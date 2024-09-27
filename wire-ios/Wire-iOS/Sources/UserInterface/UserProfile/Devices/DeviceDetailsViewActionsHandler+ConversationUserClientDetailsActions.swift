@@ -20,11 +20,15 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - ConversationUserClientDetailsActions
+
 // sourcery: AutoMockable
 protocol ConversationUserClientDetailsActions {
     func showMyDevice()
     func howToDoThat()
 }
+
+// MARK: - DeviceDetailsViewActionsHandler + ConversationUserClientDetailsActions
 
 extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions {
     func showMyDevice() {

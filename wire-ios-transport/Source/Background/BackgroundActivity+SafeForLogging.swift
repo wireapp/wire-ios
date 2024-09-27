@@ -20,11 +20,15 @@ import Foundation
 import WireSystem
 import WireUtilities
 
+// MARK: - BackgroundActivity + SafeForLoggingStringConvertible
+
 extension BackgroundActivity: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         "<BackgroundActivity [\(index)]: \(name.readableHash)>"
     }
 }
+
+// MARK: - ActivityName
 
 struct ActivityName: SafeForLoggingStringConvertible {
     let name: String

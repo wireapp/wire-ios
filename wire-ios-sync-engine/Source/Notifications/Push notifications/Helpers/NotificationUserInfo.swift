@@ -19,6 +19,8 @@
 import Foundation
 import UserNotifications
 
+// MARK: - NotificationUserInfoKey
+
 /// User info keys for notifications.
 
 private enum NotificationUserInfoKey: String {
@@ -31,6 +33,8 @@ private enum NotificationUserInfoKey: String {
     case conversationName = "conversationNameString"
     case teamName = "teamNameString"
 }
+
+// MARK: - NotificationUserInfo
 
 /// A structure that describes the content of the user info payload
 /// of user notifications.

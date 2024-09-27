@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationImageMessageCell
+
 final class ConversationImageMessageCell: UIView,
     ConversationMessageCell,
     ContextMenuDelegate {
@@ -163,6 +165,8 @@ final class ConversationImageMessageCell: UIView,
         }
     }
 }
+
+// MARK: - ConversationImageMessageCellDescription
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationImageMessageCell

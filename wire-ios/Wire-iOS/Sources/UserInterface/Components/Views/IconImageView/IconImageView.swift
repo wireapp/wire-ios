@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - IconImageStyle
+
 protocol IconImageStyle {
     var icon: StyleKitIcon? { get }
     var tintColor: UIColor? { get }
@@ -42,6 +44,8 @@ extension IconImageStyle {
         nil
     }
 }
+
+// MARK: - IconImageView
 
 class IconImageView: UIImageView {
     private(set) var size: StyleKitIcon.Size = .tiny

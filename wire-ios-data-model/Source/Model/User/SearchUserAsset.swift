@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - SearchUserAsset
+
 public enum SearchUserAsset: ExpressibleByNilLiteral, Hashable {
     case none
     case assetKey(String)

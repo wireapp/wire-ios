@@ -20,6 +20,8 @@ import WireDesign
 import XCTest
 @testable import Wire
 
+// MARK: - CompositeMessageCellTests
+
 final class CompositeMessageCellTests: ConversationMessageSnapshotTestCase {
     typealias CellConfiguration = (MockMessage) -> Void
 
@@ -141,6 +143,8 @@ final class CompositeMessageCellTests: ConversationMessageSnapshotTestCase {
         return mockCompositeMessage
     }
 }
+
+// MARK: - MockButtonMessageData
 
 final class MockButtonMessageData: ButtonMessageData {
     var title: String?

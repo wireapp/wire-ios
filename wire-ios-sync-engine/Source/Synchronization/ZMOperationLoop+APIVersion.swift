@@ -27,6 +27,8 @@ extension ZMOperationLoop {
     }
 }
 
+// MARK: - APIVersionWrapper
+
 /// A helper object to give reference semantics to `APIVersion`.
 ///
 /// This is needed because the optional type`APIVersion?` can't be

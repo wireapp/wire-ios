@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 import WireSystem
 
+// MARK: - ClientRegistrationPhase
+
 @objc(ZMClientRegistrationPhase)
 public enum ClientRegistrationPhase: UInt {
     /// The client is not registered - we send out a request to register the client
@@ -63,6 +65,8 @@ public enum ClientRegistrationPhase: UInt {
     case registered
 }
 
+// MARK: CustomDebugStringConvertible
+
 extension ClientRegistrationPhase: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
@@ -95,6 +99,8 @@ extension ClientRegistrationPhase: CustomDebugStringConvertible {
         }
     }
 }
+
+// MARK: - ZMClientRegistrationStatus
 
 @objc
 public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
@@ -675,6 +681,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 }
+
+// MARK: UserProfileUpdateObserver
 
 extension ZMClientRegistrationStatus: UserProfileUpdateObserver {
     public func didSetHandle() {

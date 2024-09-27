@@ -22,6 +22,8 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// MARK: - FileBackupExcluder
+
 final class FileBackupExcluder: BackupExcluder {
     private static let filesToExclude: [FileInDirectory] = [
         (.libraryDirectory, "Preferences/com.apple.EmojiCache.plist"),

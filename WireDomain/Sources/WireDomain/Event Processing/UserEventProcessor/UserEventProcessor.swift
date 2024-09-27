@@ -19,6 +19,8 @@
 import Foundation
 import WireAPI
 
+// MARK: - UserEventProcessorProtocol
+
 /// Process user update events.
 
 protocol UserEventProcessorProtocol {
@@ -31,6 +33,8 @@ protocol UserEventProcessorProtocol {
 
     func processEvent(_ event: UserEvent) async throws
 }
+
+// MARK: - UserEventProcessor
 
 struct UserEventProcessor {
     let clientAddEventProcessor: any UserClientAddEventProcessorProtocol

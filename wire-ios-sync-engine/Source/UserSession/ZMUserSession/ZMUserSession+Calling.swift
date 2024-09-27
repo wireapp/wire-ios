@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - CallNotificationStyleProvider
+
 @objc
 public protocol CallNotificationStyleProvider: AnyObject {
     var callNotificationStyle: CallNotificationStyle { get }
 }
+
+// MARK: - ZMUserSession + CallNotificationStyleProvider
 
 @objc
 extension ZMUserSession: CallNotificationStyleProvider {

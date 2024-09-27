@@ -31,6 +31,8 @@ extension Notification {
     }
 }
 
+// MARK: - ContextDidSaveNotificationPersistence
+
 /// This class is used to persist `NSManagedObjectContext` change
 /// notifications in order to merge them into the main app contexts.
 @objcMembers
@@ -54,6 +56,8 @@ public class ContextDidSaveNotificationPersistence: NSObject {
         objectStore.load()
     }
 }
+
+// MARK: - StorableTrackingEvent
 
 @objcMembers
 public class StorableTrackingEvent: NSObject {
@@ -83,6 +87,8 @@ public class StorableTrackingEvent: NSObject {
     }
 }
 
+// MARK: - ShareExtensionAnalyticsPersistence
+
 @objcMembers
 public class ShareExtensionAnalyticsPersistence: NSObject {
     private let objectStore: SharedObjectStore<[String: Any]>
@@ -107,6 +113,8 @@ public class ShareExtensionAnalyticsPersistence: NSObject {
 
 private let zmLog = ZMSLog(tag: "shared object store")
 
+// MARK: - SharedObjectTestClass
+
 // This class is needed to test unarchiving data saved before project rename
 // It has to be added to WireDataModel module because it won't be resolved otherwise
 class SharedObjectTestClass: NSObject, NSCoding {
@@ -115,6 +123,8 @@ class SharedObjectTestClass: NSObject, NSCoding {
     public func encode(with aCoder: NSCoder) { aCoder.encode(flag, forKey: "flag") }
     public required init?(coder aDecoder: NSCoder) { self.flag = aDecoder.decodeBool(forKey: "flag") }
 }
+
+// MARK: - SharedObjectStore
 
 /// This class is used to persist objects in a shared directory
 public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {

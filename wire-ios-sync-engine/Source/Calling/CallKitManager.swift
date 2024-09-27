@@ -22,6 +22,8 @@ import Foundation
 import Intents
 import WireRequestStrategy
 
+// MARK: - CallKitManagerDelegate
+
 protocol CallKitManagerDelegate: AnyObject {
     /// Look a conversation where a call has or will take place
 
@@ -40,6 +42,8 @@ protocol CallKitManagerDelegate: AnyObject {
     func endAllCalls()
 }
 
+// MARK: - CallKitManagerInterface
+
 @objc
 public protocol CallKitManagerInterface {
     var isEnabled: Bool { get set }
@@ -51,6 +55,8 @@ public protocol CallKitManagerInterface {
     func requestJoinCall(in conversation: ZMConversation, video: Bool)
     func requestEndCall(in conversation: ZMConversation, completion: (() -> Void)?)
 }
+
+// MARK: - CallKitManager
 
 @objc
 public class CallKitManager: NSObject, CallKitManagerInterface {
@@ -534,7 +540,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     }
 }
 
-// MARK: - Provider delegate
+// MARK: CXProviderDelegate
 
 extension CallKitManager: CXProviderDelegate {
     public func providerDidBegin(_ provider: CXProvider) {
@@ -798,7 +804,7 @@ extension CallKitManager: CXProviderDelegate {
     }
 }
 
-// MARK: - Callstate observer
+// MARK: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver
 
 extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
     public func callCenterDidChange(

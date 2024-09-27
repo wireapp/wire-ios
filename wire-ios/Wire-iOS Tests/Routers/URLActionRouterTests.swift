@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - URLActionRouterTests
+
 final class URLActionRouterTests: XCTestCase {
     // MARK: Presenting Alerts
 
@@ -132,6 +134,8 @@ final class URLActionRouterTests: XCTestCase {
     }
 }
 
+// MARK: - MockAuthenticatedRouter
+
 final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
     func updateActiveCallPresentationState() {}
 
@@ -142,6 +146,8 @@ final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
         didNavigateToDestination = destination
     }
 }
+
+// MARK: - MockURLActionRouterDelegate
 
 final class MockURLActionRouterDelegate: URLActionRouterDelegate {
     var didCallWillShowCompanyLoginError = false
@@ -154,6 +160,8 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
         canDisplayAlerts
     }
 }
+
+// MARK: - TestableURLActionRouter
 
 final class TestableURLActionRouter: URLActionRouter {
     var presentedAlert: UIAlertController?

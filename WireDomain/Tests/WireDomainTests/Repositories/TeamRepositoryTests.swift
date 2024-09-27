@@ -24,6 +24,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
+// MARK: - TeamRepositoryTests
+
 final class TeamRepositoryTests: XCTestCase {
     var sut: TeamRepository!
     var userRespository: MockUserRepositoryProtocol!
@@ -246,6 +248,8 @@ final class TeamRepositoryTests: XCTestCase {
         XCTAssertEqual(result, .pending)
     }
 }
+
+// MARK: - Scaffolding
 
 private enum Scaffolding {
     static let selfUserID = UUID()

@@ -18,13 +18,19 @@
 
 import UIKit
 
+// MARK: - Interactable
+
 protocol Interactable {
     func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event)
 }
 
+// MARK: - UIControl + Interactable
+
 extension UIControl: Interactable {}
 
 typealias Callback<T> = (T) -> Void
+
+// MARK: - CallbackObject
 
 private final class CallbackObject<T: Interactable>: NSObject {
     let callback: Callback<T>

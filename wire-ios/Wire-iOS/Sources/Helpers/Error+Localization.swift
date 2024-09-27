@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - SessionManager.AccountError + LocalizedError
+
 extension SessionManager.AccountError: LocalizedError {
     typealias SettingsAddAccountLocale = L10n.Localizable.Self.Settings.AddAccount.Error
 
@@ -36,6 +38,8 @@ extension SessionManager.AccountError: LocalizedError {
         }
     }
 }
+
+// MARK: - SessionManager.SwitchBackendError + LocalizedError
 
 extension SessionManager.SwitchBackendError: LocalizedError {
     typealias UrlActionSwitchBackendErrorLocale = L10n.Localizable.UrlAction.SwitchBackend.Error
@@ -60,6 +64,8 @@ extension SessionManager.SwitchBackendError: LocalizedError {
         }
     }
 }
+
+// MARK: - DeepLinkRequestError + LocalizedError
 
 extension DeepLinkRequestError: LocalizedError {
     typealias UrlActionLocale = L10n.Localizable.UrlAction
@@ -93,6 +99,8 @@ extension DeepLinkRequestError: LocalizedError {
     }
 }
 
+// MARK: - CompanyLoginError + LocalizedError
+
 extension CompanyLoginError: LocalizedError {
     public var errorDescription: String? {
         L10n.Localizable.General.failure
@@ -102,6 +110,8 @@ extension CompanyLoginError: LocalizedError {
         L10n.Localizable.Login.Sso.Error.Alert.message(displayCode)
     }
 }
+
+// MARK: - ConmpanyLoginRequestError + LocalizedError
 
 extension ConmpanyLoginRequestError: LocalizedError {
     public var errorDescription: String? {
@@ -119,6 +129,8 @@ extension ConmpanyLoginRequestError: LocalizedError {
     }
 }
 
+// MARK: - ConnectToUserError + LocalizedError
+
 extension ConnectToUserError: LocalizedError {
     typealias ConnectionError = L10n.Localizable.Error.Connection
 
@@ -135,6 +147,8 @@ extension ConnectToUserError: LocalizedError {
         }
     }
 }
+
+// MARK: - UpdateConnectionError + LocalizedError
 
 extension UpdateConnectionError: LocalizedError {
     typealias ConnectionError = L10n.Localizable.Error.Connection

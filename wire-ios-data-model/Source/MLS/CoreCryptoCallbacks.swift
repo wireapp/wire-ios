@@ -21,6 +21,8 @@ import WireCoreCrypto
 
 typealias ConversationId = Data
 
+// MARK: - CoreCryptoCallbacksImpl
+
 class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
     init() {}
 

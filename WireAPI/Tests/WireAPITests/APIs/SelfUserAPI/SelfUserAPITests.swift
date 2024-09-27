@@ -20,6 +20,8 @@ import SnapshotTesting
 import XCTest
 @testable import WireAPI
 
+// MARK: - SelfUserAPITests
+
 final class SelfUserAPITests: XCTestCase {
     private var apiSnapshotHelper: APISnapshotHelper<any SelfUserAPI>!
 
@@ -186,6 +188,8 @@ final class SelfUserAPITests: XCTestCase {
         }
     }
 }
+
+// MARK: SelfUserAPITests.Scaffolding
 
 extension SelfUserAPITests {
     enum Scaffolding {

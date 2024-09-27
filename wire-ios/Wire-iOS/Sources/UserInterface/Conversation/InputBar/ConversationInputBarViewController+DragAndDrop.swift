@@ -22,6 +22,8 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "Drag and drop images")
 
+// MARK: - ConversationInputBarViewController + UIDropInteractionDelegate
+
 extension ConversationInputBarViewController: UIDropInteractionDelegate {
     func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {
         for dragItem in session.items {

@@ -19,9 +19,13 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - IncomingConnectionAction
+
 enum IncomingConnectionAction: UInt {
     case ignore, accept
 }
+
+// MARK: - IncomingConnectionViewController
 
 final class IncomingConnectionViewController: UIViewController {
     fileprivate var connectionView: IncomingConnectionView!
@@ -58,6 +62,8 @@ final class IncomingConnectionViewController: UIViewController {
         view = connectionView
     }
 }
+
+// MARK: - UserConnectionViewController
 
 final class UserConnectionViewController: UIViewController {
     fileprivate var userConnectionView: UserConnectionView!

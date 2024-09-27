@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - QuickSyncObserverInterface
+
 // sourcery: AutoMockable
 public protocol QuickSyncObserverInterface {
     func waitForQuickSyncToFinish() async
 }
+
+// MARK: - QuickSyncObserver
 
 public final class QuickSyncObserver: QuickSyncObserverInterface {
     private let context: NSManagedObjectContext

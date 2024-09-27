@@ -20,6 +20,8 @@ import CoreData
 import Foundation
 import LocalAuthentication
 
+// MARK: - EARServiceInterface
+
 /// An object that provides encryption at rest.
 ///
 /// sourcery: AutoMockable
@@ -74,6 +76,8 @@ public protocol EARServiceInterface: AnyObject {
 
     func setInitialEARFlagValue(_ enabled: Bool)
 }
+
+// MARK: - EARService
 
 /// The EARService is responsible for managing encryption at rest functionality. See <doc:encryption-at-rest> for more
 /// information about how encryption at rest works.

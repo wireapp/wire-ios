@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - WaveformBarsView
+
 private final class WaveformBarsView: UIView {
     var samples: [Float] = [] {
         didSet {
@@ -83,6 +85,8 @@ private final class WaveformBarsView: UIView {
         c.fillPath()
     }
 }
+
+// MARK: - WaveformProgressView
 
 final class WaveformProgressView: UIView {
     fileprivate let backgroundWaveform = WaveformBarsView()

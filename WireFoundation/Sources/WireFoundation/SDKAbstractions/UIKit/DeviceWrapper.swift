@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - DeviceWrapper
+
 /// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
 public struct DeviceWrapper {
     var device: UIDevice
@@ -26,6 +28,8 @@ public struct DeviceWrapper {
         self.device = device
     }
 }
+
+// MARK: DeviceAbstraction
 
 extension DeviceWrapper: DeviceAbstraction {
     public var userInterfaceIdiom: UIUserInterfaceIdiom {

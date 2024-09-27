@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - TeamListPayload
+
 struct TeamListPayload: Decodable {
     let hasMore: Bool
     let teams: [TeamPayload]
@@ -25,6 +27,8 @@ struct TeamListPayload: Decodable {
         case teams
     }
 }
+
+// MARK: - TeamPayload
 
 struct TeamPayload: Decodable {
     let identifier: UUID
@@ -78,6 +82,8 @@ extension Team {
         Team.remoteIdentifierDataKey()
     )
 }
+
+// MARK: - TeamDownloadRequestStrategy
 
 /// Responsible for downloading the team which the self user belongs to during the slow sync
 /// and for updating it when processing events or when manually requested.
@@ -286,12 +292,16 @@ extension ZMUpdateEvent {
     }
 }
 
+// MARK: - TeamEventPayloadKey
+
 private  enum TeamEventPayloadKey: String {
     case team
     case data
     case user
     case conversation = "conv"
 }
+
+// MARK: - TeamUpdateEventPayload
 
 struct TeamUpdateEventPayload: Decodable {
     let name: String?

@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+// MARK: - AccountImageViewRepresentable
+
 public struct AccountImageViewRepresentable: UIViewRepresentable {
     private let accountImage: UIImage
     private let isTeamAccount: Bool

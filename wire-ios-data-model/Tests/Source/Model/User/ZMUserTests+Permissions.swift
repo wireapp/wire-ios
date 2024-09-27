@@ -18,6 +18,8 @@
 
 import XCTest
 
+// MARK: - ZMUserTests_Permissions
+
 final class ZMUserTests_Permissions: ModelObjectsTests {
     let defaultAdminRoleName = "wire_admin"
     var team: Team!

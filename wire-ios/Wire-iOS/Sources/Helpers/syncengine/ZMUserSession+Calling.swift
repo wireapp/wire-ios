@@ -18,11 +18,15 @@
 
 import WireSyncEngine
 
+// MARK: - CallConversationProvider
+
 protocol CallConversationProvider {
     var priorityCallConversation: ZMConversation? { get }
     var ongoingCallConversation: ZMConversation? { get }
     var ringingCallConversation: ZMConversation? { get }
 }
+
+// MARK: - ZMUserSession + CallConversationProvider
 
 extension ZMUserSession: CallConversationProvider {}
 

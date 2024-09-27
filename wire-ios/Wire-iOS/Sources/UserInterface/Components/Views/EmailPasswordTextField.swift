@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - EmailPasswordTextFieldDelegate
+
 protocol EmailPasswordTextFieldDelegate: AnyObject {
     func textFieldDidUpdateText(_ textField: EmailPasswordTextField)
     func textFieldDidSubmitWithValidationError(_ textField: EmailPasswordTextField)
@@ -28,6 +30,8 @@ protocol EmailPasswordTextFieldDelegate: AnyObject {
 extension EmailPasswordTextFieldDelegate {
     func textField(_ textField: UITextField, editing: Bool) {}
 }
+
+// MARK: - RevisedEmailPasswordTextField
 
 class RevisedEmailPasswordTextField: EmailPasswordTextField {
     override func configureConstraints() {
@@ -46,6 +50,8 @@ class RevisedEmailPasswordTextField: EmailPasswordTextField {
         ])
     }
 }
+
+// MARK: - EmailPasswordTextField
 
 class EmailPasswordTextField: UIView, MagicTappable {
     let emailField = ValidatedTextField(kind: .email, cornerRadius: 12, setNewColors: true, style: .default)
@@ -223,6 +229,8 @@ class EmailPasswordTextField: UIView, MagicTappable {
     }
 }
 
+// MARK: UITextFieldDelegate
+
 extension EmailPasswordTextField: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         delegate?.textField(textField, editing: true)
@@ -244,6 +252,8 @@ extension EmailPasswordTextField: UITextFieldDelegate {
         return true
     }
 }
+
+// MARK: TextFieldValidationDelegate
 
 extension EmailPasswordTextField: TextFieldValidationDelegate {
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {

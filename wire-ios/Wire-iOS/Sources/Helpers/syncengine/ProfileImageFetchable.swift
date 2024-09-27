@@ -25,6 +25,8 @@ extension CIContext {
 
 typealias ProfileImageFetchableUser = ProfileImageFetchable & UserType
 
+// MARK: - ProfileImageFetchable
+
 protocol ProfileImageFetchable {
     func fetchProfileImage(
         session: ZMUserSessionInterface,
@@ -112,5 +114,10 @@ extension ProfileImageFetchable where Self: UserType {
     }
 }
 
+// MARK: - ZMUser + ProfileImageFetchable
+
 extension ZMUser: ProfileImageFetchable {}
+
+// MARK: - ZMSearchUser + ProfileImageFetchable
+
 extension ZMSearchUser: ProfileImageFetchable {}

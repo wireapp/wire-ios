@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UsersAPIV4
+
 class UsersAPIV4: UsersAPIV3 {
     override var apiVersion: APIVersion {
         .v4
@@ -53,6 +55,8 @@ class UsersAPIV4: UsersAPIV3 {
     }
 }
 
+// MARK: - UserListResponseV4
+
 struct UserListResponseV4: Decodable, ToAPIModelConvertible {
     /// List of users which were found and succesfully retrieved.
 
@@ -66,6 +70,8 @@ struct UserListResponseV4: Decodable, ToAPIModelConvertible {
         UserList(found: found.map { $0.toAPIModel() }, failed: failed ?? [])
     }
 }
+
+// MARK: - UserResponseV4
 
 struct UserResponseV4: Decodable, ToAPIModelConvertible {
     let id: UserID

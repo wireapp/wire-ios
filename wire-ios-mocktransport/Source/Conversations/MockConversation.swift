@@ -136,6 +136,8 @@ extension MockConversation {
     }
 }
 
+// MARK: - MockConversation + EntityNamedProtocol
+
 extension MockConversation: EntityNamedProtocol {
     public static var entityName: String {
         "Conversation"

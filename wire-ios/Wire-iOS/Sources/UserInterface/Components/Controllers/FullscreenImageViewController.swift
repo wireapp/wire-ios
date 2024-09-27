@@ -23,14 +23,20 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// MARK: - ScreenshotProvider
+
 protocol ScreenshotProvider: UIViewController {
     func backgroundScreenshot(for fullscreenController: FullscreenImageViewController) -> UIView?
 }
+
+// MARK: - MenuVisibilityController
 
 protocol MenuVisibilityController: UIViewController {
     var menuVisible: Bool { get }
     func fadeAndHideMenu(_ hidden: Bool)
 }
+
+// MARK: - FullscreenImageViewController
 
 final class FullscreenImageViewController: UIViewController {
     static let kZoomScaleDelta: CGFloat = 0.0003
@@ -730,6 +736,8 @@ final class FullscreenImageViewController: UIViewController {
     }
 }
 
+// MARK: UIGestureRecognizerDelegate
+
 extension FullscreenImageViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         let imageViewRect = view.convert(imageView?.bounds ?? CGRect.zero, from: imageView)
@@ -770,7 +778,7 @@ extension FullscreenImageViewController: UIGestureRecognizerDelegate {
     }
 }
 
-// MARK: - MessageActionResponder
+// MARK: MessageActionResponder
 
 extension FullscreenImageViewController: MessageActionResponder {
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
@@ -810,6 +818,8 @@ extension FullscreenImageViewController: MessageActionResponder {
     }
 }
 
+// MARK: ZMMessageObserver
+
 extension FullscreenImageViewController: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         if (
@@ -821,7 +831,7 @@ extension FullscreenImageViewController: ZMMessageObserver {
     }
 }
 
-// MARK: - UIScrollViewDelegate
+// MARK: UIScrollViewDelegate
 
 extension FullscreenImageViewController: UIScrollViewDelegate {
     func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {

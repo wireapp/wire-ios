@@ -18,11 +18,15 @@
 
 import UIKit
 
+// MARK: - ImageToolbarConfiguration
+
 enum ImageToolbarConfiguration {
     case cell
     case compactCell
     case preview
 }
+
+// MARK: - ImageToolbarView
 
 final class ImageToolbarView: UIView {
     let buttonContainer = UIView()

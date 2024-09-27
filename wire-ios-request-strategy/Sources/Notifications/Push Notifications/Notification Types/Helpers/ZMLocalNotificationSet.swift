@@ -21,6 +21,8 @@ import UserNotifications
 import WireTransport
 import WireUtilities
 
+// MARK: - ZMLocalNotificationSet
+
 @objc
 public class ZMLocalNotificationSet: NSObject {
     let archivingKey: String

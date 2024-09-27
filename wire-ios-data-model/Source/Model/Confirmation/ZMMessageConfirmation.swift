@@ -19,6 +19,8 @@
 import CoreData
 import Foundation
 
+// MARK: - MessageConfirmationType
+
 @objc
 public enum MessageConfirmationType: Int16 {
     case delivered, read
@@ -32,6 +34,8 @@ public enum MessageConfirmationType: Int16 {
         }
     }
 }
+
+// MARK: - ZMMessageConfirmation
 
 @objc(ZMMessageConfirmation) @objcMembers
 open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {

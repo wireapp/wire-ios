@@ -24,6 +24,8 @@ import WireDesign
 import WireSyncEngine
 import WireUIFoundation
 
+// MARK: - ZClientViewController
+
 final class ZClientViewController: UIViewController {
     private let account: Account
     let userSession: UserSession
@@ -826,7 +828,7 @@ final class ZClientViewController: UIViewController {
     }
 }
 
-// MARK: - ZClientViewController + SplitViewControllerDelegate
+// MARK: SplitViewControllerDelegate
 
 extension ZClientViewController: SplitViewControllerDelegate {
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {

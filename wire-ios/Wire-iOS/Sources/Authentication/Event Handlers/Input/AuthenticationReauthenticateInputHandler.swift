@@ -21,6 +21,8 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "AuthenticationReauthenticateInputHandler")
 
+// MARK: - AuthenticationReauthenticateInputHandler
+
 /// Handles input in the reauthentication phase.
 
 final class AuthenticationReauthenticateInputHandler: AuthenticationEventHandler {

@@ -20,6 +20,8 @@ import WireDataModel
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - FederationTerminationManagerTests
+
 class FederationTerminationManagerTests: MessagingTestBase {
     var sut: FederationTerminationManager!
     let defederatedDomain = "other.user.domain"

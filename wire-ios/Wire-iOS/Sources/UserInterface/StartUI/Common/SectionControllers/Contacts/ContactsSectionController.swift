@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ContactsSectionController
+
 class ContactsSectionController: SearchSectionController {
     var contacts: [UserType] = []
     var selection: UserSelection? {
@@ -114,6 +116,8 @@ class ContactsSectionController: SearchSectionController {
         selection?.remove(user)
     }
 }
+
+// MARK: UserSelectionObserver
 
 extension ContactsSectionController: UserSelectionObserver {
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType]) {

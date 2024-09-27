@@ -21,6 +21,8 @@ import WireDataModel
 
 private let zmLog = ZMSLog(tag: "PushNotificationStatus")
 
+// MARK: - PushNotificationStatus
+
 @objcMembers
 open class PushNotificationStatus: NSObject {
     public enum FetchError: Error {

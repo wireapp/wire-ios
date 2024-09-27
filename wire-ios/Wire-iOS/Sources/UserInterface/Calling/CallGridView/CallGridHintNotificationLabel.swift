@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - CallGridHintKind
+
 enum CallGridHintKind {
     private typealias HintString = L10n.Localizable.Call.Grid.Hints
 
@@ -39,6 +41,8 @@ enum CallGridHintKind {
         }
     }
 }
+
+// MARK: - CallGridHintNotificationLabel
 
 class CallGridHintNotificationLabel: NotificationLabel {
     func show(hint: CallGridHintKind) {

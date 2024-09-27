@@ -22,6 +22,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - ConfirmAssetViewController
+
 final class ConfirmAssetViewController: UIViewController {
     enum Asset {
         /// Can either be UIImage or FLAnimatedImage
@@ -410,6 +412,8 @@ final class ConfirmAssetViewController: UIViewController {
         NSLayoutConstraint.activate(constraints)
     }
 }
+
+// MARK: CanvasViewControllerDelegate
 
 extension ConfirmAssetViewController: CanvasViewControllerDelegate {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {

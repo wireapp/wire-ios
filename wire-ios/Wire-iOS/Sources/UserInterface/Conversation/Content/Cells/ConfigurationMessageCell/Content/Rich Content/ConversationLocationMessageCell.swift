@@ -21,6 +21,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationLocationMessageCell
+
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
     struct Configuration {
         let location: LocationMessageData
@@ -181,6 +183,8 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         lastConfiguration?.location.openInMaps(with: mapView.region.span)
     }
 }
+
+// MARK: - ConversationLocationMessageCellDescription
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLocationMessageCell

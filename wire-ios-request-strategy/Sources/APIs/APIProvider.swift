@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - APIProviderInterface
+
 // sourcery: AutoMockable
 public protocol APIProviderInterface {
     func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI
@@ -25,6 +27,8 @@ public protocol APIProviderInterface {
     func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI?
     func userClientAPI(apiVersion: APIVersion) -> UserClientAPI
 }
+
+// MARK: - APIProvider
 
 public struct APIProvider: APIProviderInterface {
     let httpClient: HttpClient

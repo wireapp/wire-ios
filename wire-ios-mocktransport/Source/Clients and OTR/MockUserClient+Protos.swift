@@ -19,6 +19,8 @@
 import Foundation
 import WireProtos
 
+// MARK: - OtrMessage
+
 public protocol OtrMessage {
     var sender: Proteus_ClientId { get }
 }
@@ -108,6 +110,10 @@ extension String {
     }
 }
 
+// MARK: - Proteus_NewOtrMessage + OtrMessage
+
 extension Proteus_NewOtrMessage: OtrMessage {}
+
+// MARK: - Proteus_OtrAssetMeta + OtrMessage
 
 extension Proteus_OtrAssetMeta: OtrMessage {}

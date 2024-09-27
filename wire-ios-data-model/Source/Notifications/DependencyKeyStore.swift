@@ -20,6 +20,8 @@ import Foundation
 
 private var zmLog = ZMSLog(tag: "DependencyKeyStore")
 
+// MARK: - Observable
+
 struct Observable {
     private let affectingKeyStore: DependencyKeyStore
     let classIdentifier: String
@@ -55,6 +57,8 @@ struct Observable {
         return keys
     }
 }
+
+// MARK: - DependencyKeyStore
 
 /// Maps the observable keys to affectedKeys and vice versa
 /// You should create this only once

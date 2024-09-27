@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - UserContactJoinEventProcessorProtocol
+
 /// Process user contact join events.
 
 protocol UserContactJoinEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol UserContactJoinEventProcessorProtocol {
 
     func processEvent(_ event: UserContactJoinEvent) async throws
 }
+
+// MARK: - UserContactJoinEventProcessor
 
 struct UserContactJoinEventProcessor: UserContactJoinEventProcessorProtocol {
     func processEvent(_: UserContactJoinEvent) async throws {

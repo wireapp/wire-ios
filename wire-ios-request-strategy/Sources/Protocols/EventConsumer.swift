@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ZMEventConsumer
+
 @objc
 public protocol ZMEventConsumer: NSObjectProtocol {
     /// Process events received either through a live update (websocket / notification / notification stream)
@@ -41,6 +43,8 @@ public protocol ZMEventConsumer: NSObjectProtocol {
     @objc
     optional func conversationRemoteIdentifiersToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID>
 }
+
+// MARK: - ZMEventAsyncConsumer
 
 @objc
 public protocol ZMEventAsyncConsumer: NSObjectProtocol {

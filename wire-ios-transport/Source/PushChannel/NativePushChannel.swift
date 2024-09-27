@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - NativePushChannel
+
 @objcMembers
 final class NativePushChannel: NSObject, PushChannelType {
     var clientID: String? {
@@ -220,6 +222,8 @@ final class NativePushChannel: NSObject, PushChannelType {
     }
 }
 
+// MARK: ZMTimerClient
+
 extension NativePushChannel: ZMTimerClient {
     func timerDidFire(_: ZMTimer!) {
         WireLogger.pushChannel.debug("Sending ping")
@@ -231,6 +235,8 @@ extension NativePushChannel: ZMTimerClient {
         schedulePingTimer()
     }
 }
+
+// MARK: URLSessionWebSocketDelegate
 
 extension NativePushChannel: URLSessionWebSocketDelegate {
     func urlSession(
@@ -254,6 +260,8 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
         onClose()
     }
 }
+
+// MARK: URLSessionDataDelegate
 
 extension NativePushChannel: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {

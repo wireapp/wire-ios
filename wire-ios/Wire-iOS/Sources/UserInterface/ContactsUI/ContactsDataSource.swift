@@ -20,11 +20,15 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - ContactsDataSourceDelegate
+
 protocol ContactsDataSourceDelegate: AnyObject {
     func dataSource(_ dataSource: ContactsDataSource, cellFor user: UserType, at indexPath: IndexPath)
         -> UITableViewCell
     func dataSource(_ dataSource: ContactsDataSource, didReceiveSearchResult newUser: [UserType])
 }
+
+// MARK: - ContactsDataSource
 
 final class ContactsDataSource: NSObject {
     static let MinimumNumberOfContactsToDisplaySections: UInt = 15
@@ -118,6 +122,8 @@ final class ContactsDataSource: NSObject {
     }
 }
 
+// MARK: UITableViewDataSource
+
 extension ContactsDataSource: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         sections.count
@@ -144,6 +150,8 @@ extension ContactsDataSource: UITableViewDataSource {
         collation.section(forSectionIndexTitle: index)
     }
 }
+
+// MARK: UITableViewDelegate
 
 extension ContactsDataSource: UITableViewDelegate {
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

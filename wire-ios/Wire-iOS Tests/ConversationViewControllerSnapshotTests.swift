@@ -22,6 +22,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - ConversationViewControllerSnapshotTests
+
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationViewController!

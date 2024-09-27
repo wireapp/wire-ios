@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AnalyticsType
+
 @objc
 public protocol AnalyticsType: NSObjectProtocol {
     func tagEvent(_ event: String)
@@ -28,6 +30,8 @@ public protocol AnalyticsType: NSObjectProtocol {
     @objc(persistedAttributesForEvent:)
     func persistedAttributes(for event: String) -> [String: NSObject]?
 }
+
+// MARK: - DebugAnalytics
 
 // Used for debugging only
 @objc

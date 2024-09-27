@@ -20,6 +20,8 @@ import Countly
 import XCTest
 @testable import Wire
 
+// MARK: - AnalyticsCountlyProviderTests
+
 final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
@@ -122,6 +124,8 @@ final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper
         }
     }
 }
+
+// MARK: - MockCountly
 
 final class MockCountly: CountlyInstance {
     static var recordEventCount = 0

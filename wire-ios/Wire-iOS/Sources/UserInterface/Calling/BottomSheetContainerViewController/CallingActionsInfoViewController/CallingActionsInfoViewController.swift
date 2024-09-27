@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - CallingActionsInfoViewController
+
 final class CallingActionsInfoViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     private let participantsHeaderHeight: CGFloat = 42
     private let cellHeight: CGFloat = 56
@@ -186,7 +188,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 }
 
-// MARK: - CallInfoConfigurationObserver
+// MARK: CallInfoConfigurationObserver
 
 extension CallingActionsInfoViewController: CallInfoConfigurationObserver {
     func didUpdateConfiguration(configuration: CallInfoConfiguration) {

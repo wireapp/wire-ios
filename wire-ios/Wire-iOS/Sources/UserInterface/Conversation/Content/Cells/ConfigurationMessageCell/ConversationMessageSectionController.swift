@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - ConversationMessageContext
+
 struct ConversationMessageContext: Equatable {
     var isSameSenderAsPrevious = false
     var isTimeIntervalSinceLastMessageSignificant = false
@@ -30,6 +32,8 @@ struct ConversationMessageContext: Equatable {
     var previousMessageIsKnock = false
     var spacing: Float = 0
 }
+
+// MARK: - ConversationMessageSectionControllerDelegate
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
     func messageSectionController(
@@ -43,6 +47,8 @@ extension ZMConversationMessage {
         (self as? ConversationCompositeMessage)?.isComposite == true
     }
 }
+
+// MARK: - ConversationMessageSectionController
 
 /// An object that provides an interface to build list sections for a single message.
 ///
@@ -447,6 +453,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 }
+
+// MARK: UserObserving
 
 extension ConversationMessageSectionController: UserObserving {
     func userDidChange(_: UserChangeInfo) {

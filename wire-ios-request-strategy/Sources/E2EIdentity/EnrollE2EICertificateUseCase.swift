@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - OAuthParameters
+
 public struct OAuthParameters {
     public let identityProvider: URL
     public let clientID: String
     public let keyauth: String
     public let acmeAudience: String
 }
+
+// MARK: - OAuthResponse
 
 public struct OAuthResponse {
     let idToken: String
@@ -40,10 +44,14 @@ public struct OAuthResponse {
 
 public typealias OAuthBlock = (OAuthParameters) async throws -> OAuthResponse
 
+// MARK: - EnrollE2EICertificateUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol EnrollE2EICertificateUseCaseProtocol {
     func invoke(authenticate: @escaping OAuthBlock) async throws -> String
 }
+
+// MARK: - EnrollE2EICertificateUseCase
 
 /// This class provides an interface to issue an E2EI certificate.
 public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCaseProtocol {

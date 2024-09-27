@@ -19,9 +19,13 @@
 import UIKit
 import WireSystem
 
+// MARK: - SaveFileActions
+
 protocol SaveFileActions {
     func save(value: String, fileName: String, type: String)
 }
+
+// MARK: - SaveFileManager
 
 final class SaveFileManager: NSObject, SaveFileActions {
     private var pendingSaveURL: URL?

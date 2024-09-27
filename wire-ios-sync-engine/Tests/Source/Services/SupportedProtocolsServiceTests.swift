@@ -22,6 +22,8 @@ import WireSyncEngineSupport
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - SupportedProtocolsServiceTests
+
 final class SupportedProtocolsServiceTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var mockCoreDataStack: CoreDataStack!

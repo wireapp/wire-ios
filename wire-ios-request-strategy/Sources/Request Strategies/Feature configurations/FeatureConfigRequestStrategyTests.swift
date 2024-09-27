@@ -20,6 +20,8 @@ import WireRequestStrategySupport
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - FeatureConfigRequestStrategyTests
+
 final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     // MARK: - Properties
 
@@ -419,7 +421,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 }
 
-// MARK: JSON
+// MARK: - MockJSON
 
 private enum MockJSON {
     static let mlsWithDefaultProtocolProteus = Data("""

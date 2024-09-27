@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - PrekeyPayloadProcessorInterface
+
 // sourcery: AutoMockable
 public protocol PrekeyPayloadProcessorInterface {
     func establishSessions(
@@ -26,6 +28,8 @@ public protocol PrekeyPayloadProcessorInterface {
         context: NSManagedObjectContext
     ) async
 }
+
+// MARK: - PrekeyPayloadProcessor
 
 public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
     public init() {}

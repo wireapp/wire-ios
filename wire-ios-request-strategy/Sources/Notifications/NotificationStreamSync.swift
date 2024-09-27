@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - NotificationStreamSyncDelegate
+
 public protocol NotificationStreamSyncDelegate: AnyObject {
     func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool)
     func failedFetchingEvents(recoverable: Bool)
 }
+
+// MARK: - NotificationStreamSync
 
 public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListRequestPaginatorSync {
     private var notificationsTracker: NotificationsTracker?

@@ -24,6 +24,8 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
+// MARK: - StartUIViewController
+
 final class StartUIViewController: UIViewController {
     static let InitiallyShowsKeyboardConversationThreshold = 10
 
@@ -277,6 +279,8 @@ final class StartUIViewController: UIViewController {
         }
     }
 }
+
+// MARK: SearchHeaderViewControllerDelegate
 
 extension StartUIViewController: SearchHeaderViewControllerDelegate {
     func searchHeaderViewController(

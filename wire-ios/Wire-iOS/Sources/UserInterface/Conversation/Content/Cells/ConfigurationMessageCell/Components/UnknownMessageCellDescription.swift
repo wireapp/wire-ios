@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - CustomMessageView + ConversationMessageCell
+
 extension CustomMessageView: ConversationMessageCell {
     var selectionView: UIView? {
         messageLabel
@@ -28,6 +30,8 @@ extension CustomMessageView: ConversationMessageCell {
         messageText = object
     }
 }
+
+// MARK: - UnknownMessageCellDescription
 
 /// A description for a message cell that informs the user a message cannot be rendered.
 

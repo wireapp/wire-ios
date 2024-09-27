@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConversationJoinError
+
 public enum ConversationJoinError: Error {
     case unknown, tooManyMembers, invalidCode, noConversation, guestLinksDisabled, invalidConversationPassword
 
@@ -32,6 +34,8 @@ public enum ConversationJoinError: Error {
         }
     }
 }
+
+// MARK: - ConversationFetchError
 
 public enum ConversationFetchError: Error {
     case unknown, noTeamMember, accessDenied, invalidCode, noConversation, guestLinksDisabled
@@ -172,6 +176,8 @@ extension ZMConversation {
         transportSession.enqueueOneTime(request)
     }
 }
+
+// MARK: - ConversationJoinRequestFactory
 
 enum ConversationJoinRequestFactory {
     static let joinConversationsPath = "/conversations/join"

@@ -20,6 +20,8 @@ import Foundation
 
 private let log = ZMSLog(tag: "core-data")
 
+// MARK: - TypingUsersTimeout.Key
+
 extension TypingUsersTimeout {
     struct Key: Hashable {
         var userObjectId: NSManagedObjectID

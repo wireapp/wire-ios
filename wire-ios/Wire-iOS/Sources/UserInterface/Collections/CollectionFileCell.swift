@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - CollectionFileCell
+
 final class CollectionFileCell: CollectionCell {
     private var containerView = UIView()
     private let fileTransferView = FileTransferView()
@@ -113,6 +115,8 @@ final class CollectionFileCell: CollectionCell {
         accessibilityTraits = .button
     }
 }
+
+// MARK: TransferViewDelegate
 
 extension CollectionFileCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {

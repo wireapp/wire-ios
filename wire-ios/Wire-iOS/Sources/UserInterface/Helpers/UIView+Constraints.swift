@@ -19,6 +19,8 @@
 import UIKit
 import WireSystem
 
+// MARK: - Anchor
+
 enum Anchor {
     case top
     case bottom

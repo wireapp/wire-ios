@@ -20,6 +20,8 @@ import Foundation
 import SafariServices
 import WireDesign
 
+// MARK: - BrowserViewController
+
 final class BrowserViewController: SFSafariViewController {
     var completion: (() -> Void)?
     var onDismiss: (() -> Void)?
@@ -39,6 +41,8 @@ final class BrowserViewController: SFSafariViewController {
         }
     }
 }
+
+// MARK: SFSafariViewControllerDelegate
 
 extension BrowserViewController: SFSafariViewControllerDelegate {
     func safariViewControllerDidFinish(_: SFSafariViewController) {

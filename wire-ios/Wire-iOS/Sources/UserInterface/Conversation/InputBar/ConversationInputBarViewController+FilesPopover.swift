@@ -20,6 +20,8 @@ import MobileCoreServices
 import UniformTypeIdentifiers
 import WireSyncEngine
 
+// MARK: - ConversationInputBarViewController + UIDocumentPickerDelegate
+
 extension ConversationInputBarViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         uploadFiles(at: urls)

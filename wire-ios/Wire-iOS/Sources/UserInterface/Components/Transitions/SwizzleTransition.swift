@@ -18,10 +18,14 @@
 
 import UIKit
 
+// MARK: - SwizzleTransitionDirection
+
 enum SwizzleTransitionDirection {
     case horizontal
     case vertical
 }
+
+// MARK: - SwizzleTransition
 
 final class SwizzleTransition: NSObject, UIViewControllerAnimatedTransitioning {
     private let direction: SwizzleTransitionDirection

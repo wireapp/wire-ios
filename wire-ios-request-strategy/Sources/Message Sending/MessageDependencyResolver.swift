@@ -18,15 +18,21 @@
 
 import Foundation
 
+// MARK: - MessageDependencyResolverInterface
+
 // sourcery: AutoMockable
 public protocol MessageDependencyResolverInterface {
     func waitForDependenciesToResolve(for message: any SendableMessage) async throws
 }
 
+// MARK: - MessageDependencyResolverError
+
 public enum MessageDependencyResolverError: Error, Equatable {
     case securityLevelDegraded
     case legalHoldPendingApproval
 }
+
+// MARK: - MessageDependencyResolver
 
 public class MessageDependencyResolver: MessageDependencyResolverInterface {
     public init(context: NSManagedObjectContext) {

@@ -19,6 +19,8 @@
 import CoreData
 import Foundation
 
+// MARK: - MockAction
+
 @objc
 public final class MockAction: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var name: String

@@ -19,6 +19,8 @@
 import Foundation
 import WireRequestStrategy
 
+// MARK: - PushNotificationStrategyDelegate
+
 protocol PushNotificationStrategyDelegate: AnyObject {
     func pushNotificationStrategy(
         _ strategy: PushNotificationStrategy,
@@ -26,6 +28,8 @@ protocol PushNotificationStrategyDelegate: AnyObject {
     ) async throws
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy)
 }
+
+// MARK: - PushNotificationStrategy
 
 final class PushNotificationStrategy: AbstractRequestStrategy {
     // MARK: - Properties
@@ -82,7 +86,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
     }
 }
 
-// MARK: - Notification stream sync delegate
+// MARK: NotificationStreamSyncDelegate
 
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {

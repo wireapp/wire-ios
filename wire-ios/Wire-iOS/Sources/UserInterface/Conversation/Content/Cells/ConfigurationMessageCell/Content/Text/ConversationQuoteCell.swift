@@ -22,6 +22,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationReplyContentView
+
 final class ConversationReplyContentView: UIView {
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
     typealias MessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
@@ -277,6 +279,8 @@ final class ConversationReplyContentView: UIView {
     }
 }
 
+// MARK: - ConversationReplyCell
+
 final class ConversationReplyCell: UIView, ConversationMessageCell {
     typealias Configuration = ConversationReplyContentView.Configuration
     var isSelected = false
@@ -319,6 +323,8 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
         delegate?.perform(action: .openQuote, for: message!, view: self)
     }
 }
+
+// MARK: - ConversationReplyCellDescription
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationReplyCell

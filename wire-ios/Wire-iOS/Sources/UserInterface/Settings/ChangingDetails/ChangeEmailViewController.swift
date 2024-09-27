@@ -21,6 +21,8 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - ChangeEmailViewController
+
 final class ChangeEmailViewController: SettingsBaseTableViewController {
     // MARK: - Types
 
@@ -151,7 +153,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 }
 
-// MARK: - UserProfileUpdateObserver
+// MARK: UserProfileUpdateObserver
 
 extension ChangeEmailViewController: UserProfileUpdateObserver {
     func emailUpdateDidFail(_ error: Error!) {
@@ -166,7 +168,7 @@ extension ChangeEmailViewController: UserProfileUpdateObserver {
     }
 }
 
-// MARK: - ConfirmEmailDelegate
+// MARK: ConfirmEmailDelegate
 
 extension ChangeEmailViewController: ConfirmEmailDelegate {
     func didConfirmEmail(inController controller: ConfirmEmailViewController) {
@@ -178,7 +180,7 @@ extension ChangeEmailViewController: ConfirmEmailDelegate {
     }
 }
 
-// MARK: - TextFieldValidationDelegate
+// MARK: TextFieldValidationDelegate
 
 extension ChangeEmailViewController: TextFieldValidationDelegate {
     @objc

@@ -20,15 +20,21 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - Constants
+
 enum Constants {
     static var teamAccountViewImageInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
 }
+
+// MARK: - Float.ConversationButtonMessageCell
 
 extension Float {
     enum ConversationButtonMessageCell {
         static let verticalInset: Float = 8
     }
 }
+
+// MARK: - StyleKitIcon.Size.CreatePasscode
 
 extension StyleKitIcon.Size {
     enum CreatePasscode {

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - MLSConversationParticipantsServiceInterface
+
 // sourcery: AutoMockable
 protocol MLSConversationParticipantsServiceInterface {
     func addParticipants(
@@ -32,10 +34,14 @@ protocol MLSConversationParticipantsServiceInterface {
     ) async throws
 }
 
+// MARK: - MLSConversationParticipantsError
+
 enum MLSConversationParticipantsError: Error, Equatable {
     case failedToClaimKeyPackages(users: Set<ZMUser>)
     case invalidOperation
 }
+
+// MARK: - MLSConversationParticipantsService
 
 struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInterface {
     // MARK: - Properties

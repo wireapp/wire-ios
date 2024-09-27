@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - EmailPasswordFieldDescription
+
 final class EmailPasswordFieldDescription: ValueSubmission {
     let textField = RevisedEmailPasswordTextField()
 
@@ -35,6 +37,8 @@ final class EmailPasswordFieldDescription: ValueSubmission {
     }
 }
 
+// MARK: ViewDescriptor
+
 extension EmailPasswordFieldDescription: ViewDescriptor {
     func create() -> UIView {
         let rules: PasswordRuleSet = forRegistration ? .accountRegistration : .nonEmpty
@@ -45,6 +49,8 @@ extension EmailPasswordFieldDescription: ViewDescriptor {
         return textField
     }
 }
+
+// MARK: ValidatedTextFieldDelegate
 
 extension EmailPasswordFieldDescription: ValidatedTextFieldDelegate {
     func buttonPressed(_: UIButton) {

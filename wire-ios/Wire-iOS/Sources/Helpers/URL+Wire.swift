@@ -19,12 +19,16 @@
 import Foundation
 import WireTransport
 
+// MARK: - WebsitePages
+
 // swiftformat:sort
 private enum WebsitePages {
     case legal
     case privacyPolicy
     case termsOfServices
 }
+
+// MARK: - TeamSource
 
 enum TeamSource: Int {
     case onboarding, settings

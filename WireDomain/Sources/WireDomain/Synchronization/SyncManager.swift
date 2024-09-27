@@ -20,6 +20,8 @@ import Foundation
 import WireAPI
 import WireSystem
 
+// MARK: - SyncManagerProtocol
+
 protocol SyncManagerProtocol {
     /// Fetch events from the server and process all pending events.
 
@@ -29,6 +31,8 @@ protocol SyncManagerProtocol {
 
     func suspend() async throws
 }
+
+// MARK: - SyncManager
 
 final class SyncManager: SyncManagerProtocol {
     private(set) var syncState: SyncState = .suspended

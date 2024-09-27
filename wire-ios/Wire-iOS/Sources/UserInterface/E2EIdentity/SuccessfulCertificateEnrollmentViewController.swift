@@ -20,6 +20,8 @@ import SwiftUI
 import WireDesign
 import WireSyncEngine
 
+// MARK: - SuccessfulCertificateEnrollmentViewController
+
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
     typealias LocalizedEnrollE2eiCertificate = L10n.Localizable.EnrollE2eiCertificate
     typealias LocalizedUpdateE2eiCertificate = L10n.Localizable.UpdateE2eiCertificate
@@ -218,7 +220,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     func displayError(_: Error) {}
 }
 
-// MARK: - Previews
+// MARK: - SuccessfulCertificateEnrollmentViewController_Previews
 
 struct SuccessfulCertificateEnrollmentViewController_Previews: PreviewProvider {
     static var previews: some View {
@@ -230,6 +232,8 @@ struct SuccessfulCertificateEnrollmentViewController_Previews: PreviewProvider {
         }
     }
 }
+
+// MARK: - SuccessfulCertificateEnrollmentViewControllerWrapper
 
 private struct SuccessfulCertificateEnrollmentViewControllerWrapper: UIViewControllerRepresentable {
     @State private(set) var isUpdateMode = false

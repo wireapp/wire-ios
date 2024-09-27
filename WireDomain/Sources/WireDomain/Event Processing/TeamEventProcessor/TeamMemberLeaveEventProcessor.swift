@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - TeamMemberLeaveEventProcessorProtocol
+
 /// Process team member leave events.
 
 protocol TeamMemberLeaveEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol TeamMemberLeaveEventProcessorProtocol {
 
     func processEvent(_ event: TeamMemberLeaveEvent) async throws
 }
+
+// MARK: - TeamMemberLeaveEventProcessor
 
 struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
     func processEvent(_: TeamMemberLeaveEvent) async throws {

@@ -19,6 +19,8 @@
 import avs
 import Foundation
 
+// MARK: - MediaManagerType
+
 @objc
 public protocol MediaManagerType: AnyObject {
     func setUiStartsAudio(_ enabled: Bool)
@@ -26,5 +28,7 @@ public protocol MediaManagerType: AnyObject {
     func setupAudioDevice()
     func resetAudioDevice()
 }
+
+// MARK: - AVSMediaManager + MediaManagerType
 
 extension AVSMediaManager: MediaManagerType {}

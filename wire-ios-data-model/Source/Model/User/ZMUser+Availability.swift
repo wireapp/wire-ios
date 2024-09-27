@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - NotificationMethod
+
 /// Describes how the user should be notified about a change.
 public struct NotificationMethod: OptionSet {
     public let rawValue: Int

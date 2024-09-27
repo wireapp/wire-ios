@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - LocationSendViewControllerTests
+
 final class LocationSendViewControllerTests: XCTestCase {
     // MARK: - Properties
 

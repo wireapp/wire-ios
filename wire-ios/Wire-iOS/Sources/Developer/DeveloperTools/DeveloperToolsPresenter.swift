@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+// MARK: - DeveloperToolsPresenter
+
 final class DeveloperToolsPresenter: NSObject {
     private var displayedDeveloperTools = false
 
@@ -45,6 +47,8 @@ final class DeveloperToolsPresenter: NSObject {
         }
     }
 }
+
+// MARK: UIAdaptivePresentationControllerDelegate
 
 extension DeveloperToolsPresenter: UIAdaptivePresentationControllerDelegate {
     func presentationControllerDidDismiss(_: UIPresentationController) {

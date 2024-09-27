@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - PopoverPresentationControllerConfiguration
+
 /// Wraps the infos about how a popover should be presented.
 public enum PopoverPresentationControllerConfiguration {
     case barButtonItem(_ barButtonItem: UIBarButtonItem)

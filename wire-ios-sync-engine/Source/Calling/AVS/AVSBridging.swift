@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AVSValue
+
 /// A protocol for values that can be decoded from a C counterpart from AVS.
 
 protocol AVSValue {
@@ -31,19 +33,25 @@ protocol AVSValue {
     init?(rawValue: AVSType)
 }
 
+// MARK: - AVSEnum
+
 /// An enum that can be represented as AVS flags.
 
 protocol AVSEnum: RawRepresentable, AVSValue {}
 
-// MARK: - AVS Types
+// MARK: - AVSConversationType + AVSEnum
 
 extension AVSConversationType: AVSEnum {
     typealias AVSType = RawValue
 }
 
+// MARK: - VideoState + AVSEnum
+
 extension VideoState: AVSEnum {
     typealias AVSType = RawValue
 }
+
+// MARK: - CallClosedReason + AVSValue
 
 extension CallClosedReason: AVSValue {
     public init?(rawValue: Int32) {
@@ -51,9 +59,13 @@ extension CallClosedReason: AVSValue {
     }
 }
 
+// MARK: - NetworkQuality + AVSEnum
+
 extension NetworkQuality: AVSEnum {
     typealias AVSType = RawValue
 }
+
+// MARK: - Bool + AVSValue
 
 extension Bool: AVSValue {
     init(rawValue: Int32) {
@@ -61,11 +73,15 @@ extension Bool: AVSValue {
     }
 }
 
+// MARK: - Date + AVSValue
+
 extension Date: AVSValue {
     init(rawValue: UInt32) {
         self = Date(timeIntervalSince1970: TimeInterval(rawValue))
     }
 }
+
+// MARK: - UUID + AVSValue
 
 extension UUID: AVSValue {
     init?(rawValue: UnsafePointer<Int8>?) {
@@ -78,6 +94,8 @@ extension UUID: AVSValue {
         self.init(uuidString: aString)
     }
 }
+
+// MARK: - String + AVSValue
 
 extension String: AVSValue {
     init?(rawValue: UnsafePointer<Int8>) {

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserSessionSelfUserClientDelegate
+
 protocol UserSessionSelfUserClientDelegate: AnyObject {
     /// Invoked when a client is successfully registered
     func clientRegistrationDidSucceed(accountId: UUID)
@@ -28,6 +30,8 @@ protocol UserSessionSelfUserClientDelegate: AnyObject {
     /// Invoked when the client has completed the initial sync
     func clientCompletedInitialSync(accountId: UUID)
 }
+
+// MARK: - SessionManager + UserSessionSelfUserClientDelegate
 
 extension SessionManager: UserSessionSelfUserClientDelegate {
     public func clientRegistrationDidSucceed(accountId: UUID) {

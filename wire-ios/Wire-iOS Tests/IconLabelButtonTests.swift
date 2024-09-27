@@ -21,6 +21,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - IconLabelButtonTests
+
 final class IconLabelButtonTests: XCTestCase {
     private var button: IconLabelButton!
     private var snapshotHelper: SnapshotHelper!
@@ -55,6 +57,8 @@ final class IconLabelButtonTests: XCTestCase {
         snapshotHelper.verify(matching: button, file: file, testName: name, line: line)
     }
 }
+
+// MARK: - IconLabelButtonTestCase
 
 struct IconLabelButtonTestCase {
     enum Appearance: CaseIterable {

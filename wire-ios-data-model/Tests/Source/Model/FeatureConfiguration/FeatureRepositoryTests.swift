@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - FeatureRepositoryTests
+
 class FeatureRepositoryTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()

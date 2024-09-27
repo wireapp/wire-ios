@@ -20,11 +20,15 @@ import UIKit
 import WireDesign
 import WireSystem
 
+// MARK: - NetworkStatusViewState
+
 enum NetworkStatusViewState {
     case online
     case onlineSynchronizing
     case offlineExpanded
 }
+
+// MARK: - NetworkStatusViewDelegate
 
 // sourcery: AutoMockable
 protocol NetworkStatusViewDelegate: AnyObject {
@@ -64,6 +68,8 @@ extension NetworkStatusViewDelegate where Self: UIViewController {
         }
     }
 }
+
+// MARK: - NetworkStatusView
 
 final class NetworkStatusView: UIView {
     let connectingView: BreathLoadingBar
@@ -247,6 +253,8 @@ final class NetworkStatusView: UIView {
     }
 }
 
+// MARK: BreathLoadingBarDelegate
+
 extension NetworkStatusView: BreathLoadingBarDelegate {
     func animationDidStarted() {
         delegate?.didChangeHeight(self, animated: true, state: state)
@@ -257,7 +265,7 @@ extension NetworkStatusView: BreathLoadingBarDelegate {
     }
 }
 
-// MARK: Logging
+// MARK: - LogInfo
 
 private struct LogInfo: Encodable {
     var status: String

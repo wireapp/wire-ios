@@ -54,6 +54,8 @@ extension ZMImageMessageData {
     }
 }
 
+// MARK: - LinkPreviewImageResourceAdaptor
+
 struct LinkPreviewImageResourceAdaptor: WireImageResource {
     let textMessageData: TextMessageData
 
@@ -73,6 +75,8 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
         textMessageData.fetchLinkPreviewImageData(queue: queue, completionHandler: completionHandler)
     }
 }
+
+// MARK: - LinkAttachmentImageResourceAdaptor
 
 struct LinkAttachmentImageResourceAdaptor: WireImageResource {
     let attachment: LinkAttachment
@@ -120,6 +124,8 @@ struct LinkAttachmentImageResourceAdaptor: WireImageResource {
     }
 }
 
+// MARK: - FileMessageImageResourceAdaptor
+
 struct FileMessageImageResourceAdaptor: PreviewableImageResource {
     let fileMesssageData: ZMFileMessageData
 
@@ -147,6 +153,8 @@ struct FileMessageImageResourceAdaptor: PreviewableImageResource {
         fileMesssageData.fetchImagePreviewData(queue: queue, completionHandler: completionHandler)
     }
 }
+
+// MARK: - ImageMessageImageResourceAdaptor
 
 struct ImageMessageImageResourceAdaptor: PreviewableImageResource {
     let imageMessageData: ZMImageMessageData
@@ -176,6 +184,8 @@ struct ImageMessageImageResourceAdaptor: PreviewableImageResource {
     }
 }
 
+// MARK: - WireImageResource
+
 protocol WireImageResource {
     var cacheIdentifier: String? { get }
     var isAnimatedGIF: Bool { get }
@@ -184,10 +194,14 @@ protocol WireImageResource {
     func fetchImageData(queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void)
 }
 
+// MARK: - PreviewableImageResource
+
 protocol PreviewableImageResource: WireImageResource {
     var contentMode: UIView.ContentMode { get }
     var contentSize: CGSize { get }
 }
+
+// MARK: - ImageSizeLimit
 
 enum ImageSizeLimit {
     case none

@@ -19,10 +19,14 @@
 import WireDataModel
 import WireUtilities
 
+// MARK: - MembershipListPayload
+
 struct MembershipListPayload: Decodable {
     let hasMore: Bool
     let members: [MembershipPayload]
 }
+
+// MARK: - MembershipPayload
 
 struct MembershipPayload: Decodable {
     struct PermissionsPayload: Decodable {
@@ -72,6 +76,8 @@ extension Member {
         #keyPath(Member.needsToBeUpdatedFromBackend)
     )
 }
+
+// MARK: - PermissionsDownloadRequestStrategy
 
 public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
     ZMRequestGeneratorSource, ZMDownstreamTranscoder {

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ClearContentResult
+
 enum ClearContentResult {
     case delete(leave: Bool), cancel
 

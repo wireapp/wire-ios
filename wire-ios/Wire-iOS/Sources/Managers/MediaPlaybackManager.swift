@@ -23,6 +23,8 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "MediaPlaybackManager")
 
+// MARK: - MediaPlaybackManagerChangeObserver
+
 /// An object that observes changes in the media playback manager.
 protocol MediaPlaybackManagerChangeObserver: AnyObject {
     /// The state of the active media player changes.
@@ -34,6 +36,8 @@ extension Notification.Name {
         .Name("MediaPlaybackManagerPlayerStateChangedNotification")
     static let activeMediaPlayerChanged = Notification.Name("activeMediaPlayerChanged")
 }
+
+// MARK: - MediaPlaybackManager
 
 /// This object is an interface for AVS to control conversation media playback
 final class MediaPlaybackManager: NSObject, AVSMedia {
@@ -121,6 +125,8 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
         audioTrackPlayer.mediaPlayerDelegate = self
     }
 }
+
+// MARK: MediaPlayerDelegate
 
 extension MediaPlaybackManager: MediaPlayerDelegate {
     func mediaPlayer(_ mediaPlayer: MediaPlayer, didChangeTo state: MediaPlayerState) {

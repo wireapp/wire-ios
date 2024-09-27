@@ -19,11 +19,15 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - CameraAccessFeature
+
 enum CameraAccessFeature: Int {
     case recordVideo
     case recordAudioMessage
     case takePhoto
 }
+
+// MARK: - CameraAccess
 
 final class CameraAccess: NSObject {
     /// if there is an on going call, show a alert and return true

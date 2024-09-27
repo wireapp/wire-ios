@@ -20,8 +20,16 @@ import DifferenceKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - Int + Differentiable
+
 extension Int: Differentiable {}
+
+// MARK: - String + Differentiable
+
 extension String: Differentiable {}
+
+// MARK: - AnyConversationMessageCellDescription + Differentiable
+
 extension AnyConversationMessageCellDescription: Differentiable {
     typealias DifferenceIdentifier = String
 
@@ -46,6 +54,8 @@ extension ZMConversationMessage {
         return sender.isSelfUser && deliveryState == .pending
     }
 }
+
+// MARK: - ConversationTableViewDataSource
 
 final class ConversationTableViewDataSource: NSObject {
     static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
@@ -389,6 +399,8 @@ final class ConversationTableViewDataSource: NSObject {
     }
 }
 
+// MARK: NSFetchedResultsControllerDelegate
+
 extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_: NSFetchedResultsController<NSFetchRequestResult>) {
         // no-op
@@ -430,6 +442,8 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         }
     }
 }
+
+// MARK: UITableViewDataSource
 
 extension ConversationTableViewDataSource: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -492,6 +506,8 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         return cellDescription.makeCell(for: tableView, at: indexPath)
     }
 }
+
+// MARK: ConversationMessageSectionControllerDelegate
 
 extension ConversationTableViewDataSource: ConversationMessageSectionControllerDelegate {
     func messageSectionController(

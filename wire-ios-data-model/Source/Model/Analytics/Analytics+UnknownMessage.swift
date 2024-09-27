@@ -26,6 +26,8 @@ extension AnalyticsType {
     }
 }
 
+// MARK: - UnknownMessageAnalyticsTracker
+
 /// Objective-C compatibility wrapper for the unknown message event
 class UnknownMessageAnalyticsTracker: NSObject {
     @objc(tagUnknownMessageWithAnalytics:)

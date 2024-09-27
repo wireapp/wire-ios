@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - OneOnOneResolverInterface
+
 // sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
     func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws
@@ -28,6 +30,8 @@ public protocol OneOnOneResolverInterface {
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution
 }
+
+// MARK: - OneOnOneResolver
 
 public final class OneOnOneResolver: OneOnOneResolverInterface {
     // MARK: - Dependencies

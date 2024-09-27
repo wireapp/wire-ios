@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - ShareDestination
+
 protocol ShareDestination: Hashable {
     var displayNameWithFallback: String { get }
     var securityLevel: ZMConversationSecurityLevel { get }
@@ -28,11 +30,15 @@ protocol ShareDestination: Hashable {
     var avatarView: UIView? { get }
 }
 
+// MARK: - Shareable
+
 protocol Shareable {
     associatedtype I: ShareDestination
     func share<I>(to: [I])
     func previewView() -> UIView?
 }
+
+// MARK: - ShareViewController
 
 final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController,
     UITableViewDelegate, UITableViewDataSource {
@@ -226,7 +232,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     }
 }
 
-// MARK: - TokenFieldDelegate
+// MARK: TokenFieldDelegate
 
 extension ShareViewController: TokenFieldDelegate {
     func tokenField(_ tokenField: TokenField, changedTokensTo tokens: [Token<NSObjectProtocol>]) {

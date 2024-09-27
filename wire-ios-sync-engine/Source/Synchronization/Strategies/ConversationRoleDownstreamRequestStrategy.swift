@@ -43,6 +43,8 @@ extension ZMConversation {
     }
 }
 
+// MARK: - ConversationRoleDownstreamRequestStrategy
+
 public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
     ZMRequestGeneratorSource, ZMDownstreamTranscoder {
     fileprivate let jsonDecoder = JSONDecoder()

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - VerifyEmailStepSecondaryView
+
 final class VerifyEmailStepSecondaryView: AuthenticationFooterViewDescription {
     let views: [ViewDescriptor]
     weak var actioner: AuthenticationActioner?
@@ -54,6 +56,8 @@ final class VerifyEmailStepSecondaryView: AuthenticationFooterViewDescription {
         }
     }
 }
+
+// MARK: - VerifyEmailStepDescription
 
 final class VerifyEmailStepDescription: AuthenticationStepDescription {
     let email: String

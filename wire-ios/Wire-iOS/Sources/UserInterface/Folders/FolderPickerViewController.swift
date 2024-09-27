@@ -21,9 +21,13 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - FolderPickerViewControllerDelegate
+
 protocol FolderPickerViewControllerDelegate: AnyObject {
     func didPickFolder(_ folder: LabelType, for conversation: ZMConversation)
 }
+
+// MARK: - FolderPickerViewController
 
 final class FolderPickerViewController: UIViewController {
     var delegate: FolderPickerViewControllerDelegate?
@@ -131,7 +135,7 @@ final class FolderPickerViewController: UIViewController {
     }
 }
 
-// MARK: - Table View
+// MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
 
 extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -180,6 +184,8 @@ extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UIColl
         CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 }
+
+// MARK: FolderCreationControllerDelegate
 
 extension FolderPickerViewController: FolderCreationControllerDelegate {
     func folderController(_ controller: FolderCreationController, didCreateFolder folder: LabelType) {

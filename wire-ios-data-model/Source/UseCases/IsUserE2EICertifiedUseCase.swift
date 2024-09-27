@@ -19,6 +19,8 @@
 import Foundation
 import WireCoreCrypto
 
+// MARK: - IsUserE2EICertifiedUseCase
+
 public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
     private let schedule: NSManagedObjectContext.ScheduledTaskType
     private let coreCryptoProvider: CoreCryptoProviderProtocol
@@ -91,6 +93,8 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
             .allSatisfy { $0.status == .valid && $0.credentialType == .x509 }
     }
 }
+
+// MARK: IsUserE2EICertifiedUseCase.Error
 
 extension IsUserE2EICertifiedUseCase {
     enum Error: Swift.Error {

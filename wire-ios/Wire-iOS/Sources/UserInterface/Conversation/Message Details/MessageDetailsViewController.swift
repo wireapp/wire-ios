@@ -21,6 +21,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - MessageDetailsViewController
+
 /// A view controller wrapping the message details.
 
 final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate {
@@ -262,7 +264,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
     }
 }
 
-// MARK: - MessageDetailsDataSourceObserver
+// MARK: MessageDetailsDataSourceObserver
 
 extension MessageDetailsViewController: MessageDetailsDataSourceObserver {
     func dataSourceDidChange(_: MessageDetailsDataSource) {

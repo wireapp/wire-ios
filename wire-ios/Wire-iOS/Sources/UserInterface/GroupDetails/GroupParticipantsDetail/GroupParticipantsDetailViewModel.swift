@@ -28,6 +28,8 @@ extension String {
 
 typealias GroupParticipantsDetailConversation = GroupDetailsConversationType & StableRandomParticipantsProvider
 
+// MARK: - GroupParticipantsDetailViewModel
+
 final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControllerDelegate, ZMConversationObserver {
     private var internalParticipants: [UserType]
     private var filterQuery: String?

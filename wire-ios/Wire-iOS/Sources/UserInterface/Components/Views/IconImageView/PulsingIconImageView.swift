@@ -20,9 +20,13 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - PulsingIconImageStyle
+
 protocol PulsingIconImageStyle {
     var shouldPulse: Bool { get }
 }
+
+// MARK: - PulsingIconImageView
 
 class PulsingIconImageView: IconImageView {
     override init(frame: CGRect) {

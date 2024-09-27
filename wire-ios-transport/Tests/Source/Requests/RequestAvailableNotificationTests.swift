@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireTransport
 
+// MARK: - NotificationObserver
+
 @objc
 class NotificationObserver: NSObject, RequestAvailableObserver {
     var requestsAvailable = false
@@ -27,6 +29,8 @@ class NotificationObserver: NSObject, RequestAvailableObserver {
         requestsAvailable = true
     }
 }
+
+// MARK: - RequestAvailableNotificationTests
 
 class RequestAvailableNotificationTests: XCTestCase {
     var sut = NotificationObserver()

@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 @testable import Wire
 
+// MARK: - MockViewControllerBuilder
+
 struct MockViewControllerBuilder: ViewControllerBuilder {
     func build() -> UIViewController { .init() }
 }

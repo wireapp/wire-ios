@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - AvailabilityLabelStyle
+
 enum AvailabilityLabelStyle: Int {
     case list, participants
 }

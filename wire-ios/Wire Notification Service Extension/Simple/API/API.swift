@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - API
+
 enum API {
     static func fetchAccessToken() -> AccessTokenEndpoint {
         AccessTokenEndpoint()
@@ -28,6 +30,8 @@ enum API {
     }
 }
 
+// MARK: - Endpoint
+
 protocol Endpoint {
     associatedtype Output
     associatedtype Failure: Error
@@ -36,6 +40,8 @@ protocol Endpoint {
 
     func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure>
 }
+
+// MARK: Endpoint.Result
 
 extension Endpoint {
     typealias Result = Swift.Result<Output, Failure>

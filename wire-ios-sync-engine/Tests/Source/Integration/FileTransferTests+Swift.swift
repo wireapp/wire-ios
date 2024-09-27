@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - FileTransferTests_Swift
+
 class FileTransferTests_Swift: ConversationTestsBase {
     func remotelyInsertAssetOriginalAndUpdate(
         updateMessage: GenericMessage,

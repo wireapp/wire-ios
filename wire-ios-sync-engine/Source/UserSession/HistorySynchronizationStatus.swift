@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - HistorySynchronizationStatus
+
 @objc
 public protocol HistorySynchronizationStatus: NSObjectProtocol {
     /// Should be called when the sync is completed
@@ -29,6 +31,8 @@ public protocol HistorySynchronizationStatus: NSObjectProtocol {
     /// Whether the history can now be downloaded
     var shouldDownloadFullHistory: Bool { get }
 }
+
+// MARK: - ForegroundOnlyHistorySynchronizationStatus
 
 @objc
 public final class ForegroundOnlyHistorySynchronizationStatus: NSObject, HistorySynchronizationStatus {

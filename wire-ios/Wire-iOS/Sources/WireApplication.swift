@@ -19,6 +19,8 @@
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - WireApplication
+
 final class WireApplication: UIApplication {
     private let presenter = DeveloperToolsPresenter()
 
@@ -35,6 +37,8 @@ final class WireApplication: UIApplication {
         )
     }
 }
+
+// MARK: NotificationSettingsRegistrable
 
 extension WireApplication: NotificationSettingsRegistrable {
     var shouldRegisterUserNotificationSettings: Bool {

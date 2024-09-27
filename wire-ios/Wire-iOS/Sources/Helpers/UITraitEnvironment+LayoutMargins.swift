@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - HorizontalMargins
+
 struct HorizontalMargins {
     var left: CGFloat
     var right: CGFloat

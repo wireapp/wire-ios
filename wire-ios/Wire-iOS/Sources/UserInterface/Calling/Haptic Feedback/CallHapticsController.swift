@@ -18,6 +18,8 @@
 
 import WireSyncEngine
 
+// MARK: - CallHapticsController
+
 final class CallHapticsController {
     private var lastCallState: CallState?
     private var participants = Set<CallParticipant>()

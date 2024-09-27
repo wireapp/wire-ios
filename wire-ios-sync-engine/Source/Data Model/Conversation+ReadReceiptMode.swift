@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ReadReceiptModeError
+
 public enum ReadReceiptModeError: Error {
     case invalidOperation
     case accessDenied

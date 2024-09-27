@@ -24,6 +24,8 @@ import WireCommonComponents
 import WireDataModel
 import WireShareEngine
 
+// MARK: - UnsentSendableError
+
 /// Error that can happen during the preparation or sending operation
 enum UnsentSendableError: Error {
     // The attachment is not supported to be sent, this can currently be the case if the user sends a URL
@@ -37,6 +39,8 @@ enum UnsentSendableError: Error {
     // the target conversation does not exist anymore
     case conversationDoesNotExist
 }
+
+// MARK: LocalizedError
 
 extension UnsentSendableError: LocalizedError {
     var errorDescription: String? {
@@ -59,6 +63,8 @@ extension UnsentSendableError: LocalizedError {
     }
 }
 
+// MARK: - UnsentSendable
+
 /// This protocol defines the basic methods that an Object needes to conform to
 /// in order to be prepared and sent. A consumer should ask the objects if they need to perform
 /// perparation operations and call `prepare` before calling `send`.
@@ -76,6 +82,8 @@ extension UnsentSendable {
     }
 }
 
+// MARK: - UnsentSendableBase
+
 class UnsentSendableBase {
     let conversation: WireShareEngine.Conversation
     let sharingSession: SharingSession
@@ -89,6 +97,8 @@ class UnsentSendableBase {
         self.sharingSession = sharingSession
     }
 }
+
+// MARK: - UnsentTextSendable
 
 /// `UnsentSendable` implementation to send text messages
 final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
@@ -131,6 +141,8 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
         }
     }
 }
+
+// MARK: - UnsentImageSendable
 
 /// `UnsentSendable` implementation to send image messages
 final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
@@ -210,6 +222,8 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
         }
     }
 }
+
+// MARK: - UnsentFileSendable
 
 /// `UnsentSendable` implementation to send file messages
 class UnsentFileSendable: UnsentSendableBase, UnsentSendable {

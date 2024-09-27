@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - DarwinNotificationCenter
+
 /// A wrapper class to simplify observation of Darwin Notifications.
 ///
 public final class DarwinNotificationCenter {
@@ -49,6 +51,8 @@ public final class DarwinNotificationCenter {
         handlers[notification]?.forEach { $0() }
     }
 }
+
+// MARK: - DarwinNotification
 
 /// Darwin Notifications are used to communicate between an extension and the
 /// containing app. Note, this "communication" is extremely limited; it is

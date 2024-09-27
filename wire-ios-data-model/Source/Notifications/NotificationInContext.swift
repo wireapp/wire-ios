@@ -19,6 +19,8 @@
 import Foundation
 import WireUtilities
 
+// MARK: - NotificationInContext
+
 /// A notification that is tied to a specific context. It mimics
 /// the behavior of a regular NSNotification but is always linked to
 /// a context.

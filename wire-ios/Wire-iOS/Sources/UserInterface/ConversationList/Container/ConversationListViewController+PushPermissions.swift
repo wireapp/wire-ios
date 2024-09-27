@@ -19,6 +19,8 @@
 import UIKit
 import UserNotifications
 
+// MARK: - ConversationListViewController + PermissionDeniedViewControllerDelegate
+
 extension ConversationListViewController: PermissionDeniedViewControllerDelegate {
     func permissionDeniedViewControllerDidSkip(_: PermissionDeniedViewController) {
         closePushPermissionDeniedDialog()

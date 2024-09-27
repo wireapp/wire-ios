@@ -20,6 +20,8 @@ import Foundation
 
 private let log = ZMSLog(tag: "ConversationMessageDestructionTimeout")
 
+// MARK: - MessageDestructionTimerError
+
 public enum MessageDestructionTimerError: Error {
     case invalidOperation
     case accessDenied
@@ -84,6 +86,8 @@ extension ZMConversation {
         userSession.transportSession.enqueueOneTime(request)
     }
 }
+
+// MARK: - MessageDestructionTimeoutRequestFactory
 
 private enum MessageDestructionTimeoutRequestFactory {
     static func set(timeout: Int, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {

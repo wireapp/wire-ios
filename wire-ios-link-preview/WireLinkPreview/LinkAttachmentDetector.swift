@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - LinkAttachmentDetectorType
+
 /// An object that can detect link attachments in a text message.
 ///
 /// Link attachments differ from link previews in the fact that they're not added to
@@ -48,6 +50,8 @@ public protocol LinkAttachmentDetectorType {
         completion: @escaping (_ detectedAttachments: [LinkAttachment]) -> Void
     )
 }
+
+// MARK: - LinkAttachmentDetector
 
 /// A concrete implementation of the `LinkAttachmentDetectorType` protocol to detect link attachments using OpenGraph.
 

@@ -20,6 +20,8 @@ import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
 
+// MARK: - APIServiceTests
+
 final class APIServiceTests: XCTestCase {
     var sut: APIService!
     var backendURL: URL!
@@ -154,6 +156,8 @@ final class APIServiceTests: XCTestCase {
         }
     }
 }
+
+// MARK: - Scaffolding
 
 private enum Scaffolding {
     static let getRequest = try! URLRequestBuilder(path: "/foo")

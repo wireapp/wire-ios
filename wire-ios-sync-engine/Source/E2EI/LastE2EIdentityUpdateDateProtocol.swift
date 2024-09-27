@@ -18,11 +18,15 @@
 
 import Foundation
 
+// MARK: - LastE2EIdentityUpdateDateRepositoryInterface
+
 @objc
 public protocol LastE2EIdentityUpdateDateRepositoryInterface {
     func fetchLastAlertDate() -> Date?
     func storeLastAlertDate(_ date: Date?)
 }
+
+// MARK: - LastE2EIdentityUpdateDateRepository
 
 @objc
 public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentityUpdateDateRepositoryInterface {

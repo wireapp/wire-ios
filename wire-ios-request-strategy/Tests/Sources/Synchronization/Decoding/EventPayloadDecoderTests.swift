@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - EventPayloadDecoderTests
+
 final class EventPayloadDecoderTests: XCTestCase {
     func testDecodeData() throws {
         // given
@@ -95,7 +97,7 @@ final class EventPayloadDecoderTests: XCTestCase {
     }
 }
 
-// MARK: Decodable Struct
+// MARK: - Book
 
 private struct Book: Decodable {
     let title: String

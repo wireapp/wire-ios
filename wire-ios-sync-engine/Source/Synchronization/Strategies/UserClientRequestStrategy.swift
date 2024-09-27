@@ -25,6 +25,8 @@ import WireUtilities
 
 private let zmLog = ZMSLog(tag: "userClientRS")
 
+// MARK: - UserClientRequestStrategy
+
 /// Performs actions on the self clients
 ///
 /// Actions:

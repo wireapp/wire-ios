@@ -19,6 +19,8 @@
 import Foundation
 import PushKit
 
+// MARK: - SessionManager + VoIPPushManagerDelegate
+
 extension SessionManager: VoIPPushManagerDelegate {
     // MARK: - Legacy voIP push
 

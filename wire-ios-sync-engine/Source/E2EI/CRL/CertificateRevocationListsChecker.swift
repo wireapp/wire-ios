@@ -18,11 +18,15 @@
 
 import Foundation
 
+// MARK: - CertificateRevocationListsChecking
+
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
     func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async
     func checkExpiredCRLs() async
 }
+
+// MARK: - CertificateRevocationListsChecker
 
 public class CertificateRevocationListsChecker: CertificateRevocationListsChecking {
     // MARK: - Properties

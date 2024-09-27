@@ -32,6 +32,8 @@ extension MockMessage {
     }
 }
 
+// MARK: - MockMessageFactory
+
 enum MockMessageFactory {
     /// Create a template MockMessage with conversation, serverTimestamp, sender and activeParticipants set.
     /// When sender is not provided, create a new self user and assign as sender of the return message

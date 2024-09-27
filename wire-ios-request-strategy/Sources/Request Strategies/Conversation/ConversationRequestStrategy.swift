@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ConversationRequestStrategy
+
 public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource,
     ZMContextChangeTrackerSource {
     let syncProgress: SyncProgress
@@ -257,6 +259,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     }
 }
 
+// MARK: KeyPathObjectSyncTranscoder
+
 extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
     typealias T = ZMConversation
 
@@ -301,6 +305,8 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
     }
 }
 
+// MARK: IdentifierObjectSyncDelegate
+
 extension ConversationRequestStrategy: IdentifierObjectSyncDelegate {
     public func didFinishSyncingAllObjects() {
         guard
@@ -324,6 +330,8 @@ extension ConversationRequestStrategy: IdentifierObjectSyncDelegate {
         }
     }
 }
+
+// MARK: ZMUpstreamTranscoder
 
 extension ConversationRequestStrategy: ZMUpstreamTranscoder {
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
@@ -511,6 +519,8 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
     }
 }
 
+// MARK: - ConversationByIDTranscoder
+
 class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
@@ -632,6 +642,8 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 }
+
+// MARK: - ConversationByQualifiedIDTranscoder
 
 class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID
@@ -774,6 +786,8 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 }
 
+// MARK: - ConversationByIDListTranscoder
+
 final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
@@ -835,6 +849,8 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 }
+
+// MARK: - ConversationByQualifiedIDListTranscoder
 
 class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID

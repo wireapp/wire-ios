@@ -21,6 +21,8 @@ import WireFoundation
 import WireSystem
 import WireUtilities
 
+// MARK: - ZMUser + UserType
+
 extension ZMUser: UserType {
     @objc public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
@@ -160,6 +162,8 @@ extension ZMUser: UserType {
     }
 }
 
+// MARK: - AssetKey
+
 public struct AssetKey {
     static let legalCharacterSet = CharacterSet.alphanumerics.union(CharacterSet.punctuationCharacters)
 
@@ -177,6 +181,8 @@ public struct AssetKey {
         CharacterSet(charactersIn: string).isSubset(of: legalCharacterSet)
     }
 }
+
+// MARK: - ProfileImageSize
 
 @objc
 public enum ProfileImageSize: Int {
@@ -212,6 +218,8 @@ public enum ProfileImageSize: Int {
     }
 }
 
+// MARK: CustomDebugStringConvertible
+
 extension ProfileImageSize: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
@@ -222,6 +230,8 @@ extension ProfileImageSize: CustomDebugStringConvertible {
         }
     }
 }
+
+// MARK: - ZMUser + ServiceUser
 
 extension ZMUser: ServiceUser {
     @NSManaged public var providerIdentifier: String?
@@ -474,6 +484,8 @@ extension ZMUser {
     }
 }
 
+// MARK: - NSManagedObject + SafeForLoggingStringConvertible
+
 extension NSManagedObject: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         let moc: String = managedObjectContext?.description ?? "nil"
@@ -488,6 +500,8 @@ extension ZMUser {
         PersonName.person(withName: name ?? "", schemeTagger: nil).initials
     }
 }
+
+// MARK: - ZMUser + UserConnections
 
 extension ZMUser: UserConnections {
     public func connect(completion: @escaping (Error?) -> Void) {

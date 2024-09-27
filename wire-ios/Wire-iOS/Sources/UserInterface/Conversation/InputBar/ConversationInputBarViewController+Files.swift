@@ -20,6 +20,8 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - ConversationInputBarViewController + UINavigationControllerDelegate
+
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}
 
 private let zmLog = ZMSLog(tag: "ConversationInputBarViewController+Files")

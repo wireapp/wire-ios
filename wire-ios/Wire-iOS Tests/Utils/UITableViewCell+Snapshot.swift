@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - PhoneWidth
+
 enum PhoneWidth: CGFloat {
     case iPhone4 = 320
     case iPhone4_7 = 375

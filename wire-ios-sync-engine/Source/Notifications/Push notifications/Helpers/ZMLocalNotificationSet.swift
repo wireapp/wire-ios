@@ -20,10 +20,14 @@ import UIKit
 import UserNotifications
 import WireTransport
 
+// MARK: - ZMSynchonizableKeyValueStore
+
 @objc
 public protocol ZMSynchonizableKeyValueStore: KeyValueStore {
     func enqueueDelayedSave()
 }
+
+// MARK: - ZMLocalNotificationSet
 
 @objc
 final class ZMLocalNotificationSet: NSObject {

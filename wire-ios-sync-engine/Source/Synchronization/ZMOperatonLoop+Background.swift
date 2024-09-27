@@ -18,11 +18,15 @@
 
 import Foundation
 
+// MARK: - PushChannelKeys
+
 private enum PushChannelKeys: String {
     case data
     case identifier = "id"
     case notificationType = "type"
 }
+
+// MARK: - PushNotificationType
 
 private enum PushNotificationType: String {
     case plain

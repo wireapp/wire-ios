@@ -59,6 +59,8 @@ extension URLQueryItem {
     }
 }
 
+// MARK: - URLSessionProtocol
+
 public protocol URLSessionProtocol: AnyObject {
     func dataTask(
         with request: URLRequest,
@@ -66,9 +68,13 @@ public protocol URLSessionProtocol: AnyObject {
     ) -> URLSessionDataTask
 }
 
+// MARK: - URLSession + URLSessionProtocol
+
 extension URLSession: URLSessionProtocol {}
 
 public typealias StatusCode = Int
+
+// MARK: - ValidationError
 
 public enum ValidationError: Equatable {
     case invalidCode
@@ -85,6 +91,8 @@ public enum ValidationError: Equatable {
     }
 }
 
+// MARK: - CompanyLoginRequesterDelegate
+
 public protocol CompanyLoginRequesterDelegate: AnyObject {
     /// The login requester asks the user to verify their identity on the given website.
     ///
@@ -93,6 +101,8 @@ public protocol CompanyLoginRequesterDelegate: AnyObject {
 
     func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL)
 }
+
+// MARK: - CompanyLoginRequester
 
 /// An object that validates the identity of the user and creates a session using company login.
 

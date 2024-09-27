@@ -18,8 +18,12 @@
 
 import Foundation
 
+// MARK: - OperationStateProvider
+
 protocol OperationStateProvider {
     var operationState: SyncEngineOperationState { get }
 }
+
+// MARK: - OperationStatus + OperationStateProvider
 
 extension OperationStatus: OperationStateProvider {}

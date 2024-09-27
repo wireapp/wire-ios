@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 import WireRequestStrategy
 
+// MARK: - MockApplicationStatus
+
 public class MockApplicationStatus: NSObject, ApplicationStatus {
     public var requestCancellation: ZMRequestCancellation {
         mockTaskCancellationDelegate
@@ -57,6 +59,8 @@ public class MockApplicationStatus: NSObject, ApplicationStatus {
     }
 }
 
+// MARK: - MockTaskCancellationDelegate
+
 public class MockTaskCancellationDelegate: NSObject, ZMRequestCancellation {
     public var cancelledIdentifiers = [ZMTaskIdentifier]()
 
@@ -64,6 +68,8 @@ public class MockTaskCancellationDelegate: NSObject, ZMRequestCancellation {
         cancelledIdentifiers.append(identifier)
     }
 }
+
+// MARK: - MockClientRegistrationStatus
 
 public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public var deletionCalls = 0
@@ -77,6 +83,8 @@ public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate 
         true
     }
 }
+
+// MARK: - MockPushMessageHandler
 
 class MockPushMessageHandler: NSObject, PushMessageHandler {
     public func didFailToSend(_ message: ZMMessage) {

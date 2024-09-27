@@ -23,6 +23,8 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "MessagePresenter")
 
+// MARK: - MessagePresenter
+
 final class MessagePresenter: NSObject {
     enum MessagePresenterError: Error {
         case missingFileURL
@@ -307,6 +309,8 @@ final class MessagePresenter: NSObject {
         return viewController
     }
 }
+
+// MARK: UIDocumentInteractionControllerDelegate
 
 extension MessagePresenter: UIDocumentInteractionControllerDelegate {
     func documentInteractionControllerViewControllerForPreview(_: UIDocumentInteractionController) -> UIViewController {

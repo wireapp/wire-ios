@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationFileMessageCell
+
 final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
     struct Configuration {
         let message: ZMConversationMessage
@@ -111,6 +113,8 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
     }
 }
 
+// MARK: TransferViewDelegate
+
 extension ConversationFileMessageCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
         guard let message else { return }
@@ -118,6 +122,8 @@ extension ConversationFileMessageCell: TransferViewDelegate {
         delegate?.perform(action: action, for: message, view: self)
     }
 }
+
+// MARK: - ConversationFileMessageCellDescription
 
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell

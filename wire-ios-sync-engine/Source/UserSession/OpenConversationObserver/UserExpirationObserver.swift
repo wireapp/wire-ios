@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserExpirationObserver
+
 @objcMembers
 public class UserExpirationObserver: NSObject {
     private(set) var expiringUsers: Set<ZMUser> = Set()
@@ -56,6 +58,8 @@ public class UserExpirationObserver: NSObject {
         expiringUsers.formUnion(notExpired)
     }
 }
+
+// MARK: ZMTimerClient
 
 extension UserExpirationObserver: ZMTimerClient {
     public func timerDidFire(_ timer: ZMTimer) {

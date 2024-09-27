@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireTransport
 
+// MARK: - MockURLProtectionSpace
+
 class MockURLProtectionSpace: URLProtectionSpace {
     var mockServerTrust: SecTrust?
 
@@ -26,6 +28,8 @@ class MockURLProtectionSpace: URLProtectionSpace {
         mockServerTrust
     }
 }
+
+// MARK: - NativePushChannelTests_ServerTrust
 
 class NativePushChannelTests_ServerTrust: XCTestCase {
     var mockEnvironment: MockEnvironment!

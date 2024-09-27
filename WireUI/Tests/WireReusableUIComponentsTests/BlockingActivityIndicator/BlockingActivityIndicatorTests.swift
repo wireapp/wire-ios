@@ -20,6 +20,8 @@ import UIKit
 import XCTest
 @testable import WireReusableUIComponents
 
+// MARK: - BlockingActivityIndicatorTests
+
 final class BlockingActivityIndicatorTests: XCTestCase {
     private typealias SUT = BlockingActivityIndicator
     private var sut: SUT!

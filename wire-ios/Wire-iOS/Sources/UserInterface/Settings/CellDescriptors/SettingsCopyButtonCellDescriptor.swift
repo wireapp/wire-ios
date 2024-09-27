@@ -18,9 +18,13 @@
 
 import UIKit
 
+// MARK: - IconActionCellDelegate
+
 protocol IconActionCellDelegate: AnyObject {
     func updateLayout()
 }
+
+// MARK: - SettingsCopyButtonCellDescriptor
 
 final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = IconActionCell.self

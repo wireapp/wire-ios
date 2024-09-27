@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - SelfUserAPIV0
+
 class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
     let httpClient: any HTTPClient
 
@@ -46,6 +48,8 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
         throw SelfUserAPIError.unsupportedEndpointForAPIVersion
     }
 }
+
+// MARK: - SelfUserV0
 
 struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let accentID: Int
@@ -99,6 +103,8 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     }
 }
 
+// MARK: - ManagedByV0
+
 enum ManagedByV0: String, Decodable, ToAPIModelConvertible {
     case wire
     case scim
@@ -112,6 +118,8 @@ enum ManagedByV0: String, Decodable, ToAPIModelConvertible {
         }
     }
 }
+
+// MARK: - SSOIDV0
 
 struct SSOIDV0: Decodable, ToAPIModelConvertible {
     let scimExternalId: String

@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// MARK: - Team + ObjectInSnapshot
+
 extension Team: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
         [
@@ -33,6 +35,8 @@ extension Team: ObjectInSnapshot {
         .TeamChange
     }
 }
+
+// MARK: - TeamChangeInfo
 
 @objcMembers
 public class TeamChangeInfo: ObjectChangeInfo {
@@ -59,6 +63,8 @@ public class TeamChangeInfo: ObjectChangeInfo {
         changedKeysContain(keys: #keyPath(Team.imageData), #keyPath(Team.pictureAssetId))
     }
 }
+
+// MARK: - TeamObserver
 
 @objc
 public protocol TeamObserver: NSObjectProtocol {

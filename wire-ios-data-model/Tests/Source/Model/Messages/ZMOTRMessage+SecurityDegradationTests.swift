@@ -21,6 +21,8 @@ import WireUtilities
 import XCTest
 @testable import WireDataModel
 
+// MARK: - ZMOTRMessage_SecurityDegradationTests
+
 class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     func testThatAtCreationAMessageIsNotCausingDegradation_UIMoc() {
         // GIVEN

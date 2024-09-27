@@ -20,12 +20,16 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - DeniedAuthorizationType
+
 enum DeniedAuthorizationType {
     case camera
     case photos
     case cameraAndPhotos
     case ongoingCall
 }
+
+// MARK: - CameraKeyboardPermissionsCell
 
 final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     // MARK: - Properties

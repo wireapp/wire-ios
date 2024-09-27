@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - MessageToolboxContent
+
 /// The different contents that can be displayed inside the message toolbox.
 enum MessageToolboxContent: Equatable {
     /// Display buttons to let the user resend the message.
@@ -32,6 +34,8 @@ enum MessageToolboxContent: Equatable {
     /// Display the message details (timestamp and/or status and/or countdown).
     case details(timestamp: NSAttributedString?, status: NSAttributedString?, countdown: NSAttributedString?)
 }
+
+// MARK: Comparable
 
 extension MessageToolboxContent: Comparable {
     /// Returns whether one content is located above or below the other.
@@ -54,6 +58,8 @@ extension MessageToolboxContent: Comparable {
 /// An object that determines what content to display for the given message.
 
 typealias ConversationMessage = SwiftConversationMessage & ZMConversationMessage
+
+// MARK: - MessageToolboxDataSource
 
 final class MessageToolboxDataSource {
     typealias ContentSystem = L10n.Localizable.Content.System

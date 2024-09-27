@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - AppLockModule.Router
+
 extension AppLockModule {
     final class Router: RouterInterface {
         // MARK: - Properties
@@ -32,7 +34,7 @@ extension AppLockModule {
     }
 }
 
-// MARK: - Perform action
+// MARK: - AppLockModule.Router + AppLockRouterPresenterInterface
 
 extension AppLockModule.Router: AppLockRouterPresenterInterface {
     func performAction(_ action: AppLockModule.Action) {

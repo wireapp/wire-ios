@@ -19,6 +19,8 @@
 import Foundation
 import WireUtilities
 
+// MARK: - ExtensionSettingsKey
+
 private enum ExtensionSettingsKey: String, CaseIterable {
     case disableCrashSharing
     case disableAnalyticsSharing
@@ -42,6 +44,8 @@ private enum ExtensionSettingsKey: String, CaseIterable {
         }
     }
 }
+
+// MARK: - ExtensionSettings
 
 public final class ExtensionSettings: NSObject {
     public static let shared = ExtensionSettings(defaults: .shared()!)

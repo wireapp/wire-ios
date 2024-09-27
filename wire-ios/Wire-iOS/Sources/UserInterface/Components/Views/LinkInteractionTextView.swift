@@ -19,10 +19,14 @@
 import UIKit
 import WireDataModel
 
+// MARK: - TextViewInteractionDelegate
+
 protocol TextViewInteractionDelegate: AnyObject {
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool
     func textViewDidLongPress(_ textView: LinkInteractionTextView)
 }
+
+// MARK: - LinkInteractionTextView
 
 final class LinkInteractionTextView: UITextView {
     weak var interactionDelegate: TextViewInteractionDelegate?
@@ -98,6 +102,8 @@ final class LinkInteractionTextView: UITextView {
     }
 }
 
+// MARK: UITextViewDelegate
+
 extension LinkInteractionTextView: UITextViewDelegate {
     func textView(
         _ textView: UITextView,
@@ -155,7 +161,7 @@ extension LinkInteractionTextView: UITextViewDelegate {
     }
 }
 
-// MARK: - UITextDragDelegate
+// MARK: UITextDragDelegate
 
 extension LinkInteractionTextView: UITextDragDelegate {
     func textDraggableView(

@@ -20,6 +20,8 @@ import Foundation
 import WireTesting
 import WireTransport
 
+// MARK: - FakeReachability
+
 @objcMembers
 public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCapable {
     public var observerCount = 0
@@ -40,6 +42,8 @@ public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCap
     public func tearDown() {}
 }
 
+// MARK: - MockSessionsDirectory
+
 @objcMembers
 public final class MockSessionsDirectory: NSObject, URLSessionsDirectory, TearDownCapable {
     public var foregroundSession: ZMURLSession
@@ -57,6 +61,8 @@ public final class MockSessionsDirectory: NSObject, URLSessionsDirectory, TearDo
         tearDownCalled = true
     }
 }
+
+// MARK: - ZMTransportSessionTests_Initialization
 
 final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
     var userIdentifier: UUID!

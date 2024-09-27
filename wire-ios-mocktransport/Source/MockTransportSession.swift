@@ -152,6 +152,8 @@ extension MockTransportSession {
     }
 }
 
+// MARK: - MockTransportSession + UnauthenticatedTransportSessionProtocol
+
 extension MockTransportSession: UnauthenticatedTransportSessionProtocol {
     public func enqueueRequest(withGenerator generator: () -> ZMTransportRequest?) -> EnqueueResult {
         let result = attemptToEnqueueSyncRequest(generator: generator)
@@ -177,6 +179,8 @@ extension MockTransportSession {
         "123456"
     }
 }
+
+// MARK: - MockTransportSession + TransportSessionType
 
 extension MockTransportSession: TransportSessionType {
     public func enqueue(_ request: ZMTransportRequest, queue: GroupQueue) async -> ZMTransportResponse {

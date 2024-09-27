@@ -20,9 +20,13 @@ import UIKit
 import WireDesign
 import WireSystem
 
+// MARK: - SketchColorPickerControllerDelegate
+
 protocol SketchColorPickerControllerDelegate: AnyObject {
     func sketchColorPickerController(_ controller: SketchColorPickerController, changedSelectedColor color: UIColor)
 }
+
+// MARK: - SketchColorPickerController
 
 /// The color picker for the sketching
 
@@ -173,6 +177,8 @@ final class SketchColorPickerController: UIViewController {
         colorsCollectionView.fitIn(view: view)
     }
 }
+
+// MARK: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 
 extension SketchColorPickerController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     // MARK: - UICollectionViewDataSource

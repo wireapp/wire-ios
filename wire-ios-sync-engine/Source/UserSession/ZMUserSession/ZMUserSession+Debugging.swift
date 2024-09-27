@@ -87,6 +87,8 @@ extension ZMUserSession {
     }
 }
 
+// MARK: - DebugCommand
+
 /// A debug command that can be invoked with arguments
 protocol DebugCommand {
     /// This is the keyword used to invoke the command
@@ -114,6 +116,8 @@ extension DebugCommand {
     }
 }
 
+// MARK: - DebugCommandMixin
+
 /// This is a mixin (implementation of a protocol that can be
 /// inherited to avoid having to rewrite all protocol methods and vars)
 private class DebugCommandMixin: DebugCommand {
@@ -134,6 +138,8 @@ private class DebugCommandMixin: DebugCommand {
 
     func restoreFromState(userSession: ZMUserSession, state: [String: Any]) {}
 }
+
+// MARK: - DebugCommandResult
 
 /// The result of a debug command
 public enum DebugCommandResult {
@@ -158,6 +164,8 @@ extension EncryptionSessionIdentifier {
         self.init(userId: user, clientId: client)
     }
 }
+
+// MARK: - DebugCommandLogEncryption
 
 private class DebugCommandLogEncryption: DebugCommandMixin {
     var currentlyEnabledLogs: Set<EncryptionSessionIdentifier> = Set()
@@ -254,6 +262,8 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
     }
 }
 
+// MARK: - DebugCommandShowIdentifiers
+
 /// Show the user and client identifier
 private class DebugCommandShowIdentifiers: DebugCommandMixin {
     init() {
@@ -283,6 +293,8 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
     }
 }
 
+// MARK: - DebugCommandHelp
+
 /// Show commands
 private class DebugCommandHelp: DebugCommandMixin {
     init() {
@@ -299,6 +311,8 @@ private class DebugCommandHelp: DebugCommandMixin {
         onComplete(.success(info: output))
     }
 }
+
+// MARK: - DebugCommandVariables
 
 /// Debug variables
 private class DebugCommandVariables: DebugCommandMixin {

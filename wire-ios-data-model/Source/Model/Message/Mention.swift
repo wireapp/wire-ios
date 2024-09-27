@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - Mention
+
 @objc
 public class Mention: NSObject {
     public let range: NSRange

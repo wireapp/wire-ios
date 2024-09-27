@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - UserPropertiesSetEventProcessorProtocol
+
 /// Process user properties set events.
 
 protocol UserPropertiesSetEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol UserPropertiesSetEventProcessorProtocol {
 
     func processEvent(_ event: UserPropertiesSetEvent) async throws
 }
+
+// MARK: - UserPropertiesSetEventProcessor
 
 struct UserPropertiesSetEventProcessor: UserPropertiesSetEventProcessorProtocol {
     func processEvent(_: UserPropertiesSetEvent) async throws {

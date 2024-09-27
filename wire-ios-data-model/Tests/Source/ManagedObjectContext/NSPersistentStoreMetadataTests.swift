@@ -19,6 +19,8 @@
 import Foundation
 import XCTest
 
+// MARK: - NSPersistentStoreMetadataTests
+
 class NSPersistentStoreMetadataTests: ZMBaseManagedObjectTest {
     override var shouldUseInMemoryStore: Bool {
         false

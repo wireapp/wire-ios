@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - AlertChoice
+
 enum AlertChoice {
     case cancel, confirm, alreadyPresented, ok
 }
@@ -111,7 +113,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
     }
 }
 
-// MARK: - ActiveCallRouterProtocol
+// MARK: ActiveCallRouterProtocol
 
 extension ActiveCallRouter: ActiveCallRouterProtocol {
     // MARK: - ActiveCall
@@ -303,7 +305,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 }
 
-// MARK: - CallQualityRouterProtocol
+// MARK: CallQualityRouterProtocol
 
 extension ActiveCallRouter: CallQualityRouterProtocol {
     func presentCallQualitySurvey(with callDuration: TimeInterval) {
@@ -384,7 +386,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     }
 }
 
-// MARK: - CallTopOverlayControllerDelegate
+// MARK: CallTopOverlayControllerDelegate
 
 extension ActiveCallRouter: CallTopOverlayControllerDelegate {
     func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?) {

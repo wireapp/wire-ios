@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - SubconversationGroupIDRepositoryInterface
+
 // sourcery: AutoMockable
 public protocol SubconversationGroupIDRepositoryInterface {
     /// Stores the group ID of a subconversation in relation to their type and parent group.
@@ -60,6 +62,8 @@ public protocol SubconversationGroupIDRepositoryInterface {
         for targetGroupID: MLSGroupID
     ) async -> (parentID: MLSGroupID, type: SubgroupType)?
 }
+
+// MARK: - SubconversationGroupIDRepository
 
 /// An actor responsible for storing and fetching subconversations group IDs.
 /// It is used to keep track of which subconversation is associated with which conversation.

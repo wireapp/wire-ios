@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - CollectionsViewControllerDelegate
+
 protocol CollectionsViewControllerDelegate: AnyObject {
     func collectionsViewController(
         _ viewController: CollectionsViewController,
@@ -26,6 +28,8 @@ protocol CollectionsViewControllerDelegate: AnyObject {
         onMessage: ZMConversationMessage
     )
 }
+
+// MARK: - CollectionsViewController
 
 final class CollectionsViewController: UIViewController {
     var onDismiss: ((CollectionsViewController) -> Void)?
@@ -342,6 +346,8 @@ final class CollectionsViewController: UIViewController {
     }
 }
 
+// MARK: AssetCollectionDelegate
+
 extension CollectionsViewController: AssetCollectionDelegate {
     func assetCollectionDidFetch(
         collection: ZMCollection,
@@ -378,6 +384,8 @@ extension CollectionsViewController: AssetCollectionDelegate {
         fetchingDone = true
     }
 }
+
+// MARK: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 
 extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout {
@@ -710,6 +718,8 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 }
 
+// MARK: UICollectionViewDataSourcePrefetching
+
 extension CollectionsViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
@@ -724,7 +734,7 @@ extension CollectionsViewController: UICollectionViewDataSourcePrefetching {
     }
 }
 
-// MARK: - Message Change
+// MARK: CollectionCellMessageChangeDelegate
 
 extension CollectionsViewController: CollectionCellMessageChangeDelegate {
     func messageDidChange(_ cell: CollectionCell, changeInfo: MessageChangeInfo) {
@@ -742,7 +752,7 @@ extension CollectionsViewController: CollectionCellMessageChangeDelegate {
     }
 }
 
-// MARK: - Gestures
+// MARK: UIGestureRecognizerDelegate
 
 extension CollectionsViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -758,13 +768,15 @@ extension CollectionsViewController: UIGestureRecognizerDelegate {
     }
 }
 
-// MARK: - Actions
+// MARK: MessageActionResponder
 
 extension CollectionsViewController: MessageActionResponder {
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         perform(action, for: message, source: view)
     }
 }
+
+// MARK: CollectionCellDelegate
 
 extension CollectionsViewController: CollectionCellDelegate {
     func collectionCell(_ cell: CollectionCell, performAction action: MessageAction) {

@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - NonLegacyIconButton
+
 // This is temporary until we finish with the accessibility project
 // This is named NonLegacyIconButton for the simple reason to keep
 // file changes to the minimum instead of renaming the oroginal IconButton
@@ -40,17 +42,23 @@ class NonLegacyIconButton: IconButton {
     }
 }
 
+// MARK: - IconButtonStyle
+
 enum IconButtonStyle {
     case `default`
     case circular
     case navigation
 }
 
+// MARK: - IconDefinition
+
 struct IconDefinition: Equatable {
     let type: StyleKitIcon
     let size: CGFloat
     let renderingMode: UIImage.RenderingMode
 }
+
+// MARK: - IconButton
 
 class IconButton: ButtonWithLargerHitArea {
     var circular = false {

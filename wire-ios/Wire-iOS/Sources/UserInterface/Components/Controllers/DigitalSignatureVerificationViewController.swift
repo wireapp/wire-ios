@@ -20,13 +20,15 @@ import UIKit
 import WebKit
 import WireUtilities
 
-// MARK: - Error states
+// MARK: - DigitalSignatureVerificationError
 
 enum DigitalSignatureVerificationError: Error {
     case postCodeRetry
     case authenticationFailed
     case otherError
 }
+
+// MARK: - DigitalSignatureVerificationViewController
 
 final class DigitalSignatureVerificationViewController: UIViewController {
     typealias DigitalSignatureCompletion = (_ result: Result<Void, Error>) -> Void
@@ -93,7 +95,7 @@ final class DigitalSignatureVerificationViewController: UIViewController {
     }
 }
 
-// MARK: - WKNavigationDelegate
+// MARK: WKNavigationDelegate
 
 extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
     func webView(

@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-// MARK: - Reaction
+// MARK: - MessageReactionMetadata
 
 struct MessageReactionMetadata: Equatable {
     let emoji: Emoji.ID

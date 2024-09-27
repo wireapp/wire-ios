@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationLinkAttachmentCell
+
 final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
     struct Configuration {
         let attachment: LinkAttachment
@@ -132,11 +134,15 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     }
 }
 
+// MARK: LinkViewDelegate
+
 extension ConversationLinkAttachmentCell: LinkViewDelegate {
     var url: URL? {
         currentAttachment?.permalink
     }
 }
+
+// MARK: - ConversationLinkAttachmentCellDescription
 
 final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkAttachmentCell

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - FetchSubgroupActionHandler
+
 class FetchSubgroupActionHandler: ActionHandler<FetchSubgroupAction> {
     // MARK: - Methods
 

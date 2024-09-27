@@ -27,6 +27,8 @@ private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).
     withExtension: "txt"
 )!
 
+// MARK: - MockTaskCancellationProvider
+
 public class MockTaskCancellationProvider: NSObject, ZMRequestCancellation {
     var cancelledIdentifiers = [ZMTaskIdentifier]()
 
@@ -38,6 +40,8 @@ public class MockTaskCancellationProvider: NSObject, ZMRequestCancellation {
         cancelledIdentifiers.removeAll()
     }
 }
+
+// MARK: - AssetV3DownloadRequestStrategyTests
 
 final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!

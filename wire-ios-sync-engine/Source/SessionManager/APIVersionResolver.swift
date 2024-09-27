@@ -19,6 +19,8 @@
 import Foundation
 import WireTransport
 
+// MARK: - APIVersionResolver
+
 final class APIVersionResolver {
     // MARK: - Properties
 
@@ -151,7 +153,7 @@ final class APIVersionResolver {
     }
 }
 
-// MARK: - Delegate
+// MARK: - APIVersionResolverDelegate
 
 protocol APIVersionResolverDelegate: AnyObject {
     func apiVersionResolverDetectedFederationHasBeenEnabled()

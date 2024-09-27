@@ -18,10 +18,14 @@
 
 import WireSyncEngine
 
+// MARK: - RandomGenerator
+
 /// Source of random values.
 protocol RandomGenerator {
     func rand<ContentType>() -> ContentType
 }
+
+// MARK: - RandomGeneratorFromData
 
 /// Generates the pseudorandom values from the data given.
 /// @param data the source of random values.
@@ -67,6 +71,8 @@ extension Array {
     }
 }
 
+// MARK: - ZMConversation + StableRandomParticipantsProvider
+
 extension ZMConversation: StableRandomParticipantsProvider {
     /// Stable random list of the participants in the conversation. The list would be consistent between platforms
     /// because the conversation UUID is used as the random indexes source.
@@ -81,6 +87,8 @@ extension ZMConversation: StableRandomParticipantsProvider {
         return allUsers.shuffled(with: rand)
     }
 }
+
+// MARK: - Mode
 
 enum Mode: Equatable {
     /// 0 participants in conversation:
@@ -137,6 +145,8 @@ extension Mode {
 }
 
 typealias ConversationAvatarViewConversation = ConversationLike & StableRandomParticipantsProvider
+
+// MARK: - ConversationAvatarView
 
 final class ConversationAvatarView: UIView {
     enum Context {

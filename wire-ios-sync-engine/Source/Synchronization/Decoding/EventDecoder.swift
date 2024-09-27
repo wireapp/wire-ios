@@ -26,11 +26,15 @@ private let zmLog = ZMSLog(tag: "EventDecoder")
 /// Key used in persistent store metadata
 private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 
+// MARK: - PreviouslyReceivedEventIDsCollection
+
 /// Holds a list of received event IDs
 @objc
 public protocol PreviouslyReceivedEventIDsCollection: NSObjectProtocol {
     func discardListOfAlreadyReceivedPushEventIDs()
 }
+
+// MARK: - EventDecoder
 
 /// Decodes and stores events from various sources to be processed later
 @objcMembers
@@ -253,6 +257,8 @@ extension EventDecoder {
         }
     }
 }
+
+// MARK: PreviouslyReceivedEventIDsCollection
 
 @objc
 extension EventDecoder: PreviouslyReceivedEventIDsCollection {

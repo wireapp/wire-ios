@@ -22,6 +22,8 @@ import WireDesign
 import XCTest
 @testable import Wire
 
+// MARK: - MarkdownTextViewTests
+
 final class MarkdownTextViewTests: XCTestCase {
     var sut: MarkdownTextView!
     var bar: MarkdownBarView!

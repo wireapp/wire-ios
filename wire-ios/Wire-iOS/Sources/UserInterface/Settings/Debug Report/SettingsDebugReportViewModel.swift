@@ -20,6 +20,8 @@ import MessageUI
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - SettingsDebugReportViewModelProtocol
+
 // sourcery: AutoMockable
 protocol SettingsDebugReportViewModelProtocol {
     /// Send a debug report via email or shows fallback alert if email is not available
@@ -28,6 +30,8 @@ protocol SettingsDebugReportViewModelProtocol {
     /// Presents a list of conversation for the user to share the debug report with
     func shareReport()
 }
+
+// MARK: - SettingsDebugReportViewModel
 
 class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
     // MARK: - Properties

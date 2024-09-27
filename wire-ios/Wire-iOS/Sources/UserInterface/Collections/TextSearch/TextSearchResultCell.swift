@@ -20,6 +20,8 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
+// MARK: - TextSearchResultCell
+
 final class TextSearchResultCell: UITableViewCell {
     private let messageTextLabel = SearchResultLabel()
     private let footerView = TextSearchResultFooter()
@@ -174,6 +176,8 @@ final class TextSearchResultCell: UITableViewCell {
         contentView.backgroundColor = highlighted ? backgroundIsHighlighted : backgroundColor
     }
 }
+
+// MARK: ZMMessageObserver
 
 extension TextSearchResultCell: ZMMessageObserver {
     func messageDidChange(_: MessageChangeInfo) {

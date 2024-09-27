@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - SwitchStyle
+
 struct SwitchStyle {
     private(set) var enabledOnStateColor: UIColor
     private(set) var enabledOffStateColor: UIColor
@@ -33,6 +35,8 @@ struct SwitchStyle {
         enabledOffStateBorderColor: SemanticColors.Switch.borderOffStateEnabled
     )
 }
+
+// MARK: - Switch
 
 final class Switch: UISwitch, Stylable {
     // MARK: - Properties

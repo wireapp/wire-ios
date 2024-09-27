@@ -21,9 +21,13 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - CallInfoViewControllerDelegate
+
 protocol CallInfoViewControllerDelegate: AnyObject {
     func infoViewController(_ viewController: CallInfoViewController, perform action: CallAction)
 }
+
+// MARK: - CallInfoViewControllerInput
 
 protocol CallInfoViewControllerInput: CallActionsViewInputType, CallStatusViewInputType {
     var accessoryType: CallInfoViewControllerAccessoryType { get }
@@ -60,6 +64,8 @@ extension CallInfoViewControllerInput {
             classification == other.classification
     }
 }
+
+// MARK: - CallInfoViewController
 
 final class CallInfoViewController: UIViewController, CallActionsViewDelegate, CallAccessoryViewControllerDelegate {
     weak var delegate: CallInfoViewControllerDelegate?

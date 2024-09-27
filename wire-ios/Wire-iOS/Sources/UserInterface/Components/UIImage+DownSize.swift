@@ -29,6 +29,8 @@ extension CGSize {
     }
 }
 
+// MARK: - CGFloat.Image
+
 extension CGFloat {
     enum Image {
         /// Maximum image size that would show in a UIImageView.

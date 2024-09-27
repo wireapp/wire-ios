@@ -25,6 +25,8 @@ import XCTest
 @testable import WireAPI
 @testable import WireDomain
 
+// MARK: - ConnectionsRepositoryTests
+
 final class ConnectionsRepositoryTests: XCTestCase {
     var sut: ConnectionsRepository!
     var connectionsAPI: MockConnectionsAPI!
@@ -145,6 +147,8 @@ final class ConnectionsRepositoryTests: XCTestCase {
         }
     }
 }
+
+// MARK: - Scaffolding
 
 private enum Scaffolding {
     static let member1ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())

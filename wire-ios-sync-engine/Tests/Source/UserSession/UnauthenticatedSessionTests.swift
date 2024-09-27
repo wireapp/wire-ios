@@ -20,6 +20,8 @@ import WireTesting
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - TestUnauthenticatedTransportSession
+
 final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
     public var cookieStorage = ZMPersistentCookieStorage()
 
@@ -37,6 +39,8 @@ final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransp
     func tearDown() {}
     let environment: BackendEnvironmentProvider = MockEnvironment()
 }
+
+// MARK: - MockAuthenticationStatusDelegate
 
 @objcMembers
 final class MockAuthenticationStatusDelegate: NSObject, ZMAuthenticationStatusDelegate {
@@ -74,6 +78,8 @@ final class MockAuthenticationStatusDelegate: NSObject, ZMAuthenticationStatusDe
     }
 }
 
+// MARK: - MockUnauthenticatedSessionDelegate
+
 final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSessionDelegate {
     var existingAccounts = [Account]()
     var existingAccountsCalled = 0
@@ -104,6 +110,8 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
         isAllowedToCreatingNewAccounts
     }
 }
+
+// MARK: - UnauthenticatedSessionTests
 
 public final class UnauthenticatedSessionTests: ZMTBaseTest {
     var transportSession: TestUnauthenticatedTransportSession!

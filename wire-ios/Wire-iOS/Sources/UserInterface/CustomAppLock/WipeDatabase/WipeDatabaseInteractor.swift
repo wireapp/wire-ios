@@ -19,17 +19,23 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - WipeDatabaseInteractorInput
+
 protocol WipeDatabaseInteractorInput: AnyObject {
     func deleteAccount()
 }
 
+// MARK: - WipeDatabaseInteractorOutput
+
 protocol WipeDatabaseInteractorOutput: AnyObject {}
+
+// MARK: - WipeDatabaseInteractor
 
 final class WipeDatabaseInteractor {
     weak var output: WipeDatabaseInteractorOutput?
 }
 
-// MARK: - Interface
+// MARK: WipeDatabaseInteractorInput
 
 extension WipeDatabaseInteractor: WipeDatabaseInteractorInput {
     func deleteAccount() {

@@ -20,6 +20,8 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// MARK: - UserRepositoryProtocol
+
 // sourcery: AutoMockable
 /// Facilitate access to users related domain objects.
 ///
@@ -42,6 +44,8 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 }
+
+// MARK: - UserRepository
 
 public final class UserRepository: UserRepositoryProtocol {
     private let context: NSManagedObjectContext

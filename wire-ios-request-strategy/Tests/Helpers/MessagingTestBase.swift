@@ -21,6 +21,8 @@ import WireDataModel
 import WireTesting
 @testable import WireRequestStrategy
 
+// MARK: - MessagingTestBase
+
 class MessagingTestBase: ZMTBaseTest {
     var groupConversation: ZMConversation!
     fileprivate(set) var oneToOneConversation: ZMConversation!

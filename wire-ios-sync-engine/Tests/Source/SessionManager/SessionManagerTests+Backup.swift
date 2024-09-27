@@ -20,6 +20,8 @@ import WireTesting
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - SessionManagerBackupTests
+
 final class SessionManagerBackupTests: IntegrationTest {
     override var useInMemoryStore: Bool {
         false
@@ -312,6 +314,8 @@ final class SessionManagerBackupTests: IntegrationTest {
         return result
     }
 }
+
+// MARK: - TestError
 
 private enum TestError: Error {
     case uninitialized

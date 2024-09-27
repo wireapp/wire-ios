@@ -19,15 +19,21 @@
 import Foundation
 import struct WireSystem.WireLogger
 
+// MARK: - AccessTokenRenewalObserver
+
 protocol AccessTokenRenewalObserver {
     func accessTokenRenewalDidSucceed()
     func accessTokenRenewalDidFail()
 }
 
+// MARK: - AccessTokenRenewing
+
 protocol AccessTokenRenewing {
     func setAccessTokenRenewalObserver(_ observer: AccessTokenRenewalObserver)
     func renewAccessToken(with clientID: String)
 }
+
+// MARK: - AccessTokenMigration
 
 class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
     let version: APIVersion = .v3

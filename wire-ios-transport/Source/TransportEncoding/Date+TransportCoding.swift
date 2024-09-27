@@ -35,6 +35,8 @@ private let iso8601DateFormatter = {
     return dateFormatter
 }()
 
+// MARK: - Date + TransportCoding
+
 extension Date: TransportCoding {
     public func transportString() -> String {
         iso8601DateWithFractionalSecondsFormatter.string(from: self)

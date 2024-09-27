@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - AuthenticationCoordinatorAction
+
 /// Valid response actions for authentication events.
 enum AuthenticationCoordinatorAction {
     case showLoadingView
@@ -65,7 +67,7 @@ enum AuthenticationCoordinatorAction {
     }
 }
 
-// MARK: - Alerts
+// MARK: - AuthenticationCoordinatorAlert
 
 /// A customizable alert to display inside the coordinator's presenter.
 struct AuthenticationCoordinatorAlert {
@@ -73,6 +75,8 @@ struct AuthenticationCoordinatorAlert {
     let message: String?
     let actions: [AuthenticationCoordinatorAlertAction]
 }
+
+// MARK: - AuthenticationCoordinatorAlertAction
 
 /// An action that is part of an authentication coordinator alert.
 struct AuthenticationCoordinatorAlertAction {
@@ -96,15 +100,21 @@ extension AuthenticationCoordinatorAlertAction {
     )
 }
 
+// MARK: - AuthenticationCoordinatorErrorAlert
+
 /// A customizable alert to display inside the coordinator's presenter.
 struct AuthenticationCoordinatorErrorAlert {
     let error: NSError
     let completionActions: [AuthenticationCoordinatorAction]
 }
 
+// MARK: - AuthenticationLoginRequest
+
 enum AuthenticationLoginRequest {
     case email(address: String, password: String)
 }
+
+// MARK: - AuthenticationProxyCredentialsInput
 
 struct AuthenticationProxyCredentialsInput {
     var username: String

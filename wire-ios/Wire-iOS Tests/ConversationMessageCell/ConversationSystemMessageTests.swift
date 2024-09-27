@@ -20,6 +20,8 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
+// MARK: - ConversationSystemMessageTests
+
 final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase {
     override func setUp() {
         super.setUp()

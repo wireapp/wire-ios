@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - AuthenticationPrefilledCredentials
+
 /// An object holding the configuration of the login prefill.
 struct AuthenticationPrefilledCredentials: Equatable {
     /// The raw credentials value.
@@ -27,6 +29,8 @@ struct AuthenticationPrefilledCredentials: Equatable {
     /// Whether the credentials are expired.
     let isExpired: Bool
 }
+
+// MARK: - LogInStepDescription
 
 /// An authentication step to ask the user for login credentials.
 final class LogInStepDescription: AuthenticationStepDescription {

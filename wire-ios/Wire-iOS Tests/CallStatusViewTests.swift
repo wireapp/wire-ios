@@ -21,6 +21,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - MockStatusViewConfiguration
+
 struct MockStatusViewConfiguration: CallStatusViewInputType {
     var state: CallStatusViewState
     var isVideoCall: Bool
@@ -30,6 +32,8 @@ struct MockStatusViewConfiguration: CallStatusViewInputType {
     let isForcedCBR: Bool
     var classification: SecurityClassification?
 }
+
+// MARK: - CallStatusViewTests
 
 final class CallStatusViewTests: XCTestCase {
     private var sut: CallStatusView!

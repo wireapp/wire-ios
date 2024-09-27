@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - CreateConversationGuestLinkUseCaseError
+
 public enum CreateConversationGuestLinkUseCaseError: Error {
     case invalidOperation
     case contextUnavailable
     case networkError(Error)
     case failedToEnableGuestAccess(Error)
 }
+
+// MARK: - CreateConversationGuestLinkUseCaseProtocol
 
 // sourcery: AutoMockable
 public protocol CreateConversationGuestLinkUseCaseProtocol {
@@ -33,6 +37,8 @@ public protocol CreateConversationGuestLinkUseCaseProtocol {
         completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     )
 }
+
+// MARK: - CreateConversationGuestLinkUseCase
 
 struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
     let setGuestsAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol

@@ -18,8 +18,12 @@
 
 import UIKit
 
+// MARK: - ApplicationStateProvider
+
 protocol ApplicationStateProvider {
     var applicationState: UIApplication.State { get }
 }
+
+// MARK: - UIApplication + ApplicationStateProvider
 
 extension UIApplication: ApplicationStateProvider {}

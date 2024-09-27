@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - Payload
+
 public enum Payload {
     public typealias UserClients = [Payload.UserClient]
     public typealias UserClientByUserID = [String: UserClients]

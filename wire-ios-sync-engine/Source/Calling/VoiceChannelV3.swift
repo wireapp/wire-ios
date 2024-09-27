@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - VoiceChannelV3Error
+
 public enum VoiceChannelV3Error: LocalizedError {
     case switchToVideoNotAllowed
 
@@ -28,6 +30,8 @@ public enum VoiceChannelV3Error: LocalizedError {
         }
     }
 }
+
+// MARK: - VoiceChannelV3
 
 public class VoiceChannelV3: NSObject, VoiceChannel {
     public var callCenter: WireCallCenterV3? {
@@ -176,6 +180,8 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     }
 }
 
+// MARK: CallActions
+
 extension VoiceChannelV3: CallActions {
     public func mute(_ muted: Bool, userSession: ZMUserSession) {
         if userSession.callNotificationStyle == .callKit {
@@ -215,6 +221,8 @@ extension VoiceChannelV3: CallActions {
     }
 }
 
+// MARK: CallActionsInternal
+
 extension VoiceChannelV3: CallActionsInternal {
     public func join(video: Bool) -> Bool {
         guard
@@ -250,6 +258,8 @@ extension VoiceChannelV3: CallActionsInternal {
         }
     }
 }
+
+// MARK: CallObservers
 
 extension VoiceChannelV3: CallObservers {
     public func addNetworkQualityObserver(_ observer: NetworkQualityObserver) -> Any {

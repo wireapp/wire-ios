@@ -21,6 +21,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - PersonalAccountView
+
 final class PersonalAccountView: BaseAccountView {
     let userImageView = {
         let avatarImageView = AvatarImageView(frame: .zero)

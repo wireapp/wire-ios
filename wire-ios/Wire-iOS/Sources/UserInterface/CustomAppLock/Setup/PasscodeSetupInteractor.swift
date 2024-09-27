@@ -22,20 +22,26 @@ import WireSyncEngine
 import WireTransport
 import WireUtilities
 
+// MARK: - PasscodeSetupInteractorInput
+
 protocol PasscodeSetupInteractorInput: AnyObject {
     func validate(error: TextFieldValidator.ValidationError?)
     func storePasscode(passcode: String) throws
 }
 
+// MARK: - PasscodeSetupInteractorOutput
+
 protocol PasscodeSetupInteractorOutput: AnyObject {
     func passcodeValidated(result: PasswordValidationResult)
 }
+
+// MARK: - PasscodeSetupInteractor
 
 final class PasscodeSetupInteractor {
     weak var interactorOutput: PasscodeSetupInteractorOutput?
 }
 
-// MARK: - Interface
+// MARK: PasscodeSetupInteractorInput
 
 extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
     func storePasscode(passcode: String) throws {

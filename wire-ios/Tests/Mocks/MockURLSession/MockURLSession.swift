@@ -19,14 +19,20 @@
 import Foundation
 @testable import Wire
 
+// MARK: - MockURLResponse
+
 enum MockURLResponse {
     case success(Data, URLResponse)
     case error(Error)
 }
 
+// MARK: - MockURLSessionError
+
 enum MockURLSessionError: Error {
     case noNetwork
 }
+
+// MARK: - MockURLSession
 
 /// An object that provides the behavior of a URL session for testing purposes.
 ///

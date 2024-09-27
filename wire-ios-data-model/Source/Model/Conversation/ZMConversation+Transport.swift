@@ -18,6 +18,8 @@
 
 import WireTransport
 
+// MARK: - BackendConversationType
+
 /// This enum matches the backend convention for type
 @objc(ZMBackendConversationType)
 public enum BackendConversationType: Int {
@@ -42,6 +44,8 @@ public enum BackendConversationType: Int {
         }
     }
 }
+
+// MARK: - ZMConversationType + CustomDebugStringConvertible
 
 extension ZMConversationType: CustomDebugStringConvertible {
     public var debugDescription: String {

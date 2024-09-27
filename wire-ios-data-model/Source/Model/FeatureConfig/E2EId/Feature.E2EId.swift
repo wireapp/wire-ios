@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - Feature.E2EI
+
 extension Feature {
     public struct E2EI: Codable {
         // MARK: - Properties

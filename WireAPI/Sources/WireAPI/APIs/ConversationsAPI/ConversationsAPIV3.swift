@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConversationsAPIV3
+
 class ConversationsAPIV3: ConversationsAPIV2 {
     override var apiVersion: APIVersion { .v3 }
 
@@ -40,7 +42,7 @@ class ConversationsAPIV3: ConversationsAPIV2 {
     }
 }
 
-// MARK: Decodables
+// MARK: - QualifiedConversationListV3
 
 private struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
@@ -62,7 +64,7 @@ private struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
     }
 }
 
-// MARK: -
+// MARK: - ConversationV3
 
 private struct ConversationV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {

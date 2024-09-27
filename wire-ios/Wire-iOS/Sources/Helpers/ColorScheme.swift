@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireUtilities
 
+// MARK: - ColorSchemeVariant
+
 @objc
 enum ColorSchemeVariant: UInt {
     case light, dark
@@ -62,6 +64,8 @@ extension UIColor {
     static var amberAlpha48 = UIColor(rgba: (254, 191, 2, 0.48))
     static var amberAlpha80 = UIColor(rgba: (254, 191, 2, 0.8))
 }
+
+// MARK: - ColorSchemeColor
 
 enum ColorSchemeColor: Int {
     case textForeground
@@ -295,6 +299,8 @@ enum ColorSchemeColor: Int {
     }
 }
 
+// MARK: - ColorScheme
+
 final class ColorScheme: NSObject {
     private(set) var colors: [AnyHashable: Any]?
     var variant: ColorSchemeVariant = .light
@@ -313,6 +319,8 @@ final class ColorScheme: NSObject {
         }
     }
 }
+
+// MARK: - ColorPair
 
 private struct ColorPair {
     let light: UIColor

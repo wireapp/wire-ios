@@ -20,6 +20,8 @@ import SwiftUI
 import WireCommonComponents
 import WireDesign
 
+// MARK: - OtherUserDeviceDetailsView
+
 struct OtherUserDeviceDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -178,6 +180,6 @@ struct OtherUserDeviceDetailsView: View {
     }
 }
 
-// MARK: - DeviceInfoView conformance
+// MARK: DeviceInfoView
 
 extension OtherUserDeviceDetailsView: DeviceInfoView {}

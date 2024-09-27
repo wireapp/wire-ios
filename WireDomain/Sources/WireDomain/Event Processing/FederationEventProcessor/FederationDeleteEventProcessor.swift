@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - FederationDeleteEventProcessorProtocol
+
 /// Process federation delete events.
 
 protocol FederationDeleteEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol FederationDeleteEventProcessorProtocol {
 
     func processEvent(_ event: FederationDeleteEvent) async throws
 }
+
+// MARK: - FederationDeleteEventProcessor
 
 struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
     func processEvent(_: FederationDeleteEvent) async throws {

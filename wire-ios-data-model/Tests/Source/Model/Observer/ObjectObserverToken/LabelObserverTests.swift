@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - TestLabelObserver
+
 final class TestLabelObserver: NSObject, LabelObserver {
     var notifications = [LabelChangeInfo]()
 
@@ -29,6 +31,8 @@ final class TestLabelObserver: NSObject, LabelObserver {
         notifications.append(changeInfo)
     }
 }
+
+// MARK: - LabelObserverTests
 
 final class LabelObserverTests: NotificationDispatcherTestBase {
     var labelObserver: TestLabelObserver!

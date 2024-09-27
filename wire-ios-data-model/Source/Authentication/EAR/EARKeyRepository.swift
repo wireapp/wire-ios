@@ -20,6 +20,8 @@ import Foundation
 import LocalAuthentication
 import Security
 
+// MARK: - EARKeyRepositoryInterface
+
 // sourcery: AutoMockable
 protocol EARKeyRepositoryInterface {
     func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws
@@ -32,6 +34,8 @@ protocol EARKeyRepositoryInterface {
     func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws
     func clearCache()
 }
+
+// MARK: - EARKeyRepository
 
 /// Caches keys for reuse and avoid prompting the user to authenticate for each key access.
 final class EARKeyRepository: EARKeyRepositoryInterface {

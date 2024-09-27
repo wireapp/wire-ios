@@ -18,6 +18,8 @@
 
 import WireTransport
 
+// MARK: - ZMMockURLSession
+
 @objc
 final class ZMMockURLSession: ZMURLSession {
     @objc var cancellationHandler: (() -> Void)?
@@ -54,7 +56,7 @@ final class ZMMockURLSession: ZMURLSession {
     }
 }
 
-// MARK: - Delegate
+// MARK: - ZMMockURLSessionDelegate
 
 @objc
 final class ZMMockURLSessionDelegate: NSObject, ZMURLSessionDelegate {

@@ -20,9 +20,13 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - EmojiSectionViewControllerDelegate
+
 protocol EmojiSectionViewControllerDelegate: AnyObject {
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool)
 }
+
+// MARK: - EmojiSectionViewController
 
 final class EmojiSectionViewController: UIViewController {
     private var typesByButton = [IconButton: EmojiSectionType]()

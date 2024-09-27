@@ -19,6 +19,8 @@
 import Foundation
 import WireCoreCrypto
 
+// MARK: - AcmeAPIInterface
+
 // sourcery: AutoMockable
 public protocol AcmeAPIInterface {
     func getACMEDirectory() async throws -> Data
@@ -29,6 +31,8 @@ public protocol AcmeAPIInterface {
     func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse
     func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse
 }
+
+// MARK: - AcmeAPI
 
 /// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI
 /// certificate.
@@ -222,15 +226,21 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     }
 }
 
+// MARK: - HeaderKey
+
 enum HeaderKey {
     static let replayNonce = "Replay-Nonce"
     static let location = "location"
 }
 
+// MARK: - ContentType
+
 enum ContentType {
     static let json = "application/json"
     static let joseAndJson = "application/jose+json"
 }
+
+// MARK: - HTTPMethod
 
 private enum HTTPMethod {
     static let get = "GET"
@@ -238,14 +248,20 @@ private enum HTTPMethod {
     static let head = "HEAD"
 }
 
+// MARK: - Constant
+
 private enum Constant {
     static let contentType = "Content-Type"
     static let accept = "Accept"
 }
 
+// MARK: - HttpClientCustom
+
 public protocol HttpClientCustom {
     func send(_ request: URLRequest) async throws -> (Data, URLResponse)
 }
+
+// MARK: - HttpClientE2EI
 
 public class HttpClientE2EI: NSObject, HttpClientCustom {
     private let urlSession: URLSession

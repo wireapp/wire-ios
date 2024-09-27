@@ -19,6 +19,8 @@
 import CoreGraphics
 import UIKit
 
+// MARK: - AspectRatio
+
 enum AspectRatio {
     case portrait
     case landscape

@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
+// MARK: - PBMessageValidationTests
+
 class PBMessageValidationTests: XCTestCase {
     // MARK: Generic Message
 
@@ -367,6 +369,8 @@ class PBMessageValidationTests: XCTestCase {
         }
     }
 }
+
+// MARK: - ModelValidationTests
 
 class ModelValidationTests: XCTestCase {
     // MARK: Generic Message

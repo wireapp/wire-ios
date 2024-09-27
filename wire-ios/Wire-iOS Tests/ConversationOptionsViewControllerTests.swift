@@ -24,6 +24,8 @@ import WireTransport
 import XCTest
 @testable import Wire
 
+// MARK: - MockOptionsViewModelConfiguration
+
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
 

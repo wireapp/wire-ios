@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - CollectionVideoCell
+
 final class CollectionVideoCell: CollectionCell {
     private var containerView = UIView()
     private let videoMessageView = VideoMessageView()
@@ -96,6 +98,8 @@ final class CollectionVideoCell: CollectionCell {
         accessibilityHint = L10n.Accessibility.ConversationSearch.ItemPlay.hint
     }
 }
+
+// MARK: TransferViewDelegate
 
 extension CollectionVideoCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {

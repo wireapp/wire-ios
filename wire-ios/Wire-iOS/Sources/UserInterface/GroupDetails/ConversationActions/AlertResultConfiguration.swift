@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - AlertResultConfiguration
+
 protocol AlertResultConfiguration {
     static var title: String { get }
     static var all: [Self] { get }

@@ -25,6 +25,8 @@ import WireSyncEngine
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"
 
+// MARK: - ConversationListContentController
+
 final class ConversationListContentController: UICollectionViewController {
     private let mainCoordinator: MainCoordinating
 
@@ -377,6 +379,8 @@ final class ConversationListContentController: UICollectionViewController {
     }
 }
 
+// MARK: UICollectionViewDelegateFlowLayout
+
 extension ConversationListContentController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -406,6 +410,8 @@ extension ConversationListContentController: UICollectionViewDelegateFlowLayout 
         UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
 }
+
+// MARK: ConversationListViewModelDelegate
 
 extension ConversationListContentController: ConversationListViewModelDelegate {
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
@@ -495,7 +501,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
     }
 }
 
-// MARK: iOS 12- peek pop
+// MARK: UIViewControllerPreviewingDelegate
 
 extension ConversationListContentController: UIViewControllerPreviewingDelegate {
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
@@ -534,6 +540,8 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
         )
     }
 }
+
+// MARK: ConversationListCellDelegate
 
 extension ConversationListContentController: ConversationListCellDelegate {
     func indexPath(for cell: ConversationListCell) -> IndexPath? {

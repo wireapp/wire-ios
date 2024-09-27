@@ -22,6 +22,8 @@ import WireTesting
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - ZMLocalNotificationTests_Message
+
 final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     // MARK: - Text Messages
 
@@ -691,7 +693,7 @@ extension ZMLocalNotificationTests_Message {
     }
 }
 
-// MARK: - File Asset Messages
+// MARK: - FileType
 
 enum FileType {
     case txt, video, audio

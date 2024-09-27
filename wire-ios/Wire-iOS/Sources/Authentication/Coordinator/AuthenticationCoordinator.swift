@@ -20,6 +20,8 @@ import UIKit
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - AuthenticationCoordinatorDelegate
+
 /// Provides and asks for context when registering users.
 
 protocol AuthenticationCoordinatorDelegate: AnyObject {
@@ -27,6 +29,8 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
 
     func userAuthenticationDidComplete(userSession: UserSession)
 }
+
+// MARK: - AuthenticationCoordinator
 
 /// Manages the flow of authentication for the user. Decides which steps to take for login, registration
 /// and team creation.
@@ -164,7 +168,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     }
 }
 
-// MARK: - State Management
+// MARK: AuthenticationStateControllerDelegate
 
 extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
     func stateDidChange(
@@ -211,7 +215,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
     }
 }
 
-// MARK: - Event Handling
+// MARK: AuthenticationActioner, SessionManagerCreatedSessionObserver
 
 extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreatedSessionObserver {
     func sessionManagerCreated(userSession: ZMUserSession) {

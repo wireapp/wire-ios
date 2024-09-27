@@ -86,11 +86,15 @@ extension NSManagedObjectContext {
     }
 }
 
+// MARK: - MessageDestructionType
+
 enum MessageDestructionType: String {
     static let UserInfoKey = "destructionType"
 
     case obfuscation, deletion
 }
+
+// MARK: - ZMMessageDestructionTimer
 
 @objcMembers
 public class ZMMessageDestructionTimer: ZMMessageTimer {

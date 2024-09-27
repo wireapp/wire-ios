@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - ClientMessageTests_OTR_Legacy
+
 final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
     override func setUp() {
         DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .temporary())

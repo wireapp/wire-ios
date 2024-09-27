@@ -20,6 +20,8 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
+// MARK: - UIAlertControllerFeatureConfigSnapshotTests
+
 final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
     private func createSut(for featureChange: FeatureRepository.FeatureChange) -> UIAlertController? {
         let result = UIAlertController.fromFeatureChange(
@@ -52,6 +54,8 @@ final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
         try verify(matching: createSut(for: .fileSharingDisabled)!)
     }
 }
+
+// MARK: - MockFeatureChangeAcknowledger
 
 private final class MockFeatureChangeAcknowledger: FeatureChangeAcknowledger {
     func acknowledgeChange(for featureName: Feature.Name) {

@@ -24,6 +24,8 @@ extension UserClient {
     }
 }
 
+// MARK: - UserClient + ObjectInSnapshot
+
 extension UserClient: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
         Set([
@@ -39,11 +41,15 @@ extension UserClient: ObjectInSnapshot {
     }
 }
 
+// MARK: - UserClientChangeInfoKey
+
 public enum UserClientChangeInfoKey: String {
     case TrustedByClientsChanged = "trustedByClientsChanged"
     case IgnoredByClientsChanged = "ignoredByClientsChanged"
     case FingerprintChanged = "fingerprintChanged"
 }
+
+// MARK: - UserClientChangeInfo
 
 @objcMembers
 open class UserClientChangeInfo: ObjectChangeInfo {
@@ -75,6 +81,8 @@ open class UserClientChangeInfo: ObjectChangeInfo {
         UserClientChangeInfo(object: client, changes: changes)
     }
 }
+
+// MARK: - UserClientObserver
 
 @objc
 public protocol UserClientObserver: NSObjectProtocol {

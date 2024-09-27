@@ -22,6 +22,8 @@ import WireSyncEngineSupport
 import XCTest
 @testable import Wire
 
+// MARK: - DeviceDetailsViewActionsHandlerTests
+
 final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
     var client: UserClient!

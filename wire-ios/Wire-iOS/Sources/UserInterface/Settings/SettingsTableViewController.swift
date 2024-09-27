@@ -20,6 +20,8 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
+// MARK: - SettingsBaseTableViewController
+
 class SettingsBaseTableViewController: UIViewController {
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()
@@ -112,6 +114,8 @@ class SettingsBaseTableViewController: UIViewController {
     }
 }
 
+// MARK: UITableViewDelegate, UITableViewDataSource
+
 extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataSource {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         topSeparator.scrollViewDidScroll(scrollView: scrollView)
@@ -132,6 +136,8 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {}
 }
+
+// MARK: - SettingsTableViewController
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
     let group: SettingsInternalGroupCellDescriptorType
@@ -315,6 +321,8 @@ extension SettingsTableViewController {
         refreshData()
     }
 }
+
+// MARK: UserObserving
 
 extension SettingsTableViewController: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {

@@ -20,6 +20,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ShareableDebugReport
+
 struct ShareableDebugReport: Shareable {
     // MARK: - Types
 
@@ -61,6 +63,8 @@ struct ShareableDebugReport: Shareable {
         return view
     }
 }
+
+// MARK: Equatable
 
 extension ShareableDebugReport: Equatable {
     static func == (lhs: ShareableDebugReport, rhs: ShareableDebugReport) -> Bool {

@@ -19,9 +19,13 @@
 import Foundation
 import WireTransport
 
+// MARK: - AccessAPIClientProtocol
+
 protocol AccessAPIClientProtocol {
     func fetchAccessToken() async throws -> AccessToken
 }
+
+// MARK: - AccessAPIClient
 
 final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
     // MARK: - Properties
@@ -47,6 +51,8 @@ final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
         }
     }
 }
+
+// MARK: - AccessTokenEndpoint
 
 struct AccessTokenEndpoint: Endpoint, Loggable {
     // MARK: - Types

@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - SectionFooterView
+
 final class SectionFooterView: UIView {
     let titleLabel = UILabel()
 
@@ -50,6 +52,8 @@ final class SectionFooterView: UIView {
     }
 }
 
+// MARK: - SectionFooter
+
 final class SectionFooter: UICollectionReusableView {
     let footerView = SectionFooterView()
 
@@ -77,6 +81,8 @@ final class SectionFooter: UICollectionReusableView {
         )
     }
 }
+
+// MARK: - SectionTableFooter
 
 final class SectionTableFooter: UITableViewHeaderFooterView {
     let footerView = SectionFooterView()

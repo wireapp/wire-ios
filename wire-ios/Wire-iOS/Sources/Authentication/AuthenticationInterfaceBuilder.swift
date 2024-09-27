@@ -23,6 +23,8 @@ import WireDataModel
 
 typealias AuthenticationStepViewController = AuthenticationCoordinatedViewController & UIViewController
 
+// MARK: - AuthenticationInterfaceBuilder
+
 /// An object that builds view controllers for authentication steps.
 
 final class AuthenticationInterfaceBuilder {

@@ -26,6 +26,8 @@ extension Loggable {
     }
 }
 
+// MARK: - Loggable
+
 protocol Loggable {
     var logger: os.Logger { get }
 }

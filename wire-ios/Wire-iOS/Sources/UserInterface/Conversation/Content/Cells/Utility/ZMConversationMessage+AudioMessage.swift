@@ -37,6 +37,8 @@ extension ZMConversationMessage {
     }
 }
 
+// MARK: - ZMAssetClientMessage + AudioTrack
+
 extension ZMAssetClientMessage: AudioTrack {
     var title: String? {
         guard let fileMessageData else { return "" }

@@ -25,14 +25,20 @@ typealias AuthenticationFooterViewDescription = AuthenticationActionable & Foote
 typealias ValueSubmitted = (Any) -> Void
 typealias ValueValidated = (ValueValidation?) -> Void
 
+// MARK: - ValueValidation
+
 enum ValueValidation {
     case info(String)
     case error(TextFieldValidator.ValidationError, showVisualFeedback: Bool)
 }
 
+// MARK: - ViewDescriptor
+
 protocol ViewDescriptor: AnyObject {
     func create() -> UIView
 }
+
+// MARK: - ValueSubmission
 
 protocol ValueSubmission: AnyObject {
     var acceptsInput: Bool { get set }
@@ -40,10 +46,14 @@ protocol ValueSubmission: AnyObject {
     var valueValidated: ValueValidated? { get set }
 }
 
+// MARK: - MagicTappable
+
 /// A protocol for views that support performing the magic tap.
 protocol MagicTappable: AnyObject {
     func performMagicTap() -> Bool
 }
+
+// MARK: - AuthenticationStepDescription
 
 protocol AuthenticationStepDescription {
     var backButton: BackButtonDescription? { get }
@@ -53,6 +63,8 @@ protocol AuthenticationStepDescription {
     var secondaryView: AuthenticationSecondaryViewDescription? { get }
     var footerView: AuthenticationFooterViewDescription? { get }
 }
+
+// MARK: - DefaultValidatingStepDescription
 
 protocol DefaultValidatingStepDescription: AuthenticationStepDescription {
     var initialValidation: ValueValidation { get }

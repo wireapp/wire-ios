@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AuthenticationEventHandler
+
 /// A protocol for objects that handle an event from the authentication stack.
 ///
 /// Typically, a handler only handles one type of event. Objects conforming to this protocol expose

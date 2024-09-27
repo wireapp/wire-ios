@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - ProfileDetailsContentControllerDelegate
+
 /// An object that receives notifications from a profile details content controller.
 
 protocol ProfileDetailsContentControllerDelegate: AnyObject {
@@ -29,6 +31,8 @@ protocol ProfileDetailsContentControllerDelegate: AnyObject {
     /// Called when the group role change.
     func profileGroupRoleDidChange(isAdminRole: Bool)
 }
+
+// MARK: - ProfileDetailsContentController
 
 /// An object that controls the content to display in the user details screen.
 

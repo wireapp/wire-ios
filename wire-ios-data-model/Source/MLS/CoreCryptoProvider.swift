@@ -19,6 +19,8 @@
 import Foundation
 import WireCoreCrypto
 
+// MARK: - CoreCryptoProviderProtocol
+
 // sourcery: AutoMockable
 public protocol CoreCryptoProviderProtocol {
     /// Retrieve the shared core crypto instance or create one if one does not yet exist.
@@ -40,6 +42,8 @@ public protocol CoreCryptoProviderProtocol {
     func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws
         -> CRLsDistributionPoints?
 }
+
+// MARK: - CoreCryptoProvider
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let selfUserID: UUID

@@ -21,6 +21,8 @@ import WireDataModel
 
 private let log = ZMSLog(tag: "Mentions")
 
+// MARK: - TextMarker
+
 struct TextMarker<A> {
     let replacementText: String
     let token: String

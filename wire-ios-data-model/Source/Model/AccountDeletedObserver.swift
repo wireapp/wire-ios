@@ -18,9 +18,13 @@
 
 import Foundation
 
+// MARK: - AccountDeletedObserver
+
 public protocol AccountDeletedObserver: AnyObject {
     func accountDeleted(accountId: UUID)
 }
+
+// MARK: - AccountDeletedNotification
 
 public struct AccountDeletedNotification {
     public static let notificationName = Notification.Name("AccountDeletedNotification")

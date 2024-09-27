@@ -18,9 +18,13 @@
 
 import Foundation
 
+// MARK: - UpdateRoleError
+
 public enum UpdateRoleError: Error {
     case unknown
 }
+
+// MARK: - UpdateRoleAction
 
 public class UpdateRoleAction: EntityAction {
     public var resultHandler: ResultHandler?

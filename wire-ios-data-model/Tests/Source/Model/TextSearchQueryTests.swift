@@ -19,6 +19,8 @@
 import WireTesting
 @testable import WireDataModel
 
+// MARK: - MockTextSearchQueryDelegate
+
 private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
     var fetchedResults = [TextQueryResult]()
 
@@ -26,6 +28,8 @@ private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
         fetchedResults.append(result)
     }
 }
+
+// MARK: - TextSearchQueryTests
 
 class TextSearchQueryTests: BaseZMClientMessageTests {
     override class func setUp() {

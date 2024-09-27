@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConversationsAPIV1
+
 class ConversationsAPIV1: ConversationsAPIV0 {
     override var apiVersion: APIVersion { .v1 }
 
@@ -49,7 +51,7 @@ class ConversationsAPIV1: ConversationsAPIV0 {
     }
 }
 
-// MARK: -
+// MARK: - PaginatedConversationIDsV1
 
 private struct PaginatedConversationIDsV1: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {

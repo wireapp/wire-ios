@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - NoHistoryContext
+
 /// The context that caused the user to not have a complete history.
 enum NoHistoryContext {
     /// The user signed into this device for the first time.
@@ -27,6 +29,8 @@ enum NoHistoryContext {
     /// The user logged out.
     case loggedOut
 }
+
+// MARK: - AuthenticationFlowStep
 
 /// Steps of the authentication flow.
 indirect enum AuthenticationFlowStep: Equatable {
@@ -104,7 +108,7 @@ indirect enum AuthenticationFlowStep: Equatable {
     }
 }
 
-// MARK: - Intermediate Steps
+// MARK: - IntermediateRegistrationStep
 
 /// Intermediate steps required for user registration.
 enum IntermediateRegistrationStep: Equatable {

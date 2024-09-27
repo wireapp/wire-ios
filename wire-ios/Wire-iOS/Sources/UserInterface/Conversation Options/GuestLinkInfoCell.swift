@@ -20,6 +20,8 @@ import Down
 import UIKit
 import WireDesign
 
+// MARK: - GuestLinkInfoCell
+
 final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
     // MARK: - Properties
 

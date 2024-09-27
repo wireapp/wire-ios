@@ -21,6 +21,8 @@ import ImageIO
 import MobileCoreServices
 import UniformTypeIdentifiers
 
+// MARK: - MetadataError
+
 public enum MetadataError: Error {
     case unknownFormat
     case cannotCreate

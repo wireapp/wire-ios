@@ -21,6 +21,8 @@ import WireTransport
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - CodableAPIVersionAwareObject
+
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
     enum CodingKeys: CodingKey {}
 
@@ -43,6 +45,8 @@ private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
     init() {}
 }
 
+// MARK: - CodableObject
+
 private struct CodableObject: Codable {
     enum CodingKeys: CodingKey {}
 
@@ -62,6 +66,8 @@ private struct CodableObject: Codable {
 
     init() {}
 }
+
+// MARK: - Payload_CodingTests
 
 class Payload_CodingTests: XCTestCase {
     var data: Data!

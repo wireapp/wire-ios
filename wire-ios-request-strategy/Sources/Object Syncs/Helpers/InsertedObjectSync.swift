@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - InsertedObjectSyncTranscoder
+
 protocol InsertedObjectSyncTranscoder: AnyObject {
     associatedtype Object: ZMManagedObject
 
@@ -31,6 +33,8 @@ protocol InsertedObjectSyncTranscoder: AnyObject {
     ///
     func insert(object: Object, completion: @escaping () -> Void)
 }
+
+// MARK: - InsertedObjectSync
 
 /// InsertedObjectSync synchronizes objects which has been inserted locally but does yet exist on the backend.
 ///

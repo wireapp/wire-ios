@@ -33,7 +33,7 @@ private let awayRelativeBorderSize = 2.0 / 4.375
 private let busyMaskRelativeRectangleWidth = 5.25 / 8.75
 private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 
-// MARK: -
+// MARK: - AvailabilityIndicatorView
 
 final class AvailabilityIndicatorView: UIView {
     // MARK: - Properties
@@ -168,6 +168,8 @@ extension AvailabilityIndicatorView {
     }
     .background(Color(UIColor.systemGray2))
 }
+
+// MARK: - AvailabilityIndicatorViewRepresentable
 
 private struct AvailabilityIndicatorViewRepresentable: UIViewRepresentable {
     @State private(set) var availability: Availability?

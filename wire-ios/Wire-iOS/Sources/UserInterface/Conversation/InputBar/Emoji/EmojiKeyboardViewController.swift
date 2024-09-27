@@ -19,10 +19,14 @@
 import UIKit
 import WireDesign
 
+// MARK: - EmojiPickerViewControllerDelegate
+
 protocol EmojiPickerViewControllerDelegate: AnyObject {
     func emojiPickerDidSelectEmoji(_ emoji: Emoji)
     func emojiPickerDeleteTapped()
 }
+
+// MARK: - EmojiKeyboardViewController
 
 final class EmojiKeyboardViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
@@ -136,6 +140,8 @@ final class EmojiKeyboardViewController: UIViewController {
     }
 }
 
+// MARK: EmojiSectionViewControllerDelegate
+
 extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
@@ -143,6 +149,8 @@ extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
         collectionView.scrollToItem(at: indexPath, at: .left, animated: !scrolling)
     }
 }
+
+// MARK: UICollectionViewDelegateFlowLayout
 
 extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -173,6 +181,8 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
         updateSectionSelection()
     }
 }
+
+// MARK: - EmojiCollectionViewCell
 
 final class EmojiCollectionViewCell: UICollectionViewCell {
     let titleLabel = UILabel()
@@ -230,6 +240,8 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
         ])
     }
 }
+
+// MARK: - EmojiCollectionView
 
 final class EmojiCollectionView: UICollectionView {
     private let layout = UICollectionViewFlowLayout()

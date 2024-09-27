@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import Wire
 
+// MARK: - ConversationStatusLineTests_Muting
+
 final class ConversationStatusLineTests_Muting: CoreDataSnapshotTestCase {
     override func setUp() {
         selfUserInTeam = true

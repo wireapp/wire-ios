@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import WireUtilities
 
+// MARK: - FileManagerMoveTests
+
 class FileManagerMoveTests: XCTestCase {
     override func setUp() {
         super.setUp()

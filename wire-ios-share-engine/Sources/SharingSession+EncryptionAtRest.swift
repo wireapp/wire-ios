@@ -20,11 +20,15 @@ import LocalAuthentication
 import UIKit
 import WireDataModel
 
+// MARK: - SharingSessionEncryptionAtRestInterface
+
 public protocol SharingSessionEncryptionAtRestInterface {
     var encryptMessagesAtRest: Bool { get }
     var isDatabaseLocked: Bool { get }
     func unlockDatabase() throws
 }
+
+// MARK: - SharingSession + SharingSessionEncryptionAtRestInterface
 
 extension SharingSession: SharingSessionEncryptionAtRestInterface {
     public var encryptMessagesAtRest: Bool {

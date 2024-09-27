@@ -24,8 +24,12 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - CryptoError + Error
+
 // NOTE: necessary since CryptoError doesn't publically conform to Error
 extension CryptoError: Error {}
+
+// MARK: - MLSServiceTests
 
 final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var sut: MLSService!

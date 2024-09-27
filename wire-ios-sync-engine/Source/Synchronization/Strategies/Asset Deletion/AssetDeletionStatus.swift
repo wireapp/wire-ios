@@ -20,12 +20,16 @@ import Foundation
 
 private let log = ZMSLog(tag: "AssetDeletion")
 
+// MARK: - AssetDeletionIdentifierProviderType
+
 @objc
 public protocol AssetDeletionIdentifierProviderType: AnyObject {
     func nextIdentifierToDelete() -> String?
     func didDelete(identifier: String)
     func didFailToDelete(identifier: String)
 }
+
+// MARK: - AssetDeletionStatus
 
 public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProviderType {
     private var provider: DeletableAssetIdentifierProvider

@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - URLSessionsDirectory
+
 @objc
 public protocol URLSessionsDirectory: NSObjectProtocol {
     @objc var foregroundSession: ZMURLSession { get }
     @objc var backgroundSession: ZMURLSession { get }
     @objc var allSessions: [ZMURLSession] { get }
 }
+
+// MARK: - CurrentURLSessionsDirectory
 
 @objcMembers
 public final class CurrentURLSessionsDirectory: NSObject, URLSessionsDirectory {
@@ -38,6 +42,8 @@ public final class CurrentURLSessionsDirectory: NSObject, URLSessionsDirectory {
         self.backgroundSession = backgroundSession
     }
 }
+
+// MARK: TearDownCapable
 
 extension CurrentURLSessionsDirectory: TearDownCapable {
     public func tearDown() {

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - RequestLoopDetection
+
 /// Monitors the REST requests that are sent over the network
 /// to detect suspicious request loops
 @objcMembers
@@ -133,7 +135,7 @@ public final class RequestLoopDetection: NSObject {
     }
 }
 
-// MARK: -
+// MARK: - IdentifierDate
 
 struct IdentifierDate {
     let identifier: String

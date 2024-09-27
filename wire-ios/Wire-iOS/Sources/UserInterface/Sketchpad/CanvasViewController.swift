@@ -22,7 +22,7 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
-// MARK: - CanvasViewControllerDelegate - didExportImage
+// MARK: - CanvasViewControllerDelegate
 
 protocol CanvasViewControllerDelegate: AnyObject {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage)
@@ -281,7 +281,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     }
 }
 
-// MARK: - CanvasDelegate
+// MARK: CanvasDelegate
 
 extension CanvasViewController: CanvasDelegate {
     func canvasDidChange(_ canvas: Canvas) {
@@ -291,7 +291,7 @@ extension CanvasViewController: CanvasDelegate {
     }
 }
 
-// MARK: - EmojiKeyboardViewControllerDelegate
+// MARK: EmojiPickerViewControllerDelegate
 
 extension CanvasViewController: EmojiPickerViewControllerDelegate {
     func showEmojiKeyboard(animated: Bool) {
@@ -386,7 +386,7 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
     }
 }
 
-// MARK: - UIImagePickerControllerDelegate
+// MARK: UIImagePickerControllerDelegate
 
 extension CanvasViewController: UIImagePickerControllerDelegate {
     @objc
@@ -418,7 +418,7 @@ extension CanvasViewController: UIImagePickerControllerDelegate {
     }
 }
 
-// MARK: - SketchColorPickerControllerDelegate
+// MARK: SketchColorPickerControllerDelegate
 
 extension CanvasViewController: SketchColorPickerControllerDelegate {
     func sketchColorPickerController(_ controller: SketchColorPickerController, changedSelectedColor color: UIColor) {

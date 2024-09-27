@@ -23,6 +23,8 @@ import WireCryptobox
 import WireDataModel
 @testable import WireSyncEngine
 
+// MARK: - MockApplicationStatus
+
 @objcMembers
 public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrationDelegate, ZMRequestCancellation {
     public var taskCancellationDelegate: ZMRequestCancellation { self }
@@ -70,6 +72,8 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
     }
 }
 
+// MARK: - MockAuthenticationStatus
+
 class MockAuthenticationStatus: ZMAuthenticationStatus {
     var mockPhase: ZMAuthenticationPhase
 
@@ -90,6 +94,8 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
         mockPhase
     }
 }
+
+// MARK: - ZMMockClientRegistrationStatus
 
 @objcMembers
 class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
@@ -135,6 +141,8 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     }
 }
 
+// MARK: - ZMMockClientUpdateStatus
+
 class ZMMockClientUpdateStatus: ClientUpdateStatus {
     var fetchedClients: [UserClient?] = []
     var mockPhase: ClientUpdatePhase?
@@ -163,6 +171,8 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
     }
 }
 
+// MARK: - FakeCredentialProvider
+
 class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     var clearCallCount = 0
     var email = "hello@example.com"
@@ -177,7 +187,11 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     }
 }
 
+// MARK: - FakeCookieStorage
+
 class FakeCookieStorage: ZMPersistentCookieStorage {}
+
+// MARK: - MockSyncStatus
 
 public class MockSyncStatus: SyncStatus {
     var didCallFailCurrentSyncPhase = false
@@ -201,6 +215,8 @@ public class MockSyncStatus: SyncStatus {
         super.finishCurrentSyncPhase(phase: phase)
     }
 }
+
+// MARK: - MockSyncStateDelegate
 
 @objc
 public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
@@ -246,6 +262,8 @@ public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
     }
 }
 
+// MARK: - MockPushMessageHandler
+
 @objc
 public class MockPushMessageHandler: NSObject, PushMessageHandler {
     public func didFailToSend(_ message: ZMMessage) {
@@ -254,6 +272,8 @@ public class MockPushMessageHandler: NSObject, PushMessageHandler {
 
     fileprivate(set) var failedToSend: [ZMMessage] = []
 }
+
+// MARK: - MockEventConsumer
 
 @objcMembers
 public class MockEventConsumer: NSObject, ZMEventConsumer {
@@ -286,6 +306,8 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
     }
 }
 
+// MARK: - MockContextChangeTracker
+
 @objcMembers
 public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
     public var objectsDidChangeCalled = false
@@ -306,6 +328,8 @@ public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
     }
 }
 
+// MARK: - MockEventAsyncConsumer
+
 @objcMembers
 public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
     public var eventsProcessed: [ZMUpdateEvent] = []
@@ -315,6 +339,8 @@ public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
         eventsProcessed.append(contentsOf: events)
     }
 }
+
+// MARK: - MockRequestStrategy
 
 @objcMembers
 public class MockRequestStrategy: NSObject, RequestStrategy {

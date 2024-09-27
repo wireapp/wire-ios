@@ -20,6 +20,8 @@ import avs
 import XCTest
 @testable import Wire
 
+// MARK: - MockAudioRecordViewControllerDelegate
+
 private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecordViewControllerDelegate {
     var cancelCallCount: UInt = 0
 
@@ -36,6 +38,8 @@ private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecord
         filter: AVSAudioEffectType
     ) {}
 }
+
+// MARK: - AudioRecordViewControllerTests
 
 final class AudioRecordViewControllerTests: XCTestCase {
     var sut: AudioRecordViewController!

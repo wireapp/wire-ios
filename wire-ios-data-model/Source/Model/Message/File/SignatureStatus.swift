@@ -28,7 +28,7 @@ public protocol SignatureObserver: NSObjectProtocol {
     func didFailSignature(errorType: SignatureStatus.ErrorYpe)
 }
 
-// MARK: - SignatureStatus
+// MARK: - PDFSigningState
 
 public enum PDFSigningState {
     case initial
@@ -40,6 +40,8 @@ public enum PDFSigningState {
 }
 
 private let log = ZMSLog(tag: "Conversations")
+
+// MARK: - SignatureStatus
 
 @objc
 public final class SignatureStatus: NSObject {

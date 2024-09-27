@@ -98,6 +98,8 @@ extension ZClientViewController {
     }
 }
 
+// MARK: - ZClientViewController + ConferenceCallingUnavailableObserver
+
 extension ZClientViewController: ConferenceCallingUnavailableObserver {
     func setUpConferenceCallingUnavailableObserver() {
         conferenceCallingUnavailableObserverToken = userSession.addConferenceCallingUnavailableObserver(self)

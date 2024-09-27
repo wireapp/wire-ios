@@ -16,12 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - SafeForLoggingStringConvertible
+
 /// Object can implement this protocol to allow creating the privacy-enabled object description.
 /// Things to consider when implementing is to exclude any kind of personal information from the object description:
 /// No user name, login, email, etc., or any kind of backend object ID.
 public protocol SafeForLoggingStringConvertible {
     var safeForLoggingDescription: String { get }
 }
+
+// MARK: - SafeValueForLogging
 
 public struct SafeValueForLogging<T: CustomStringConvertible>: SafeForLoggingStringConvertible {
     public let value: T
@@ -34,11 +38,15 @@ public struct SafeValueForLogging<T: CustomStringConvertible>: SafeForLoggingStr
     }
 }
 
+// MARK: - Array + SafeForLoggingStringConvertible
+
 extension Array: SafeForLoggingStringConvertible where Array.Element: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         String(describing: map(\.safeForLoggingDescription))
     }
 }
+
+// MARK: - Dictionary + SafeForLoggingStringConvertible
 
 extension Dictionary: SafeForLoggingStringConvertible where Key: SafeForLoggingStringConvertible,
     Value: SafeForLoggingStringConvertible {

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AssetV3UploadRequestStrategy
+
 /// AssetV3UploadRequestStrategy is responsible for uploading all the assets associated with a asset message
 /// after they've been preprocessed (downscaled & encrypted). After all the assets have been uploaded
 /// transfer state is changed to .uploaded which is the signal that the asset message is ready to be sent.
@@ -66,6 +68,8 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     }
 }
 
+// MARK: ZMContextChangeTracker
+
 extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
     // we need to cancel the requests manually as the upstream modified object sync
     // will not pick up a change to keys which are already being synchronized (transferState)
@@ -96,6 +100,8 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
         message.associatedTaskIdentifier = nil
     }
 }
+
+// MARK: ZMUpstreamTranscoder
 
 extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
     public func request(

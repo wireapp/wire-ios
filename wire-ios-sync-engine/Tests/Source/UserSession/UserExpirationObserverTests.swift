@@ -45,6 +45,8 @@ extension XCTestCase {
     }
 }
 
+// MARK: - UserExpirationObserverTests
+
 public class UserExpirationObserverTests: MessagingTest {
     var sut: UserExpirationObserver!
 

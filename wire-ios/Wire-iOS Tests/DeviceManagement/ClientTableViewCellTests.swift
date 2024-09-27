@@ -20,6 +20,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - ClientTableViewCellTests
+
 final class ClientTableViewCellTests: XCTestCase {
     // MARK: - Properties
 

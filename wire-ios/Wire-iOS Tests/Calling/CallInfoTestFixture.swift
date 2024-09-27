@@ -23,6 +23,8 @@ extension CallStateMock {
     fileprivate static var connecting: CallStateMock { .outgoing }
 }
 
+// MARK: - CallInfoTestFixture
+
 struct CallInfoTestFixture {
     enum GroupSize: Int {
         case large = 10

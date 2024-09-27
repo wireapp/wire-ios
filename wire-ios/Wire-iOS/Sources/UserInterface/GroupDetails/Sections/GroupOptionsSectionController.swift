@@ -19,12 +19,16 @@
 import Foundation
 import WireDataModel
 
+// MARK: - GroupOptionsSectionControllerDelegate
+
 protocol GroupOptionsSectionControllerDelegate: AnyObject {
     func presentTimeoutOptions(animated: Bool)
     func presentGuestOptions(animated: Bool)
     func presentServicesOptions(animated: Bool)
     func presentNotificationsOptions(animated: Bool)
 }
+
+// MARK: - GroupOptionsSectionController
 
 final class GroupOptionsSectionController: GroupDetailsSectionController {
     private enum Option: Int, CaseIterable {

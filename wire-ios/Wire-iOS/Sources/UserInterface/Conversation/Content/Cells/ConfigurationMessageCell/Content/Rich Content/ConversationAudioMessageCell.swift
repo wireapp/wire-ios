@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationAudioMessageCell
+
 final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     struct Configuration {
         let message: ZMConversationMessage
@@ -109,6 +111,8 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     }
 }
 
+// MARK: TransferViewDelegate
+
 extension ConversationAudioMessageCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
         guard let message else { return }
@@ -116,6 +120,8 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
         delegate?.perform(action: action, for: message, view: self)
     }
 }
+
+// MARK: - ConversationAudioMessageCellDescription
 
 final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationAudioMessageCell

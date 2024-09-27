@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - CallStatusViewInputType
+
 protocol CallStatusViewInputType: CallTypeProvider, CBRSettingProvider {
     var state: CallStatusViewState { get }
     var isConstantBitRate: Bool { get }
@@ -26,9 +28,13 @@ protocol CallStatusViewInputType: CallTypeProvider, CBRSettingProvider {
     var classification: SecurityClassification? { get }
 }
 
+// MARK: - CallTypeProvider
+
 protocol CallTypeProvider {
     var isVideoCall: Bool { get }
 }
+
+// MARK: - CBRSettingProvider
 
 protocol CBRSettingProvider {
     var userEnabledCBR: Bool { get }

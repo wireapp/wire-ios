@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - ReplyComposingViewMockDelegate
+
 private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelegate {
     var didCancelCalledCount = 0
     func composingViewDidCancel(composingView: ReplyComposingView) {
@@ -30,6 +32,8 @@ private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelega
         composingViewWantsToShowMessage += 1
     }
 }
+
+// MARK: - ReplyComposingViewTests
 
 final class ReplyComposingViewTests: XCTestCase {
     func testDeallocation() {

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - Version
+
 @objc(ZMVersion)
 public final class Version: NSObject, Comparable {
     @objc public private(set) var versionString: String

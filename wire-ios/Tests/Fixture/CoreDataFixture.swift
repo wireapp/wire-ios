@@ -21,6 +21,8 @@ import XCTest
 @testable import Wire
 @testable import WireDataModel
 
+// MARK: - CoreDataFixture
+
 /// This class provides a `NSManagedObjectContext` in order to test views with real data instead
 /// of mock objects.
 final class CoreDataFixture {
@@ -249,6 +251,8 @@ extension CoreDataFixture {
         return serviceUser
     }
 }
+
+// MARK: - CoreDataFixtureTestHelper
 
 protocol CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture! { get }

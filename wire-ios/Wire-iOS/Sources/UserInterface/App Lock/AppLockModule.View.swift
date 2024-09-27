@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - AppLockModule.View
+
 extension AppLockModule {
     final class View: UIViewController, ViewInterface {
         // MARK: - Properties
@@ -67,7 +69,7 @@ extension AppLockModule {
     }
 }
 
-// MARK: - View model
+// MARK: - AppLockModule.ViewModel
 
 extension AppLockModule {
     enum ViewModel: Equatable {
@@ -122,7 +124,7 @@ extension AppLockModule {
     }
 }
 
-// MARK: - Refresh
+// MARK: - AppLockModule.View + AppLockViewPresenterInterface
 
 extension AppLockModule.View: AppLockViewPresenterInterface {
     func refresh(withModel model: AppLockModule.ViewModel) {
@@ -135,7 +137,7 @@ extension AppLockModule.View: AppLockViewPresenterInterface {
     }
 }
 
-// MARK: - Delegates
+// MARK: - AppLockModule.View + PasscodeSetupViewControllerDelegate
 
 extension AppLockModule.View: PasscodeSetupViewControllerDelegate {
     func passcodeSetupControllerDidFinish() {
@@ -145,11 +147,15 @@ extension AppLockModule.View: PasscodeSetupViewControllerDelegate {
     func passcodeSetupControllerWasDismissed() {}
 }
 
+// MARK: - AppLockModule.View + UnlockViewControllerDelegate
+
 extension AppLockModule.View: UnlockViewControllerDelegate {
     func unlockViewControllerDidUnlock() {
         presenter.processEvent(.customPasscodeVerified)
     }
 }
+
+// MARK: - AppLockModule.View + AppLockChangeWarningViewControllerDelegate
 
 extension AppLockModule.View: AppLockChangeWarningViewControllerDelegate {
     func appLockChangeWarningViewControllerDidDismiss() {

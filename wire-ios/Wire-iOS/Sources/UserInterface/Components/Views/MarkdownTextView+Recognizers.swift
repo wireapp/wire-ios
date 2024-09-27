@@ -52,6 +52,8 @@ extension MarkdownTextView {
     }
 }
 
+// MARK: - MarkdownTextView + UIGestureRecognizerDelegate
+
 extension MarkdownTextView: UIGestureRecognizerDelegate {
     func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,

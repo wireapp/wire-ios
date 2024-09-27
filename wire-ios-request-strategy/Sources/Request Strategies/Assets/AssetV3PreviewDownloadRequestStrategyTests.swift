@@ -27,6 +27,8 @@ private let testDataURL = Bundle(for: AssetV3PreviewDownloadRequestStrategyTests
     withExtension: "txt"
 )!
 
+// MARK: - AssetV3PreviewDownloadRequestStrategyTests
+
 class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var sut: AssetV3PreviewDownloadRequestStrategy!

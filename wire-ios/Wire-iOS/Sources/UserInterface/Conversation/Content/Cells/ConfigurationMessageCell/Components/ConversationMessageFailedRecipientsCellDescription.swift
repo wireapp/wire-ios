@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
+// MARK: - ConversationMessageFailedRecipientsCellDescription
+
 final class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
     typealias SystemContent = L10n.Localizable.Content.System
     typealias View = FailedUsersSystemMessageCell

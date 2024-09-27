@@ -20,10 +20,14 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - MessageDetailsDisplayMode
+
 /// The way the details are displayed.
 enum MessageDetailsDisplayMode: Int {
     case reactions, receipts, combined
 }
+
+// MARK: - MessageDetailsDataSourceObserver
 
 /// An object that observes changes in the message data source.
 
@@ -34,6 +38,8 @@ protocol MessageDetailsDataSourceObserver: AnyObject {
     /// Called when the message subtitle changes.
     func detailsFooterDidChange(_ dataSource: MessageDetailsDataSource)
 }
+
+// MARK: - MessageDetailsDataSource
 
 /// The data source to present message details.
 

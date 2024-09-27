@@ -20,6 +20,8 @@ import CoreData
 import Foundation
 import WireDataModel
 
+// MARK: - CallStateObserver
+
 @objc(ZMCallStateObserver)
 public final class CallStateObserver: NSObject {
     @objc public static let CallInProgressNotification = Notification.Name(rawValue: "ZMCallInProgressNotification")
@@ -64,6 +66,8 @@ public final class CallStateObserver: NSObject {
         }
     }
 }
+
+// MARK: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver
 
 extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
     public func callCenterDidChange(

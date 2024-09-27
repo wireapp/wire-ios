@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - SelfUserAPIV4
+
 class SelfUserAPIV4: SelfUserAPIV3 {
     override var apiVersion: APIVersion {
         .v4
@@ -36,6 +38,8 @@ class SelfUserAPIV4: SelfUserAPIV3 {
             .parse(response)
     }
 }
+
+// MARK: - SelfUserV4
 
 struct SelfUserV4: Decodable, ToAPIModelConvertible {
     let accentID: Int

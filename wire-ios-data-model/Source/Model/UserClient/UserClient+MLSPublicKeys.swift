@@ -90,6 +90,8 @@ extension UserClient {
     }
 }
 
+// MARK: - UserClient.MLSPublicKeys
+
 extension UserClient {
     public struct MLSPublicKeys: Codable, Equatable {
         enum CodingKeys: String, CodingKey {

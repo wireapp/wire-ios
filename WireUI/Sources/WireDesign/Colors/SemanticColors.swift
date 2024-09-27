@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - SemanticColors
+
 /// Naming convention:
 ///
 /// The names of all SemanticColors should follow the format:

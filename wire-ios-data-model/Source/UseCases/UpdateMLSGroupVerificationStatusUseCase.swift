@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - UpdateMLSGroupVerificationStatusUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol UpdateMLSGroupVerificationStatusUseCaseProtocol {
     func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws
 }
+
+// MARK: - UpdateMLSGroupVerificationStatusUseCase
 
 public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol {
     // MARK: - Properties

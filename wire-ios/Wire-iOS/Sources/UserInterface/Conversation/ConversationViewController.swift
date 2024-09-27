@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ConversationViewController
+
 final class ConversationViewController: UIViewController {
     let mainCoordinator: MainCoordinating
     private let visibleMessage: ZMConversationMessage?
@@ -494,7 +496,7 @@ final class ConversationViewController: UIViewController {
     }
 }
 
-// MARK: - InvisibleInputAccessoryViewDelegate
+// MARK: InvisibleInputAccessoryViewDelegate
 
 extension ConversationViewController: InvisibleInputAccessoryViewDelegate {
     // WARNING: DO NOT TOUCH THIS UNLESS YOU KNOW WHAT YOU ARE DOING
@@ -533,7 +535,7 @@ extension ConversationViewController: InvisibleInputAccessoryViewDelegate {
     }
 }
 
-// MARK: - ZMConversationObserver
+// MARK: ZMConversationObserver
 
 extension ConversationViewController: ZMConversationObserver {
     func conversationDidChange(_ note: ConversationChangeInfo) {
@@ -568,7 +570,7 @@ extension ConversationViewController: ZMConversationObserver {
     }
 }
 
-// MARK: - ZMConversationListObserver
+// MARK: ZMConversationListObserver
 
 extension ConversationViewController: ZMConversationListObserver {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
@@ -583,7 +585,7 @@ extension ConversationViewController: ZMConversationListObserver {
     }
 }
 
-// MARK: - InputBar
+// MARK: ConversationInputBarViewControllerDelegate
 
 extension ConversationViewController: ConversationInputBarViewControllerDelegate {
     func conversationInputBarViewControllerDidComposeText(

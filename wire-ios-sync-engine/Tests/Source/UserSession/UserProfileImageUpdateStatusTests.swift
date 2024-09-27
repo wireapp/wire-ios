@@ -44,6 +44,8 @@ var sampleFailedState: UserProfileImageUpdateStatus.ProfileUpdateState {
     UserProfileImageUpdateStatus.ProfileUpdateState.failed(.preprocessingFailed)
 }
 
+// MARK: - MockPreprocessor
+
 class MockPreprocessor: NSObject, ZMAssetsPreprocessorProtocol {
     weak var delegate: ZMAssetsPreprocessorDelegate?
     var operations = [Operation]()
@@ -57,6 +59,8 @@ class MockPreprocessor: NSObject, ZMAssetsPreprocessorProtocol {
         return operations
     }
 }
+
+// MARK: - MockOperation
 
 class MockOperation: NSObject, ZMImageDownsampleOperationProtocol {
     let downsampleImageData: Data
@@ -76,6 +80,8 @@ class MockOperation: NSObject, ZMImageDownsampleOperationProtocol {
 
 public typealias ProfileUpdateState = WireSyncEngine.UserProfileImageUpdateStatus.ProfileUpdateState
 typealias ImageState = WireSyncEngine.UserProfileImageUpdateStatus.ImageState
+
+// MARK: - MockChangeDelegate
 
 class MockChangeDelegate: WireSyncEngine.UserProfileImageUploadStateChangeDelegate {
     var states = [ProfileUpdateState]()
@@ -109,9 +115,13 @@ class MockChangeDelegate: WireSyncEngine.UserProfileImageUploadStateChangeDelega
     }
 }
 
+// MARK: - MockUploadError
+
 enum MockUploadError: String, Error {
     case failed
 }
+
+// MARK: - MockImageOwner
 
 class MockImageOwner: NSObject, ZMImageOwner {
     public func requiredImageFormats() -> NSOrderedSet { NSOrderedSet() }
@@ -124,6 +134,8 @@ class MockImageOwner: NSObject, ZMImageOwner {
     public func isUsingNativePush(for format: ZMImageFormat) -> Bool { false }
     public func processingDidFinish() {}
 }
+
+// MARK: - StateTransition
 
 protocol StateTransition: Equatable {
     func canTransition(to: Self) -> Bool
@@ -155,6 +167,8 @@ extension StateTransition {
 
 public typealias UserProfileImageUpdateStatus = WireSyncEngine.UserProfileImageUpdateStatus
 
+// MARK: - UserProfileImageUpdateStatus.ImageState + Equatable
+
 extension UserProfileImageUpdateStatus.ImageState: Equatable {
     public static func == (
         lhs: UserProfileImageUpdateStatus.ImageState,
@@ -164,11 +178,15 @@ extension UserProfileImageUpdateStatus.ImageState: Equatable {
     }
 }
 
+// MARK: - UserProfileImageUpdateStatus.ImageState + StateTransition
+
 extension UserProfileImageUpdateStatus.ImageState: StateTransition {
     static var allStates: [ImageState] {
         [.ready, .preprocessing, sampleUploadState, .uploading, sampleUploadedState, sampleFailedImageState]
     }
 }
+
+// MARK: - ProfileUpdateState + Equatable
 
 extension ProfileUpdateState: Equatable {
     public static func == (lhs: ProfileUpdateState, rhs: ProfileUpdateState) -> Bool {
@@ -176,11 +194,15 @@ extension ProfileUpdateState: Equatable {
     }
 }
 
+// MARK: - ProfileUpdateState + StateTransition
+
 extension ProfileUpdateState: StateTransition {
     static var allStates: [ProfileUpdateState] {
         [.ready, samplePreprocessState, sampleUpdateState, sampleFailedState]
     }
 }
+
+// MARK: - UserProfileImageUpdateStatusTests
 
 class UserProfileImageUpdateStatusTests: MessagingTest {
     var sut: UserProfileImageUpdateStatus!

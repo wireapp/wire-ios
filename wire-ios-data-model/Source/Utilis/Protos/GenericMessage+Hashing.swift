@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - BigEndianDataConvertible
+
 protocol BigEndianDataConvertible {
     var asBigEndianData: Data { get }
 }
@@ -53,17 +55,23 @@ extension GenericMessage {
     }
 }
 
+// MARK: - MessageEdit + BigEndianDataConvertible
+
 extension MessageEdit: BigEndianDataConvertible {
     var asBigEndianData: Data {
         text.asBigEndianData
     }
 }
 
+// MARK: - WireProtos.Text + BigEndianDataConvertible
+
 extension WireProtos.Text: BigEndianDataConvertible {
     var asBigEndianData: Data {
         content.asBigEndianData
     }
 }
+
+// MARK: - Location + BigEndianDataConvertible
 
 extension Location: BigEndianDataConvertible {
     var asBigEndianData: Data {
@@ -72,6 +80,8 @@ extension Location: BigEndianDataConvertible {
         return data
     }
 }
+
+// MARK: - WireProtos.Asset + BigEndianDataConvertible
 
 extension WireProtos.Asset: BigEndianDataConvertible {
     var asBigEndianData: Data {
@@ -85,6 +95,8 @@ extension Float {
     }
 }
 
+// MARK: - String + BigEndianDataConvertible
+
 extension String: BigEndianDataConvertible {
     var asBigEndianData: Data {
         var data = Data([0xFE, 0xFF]) // Byte order marker
@@ -93,6 +105,8 @@ extension String: BigEndianDataConvertible {
     }
 }
 
+// MARK: - Int + BigEndianDataConvertible
+
 extension Int: BigEndianDataConvertible {
     public var asBigEndianData: Data {
         withUnsafePointer(to: bigEndian) {
@@ -100,6 +114,8 @@ extension Int: BigEndianDataConvertible {
         }
     }
 }
+
+// MARK: - TimeInterval + BigEndianDataConvertible
 
 extension TimeInterval: BigEndianDataConvertible {
     public var asBigEndianData: Data {

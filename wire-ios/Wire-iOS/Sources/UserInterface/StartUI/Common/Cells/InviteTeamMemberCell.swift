@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - StartUIIconCell
+
 class StartUIIconCell: UICollectionViewCell {
     typealias CellColors = SemanticColors.View
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
@@ -92,6 +94,8 @@ class StartUIIconCell: UICollectionViewCell {
     }
 }
 
+// MARK: - InviteTeamMemberCell
+
 final class InviteTeamMemberCell: StartUIIconCell {
     override func setupViews() {
         super.setupViews()
@@ -103,6 +107,8 @@ final class InviteTeamMemberCell: StartUIIconCell {
         accessibilityIdentifier = "button.searchui.invite_team"
     }
 }
+
+// MARK: - CreateGroupCell
 
 final class CreateGroupCell: StartUIIconCell {
     override func setupViews() {
@@ -116,6 +122,8 @@ final class CreateGroupCell: StartUIIconCell {
     }
 }
 
+// MARK: - CreateGuestRoomCell
+
 final class CreateGuestRoomCell: StartUIIconCell {
     override func setupViews() {
         super.setupViews()
@@ -127,6 +135,8 @@ final class CreateGuestRoomCell: StartUIIconCell {
         accessibilityIdentifier = "button.searchui.createguestroom"
     }
 }
+
+// MARK: - OpenServicesAdminCell
 
 final class OpenServicesAdminCell: StartUIIconCell {
     override func setupViews() {

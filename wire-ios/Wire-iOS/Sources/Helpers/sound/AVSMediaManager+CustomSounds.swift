@@ -22,6 +22,8 @@ import WireCommonComponents
 import WireSyncEngine
 import WireSystem
 
+// MARK: - MediaManagerSound
+
 enum MediaManagerSound: String {
     case outgoingKnockSound = "ping_from_me"
     case incomingKnockSound = "ping_from_them"

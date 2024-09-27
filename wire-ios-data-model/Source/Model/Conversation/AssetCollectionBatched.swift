@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - CategoryMatch
+
 public struct CategoryMatch: Hashable {
     public let including: MessageCategory
     public let excluding: MessageCategory
@@ -29,6 +31,8 @@ public struct CategoryMatch: Hashable {
 public func == (lhs: CategoryMatch, rhs: CategoryMatch) -> Bool {
     (lhs.excluding == rhs.excluding) && (lhs.including == rhs.including)
 }
+
+// MARK: - AssetCollectionBatched
 
 /// This class fetches messages and groups them by `MessageCategory` (e.g. files, images, videos etc.)
 /// It first fetches all objects that have previously categorized and then performs one fetch request with

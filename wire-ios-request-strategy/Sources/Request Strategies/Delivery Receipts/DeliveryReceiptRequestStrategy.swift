@@ -43,6 +43,8 @@ extension ZMUpdateEvent {
     }
 }
 
+// MARK: - DeliveryReceiptRequestStrategy
+
 @objcMembers
 public final class DeliveryReceiptRequestStrategy: NSObject {
     private let messageSender: MessageSenderInterface
@@ -59,7 +61,7 @@ public final class DeliveryReceiptRequestStrategy: NSObject {
     }
 }
 
-// MARK: - Event Consumer
+// MARK: ZMEventConsumer
 
 extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
     struct DeliveryReceipt {

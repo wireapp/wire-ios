@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - OpenConversationObserver
+
 public protocol OpenConversationObserver {
     func didOpen(conversation: ZMConversation)
     func didClose(conversation: ZMConversation)
 }
+
+// MARK: - ZMUserSession + OpenConversationObserver
 
 extension ZMUserSession: OpenConversationObserver {
     public func didOpen(conversation: ZMConversation) {

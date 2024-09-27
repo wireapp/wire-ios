@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ConversationCreateSectionController
+
 class ConversationCreateSectionController: NSObject, CollectionViewSectionController {
     typealias CreationCell = (DetailsCollectionViewCell & ConversationCreationValuesConfigurable)
 
@@ -50,6 +52,8 @@ class ConversationCreateSectionController: NSObject, CollectionViewSectionContro
         )
     }
 }
+
+// MARK: ConversationCreationValuesConfigurable
 
 extension ConversationCreateSectionController: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {

@@ -21,6 +21,8 @@ import WireTesting
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - TopConversationsDirectoryTests
+
 class TopConversationsDirectoryTests: MessagingTest {
     var sut: TopConversationsDirectory!
     var topConversationsObserver: FakeTopConversationsDirectoryObserver!
@@ -375,6 +377,8 @@ extension TopConversationsDirectoryTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2), file: file, line: line)
     }
 }
+
+// MARK: - FakeTopConversationsDirectoryObserver
 
 class FakeTopConversationsDirectoryObserver: TopConversationsDirectoryObserver {
     var topConversationsDidChangeCallCount = 0

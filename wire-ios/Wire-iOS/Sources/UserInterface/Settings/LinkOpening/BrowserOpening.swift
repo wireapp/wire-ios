@@ -21,6 +21,8 @@ import WireSystem
 
 private let log = ZMSLog(tag: "link opening")
 
+// MARK: - BrowserOpeningOption
+
 enum BrowserOpeningOption: Int, LinkOpeningOption {
     case safari, chrome, firefox, snowhaze, brave
 

@@ -19,6 +19,8 @@
 import Foundation
 import WireCommonComponents
 
+// MARK: - SettingsPropertyValue
+
 enum SettingsPropertyValue: Equatable {
     case bool(value: Bool)
     case number(value: NSNumber)
@@ -72,6 +74,8 @@ enum SettingsPropertyValue: Equatable {
     }
 }
 
+// MARK: - SettingsProperty
+
 ///  Generic settings property
 protocol SettingsProperty {
     var propertyName: SettingsPropertyName { get }
@@ -113,6 +117,8 @@ func << (property: inout SettingsProperty, expr: @autoclosure () -> SettingsProp
 func << (value: inout Any?, property: SettingsProperty) {
     value = property.rawValue()
 }
+
+// MARK: - SettingsUserDefaultsProperty
 
 /// Generic user defaults property
 final class SettingsUserDefaultsProperty: SettingsProperty {
@@ -156,6 +162,8 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
 
 typealias GetAction = (SettingsBlockProperty) -> SettingsPropertyValue
 typealias SetAction = (SettingsBlockProperty, SettingsPropertyValue) throws -> Void
+
+// MARK: - SettingsBlockProperty
 
 /// Genetic block property
 final class SettingsBlockProperty: SettingsProperty {

@@ -24,6 +24,8 @@ func == (lhs: CallInfoViewControllerInput, rhs: CallInfoViewControllerInput) -> 
     lhs.isEqual(toConfiguration: rhs)
 }
 
+// MARK: - CallInfoConfigurationTests
+
 final class CallInfoConfigurationTests: ZMSnapshotTestCase {
     var mockUsers: [MockUserType]!
     var selfUser: ZMUser!

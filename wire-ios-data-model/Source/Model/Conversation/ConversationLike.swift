@@ -21,6 +21,8 @@ import WireUtilities
 
 public typealias Conversation = ConversationLike & SwiftConversationLike
 
+// MARK: - ConversationLike
+
 // sourcery: AutoMockable
 @objc
 public protocol ConversationLike: AnyObject {
@@ -53,6 +55,8 @@ public protocol ConversationLike: AnyObject {
     var domain: String? { get }
 }
 
+// MARK: - SwiftConversationLike
+
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
 // protocol to abstract Swift only properties
 public protocol SwiftConversationLike {
@@ -66,6 +70,8 @@ public protocol SwiftConversationLike {
     var sortedServiceUsers: [UserType] { get }
     var ciphersuite: MLSCipherSuite? { get }
 }
+
+// MARK: - ZMConversation + ConversationLike
 
 extension ZMConversation: ConversationLike {
     public var localParticipantsCount: Int {

@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - AuthenticationNavigationBar
+
 final class AuthenticationNavigationBar: DefaultNavigationBar {
     override func configureBackground() {
         isTranslucent = true

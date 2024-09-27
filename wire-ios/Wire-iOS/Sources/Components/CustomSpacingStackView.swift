@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - CustomSpacingStackView
+
 final class CustomSpacingStackView: UIView {
     private var stackView: UIStackView
 
@@ -76,6 +78,8 @@ final class CustomSpacingStackView: UIView {
     }
 }
 
+// MARK: - SpacingView
+
 final class SpacingView: UIView {
     var size: CGFloat
 
@@ -99,6 +103,8 @@ final class SpacingView: UIView {
         CGSize(width: size, height: size)
     }
 }
+
+// MARK: - ContentInsetView
 
 /// A view that can contain a label with additional content insets.
 

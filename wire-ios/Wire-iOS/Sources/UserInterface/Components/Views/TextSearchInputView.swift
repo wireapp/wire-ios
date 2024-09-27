@@ -21,10 +21,14 @@ import WireDesign
 import WireReusableUIComponents
 import WireSystem
 
+// MARK: - TextSearchInputViewDelegate
+
 protocol TextSearchInputViewDelegate: AnyObject {
     func searchView(_ searchView: TextSearchInputView, didChangeQueryTo: String)
     func searchViewShouldReturn(_ searchView: TextSearchInputView) -> Bool
 }
+
+// MARK: - TextSearchInputView
 
 final class TextSearchInputView: UIView {
     typealias SearchBarColors = SemanticColors.SearchBar
@@ -149,6 +153,8 @@ final class TextSearchInputView: UIView {
         clearButton.isHidden = query.isEmpty
     }
 }
+
+// MARK: UITextViewDelegate
 
 extension TextSearchInputView: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {

@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 
+// MARK: - MainTabBarController
+
 /// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController: UITabBarController {
@@ -120,6 +122,8 @@ func MainTabBarController_Preview() -> MainTabBarController {
     tabBarController.selectedTab = .conversations
     return tabBarController
 }
+
+// MARK: - PlaceholderViewController
 
 private final class PlaceholderViewController: UIViewController {
     override func viewDidLoad() {

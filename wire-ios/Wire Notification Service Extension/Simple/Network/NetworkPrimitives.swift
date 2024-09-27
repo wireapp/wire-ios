@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - NetworkRequest
+
 struct NetworkRequest {
     let path: String
     let httpMethod: HTTPMethod
@@ -25,18 +27,26 @@ struct NetworkRequest {
     let acceptType: AcceptType
 }
 
+// MARK: - HTTPMethod
+
 enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
 }
 
+// MARK: - ContentType
+
 enum ContentType: String {
     case json = "application/json"
 }
 
+// MARK: - AcceptType
+
 enum AcceptType: String {
     case json = "application/json"
 }
+
+// MARK: - NetworkResponse
 
 enum NetworkResponse: CustomStringConvertible {
     case success(SuccessResponse)
@@ -53,6 +63,8 @@ enum NetworkResponse: CustomStringConvertible {
     }
 }
 
+// MARK: - SuccessResponse
+
 struct SuccessResponse: CustomStringConvertible {
     let status: Int
     let data: Data
@@ -61,6 +73,8 @@ struct SuccessResponse: CustomStringConvertible {
         "status: \(status), data: \(data)"
     }
 }
+
+// MARK: - ErrorResponse
 
 struct ErrorResponse: Codable, Equatable, CustomStringConvertible {
     let code: Int

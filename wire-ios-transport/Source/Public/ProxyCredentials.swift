@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ProxyCredentials
+
 public final class ProxyCredentials: NSObject {
     public var username: String
     public var password: String
@@ -78,6 +80,8 @@ public final class ProxyCredentials: NSObject {
         return true
     }
 }
+
+// MARK: - GenericPasswordKeychainItem
 
 struct GenericPasswordKeychainItem: KeychainItem {
     // MARK: - Properties

@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireSyncEngine
 
+// MARK: - RegistrationCredentialVerificationStrategyTests
+
 class RegistrationCredentialVerificationStrategyTests: MessagingTest {
     var registrationStatus: TestRegistrationStatus!
     var sut: WireSyncEngine.RegistationCredentialVerificationStrategy!
@@ -143,6 +145,8 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         XCTAssertEqual(registrationStatus.successCalled, 1)
     }
 }
+
+// MARK: RegistrationStatusStrategyTestHelper
 
 extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStrategyTestHelper {
     func handleResponse(response: ZMTransportResponse) {

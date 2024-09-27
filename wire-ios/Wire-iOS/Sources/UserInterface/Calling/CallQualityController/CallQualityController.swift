@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - CallQualityController
+
 /// Observes call state to prompt the user for call quality feedback when appropriate.
 
 class CallQualityController: NSObject {
@@ -119,7 +121,7 @@ class CallQualityController: NSObject {
     }
 }
 
-// MARK: - Call State
+// MARK: WireCallCenterCallStateObserver
 
 extension CallQualityController: WireCallCenterCallStateObserver {
     func callCenterDidChange(
@@ -146,7 +148,7 @@ extension CallQualityController: WireCallCenterCallStateObserver {
     }
 }
 
-// MARK: - User Input
+// MARK: CallQualityViewControllerDelegate
 
 extension CallQualityController: CallQualityViewControllerDelegate {
     func callQualityController(_ controller: CallQualityViewController, didSelect score: Int) {

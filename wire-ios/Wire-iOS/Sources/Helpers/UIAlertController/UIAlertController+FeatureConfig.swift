@@ -19,9 +19,13 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - FeatureChangeAcknowledger
+
 protocol FeatureChangeAcknowledger {
     func acknowledgeChange(for featureName: Feature.Name)
 }
+
+// MARK: - FeatureRepository + FeatureChangeAcknowledger
 
 extension FeatureRepository: FeatureChangeAcknowledger {
     func acknowledgeChange(for featureName: Feature.Name) {

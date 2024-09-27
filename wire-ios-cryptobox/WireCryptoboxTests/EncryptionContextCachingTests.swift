@@ -21,6 +21,8 @@ import XCTest
 
 let someTextToEncrypt = "ENCRYPT THIS!"
 
+// MARK: - DebugEncryptor
+
 class DebugEncryptor: Encryptor {
     var index = 0
     func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
@@ -31,6 +33,8 @@ class DebugEncryptor: Encryptor {
         return result
     }
 }
+
+// MARK: - EncryptionContextCachingTests
 
 class EncryptionContextCachingTests: XCTestCase {
     func testThatItDoesNotCachePerDefault() {

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MockUser
+
 @objcMembers
 public class MockUser: NSManagedObject {
     public enum LegalHoldState: Equatable {

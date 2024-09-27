@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - SearchResult
+
 public struct SearchResult {
     /// Users already connected to.
     public var contacts: [ZMSearchUser]

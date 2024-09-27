@@ -19,6 +19,8 @@
 import WireTesting
 @testable import WireSyncEngine
 
+// MARK: - EventDecoderTest
+
 class EventDecoderTest: MessagingTest {
     var sut: EventDecoder!
 

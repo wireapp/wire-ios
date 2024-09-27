@@ -21,6 +21,8 @@ import WireDataModel
 import WireRequestStrategy
 import WireUtilities
 
+// MARK: - ZMConversation + Conversation
+
 extension ZMConversation: Conversation {
     public var name: String? { displayName }
 
@@ -71,6 +73,8 @@ extension ZMConversation: Conversation {
     }
 }
 
+// MARK: - ConversationDegradationInfo
+
 public struct ConversationDegradationInfo {
     public let conversation: Conversation
     public let users: Set<ZMUser>
@@ -80,6 +84,8 @@ public struct ConversationDegradationInfo {
         self.conversation = conversation
     }
 }
+
+// MARK: - DegradationObserver
 
 final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapable {
     let callback: (ConversationDegradationInfo) -> Void

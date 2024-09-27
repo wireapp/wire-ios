@@ -20,11 +20,15 @@ import Foundation
 import LocalAuthentication
 import Security
 
+// MARK: - KeychainItem
+
 public protocol KeychainItem {
     associatedtype Value
     func queryForSetting(value: Value) -> [CFString: Any]
     var queryForGettingValue: [CFString: Any] { get }
 }
+
+// MARK: - Keychain
 
 public enum Keychain {
     public enum KeychainError: Error {

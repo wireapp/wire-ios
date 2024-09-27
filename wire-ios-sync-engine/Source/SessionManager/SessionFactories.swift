@@ -19,6 +19,8 @@
 import avs
 import WireDataModel
 
+// MARK: - AuthenticatedSessionFactory
+
 open class AuthenticatedSessionFactory {
     let appVersion: String
     let mediaManager: MediaManagerType
@@ -119,7 +121,7 @@ open class AuthenticatedSessionFactory {
     private(set) var proxyPassword: String?
 }
 
-// MARK: -
+// MARK: - UnauthenticatedSessionFactory
 
 open class UnauthenticatedSessionFactory {
     var environment: BackendEnvironmentProvider

@@ -27,6 +27,8 @@ public typealias ZiphyLookupCallback = (ZiphyResult<Ziph>) -> Void
 /// A block that will be executed with the result of an image data fetch request.
 public typealias ZiphyImageDataCallback = (ZiphyResult<Data>) -> Void
 
+// MARK: - ZiphyClient
+
 /// An object that provides access to the Giphy API.
 
 public final class ZiphyClient {

@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - TeamMetadataRefresherTests
+
 final class TeamMetadataRefresherTests: XCTestCase {
     private var mockSelfUser: MockUserType!
 
@@ -126,7 +128,7 @@ final class TeamMetadataRefresherTests: XCTestCase {
     }
 }
 
-// MARK: - Mock Self User Provider
+// MARK: - MockSelfUserProvider
 
 private struct MockSelfUserProvider: SelfUserProvider {
     let providedSelfUser: UserType & EditableUserType

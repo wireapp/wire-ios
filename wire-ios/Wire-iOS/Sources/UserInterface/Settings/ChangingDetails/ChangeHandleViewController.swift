@@ -33,10 +33,14 @@ extension UIView {
     }
 }
 
+// MARK: - ChangeHandleTableViewCellDelegate
+
 protocol ChangeHandleTableViewCellDelegate: AnyObject {
     func tableViewCell(cell: ChangeHandleTableViewCell, shouldAllowEditingText text: String) -> Bool
     func tableViewCellDidChangeText(cell: ChangeHandleTableViewCell, text: String)
 }
+
+// MARK: - ChangeHandleTableViewCell
 
 final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     weak var delegate: ChangeHandleTableViewCellDelegate?
@@ -144,6 +148,8 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
 }
 
+// MARK: - HandleValidation
+
 enum HandleValidation {
     static var allowedCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.").union(.decimalDigits)
 
@@ -151,6 +157,8 @@ enum HandleValidation {
         2 ... 256
     }
 }
+
+// MARK: - HandleChangeState
 
 /// This struct represents the current state of a handle
 /// change operation and performs necessary validation steps of
@@ -198,6 +206,8 @@ struct HandleChangeState {
         guard handle != currentHandle else { throw ValidationError.sameAsPrevious }
     }
 }
+
+// MARK: - ChangeHandleViewController
 
 final class ChangeHandleViewController: SettingsBaseTableViewController {
     private typealias HandleChange = L10n.Localizable.Self.Settings.AccountSection.Handle.Change
@@ -336,6 +346,8 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 }
 
+// MARK: ChangeHandleTableViewCellDelegate
+
 extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
     func tableViewCell(cell: ChangeHandleTableViewCell, shouldAllowEditingText text: String) -> Bool {
         do {
@@ -369,6 +381,8 @@ extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
         userProfile?.requestCheckHandleAvailability(handle: handle)
     }
 }
+
+// MARK: UserProfileUpdateObserver
 
 extension ChangeHandleViewController: UserProfileUpdateObserver {
     func didCheckAvailiabilityOfHandle(handle: String, available: Bool) {

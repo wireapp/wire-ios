@@ -18,6 +18,8 @@
 
 import WireSyncEngine
 
+// MARK: - SessionManagerLifeCycleObserver
+
 final class SessionManagerLifeCycleObserver {
     // MARK: - Public Property
 
@@ -48,6 +50,8 @@ final class SessionManagerLifeCycleObserver {
         observerTokens.append(destroyedSessionObserverToken)
     }
 }
+
+// MARK: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver
 
 extension SessionManagerLifeCycleObserver: SessionManagerCreatedSessionObserver,
     SessionManagerDestroyedSessionObserver {

@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - SettingsCellDescriptorType
+
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains
 // * |--Settings section (table view section) @c SettingsSectionDescriptorType
@@ -29,8 +31,6 @@ import WireDesign
 // * |   \..
 // * \...
 // *
-
-// MARK: - Protocols
 
 /// @abstract Top-level protocol for model object of settings. Describes the way cell should be created or how the value
 /// should be updated from the cell.
@@ -63,9 +63,13 @@ func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) ->
 
 typealias PreviewGeneratorType = (SettingsCellDescriptorType) -> SettingsCellPreview
 
+// MARK: - SettingsGroupCellDescriptorType
+
 protocol SettingsGroupCellDescriptorType: SettingsCellDescriptorType {
     var viewController: UIViewController? { get set }
 }
+
+// MARK: - SettingsSectionDescriptorType
 
 protocol SettingsSectionDescriptorType: AnyObject {
     var cellDescriptors: [SettingsCellDescriptorType] { get }
@@ -81,10 +85,14 @@ extension SettingsSectionDescriptorType {
     }
 }
 
+// MARK: - InternalScreenStyle
+
 enum InternalScreenStyle {
     case plain
     case grouped
 }
+
+// MARK: - SettingsInternalGroupCellDescriptorType
 
 protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorType {
     var items: [SettingsSectionDescriptorType] { get }
@@ -101,19 +109,25 @@ extension SettingsInternalGroupCellDescriptorType {
     }
 }
 
+// MARK: - SettingsExternalScreenCellDescriptorType
+
 protocol SettingsExternalScreenCellDescriptorType: SettingsGroupCellDescriptorType {
     var presentationAction: () -> (UIViewController?) { get }
 }
+
+// MARK: - SettingsPropertyCellDescriptorType
 
 protocol SettingsPropertyCellDescriptorType: SettingsCellDescriptorType {
     var settingsProperty: SettingsProperty { get }
 }
 
+// MARK: - SettingsControllerGeneratorType
+
 protocol SettingsControllerGeneratorType {
     func generateViewController() -> UIViewController?
 }
 
-// MARK: - Classes
+// MARK: - SettingsSectionDescriptor
 
 class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     let cellDescriptors: [SettingsCellDescriptorType]
@@ -164,6 +178,8 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
         self.visibilityAction = visibilityAction
     }
 }
+
+// MARK: - SettingsGroupCellDescriptor
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self

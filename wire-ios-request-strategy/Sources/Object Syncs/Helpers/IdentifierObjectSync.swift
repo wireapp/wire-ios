@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - IdentifierObjectSyncTranscoder
+
 /// Delegate protocol which the user of the IdentifierObjectSync class should implement.
 
 public protocol IdentifierObjectSyncTranscoder: AnyObject {
@@ -30,10 +32,14 @@ public protocol IdentifierObjectSyncTranscoder: AnyObject {
     func didReceive(response: ZMTransportResponse, for identifiers: Set<T>, completionHandler: @escaping () -> Void)
 }
 
+// MARK: - IdentifierObjectSyncDelegate
+
 public protocol IdentifierObjectSyncDelegate: AnyObject {
     func didFinishSyncingAllObjects()
     func didFailToSyncAllObjects()
 }
+
+// MARK: - IdentifierObjectSync
 
 /// Class for syncing objects based on an identifier.
 

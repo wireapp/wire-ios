@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 import WireSystem
 
+// MARK: - ConversationDeletionError
+
 public enum ConversationDeletionError: Error {
     case unknown, invalidOperation, conversationNotFound
 
@@ -101,6 +103,8 @@ extension ZMConversation {
         transportSession.enqueueOneTime(request)
     }
 }
+
+// MARK: - ConversationDeletionRequestFactory
 
 enum ConversationDeletionRequestFactory {
     static func requestForDeletingTeamConversation(_ conversation: ZMConversation) -> ZMTransportRequest? {

@@ -23,6 +23,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDomain
 
+// MARK: - ConversationLabelsRepositoryTests
+
 final class ConversationLabelsRepositoryTests: XCTestCase {
     var sut: ConversationLabelsRepository!
     var userPropertiesAPI: MockUserPropertiesAPI!
@@ -284,6 +286,8 @@ extension ConversationLabelsRepositoryTests {
         conversation3.remoteIdentifier = Scaffolding.updatedConversationLabel1.conversationIDs[2]
     }
 }
+
+// MARK: - Scaffolding
 
 private enum Scaffolding {
     static let conversationLabel1 = ConversationLabel(

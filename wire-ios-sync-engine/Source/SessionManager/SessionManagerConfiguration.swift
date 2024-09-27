@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - SessionManagerConfiguration
+
 /// SessionManagerConfiguration is configuration class which can be used when initializing a SessionManager configure
 /// change the default behaviour.
 
@@ -156,7 +158,7 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     }
 }
 
-// MARK: - Coding Key
+// MARK: SessionManagerConfiguration.CodingKeys
 
 extension SessionManagerConfiguration {
     enum CodingKeys: String, CodingKey {

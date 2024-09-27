@@ -25,6 +25,8 @@ import WireFoundation
 import WireSyncEngine
 import Ziphy
 
+// MARK: - GiphySearchViewControllerDelegate
+
 protocol GiphySearchViewControllerDelegate: AnyObject {
     func giphySearchViewController(
         _ giphySearchViewController: GiphySearchViewController,
@@ -32,6 +34,8 @@ protocol GiphySearchViewControllerDelegate: AnyObject {
         searchTerm: String
     )
 }
+
+// MARK: - GiphySearchViewController
 
 final class GiphySearchViewController: VerticalColumnCollectionViewController {
     typealias Giphy = L10n.Localizable.Giphy
@@ -355,7 +359,7 @@ extension GiphySearchViewController {
     }
 }
 
-// MARK: - GiphyConfirmationViewControllerDelegate
+// MARK: GiphyConfirmationViewControllerDelegate
 
 extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
     func giphyConfirmationViewController(
@@ -366,6 +370,8 @@ extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
     }
 }
 
+// MARK: UISearchResultsUpdating
+
 extension GiphySearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text else { return }
@@ -373,6 +379,8 @@ extension GiphySearchViewController: UISearchResultsUpdating {
         performSearchAfter(delay: 0.3)
     }
 }
+
+// MARK: UISearchBarDelegate
 
 extension GiphySearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_: UISearchBar) {

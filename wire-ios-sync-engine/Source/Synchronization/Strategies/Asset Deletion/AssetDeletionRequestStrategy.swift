@@ -44,6 +44,8 @@ extension AssetRequestFactory {
     }
 }
 
+// MARK: - AssetDeletionRequestStrategy
+
 public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
     private var requestSync: ZMSingleRequestSync!
     private let identifierProvider: AssetDeletionIdentifierProviderType

@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - TeamDeleteEventProcessorProtocol
+
 /// Process team delete events.
 
 protocol TeamDeleteEventProcessorProtocol {
@@ -25,6 +27,8 @@ protocol TeamDeleteEventProcessorProtocol {
 
     func processEvent() async throws
 }
+
+// MARK: - TeamDeleteEventProcessor
 
 struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
     func processEvent() async throws {

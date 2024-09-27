@@ -19,9 +19,13 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - ClientRemovalUIError
+
 enum ClientRemovalUIError: Error {
     case noPasswordProvided
 }
+
+// MARK: - ClientRemovalObserverDelegate
 
 protocol ClientRemovalObserverDelegate: AnyObject {
     func present(
@@ -30,6 +34,8 @@ protocol ClientRemovalObserverDelegate: AnyObject {
     )
     func setIsLoadingViewVisible(_ clientRemovalObserver: ClientRemovalObserver, isVisible: Bool)
 }
+
+// MARK: - ClientRemovalObserver
 
 final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
     var userClientToDelete: UserClient

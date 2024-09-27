@@ -22,6 +22,8 @@ public let ZMReactionUnicodeValueKey    = "unicodeValue"
 public let ZMReactionMessageValueKey    = "message"
 public let ZMReactionUsersValueKey      = "users"
 
+// MARK: - TransportReaction
+
 @objc
 public enum TransportReaction: UInt32 {
     case none  = 0
@@ -32,6 +34,8 @@ public enum TransportReaction: UInt32 {
     case beamingFace
     case frowningFace
 }
+
+// MARK: - Reaction
 
 @objcMembers
 open class Reaction: ZMManagedObject {

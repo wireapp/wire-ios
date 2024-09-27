@@ -23,10 +23,14 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
 
+// MARK: - DeveloperToolsContext
+
 /// Data Structure containing contextual information currently displayed view
 struct DeveloperToolsContext {
     var currentUserClient: UserClient?
 }
+
+// MARK: - DeveloperToolsViewModel
 
 final class DeveloperToolsViewModel: ObservableObject {
     static var context = DeveloperToolsContext()
@@ -399,6 +403,8 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 }
 
+// MARK: - PushToken.TokenType + CustomStringConvertible
+
 extension PushToken.TokenType: CustomStringConvertible {
     public var description: String {
         switch self {
@@ -410,6 +416,8 @@ extension PushToken.TokenType: CustomStringConvertible {
         }
     }
 }
+
+// MARK: - PushToken + CustomDebugStringConvertible
 
 extension PushToken: CustomDebugStringConvertible {
     public var debugDescription: String {

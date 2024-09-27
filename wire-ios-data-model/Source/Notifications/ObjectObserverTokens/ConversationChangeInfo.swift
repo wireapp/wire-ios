@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ZMConversation + ObjectInSnapshot
+
 extension ZMConversation: ObjectInSnapshot {
     @objc public static var observableKeys: Set<String> {
         [
@@ -58,6 +60,8 @@ extension ZMConversation: ObjectInSnapshot {
         .ConversationChange
     }
 }
+
+// MARK: - ConversationChangeInfo
 
 ////////////////////
 ////
@@ -228,6 +232,8 @@ public final class ConversationChangeInfo: ObjectChangeInfo {
         ConversationChangeInfo(object: conversation, changes: changes)
     }
 }
+
+// MARK: - ZMConversationObserver
 
 @objc
 public protocol ZMConversationObserver: NSObjectProtocol {

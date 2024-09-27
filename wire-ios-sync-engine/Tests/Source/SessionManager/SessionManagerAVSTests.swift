@@ -20,6 +20,8 @@ import WireTesting
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - TestAVSLogger
+
 class TestAVSLogger: AVSLogger {
     var messages: [String] = []
 
@@ -27,6 +29,8 @@ class TestAVSLogger: AVSLogger {
         messages.append(message)
     }
 }
+
+// MARK: - SessionManagerAVSTests
 
 class SessionManagerAVSTests: ZMTBaseTest {
     func testLoggersReceiveLogMessages() {

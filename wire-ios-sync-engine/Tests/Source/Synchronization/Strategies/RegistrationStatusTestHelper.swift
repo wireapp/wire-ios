@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireSyncEngine
 
+// MARK: - TestRegistrationStatus
+
 class TestRegistrationStatus: WireSyncEngine.RegistrationStatusProtocol {
     var handleErrorCalled = 0
     var handleErrorError: Error?
@@ -34,6 +36,8 @@ class TestRegistrationStatus: WireSyncEngine.RegistrationStatusProtocol {
 
     var phase: RegistrationPhase? = .none
 }
+
+// MARK: - RegistrationStatusStrategyTestHelper
 
 protocol RegistrationStatusStrategyTestHelper {
     var registrationStatus: TestRegistrationStatus! { get }

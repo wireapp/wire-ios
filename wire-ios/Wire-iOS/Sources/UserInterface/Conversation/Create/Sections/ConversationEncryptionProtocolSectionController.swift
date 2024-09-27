@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ConversationEncryptionProtocolSectionController
+
 final class ConversationEncryptionProtocolSectionController: ConversationCreateSectionController {
     typealias Cell = ConversationCreateEncryptionProtocolCell
 

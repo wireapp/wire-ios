@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - CallActionsViewInputType
+
 // This protocol describes the input for a `CallActionsView`.
 protocol CallActionsViewInputType: CallTypeProvider {
     var canToggleMediaType: Bool { get }

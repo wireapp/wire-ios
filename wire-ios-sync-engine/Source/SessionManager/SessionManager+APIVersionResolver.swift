@@ -20,6 +20,8 @@ import Foundation
 
 private let log = ZMSLog(tag: "APIVersion")
 
+// MARK: - SessionManager + APIVersionResolverDelegate
+
 extension SessionManager: APIVersionResolverDelegate {
     public func resolveAPIVersion(completion: @escaping (Error?) -> Void = { _ in }) {
         if apiVersionResolver == nil {

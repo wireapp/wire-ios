@@ -43,6 +43,8 @@ extension URL {
     }
 }
 
+// MARK: - LinkOpeningOption
+
 protocol LinkOpeningOption {
     associatedtype ApplicationOptionEnum: RawRepresentable where ApplicationOptionEnum.RawValue == Int
 

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - MulticastDelegate
+
 class MulticastDelegate<T: Any>: NSObject {
     private let delegates = NSHashTable<AnyObject>(options: .weakMemory, capacity: 0)
 
@@ -37,7 +39,11 @@ class MulticastDelegate<T: Any>: NSObject {
     }
 }
 
+// MARK: - AssetCollectionMulticastDelegate
+
 final class AssetCollectionMulticastDelegate: MulticastDelegate<AssetCollectionDelegate> {}
+
+// MARK: AssetCollectionDelegate
 
 extension AssetCollectionMulticastDelegate: AssetCollectionDelegate {
     func assetCollectionDidFetch(
@@ -56,6 +62,8 @@ extension AssetCollectionMulticastDelegate: AssetCollectionDelegate {
         }
     }
 }
+
+// MARK: - AssetCollectionWrapper
 
 final class AssetCollectionWrapper: NSObject {
     let conversation: GroupDetailsConversationType

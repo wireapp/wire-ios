@@ -46,6 +46,8 @@ func XCTAssertArrayEqual(
     XCTAssertEqual(classes, expectedClasses, file: file, line: line)
 }
 
+// MARK: - ConversationMessageSnapshotTestCase
+
 class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
     var userSession: UserSessionMock!
 

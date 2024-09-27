@@ -21,13 +21,19 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - CollectionCellDelegate
+
 protocol CollectionCellDelegate: AnyObject {
     func collectionCell(_ cell: CollectionCell, performAction: MessageAction)
 }
 
+// MARK: - CollectionCellMessageChangeDelegate
+
 protocol CollectionCellMessageChangeDelegate: AnyObject {
     func messageDidChange(_ cell: CollectionCell, changeInfo: MessageChangeInfo)
 }
+
+// MARK: - CollectionCell
 
 class CollectionCell: UICollectionViewCell {
     var actionController: ConversationMessageActionController?
@@ -231,12 +237,16 @@ class CollectionCell: UICollectionViewCell {
     }
 }
 
+// MARK: ZMMessageObserver
+
 extension CollectionCell: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         updateForMessage(changeInfo: changeInfo)
         messageChangeDelegate?.messageDidChange(self, changeInfo: changeInfo)
     }
 }
+
+// MARK: MessageActionResponder
 
 extension CollectionCell: MessageActionResponder {
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {

@@ -19,9 +19,13 @@
 import UIKit
 import WireDataModel
 
+// MARK: - GroupDetailsUserDetailPresenter
+
 protocol GroupDetailsUserDetailPresenter: AnyObject {
     func presentDetails(for user: UserType)
 }
+
+// MARK: - GroupDetailsSectionControllerDelegate
 
 protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter, AnyObject {
     func presentFullParticipantsList(
@@ -29,6 +33,8 @@ protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter,
         in conversation: GroupDetailsConversationType
     )
 }
+
+// MARK: - GroupDetailsSectionController
 
 class GroupDetailsSectionController: NSObject, CollectionViewSectionController {
     var isHidden: Bool {

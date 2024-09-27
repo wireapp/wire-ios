@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ConversationCreateReceiptsSectionController
+
 final class ConversationCreateReceiptsSectionController: ConversationCreateSectionController {
     typealias Cell = ConversationCreateReceiptsCell
 

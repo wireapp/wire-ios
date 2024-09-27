@@ -26,6 +26,8 @@ import WireUtilitiesSupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
+// MARK: - MockAuthenticatedSessionFactory
+
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
     let transportSession: TransportSessionType
 
@@ -99,6 +101,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         return userSession
     }
 }
+
+// MARK: - MockUnauthenticatedSessionFactory
 
 final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
     let transportSession: UnauthenticatedTransportSessionProtocol
@@ -773,6 +777,8 @@ extension IntegrationTest {
     }
 }
 
+// MARK: - IntegrationTest + SessionManagerDelegate
+
 extension IntegrationTest: SessionManagerDelegate {
     public var isInAuthenticatedAppState: Bool {
         appState == "authenticated"
@@ -862,6 +868,8 @@ extension IntegrationTest: SessionManagerDelegate {
         // no op
     }
 }
+
+// MARK: - MockLoginDelegate
 
 @objcMembers
 public class MockLoginDelegate: NSObject, LoginDelegate {

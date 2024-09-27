@@ -19,6 +19,8 @@
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - CallGridConfiguration
+
 struct CallGridConfiguration: CallGridViewControllerInput, Equatable {
     fileprivate static let maxActiveSpeakers = 4
 

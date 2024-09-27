@@ -22,10 +22,14 @@ extension NSNotification.Name {
     public static let requestAvailableNotification = RequestAvailableNotification.name
 }
 
+// MARK: - RequestAvailableObserver
+
 @objc(ZMRequestAvailableObserver)
 public protocol RequestAvailableObserver: NSObjectProtocol {
     func newRequestsAvailable()
 }
+
+// MARK: - RequestAvailableNotification
 
 /// ZMRequestAvailableNotification is used by transport to signal the operation loop that
 /// there are new potential requests available to process.

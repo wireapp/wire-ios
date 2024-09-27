@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ClientMessageRequestStrategy
+
 public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
@@ -82,7 +84,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     }
 }
 
-// MARK: - Inserted object sync transcoder
+// MARK: InsertedObjectSyncTranscoder
 
 extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMClientMessage
@@ -152,7 +154,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     }
 }
 
-// MARK: - Event processing
+// MARK: ZMEventConsumer
 
 extension ClientMessageRequestStrategy: ZMEventConsumer {
     public func processEvents(
@@ -199,7 +201,7 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
     }
 }
 
-// MARK: - Helpers
+// MARK: - UpdateEventWithNonce
 
 private struct UpdateEventWithNonce {
     let event: ZMUpdateEvent

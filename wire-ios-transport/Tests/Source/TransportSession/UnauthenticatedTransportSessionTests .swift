@@ -19,6 +19,8 @@
 import  WireTesting
 @testable import WireTransport
 
+// MARK: - MockTask
+
 private final class MockTask: DataTaskProtocol {
     var resumeCallCount = 0
 
@@ -26,6 +28,8 @@ private final class MockTask: DataTaskProtocol {
         resumeCallCount += 1
     }
 }
+
+// MARK: - MockURLSession
 
 private final class MockURLSession: SessionProtocol {
     var recordedRequest: URLRequest?
@@ -46,6 +50,8 @@ private final class MockURLSession: SessionProtocol {
     }
 }
 
+// MARK: - MockReachability
+
 private final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
     let mayBeReachable = true
     let isMobileConnection = true
@@ -59,6 +65,8 @@ private final class MockReachability: NSObject, ReachabilityProvider, TearDownCa
     }
 }
 
+// MARK: - MockCertificateTrust
+
 @objcMembers
 final class MockCertificateTrust: NSObject, BackendTrustProvider {
     var isTrustingServer = true
@@ -67,6 +75,8 @@ final class MockCertificateTrust: NSObject, BackendTrustProvider {
         isTrustingServer
     }
 }
+
+// MARK: - UnauthenticatedTransportSessionTests
 
 final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
     private var sut: UnauthenticatedTransportSession!
@@ -290,6 +300,8 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         XCTAssertEqual(task.resumeCallCount, 0)
     }
 }
+
+// MARK: - TestError
 
 enum TestError: Error {
     case genericError

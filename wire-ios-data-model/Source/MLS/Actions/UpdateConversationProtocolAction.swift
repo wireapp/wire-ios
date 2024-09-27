@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UpdateConversationProtocolAction
+
 public struct UpdateConversationProtocolAction: EntityAction {
     // MARK: - Properties
 

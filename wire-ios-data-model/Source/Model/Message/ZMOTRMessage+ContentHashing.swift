@@ -18,11 +18,15 @@
 
 import Foundation
 
+// MARK: - ContentHashing
+
 @objc
 protocol ContentHashing {
     /// SHA-256 hash of the message content (text, image, location, ...)
     var hashOfContent: Data? { get }
 }
+
+// MARK: - ZMOTRMessage + ContentHashing
 
 @objc
 extension ZMOTRMessage: ContentHashing {

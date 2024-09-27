@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ConversationCreateErrorSectionController
+
 final class ConversationCreateErrorSectionController: NSObject, CollectionViewSectionController {
     typealias Cell = ConversationCreateErrorCell
 

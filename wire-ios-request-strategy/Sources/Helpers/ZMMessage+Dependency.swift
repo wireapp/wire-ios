@@ -21,7 +21,7 @@ import WireDataModel
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
-// MARK: - Dependent objects
+// MARK: - ZMOTRMessage + OTREntity
 
 extension ZMOTRMessage: OTREntity {
     public var context: NSManagedObjectContext {
@@ -56,6 +56,8 @@ extension ZMOTRMessage: OTREntity {
         hiddenInConversation != nil
     }
 }
+
+// MARK: - BlockingMessage
 
 /// Message that can block following messages
 @objc
@@ -117,6 +119,8 @@ extension ZMMessage {
         return blockingMessage
     }
 }
+
+// MARK: - ZMMessage + BlockingMessage
 
 extension ZMMessage: BlockingMessage {
     var shouldBlockFurtherMessages: Bool {

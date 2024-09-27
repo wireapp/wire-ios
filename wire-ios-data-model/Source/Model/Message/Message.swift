@@ -95,6 +95,8 @@ extension ConversationCompositeMessage {
     }
 }
 
+// MARK: - Message
+
 /// The `ZMConversationMessage` protocol can not be extended in Objective-C,
 /// thus this helper class provides access to commonly used properties.
 public class Message: NSObject {

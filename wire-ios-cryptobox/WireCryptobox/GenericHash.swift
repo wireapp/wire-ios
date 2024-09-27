@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - GenericHash
+
 /// Encapsulates the hash value.
 
 public struct GenericHash: Hashable {
@@ -28,11 +30,15 @@ public struct GenericHash: Hashable {
     }
 }
 
+// MARK: CustomStringConvertible
+
 extension GenericHash: CustomStringConvertible {
     public var description: String {
         "GenericHash \(hashValue)"
     }
 }
+
+// MARK: - GenericHashBuilder
 
 /// This class is designed to generate the hash value for the given input data.
 /// Sample usage:

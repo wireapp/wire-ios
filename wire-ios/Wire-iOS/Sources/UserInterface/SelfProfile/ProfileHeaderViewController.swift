@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ProfileHeaderViewController
+
 final class ProfileHeaderViewController: UIViewController {
     /// The options to customize the appearance and behavior of the view.
     private let options: Options
@@ -380,7 +382,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 }
 
-// MARK: - UserStatusViewControllerDelegate
+// MARK: UserStatusViewControllerDelegate
 
 extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
@@ -392,7 +394,7 @@ extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
     }
 }
 
-// MARK: - ZMUserObserving
+// MARK: UserObserving
 
 extension ProfileHeaderViewController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
@@ -413,7 +415,7 @@ extension ProfileHeaderViewController: UserObserving {
     }
 }
 
-// MARK: - TeamObserver
+// MARK: TeamObserver
 
 extension ProfileHeaderViewController: TeamObserver {
     func teamDidChange(_ changeInfo: TeamChangeInfo) {

@@ -20,6 +20,8 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// MARK: - TeamRepositoryProtocol
+
 /// Facilitate access to team related domain objects.
 ///
 /// A repository provides an abstraction for the access and storage
@@ -43,6 +45,8 @@ protocol TeamRepositoryProtocol {
 
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus
 }
+
+// MARK: - TeamRepository
 
 final class TeamRepository: TeamRepositoryProtocol {
     private let selfTeamID: UUID

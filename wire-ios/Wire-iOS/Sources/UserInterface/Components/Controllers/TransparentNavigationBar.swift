@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - TransparentBackgroundNavigationBar
+
 protocol TransparentBackgroundNavigationBar {
     func configureTransparentBackground()
 }
@@ -29,6 +31,8 @@ extension TransparentBackgroundNavigationBar where Self: DefaultNavigationBar {
         shadowImage = UIImage()
     }
 }
+
+// MARK: - TransparentNavigationBar
 
 final class TransparentNavigationBar: DefaultNavigationBar, TransparentBackgroundNavigationBar {
     override func configureBackground() {

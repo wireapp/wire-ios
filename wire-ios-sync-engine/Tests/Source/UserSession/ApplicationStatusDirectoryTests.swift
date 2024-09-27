@@ -20,6 +20,8 @@ import Foundation
 import WireDataModelSupport
 @testable import WireSyncEngine
 
+// MARK: - ApplicationStatusDirectoryTests
+
 class ApplicationStatusDirectoryTests: MessagingTest {
     var sut: ApplicationStatusDirectory!
 
@@ -80,6 +82,8 @@ class ApplicationStatusDirectoryTests: MessagingTest {
         XCTAssertFalse(sut.operationStatus.hasOngoingCall)
     }
 }
+
+// MARK: ZMRequestCancellation
 
 extension ApplicationStatusDirectoryTests: ZMRequestCancellation {
     func cancelTask(with taskIdentifier: ZMTaskIdentifier) {

@@ -20,6 +20,8 @@ import Foundation
 
 let ZMParticipantRoleRoleValueKey = #keyPath(ParticipantRole.role)
 
+// MARK: - ParticipantRole
+
 @objcMembers
 public final class ParticipantRole: ZMManagedObject {
     /// - Note: conversation is optional dbut we should make sure it's always created with one using

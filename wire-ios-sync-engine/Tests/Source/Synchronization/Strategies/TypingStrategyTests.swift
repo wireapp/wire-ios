@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - MockTyping
+
 class MockTyping: WireSyncEngine.Typing {
     var didTearDown = false
     var typingUsers: [ZMConversation: Set<ZMUser>] = [:]
@@ -47,6 +49,8 @@ class MockTyping: WireSyncEngine.Typing {
     }
 }
 
+// MARK: - MockClientRegistrationDelegate
+
 class MockClientRegistrationDelegate: NSObject, ClientRegistrationDelegate {
     var mockReadiness = true
     var clientIsReadyForRequests: Bool {
@@ -56,9 +60,13 @@ class MockClientRegistrationDelegate: NSObject, ClientRegistrationDelegate {
     public func didDetectCurrentClientDeletion() {}
 }
 
+// MARK: - TestTyping
+
 enum TestTyping {
     case noDelay, delay, clearTranscoder, appendMessage
 }
+
+// MARK: - TypingStrategyTests
 
 final class TypingStrategyTests: MessagingTest {
     var sut: TypingStrategy!
@@ -821,6 +829,8 @@ extension TypingStrategyTests {
         }
     }
 }
+
+// MARK: - TypingEventTests
 
 class TypingEventTests: MessagingTest {
     var originalTimeout: TimeInterval = 0.0

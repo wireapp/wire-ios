@@ -21,6 +21,8 @@ import Wire_Notification_Service_Extension
 import WireNotificationEngine
 import XCTest
 
+// MARK: - LegacyNotificationServiceTests
+
 final class LegacyNotificationServiceTests: XCTestCase {
     private var sut: LegacyNotificationService!
     private var request: UNNotificationRequest!

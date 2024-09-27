@@ -20,9 +20,13 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - CallAccessoryViewControllerDelegate
+
 protocol CallAccessoryViewControllerDelegate: AnyObject {
     func callAccessoryViewControllerDidSelectShowMore(viewController: CallAccessoryViewController)
 }
+
+// MARK: - CallAccessoryViewController
 
 final class CallAccessoryViewController: UIViewController, CallParticipantsListViewControllerDelegate {
     weak var delegate: CallAccessoryViewControllerDelegate?

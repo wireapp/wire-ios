@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - OneOnOneProtocolSelectorInterface
+
 // sourcery: AutoMockable
 public protocol OneOnOneProtocolSelectorInterface {
     func getProtocolForUser(
@@ -26,9 +28,13 @@ public protocol OneOnOneProtocolSelectorInterface {
     ) async throws -> MessageProtocol?
 }
 
+// MARK: - OneOnOneProtocolSelectorError
+
 public enum OneOnOneProtocolSelectorError: Error {
     case userNotFound
 }
+
+// MARK: - OneOnOneProtocolSelector
 
 public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
     public init() {}

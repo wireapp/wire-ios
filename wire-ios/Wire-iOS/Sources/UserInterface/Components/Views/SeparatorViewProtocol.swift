@@ -18,12 +18,21 @@
 
 import UIKit
 
+// MARK: - ViewWithContentView
+
 protocol ViewWithContentView {
     var contentView: UIView { get }
 }
 
+// MARK: - UICollectionViewCell + ViewWithContentView
+
 extension UICollectionViewCell: ViewWithContentView {}
+
+// MARK: - UITableViewCell + ViewWithContentView
+
 extension UITableViewCell: ViewWithContentView {}
+
+// MARK: - SeparatorViewProtocol
 
 protocol SeparatorViewProtocol: AnyObject {
     var separator: UIView { get }

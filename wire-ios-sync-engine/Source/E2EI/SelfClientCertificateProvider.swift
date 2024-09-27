@@ -18,11 +18,15 @@
 
 import Foundation
 
+// MARK: - SelfClientCertificateProviderProtocol
+
 // sourcery: AutoMockable
 public protocol SelfClientCertificateProviderProtocol {
     var hasCertificate: Bool { get async }
     func getCertificate() async throws -> E2eIdentityCertificate?
 }
+
+// MARK: - SelfClientCertificateProvider
 
 public final class SelfClientCertificateProvider: SelfClientCertificateProviderProtocol {
     // MARK: - Properties

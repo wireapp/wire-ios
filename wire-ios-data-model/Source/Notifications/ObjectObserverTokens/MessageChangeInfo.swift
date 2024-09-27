@@ -20,7 +20,7 @@ import Foundation
 
 private var zmLog = ZMSLog(tag: "MessageChangeInfo")
 
-// MARK: Message observing
+// MARK: - MessageKey
 
 enum MessageKey: String {
     case previewGenericMessage
@@ -28,6 +28,8 @@ enum MessageKey: String {
     case linkPreview
     case underlyingMessage
 }
+
+// MARK: - ZMMessage + ObjectInSnapshot
 
 extension ZMMessage: ObjectInSnapshot {
     @objc public class var observableKeys: Set<String> {
@@ -97,6 +99,8 @@ extension ZMSystemMessage {
         return keys.union(additionalKeys)
     }
 }
+
+// MARK: - MessageChangeInfo
 
 @objcMembers
 public final class MessageChangeInfo: ObjectChangeInfo {
@@ -213,6 +217,8 @@ public final class MessageChangeInfo: ObjectChangeInfo {
 
     public let message: ZMMessage
 }
+
+// MARK: - ZMMessageObserver
 
 @objc
 public protocol ZMMessageObserver: NSObjectProtocol {

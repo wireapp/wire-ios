@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - DirectorySectionController
+
 final class DirectorySectionController: SearchSectionController {
     var suggestions: [ZMSearchUser] = []
     weak var delegate: SearchSectionControllerDelegate?
@@ -103,6 +105,8 @@ final class DirectorySectionController: SearchSectionController {
         delegate?.searchSectionController(self, didSelectUser: user, at: indexPath)
     }
 }
+
+// MARK: UserObserving
 
 extension DirectorySectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {

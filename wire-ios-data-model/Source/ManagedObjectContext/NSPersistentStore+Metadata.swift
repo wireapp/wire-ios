@@ -18,21 +18,49 @@
 
 import Foundation
 
-// MARK: - Public accessors
+// MARK: - PersistableInMetadata
 
 @objc(ZMPersistableMetadata)
 public protocol PersistableInMetadata: NSObjectProtocol {}
 
+// MARK: - NSString + PersistableInMetadata
+
 extension NSString: PersistableInMetadata {}
+
+// MARK: - NSNumber + PersistableInMetadata
+
 extension NSNumber: PersistableInMetadata {}
+
+// MARK: - NSDate + PersistableInMetadata
+
 extension NSDate: PersistableInMetadata {}
+
+// MARK: - NSData + PersistableInMetadata
+
 extension NSData: PersistableInMetadata {}
 
+// MARK: - SwiftPersistableInMetadata
+
 public protocol SwiftPersistableInMetadata {}
+
+// MARK: - String + SwiftPersistableInMetadata
+
 extension String: SwiftPersistableInMetadata {}
+
+// MARK: - Date + SwiftPersistableInMetadata
+
 extension Date: SwiftPersistableInMetadata {}
+
+// MARK: - Data + SwiftPersistableInMetadata
+
 extension Data: SwiftPersistableInMetadata {}
+
+// MARK: - Array + SwiftPersistableInMetadata
+
 extension Array: SwiftPersistableInMetadata {}
+
+// MARK: - Int + SwiftPersistableInMetadata
+
 extension Int: SwiftPersistableInMetadata {}
 
 // swiftlint:disable:next todo_requires_jira_link

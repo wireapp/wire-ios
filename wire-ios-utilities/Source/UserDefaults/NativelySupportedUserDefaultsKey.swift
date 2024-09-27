@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - NativelySupportedUserDefaultsKey
+
 /// With this protocol and the extension to `UserDefaults` we can have "typed" user defaults values.
 /// Based on the `ValueType` associated type the implementation in the extension prevents storing other types then the
 /// designated one and casts values on reading.

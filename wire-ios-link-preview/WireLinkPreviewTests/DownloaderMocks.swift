@@ -18,6 +18,8 @@
 
 @testable import WireLinkPreview
 
+// MARK: - MockPreviewDownloader
+
 final class MockPreviewDownloader: PreviewDownloaderType {
     typealias Completion = (OpenGraphData?) -> Void
 
@@ -38,6 +40,8 @@ final class MockPreviewDownloader: PreviewDownloaderType {
         tornDown = true
     }
 }
+
+// MARK: - MockImageDownloader
 
 final class MockImageDownloader: ImageDownloaderType {
     typealias ImageCompletion = (Data?) -> Void

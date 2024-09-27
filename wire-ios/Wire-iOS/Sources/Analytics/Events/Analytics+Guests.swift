@@ -38,6 +38,8 @@ extension Analytics {
     }
 }
 
+// MARK: - Event
+
 protocol Event {
     var name: String { get }
     var attributes: [AnyHashable: Any]? { get }

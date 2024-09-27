@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserPropertiesAPIV0
+
 class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
     let httpClient: any HTTPClient
 
@@ -92,6 +94,8 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
     }
 }
 
+// MARK: - UserPropertiesResponseAPIV0
+
 protocol UserPropertiesResponseAPIV0: Decodable, ToAPIModelConvertible {
     var value: UserProperty { get }
 }
@@ -101,6 +105,8 @@ extension UserPropertiesResponseAPIV0 {
         value
     }
 }
+
+// MARK: - ReceiptModeResponseV0
 
 struct ReceiptModeResponseV0: UserPropertiesResponseAPIV0 {
     let value: UserProperty
@@ -112,6 +118,8 @@ struct ReceiptModeResponseV0: UserPropertiesResponseAPIV0 {
     }
 }
 
+// MARK: - TypeIndicatorModeResponseV0
+
 struct TypeIndicatorModeResponseV0: UserPropertiesResponseAPIV0 {
     let value: UserProperty
 
@@ -121,6 +129,8 @@ struct TypeIndicatorModeResponseV0: UserPropertiesResponseAPIV0 {
         self.value = .areTypingIndicatorsEnabled(value == 1)
     }
 }
+
+// MARK: - LabelsResponseV0
 
 struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
     let value: UserProperty
@@ -141,6 +151,8 @@ struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
         self.value = .conversationLabels(conversationLabels)
     }
 }
+
+// MARK: - LabelsPayloadV0
 
 struct LabelsPayloadV0: Decodable {
     let labels: [Label]

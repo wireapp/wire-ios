@@ -18,6 +18,8 @@
 
 import WireSyncEngine
 
+// MARK: - SectionListCellType
+
 protocol SectionListCellType: AnyObject {
     var sectionName: String? { get set }
     var obfuscatedSectionName: String? { get set }
@@ -31,6 +33,8 @@ extension SectionListCellType {
             .joined(separator: " - ")
     }
 }
+
+// MARK: - ConnectRequestsCell
 
 final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
     var sectionName: String?
@@ -122,6 +126,8 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         }
     }
 }
+
+// MARK: ZMConversationListObserver
 
 extension ConnectRequestsCell: ZMConversationListObserver {
     func conversationListDidChange(_: ConversationListChangeInfo) {

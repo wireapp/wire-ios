@@ -28,6 +28,8 @@ extension UIView {
 
 typealias TapHandler = (_ collapsed: Bool) -> Void
 
+// MARK: - ConversationListHeaderView
+
 final class ConversationListHeaderView: UICollectionReusableView {
     private let spacing: CGFloat = 8
 

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - MLSEventProcessing
+
 // sourcery: AutoMockable
 public protocol MLSEventProcessing {
     /// Updates the conversation's `mlsStatus`
@@ -70,6 +72,8 @@ public protocol MLSEventProcessing {
         context: NSManagedObjectContext
     ) async
 }
+
+// MARK: - MLSEventProcessor
 
 /// This class provides APIs to support processing of several events where MLS is involved.
 /// Such as updating the conversation's MLS status, handling welcome messages, or wiping MLS groups.

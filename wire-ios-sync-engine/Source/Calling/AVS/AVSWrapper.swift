@@ -21,6 +21,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
+// MARK: - AVSWrapperType
+
 /// The type of objects that can provide an interface to calling APIs.
 /// This provides strong typing, dependency injection and better testing.
 
@@ -51,6 +53,8 @@ public protocol AVSWrapperType {
     func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
     var isMuted: Bool { get set }
 }
+
+// MARK: - AVSWrapper
 
 /// An object that provides an interface to the AVS APIs.
 public final class AVSWrapper: AVSWrapperType {

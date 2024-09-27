@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ZiphyAnimatedImageList
+
 /// A list of images, sorted by their type. When decoding from JSON, only
 /// valid images will be included.
 
@@ -50,7 +52,7 @@ public struct ZiphyAnimatedImageList: Codable {
     }
 }
 
-// MARK: - Sequence
+// MARK: Sequence
 
 extension ZiphyAnimatedImageList: Sequence {
     public typealias RawValue = [ZiphyImageType: ZiphyAnimatedImage]

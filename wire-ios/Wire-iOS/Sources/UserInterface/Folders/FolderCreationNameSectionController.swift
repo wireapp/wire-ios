@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - FolderCreationNameSectionController
+
 final class FolderCreationNameSectionController: NSObject, CollectionViewSectionController {
     typealias Cell = FolderCreationNameCell
 

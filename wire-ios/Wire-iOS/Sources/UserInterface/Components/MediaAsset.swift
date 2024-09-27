@@ -18,6 +18,8 @@
 
 import FLAnimatedImage
 
+// MARK: - MediaAsset
+
 protocol MediaAsset: AnyObject {
     var imageData: Data? { get }
     var size: CGSize { get }
@@ -37,6 +39,8 @@ extension MediaAsset {
         }
     }
 }
+
+// MARK: - MediaAssetView
 
 protocol MediaAssetView: UIView {
     var mediaAsset: MediaAsset? { get set }
@@ -78,6 +82,8 @@ extension MediaAssetView where Self: FLAnimatedImageView {
     }
 }
 
+// MARK: - FLAnimatedImage + MediaAsset
+
 extension FLAnimatedImage: MediaAsset {
     var imageData: Data? {
         data
@@ -91,6 +97,8 @@ extension FLAnimatedImage: MediaAsset {
         false
     }
 }
+
+// MARK: - UIImageView + MediaAssetView
 
 extension UIImageView: MediaAssetView {
     var imageData: Data? {

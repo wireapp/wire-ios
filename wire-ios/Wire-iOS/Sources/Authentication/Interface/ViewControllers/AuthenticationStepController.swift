@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - AuthenticationStepController
+
 /// A view controller that can display the interface from an authentication step.
 
 class AuthenticationStepController: AuthenticationStepViewController {

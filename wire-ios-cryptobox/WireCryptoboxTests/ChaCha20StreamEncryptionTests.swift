@@ -21,6 +21,8 @@ import XCTest
 
 private typealias Sut = ChaCha20Poly1305.StreamEncryption
 
+// MARK: - ChaCha20StreamEncryptionFileHeaderTests
+
 class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
     func testThatWrittenFileHeaderCanBeRead() throws {
         // given
@@ -117,6 +119,8 @@ class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
         XCTFail("Expected error")
     }
 }
+
+// MARK: - ChaCha20StreamEncryptionTests
 
 class ChaCha20StreamEncryptionTests: XCTestCase {
     var directoryURL: URL!

@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - CallingActionButton
+
 class CallingActionButton: IconLabelButton {
     override init(input: IconLabelButtonInput, iconSize: StyleKitIcon.Size = .tiny) {
         super.init(input: input)
@@ -51,6 +53,8 @@ class CallingActionButton: IconLabelButton {
     }
 }
 
+// MARK: - EndCallButton
+
 final class EndCallButton: CallingActionButton {
     override func apply(_: CallActionAppearance) {
         let redColor = SemanticColors.Button.backgroundLikeHighlighted
@@ -59,6 +63,8 @@ final class EndCallButton: CallingActionButton {
         iconButton.setBackgroundImageColor(redColor, for: .normal)
     }
 }
+
+// MARK: - PickUpButton
 
 final class PickUpButton: CallingActionButton {
     override func apply(_: CallActionAppearance) {

@@ -22,6 +22,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - SecurityLevelView
+
 final class SecurityLevelView: UIView {
     // MARK: - Constants
 
@@ -172,7 +174,7 @@ extension SecurityClassification {
     }
 }
 
-// MARK: - Previews
+// MARK: - SecurityLevelView_Previews
 
 struct SecurityLevelView_Previews: PreviewProvider {
     static var previews: some View {
@@ -184,6 +186,8 @@ struct SecurityLevelView_Previews: PreviewProvider {
         }
     }
 }
+
+// MARK: - SecurityLevelViewRepresentable
 
 private struct SecurityLevelViewRepresentable: UIViewRepresentable {
     @State var classification: SecurityClassification?

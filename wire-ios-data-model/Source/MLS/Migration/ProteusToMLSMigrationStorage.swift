@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - ProteusToMLSMigrationStorageInterface
+
 // sourcery: AutoMockable
 protocol ProteusToMLSMigrationStorageInterface {
     var migrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus { get set }
 }
+
+// MARK: - ProteusToMLSMigrationStorage
 
 class ProteusToMLSMigrationStorage: ProteusToMLSMigrationStorageInterface {
     // MARK: - Properties

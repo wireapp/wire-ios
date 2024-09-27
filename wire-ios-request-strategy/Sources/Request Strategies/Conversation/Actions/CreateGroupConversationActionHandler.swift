@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - CreateGroupConversationAction
+
 public final class CreateGroupConversationAction: EntityAction {
     public typealias Result = NSManagedObjectID
 
@@ -77,6 +79,8 @@ public final class CreateGroupConversationAction: EntityAction {
         self.resultHandler = resultHandler
     }
 }
+
+// MARK: - CreateGroupConversationActionHandler
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
     private lazy var processor = ConversationEventPayloadProcessor(
@@ -226,6 +230,8 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         }
     }
 }
+
+// MARK: CreateGroupConversationActionHandler.ErrorResponse
 
 extension CreateGroupConversationActionHandler {
     // MARK: - Error response

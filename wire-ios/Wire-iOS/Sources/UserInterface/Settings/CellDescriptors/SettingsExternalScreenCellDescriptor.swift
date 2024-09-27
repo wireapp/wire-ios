@@ -20,17 +20,23 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - PresentationStyle
+
 enum PresentationStyle: Int {
     case modal
     case navigation
     case alert
 }
 
+// MARK: - AccessoryViewMode
+
 enum AccessoryViewMode: Int {
     case `default`
     case alwaysShow
     case alwaysHide
 }
+
+// MARK: - SettingsExternalScreenCellDescriptor
 
 class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptorType, SettingsControllerGeneratorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self

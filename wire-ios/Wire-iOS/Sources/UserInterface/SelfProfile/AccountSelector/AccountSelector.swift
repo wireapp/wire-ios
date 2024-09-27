@@ -18,6 +18,8 @@
 
 import WireSyncEngine
 
+// MARK: - AccountSelector
+
 // sourcery: AutoMockable
 public protocol AccountSelector {
     var currentAccount: Account? { get }

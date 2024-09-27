@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - LinkMetadata
+
 @objcMembers
 open class LinkMetadata: NSObject {
     public let originalURLString: String
@@ -57,11 +59,15 @@ open class LinkMetadata: NSObject {
     }
 }
 
+// MARK: - ArticleMetadata
+
 @objcMembers
 public final class ArticleMetadata: LinkMetadata {
     public var title: String?
     public var summary: String?
 }
+
+// MARK: - FoursquareLocationMetadata
 
 @objcMembers
 public final class FoursquareLocationMetadata: LinkMetadata {
@@ -71,11 +77,15 @@ public final class FoursquareLocationMetadata: LinkMetadata {
     public var longitude: Float?
 }
 
+// MARK: - InstagramPictureMetadata
+
 @objcMembers
 public final class InstagramPictureMetadata: LinkMetadata {
     public var title: String?
     public var subtitle: String?
 }
+
+// MARK: - TwitterStatusMetadata
 
 @objcMembers
 public final class TwitterStatusMetadata: LinkMetadata {

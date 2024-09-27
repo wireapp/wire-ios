@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+// MARK: - AccentColorKey
+
 private struct AccentColorKey: EnvironmentKey {
     static let defaultValue: AccentColor = .default
 }

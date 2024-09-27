@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - UpdateEventSource
+
 public enum UpdateEventSource: String {
     case pushChannel
     case notificationsStream

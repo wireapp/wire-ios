@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ZMConversation + ShareDestination
+
 extension ZMConversation: ShareDestination {
     var showsGuestIcon: Bool {
         guard let selfUser = ZMUser.selfUser() else {
@@ -56,6 +58,8 @@ extension [ZMConversation] {
         }
     }
 }
+
+// MARK: - ZMMessage + Shareable
 
 extension ZMMessage: Shareable {
     typealias I = ZMConversation
@@ -159,6 +163,8 @@ extension ConversationContentViewController {
         }
     }
 }
+
+// MARK: - ConversationContentViewController + UIAdaptivePresentationControllerDelegate
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
     func adaptivePresentationStyle(

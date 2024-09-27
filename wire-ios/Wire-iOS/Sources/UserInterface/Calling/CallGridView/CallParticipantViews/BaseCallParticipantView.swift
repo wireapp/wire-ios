@@ -22,6 +22,8 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - BaseCallParticipantView
+
 class BaseCallParticipantView: OrientableView {
     // MARK: - Public Properties
 
@@ -306,7 +308,7 @@ class BaseCallParticipantView: OrientableView {
     }
 }
 
-// MARK: - User Details Constraints
+// MARK: - UserDetailsConstraints
 
 private struct UserDetailsConstraints {
     private let bottom: NSLayoutConstraint

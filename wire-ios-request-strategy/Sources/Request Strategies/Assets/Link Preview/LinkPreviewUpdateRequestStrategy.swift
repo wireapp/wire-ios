@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - LinkPreviewUpdateRequestStrategy
+
 public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerSource {
     let managedObjectContext: NSManagedObjectContext
     let modifiedKeysSync: ModifiedKeyObjectSync<LinkPreviewUpdateRequestStrategy>
@@ -55,6 +57,8 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
         [modifiedKeysSync]
     }
 }
+
+// MARK: ModifiedKeyObjectSyncTranscoder
 
 extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
     typealias Object = ZMClientMessage

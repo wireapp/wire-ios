@@ -20,6 +20,8 @@ import Foundation
 import os.log
 import ZipArchive
 
+// MARK: - ZMSLogEntry
+
 /// Represents an entry to be logged.
 @objcMembers
 public final class ZMSLogEntry: NSObject {
@@ -31,6 +33,8 @@ public final class ZMSLogEntry: NSObject {
         self.timestamp = timestamp
     }
 }
+
+// MARK: - ZMSLog
 
 /// A logging facility based on tags to switch on and off certain logs
 ///
@@ -144,6 +148,8 @@ extension ZMSLog {
         }
     }
 }
+
+// MARK: - LogHookToken
 
 // NOTE:
 // I could use NotificationCenter for this, but I would have to deal with

@@ -19,10 +19,14 @@
 import Foundation
 import WireRequestStrategy
 
+// MARK: - GetUserClientFingerprintUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol GetUserClientFingerprintUseCaseProtocol {
     func invoke(userClient: UserClient) async -> Data?
 }
+
+// MARK: - GetUserClientFingerprintUseCase
 
 public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
     let proteusProvider: ProteusProviding

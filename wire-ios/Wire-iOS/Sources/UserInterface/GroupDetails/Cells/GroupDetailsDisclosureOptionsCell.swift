@@ -21,12 +21,16 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationOptionsConfigurable
+
 protocol ConversationOptionsConfigurable {
     func configure(with conversation: GroupDetailsConversationType)
 }
 
 // a ConversationOptionsCell that with a disclosure indicator on the right
 typealias GroupDetailsDisclosureOptionsCell = ConversationOptionsConfigurable & DisclosureCell
+
+// MARK: - DisclosureCell
 
 class DisclosureCell: RightIconDetailsCell {
     override func setUp() {

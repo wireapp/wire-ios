@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - EventData
+
 protocol EventData {
     static var eventType: ZMUpdateEventType { get }
 }

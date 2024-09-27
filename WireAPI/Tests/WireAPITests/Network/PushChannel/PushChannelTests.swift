@@ -20,6 +20,8 @@ import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
 
+// MARK: - PushChannelTests
+
 final class PushChannelTests: XCTestCase {
     var sut: PushChannel!
     var request: URLRequest!
@@ -133,6 +135,8 @@ final class PushChannelTests: XCTestCase {
         XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 }
+
+// MARK: - Scaffolding
 
 private enum Scaffolding {
     static let envelope1 = UpdateEventEnvelope(

@@ -21,10 +21,14 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ProfileViewControllerTabBarIndex
+
 enum ProfileViewControllerTabBarIndex: Int {
     case details = 0
     case devices
 }
+
+// MARK: - ProfileViewControllerDelegate
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
@@ -40,6 +44,8 @@ extension ZMConversationType {
         }
     }
 }
+
+// MARK: - ProfileViewController
 
 final class ProfileViewController: UIViewController {
     weak var viewControllerDismisser: ViewControllerDismisser?
@@ -285,13 +291,15 @@ final class ProfileViewController: UIViewController {
     }
 }
 
+// MARK: ViewControllerDismisser
+
 extension ProfileViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
         navigationController?.popViewController(animated: true)
     }
 }
 
-// MARK: - Footer View
+// MARK: ProfileFooterViewDelegate, IncomingRequestFooterViewDelegate
 
 extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFooterViewDelegate {
     func footerView(
@@ -556,6 +564,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     }
 }
 
+// MARK: ConversationCreationControllerDelegate
+
 extension ProfileViewController: ConversationCreationControllerDelegate {
     func conversationCreationController(
         _ controller: ConversationCreationController,
@@ -571,6 +581,8 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
         }
     }
 }
+
+// MARK: ProfileViewControllerViewModelDelegate
 
 extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     func setupNavigationItems() {

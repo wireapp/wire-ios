@@ -19,11 +19,15 @@
 import Foundation
 import WireDataModel
 
+// MARK: - GetMLSFeatureUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol GetMLSFeatureUseCaseProtocol {
     func invoke() -> Feature.MLS
     func invoke() async -> Feature.MLS
 }
+
+// MARK: - GetMLSFeatureUseCase
 
 public struct GetMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol {
     private let featureRepository: FeatureRepositoryInterface

@@ -20,6 +20,8 @@ import Combine
 import Foundation
 import WireCoreCrypto
 
+// MARK: - MLSServiceInterface
+
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
     // MARK: - Managing groups
@@ -472,11 +474,15 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func startProteusToMLSMigration() async throws
 }
 
+// MARK: - MLSServiceDelegate
+
 // This is only used in tests, so it should be removed.
 public protocol MLSServiceDelegate: AnyObject {
     func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
     func mlsServiceDidUpdateKeyMaterialForAllGroups()
 }
+
+// MARK: - MLSService
 
 /// This class is responsible for handling several MLS operations. See <doc:MLS> for more informations about MLS
 ///
@@ -2194,7 +2200,7 @@ public final class MLSService: MLSServiceInterface {
     }
 }
 
-// MARK: - Helper types
+// MARK: - MLSUser
 
 public struct MLSUser: Equatable {
     public let id: UUID
@@ -2232,6 +2238,8 @@ public struct MLSUser: Equatable {
     }
 }
 
+// MARK: CustomStringConvertible
+
 extension MLSUser: CustomStringConvertible {
     public var description: String {
         "\(id)@\(domain)"
@@ -2246,6 +2254,8 @@ extension TimeInterval {
     }
 }
 
+// MARK: - ConversationEventProcessorProtocol
+
 // sourcery: AutoMockable
 public protocol ConversationEventProcessorProtocol {
     /// Decodes event's payload and transform it to local model
@@ -2253,6 +2263,8 @@ public protocol ConversationEventProcessorProtocol {
     /// Process the events and perform a save on syncContext
     func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async
 }
+
+// MARK: - GroupsBeingRepaired
 
 actor GroupsBeingRepaired {
     var values = Set<MLSGroupID>()

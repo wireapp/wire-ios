@@ -19,6 +19,8 @@
 import Foundation
 import LocalAuthentication
 
+// MARK: - AuthenticationContextProtocol
+
 // sourcery: AutoMockable
 /// An abstraction around authentication via `LAContext`.
 public protocol AuthenticationContextProtocol {
@@ -28,6 +30,8 @@ public protocol AuthenticationContextProtocol {
     func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
     func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
 }
+
+// MARK: - AuthenticationContext
 
 public struct AuthenticationContext: AuthenticationContextProtocol {
     public var laContext: LAContext {

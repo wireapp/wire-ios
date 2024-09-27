@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MessageAPI
+
 // sourcery: AutoMockable
 public protocol MessageAPI {
     func broadcastProteusMessage(message: any ProteusMessage) async throws
@@ -51,6 +53,8 @@ extension Payload.MessageSendingStatusV0 {
         )
     }
 }
+
+// MARK: - MessageAPIV0
 
 class MessageAPIV0: MessageAPI {
     open var apiVersion: APIVersion {
@@ -179,6 +183,8 @@ func mapFailureResponse(_ response: ZMTransportResponse) -> Error {
     return NetworkError.invalidRequestError(responseFailure, response)
 }
 
+// MARK: - MessageAPIV1
+
 class MessageAPIV1: MessageAPIV0 {
     private let protobufContentType = "application/x-protobuf"
 
@@ -267,17 +273,23 @@ class MessageAPIV1: MessageAPIV0 {
     }
 }
 
+// MARK: - MessageAPIV2
+
 class MessageAPIV2: MessageAPIV1 {
     override var apiVersion: APIVersion {
         .v2
     }
 }
 
+// MARK: - MessageAPIV3
+
 class MessageAPIV3: MessageAPIV2 {
     override var apiVersion: APIVersion {
         .v3
     }
 }
+
+// MARK: - MessageAPIV4
 
 class MessageAPIV4: MessageAPIV3 {
     override var apiVersion: APIVersion {
@@ -369,6 +381,8 @@ class MessageAPIV4: MessageAPIV3 {
     }
 }
 
+// MARK: - MessageAPIV5
+
 class MessageAPIV5: MessageAPIV4 {
     override var apiVersion: APIVersion {
         .v5
@@ -398,6 +412,8 @@ class MessageAPIV5: MessageAPIV4 {
         return (payload, response)
     }
 }
+
+// MARK: - MessageAPIV6
 
 class MessageAPIV6: MessageAPIV5 {
     override var apiVersion: APIVersion {

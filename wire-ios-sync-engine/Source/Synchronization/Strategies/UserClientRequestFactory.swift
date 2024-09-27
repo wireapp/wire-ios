@@ -20,6 +20,8 @@ import Foundation
 import WireCryptobox
 import WireDataModel
 
+// MARK: - UserClientRequestError
+
 enum UserClientRequestError: Error {
     case noPreKeys
     case noLastPreKey
@@ -270,6 +272,8 @@ extension UserClientRequestFactory {
         ZMTransportRequest(getFromPath: "/clients", apiVersion: apiVersion.rawValue)
     }
 }
+
+// MARK: - MLSPublicKeyUploadPayload
 
 private struct MLSPublicKeyUploadPayload: Encodable {
     enum CodingKeys: String, CodingKey {

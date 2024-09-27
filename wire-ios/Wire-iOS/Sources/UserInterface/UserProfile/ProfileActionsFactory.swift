@@ -22,6 +22,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ProfileAction
+
 /// The actions that can be performed from the profile details or devices.
 
 enum ProfileAction: Equatable {
@@ -102,10 +104,14 @@ enum ProfileAction: Equatable {
     }
 }
 
+// MARK: - ProfileActionsFactoryProtocol
+
 // sourcery: AutoMockable
 protocol ProfileActionsFactoryProtocol {
     func makeActionsList(completion: @escaping ([ProfileAction]) -> Void)
 }
+
+// MARK: - ProfileActionsFactory
 
 /// An object that returns the actions that a user can perform in the scope
 /// of a conversation.

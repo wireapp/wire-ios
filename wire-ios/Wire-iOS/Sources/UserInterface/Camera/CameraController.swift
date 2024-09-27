@@ -22,6 +22,8 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// MARK: - CameraController
+
 final class CameraController {
     private(set) var currentCamera: SettingsCamera
 

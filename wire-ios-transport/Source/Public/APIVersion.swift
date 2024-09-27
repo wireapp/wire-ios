@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - APIVersion
+
 /// Represents the backend API versions implemented by the client.
 
 @objc
@@ -31,11 +33,11 @@ public enum APIVersion: Int32 {
     case v6 = 6
 }
 
-// MARK: - CaseIterable
+// MARK: CaseIterable
 
 extension APIVersion: CaseIterable {}
 
-// MARK: - Comparable
+// MARK: Comparable
 
 extension APIVersion: Comparable {
     public static func < (lhs: Self, rhs: Self) -> Bool {

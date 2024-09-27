@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UnreadMessageTestObserver
+
 @objc
 class UnreadMessageTestObserver: NSObject, ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObserver {
     var unreadMessageNotes: [NewUnreadMessagesChangeInfo] = []
@@ -42,6 +44,8 @@ class UnreadMessageTestObserver: NSObject, ZMNewUnreadMessagesObserver, ZMNewUnr
         unreadMessageNotes = []
     }
 }
+
+// MARK: - NewUnreadMessageObserverTests
 
 class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
     func processPendingChangesAndClearNotifications() {

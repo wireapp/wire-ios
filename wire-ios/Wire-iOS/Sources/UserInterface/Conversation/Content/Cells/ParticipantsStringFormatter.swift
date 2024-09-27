@@ -53,6 +53,8 @@ extension ConversationActionType {
     }
 }
 
+// MARK: - FormatSequence
+
 /// This class assists in applying string attributes to localized strings.
 /// The issue with localized strings is that you can not pass attributed
 /// strings as arguments to format strings, therefore the styling must take
@@ -85,6 +87,8 @@ private final class FormatSequence {
         return mutableCopy
     }
 }
+
+// MARK: - ParticipantsStringFormatter
 
 final class ParticipantsStringFormatter {
     struct NameList {

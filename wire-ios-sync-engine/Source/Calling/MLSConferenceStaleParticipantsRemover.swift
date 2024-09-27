@@ -21,6 +21,8 @@ import Foundation
 import WireDataModel
 import WireUtilities
 
+// MARK: - MLSConferenceStaleParticipantsRemover
+
 /// A class responsible for removing stale participants in a MLS conference.
 ///
 /// Confluence use case:

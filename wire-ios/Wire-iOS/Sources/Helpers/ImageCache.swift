@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ImageCache
+
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: remove public after MockUser is convert to Swift
 final class ImageCache<T: AnyObject> {
@@ -29,6 +31,8 @@ final class ImageCache<T: AnyObject> {
 extension UIImage {
     static var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 }
+
+// MARK: - MediaAssetCache
 
 enum MediaAssetCache {
     static var defaultImageCache = ImageCache<AnyObject>()

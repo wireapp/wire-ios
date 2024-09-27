@@ -21,6 +21,8 @@ import UIKit
 import WireReusableUIComponents
 import WireSystem
 
+// MARK: - SendTechnicalReportPresenter
+
 protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
     @MainActor
     func presentMailComposer(fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration)

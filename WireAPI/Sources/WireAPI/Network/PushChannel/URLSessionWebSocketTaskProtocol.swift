@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - URLSessionWebSocketTaskProtocol
+
 // sourcery: AutoMockable
 protocol URLSessionWebSocketTaskProtocol {
     var isOpen: Bool { get }
@@ -33,6 +35,8 @@ protocol URLSessionWebSocketTaskProtocol {
 
     func receive() async throws -> URLSessionWebSocketTask.Message
 }
+
+// MARK: - URLSessionWebSocketTask + URLSessionWebSocketTaskProtocol
 
 extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
     var isOpen: Bool {

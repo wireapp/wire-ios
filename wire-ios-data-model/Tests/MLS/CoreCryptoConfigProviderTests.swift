@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
+// MARK: - MockCoreCryptoKeyProvider
+
 class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
     enum MockError: Error {
         case unmockedMethodCalled
@@ -35,6 +37,8 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
         return try mock()
     }
 }
+
+// MARK: - CoreCryptoConfigProviderTests
 
 class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     private var mockCoreCryptoKeyProvider: MockCoreCryptoKeyProvider!

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - CompanyLoginVerificationToken
+
 /// A struct containing a token to validate login requests
 /// received via url schemes.
 public struct CompanyLoginVerificationToken: Codable, Equatable {

@@ -19,10 +19,14 @@
 import Foundation
 import WireDataModel
 
+// MARK: - SnoozeCertificateEnrollmentUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
     func invoke(endOfPeriod: Date, isUpdateMode: Bool) async
 }
+
+// MARK: - SnoozeCertificateEnrollmentUseCase
 
 final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol {
     // MARK: - Properties
@@ -84,6 +88,8 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
         recurringActionService.registerAction(recurringAction)
     }
 }
+
+// MARK: - SnoozeTimeProvider
 
 final class SnoozeTimeProvider {
     // MARK: - Properties

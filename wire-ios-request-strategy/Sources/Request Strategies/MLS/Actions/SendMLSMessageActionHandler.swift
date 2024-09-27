@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - SendMLSMessageActionHandler
+
 class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
     typealias EventPayload = [AnyHashable: Any]
 

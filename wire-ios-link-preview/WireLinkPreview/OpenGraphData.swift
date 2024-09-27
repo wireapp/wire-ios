@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - OpenGraphData
+
 public struct OpenGraphData {
     let title: String
     let type: String
@@ -54,6 +56,8 @@ public struct OpenGraphData {
     }
 }
 
+// MARK: CustomStringConvertible
+
 extension OpenGraphData: CustomStringConvertible {
     public var description: String {
         var description = "<\(Swift.type(of: self))> \(String(describing: siteNameString)): \(url):\n\t\(title)"
@@ -61,6 +65,8 @@ extension OpenGraphData: CustomStringConvertible {
         return description
     }
 }
+
+// MARK: - FoursquareMetaData
 
 public struct FoursquareMetaData {
     let latitude: Float
@@ -100,6 +106,8 @@ extension OpenGraphData {
     }
 }
 
+// MARK: - OpenGraphData + Equatable
+
 extension OpenGraphData: Equatable {}
 
 public func == (lhs: OpenGraphData, rhs: OpenGraphData) -> Bool {
@@ -109,6 +117,8 @@ public func == (lhs: OpenGraphData, rhs: OpenGraphData) -> Bool {
         lhs.siteNameString == rhs.siteNameString && lhs.userGeneratedImage == rhs.userGeneratedImage &&
         lhs.foursquareMetaData == rhs.foursquareMetaData
 }
+
+// MARK: - FoursquareMetaData + Equatable
 
 extension FoursquareMetaData: Equatable {}
 

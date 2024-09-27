@@ -19,9 +19,13 @@
 import Darwin
 import UIKit
 
+// MARK: - JailbreakDetectorProtocol
+
 public protocol JailbreakDetectorProtocol {
     func isJailbroken() -> Bool
 }
+
+// MARK: - JailbreakDetector
 
 public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
     private let fm = FileManager.default
@@ -137,6 +141,8 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
         return false
     }
 }
+
+// MARK: - MockJailbreakDetector
 
 @objcMembers
 public class MockJailbreakDetector: NSObject, JailbreakDetectorProtocol {

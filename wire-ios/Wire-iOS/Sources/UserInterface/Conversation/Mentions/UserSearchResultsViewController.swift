@@ -20,17 +20,25 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - UserSearchResultsViewControllerDelegate
+
 protocol UserSearchResultsViewControllerDelegate: AnyObject {
     func didSelect(user: UserType)
 }
+
+// MARK: - Dismissable
 
 protocol Dismissable: AnyObject {
     func dismiss()
 }
 
+// MARK: - KeyboardCollapseObserver
+
 protocol KeyboardCollapseObserver: AnyObject {
     var isKeyboardCollapsed: Bool { get }
 }
+
+// MARK: - UserList
 
 protocol UserList: AnyObject {
     var users: [UserType] { get set }
@@ -39,6 +47,8 @@ protocol UserList: AnyObject {
     func selectPreviousUser()
     func selectNextUser()
 }
+
+// MARK: - UserSearchResultsViewController
 
 final class UserSearchResultsViewController: UIViewController, KeyboardCollapseObserver {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
@@ -214,12 +224,16 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     }
 }
 
+// MARK: Dismissable
+
 extension UserSearchResultsViewController: Dismissable {
     func dismiss() {
         view.isHidden = true
         collectionViewSelectedIndex = .none
     }
 }
+
+// MARK: UserList
 
 extension UserSearchResultsViewController: UserList {
     var selectedUser: UserType? {
@@ -271,6 +285,8 @@ extension UserSearchResultsViewController: UserList {
     }
 }
 
+// MARK: UICollectionViewDelegate
+
 extension UserSearchResultsViewController: UICollectionViewDelegate {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         1
@@ -281,6 +297,8 @@ extension UserSearchResultsViewController: UICollectionViewDelegate {
     }
 }
 
+// MARK: UICollectionViewDelegateFlowLayout
+
 extension UserSearchResultsViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -290,6 +308,8 @@ extension UserSearchResultsViewController: UICollectionViewDelegateFlowLayout {
         CGSize(width: collectionView.bounds.size.width, height: rowHeight)
     }
 }
+
+// MARK: UICollectionViewDataSource
 
 extension UserSearchResultsViewController: UICollectionViewDataSource {
     func collectionView(

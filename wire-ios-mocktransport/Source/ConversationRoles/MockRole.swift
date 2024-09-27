@@ -19,6 +19,8 @@
 import CoreData
 import Foundation
 
+// MARK: - MockRole
+
 @objc
 public final class MockRole: NSManagedObject, EntityNamedProtocol {
     public static let nameKey = #keyPath(MockRole.name)

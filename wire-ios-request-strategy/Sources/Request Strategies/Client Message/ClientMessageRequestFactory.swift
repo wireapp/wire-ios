@@ -24,6 +24,8 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "Network")
 
+// MARK: - ClientMessageRequestFactory
+
 public final class ClientMessageRequestFactory: NSObject {
     let protobufContentType = "application/x-protobuf"
     let octetStreamContentType = "application/octet-stream"

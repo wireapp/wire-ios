@@ -23,6 +23,8 @@ import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
+// MARK: - APIMigrationMock
+
 class APIMigrationMock: APIMigration {
     var version: APIVersion
 
@@ -36,6 +38,8 @@ class APIMigrationMock: APIMigration {
         performCalls.append((session, clientID))
     }
 }
+
+// MARK: - APIMigrationManagerTests
 
 final class APIMigrationManagerTests: MessagingTest {
     // MARK: - Verifying if migration is needed

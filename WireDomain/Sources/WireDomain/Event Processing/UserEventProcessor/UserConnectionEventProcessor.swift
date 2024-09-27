@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - UserConnectionEventProcessorProtocol
+
 /// Process user connection events.
 
 protocol UserConnectionEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol UserConnectionEventProcessorProtocol {
 
     func processEvent(_ event: UserConnectionEvent) async throws
 }
+
+// MARK: - UserConnectionEventProcessor
 
 struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
     func processEvent(_: UserConnectionEvent) async throws {

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - BackendInfoAPIImpl
+
 class BackendInfoAPIImpl: BackendInfoAPI {
     let apiService: any APIServiceProtocol
 
@@ -41,6 +43,8 @@ class BackendInfoAPIImpl: BackendInfoAPI {
             .parse(code: response.statusCode, data: data)
     }
 }
+
+// MARK: - BackendInfoResponse
 
 private struct BackendInfoResponse: Decodable, ToAPIModelConvertible {
     var domain: String

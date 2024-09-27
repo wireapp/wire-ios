@@ -33,6 +33,8 @@ extension ZMConversation {
     public static let typingChangeNotificationName = Notification.Name(rawValue: "ZMTypingChangeNotification")
 }
 
+// MARK: - TypingEvent
+
 public struct TypingEvent {
     let date: Date
     let objectID: NSManagedObjectID
@@ -56,6 +58,8 @@ public struct TypingEvent {
             fabs(date.timeIntervalSince(other.date)) < Typing.defaultTimeout
     }
 }
+
+// MARK: - TypingEventQueue
 
 class TypingEventQueue {
     /// conversations with their current isTyping state
@@ -106,6 +110,8 @@ class TypingEventQueue {
         conversations.removeValue(forKey: conversationID)
     }
 }
+
+// MARK: - TypingStrategy
 
 public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventConsumer {
     fileprivate var typing: Typing!

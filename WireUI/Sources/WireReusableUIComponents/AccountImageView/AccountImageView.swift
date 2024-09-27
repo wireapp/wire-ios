@@ -29,7 +29,7 @@ private let accountImageViewBorderColor = ColorTheme.Strokes.outline
 
 private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
-// MARK: -
+// MARK: - AccountImageView
 
 /// Displays the image of a user account plus optional availability.
 public final class AccountImageView: UIView {
@@ -221,7 +221,7 @@ extension AccountImageView {
     }
 }
 
-// MARK: - Previews
+// MARK: - AccountImageView_Previews
 
 @available(iOS 16.0, *)
 struct AccountImageView_Previews: PreviewProvider {

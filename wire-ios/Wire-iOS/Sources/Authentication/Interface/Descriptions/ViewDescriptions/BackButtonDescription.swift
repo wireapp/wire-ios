@@ -20,10 +20,14 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - BackButtonDescription
+
 final class BackButtonDescription {
     var buttonTapped: (() -> Void)?
     var accessibilityIdentifier: String? = "backButton"
 }
+
+// MARK: ViewDescriptor
 
 extension BackButtonDescription: ViewDescriptor {
     func create() -> UIView {

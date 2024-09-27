@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - CheckOneOnOneConversationIsReadyUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol CheckOneOnOneConversationIsReadyUseCaseProtocol {
     /// Checks if there is a one-on-one conversation ready to be used for a given user.
@@ -29,10 +31,14 @@ public protocol CheckOneOnOneConversationIsReadyUseCaseProtocol {
     func invoke(userID: QualifiedID) async throws -> Bool
 }
 
+// MARK: - CheckOneOnOneConversationIsReadyError
+
 public enum CheckOneOnOneConversationIsReadyError: Error, Equatable {
     case userNotFound
     case missingGroupID
 }
+
+// MARK: - CheckOneOnOneConversationIsReadyUseCase
 
 struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReadyUseCaseProtocol {
     // MARK: - Properties

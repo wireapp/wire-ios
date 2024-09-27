@@ -20,6 +20,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - MockContainerViewController
+
 final class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin = CGFloat.NetworkStatusBar.bottomMargin
 
@@ -32,6 +34,8 @@ final class MockContainerViewController: UIViewController, NetworkStatusBarDeleg
 
     var shouldAnimateNetworkStatusView = true
 }
+
+// MARK: - NetworkStatusViewControllerSnapshotTests
 
 /// Snapshot tests for differnt margin and size of NetworkStatusViewController.view for all value of NetworkState with
 /// other UIView at the bottom.

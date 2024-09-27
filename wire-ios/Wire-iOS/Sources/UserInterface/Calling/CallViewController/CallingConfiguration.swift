@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - CallingConfiguration
+
 struct CallingConfiguration {
     let canSwipeToDismissCall: Bool
     let audioTilesEnabled: Bool

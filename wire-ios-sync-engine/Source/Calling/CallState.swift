@@ -21,6 +21,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
+// MARK: - CallParticipant
+
 /// A participant in the call.
 
 public struct CallParticipant: Hashable {
@@ -98,6 +100,8 @@ public struct CallParticipant: Hashable {
     }
 }
 
+// MARK: - CallParticipantState
+
 /// The state of a participant in a call.
 
 public enum CallParticipantState: Equatable, Hashable {
@@ -111,6 +115,8 @@ public enum CallParticipantState: Equatable, Hashable {
     case connected(videoState: VideoState, microphoneState: MicrophoneState)
 }
 
+// MARK: - AudioState
+
 /// The audio state of a participant in a call.
 
 public enum AudioState: Int32, Codable {
@@ -121,6 +127,8 @@ public enum AudioState: Int32, Codable {
     /// No relay candidate, though audio may still connect.
     case networkProblem = 2
 }
+
+// MARK: - VideoState
 
 /// The state of video in the call.
 
@@ -137,6 +145,8 @@ public enum VideoState: Int32, Codable {
     case screenSharing = 4
 }
 
+// MARK: - MicrophoneState
+
 /// The state of microphone in the call
 
 public enum MicrophoneState: Int32, Codable {
@@ -146,6 +156,8 @@ public enum MicrophoneState: Int32, Codable {
     case muted = 1
 }
 
+// MARK: - ActiveSpeakerState
+
 /// The speaking activity state of a participant in the call.
 
 public enum ActiveSpeakerState: Hashable {
@@ -154,6 +166,8 @@ public enum ActiveSpeakerState: Hashable {
     /// Participant is not an active speaker
     case inactive
 }
+
+// MARK: - CallState
 
 /// The current state of a call.
 

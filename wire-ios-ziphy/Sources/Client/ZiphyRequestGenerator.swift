@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ZiphyRequestGenerator
+
 /// An object that generates requests to the Giphy API.
 
 struct ZiphyRequestGenerator {

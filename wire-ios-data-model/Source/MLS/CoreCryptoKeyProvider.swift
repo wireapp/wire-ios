@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// MARK: - CoreCryptoKeyProvider
+
 public class CoreCryptoKeyProvider {
     public init() {}
 
@@ -69,6 +71,8 @@ public class CoreCryptoKeyProvider {
     }
 }
 
+// MARK: - CoreCryptoKeychainItem
+
 struct CoreCryptoKeychainItem: KeychainItemProtocol {
     var id: String {
         "com.wire.mls.key"
@@ -96,6 +100,8 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
         ]
     }
 }
+
+// MARK: - LegacyCoreCryptoKeychainItem
 
 struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
     var id: String {

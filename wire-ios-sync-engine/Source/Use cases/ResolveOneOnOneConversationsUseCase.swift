@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - ResolveOneOnOneConversationsUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol ResolveOneOnOneConversationsUseCaseProtocol {
     func invoke() async throws
 }
+
+// MARK: - ResolveOneOnOneConversationsUseCase
 
 struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseProtocol {
     let context: NSManagedObjectContext

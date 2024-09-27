@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireDataModel
 
+// MARK: - ZMConversationTests_Transport
+
 class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Access Mode
 

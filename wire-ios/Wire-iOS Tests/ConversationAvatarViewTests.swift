@@ -20,6 +20,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - ConversationAvatarViewTests
+
 final class ConversationAvatarViewTests: XCTestCase {
     // MARK: - Properties
 

@@ -19,9 +19,13 @@
 import UIKit
 import WireDataModel
 
+// MARK: - GroupDetailsFooterViewDelegate
+
 protocol GroupDetailsFooterViewDelegate: AnyObject {
     func footerView(_ view: GroupDetailsFooterView, shouldPerformAction action: GroupDetailsFooterView.Action)
 }
+
+// MARK: - GroupDetailsFooterView
 
 final class GroupDetailsFooterView: ConversationDetailFooterView {
     weak var delegate: GroupDetailsFooterViewDelegate?

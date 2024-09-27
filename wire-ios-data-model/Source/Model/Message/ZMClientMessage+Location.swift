@@ -19,6 +19,8 @@
 import CoreLocation
 import Foundation
 
+// MARK: - LocationMessageData
+
 @objc(ZMLocationMessageData)
 public protocol LocationMessageData: NSObjectProtocol {
     var latitude: Float { get }
@@ -26,6 +28,8 @@ public protocol LocationMessageData: NSObjectProtocol {
     var name: String? { get }
     var zoomLevel: Int32 { get }
 }
+
+// MARK: - ZMClientMessage + LocationMessageData
 
 extension ZMClientMessage: LocationMessageData {
     override public var locationMessageData: LocationMessageData? {

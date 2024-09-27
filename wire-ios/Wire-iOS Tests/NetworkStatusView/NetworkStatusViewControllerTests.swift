@@ -20,6 +20,8 @@ import WireFoundationSupport
 import XCTest
 @testable import Wire
 
+// MARK: - MockConversationRootViewController
+
 final class MockConversationRootViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin: CGFloat = 0
 
@@ -35,6 +37,8 @@ final class MockConversationRootViewController: UIViewController, NetworkStatusB
     }
 }
 
+// MARK: - MockConversationListViewController
+
 final class MockConversationListViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin: CGFloat = 0
 
@@ -49,6 +53,8 @@ final class MockConversationListViewController: UIViewController, NetworkStatusB
         false
     }
 }
+
+// MARK: - NetworkStatusViewControllerTests
 
 final class NetworkStatusViewControllerTests: XCTestCase {
     var sutRoot: NetworkStatusViewController!
@@ -229,6 +235,8 @@ final class NetworkStatusViewControllerTests: XCTestCase {
         checkResult(listState: .online, rootState: .offlineExpanded)
     }
 }
+
+// MARK: - NetworkStatusViewControllerRetainTests
 
 final class NetworkStatusViewControllerRetainTests: XCTestCase {
     weak var sut: NetworkStatusViewController! = nil

@@ -19,6 +19,8 @@
 import Foundation
 import WireUtilities
 
+// MARK: - ZMUpdateEventsPolicy
+
 @objc
 public enum ZMUpdateEventsPolicy: Int {
     case buffer /// store live events in a buffer, to be processed later
@@ -26,12 +28,16 @@ public enum ZMUpdateEventsPolicy: Int {
     case process /// process events received through the push channel
 }
 
+// MARK: - ZMUpdateEventSource
+
 @objc
 public enum ZMUpdateEventSource: Int {
     case webSocket
     case pushNotification
     case download
 }
+
+// MARK: - ZMUpdateEventType
 
 @objc
 public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
@@ -212,6 +218,8 @@ extension ZMUpdateEvent {
 }
 
 private let zmLog = ZMSLog(tag: "UpdateEvents")
+
+// MARK: - ZMUpdateEvent
 
 @objcMembers
 open class ZMUpdateEvent: NSObject {

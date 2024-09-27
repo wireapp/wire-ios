@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - MessageActionsViewController
+
 final class MessageActionsViewController: UIAlertController {
     // We're using custom marker to add space for custom view in UIAlertController. Solution explained in
     // https://stackoverflow.com/a/47925120
@@ -98,6 +100,8 @@ final class MessageActionsViewController: UIAlertController {
     }
 }
 
+// MARK: ReactionPickerDelegate
+
 extension MessageActionsViewController: ReactionPickerDelegate {
     func didPickReaction(reaction: Emoji) {
         actionController?.perform(action: .react(reaction.value))
@@ -112,6 +116,8 @@ extension MessageActionsViewController: ReactionPickerDelegate {
         present(pickerController, animated: true)
     }
 }
+
+// MARK: EmojiPickerViewControllerDelegate
 
 extension MessageActionsViewController: EmojiPickerViewControllerDelegate {
     func emojiPickerDidSelectEmoji(_ emoji: Emoji) {

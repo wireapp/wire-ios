@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - ConversationReceiptModeUpdateEventProcessorProtocol
+
 /// Process conversation receipt mode update events.
 
 protocol ConversationReceiptModeUpdateEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol ConversationReceiptModeUpdateEventProcessorProtocol {
 
     func processEvent(_ event: ConversationReceiptModeUpdateEvent) async throws
 }
+
+// MARK: - ConversationReceiptModeUpdateEventProcessor
 
 struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdateEventProcessorProtocol {
     func processEvent(_: ConversationReceiptModeUpdateEvent) async throws {

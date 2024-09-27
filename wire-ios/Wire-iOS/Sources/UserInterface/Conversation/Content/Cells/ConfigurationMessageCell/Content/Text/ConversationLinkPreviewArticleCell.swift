@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - ConversationLinkPreviewArticleCell
+
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
     struct Configuration {
         let textMessageData: TextMessageData
@@ -87,11 +89,15 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
     }
 }
 
+// MARK: LinkViewDelegate
+
 extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
     var url: URL? {
         configuration?.textMessageData.linkPreview?.openableURL
     }
 }
+
+// MARK: - ConversationLinkPreviewArticleCellDescription
 
 final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkPreviewArticleCell

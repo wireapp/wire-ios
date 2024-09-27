@@ -36,6 +36,8 @@ extension NSManagedObjectContext {
     }
 }
 
+// MARK: - SearchUserSnapshot
+
 public class SearchUserSnapshot {
     /// Keys that we want to be notified for
     static let observableKeys: [String] = [
@@ -101,6 +103,8 @@ public class SearchUserSnapshot {
         ).post()
     }
 }
+
+// MARK: - SearchUserObserverCenter
 
 @objcMembers
 public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {

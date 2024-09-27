@@ -22,6 +22,8 @@ import WireSyncEngine
 
 typealias DismissAction = (_ completion: Completion?) -> Void
 
+// MARK: - ConversationImagesViewController
+
 final class ConversationImagesViewController: UIViewController {
     typealias ButtonColors = SemanticColors.Button
 
@@ -457,11 +459,15 @@ final class ConversationImagesViewController: UIViewController {
     }
 }
 
+// MARK: ScreenshotProvider
+
 extension ConversationImagesViewController: ScreenshotProvider {
     func backgroundScreenshot(for fullscreenController: FullscreenImageViewController) -> UIView? {
         snapshotBackgroundView
     }
 }
+
+// MARK: AssetCollectionDelegate
 
 extension ConversationImagesViewController: AssetCollectionDelegate {
     func assetCollectionDidFetch(
@@ -482,6 +488,8 @@ extension ConversationImagesViewController: AssetCollectionDelegate {
         // no-op
     }
 }
+
+// MARK: UIPageViewControllerDelegate, UIPageViewControllerDataSource
 
 extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     func pageViewControllerPreferredInterfaceOrientationForPresentation(_: UIPageViewController)
@@ -543,6 +551,8 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
         }
     }
 }
+
+// MARK: MenuVisibilityController
 
 extension ConversationImagesViewController: MenuVisibilityController {
     var menuVisible: Bool {

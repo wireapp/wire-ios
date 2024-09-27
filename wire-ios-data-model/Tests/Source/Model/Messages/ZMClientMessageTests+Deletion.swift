@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireDataModel
 
-// MARK: - Sending
+// MARK: - ZMClientMessageTests_Deletion
 
 class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     func testThatItDeletesAMessage() {
@@ -643,6 +643,8 @@ extension ZMClientMessageTests_Deletion {
         }
     }
 }
+
+// MARK: - AssetDeletionNotificationObserver
 
 private final class AssetDeletionNotificationObserver: NSObject {
     private(set) var deletedIdentifiers = [String]()

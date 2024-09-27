@@ -60,6 +60,8 @@ extension UITextView {
     }
 }
 
+// MARK: - MessageThumbnailPreviewView
+
 final class MessageThumbnailPreviewView: UIView {
     private let senderLabel = UILabel()
     private var leftEditIconInset: CGFloat = 10
@@ -213,6 +215,8 @@ final class MessageThumbnailPreviewView: UIView {
     }
 }
 
+// MARK: ZMMessageObserver
+
 extension MessageThumbnailPreviewView: ZMMessageObserver {
     func messageDidChange(_: MessageChangeInfo) {
         guard !message.hasBeenDeleted else {
@@ -222,6 +226,8 @@ extension MessageThumbnailPreviewView: ZMMessageObserver {
         updateForMessage()
     }
 }
+
+// MARK: - MessagePreviewView
 
 final class MessagePreviewView: UIView {
     private let senderLabel = UILabel()
@@ -354,6 +360,8 @@ final class MessagePreviewView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+// MARK: ZMMessageObserver
 
 extension MessagePreviewView: ZMMessageObserver {
     func messageDidChange(_: MessageChangeInfo) {

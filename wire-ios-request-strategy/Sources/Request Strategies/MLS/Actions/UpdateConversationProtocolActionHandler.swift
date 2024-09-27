@@ -18,6 +18,8 @@
 
 import WireDataModel
 
+// MARK: - UpdateConversationProtocolActionHandler
+
 final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConversationProtocolAction> {
     typealias EventPayload = [AnyHashable: Any]
 

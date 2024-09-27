@@ -20,6 +20,8 @@ import Foundation
 import WireTesting
 @testable import WireDataModel
 
+// MARK: - ZMAssetClientMessageTests_Ephemeral
+
 class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
     override func setUp() {
         super.setUp()

@@ -202,7 +202,7 @@ final class ConversationRootViewController: UIViewController {
     }
 }
 
-// MARK: - NetworkStatusBarDelegate
+// MARK: NetworkStatusBarDelegate
 
 extension ConversationRootViewController: NetworkStatusBarDelegate {
     var bottomMargin: CGFloat {

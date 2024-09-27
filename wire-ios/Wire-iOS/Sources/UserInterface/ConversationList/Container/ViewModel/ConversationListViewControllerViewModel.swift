@@ -25,6 +25,8 @@ import WireSyncEngine
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
 
+// MARK: - ConversationListContainerViewModelDelegate
+
 protocol ConversationListContainerViewModelDelegate: AnyObject {
     func conversationListViewControllerViewModel(
         _ viewModel: ConversationListViewController.ViewModel,
@@ -60,6 +62,8 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
             .ViewModel
     )
 }
+
+// MARK: - ConversationListViewController.ViewModel
 
 extension ConversationListViewController {
     final class ViewModel: NSObject {
@@ -264,6 +268,8 @@ extension ConversationListViewController.ViewModel {
         }
     }
 }
+
+// MARK: - ConversationListViewController.ViewModel + UserObserving
 
 extension ConversationListViewController.ViewModel: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {

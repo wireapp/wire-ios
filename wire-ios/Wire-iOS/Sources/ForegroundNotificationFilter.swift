@@ -18,6 +18,8 @@
 
 import WireSyncEngine
 
+// MARK: - ForegroundNotificationFilter
+
 final class ForegroundNotificationFilter {
     // MARK: - Public Property
 
@@ -29,6 +31,8 @@ final class ForegroundNotificationFilter {
         self.sessionManager = sessionManager
     }
 }
+
+// MARK: ForegroundNotificationResponder
 
 // TO DO: Ask for the logic, not clear when a notification shuld be presented
 extension ForegroundNotificationFilter: ForegroundNotificationResponder {

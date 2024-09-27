@@ -20,12 +20,16 @@ import Foundation
 import WireDataModel
 import WireUtilities
 
+// MARK: - UserSelectionObserver
+
 @objc
 protocol UserSelectionObserver: AnyObject {
     func userSelection(_ userSelection: UserSelection, didAddUser user: UserType)
     func userSelection(_ userSelection: UserSelection, didRemoveUser user: UserType)
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType])
 }
+
+// MARK: - UserSelection
 
 final class UserSelection: NSObject {
     private(set) var users = UserSet()

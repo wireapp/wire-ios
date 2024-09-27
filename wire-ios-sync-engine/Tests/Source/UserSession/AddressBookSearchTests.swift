@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - AddressBookSearchTests
+
 class AddressBookSearchTests: MessagingTest {
     var sut: WireSyncEngine.AddressBookSearch!
     var addressBook: MockAddressBook!

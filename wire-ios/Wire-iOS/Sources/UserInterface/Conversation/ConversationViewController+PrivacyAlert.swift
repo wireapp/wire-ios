@@ -200,7 +200,7 @@ extension ConversationViewController {
     }
 }
 
-// MARK: - E2EIPrivacyWarningPresenter
+// MARK: - ConversationViewController + PrivacyWarningPresenter
 
 extension ConversationViewController: PrivacyWarningPresenter {
     func presentPrivacyWarningAlert(_ notification: Notification) {

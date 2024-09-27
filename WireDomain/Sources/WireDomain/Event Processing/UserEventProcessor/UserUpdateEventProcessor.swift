@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - UserUpdateEventProcessorProtocol
+
 /// Process user update events.
 
 protocol UserUpdateEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol UserUpdateEventProcessorProtocol {
 
     func processEvent(_ event: UserUpdateEvent) async throws
 }
+
+// MARK: - UserUpdateEventProcessor
 
 struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
     func processEvent(_: UserUpdateEvent) async throws {

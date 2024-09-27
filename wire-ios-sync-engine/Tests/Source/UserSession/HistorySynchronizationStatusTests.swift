@@ -19,6 +19,8 @@
 import WireSyncEngine
 import XCTest
 
+// MARK: - HistorySynchronizationStatusTests
+
 class HistorySynchronizationStatusTests: MessagingTest {}
 
 extension HistorySynchronizationStatusTests {

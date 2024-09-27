@@ -24,6 +24,8 @@ import WireTransportSupport
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - SessionManagerTests
+
 final class SessionManagerTests: IntegrationTest {
     private var sessionManagerBuilder: SessionManagerBuilder!
 
@@ -639,7 +641,7 @@ extension IntegrationTest {
     }
 }
 
-// MARK: - Mocks
+// MARK: - MockForegroundNotificationResponder
 
 class MockForegroundNotificationResponder: NSObject, ForegroundNotificationResponder {
     var notificationPermissionRequests: [UUID] = []

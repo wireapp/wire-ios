@@ -20,6 +20,8 @@ import Foundation
 import WireAPI
 import WireSystem
 
+// MARK: - HTTPClientImpl
+
 // Note: this is just a tempory helper for debugging
 // purposes and should eventually be removed.
 

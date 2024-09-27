@@ -18,9 +18,13 @@
 
 import Foundation
 
+// MARK: - UnauthenticatedSessionStatusDelegate
+
 protocol UnauthenticatedSessionStatusDelegate: AnyObject {
     var isAllowedToCreateNewAccount: Bool { get }
 }
+
+// MARK: - CompanyLoginURLActionProcessor
 
 class CompanyLoginURLActionProcessor: URLActionProcessor {
     private weak var delegate: UnauthenticatedSessionStatusDelegate?

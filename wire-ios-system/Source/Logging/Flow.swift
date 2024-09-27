@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - Flow
+
 /// A `Flow` is a structured log class that reports the progress
 /// of a particular flow of code, marking the start, middle, and end
 /// of the flow.
@@ -104,6 +106,8 @@ open class Flow {
     }
 }
 
+// MARK: - FlowLog
+
 struct FlowLog: LogConvertible, Encodable {
     let name: String
     let event: Event
@@ -119,6 +123,8 @@ struct FlowLog: LogConvertible, Encodable {
         return "FLOW: \(string)"
     }
 }
+
+// MARK: FlowLog.Event
 
 extension FlowLog {
     struct Event: Encodable {

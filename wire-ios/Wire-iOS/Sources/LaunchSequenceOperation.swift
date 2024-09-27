@@ -55,7 +55,7 @@ final class PerformanceDebuggerOperation: LaunchSequenceOperation {
     }
 }
 
-// MARK: - ZMSLogOperation
+// MARK: - AVSLoggingOperation
 
 final class AVSLoggingOperation: LaunchSequenceOperation {
     func execute() {
@@ -126,17 +126,23 @@ final class BackendInfoOperation: LaunchSequenceOperation {
     }
 }
 
+// MARK: - FontSchemeOperation
+
 final class FontSchemeOperation: LaunchSequenceOperation {
     func execute() {
         FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
     }
 }
 
+// MARK: - VoIPPushHelperOperation
+
 final class VoIPPushHelperOperation: LaunchSequenceOperation {
     func execute() {
         VoIPPushHelper.storage = .applicationGroup
     }
 }
+
+// MARK: - CleanUpDebugStateOperation
 
 /// This operation cleans up any state that may have been set in debug builds so that
 /// release builds don't exhibit any debugging behaviour.

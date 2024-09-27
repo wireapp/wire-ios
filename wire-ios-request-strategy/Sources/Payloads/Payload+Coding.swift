@@ -149,19 +149,25 @@ extension Encodable {
     }
 }
 
+// MARK: - JSONEncodingFailure
+
 enum JSONEncodingFailure: Error {
     case failedToEncode(Error)
 }
 
-// MARK: API version aware coding
+// MARK: - DecodableAPIVersionAware
 
 protocol DecodableAPIVersionAware: Decodable {
     init(from decoder: Decoder, apiVersion: APIVersion) throws
 }
 
+// MARK: - EncodableAPIVersionAware
+
 protocol EncodableAPIVersionAware: Encodable {
     func encode(to encoder: Encoder, apiVersion: APIVersion) throws
 }
+
+// MARK: - CodableAPIVersionAware
 
 protocol CodableAPIVersionAware: EncodableAPIVersionAware & DecodableAPIVersionAware {}
 
@@ -185,7 +191,7 @@ extension EncodableAPIVersionAware {
     }
 }
 
-// MARK: - Helpers
+// MARK: - APIVersionAwareCodingError
 
 enum APIVersionAwareCodingError: Error {
     case missingAPIVersion

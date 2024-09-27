@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - ParticipantsRowType
+
 enum ParticipantsRowType {
     case user(UserType)
     case showAll(_ totalParticipantsCount: Int)
@@ -34,6 +36,8 @@ enum ParticipantsRowType {
     }
 }
 
+// MARK: - ConversationRole
+
 enum ConversationRole {
     case admin, member
 
@@ -46,6 +50,8 @@ enum ConversationRole {
         }
     }
 }
+
+// MARK: - ParticipantsSectionViewModel
 
 private struct ParticipantsSectionViewModel {
     let rows: [ParticipantsRowType]
@@ -170,6 +176,8 @@ extension UserCell {
         self.showSeparator = showSeparator
     }
 }
+
+// MARK: - ParticipantsSectionController
 
 final class ParticipantsSectionController: GroupDetailsSectionController {
     fileprivate weak var collectionView: UICollectionView? {
@@ -338,6 +346,8 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         }
     }
 }
+
+// MARK: UserObserving
 
 extension ParticipantsSectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {

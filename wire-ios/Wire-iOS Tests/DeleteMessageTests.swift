@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - ConversationCellType
+
 enum ConversationCellType: Int {
     case text
     case textWithRichMedia
@@ -28,6 +30,8 @@ enum ConversationCellType: Int {
     case systemMessage
     case count
 }
+
+// MARK: - DeleteMessageTests
 
 final class DeleteMessageTests: XCTestCase {
     var sut: DeleteMessageTests!

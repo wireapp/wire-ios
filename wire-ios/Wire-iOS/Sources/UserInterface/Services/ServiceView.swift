@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - ServiceDetailView
+
 final class ServiceDetailView: UIView {
     private let serviceView: ServiceView
     private let descriptionTextView = UITextView()
@@ -73,6 +75,8 @@ final class ServiceDetailView: UIView {
         descriptionTextView.text = service.serviceUserDetails?.serviceDescription
     }
 }
+
+// MARK: - ServiceView
 
 final class ServiceView: UIView {
     private let logoView = UserImageView(size: .normal)

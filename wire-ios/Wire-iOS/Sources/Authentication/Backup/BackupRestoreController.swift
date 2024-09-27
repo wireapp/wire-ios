@@ -22,6 +22,8 @@ import WireDataModel
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - BackupRestoreControllerDelegate
+
 protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
 }
@@ -29,6 +31,8 @@ protocol BackupRestoreControllerDelegate: AnyObject {
 /// An object that coordinates restoring a backup.
 
 private let zmLog = ZMSLog(tag: "Backup")
+
+// MARK: - BackupRestoreController
 
 final class BackupRestoreController: NSObject {
     // There are some external apps that users can use to transfer backup files, which can modify
@@ -166,6 +170,8 @@ final class BackupRestoreController: NSObject {
         target.present(controller, animated: true)
     }
 }
+
+// MARK: UIDocumentPickerDelegate
 
 extension BackupRestoreController: UIDocumentPickerDelegate {
     func documentPicker(

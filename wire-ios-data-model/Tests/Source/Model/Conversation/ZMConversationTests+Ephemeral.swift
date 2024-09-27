@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireDataModel
 
+// MARK: - MessageDestructionTimeoutValueTests
+
 final class MessageDestructionTimeoutValueTests: XCTestCase {
     func testThatItReturnsTheCorrectTimeouts() {
         XCTAssertEqual(MessageDestructionTimeoutValue.none.rawValue, 0)
@@ -70,6 +72,8 @@ extension MessageDestructionTimeoutValueTests {
         XCTAssertEqual(MessageDestructionTimeoutValue.fourWeeks.displayString, "4 weeks")
     }
 }
+
+// MARK: - ZMConversationTests_Ephemeral
 
 class ZMConversationTests_Ephemeral: BaseZMMessageTests {
     func testThatItAllowsSettingTimeoutsOnGroupConversations() {

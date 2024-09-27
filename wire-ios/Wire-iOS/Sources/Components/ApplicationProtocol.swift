@@ -18,12 +18,16 @@
 
 import UIKit
 
+// MARK: - ApplicationProtocol
+
 protocol ApplicationProtocol {
     @available(*, deprecated, message: "Use the interfaceOrientation property of the window scene instead.")
     var statusBarOrientation: UIInterfaceOrientation { get }
 
     static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void)
 }
+
+// MARK: - UIApplication.State + CustomStringConvertible
 
 extension UIApplication.State: CustomStringConvertible {
     public var description: String {

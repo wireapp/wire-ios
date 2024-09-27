@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - CallEvent
+
 enum CallEvent {
     case initiated,
          received,

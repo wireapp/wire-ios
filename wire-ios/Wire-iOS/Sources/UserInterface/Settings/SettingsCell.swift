@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - SettingsCellPreview
+
 enum SettingsCellPreview {
     case none
     case text(String)
@@ -27,6 +29,8 @@ enum SettingsCellPreview {
     case image(UIImage)
     case color(UIColor)
 }
+
+// MARK: - SettingsCellType
 
 protocol SettingsCellType: AnyObject {
     var titleText: String { get set }
@@ -36,6 +40,8 @@ protocol SettingsCellType: AnyObject {
 }
 
 typealias SettingsTableCellProtocol = SettingsCellType & UITableViewCell
+
+// MARK: - SettingsTableCell
 
 class SettingsTableCell: SettingsTableCellProtocol {
     private let iconImageView: UIImageView = {
@@ -274,12 +280,16 @@ class SettingsTableCell: SettingsTableCellProtocol {
     }
 }
 
+// MARK: - SettingsButtonCell
+
 final class SettingsButtonCell: SettingsTableCell {
     override func setup() {
         super.setup()
         cellNameLabel.textColor = SemanticColors.Label.textDefault
     }
 }
+
+// MARK: - SettingsToggleCell
 
 final class SettingsToggleCell: SettingsTableCell {
     var switchView: UISwitch!
@@ -303,6 +313,8 @@ final class SettingsToggleCell: SettingsTableCell {
         descriptor?.select(SettingsPropertyValue(switchView.isOn), sender: sender)
     }
 }
+
+// MARK: - SettingsValueCell
 
 final class SettingsValueCell: SettingsTableCell {
     override var descriptor: SettingsCellDescriptorType? {
@@ -336,6 +348,8 @@ final class SettingsValueCell: SettingsTableCell {
         descriptor?.featureCell(self)
     }
 }
+
+// MARK: - SettingsTextCell
 
 final class SettingsTextCell: SettingsTableCell,
     UITextFieldDelegate {
@@ -423,6 +437,8 @@ final class SettingsTextCell: SettingsTableCell,
     }
 }
 
+// MARK: - SettingsStaticTextTableCell
+
 final class SettingsStaticTextTableCell: SettingsTableCell {
     override func setup() {
         super.setup()
@@ -431,6 +447,8 @@ final class SettingsStaticTextTableCell: SettingsTableCell {
         accessibilityTraits = .staticText
     }
 }
+
+// MARK: - SettingsProfileLinkCell
 
 final class SettingsProfileLinkCell: SettingsTableCell {
     // MARK: - Properties

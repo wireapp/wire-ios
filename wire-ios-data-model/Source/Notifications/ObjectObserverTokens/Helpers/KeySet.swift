@@ -19,6 +19,8 @@
 import Foundation
 import WireUtilities
 
+// MARK: - AffectedKeys
+
 public enum AffectedKeys: Equatable {
     case some(KeySet)
     case all
@@ -52,6 +54,8 @@ public func == (lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
         false
     }
 }
+
+// MARK: - KeySet
 
 public struct KeySet: Sequence {
     public typealias Key = StringKeyPath
@@ -127,6 +131,8 @@ public struct KeySet: Sequence {
     }
 }
 
+// MARK: Hashable
+
 extension KeySet: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(backing.hashValue)
@@ -154,6 +160,8 @@ extension KeySet {
         KeySet(backing.filter { match($0) })
     }
 }
+
+// MARK: CustomDebugStringConvertible
 
 extension KeySet: CustomDebugStringConvertible {
     public var description: String {

@@ -18,6 +18,8 @@
 
 import CoreLocation
 
+// MARK: - AppLocationManagerDelegate
+
 protocol AppLocationManagerDelegate: AnyObject {
     func didUpdateLocations(_ locations: [CLLocation])
 
@@ -25,6 +27,8 @@ protocol AppLocationManagerDelegate: AnyObject {
 
     func didChangeAuthorization(status: CLAuthorizationStatus)
 }
+
+// MARK: - AppLocationManagerProtocol
 
 // sourcery: AutoMockable
 protocol AppLocationManagerProtocol: AnyObject {
@@ -40,6 +44,8 @@ protocol AppLocationManagerProtocol: AnyObject {
 
     func stopUpdatingLocation()
 }
+
+// MARK: - AppLocationManager
 
 /// The AppLocationManager class is responsible for handling location-related services using CoreLocation.
 /// It conforms to the AppLocationManagerProtocol and CLLocationManagerDelegate protocols,
@@ -83,7 +89,7 @@ final class AppLocationManager: NSObject, AppLocationManagerProtocol {
     }
 }
 
-// MARK: - CLLocationManagerDelegate
+// MARK: CLLocationManagerDelegate
 
 extension AppLocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

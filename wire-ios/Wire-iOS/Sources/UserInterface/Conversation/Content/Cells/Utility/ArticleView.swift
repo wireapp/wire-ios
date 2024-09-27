@@ -22,6 +22,8 @@ import WireDataModel
 import WireDesign
 import WireLinkPreview
 
+// MARK: - ArticleView
+
 final class ArticleView: UIView {
     // MARK: - Styling
 
@@ -222,7 +224,7 @@ final class ArticleView: UIView {
     }
 }
 
-// MARK: - UIContextMenuInteractionDelegate
+// MARK: UIContextMenuInteractionDelegate
 
 extension ArticleView: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(

@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 import WireSystem
 
+// MARK: - AuthenticationEventResponderChainDelegate
+
 /// Provides information to the event responder chain and executes actions.
 
 protocol AuthenticationEventResponderChainDelegate: AnyObject {
@@ -34,6 +36,8 @@ protocol AuthenticationEventResponderChainDelegate: AnyObject {
 
     func executeActions(_ actions: [AuthenticationCoordinatorAction])
 }
+
+// MARK: - AuthenticationEventResponderChain
 
 /// The authentication responder chain is responsible for dispatching events to supported
 /// handlers, and determining what actions to execute in response.

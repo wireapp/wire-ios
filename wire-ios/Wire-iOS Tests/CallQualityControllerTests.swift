@@ -21,6 +21,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - CallQualityControllerTests
+
 final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     // MARK: - Properties
 
@@ -214,7 +216,7 @@ extension CallQualityControllerTests {
     }
 }
 
-// MARK: - ActiveCallRouterMock
+// MARK: - MockCallQualityController
 
 final class MockCallQualityController: CallQualityController {
     override var canPresentCallQualitySurvey: Bool {

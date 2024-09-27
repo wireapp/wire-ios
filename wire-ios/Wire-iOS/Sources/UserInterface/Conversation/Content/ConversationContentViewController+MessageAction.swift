@@ -219,7 +219,7 @@ extension ConversationContentViewController {
     }
 }
 
-// MARK: - UserClientObserver
+// MARK: - ConversationContentViewController + UserClientObserver
 
 extension ConversationContentViewController: UserClientObserver {
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
@@ -230,7 +230,7 @@ extension ConversationContentViewController: UserClientObserver {
     }
 }
 
-// MARK: - SignatureObserver
+// MARK: - ConversationContentViewController + SignatureObserver
 
 extension ConversationContentViewController: SignatureObserver {
     func willReceiveSignatureURL() {

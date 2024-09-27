@@ -104,6 +104,8 @@ public protocol ZMFileMessageData: NSObjectProtocol {
     func retrievePDFSignature()
 }
 
+// MARK: - ZMAssetClientMessage + ZMFileMessageData
+
 extension ZMAssetClientMessage: ZMFileMessageData {
     /// Notification name for canceled file upload
     public static let didCancelFileDownloadNotificationName = Notification

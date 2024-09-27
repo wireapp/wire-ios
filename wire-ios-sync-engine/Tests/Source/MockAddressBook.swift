@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireSyncEngine
 
+// MARK: - MockAddressBook
+
 /// Fake to supply predefined AB hashes
 class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAccessor {
     /// Find contact by Id
@@ -86,6 +88,8 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
     /// Generate an infinite number of contacts
     var createInfiniteContacts = false
 }
+
+// MARK: - MockAddressBookContact
 
 struct MockAddressBookContact: WireSyncEngine.ContactRecord {
     static var incrementalLocalIdentifier = ZMAtomicInteger(integer: 0)

@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - TestUserClientObserver
+
 class TestUserClientObserver: NSObject, UserClientObserver {
     var receivedChangeInfo: [UserClientChangeInfo] = []
 
@@ -26,6 +28,8 @@ class TestUserClientObserver: NSObject, UserClientObserver {
         receivedChangeInfo.append(changes)
     }
 }
+
+// MARK: - UserClientObserverTests
 
 class UserClientObserverTests: NotificationDispatcherTestBase {
     var clientObserver: TestUserClientObserver!

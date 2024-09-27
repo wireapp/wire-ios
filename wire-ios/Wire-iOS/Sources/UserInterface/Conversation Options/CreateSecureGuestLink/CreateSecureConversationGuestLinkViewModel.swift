@@ -34,7 +34,7 @@ protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToCreateLinkWithError error: Error)
 }
 
-// MARK: - CreateSecureGuestLinkViewModel
+// MARK: - CreateSecureConversationGuestLinkViewModel
 
 final class CreateSecureConversationGuestLinkViewModel {
     enum UserInfoKeys {

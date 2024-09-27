@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - NetworkSocketDelegate
+
 @objc
 public protocol NetworkSocketDelegate {
     @objc(networkSocketDidOpen:)
@@ -31,6 +33,8 @@ public protocol NetworkSocketDelegate {
     @objc(networkSocketDidClose:)
     func didClose(socket: NetworkSocket)
 }
+
+// MARK: - DataBuffer
 
 @objcMembers
 public final class DataBuffer: NSObject {
@@ -59,6 +63,8 @@ public final class DataBuffer: NSObject {
         data.isEmpty
     }
 }
+
+// MARK: - NetworkSocket
 
 @objcMembers
 public final class NetworkSocket: NSObject {
@@ -347,6 +353,8 @@ public final class NetworkSocket: NSObject {
         }
     }
 }
+
+// MARK: StreamDelegate
 
 extension NetworkSocket: StreamDelegate {
     public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {

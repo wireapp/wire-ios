@@ -20,6 +20,8 @@ import Foundation
 import WireDomain
 import WireRequestStrategy
 
+// MARK: - StrategyDirectoryProtocol
+
 @objc
 public protocol StrategyDirectoryProtocol {
     var eventConsumers: [ZMEventConsumer] { get }
@@ -27,6 +29,8 @@ public protocol StrategyDirectoryProtocol {
     var requestStrategies: [RequestStrategy] { get }
     var contextChangeTrackers: [ZMContextChangeTracker] { get }
 }
+
+// MARK: - StrategyDirectory
 
 @objcMembers
 public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {

@@ -23,6 +23,8 @@ import WireSyncEngineSupport
 import WireTransport
 @testable import WireSyncEngine
 
+// MARK: - CallingRequestStrategyTests
+
 class CallingRequestStrategyTests: MessagingTest {
     var sut: CallingRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -793,6 +795,8 @@ class CallingRequestStrategyTests: MessagingTest {
         mockMessageSender.sendMessageMessage_MockMethod = { _ in }
     }
 }
+
+// MARK: - MockFetchUserClientsUseCase
 
 class MockFetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
     var mockReturnValueForFetchUserClients = Set<QualifiedClientID>()

@@ -21,9 +21,13 @@ import WireDataModel
 import WireLinkPreview
 import XCTest
 
+// MARK: - MockCompositeMessageData
+
 final class MockCompositeMessageData: NSObject, CompositeMessageData {
     var items: [CompositeMessageItem] = []
 }
+
+// MARK: - MockTextMessageData
 
 final class MockTextMessageData: NSObject, TextMessageData {
     var messageText: String? = ""
@@ -65,6 +69,8 @@ final class MockTextMessageData: NSObject, TextMessageData {
         // stub
     }
 }
+
+// MARK: - MockSystemMessageData
 
 final class MockSystemMessageData: NSObject, ZMSystemMessageData {
     var messageTimer: NSNumber?
@@ -126,6 +132,8 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
     }
 }
 
+// MARK: - MockFileMessageDataType
+
 protocol MockFileMessageDataType: ZMFileMessageData {
     var size: UInt64 { get set }
     var mimeType: String? { get set }
@@ -138,8 +146,15 @@ protocol MockFileMessageDataType: ZMFileMessageData {
     var downloadState: AssetDownloadState { get set }
 }
 
+// MARK: - MockPassFileMessageData + MockFileMessageDataType
+
 extension MockPassFileMessageData: MockFileMessageDataType {}
+
+// MARK: - MockFileMessageData + MockFileMessageDataType
+
 extension MockFileMessageData: MockFileMessageDataType {}
+
+// MARK: - MockPassFileMessageData
 
 final class MockPassFileMessageData: NSObject, ZMFileMessageData {
     var mimeType: String? = "application/vnd.apple.pkpass"
@@ -217,6 +232,8 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
     }
 }
 
+// MARK: - MockFileMessageData
+
 final class MockFileMessageData: NSObject, ZMFileMessageData {
     var mimeType: String? = "application/pdf"
     var size: UInt64 = 1024 * 1024 * 2
@@ -285,7 +302,11 @@ final class MockFileMessageData: NSObject, ZMFileMessageData {
     }
 }
 
+// MARK: - MockKnockMessageData
+
 final class MockKnockMessageData: NSObject, ZMKnockMessageData {}
+
+// MARK: - MockImageMessageData
 
 final class MockImageMessageData: NSObject, ZMImageMessageData {
     var mockOriginalSize: CGSize = .zero
@@ -313,12 +334,16 @@ final class MockImageMessageData: NSObject, ZMImageMessageData {
     }
 }
 
+// MARK: - MockLocationMessageData
+
 final class MockLocationMessageData: NSObject, LocationMessageData {
     var longitude: Float = 0
     var latitude: Float = 0
     var name: String?
     var zoomLevel: Int32 = 0
 }
+
+// MARK: - MockMessage
 
 class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage, SwiftConversationMessage {
     // MARK: - ConversationCompositeMessage

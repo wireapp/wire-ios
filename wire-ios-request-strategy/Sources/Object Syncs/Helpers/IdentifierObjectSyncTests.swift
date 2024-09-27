@@ -20,6 +20,8 @@ import WireTesting
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - MockTranscoder
+
 class MockTranscoder: IdentifierObjectSyncTranscoder {
     typealias T = UUID
 
@@ -40,6 +42,8 @@ class MockTranscoder: IdentifierObjectSyncTranscoder {
         lastReceivedResponse = (response, identifiers)
     }
 }
+
+// MARK: - IdentifierObjectSyncTests
 
 class IdentifierObjectSyncTests: ZMTBaseTest {
     var moc: NSManagedObjectContext!

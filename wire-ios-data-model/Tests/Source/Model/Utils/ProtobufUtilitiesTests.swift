@@ -20,6 +20,8 @@ import WireTesting
 import XCTest
 @testable import WireDataModel
 
+// MARK: - ProtobufUtilitiesTests
+
 class ProtobufUtilitiesTests: BaseZMClientMessageTests {
     override class func setUp() {
         super.setUp()

@@ -52,6 +52,8 @@ extension CallStatusViewState {
     }
 }
 
+// MARK: - EstablishingCallStatusView
+
 final class EstablishingCallStatusView: UIView {
     private let titleLabel = DynamicFontLabel(
         text: "",

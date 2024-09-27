@@ -39,6 +39,8 @@ extension UserDefaults {
 
 private let zmLog = ZMSLog(tag: "UserDefaults")
 
+// MARK: - SuiteCleanUp
+
 private final class SuiteCleanUp {
     private let suiteName: String
 

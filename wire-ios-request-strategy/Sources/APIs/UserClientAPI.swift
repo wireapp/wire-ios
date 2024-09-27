@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - UserClientAPI
+
 // sourcery: AutoMockable
 public protocol UserClientAPI {
     func deleteUserClient(clientId: String, password: String) async throws
 }
+
+// MARK: - UserClientAPIV0
 
 class UserClientAPIV0: UserClientAPI {
     let httpClient: HttpClient
@@ -51,11 +55,15 @@ class UserClientAPIV0: UserClientAPI {
     }
 }
 
+// MARK: - UserClientAPIV1
+
 class UserClientAPIV1: UserClientAPIV0 {
     override var apiVersion: APIVersion {
         .v1
     }
 }
+
+// MARK: - UserClientAPIV2
 
 class UserClientAPIV2: UserClientAPIV1 {
     override var apiVersion: APIVersion {
@@ -63,11 +71,15 @@ class UserClientAPIV2: UserClientAPIV1 {
     }
 }
 
+// MARK: - UserClientAPIV3
+
 class UserClientAPIV3: UserClientAPIV2 {
     override var apiVersion: APIVersion {
         .v3
     }
 }
+
+// MARK: - UserClientAPIV4
 
 class UserClientAPIV4: UserClientAPIV3 {
     override var apiVersion: APIVersion {
@@ -75,11 +87,15 @@ class UserClientAPIV4: UserClientAPIV3 {
     }
 }
 
+// MARK: - UserClientAPIV5
+
 class UserClientAPIV5: UserClientAPIV4 {
     override var apiVersion: APIVersion {
         .v5
     }
 }
+
+// MARK: - UserClientAPIV6
 
 class UserClientAPIV6: UserClientAPIV5 {
     override var apiVersion: APIVersion {

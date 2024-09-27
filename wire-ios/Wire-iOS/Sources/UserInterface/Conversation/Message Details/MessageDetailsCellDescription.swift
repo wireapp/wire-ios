@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - MessageDetailsCellDescription
+
 /// The description of a cell for message details.
 /// - note: This class needs to be NSCopying to be used in an ordered set for diffing.
 

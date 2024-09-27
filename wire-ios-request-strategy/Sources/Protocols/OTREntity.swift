@@ -21,6 +21,8 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
+// MARK: - OTREntity
+
 public protocol OTREntity: AnyObject {
     /// NSManagedObjectContext which the OTR entity is associated with.
     var context: NSManagedObjectContext { get }

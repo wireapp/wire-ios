@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireSyncEngine
 
+// MARK: - RegistrationStrategyTests
+
 final class RegistrationStrategyTests: MessagingTest {
     var registrationStatus: TestRegistrationStatus!
     var sut: RegistrationStrategy!
@@ -171,7 +173,7 @@ final class RegistrationStrategyTests: MessagingTest {
     }
 }
 
-// MARK: - error tests for team creation
+// MARK: RegistrationStatusStrategyTestHelper
 
 extension RegistrationStrategyTests: RegistrationStatusStrategyTestHelper {
     func handleResponse(response: ZMTransportResponse) {

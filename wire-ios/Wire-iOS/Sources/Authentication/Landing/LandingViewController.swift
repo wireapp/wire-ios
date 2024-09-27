@@ -23,6 +23,8 @@ import WireSyncEngine
 import WireSystem
 import WireTransport
 
+// MARK: - LandingViewControllerDelegate
+
 protocol LandingViewControllerDelegate: AnyObject {
     func landingViewControllerDidChooseCreateAccount()
     func landingViewControllerDidChooseLogin()
@@ -30,6 +32,8 @@ protocol LandingViewControllerDelegate: AnyObject {
     func landingViewControllerDidChooseSSOLogin() // to remove ?
     func landingViewControllerDidChooseInfoBackend()
 }
+
+// MARK: - LandingViewController
 
 /// Landing screen for choosing how to authenticate.
 final class LandingViewController: AuthenticationStepViewController {

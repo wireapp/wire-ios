@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - ImageDownloaderType
+
 protocol ImageDownloaderType {
     func downloadImage(fromURL url: URL, completion: @escaping (Data?) -> Void)
     func downloadImages(fromURLs urls: [URL], completion: @escaping ([URL: Data]) -> Void)
 }
+
+// MARK: - ImageDownloader
 
 final class ImageDownloader: NSObject, ImageDownloaderType {
     typealias ImageData = Data

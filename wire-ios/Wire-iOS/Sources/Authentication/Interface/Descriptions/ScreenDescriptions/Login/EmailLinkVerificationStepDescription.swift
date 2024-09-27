@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - EmailLinkVerificationStepDescription
+
 final class EmailLinkVerificationStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
@@ -38,6 +40,8 @@ final class EmailLinkVerificationStepDescription: AuthenticationStepDescription 
         self.footerView = VerifyEmailStepSecondaryView(canResend: false)
     }
 }
+
+// MARK: - EmailLinkVerificationMainView
 
 final class EmailLinkVerificationMainView: NSObject, ViewDescriptor, ValueSubmission {
     var valueSubmitted: ValueSubmitted?

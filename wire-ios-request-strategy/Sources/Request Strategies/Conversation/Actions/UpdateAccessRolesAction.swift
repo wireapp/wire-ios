@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UpdateAccessRolesError
+
 public enum UpdateAccessRolesError: Error {
     case unknown
     case invalidOperation
@@ -25,6 +27,8 @@ public enum UpdateAccessRolesError: Error {
     case actionDenied
     case conversationNotFound
 }
+
+// MARK: - UpdateAccessRolesAction
 
 public class UpdateAccessRolesAction: EntityAction {
     // MARK: - Types

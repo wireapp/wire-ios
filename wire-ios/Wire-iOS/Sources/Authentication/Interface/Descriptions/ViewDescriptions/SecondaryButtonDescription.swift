@@ -19,6 +19,8 @@
 import UIKit
 import WireCommonComponents
 
+// MARK: - SecondaryButtonDescription
+
 final class SecondaryButtonDescription {
     var buttonTapped: (() -> Void)?
     let title: String
@@ -29,6 +31,8 @@ final class SecondaryButtonDescription {
         self.accessibilityIdentifier = accessibilityIdentifier
     }
 }
+
+// MARK: ViewDescriptor
 
 extension SecondaryButtonDescription: ViewDescriptor {
     func create() -> UIView {

@@ -22,6 +22,8 @@ import WireTesting
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - MLSConferenceStaleParticipantsRemoverTests
+
 class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
     private let domain = "example.domain.com"
     private let groupID = MLSGroupID.random()
@@ -252,6 +254,8 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         )
     }
 }
+
+// MARK: - MLSParticipant
 
 private class MLSParticipant {
     var callParticipant: CallParticipant

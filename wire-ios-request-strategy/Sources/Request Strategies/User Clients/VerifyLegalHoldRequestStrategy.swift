@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - VerifyLegalHoldRequestStrategy
+
 /// This strategy observes the `needsToVerifyLegalHold` flag on conversations and fetches an updated list of available
 /// clients
 /// and verifies that the legal hold status is correct.
@@ -47,6 +49,8 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
     }
 }
 
+// MARK: ZMContextChangeTracker, ZMContextChangeTrackerSource
+
 extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [self]
@@ -71,6 +75,8 @@ extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChang
         }
     }
 }
+
+// MARK: IdentifierObjectSyncTranscoder
 
 extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
     public typealias T = ZMConversation
@@ -130,6 +136,8 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         }
     }
 }
+
+// MARK: - VerifyClientsParser
 
 private class VerifyClientsParser: OTREntity {
     var context: NSManagedObjectContext

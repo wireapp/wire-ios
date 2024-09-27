@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - IndexedListView
+
 /// A view that displays a list of cells that can be accessed by their index.
 protocol IndexedListView {
     /// The number of sections in the list.
@@ -41,11 +43,15 @@ extension IndexedListView {
     }
 }
 
+// MARK: - UITableView + IndexedListView
+
 extension UITableView: IndexedListView {
     func numberOfCells(inSection section: Int) -> Int {
         numberOfRows(inSection: section)
     }
 }
+
+// MARK: - UICollectionView + IndexedListView
 
 extension UICollectionView: IndexedListView {
     func numberOfCells(inSection section: Int) -> Int {

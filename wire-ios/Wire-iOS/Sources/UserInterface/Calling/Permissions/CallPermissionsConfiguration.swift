@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - CallPermissionsConfiguration
+
 protocol CallPermissionsConfiguration {
     var canAcceptAudioCalls: Bool { get }
     var isPendingAudioPermissionRequest: Bool { get }

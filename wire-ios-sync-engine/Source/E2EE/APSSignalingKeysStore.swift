@@ -20,6 +20,8 @@ import UIKit
 import WireTransport
 import WireUtilities
 
+// MARK: - SignalingKeys
+
 public struct SignalingKeys {
     let verificationKey: Data
     let decryptionKey: Data
@@ -31,6 +33,8 @@ public struct SignalingKeys {
             .secureRandomData(ofLength: APSSignalingKeysStore.defaultKeyLengthBytes)
     }
 }
+
+// MARK: - APSSignalingKeysStore
 
 @objcMembers
 public final class APSSignalingKeysStore: NSObject {

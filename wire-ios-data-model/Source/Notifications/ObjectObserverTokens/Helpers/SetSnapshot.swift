@@ -19,6 +19,8 @@
 import Foundation
 import WireUtilities
 
+// MARK: - SetStateUpdate
+
 public struct SetStateUpdate<T: Hashable> {
     public let newSnapshot: SetSnapshot<T>
     public let changeInfo: SetChangeInfo<T>
@@ -26,6 +28,8 @@ public struct SetStateUpdate<T: Hashable> {
     let removedObjects: Set<T>
     let insertedObjects: Set<T>
 }
+
+// MARK: - SetChangeInfoOwner
 
 public protocol SetChangeInfoOwner {
     associatedtype ChangeInfoContent: Hashable
@@ -40,6 +44,8 @@ public protocol SetChangeInfoOwner {
 
     func enumerateMovedIndexes(_ block: @escaping (_ from: Int, _ to: Int) -> Void)
 }
+
+// MARK: - SetChangeInfo
 
 open class SetChangeInfo<T: Hashable>: NSObject {
     let changeSet: ChangedIndexes<T>
@@ -81,6 +87,8 @@ open class SetChangeInfo<T: Hashable>: NSObject {
             "updated: \(updatedIndexes), moved: \(movedIndexPairs)"
     }
 }
+
+// MARK: - SetSnapshot
 
 public struct SetSnapshot<T: Hashable> {
     public let set: OrderedSetState<T>

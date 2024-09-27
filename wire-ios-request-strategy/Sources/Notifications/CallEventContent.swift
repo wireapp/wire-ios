@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - CallEventContent
+
 public struct CallEventContent: Codable {
     public enum CodingKeys: String, CodingKey {
         case type
@@ -141,6 +143,8 @@ public struct CallEventContent: Codable {
         return properties.isVideo
     }
 }
+
+// MARK: CallEventContent.Properties
 
 extension CallEventContent {
     struct Properties: Codable {

@@ -22,6 +22,8 @@ import WireTransport
 
 private let log = ZMSLog(tag: "Network")
 
+// MARK: - UnauthenticatedOperationLoop
+
 class UnauthenticatedOperationLoop: NSObject {
     let transportSession: UnauthenticatedTransportSessionProtocol
     let requestStrategies: [RequestStrategy]
@@ -46,6 +48,8 @@ class UnauthenticatedOperationLoop: NSObject {
     }
 }
 
+// MARK: TearDownCapable
+
 extension UnauthenticatedOperationLoop: TearDownCapable {
     func tearDown() {
         shouldEnqueue = false
@@ -54,6 +58,8 @@ extension UnauthenticatedOperationLoop: TearDownCapable {
         tornDown = true
     }
 }
+
+// MARK: RequestAvailableObserver
 
 extension UnauthenticatedOperationLoop: RequestAvailableObserver {
     func newRequestsAvailable() {

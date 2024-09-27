@@ -217,6 +217,8 @@ extension ConversationInputBarViewController {
     }
 }
 
+// MARK: - ConversationInputBarViewController + AudioRecordViewControllerDelegate
+
 extension ConversationInputBarViewController: AudioRecordViewControllerDelegate {
     func audioRecordViewControllerDidCancel(_: AudioRecordBaseViewController) {
         hideAudioRecordViewController()
@@ -242,6 +244,8 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
         checker.performAction()
     }
 }
+
+// MARK: - ConversationInputBarViewController + WireCallCenterCallStateObserver
 
 extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(

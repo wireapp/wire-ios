@@ -21,6 +21,8 @@ import WireCryptobox
 import WireLinkPreview
 @testable import WireDataModel
 
+// MARK: - ZMClientMessageTests_Ephemeral
+
 class ZMClientMessageTests_Ephemeral: BaseZMClientMessageTests {
     override func setUp() {
         super.setUp()

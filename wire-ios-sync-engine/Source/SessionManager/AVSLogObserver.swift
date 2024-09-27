@@ -20,6 +20,8 @@ import avs
 
 private let zmLog = ZMSLog(tag: "AVS")
 
+// MARK: - AVSLogObserver
+
 final class AVSLogObserver: AVSLogger {
     private var token: Any!
 

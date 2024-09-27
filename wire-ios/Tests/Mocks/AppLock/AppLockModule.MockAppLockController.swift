@@ -20,6 +20,8 @@ import Foundation
 import LocalAuthentication
 @testable import Wire
 
+// MARK: - AppLockModule.MockAppLockController
+
 extension AppLockModule {
     final class MockAppLockController: AppLockType {
         // MARK: - Metrics
@@ -80,6 +82,8 @@ extension AppLockModule {
         }
     }
 }
+
+// MARK: - AppLockModule.MockAppLockController.MethodCalls
 
 extension AppLockModule.MockAppLockController {
     struct MethodCalls {

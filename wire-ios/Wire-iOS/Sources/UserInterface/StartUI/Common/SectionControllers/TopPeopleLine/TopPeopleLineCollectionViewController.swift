@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - TopPeopleLineCollectionViewController
+
 final class TopPeopleLineCollectionViewController: NSObject {
     var topPeople = [ZMConversation]()
 
@@ -29,7 +31,7 @@ final class TopPeopleLineCollectionViewController: NSObject {
     }
 }
 
-// MARK: - Collection View Data Source
+// MARK: UICollectionViewDataSource
 
 extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -46,7 +48,7 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - Collection View Delegate
+// MARK: UICollectionViewDelegate
 
 extension TopPeopleLineCollectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -55,7 +57,7 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDelegate {
     }
 }
 
-// MARK: - Flow Layout
+// MARK: UICollectionViewDelegateFlowLayout
 
 extension TopPeopleLineCollectionViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(

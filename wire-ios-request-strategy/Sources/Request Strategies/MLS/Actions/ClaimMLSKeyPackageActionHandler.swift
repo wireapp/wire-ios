@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ClaimMLSKeyPackageActionHandler
+
 class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
     // MARK: - Methods
 
@@ -87,6 +89,8 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
         }
     }
 }
+
+// MARK: ClaimMLSKeyPackageActionHandler.ResponsePayload
 
 extension ClaimMLSKeyPackageActionHandler {
     // MARK: - Payload

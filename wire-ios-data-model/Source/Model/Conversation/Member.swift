@@ -17,6 +17,9 @@
 //
 
 public typealias TeamMembership = Member
+
+// MARK: - Member
+
 @objcMembers
 public class Member: ZMManagedObject {
     @NSManaged public var team: Team?
@@ -79,7 +82,7 @@ public class Member: ZMManagedObject {
     }
 }
 
-// MARK: - Transport
+// MARK: - ResponseKey
 
 private enum ResponseKey: String {
     case user, permissions, createdBy = "created_by", createdAt = "created_at"

@@ -19,6 +19,8 @@
 import Foundation
 import WireUtilities
 
+// MARK: - CallParticipantsSnapshot
+
 final class CallParticipantsSnapshot {
     // MARK: - Properties
 

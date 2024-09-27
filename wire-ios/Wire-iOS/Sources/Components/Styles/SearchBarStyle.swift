@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - SearchBarStyle
+
 struct SearchBarStyle {
     typealias SearchBarColors = SemanticColors.SearchBar
 
@@ -39,6 +41,8 @@ struct SearchBarStyle {
         backgroundColor: SemanticColors.SearchBar.backgroundInputView
     )
 }
+
+// MARK: - UITextView + Stylable
 
 extension UITextView: Stylable {
     func applyStyle(_ style: SearchBarStyle) {

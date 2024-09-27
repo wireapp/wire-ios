@@ -20,6 +20,8 @@ import WireDataModel
 import WireTesting
 @testable import WireSyncEngine
 
+// MARK: - ZMLocalNotificationTests_Message
+
 class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     // MARK: - Text Messages
 
@@ -555,7 +557,7 @@ extension ZMLocalNotificationTests_Message {
     }
 }
 
-// MARK: - File Asset Messages
+// MARK: - FileType
 
 enum FileType {
     case txt, video, audio

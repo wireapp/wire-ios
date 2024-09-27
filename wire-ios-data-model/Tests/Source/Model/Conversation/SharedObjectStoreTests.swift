@@ -32,6 +32,8 @@ extension Notification {
     }
 }
 
+// MARK: - ContextDidSaveNotificationPersistenceTests
+
 class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
     var sut: ContextDidSaveNotificationPersistence!
 
@@ -121,6 +123,8 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
     }
 }
 
+// MARK: - ShareExtensionAnalyticsPersistenceTests
+
 class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
     var sut: ShareExtensionAnalyticsPersistence!
 
@@ -165,6 +169,8 @@ class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
         XCTAssertEqual(sut.storedTrackingEvents.count, 0)
     }
 }
+
+// MARK: - ShareObjectStoreTests
 
 class ShareObjectStoreTests: ZMTBaseTest {
     var sut: SharedObjectStore<WireDataModel.SharedObjectTestClass>!

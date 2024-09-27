@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireSyncEngine
 
+// MARK: - MockSessionManager
+
 class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     static let accountManagerURL = URL(fileURLWithPath: NSTemporaryDirectory())
         .appendingPathComponent("MockSessionManager.accounts")
@@ -85,6 +87,8 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
         // no-op
     }
 }
+
+// MARK: - MockCallKitManager
 
 class MockCallKitManager: CallKitManagerInterface {
     var isEnabled = false

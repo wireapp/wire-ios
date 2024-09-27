@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - ConversationMemberJoinEventProcessorProtocol
+
 /// Process conversation member join events.
 
 protocol ConversationMemberJoinEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol ConversationMemberJoinEventProcessorProtocol {
 
     func processEvent(_ event: ConversationMemberJoinEvent) async throws
 }
+
+// MARK: - ConversationMemberJoinEventProcessor
 
 struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcessorProtocol {
     func processEvent(_: ConversationMemberJoinEvent) async throws {

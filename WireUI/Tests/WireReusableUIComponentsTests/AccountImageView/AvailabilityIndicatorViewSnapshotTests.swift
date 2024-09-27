@@ -20,6 +20,8 @@ import WireTestingPackage
 import XCTest
 @testable import WireReusableUIComponents
 
+// MARK: - AvailabilityIndicatorViewSnapshotTests
+
 final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
     typealias SUT = AvailabilityIndicatorView
 
@@ -61,5 +63,7 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
         }
     }
 }
+
+// MARK: - AvailabilityIndicatorView + Sendable
 
 extension AvailabilityIndicatorView: Sendable {}

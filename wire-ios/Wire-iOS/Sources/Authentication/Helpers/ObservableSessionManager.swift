@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - ObservableSessionManager
+
 /// A protocol for session managers that provides a mechanism to observe user
 /// session creation.
 
@@ -58,5 +60,7 @@ protocol ObservableSessionManager: SessionManagerType {
     /// Add a new account.
     func addAccount(userInfo: [String: Any]?)
 }
+
+// MARK: - SessionManager + ObservableSessionManager
 
 extension SessionManager: ObservableSessionManager {}

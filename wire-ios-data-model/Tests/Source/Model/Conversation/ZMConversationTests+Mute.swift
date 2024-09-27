@@ -29,6 +29,8 @@ extension ZMConversation {
     }
 }
 
+// MARK: - ZMConversationTests_Mute
+
 class ZMConversationTests_Mute: ZMConversationTestsBase {
     func testThatItDoesNotCountsSilencedConversationsUnreadContentAsUnread() {
         let context = syncMOC
@@ -320,7 +322,7 @@ extension ZMConversationTests_Mute {
     }
 }
 
-// MARK: - Alarming messages
+// MARK: - ZMConversationTest_Mute_Alarming
 
 class ZMConversationTest_Mute_Alarming: BaseCompositeMessageTests {
     func testCompositeMessageShouldCreateNotification_AvailabilityBusy() {

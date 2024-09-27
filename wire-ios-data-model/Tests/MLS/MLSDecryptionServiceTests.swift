@@ -24,6 +24,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - MLSDecryptionServiceTests
+
 final class MLSDecryptionServiceTests: ZMConversationTestsBase {
     var sut: MLSDecryptionService!
     var mockMLSActionExecutor: MockMLSActionExecutor!

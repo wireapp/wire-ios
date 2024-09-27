@@ -33,6 +33,8 @@ extension ConversationAddParticipantsError {
     }
 }
 
+// MARK: - AddParticipantActionHandler
+
 class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
     let decoder: JSONDecoder = .defaultDecoder
 
@@ -197,6 +199,8 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
     }
 }
+
+// MARK: AddParticipantActionHandler.ErrorResponse
 
 extension AddParticipantActionHandler {
     // MARK: - Error response

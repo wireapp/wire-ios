@@ -22,6 +22,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - AudioEffectsPickerDelegate
+
 protocol AudioEffectsPickerDelegate: AnyObject {
     func audioEffectsPickerDidPickEffect(
         _ picker: AudioEffectsPickerViewController,
@@ -29,6 +31,8 @@ protocol AudioEffectsPickerDelegate: AnyObject {
         resultFilePath: String
     )
 }
+
+// MARK: - AudioEffectsPickerViewController
 
 final class AudioEffectsPickerViewController: UIViewController {
     let recordingPath: String
@@ -316,6 +320,8 @@ final class AudioEffectsPickerViewController: UIViewController {
     }
 }
 
+// MARK: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
+
 extension AudioEffectsPickerViewController: UICollectionViewDelegate, UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -361,15 +367,21 @@ extension AudioEffectsPickerViewController: UICollectionViewDelegate, UICollecti
     }
 }
 
+// MARK: AudioPlayerControllerDelegate
+
 extension AudioEffectsPickerViewController: AudioPlayerControllerDelegate {
     func audioPlayerControllerDidFinishPlaying() {
         setState(.time, animated: true)
     }
 }
 
+// MARK: - AudioPlayerControllerDelegate
+
 private protocol AudioPlayerControllerDelegate: AnyObject {
     func audioPlayerControllerDidFinishPlaying()
 }
+
+// MARK: - AudioPlayerController
 
 private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
     let player: AVAudioPlayer

@@ -45,6 +45,8 @@ extension ZMConversationMessage {
     }
 }
 
+// MARK: - SoundEventListener
+
 final class SoundEventListener: NSObject {
     weak var userSession: ZMUserSession?
 
@@ -102,6 +104,8 @@ final class SoundEventListener: NSObject {
     }
 }
 
+// MARK: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObserver
+
 extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObserver {
     func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo) {
         for message in changeInfo.messages {
@@ -146,6 +150,8 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
         }
     }
 }
+
+// MARK: WireCallCenterCallStateObserver
 
 extension SoundEventListener: WireCallCenterCallStateObserver {
     func callCenterDidChange(
@@ -229,6 +235,8 @@ extension SoundEventListener {
         soundEventWatchDog.isMuted = true
     }
 }
+
+// MARK: ZMNetworkAvailabilityObserver
 
 extension SoundEventListener: ZMNetworkAvailabilityObserver {
     func didChangeAvailability(newState: NetworkState) {

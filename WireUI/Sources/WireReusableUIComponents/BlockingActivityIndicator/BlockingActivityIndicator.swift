@@ -19,6 +19,8 @@
 import SwiftUI
 import WireFoundation
 
+// MARK: - BlockingActivityIndicator
+
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
 public final class BlockingActivityIndicator {
     // MARK: - Private Properties

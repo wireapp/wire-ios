@@ -29,6 +29,8 @@ extension TimeInterval {
     }
 }
 
+// MARK: - WirelessExpirationTimeFormatter
+
 final class WirelessExpirationTimeFormatter {
     static let shared = WirelessExpirationTimeFormatter()
     private let numberFormatter: NumberFormatter = {

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AssetsPreprocessor
+
 /// Preprocess the assets before they are uploaded.
 ///
 /// - images are downscaled and converted to jpeg if they are too big
@@ -112,6 +114,8 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
     }
 }
 
+// MARK: ZMAssetsPreprocessorDelegate
+
 extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
     public func completedDownsampleOperation(
         _ operation: ZMImageDownsampleOperationProtocol,
@@ -142,6 +146,8 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
         }
     }
 }
+
+// MARK: - AssetImageOwnerAdapter
 
 /// Adapter which implements the ZMImageOwner protcol because it requires an NSObject
 class AssetImageOwnerAdapter: NSObject, ZMImageOwner {

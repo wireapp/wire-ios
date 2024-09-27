@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - QualifiedClientID
+
 public struct QualifiedClientID: Hashable {
     public let userID: UUID
     public let domain: String
@@ -29,6 +31,8 @@ public struct QualifiedClientID: Hashable {
         self.clientID = clientID
     }
 }
+
+// MARK: - FetchUserClientsAction
 
 /// An action to fetch all user client IDs given a set of
 /// user IDs.

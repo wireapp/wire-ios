@@ -19,6 +19,8 @@
 import WireRequestStrategy
 import XCTest
 
+// MARK: - QuickSyncObserverTests
+
 final class QuickSyncObserverTests: MessagingTestBase {
     func testThatSynchronisationStateIsOnline_thenDontWait() async {
         // given
@@ -58,7 +60,7 @@ final class QuickSyncObserverTests: MessagingTestBase {
     }
 }
 
-// MARK: -
+// MARK: - Arrangement
 
 private struct Arrangement {
     let coreDataStack: CoreDataStack

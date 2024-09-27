@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - SyncMLSOneToOneConversationActionHandler
+
 final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneToOneConversationAction> {
     private lazy var processor = ConversationEventPayloadProcessor(
         mlsEventProcessor: MLSEventProcessor(context: context),

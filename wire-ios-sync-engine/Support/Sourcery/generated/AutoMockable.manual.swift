@@ -25,6 +25,8 @@ import Foundation
 
 @testable import WireSyncEngine
 
+// MARK: - MockMessageSenderInterface
+
 public class MockMessageSenderInterface: MessageSenderInterface {
     // MARK: - Life cycle
 
@@ -70,6 +72,8 @@ public class MockMessageSenderInterface: MessageSenderInterface {
         try await mock(message)
     }
 }
+
+// MARK: - MockSessionEstablisherInterface
 
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     // MARK: - Life cycle

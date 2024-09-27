@@ -19,9 +19,13 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - CallActionsViewDelegate
+
 protocol CallActionsViewDelegate: AnyObject {
     func callActionsView(_ callActionsView: CallActionsView, perform action: CallAction)
 }
+
+// MARK: - CallActionsView
 
 // A view showing multiple buttons depending on the given `CallActionsView.Input`.
 // Button touches result in `CallActionsView.Action` cases to be sent to the objects delegate.
@@ -266,6 +270,8 @@ final class CallActionsView: UIView {
             "speakers_and_all_toggle.selected.\(input.videoGridPresentationMode.accessibilityIdentifier)"
     }
 }
+
+// MARK: CallActionsView.LayoutSize
 
 extension CallActionsView {
     enum LayoutSize {

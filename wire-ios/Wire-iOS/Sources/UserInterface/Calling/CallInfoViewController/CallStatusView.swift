@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - CallStatusViewState
+
 enum CallStatusViewState: Equatable {
     case none
     case connecting
@@ -29,6 +31,8 @@ enum CallStatusViewState: Equatable {
     case reconnecting // "Reconnecting..."
     case terminating // "Ending call..."
 }
+
+// MARK: - CallStatusView
 
 final class CallStatusView: UIView {
     private let titleLabel = UILabel()

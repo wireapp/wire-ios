@@ -21,6 +21,8 @@ import WireDataModel
 import WireSyncEngine
 import WireSystem
 
+// MARK: - AutomationEmailCredentials
+
 public final class AutomationEmailCredentials: NSObject {
     public var email: String
     public var password: String
@@ -30,6 +32,8 @@ public final class AutomationEmailCredentials: NSObject {
         super.init()
     }
 }
+
+// MARK: - AutomationHelper
 
 /// This class is used to retrieve specific arguments passed on the
 /// command line when running automation tests.
@@ -165,7 +169,7 @@ public final class AutomationHelper: NSObject {
     }
 }
 
-// MARK: - Helpers
+// MARK: - ArgumentsType
 
 protocol ArgumentsType {
     var flagPrefix: String { get }
@@ -204,6 +208,8 @@ extension ArgumentsType {
     }
 }
 
+// MARK: - CommandLineArguments
+
 /// Command line arguments
 private struct CommandLineArguments: ArgumentsType {
     let arguments: Set<String>
@@ -212,6 +218,8 @@ private struct CommandLineArguments: ArgumentsType {
         self.arguments = Set(ProcessInfo.processInfo.arguments)
     }
 }
+
+// MARK: - FileArguments
 
 /// Arguments read from a file on disk
 private struct FileArguments: ArgumentsType {

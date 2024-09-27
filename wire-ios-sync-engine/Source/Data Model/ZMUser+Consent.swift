@@ -20,9 +20,13 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "Network")
 
+// MARK: - ConsentType
+
 enum ConsentType: Int {
     case marketing = 2
 }
+
+// MARK: - ConsentRequestError
 
 public enum ConsentRequestError: Error {
     case unknown
@@ -135,6 +139,8 @@ extension ZMUser {
         transportSession.enqueueOneTime(request)
     }
 }
+
+// MARK: - ConsentRequestFactory
 
 enum ConsentRequestFactory {
     static let consentPath = "/self/consent"

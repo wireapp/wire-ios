@@ -21,6 +21,8 @@ import WireSyncEngine
 import WireTransport
 import WireUtilities
 
+// MARK: - ConversationGuestOptionsViewModelConfiguration
+
 protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var allowGuests: Bool { get }
     var guestLinkFeatureStatus: GuestLinkFeatureStatus { get }
@@ -33,6 +35,8 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     func fetchConversationLink(completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void)
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void)
 }
+
+// MARK: - ConversationGuestOptionsViewModelDelegate
 
 // sourcery: AutoMockable
 protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
@@ -76,6 +80,8 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
         animated: Bool
     )
 }
+
+// MARK: - ConversationGuestOptionsViewModel
 
 final class ConversationGuestOptionsViewModel {
     private let conversation: ZMConversation

@@ -19,16 +19,22 @@
 import QuartzCore
 import UIKit
 
+// MARK: - EditingMode
+
 public enum EditingMode {
     case draw
     case edit
 }
+
+// MARK: - Renderable
 
 protocol Renderable: AnyObject {
     var bounds: CGRect { get }
 
     func draw(context: CGContext)
 }
+
+// MARK: - Editable
 
 protocol Editable: Renderable {
     var selected: Bool { get set }
@@ -41,6 +47,8 @@ protocol Editable: Renderable {
     var rotation: CGFloat { get set }
 }
 
+// MARK: - Orientation
+
 struct Orientation {
     var scale: CGFloat
     var position: CGPoint
@@ -51,9 +59,13 @@ struct Orientation {
     }
 }
 
+// MARK: - CanvasDelegate
+
 public protocol CanvasDelegate: AnyObject {
     func canvasDidChange(_ canvas: Canvas)
 }
+
+// MARK: - Canvas
 
 public final class Canvas: UIView {
     fileprivate let minimumScale: CGFloat = 0.5
@@ -374,6 +386,8 @@ public final class Canvas: UIView {
         setNeedsDisplay()
     }
 }
+
+// MARK: UIGestureRecognizerDelegate
 
 extension Canvas: UIGestureRecognizerDelegate {
     func configureGestureRecognizers() {

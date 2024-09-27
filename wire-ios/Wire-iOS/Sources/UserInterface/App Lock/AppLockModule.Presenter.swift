@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - AppLockModule.Presenter
+
 extension AppLockModule {
     final class Presenter: PresenterInterface {
         // MARK: - Properties
@@ -28,7 +30,7 @@ extension AppLockModule {
     }
 }
 
-// MARK: - Handle result
+// MARK: - AppLockModule.Presenter + AppLockPresenterInteractorInterface
 
 extension AppLockModule.Presenter: AppLockPresenterInteractorInterface {
     func handleResult(_ result: AppLockModule.Result) {
@@ -55,7 +57,7 @@ extension AppLockModule.Presenter: AppLockPresenterInteractorInterface {
     }
 }
 
-// MARK: - Process event
+// MARK: - AppLockModule.Presenter + AppLockPresenterViewInterface
 
 extension AppLockModule.Presenter: AppLockPresenterViewInterface {
     func processEvent(_ event: AppLockModule.Event) {

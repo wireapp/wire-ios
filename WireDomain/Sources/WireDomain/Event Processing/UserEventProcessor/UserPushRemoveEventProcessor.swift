@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - UserPushRemoveEventProcessorProtocol
+
 /// Process user push remove events.
 
 protocol UserPushRemoveEventProcessorProtocol {
@@ -25,6 +27,8 @@ protocol UserPushRemoveEventProcessorProtocol {
 
     func processEvent() async throws
 }
+
+// MARK: - UserPushRemoveEventProcessor
 
 struct UserPushRemoveEventProcessor: UserPushRemoveEventProcessorProtocol {
     func processEvent() async throws {

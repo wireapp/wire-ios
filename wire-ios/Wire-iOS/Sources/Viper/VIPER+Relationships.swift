@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - InteractorPresenterInterface
+
 /// Naming convention:
 ///
 /// The names of all relationship protocols follow the format:
@@ -38,12 +40,16 @@ import Foundation
 
 protocol InteractorPresenterInterface: AnyObject {}
 
+// MARK: - PresenterInteractorInterface
+
 /// Interface of the presenter from the perspective of the interactor.
 ///
 /// Typically contains methods to report the results of data fetches
 /// and business logic.
 
 protocol PresenterInteractorInterface: AnyObject {}
+
+// MARK: - PresenterViewInterface
 
 /// Interface of the presenter from the perspective of the view.
 ///
@@ -52,11 +58,15 @@ protocol PresenterInteractorInterface: AnyObject {}
 
 protocol PresenterViewInterface: AnyObject {}
 
+// MARK: - ViewPresenterInterface
+
 /// Interface of the view from the perspective of the presenter.
 ///
 /// Typically contains methods to set and update view data.
 
 protocol ViewPresenterInterface: AnyObject {}
+
+// MARK: - RouterPresenterInterface
 
 /// Interface of the router from the perspective of the presenter.
 ///

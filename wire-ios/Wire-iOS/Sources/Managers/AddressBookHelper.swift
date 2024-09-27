@@ -20,6 +20,8 @@ import Contacts
 import UIKit
 import WireSyncEngine
 
+// MARK: - AddressBookHelperProtocol
+
 protocol AddressBookHelperProtocol: AnyObject {
     var isAddressBookAccessGranted: Bool { get }
     var isAddressBookAccessUnknown: Bool { get }
@@ -31,6 +33,8 @@ protocol AddressBookHelperProtocol: AnyObject {
     func requestPermissions(_ callback: ((Bool) -> Void)?)
     func persistCurrentAccessStatus()
 }
+
+// MARK: - AddressBookHelper
 
 /// Allows access to address book for search
 final class AddressBookHelper: AddressBookHelperProtocol {

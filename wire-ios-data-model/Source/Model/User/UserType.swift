@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserType
+
 @objc
 public protocol UserType: NSObjectProtocol, UserConnections {
     /// The identifier which uniquely idenitifies the user in its domain
@@ -233,6 +235,8 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user is allowed to create MLS groups.
     var canCreateMLSGroups: Bool { get }
 }
+
+// MARK: - UserConnections
 
 /// Methods and properties related to managing 1:1 user connections.
 

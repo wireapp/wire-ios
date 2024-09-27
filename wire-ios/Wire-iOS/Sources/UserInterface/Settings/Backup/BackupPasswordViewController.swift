@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - BackupPasswordViewController
+
 final class BackupPasswordViewController: UIViewController {
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
@@ -157,7 +159,7 @@ final class BackupPasswordViewController: UIViewController {
     }
 }
 
-// MARK: - UITextFieldDelegate
+// MARK: UITextFieldDelegate
 
 extension BackupPasswordViewController: UITextFieldDelegate {
     func textField(

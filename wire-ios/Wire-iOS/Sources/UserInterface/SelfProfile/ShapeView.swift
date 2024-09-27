@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ShapeView
+
 final class ShapeView: LayerHostView<CAShapeLayer> {
     var pathGenerator: ((CGSize) -> (UIBezierPath))? {
         didSet { updatePath() }
@@ -39,6 +41,8 @@ final class ShapeView: LayerHostView<CAShapeLayer> {
         }
     }
 }
+
+// MARK: - LayerHostView
 
 class LayerHostView<LayerType: CALayer>: UIView {
     var hostedLayer: LayerType {

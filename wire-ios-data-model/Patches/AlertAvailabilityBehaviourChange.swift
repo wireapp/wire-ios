@@ -23,6 +23,8 @@ extension Notification.Name {
         .Name("applicationUpdateDidChangeAvailabilityBehaviour")
 }
 
+// MARK: - AvailabilityBehaviourChange
+
 enum AvailabilityBehaviourChange {
     static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
 

@@ -25,6 +25,8 @@ extension ZMMessage {
     }
 }
 
+// MARK: - ZMMessage + Sendable
+
 extension ZMMessage: Sendable {
     public var blockedBecauseOfMissingClients: Bool {
         guard let message = self as? ZMOTRMessage else {

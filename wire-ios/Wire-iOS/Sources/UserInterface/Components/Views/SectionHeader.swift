@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - SectionHeaderView
+
 final class SectionHeaderView: UIView {
     let titleLabel = DynamicFontLabel(
         fontSpec: .smallSemiboldFont,
@@ -55,6 +57,8 @@ final class SectionHeaderView: UIView {
     }
 }
 
+// MARK: - SectionHeader
+
 final class SectionHeader: UICollectionReusableView {
     let headerView = SectionHeaderView()
 
@@ -74,6 +78,8 @@ final class SectionHeader: UICollectionReusableView {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 }
+
+// MARK: - SectionTableHeader
 
 final class SectionTableHeader: UITableViewHeaderFooterView {
     let headerView = SectionHeaderView()

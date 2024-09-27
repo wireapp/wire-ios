@@ -20,6 +20,8 @@ import Foundation
 
 private let AVSLogMessageNotification = Notification.Name("AVSLogMessageNotification")
 
+// MARK: - AVSLogger
+
 @objc
 public protocol AVSLogger: AnyObject {
     @objc(logMessage:)

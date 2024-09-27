@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - MockStableRandomParticipantsConversation
+
 class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider {
     var stableRandomParticipants: [UserType] = []
 
@@ -41,6 +43,8 @@ class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRan
         return otherUserConversation
     }
 }
+
+// MARK: - ConversationAvatarViewModeTests
 
 final class ConversationAvatarViewModeTests: XCTestCase {
     var sut: ConversationAvatarView!

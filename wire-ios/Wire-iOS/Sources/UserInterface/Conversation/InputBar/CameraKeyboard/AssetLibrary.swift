@@ -19,9 +19,13 @@
 import Foundation
 import Photos
 
+// MARK: - AssetLibraryDelegate
+
 protocol AssetLibraryDelegate: AnyObject {
     func assetLibraryDidChange(_ library: AssetLibrary)
 }
+
+// MARK: - AssetLibrary
 
 class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     weak var delegate: AssetLibraryDelegate?

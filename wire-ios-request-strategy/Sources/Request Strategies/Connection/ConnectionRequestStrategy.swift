@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConnectionRequestStrategy
+
 public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource,
     ZMContextChangeTrackerSource {
     let eventsToProcess: [ZMUpdateEventType] = [
@@ -178,6 +180,8 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     }
 }
 
+// MARK: KeyPathObjectSyncTranscoder
+
 extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
     typealias T = ZMConnection
 
@@ -204,6 +208,8 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
         // We don't need to cancel connections
     }
 }
+
+// MARK: ZMEventConsumer
 
 extension ConnectionRequestStrategy: ZMEventConsumer {
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
@@ -267,6 +273,8 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
     }
 }
 
+// MARK: - ConnectionByIDTranscoder
+
 class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
@@ -323,6 +331,8 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
         )
     }
 }
+
+// MARK: - ConnectionByQualifiedIDTranscoder
 
 class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID

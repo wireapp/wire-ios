@@ -21,6 +21,8 @@ import WireCommonComponents
 
 typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 
+// MARK: - EnrollE2EIdentityStepDescription
+
 /// The step informing the user that they need to enroll into end-2-end identity
 
 class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {

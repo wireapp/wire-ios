@@ -22,6 +22,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - UserStatusView
+
 /// A title view subclass that displays the availability of the user.
 final class UserStatusView: TitleView {
     // MARK: - Properties
@@ -129,6 +131,8 @@ final class UserStatusView: TitleView {
         titleColor = SemanticColors.Label.textDefault
     }
 }
+
+// MARK: UserStatusView.Options
 
 extension UserStatusView {
     /// The available options for this view.

@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import Wire
 
+// MARK: - CallControllerTests
+
 final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
     var sut: CallController!
@@ -186,7 +188,7 @@ extension CallControllerTests {
     }
 }
 
-// MARK: - ActiveCallRouterMock
+// MARK: - ActiveCallRouterProtocolMock
 
 final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
     var dismissSecurityDegradedAlertIfNeededIsCalled = false

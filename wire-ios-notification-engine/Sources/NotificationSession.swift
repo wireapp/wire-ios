@@ -19,6 +19,8 @@
 import Foundation
 import WireRequestStrategy
 
+// MARK: - NotificationSessionError
+
 public enum NotificationSessionError: LocalizedError {
     case accountNotAuthenticated
     case noEventID
@@ -46,6 +48,8 @@ public enum NotificationSessionError: LocalizedError {
     }
 }
 
+// MARK: - NotificationSessionDelegate
+
 public protocol NotificationSessionDelegate: AnyObject {
     func notificationSessionDidFailWithError(error: NotificationSessionError)
 
@@ -59,6 +63,8 @@ public protocol NotificationSessionDelegate: AnyObject {
         currentTimestamp: TimeInterval
     )
 }
+
+// MARK: - NotificationSession
 
 /// A syncing layer for the notification processing
 /// - note: this is the entry point of this framework. Users of
@@ -395,6 +401,8 @@ public final class NotificationSession {
     }
 }
 
+// MARK: PushNotificationStrategyDelegate
+
 extension NotificationSession: PushNotificationStrategyDelegate {
     func pushNotificationStrategy(
         _ strategy: PushNotificationStrategy,
@@ -614,6 +622,8 @@ extension NotificationSession {
         return Int(currentTimestamp.timeIntervalSince(eventTimestamp)) > 30
     }
 }
+
+// MARK: - CallEventPayload
 
 public struct CallEventPayload {
     public let accountID: String

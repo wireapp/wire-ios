@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - LabelStyle
+
 struct LabelStyle {
     var backgroundColor: UIColor
     var textColor: UIColor
@@ -48,6 +50,8 @@ struct LabelStyle {
         textColor: SemanticColors.SearchBar.textInputViewPlaceholder
     )
 }
+
+// MARK: - UILabel + Stylable
 
 extension UILabel: Stylable {
     func applyStyle(_ style: LabelStyle) {

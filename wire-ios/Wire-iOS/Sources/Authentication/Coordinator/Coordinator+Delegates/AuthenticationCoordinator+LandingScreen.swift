@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireTransport
 
+// MARK: - AuthenticationCoordinator + LandingViewControllerDelegate
+
 extension AuthenticationCoordinator: LandingViewControllerDelegate {
     func landingViewControllerDidChooseLogin() {
         if let fastloginCredentials = AutomationHelper.sharedHelper.automationEmailCredentials {

@@ -134,6 +134,8 @@ extension MessageDestructionTimeoutValue {
     }
 }
 
+// MARK: - ConversationInputBarViewController + EphemeralKeyboardViewControllerDelegate
+
 extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDelegate {
     func ephemeralKeyboardWantsToBeDismissed(_: EphemeralKeyboardViewController) {
         toggleEphemeralKeyboardVisibility()

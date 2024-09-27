@@ -33,6 +33,8 @@ typealias URLRequestSuccessFailureHandler = (_ error: ZiphyError) -> Void
 
 typealias URLRequestSuccessHandler = (_ data: Data) throws -> Void
 
+// MARK: - URLRequestPromise
+
 /// An object that handles the asynchronous delivery of a network response.
 ///
 /// If you set the `requestIdentifier` property, the promise becomes eligible for cancellation.

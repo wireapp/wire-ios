@@ -20,6 +20,8 @@ import Combine
 import Foundation
 import WireCoreCrypto
 
+// MARK: - E2EIRepositoryInterface
+
 public protocol E2EIRepositoryInterface {
     func fetchTrustAnchor() async throws
 
@@ -30,6 +32,8 @@ public protocol E2EIRepositoryInterface {
         expirySec: UInt32?
     ) async throws -> E2EIEnrollmentInterface
 }
+
+// MARK: - E2EIRepository
 
 public final class E2EIRepository: E2EIRepositoryInterface {
     // MARK: - Types

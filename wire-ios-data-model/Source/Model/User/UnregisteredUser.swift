@@ -18,6 +18,8 @@
 
 import WireFoundation
 
+// MARK: - UnregisteredUser
+
 /// The representation of a user that is going through the registration process.
 ///
 /// Typically, you create this object once you start the registration flow and start asking
@@ -67,7 +69,7 @@ public class UnregisteredUser {
     }
 }
 
-// MARK: - Equatable
+// MARK: Equatable
 
 extension UnregisteredUser: Equatable {
     public static func == (lhs: UnregisteredUser, rhs: UnregisteredUser) -> Bool {

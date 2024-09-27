@@ -19,6 +19,8 @@
 import WireTesting
 @testable import WireDataModel
 
+// MARK: - ZMMessageTests_Confirmation
+
 class ZMMessageTests_Confirmation: BaseZMClientMessageTests {}
 
 // MARK: - Sending confirmation messages

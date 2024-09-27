@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ZiphyResult
+
 /// The result of an operation, either success or failure.
 
 public enum ZiphyResult<T> {
@@ -33,16 +35,22 @@ public enum ZiphyResult<T> {
     }
 }
 
+// MARK: - CancelableTask
+
 /// A task that can be cancelled.
 
 public protocol CancelableTask {
     func cancel()
 }
 
+// MARK: - ZiphyRequestIdentifier
+
 /// An opaque object that identifies as a single Ziphy network request
 
 @objc
 public protocol ZiphyRequestIdentifier {}
+
+// MARK: - ZiphyURLRequester
 
 /// An object that performs network requests to the Giphy API.
 
@@ -56,9 +64,11 @@ public protocol ZiphyURLRequester {
     func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier)
 }
 
-// MARK: - URL Session
+// MARK: - URLSessionDataTask + ZiphyRequestIdentifier, CancelableTask
 
 extension URLSessionDataTask: ZiphyRequestIdentifier, CancelableTask {}
+
+// MARK: - URLSession + ZiphyURLRequester
 
 extension URLSession: ZiphyURLRequester {
     public func performZiphyRequest(

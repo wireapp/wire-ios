@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - Brush
+
 public struct Brush {
     public init(size: Float, color: UIColor) {
         self.size = size
@@ -35,6 +37,8 @@ public struct Brush {
         Brush(size: size, color: color)
     }
 }
+
+// MARK: - Stroke
 
 final class Stroke: Renderable {
     private var points: [CGPoint]

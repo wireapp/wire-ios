@@ -21,6 +21,8 @@ import WireTransport
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - MockCookieStorage
+
 final class MockCookieStorage: CookieProvider {
     var isAuthenticated = true
 
@@ -31,6 +33,8 @@ final class MockCookieStorage: CookieProvider {
         didCallDeleteKeychainItems = true
     }
 }
+
+// MARK: - ZMClientRegistrationStatusTests
 
 final class ZMClientRegistrationStatusTests: MessagingTest {
     private var sut: ZMClientRegistrationStatus!

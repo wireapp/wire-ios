@@ -21,6 +21,8 @@ import WireSystem
 
 private let log = WireLogger(tag: "Accounts")
 
+// MARK: - AccountStore
+
 /// Persistence layer for `Account` objects.
 /// Objects are stored in files named after their identifier like this:
 ///

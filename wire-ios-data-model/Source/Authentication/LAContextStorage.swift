@@ -19,12 +19,16 @@
 import Foundation
 import LocalAuthentication
 
+// MARK: - LAContextStorable
+
 // sourcery: AutoMockable
 /// Stores a `LAContext`  to avoid repeatative authention prompts to the user.
 public protocol LAContextStorable: AnyObject {
     var context: LAContext? { get set }
     func clear()
 }
+
+// MARK: - LAContextStorage
 
 // `LAContextStorage` was supposed to be an actor to give thread-safe access!
 // Unfortunatly the consequences are huge refactorings to Swift Concurrency

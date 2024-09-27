@@ -19,9 +19,13 @@
 import AVFoundation
 import UIKit
 
+// MARK: - AVAudioSessionType
+
 /// A protocol for allow tests to mock recordPermission
 protocol AVAudioSessionType {
     var recordPermission: AVAudioSession.RecordPermission { get }
 }
+
+// MARK: - AVAudioSession + AVAudioSessionType
 
 extension AVAudioSession: AVAudioSessionType {}

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MessageDestructionTimeoutValue
+
 /// A type representing the possible timeout values.
 
 public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {

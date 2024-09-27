@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - MessageCapable
+
 public protocol MessageCapable {
     func setContent(on message: inout GenericMessage)
     var expectsReadConfirmation: Bool { get set }
 }
+
+// MARK: - EphemeralMessageCapable
 
 public protocol EphemeralMessageCapable: MessageCapable {
     func setEphemeralContent(on ephemeral: inout Ephemeral)
@@ -36,7 +40,7 @@ extension MessageCapable {
     }
 }
 
-// MARK: - EphemeralMessageCapable
+// MARK: - Location + EphemeralMessageCapable
 
 extension Location: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
@@ -48,6 +52,8 @@ extension Location: EphemeralMessageCapable {
     }
 }
 
+// MARK: - Knock + EphemeralMessageCapable
+
 extension Knock: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.knock = self
@@ -57,6 +63,8 @@ extension Knock: EphemeralMessageCapable {
         message.knock = self
     }
 }
+
+// MARK: - Text + EphemeralMessageCapable
 
 extension Text: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
@@ -68,6 +76,8 @@ extension Text: EphemeralMessageCapable {
     }
 }
 
+// MARK: - WireProtos.Asset + EphemeralMessageCapable
+
 extension WireProtos.Asset: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.asset = self
@@ -78,7 +88,7 @@ extension WireProtos.Asset: EphemeralMessageCapable {
     }
 }
 
-// MARK: - MessageCapable
+// MARK: - ImageAsset + MessageCapable
 
 extension ImageAsset: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
@@ -86,11 +96,15 @@ extension ImageAsset: MessageCapable {
     }
 }
 
+// MARK: - Composite + MessageCapable
+
 extension Composite: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.composite = self
     }
 }
+
+// MARK: - ClientAction + MessageCapable
 
 extension ClientAction: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
@@ -98,11 +112,15 @@ extension ClientAction: MessageCapable {
     }
 }
 
+// MARK: - ButtonActionConfirmation + MessageCapable
+
 extension ButtonActionConfirmation: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.buttonActionConfirmation = self
     }
 }
+
+// MARK: - WireProtos.Availability + MessageCapable
 
 extension WireProtos.Availability: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
@@ -110,11 +128,15 @@ extension WireProtos.Availability: MessageCapable {
     }
 }
 
+// MARK: - ButtonAction + MessageCapable
+
 extension ButtonAction: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.buttonAction = self
     }
 }
+
+// MARK: - WireProtos.Reaction + MessageCapable
 
 extension WireProtos.Reaction: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
@@ -122,11 +144,15 @@ extension WireProtos.Reaction: MessageCapable {
     }
 }
 
+// MARK: - LastRead + MessageCapable
+
 extension LastRead: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.lastRead = self
     }
 }
+
+// MARK: - Calling + MessageCapable
 
 extension Calling: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
@@ -134,11 +160,15 @@ extension Calling: MessageCapable {
     }
 }
 
+// MARK: - WireProtos.MessageEdit + MessageCapable
+
 extension WireProtos.MessageEdit: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.edited = self
     }
 }
+
+// MARK: - Cleared + MessageCapable
 
 extension Cleared: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
@@ -146,11 +176,15 @@ extension Cleared: MessageCapable {
     }
 }
 
+// MARK: - MessageHide + MessageCapable
+
 extension MessageHide: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.hidden = self
     }
 }
+
+// MARK: - MessageDelete + MessageCapable
 
 extension MessageDelete: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
@@ -158,17 +192,23 @@ extension MessageDelete: MessageCapable {
     }
 }
 
+// MARK: - WireProtos.Confirmation + MessageCapable
+
 extension WireProtos.Confirmation: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.confirmation = self
     }
 }
 
+// MARK: - External + MessageCapable
+
 extension External: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.external = self
     }
 }
+
+// MARK: - Ephemeral + MessageCapable
 
 extension Ephemeral: MessageCapable {
     public var expectsReadConfirmation: Bool {
@@ -208,6 +248,8 @@ extension Ephemeral: MessageCapable {
         message.ephemeral = self
     }
 }
+
+// MARK: - DataTransfer + MessageCapable
 
 extension DataTransfer: MessageCapable {
     public func setContent(on message: inout GenericMessage) {

@@ -25,6 +25,8 @@ typealias MatcherConversation = Conversation & ConversationStatusProvider & Typi
 
 typealias ConversationListCellConversation = MatcherConversation & StableRandomParticipantsProvider
 
+// MARK: - ConversationListCell
+
 final class ConversationListCell: SwipeMenuCollectionCell,
     SectionListCellType {
     static let IgnoreOverscrollTimeInterval: TimeInterval = 0.005
@@ -261,7 +263,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     }
 }
 
-// MARK: - Typing
+// MARK: ZMTypingChangeObserver
 
 extension ConversationListCell: ZMTypingChangeObserver {
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType]) {
@@ -269,7 +271,7 @@ extension ConversationListCell: ZMTypingChangeObserver {
     }
 }
 
-// MARK: - AVSMediaManagerClientChangeNotification
+// MARK: AVSMediaManagerClientObserver
 
 extension ConversationListCell: AVSMediaManagerClientObserver {
     func mediaManagerDidChange(_ notification: AVSMediaManagerClientChangeNotification?) {

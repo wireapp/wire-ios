@@ -19,6 +19,8 @@
 import WireDataModel
 @testable import WireSyncEngine
 
+// MARK: - AssetDeletionRequestStrategyTests
+
 class AssetDeletionRequestStrategyTests: MessagingTest {
     private var sut: AssetDeletionRequestStrategy!
     private var mockApplicationStatus: MockApplicationStatus!
@@ -139,7 +141,7 @@ extension AssetDeletionRequestStrategyTests {
     }
 }
 
-// MARK: - Helper
+// MARK: - MockIdentifierProvider
 
 private class MockIdentifierProvider: AssetDeletionIdentifierProviderType {
     var nextIdentifier: String?

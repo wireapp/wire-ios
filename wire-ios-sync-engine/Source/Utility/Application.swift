@@ -19,10 +19,14 @@
 import UIKit
 import WireTransport
 
+// MARK: - NotificationSettingsRegistrable
+
 public protocol NotificationSettingsRegistrable {
     /// To determine if notification settings should be registered
     var shouldRegisterUserNotificationSettings: Bool { get }
 }
+
+// MARK: - ZMApplication
 
 /// An abstraction of the application (UIApplication, NSApplication)
 @objc
@@ -67,6 +71,8 @@ public protocol ZMApplication: NSObjectProtocol {
     @objc
     func setMinimumBackgroundFetchInterval(_ minimumBackgroundFetchInterval: TimeInterval)
 }
+
+// MARK: - UIApplication + ZMApplication
 
 extension UIApplication: ZMApplication {
     public func registerObserverForDidBecomeActive(_ object: NSObject, selector: Selector) {

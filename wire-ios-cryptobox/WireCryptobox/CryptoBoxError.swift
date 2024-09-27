@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// MARK: - CBoxResult + Error
+
 extension CBoxResult: Error {
     /// Throw if self represents an error
     func throwIfError() throws {
@@ -34,6 +36,8 @@ extension CBoxResult: Error {
         }
     }
 }
+
+// MARK: - CBoxResult + SafeForLoggingStringConvertible
 
 extension CBoxResult: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

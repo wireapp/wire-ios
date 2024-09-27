@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - InvisibleInputAccessoryViewDelegate
+
 // Because the system manages the input accessory view lifecycle and positioning, we have to monitor what
 // is being done to us and report back
 
@@ -27,6 +29,8 @@ protocol InvisibleInputAccessoryViewDelegate: AnyObject {
         superviewFrameChanged frame: CGRect?
     )
 }
+
+// MARK: - InvisibleInputAccessoryView
 
 final class InvisibleInputAccessoryView: UIView {
     weak var delegate: InvisibleInputAccessoryViewDelegate?

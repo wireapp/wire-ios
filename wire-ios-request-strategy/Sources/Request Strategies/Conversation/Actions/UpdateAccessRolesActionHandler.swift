@@ -31,6 +31,8 @@ extension UpdateAccessRolesError {
     }
 }
 
+// MARK: - UpdateAccessRolesActionHandler
+
 final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesAction> {
     private lazy var eventProcessor = ConversationEventProcessor(context: context)
 

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - GetPushTokensActionHandler
+
 class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
     // MARK: - Methods
 

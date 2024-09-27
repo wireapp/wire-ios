@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - ConversationCreateEventProcessorProtocol
+
 /// Process conversation create events.
 
 protocol ConversationCreateEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol ConversationCreateEventProcessorProtocol {
 
     func processEvent(_ event: ConversationCreateEvent) async throws
 }
+
+// MARK: - ConversationCreateEventProcessor
 
 struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtocol {
     func processEvent(_: ConversationCreateEvent) async throws {

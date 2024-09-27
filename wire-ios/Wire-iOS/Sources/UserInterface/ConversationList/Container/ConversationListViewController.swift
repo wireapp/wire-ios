@@ -23,11 +23,15 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - ConversationListState
+
 enum ConversationListState {
     case conversationList
     case peoplePicker
     case archived
 }
+
+// MARK: - ConversationListViewController
 
 final class ConversationListViewController: UIViewController {
     let viewModel: ViewModel
@@ -336,7 +340,7 @@ final class ConversationListViewController: UIViewController {
     }
 }
 
-// MARK: - ViewModel Delegate
+// MARK: ConversationListContainerViewModelDelegate
 
 extension ConversationListViewController: ConversationListContainerViewModelDelegate {
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - BlockResult
+
 enum BlockResult {
     case block(isBlocked: Bool), cancel
 

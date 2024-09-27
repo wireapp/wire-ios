@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - PrekeyAPI
+
 // sourcery: AutoMockable
 public protocol PrekeyAPI {
     func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID
@@ -28,6 +30,8 @@ extension Payload.PrekeyByUserID {
         [domain: self]
     }
 }
+
+// MARK: - PrekeyAPIV0
 
 class PrekeyAPIV0: PrekeyAPI {
     init(httpClient: HttpClient) {
@@ -62,6 +66,8 @@ class PrekeyAPIV0: PrekeyAPI {
     }
 }
 
+// MARK: - PrekeyAPIV1
+
 class PrekeyAPIV1: PrekeyAPIV0 {
     override var apiVersion: APIVersion {
         .v1
@@ -87,17 +93,23 @@ class PrekeyAPIV1: PrekeyAPIV0 {
     }
 }
 
+// MARK: - PrekeyAPIV2
+
 class PrekeyAPIV2: PrekeyAPIV1 {
     override var apiVersion: APIVersion {
         .v2
     }
 }
 
+// MARK: - PrekeyAPIV3
+
 class PrekeyAPIV3: PrekeyAPIV2 {
     override var apiVersion: APIVersion {
         .v3
     }
 }
+
+// MARK: - PrekeyAPIV4
 
 class PrekeyAPIV4: PrekeyAPIV3 {
     override var apiVersion: APIVersion {
@@ -125,11 +137,15 @@ class PrekeyAPIV4: PrekeyAPIV3 {
     }
 }
 
+// MARK: - PrekeyAPIV5
+
 class PrekeyAPIV5: PrekeyAPIV4 {
     override var apiVersion: APIVersion {
         .v5
     }
 }
+
+// MARK: - PrekeyAPIV6
 
 class PrekeyAPIV6: PrekeyAPIV5 {
     override var apiVersion: APIVersion {

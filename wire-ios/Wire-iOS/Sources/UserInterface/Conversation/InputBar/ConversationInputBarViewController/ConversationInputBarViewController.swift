@@ -25,12 +25,16 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ConversationInputBarViewControllerMode
+
 enum ConversationInputBarViewControllerMode {
     case textInput
     case audioRecord
     case camera
     case timeoutConfguration
 }
+
+// MARK: - ConversationInputBarViewController
 
 final class ConversationInputBarViewController: UIViewController,
     UIPopoverPresentationControllerDelegate {
@@ -833,7 +837,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 }
 
-// MARK: - GiphySearchViewControllerDelegate
+// MARK: GiphySearchViewControllerDelegate
 
 extension ConversationInputBarViewController: GiphySearchViewControllerDelegate {
     func giphySearchViewController(
@@ -859,7 +863,7 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
     }
 }
 
-// MARK: - UIImagePickerControllerDelegate
+// MARK: UIImagePickerControllerDelegate
 
 extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     // swiftlint:disable:next todo_requires_jira_link
@@ -956,7 +960,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     }
 }
 
-// MARK: - Informal TextView delegate methods
+// MARK: InformalTextViewDelegate
 
 extension ConversationInputBarViewController: InformalTextViewDelegate {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset) {
@@ -984,7 +988,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
     }
 }
 
-// MARK: - ZMConversationObserver
+// MARK: ZMConversationObserver
 
 extension ConversationInputBarViewController: ZMConversationObserver {
     func conversationDidChange(_ change: ConversationChangeInfo) {
@@ -1002,7 +1006,7 @@ extension ConversationInputBarViewController: ZMConversationObserver {
     }
 }
 
-// MARK: - UIGestureRecognizerDelegate
+// MARK: UIGestureRecognizerDelegate
 
 extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(

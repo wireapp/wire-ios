@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - FakeGroupQueue
+
 @objc
 final class FakeGroupQueue: NSObject, GroupQueue {
     var dispatchGroup: ZMSDispatchGroup? {
@@ -30,7 +32,7 @@ final class FakeGroupQueue: NSObject, GroupQueue {
     }
 }
 
-// MARK: - Tests
+// MARK: - PushNotificationStatusTests
 
 final class PushNotificationStatusTests: MessagingTestBase {
     var sut: PushNotificationStatus!

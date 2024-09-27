@@ -19,9 +19,13 @@
 import Foundation
 import WireDataModel
 
+// MARK: - TransferViewDelegate
+
 protocol TransferViewDelegate: AnyObject {
     func transferView(_ view: TransferView, didSelect: MessageAction)
 }
+
+// MARK: - TransferView
 
 protocol TransferView {
     var delegate: TransferViewDelegate? { get set }

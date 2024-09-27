@@ -18,16 +18,22 @@
 
 import Foundation
 
+// MARK: - KeyValueStore
+
 @objc(ZMKeyValueStore)
 public protocol KeyValueStore: NSObjectProtocol {
     func store(value: PersistableInMetadata?, key: String)
     func storedValue(key: String) -> Any?
 }
 
+// MARK: - ZMSynchonizableKeyValueStore
+
 @objc
 public protocol ZMSynchonizableKeyValueStore: KeyValueStore {
     func enqueueDelayedSave()
 }
+
+// MARK: - NSManagedObjectContext + ZMSynchonizableKeyValueStore
 
 extension NSManagedObjectContext: ZMSynchonizableKeyValueStore {
     public func store(value: PersistableInMetadata?, key: String) {

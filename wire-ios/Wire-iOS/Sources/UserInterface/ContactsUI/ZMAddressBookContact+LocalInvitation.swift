@@ -20,6 +20,8 @@ import Foundation
 import MessageUI
 import WireSyncEngine
 
+// MARK: - EmailInvitePresenter
+
 final class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate,
     MFMessageComposeViewControllerDelegate {
     static let sharedInstance = EmailInvitePresenter()

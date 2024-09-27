@@ -20,11 +20,15 @@ import Foundation
 import WireSyncEngine
 import WireSystem
 
+// MARK: - E2EINotificationActions
+
 protocol E2EINotificationActions {
     func getCertificate() async
     func updateCertificate() async
     func snoozeReminder() async
 }
+
+// MARK: - E2EINotificationActionsHandler
 
 final class E2EINotificationActionsHandler: E2EINotificationActions {
     enum Failure: Error {

@@ -20,10 +20,14 @@ import Foundation
 import XCTest
 @testable import WireSystem
 
+// MARK: - Item
+
 struct Item {
     var name: String
     var age: Int
 }
+
+// MARK: SafeForLoggingStringConvertible
 
 extension Item: SafeForLoggingStringConvertible {
     static var redacted = "<redacted>"
@@ -32,6 +36,8 @@ extension Item: SafeForLoggingStringConvertible {
         Item.redacted
     }
 }
+
+// MARK: - SanitizedStringTests
 
 class SanitizedStringTests: XCTestCase {
     var item: Item!

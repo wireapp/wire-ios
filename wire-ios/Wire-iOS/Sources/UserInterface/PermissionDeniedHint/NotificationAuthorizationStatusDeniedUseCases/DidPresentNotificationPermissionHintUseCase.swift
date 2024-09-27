@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// MARK: - DidPresentNotificationPermissionHintUseCase
+
 struct DidPresentNotificationPermissionHintUseCase<DateProvider>: DidPresentNotificationPermissionHintUseCaseProtocol
     where DateProvider: CurrentDateProviding {
     var currentDateProvider: DateProvider

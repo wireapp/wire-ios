@@ -19,6 +19,8 @@
 import Foundation
 import WireCoreCrypto
 
+// MARK: - IsSelfUserE2EICertifiedUseCase
+
 /// A wrapper use case around `IsUserE2EICertifiedUseCaseProtocol` which gets the
 /// self-user and the self-mls-conversation from a managed object context in order to pass it to
 /// the wrapped use case and provide an argument-less `invoke` method.
@@ -65,6 +67,8 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
         )
     }
 }
+
+// MARK: IsSelfUserE2EICertifiedUseCase.Error
 
 extension IsSelfUserE2EICertifiedUseCase {
     enum Error: Swift.Error {

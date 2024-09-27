@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - MediaBarViewController
+
 final class MediaBarViewController: UIViewController {
     private var mediaPlaybackManager: MediaPlaybackManager?
 
@@ -84,6 +86,8 @@ final class MediaBarViewController: UIViewController {
         mediaPlaybackManager?.stop()
     }
 }
+
+// MARK: MediaPlaybackManagerChangeObserver
 
 extension MediaBarViewController: MediaPlaybackManagerChangeObserver {
     func activeMediaPlayerStateDidChange() {

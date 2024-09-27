@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - StartedConversationCellTests
+
 final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
     var mockSelfUser: MockUserType!
     var mockOtherUser: MockUserType!
@@ -220,6 +222,8 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
         return message
     }
 }
+
+// MARK: - Users
 
 private enum Users {
     case none, sender, one, some, many, justYou, youAndAnother, overflow

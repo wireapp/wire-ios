@@ -19,6 +19,8 @@
 import Foundation
 import WireUtilities
 
+// MARK: - SearchTask
+
 public class SearchTask {
     public enum Task {
         case search(searchRequest: SearchRequest)

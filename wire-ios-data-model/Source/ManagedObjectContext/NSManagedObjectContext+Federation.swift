@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - FederationMigratable
+
 private protocol FederationMigratable: ZMManagedObject {
     static var predicateForObjectsNeedingFederationMigration: NSPredicate? { get }
     var domain: String? { get set }
 }
+
+// MARK: - ZMConversation + FederationMigratable
 
 extension ZMConversation: FederationMigratable {
     static let predicateForObjectsNeedingFederationMigration: NSPredicate? = NSPredicate(
@@ -29,6 +33,8 @@ extension ZMConversation: FederationMigratable {
         #keyPath(ZMConversation.domain)
     )
 }
+
+// MARK: - ZMUser + FederationMigratable
 
 extension ZMUser: FederationMigratable {
     static let predicateForObjectsNeedingFederationMigration: NSPredicate? = NSPredicate(

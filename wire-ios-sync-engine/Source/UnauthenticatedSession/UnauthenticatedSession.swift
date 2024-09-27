@@ -19,6 +19,8 @@
 import Foundation
 import WireUtilities
 
+// MARK: - UnauthenticatedSessionDelegate
+
 public protocol UnauthenticatedSessionDelegate: AnyObject {
     /// Update credentials for the corresponding user session. Returns true if the credentials were accepted.
     func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool
@@ -27,6 +29,8 @@ public protocol UnauthenticatedSessionDelegate: AnyObject {
     func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool
     func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool
 }
+
+// MARK: - UserInfoParser
 
 @objc
 public protocol UserInfoParser: AnyObject {
@@ -37,6 +41,8 @@ public protocol UserInfoParser: AnyObject {
 }
 
 private let log = ZMSLog(tag: "UnauthenticatedSession")
+
+// MARK: - UnauthenticatedSession
 
 @objcMembers
 public class UnauthenticatedSession: NSObject {
@@ -110,17 +116,23 @@ public class UnauthenticatedSession: NSObject {
     }
 }
 
+// MARK: UnauthenticatedSessionStatusDelegate
+
 extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
     var isAllowedToCreateNewAccount: Bool {
         delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
     }
 }
 
+// MARK: URLActionProcessor
+
 extension UnauthenticatedSession: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         urlActionProcessors.forEach { $0.process(urlAction: urlAction, delegate: delegate) }
     }
 }
+
+// MARK: TearDownCapable
 
 extension UnauthenticatedSession: TearDownCapable {
     public func tearDown() {
@@ -129,7 +141,7 @@ extension UnauthenticatedSession: TearDownCapable {
     }
 }
 
-// MARK: - UserInfoParser
+// MARK: UserInfoParser
 
 extension UnauthenticatedSession: UserInfoParser {
     public func accountExistsLocally(from info: UserInfo) -> Bool {

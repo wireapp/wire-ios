@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - TestParticipantRoleObserver
+
 final class TestParticipantRoleObserver: NSObject, ParticipantRoleObserver {
     var notifications = [ParticipantRoleChangeInfo]()
 
@@ -30,6 +32,8 @@ final class TestParticipantRoleObserver: NSObject, ParticipantRoleObserver {
         notifications.append(changeInfo)
     }
 }
+
+// MARK: - ParticipantRoleObserverTests
 
 final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
     var observer: TestParticipantRoleObserver!

@@ -25,6 +25,8 @@ extension ZMLocalNotification {
     }
 }
 
+// MARK: - AvailabilityNotificationBuilder
+
 private class AvailabilityNotificationBuilder: NotificationBuilder {
     let managedObjectContext: NSManagedObjectContext
     let availability: Availability

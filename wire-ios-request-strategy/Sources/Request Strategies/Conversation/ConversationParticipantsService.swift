@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ConversationParticipantsServiceInterface
+
 // sourcery: AutoMockable
 public protocol ConversationParticipantsServiceInterface {
     func addParticipants(
@@ -32,10 +34,14 @@ public protocol ConversationParticipantsServiceInterface {
     ) async throws
 }
 
+// MARK: - FederationError
+
 enum FederationError: Error, Equatable {
     case unreachableDomains(Set<String>)
     case nonFederatingDomains(Set<String>)
 }
+
+// MARK: - ConversationParticipantsError
 
 enum ConversationParticipantsError: Error, Equatable {
     case invalidOperation
@@ -54,6 +60,8 @@ extension Error {
         return false
     }
 }
+
+// MARK: - ConversationParticipantsService
 
 public class ConversationParticipantsService: ConversationParticipantsServiceInterface {
     // MARK: - Properties

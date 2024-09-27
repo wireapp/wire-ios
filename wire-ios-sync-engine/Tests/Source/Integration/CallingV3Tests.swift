@@ -21,6 +21,8 @@ import Foundation
 import WireDataModel
 @testable import WireSyncEngine
 
+// MARK: - CallStateTestObserver
+
 final class CallStateTestObserver: WireCallCenterCallStateObserver {
     var changes: [CallState] = []
     var token: Any?
@@ -48,6 +50,8 @@ final class CallStateTestObserver: WireCallCenterCallStateObserver {
     }
 }
 
+// MARK: - CallParticipantTestObserver
+
 final class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
     var changes: [[(UUID, CallParticipantState)]] = []
     var token: Any?
@@ -60,6 +64,8 @@ final class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
         changes.append(participants)
     }
 }
+
+// MARK: - CallingV3Tests
 
 final class CallingV3Tests: IntegrationTest {
     var stateObserver: CallStateTestObserver!

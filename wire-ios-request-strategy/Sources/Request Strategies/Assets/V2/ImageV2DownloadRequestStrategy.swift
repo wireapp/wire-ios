@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ImageV2DownloadRequestStrategy
+
 public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
     fileprivate let requestFactory = ClientMessageRequestFactory()
@@ -76,6 +78,8 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
         downstreamSync.nextRequest(for: apiVersion)
     }
 }
+
+// MARK: ZMDownstreamTranscoder
 
 extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
     public func request(

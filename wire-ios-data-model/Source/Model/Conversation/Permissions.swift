@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - Permissions
+
 /// An optionSet indicates a user's permissions
 public struct Permissions: OptionSet {
     public let rawValue: Int64
@@ -66,7 +68,7 @@ public struct Permissions: OptionSet {
     public static let owner: Permissions = [.admin, .getBilling, .setBilling, .deleteTeam]
 }
 
-// MARK: - Debugging
+// MARK: CustomDebugStringConvertible
 
 extension Permissions: CustomDebugStringConvertible {
     private static let descriptions: [Permissions: String] = [
@@ -90,13 +92,15 @@ extension Permissions: CustomDebugStringConvertible {
     }
 }
 
+// MARK: Hashable
+
 extension Permissions: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
     }
 }
 
-// MARK: - Objective-C Interoperability
+// MARK: - TeamRole
 
 /// Represents a collection of individual `Permissions` options to allow
 /// for Objective C compatibility. For most intents and purposes we are

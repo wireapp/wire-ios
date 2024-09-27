@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - SlideDirection
+
 enum SlideDirection: UInt {
     case up
     case down

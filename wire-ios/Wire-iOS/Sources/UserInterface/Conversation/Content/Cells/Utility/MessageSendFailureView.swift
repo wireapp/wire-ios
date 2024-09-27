@@ -21,6 +21,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - MessageSendFailureView
+
 final class MessageSendFailureView: UIView {
     // MARK: - Properties
 

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - MessageProtocolSectionController
+
 final class MessageProtocolSectionController: GroupDetailsSectionController {
     typealias Cell = DetailsCollectionViewCell
 

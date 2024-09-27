@@ -20,9 +20,13 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - PreBackendSwitchViewControllerDelegate
+
 protocol PreBackendSwitchViewControllerDelegate: AnyObject {
     func preBackendSwitchViewControllerDidComplete(_ url: URL)
 }
+
+// MARK: - PreBackendSwitchViewController
 
 final class PreBackendSwitchViewController: AuthenticationStepViewController {
     var authenticationCoordinator: AuthenticationCoordinator?

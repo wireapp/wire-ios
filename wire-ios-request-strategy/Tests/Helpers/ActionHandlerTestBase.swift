@@ -20,6 +20,8 @@ import UIKit
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - ActionHandlerTestBase
+
 class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>>: MessagingTestBase {
     typealias ValidationBlock = (Result<Action.Result, Action.Failure>) -> Bool
 

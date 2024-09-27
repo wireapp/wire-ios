@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - CollectionAudioCell
+
 final class CollectionAudioCell: CollectionCell {
     private var containerView = UIView()
     private let audioMessageView = AudioMessageView()
@@ -111,6 +113,8 @@ final class CollectionAudioCell: CollectionCell {
         accessibilityTraits = .button
     }
 }
+
+// MARK: TransferViewDelegate
 
 extension CollectionAudioCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {

@@ -21,12 +21,16 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - MicrophoneIconStyle
+
 enum MicrophoneIconStyle: String {
     case muted
     case unmuted
     case unmutedPulsing
     case hidden
 }
+
+// MARK: IconImageStyle
 
 extension MicrophoneIconStyle: IconImageStyle {
     var icon: StyleKitIcon? {
@@ -68,6 +72,8 @@ extension MicrophoneIconStyle: IconImageStyle {
         }
     }
 }
+
+// MARK: PulsingIconImageStyle
 
 extension MicrophoneIconStyle: PulsingIconImageStyle {
     var shouldPulse: Bool { self == .unmutedPulsing }

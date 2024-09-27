@@ -21,6 +21,8 @@ import WireDataModel
 
 private let zmLog = ZMSLog(tag: "rich-profile")
 
+// MARK: - UserRichProfileRequestStrategy
+
 public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
     var modifiedSync: ZMDownstreamObjectSync!
 
@@ -43,6 +45,8 @@ public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
         modifiedSync.nextRequest(for: apiVersion)
     }
 }
+
+// MARK: ZMDownstreamTranscoder
 
 extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
     public func request(
@@ -82,6 +86,8 @@ extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
         user.needsRichProfileUpdate = false
     }
 }
+
+// MARK: ZMContextChangeTrackerSource
 
 extension UserRichProfileRequestStrategy: ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {

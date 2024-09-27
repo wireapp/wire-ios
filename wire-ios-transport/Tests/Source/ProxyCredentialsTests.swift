@@ -21,6 +21,8 @@ import WireTesting
 import WireTransport
 import XCTest
 
+// MARK: - ProxyCredentialsTests
+
 final class ProxyCredentialsTests: ZMTBaseTest {
     func test_persist_storesInformationToTheKeychainDoesNotThrow() throws {
         // GIVEN
@@ -79,7 +81,7 @@ final class ProxyCredentialsTests: ZMTBaseTest {
     }
 }
 
-// MARK: - Mock
+// MARK: - MockProxy
 
 final class MockProxy: NSObject, ProxySettingsProvider {
     var host: String

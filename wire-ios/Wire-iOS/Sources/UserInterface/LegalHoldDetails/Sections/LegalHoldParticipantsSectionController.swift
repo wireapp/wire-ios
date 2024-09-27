@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - LegalHoldParticipantsSectionViewModel
+
 private struct LegalHoldParticipantsSectionViewModel {
     let participants: [UserType]
 
@@ -31,6 +33,8 @@ private struct LegalHoldParticipantsSectionViewModel {
         self.participants = participants
     }
 }
+
+// MARK: - LegalHoldParticipantsSectionControllerDelegate
 
 protocol LegalHoldParticipantsSectionControllerDelegate: AnyObject {
     func legalHoldParticipantsSectionWantsToPresentUserProfile(for user: UserType)
@@ -46,6 +50,8 @@ extension ConversationLike {
         )
     }
 }
+
+// MARK: - LegalHoldParticipantsSectionController
 
 final class LegalHoldParticipantsSectionController: GroupDetailsSectionController {
     fileprivate weak var collectionView: UICollectionView?
@@ -117,6 +123,8 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
         delegate?.legalHoldParticipantsSectionWantsToPresentUserProfile(for: user)
     }
 }
+
+// MARK: UserObserving
 
 extension LegalHoldParticipantsSectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {

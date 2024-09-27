@@ -19,10 +19,14 @@
 import QuartzCore
 import UIKit
 
+// MARK: - BreathLoadingBarDelegate
+
 protocol BreathLoadingBarDelegate: AnyObject {
     func animationDidStarted()
     func animationDidStopped()
 }
+
+// MARK: - BreathLoadingBar
 
 final class BreathLoadingBar: UIView {
     weak var delegate: BreathLoadingBarDelegate?

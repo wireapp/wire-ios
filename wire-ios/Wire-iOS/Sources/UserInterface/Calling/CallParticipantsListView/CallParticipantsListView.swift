@@ -23,12 +23,16 @@ import WireSyncEngine
 
 typealias CallParticipantsList = [CallParticipantsListCellConfiguration]
 
+// MARK: - CallParticipantsListCellConfigurable
+
 protocol CallParticipantsListCellConfigurable: Reusable {
     func configure(
         with configuration: CallParticipantsListCellConfiguration,
         selfUser: UserType
     )
 }
+
+// MARK: - CallParticipantsListCellConfiguration
 
 enum CallParticipantsListCellConfiguration: Hashable {
     case callParticipant(
@@ -61,6 +65,8 @@ enum CallParticipantsListCellConfiguration: Hashable {
     }
 }
 
+// MARK: - CallParticipantsListView
+
 final class CallParticipantsListView: UICollectionView {
     let selfUser: UserType
 
@@ -84,6 +90,8 @@ final class CallParticipantsListView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+// MARK: UICollectionViewDataSource
 
 extension CallParticipantsListView: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -113,6 +121,8 @@ extension CallParticipantsListView: UICollectionViewDataSource {
         return cell
     }
 }
+
+// MARK: - UserCell + CallParticipantsListCellConfigurable
 
 extension UserCell: CallParticipantsListCellConfigurable {
     func configure(

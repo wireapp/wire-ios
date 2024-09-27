@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - CreateConversationGuestLinkError
+
 public enum CreateConversationGuestLinkError: Error, Equatable {
     case noCode
     case invalidResponse
@@ -26,6 +28,8 @@ public enum CreateConversationGuestLinkError: Error, Equatable {
     case unknown
     case invalidRequest
 }
+
+// MARK: - CreateConversationGuestLinkAction
 
 public struct CreateConversationGuestLinkAction: EntityAction {
     public typealias Result = String?

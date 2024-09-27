@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - AppState
+
 enum AppState: Equatable {
     case retryStart
     case headless
@@ -62,6 +64,8 @@ enum AppState: Equatable {
     }
 }
 
+// MARK: CustomDebugStringConvertible
+
 extension AppState: CustomDebugStringConvertible {
     var debugDescription: String {
         switch self {
@@ -90,6 +94,8 @@ extension AppState: CustomDebugStringConvertible {
         }
     }
 }
+
+// MARK: SafeForLoggingStringConvertible
 
 extension AppState: SafeForLoggingStringConvertible {
     var safeForLoggingDescription: String {
@@ -120,6 +126,8 @@ extension AppState: SafeForLoggingStringConvertible {
     }
 }
 
+// MARK: - AppStateCalculatorDelegate
+
 // sourcery: AutoMockable
 protocol AppStateCalculatorDelegate: AnyObject {
     func appStateCalculator(
@@ -128,6 +136,8 @@ protocol AppStateCalculatorDelegate: AnyObject {
         completion: @escaping () -> Void
     )
 }
+
+// MARK: - AppStateCalculator
 
 final class AppStateCalculator {
     init() {
@@ -196,7 +206,7 @@ final class AppStateCalculator {
     }
 }
 
-// MARK: - ApplicationStateObserving
+// MARK: ApplicationStateObserving
 
 extension AppStateCalculator: ApplicationStateObserving {
     func addObserverToken(_ token: NSObjectProtocol) {
@@ -213,7 +223,7 @@ extension AppStateCalculator: ApplicationStateObserving {
     }
 }
 
-// MARK: - SessionManagerDelegate
+// MARK: SessionManagerDelegate
 
 extension AppStateCalculator: SessionManagerDelegate {
     var isInAuthenticatedAppState: Bool {
@@ -330,7 +340,7 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 }
 
-// MARK: - AuthenticationCoordinatorDelegate
+// MARK: AuthenticationCoordinatorDelegate
 
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
     func userAuthenticationDidComplete(userSession: UserSession) {

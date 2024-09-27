@@ -18,11 +18,15 @@
 
 import Foundation
 
+// MARK: - KeychainItemProtocol
+
 protocol KeychainItemProtocol {
     var id: String { get }
     var getQuery: [CFString: Any] { get }
     func setQuery<T>(value: T) -> [CFString: Any]
 }
+
+// MARK: - KeychainManager
 
 public enum KeychainManager {
     // MARK: - Keychain access
@@ -149,6 +153,8 @@ public enum KeychainManager {
         #endif
     }
 }
+
+// MARK: KeychainManager.Error
 
 extension KeychainManager {
     public enum Error: LocalizedError {

@@ -37,6 +37,8 @@ extension String {
     }
 }
 
+// MARK: - AVSAudioEffectType + CustomStringConvertible
+
 extension AVSAudioEffectType: CustomStringConvertible {
     var icon: StyleKitIcon {
         switch self {

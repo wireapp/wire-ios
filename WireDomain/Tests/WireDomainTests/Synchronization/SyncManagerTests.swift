@@ -23,6 +23,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
+// MARK: - SyncManagerTests
+
 final class SyncManagerTests: XCTestCase {
     private var sut: SyncManager!
     private var updateEventsRepository: MockUpdateEventsRepositoryProtocol!
@@ -281,6 +283,8 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 0)
     }
 }
+
+// MARK: - Scaffolding
 
 private enum Scaffolding {
     static let localDomain = "example.com"

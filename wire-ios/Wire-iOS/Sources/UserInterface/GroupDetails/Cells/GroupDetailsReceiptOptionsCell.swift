@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - GroupDetailsReceiptOptionsCell
+
 final class GroupDetailsReceiptOptionsCell: IconToggleCell {
     override func setUp() {
         super.setUp()
@@ -42,6 +44,8 @@ final class GroupDetailsReceiptOptionsCell: IconToggleCell {
         }
     }
 }
+
+// MARK: ConversationOptionsConfigurable
 
 extension GroupDetailsReceiptOptionsCell: ConversationOptionsConfigurable {
     func configure(with conversation: GroupDetailsConversationType) {

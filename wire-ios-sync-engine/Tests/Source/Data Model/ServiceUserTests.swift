@@ -21,6 +21,8 @@ import WireUtilities
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - DummyServiceUser
+
 final class DummyServiceUser: NSObject, ServiceUser {
     func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {}
 
@@ -245,6 +247,8 @@ final class DummyServiceUser: NSObject, ServiceUser {
         super.init()
     }
 }
+
+// MARK: - ServiceUserTests
 
 final class ServiceUserTests: IntegrationTest {
     override public func setUp() {

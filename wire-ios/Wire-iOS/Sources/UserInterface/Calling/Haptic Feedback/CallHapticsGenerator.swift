@@ -19,9 +19,13 @@
 import UIKit
 import WireUtilities
 
+// MARK: - CallHapticsGeneratorType
+
 protocol CallHapticsGeneratorType {
     func trigger(event: CallHapticsEvent)
 }
+
+// MARK: - CallHapticsEvent
 
 enum CallHapticsEvent: String {
     case start
@@ -43,6 +47,8 @@ enum CallHapticsEvent: String {
         }
     }
 }
+
+// MARK: - CallHapticsGenerator
 
 final class CallHapticsGenerator: CallHapticsGeneratorType {
     private let impactGenerator = UIImpactFeedbackGenerator(style: .light)

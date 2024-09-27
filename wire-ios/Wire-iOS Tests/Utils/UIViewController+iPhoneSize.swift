@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - CGSize.iPhoneSize
+
 extension CGSize {
     enum iPhoneSize {
         static let iPhone4 = CGSize(width: 320, height: 568)

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MLSActionsProviderProtocol
+
 // sourcery: AutoMockable
 protocol MLSActionsProviderProtocol {
     func fetchBackendPublicKeys(
@@ -99,6 +101,8 @@ protocol MLSActionsProviderProtocol {
         context: NotificationContext
     ) async throws
 }
+
+// MARK: - MLSActionsProvider
 
 final class MLSActionsProvider: MLSActionsProviderProtocol {
     func fetchBackendPublicKeys(

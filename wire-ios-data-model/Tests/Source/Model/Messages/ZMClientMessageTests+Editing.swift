@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - ZMClientMessageTests_Editing
+
 class ZMClientMessageTests_Editing: BaseZMClientMessageTests {
     func testThatItEditsTheMessage() throws {
         // GIVEN
@@ -67,6 +69,8 @@ class ZMClientMessageTests_Editing: BaseZMClientMessageTests {
         XCTAssertEqual(editedMessage?.messageText, "editedText")
     }
 }
+
+// MARK: - ZMClientMessageTests_TextMessageData
 
 class ZMClientMessageTests_TextMessageData: BaseZMClientMessageTests {
     func testThatItUpdatesTheMesssageText_WhenEditing() {

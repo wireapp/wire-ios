@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - TransportSessionType
+
 @objc
 public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, TearDownCapable {
     var reachability: ReachabilityProvider & TearDownCapable { get }
@@ -54,6 +56,8 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     @objc(renewAccessTokenWithClientID:)
     func renewAccessToken(with clientID: String)
 }
+
+// MARK: - ZMTransportSession + TransportSessionType
 
 extension ZMTransportSession: TransportSessionType {}
 

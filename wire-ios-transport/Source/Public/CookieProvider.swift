@@ -18,11 +18,15 @@
 
 import Foundation
 
+// MARK: - CookieProvider
+
 public protocol CookieProvider {
     var isAuthenticated: Bool { get }
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest)
     func deleteKeychainItems()
 }
+
+// MARK: - ZMPersistentCookieStorage + CookieProvider
 
 extension ZMPersistentCookieStorage: CookieProvider {
     public var isAuthenticated: Bool {

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - FetchShareableConversationsUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol FetchShareableConversationsUseCaseProtocol {
     /// Fetches all non-archived conversations in which the user is an active member.
@@ -28,6 +30,8 @@ public protocol FetchShareableConversationsUseCaseProtocol {
 
     func invoke() -> [ZMConversation]
 }
+
+// MARK: - FetchShareableConversationsUseCase
 
 public class FetchShareableConversationsUseCase: FetchShareableConversationsUseCaseProtocol {
     private let contextProvider: ContextProvider

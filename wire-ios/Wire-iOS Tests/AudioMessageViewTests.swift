@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - MockMessage + AudioTrack
+
 extension MockMessage: AudioTrack {
     var title: String? {
         .none
@@ -49,6 +51,8 @@ extension MockMessage: AudioTrack {
         }
     }
 }
+
+// MARK: - AudioMessageViewTests
 
 final class AudioMessageViewTests: XCTestCase {
     var sut: AudioMessageView!

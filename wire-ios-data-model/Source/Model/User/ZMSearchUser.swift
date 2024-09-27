@@ -23,6 +23,8 @@ extension Notification.Name {
     public static let searchUserDidRequestCompleteAsset = Notification.Name("SearchUserDidRequestCompleteAsset")
 }
 
+// MARK: - ResponseKey
+
 private enum ResponseKey: String {
     case pictureTag = "tag"
     case pictures = "picture"
@@ -34,19 +36,27 @@ private enum ResponseKey: String {
     case assetType = "type"
 }
 
+// MARK: - ImageTag
+
 private enum ImageTag: String {
     case smallProfile
     case medium
 }
+
+// MARK: - AssetSize
 
 private enum AssetSize: String {
     case preview
     case complete
 }
 
+// MARK: - AssetKind
+
 private enum AssetKind: String {
     case image
 }
+
+// MARK: - SearchUserAssetKeys
 
 public struct SearchUserAssetKeys {
     public let preview: String?
@@ -79,13 +89,15 @@ public struct SearchUserAssetKeys {
     }
 }
 
+// MARK: - ZMSearchUser + SearchServiceUser
+
 extension ZMSearchUser: SearchServiceUser {
     public var serviceIdentifier: String? {
         remoteIdentifier?.transportString()
     }
 }
 
-// MARK: NSManagedObjectContext
+// MARK: - ZMSearchUser
 
 @objc
 public class ZMSearchUser: NSObject, UserType {

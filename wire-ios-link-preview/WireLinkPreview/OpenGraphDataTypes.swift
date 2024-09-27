@@ -18,16 +18,22 @@
 
 import Foundation
 
+// MARK: - OpenGraphAttribute
+
 enum OpenGraphAttribute {
     static let property = "property"
     static let content = "content"
 }
+
+// MARK: - OpenGraphXMLNode
 
 enum OpenGraphXMLNode: String {
     case headStart = "<head "
     case headStartNoAttributes = "<head>"
     case headEnd = "</head>"
 }
+
+// MARK: - OpenGraphPropertyType
 
 enum OpenGraphPropertyType: String {
     case title = "og:title"
@@ -44,6 +50,8 @@ enum OpenGraphPropertyType: String {
     case longitudeFSQ = "playfoursquare:location:longitude"
 }
 
+// MARK: - OpenGraphSiteName
+
 enum OpenGraphSiteName: String {
     case other
     case twitter
@@ -56,6 +64,8 @@ enum OpenGraphSiteName: String {
         self.init(rawValue: string.lowercased())
     }
 }
+
+// MARK: - OpenGraphTypeType
 
 enum OpenGraphTypeType: String {
     case article

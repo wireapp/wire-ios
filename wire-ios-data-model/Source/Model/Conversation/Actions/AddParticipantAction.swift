@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConversationAddParticipantsError
+
 public enum ConversationAddParticipantsError: Error, Equatable {
     case unknown
     case invalidOperation
@@ -30,6 +32,8 @@ public enum ConversationAddParticipantsError: Error, Equatable {
     case unreachableDomains(Set<String>)
     case nonFederatingDomains(Set<String>)
 }
+
+// MARK: - AddParticipantAction
 
 public class AddParticipantAction: EntityAction {
     public var resultHandler: ResultHandler?

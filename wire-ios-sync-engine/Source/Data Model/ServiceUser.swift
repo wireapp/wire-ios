@@ -21,6 +21,8 @@ import WireDataModel
 
 private let zmLog = ZMSLog(tag: "Services")
 
+// MARK: - ServiceUserData
+
 public struct ServiceUserData: Equatable {
     let provider: UUID
     let service: UUID
@@ -48,6 +50,8 @@ extension ServiceUser {
     }
 }
 
+// MARK: - ServiceProvider
+
 public final class ServiceProvider: NSObject {
     public let identifier: String
 
@@ -74,6 +78,8 @@ public final class ServiceProvider: NSObject {
         super.init()
     }
 }
+
+// MARK: - ServiceDetails
 
 public final class ServiceDetails: NSObject {
     public let serviceIdentifier: String
@@ -261,6 +267,8 @@ extension ServiceUser {
     }
 }
 
+// MARK: - AddBotError
+
 public enum AddBotError: Int, Error {
     case offline
     case general
@@ -272,6 +280,8 @@ public enum AddBotError: Int, Error {
     case botRejected
     case missingAPIVersion
 }
+
+// MARK: - AddBotResult
 
 public enum AddBotResult {
     case success(conversation: ZMConversation)

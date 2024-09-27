@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ProteusConversationParticipantsServiceInterface
+
 // sourcery: AutoMockable
 protocol ProteusConversationParticipantsServiceInterface {
     func addParticipants(
@@ -31,6 +33,8 @@ protocol ProteusConversationParticipantsServiceInterface {
         from conversation: ZMConversation
     ) async throws
 }
+
+// MARK: - ProteusConversationParticipantsService
 
 struct ProteusConversationParticipantsService: ProteusConversationParticipantsServiceInterface {
     private let context: NSManagedObjectContext

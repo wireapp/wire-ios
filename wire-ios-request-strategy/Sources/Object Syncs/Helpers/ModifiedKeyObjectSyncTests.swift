@@ -20,6 +20,8 @@ import WireTesting
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - MockModifiedKeyObjectSyncTranscoder
+
 class MockModifiedKeyObjectSyncTranscoder: ModifiedKeyObjectSyncTranscoder {
     typealias Object = MockEntity
 
@@ -36,6 +38,8 @@ class MockModifiedKeyObjectSyncTranscoder: ModifiedKeyObjectSyncTranscoder {
         pendingModifications.append(completion)
     }
 }
+
+// MARK: - ModifiedKeyObjectSyncTests
 
 class ModifiedKeyObjectSyncTests: ZMTBaseTest {
     var moc: NSManagedObjectContext!

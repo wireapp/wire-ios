@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - TeamAccountView
+
 final class TeamAccountView: BaseAccountView {
     private let imageView: TeamImageView
     private var teamObserver: NSObjectProtocol!
@@ -106,6 +108,8 @@ final class TeamAccountView: BaseAccountView {
         ]
     }
 }
+
+// MARK: TeamObserver
 
 extension TeamAccountView: TeamObserver {
     func teamDidChange(_ changeInfo: TeamChangeInfo) {

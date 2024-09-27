@@ -19,9 +19,13 @@
 import UIKit
 import WireDataModel
 
+// MARK: - InviteTeamMemberSectionDelegate
+
 protocol InviteTeamMemberSectionDelegate: AnyObject {
     func inviteSectionDidRequestTeamManagement()
 }
+
+// MARK: - InviteTeamMemberSection
 
 final class InviteTeamMemberSection: NSObject, CollectionViewSectionController {
     var team: Team?

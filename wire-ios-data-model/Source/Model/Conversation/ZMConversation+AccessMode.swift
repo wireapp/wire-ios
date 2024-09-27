@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConversationAccessMode
+
 /// Defines how users can join a conversation.
 public struct ConversationAccessMode: OptionSet {
     public let rawValue: Int
@@ -39,6 +41,8 @@ public struct ConversationAccessMode: OptionSet {
     public static let teamOnly  = ConversationAccessMode()
     public static let allowGuests: ConversationAccessMode = [.invite, .code]
 }
+
+// MARK: Hashable
 
 extension ConversationAccessMode: Hashable {
     public func hash(into hasher: inout Hasher) {
@@ -75,6 +79,8 @@ extension ConversationAccessMode {
     }
 }
 
+// MARK: - ConversationAccessRole
+
 /// Defines who can join the conversation.
 public enum ConversationAccessRole: String {
     /// Only the team member can join.
@@ -98,6 +104,8 @@ public enum ConversationAccessRole: String {
         }
     }
 }
+
+// MARK: - ConversationAccessRoleV2
 
 /// The issue:
 ///
@@ -161,6 +169,8 @@ extension ConversationAccessRole {
         allowGuests ? ConversationAccessRole.nonActivated : ConversationAccessRole.team
     }
 }
+
+// MARK: - ZMConversation + SwiftConversationLike
 
 extension ZMConversation: SwiftConversationLike {
     @NSManaged dynamic var accessModeStrings: [String]?

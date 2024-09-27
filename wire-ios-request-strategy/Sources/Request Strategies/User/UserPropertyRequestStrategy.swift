@@ -19,6 +19,8 @@
 import Foundation
 import WireTransport
 
+// MARK: - UserProperty
+
 private enum UserProperty: CaseIterable {
     case readReceiptsEnabled
 }
@@ -123,6 +125,8 @@ extension UserProperty {
     }
 }
 
+// MARK: - UserPropertyRequestStrategy
+
 public class UserPropertyRequestStrategy: AbstractRequestStrategy {
     var modifiedSync: ZMUpstreamModifiedObjectSync!
     var downstreamSync: ZMSingleRequestSync!
@@ -165,6 +169,8 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
         }
     }
 }
+
+// MARK: ZMUpstreamTranscoder
 
 extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
     public func request(
@@ -238,11 +244,15 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
     }
 }
 
+// MARK: ZMContextChangeTrackerSource
+
 extension UserPropertyRequestStrategy: ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [modifiedSync]
     }
 }
+
+// MARK: ZMEventConsumer
 
 extension UserPropertyRequestStrategy: ZMEventConsumer {
     static let UpdateEventKey = "key"
@@ -266,6 +276,8 @@ extension UserPropertyRequestStrategy: ZMEventConsumer {
         }
     }
 }
+
+// MARK: ZMSingleRequestTranscoder
 
 extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
     fileprivate func initializePropertiesToFetch() {

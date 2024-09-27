@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - APIServiceProtocol
+
 // sourcery: AutoMockable
 /// A service for network communication to a specific backend.
 ///
@@ -38,6 +40,8 @@ public protocol APIServiceProtocol {
         requiringAccessToken: Bool
     ) async throws -> (Data, HTTPURLResponse)
 }
+
+// MARK: - APIService
 
 /// A service for network communication to a specific backend.
 ///

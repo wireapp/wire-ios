@@ -29,6 +29,8 @@ extension Settings {
     }
 }
 
+// MARK: - EphemeralState
+
 enum EphemeralState: Equatable {
     case conversation
     case message
@@ -38,6 +40,8 @@ enum EphemeralState: Equatable {
         [.message, .conversation].contains(self)
     }
 }
+
+// MARK: - InputBarState
 
 enum InputBarState: Equatable {
     case writing(ephemeral: EphemeralState)
@@ -99,9 +103,13 @@ enum InputBarState: Equatable {
     }
 }
 
+// MARK: - InputBarConstants
+
 private struct InputBarConstants {
     let buttonsBarHeight: CGFloat = 56
 }
+
+// MARK: - InputBar
 
 final class InputBar: UIView {
     typealias ConversationInputBar = L10n.Localizable.Conversation.InputBar

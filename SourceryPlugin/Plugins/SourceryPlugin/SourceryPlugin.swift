@@ -19,6 +19,8 @@
 import Foundation
 import PackagePlugin
 
+// MARK: - SourceryPlugin
+
 @main
 struct SourceryPlugin {
     private enum Constant {
@@ -35,7 +37,7 @@ struct SourceryPlugin {
     }
 }
 
-// MARK: - BuildToolPlugin
+// MARK: BuildToolPlugin
 
 extension SourceryPlugin: BuildToolPlugin {
     func createBuildCommands(

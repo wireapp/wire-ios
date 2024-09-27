@@ -19,9 +19,13 @@
 import Foundation
 import WireDataModel
 
+// MARK: - LocalNotificationEventType
+
 public enum LocalNotificationEventType {
     case connectionRequestAccepted, connectionRequestPending, newConnection, conversationCreated, conversationDeleted
 }
+
+// MARK: - LocalNotificationContentType
 
 public enum LocalNotificationContentType: Equatable {
     case text(String, isMention: Bool, isReply: Bool)

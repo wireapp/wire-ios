@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AuthenticationFeatureProvider
+
 /// An object that provides the available features in the authentication flow.
 
 protocol AuthenticationFeatureProvider {
@@ -30,6 +32,8 @@ protocol AuthenticationFeatureProvider {
     /// Whether we allow the users to log in with their company manually, or only enable SSO links.
     var allowDirectCompanyLogin: Bool { get }
 }
+
+// MARK: - BuildSettingAuthenticationFeatureProvider
 
 /// Reads the authentication features from the build settings.
 

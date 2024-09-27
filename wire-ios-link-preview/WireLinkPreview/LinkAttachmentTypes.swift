@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - LinkAttachmentType
+
 /// A list of supported link attachments.
 
 @objc(ZMLinkAttachmentType)
@@ -27,7 +29,7 @@ public enum LinkAttachmentType: Int {
     case soundCloudPlaylist = 3
 }
 
-// MARK: - Media Attachments
+// MARK: - LinkAttachment
 
 /// Represents a link attachment for a single media.
 

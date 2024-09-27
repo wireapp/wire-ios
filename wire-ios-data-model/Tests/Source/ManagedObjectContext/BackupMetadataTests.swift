@@ -18,6 +18,8 @@
 
 import XCTest
 
+// MARK: - BackupMetadataTests
+
 class BackupMetadataTests: XCTestCase {
     var url: URL!
 
@@ -128,7 +130,7 @@ class BackupMetadataTests: XCTestCase {
     }
 }
 
-// MARK: - Helper
+// MARK: - MockProvider
 
 private class MockProvider: VersionProvider {
     var version: String

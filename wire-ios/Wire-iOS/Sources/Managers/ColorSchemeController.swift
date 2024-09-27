@@ -23,6 +23,8 @@ extension Notification.Name {
     static let colorSchemeControllerDidApplyColorSchemeChange = Self("ColorSchemeControllerDidApplyColorSchemeChange")
 }
 
+// MARK: - ColorSchemeController
+
 final class ColorSchemeController: NSObject {
     var userObserverToken: Any?
 
@@ -59,6 +61,8 @@ final class ColorSchemeController: NSObject {
         notifyColorSchemeChange()
     }
 }
+
+// MARK: UserObserving
 
 extension ColorSchemeController: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {

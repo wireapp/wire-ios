@@ -18,9 +18,13 @@
 
 import UIKit
 
+// MARK: - Bar
+
 protocol Bar {
     var weight: Float { get }
 }
+
+// MARK: - BarController
 
 final class BarController: UIViewController {
     private let stackView = UIStackView()

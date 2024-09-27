@@ -20,6 +20,8 @@ import Foundation
 import WireTransport
 @testable import WireRequestStrategy
 
+// MARK: - AcmeAPITests
+
 final class AcmeAPITests: ZMTBaseTest {
     var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
@@ -289,6 +291,8 @@ final class AcmeAPITests: ZMTBaseTest {
     }
 }
 
+// MARK: - MockHttpClient
+
 class MockHttpClient: HttpClientCustom {
     var mockResponse: (Data, URLResponse)?
     var sentRequests: [URLRequest] = []
@@ -301,6 +305,8 @@ class MockHttpClient: HttpClientCustom {
         return mockResponse
     }
 }
+
+// MARK: - MockAcmeResponse
 
 private class MockAcmeResponse {
     func acmeDirectory() -> AcmeDirectoriesResponse {

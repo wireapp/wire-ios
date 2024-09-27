@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - ConversationCreateReceiptsCell
+
 final class ConversationCreateReceiptsCell: IconToggleCell {
     override func setUp() {
         super.setUp()
@@ -34,6 +36,8 @@ final class ConversationCreateReceiptsCell: IconToggleCell {
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 }
+
+// MARK: ConversationCreationValuesConfigurable
 
 extension ConversationCreateReceiptsCell: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {

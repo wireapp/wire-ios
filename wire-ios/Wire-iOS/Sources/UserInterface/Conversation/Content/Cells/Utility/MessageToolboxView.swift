@@ -21,6 +21,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - MessageToolboxViewDelegate
+
 /// Observes events from the message toolbox.
 protocol MessageToolboxViewDelegate: AnyObject {
     func messageToolboxDidRequestOpeningDetails(
@@ -44,6 +46,8 @@ extension UILabel {
         return label
     }
 }
+
+// MARK: - MessageToolboxView
 
 /// A view that displays information about a message.
 
@@ -308,7 +312,7 @@ final class MessageToolboxView: UIView {
     }
 }
 
-// MARK: - Tap Gesture
+// MARK: UIGestureRecognizerDelegate
 
 extension MessageToolboxView: UIGestureRecognizerDelegate {
     @objc

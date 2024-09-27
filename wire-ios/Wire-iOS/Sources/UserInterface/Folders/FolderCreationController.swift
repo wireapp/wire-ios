@@ -20,12 +20,16 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
+// MARK: - FolderCreationControllerDelegate
+
 protocol FolderCreationControllerDelegate: AnyObject {
     func folderController(
         _ controller: FolderCreationController,
         didCreateFolder folder: LabelType
     )
 }
+
+// MARK: - FolderCreationController
 
 final class FolderCreationController: UIViewController {
     private let collectionViewController = SectionCollectionViewController()
@@ -157,7 +161,7 @@ final class FolderCreationController: UIViewController {
     }
 }
 
-// MARK: - SimpleTextFieldDelegate
+// MARK: SimpleTextFieldDelegate
 
 extension FolderCreationController: SimpleTextFieldDelegate {
     func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {

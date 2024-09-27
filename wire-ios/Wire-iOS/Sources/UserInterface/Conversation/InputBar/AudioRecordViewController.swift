@@ -26,9 +26,13 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// MARK: - AudioRecordBaseViewController
+
 protocol AudioRecordBaseViewController: AnyObject {
     var delegate: AudioRecordViewControllerDelegate? { get set }
 }
+
+// MARK: - AudioRecordViewControllerDelegate
 
 protocol AudioRecordViewControllerDelegate: AnyObject {
     func audioRecordViewControllerDidCancel(_ audioRecordViewController: AudioRecordBaseViewController)
@@ -41,9 +45,13 @@ protocol AudioRecordViewControllerDelegate: AnyObject {
     )
 }
 
+// MARK: - AudioRecordState
+
 enum AudioRecordState {
     case recording, finishedRecording
 }
+
+// MARK: - AudioRecordViewController
 
 final class AudioRecordViewController: UIViewController, AudioRecordBaseViewController {
     let buttonOverlay = AudioButtonOverlay()

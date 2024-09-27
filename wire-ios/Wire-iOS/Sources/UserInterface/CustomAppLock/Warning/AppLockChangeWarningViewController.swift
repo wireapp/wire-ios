@@ -21,9 +21,13 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - AppLockChangeWarningViewControllerDelegate
+
 protocol AppLockChangeWarningViewControllerDelegate: AnyObject {
     func appLockChangeWarningViewControllerDidDismiss()
 }
+
+// MARK: - AppLockChangeWarningViewController
 
 final class AppLockChangeWarningViewController: UIViewController {
     // MARK: - Properties

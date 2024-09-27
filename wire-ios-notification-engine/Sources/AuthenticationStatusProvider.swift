@@ -18,9 +18,13 @@
 
 import Foundation
 
+// MARK: - AuthenticationStatusProvider
+
 protocol AuthenticationStatusProvider {
     var state: AuthenticationState { get }
 }
+
+// MARK: - AuthenticationState
 
 enum AuthenticationState {
     case authenticated

@@ -20,6 +20,8 @@ import Foundation
 import LocalAuthentication
 import WireDataModel
 
+// MARK: - ZMUserSession + UserSession
+
 extension ZMUserSession: UserSession {
     // MARK: Properties
 

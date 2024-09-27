@@ -22,11 +22,15 @@ import WireCommonComponents
 import WireSyncEngine
 import WireSystem
 
+// MARK: - SettingsLastScreen
+
 enum SettingsLastScreen: Int {
     case none = 0
     case list
     case conversation
 }
+
+// MARK: - SettingsCamera
 
 enum SettingsCamera: Int {
     case front
@@ -36,6 +40,8 @@ enum SettingsCamera: Int {
 extension Notification.Name {
     static let SettingsColorSchemeChanged = Notification.Name("SettingsColorSchemeChanged")
 }
+
+// MARK: - SettingKey
 
 enum SettingKey: String, CaseIterable {
     case disableMarkdown = "UserDefaultDisableMarkdown"
@@ -69,6 +75,8 @@ enum SettingKey: String, CaseIterable {
     case callingConstantBitRate = "CallingConstantBitRate"
     case disableLinkPreviews = "DisableLinkPreviews"
 }
+
+// MARK: - Settings
 
 /// Model object for locally stored (not in SE or AVS) user app settings
 class Settings {

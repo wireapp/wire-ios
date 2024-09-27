@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import WireSystem
 
+// MARK: - ExpiringActivityTests
+
 class ExpiringActivityTests: XCTestCase {
     let concurrentQueue = DispatchQueue(label: "activity queue", attributes: [.concurrent])
 
@@ -93,6 +95,8 @@ class ExpiringActivityTests: XCTestCase {
         }
     }
 }
+
+// MARK: - MockExpiringActivityAPI
 
 private class MockExpiringActivityAPI: ExpiringActivityInterface {
     typealias MethodCall = (_ reason: String, _ block: @escaping @Sendable (Bool) -> Void) -> Void

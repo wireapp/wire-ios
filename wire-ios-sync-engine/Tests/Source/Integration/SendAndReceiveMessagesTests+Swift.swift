@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - SendAndReceiveMessagesTests_Swift
+
 class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
     private func uniqueText() -> String {
         "This is a test for \(name): \(UUID.create())"

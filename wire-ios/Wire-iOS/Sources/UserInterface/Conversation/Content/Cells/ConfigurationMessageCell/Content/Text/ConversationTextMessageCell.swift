@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - ConversationTextMessageCell
+
 final class ConversationTextMessageCell: UIView,
     ConversationMessageCell,
     TextViewInteractionDelegate {
@@ -146,7 +148,7 @@ final class ConversationTextMessageCell: UIView,
     }
 }
 
-// MARK: - Description
+// MARK: - ConversationTextMessageCellDescription
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell

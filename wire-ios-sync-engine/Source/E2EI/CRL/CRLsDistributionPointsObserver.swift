@@ -20,11 +20,15 @@ import Combine
 import Foundation
 import WireDataModel
 
+// MARK: - CRLsDistributionPointsObserving
+
 public protocol CRLsDistributionPointsObserving {
     func startObservingNewCRLsDistributionPoints(
         from publisher: AnyPublisher<CRLsDistributionPoints, Never>
     )
 }
+
+// MARK: - CRLsDistributionPointsObserver
 
 public class CRLsDistributionPointsObserver: CRLsDistributionPointsObserving {
     private var cancellables: Set<AnyCancellable> = []

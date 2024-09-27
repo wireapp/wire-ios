@@ -18,6 +18,8 @@
 
 public typealias LogAttributes = [LogAttributesKey: Encodable]
 
+// MARK: - LogAttributesKey
+
 public enum LogAttributesKey: String, Comparable {
     case selfClientId = "self_client_id"
     case selfUserId = "self_user_id"

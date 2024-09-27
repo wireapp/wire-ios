@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - FeatureConfigsAPIV1
+
 class FeatureConfigsAPIV1: FeatureConfigsAPIV0 {
     override var apiVersion: APIVersion {
         .v1
@@ -39,6 +41,8 @@ class FeatureConfigsAPIV1: FeatureConfigsAPIV0 {
             .parse(response)
     }
 }
+
+// MARK: - FeatureConfigsResponseAPIV1
 
 struct FeatureConfigsResponseAPIV1: Decodable, ToAPIModelConvertible {
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
@@ -92,6 +96,8 @@ struct FeatureConfigsResponseAPIV1: Decodable, ToAPIModelConvertible {
         return featureConfigs
     }
 }
+
+// MARK: - FeatureConfigResponse.MLSV1
 
 extension FeatureConfigResponse {
     struct MLSV1: Decodable {

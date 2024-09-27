@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - ConversationCreateOptionsCell
+
 final class ConversationCreateOptionsCell: RightIconDetailsCell {
     // MARK: - Properties
 
@@ -100,7 +102,7 @@ final class ConversationCreateOptionsCell: RightIconDetailsCell {
     }
 }
 
-// MARK: - ConversationCreateOptionsCell Extension
+// MARK: ConversationCreationValuesConfigurable
 
 extension ConversationCreateOptionsCell: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {

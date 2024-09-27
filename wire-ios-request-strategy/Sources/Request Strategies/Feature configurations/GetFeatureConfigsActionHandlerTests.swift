@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireRequestStrategy
 
+// MARK: - GetFeatureConfigsActionHandlerTests
+
 final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
     // MARK: - Helpers
 

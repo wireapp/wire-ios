@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - ConversationRemoveParticipantError
+
 public enum ConversationRemoveParticipantError: Error {
     case unknown,
          invalidOperation,
          conversationNotFound,
          failedToRemoveMLSMembers
 }
+
+// MARK: - RemoveParticipantAction
 
 public class RemoveParticipantAction: EntityAction {
     public var resultHandler: ResultHandler?

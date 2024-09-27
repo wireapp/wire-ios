@@ -18,10 +18,14 @@
 
 import UIKit
 
+// MARK: - TokenizedTextViewDelegate
+
 protocol TokenizedTextViewDelegate: AnyObject {
     func tokenizedTextView(_ textView: TokenizedTextView, didTapTextRange range: NSRange, fraction: CGFloat)
     func tokenizedTextView(_ textView: TokenizedTextView, textContainerInsetChanged textContainerInset: UIEdgeInsets)
 }
+
+// MARK: - TokenizedTextView
 
 // ! Custom UITextView subclass to be used in TokenField.
 // ! Shouldn't be used anywhere else.
@@ -145,7 +149,7 @@ class TokenizedTextView: TextView {
     }
 }
 
-// MARK: - UIGestureRecognizerDelegate
+// MARK: UIGestureRecognizerDelegate
 
 extension TokenizedTextView: UIGestureRecognizerDelegate {
     func gestureRecognizer(

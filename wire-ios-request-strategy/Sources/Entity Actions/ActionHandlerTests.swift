@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - MockAction
+
 private class MockAction: EntityAction, Equatable {
     let uuid = UUID()
     var resultHandler: ResultHandler?
@@ -30,6 +32,8 @@ private class MockAction: EntityAction, Equatable {
         lhs.uuid == rhs.uuid
     }
 }
+
+// MARK: - TestActionHandler
 
 private class TestActionHandler: ActionHandler<MockAction> {
     var calledRequestForAction = false
@@ -43,6 +47,8 @@ private class TestActionHandler: ActionHandler<MockAction> {
         calledHandleResponse = true
     }
 }
+
+// MARK: - ActionHandlerTests
 
 class ActionHandlerTests: MessagingTestBase {
     private var sut: TestActionHandler!

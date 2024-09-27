@@ -23,6 +23,8 @@ import WireDataModelSupport
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - WireCallCenterTransportMock
+
 final class WireCallCenterTransportMock: WireCallCenterTransport {
     var mockCallConfigResponse: (String, Int)?
     var mockClientsRequestResponse: [AVSClient]?
@@ -49,6 +51,8 @@ final class WireCallCenterTransportMock: WireCallCenterTransport {
         }
     }
 }
+
+// MARK: - WireCallCenterV3Tests
 
 final class WireCallCenterV3Tests: MessagingTest {
     var flowManager: FlowManagerMock!

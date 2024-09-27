@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - SearchGroup
+
 enum SearchGroup: Int {
     case people
     case services
@@ -57,6 +59,8 @@ extension SearchGroup {
     }
 }
 
+// MARK: - SearchResultsViewControllerDelegate
+
 protocol SearchResultsViewControllerDelegate: AnyObject {
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
@@ -83,16 +87,22 @@ protocol SearchResultsViewControllerDelegate: AnyObject {
     )
 }
 
+// MARK: - SearchResultsViewControllerAction
+
 enum SearchResultsViewControllerAction: Int {
     case createGroup
     case createGuestRoom
 }
+
+// MARK: - SearchResultsViewControllerMode
 
 enum SearchResultsViewControllerMode: Int {
     case search
     case selection
     case list
 }
+
+// MARK: - SearchResultsViewControllerSection
 
 enum SearchResultsViewControllerSection: Int {
     case unknown
@@ -142,6 +152,8 @@ extension UIViewController {
         }
     }
 }
+
+// MARK: - SearchResultsViewController
 
 final class SearchResultsViewController: UIViewController {
     lazy var searchResultsView: SearchResultsView = {
@@ -458,6 +470,8 @@ final class SearchResultsViewController: UIViewController {
     }
 }
 
+// MARK: SearchSectionControllerDelegate
+
 extension SearchResultsViewController: SearchSectionControllerDelegate {
     func searchSectionController(
         _ searchSectionController: CollectionViewSectionController,
@@ -512,11 +526,15 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
     }
 }
 
+// MARK: InviteTeamMemberSectionDelegate
+
 extension SearchResultsViewController: InviteTeamMemberSectionDelegate {
     func inviteSectionDidRequestTeamManagement() {
         URL.manageTeam(source: .onboarding).openInApp(above: self)
     }
 }
+
+// MARK: SearchServicesSectionDelegate
 
 extension SearchResultsViewController: SearchServicesSectionDelegate {
     func addServicesSectionDidRequestOpenServicesAdmin() {

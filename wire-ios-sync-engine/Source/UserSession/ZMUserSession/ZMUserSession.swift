@@ -27,6 +27,8 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionLogoutDelegate
     & UserSessionSelfUserClientDelegate
 
+// MARK: - ZMUserSession
+
 @objcMembers
 public final class ZMUserSession: NSObject {
     // MARK: Properties
@@ -760,7 +762,7 @@ public final class ZMUserSession: NSObject {
     }
 }
 
-// MARK: - ZMNetworkStateDelegate
+// MARK: ZMNetworkStateDelegate
 
 extension ZMUserSession: ZMNetworkStateDelegate {
     public func didReceiveData() {
@@ -793,7 +795,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 }
 
-// MARK: - UpdateEventProcessor
+// MARK: UpdateEventProcessor
 
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
@@ -811,7 +813,7 @@ extension ZMUserSession: UpdateEventProcessor {
     }
 }
 
-// MARK: - ZMSyncStateDelegate
+// MARK: ZMSyncStateDelegate
 
 extension ZMUserSession: ZMSyncStateDelegate {
     public func didStartSlowSync() {
@@ -1054,7 +1056,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 }
 
-// MARK: - URLActionProcessor
+// MARK: URLActionProcessor
 
 extension ZMUserSession: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
@@ -1062,7 +1064,7 @@ extension ZMUserSession: URLActionProcessor {
     }
 }
 
-// MARK: - ContextProvider
+// MARK: ContextProvider
 
 extension ZMUserSession: ContextProvider {
     public var account: Account {

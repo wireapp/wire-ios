@@ -19,6 +19,8 @@
 import Foundation
 import XCTest
 
+// MARK: - FileManagerProtectionTests
+
 class FileManagerProtectionTests: XCTestCase {
     var fileManager: FileManagerThatRecordsFileProtectionAttributes!
 
@@ -132,6 +134,8 @@ extension FileManagerProtectionTests {
         return values.isExcludedFromBackup == true
     }
 }
+
+// MARK: - FileManagerThatRecordsFileProtectionAttributes
 
 /// This helper class is needed as the default file system will not report the value
 /// of the `FileAttributeKey.protectionKey` when reading file attributes

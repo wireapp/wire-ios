@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - WebLinkTextView
+
 // This subclass is used for the legal text in the Welcome screen and the reset password text in the login screen
 // Purpose of this class is to reduce the amount of duplicate code to set the default properties of this NSTextView.
 // On the Mac client we are using something similar to also stop the user from being able to select the text
@@ -67,6 +69,8 @@ final class WebLinkTextView: UITextView {
         super.addGestureRecognizer(gestureRecognizer)
     }
 }
+
+// MARK: UITextDragDelegate
 
 extension WebLinkTextView: UITextDragDelegate {
     func textDraggableView(

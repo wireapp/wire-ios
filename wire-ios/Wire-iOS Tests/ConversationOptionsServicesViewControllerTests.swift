@@ -21,6 +21,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - MockServicesOptionsViewModelConfiguration
+
 final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptionsViewModelConfiguration {
     // MARK: Properties
 
@@ -41,6 +43,8 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
         setAllowServices?(allowServices, completion)
     }
 }
+
+// MARK: - ConversationServicesOptionsViewControllerTests
 
 final class ConversationServicesOptionsViewControllerTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!

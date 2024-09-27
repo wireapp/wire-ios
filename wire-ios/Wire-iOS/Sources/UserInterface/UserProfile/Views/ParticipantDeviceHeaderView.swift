@@ -19,9 +19,13 @@
 import UIKit
 import WireDesign
 
+// MARK: - ParticipantDeviceHeaderViewDelegate
+
 protocol ParticipantDeviceHeaderViewDelegate: AnyObject {
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView)
 }
+
+// MARK: - ParticipantDeviceHeaderView
 
 final class ParticipantDeviceHeaderView: UIView {
     private var font: UIFont = .normalLightFont
@@ -134,6 +138,8 @@ final class ParticipantDeviceHeaderView: UIView {
         textView.accessibilityHint = L10n.Accessibility.DeviceDetails.WhyVerifyFingerprint.hint
     }
 }
+
+// MARK: UITextViewDelegate
 
 extension ParticipantDeviceHeaderView: UITextViewDelegate {
     func textView(

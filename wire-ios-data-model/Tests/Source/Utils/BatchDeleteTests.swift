@@ -20,10 +20,14 @@ import WireTesting
 import XCTest
 @testable import WireDataModel
 
+// MARK: - TestEntity
+
 class TestEntity: NSManagedObject {
     @NSManaged var identifier: String?
     @NSManaged var parameter: String?
 }
+
+// MARK: - BatchDeleteTests
 
 class BatchDeleteTests: ZMTBaseTest {
     var model: NSManagedObjectModel {

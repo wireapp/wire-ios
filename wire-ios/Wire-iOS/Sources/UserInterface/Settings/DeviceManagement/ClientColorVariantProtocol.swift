@@ -19,9 +19,13 @@
 import UIKit
 import WireDesign
 
+// MARK: - ClientListViewControllerDelegate
+
 protocol ClientListViewControllerDelegate: AnyObject {
     func finishedDeleting(_ clientListViewController: ClientListViewController)
 }
+
+// MARK: - ClientColorVariantProtocol
 
 protocol ClientColorVariantProtocol {
     var headerFooterViewTextColor: UIColor { get }

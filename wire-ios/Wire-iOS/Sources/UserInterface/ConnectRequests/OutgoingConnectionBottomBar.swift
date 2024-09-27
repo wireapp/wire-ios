@@ -20,9 +20,13 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - OutgoingConnectionBottomBarAction
+
 enum OutgoingConnectionBottomBarAction: UInt {
     case cancel, archive
 }
+
+// MARK: - OutgoingConnectionViewController
 
 final class OutgoingConnectionViewController: UIViewController {
     typealias Connection = L10n.Accessibility.Connection

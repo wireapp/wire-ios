@@ -44,6 +44,8 @@ extension String {
     }
 }
 
+// MARK: - NSString_EmoticonSubstitutionTests
+
 final class NSString_EmoticonSubstitutionTests: XCTestCase {
     var sut: EmoticonSubstitutionConfiguration!
 

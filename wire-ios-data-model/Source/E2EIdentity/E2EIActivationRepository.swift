@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - E2EIActivationDateRepositoryProtocol
+
 /// The repository is responsible for storing the e2ei activation date.
 /// The e2ei activation date begins from the moment the client receives the notification that the feature flag is
 /// enabled for the team.
@@ -26,6 +28,8 @@ public protocol E2EIActivationDateRepositoryProtocol {
     func storeE2EIActivationDate(_ date: Date)
     func removeE2EIActivationDate()
 }
+
+// MARK: - E2EIActivationDateRepository
 
 public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRepositoryProtocol {
     // MARK: - Properties

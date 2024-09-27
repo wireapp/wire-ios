@@ -25,6 +25,8 @@ import WireSyncEngine
 import WireSyncEngineSupport
 @testable import Wire
 
+// MARK: - UserSessionMock
+
 final class UserSessionMock: UserSession {
     var userProfile: UserProfile
 
@@ -365,7 +367,7 @@ final class UserSessionMock: UserSession {
     }
 }
 
-// MARK: - UserSessionMock + ContextProvider
+// MARK: ContextProvider
 
 extension UserSessionMock: ContextProvider {
     var account: Account { contextProvider.account }

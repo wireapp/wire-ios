@@ -23,6 +23,8 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "TokenField")
 
+// MARK: - TokenField
+
 final class TokenField: UIView {
     let accessoryButtonSize: CGFloat = 32
 
@@ -732,7 +734,7 @@ final class TokenField: UIView {
     }
 }
 
-// MARK: - TokenizedTextViewDelegate
+// MARK: TokenizedTextViewDelegate
 
 extension TokenField: TokenizedTextViewDelegate {
     func tokenizedTextView(
@@ -765,7 +767,7 @@ extension TokenField: TokenizedTextViewDelegate {
     }
 }
 
-// MARK: - UITextViewDelegate
+// MARK: UITextViewDelegate
 
 extension TokenField: UITextViewDelegate {
     func textView(

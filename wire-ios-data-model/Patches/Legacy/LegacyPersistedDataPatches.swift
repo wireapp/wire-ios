@@ -20,6 +20,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "Patches")
 
+// MARK: - LegacyPersistedDataPatch
+
 /// Patches to apply to migrate some persisted data from a previous
 /// version of the app - database fixes, local files clean up, etc.
 public final class LegacyPersistedDataPatch {
@@ -66,7 +68,7 @@ public final class LegacyPersistedDataPatch {
 /// Persistent store key for last data model version
 let lastDataModelPatchedVersionKey = "zm_lastDataModelVersionKeyThatWasPatched"
 
-// MARK: - Framework version
+// MARK: - FrameworkVersion
 
 /// A framework version (major, minor, patch)
 public struct FrameworkVersion: Comparable, Equatable {

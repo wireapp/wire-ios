@@ -19,9 +19,13 @@
 import CoreFoundation
 import Security
 
+// MARK: - EnqueueResult
+
 public enum EnqueueResult {
     case success, nilRequest, maximumNumberOfRequests
 }
+
+// MARK: - UnauthenticatedTransportSessionProtocol
 
 public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
     func enqueueOneTime(_ request: ZMTransportRequest)
@@ -30,6 +34,8 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 
     var environment: BackendEnvironmentProvider { get }
 }
+
+// MARK: - UserInfo
 
 @objcMembers
 public final class UserInfo: NSObject {
@@ -46,6 +52,8 @@ public final class UserInfo: NSObject {
         return other.cookieData == cookieData && other.identifier == identifier
     }
 }
+
+// MARK: - UnauthenticatedTransportSession
 
 /// The `UnauthenticatedTransportSession` class should be used instead of `ZMTransportSession`
 /// until a user has been authenticated. Consumers should set themselves as delegate to
@@ -195,7 +203,7 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     }
 }
 
-// MARK: - SSL Pinning
+// MARK: URLSessionDelegate
 
 extension UnauthenticatedTransportSession: URLSessionDelegate {
     public func urlSession(
@@ -230,16 +238,20 @@ extension NSMutableURLRequest {
     }
 }
 
-// MARK: - Cookie Parsing
+// MARK: - CookieKey
 
 private enum CookieKey: String {
     case zetaId = "zuid"
     case properties
 }
 
+// MARK: - HeaderKey
+
 private enum HeaderKey: String {
     case cookie = "Set-Cookie"
 }
+
+// MARK: - UserKey
 
 private enum UserKey: String {
     case user, id

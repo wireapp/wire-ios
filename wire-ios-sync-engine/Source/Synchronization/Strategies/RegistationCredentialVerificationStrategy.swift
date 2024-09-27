@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - RegistationCredentialVerificationStrategy
+
 final class RegistationCredentialVerificationStrategy: NSObject {
     let registrationStatus: RegistrationStatusProtocol
     var codeSendingSync: ZMSingleRequestSync!
@@ -28,6 +30,8 @@ final class RegistationCredentialVerificationStrategy: NSObject {
         self.codeSendingSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
     }
 }
+
+// MARK: ZMSingleRequestTranscoder
 
 extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
     func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -91,6 +95,8 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
         }
     }
 }
+
+// MARK: RequestStrategy
 
 extension RegistationCredentialVerificationStrategy: RequestStrategy {
     func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {

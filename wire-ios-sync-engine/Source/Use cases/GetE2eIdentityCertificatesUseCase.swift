@@ -20,6 +20,8 @@ import Foundation
 import WireCoreCrypto
 import WireDataModel
 
+// MARK: - GetE2eIdentityCertificatesUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol GetE2eIdentityCertificatesUseCaseProtocol {
     func invoke(
@@ -27,6 +29,8 @@ public protocol GetE2eIdentityCertificatesUseCaseProtocol {
         clientIds: [MLSClientID]
     ) async throws -> [E2eIdentityCertificate]
 }
+
+// MARK: - GetE2eIdentityCertificatesUseCase
 
 public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol {
     private let coreCryptoProvider: CoreCryptoProviderProtocol

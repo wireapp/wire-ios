@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - Account + NotificationContext
+
 extension Account: NotificationContext {}
 
 extension Notification.Name {
     public static let AccountUnreadCountDidChangeNotification = Notification
         .Name("AccountUnreadCountDidChangeNotification")
 }
+
+// MARK: - Account
 
 /// An `Account` holds information related to a single account,
 /// such as the accounts users name,
@@ -117,7 +121,7 @@ extension Account {
     }
 }
 
-// MARK: - SafeForLoggingStringConvertible
+// MARK: SafeForLoggingStringConvertible
 
 extension Account: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

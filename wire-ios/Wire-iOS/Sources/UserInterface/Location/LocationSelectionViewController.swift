@@ -22,6 +22,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - LocationSelectionViewControllerDelegate
+
 protocol LocationSelectionViewControllerDelegate: AnyObject {
     func locationSelectionViewController(
         _ viewController: LocationSelectionViewController,
@@ -30,6 +32,8 @@ protocol LocationSelectionViewControllerDelegate: AnyObject {
 
     func locationSelectionViewControllerDidCancel(_ viewController: LocationSelectionViewController)
 }
+
+// MARK: - LocationSelectionViewController
 
 final class LocationSelectionViewController: UIViewController {
     // MARK: - Constants
@@ -216,7 +220,7 @@ final class LocationSelectionViewController: UIViewController {
     }
 }
 
-// MARK: - LocationSendViewControllerDelegate
+// MARK: LocationSendViewControllerDelegate
 
 extension LocationSelectionViewController: LocationSendViewControllerDelegate {
     func locationSendViewController(_ viewController: LocationSendViewController, shouldChangeHeight isActive: Bool) {
@@ -241,7 +245,7 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
     }
 }
 
-// MARK: - Modal Top Bar Delegate
+// MARK: ModalTopBarDelegate
 
 extension LocationSelectionViewController: ModalTopBarDelegate {
     func modelTopBarWantsToBeDismissed(_: ModalTopBar) {
@@ -249,7 +253,7 @@ extension LocationSelectionViewController: ModalTopBarDelegate {
     }
 }
 
-// MARK: - Map Manager Delegate
+// MARK: MapViewControllerDelegate
 
 extension LocationSelectionViewController: MapViewControllerDelegate {
     func mapViewController(_ viewController: MapViewController, didUpdateUserLocation userLocation: MKUserLocation) {
@@ -269,7 +273,7 @@ extension LocationSelectionViewController: MapViewControllerDelegate {
     }
 }
 
-// MARK: - AppLocation Manager Delegate
+// MARK: AppLocationManagerDelegate
 
 extension LocationSelectionViewController: AppLocationManagerDelegate {
     func didUpdateLocations(_ locations: [CLLocation]) {

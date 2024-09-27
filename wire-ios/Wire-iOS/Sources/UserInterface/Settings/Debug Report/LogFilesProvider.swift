@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireSystem
 import ZipArchive
 
+// MARK: - LogFilesProviding
+
 // sourcery: AutoMockable
 protocol LogFilesProviding {
     /// Generates a zip file containing all log files and returns its data before removing the files
@@ -40,6 +42,8 @@ protocol LogFilesProviding {
 
     func clearLogsDirectory() throws
 }
+
+// MARK: - LogFilesProvider
 
 /// Generates log files archives.
 ///

@@ -28,6 +28,8 @@ extension ConversationLike where Self: SwiftConversationLike {
     }
 }
 
+// MARK: - Service
+
 struct Service {
     let serviceUser: ServiceUser
     var serviceUserDetails: ServiceDetails?
@@ -41,6 +43,8 @@ extension Service {
         self.provider = nil
     }
 }
+
+// MARK: - ServiceDetailViewController
 
 final class ServiceDetailViewController: UIViewController {
     typealias Completion = (AddBotResult?) -> Void

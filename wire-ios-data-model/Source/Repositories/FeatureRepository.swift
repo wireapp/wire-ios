@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - FeatureRepositoryInterface
+
 // sourcery: AutoMockable
 public protocol FeatureRepositoryInterface {
     func fetchAppLock() -> Feature.AppLock
@@ -42,6 +44,8 @@ public protocol FeatureRepositoryInterface {
     func fetchMLSMigration() -> Feature.MLSMigration
     func storeMLSMigration(_ mlsMigration: Feature.MLSMigration)
 }
+
+// MARK: - FeatureRepository
 
 /// This class facilitates storage and retrieval of feature configs to and from
 /// the database.
@@ -481,6 +485,8 @@ public class FeatureRepository: FeatureRepositoryInterface {
         NotificationCenter.default.post(name: .featureDidChangeNotification, object: change)
     }
 }
+
+// MARK: FeatureRepository.FeatureChange
 
 extension FeatureRepository {
     /// A type that represents the possible changes to feature configs.

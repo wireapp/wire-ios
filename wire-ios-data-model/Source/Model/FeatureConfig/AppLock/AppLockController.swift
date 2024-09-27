@@ -19,6 +19,8 @@
 import Foundation
 import LocalAuthentication
 
+// MARK: - AppLockController
+
 public final class AppLockController: AppLockType {
     // MARK: - Properties
 

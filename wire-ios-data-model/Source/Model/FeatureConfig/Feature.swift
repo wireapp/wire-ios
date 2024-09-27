@@ -20,6 +20,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "Feature")
 
+// MARK: - Feature
+
 @objcMembers
 public class Feature: ZMManagedObject {
     // MARK: - Types

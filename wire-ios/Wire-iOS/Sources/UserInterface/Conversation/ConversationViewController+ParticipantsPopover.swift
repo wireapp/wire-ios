@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ConversationViewController + UIPopoverPresentationControllerDelegate
+
 extension ConversationViewController: UIPopoverPresentationControllerDelegate {
     func createAndPresentParticipantsPopoverController(
         with rect: CGRect,
@@ -31,6 +33,8 @@ extension ConversationViewController: UIPopoverPresentationControllerDelegate {
     }
 }
 
+// MARK: - ConversationViewController + UIAdaptivePresentationControllerDelegate
+
 extension ConversationViewController: UIAdaptivePresentationControllerDelegate {
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         if controller.presentedViewController is AddParticipantsViewController {
@@ -40,6 +44,8 @@ extension ConversationViewController: UIAdaptivePresentationControllerDelegate {
         return .formSheet
     }
 }
+
+// MARK: - ConversationViewController + ViewControllerDismisser
 
 extension ConversationViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {

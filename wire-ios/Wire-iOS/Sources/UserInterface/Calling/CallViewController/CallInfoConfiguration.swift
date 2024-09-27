@@ -101,6 +101,8 @@ extension VoiceChannel {
     }
 }
 
+// MARK: - CallInfoConfiguration
+
 struct CallInfoConfiguration: CallInfoViewControllerInput {
     static let maxActiveSpeakers = 4
 
@@ -171,6 +173,8 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         }
     }
 }
+
+// MARK: - VoiceChannelSnapshot
 
 private struct VoiceChannelSnapshot {
     let callerName: String?

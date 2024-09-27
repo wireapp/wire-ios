@@ -19,6 +19,8 @@
 import UIKit
 import WireCommonComponents
 
+// MARK: - BackupRestoreStepDescriptionFooterView
+
 /// The view that displays the restore from backup button.
 
 final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
@@ -39,6 +41,8 @@ final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDesc
         }
     }
 }
+
+// MARK: - BackupRestoreStepDescription
 
 /// The step that displays information about the history.
 

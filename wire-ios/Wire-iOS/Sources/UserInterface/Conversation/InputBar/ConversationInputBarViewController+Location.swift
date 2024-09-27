@@ -45,6 +45,8 @@ extension ConversationInputBarViewController {
     }
 }
 
+// MARK: - ConversationInputBarViewController + LocationSelectionViewControllerDelegate
+
 extension ConversationInputBarViewController: LocationSelectionViewControllerDelegate {
     func locationSelectionViewController(
         _ viewController: LocationSelectionViewController,

@@ -22,12 +22,16 @@ import WireCommonComponents
 import WireDesign
 import Ziphy
 
+// MARK: - GiphyConfirmationViewControllerDelegate
+
 protocol GiphyConfirmationViewControllerDelegate: AnyObject {
     func giphyConfirmationViewController(
         _ giphyConfirmationViewController: GiphyConfirmationViewController,
         didConfirmImageData imageData: Data
     )
 }
+
+// MARK: - GiphyConfirmationViewController
 
 final class GiphyConfirmationViewController: UIViewController {
     typealias Giphy = L10n.Localizable.Giphy

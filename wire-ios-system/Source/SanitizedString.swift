@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - SanitizedString
+
 public struct SanitizedString: Equatable {
     var value: String
 }
+
+// MARK: ExpressibleByStringLiteral
 
 extension SanitizedString: ExpressibleByStringLiteral {
     public init(stringLiteral value: StringLiteralType) {
@@ -26,11 +30,15 @@ extension SanitizedString: ExpressibleByStringLiteral {
     }
 }
 
+// MARK: ExpressibleByStringInterpolation
+
 extension SanitizedString: ExpressibleByStringInterpolation {
     public init(stringInterpolation: SanitizedString) {
         self.value = stringInterpolation.value
     }
 }
+
+// MARK: StringInterpolationProtocol
 
 extension SanitizedString: StringInterpolationProtocol {
     public init(literalCapacity: Int, interpolationCount: Int) {
@@ -50,11 +58,15 @@ extension SanitizedString: StringInterpolationProtocol {
     }
 }
 
+// MARK: CustomStringConvertible
+
 extension SanitizedString: CustomStringConvertible {
     public var description: String {
         value
     }
 }
+
+// MARK: SafeForLoggingStringConvertible
 
 extension SanitizedString: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

@@ -19,6 +19,8 @@
 import CoreData
 @testable import WireDataModel
 
+// MARK: - ZMCallStateTests
+
 class ZMCallStateTests: ZMBaseManagedObjectTest {
     func testThatItReturnsTheSameStateForTheSameConversation() {
         // given

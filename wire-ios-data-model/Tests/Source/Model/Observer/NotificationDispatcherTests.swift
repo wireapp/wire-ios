@@ -47,6 +47,8 @@ extension ObjectChangeInfo {
     }
 }
 
+// MARK: - NotificationDispatcherTestBase
+
 @objcMembers
 public class NotificationDispatcherTestBase: ZMBaseManagedObjectTest {
     var dispatcher: NotificationDispatcher! {
@@ -107,6 +109,8 @@ public class NotificationDispatcherTestBase: ZMBaseManagedObjectTest {
         return changedObjects
     }
 }
+
+// MARK: - NotificationDispatcherTests
 
 final class NotificationDispatcherTests: NotificationDispatcherTestBase {
     class Wrapper {

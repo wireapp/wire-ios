@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - CircularProgressView
+
 public class CircularProgressView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)

@@ -28,6 +28,8 @@ extension ZMConversation {
     }
 }
 
+// MARK: - ServiceAddedEvent
+
 struct ServiceAddedEvent: Event {
     enum Keys {
         static let serviceID = "service_id"
@@ -65,6 +67,8 @@ struct ServiceAddedEvent: Event {
         ]
     }
 }
+
+// MARK: - ServiceRemovedEvent
 
 struct ServiceRemovedEvent: Event {
     enum Keys {

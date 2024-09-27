@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 import WireTransport
 
+// MARK: - LegalHoldActivationError
+
 public enum LegalHoldActivationError: Error, Equatable {
     case selfUserNotInTeam
     case invalidSelfUser

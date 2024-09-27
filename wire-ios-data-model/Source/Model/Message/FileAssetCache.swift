@@ -32,7 +32,7 @@ extension NSManagedObjectContext {
     }
 }
 
-// MARK: - File asset cache
+// MARK: - FileAssetCache
 
 /// A file cache
 ///
@@ -857,6 +857,8 @@ private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?
     guard let input else { return nil }
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
 }
+
+// MARK: - FileCache
 
 /// A file cache
 /// This class is NOT thread safe. However, the only problematic operation is deleting.

@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - LabelIndicatorContext
+
 enum LabelIndicatorContext {
     case guest,
          groupRole,
@@ -52,6 +54,8 @@ enum LabelIndicatorContext {
         }
     }
 }
+
+// MARK: - LabelIndicator
 
 final class LabelIndicator: UIView {
     private let indicatorIcon = UIImageView()

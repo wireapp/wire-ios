@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - URLRequestBuilder
+
 struct URLRequestBuilder {
     private var request: URLRequest
 

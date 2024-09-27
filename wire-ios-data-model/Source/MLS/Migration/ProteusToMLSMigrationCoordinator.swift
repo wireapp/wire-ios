@@ -20,11 +20,15 @@ import Foundation
 import WireTransport
 import WireUtilities
 
+// MARK: - ProteusToMLSMigrationCoordinating
+
 // sourcery: AutoMockable
 public protocol ProteusToMLSMigrationCoordinating {
     /// Updates the migration status of group conversations.
     func updateMigrationStatus() async throws
 }
+
+// MARK: - ProteusToMLSMigrationCoordinator
 
 /// A class responsible for migrating group conversations from Proteus to MLS.
 /// It will start the migration if the conditions are met and finalise it when the time comes.

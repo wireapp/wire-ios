@@ -21,6 +21,8 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
+// MARK: - AssetV3PreviewDownloadRequestStrategy
+
 @objcMembers
 public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy,
     ZMContextChangeTrackerSource {
@@ -123,7 +125,7 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
     }
 }
 
-// MARK: - ZMDownstreamTranscoder
+// MARK: ZMDownstreamTranscoder
 
 extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
     public func request(

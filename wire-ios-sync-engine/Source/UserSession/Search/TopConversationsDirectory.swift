@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - TopConversationsDirectory
+
 /// Directory of various conversation lists
 /// This object is expected to be used on the UI context only
 @objcMembers
@@ -99,13 +101,15 @@ extension TopConversationsDirectory {
     }
 }
 
-// MARK: – Observation
+// MARK: - TopConversationsDirectoryObserver
 
 @objc
 public protocol TopConversationsDirectoryObserver {
     @objc
     func topConversationsDidChange()
 }
+
+// MARK: - TopConversationsDirectoryNotification
 
 struct TopConversationsDirectoryNotification: SelfPostingNotification {
     static let notificationName = NSNotification.Name(rawValue: "TopConversationsDirectoryNotification")

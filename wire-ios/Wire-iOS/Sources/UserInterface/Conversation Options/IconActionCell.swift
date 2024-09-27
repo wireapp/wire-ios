@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - IconActionCell
+
 final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
     private let imageContainer = UIView()
     private let iconImageView = UIImageView()
@@ -68,6 +70,8 @@ final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
         label.text = title
     }
 }
+
+// MARK: IconActionCellDelegate
 
 extension IconActionCell: IconActionCellDelegate {
     func updateLayout() {

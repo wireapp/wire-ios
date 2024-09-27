@@ -22,6 +22,8 @@ import WireTransport
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - UserProfileRequestStrategyTests
+
 class UserProfileRequestStrategyTests: MessagingTestBase {
     var sut: UserProfileRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!

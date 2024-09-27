@@ -42,6 +42,8 @@ extension ConversationLike where Self: SwiftConversationLike {
     }
 }
 
+// MARK: - AddParticipantsConversationCreationDelegate
+
 protocol AddParticipantsConversationCreationDelegate: AnyObject {
     func addParticipantsViewController(
         _ addParticipantsViewController: AddParticipantsViewController,
@@ -94,6 +96,8 @@ extension AddParticipantsViewController.Context {
         return controller
     }
 }
+
+// MARK: - AddParticipantsViewController
 
 final class AddParticipantsViewController: UIViewController {
     enum CreateAction {
@@ -467,6 +471,8 @@ final class AddParticipantsViewController: UIViewController {
     }
 }
 
+// MARK: UserSelectionObserver
+
 extension AddParticipantsViewController: UserSelectionObserver {
     func userSelection(_ userSelection: UserSelection, didAddUser user: UserType) {
         updateSelectionValues()
@@ -480,6 +486,8 @@ extension AddParticipantsViewController: UserSelectionObserver {
         updateSelectionValues()
     }
 }
+
+// MARK: SearchHeaderViewControllerDelegate
 
 extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
     @objc
@@ -499,6 +507,8 @@ extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
     }
 }
 
+// MARK: UIPopoverPresentationControllerDelegate
+
 extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate {
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         UIModalPresentationStyle.overFullScreen
@@ -511,6 +521,8 @@ extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate
         UIModalPresentationStyle.overFullScreen
     }
 }
+
+// MARK: SearchResultsViewControllerDelegate
 
 extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     func searchResultsViewController(
@@ -568,6 +580,8 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
         navigationController?.pushViewController(detail, animated: true)
     }
 }
+
+// MARK: EmptySearchResultsViewDelegate
 
 extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
     func execute(action: EmptySearchResultsViewAction, from: EmptySearchResultsView) {

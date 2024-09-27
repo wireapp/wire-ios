@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - LinkPreviewAssetDownloadRequestStrategy
+
 @objcMembers
 public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy {
     private let requestFactory = AssetDownloadRequestFactory()
@@ -127,11 +129,15 @@ public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrat
     }
 }
 
+// MARK: ZMContextChangeTrackerSource
+
 extension LinkPreviewAssetDownloadRequestStrategy: ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [assetDownstreamObjectSync]
     }
 }
+
+// MARK: ZMDownstreamTranscoder
 
 extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
     public func request(

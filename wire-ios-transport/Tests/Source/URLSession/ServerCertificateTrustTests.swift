@@ -25,11 +25,15 @@ import Foundation
 import XCTest
 @testable import WireTransport
 
+// MARK: - CertificateData
+
 struct CertificateData: Decodable {
     var production: [Data]
     var external: [Data]
     var invalid: [Data]
 }
+
+// MARK: - PinnedKeysData
 
 struct PinnedKeysData: Decodable {
     var pinnedKeys: [TrustData]
@@ -56,6 +60,8 @@ extension SecTrust {
         return trust
     }
 }
+
+// MARK: - BackendTrustProviderTests
 
 class BackendTrustProviderTests: XCTestCase {
     var pinnedHosts: [String]!

@@ -21,11 +21,15 @@ import WireDataModel
 
 private let lastUpdateEventIDKey = "LastUpdateEventID"
 
+// MARK: - ZMLastNotificationIDStore
+
 @objc
 public protocol ZMLastNotificationIDStore {
     var zm_lastNotificationID: UUID? { get set }
     var zm_hasLastNotificationID: Bool { get }
 }
+
+// MARK: - NSManagedObjectContext + ZMLastNotificationIDStore
 
 extension NSManagedObjectContext: ZMLastNotificationIDStore {
     public var zm_lastNotificationID: UUID? {

@@ -19,9 +19,13 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ConversationCreationValuesConfigurable
+
 protocol ConversationCreationValuesConfigurable: AnyObject {
     func configure(with values: ConversationCreationValues)
 }
+
+// MARK: - ConversationCreationValues
 
 final class ConversationCreationValues {
     // MARK: - Properties

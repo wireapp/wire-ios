@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ZMNetworkAvailabilityChangeNotification
+
 public class ZMNetworkAvailabilityChangeNotification: NSObject {
     static let name = Notification.Name(rawValue: "ZMNetworkAvailabilityChangeNotification")
 
@@ -47,6 +49,8 @@ public class ZMNetworkAvailabilityChangeNotification: NSObject {
         ).post()
     }
 }
+
+// MARK: - ZMNetworkAvailabilityObserver
 
 public protocol ZMNetworkAvailabilityObserver: AnyObject {
     func didChangeAvailability(newState: NetworkState)

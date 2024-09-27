@@ -20,6 +20,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - ChangeHandleViewControllerTests
+
 final class ChangeHandleViewControllerTests: XCTestCase {
     // MARK: - Properties
 

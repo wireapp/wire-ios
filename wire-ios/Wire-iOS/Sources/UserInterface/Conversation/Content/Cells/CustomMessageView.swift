@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - CustomMessageView
+
 final class CustomMessageView: UIView {
     var isSelected = false
 
@@ -66,7 +68,7 @@ final class CustomMessageView: UIView {
     }
 }
 
-// MARK: - UITextViewDelegate
+// MARK: UITextViewDelegate
 
 extension CustomMessageView: UITextViewDelegate {
     func textView(

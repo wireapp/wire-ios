@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - NavigationDestination
+
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
     case userProfile(UserType)
@@ -26,11 +28,15 @@ enum NavigationDestination {
     case conversationList
 }
 
+// MARK: - AuthenticatedRouterProtocol
+
 protocol AuthenticatedRouterProtocol: AnyObject {
     func updateActiveCallPresentationState()
     func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?)
     func navigate(to destination: NavigationDestination)
 }
+
+// MARK: - AuthenticatedRouter
 
 final class AuthenticatedRouter {
     // MARK: - Private Property
@@ -139,7 +145,7 @@ final class AuthenticatedRouter {
     }
 }
 
-// MARK: - AuthenticatedRouterProtocol
+// MARK: AuthenticatedRouterProtocol
 
 extension AuthenticatedRouter: AuthenticatedRouterProtocol {
     func updateActiveCallPresentationState() {
@@ -194,8 +200,12 @@ extension UIViewController {
     }
 }
 
+// MARK: - FeatureRepositoryProvider
+
 protocol FeatureRepositoryProvider {
     var featureRepository: FeatureRepository { get }
 }
+
+// MARK: - ZMUserSession + FeatureRepositoryProvider
 
 extension ZMUserSession: FeatureRepositoryProvider {}

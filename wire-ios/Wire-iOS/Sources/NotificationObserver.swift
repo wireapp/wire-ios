@@ -93,6 +93,8 @@ extension Notification.Name {
     static let UserGrantedAudioPermissions = Notification.Name("UserGrantedAudioPermissionsNotification")
 }
 
+// MARK: - AudioPermissionsObserving
+
 protocol AudioPermissionsObserving: ObserverTokenStore {
     func userDidGrantAudioPermissions()
 }

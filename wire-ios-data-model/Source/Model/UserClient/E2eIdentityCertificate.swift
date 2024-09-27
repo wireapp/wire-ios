@@ -19,9 +19,13 @@
 import Foundation
 import WireCoreCrypto
 
+// MARK: - E2EIdentityCertificateStatus
+
 public enum E2EIdentityCertificateStatus: CaseIterable {
     case notActivated, revoked, expired, invalid, valid
 }
+
+// MARK: - E2eIdentityCertificateConstants
 
 public enum E2eIdentityCertificateConstants {
     // Maximum time messages are stored for a client on the backend
@@ -30,6 +34,8 @@ public enum E2eIdentityCertificateConstants {
     // Randomising time so that not all clients update certificate at the same time
     public static let randomInterval: TimeInterval = .random(in: 0 ..< TimeInterval.oneDay)
 }
+
+// MARK: - E2eIdentityCertificate
 
 @objc
 public class E2eIdentityCertificate: NSObject {

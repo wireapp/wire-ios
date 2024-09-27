@@ -34,11 +34,15 @@ private let zmLog = ZMSLog(tag: "UI")
 /// The delay after which a progess view controller will be displayed if all messages are not yet sent.
 private let progressDisplayDelay: TimeInterval = 0.5
 
+// MARK: - LocalAuthenticationStatus
+
 private enum LocalAuthenticationStatus {
     case disabled
     case denied
     case granted
 }
+
+// MARK: - ShareExtensionViewController
 
 final class ShareExtensionViewController: SLComposeServiceViewController {
     // MARK: - Elements

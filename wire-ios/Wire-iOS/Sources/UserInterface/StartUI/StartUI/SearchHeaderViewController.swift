@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - SearchHeaderViewControllerDelegate
+
 protocol SearchHeaderViewControllerDelegate: AnyObject {
     func searchHeaderViewController(
         _ searchHeaderViewController: SearchHeaderViewController,
@@ -27,6 +29,8 @@ protocol SearchHeaderViewControllerDelegate: AnyObject {
     )
     func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController)
 }
+
+// MARK: - SearchHeaderViewController
 
 final class SearchHeaderViewController: UIViewController {
     let tokenFieldContainer = UIView()
@@ -140,6 +144,8 @@ final class SearchHeaderViewController: UIViewController {
     }
 }
 
+// MARK: UserSelectionObserver
+
 extension SearchHeaderViewController: UserSelectionObserver {
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType]) {
         // this is triggered by the TokenField itself so we should ignore it here
@@ -156,6 +162,8 @@ extension SearchHeaderViewController: UserSelectionObserver {
         updateClearIndicator(for: tokenField)
     }
 }
+
+// MARK: TokenFieldDelegate
 
 extension SearchHeaderViewController: TokenFieldDelegate {
     func tokenField(_ tokenField: TokenField, changedTokensTo tokens: [Token<NSObjectProtocol>]) {

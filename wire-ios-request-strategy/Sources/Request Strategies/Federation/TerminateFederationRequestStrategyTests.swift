@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - TerminateFederationRequestStrategyTests
+
 class TerminateFederationRequestStrategyTests: MessagingTestBase {
     // MARK: - Properties
 
@@ -90,6 +92,8 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(manager.didCallhandleFederationTerminationBetween)
     }
 }
+
+// MARK: - MockFederationTerminationManager
 
 class MockFederationTerminationManager: FederationTerminationManagerInterface {
     var didCallHandleFederationTerminationWith = false

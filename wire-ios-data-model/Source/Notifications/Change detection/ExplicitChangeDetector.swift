@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ExplicitChangeDetector
+
 final class ExplicitChangeDetector: ChangeDetector {
     private typealias ObservableChangesByObject = [ZMManagedObject: Changes]
 
@@ -179,7 +181,7 @@ final class ExplicitChangeDetector: ChangeDetector {
     }
 }
 
-// MARK: - Helper extensions
+// MARK: ExplicitChangeDetector.UpdatedObject
 
 extension ExplicitChangeDetector {
     fileprivate struct UpdatedObject {
@@ -210,7 +212,7 @@ extension NSManagedObject {
     }
 }
 
-// MARK: Mergeable
+// MARK: - Mergeable
 
 protocol Mergeable {
     func merged(with other: Self) -> Self

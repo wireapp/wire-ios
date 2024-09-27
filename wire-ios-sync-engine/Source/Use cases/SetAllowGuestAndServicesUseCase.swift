@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - SetAllowGuestsAndServicesUseCaseError
+
 public enum SetAllowGuestsAndServicesUseCaseError: Error {
     case invalidOperation
     case contextUnavailable
     case networkError(Error)
 }
+
+// MARK: - SetAllowGuestAndServicesUseCaseProtocol
 
 // sourcery: AutoMockable
 public protocol SetAllowGuestAndServicesUseCaseProtocol {
@@ -31,6 +35,8 @@ public protocol SetAllowGuestAndServicesUseCaseProtocol {
         completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void
     )
 }
+
+// MARK: - SetAllowGuestAndServicesUseCase
 
 struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol {
     func invoke(

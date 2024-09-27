@@ -18,7 +18,7 @@
 
 import Foundation
 
-// MARK: Protocols
+// MARK: - DataTask
 
 /// A network session task that downloads data.
 
@@ -36,6 +36,8 @@ protocol DataTask: AnyObject {
     func resume()
 }
 
+// MARK: - DataTaskSession
+
 /// An object that schedules and manages data tasks.
 
 protocol DataTaskSession: AnyObject {
@@ -43,9 +45,11 @@ protocol DataTaskSession: AnyObject {
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask
 }
 
-// MARK: - Conformance
+// MARK: - URLSessionDataTask + DataTask
 
 extension URLSessionDataTask: DataTask {}
+
+// MARK: - URLSession + DataTaskSession
 
 extension URLSession: DataTaskSession {
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {

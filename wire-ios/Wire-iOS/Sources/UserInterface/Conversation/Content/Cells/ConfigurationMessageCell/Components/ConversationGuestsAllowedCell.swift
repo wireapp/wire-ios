@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - GuestsAllowedCellDescription
+
 final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     // MARK: Properties
 
@@ -53,7 +55,7 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     }
 }
 
-// MARK: GuestAllowedCell
+// MARK: - GuestsAllowedCell
 
 final class GuestsAllowedCell: UIView, ConversationMessageCell {
     // MARK: Properties

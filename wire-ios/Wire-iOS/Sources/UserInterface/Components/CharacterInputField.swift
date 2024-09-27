@@ -19,15 +19,21 @@
 import UIKit
 import WireDesign
 
+// MARK: - CharacterInputFieldDelegate
+
 protocol CharacterInputFieldDelegate: AnyObject {
     func shouldAcceptChanges(_ inputField: CharacterInputField) -> Bool
     func didChangeText(_ inputField: CharacterInputField, to: String)
     func didFillInput(inputField: CharacterInputField, text: String)
 }
 
+// MARK: - TextContainer
+
 protocol TextContainer: AnyObject {
     var text: String? { get set }
 }
+
+// MARK: - CharacterInputField
 
 /// Custom input field implementation. Allows entering the characters from @c characterSet up to @c maxLength characters
 /// Allows pasting the text.
@@ -291,6 +297,8 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
     var keyboardType: UIKeyboardType = .default
     var textContentType: UITextContentType! = nil
 }
+
+// MARK: UIKeyInput
 
 extension CharacterInputField: UIKeyInput {
     func insertText(_ text: String) {

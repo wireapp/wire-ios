@@ -22,6 +22,8 @@ import Foundation
 
 public typealias WireCallMessageToken = UnsafeMutableRawPointer
 
+// MARK: - AVSCallType
+
 /// The possible types of call.
 
 public enum AVSCallType: Int32 {
@@ -29,6 +31,8 @@ public enum AVSCallType: Int32 {
     case video = 1
     case audioOnly = 2
 }
+
+// MARK: - AVSConversationType
 
 /// Possible types of conversation in which calls can be initiated.
 
@@ -38,6 +42,8 @@ public enum AVSConversationType: Int32 {
     case conference = 2
     case mlsConference = 3
 }
+
+// MARK: - CallEvent
 
 /// An object that represents a calling event.
 
@@ -55,6 +61,8 @@ public struct CallEvent {
 /// A block of code executed when the config request finishes.
 
 public typealias CallConfigRequestCompletion = (String?, Int) -> Void
+
+// MARK: - WireCallCenterTransport
 
 /// An object that can perform requests on behalf of the call center.
 

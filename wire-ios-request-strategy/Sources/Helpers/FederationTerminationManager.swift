@@ -19,10 +19,14 @@
 import Foundation
 import WireDataModel
 
+// MARK: - FederationTerminationManagerInterface
+
 public protocol FederationTerminationManagerInterface {
     func handleFederationTerminationWith(_ domain: String)
     func handleFederationTerminationBetween(_ domain: String, otherDomain: String)
 }
+
+// MARK: - FederationTerminationManager
 
 public final class FederationTerminationManager: FederationTerminationManagerInterface {
     private var context: NSManagedObjectContext

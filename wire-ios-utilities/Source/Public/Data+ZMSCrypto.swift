@@ -20,6 +20,8 @@ import CommonCrypto
 import CryptoKit
 import Foundation
 
+// MARK: - AESError
+
 /// Advanced Encryption Standard errors
 public enum AESError: Error {
     /// The key length is incorrect

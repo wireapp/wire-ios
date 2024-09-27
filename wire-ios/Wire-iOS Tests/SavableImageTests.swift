@@ -20,6 +20,8 @@ import Photos
 import XCTest
 @testable import Wire
 
+// MARK: - MockAssetChangeRequest
+
 final class MockAssetChangeRequest: AssetChangeRequestProtocol {
     static var url: URL?
     static var image: UIImage?
@@ -37,6 +39,8 @@ final class MockAssetChangeRequest: AssetChangeRequestProtocol {
     }
 }
 
+// MARK: - MockAssetCreationRequest
+
 final class MockAssetCreationRequest: AssetCreationRequestProtocol {
     static var image: UIImage?
 
@@ -49,9 +53,13 @@ final class MockAssetCreationRequest: AssetCreationRequestProtocol {
     }
 }
 
+// MARK: - MockOwner
+
 final class MockOwner {
     var savableImage: SavableImage!
 }
+
+// MARK: - SavableImageTests
 
 final class SavableImageTests: XCTestCase {
     weak var sut: SavableImage!

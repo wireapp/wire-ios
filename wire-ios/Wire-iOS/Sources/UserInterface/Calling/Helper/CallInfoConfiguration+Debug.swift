@@ -43,4 +43,6 @@ extension CallInfoViewControllerInput {
     }
 }
 
+// MARK: - CallInfoConfiguration + CustomDebugStringConvertible
+
 extension CallInfoConfiguration: CustomDebugStringConvertible {}

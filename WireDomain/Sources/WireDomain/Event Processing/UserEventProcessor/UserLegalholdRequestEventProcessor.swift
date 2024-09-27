@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - UserLegalholdRequestEventProcessorProtocol
+
 /// Process user legalhold request events.
 
 protocol UserLegalholdRequestEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol UserLegalholdRequestEventProcessorProtocol {
 
     func processEvent(_ event: UserLegalholdRequestEvent) async throws
 }
+
+// MARK: - UserLegalholdRequestEventProcessor
 
 struct UserLegalholdRequestEventProcessor: UserLegalholdRequestEventProcessorProtocol {
     func processEvent(_: UserLegalholdRequestEvent) async throws {

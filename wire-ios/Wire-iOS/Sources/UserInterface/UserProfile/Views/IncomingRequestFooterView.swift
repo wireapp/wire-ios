@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - IncomingRequestFooterViewDelegate
+
 protocol IncomingRequestFooterViewDelegate: AnyObject {
     /// Called when the user accepts or denies a connection request.
     func footerView(
@@ -26,6 +28,8 @@ protocol IncomingRequestFooterViewDelegate: AnyObject {
         didRespondToRequestWithAction action: IncomingConnectionAction
     )
 }
+
+// MARK: - IncomingRequestFooterView
 
 /// A view that lets the user accept a connection request.
 

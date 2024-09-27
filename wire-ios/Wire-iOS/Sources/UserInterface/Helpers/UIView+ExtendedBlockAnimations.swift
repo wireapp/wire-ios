@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - EasingFunction
+
 enum EasingFunction {
     case linear
     case easeInSine

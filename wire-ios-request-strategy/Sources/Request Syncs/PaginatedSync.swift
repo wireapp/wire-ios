@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - Paginatable
+
 protocol Paginatable: Decodable {
     var hasMore: Bool { get }
     var nextStartReference: String? { get }
 }
+
+// MARK: - PaginatedSync
 
 class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
     typealias CompletionHandler = (Result<PayloadType, PaginatedSyncError>) -> Void

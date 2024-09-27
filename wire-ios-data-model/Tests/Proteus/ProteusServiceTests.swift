@@ -22,6 +22,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - ProteusServiceTests
+
 class ProteusServiceTests: XCTestCase {
     struct MockError: Error, Equatable {}
 

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserProperty
+
 /// A persisted property stored on the server used to
 /// share self user settings across devices.
 
@@ -38,6 +40,8 @@ public enum UserProperty: Equatable, Codable {
 
     case unknown(key: String)
 }
+
+// MARK: UserProperty.Key
 
 extension UserProperty {
     /// The user property key.

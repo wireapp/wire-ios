@@ -20,6 +20,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "ConversationLink")
 
+// MARK: - ZMConversation.TransportKey
+
 extension ZMConversation {
     fileprivate enum TransportKey {
         static let data = "data"
@@ -27,6 +29,8 @@ extension ZMConversation {
         static let hasPassword = "has_password"
     }
 }
+
+// MARK: - WirelessLinkError
 
 public enum WirelessLinkError: Error {
     case noCode
@@ -169,6 +173,8 @@ extension ZMConversation {
         return selfUser.canModifyAccessControlSettings(in: self)
     }
 }
+
+// MARK: - WirelessRequestFactory
 
 enum WirelessRequestFactory {
     static func fetchLinkRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {

@@ -18,7 +18,7 @@
 
 import Foundation
 
-// MARK: Base class for observer / change info
+// MARK: - ObjectChangeInfoProtocol
 
 public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
     var changeInfos: [String: NSObject?] { get set }
@@ -29,6 +29,8 @@ public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
 
     func value(forKey key: String) -> Any?
 }
+
+// MARK: - ObjectChangeInfo
 
 open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
     let object: NSObject

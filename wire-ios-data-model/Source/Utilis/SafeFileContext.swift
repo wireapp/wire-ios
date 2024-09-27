@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// MARK: - SafeFileContext
+
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
     let fileURL: URL

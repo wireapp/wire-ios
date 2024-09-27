@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - CancelConnectionRequestResult
+
 enum CancelConnectionRequestResult {
     case cancelRequest, cancel
 

@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - ConversationCreateGuestsCell
+
 final class ConversationCreateGuestsCell: IconToggleCell {
     override func setUp() {
         super.setUp()
@@ -34,6 +36,8 @@ final class ConversationCreateGuestsCell: IconToggleCell {
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 }
+
+// MARK: ConversationCreationValuesConfigurable
 
 extension ConversationCreateGuestsCell: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {

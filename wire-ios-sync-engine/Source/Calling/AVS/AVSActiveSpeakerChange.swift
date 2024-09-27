@@ -19,6 +19,8 @@
 import avs
 import Foundation
 
+// MARK: - AVSActiveSpeakersChange
+
 struct AVSActiveSpeakersChange: Codable {
     let activeSpeakers: [ActiveSpeaker]
 

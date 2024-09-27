@@ -23,6 +23,8 @@ import WireSyncEngine
 typealias ViewControllerPresenter = (UIViewController, Bool, (() -> Void)?) -> Void
 typealias SuggestedStateChangeHandler = (LegalHoldDisclosureController.DisclosureState) -> Void
 
+// MARK: - LegalHoldAlertFactory
+
 enum LegalHoldAlertFactory {
     static func makeLegalHoldDeactivatedAlert(
         for user: SelfUserLegalHoldable,

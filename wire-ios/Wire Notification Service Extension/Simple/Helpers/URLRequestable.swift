@@ -18,8 +18,12 @@
 
 import Foundation
 
+// MARK: - URLRequestable
+
 protocol URLRequestable {
     func data(for request: URLRequest, delegate: URLSessionTaskDelegate?) async throws -> (Data, URLResponse)
 }
+
+// MARK: - URLSession + URLRequestable
 
 extension URLSession: URLRequestable {}

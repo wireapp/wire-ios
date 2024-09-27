@@ -18,16 +18,22 @@
 
 import Foundation
 
+// MARK: - ChangeUsernameError
+
 public enum ChangeUsernameError: Error {
     case taken
     case unknown
 }
+
+// MARK: - ChangeUsernameUseCaseProtocol
 
 /// Change the user name of the self user
 
 public protocol ChangeUsernameUseCaseProtocol {
     func invoke(username: String) async throws
 }
+
+// MARK: - ChangeUsernameUseCase
 
 class ChangeUsernameUseCase: NSObject, ChangeUsernameUseCaseProtocol {
     let userProfile: UserProfile
@@ -46,6 +52,8 @@ class ChangeUsernameUseCase: NSObject, ChangeUsernameUseCaseProtocol {
         }
     }
 }
+
+// MARK: UserProfileUpdateObserver
 
 extension ChangeUsernameUseCase: UserProfileUpdateObserver {
     func didSetHandle() {

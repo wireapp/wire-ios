@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MLSGroupID
+
 /// Represents the identifer for an MLS group.
 
 public struct MLSGroupID: Equatable, Hashable {
@@ -37,7 +39,7 @@ public struct MLSGroupID: Equatable, Hashable {
     }
 }
 
-// MARK: -
+// MARK: CustomStringConvertible
 
 extension MLSGroupID: CustomStringConvertible {
     public var description: String {
@@ -45,7 +47,7 @@ extension MLSGroupID: CustomStringConvertible {
     }
 }
 
-// MARK: -
+// MARK: SafeForLoggingStringConvertible
 
 extension MLSGroupID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

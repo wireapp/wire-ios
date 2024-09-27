@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - E2eIAPI
+
 // sourcery: AutoMockable
 public protocol E2eIAPI {
     func getWireNonce(clientId: String) async throws -> String
 
     func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse
 }
+
+// MARK: - E2eIAPIV5
 
 class E2eIAPIV5: E2eIAPI {
     let httpClient: HttpClient
@@ -68,11 +72,15 @@ class E2eIAPIV5: E2eIAPI {
     }
 }
 
+// MARK: - E2eIAPIV6
+
 class E2eIAPIV6: E2eIAPIV5 {
     override var apiVersion: APIVersion {
         .v6
     }
 }
+
+// MARK: - Constant
 
 private enum Constant {
     static let pathClients = "clients"

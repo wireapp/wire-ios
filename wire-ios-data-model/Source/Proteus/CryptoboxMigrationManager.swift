@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// MARK: - CryptoboxMigrationManagerInterface
+
 // sourcery: AutoMockable
 public protocol CryptoboxMigrationManagerInterface {
     func isMigrationNeeded(accountDirectory: URL) -> Bool
@@ -28,6 +30,8 @@ public protocol CryptoboxMigrationManagerInterface {
         coreCrypto: SafeCoreCryptoProtocol
     ) async throws
 }
+
+// MARK: - CryptoboxMigrationManager
 
 public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     // MARK: - Properties
@@ -91,12 +95,16 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     }
 }
 
+// MARK: - FileManagerInterface
+
 // sourcery: AutoMockable
 protocol FileManagerInterface {
     func fileExists(atPath path: String) -> Bool
     func removeItem(at url: URL) throws
     func cryptoboxDirectory(in accountDirectory: URL) -> URL
 }
+
+// MARK: - FileManager + FileManagerInterface
 
 extension FileManager: FileManagerInterface {
     func cryptoboxDirectory(in accountDirectory: URL) -> URL {

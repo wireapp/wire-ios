@@ -20,6 +20,8 @@ import WireDataModel
 import XCTest
 @testable import Wire
 
+// MARK: - MockAuthenticationStateControllerDelegate
+
 class MockAuthenticationStateControllerDelegate: AuthenticationStateControllerDelegate {
     var lastKnownStep: AuthenticationFlowStep?
     var lastKnownChangeMode: AuthenticationStateController.StateChangeMode?
@@ -29,6 +31,8 @@ class MockAuthenticationStateControllerDelegate: AuthenticationStateControllerDe
         lastKnownChangeMode = mode
     }
 }
+
+// MARK: - AuthenticationStateControllerTests
 
 class AuthenticationStateControllerTests: XCTestCase {
     var stateController: AuthenticationStateController!

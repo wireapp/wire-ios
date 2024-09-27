@@ -25,6 +25,8 @@ extension String {
     }
 }
 
+// MARK: - MentionsHandler
+
 final class MentionsHandler: NSObject {
     fileprivate var mentionRegex: NSRegularExpression = try! NSRegularExpression(
         pattern: "([\\s]|^)(@(\\S*))",

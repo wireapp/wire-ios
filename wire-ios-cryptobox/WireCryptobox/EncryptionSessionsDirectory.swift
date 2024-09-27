@@ -20,6 +20,8 @@ import Foundation
 import WireSystem
 import WireUtilities
 
+// MARK: - EncryptionSessionError
+
 @objc
 enum EncryptionSessionError: Int {
     case unknown, encryptionFailed, decryptionFailed
@@ -42,7 +44,11 @@ enum EncryptionSessionError: Int {
     }
 }
 
+// MARK: - _CBoxSession
+
 class _CBoxSession: PointerWrapper {}
+
+// MARK: - EncryptionSessionsDirectory
 
 /// An encryption state that is usable to encrypt/decrypt messages
 /// It maintains an in-memory cache of encryption sessions with other clients
@@ -148,7 +154,7 @@ public final class EncryptionSessionsDirectory: NSObject {
     }
 }
 
-// MARK: - Encryption sessions
+// MARK: - EncryptionSessionManager
 
 public protocol EncryptionSessionManager {
     /// Migrate session to a new identifier, if a session with the old identifier exists
@@ -179,6 +185,8 @@ public protocol EncryptionSessionManager {
     /// Returns the remote fingerprint of a encryption session
     func fingerprint(for identifier: EncryptionSessionIdentifier) -> Data?
 }
+
+// MARK: - EncryptionSessionsDirectory + EncryptionSessionManager
 
 extension EncryptionSessionsDirectory: EncryptionSessionManager {
     public func migrateSession(from previousIdentifier: String, to newIdentifier: EncryptionSessionIdentifier) {
@@ -392,6 +400,8 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
     }
 }
 
+// MARK: - PrekeyGeneratorType
+
 public protocol PrekeyGeneratorType {
     func generatePrekey(_ id: UInt16) throws -> String
     func generateLastPrekey() throws -> String
@@ -399,7 +409,7 @@ public protocol PrekeyGeneratorType {
     func generatePrekeys(_ nsRange: NSRange) throws -> [[String: AnyObject]]
 }
 
-// MARK: - Prekeys
+// MARK: - EncryptionSessionsDirectory + PrekeyGeneratorType
 
 extension EncryptionSessionsDirectory: PrekeyGeneratorType {
     /// Generates one prekey of the given ID. If the prekey exists already,
@@ -477,6 +487,8 @@ extension _CBox {
         return Data.moveFromCBoxVector(vectorBacking)!
     }
 }
+
+// MARK: - EncryptionSession
 
 /// A cryptographic session used to encrypt/decrypt data send to and received from
 /// another client
@@ -583,7 +595,7 @@ extension EncryptionSession {
     }
 }
 
-// MARK: - Encryption
+// MARK: - Encryptor
 
 public protocol Encryptor: AnyObject {
     /// Encrypts data for a client
@@ -592,7 +604,7 @@ public protocol Encryptor: AnyObject {
     func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data
 }
 
-// MARK: - Decryption
+// MARK: - Decryptor
 
 public protocol Decryptor: AnyObject {
     /// Decrypts data from a client
@@ -600,6 +612,8 @@ public protocol Decryptor: AnyObject {
     /// - throws: EncryptionSessionError in case no session with given recipient
     func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data
 }
+
+// MARK: - EncryptionSessionsDirectory + Encryptor, Decryptor
 
 extension EncryptionSessionsDirectory: Encryptor, Decryptor {
     public func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
@@ -724,7 +738,7 @@ extension EncryptionSessionsDirectory {
     }
 }
 
-// MARK: - Session identifier
+// MARK: - EncryptionSessionIdentifier
 
 public struct EncryptionSessionIdentifier: Hashable, Equatable {
     public let userId: String
@@ -763,6 +777,8 @@ public struct EncryptionSessionIdentifier: Hashable, Equatable {
 public func == (lhs: EncryptionSessionIdentifier, rhs: EncryptionSessionIdentifier) -> Bool {
     lhs.rawValue == rhs.rawValue
 }
+
+// MARK: SafeForLoggingStringConvertible
 
 extension EncryptionSessionIdentifier: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

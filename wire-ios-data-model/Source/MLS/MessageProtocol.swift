@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - MessageProtocol
+
 /// Protocols for exchanging end-to-end-encrypted messages
 /// between clients.
 
@@ -56,7 +58,7 @@ extension MessageProtocol {
     }
 }
 
-// MARK: - Custom string convertible
+// MARK: CustomStringConvertible
 
 extension MessageProtocol: CustomStringConvertible {
     public var description: String {

@@ -20,6 +20,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "terminate federation")
 
+// MARK: - TerminateFederationRequestStrategy
+
 @objcMembers
 public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
     // MARK: - Properties
@@ -54,7 +56,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
     }
 }
 
-// MARK: - Event processing
+// MARK: ZMEventConsumer
 
 extension TerminateFederationRequestStrategy: ZMEventConsumer {
     public func processEvents(

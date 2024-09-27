@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - ConversationButtonMessageCell
+
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     var isSelected = false
 
@@ -150,6 +152,8 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     }
 }
 
+// MARK: - ConversationButtonMessageCellDescription
+
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationButtonMessageCell
 
@@ -189,6 +193,8 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
         )
     }
 }
+
+// MARK: - ConversationButtonMessageCell.Configuration + Hashable
 
 extension ConversationButtonMessageCell.Configuration: Hashable {
     static func == (

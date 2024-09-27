@@ -21,6 +21,8 @@ import Foundation
 import MediaPlayer
 import WireSyncEngine
 
+// MARK: - PlayingState
+
 enum PlayingState: UInt, CustomStringConvertible {
     case idle, playing
 
@@ -33,6 +35,8 @@ enum PlayingState: UInt, CustomStringConvertible {
 }
 
 typealias RecordingLevel = Float
+
+// MARK: - AudioRecorderFormat
 
 enum AudioRecorderFormat {
     case m4A, wav
@@ -55,13 +59,19 @@ enum AudioRecorderFormat {
     }
 }
 
+// MARK: - AudioRecorderState
+
 enum AudioRecorderState: Equatable {
     case initializing, recording(start: TimeInterval), stopped
 }
 
+// MARK: - RecordingError
+
 enum RecordingError: Error {
     case toMaxDuration, toMaxSize
 }
+
+// MARK: - AudioRecorderType
 
 protocol AudioRecorderType: AnyObject {
     var format: AudioRecorderFormat { get }
@@ -85,6 +95,8 @@ protocol AudioRecorderType: AnyObject {
     func durationForCurrentState() -> TimeInterval?
     func alertForRecording(error: RecordingError) -> UIAlertController?
 }
+
+// MARK: - AudioRecorder
 
 final class AudioRecorder: NSObject, AudioRecorderType {
     let format: AudioRecorderFormat
@@ -401,6 +413,8 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     }
 }
 
+// MARK: AVAudioRecorderDelegate
+
 extension AudioRecorder: AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         var recordedToMaxDuration = false
@@ -431,7 +445,7 @@ extension AudioRecorder: AVAudioRecorderDelegate {
     }
 }
 
-// MARK: AVAvdioPlayerDelegate
+// MARK: - AudioPlayerDelegate
 
 final class AudioPlayerDelegate: NSObject, AVAudioPlayerDelegate {
     let playerDidFinishClosure: (Bool) -> Void
@@ -447,7 +461,7 @@ final class AudioPlayerDelegate: NSObject, AVAudioPlayerDelegate {
     }
 }
 
-// MARK: Power Provider
+// MARK: - PowerProvider
 
 protocol PowerProvider {
     func updateMeters() // call to refresh meter values
@@ -466,5 +480,10 @@ extension PowerProvider {
     }
 }
 
+// MARK: - AVAudioPlayer + PowerProvider
+
 extension AVAudioPlayer: PowerProvider {}
+
+// MARK: - AVAudioRecorder + PowerProvider
+
 extension AVAudioRecorder: PowerProvider {}

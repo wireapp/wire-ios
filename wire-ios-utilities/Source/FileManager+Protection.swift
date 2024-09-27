@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// MARK: - FileManagerError
+
 public enum FileManagerError: Error {
     case failedToCreateDirectory(Error)
     case failedToSetProtection(Error)

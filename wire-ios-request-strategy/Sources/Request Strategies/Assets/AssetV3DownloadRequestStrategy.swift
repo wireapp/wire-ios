@@ -21,6 +21,8 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "Asset V3")
 
+// MARK: - AssetV3DownloadRequestStrategy
+
 @objcMembers
 public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
     ZMContextChangeTrackerSource {

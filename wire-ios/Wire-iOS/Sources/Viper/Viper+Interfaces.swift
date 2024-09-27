@@ -18,7 +18,7 @@
 
 import UIKit
 
-// MARK: - Module
+// MARK: - ModuleInterface
 
 /// Represents a single Viper module and is used to construct and connect
 /// all the components in the module.
@@ -45,7 +45,7 @@ extension ModuleInterface {
     }
 }
 
-// MARK: - Interactor
+// MARK: - InteractorInterface
 
 /// The module component responsible for performing the business logic to fullfill
 /// data requests from the presenter.
@@ -58,7 +58,7 @@ protocol InteractorInterface: InteractorPresenterInterface {
     var presenter: PresenterInteractor! { get set }
 }
 
-// MARK: - Presenter
+// MARK: - PresenterInterface
 
 /// The module component responsible for 1) transforming data from the interactor
 /// and presenting it in the view, and 2) responding to ui by engaging with the
@@ -82,7 +82,7 @@ protocol PresenterInterface: PresenterInteractorInterface, PresenterViewInterfac
     var router: RouterPresenter! { get set }
 }
 
-// MARK: - View
+// MARK: - ViewInterface
 
 /// The module component responsible for 1) displaying the data received by the
 /// presenter, and 2) reporting ui events to the presenter.
@@ -95,7 +95,7 @@ protocol ViewInterface: ViewPresenterInterface {
     var presenter: PresenterView! { get set }
 }
 
-// MARK: - Router
+// MARK: - RouterInterface
 
 /// The module component responsible for navigation to other modules.
 

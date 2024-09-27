@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ResetSessionRequestStrategy
+
 public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource {
     fileprivate let keyPathSync: KeyPathObjectSync<ResetSessionRequestStrategy>
     fileprivate let messageSender: MessageSenderInterface
@@ -43,6 +45,8 @@ public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource
         [keyPathSync]
     }
 }
+
+// MARK: KeyPathObjectSyncTranscoder
 
 extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
     typealias T = UserClient

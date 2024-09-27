@@ -20,14 +20,20 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - EditButtonType
+
 enum EditButtonType {
     case undo, confirm, cancel
 }
+
+// MARK: - InputBarEditViewDelegate
 
 protocol InputBarEditViewDelegate: AnyObject {
     func inputBarEditView(_ editView: InputBarEditView, didTapButtonWithType buttonType: EditButtonType)
     func inputBarEditViewDidLongPressUndoButton(_ editView: InputBarEditView)
 }
+
+// MARK: - InputBarEditView
 
 final class InputBarEditView: UIView {
     typealias IconColors = SemanticColors.Icon

@@ -19,9 +19,13 @@
 import Foundation
 import WireDataModel
 
+// MARK: - UserRightInterface
+
 protocol UserRightInterface {
     static func selfUserIsPermitted(to permission: UserRight.Permission) -> Bool
 }
+
+// MARK: - UserRight
 
 final class UserRight: UserRightInterface {
     enum Permission {

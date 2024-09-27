@@ -23,6 +23,8 @@ private let log = ZMSLog(tag: "UserClient")
 
 public typealias SelfUserLegalHoldable = EditableUserType & SelfLegalHoldSubject & UserType
 
+// MARK: - SelfLegalHoldSubject
+
 /// A protocol for objects that provide the legal hold status for the self user.
 
 public protocol SelfLegalHoldSubject {
@@ -48,6 +50,8 @@ public protocol SelfLegalHoldSubject {
     func acknowledgeLegalHoldStatus()
 }
 
+// MARK: - UserLegalHoldStatus
+
 /// Describes the status of legal hold for the user.
 
 @frozen
@@ -61,6 +65,8 @@ public enum UserLegalHoldStatus: Equatable {
     /// Legal hold is disabled for the user.
     case disabled
 }
+
+// MARK: - LegalHoldRequest
 
 /// Describes a request to enable legal hold, created from the update event.
 
@@ -136,6 +142,8 @@ extension ZMUserKeys {
     /// The key path to access the current legal hold request.
     static let legalHoldRequest = "legalHoldRequest"
 }
+
+// MARK: - ZMUser + SelfLegalHoldSubject
 
 extension ZMUser: SelfLegalHoldSubject {
     // MARK: - Legal Hold Status

@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - ConversationProteusMessageAddEventProcessorProtocol
+
 /// Process conversation proteus message add events.
 
 protocol ConversationProteusMessageAddEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol ConversationProteusMessageAddEventProcessorProtocol {
 
     func processEvent(_ event: ConversationProteusMessageAddEvent) async throws
 }
+
+// MARK: - ConversationProteusMessageAddEventProcessor
 
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
     func processEvent(_: ConversationProteusMessageAddEvent) async throws {

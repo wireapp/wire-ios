@@ -23,6 +23,8 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "calling")
 
+// MARK: - ProximityMonitorManager
+
 final class ProximityMonitorManager: NSObject {
     typealias RaisedToEarHandler = (_ raisedToEar: Bool) -> Void
 
@@ -112,6 +114,8 @@ final class ProximityMonitorManager: NSObject {
     }
 }
 
+// MARK: WireCallCenterCallStateObserver
+
 extension ProximityMonitorManager: WireCallCenterCallStateObserver {
     func callCenterDidChange(
         callState: CallState,
@@ -123,6 +127,8 @@ extension ProximityMonitorManager: WireCallCenterCallStateObserver {
         updateProximityMonitorState()
     }
 }
+
+// MARK: AVSMediaManagerClientObserver
 
 extension ProximityMonitorManager: AVSMediaManagerClientObserver {
     func mediaManagerDidChange(_ notification: AVSMediaManagerClientChangeNotification!) {

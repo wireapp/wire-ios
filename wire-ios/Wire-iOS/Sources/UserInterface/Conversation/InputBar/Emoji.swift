@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - Emoji
+
 final class Emoji: Decodable {
     typealias ID = String
 
@@ -71,6 +73,8 @@ final class Emoji: Decodable {
     }
 }
 
+// MARK: Hashable
+
 extension Emoji: Hashable {
     static func == (lhs: Emoji, rhs: Emoji) -> Bool {
         lhs.value == rhs.value
@@ -88,6 +92,8 @@ extension Emoji.ID {
     static let smile = "🙂"
     static let frown = "☹️"
 }
+
+// MARK: - EmojiCategory
 
 enum EmojiCategory: String, CaseIterable, Decodable {
     case smileysAndEmotion = "Smileys & Emotion"

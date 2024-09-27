@@ -22,6 +22,8 @@ import XCTest
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
+// MARK: - ClientMessageRequestStrategyTests
+
 class ClientMessageRequestStrategyTests: MessagingTestBase {
     var localNotificationDispatcher: MockPushMessageHandler!
     var sut: ClientMessageRequestStrategy!

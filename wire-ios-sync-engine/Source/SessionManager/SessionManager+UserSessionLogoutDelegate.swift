@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserSessionLogoutDelegate
+
 protocol UserSessionLogoutDelegate: AnyObject {
     /// Invoked when the user successfully logged out
     func userDidLogout(accountId: UUID)
@@ -25,6 +27,8 @@ protocol UserSessionLogoutDelegate: AnyObject {
     /// Invoked when the authentication has proven invalid
     func authenticationInvalidated(_ error: NSError, accountId: UUID)
 }
+
+// MARK: - SessionManager + UserSessionLogoutDelegate
 
 extension SessionManager: UserSessionLogoutDelegate {
     /// Invoked when the user successfully logged out

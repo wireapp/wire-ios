@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - UserProfileUpdateRequestStrategyTests
+
 class UserProfileUpdateRequestStrategyTests: MessagingTest {
     var sut: UserProfileUpdateRequestStrategy!
     var userProfileUpdateStatus: TestUserProfileUpdateStatus!
@@ -599,6 +601,8 @@ extension ZMTransportResponse {
         self.init(httpurlResponse: httpResponse!, data: nil, error: error, apiVersion: APIVersion.v0.rawValue)
     }
 }
+
+// MARK: - TestUserProfileUpdateStatus
 
 class TestUserProfileUpdateStatus: UserProfileUpdateStatus {
     var recordedDidFailEmailUpdate: [Error] = []

@@ -23,6 +23,8 @@ import UniformTypeIdentifiers
     import MobileCoreServices
 #endif
 
+// MARK: - UTIHelper
+
 @objc
 public final class UTIHelper: NSObject {
     private static func conformsTo(uti: String, type: UTType) -> Bool {

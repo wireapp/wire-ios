@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - DotView
+
 final class DotView: UIView {
     private let circleView = ShapeView()
     private let centerView = ShapeView()
@@ -104,6 +106,8 @@ final class DotView: UIView {
     }
 }
 
+// MARK: UserObserving
+
 extension DotView: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.trustLevelChanged ||
@@ -122,7 +126,7 @@ extension DotView: UserObserving {
     }
 }
 
-// MARK: - Clients observer
+// MARK: UserClientObserver
 
 extension DotView: UserClientObserver {
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {

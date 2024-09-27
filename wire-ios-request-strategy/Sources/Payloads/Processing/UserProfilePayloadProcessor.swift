@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 import WireFoundation
 
+// MARK: - UserProfilePayloadProcessing
+
 // sourcery: AutoMockable
 protocol UserProfilePayloadProcessing {
     func updateUserProfiles(
@@ -27,6 +29,8 @@ protocol UserProfilePayloadProcessing {
         in context: NSManagedObjectContext
     )
 }
+
+// MARK: - UserProfilePayloadProcessor
 
 final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
     /// Update all user entities with the data from the user profiles.

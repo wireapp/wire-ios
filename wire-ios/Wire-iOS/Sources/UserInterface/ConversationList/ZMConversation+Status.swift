@@ -22,6 +22,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ConversationStatusIcon
+
 // Describes the icon to be shown for the conversation in the list.
 enum ConversationStatusIcon: Equatable {
     case pendingConnection
@@ -41,6 +43,8 @@ enum ConversationStatusIcon: Equatable {
     case activeCall(showJoin: Bool)
 }
 
+// MARK: - ConversationStatus
+
 // Describes the status of the conversation.
 struct ConversationStatus {
     let isGroup: Bool
@@ -58,6 +62,8 @@ struct ConversationStatus {
     let hasSelfMention: Bool
     let hasSelfReply: Bool
 }
+
+// MARK: - StatusMessageType
 
 // Describes the conversation message.
 enum StatusMessageType: Int, CaseIterable {
@@ -178,6 +184,8 @@ extension StatusMessageType {
     }
 }
 
+// MARK: - ConversationStatusMatcher
+
 // Describes object that is able to match and describe the conversation.
 // Provides rich description and status icon.
 protocol ConversationStatusMatcher {
@@ -189,6 +197,8 @@ protocol ConversationStatusMatcher {
     // in one row, like "description1 | description2"
     var combinesWith: [ConversationStatusMatcher] { get }
 }
+
+// MARK: - TypedConversationStatusMatcher
 
 protocol TypedConversationStatusMatcher: ConversationStatusMatcher {
     var matchedTypes: [StatusMessageType] { get }
@@ -210,6 +220,8 @@ extension ConversationStatusMatcher {
         string.setAttributes(type(of: self).emphasisStyle, toSubstring: substring)
     }
 }
+
+// MARK: - ContentSizeCategoryUpdater
 
 final class ContentSizeCategoryUpdater {
     private let callback: () -> Void
@@ -233,6 +245,8 @@ final class ContentSizeCategoryUpdater {
         }
     }
 }
+
+// MARK: - ConversationStatusStyle
 
 final class ConversationStatusStyle {
     private(set) var regularStyle: [NSAttributedString.Key: AnyObject] = [:]
@@ -275,6 +289,8 @@ extension ZMConversation {
     }
 }
 
+// MARK: - SelfUserLeftMatcher
+
 // "You left"
 final class SelfUserLeftMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
@@ -292,6 +308,8 @@ final class SelfUserLeftMatcher: ConversationStatusMatcher {
     var combinesWith: [ConversationStatusMatcher] = []
 }
 
+// MARK: - BlockedMatcher
+
 // "Blocked"
 final class BlockedMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
@@ -304,6 +322,8 @@ final class BlockedMatcher: ConversationStatusMatcher {
 
     var combinesWith: [ConversationStatusMatcher] = []
 }
+
+// MARK: - CallingMatcher
 
 // "Active Call"
 final class CallingMatcher: ConversationStatusMatcher {
@@ -344,6 +364,8 @@ final class CallingMatcher: ConversationStatusMatcher {
     var combinesWith: [ConversationStatusMatcher] = []
 }
 
+// MARK: - SecurityAlertMatcher
+
 final class SecurityAlertMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
         status.messagesRequiringAttention.contains(where: \.isComposite)
@@ -383,6 +405,8 @@ final class SecurityAlertMatcher: ConversationStatusMatcher {
     var combinesWith: [ConversationStatusMatcher] = []
 }
 
+// MARK: - TypingMatcher
+
 // "A, B, C: typing a message..."
 final class TypingMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
@@ -408,6 +432,8 @@ final class TypingMatcher: ConversationStatusMatcher {
 
     var combinesWith: [ConversationStatusMatcher] = []
 }
+
+// MARK: - SilencedMatcher
 
 // "Silenced"
 final class SilencedMatcher: ConversationStatusMatcher {
@@ -476,6 +502,8 @@ extension ConversationStatus {
         }
     }
 }
+
+// MARK: - NewMessagesMatcher
 
 // In silenced "N (text|image|link|...) message, ..."
 // In not silenced: "[Sender:] <message text>"
@@ -617,6 +645,8 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
     var combinesWith: [ConversationStatusMatcher] = []
 }
 
+// MARK: - FailedSendMatcher
+
 // ! Failed to send
 final class FailedSendMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
@@ -629,6 +659,8 @@ final class FailedSendMatcher: ConversationStatusMatcher {
 
     var combinesWith: [ConversationStatusMatcher] = []
 }
+
+// MARK: - GroupActivityMatcher
 
 // "[You|User] [added|removed|left] [_|users|you]"
 final class GroupActivityMatcher: TypedConversationStatusMatcher {
@@ -695,6 +727,8 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
     }
 }
 
+// MARK: - StartConversationMatcher
+
 // [Someone] started a conversation
 final class StartConversationMatcher: TypedConversationStatusMatcher {
     let matchedTypes: [StatusMessageType] = [.newConversation]
@@ -723,6 +757,8 @@ final class StartConversationMatcher: TypedConversationStatusMatcher {
 
     var combinesWith: [ConversationStatusMatcher] = []
 }
+
+// MARK: - UsernameMatcher
 
 // Fallback for empty conversations: showing the handle.
 final class UsernameMatcher: ConversationStatusMatcher {

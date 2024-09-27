@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MockPendingLegalHoldClient
+
 /// A pending legal hold client.
 
 public class MockPendingLegalHoldClient: NSManagedObject {

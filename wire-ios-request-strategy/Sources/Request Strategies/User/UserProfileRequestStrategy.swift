@@ -17,6 +17,8 @@
 //
 import Foundation
 
+// MARK: - UserProfileRequestStrategy
+
 /// Request strategy for fetching user profiles and processing user update events.
 ///
 /// User profiles are fetched:
@@ -135,6 +137,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     }
 }
 
+// MARK: ZMContextChangeTracker
+
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
         guard let apiVersion = BackendInfo.apiVersion else { return }
@@ -161,6 +165,8 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
         fetch(users: users, for: apiVersion)
     }
 }
+
+// MARK: ZMEventConsumer
 
 extension UserProfileRequestStrategy: ZMEventConsumer {
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
@@ -224,6 +230,8 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
     }
 }
 
+// MARK: - UserProfileByIDTranscoder
+
 class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
@@ -284,6 +292,8 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 }
+
+// MARK: - UserProfileByQualifiedIDTranscoder
 
 class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID

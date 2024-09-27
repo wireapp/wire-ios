@@ -21,6 +21,8 @@ import WireCommonComponents
 import XCTest
 @testable import Wire
 
+// MARK: - MockAVSVideoPreview
+
 private class MockAVSVideoPreview: AVSVideoPreview {
     var isCapturing = false
 
@@ -32,6 +34,8 @@ private class MockAVSVideoPreview: AVSVideoPreview {
         isCapturing = false
     }
 }
+
+// MARK: - SelfCallParticipantViewTests
 
 final class SelfCallParticipantViewTests: XCTestCase {
     private var sut: SelfCallParticipantView!

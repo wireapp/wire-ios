@@ -21,14 +21,20 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - CallingActionsViewDelegate
+
 protocol CallingActionsViewDelegate: AnyObject {
     func callingActionsViewPerformAction(_ action: CallAction)
 }
+
+// MARK: - BottomSheetScrollingDelegate
 
 protocol BottomSheetScrollingDelegate: AnyObject {
     var isBottomSheetExpanded: Bool { get }
     func toggleBottomSheetVisibility()
 }
+
+// MARK: - CallingActionsView
 
 // A view showing multiple buttons depending on the given `CallActionsView.Input`.
 // Button touches result in `CallActionsView.Action` cases to be sent to the objects delegate.
@@ -316,7 +322,7 @@ final class CallingActionsView: UIView {
     }
 }
 
-// MARK: - UILargeContentViewerInteractionDelegate
+// MARK: UILargeContentViewerInteractionDelegate
 
 extension CallingActionsView: UILargeContentViewerInteractionDelegate {
     func largeContentViewerInteraction(

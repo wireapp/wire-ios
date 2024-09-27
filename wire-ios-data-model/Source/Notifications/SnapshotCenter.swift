@@ -19,18 +19,29 @@
 import Foundation
 import WireUtilities
 
+// MARK: - Snapshot
+
 struct Snapshot {
     let attributes: [String: NSObject?]
     let toManyRelationships: [String: Int]
     let toOneRelationships: [String: NSManagedObjectID]
 }
 
+// MARK: - Countable
+
 protocol Countable {
     var count: Int { get }
 }
 
+// MARK: - NSOrderedSet + Countable
+
 extension NSOrderedSet: Countable {}
+
+// MARK: - NSSet + Countable
+
 extension NSSet: Countable {}
+
+// MARK: - SnapshotCenter
 
 public class SnapshotCenter {
     private unowned var managedObjectContext: NSManagedObjectContext

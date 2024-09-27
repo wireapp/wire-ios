@@ -23,6 +23,8 @@ extension Notification.Name {
     static let UserToggledVideoInCall = Notification.Name("UserToggledVideoInCall")
 }
 
+// MARK: - CallInfo
+
 struct CallInfo {
     var connectingDate: Date?
     var establishedDate: Date?
@@ -33,6 +35,8 @@ struct CallInfo {
 }
 
 private let zmLog = ZMSLog(tag: "Analytics")
+
+// MARK: - AnalyticsCallingTracker
 
 final class AnalyticsCallingTracker: NSObject {
     private static let conversationIdKey = "conversationId"
@@ -79,7 +83,7 @@ final class AnalyticsCallingTracker: NSObject {
     }
 }
 
-// MARK: - WireCallCenterCallStateObserver
+// MARK: WireCallCenterCallStateObserver
 
 extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
     func callCenterDidChange(
@@ -187,7 +191,7 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
     }
 }
 
-// MARK: - WireCallCenterCallParticipantObserver - tracking share screen
+// MARK: WireCallCenterCallParticipantObserver
 
 extension AnalyticsCallingTracker: WireCallCenterCallParticipantObserver {
     func callParticipantsDidChange(

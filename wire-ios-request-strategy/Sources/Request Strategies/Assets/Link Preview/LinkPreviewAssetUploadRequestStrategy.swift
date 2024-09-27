@@ -19,6 +19,8 @@
 import Foundation
 import WireLinkPreview
 
+// MARK: - LinkPreviewDetectorHelper
+
 public final class LinkPreviewDetectorHelper: NSObject {
     fileprivate static var _test_debug_linkPreviewDetector: LinkPreviewDetectorType?
 
@@ -60,6 +62,8 @@ extension ZMImagePreprocessingTracker {
         return previewImagePreprocessor
     }
 }
+
+// MARK: - LinkPreviewAssetUploadRequestStrategy
 
 public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
     let requestFactory = AssetRequestFactory()
@@ -129,6 +133,8 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         assetUpstreamSync.nextRequest(for: apiVersion)
     }
 }
+
+// MARK: ZMUpstreamTranscoder
 
 extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
     public func request(

@@ -22,9 +22,13 @@ import WireRequestStrategy
 import WireSystem
 import WireUtilities
 
+// MARK: - OAuthUseCaseInterface
+
 protocol OAuthUseCaseInterface {
     func invoke(parameters: OAuthParameters) async throws -> OAuthResponse
 }
+
+// MARK: - OAuthUseCase
 
 class OAuthUseCase: OAuthUseCaseInterface {
     private let logger = WireLogger.e2ei
@@ -162,6 +166,8 @@ class OAuthUseCase: OAuthUseCaseInterface {
         }
     }
 }
+
+// MARK: - OAuthError
 
 enum OAuthError: Error {
     case failedToSendAuthorizationRequest(_ underlyingError: Error)

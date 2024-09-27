@@ -20,6 +20,8 @@ import WireSyncEngine
 
 typealias UserSessionInterface = UserSessionAppLockInterface & UserSessionSwiftInterface
 
+// MARK: - ZMUserSessionInterface
+
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: delete
 protocol ZMUserSessionInterface: AnyObject {
@@ -34,9 +36,13 @@ protocol ZMUserSessionInterface: AnyObject {
     var encryptMessagesAtRest: Bool { get }
 }
 
+// MARK: - UserSessionSwiftInterface
+
 // an interface for ZMUserSession's Swift-only functions
 protocol UserSessionSwiftInterface: ZMUserSessionInterface {
     var conversationDirectory: ConversationDirectoryType { get }
 }
+
+// MARK: - ZMUserSession + UserSessionSwiftInterface
 
 extension ZMUserSession: UserSessionSwiftInterface {}

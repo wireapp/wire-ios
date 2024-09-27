@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - FeatureConfigsAPIV0
+
 class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
     let httpClient: any HTTPClient
 
@@ -48,6 +50,8 @@ class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
     }
 }
 
+// MARK: - FeatureConfigResponse
+
 /// A namespace for all feature config responses
 
 enum FeatureConfigResponse {
@@ -64,6 +68,8 @@ enum FeatureConfigResponse {
         let enforcedTimeoutSeconds: UInt
     }
 }
+
+// MARK: - FeatureConfigsResponseAPIV0
 
 struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
@@ -114,6 +120,8 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
         return featureConfigs
     }
 }
+
+// MARK: - FeatureWithConfig + ToAPIModelConvertible
 
 extension FeatureWithConfig<FeatureConfigResponse.AppLockV0>: ToAPIModelConvertible {
     func toAPIModel() -> AppLockFeatureConfig {

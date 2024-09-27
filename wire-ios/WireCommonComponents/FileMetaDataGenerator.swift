@@ -23,6 +23,8 @@ import WireDataModel
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// MARK: - FileMetaDataGenerating
+
 // sourcery: AutoMockable
 public protocol FileMetaDataGenerating {
     func metadataForFileAtURL(
@@ -32,6 +34,8 @@ public protocol FileMetaDataGenerating {
         completion: @escaping (ZMFileMetadata) -> Void
     )
 }
+
+// MARK: - FileMetaDataGenerator
 
 public final class FileMetaDataGenerator: FileMetaDataGenerating {
     @available(*, deprecated, message: "This shared instance supports legacy static usage. Don't use it.")

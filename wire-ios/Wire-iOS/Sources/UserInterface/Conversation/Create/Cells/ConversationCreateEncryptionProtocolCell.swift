@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - ConversationCreateEncryptionProtocolCell
+
 final class ConversationCreateEncryptionProtocolCell: ConversationEncryptionProtocolCell {
     override func setUp() {
         super.setUp()
@@ -29,6 +31,8 @@ final class ConversationCreateEncryptionProtocolCell: ConversationEncryptionProt
         showSeparator = false
     }
 }
+
+// MARK: ConversationCreationValuesConfigurable
 
 extension ConversationCreateEncryptionProtocolCell: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {

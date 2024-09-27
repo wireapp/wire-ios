@@ -18,12 +18,16 @@
 
 import UIKit
 
+// MARK: - VerificationCodeFieldDescription
+
 final class VerificationCodeFieldDescription: NSObject, ValueSubmission {
     var valueSubmitted: ValueSubmitted?
     var valueValidated: ValueValidated?
     var acceptsInput = true
     var constraints: [NSLayoutConstraint] = []
 }
+
+// MARK: - ResponderContainer
 
 private final class ResponderContainer<Child: UIView>: UIView {
     private let responder: Child
@@ -52,6 +56,8 @@ private final class ResponderContainer<Child: UIView>: UIView {
     }
 }
 
+// MARK: TextContainer
+
 extension ResponderContainer: TextContainer where Child: TextContainer {
     var text: String? {
         get {
@@ -62,6 +68,8 @@ extension ResponderContainer: TextContainer where Child: TextContainer {
         }
     }
 }
+
+// MARK: - VerificationCodeFieldDescription + ViewDescriptor
 
 extension VerificationCodeFieldDescription: ViewDescriptor {
     func create() -> UIView {
@@ -92,6 +100,8 @@ extension VerificationCodeFieldDescription: ViewDescriptor {
         return containerView
     }
 }
+
+// MARK: - VerificationCodeFieldDescription + CharacterInputFieldDelegate
 
 extension VerificationCodeFieldDescription: CharacterInputFieldDelegate {
     func shouldAcceptChanges(_ inputField: CharacterInputField) -> Bool {

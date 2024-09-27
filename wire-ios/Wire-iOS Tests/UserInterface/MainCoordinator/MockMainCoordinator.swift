@@ -19,6 +19,8 @@
 import WireDataModel
 @testable import Wire
 
+// MARK: - MockMainCoordinator
+
 final class MockMainCoordinator: MainCoordinating {
     func openConversation(
         _ conversation: ZMConversation,

@@ -20,10 +20,14 @@ import Foundation
 import WireDomain
 import WireRequestStrategy
 
+// MARK: - SupportedProtocolsServiceInterface
+
 // sourcery: AutoMockable
 public protocol SupportedProtocolsServiceInterface {
     func calculateSupportedProtocols() -> Set<MessageProtocol>
 }
+
+// MARK: - SupportedProtocolsService
 
 public final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
     // MARK: - Properties

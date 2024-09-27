@@ -19,12 +19,16 @@
 import Foundation
 import WireTransport
 
+// MARK: - NetworkSessionProtocol
+
 protocol NetworkSessionProtocol: AnyObject {
     var accessToken: AccessToken? { get set }
     var isAuthenticated: Bool { get }
 
     func execute<E: Endpoint>(endpoint: E) async throws -> E.Result
 }
+
+// MARK: - NetworkSession
 
 final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDelegate, Loggable {
     // MARK: - Types

@@ -442,7 +442,7 @@ class CameraKeyboardViewController: UIViewController {
     }
 }
 
-// MARK: - CameraKeyboardViewController - UICollectionViewDelegate - UICollectionViewDataSource
+// MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource
 
 extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate,
     UICollectionViewDataSource {
@@ -620,7 +620,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 }
 
-// MARK: - CameraKeyboardViewController - CameraCellDelegate
+// MARK: CameraCellDelegate
 
 extension CameraKeyboardViewController: CameraCellDelegate {
     func cameraCellWantsToOpenFullCamera(_: CameraCell) {
@@ -632,7 +632,7 @@ extension CameraKeyboardViewController: CameraCellDelegate {
     }
 }
 
-// MARK: - CameraKeyboardViewController - AssetLibraryDelegate
+// MARK: AssetLibraryDelegate
 
 extension CameraKeyboardViewController: AssetLibraryDelegate {
     func assetLibraryDidChange(_: AssetLibrary) {
@@ -640,7 +640,7 @@ extension CameraKeyboardViewController: AssetLibraryDelegate {
     }
 }
 
-// MARK: - CameraKeyboardViewController - WireCallCenterCallStateObserver
+// MARK: WireCallCenterCallStateObserver
 
 extension CameraKeyboardViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(

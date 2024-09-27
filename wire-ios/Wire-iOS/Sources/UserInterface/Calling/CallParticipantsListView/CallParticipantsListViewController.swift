@@ -19,9 +19,13 @@
 import UIKit
 import WireDataModel
 
+// MARK: - CallParticipantsListViewControllerDelegate
+
 protocol CallParticipantsListViewControllerDelegate: AnyObject {
     func callParticipantsListViewControllerDidSelectShowMore(viewController: CallParticipantsListViewController)
 }
+
+// MARK: - CallParticipantsListViewController
 
 final class CallParticipantsListViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     private let cellHeight: CGFloat = 56

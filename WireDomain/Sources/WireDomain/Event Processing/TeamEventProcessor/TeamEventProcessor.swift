@@ -19,6 +19,8 @@
 import Foundation
 import WireAPI
 
+// MARK: - TeamEventProcessorProtocol
+
 /// Process team update events.
 
 protocol TeamEventProcessorProtocol {
@@ -31,6 +33,8 @@ protocol TeamEventProcessorProtocol {
 
     func processEvent(_ event: TeamEvent) async throws
 }
+
+// MARK: - TeamEventProcessor
 
 struct TeamEventProcessor {
     let deleteEventProcessor: any TeamDeleteEventProcessorProtocol

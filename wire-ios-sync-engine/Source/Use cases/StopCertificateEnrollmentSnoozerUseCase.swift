@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - StopCertificateEnrollmentSnoozerUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol StopCertificateEnrollmentSnoozerUseCaseProtocol {
     func invoke()
 }
+
+// MARK: - StopCertificateEnrollmentSnoozerUseCase
 
 final class StopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol {
     // MARK: - Properties

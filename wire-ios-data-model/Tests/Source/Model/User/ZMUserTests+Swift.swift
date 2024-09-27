@@ -20,7 +20,7 @@ import Foundation
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-// MARK: - Modified keys for profile picture upload
+// MARK: - ZMUserTests_Swift
 
 final class ZMUserTests_Swift: ModelObjectsTests {
     override func tearDown() {

@@ -20,6 +20,8 @@ import UIKit
 import XCTest
 @testable import WireSystem
 
+// MARK: - SupportedOrientationsDelegatingSplitViewControllerDelegateTests
+
 final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCTestCase {
     private var sut: SupportedOrientationsDelegatingSplitViewControllerDelegate!
 
@@ -120,5 +122,7 @@ private final class ViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 }
+
+// MARK: - SupportedOrientationsDelegatingSplitViewControllerDelegate + Sendable
 
 extension SupportedOrientationsDelegatingSplitViewControllerDelegate: Sendable {}

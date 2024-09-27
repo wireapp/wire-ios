@@ -21,6 +21,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - IsSelfUserE2EICertifiedUseCaseTests
+
 final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     private var selfUser: ZMUser!
     private var selfMLSConversation: ZMConversation!
@@ -102,7 +104,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     }
 }
 
-// MARK: - Mock Error
+// MARK: - MockError
 
 private enum MockError: Error {
     case some

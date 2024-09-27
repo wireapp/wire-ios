@@ -38,6 +38,8 @@ extension XCTestCase {
     }
 }
 
+// MARK: - CallViewControllerTests
+
 final class CallViewControllerTests: ZMSnapshotTestCase {
     var mockVoiceChannel: MockVoiceChannel!
     var conversation: ZMConversation!

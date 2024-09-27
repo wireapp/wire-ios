@@ -20,6 +20,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - ThumbnailCreationTests
+
 final class ThumbnailCreationTests: XCTestCase {
     // MARK: - Properties
 

@@ -25,9 +25,13 @@ import WireTesting
 import XCTest
 @testable import WireNotificationEngine
 
+// MARK: - FakeAuthenticationStatus
+
 class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
 }
+
+// MARK: - BaseTest
 
 class BaseTest: ZMTBaseTest {
     var authenticationStatus: FakeAuthenticationStatus!

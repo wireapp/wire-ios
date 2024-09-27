@@ -19,13 +19,15 @@
 import Foundation
 import WireCoreCrypto
 
-// MARK: - Protocols
+// MARK: - SafeCoreCryptoProtocol
 
 public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
     func tearDown() throws
 }
+
+// MARK: - SafeCoreCrypto
 
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     public enum CoreCryptoSetupFailure: Error, Equatable {

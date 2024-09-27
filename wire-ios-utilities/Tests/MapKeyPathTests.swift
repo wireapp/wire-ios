@@ -19,20 +19,28 @@
 import XCTest
 @testable import WireUtilities
 
+// MARK: - Person
+
 private struct Person {
     let name: String
     let age: Int?
 }
+
+// MARK: - SocialPerson
 
 private struct SocialPerson {
     let name: String
     let friends: [String]
 }
 
+// MARK: - Office
+
 private struct Office: Equatable {
     let id: Int
     let isInBerlin: Bool
 }
+
+// MARK: - MapKeyPathTests
 
 class MapKeyPathTests: XCTestCase {
     // MARK: - Optional

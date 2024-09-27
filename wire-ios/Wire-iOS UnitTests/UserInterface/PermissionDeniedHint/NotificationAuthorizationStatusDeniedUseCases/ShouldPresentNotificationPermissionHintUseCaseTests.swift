@@ -22,6 +22,8 @@ import WireUtilitiesSupport
 import XCTest
 @testable import Wire
 
+// MARK: - ShouldPresentNotificationPermissionHintUseCaseTests
+
 final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
     private var mockDateProvider: MockCurrentDateProviding!
     private var userDefaults: UserDefaults!

@@ -242,7 +242,7 @@ extension ZMMessage {
     }
 }
 
-// MARK: - Categories
+// MARK: - MessageCategory
 
 /// Type of content in a message
 public struct MessageCategory: OptionSet {
@@ -268,6 +268,8 @@ public struct MessageCategory: OptionSet {
         self.rawValue = rawValue
     }
 }
+
+// MARK: CustomDebugStringConvertible
 
 extension MessageCategory: CustomDebugStringConvertible {
     fileprivate static let descriptions: [MessageCategory: String] = [
@@ -298,6 +300,8 @@ extension MessageCategory: CustomDebugStringConvertible {
         return description
     }
 }
+
+// MARK: Hashable
 
 extension MessageCategory: Hashable {
     public func hash(into hasher: inout Hasher) {

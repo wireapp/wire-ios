@@ -18,9 +18,13 @@
 
 import WireSyncEngine
 
+// MARK: - SwitchingAccountAlertPresenter
+
 protocol SwitchingAccountAlertPresenter {
     func presentSwitchAccountAlert(completion: @escaping (Bool) -> Void)
 }
+
+// MARK: - SwitchingAccountRouter
 
 final class SwitchingAccountRouter: SessionManagerSwitchingDelegate, SwitchingAccountAlertPresenter {
     // MARK: - SessionManagerSwitchingDelegate

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - VolatileData
+
 /// A container for sensitive data.
 ///
 /// `VolatileData` holds a collection of bytes that are required to exist only during the lifetime
@@ -60,6 +62,8 @@ public final class VolatileData {
         _storage.resetBytes(in: (_storage.startIndex) ..< (_storage.endIndex))
     }
 }
+
+// MARK: Equatable
 
 extension VolatileData: Equatable {
     public static func == (lhs: VolatileData, rhs: VolatileData) -> Bool {

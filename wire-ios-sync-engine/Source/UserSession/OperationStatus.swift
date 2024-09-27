@@ -24,17 +24,23 @@ public typealias BackgroundTaskHandler = (_ taskResult: BackgroundTaskResult) ->
 
 private let zmLog = ZMSLog(tag: "OperationStatus")
 
+// MARK: - OperationStatusDelegate
+
 @objc(ZMOperationStatusDelegate)
 public protocol OperationStatusDelegate: AnyObject {
     @objc(operationStatusDidChangeState:)
     func operationStatus(didChangeState state: SyncEngineOperationState)
 }
 
+// MARK: - BackgroundTaskResult
+
 @objc(ZMBackgroundTaskResult)
 public enum BackgroundTaskResult: UInt {
     case finished
     case failed
 }
+
+// MARK: - SyncEngineOperationState
 
 @objc
 public enum SyncEngineOperationState: UInt, CustomStringConvertible {
@@ -77,6 +83,8 @@ public enum SyncEngineOperationState: UInt, CustomStringConvertible {
         }
     }
 }
+
+// MARK: - OperationStatus
 
 @objcMembers
 public class OperationStatus: NSObject {

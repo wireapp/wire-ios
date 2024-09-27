@@ -156,6 +156,8 @@ extension ZMClientMessage {
     }
 }
 
+// MARK: - ZMClientMessage + ZMImageOwner
+
 extension ZMClientMessage: ZMImageOwner {
     // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data
     // is preprocessed

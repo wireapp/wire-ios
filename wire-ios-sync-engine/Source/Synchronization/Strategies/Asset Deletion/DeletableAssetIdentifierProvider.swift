@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - DeletableAssetIdentifierProvider
+
 @objc
 public protocol DeletableAssetIdentifierProvider: AnyObject {
     var assetIdentifiersToBeDeleted: Set<String> { get set }
 }
+
+// MARK: - NSManagedObjectContext + DeletableAssetIdentifierProvider
 
 extension NSManagedObjectContext: DeletableAssetIdentifierProvider {
     private static let assetIdentifiersToBeDeletedKey = "assetIdentifiersToBeDeleted"

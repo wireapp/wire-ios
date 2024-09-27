@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - RoundedBadge
+
 class RoundedBadge: UIButton {
     let containedView: UIView
     private var trailingConstraint: NSLayoutConstraint!
@@ -88,6 +90,8 @@ class RoundedBadge: UIButton {
         updateCornerRadius()
     }
 }
+
+// MARK: - RoundedTextBadge
 
 final class RoundedTextBadge: RoundedBadge {
     var textLabel = UILabel()

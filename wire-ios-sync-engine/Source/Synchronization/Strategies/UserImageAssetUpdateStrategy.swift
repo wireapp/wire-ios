@@ -19,6 +19,8 @@
 import Foundation
 import WireRequestStrategy
 
+// MARK: - AssetTransportError
+
 enum AssetTransportError: Error {
     case invalidLength
     case assetTooLarge
@@ -35,6 +37,8 @@ enum AssetTransportError: Error {
         }
     }
 }
+
+// MARK: - UserImageAssetUpdateStrategy
 
 public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
     ZMSingleRequestTranscoder, ZMDownstreamTranscoder {

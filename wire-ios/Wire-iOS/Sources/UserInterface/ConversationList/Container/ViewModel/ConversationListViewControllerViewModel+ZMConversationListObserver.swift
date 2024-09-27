@@ -18,6 +18,8 @@
 
 import WireSyncEngine
 
+// MARK: - ConversationListViewController.ViewModel + ZMConversationListObserver
+
 extension ConversationListViewController.ViewModel: ZMConversationListObserver {
     func conversationListDidChange(_: ConversationListChangeInfo) {
         updateNoConversationVisibility()

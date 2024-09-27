@@ -19,6 +19,8 @@
 import UIKit
 import WireUtilities
 
+// MARK: - BitRateStatus
+
 enum BitRateStatus: String {
     case constant
     case variable
@@ -42,6 +44,8 @@ enum BitRateStatus: String {
         self = isConstantBitRate ? .constant : .variable
     }
 }
+
+// MARK: - BitRateLabel
 
 final class BitRateLabel: DynamicFontLabel {
     var bitRateStatus: BitRateStatus? {

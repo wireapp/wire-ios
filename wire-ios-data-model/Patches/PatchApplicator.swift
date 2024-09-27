@@ -19,10 +19,14 @@
 import CoreData
 import Foundation
 
+// MARK: - DataPatchInterface
+
 public protocol DataPatchInterface: CaseIterable {
     var version: Int { get }
     func execute(in context: NSManagedObjectContext)
 }
+
+// MARK: - PatchApplicator
 
 public final class PatchApplicator<T: DataPatchInterface> {
     // MARK: - Properties

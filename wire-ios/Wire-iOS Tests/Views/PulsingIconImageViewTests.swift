@@ -21,6 +21,8 @@ import WireDesign
 import XCTest
 @testable import Wire
 
+// MARK: - MockPulsingIconImageView
+
 private class MockPulsingIconImageView: PulsingIconImageView {
     var didStartPulsing = false
     override func startPulsing() {
@@ -33,6 +35,8 @@ private class MockPulsingIconImageView: PulsingIconImageView {
     }
 }
 
+// MARK: - MockPulsingIconImageStyle
+
 private class MockPulsingIconImageStyle: PulsingIconImageStyle, IconImageStyle {
     var _shouldPulse = false
     var shouldPulse: Bool {
@@ -43,6 +47,8 @@ private class MockPulsingIconImageStyle: PulsingIconImageStyle, IconImageStyle {
     var accessibilitySuffix: String { "" }
     var accessibilityLabel: String { "" }
 }
+
+// MARK: - PulsingIconImageViewTests
 
 class PulsingIconImageViewTests: XCTestCase {
     private var sut: MockPulsingIconImageView!

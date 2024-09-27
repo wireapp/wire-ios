@@ -21,6 +21,8 @@ import Foundation
 import XCTest
 @testable import Wire
 
+// MARK: - MockAudioRecordKeyboardDelegate
+
 final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
     var didCancelHitCount = 0
     func audioRecordViewControllerDidCancel(_: AudioRecordBaseViewController) {
@@ -42,6 +44,8 @@ final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
         wantsToSendAudioHitCount += 1
     }
 }
+
+// MARK: - MockAudioRecorder
 
 final class MockAudioRecorder: AudioRecorderType {
     var format: AudioRecorderFormat = .wav
@@ -98,6 +102,8 @@ final class MockAudioRecorder: AudioRecorderType {
         nil
     }
 }
+
+// MARK: - AudioRecordKeyboardViewControllerTests
 
 final class AudioRecordKeyboardViewControllerTests: XCTestCase {
     var sut: AudioRecordKeyboardViewController!

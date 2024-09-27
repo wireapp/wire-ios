@@ -30,6 +30,8 @@ extension UIImage {
     }
 }
 
+// MARK: - ImagePickerManager
+
 class ImagePickerManager: NSObject {
     // MARK: - Properties
 
@@ -117,6 +119,8 @@ class ImagePickerManager: NSObject {
         viewController.present(imagePickerController, animated: true)
     }
 }
+
+// MARK: UIImagePickerControllerDelegate, UINavigationControllerDelegate
 
 extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(

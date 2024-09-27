@@ -21,10 +21,14 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - PasscodeSetupUserInterface
+
 protocol PasscodeSetupUserInterface: AnyObject {
     var createButtonEnabled: Bool { get set }
     func setValidationLabelsState(errorReason: PasscodeError, passed: Bool)
 }
+
+// MARK: - PasscodeSetupViewController
 
 final class PasscodeSetupViewController: UIViewController {
     enum Context {
@@ -273,7 +277,7 @@ final class PasscodeSetupViewController: UIViewController {
     }
 }
 
-// MARK: - UITextFieldDelegate
+// MARK: UITextFieldDelegate
 
 extension PasscodeSetupViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_: UITextField) -> Bool {
@@ -286,7 +290,7 @@ extension PasscodeSetupViewController: UITextFieldDelegate {
     }
 }
 
-// MARK: - ValidatedTextFieldDelegate
+// MARK: ValidatedTextFieldDelegate
 
 extension PasscodeSetupViewController: ValidatedTextFieldDelegate {
     func buttonPressed(_: UIButton) {
@@ -296,7 +300,7 @@ extension PasscodeSetupViewController: ValidatedTextFieldDelegate {
     }
 }
 
-// MARK: - TextFieldValidationDelegate
+// MARK: TextFieldValidationDelegate
 
 extension PasscodeSetupViewController: TextFieldValidationDelegate {
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {
@@ -304,7 +308,7 @@ extension PasscodeSetupViewController: TextFieldValidationDelegate {
     }
 }
 
-// MARK: - PasscodeSetupUserInterface
+// MARK: PasscodeSetupUserInterface
 
 extension PasscodeSetupViewController: PasscodeSetupUserInterface {
     func setValidationLabelsState(errorReason: PasscodeError, passed: Bool) {
@@ -324,7 +328,7 @@ extension PasscodeSetupViewController: PasscodeSetupUserInterface {
     }
 }
 
-// MARK: - UIAdaptivePresentationControllerDelegate
+// MARK: UIAdaptivePresentationControllerDelegate
 
 extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate {
     func presentationControllerWillDismiss(_: UIPresentationController) {

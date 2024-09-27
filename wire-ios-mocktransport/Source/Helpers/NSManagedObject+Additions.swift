@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - EntityNamedProtocol
+
 public protocol EntityNamedProtocol: NSObjectProtocol {
     static var entityName: String { get }
     init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?)

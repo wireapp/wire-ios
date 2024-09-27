@@ -18,6 +18,8 @@
 
 import UserNotifications
 
+// MARK: - UserNotificationCenterWrapper
+
 public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
     private var userNotificationCenter: UNUserNotificationCenter
 

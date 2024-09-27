@@ -21,6 +21,9 @@ import WireDataModel
 import WireSystem
 
 private let tag = "<ANALYTICS>:"
+
+// MARK: - AnalyticsConsoleProvider
+
 final class AnalyticsConsoleProvider: NSObject {
     let zmLog = ZMSLog(tag: tag)
     var optedOut = false
@@ -30,6 +33,8 @@ final class AnalyticsConsoleProvider: NSObject {
         ZMSLog.set(level: .info, tag: tag)
     }
 }
+
+// MARK: AnalyticsProvider
 
 extension AnalyticsConsoleProvider: AnalyticsProvider {
     var isOptedOut: Bool {

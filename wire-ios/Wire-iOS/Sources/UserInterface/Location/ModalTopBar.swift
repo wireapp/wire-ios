@@ -20,9 +20,13 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - ModalTopBarDelegate
+
 protocol ModalTopBarDelegate: AnyObject {
     func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar)
 }
+
+// MARK: - ModalTopBar
 
 final class ModalTopBar: UIView {
     let dismissButton = IconButton()

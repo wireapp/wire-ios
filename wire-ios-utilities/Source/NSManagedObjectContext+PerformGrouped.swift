@@ -76,6 +76,8 @@ extension NSManagedObjectContext {
     }
 }
 
+// MARK: - WaitingGroupTask
+
 /// Wrapper around Task to make sure tests are waiting for the task to be finished using dispatchGroups attached to
 /// NSManagedObjectContext.
 ///

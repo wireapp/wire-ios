@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - ConversationMLSWelcomeEventProcessorProtocol
+
 /// Process conversation mls welcome events.
 
 protocol ConversationMLSWelcomeEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol ConversationMLSWelcomeEventProcessorProtocol {
 
     func processEvent(_ event: ConversationMLSWelcomeEvent) async throws
 }
+
+// MARK: - ConversationMLSWelcomeEventProcessor
 
 struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcessorProtocol {
     func processEvent(_: ConversationMLSWelcomeEvent) async throws {

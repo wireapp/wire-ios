@@ -26,6 +26,8 @@ extension AssetRequestFactory {
     }
 }
 
+// MARK: - SlowSyncTests_Swift
+
 final class SlowSyncTests_Swift: IntegrationTest {
     override func setUp() {
         super.setUp()

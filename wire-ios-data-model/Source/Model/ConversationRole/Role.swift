@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - TeamOrConversation
+
 public enum TeamOrConversation {
     case team(Team)
     case conversation(ZMConversation)
@@ -41,6 +43,8 @@ public enum TeamOrConversation {
         fatal("No team and no conversation")
     }
 }
+
+// MARK: - Role
 
 @objcMembers
 public final class Role: ZMManagedObject {

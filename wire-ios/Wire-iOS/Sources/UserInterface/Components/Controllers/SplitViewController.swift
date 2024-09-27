@@ -24,11 +24,15 @@ extension Notification.Name {
         .Name("SplitLayoutObservableDidChangeToLayoutSizeNotification")
 }
 
+// MARK: - SplitViewControllerTransition
+
 enum SplitViewControllerTransition {
     case `default`
     case present
     case dismiss
 }
+
+// MARK: - SplitViewControllerLayoutSize
 
 enum SplitViewControllerLayoutSize {
     case compact
@@ -36,14 +40,20 @@ enum SplitViewControllerLayoutSize {
     case regularLandscape
 }
 
+// MARK: - SplitLayoutObservable
+
 protocol SplitLayoutObservable: AnyObject {
     var layoutSize: SplitViewControllerLayoutSize { get }
     var leftViewControllerWidth: CGFloat { get }
 }
 
+// MARK: - SplitViewControllerDelegate
+
 protocol SplitViewControllerDelegate: AnyObject {
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool
 }
+
+// MARK: - SplitViewController
 
 final class SplitViewController: UIViewController, SplitLayoutObservable {
     weak var delegate: SplitViewControllerDelegate?
@@ -572,6 +582,8 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
     }
 }
+
+// MARK: UIGestureRecognizerDelegate
 
 extension SplitViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_: UIGestureRecognizer) -> Bool {

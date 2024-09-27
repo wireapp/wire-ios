@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MLSGroupVerificationProtocol
+
 // sourcery: AutoMockable
 public protocol MLSGroupVerificationProtocol {
     func startObserving()
@@ -25,6 +27,8 @@ public protocol MLSGroupVerificationProtocol {
     func updateConversation(_ conversation: ZMConversation, with groupID: MLSGroupID) async
     func updateAllConversations() async
 }
+
+// MARK: - MLSGroupVerification
 
 public final class MLSGroupVerification: MLSGroupVerificationProtocol {
     // MARK: - Properties

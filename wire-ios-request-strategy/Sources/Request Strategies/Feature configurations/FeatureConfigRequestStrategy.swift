@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - FeatureConfigRequestStrategy
+
 public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
     // MARK: - Properties
 
@@ -104,7 +106,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
     }
 }
 
-// MARK: - Event processing
+// MARK: ZMEventConsumer
 
 extension FeatureConfigRequestStrategy: ZMEventConsumer {
     public func processEvents(

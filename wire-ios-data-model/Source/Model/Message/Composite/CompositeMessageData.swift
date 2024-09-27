@@ -18,11 +18,13 @@
 
 import Foundation
 
-// MARK: - CompositeMessageData protocol
+// MARK: - CompositeMessageData
 
 public protocol CompositeMessageData {
     var items: [CompositeMessageItem] { get }
 }
+
+// MARK: - CompositeMessageItem
 
 public enum CompositeMessageItem {
     case text(TextMessageData)
@@ -47,7 +49,7 @@ extension CompositeMessageItem {
     }
 }
 
-// MARK: - ButtonMessageData protocol
+// MARK: - ButtonMessageData
 
 public protocol ButtonMessageData {
     var title: String? { get }
@@ -55,6 +57,8 @@ public protocol ButtonMessageData {
     var isExpired: Bool { get }
     func touchAction()
 }
+
+// MARK: - ButtonMessageState
 
 public enum ButtonMessageState {
     case unselected

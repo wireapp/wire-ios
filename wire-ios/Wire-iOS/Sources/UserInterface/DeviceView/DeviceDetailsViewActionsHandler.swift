@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - DeviceDetailsViewActionsHandler
+
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
     let logger = WireLogger.e2ei
     var userClient: UserClient
@@ -168,6 +170,8 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     }
 }
 
+// MARK: ClientRemovalObserverDelegate
+
 extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
     func present(
         _ clientRemovalObserver: ClientRemovalObserver,
@@ -185,6 +189,8 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         isProcessing?(isVisible)
     }
 }
+
+// MARK: - DeviceDetailsActionsError
 
 enum DeviceDetailsActionsError: Error {
     case failedAction(String)

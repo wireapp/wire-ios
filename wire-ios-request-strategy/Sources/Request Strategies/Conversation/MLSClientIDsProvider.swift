@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - MLSClientIDsProviding
+
 // sourcery: AutoMockable
 protocol MLSClientIDsProviding {
     func fetchUserClients(
@@ -26,6 +28,8 @@ protocol MLSClientIDsProviding {
         in context: NotificationContext
     ) async throws -> [MLSClientID]
 }
+
+// MARK: - MLSClientIDsProvider
 
 struct MLSClientIDsProvider: MLSClientIDsProviding {
     func fetchUserClients(

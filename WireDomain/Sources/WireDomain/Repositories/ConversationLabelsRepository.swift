@@ -20,6 +20,8 @@ import CoreData
 import WireAPI
 import WireDataModel
 
+// MARK: - ConversationLabelsRepositoryProtocol
+
 /// Facilitate access to conversation labels related domain objects.
 
 protocol ConversationLabelsRepositoryProtocol {
@@ -27,6 +29,8 @@ protocol ConversationLabelsRepositoryProtocol {
 
     func pullConversationLabels() async throws
 }
+
+// MARK: - ConversationLabelsRepository
 
 final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
     private let userPropertiesAPI: any UserPropertiesAPI

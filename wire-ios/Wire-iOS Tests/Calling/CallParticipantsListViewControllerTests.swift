@@ -21,6 +21,8 @@ import WireUtilities
 import XCTest
 @testable import Wire
 
+// MARK: - CallParticipantsListHelper
+
 enum CallParticipantsListHelper {
     static func participants(
         count participantCount: Int,
@@ -45,6 +47,8 @@ enum CallParticipantsListHelper {
         }
     }
 }
+
+// MARK: - CallParticipantsListViewControllerTests
 
 final class CallParticipantsListViewControllerTests: XCTestCase {
     // MARK: - Properties

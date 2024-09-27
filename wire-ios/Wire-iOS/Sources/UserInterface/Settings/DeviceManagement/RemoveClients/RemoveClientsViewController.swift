@@ -22,10 +22,14 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - RemoveClientsViewControllerDelegate
+
 protocol RemoveClientsViewControllerDelegate: AnyObject {
     func finishedDeleting(_ clientListViewController: RemoveClientsViewController)
     func failedToDeleteClients(_ error: Error)
 }
+
+// MARK: - RemoveClientsViewController
 
 final class RemoveClientsViewController: UIViewController,
     UITableViewDelegate,
@@ -211,6 +215,8 @@ final class RemoveClientsViewController: UIViewController,
         cell.preservesSuperviewLayoutMargins = false
     }
 }
+
+// MARK: - RemoveUserClientError + LocalizedError
 
 extension RemoveUserClientError: LocalizedError {
     public var errorDescription: String? {

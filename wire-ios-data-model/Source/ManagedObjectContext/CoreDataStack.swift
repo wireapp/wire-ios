@@ -21,10 +21,14 @@ import Foundation
 import WireSystem
 import WireUtilities
 
+// MARK: - CoreDataStackError
+
 enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
     case noDatabaseActivity
 }
+
+// MARK: LocalizedError
 
 extension CoreDataStackError: LocalizedError {
     var errorDescription: String? {
@@ -36,6 +40,8 @@ extension CoreDataStackError: LocalizedError {
         }
     }
 }
+
+// MARK: - ContextProvider
 
 @objc
 public protocol ContextProvider {
@@ -94,7 +100,7 @@ extension NSURL {
     }
 }
 
-// MARK: -
+// MARK: - CoreDataStack
 
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
@@ -548,7 +554,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 }
 
-// MARK: -
+// MARK: - PersistentContainer
 
 class PersistentContainer: NSPersistentContainer {
     var storeURL: URL? {

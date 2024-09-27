@@ -20,6 +20,8 @@ import UIKit
 import WireDesign
 import WireUtilities
 
+// MARK: - RoundedPageIndicator
+
 class RoundedPageIndicator: RoundedBlurView {
     private let selectedPageIndicator = UIImage.circle(filled: true)
     private let defaultPageIndicator = UIImage.circle(filled: false)

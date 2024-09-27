@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - ColorSchemeControllerTests
+
 final class ColorSchemeControllerTests: XCTestCase {
     var sut: ColorSchemeController!
     var originalColorScheme: Any! = nil

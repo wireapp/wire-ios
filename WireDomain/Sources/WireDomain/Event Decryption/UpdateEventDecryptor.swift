@@ -20,6 +20,8 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// MARK: - UpdateEventDecryptorProtocol
+
 // sourcery: AutoMockable
 /// Decrypt the E2EE content within update events.
 protocol UpdateEventDecryptorProtocol {
@@ -30,6 +32,8 @@ protocol UpdateEventDecryptorProtocol {
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
 }
+
+// MARK: - UpdateEventDecryptor
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol

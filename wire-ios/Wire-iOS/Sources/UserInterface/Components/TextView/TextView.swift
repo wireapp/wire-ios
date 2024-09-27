@@ -22,10 +22,14 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "TextView")
 
+// MARK: - InformalTextViewDelegate
+
 protocol InformalTextViewDelegate: AnyObject {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset)
     func textView(_ textView: UITextView, firstResponderChanged resigned: Bool)
 }
+
+// MARK: - TextView
 
 // Inspired by https://github.com/samsoffes/sstoolkit/blob/master/SSToolkit/SSTextView.m
 // and by http://derpturkey.com/placeholder-in-uitextview/

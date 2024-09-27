@@ -42,6 +42,8 @@ extension NSManagedObjectContext {
     }
 }
 
+// MARK: - ConversationListObserverCenter
+
 public class ConversationListObserverCenter: NSObject, ZMConversationObserver, ChangeInfoConsumer {
     fileprivate var listSnapshots: [String: ConversationListSnapshot] = [:]
 
@@ -228,6 +230,8 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 }
 
+// MARK: TearDownCapable
+
 extension ConversationListObserverCenter: TearDownCapable {
     public func tearDown() {
         if isTornDown { return }
@@ -235,6 +239,8 @@ extension ConversationListObserverCenter: TearDownCapable {
         listSnapshots = [:]
     }
 }
+
+// MARK: - ConversationListSnapshot
 
 class ConversationListSnapshot: NSObject {
     fileprivate var state: SetSnapshot<ZMConversation>

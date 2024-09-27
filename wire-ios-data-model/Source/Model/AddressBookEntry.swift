@@ -20,6 +20,8 @@ import AddressBook
 import Contacts
 import Foundation
 
+// MARK: - AddressBookEntry
+
 @objcMembers
 public class AddressBookEntry: ZMManagedObject {
     public enum Fields: String {

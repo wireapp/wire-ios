@@ -19,6 +19,8 @@
 import Photos
 import UIKit
 
+// MARK: - ImageManagerProtocol
+
 protocol ImageManagerProtocol {
     func cancelImageRequest(_ requestID: PHImageRequestID)
 
@@ -48,6 +50,8 @@ protocol ImageManagerProtocol {
 
     static var defaultInstance: ImageManagerProtocol { get }
 }
+
+// MARK: - PHImageManager + ImageManagerProtocol
 
 extension PHImageManager: ImageManagerProtocol {
     static var defaultInstance: ImageManagerProtocol {

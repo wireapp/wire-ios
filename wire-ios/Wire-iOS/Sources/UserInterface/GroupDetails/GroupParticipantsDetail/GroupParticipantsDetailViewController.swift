@@ -21,6 +21,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - GroupParticipantsDetailViewController
+
 final class GroupParticipantsDetailViewController: UIViewController {
     private let mainCoordinator: MainCoordinating
     private let collectionView = UICollectionView(forGroupedSections: ())
@@ -187,6 +189,8 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 }
 
+// MARK: GroupDetailsSectionControllerDelegate
+
 extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDelegate {
     func presentDetails(for user: UserType) {
         guard let conversation = viewModel.conversation as? ZMConversation else { return }
@@ -221,11 +225,15 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
     }
 }
 
+// MARK: ViewControllerDismisser
+
 extension GroupParticipantsDetailViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
         navigationController?.popViewController(animated: true, completion: completion)
     }
 }
+
+// MARK: ProfileViewControllerDelegate
 
 extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {

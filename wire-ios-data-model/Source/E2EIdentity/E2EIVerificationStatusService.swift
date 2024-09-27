@@ -19,10 +19,14 @@
 import Foundation
 import WireCoreCrypto
 
+// MARK: - E2EIVerificationStatusServiceInterface
+
 // sourcery: AutoMockable
 public protocol E2EIVerificationStatusServiceInterface {
     func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus
 }
+
+// MARK: - E2EIVerificationStatusService
 
 public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceInterface {
     // MARK: - Properties

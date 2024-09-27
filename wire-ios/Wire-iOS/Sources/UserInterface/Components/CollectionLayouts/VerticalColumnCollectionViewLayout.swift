@@ -18,9 +18,13 @@
 
 import UIKit
 
+// MARK: - VerticalColumnCollectionViewLayoutDelegate
+
 protocol VerticalColumnCollectionViewLayoutDelegate: AnyObject {
     func collectionView(_ collectionView: UICollectionView, sizeOfItemAt indexPath: IndexPath) -> CGSize
 }
+
+// MARK: - VerticalColumnCollectionViewLayout
 
 /// A collection view layout that displays its contents within multiple columns.
 

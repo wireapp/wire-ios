@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - RequestLog
+
 struct RequestLog: Codable {
     var method: String
     var endpoint: String

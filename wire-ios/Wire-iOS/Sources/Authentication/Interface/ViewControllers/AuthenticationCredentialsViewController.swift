@@ -23,6 +23,8 @@ import WireDesign
 import WireSystem
 import WireTransport
 
+// MARK: - AuthenticationCredentialsViewController
+
 /// The view controller to use to ask the user to enter their credentials.
 
 final class AuthenticationCredentialsViewController: AuthenticationStepController,
@@ -499,6 +501,8 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         loginActiveField = editing ? textField : nil
     }
 }
+
+// MARK: ValidatedTextFieldDelegate
 
 extension AuthenticationCredentialsViewController: ValidatedTextFieldDelegate {
     func buttonPressed(_: UIButton) {

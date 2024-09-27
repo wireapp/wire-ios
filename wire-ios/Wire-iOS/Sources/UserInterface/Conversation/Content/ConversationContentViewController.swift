@@ -26,6 +26,8 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
+// MARK: - ConversationContentViewController
+
 /// The main conversation view controller
 final class ConversationContentViewController: UIViewController {
     weak var delegate: ConversationContentViewControllerDelegate?
@@ -461,7 +463,7 @@ final class ConversationContentViewController: UIViewController {
     }
 }
 
-// MARK: - TableView
+// MARK: UITableViewDelegate
 
 extension ConversationContentViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -493,6 +495,8 @@ extension ConversationContentViewController: UITableViewDelegate {
         willSelectRow(at: indexPath, tableView: tableView)
     }
 }
+
+// MARK: UITableViewDataSourcePrefetching
 
 extension ConversationContentViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {

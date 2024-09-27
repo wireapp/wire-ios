@@ -21,6 +21,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - RemoveClientStepViewController
+
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
     var authenticationCoordinator: AuthenticationCoordinator?
     let clientListController: RemoveClientsViewController
@@ -124,7 +126,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     }
 }
 
-// MARK: - ClientListViewControllerDelegate
+// MARK: RemoveClientsViewControllerDelegate
 
 extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
     func finishedDeleting(_: RemoveClientsViewController) {

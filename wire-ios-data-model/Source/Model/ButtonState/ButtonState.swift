@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ButtonState
+
 class ButtonState: ZMManagedObject {
     @NSManaged var stateValue: Int16
     @NSManaged var message: ZMMessage?

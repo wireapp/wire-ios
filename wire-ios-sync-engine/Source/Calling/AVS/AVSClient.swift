@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AVSClient
+
 /// Used to identify a participant in a call.
 
 public struct AVSClient: Hashable {
@@ -66,6 +68,8 @@ public struct AVSClient: Hashable {
         self.isMemberOfSubconversation = isMemberOfSubconversation
     }
 }
+
+// MARK: Codable
 
 extension AVSClient: Codable {
     enum CodingKeys: String, CodingKey {

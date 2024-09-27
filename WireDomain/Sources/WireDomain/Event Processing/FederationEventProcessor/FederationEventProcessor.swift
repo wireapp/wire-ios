@@ -19,6 +19,8 @@
 import Foundation
 import WireAPI
 
+// MARK: - FederationEventProcessorProtocol
+
 /// Process federation update events.
 
 protocol FederationEventProcessorProtocol {
@@ -31,6 +33,8 @@ protocol FederationEventProcessorProtocol {
 
     func processEvent(_ event: FederationEvent) async throws
 }
+
+// MARK: - FederationEventProcessor
 
 struct FederationEventProcessor {
     let connectionRemovedEventProcessor: any FederationConnectionRemovedEventProcessorProtocol

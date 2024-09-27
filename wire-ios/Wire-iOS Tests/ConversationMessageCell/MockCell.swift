@@ -20,6 +20,8 @@ import UIKit
 import WireFoundation
 @testable import Wire
 
+// MARK: - MockCell
+
 final class MockCell: UIView, ConversationMessageCell {
     struct Configuration {
         let backgroundColor: UIColor
@@ -36,6 +38,8 @@ final class MockCell: UIView, ConversationMessageCell {
         backgroundColor = object.backgroundColor
     }
 }
+
+// MARK: - MockCellDescription
 
 final class MockCellDescription<T>: ConversationMessageCellDescription {
     typealias View = MockCell

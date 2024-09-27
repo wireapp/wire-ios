@@ -19,9 +19,13 @@
 import Foundation
 import WireSystem
 
+// MARK: - TemporaryFileServiceInterface
+
 protocol TemporaryFileServiceInterface {
     func removeTemporaryData()
 }
+
+// MARK: - TemporaryFileService
 
 final class TemporaryFileService: TemporaryFileServiceInterface {
     func removeTemporaryData() {

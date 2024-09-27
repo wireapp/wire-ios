@@ -21,6 +21,8 @@ import XCTest
 @testable import Wire
 @testable import WireCommonComponents
 
+// MARK: - MockZMEditableUser
+
 final class MockZMEditableUser: MockUser, EditableUserType {
     var needsRichProfileUpdate = false
 
@@ -36,6 +38,8 @@ final class MockZMEditableUser: MockUser, EditableUserType {
     }
 }
 
+// MARK: - ZMMockAVSMediaManager
+
 final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
     var isMicrophoneMuted = false
 
@@ -44,11 +48,15 @@ final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
     func playMediaByName(_: String!) {}
 }
 
+// MARK: - ZMMockTracking
+
 final class ZMMockTracking: TrackingInterface {
     var disableCrashSharing = false
     var disableAnalyticsSharing = false
     var disableCrashAndAnalyticsSharing = false
 }
+
+// MARK: - SettingsPropertyTests
 
 final class SettingsPropertyTests: XCTestCase {
     var userDefaults: UserDefaults!

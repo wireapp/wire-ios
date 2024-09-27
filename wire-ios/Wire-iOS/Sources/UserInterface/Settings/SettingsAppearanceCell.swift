@@ -21,6 +21,8 @@ import WireDesign
 import WireFoundation
 import WireUtilities
 
+// MARK: - SettingsAppearanceCell
+
 final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
     // MARK: - Properties
 

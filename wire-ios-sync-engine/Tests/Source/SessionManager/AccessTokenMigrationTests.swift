@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - AccessTokenRenewerMock
+
 class AccessTokenRenewerMock: AccessTokenRenewing {
     struct Calls {
         var setAccessTokenRenewalObserver = [AccessTokenRenewalObserver]()
@@ -43,6 +45,8 @@ class AccessTokenRenewerMock: AccessTokenRenewing {
         }
     }
 }
+
+// MARK: - AccessTokenMigrationTests
 
 class AccessTokenMigrationTests: XCTestCase {
     func test_itSetsObserver_AndRenewsAccessToken() async throws {

@@ -19,10 +19,14 @@
 import Foundation
 @testable import Ziphy
 
+// MARK: - MockPaginatedResponse
+
 enum MockPaginatedResponse {
     case success([Ziph])
     case error(Error)
 }
+
+// MARK: - MockPaginatedRequester
 
 final class MockPaginatedRequester: ZiphyURLRequester {
     private let networkQueue = DispatchQueue(label: "MockZiphyRequester.Network")

@@ -24,6 +24,8 @@ import WireCommonComponents
 import WireCoreCrypto
 import WireSyncEngine
 
+// MARK: - ApplicationLaunchType
+
 enum ApplicationLaunchType {
     case unknown
     case direct
@@ -36,6 +38,8 @@ enum ApplicationLaunchType {
 extension Notification.Name {
     static let ZMUserSessionDidBecomeAvailable = Notification.Name("ZMUserSessionDidBecomeAvailableNotification")
 }
+
+// MARK: - AppDelegate
 
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Private Property

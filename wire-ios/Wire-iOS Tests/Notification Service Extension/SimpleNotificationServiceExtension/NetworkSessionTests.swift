@@ -19,6 +19,8 @@
 import WireTransport
 import XCTest
 
+// MARK: - NetworkSessionTests
+
 final class NetworkSessionTests: XCTestCase {
     var mockURLSession: URLSessionMock!
     var mockNetworkRequest: NetworkRequest!
@@ -179,6 +181,8 @@ final class NetworkSessionTests: XCTestCase {
     }
 }
 
+// MARK: - MockCookieStorage
+
 final class MockCookieStorage: CookieProvider {
     var isAuthenticated = true
 
@@ -186,6 +190,8 @@ final class MockCookieStorage: CookieProvider {
 
     func deleteKeychainItems() {}
 }
+
+// MARK: - URLSessionMock
 
 final class URLSessionMock: URLRequestable {
     var mockedResponse = (Data(), URLResponse())

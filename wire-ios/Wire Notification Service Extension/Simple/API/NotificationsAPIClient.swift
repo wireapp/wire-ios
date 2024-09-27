@@ -19,9 +19,13 @@
 import Foundation
 import WireTransport
 
+// MARK: - NotificationsAPIClientProtocol
+
 protocol NotificationsAPIClientProtocol {
     func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent
 }
+
+// MARK: - NotificationsAPIClient
 
 final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
     // MARK: - Properties
@@ -48,6 +52,8 @@ final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
         }
     }
 }
+
+// MARK: - NotificationByIDEndpoint
 
 struct NotificationByIDEndpoint: Endpoint, Loggable {
     // MARK: - Types

@@ -29,6 +29,8 @@ extension ConversationRemoveParticipantError {
     }
 }
 
+// MARK: - RemoveParticipantActionHandler
+
 class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
     private lazy var eventProcessor = ConversationEventProcessor(context: context)
 

@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - ConversationMessageToolboxCell
+
 final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
     struct Configuration: Equatable {
         let message: ZMConversationMessage
@@ -98,6 +100,8 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         perform(action: .resend)
     }
 }
+
+// MARK: - ConversationMessageToolboxCellDescription
 
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationMessageToolboxCell

@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationActionType
+
 enum ConversationActionType {
     case none, started(withName: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left,
          teamMemberLeave
@@ -71,6 +73,8 @@ extension ZMConversationMessage {
         }
     }
 }
+
+// MARK: - ParticipantsCellViewModel
 
 final class ParticipantsCellViewModel {
     private typealias NameList = ParticipantsStringFormatter.NameList

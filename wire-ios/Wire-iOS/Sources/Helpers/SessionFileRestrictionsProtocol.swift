@@ -20,15 +20,21 @@ import Foundation
 import WireShareEngine
 import WireSyncEngine
 
+// MARK: - SessionFileRestrictionsProtocol
+
 protocol SessionFileRestrictionsProtocol {
     var isFileSharingEnabled: Bool { get }
 }
+
+// MARK: - ZMUserSession + SessionFileRestrictionsProtocol
 
 extension ZMUserSession: SessionFileRestrictionsProtocol {
     var isFileSharingEnabled: Bool {
         fileSharingFeature.status == .enabled
     }
 }
+
+// MARK: - SharingSession + SessionFileRestrictionsProtocol
 
 extension SharingSession: SessionFileRestrictionsProtocol {
     var isFileSharingEnabled: Bool {

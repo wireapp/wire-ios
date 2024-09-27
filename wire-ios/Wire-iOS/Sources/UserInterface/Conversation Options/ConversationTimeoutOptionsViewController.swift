@@ -22,6 +22,8 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - Item
+
 private enum Item {
     case supportedValue(MessageDestructionTimeoutValue)
     case unsupportedValue(MessageDestructionTimeoutValue)
@@ -44,6 +46,8 @@ extension ZMConversation {
         return newItems
     }
 }
+
+// MARK: - ConversationTimeoutOptionsViewController
 
 final class ConversationTimeoutOptionsViewController: UIViewController {
     private let conversation: ZMConversation
@@ -116,7 +120,7 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
     }
 }
 
-// MARK: - Table View
+// MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
 
 extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -257,6 +261,8 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         CGSize(width: collectionView.bounds.size.width, height: 32)
     }
 }
+
+// MARK: ZMConversationObserver
 
 extension ConversationTimeoutOptionsViewController: ZMConversationObserver {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {

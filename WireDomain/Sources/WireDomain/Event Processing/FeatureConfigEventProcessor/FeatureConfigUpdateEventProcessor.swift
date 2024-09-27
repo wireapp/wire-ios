@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - FeatureConfigUpdateEventProcessorProtocol
+
 /// Process feature config update events.
 
 protocol FeatureConfigUpdateEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol FeatureConfigUpdateEventProcessorProtocol {
 
     func processEvent(_ event: FeatureConfigUpdateEvent) async throws
 }
+
+// MARK: - FeatureConfigUpdateEventProcessor
 
 struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
     func processEvent(_: FeatureConfigUpdateEvent) async throws {

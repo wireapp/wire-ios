@@ -21,16 +21,24 @@ import Foundation
 
 typealias MockZiphyRequesterCompletionHandler = (Data?, URLResponse?, Error?) -> Void
 
+// MARK: - NSUUID + ZiphyRequestIdentifier
+
 extension NSUUID: ZiphyRequestIdentifier {}
+
+// MARK: - MockZiphyResponse
 
 enum MockZiphyResponse {
     case success(Data, URLResponse)
     case error(Error)
 }
 
+// MARK: - MockZiphyRequesterError
+
 enum MockZiphyRequesterError: Error {
     case noResponseFound
 }
+
+// MARK: - MockZiphyRequester
 
 /// An object that mocks performing requests to the Giphy API.
 final class MockZiphyRequester: ZiphyURLRequester {

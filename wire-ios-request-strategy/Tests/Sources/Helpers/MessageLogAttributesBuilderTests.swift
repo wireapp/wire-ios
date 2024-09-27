@@ -20,6 +20,8 @@ import WireDataModelSupport
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - MessageLogAttributesBuilderTests
+
 final class MessageLogAttributesBuilderTests: XCTestCase {
     // add more tests for supported types, but some are difficult to mock.
 
@@ -77,7 +79,7 @@ final class MessageLogAttributesBuilderTests: XCTestCase {
     }
 }
 
-// MARK: -
+// MARK: - Scaffolding
 
 private enum Scaffolding {
     static let nonce = UUID(uuidString: "9CB5D6FA-875E-406B-AA66-6A93F031FF5F")!

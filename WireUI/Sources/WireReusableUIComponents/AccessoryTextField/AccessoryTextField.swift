@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - AccessoryTextField
+
 open class AccessoryTextField: UITextField, DynamicTypeCapable {
     public func redrawFont() {
         font = textFieldAttributes.textFont.font

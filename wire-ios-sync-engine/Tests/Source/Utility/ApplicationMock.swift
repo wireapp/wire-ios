@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 @testable import WireSyncEngine
 
+// MARK: - ApplicationMock
+
 /// A mock of Application that records the calls
 @objcMembers
 public final class ApplicationMock: NSObject {
@@ -44,7 +46,7 @@ public final class ApplicationMock: NSObject {
     public var registerForRemoteNotificationsCallback: () -> Void = {}
 }
 
-// MARK: - Application protocol
+// MARK: ZMApplication
 
 extension ApplicationMock: ZMApplication {
     public func registerForRemoteNotifications() {

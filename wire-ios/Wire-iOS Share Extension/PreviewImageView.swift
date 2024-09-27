@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - PreviewDisplayMode
+
 /// The aspect ratio of the video view.
 
 enum PreviewDisplayMode {
@@ -37,6 +39,8 @@ enum PreviewDisplayMode {
         return CGSize(width: 70 * scale, height: 70 * scale)
     }
 }
+
+// MARK: - PreviewImageView
 
 /// An image view used to preview the content of a post.
 

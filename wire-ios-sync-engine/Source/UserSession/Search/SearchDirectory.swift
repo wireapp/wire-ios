@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - SearchDirectory
+
 @objcMembers
 public class SearchDirectory: NSObject {
     let searchContext: NSManagedObjectContext
@@ -113,6 +115,8 @@ public class SearchDirectory: NSObject {
         refreshConversationsMissingMetadataAction()
     }
 }
+
+// MARK: TearDownCapable
 
 extension SearchDirectory: TearDownCapable {
     /// Tear down the SearchDirectory.

@@ -70,6 +70,8 @@ extension ZMLocalNotification {
     }
 }
 
+// MARK: - EventNotificationBuilder
+
 // Base class for event notification builders. Subclass this for each
 // event type, and override the components specific for that type.
 private class EventNotificationBuilder: NotificationBuilder {
@@ -136,7 +138,7 @@ private class EventNotificationBuilder: NotificationBuilder {
     }
 }
 
-// MARK: - Reaction Event
+// MARK: - ReactionEventNotificationBuilder
 
 private class ReactionEventNotificationBuilder: EventNotificationBuilder {
     private let emoji: String
@@ -178,7 +180,7 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
     }
 }
 
-// MARK: - Conversation Create Event
+// MARK: - ConversationCreateEventNotificationBuilder
 
 private class ConversationCreateEventNotificationBuilder: EventNotificationBuilder {
     override var notificationType: LocalNotificationType {
@@ -186,7 +188,7 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
     }
 }
 
-// MARK: - Conversation Delete Event
+// MARK: - ConversationDeleteEventNotificationBuilder
 
 private class ConversationDeleteEventNotificationBuilder: EventNotificationBuilder {
     override var notificationType: LocalNotificationType {
@@ -198,7 +200,7 @@ private class ConversationDeleteEventNotificationBuilder: EventNotificationBuild
     }
 }
 
-// MARK: - User Connection Event
+// MARK: - UserConnectionEventNotificationBuilder
 
 private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
     var eventType: LocalNotificationEventType
@@ -235,7 +237,7 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
     }
 }
 
-// MARK: - New User Event
+// MARK: - NewUserEventNotificationBuilder
 
 private class NewUserEventNotificationBuilder: EventNotificationBuilder {
     override var notificationType: LocalNotificationType {
@@ -252,7 +254,7 @@ private class NewUserEventNotificationBuilder: EventNotificationBuilder {
     }
 }
 
-// MARK: - Message
+// MARK: - NewMessageNotificationBuilder
 
 private class NewMessageNotificationBuilder: EventNotificationBuilder {
     private let message: GenericMessage
@@ -322,7 +324,7 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     }
 }
 
-// MARK: - System Message
+// MARK: - NewSystemMessageNotificationBuilder
 
 private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
     let contentType: LocalNotificationContentType

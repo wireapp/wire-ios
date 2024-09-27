@@ -18,7 +18,11 @@
 
 import Foundation
 
+// MARK: - ZMAuthenticationStatus + NotificationContext
+
 extension ZMAuthenticationStatus: NotificationContext {}
+
+// MARK: - ZMAuthenticationStatus + ZMCredentialProvider
 
 extension ZMAuthenticationStatus: ZMCredentialProvider {
     public func credentialsMayBeCleared() {

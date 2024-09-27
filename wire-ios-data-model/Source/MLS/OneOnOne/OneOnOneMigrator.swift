@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - OneOnOneMigratorInterface
+
 // sourcery: AutoMockable
 public protocol OneOnOneMigratorInterface {
     @discardableResult
@@ -26,6 +28,8 @@ public protocol OneOnOneMigratorInterface {
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID
 }
+
+// MARK: - OneOnOneMigrator
 
 public struct OneOnOneMigrator: OneOnOneMigratorInterface {
     // MARK: - Dependencies

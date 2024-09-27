@@ -18,12 +18,14 @@
 
 import SwiftUI
 
+// MARK: - FontTextStyle
+
 public enum FontTextStyle: String {
     case largeTitle
     case inputText
 }
 
-// MARK: -
+// MARK: - FontSize
 
 public enum FontSize: String {
     case large
@@ -39,7 +41,7 @@ public enum FontSize: String {
     case buttonBig
 }
 
-// MARK: -
+// MARK: - FontWeight
 
 public enum FontWeight: String, CaseIterable {
     case ultraLight
@@ -109,7 +111,7 @@ extension UIFont {
     }
 }
 
-// MARK: -
+// MARK: - FontSpec
 
 public struct FontSpec: Hashable {
     let size: FontSize
@@ -137,6 +139,8 @@ public struct FontSpec: Hashable {
     }
 }
 
+// MARK: CustomStringConvertible
+
 extension FontSpec: CustomStringConvertible {
     public var description: String {
         var descriptionString = "\(size)"
@@ -153,7 +157,7 @@ extension FontSpec: CustomStringConvertible {
     }
 }
 
-// MARK: -
+// MARK: - FontScheme
 
 public final class FontScheme {
     public static let shared: FontScheme = {

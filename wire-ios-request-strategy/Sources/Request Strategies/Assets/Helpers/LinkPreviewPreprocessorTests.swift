@@ -22,6 +22,8 @@ import WireLinkPreview
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - MockLinkDetector
+
 final class MockLinkDetector: LinkPreviewDetectorType {
     var nextResult = [LinkMetadata]()
     var downloadLinkPreviewsCallCount = 0
@@ -37,6 +39,8 @@ final class MockLinkDetector: LinkPreviewDetectorType {
         completion(nextResult)
     }
 }
+
+// MARK: - LinkPreviewPreprocessorTests
 
 class LinkPreviewPreprocessorTests: MessagingTestBase {
     var sut: LinkPreviewPreprocessor!

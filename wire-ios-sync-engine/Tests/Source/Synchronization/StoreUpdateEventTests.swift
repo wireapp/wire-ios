@@ -20,6 +20,8 @@ import WireDataModel
 import WireTesting
 @testable import WireSyncEngine
 
+// MARK: - StoreUpdateEventTests
+
 class StoreUpdateEventTests: MessagingTest {
     var account: Account!
     var publicKey: SecKey?

@@ -21,6 +21,8 @@ import WireSystem
 import XCTest
 @testable import WireCryptobox
 
+// MARK: - EncryptionSessionsDirectoryTests
+
 class EncryptionSessionsDirectoryTests: XCTestCase {
     var contextAlice: EncryptionContext!
     var contextBob: EncryptionContext!

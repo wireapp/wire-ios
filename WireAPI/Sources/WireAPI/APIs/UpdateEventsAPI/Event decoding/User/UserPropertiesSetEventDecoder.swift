@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserPropertiesSetEventDecoder
+
 struct UserPropertiesSetEventDecoder {
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
@@ -71,6 +73,8 @@ struct UserPropertiesSetEventDecoder {
         return UserPropertiesSetEvent(property: property)
     }
 }
+
+// MARK: - LabelsPayload
 
 struct LabelsPayload: Decodable {
     let labels: [Label]

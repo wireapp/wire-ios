@@ -21,6 +21,8 @@ import WireDataModel
 import WireLinkPreview
 import WireUtilities
 
+// MARK: - LinkAttachmentDetectorHelper
+
 public final class LinkAttachmentDetectorHelper: NSObject {
     fileprivate static var _test_debug_linkAttachmentDetector: LinkAttachmentDetectorType?
 
@@ -40,6 +42,8 @@ public final class LinkAttachmentDetectorHelper: NSObject {
         _test_debug_linkAttachmentDetector = nil
     }
 }
+
+// MARK: - LinkAttachmentsPreprocessor
 
 @objcMembers
 public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment> {

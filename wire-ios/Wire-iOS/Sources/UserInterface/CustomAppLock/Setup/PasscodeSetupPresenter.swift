@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - PasscodeSetupPresenter
+
 final class PasscodeSetupPresenter {
     private weak var userInterface: PasscodeSetupUserInterface?
     private var interactorInput: PasscodeSetupInteractorInput
@@ -67,7 +69,7 @@ final class PasscodeSetupPresenter {
     }
 }
 
-// MARK: - InteractorOutput
+// MARK: PasscodeSetupInteractorOutput
 
 extension PasscodeSetupPresenter: PasscodeSetupInteractorOutput {
     private func resetValidationLabels(errors: Set<PasscodeError>, passed: Bool) {

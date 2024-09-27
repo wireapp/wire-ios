@@ -21,6 +21,8 @@ import WireTesting
 import XCTest
 @testable import WireDataModel
 
+// MARK: - DuplicatedEntityRemovalTests
+
 final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
     func appendSystemMessage(
         conversation: ZMConversation,

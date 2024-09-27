@@ -35,6 +35,8 @@ extension ConversationViewController {
     }
 }
 
+// MARK: - ConversationViewController + ProfileViewControllerDelegate
+
 extension ConversationViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {

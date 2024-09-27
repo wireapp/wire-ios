@@ -19,6 +19,8 @@
 import WireUtilities
 import XCTest
 
+// MARK: - OptionalComparisonTests
+
 final class OptionalComparisonTests: XCTestCase {
     // MARK: OptionalComparison
 

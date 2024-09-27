@@ -18,14 +18,20 @@
 
 import Foundation
 
+// MARK: - SessionEstablisherError
+
 public enum SessionEstablisherError: Error, Equatable {
     case missingSelfClient
 }
+
+// MARK: - SessionEstablisherInterface
 
 // sourcery: AutoMockable
 public protocol SessionEstablisherInterface {
     func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws
 }
+
+// MARK: - SessionEstablisher
 
 public class SessionEstablisher: SessionEstablisherInterface {
     public init(

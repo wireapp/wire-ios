@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - RegistrationStrategy
+
 final class RegistrationStrategy: NSObject {
     let registrationStatus: RegistrationStatusProtocol
     weak var userInfoParser: UserInfoParser?
@@ -30,6 +32,8 @@ final class RegistrationStrategy: NSObject {
         self.registrationSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
     }
 }
+
+// MARK: ZMSingleRequestTranscoder
 
 extension RegistrationStrategy: ZMSingleRequestTranscoder {
     func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -73,6 +77,8 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
         }
     }
 }
+
+// MARK: RequestStrategy
 
 extension RegistrationStrategy: RequestStrategy {
     func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {

@@ -23,6 +23,8 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentViewControllerDelegate")
 
+// MARK: - ConversationViewController + ConversationContentViewControllerDelegate
+
 extension ConversationViewController: ConversationContentViewControllerDelegate {
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect) {
         guard let selfUser = ZMUser.selfUser() else {

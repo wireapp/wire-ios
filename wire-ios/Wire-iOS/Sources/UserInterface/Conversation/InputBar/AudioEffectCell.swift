@@ -20,6 +20,8 @@ import avs
 import Foundation
 import WireDesign
 
+// MARK: - AudioEffectCellBorders
+
 struct AudioEffectCellBorders: OptionSet {
     let rawValue: Int
 
@@ -27,6 +29,8 @@ struct AudioEffectCellBorders: OptionSet {
     static let Right  = AudioEffectCellBorders(rawValue: 1 << 0)
     static let Bottom = AudioEffectCellBorders(rawValue: 1 << 1)
 }
+
+// MARK: - AudioEffectCell
 
 final class AudioEffectCell: UICollectionViewCell {
     private let iconView = IconButton()

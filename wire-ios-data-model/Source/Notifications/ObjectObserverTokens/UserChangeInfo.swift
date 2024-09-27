@@ -19,10 +19,14 @@
 import Foundation
 import WireSystem
 
+// MARK: - ObjectInSnapshot
+
 protocol ObjectInSnapshot {
     static var observableKeys: Set<String> { get }
     var notificationName: Notification.Name { get }
 }
+
+// MARK: - ZMUser + ObjectInSnapshot
 
 extension ZMUser: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
@@ -59,6 +63,8 @@ extension ZMUser: ObjectInSnapshot {
         .UserChange
     }
 }
+
+// MARK: - UserChangeInfo
 
 @objcMembers
 open class UserChangeInfo: ObjectChangeInfo {

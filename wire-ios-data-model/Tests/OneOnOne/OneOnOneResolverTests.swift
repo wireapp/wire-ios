@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - OneOnOneResolverTests
+
 final class OneOnOneResolverTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -341,7 +343,7 @@ final class OneOnOneResolverTests: XCTestCase {
     }
 }
 
-// MARK: - Mock Error
+// MARK: - MockOneOnOneResolverError
 
 private enum MockOneOnOneResolverError: Error {
     case failed

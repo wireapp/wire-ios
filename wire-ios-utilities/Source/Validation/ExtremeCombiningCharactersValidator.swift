@@ -19,10 +19,14 @@
 import Foundation
 import WireSystem
 
+// MARK: - ExtremeCombiningCharactersValidationError
+
 public enum ExtremeCombiningCharactersValidationError: Error {
     case containsExtremeCombiningCharacters
     case notAString
 }
+
+// MARK: - ExtremeCombiningCharactersValidator
 
 @objc
 public final class ExtremeCombiningCharactersValidator: NSObject, ZMPropertyValidator {

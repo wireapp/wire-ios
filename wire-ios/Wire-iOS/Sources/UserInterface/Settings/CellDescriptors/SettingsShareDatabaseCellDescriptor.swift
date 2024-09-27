@@ -20,11 +20,15 @@ import Foundation
 import WireSyncEngine
 import ZipArchive
 
+// MARK: - DocumentDelegate
+
 final class DocumentDelegate: NSObject, UIDocumentInteractionControllerDelegate {
     func documentInteractionControllerViewControllerForPreview(_: UIDocumentInteractionController) -> UIViewController {
         UIApplication.shared.topmostViewController(onlyFullScreen: false)!
     }
 }
+
+// MARK: - SettingsShareDatabaseCellDescriptor
 
 final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
     let documentDelegate: DocumentDelegate
@@ -46,6 +50,8 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
         }
     }
 }
+
+// MARK: - SettingsShareCryptoboxCellDescriptor
 
 final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
     let documentDelegate: DocumentDelegate

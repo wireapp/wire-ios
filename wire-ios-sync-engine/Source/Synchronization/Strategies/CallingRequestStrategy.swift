@@ -21,6 +21,8 @@ import Foundation
 import WireDataModel
 import WireRequestStrategy
 
+// MARK: - CallingRequestStrategy
+
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,
     ZMContextChangeTrackerSource, ZMEventConsumer {
@@ -335,7 +337,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     }
 }
 
-// MARK: - Wire Call Center Transport
+// MARK: WireCallCenterTransport
 
 extension CallingRequestStrategy: WireCallCenterTransport {
     public func send(

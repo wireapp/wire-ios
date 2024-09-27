@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - ConversationMessageCellMenuPresenter
+
 protocol ConversationMessageCellMenuPresenter: AnyObject {
     func showMenu()
     func showSecuredMenu()
@@ -35,6 +37,8 @@ extension UITableViewCell {
         // to be overriden in subclasses
     }
 }
+
+// MARK: - ConversationMessageCellTableViewAdapter
 
 class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView,
     HighlightableView, ConversationMessageCellMenuPresenter {

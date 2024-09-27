@@ -34,16 +34,22 @@ extension Bundle {
     }
 }
 
+// MARK: - CallNotificationStyle
+
 @objc
 public enum CallNotificationStyle: UInt {
     case pushNotifications
     case callKit
 }
 
+// MARK: - SessionActivationObserver
+
 public protocol SessionActivationObserver: AnyObject {
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession)
     func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
+
+// MARK: - SessionManagerDelegate
 
 // sourcery: AutoMockable
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
@@ -69,6 +75,8 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
 }
+
+// MARK: - SessionManagerType
 
 /// The public interface for the session manager.
 
@@ -111,15 +119,21 @@ public protocol SessionManagerType: AnyObject {
     func passwordVerificationDidFail(with failCount: Int)
 }
 
+// MARK: - SessionManagerSwitchingDelegate
+
 @objc
 public protocol SessionManagerSwitchingDelegate: AnyObject {
     func confirmSwitchingAccount(completion: @escaping (Bool) -> Void)
 }
 
+// MARK: - ForegroundNotificationResponder
+
 @objc
 public protocol ForegroundNotificationResponder: AnyObject {
     func shouldPresentNotification(with userInfo: NotificationUserInfo) -> Bool
 }
+
+// MARK: - SessionManager
 
 /// Manage the creation of `ZMUserSession` and `UnauthenticatedSession` objects and
 /// the switching between them.
@@ -1333,6 +1347,8 @@ extension SessionManager {
     }
 }
 
+// MARK: TeamObserver
+
 extension SessionManager: TeamObserver {
     public func teamDidChange(_ changeInfo: TeamChangeInfo) {
         let team = changeInfo.team
@@ -1343,7 +1359,7 @@ extension SessionManager: TeamObserver {
     }
 }
 
-// MARK: - ZMUserObserving
+// MARK: UserObserving
 
 extension SessionManager: UserObserving {
     public func userDidChange(_ changeInfo: UserChangeInfo) {
@@ -1370,6 +1386,8 @@ extension SessionManager {
         return true
     }
 }
+
+// MARK: UnauthenticatedSessionDelegate
 
 extension SessionManager: UnauthenticatedSessionDelegate {
     public func sessionIsAllowedToCreateNewAccount(_: UnauthenticatedSession) -> Bool {
@@ -1470,7 +1488,7 @@ extension SessionManager {
     }
 }
 
-// MARK: - Unread Conversation Count
+// MARK: ZMConversationListObserver
 
 extension SessionManager: ZMConversationListObserver {
     public func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
@@ -1510,6 +1528,8 @@ extension SessionManager: ZMConversationListObserver {
         }
     }
 }
+
+// MARK: WireCallCenterCallStateObserver
 
 extension SessionManager: WireCallCenterCallStateObserver {
     public func callCenterDidChange(
@@ -1567,7 +1587,7 @@ extension SessionManager {
     }
 }
 
-// MARK: - Session manager observer
+// MARK: - SessionManagerCreatedSessionObserver
 
 @objc
 public protocol SessionManagerCreatedSessionObserver: AnyObject {
@@ -1579,6 +1599,8 @@ public protocol SessionManagerCreatedSessionObserver: AnyObject {
     /// Invoked when the SessionManager creates a new unauthenticated session.
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession)
 }
+
+// MARK: - SessionManagerDestroyedSessionObserver
 
 @objc
 public protocol SessionManagerDestroyedSessionObserver: AnyObject {
@@ -1593,6 +1615,8 @@ private let sessionManagerCreatedSessionNotificationName = Notification
     .Name(rawValue: "ZMSessionManagerCreatedSessionNotification")
 private let sessionManagerDestroyedSessionNotificationName = Notification
     .Name(rawValue: "ZMSessionManagerDestroyedSessionNotification")
+
+// MARK: - SessionManager + NotificationContext
 
 extension SessionManager: NotificationContext {
     public func addUnauthenticatedSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver)

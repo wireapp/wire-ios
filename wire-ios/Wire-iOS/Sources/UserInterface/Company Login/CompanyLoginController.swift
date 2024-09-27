@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireSyncEngine
 import WireTransport
 
+// MARK: - CompanyLoginControllerDelegate
+
 protocol CompanyLoginControllerDelegate: AnyObject {
     /// The `CompanyLoginController` will never present any alerts on its own and will
     /// always ask its delegate to handle the actual presentation of the alerts.
@@ -46,6 +48,8 @@ protocol CompanyLoginControllerDelegate: AnyObject {
         didConfirm: @escaping (Bool) -> Void
     )
 }
+
+// MARK: - CompanyLoginController
 
 ///
 /// `CompanyLoginController` handles the logic of deciding when to present the company login alert.
@@ -362,7 +366,7 @@ extension CompanyLoginController {
     }
 }
 
-// MARK: - Flow
+// MARK: CompanyLoginFlowHandlerDelegate
 
 extension CompanyLoginController: CompanyLoginFlowHandlerDelegate {
     func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL) {

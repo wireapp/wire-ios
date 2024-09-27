@@ -19,6 +19,8 @@
 import Contacts
 import Foundation
 
+// MARK: - AddressBookSearch
+
 /// Search for contacts in the address book
 class AddressBookSearch {
     /// Maximum number of contacts to consider when matching/searching,

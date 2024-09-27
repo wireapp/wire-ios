@@ -22,6 +22,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ArchivedListViewController
+
 final class ArchivedListViewController: UIViewController {
     private var collectionView: UICollectionView!
     private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
@@ -162,7 +164,7 @@ final class ArchivedListViewController: UIViewController {
     }
 }
 
-// MARK: - CollectionViewDelegate
+// MARK: UICollectionViewDelegate
 
 extension ArchivedListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -171,7 +173,7 @@ extension ArchivedListViewController: UICollectionViewDelegate {
     }
 }
 
-// MARK: - CollectionViewDataSource
+// MARK: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 
 extension ArchivedListViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(
@@ -206,7 +208,7 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
     }
 }
 
-// MARK: - ArchivedListViewModelDelegate
+// MARK: ArchivedListViewModelDelegate
 
 extension ArchivedListViewController: ArchivedListViewModelDelegate {
     func archivedListViewModel(
@@ -227,7 +229,7 @@ extension ArchivedListViewController: ArchivedListViewModelDelegate {
     }
 }
 
-// MARK: - ConversationListCellDelegate
+// MARK: ConversationListCellDelegate
 
 extension ArchivedListViewController: ConversationListCellDelegate {
     func indexPath(for cell: ConversationListCell) -> IndexPath? {

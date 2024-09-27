@@ -21,6 +21,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - EARServiceTests
+
 final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     var sut: EARService!
     var keyRepository: MockEARKeyRepositoryInterface!

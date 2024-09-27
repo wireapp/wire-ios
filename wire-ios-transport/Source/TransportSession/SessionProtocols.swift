@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - SessionProtocol
+
 /// The following protocols are used in `UnauthenticatedTransportSession`
 /// to enable easy injection of mocks in tests.
 
@@ -26,13 +28,17 @@ public protocol SessionProtocol {
     ) -> DataTaskProtocol
 }
 
+// MARK: - DataTaskProtocol
+
 public protocol DataTaskProtocol {
     func resume()
 }
 
-// MARK: - Conformances
+// MARK: - URLSessionDataTask + DataTaskProtocol
 
 extension URLSessionDataTask: DataTaskProtocol {}
+
+// MARK: - URLSession + SessionProtocol
 
 extension URLSession: SessionProtocol {
     public func task(

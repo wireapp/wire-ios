@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationDomainsStoppedFederatingSystemMessageCellDescription
+
 final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationSystemMessageCell
     typealias System = L10n.Localizable.Content.System

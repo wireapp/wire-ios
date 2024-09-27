@@ -19,6 +19,8 @@
 import UIKit
 import WireCommonComponents
 
+// MARK: - SolidButtonDescription
+
 /// A view that displays a solid button.
 
 final class SolidButtonDescription: ValueSubmission {
@@ -34,6 +36,8 @@ final class SolidButtonDescription: ValueSubmission {
         self.accessibilityIdentifier = accessibilityIdentifier
     }
 }
+
+// MARK: ViewDescriptor
 
 extension SolidButtonDescription: ViewDescriptor {
     func create() -> UIView {

@@ -20,6 +20,8 @@ import UIKit
 import WireDesign
 import WireReusableUIComponents
 
+// MARK: - TextFieldValidationDelegate
+
 protocol TextFieldValidationDelegate: AnyObject {
     /// Delegate for validation. It is called when every time .editingChanged event fires
     ///
@@ -29,9 +31,13 @@ protocol TextFieldValidationDelegate: AnyObject {
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?)
 }
 
+// MARK: - ValidatedTextFieldDelegate
+
 protocol ValidatedTextFieldDelegate: AnyObject {
     func buttonPressed(_ sender: UIButton)
 }
+
+// MARK: - ValidatedTextField
 
 final class ValidatedTextField: AccessoryTextField, TextContainer {
     enum Kind: Equatable {

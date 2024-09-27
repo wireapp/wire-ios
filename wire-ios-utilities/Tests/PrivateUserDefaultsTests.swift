@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import WireUtilities
 
+// MARK: - PrivateUserDefaultsTests
+
 final class PrivateUserDefaultsTests: XCTestCase {
     var sut: PrivateUserDefaults<String>!
     var userID: UUID!
@@ -93,6 +95,8 @@ final class PrivateUserDefaultsTests: XCTestCase {
         XCTAssertNil(storage.value(forKey: scopedKey))
     }
 }
+
+// MARK: - String + DefaultsKey
 
 extension String: DefaultsKey {
     public var rawValue: String {

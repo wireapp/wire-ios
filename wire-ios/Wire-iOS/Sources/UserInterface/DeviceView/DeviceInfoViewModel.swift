@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - DeviceDetailsViewActions
+
 // sourcery: AutoMockable
 protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
@@ -36,6 +38,8 @@ protocol DeviceDetailsViewActions {
     func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate)
     func getProteusFingerPrint() async -> String
 }
+
+// MARK: - DeviceInfoViewModel
 
 final class DeviceInfoViewModel: ObservableObject {
     let addedDate: String

@@ -26,9 +26,13 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireUtilities
 
+// MARK: - CallEventHandlerProtocol
+
 protocol CallEventHandlerProtocol {
     func reportIncomingVoIPCall(_ payload: [String: Any])
 }
+
+// MARK: - CallEventHandler
 
 final class CallEventHandler: CallEventHandlerProtocol {
     func reportIncomingVoIPCall(_ payload: [String: Any]) {
@@ -40,6 +44,8 @@ final class CallEventHandler: CallEventHandlerProtocol {
         }
     }
 }
+
+// MARK: - LegacyNotificationService
 
 final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
     // MARK: - Properties

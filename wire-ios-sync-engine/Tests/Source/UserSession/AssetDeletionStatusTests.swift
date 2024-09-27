@@ -19,7 +19,7 @@
 import WireDataModel
 @testable import WireSyncEngine
 
-// MARK: - Mocks
+// MARK: - FakeGroupQueue
 
 @objc
 final class FakeGroupQueue: NSObject, GroupQueue {
@@ -31,6 +31,8 @@ final class FakeGroupQueue: NSObject, GroupQueue {
         block()
     }
 }
+
+// MARK: - AssetDeletionStatusTests
 
 final class AssetDeletionStatusTests: MessagingTest {
     private var sut: AssetDeletionStatus!
@@ -147,11 +149,13 @@ final class AssetDeletionStatusTests: MessagingTest {
     }
 }
 
-// MARK: - Helper
+// MARK: - IdentifierProvider
 
 private final class IdentifierProvider: NSObject, DeletableAssetIdentifierProvider {
     var assetIdentifiersToBeDeleted = Set<String>()
 }
+
+// MARK: - MockRequestAvailableObserver
 
 private final class MockRequestAvailableObserver: NSObject, RequestAvailableObserver {
     private let requestAvailable: () -> Void

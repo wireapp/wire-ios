@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConnectionsAPIV0
+
 class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     private enum Constants {
         static let batchSize = 500
@@ -61,6 +63,8 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 }
 
+// MARK: - PaginatedConnectionListV0
+
 private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case connections
@@ -84,6 +88,8 @@ private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
         )
     }
 }
+
+// MARK: - ConnectionResponseV0
 
 private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {

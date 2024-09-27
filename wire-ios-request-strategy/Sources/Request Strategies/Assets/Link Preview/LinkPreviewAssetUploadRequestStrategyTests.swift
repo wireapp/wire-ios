@@ -22,7 +22,7 @@ import WireLinkPreview
 import WireRequestStrategy
 import XCTest
 
-// MARK: - Tests setup
+// MARK: - LinkPreviewAssetUploadRequestStrategyTests
 
 class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
     fileprivate var sut: LinkPreviewAssetUploadRequestStrategy!

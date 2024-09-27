@@ -102,6 +102,8 @@ extension ZMConversation {
     }
 }
 
+// MARK: - ZMCallState
+
 @objc
 open class ZMCallState: NSObject, Sequence {
     fileprivate var conversationStates: [NSManagedObjectID: ZMConversationCallState] = [:]
@@ -156,6 +158,8 @@ open class ZMCallState: NSObject, Sequence {
         description
     }
 }
+
+// MARK: - ZMConversationCallState
 
 /// This is the call state for a specific conversation.
 open class ZMConversationCallState: NSObject {

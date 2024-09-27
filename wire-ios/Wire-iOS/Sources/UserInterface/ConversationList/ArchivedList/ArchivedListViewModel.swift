@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - ArchivedListViewModelDelegate
+
 protocol ArchivedListViewModelDelegate: AnyObject {
     func archivedListViewModel(
         _ model: ArchivedListViewModel,
@@ -31,6 +33,8 @@ protocol ArchivedListViewModelDelegate: AnyObject {
         didUpdateConversationWithChange change: ConversationChangeInfo
     )
 }
+
+// MARK: - ArchivedListViewModel
 
 final class ArchivedListViewModel: NSObject {
     weak var delegate: ArchivedListViewModelDelegate?
@@ -59,6 +63,8 @@ final class ArchivedListViewModel: NSObject {
         archivedConversations[key]
     }
 }
+
+// MARK: ZMConversationListObserver
 
 extension ArchivedListViewModel: ZMConversationListObserver {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {

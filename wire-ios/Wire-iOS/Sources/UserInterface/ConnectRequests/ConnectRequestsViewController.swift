@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ConnectRequestsViewController
+
 final class ConnectRequestsViewController: UIViewController,
     UITableViewDataSource,
     UITableViewDelegate {
@@ -216,7 +218,7 @@ final class ConnectRequestsViewController: UIViewController,
     }
 }
 
-// MARK: - ZMConversationListObserver
+// MARK: ZMConversationListObserver
 
 extension ConnectRequestsViewController: ZMConversationListObserver {
     func conversationListDidChange(_: ConversationListChangeInfo) {
@@ -224,7 +226,7 @@ extension ConnectRequestsViewController: ZMConversationListObserver {
     }
 }
 
-// MARK: - ZMUserObserving
+// MARK: UserObserving
 
 extension ConnectRequestsViewController: UserObserving {
     func userDidChange(_: UserChangeInfo) {

@@ -18,11 +18,17 @@
 
 import Foundation
 
+// MARK: - ExpiringActivityInterface
+
 protocol ExpiringActivityInterface {
     func performExpiringActivity(withReason reason: String, using block: @escaping @Sendable (Bool) -> Void)
 }
 
+// MARK: - ProcessInfo + ExpiringActivityInterface
+
 extension ProcessInfo: ExpiringActivityInterface {}
+
+// MARK: - ExpiringActivityNotAllowedToRun
 
 /// The expiring activity is not allowed to run possibly because the background execution time has already expired.
 
@@ -42,6 +48,8 @@ public func withExpiringActivity(reason: String, block: @escaping () async throw
     let manager = ExpiringActivityManager()
     try await manager.withExpiringActivity(reason: reason, block: block)
 }
+
+// MARK: - ExpiringActivityManager
 
 actor ExpiringActivityManager {
     let api: ExpiringActivityInterface

@@ -19,6 +19,8 @@
 import Foundation
 import UserNotifications
 
+// MARK: - LocalNotificationDispatcher
+
 /// Creates and cancels local notifications
 @objcMembers
 public class LocalNotificationDispatcher: NSObject {
@@ -83,6 +85,8 @@ public class LocalNotificationDispatcher: NSObject {
         return value?.boolValue ?? false
     }
 }
+
+// MARK: ZMEventConsumer
 
 extension LocalNotificationDispatcher: ZMEventConsumer {
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
@@ -153,7 +157,7 @@ extension LocalNotificationDispatcher {
     }
 }
 
-// MARK: - Failed messages
+// MARK: PushMessageHandler
 
 extension LocalNotificationDispatcher: PushMessageHandler {
     /// Informs the user that the message failed to send

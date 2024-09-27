@@ -20,9 +20,13 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - WipeDatabaseUserInterface
+
 protocol WipeDatabaseUserInterface: AnyObject {
     func presentConfirmAlert()
 }
+
+// MARK: - WipeDatabaseViewController + WipeDatabaseUserInterface
 
 extension WipeDatabaseViewController: WipeDatabaseUserInterface {
     func presentConfirmAlert() {
@@ -36,6 +40,8 @@ extension WipeDatabaseViewController: WipeDatabaseUserInterface {
         present(confirmController.alertController, animated: true)
     }
 }
+
+// MARK: - WipeDatabaseViewController
 
 final class WipeDatabaseViewController: UIViewController {
     var presenter: WipeDatabasePresenter!

@@ -20,10 +20,14 @@ import Combine
 import Foundation
 import WireDataModel
 
+// MARK: - ConferenceParticipantsInfo
+
 struct ConferenceParticipantsInfo {
     let participants: [CallParticipant]
     let selfUserID: AVSIdentifier
 }
+
+// MARK: - MLSConferenceParticipantsInfo
 
 struct MLSConferenceParticipantsInfo {
     let participants: [CallParticipant]

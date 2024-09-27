@@ -19,35 +19,45 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - StableRandomParticipantsProvider
+
 /// from UI project, to randomize users display in avatar icon
 protocol StableRandomParticipantsProvider {
     var stableRandomParticipants: [UserType] { get }
 }
 
+// MARK: - ConversationStatusProvider
+
 protocol ConversationStatusProvider {
     var status: ConversationStatus { get }
 }
+
+// MARK: - ConnectedUserProvider
 
 protocol ConnectedUserProvider {
     var connectedUserType: UserType? { get }
 }
 
-// MARK: - ZMConversation extension from sync engine
+// MARK: - TypingStatusProvider
 
 protocol TypingStatusProvider {
     var typingUsers: [UserType] { get }
     func setIsTyping(_ isTyping: Bool)
 }
 
+// MARK: - VoiceChannelProvider
+
 protocol VoiceChannelProvider {
     var voiceChannel: VoiceChannel? { get }
 }
+
+// MARK: - CanManageAccessProvider
 
 protocol CanManageAccessProvider {
     var canManageAccess: Bool { get }
 }
 
-// MARK: - Input Bar View controller
+// MARK: - InputBarConversation
 
 protocol InputBarConversation {
     var typingUsers: [UserType] { get }
@@ -67,6 +77,8 @@ protocol InputBarConversation {
 
 typealias InputBarConversationType = ConversationLike & InputBarConversation & TypingStatusProvider
 
+// MARK: - ZMConversation + InputBarConversation
+
 extension ZMConversation: InputBarConversation {
     var isSelfDeletingMessageSendingDisabled: Bool {
         guard let context = managedObjectContext else { return false }
@@ -85,7 +97,7 @@ extension ZMConversation: InputBarConversation {
     }
 }
 
-// MARK: - GroupDetailsConversation View controllers and child VCs
+// MARK: - GroupDetailsConversation
 
 protocol GroupDetailsConversation {
     var userDefinedName: String? { get set }
@@ -114,11 +126,23 @@ protocol GroupDetailsConversation {
 
 typealias GroupDetailsConversationType = Conversation & GroupDetailsConversation
 
+// MARK: - ZMConversation + ConversationStatusProvider
+
 extension ZMConversation: ConversationStatusProvider {}
 
+// MARK: - ZMConversation + TypingStatusProvider
+
 extension ZMConversation: TypingStatusProvider {}
+
+// MARK: - ZMConversation + VoiceChannelProvider
+
 extension ZMConversation: VoiceChannelProvider {}
+
+// MARK: - ZMConversation + CanManageAccessProvider
+
 extension ZMConversation: CanManageAccessProvider {}
+
+// MARK: - ZMConversation + GroupDetailsConversation
 
 extension ZMConversation: GroupDetailsConversation {
     var syncedMessageDestructionTimeout: TimeInterval {

@@ -20,6 +20,8 @@ import DifferenceKit
 import XCTest
 @testable import Wire
 
+// MARK: - MockConversationListViewModelDelegate
+
 final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
         // no-op
@@ -56,6 +58,8 @@ final class MockConversationListViewModelDelegate: NSObject, ConversationListVie
         // no-op
     }
 }
+
+// MARK: - ConversationListViewModelTests
 
 final class ConversationListViewModelTests: XCTestCase {
     var sut: ConversationListViewModel!

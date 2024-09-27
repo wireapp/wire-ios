@@ -154,7 +154,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     }
 }
 
-// MARK: - ZMUserObserving
+// MARK: UserObserving
 
 extension ConfirmEmailViewController: UserObserving {
     func userDidChange(_ note: WireDataModel.UserChangeInfo) {

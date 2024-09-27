@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - TopPeopleSectionController
+
 final class TopPeopleSectionController: SearchSectionController {
     private var innerCollectionView: UICollectionView!
     private let innerCollectionViewController = TopPeopleLineCollectionViewController()
@@ -108,12 +110,16 @@ final class TopPeopleSectionController: SearchSectionController {
     }
 }
 
+// MARK: TopConversationsDirectoryObserver
+
 extension TopPeopleSectionController: TopConversationsDirectoryObserver {
     func topConversationsDidChange() {
         innerCollectionViewController.topPeople = topConversationsDirectory.topConversations
         innerCollectionView.reloadData()
     }
 }
+
+// MARK: TopPeopleLineCollectionViewControllerDelegate
 
 extension TopPeopleSectionController: TopPeopleLineCollectionViewControllerDelegate {
     func topPeopleLineCollectionViewControllerDidSelect(_ conversation: ZMConversation) {

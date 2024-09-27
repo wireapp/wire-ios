@@ -23,6 +23,8 @@ import WireSyncEngine
 
 typealias ContactsCellActionButtonHandler = (UserType, ContactsCell.Action) -> Void
 
+// MARK: - ContactsCell
+
 /// A UITableViewCell version of UserCell, with simpler functionality for contact Screen with table view index bar
 final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
     var user: UserType? {
@@ -220,6 +222,8 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         }
     }
 }
+
+// MARK: UserCellSubtitleProtocol
 
 extension ContactsCell: UserCellSubtitleProtocol {}
 

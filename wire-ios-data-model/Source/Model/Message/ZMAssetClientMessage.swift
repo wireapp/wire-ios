@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ZMAssetClientMessage
+
 /// An asset message (image, file, ...)
 @objcMembers
 public class ZMAssetClientMessage: ZMOTRMessage {
@@ -288,6 +290,8 @@ extension ZMAssetClientMessage {
     }
 }
 
+// MARK: - AssetClientMessageDataType
+
 @objc
 public enum AssetClientMessageDataType: UInt {
     case placeholder = 1
@@ -295,12 +299,16 @@ public enum AssetClientMessageDataType: UInt {
     case thumbnail = 3
 }
 
+// MARK: - AssetDownloadState
+
 @objc
 public enum AssetDownloadState: Int16 {
     case remote = 0
     case downloaded
     case downloading
 }
+
+// MARK: - AssetTransferState
 
 @objc
 public enum AssetTransferState: Int16 {
@@ -310,12 +318,16 @@ public enum AssetTransferState: Int16 {
     case uploadingCancelled
 }
 
+// MARK: - AssetProcessingState
+
 @objc
 public enum AssetProcessingState: Int16 {
     case done = 0
     case preprocessing
     case uploading
 }
+
+// MARK: - CacheAsset
 
 struct CacheAsset: AssetType {
     enum AssetType {
@@ -529,6 +541,8 @@ struct CacheAsset: AssetType {
     }
 }
 
+// MARK: - ZMAssetClientMessage + AssetMessage
+
 extension ZMAssetClientMessage: AssetMessage {
     public var assets: [AssetType] {
         guard let cache = managedObjectContext?.zm_fileAssetCache else {
@@ -573,6 +587,8 @@ extension ZMAssetClientMessage: AssetMessage {
     }
 }
 
+// MARK: - AssetMessage
+
 /// Exposes all the assets which are contained within a message
 public protocol AssetMessage {
     /// List of assets which the message contains.
@@ -583,6 +599,8 @@ public protocol AssetMessage {
     /// Summary of the processing state for the assets
     var processingState: AssetProcessingState { get }
 }
+
+// MARK: - AssetType
 
 /// Represent a single asset like file, thumbnail, image and image preview.
 /// rename to AssetType to prevent build error due to name conflict with Proto.Asset struct

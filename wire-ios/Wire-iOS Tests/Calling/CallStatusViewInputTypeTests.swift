@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import Wire
 
+// MARK: - MockCallStatusViewInputType
+
 struct MockCallStatusViewInputType: CallStatusViewInputType {
     var state: CallStatusViewState
     var isConstantBitRate: Bool
@@ -43,6 +45,8 @@ extension MockCallStatusViewInputType {
         )
     }
 }
+
+// MARK: - CallStatusViewInputTypeTests
 
 class CallStatusViewInputTypeTests: XCTestCase {
     func testShouldShowBitRateLabel() {

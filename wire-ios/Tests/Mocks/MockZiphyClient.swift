@@ -19,7 +19,11 @@
 import Foundation
 import Ziphy
 
+// MARK: - MockDataTask + ZiphyRequestIdentifier
+
 extension MockDataTask: ZiphyRequestIdentifier {}
+
+// MARK: - MockURLSession + ZiphyURLRequester
 
 extension MockURLSession: ZiphyURLRequester {
     func performZiphyRequest(

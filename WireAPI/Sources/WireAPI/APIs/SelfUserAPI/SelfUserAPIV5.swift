@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - SelfUserAPIV5
+
 class SelfUserAPIV5: SelfUserAPIV4 {
     override var apiVersion: APIVersion {
         .v5
@@ -41,6 +43,8 @@ class SelfUserAPIV5: SelfUserAPIV4 {
             .parse(response)
     }
 }
+
+// MARK: - SupportedProtocolsPayloadV5
 
 struct SupportedProtocolsPayloadV5: Encodable {
     let supportedProtocols: Set<MessageProtocol>

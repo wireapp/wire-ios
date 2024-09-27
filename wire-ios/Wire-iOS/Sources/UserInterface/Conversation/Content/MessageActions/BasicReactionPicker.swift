@@ -22,10 +22,14 @@ import WireDataModel
 import WireDesign
 import WireFoundation
 
+// MARK: - ReactionPickerDelegate
+
 protocol ReactionPickerDelegate: AnyObject {
     func didPickReaction(reaction: Emoji)
     func didTapMoreEmojis()
 }
+
+// MARK: - BasicReactionPicker
 
 final class BasicReactionPicker: UIView {
     private let titleLabel = DynamicFontLabel(

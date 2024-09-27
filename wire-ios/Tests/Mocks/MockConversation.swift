@@ -20,6 +20,8 @@ import Foundation
 import WireRequestStrategy
 @testable import Wire
 
+// MARK: - SwiftMockConversation
+
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: rename to MockConversation after objc MockConversation is retired
 class SwiftMockConversation: NSObject, Conversation {
@@ -81,6 +83,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var ciphersuite: WireDataModel.MLSCipherSuite? = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 }
 
+// MARK: - MockGroupDetailsConversation
+
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
     var userDefinedName: String?
 
@@ -96,6 +100,8 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
 
     var mlsVerificationStatus: MLSVerificationStatus?
 }
+
+// MARK: - MockInputBarConversationType
 
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {
     var typingUsers: [UserType] = []

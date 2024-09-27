@@ -20,9 +20,13 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - AccountSelectorViewDelegate
+
 protocol AccountSelectorViewDelegate: AnyObject {
     func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account)
 }
+
+// MARK: - AccountSelectorView
 
 final class AccountSelectorView: UIView {
     weak var delegate: AccountSelectorViewDelegate?

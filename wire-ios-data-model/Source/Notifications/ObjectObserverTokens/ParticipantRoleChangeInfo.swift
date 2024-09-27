@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// MARK: - ParticipantRole + ObjectInSnapshot
+
 extension ParticipantRole: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
         [
@@ -30,6 +32,8 @@ extension ParticipantRole: ObjectInSnapshot {
         .ParticipantRoleChange
     }
 }
+
+// MARK: - ParticipantRoleChangeInfo
 
 @objcMembers
 public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
@@ -87,6 +91,8 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
         }
     }
 }
+
+// MARK: - ParticipantRoleObserver
 
 @objc
 public protocol ParticipantRoleObserver: NSObjectProtocol {

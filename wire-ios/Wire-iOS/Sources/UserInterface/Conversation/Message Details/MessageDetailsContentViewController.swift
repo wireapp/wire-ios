@@ -29,6 +29,8 @@ struct MessageDetailsSectionDescription {
     var items: [MessageDetailsCellDescription]
 }
 
+// MARK: - MessageDetailsContentViewController
+
 /// Displays the list of users for a specified message detail content type.
 
 final class MessageDetailsContentViewController: UIViewController {
@@ -282,7 +284,7 @@ final class MessageDetailsContentViewController: UIViewController {
     }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 
 extension MessageDetailsContentViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -386,7 +388,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
     }
 }
 
-// MARK: - ViewControllerDismisser
+// MARK: ViewControllerDismisser
 
 extension MessageDetailsContentViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
@@ -394,7 +396,7 @@ extension MessageDetailsContentViewController: ViewControllerDismisser {
     }
 }
 
-// MARK: - ProfileViewControllerDelegate
+// MARK: ProfileViewControllerDelegate
 
 extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
     func profileViewController(

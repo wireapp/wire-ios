@@ -22,6 +22,8 @@ import XCTest
 
 typealias ProfileImageSize = WireSyncEngine.ProfileImageSize
 
+// MARK: - MockImageUpdateStatus
+
 class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol {
     var allSizes: [ProfileImageSize] { [.preview, .complete] }
 
@@ -57,6 +59,8 @@ class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol
         uploadFailedWithError = error
     }
 }
+
+// MARK: - UserImageAssetUpdateStrategyTests
 
 class UserImageAssetUpdateStrategyTests: MessagingTest {
     var sut: WireSyncEngine.UserImageAssetUpdateStrategy!

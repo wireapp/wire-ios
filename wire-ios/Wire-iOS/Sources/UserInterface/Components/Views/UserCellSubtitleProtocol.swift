@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - UserCellSubtitleProtocol
+
 protocol UserCellSubtitleProtocol: AnyObject {
     func subtitle(forRegularUser user: UserType?) -> NSAttributedString?
 

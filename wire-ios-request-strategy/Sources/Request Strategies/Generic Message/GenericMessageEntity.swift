@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - GenericMessageEntity
+
 @objcMembers
 public class GenericMessageEntity: NSObject, ProteusMessage {
     public enum Recipients {
@@ -86,6 +88,8 @@ public class GenericMessageEntity: NSObject, ProteusMessage {
 public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
     lhs === rhs
 }
+
+// MARK: EncryptedPayloadGenerator
 
 extension GenericMessageEntity: EncryptedPayloadGenerator {
     public func encryptForTransport() async -> EncryptedPayloadGenerator.Payload? {

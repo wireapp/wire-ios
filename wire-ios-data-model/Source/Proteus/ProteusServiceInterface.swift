@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ProteusServiceInterface
+
 // swiftlint:disable orphaned_doc_comment
 
 /// A type that provides support for messaging via the Proteus

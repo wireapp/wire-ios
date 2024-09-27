@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ZiphyImageType
+
 /// The types of image provided by the Giphy API.
 
 public enum ZiphyImageType: String, CodingKey {

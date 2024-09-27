@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - PushToken
+
 public struct PushToken: Equatable {
     // MARK: - Types
 
@@ -61,7 +63,7 @@ public struct PushToken: Equatable {
     }
 }
 
-// MARK: - Codable
+// MARK: Codable
 
 extension PushToken: Codable {
     public init(from decoder: Decoder) throws {

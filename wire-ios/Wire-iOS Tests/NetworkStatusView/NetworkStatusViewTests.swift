@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - NetworkStatusViewTests
+
 final class NetworkStatusViewTests: XCTestCase {
     private var sut: NetworkStatusView!
     private var mockContainer: MockNetworkStatusViewDelegate!

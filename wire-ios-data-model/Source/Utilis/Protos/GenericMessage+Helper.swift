@@ -527,6 +527,8 @@ extension WireProtos.Reaction {
     }
 }
 
+// MARK: - ProtosReactionFactory
+
 public enum ProtosReactionFactory {
     public static func createReaction(
         emojis: Set<String>,

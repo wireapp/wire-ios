@@ -21,6 +21,8 @@ import LocalAuthentication
 import WireDataModelSupport
 @testable import WireSyncEngine
 
+// MARK: - MockUserSessionDelegate
+
 final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
     var prepareForMigration_Invocations = [Account]()
     func prepareForMigration(
@@ -45,6 +47,8 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 
     func authenticationInvalidated(_ error: NSError, accountId: UUID) {}
 }
+
+// MARK: - ZMUserSessionTests_EncryptionAtRest
 
 final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     private var activityManager: MockBackgroundActivityManager!

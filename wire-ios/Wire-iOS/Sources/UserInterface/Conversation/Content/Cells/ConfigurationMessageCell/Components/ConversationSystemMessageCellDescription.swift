@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - ConversationSystemMessageCellDescription
+
 enum ConversationSystemMessageCellDescription {
     static func cells(
         for message: ZMConversationMessage,

@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ProfileFooterViewDelegate
+
 protocol ProfileFooterViewDelegate: AnyObject {
     /// Called when the footer wants to perform a single action, from the left button.
     func footerView(_ footerView: ProfileFooterView, shouldPerformAction action: ProfileAction)
@@ -25,6 +27,8 @@ protocol ProfileFooterViewDelegate: AnyObject {
     /// Called when the footer wants to present the list of actions, from the right button.
     func footerView(_ footerView: ProfileFooterView, shouldPresentMenuWithActions actions: [ProfileAction])
 }
+
+// MARK: - ProfileFooterView
 
 /// The footer of to use in the profile details screen.
 

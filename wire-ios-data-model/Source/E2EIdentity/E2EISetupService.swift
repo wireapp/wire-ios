@@ -19,6 +19,8 @@
 import Foundation
 import WireCoreCrypto
 
+// MARK: - E2EISetupServiceInterface
+
 public protocol E2EISetupServiceInterface {
     func isTrustAnchorRegistered()  async throws -> Bool
 
@@ -45,6 +47,8 @@ public protocol E2EISetupServiceInterface {
         expirySec: UInt32?
     ) async throws -> E2eiEnrollment
 }
+
+// MARK: - E2EISetupService
 
 /// This class setups e2eIdentity object from CoreCrypto.
 public final class E2EISetupService: E2EISetupServiceInterface {

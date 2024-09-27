@@ -19,6 +19,8 @@
 import WireTesting
 import XCTest
 
+// MARK: - MockSearchDelegate
+
 private class MockSearchDelegate: TextSearchQueryDelegate {
     var results = [TextQueryResult]()
 
@@ -26,6 +28,8 @@ private class MockSearchDelegate: TextSearchQueryDelegate {
         results.append(result)
     }
 }
+
+// MARK: - TextSearchTests
 
 class TextSearchTests: ConversationTestsBase {
     func testThatItFindsAMessageSendRemotely() {

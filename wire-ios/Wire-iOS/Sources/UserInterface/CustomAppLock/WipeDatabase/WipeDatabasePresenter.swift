@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - WipeDatabasePresenter
+
 final class WipeDatabasePresenter {
     weak var userInterface: WipeDatabaseUserInterface?
     var interactorInput: WipeDatabaseInteractorInput?
@@ -40,6 +42,6 @@ final class WipeDatabasePresenter {
     }
 }
 
-// MARK: - InteractorOutput
+// MARK: WipeDatabaseInteractorOutput
 
 extension WipeDatabasePresenter: WipeDatabaseInteractorOutput {}

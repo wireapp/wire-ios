@@ -20,6 +20,8 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// MARK: - ConnectionsRepositoryProtocol
+
 /// Facilitate access to connections related domain objects.
 ///
 /// A repository provides an abstraction for the access and storage
@@ -30,6 +32,8 @@ protocol ConnectionsRepositoryProtocol {
 
     func pullConnections() async throws
 }
+
+// MARK: - ConnectionsRepository
 
 struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     private let connectionsAPI: any ConnectionsAPI

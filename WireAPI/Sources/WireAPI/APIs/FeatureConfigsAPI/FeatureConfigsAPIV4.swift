@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - FeatureConfigsAPIV4
+
 class FeatureConfigsAPIV4: FeatureConfigsAPIV3 {
     override var apiVersion: APIVersion {
         .v4
@@ -39,6 +41,8 @@ class FeatureConfigsAPIV4: FeatureConfigsAPIV3 {
             .parse(response)
     }
 }
+
+// MARK: - FeatureConfigsResponseAPIV4
 
 struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>

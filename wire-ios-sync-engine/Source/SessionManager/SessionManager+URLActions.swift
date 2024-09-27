@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - URLActionProcessor
+
 /// URLActionProcessor has the capabillity of processing a URLAction
 
 protocol URLActionProcessor {

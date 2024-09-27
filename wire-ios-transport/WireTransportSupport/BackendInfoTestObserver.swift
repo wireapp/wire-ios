@@ -33,6 +33,8 @@ public func makeBackendInfoTestObserver(
     )
 }
 
+// MARK: - BackendInfoTestObserver
+
 final class BackendInfoTestObserver: NSObject, XCTestObservation {
     private let suiteName = UUID().uuidString
     private let defaults: UserDefaults

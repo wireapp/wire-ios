@@ -19,7 +19,7 @@
 import Foundation
 import WireUtilities
 
-// MARK: - Observer
+// MARK: - UserProfileUpdateObserver
 
 @objc
 public protocol UserProfileUpdateObserver: NSObjectProtocol {
@@ -62,7 +62,7 @@ public protocol UserProfileUpdateObserver: NSObjectProtocol {
     optional func didFindHandleSuggestion(handle: String)
 }
 
-// MARK: - Notification
+// MARK: - UserProfileUpdateNotificationType
 
 enum UserProfileUpdateNotificationType {
     case passwordUpdateDidFail
@@ -75,6 +75,8 @@ enum UserProfileUpdateNotificationType {
     case didFailToSetHandle
     case didFindHandleSuggestion(handle: String)
 }
+
+// MARK: - UserProfileUpdateNotification
 
 struct UserProfileUpdateNotification: SelfPostingNotification {
     static let notificationName = NSNotification.Name(rawValue: "UserProfileUpdateNotification")

@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - AppLockModule
+
 /// This module is responsible for displaying the app lock and requesting
 /// authentication from the user.
 
@@ -73,29 +75,31 @@ extension AppLockModule {
     }
 }
 
-// MARK: - Interactor
+// MARK: - AppLockInteractorPresenterInterface
 
 protocol AppLockInteractorPresenterInterface: InteractorPresenterInterface {
     func executeRequest(_ request: AppLockModule.Request)
 }
 
-// MARK: - Presenter
+// MARK: - AppLockPresenterInteractorInterface
 
 protocol AppLockPresenterInteractorInterface: PresenterInteractorInterface {
     func handleResult(_ result: AppLockModule.Result)
 }
 
+// MARK: - AppLockPresenterViewInterface
+
 protocol AppLockPresenterViewInterface: PresenterViewInterface {
     func processEvent(_ event: AppLockModule.Event)
 }
 
-// MARK: - View
+// MARK: - AppLockViewPresenterInterface
 
 protocol AppLockViewPresenterInterface: ViewPresenterInterface {
     func refresh(withModel model: AppLockModule.ViewModel)
 }
 
-// MARK: - Router
+// MARK: - AppLockRouterPresenterInterface
 
 protocol AppLockRouterPresenterInterface: RouterPresenterInterface {
     func performAction(_ action: AppLockModule.Action)

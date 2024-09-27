@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - TestCharacterInputFieldDelegate
+
 final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelegate {
     var shouldAccept = true
     func shouldAcceptChanges(_: CharacterInputField) -> Bool {
@@ -35,6 +37,8 @@ final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelega
         didFillInput += 1
     }
 }
+
+// MARK: - CharacterInputFieldTests
 
 final class CharacterInputFieldTests: XCTestCase {
     private var sut: CharacterInputField! = nil

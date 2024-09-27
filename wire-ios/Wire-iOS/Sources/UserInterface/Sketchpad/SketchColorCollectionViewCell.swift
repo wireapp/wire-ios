@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-// MARK: - SketchColors Enum
+// MARK: - SketchColors
 
 enum SketchColors: CaseIterable {
     typealias SketchColorValues = SemanticColors.DrawingColors

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConversationAction
+
 enum ConversationAction {
     case addConversationMember
     case removeConversationMember

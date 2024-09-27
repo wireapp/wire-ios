@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - BaseMessageRestrictionView
+
 class BaseMessageRestrictionView: UIView {
     // MARK: - Properties
 
@@ -97,6 +99,8 @@ class BaseMessageRestrictionView: UIView {
         bottomLabel.attributedText = subtitleString
     }
 }
+
+// MARK: - RestrictedMessageType
 
 enum RestrictedMessageType: String {
     case audio

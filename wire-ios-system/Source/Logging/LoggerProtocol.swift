@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - LoggerProtocol
+
 public protocol LoggerProtocol {
     func debug(_ message: any LogConvertible, attributes: LogAttributes...)
     func info(_ message: any LogConvertible, attributes: LogAttributes...)

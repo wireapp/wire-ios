@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - CreateTeamOneOnOneConversationUseCaseProtocol
+
 protocol CreateTeamOneOnOneConversationUseCaseProtocol {
     func invoke(
         with user: ZMUser,
         syncContext: NSManagedObjectContext
     ) async throws -> NSManagedObjectID
 }
+
+// MARK: - CreateTeamOneOnOneConversationError
 
 public enum CreateTeamOneOnOneConversationError: Error {
     case userDoesNotExist
@@ -35,6 +39,8 @@ public enum CreateTeamOneOnOneConversationError: Error {
     case noCommonProtocols
     case conversationNotFound
 }
+
+// MARK: - CreateTeamOneOnOneConversationUseCase
 
 /// Creates the team one on one conversation with a particular user, depending
 /// on the currently supported protocols of the self and other users.

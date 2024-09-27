@@ -40,6 +40,8 @@ public let ZMUserClientNeedsToNotifyOtherUserAboutSessionResetKey = "needsToNoti
 
 private let zmLog = ZMSLog(tag: "UserClient")
 
+// MARK: - UserClient
+
 @objcMembers
 public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var type: DeviceType
@@ -733,6 +735,8 @@ extension UserClient {
         }
     }
 }
+
+// MARK: - SecurityChangeType
 
 enum SecurityChangeType {
     case clientTrusted // a client was trusted by the user on this device

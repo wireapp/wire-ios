@@ -20,6 +20,8 @@ import WireTesting
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - MockKeyPathObjectSyncTranscoder
+
 class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {
     typealias T = MockEntity
 
@@ -41,6 +43,8 @@ class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {
         completionBlock = nil
     }
 }
+
+// MARK: - KeyPathObjectSyncTests
 
 class KeyPathObjectSyncTests: ZMTBaseTest {
     var moc: NSManagedObjectContext!

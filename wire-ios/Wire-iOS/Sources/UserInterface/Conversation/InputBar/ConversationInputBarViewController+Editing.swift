@@ -74,6 +74,8 @@ extension ConversationInputBarViewController {
     }
 }
 
+// MARK: - ConversationInputBarViewController + InputBarEditViewDelegate
+
 extension ConversationInputBarViewController: InputBarEditViewDelegate {
     func inputBarEditView(_ editView: InputBarEditView, didTapButtonWithType buttonType: EditButtonType) {
         switch buttonType {

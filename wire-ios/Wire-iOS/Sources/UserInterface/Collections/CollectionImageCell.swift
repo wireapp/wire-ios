@@ -24,6 +24,8 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// MARK: - CollectionImageCell
+
 final class CollectionImageCell: CollectionCell {
     static let maxCellSize: CGFloat = 100
 

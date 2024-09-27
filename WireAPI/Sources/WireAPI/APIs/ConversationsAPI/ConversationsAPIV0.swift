@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConversationsAPIV0
+
 class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     // MARK: - Constants
 
@@ -92,7 +94,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 }
 
-// MARK: Encodables
+// MARK: - GetConversationsParametersV0
 
 struct GetConversationsParametersV0: Encodable {
     enum CodingKeys: String, CodingKey {
@@ -102,7 +104,7 @@ struct GetConversationsParametersV0: Encodable {
     let qualifiedIdentifiers: [QualifiedID]
 }
 
-// MARK: - Decodables
+// MARK: - PaginatedConversationIDsV0
 
 private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
@@ -124,7 +126,7 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
     }
 }
 
-// MARK: -
+// MARK: - QualifiedConversationListV0
 
 struct QualifiedConversationListV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
@@ -146,7 +148,7 @@ struct QualifiedConversationListV0: Decodable, ToAPIModelConvertible {
     }
 }
 
-// MARK: -
+// MARK: - ConversationV0
 
 struct ConversationV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {

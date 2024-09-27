@@ -19,6 +19,8 @@
 import WireTesting
 @testable import WireDataModel
 
+// MARK: - MemberTests
+
 class MemberTests: ZMConversationTestsBase {
     func testThatItStoresThePermissionsOfAMember() {
         // given

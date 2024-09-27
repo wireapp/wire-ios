@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - Label + ObjectInSnapshot
+
 extension Label: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
         [
@@ -29,6 +31,8 @@ extension Label: ObjectInSnapshot {
         .LabelChange
     }
 }
+
+// MARK: - LabelChangeInfo
 
 @objcMembers
 public class LabelChangeInfo: ObjectChangeInfo {
@@ -55,6 +59,8 @@ public class LabelChangeInfo: ObjectChangeInfo {
         changedKeys.contains(#keyPath(Label.conversations))
     }
 }
+
+// MARK: - LabelObserver
 
 @objc
 public protocol LabelObserver: NSObjectProtocol {

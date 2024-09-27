@@ -20,6 +20,8 @@ import WireDataModelSupport
 import WireTesting
 @testable import WireRequestStrategy
 
+// MARK: - EventConversation
+
 public enum EventConversation {
     static let add = "conversation.message-add"
     static let addClientMessage = "conversation.client-message-add"
@@ -27,6 +29,8 @@ public enum EventConversation {
     static let addAsset = "conversation.asset-add"
     static let addOTRAsset = "conversation.otr-asset-add"
 }
+
+// MARK: - EventDecoderTest
 
 class EventDecoderTest: MessagingTestBase {
     var sut: EventDecoder!

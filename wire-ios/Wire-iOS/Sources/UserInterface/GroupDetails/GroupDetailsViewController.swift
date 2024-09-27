@@ -20,6 +20,8 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
+// MARK: - GroupDetailsViewController
+
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
     private let mainCoordinator: MainCoordinating
     private let collectionViewController: SectionCollectionViewController
@@ -471,11 +473,15 @@ extension GroupDetailsViewController {
     }
 }
 
+// MARK: ViewControllerDismisser
+
 extension GroupDetailsViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
         navigationController?.popViewController(animated: true, completion: completion)
     }
 }
+
+// MARK: ProfileViewControllerDelegate
 
 extension GroupDetailsViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
@@ -484,6 +490,8 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
         }
     }
 }
+
+// MARK: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate
 
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
     func presentDetails(for user: UserType) {

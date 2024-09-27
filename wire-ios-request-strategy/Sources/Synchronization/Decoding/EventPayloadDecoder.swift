@@ -18,9 +18,13 @@
 
 import Foundation
 
+// MARK: - EventPayloadDecoderError
+
 enum EventPayloadDecoderError: Error {
     case invalidSerializationJSONObject
 }
+
+// MARK: - EventPayloadDecoder
 
 struct EventPayloadDecoder {
     private let decoder: JSONDecoder

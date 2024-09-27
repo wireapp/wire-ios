@@ -21,6 +21,8 @@ import XCTest
 @_spi(AppLockControllerState) @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - AppLockControllerTests
+
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
     var selfUser: ZMUser!
 

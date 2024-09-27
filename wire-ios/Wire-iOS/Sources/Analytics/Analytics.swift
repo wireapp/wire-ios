@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - Analytics
+
 final class Analytics: NSObject {
     var provider: AnalyticsProvider?
 
@@ -97,6 +99,8 @@ final class Analytics: NSObject {
     }
 }
 
+// MARK: AnalyticsType
+
 extension Analytics: AnalyticsType {
     func setPersistedAttributes(_ attributes: [String: NSObject]?, for event: String) {
         // no-op
@@ -120,6 +124,8 @@ extension Analytics: AnalyticsType {
         provider?.tagEvent(event, attributes: attributes)
     }
 }
+
+// MARK: UserObserving
 
 extension Analytics: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {

@@ -19,6 +19,8 @@
 import LocalAuthentication
 import WireSystem
 
+// MARK: - AuthenticationType
+
 enum AuthenticationType: CaseIterable {
     case faceID, touchID, passcode, unavailable
 
@@ -26,6 +28,8 @@ enum AuthenticationType: CaseIterable {
         AuthenticationTypeDetector().current
     }
 }
+
+// MARK: - AuthenticationTypeDetector
 
 struct AuthenticationTypeDetector: AuthenticationTypeProvider {
     var current: AuthenticationType {
@@ -52,6 +56,8 @@ struct AuthenticationTypeDetector: AuthenticationTypeProvider {
         }
     }
 }
+
+// MARK: - AuthenticationTypeProvider
 
 protocol AuthenticationTypeProvider {
     var current: AuthenticationType { get }

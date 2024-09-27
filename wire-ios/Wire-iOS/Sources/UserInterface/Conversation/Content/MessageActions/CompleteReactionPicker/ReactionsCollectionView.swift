@@ -20,6 +20,8 @@ import UIKit
 import WireDesign
 import WireFoundation
 
+// MARK: - ReactionsCollectionView
+
 final class ReactionsCollectionView: UICollectionView {
     private let layout = UICollectionViewFlowLayout()
 

@@ -23,6 +23,8 @@ import WireRequestStrategy
 
 private let pushLog = ZMSLog(tag: "Push")
 
+// MARK: - PushRegistry
+
 protocol PushRegistry {
     var delegate: PKPushRegistryDelegate? { get set }
     var desiredPushTypes: Set<PKPushType>? { get set }
@@ -30,9 +32,11 @@ protocol PushRegistry {
     func pushToken(for type: PKPushType) -> Data?
 }
 
+// MARK: - PKPushRegistry + PushRegistry
+
 extension PKPushRegistry: PushRegistry {}
 
-// MARK: - UNUserNotificationCenterDelegate
+// MARK: - SessionManager + UNUserNotificationCenterDelegate
 
 @objc
 extension SessionManager: UNUserNotificationCenterDelegate {

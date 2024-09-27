@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ObserverType
+
 protocol ObserverType: NSObjectProtocol {
     associatedtype ChangeInfo: ObjectChangeInfo
     var notifications: [ChangeInfo] { get set }
@@ -28,6 +30,8 @@ extension ObserverType {
         notifications = []
     }
 }
+
+// MARK: - MockUserObserver
 
 final class MockUserObserver: UserObserving {
     var notifications = [UserChangeInfo]()
@@ -40,6 +44,8 @@ final class MockUserObserver: UserObserving {
         notifications.append(changeInfo)
     }
 }
+
+// MARK: - MessageObserver
 
 class MessageObserver: NSObject, ZMMessageObserver {
     var token: NSObjectProtocol?
@@ -62,6 +68,8 @@ class MessageObserver: NSObject, ZMMessageObserver {
     }
 }
 
+// MARK: - NewUnreadMessageObserver
+
 class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
     var token: NSObjectProtocol?
     var notifications: [NewUnreadMessagesChangeInfo] = []
@@ -77,6 +85,8 @@ class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
         notifications.append(changeInfo)
     }
 }
+
+// MARK: - ConversationObserver
 
 final class ConversationObserver: NSObject, ZMConversationObserver {
     var token: NSObjectProtocol?
@@ -98,6 +108,8 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
         notifications.append(changeInfo)
     }
 }
+
+// MARK: - ConversationListChangeObserver
 
 @objcMembers
 class ConversationListChangeObserver: NSObject, ZMConversationListObserver {

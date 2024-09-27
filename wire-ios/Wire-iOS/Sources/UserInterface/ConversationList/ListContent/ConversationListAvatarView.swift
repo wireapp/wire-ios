@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - RandomGenerator
+
 /// Source of random values.
 public protocol RandomGenerator {
     func rand<ContentType>() -> ContentType
 }
+
+// MARK: - RandomGeneratorFromData
 
 /// Generates the pseudorandom values from the data given.
 /// @param data the source of random values.
@@ -80,6 +84,8 @@ extension ZMConversation {
     }
 }
 
+// MARK: - Mode
+
 private enum Mode {
     /// 1-2 participants in conversation:
     /// / AA \
@@ -107,6 +113,8 @@ extension Mode {
         }
     }
 }
+
+// MARK: - ConversationListAvatarView
 
 public final class ConversationListAvatarView: UIView {
     public var conversation: ZMConversation? = .none {

@@ -19,6 +19,8 @@
 import CoreData
 import Foundation
 
+// MARK: - MockParticipantRole
+
 @objc
 public final class MockParticipantRole: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversation: MockConversation

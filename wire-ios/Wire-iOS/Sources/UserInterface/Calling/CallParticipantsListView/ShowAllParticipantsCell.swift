@@ -129,7 +129,7 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     }
 }
 
-// MARK: - CallParticipantsListCellConfigurable
+// MARK: CallParticipantsListCellConfigurable
 
 extension ShowAllParticipantsCell: CallParticipantsListCellConfigurable {
     func configure(

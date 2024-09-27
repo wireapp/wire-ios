@@ -34,6 +34,8 @@ extension StartUIViewController {
     }
 }
 
+// MARK: - StartUIViewController + ShareContactsViewControllerDelegate
+
 extension StartUIViewController: ShareContactsViewControllerDelegate {
     func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController) {
         viewController.dismiss(animated: true)

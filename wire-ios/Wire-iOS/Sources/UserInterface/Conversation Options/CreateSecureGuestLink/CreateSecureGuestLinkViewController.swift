@@ -22,6 +22,8 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - CreateSecureGuestLinkViewController
+
 class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate {
     // MARK: - Properties
 
@@ -451,7 +453,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }
 }
 
-// MARK: - ValidatedTextFieldDelegate
+// MARK: ValidatedTextFieldDelegate
 
 extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
     func buttonPressed(_: UIButton) {
@@ -462,7 +464,7 @@ extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
     }
 }
 
-// MARK: - UITextFieldDelegate
+// MARK: UITextFieldDelegate
 
 extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
     @objc

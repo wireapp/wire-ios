@@ -48,12 +48,14 @@ extension ZMConversation {
     }
 }
 
+// MARK: - ZMTypingChangeObserver
+
 @objc
 public protocol ZMTypingChangeObserver: NSObjectProtocol {
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType])
 }
 
-// MARK: - Encryption at rest
+// MARK: - DatabaseEncryptionLockNotification
 
 public struct DatabaseEncryptionLockNotification: SelfPostingNotification {
     static var notificationName = Notification.Name("DatabaseEncryptionLockNotification")

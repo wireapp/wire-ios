@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - UnlockViewController
+
 final class UnlockViewController: UIViewController {
     typealias Callback = (_ passcode: String?) -> Void
 
@@ -218,7 +220,7 @@ extension UnlockViewController {
     }
 }
 
-// MARK: - PasscodeTextFieldDelegate
+// MARK: PasscodeTextFieldDelegate
 
 extension UnlockViewController: PasscodeTextFieldDelegate {
     func textFieldValueChanged(_ value: String?) {

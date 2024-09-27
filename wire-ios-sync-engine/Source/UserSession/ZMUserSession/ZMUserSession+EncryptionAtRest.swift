@@ -20,6 +20,8 @@ import Foundation
 import LocalAuthentication
 import WireDataModel
 
+// MARK: - UserSessionEncryptionAtRestInterface
+
 public protocol UserSessionEncryptionAtRestInterface {
     var encryptMessagesAtRest: Bool { get }
     var isDatabaseLocked: Bool { get }
@@ -29,9 +31,13 @@ public protocol UserSessionEncryptionAtRestInterface {
     func registerDatabaseLockedHandler(_ handler: @escaping (_ isDatabaseLocked: Bool) -> Void) -> Any
 }
 
+// MARK: - UserSessionEncryptionAtRestDelegate
+
 protocol UserSessionEncryptionAtRestDelegate: AnyObject {
     func prepareForMigration(for account: Account, onReady: @escaping (NSManagedObjectContext) throws -> Void)
 }
+
+// MARK: - ZMUserSession + UserSessionEncryptionAtRestInterface
 
 extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// Enable or disable encryption at rest.
@@ -124,6 +130,8 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         }
     }
 }
+
+// MARK: - ZMUserSession + EARServiceDelegate
 
 extension ZMUserSession: EARServiceDelegate {
     public func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) {

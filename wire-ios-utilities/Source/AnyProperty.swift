@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AnyConstantProperty
+
 /// A wrapper that can be used to access a property inside a type-erased box.
 ///
 /// You typically create this wrapper by passing the object of the type you want
@@ -40,6 +42,8 @@ public struct AnyConstantProperty<Value> {
         }
     }
 }
+
+// MARK: - AnyMutableProperty
 
 /// A wrapper that can be used to get and set a property inside a type-erased box.
 ///

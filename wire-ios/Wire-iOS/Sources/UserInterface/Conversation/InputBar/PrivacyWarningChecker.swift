@@ -19,9 +19,13 @@
 import Foundation
 import WireDataModel
 
+// MARK: - PrivacyWarningPresenter
+
 protocol PrivacyWarningPresenter: AnyObject {
     func presentPrivacyWarningAlert(_ notification: Notification)
 }
+
+// MARK: - PrivacyWarningChecker
 
 // Checks if PrivacyWarningAlert needs to be presented before given action
 struct PrivacyWarningChecker {

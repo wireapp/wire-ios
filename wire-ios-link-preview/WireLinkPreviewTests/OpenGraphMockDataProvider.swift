@@ -19,12 +19,16 @@
 import Foundation
 @testable import WireLinkPreview
 
+// MARK: - OpenGraphMockData
+
 struct OpenGraphMockData {
     let head: String
     let expected: OpenGraphData?
     let urlString: String
     let urlVersion: String?
 }
+
+// MARK: - OpenGraphMockDataProvider
 
 final class OpenGraphMockDataProvider: NSObject {
     static func twitterData() -> OpenGraphMockData {

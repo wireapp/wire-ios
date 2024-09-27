@@ -88,6 +88,8 @@ extension ZMClientMessage {
     }
 }
 
+// MARK: - TextQueryResult
+
 /// The result object passed to the `TextSearchQueryDelegate`
 /// when performing a search using `TextSearchQuery`.
 public class TextQueryResult: NSObject {
@@ -106,6 +108,8 @@ public class TextQueryResult: NSObject {
     }
 }
 
+// MARK: - TextSearchQueryFetchConfiguration
+
 /// Configuration to initialize a `TextSearchQuery`.
 /// Specifies the fetch batch sizes for the indexed and not-indexed fetches.
 public struct TextSearchQueryFetchConfiguration {
@@ -117,11 +121,15 @@ public struct TextSearchQueryFetchConfiguration {
     }
 }
 
+// MARK: - TextSearchQueryDelegate
+
 public protocol TextSearchQueryDelegate: AnyObject {
     func textSearchQueryDidReceive(result: TextQueryResult)
 }
 
 private let zmLog = ZMSLog(tag: "text search")
+
+// MARK: - TextSearchQuery
 
 /// This class should be used to perform a text search for messages in a conversation.
 /// Each instance can only be used to perform a search once. A running instance can be cancelled.

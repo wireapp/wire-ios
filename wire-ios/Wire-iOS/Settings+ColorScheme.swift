@@ -19,6 +19,8 @@
 import UIKit
 import WireSystem
 
+// MARK: - SettingsColorScheme
+
 enum SettingsColorScheme: Int, CaseIterable {
     case light = 0
     case dark = 1

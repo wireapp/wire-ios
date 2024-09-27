@@ -22,12 +22,16 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ConversationCreationControllerDelegate
+
 protocol ConversationCreationControllerDelegate: AnyObject {
     func conversationCreationController(
         _ controller: ConversationCreationController,
         didCreateConversation conversation: ZMConversation
     )
 }
+
+// MARK: - ConversationCreationController
 
 final class ConversationCreationController: UIViewController {
     // MARK: - Properties
@@ -277,7 +281,7 @@ final class ConversationCreationController: UIViewController {
     }
 }
 
-// MARK: - AddParticipantsConversationCreationDelegate
+// MARK: AddParticipantsConversationCreationDelegate
 
 extension ConversationCreationController: AddParticipantsConversationCreationDelegate {
     func addParticipantsViewController(
@@ -413,7 +417,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
     }
 }
 
-// MARK: - SimpleTextFieldDelegate
+// MARK: SimpleTextFieldDelegate
 
 extension ConversationCreationController: SimpleTextFieldDelegate {
     func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {

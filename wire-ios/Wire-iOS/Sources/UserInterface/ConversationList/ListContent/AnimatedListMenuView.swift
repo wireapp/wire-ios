@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - MenuDotView
+
 private final class MenuDotView: UIView {
     init() {
         super.init(frame: .zero)
@@ -37,6 +39,8 @@ private final class MenuDotView: UIView {
         layer.cornerRadius = bounds.size.width / 2
     }
 }
+
+// MARK: - AnimatedListMenuView
 
 final class AnimatedListMenuView: UIView {
     /// Animation progress. Value from 0 to 1.0

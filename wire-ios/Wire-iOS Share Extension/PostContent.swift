@@ -21,6 +21,8 @@ import UIKit
 import WireCommonComponents
 import WireShareEngine
 
+// MARK: - PostContent
+
 /// Content that is shared on a share extension post attempt
 final class PostContent {
     /// Conversation to post to
@@ -102,6 +104,8 @@ final class PostContent {
         sendController?.cancel(completion: completion)
     }
 }
+
+// MARK: - DegradationStrategy
 
 /// What to do when a conversation that was verified degraded (we discovered a new
 /// non-verified client)

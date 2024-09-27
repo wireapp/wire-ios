@@ -18,6 +18,8 @@
 
 import WireTesting
 
+// MARK: - ZMClientMessageTests_Reaction
+
 class ZMClientMessageTests_Reaction: BaseZMClientMessageTests {}
 
 extension ZMClientMessageTests_Reaction {

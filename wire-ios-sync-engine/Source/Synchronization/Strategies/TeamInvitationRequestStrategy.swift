@@ -44,6 +44,8 @@ extension InviteResult {
     }
 }
 
+// MARK: - TeamInvitationRequestStrategy
+
 public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
     fileprivate weak var teamInvitationStatus: TeamInvitationStatus?
 

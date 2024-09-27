@@ -28,6 +28,8 @@ extension Notification.Name {
     static let MarkdownTextViewDidChangeActiveMarkdown = Notification.Name("MarkdownTextViewDidChangeActiveMarkdown")
 }
 
+// MARK: - MarkdownTextView
+
 final class MarkdownTextView: NextResponderTextView {
     enum ListType {
         case number, bullet
@@ -544,7 +546,7 @@ final class MarkdownTextView: NextResponderTextView {
     }
 }
 
-// MARK: - MarkdownBarViewDelegate
+// MARK: MarkdownBarViewDelegate
 
 extension MarkdownTextView: MarkdownBarViewDelegate {
     func markdownBarView(_ view: MarkdownBarView, didSelectMarkdown markdown: Markdown, with sender: IconButton) {

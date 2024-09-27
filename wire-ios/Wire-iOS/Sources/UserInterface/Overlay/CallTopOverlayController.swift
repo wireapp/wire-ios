@@ -256,7 +256,7 @@ final class CallTopOverlayController: UIViewController {
     }
 }
 
-// MARK: - CallTopOverlayController: WireCallCenterCallStateObserver
+// MARK: WireCallCenterCallStateObserver
 
 extension CallTopOverlayController: WireCallCenterCallStateObserver {
     func callCenterDidChange(
@@ -270,7 +270,7 @@ extension CallTopOverlayController: WireCallCenterCallStateObserver {
     }
 }
 
-// MARK: - CallTopOverlayController: MuteStateObserver
+// MARK: MuteStateObserver
 
 extension CallTopOverlayController: MuteStateObserver {
     func callCenterDidChange(muted: Bool) {

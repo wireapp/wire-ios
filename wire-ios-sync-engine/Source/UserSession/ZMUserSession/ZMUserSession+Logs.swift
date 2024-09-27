@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-// MARK: - Error on context save debugging
+// MARK: - ContextType
 
 public enum ContextType: String {
     case UI

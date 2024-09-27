@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - UITraitEnvironmentTests
+
 final class UITraitEnvironmentTests: XCTestCase {
     var sut: UITraitEnvironment!
     let compactMargins = HorizontalMargins(userInterfaceSizeClass: .compact)
@@ -64,6 +66,8 @@ final class UITraitEnvironmentTests: XCTestCase {
         XCTAssertEqual(margins.right, regularMargins.right)
     }
 }
+
+// MARK: - MockRegularView
 
 final class MockRegularView: NSObject, UITraitEnvironment {
     var traitCollection = UITraitCollection(horizontalSizeClass: .regular)

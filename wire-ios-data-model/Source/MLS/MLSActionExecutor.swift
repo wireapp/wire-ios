@@ -20,6 +20,8 @@ import Combine
 import Foundation
 import WireCoreCrypto
 
+// MARK: - MLSActionExecutorProtocol
+
 public protocol MLSActionExecutorProtocol {
     /// Processes a welcome message.
     ///
@@ -108,6 +110,8 @@ public protocol MLSActionExecutorProtocol {
 
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
 }
+
+// MARK: - MLSActionExecutor
 
 /// An actor responsible for performing commits on MLS groups and decrypting messages in a non-reentrant manner.
 
@@ -423,6 +427,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
 }
+
+// MARK: - MLSActionExecutor.Action + CustomDebugStringConvertible
 
 extension MLSActionExecutor.Action: CustomDebugStringConvertible {
     var debugDescription: String {

@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - UserClientAddEventProcessorProtocol
+
 /// Process user client add events.
 
 protocol UserClientAddEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol UserClientAddEventProcessorProtocol {
 
     func processEvent(_ event: UserClientAddEvent) async throws
 }
+
+// MARK: - UserClientAddEventProcessor
 
 struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
     func processEvent(_: UserClientAddEvent) async throws {

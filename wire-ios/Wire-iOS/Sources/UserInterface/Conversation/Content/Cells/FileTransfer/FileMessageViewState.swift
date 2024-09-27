@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - ProgressViewType
+
 enum ProgressViewType {
     case determ // stands for deterministic
     case infinite
@@ -31,6 +33,8 @@ typealias FileMessageViewViewsState = (
     playButtonIcon: StyleKitIcon?,
     playButtonBackgroundColor: UIColor?
 )
+
+// MARK: - FileMessageViewState
 
 enum FileMessageViewState {
     case unavailable

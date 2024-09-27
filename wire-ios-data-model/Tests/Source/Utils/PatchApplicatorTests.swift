@@ -22,6 +22,8 @@ import simd
 import XCTest
 @testable import WireDataModel
 
+// MARK: - PatchApplicatorTests
+
 class PatchApplicatorTests: ZMBaseManagedObjectTest {
     var patchCountByVersion = [Int: Int]()
     var sut: PatchApplicator<TestPatch>!
@@ -151,6 +153,8 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
         }
     }
 }
+
+// MARK: - TestPatch
 
 struct TestPatch: DataPatchInterface {
     static var allCases = [TestPatch]()

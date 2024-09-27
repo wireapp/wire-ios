@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserCredentials
+
 @objcMembers
 public class UserCredentials: NSObject {
     public var email: String?
@@ -72,6 +74,8 @@ public class UserCredentials: NSObject {
     }
 }
 
+// MARK: - UserPhoneCredentials
+
 @objcMembers
 public class UserPhoneCredentials: UserCredentials {
     @objc(credentialsWithPhoneNumber:verificationCode:)
@@ -80,6 +84,8 @@ public class UserPhoneCredentials: UserCredentials {
         return UserPhoneCredentials(phoneNumber: validatedPhoneNumber, phoneNumberVerificationCode: verificationCode)
     }
 }
+
+// MARK: - UserEmailCredentials
 
 @objcMembers
 public class UserEmailCredentials: UserCredentials {

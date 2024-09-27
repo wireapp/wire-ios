@@ -20,6 +20,8 @@ import UIKit
 import XCTest
 @testable import WireSystem
 
+// MARK: - SupportedOrientationsDelegatingNavigationControllerDelegateTests
+
 final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XCTestCase {
     private var sut: SupportedOrientationsDelegatingNavigationControllerDelegate!
 
@@ -128,5 +130,7 @@ private final class ViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 }
+
+// MARK: - SupportedOrientationsDelegatingNavigationControllerDelegate + Sendable
 
 extension SupportedOrientationsDelegatingNavigationControllerDelegate: Sendable {}

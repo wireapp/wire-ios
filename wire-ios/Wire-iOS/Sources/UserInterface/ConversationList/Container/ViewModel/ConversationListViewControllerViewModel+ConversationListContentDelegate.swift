@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ConversationListViewController.ViewModel + ConversationListContentDelegate
+
 extension ConversationListViewController.ViewModel: ConversationListContentDelegate {
     func conversationList(
         _ controller: ConversationListContentController?,

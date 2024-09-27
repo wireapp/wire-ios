@@ -20,9 +20,13 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - CellConfigurationConfigurable
+
 protocol CellConfigurationConfigurable: Reusable {
     func configure(with configuration: CellConfiguration)
 }
+
+// MARK: - CellConfiguration
 
 enum CellConfiguration {
     typealias Action = (UIView) -> Void

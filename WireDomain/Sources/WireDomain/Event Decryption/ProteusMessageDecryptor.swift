@@ -20,6 +20,8 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// MARK: - ProteusMessageDecryptorProtocol
+
 // sourcery: AutoMockable
 /// Decrypt proteus messages.
 protocol ProteusMessageDecryptorProtocol {
@@ -32,6 +34,8 @@ protocol ProteusMessageDecryptorProtocol {
         from eventData: ConversationProteusMessageAddEvent
     ) async throws -> ConversationProteusMessageAddEvent
 }
+
+// MARK: - ProteusMessageDecryptor
 
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     let proteusService: any ProteusServiceInterface

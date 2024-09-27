@@ -165,7 +165,7 @@ final class ReplyComposingView: UIView {
     }
 }
 
-// MARK: - ReplyComposingView Extension
+// MARK: ZMMessageObserver
 
 extension ReplyComposingView: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ShareFileUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol ShareFileUseCaseProtocol {
     /// Share the debug report with the given conversations
@@ -32,6 +34,8 @@ public protocol ShareFileUseCaseProtocol {
         conversations: [ZMConversation]
     )
 }
+
+// MARK: - ShareFileUseCase
 
 public struct ShareFileUseCase: ShareFileUseCaseProtocol {
     private let contextProvider: ContextProvider

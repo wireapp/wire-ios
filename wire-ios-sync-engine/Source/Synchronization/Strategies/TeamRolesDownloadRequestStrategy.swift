@@ -40,6 +40,8 @@ extension Team {
     }
 }
 
+// MARK: - TeamRolesDownloadRequestStrategy
+
 public final class TeamRolesDownloadRequestStrategy:
     AbstractRequestStrategy,
     ZMContextChangeTrackerSource,

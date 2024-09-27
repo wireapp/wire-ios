@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - KeyPathObjectSyncTranscoder
+
 protocol KeyPathObjectSyncTranscoder: AnyObject {
     associatedtype T: Hashable
 
@@ -36,6 +38,8 @@ protocol KeyPathObjectSyncTranscoder: AnyObject {
     ///   - object: Object which no longer needs be synchronized.
     func cancel(_ object: T)
 }
+
+// MARK: - KeyPathObjectSync
 
 /// KeyPathObjectSync synchronizes objects filtered by a boolean KeyPath which should evaluate to `true` if the object
 /// needs to synced.

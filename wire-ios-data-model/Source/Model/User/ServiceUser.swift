@@ -18,11 +18,15 @@
 
 import Foundation
 
+// MARK: - ServiceUser
+
 @objc
 public protocol ServiceUser: AnyObject, UserType {
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 }
+
+// MARK: - SearchServiceUser
 
 @objc
 public protocol SearchServiceUser: ServiceUser {

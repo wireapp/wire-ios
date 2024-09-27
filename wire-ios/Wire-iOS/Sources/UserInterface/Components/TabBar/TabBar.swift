@@ -19,9 +19,13 @@
 import UIKit
 import WireDesign
 
+// MARK: - TabBarDelegate
+
 protocol TabBarDelegate: AnyObject {
     func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int)
 }
+
+// MARK: - TabBar
 
 final class TabBar: UIView {
     private let stackView = UIStackView()

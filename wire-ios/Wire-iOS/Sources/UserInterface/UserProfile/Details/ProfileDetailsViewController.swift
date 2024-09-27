@@ -21,6 +21,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ProfileDetailsViewController
+
 /// A view controller that displays the details for a user.
 
 final class ProfileDetailsViewController: UIViewController {
@@ -171,7 +173,7 @@ final class ProfileDetailsViewController: UIViewController {
     }
 }
 
-// MARK: - ProfileDetailsContentController
+// MARK: ProfileDetailsContentControllerDelegate
 
 extension ProfileDetailsViewController: ProfileDetailsContentControllerDelegate {
     func profileGroupRoleDidChange(isAdminRole: Bool) {

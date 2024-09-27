@@ -23,6 +23,8 @@ import WireUtilities
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - ClientMessageRequestFactoryTests
+
 class ClientMessageRequestFactoryTests: MessagingTestBase {
     private var apiVersion: APIVersion! {
         didSet {

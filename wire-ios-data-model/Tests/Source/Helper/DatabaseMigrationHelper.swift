@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - Database
+
 enum Database {
     case messaging
     case event
@@ -45,6 +47,8 @@ enum Database {
         }
     }
 }
+
+// MARK: - DatabaseMigrationHelper
 
 struct DatabaseMigrationHelper {
     typealias MigrationAction = (NSManagedObjectContext) throws -> Void
@@ -263,6 +267,8 @@ struct DatabaseMigrationHelper {
         try? FileManager.default.removeItem(at: applicationContainer)
     }
 }
+
+// MARK: - WireDataModelTestsBundle
 
 private final class WireDataModelTestsBundle {
     static let bundle = Bundle(for: WireDataModelTestsBundle.self)

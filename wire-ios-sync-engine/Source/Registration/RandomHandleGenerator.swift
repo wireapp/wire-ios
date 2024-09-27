@@ -22,6 +22,8 @@ private let maximumUserHandleLength = 21
 
 private let minimumUserHandleLength = 2
 
+// MARK: - RandomHandleGenerator
+
 enum RandomHandleGenerator {
     /// Generate somes possible handles for the given display name
     static func generatePossibleHandles(displayName: String, alternativeNames: Int) -> [String] {

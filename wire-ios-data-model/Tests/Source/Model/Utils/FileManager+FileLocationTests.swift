@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - FileManager_CryptoboxTests
+
 class FileManager_CryptoboxTests: XCTestCase {
     func testThatItReturnsTheCryptoboxPath() {
         // given
@@ -52,6 +54,8 @@ class FileManager_CryptoboxTests: XCTestCase {
         try? FileManager.default.removeItem(at: parentURL)
     }
 }
+
+// MARK: - FileManager_CacheTests
 
 class FileManager_CacheTests: XCTestCase {
     func testThatItReturnsTheCachesDirectory_WithAccountId() {

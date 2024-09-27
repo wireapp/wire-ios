@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ColorTheme
+
 // The structure of this type corresponds to the Wire design system.
 
 public enum ColorTheme {

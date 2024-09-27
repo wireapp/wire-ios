@@ -22,9 +22,13 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - UnlockViewControllerDelegate
+
 protocol UnlockViewControllerDelegate: AnyObject {
     func unlockViewControllerDidUnlock()
 }
+
+// MARK: - UnlockViewController
 
 /// UnlockViewController
 ///
@@ -246,7 +250,7 @@ final class UnlockViewController: UIViewController {
     }
 }
 
-// MARK: - ValidatedTextFieldDelegate
+// MARK: ValidatedTextFieldDelegate
 
 extension UnlockViewController: ValidatedTextFieldDelegate {
     func buttonPressed(_: UIButton) {
@@ -256,7 +260,7 @@ extension UnlockViewController: ValidatedTextFieldDelegate {
     }
 }
 
-// MARK: - TextFieldValidationDelegate
+// MARK: TextFieldValidationDelegate
 
 extension UnlockViewController: TextFieldValidationDelegate {
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {
@@ -265,7 +269,7 @@ extension UnlockViewController: TextFieldValidationDelegate {
     }
 }
 
-// MARK: - UITextFieldDelegate
+// MARK: UITextFieldDelegate
 
 extension UnlockViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_: UITextField) -> Bool {

@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - PushTokenService
+
 public final class PushTokenService: PushTokenServiceInterface {
     // MARK: - Properties
 
@@ -97,7 +99,7 @@ public final class PushTokenService: PushTokenServiceInterface {
     }
 }
 
-// MARK: - Interface
+// MARK: - PushTokenServiceInterface
 
 public protocol PushTokenServiceInterface: AnyObject {
     var localToken: PushToken? { get }
@@ -142,7 +144,7 @@ extension PushTokenServiceInterface {
     }
 }
 
-// MARK: - Helpers
+// MARK: - PushToken.TokenType + SafeForLoggingStringConvertible
 
 extension PushToken.TokenType: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

@@ -20,6 +20,8 @@ import WireTesting
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - TestPushDispatcherClient
+
 final class TestPushDispatcherClient: NSObject, PushDispatcherOptionalClient {
     var pushTokens: [PushToken?] = []
     var canHandlePayloads: [[AnyHashable: Any]] = []
@@ -44,6 +46,8 @@ final class TestPushDispatcherClient: NSObject, PushDispatcherOptionalClient {
         receivedPayloads.append(payload)
     }
 }
+
+// MARK: - PushDispatcherTests
 
 public final class PushDispatcherTests: ZMTBaseTest {
     var sut: PushDispatcher!

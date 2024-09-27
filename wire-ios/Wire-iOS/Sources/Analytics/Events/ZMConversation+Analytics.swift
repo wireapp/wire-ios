@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ConversationType
+
 enum ConversationType: Int {
     case oneToOne
     case group

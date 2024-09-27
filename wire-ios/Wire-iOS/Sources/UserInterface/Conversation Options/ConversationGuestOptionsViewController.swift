@@ -22,11 +22,15 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - ConversationGuestLink
+
 enum ConversationGuestLink {
     static let didCreateSecureGuestLinkNotification = Notification.Name(
         "Conversation.didCreateSecureGuestLink"
     )
 }
+
+// MARK: - ConversationGuestOptionsViewController
 
 final class ConversationGuestOptionsViewController: UIViewController,
     UITableViewDelegate,

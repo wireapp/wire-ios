@@ -20,12 +20,16 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - BurstTimestampSenderMessageCellConfiguration
+
 struct BurstTimestampSenderMessageCellConfiguration {
     let date: Date
     let includeDayOfWeek: Bool
     let showUnreadDot: Bool
     let accentColor: UIColor
 }
+
+// MARK: - BurstTimestampSenderMessageCellDescription
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
@@ -63,6 +67,8 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
         self.configuration = configuration
     }
 }
+
+// MARK: - BurstTimestampSenderMessageCell
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     private let timestampView: ConversationCellBurstTimestampView

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MockPermissions
+
 public struct MockPermissions: OptionSet {
     public let rawValue: Int64
 
@@ -58,6 +60,8 @@ public struct MockPermissions: OptionSet {
     ]
     public static let owner: MockPermissions  = [.admin, .getBilling, .setBilling, .deleteTeam]
 }
+
+// MARK: - MockMember
 
 @objc
 public final class MockMember: NSManagedObject, EntityNamedProtocol {

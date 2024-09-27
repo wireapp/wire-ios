@@ -20,15 +20,21 @@ import Foundation
 
 private let userAgent = "Wire LinkPreview Bot"
 
+// MARK: - PreviewDownloaderType
+
 protocol PreviewDownloaderType {
     func requestOpenGraphData(fromURL url: URL, completion: @escaping (OpenGraphData?) -> Void)
     func tearDown()
 }
 
+// MARK: - HeaderKey
+
 enum HeaderKey: String {
     case userAgent = "User-Agent"
     case contentType = "Content-Type"
 }
+
+// MARK: - PreviewDownloader
 
 final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownloaderType {
     typealias DownloadCompletion = (OpenGraphData?) -> Void

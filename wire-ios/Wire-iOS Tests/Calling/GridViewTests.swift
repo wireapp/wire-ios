@@ -20,6 +20,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - OrientableViewMock
+
 class OrientableViewMock: OrientableView {
     func layoutForOrientation() {}
     func layout(
@@ -28,6 +30,8 @@ class OrientableViewMock: OrientableView {
     ) {}
 }
 
+// MARK: - GridViewDelegateMock
+
 class GridViewDelegateMock: GridViewDelegate {
     var page = 0
 
@@ -35,6 +39,8 @@ class GridViewDelegateMock: GridViewDelegate {
         self.page = page
     }
 }
+
+// MARK: - GridViewTests
 
 final class GridViewTests: XCTestCase {
     // MARK: - Properties
@@ -160,6 +166,8 @@ final class GridViewTests: XCTestCase {
         XCTAssertEqual(gridViewDelegateMock.page, 1)
     }
 }
+
+// MARK: UICollectionViewDataSource
 
 extension GridViewTests: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {

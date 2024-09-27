@@ -18,11 +18,15 @@
 
 import Foundation
 
+// MARK: - SSOSettingsError
+
 public enum SSOSettingsError: Error, Equatable {
     case networkFailure
     case malformedData
     case unknown
 }
+
+// MARK: - SSOSettings
 
 public struct SSOSettings: Codable, Equatable {
     public let ssoCode: UUID?

@@ -19,6 +19,8 @@
 import Foundation
 import MobileCoreServices
 
+// MARK: - V2Asset
+
 @objcMembers
 public class V2Asset: NSObject, ZMImageMessageData {
     public var isDownloaded: Bool {
@@ -172,6 +174,8 @@ public class V2Asset: NSObject, ZMImageMessageData {
         return assetClientMessage.preprocessedSize
     }
 }
+
+// MARK: AssetProxyType
 
 extension V2Asset: AssetProxyType {
     private var hasImageData: Bool {

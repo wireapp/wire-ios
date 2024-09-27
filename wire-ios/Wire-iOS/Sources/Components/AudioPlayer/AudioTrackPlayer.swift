@@ -20,6 +20,8 @@ import Foundation
 import MediaPlayer
 import WireSyncEngine
 
+// MARK: - MediaPlayerState
+
 /// These enums represent the state of the current media in the player.
 
 enum MediaPlayerState: Int {
@@ -29,6 +31,8 @@ enum MediaPlayerState: Int {
     case completed
     case error
 }
+
+// MARK: - MediaPlayer
 
 protocol MediaPlayer: AnyObject {
     var title: String? { get }
@@ -41,10 +45,14 @@ protocol MediaPlayer: AnyObject {
 
 typealias AudioTrackCompletionHandler = (_ loaded: Bool, _ error: Error?) -> Void
 
+// MARK: - AudioTrackPlayerDelegate
+
 protocol AudioTrackPlayerDelegate: AnyObject {
     func stateDidChange(_ audioTrackPlayer: AudioTrackPlayer, state: MediaPlayerState?)
     func progressDidChange(_ audioTrackPlayer: AudioTrackPlayer, progress: Double)
 }
+
+// MARK: - AudioTrackPlayer
 
 final class AudioTrackPlayer: NSObject, MediaPlayer {
     private let userSession: UserSession
@@ -352,7 +360,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 }
 
-// MARK: - ZMMessageObserver
+// MARK: ZMMessageObserver
 
 extension AudioTrackPlayer: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {

@@ -22,6 +22,8 @@ import WireShareEngine
 
 private let cellReuseIdentifier = "ConversationCell"
 
+// MARK: - ConversationSelectionViewController
+
 final class ConversationSelectionViewController: UITableViewController {
     private var allConversations: [Conversation]
     private var visibleConversations: [Conversation]
@@ -85,6 +87,8 @@ final class ConversationSelectionViewController: UITableViewController {
         }
     }
 }
+
+// MARK: UISearchResultsUpdating
 
 extension ConversationSelectionViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {

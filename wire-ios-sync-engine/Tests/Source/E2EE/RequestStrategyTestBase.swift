@@ -27,6 +27,8 @@ extension ZMContextChangeTrackerSource {
     }
 }
 
+// MARK: - RequestStrategyTestBase
+
 class RequestStrategyTestBase: MessagingTest {
     func createRemoteClient() -> UserClient {
         var mockUserIdentifier: String!

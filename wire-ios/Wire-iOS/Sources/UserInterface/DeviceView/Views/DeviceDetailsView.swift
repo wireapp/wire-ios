@@ -21,6 +21,8 @@ import SwiftUI
 import WireCommonComponents
 import WireDesign
 
+// MARK: - DeviceDetailsView
+
 struct DeviceDetailsView: View {
     typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 
@@ -137,6 +139,6 @@ struct DeviceDetailsView: View {
     }
 }
 
-// MARK: - DeviceInfoView conformance
+// MARK: DeviceInfoView
 
 extension DeviceDetailsView: DeviceInfoView {}

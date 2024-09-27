@@ -21,6 +21,8 @@ import WireDataModel
 import WireSyncEngine
 import WireSystem
 
+// MARK: - ProfileViewControllerContext
+
 enum ProfileViewControllerContext {
     case search
     case groupConversation
@@ -29,6 +31,8 @@ enum ProfileViewControllerContext {
     /// when opening from a URL scheme, not linked to a specific conversation
     case profileViewer
 }
+
+// MARK: - ProfileViewControllerViewModeling
 
 // sourcery: AutoMockable
 protocol ProfileViewControllerViewModeling {
@@ -62,6 +66,8 @@ protocol ProfileViewControllerViewModeling {
     func setConversationTransitionClosure(_ closure: @escaping (ZMConversation) -> Void)
     func setDelegate(_ delegate: ProfileViewControllerViewModelDelegate)
 }
+
+// MARK: - ProfileViewControllerViewModel
 
 final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewModeling {
     // MARK: - Properties
@@ -315,6 +321,8 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     }
 }
 
+// MARK: UserObserving
+
 extension ProfileViewControllerViewModel: UserObserving {
     // MARK: - User Changes
 
@@ -329,6 +337,8 @@ extension ProfileViewControllerViewModel: UserObserving {
         }
     }
 }
+
+// MARK: - ProfileViewControllerViewModelDelegate
 
 // sourcery: AutoMockable
 protocol ProfileViewControllerViewModelDelegate: AnyObject {

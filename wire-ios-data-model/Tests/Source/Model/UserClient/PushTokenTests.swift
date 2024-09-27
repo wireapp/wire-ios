@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - PushTokenTests
+
 final class PushTokenTests: XCTestCase {
     // MARK: - Set up
 
@@ -132,6 +134,8 @@ final class PushTokenTests: XCTestCase {
         XCTAssertEqual(decodedPushToken, expectedPushToken)
     }
 }
+
+// MARK: - MockOldPushToken
 
 struct MockOldPushToken: Encodable {
     public let deviceToken: Data

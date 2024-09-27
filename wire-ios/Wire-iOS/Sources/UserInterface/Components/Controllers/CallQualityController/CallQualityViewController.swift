@@ -20,14 +20,14 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-// MARK: Call Quality View Controller Delegate
+// MARK: - CallQualityViewControllerDelegate
 
 protocol CallQualityViewControllerDelegate: AnyObject {
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController)
     func callQualityController(_ controller: CallQualityViewController, didSelect score: Int)
 }
 
-// MARK: Call Quality View Controller
+// MARK: - CallQualityViewController
 
 final class CallQualityViewController: UIViewController, UIGestureRecognizerDelegate {
     let questionLabelText: String
@@ -242,7 +242,7 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     }
 }
 
-// MARK: Call Quality View
+// MARK: - CallQualityView
 
 final class CallQualityView: UIStackView {
     let scoreLabel = DynamicFontLabel(
@@ -306,7 +306,7 @@ final class CallQualityView: UIStackView {
     }
 }
 
-// MARK: Quality Score Selector View
+// MARK: - QualityScoreSelectorView
 
 final class QualityScoreSelectorView: UIView {
     private let scoreStackView = UIStackView()
@@ -358,7 +358,7 @@ final class QualityScoreSelectorView: UIView {
     }
 }
 
-// MARK: Call Quality Animator
+// MARK: - CallQualityAnimator
 
 final class CallQualityAnimator: NSObject, UIViewControllerTransitioningDelegate {
     func animationController(

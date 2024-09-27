@@ -20,6 +20,8 @@ extension NSNotification.Name {
     public static let teamDidRequestAsset = Notification.Name("TeamDidRequestAsset")
 }
 
+// MARK: - TeamType
+
 public protocol TeamType: AnyObject {
     var conversations: Set<ZMConversation> { get }
     var name: String? { get }
@@ -31,6 +33,8 @@ public protocol TeamType: AnyObject {
     func requestImage()
     func refreshMetadata()
 }
+
+// MARK: - Team
 
 @objcMembers
 public class Team: ZMManagedObject, TeamType {

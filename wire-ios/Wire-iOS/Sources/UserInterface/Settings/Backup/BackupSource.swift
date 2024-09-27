@@ -19,6 +19,8 @@
 import Foundation
 import class WireSyncEngine.SessionManager
 
+// MARK: - BackupSource
+
 // sourcery: AutoMockable
 protocol BackupSource {
     func backupActiveAccount(
@@ -28,5 +30,7 @@ protocol BackupSource {
 
     func clearPreviousBackups()
 }
+
+// MARK: - SessionManager + BackupSource
 
 extension SessionManager: BackupSource {}

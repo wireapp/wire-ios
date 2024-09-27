@@ -20,7 +20,11 @@ import WireCommonComponents
 import XCTest
 @testable import Wire
 
+// MARK: - MockBackupExcluder
+
 private final class MockBackupExcluder: BackupExcluder {}
+
+// MARK: - BackupExcluderTests
 
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: test protocol instead

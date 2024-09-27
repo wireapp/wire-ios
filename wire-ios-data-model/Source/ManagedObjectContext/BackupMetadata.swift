@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - BackupMetadata
+
 public struct BackupMetadata: Codable {
     public enum Platform: String, Codable {
         case iOS
@@ -57,7 +59,7 @@ public struct BackupMetadata: Codable {
     }
 }
 
-// MARK: - Equatable
+// MARK: Equatable
 
 extension BackupMetadata: Equatable {}
 
@@ -126,17 +128,21 @@ extension BackupMetadata {
     }
 }
 
-// MARK: - Version Helper
+// MARK: - VersionProvider
 
 public protocol VersionProvider {
     var version: String { get }
 }
+
+// MARK: - NSManagedObjectModel + VersionProvider
 
 extension NSManagedObjectModel: VersionProvider {
     public var version: String {
         versionIdentifiers.first as! String
     }
 }
+
+// MARK: - Bundle + VersionProvider
 
 extension Bundle: VersionProvider {
     public var version: String {

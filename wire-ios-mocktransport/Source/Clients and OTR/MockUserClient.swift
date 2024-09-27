@@ -19,6 +19,8 @@
 import CoreData
 import Foundation
 
+// MARK: - MockUserClient
+
 @objc
 public class MockUserClient: NSManagedObject {
     /// User that owns the client

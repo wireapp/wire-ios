@@ -20,6 +20,8 @@ import DifferenceKit
 import Foundation
 import WireSyncEngine
 
+// MARK: - Stream
+
 struct Stream: Equatable {
     let streamId: AVSClient
     let user: UserType?
@@ -27,6 +29,8 @@ struct Stream: Equatable {
     let activeSpeakerState: ActiveSpeakerState
     let isPaused: Bool
 }
+
+// MARK: Differentiable
 
 extension Stream: Differentiable {
     var differenceIdentifier: AVSClient {

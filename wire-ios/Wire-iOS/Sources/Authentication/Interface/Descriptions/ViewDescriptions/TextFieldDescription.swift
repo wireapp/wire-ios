@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - TextFieldDescription
+
 final class TextFieldDescription: NSObject, ValueSubmission {
     let placeholder: String
     let actionDescription: String
@@ -44,6 +46,8 @@ final class TextFieldDescription: NSObject, ValueSubmission {
         }
     }
 }
+
+// MARK: ViewDescriptor
 
 extension TextFieldDescription: ViewDescriptor {
     func create() -> UIView {
@@ -88,6 +92,8 @@ extension TextFieldDescription: ViewDescriptor {
         return textfieldContainer
     }
 }
+
+// MARK: UITextFieldDelegate
 
 extension TextFieldDescription: UITextFieldDelegate {
     @objc
@@ -142,6 +148,8 @@ extension TextFieldDescription: UITextFieldDelegate {
         }
     }
 }
+
+// MARK: TextFieldValidationDelegate
 
 extension TextFieldDescription: TextFieldValidationDelegate {
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {

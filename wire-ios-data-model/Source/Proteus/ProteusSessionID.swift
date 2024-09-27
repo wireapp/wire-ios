@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ProteusSessionID
+
 public struct ProteusSessionID: Hashable, Equatable {
     // MARK: - Properties
 
@@ -63,6 +65,8 @@ public struct ProteusSessionID: Hashable, Equatable {
         lhs.rawValue == rhs.rawValue
     }
 }
+
+// MARK: SafeForLoggingStringConvertible
 
 extension ProteusSessionID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

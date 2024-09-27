@@ -22,6 +22,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
+// MARK: - WireCallCenterV3
+
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
 /// WireCallCenter.
 ///

@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - TeamInvitationRequestStrategyTests
+
 class TeamInvitationRequestStrategyTests: MessagingTest {
     var applicationStatus: MockApplicationStatus!
     var teamInvitationStatus: TeamInvitationStatus!
@@ -165,6 +167,8 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
         syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
     }
 }
+
+// MARK: ZMRequestCancellation, ZMSyncStateDelegate
 
 extension TeamInvitationRequestStrategyTests: ZMRequestCancellation, ZMSyncStateDelegate {
     func didRegisterMLSClient(_: WireDataModel.UserClient) {}

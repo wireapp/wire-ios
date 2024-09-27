@@ -19,6 +19,8 @@
 import CoreData
 import Foundation
 
+// MARK: - MockTeam
+
 @objc
 public final class MockTeam: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversations: Set<MockConversation>?

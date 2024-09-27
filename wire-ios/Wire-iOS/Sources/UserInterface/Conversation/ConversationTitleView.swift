@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - ConversationTitleView
+
 final class ConversationTitleView: TitleView {
     var conversation: GroupDetailsConversationType
     var interactive = true

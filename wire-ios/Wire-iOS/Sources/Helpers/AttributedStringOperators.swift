@@ -124,7 +124,7 @@ extension String {
     }
 }
 
-// MARK: - Line Height
+// MARK: - ParagraphStyleDescriptor
 
 enum ParagraphStyleDescriptor {
     case lineSpacing(CGFloat)
@@ -149,6 +149,8 @@ func && (left: NSAttributedString, right: ParagraphStyleDescriptor) -> NSAttribu
 func && (left: String, right: ParagraphStyleDescriptor) -> NSAttributedString {
     left.attributedString && right
 }
+
+// MARK: - PointOfView
 
 // The point of view is important for the localization grammar. In some languages, for example German, the verb has
 // to adjust depending on the point of view. @c PointOfView containts the meta-information for the localization system
@@ -180,6 +182,8 @@ enum PointOfView: UInt {
         }
     }
 }
+
+// MARK: CustomStringConvertible
 
 extension PointOfView: CustomStringConvertible {
     var description: String {

@@ -20,6 +20,8 @@ import Combine
 import Foundation
 import WireCoreCrypto
 
+// MARK: - E2EIServiceInterface
+
 // sourcery: AutoMockable
 public protocol E2EIServiceInterface {
     func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory
@@ -44,6 +46,8 @@ public protocol E2EIServiceInterface {
 
     var e2eIdentity: E2eiEnrollmentProtocol { get }
 }
+
+// MARK: - E2EIService
 
 /// This class provides an interface for WireE2eIdentityProtocol (CoreCrypto) methods.
 public final class E2EIService: E2EIServiceInterface {

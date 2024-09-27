@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireMockTransport
 
-// MARK: - Teams
+// MARK: - MockTransportSessionTeamTests
 
 class MockTransportSessionTeamTests: MockTransportSessionTests {
     func checkThat(

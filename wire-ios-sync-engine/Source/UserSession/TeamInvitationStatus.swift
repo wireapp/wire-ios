@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - InviteResult
+
 public enum InviteResult {
     case success(email: String)
     case failure(email: String, error: InviteError)
 }
+
+// MARK: - InviteError
 
 public enum InviteError: Int, Error {
     /// There's more invitations sent than available seats
@@ -42,6 +46,8 @@ public enum InviteError: Int, Error {
     case unknown
 }
 
+// MARK: - InviteResult + Equatable
+
 extension InviteResult: Equatable {}
 
 public func == (lhs: InviteResult, rhs: InviteResult) -> Bool {
@@ -59,6 +65,8 @@ public func == (lhs: InviteResult, rhs: InviteResult) -> Bool {
 }
 
 public typealias InviteCompletionHandler = (InviteResult) -> Void
+
+// MARK: - TeamInvitationStatus
 
 public class TeamInvitationStatus: NSObject {
     fileprivate var pendingInvitations: [String: InviteCompletionHandler] = [:]

@@ -22,10 +22,14 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - Indicator
+
 enum Indicator {
     case deleted
     case edited
 }
+
+// MARK: - TeamRoleIndicator
 
 enum TeamRoleIndicator {
     case guest

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - SignatureRequestStrategy
+
 // Sign a PDF document
 public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
     // MARK: - Private Property

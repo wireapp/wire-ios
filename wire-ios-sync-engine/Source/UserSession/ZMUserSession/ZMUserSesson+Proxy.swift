@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ProxiedRequestType
+
 @objc
 public enum ProxiedRequestType: Int {
     case giphy, soundcloud, youTube

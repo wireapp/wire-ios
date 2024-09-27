@@ -21,6 +21,8 @@ import WireUtilitiesSupport
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - LocalNotificationDispatcherTests
+
 final class LocalNotificationDispatcherTests: DatabaseTest {
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
 

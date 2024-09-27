@@ -21,6 +21,8 @@ import UniformTypeIdentifiers
 import WireCommonComponents
 import WireShareEngine
 
+// MARK: - AttachmentType
+
 enum AttachmentType: Int, CaseIterable {
     static func < (lhs: AttachmentType, rhs: AttachmentType) -> Bool {
         lhs.rawValue < rhs.rawValue

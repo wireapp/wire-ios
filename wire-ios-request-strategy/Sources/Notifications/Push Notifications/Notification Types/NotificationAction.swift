@@ -19,6 +19,8 @@
 import Foundation
 import UserNotifications
 
+// MARK: - NotificationActionTextInputMode
+
 /// An object that describes the configuration for text input actions.
 struct NotificationActionTextInputMode {
     /// The format string for the localized title of the action/send button.
@@ -27,6 +29,8 @@ struct NotificationActionTextInputMode {
     /// The format string for the localized placeholder text of the input field.
     let placeholderFormat: String
 }
+
+// MARK: - NotificationAction
 
 /// An object that describes a notification that can be performed by the user for a notification.
 
@@ -95,7 +99,7 @@ extension NotificationAction {
     }
 }
 
-// MARK: - Concrete Actions
+// MARK: - ConversationNotificationAction
 
 public enum ConversationNotificationAction: String, NotificationAction {
     case open = "conversationOpenAction"
@@ -144,6 +148,8 @@ public enum ConversationNotificationAction: String, NotificationAction {
         }
     }
 }
+
+// MARK: - CallNotificationAction
 
 public enum CallNotificationAction: String, NotificationAction {
     case ignore = "ignoreCallAction"

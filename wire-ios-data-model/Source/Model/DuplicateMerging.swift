@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - DuplicateMerging
+
 protocol DuplicateMerging {
     associatedtype T: ZMManagedObject
     static func remoteIdentifierDataKey() -> String?

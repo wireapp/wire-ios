@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - VersionedAPI
+
 protocol VersionedAPI {
     var apiVersion: APIVersion { get }
 }

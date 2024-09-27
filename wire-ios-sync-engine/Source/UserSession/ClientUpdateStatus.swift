@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ClientUpdatePhase
+
 public enum ClientUpdatePhase {
     case done
     case fetchingClients
@@ -27,6 +29,8 @@ public enum ClientUpdatePhase {
 }
 
 let ClientUpdateErrorDomain = "ClientManagement"
+
+// MARK: - ClientUpdateError
 
 @objc
 public enum ClientUpdateError: NSInteger {
@@ -40,6 +44,8 @@ public enum ClientUpdateError: NSInteger {
         NSError(domain: ClientUpdateErrorDomain, code: rawValue, userInfo: nil)
     }
 }
+
+// MARK: - ClientUpdateStatus
 
 @objcMembers
 open class ClientUpdateStatus: NSObject {

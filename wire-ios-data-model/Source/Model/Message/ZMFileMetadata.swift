@@ -23,6 +23,8 @@ import WireUtilities
 
 private let zmLog = ZMSLog(tag: "ZMFileMetadata")
 
+// MARK: - ZMFileMetadata
+
 @objcMembers
 open class ZMFileMetadata: NSObject {
     public let fileURL: URL
@@ -51,6 +53,8 @@ open class ZMFileMetadata: NSObject {
     }
 }
 
+// MARK: - ZMAudioMetadata
+
 open class ZMAudioMetadata: ZMFileMetadata {
     public let duration: TimeInterval
     public let normalizedLoudness: [Float]
@@ -77,6 +81,8 @@ open class ZMAudioMetadata: ZMFileMetadata {
         WireProtos.Asset(self)
     }
 }
+
+// MARK: - ZMVideoMetadata
 
 open class ZMVideoMetadata: ZMFileMetadata {
     public let duration: TimeInterval

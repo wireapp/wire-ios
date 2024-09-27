@@ -20,6 +20,8 @@ import Contacts
 import Foundation
 import libPhoneNumberiOS
 
+// MARK: - AddressBookAccessor
+
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
 /// without a valid email or phone
 protocol AddressBookAccessor {
@@ -144,6 +146,8 @@ extension AddressBookAccessor {
     }
 }
 
+// MARK: - AddressBook
+
 /// Common base class between iOS 8 (AddressBook framework) and iOS 9+ (Contacts framework)
 class AddressBook {
     /// normalizer for phone numbers
@@ -177,7 +181,7 @@ class AddressBook {
     }
 }
 
-// MARK: - Encoded address book chunk
+// MARK: - EncodedAddressBookChunk
 
 struct EncodedAddressBookChunk {
     /// Total number of contacts in the address book
@@ -284,6 +288,8 @@ extension Sequence {
         }
     }
 }
+
+// MARK: - ContactRecord
 
 // Generic contactto abstract actual address book framework details
 protocol ContactRecord {

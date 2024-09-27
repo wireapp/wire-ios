@@ -18,9 +18,13 @@
 
 import Foundation
 
+// MARK: - SubgroupType
+
 public enum SubgroupType: String, Hashable, Equatable, Codable {
     case conference
 }
+
+// MARK: - FetchSubgroupAction
 
 public class FetchSubgroupAction: EntityAction {
     public typealias Result = MLSSubgroup

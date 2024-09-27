@@ -19,9 +19,13 @@
 import UIKit
 import WireDataModel
 
+// MARK: - SearchServicesSectionDelegate
+
 protocol SearchServicesSectionDelegate: SearchSectionControllerDelegate {
     func addServicesSectionDidRequestOpenServicesAdmin()
 }
+
+// MARK: - SearchServicesSectionController
 
 final class SearchServicesSectionController: SearchSectionController {
     weak var delegate: SearchServicesSectionDelegate?

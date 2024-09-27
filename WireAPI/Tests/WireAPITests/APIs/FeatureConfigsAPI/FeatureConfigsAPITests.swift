@@ -20,6 +20,8 @@ import SnapshotTesting
 import XCTest
 @testable import WireAPI
 
+// MARK: - FeatureConfigsAPITests
+
 final class FeatureConfigsAPITests: XCTestCase {
     private var apiSnapshotHelper: APISnapshotHelper<any FeatureConfigsAPI>!
 
@@ -195,6 +197,8 @@ final class FeatureConfigsAPITests: XCTestCase {
         }
     }
 }
+
+// MARK: FeatureConfigsAPITests.Scaffolding
 
 extension FeatureConfigsAPITests {
     enum Scaffolding {

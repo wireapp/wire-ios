@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - SupportedOrientationsDelegatingSplitViewControllerDelegate
+
 /// Implements the delegate method `splitViewControllerSupportedInterfaceOrientations(_: UISplitViewController)`
 /// and returns a value based on the intersection of all column's view controllers' supported interface orientations.
 ///

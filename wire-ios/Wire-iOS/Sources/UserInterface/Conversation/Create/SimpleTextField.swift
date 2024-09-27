@@ -20,12 +20,16 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - SimpleTextFieldDelegate
+
 protocol SimpleTextFieldDelegate: AnyObject {
     func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value)
     func textFieldReturnPressed(_ textField: SimpleTextField)
     func textFieldDidEndEditing(_ textField: SimpleTextField)
     func textFieldDidBeginEditing(_ textField: SimpleTextField)
 }
+
+// MARK: - SimpleTextField
 
 final class SimpleTextField: UITextField, DynamicTypeCapable {
     // MARK: - Properties
@@ -159,7 +163,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     }
 }
 
-// MARK: SimpleTextField Extension
+// MARK: SimpleTextFieldValidatorDelegate
 
 extension SimpleTextField: SimpleTextFieldValidatorDelegate {
     func textFieldValueChanged(_ text: String?) {

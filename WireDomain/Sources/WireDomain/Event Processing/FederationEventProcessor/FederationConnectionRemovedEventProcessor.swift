@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - FederationConnectionRemovedEventProcessorProtocol
+
 /// Process federation connection removed events.
 
 protocol FederationConnectionRemovedEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol FederationConnectionRemovedEventProcessorProtocol {
 
     func processEvent(_ event: FederationConnectionRemovedEvent) async throws
 }
+
+// MARK: - FederationConnectionRemovedEventProcessor
 
 struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEventProcessorProtocol {
     func processEvent(_: FederationConnectionRemovedEvent) async throws {

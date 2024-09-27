@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - TestTeamObserver
+
 class TestTeamObserver: NSObject, TeamObserver {
     var notifications = [TeamChangeInfo]()
 
@@ -30,6 +32,8 @@ class TestTeamObserver: NSObject, TeamObserver {
         notifications.append(changeInfo)
     }
 }
+
+// MARK: - TeamObserverTests
 
 class TeamObserverTests: NotificationDispatcherTestBase {
     var teamObserver: TestTeamObserver!

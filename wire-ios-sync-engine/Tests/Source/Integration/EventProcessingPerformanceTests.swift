@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - EventProcessingPerformanceTests
+
 /// These tests are measuring the performance of processing events of
 /// in different scenarios.
 ///

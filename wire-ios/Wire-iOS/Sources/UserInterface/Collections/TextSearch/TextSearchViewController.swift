@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - TextSearchViewController
+
 final class TextSearchViewController: NSObject {
     let resultsView = TextSearchResultsView()
     let searchBar = TextSearchInputView()
@@ -125,6 +127,8 @@ final class TextSearchViewController: NSObject {
     }
 }
 
+// MARK: TextSearchQueryDelegate
+
 extension TextSearchViewController: TextSearchQueryDelegate {
     func textSearchQueryDidReceive(result: TextQueryResult) {
         guard result.query == textSearchQuery else { return }
@@ -134,6 +138,8 @@ extension TextSearchViewController: TextSearchQueryDelegate {
         }
     }
 }
+
+// MARK: TextSearchInputViewDelegate
 
 extension TextSearchViewController: TextSearchInputViewDelegate {
     func searchView(_ searchView: TextSearchInputView, didChangeQueryTo query: String) {
@@ -154,6 +160,8 @@ extension TextSearchViewController: TextSearchInputViewDelegate {
         TextSearchQuery.isValid(query: searchView.query)
     }
 }
+
+// MARK: UITableViewDelegate, UITableViewDataSource
 
 extension TextSearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

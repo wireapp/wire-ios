@@ -18,6 +18,8 @@
 
 import WireDataModel
 
+// MARK: - ZMClientUpdateNotificationType
+
 @objc
 public enum ZMClientUpdateNotificationType: Int {
     case fetchCompleted
@@ -25,6 +27,8 @@ public enum ZMClientUpdateNotificationType: Int {
     case deletionCompleted
     case deletionFailed
 }
+
+// MARK: - ZMClientUpdateNotification
 
 @objc
 public class ZMClientUpdateNotification: NSObject {

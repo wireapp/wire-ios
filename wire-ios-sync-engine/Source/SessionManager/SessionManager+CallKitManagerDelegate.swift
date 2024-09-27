@@ -20,11 +20,15 @@ import CallKit
 import Foundation
 import WireSystem
 
+// MARK: - ConversationLookupError
+
 enum ConversationLookupError: Error {
     case accountDoesNotExist
     case conversationDoesNotExist
     case failedToProcessCallEvents
 }
+
+// MARK: - SessionManager + CallKitManagerDelegate
 
 extension SessionManager: CallKitManagerDelegate {
     func lookupConversation(

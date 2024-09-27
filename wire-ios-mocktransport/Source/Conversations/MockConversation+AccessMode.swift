@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MockConversationAccessRole
+
 public enum MockConversationAccessRole: String {
     /// Only the team member can join.
     case team
@@ -30,6 +32,8 @@ public enum MockConversationAccessRole: String {
         allowGuests ? .nonActivated : .team
     }
 }
+
+// MARK: - MockConversationAccessRoleV2
 
 public enum MockConversationAccessRoleV2: String {
     /// Users with Wire accounts belonging to the same team owning the conversation.
@@ -54,6 +58,8 @@ public enum MockConversationAccessRoleV2: String {
         }
     }
 }
+
+// MARK: - MockConversationAccessMode
 
 public struct MockConversationAccessMode: OptionSet {
     public let rawValue: Int
@@ -90,6 +96,8 @@ public struct MockConversationAccessMode: OptionSet {
         allowGuests ? .allowGuests : .teamOnly
     }
 }
+
+// MARK: Hashable
 
 extension MockConversationAccessMode: Hashable {
     public func hash(into hasher: inout Hasher) {

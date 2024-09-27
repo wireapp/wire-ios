@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - LabelUpdate
+
 struct LabelUpdate: Codable, Equatable {
     let id: UUID
     let type: Int16
@@ -43,9 +45,13 @@ struct LabelUpdate: Codable, Equatable {
     }
 }
 
+// MARK: - LabelPayload
+
 struct LabelPayload: Codable, Equatable {
     var labels: [LabelUpdate]
 }
+
+// MARK: - LabelDownstreamRequestStrategy
 
 public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventConsumer, ZMSingleRequestTranscoder {
     fileprivate let syncStatus: SyncStatus

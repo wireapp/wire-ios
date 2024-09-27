@@ -22,6 +22,8 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "Analytics")
 
+// MARK: - CountlyInstance
+
 protocol CountlyInstance {
     func recordEvent(_ key: String, segmentation: [String: String]?)
     func start(with config: CountlyConfig)
@@ -29,7 +31,11 @@ protocol CountlyInstance {
     static func sharedInstance() -> Self
 }
 
+// MARK: - Countly + CountlyInstance
+
 extension Countly: CountlyInstance {}
+
+// MARK: - AnalyticsCountlyProvider
 
 final class AnalyticsCountlyProvider: AnalyticsProvider {
     typealias PendingEvent = (event: String, attribtues: [String: Any])
@@ -269,7 +275,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
     private var observerTokens = [Any]()
 }
 
-// MARK: - Application state observing
+// MARK: ApplicationStateObserving
 
 extension AnalyticsCountlyProvider: ApplicationStateObserving {
     func addObserverToken(_ token: NSObjectProtocol) {

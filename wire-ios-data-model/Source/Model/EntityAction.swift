@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - EntityActionHandler
+
 /// An EntityActionHandler is responsible for performing actions requested by an EntityAction.
 ///
 public protocol EntityActionHandler: AnyObject {
@@ -31,6 +33,8 @@ public protocol EntityActionHandler: AnyObject {
     ///
     func performAction(_ action: Action)
 }
+
+// MARK: - EntityAction
 
 /// Represents an action which an entity can request to be performed.
 ///

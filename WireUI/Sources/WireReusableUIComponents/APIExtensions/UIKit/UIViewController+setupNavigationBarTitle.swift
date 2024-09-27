@@ -39,7 +39,7 @@ extension UIViewController {
     }
 }
 
-// MARK: - Previews
+// MARK: - ViewControllerPreview
 
 struct ViewControllerPreview: UIViewControllerRepresentable {
     let title: String

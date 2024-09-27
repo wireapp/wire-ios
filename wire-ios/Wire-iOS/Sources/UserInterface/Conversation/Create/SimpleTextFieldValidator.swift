@@ -19,12 +19,16 @@
 import UIKit
 import WireUtilities
 
+// MARK: - SimpleTextFieldValidatorDelegate
+
 protocol SimpleTextFieldValidatorDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)
     func textFieldValueSubmitted(_ value: String)
     func textFieldDidEndEditing()
     func textFieldDidBeginEditing()
 }
+
+// MARK: - SimpleTextFieldValidator
 
 final class SimpleTextFieldValidator: NSObject {
     weak var delegate: SimpleTextFieldValidatorDelegate?
@@ -62,6 +66,8 @@ final class SimpleTextFieldValidator: NSObject {
     }
 }
 
+// MARK: UITextFieldDelegate
+
 extension SimpleTextFieldValidator: UITextFieldDelegate {
     func textField(
         _ textField: UITextField,
@@ -91,6 +97,8 @@ extension SimpleTextFieldValidator: UITextFieldDelegate {
         delegate?.textFieldDidBeginEditing()
     }
 }
+
+// MARK: - SimpleTextFieldValidator.ValidationError + LocalizedError
 
 extension SimpleTextFieldValidator.ValidationError: LocalizedError {
     var errorDescription: String? {

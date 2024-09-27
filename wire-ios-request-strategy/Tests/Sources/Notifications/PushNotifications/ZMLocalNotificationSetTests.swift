@@ -21,6 +21,8 @@ import WireTesting
 import WireUtilitiesSupport
 @testable import WireRequestStrategy
 
+// MARK: - MockKVStore
+
 public final class MockKVStore: NSObject, ZMSynchonizableKeyValueStore {
     var keysAndValues = [String: Any]()
 
@@ -36,6 +38,8 @@ public final class MockKVStore: NSObject, ZMSynchonizableKeyValueStore {
         // no op
     }
 }
+
+// MARK: - ZMLocalNotificationSetTests
 
 class ZMLocalNotificationSetTests: MessagingTestBase {
     typealias ZMLocalNotification = WireRequestStrategy.ZMLocalNotification

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ExternalCommitError
+
 enum ExternalCommitError: Error, Equatable {
     case failedToSendCommit(recovery: RecoveryStrategy, cause: SendCommitBundleAction.Failure)
     case failedToMergePendingGroup

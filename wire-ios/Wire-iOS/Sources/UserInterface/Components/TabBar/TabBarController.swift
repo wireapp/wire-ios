@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - TabBarControllerDelegate
+
 protocol TabBarControllerDelegate: AnyObject {
     func tabBarController(_ controller: TabBarController, tabBarDidSelectIndex: Int)
 }
@@ -38,6 +40,8 @@ extension UIViewController {
         }
     }
 }
+
+// MARK: - TabBarController
 
 final class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource,
     UIScrollViewDelegate {
@@ -239,6 +243,8 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         tabBar?.setOffsetPercentage(adjustedPercent)
     }
 }
+
+// MARK: TabBarDelegate
 
 extension TabBarController: TabBarDelegate {
     func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int) {

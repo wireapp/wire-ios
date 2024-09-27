@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AnyClassTuple
+
 public struct AnyClassTuple<T: Hashable>: Hashable {
     public let classOfObject: AnyClass
     public let secondElement: T

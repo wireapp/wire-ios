@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - PayloadUpdateConversationProtocolChangeTests
+
 final class PayloadUpdateConversationProtocolChangeTests: XCTestCase {
     func testEventType() throws {
         // given

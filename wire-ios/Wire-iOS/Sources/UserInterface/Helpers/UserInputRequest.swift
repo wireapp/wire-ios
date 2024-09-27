@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - UserInputRequest
+
 /// Represents a request for the user to input text in an alert.
 
 struct UserInputRequest {

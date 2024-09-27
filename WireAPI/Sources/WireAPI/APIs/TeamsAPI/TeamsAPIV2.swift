@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - TeamsAPIV2
+
 class TeamsAPIV2: TeamsAPIV1 {
     override var apiVersion: APIVersion {
         .v2
@@ -41,6 +43,8 @@ class TeamsAPIV2: TeamsAPIV1 {
             .parse(response)
     }
 }
+
+// MARK: - TeamResponseV2
 
 struct TeamResponseV2: Decodable, ToAPIModelConvertible {
     let id: UUID

@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - UserClientTypeAttributedString
+
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: merge to UserClientType or stay in UI project? It is depends on localized string resource
 protocol UserClientTypeAttributedString {

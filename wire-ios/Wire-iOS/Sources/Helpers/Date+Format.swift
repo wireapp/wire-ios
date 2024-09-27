@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - WRDateFormatter
+
 // Creating and configuring date formatters is insanely expensive.
 // This is why there’s a bunch of statically configured ones here that are reused.
 enum WRDateFormatter {

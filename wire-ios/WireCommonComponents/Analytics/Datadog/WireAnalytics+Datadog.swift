@@ -23,6 +23,8 @@ import WireSystem
     import WireDatadog
 #endif
 
+// MARK: - WireAnalytics.Datadog
+
 extension WireAnalytics {
     /// Namespace for Datadog analytics.
     public enum Datadog {
@@ -59,6 +61,8 @@ extension WireAnalytics {
         }
     }
 }
+
+// MARK: - OnceOnlyThreadSafeFunction
 
 /// Wrapper class to execute a function just once, thread safe
 class OnceOnlyThreadSafeFunction {

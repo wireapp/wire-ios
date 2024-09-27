@@ -20,6 +20,8 @@ import Foundation
 
 public typealias ProxyRequestCallback = (Data?, HTTPURLResponse?, NSError?) -> Void
 
+// MARK: - ProxyRequest
+
 @objc(ZMProxyRequest)
 public class ProxyRequest: NSObject {
     @objc public let type: ProxiedRequestType
@@ -40,6 +42,8 @@ public class ProxyRequest: NSObject {
         self.callback = callback
     }
 }
+
+// MARK: - ProxiedRequestsStatus
 
 /// Keeps track of which requests to send to the backend
 @objcMembers

@@ -21,10 +21,14 @@ import SafariServices
 import UIKit
 import WireSyncEngine
 
+// MARK: - CompanyLoginFlowHandlerDelegate
+
 protocol CompanyLoginFlowHandlerDelegate: AnyObject {
     /// Called when the user cancels the company login flow.
     func userDidCancelCompanyLoginFlow()
 }
+
+// MARK: - CompanyLoginFlowHandler
 
 /// Handles opening URLs to validate company login authentication.
 

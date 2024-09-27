@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ConversationServiceInterface
+
 // sourcery: AutoMockable
 public protocol ConversationServiceInterface {
     func createGroupConversation(
@@ -50,6 +52,8 @@ public protocol ConversationServiceInterface {
     ) async
 }
 
+// MARK: - ConversationCreationFailure
+
 public enum ConversationCreationFailure: Error {
     case missingPermissions
     case missingSelfClientID
@@ -58,6 +62,8 @@ public enum ConversationCreationFailure: Error {
     case networkError(CreateGroupConversationAction.Failure)
     case underlyingError(Error)
 }
+
+// MARK: - ConversationService
 
 public final class ConversationService: ConversationServiceInterface {
     // MARK: - Properties
@@ -430,6 +436,8 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 }
+
+// MARK: - MLSAddParticipantLog
 
 struct MLSAddParticipantLog: LogConvertible {
     var users: [ZMUser]

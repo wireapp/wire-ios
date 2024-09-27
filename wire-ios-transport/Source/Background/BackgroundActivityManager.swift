@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - BackgroundActivityManager
+
 /// A protocol for objects that can start and end background activities.
 
 @objc
@@ -47,6 +49,8 @@ extension BackgroundActivityManager {
     }
 }
 
+// MARK: - UIApplication.State + CustomDebugStringConvertible
+
 extension UIApplication.State: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
@@ -61,5 +65,7 @@ extension UIApplication.State: CustomDebugStringConvertible {
         }
     }
 }
+
+// MARK: - UIApplication + BackgroundActivityManager
 
 extension UIApplication: BackgroundActivityManager {}

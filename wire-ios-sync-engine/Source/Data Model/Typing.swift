@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - Typing
+
 class Typing {
     #if DEBUG
         public static var defaultTimeout: TimeInterval = 60
@@ -101,7 +103,7 @@ class Typing {
     }
 }
 
-// MARK: - TimerClient
+// MARK: ZMTimerClient
 
 extension Typing: ZMTimerClient {
     func timerDidFire(_ timer: ZMTimer!) {

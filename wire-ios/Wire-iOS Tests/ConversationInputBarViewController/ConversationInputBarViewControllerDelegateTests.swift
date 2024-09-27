@@ -20,6 +20,8 @@ import WireSyncEngineSupport
 import XCTest
 @testable import Wire
 
+// MARK: - ConversationInputBarViewControllerDelegateTests
+
 final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
     var coreDataFixture: CoreDataFixture!
     private var mockDelegate: MockDelegate!
@@ -72,6 +74,8 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
         XCTAssertEqual(mockDelegate.composedDrafts[0], DraftMessage(text: "Goo", mentions: [], quote: nil))
     }
 }
+
+// MARK: - MockDelegate
 
 private final class MockDelegate: NSObject, ConversationInputBarViewControllerDelegate {
     var composedDrafts = [DraftMessage]()

@@ -19,10 +19,14 @@
 import Foundation
 import struct WireSystem.WireLogger
 
+// MARK: - APIMigration
+
 protocol APIMigration {
     func perform(with session: ZMUserSession, clientID: String) async throws
     var version: APIVersion { get }
 }
+
+// MARK: - APIMigrationManager
 
 final class APIMigrationManager {
     let migrations: [APIMigration]

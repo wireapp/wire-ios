@@ -252,6 +252,8 @@ extension ConversationViewController {
     }
 }
 
+// MARK: - ConversationViewController + CollectionsViewControllerDelegate
+
 extension ConversationViewController: CollectionsViewControllerDelegate {
     func collectionsViewController(
         _ viewController: CollectionsViewController,
@@ -278,6 +280,8 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
         }
     }
 }
+
+// MARK: - ConversationViewController + WireCallCenterCallStateObserver
 
 extension ConversationViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(

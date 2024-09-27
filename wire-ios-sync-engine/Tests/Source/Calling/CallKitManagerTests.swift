@@ -23,6 +23,8 @@ import OCMock
 import WireDataModel
 @testable import WireSyncEngine
 
+// MARK: - MockCallKitProvider
+
 class MockCallKitProvider: CXProvider {
     public var timesSetDelegateCalled = 0
     override func setDelegate(_ delegate: CXProviderDelegate?, queue: DispatchQueue?) {
@@ -68,6 +70,8 @@ class MockCallKitProvider: CXProvider {
     }
 }
 
+// MARK: - MockCallObserver
+
 class MockCallObserver: CXCallObserver {
     public var mockCalls: [CXCall] = []
 
@@ -75,6 +79,8 @@ class MockCallObserver: CXCallObserver {
         mockCalls
     }
 }
+
+// MARK: - MockCallKitCallController
 
 class MockCallKitCallController: CXCallController {
     override public var callObserver: CXCallObserver {
@@ -99,6 +105,8 @@ class MockCallKitCallController: CXCallController {
     }
 }
 
+// MARK: - MockCallAnswerAction
+
 class MockCallAnswerAction: CXAnswerCallAction {
     var isFulfilled = false
     var hasFailed = false
@@ -111,6 +119,8 @@ class MockCallAnswerAction: CXAnswerCallAction {
         hasFailed = true
     }
 }
+
+// MARK: - MockStartCallAction
 
 class MockStartCallAction: CXStartCallAction {
     var isFulfilled = false
@@ -125,6 +135,8 @@ class MockStartCallAction: CXStartCallAction {
     }
 }
 
+// MARK: - MockEndCallAction
+
 class MockEndCallAction: CXEndCallAction {
     var isFulfilled = false
     var hasFailed = false
@@ -137,6 +149,8 @@ class MockEndCallAction: CXEndCallAction {
         hasFailed = true
     }
 }
+
+// MARK: - MockProvider
 
 class MockProvider: CXProvider {
     var connectingCalls: Set<UUID> = Set()
@@ -154,6 +168,8 @@ class MockProvider: CXProvider {
         connectedCalls.insert(UUID)
     }
 }
+
+// MARK: - MockCallKitManagerDelegate
 
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
     var mockConversations: [WireSyncEngine.CallHandle: ZMConversation] = [:]
@@ -184,6 +200,8 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         hasEndedAllCalls = true
     }
 }
+
+// MARK: - CallKitManagerTest
 
 class CallKitManagerTest: DatabaseTest {
     var sut: WireSyncEngine.CallKitManager!

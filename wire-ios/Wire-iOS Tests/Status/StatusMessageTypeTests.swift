@@ -26,6 +26,8 @@ func localizeString(stringToLocalize: String, language: String) -> String? {
     return languageBundle!.localizedString(forKey: stringToLocalize, value: "", table: nil)
 }
 
+// MARK: - StatusMessageTypeTests
+
 final class StatusMessageTypeTests: XCTestCase {
     func testForAllLanguageIsLocalized() {
         // GIVEN

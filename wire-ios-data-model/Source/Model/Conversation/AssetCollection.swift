@@ -19,15 +19,21 @@
 import Foundation
 import WireUtilities
 
+// MARK: - AssetFetchResult
+
 public enum AssetFetchResult: Int {
     case success, failed, noAssetsToFetch
 }
+
+// MARK: - ZMCollection
 
 public protocol ZMCollection: TearDownCapable {
     func tearDown()
     func assets(for category: CategoryMatch) -> [ZMConversationMessage]
     var fetchingDone: Bool { get }
 }
+
+// MARK: - AssetCollectionDelegate
 
 public protocol AssetCollectionDelegate: NSObjectProtocol {
     /// The AssetCollection calls this when the fetching completes
@@ -41,6 +47,8 @@ public protocol AssetCollectionDelegate: NSObjectProtocol {
     /// This method is called when all assets in the conversation have been fetched & analyzed / categorized
     func assetCollectionDidFinishFetching(collection: ZMCollection, result: AssetFetchResult)
 }
+
+// MARK: - AssetCollection
 
 /// This class fetches messages and groups them by `CategoryMatch` (e.g. files, images, videos etc.)
 /// It first fetches all objects that have previously categorized and then performs consecutive request of limited

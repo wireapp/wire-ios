@@ -19,6 +19,8 @@
 import SwiftUI
 import WireUtilities
 
+// MARK: - DeveloperFlagsView
+
 struct DeveloperFlagsView: View {
     // MARK: - Properties
 
@@ -51,7 +53,7 @@ struct DeveloperFlagsView: View {
     }
 }
 
-// MARK: - Previews
+// MARK: - DeveloperFlagsView_Previews
 
 struct DeveloperFlagsView_Previews: PreviewProvider {
     static var previews: some View {

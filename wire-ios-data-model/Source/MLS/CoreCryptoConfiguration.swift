@@ -20,6 +20,8 @@ import Foundation
 import WireCoreCrypto
 import WireSystem
 
+// MARK: - CoreCryptoConfiguration
+
 public struct CoreCryptoConfiguration {
     public let path: String
     public let key: String
@@ -29,6 +31,8 @@ public struct CoreCryptoConfiguration {
         .init(from: clientID)
     }
 }
+
+// MARK: - CoreCryptoConfigProvider
 
 public class CoreCryptoConfigProvider {
     // MARK: - Properties

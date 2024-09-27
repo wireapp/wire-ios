@@ -62,7 +62,7 @@ extension Article {
     }
 }
 
-// MARK: - GenericMessage
+// MARK: - GenericMessage + CustomStringConvertible
 
 extension GenericMessage: CustomStringConvertible {
     public var description: String {
@@ -84,6 +84,8 @@ extension GenericMessage: CustomStringConvertible {
     }
 }
 
+// MARK: - GenericMessage + SafeForLoggingStringConvertible
+
 extension GenericMessage: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         "[\(safeTypeForLoggingDescription) \(safeIdForLoggingDescription)]"
@@ -97,6 +99,8 @@ extension GenericMessage: SafeForLoggingStringConvertible {
         content?.safeForLoggingDescription ?? "unknown"
     }
 }
+
+// MARK: - GenericMessage.OneOf_Content + SafeForLoggingStringConvertible
 
 extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

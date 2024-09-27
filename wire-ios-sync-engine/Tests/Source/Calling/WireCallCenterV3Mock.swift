@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireSyncEngine
 
+// MARK: - MockAVSWrapper
+
 @objcMembers
 public class MockAVSWrapper: AVSWrapperType {
     public var isMuted = false
@@ -115,6 +117,8 @@ public class MockAVSWrapper: AVSWrapperType {
     }
 }
 
+// MARK: - WireCallCenterV3IntegrationMock
+
 final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
     public let mockAVSWrapper: MockAVSWrapper
 
@@ -138,6 +142,8 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
         )
     }
 }
+
+// MARK: - WireCallCenterV3Mock
 
 @objcMembers
 public class WireCallCenterV3Mock: WireCallCenterV3 {

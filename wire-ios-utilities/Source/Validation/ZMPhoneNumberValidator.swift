@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ZMPhoneNumberValidator
+
 @objc
 public final class ZMPhoneNumberValidator: NSObject, ZMPropertyValidator {
     @objc(validateValue:error:)

@@ -33,6 +33,8 @@ extension Array where Element: Hashable {
     }
 }
 
+// MARK: - OrderedSetState
+
 public struct OrderedSetState<T: Hashable>: Equatable {
     public private(set) var array: [T]
     public private(set) var order: [T: Int]
@@ -71,9 +73,13 @@ public struct OrderedSetState<T: Hashable>: Equatable {
     }
 }
 
+// MARK: - SetChangeMoveType
+
 public enum SetChangeMoveType {
     case uiTableView, uiCollectionView
 }
+
+// MARK: - MovedIndex
 
 public struct MovedIndex: Equatable {
     public let from: Int
@@ -83,6 +89,8 @@ public struct MovedIndex: Equatable {
         lhs.from == rhs.from && lhs.to == rhs.to
     }
 }
+
+// MARK: - ChangedIndexes
 
 public struct ChangedIndexes<T: Hashable> {
     public let startState: OrderedSetState<T>

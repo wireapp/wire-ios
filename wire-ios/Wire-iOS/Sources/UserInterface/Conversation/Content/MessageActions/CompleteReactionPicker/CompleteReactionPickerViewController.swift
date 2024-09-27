@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - CompleteReactionPickerViewController
+
 final class CompleteReactionPickerViewController: UIViewController {
     // MARK: - Properties
 
@@ -171,7 +173,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     }
 }
 
-// MARK: - EmojiSectionViewControllerDelegate
+// MARK: EmojiSectionViewControllerDelegate
 
 extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelegate {
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
@@ -188,7 +190,7 @@ extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelega
     }
 }
 
-// MARK: - UICollectionViewDelegateFlowLayout
+// MARK: UICollectionViewDelegateFlowLayout
 
 extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -211,7 +213,7 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
     }
 }
 
-// MARK: - ModalTopBarDelegate
+// MARK: ModalTopBarDelegate
 
 extension CompleteReactionPickerViewController: ModalTopBarDelegate {
     func modelTopBarWantsToBeDismissed(_: ModalTopBar) {
@@ -219,7 +221,7 @@ extension CompleteReactionPickerViewController: ModalTopBarDelegate {
     }
 }
 
-// MARK: - UISearchBarDelegate
+// MARK: UISearchBarDelegate
 
 extension CompleteReactionPickerViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

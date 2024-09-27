@@ -149,7 +149,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 }
 
-// MARK: - UIPickerViewDelegate & UIPickerViewDataSource
+// MARK: UIPickerViewDelegate, UIPickerViewDataSource
 
 extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {

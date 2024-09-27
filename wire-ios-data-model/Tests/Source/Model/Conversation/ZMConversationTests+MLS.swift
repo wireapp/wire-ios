@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - ZMConversationTests_MLS
+
 final class ZMConversationTests_MLS: ZMConversationTestsBase {
     override func tearDown() {
         BackendInfo.isFederationEnabled = false
@@ -82,7 +84,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
     }
 }
 
-// MARK: - Migration releated fetch requests
+// MARK: - ZMConversationTests_MLS_Migration
 
 final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
     func test_fetchAllTeamGroupConversations_messageProtocolProteus() async throws {

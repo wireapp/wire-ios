@@ -25,11 +25,15 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// MARK: - StatusBarVideoEditorController
+
 final class StatusBarVideoEditorController: UIVideoEditorController {
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }
 }
+
+// MARK: - ConversationInputBarViewController + CameraKeyboardViewControllerDelegate
 
 extension ConversationInputBarViewController: CameraKeyboardViewControllerDelegate {
     func createCameraKeyboardViewController() -> CameraKeyboardViewController {
@@ -245,6 +249,8 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 }
 
+// MARK: - ConversationInputBarViewController + UIVideoEditorControllerDelegate
+
 extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
     func videoEditorControllerDidCancel(_ editor: UIVideoEditorController) {
         editor.dismiss(animated: true, completion: .none)
@@ -275,6 +281,8 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
         zmLog.error("Video editor failed with error: \(error)")
     }
 }
+
+// MARK: - ConversationInputBarViewController + CanvasViewControllerDelegate
 
 extension ConversationInputBarViewController: CanvasViewControllerDelegate {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {

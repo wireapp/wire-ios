@@ -19,11 +19,15 @@
 import XCTest
 @testable import Wire
 
+// MARK: - MockSplitViewControllerDelegate
+
 final class MockSplitViewControllerDelegate: NSObject, SplitViewControllerDelegate {
     func splitViewControllerShouldMoveLeftViewController(_: SplitViewController) -> Bool {
         true
     }
 }
+
+// MARK: - SplitViewControllerTests
 
 final class SplitViewControllerTests: XCTestCase {
     var sut: SplitViewController!

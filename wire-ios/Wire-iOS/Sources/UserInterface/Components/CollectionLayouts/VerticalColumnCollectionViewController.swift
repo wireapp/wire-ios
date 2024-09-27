@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - AdaptiveColumnCount
+
 /// A number of columns that changes depending on the width of the container.
 
 struct AdaptiveColumnCount {
@@ -32,6 +34,8 @@ struct AdaptiveColumnCount {
     /// and a width larger than 1024pt.
     let large: Int
 }
+
+// MARK: - VerticalColumnCollectionViewController
 
 /// An abstract collection view container that allows displaying the cells into columns.
 ///

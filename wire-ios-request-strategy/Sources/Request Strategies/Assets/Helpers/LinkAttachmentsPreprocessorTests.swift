@@ -22,6 +22,8 @@ import WireLinkPreview
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - MockAttachmentDetector
+
 final class MockAttachmentDetector: LinkAttachmentDetectorType {
     var nextResult = [LinkAttachment]()
     var downloadCount = 0
@@ -37,6 +39,8 @@ final class MockAttachmentDetector: LinkAttachmentDetectorType {
         completion(nextResult)
     }
 }
+
+// MARK: - LinkAttachmentsPreprocessorTests
 
 class LinkAttachmentsPreprocessorTests: MessagingTestBase {
     var sut: LinkAttachmentsPreprocessor!

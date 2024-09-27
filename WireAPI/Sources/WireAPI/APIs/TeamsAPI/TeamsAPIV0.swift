@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - TeamsAPIV0
+
 class TeamsAPIV0: TeamsAPI, VersionedAPI {
     let httpClient: any HTTPClient
 
@@ -116,6 +118,8 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
     }
 }
 
+// MARK: - TeamResponseV0
+
 struct TeamResponseV0: Decodable, ToAPIModelConvertible {
     let id: UUID
     let name: String
@@ -145,6 +149,8 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
     }
 }
 
+// MARK: - ConversationRolesListResponseV0
+
 struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
     let conversationRoles: [ConversationRoleResponseV0]
 
@@ -156,6 +162,8 @@ struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
         conversationRoles.map { $0.toAPIModel() }
     }
 }
+
+// MARK: - ConversationRoleResponseV0
 
 struct ConversationRoleResponseV0: Decodable {
     let conversationRole: String?
@@ -175,6 +183,8 @@ struct ConversationRoleResponseV0: Decodable {
         )
     }
 }
+
+// MARK: - ConversationActionResponseV0
 
 enum ConversationActionResponseV0: String, Decodable {
     case addConversationMember = "add_conversation_member"
@@ -211,6 +221,8 @@ enum ConversationActionResponseV0: String, Decodable {
     }
 }
 
+// MARK: - TeamMemberListResponseV0
+
 struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
     let hasMore: Bool
     let members: [TeamMemberResponseV0]
@@ -221,6 +233,8 @@ struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
         }
     }
 }
+
+// MARK: - TeamMemberResponseV0
 
 struct TeamMemberResponseV0: Decodable {
     let user: UUID
@@ -248,6 +262,8 @@ struct TeamMemberResponseV0: Decodable {
     }
 }
 
+// MARK: - PermissionsResponseV0
+
 struct PermissionsResponseV0: Decodable {
     let copy: Int64
     let `self`: Int64
@@ -259,6 +275,8 @@ struct PermissionsResponseV0: Decodable {
         )
     }
 }
+
+// MARK: - LegalholdStatusV0
 
 enum LegalholdStatusV0: String, Decodable {
     case enabled
@@ -279,6 +297,8 @@ enum LegalholdStatusV0: String, Decodable {
         }
     }
 }
+
+// MARK: - LegalholdStatusResponseV0
 
 struct LegalholdStatusResponseV0: Decodable, ToAPIModelConvertible {
     let status: LegalholdStatusV0

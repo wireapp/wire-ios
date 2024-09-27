@@ -19,9 +19,13 @@
 import Foundation
 import WireDataModel
 
+// MARK: - ConversationEventPayloadProcessorError
+
 enum ConversationEventPayloadProcessorError: Error {
     case noBackendConversationId
 }
+
+// MARK: - ConversationEventPayloadProcessor
 
 struct ConversationEventPayloadProcessor {
     enum Source {

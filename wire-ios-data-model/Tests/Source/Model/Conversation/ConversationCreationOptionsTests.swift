@@ -20,6 +20,8 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
+// MARK: - ConversationCreationOptionsTests
+
 class ConversationCreationOptionsTests: ZMConversationTestsBase {
     func testThatItCreatesTheConversationWithOptions() {
         // given

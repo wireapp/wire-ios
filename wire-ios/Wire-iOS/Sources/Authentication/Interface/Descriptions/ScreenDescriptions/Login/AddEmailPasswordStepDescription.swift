@@ -19,6 +19,8 @@
 import UIKit
 import WireUtilities
 
+// MARK: - AddEmailPasswordStepDescription
+
 final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
     let backButton: BackButtonDescription?
     var mainView: ViewDescriptor & ValueSubmission {
@@ -71,6 +73,8 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
             .passwordField.isInputValid
     }
 }
+
+// MARK: EmailPasswordTextFieldDelegate
 
 extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
     func textFieldDidUpdateText(_ textField: EmailPasswordTextField) {

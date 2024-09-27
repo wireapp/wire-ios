@@ -18,9 +18,13 @@
 
 import UIKit
 
+// MARK: - VerticalTransitionDataSource
+
 protocol VerticalTransitionDataSource: NSObject {
     func viewsToHideDuringVerticalTransition(transition: VerticalTransition) -> [UIView]
 }
+
+// MARK: - VerticalTransition
 
 final class VerticalTransition: NSObject, UIViewControllerAnimatedTransitioning {
     private let offset: CGFloat

@@ -93,10 +93,14 @@ extension FileManager {
     }
 }
 
+// MARK: - UserClientKeyStoreError
+
 public enum UserClientKeyStoreError: Error {
     case canNotGeneratePreKeys
     case preKeysCountNeedsToBePositive
 }
+
+// MARK: - UserClientKeysStore
 
 /// A storage for cryptographic keys material
 @objc(UserClientKeysStore) @objcMembers

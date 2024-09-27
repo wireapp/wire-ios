@@ -24,6 +24,8 @@ import WireShareEngine
 typealias DegradationStrategyChoice = (DegradationStrategy) -> Void
 typealias SendingStateCallback = (_ type: SendingState) -> Void
 
+// MARK: - SendingState
+
 /// This enum specifies the current state of the sending progress and is passed
 /// as a parameter in a `Progress` closure.
 enum SendingState {
@@ -39,6 +41,8 @@ enum SendingState {
     case error(Error) // When error occurs, e.g. file is over the size limit/conversation does not exist
     case fileSharingRestriction // Fired when the selfUser isn't allowed to share files
 }
+
+// MARK: - SendController
 
 /// This class encapsulates the preparation and sending of text an `NSItemProviders`.
 /// It creates `UnsentSendable` instances and queries them if they need preparation.

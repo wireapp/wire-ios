@@ -18,9 +18,13 @@
 
 import Foundation
 
+// MARK: - LinkPreviewDetectorType
+
 public protocol LinkPreviewDetectorType {
     func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void)
 }
+
+// MARK: - LinkPreviewDetector
 
 public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
     private let linkDetector: NSDataDetector? = NSDataDetector.linkDetector

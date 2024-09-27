@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - CompositeMessageItemContent
+
 class CompositeMessageItemContent: NSObject {
     private let parentMessage: ZMClientMessage
     private let item: Composite.Item
@@ -38,7 +40,7 @@ class CompositeMessageItemContent: NSObject {
     }
 }
 
-// MARK: - TextMessageData
+// MARK: TextMessageData
 
 extension CompositeMessageItemContent: TextMessageData {
     var messageText: String? {
@@ -93,7 +95,7 @@ extension CompositeMessageItemContent: TextMessageData {
     }
 }
 
-// MARK: - ButtonMessageData
+// MARK: ButtonMessageData
 
 extension CompositeMessageItemContent: ButtonMessageData {
     var title: String? {

@@ -23,13 +23,15 @@ import WireDataModel
 
 typealias HashBoxUser = HashBox<UserType>
 
+// MARK: - UserSet
+
 struct UserSet {
     typealias Storage = Set<HashBoxUser>
 
     private var storage: Storage
 }
 
-// MARK: - Collection
+// MARK: Collection
 
 extension UserSet: Collection {
     typealias Element = UserType
@@ -60,7 +62,7 @@ extension UserSet: Collection {
     }
 }
 
-// MARK: - Set Algebra
+// MARK: SetAlgebra
 
 extension UserSet: SetAlgebra {
     init() {

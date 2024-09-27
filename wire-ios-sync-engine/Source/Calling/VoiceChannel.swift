@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - CaptureDevice
+
 @objc(ZMCaptureDevice)
 public enum CaptureDevice: Int {
     case front
@@ -33,7 +35,11 @@ public enum CaptureDevice: Int {
     }
 }
 
+// MARK: - VoiceChannel
+
 public protocol VoiceChannel: CallProperties, CallActions, CallActionsInternal, CallObservers {}
+
+// MARK: - CallProperties
 
 public protocol CallProperties: NSObjectProtocol {
     var state: CallState { get }
@@ -65,6 +71,8 @@ public protocol CallProperties: NSObjectProtocol {
     func setVideoCaptureDevice(_ device: CaptureDevice) throws
 }
 
+// MARK: - CallActions
+
 public protocol CallActions: NSObjectProtocol {
     func mute(_ muted: Bool, userSession: ZMUserSession)
     func join(video: Bool, userSession: ZMUserSession) -> Bool
@@ -73,11 +81,15 @@ public protocol CallActions: NSObjectProtocol {
     func request(videoStreams: [AVSClient])
 }
 
+// MARK: - CallActionsInternal
+
 @objc
 public protocol CallActionsInternal: NSObjectProtocol {
     func join(video: Bool) -> Bool
     func leave()
 }
+
+// MARK: - CallObservers
 
 public protocol CallObservers: NSObjectProtocol {
     /// Add observer of voice channel state. Returns a token which needs to be retained as long as the observer should

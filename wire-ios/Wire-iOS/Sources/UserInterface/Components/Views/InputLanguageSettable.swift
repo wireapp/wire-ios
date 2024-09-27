@@ -18,10 +18,14 @@
 
 import UIKit
 
+// MARK: - InputLanguageSettable
+
 protocol InputLanguageSettable {
     var language: String? { get set }
     var originalTextInputMode: UITextInputMode? { get }
 }
+
+// MARK: - TextView + InputLanguageSettable
 
 extension TextView: InputLanguageSettable {
     var originalTextInputMode: UITextInputMode? {

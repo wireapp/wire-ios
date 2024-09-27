@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - BaseAccountView
+
 /// The subclasses of BaseAccountView must conform to AccountViewType,
 /// otherwise `init?(account: Account, user: ZMUser? = nil)` returns nil
 class BaseAccountView: UIView {
@@ -172,7 +174,7 @@ class BaseAccountView: UIView {
     }
 }
 
-// MARK: - Nested Types
+// MARK: - AccountUnreadCountStyle
 
 enum AccountUnreadCountStyle {
     /// Do not display an unread count.
@@ -183,13 +185,15 @@ enum AccountUnreadCountStyle {
     case others
 }
 
+// MARK: - DisplayContext
+
 /// For controlling size of BaseAccountView
 enum DisplayContext {
     case conversationListHeader
     case accountSelector
 }
 
-// MARK: - ZMConversationListObserver Conformance
+// MARK: - BaseAccountView + ZMConversationListObserver
 
 extension BaseAccountView: ZMConversationListObserver {
     func conversationListDidChange(_: ConversationListChangeInfo) {
@@ -201,7 +205,7 @@ extension BaseAccountView: ZMConversationListObserver {
     }
 }
 
-// MARK: - UserObserving Conformance
+// MARK: - BaseAccountView + UserObserving
 
 extension BaseAccountView: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {

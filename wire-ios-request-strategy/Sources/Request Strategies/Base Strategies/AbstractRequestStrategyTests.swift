@@ -20,9 +20,13 @@ import Foundation
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - TestableAbstractRequestStrategy
+
 protocol TestableAbstractRequestStrategy: AnyObject {
     var mutableConfiguration: ZMStrategyConfigurationOption { get set }
 }
+
+// MARK: - TestRequestStrategyObjc
 
 class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractRequestStrategy {
     var mutableConfiguration: ZMStrategyConfigurationOption = []
@@ -36,6 +40,8 @@ class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractReques
     }
 }
 
+// MARK: - TestRequestStrategy
+
 class TestRequestStrategy: AbstractRequestStrategy, TestableAbstractRequestStrategy {
     var mutableConfiguration: ZMStrategyConfigurationOption = []
 
@@ -48,6 +54,8 @@ class TestRequestStrategy: AbstractRequestStrategy, TestableAbstractRequestStrat
         set { mutableConfiguration = newValue }
     }
 }
+
+// MARK: - AbstractRequestStrategyTests
 
 class AbstractRequestStrategyTests: MessagingTestBase {
     let mockApplicationStatus = MockApplicationStatus()

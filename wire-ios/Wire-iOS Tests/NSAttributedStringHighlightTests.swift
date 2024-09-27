@@ -21,6 +21,8 @@ import WireCommonComponents
 import XCTest
 @testable import Wire
 
+// MARK: - NSAttributedStringHighlightTests
+
 // cutAndPrefixedWithEllipsis
 final class NSAttributedStringHighlightTests: XCTestCase {
     func testThatItReturnsEmptyStringOnEmpty() {
@@ -108,6 +110,8 @@ final class NSAttributedStringHighlightTests: XCTestCase {
     }
 }
 
+// MARK: - StringAllRangesOfStringTests
+
 // allRanges on String
 final class StringAllRangesOfStringTests: XCTestCase {
     func testThatItIgnoresEmptyString() {
@@ -173,6 +177,8 @@ final class StringAllRangesOfStringTests: XCTestCase {
         XCTAssertEqual(result["string"]!, [NSRange(location: 9, length: 6)])
     }
 }
+
+// MARK: - StringRangeOfStringTests
 
 // rangeOfStrings on String
 final class StringRangeOfStringTests: XCTestCase {

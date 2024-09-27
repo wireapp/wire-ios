@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - UserPropertyRequestStrategyTests
+
 class UserPropertyRequestStrategyTests: MessagingTestBase {
     var applicationStatus: MockApplicationStatus!
     var sut: UserPropertyRequestStrategy!

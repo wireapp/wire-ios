@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - GuestLinkType
+
 enum GuestLinkType {
     case secure
     case normal

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UnownedObject
+
 public final class UnownedObject<T: AnyObject> {
     public weak var unbox: T?
 
@@ -27,6 +29,8 @@ public final class UnownedObject<T: AnyObject> {
 
     public var isValid: Bool { unbox != nil }
 }
+
+// MARK: - UnownedNSObject
 
 @objcMembers
 public final class UnownedNSObject: NSObject {

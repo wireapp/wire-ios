@@ -25,6 +25,8 @@ extension Notification.Name {
     static let conversationListItemDidScroll = Notification.Name("ConversationListItemDidScroll")
 }
 
+// MARK: - ConversationListItemView
+
 final class ConversationListItemView: UIView {
     // MARK: UI constants
 

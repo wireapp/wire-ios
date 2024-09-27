@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+// MARK: - ProxyCredentialsViewController
+
 final class ProxyCredentialsViewController: UIViewController {
     typealias Credentials = L10n.Localizable.ProxyCredentials
 
@@ -157,6 +159,8 @@ final class ProxyCredentialsViewController: UIViewController {
     }
 }
 
+// MARK: UITextFieldDelegate
+
 extension ProxyCredentialsViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == usernameInput {
@@ -176,6 +180,8 @@ extension ProxyCredentialsViewController: UITextFieldDelegate {
         activeFieldChange(nil)
     }
 }
+
+// MARK: ValidatedTextFieldDelegate
 
 extension ProxyCredentialsViewController: ValidatedTextFieldDelegate {
     func buttonPressed(_: UIButton) {

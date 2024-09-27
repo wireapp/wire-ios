@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MockAnalytics
+
 final class MockAnalytics: NSObject, AnalyticsType {
     var eventAttributes = [String: [String: NSObject]]()
 
@@ -54,7 +56,7 @@ final class MockAnalytics: NSObject, AnalyticsType {
     var uploadCallCount = 0
 }
 
-// MARK: - Helpers
+// MARK: - EventWithAttributes
 
 struct EventWithAttributes: Equatable {
     let event: String

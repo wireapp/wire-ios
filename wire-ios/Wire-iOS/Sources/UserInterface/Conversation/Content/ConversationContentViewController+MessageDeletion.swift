@@ -39,19 +39,27 @@ extension ZMConversationMessage {
     }
 }
 
+// MARK: - SelectableView
+
 protocol SelectableView {
     var selectionView: UIView! { get }
     var selectionRect: CGRect { get }
 }
 
+// MARK: - HighlightableView
+
 protocol HighlightableView {
     var highlightContainer: UIView { get }
 }
+
+// MARK: - CollectionCell + SelectableView
 
 extension CollectionCell: SelectableView {
     var selectionView: UIView! { self }
     var selectionRect: CGRect { frame }
 }
+
+// MARK: - DeletionDialogPresenter
 
 final class DeletionDialogPresenter: NSObject {
     private weak var sourceViewController: UIViewController?
@@ -126,6 +134,8 @@ final class DeletionDialogPresenter: NSObject {
     }
 }
 
+// MARK: - AlertAction
+
 private enum AlertAction {
     enum DeletionType {
         case local
@@ -134,6 +144,8 @@ private enum AlertAction {
 
     case delete(DeletionType), cancel
 }
+
+// MARK: - DeletionConfiguration
 
 // Used to enforce only valid configurations can be shown.
 // Unfortunately this can not be done with an `OptionSetType`

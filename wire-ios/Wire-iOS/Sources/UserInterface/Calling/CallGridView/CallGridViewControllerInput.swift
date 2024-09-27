@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+// MARK: - CallGridViewControllerInput
+
 protocol CallGridViewControllerInput {
     var floatingStream: Stream? { get }
     var streams: [Stream] { get }

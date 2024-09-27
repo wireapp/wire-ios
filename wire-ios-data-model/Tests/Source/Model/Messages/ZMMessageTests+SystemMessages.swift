@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - ZMMessageTests_SystemMessages
+
 class ZMMessageTests_SystemMessages: BaseZMMessageTests {
     func testThatOnlyRecoverableDecryptionErrorsAreReportedAsRecoverable() throws {
         let allEncryptionErrors = [

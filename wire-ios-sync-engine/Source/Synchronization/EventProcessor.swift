@@ -20,6 +20,8 @@ import Foundation
 import WireRequestStrategy
 import WireUtilities
 
+// MARK: - EventProcessor
+
 actor EventProcessor: UpdateEventProcessor {
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
 
@@ -268,6 +270,8 @@ extension Notification.Name {
     /// Published after the last event has been processed.
     static let eventProcessorDidFinishProcessingEventsNotification = Self("EventProcessorDidFinishProcessingEvents")
 }
+
+// MARK: - ProcessedEventList
 
 private actor ProcessedEventList {
     private var hashes = Set<Int64>()

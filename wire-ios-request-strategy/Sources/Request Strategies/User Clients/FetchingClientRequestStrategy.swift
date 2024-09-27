@@ -36,6 +36,8 @@ extension ZMUser {
     }
 }
 
+// MARK: - FetchingClientRequestStrategy
+
 @objc
 public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
     fileprivate static let needsToUpdateUserClientsNotificationName = Notification
@@ -150,6 +152,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
     }
 }
 
+// MARK: ZMContextChangeTracker, ZMContextChangeTrackerSource
+
 extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [self]
@@ -230,6 +234,8 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 }
 
+// MARK: - UserClientByUserClientIDTranscoder
+
 final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
     struct UserClientID: Hashable {
         let userId: UUID
@@ -297,6 +303,8 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 }
+
+// MARK: - UserClientByQualifiedUserIDTranscoder
 
 final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID
@@ -452,6 +460,8 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         managedObjectContext.saveOrRollback()
     }
 }
+
+// MARK: - UserClientByUserIDTranscoder
 
 final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID

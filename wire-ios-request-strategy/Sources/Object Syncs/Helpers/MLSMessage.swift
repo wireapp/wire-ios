@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MLSMessage
+
 /// A message that can be sent in an mls group.
 
 public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator {
@@ -28,9 +30,15 @@ public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator {
     func setExpirationDate()
 }
 
+// MARK: - ZMClientMessage + MLSMessage
+
 extension ZMClientMessage: MLSMessage {}
 
+// MARK: - ZMAssetClientMessage + MLSMessage
+
 extension ZMAssetClientMessage: MLSMessage {}
+
+// MARK: - GenericMessageEntity + MLSMessage
 
 extension GenericMessageEntity: MLSMessage {
     // Just required for protocol conformance.

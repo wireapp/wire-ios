@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - RenameGroupSectionController
+
 final class RenameGroupSectionController: NSObject, CollectionViewSectionController {
     private var validName: String?
     private var conversation: GroupDetailsConversationType
@@ -120,6 +122,8 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 }
 
+// MARK: ZMConversationObserver
+
 extension RenameGroupSectionController: ZMConversationObserver {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard changeInfo.securityLevelChanged || changeInfo.nameChanged else { return }
@@ -129,6 +133,8 @@ extension RenameGroupSectionController: ZMConversationObserver {
         renameCell?.configure(for: conversation, editable: ZMUser.selfUser()?.canModifyTitle(in: conversation) ?? false)
     }
 }
+
+// MARK: SimpleTextFieldDelegate
 
 extension RenameGroupSectionController: SimpleTextFieldDelegate {
     func textFieldReturnPressed(_ textField: SimpleTextField) {

@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - VideoIconStyle
+
 enum VideoIconStyle: String, IconImageStyle {
     case video
     case screenshare

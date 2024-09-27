@@ -21,6 +21,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - MockConversation
+
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
     var userDefinedName: String?
 
@@ -36,6 +38,8 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
     var mlsVerificationStatus: WireDataModel.MLSVerificationStatus?
 }
+
+// MARK: - GroupParticipantsDetailViewControllerTests
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - QualifiedID
+
 public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
     enum CodingKeys: String, CodingKey {
         case uuid = "id"
@@ -36,6 +38,8 @@ public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
         "\(uuid)@\(domain)"
     }
 }
+
+// MARK: SafeForLoggingStringConvertible
 
 extension QualifiedID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

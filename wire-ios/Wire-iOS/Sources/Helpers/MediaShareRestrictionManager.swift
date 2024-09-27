@@ -20,6 +20,8 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - ShareableMediaSource
+
 enum ShareableMediaSource: CaseIterable {
     case camera
     case photoLibrary
@@ -30,11 +32,15 @@ enum ShareableMediaSource: CaseIterable {
     case clipboard
 }
 
+// MARK: - MediaShareRestrictionLevel
+
 enum MediaShareRestrictionLevel {
     case none
     case securityFlag
     case APIFlag
 }
+
+// MARK: - MediaShareRestrictionManager
 
 class MediaShareRestrictionManager {
     // MARK: - Private Properties

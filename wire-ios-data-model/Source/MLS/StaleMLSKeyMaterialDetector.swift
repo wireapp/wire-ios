@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - StaleMLSKeyDetectorProtocol
+
 // sourcery: AutoMockable
 public protocol StaleMLSKeyDetectorProtocol {
     /// The number of days before a key is considered stale.
@@ -35,6 +37,8 @@ public protocol StaleMLSKeyDetectorProtocol {
 
     func keyingMaterialUpdated(for groupID: MLSGroupID)
 }
+
+// MARK: - StaleMLSKeyDetector
 
 /// A class responsible for keeping track of groups that have stale key material.
 /// It relies on Core Data for storage.

@@ -22,6 +22,8 @@ import WireUtilities
 import XCTest
 @testable import Wire
 
+// MARK: - MockCallGridViewControllerInput
+
 struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
     var isConnected = true
 
@@ -39,6 +41,8 @@ struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
 
     var isGroupCall = false
 }
+
+// MARK: - CallGridViewControllerSnapshotTests
 
 final class CallGridViewControllerSnapshotTests: XCTestCase {
     var sut: CallGridViewController!

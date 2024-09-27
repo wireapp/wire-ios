@@ -22,6 +22,8 @@ import WireTransport
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - LinkPreviewAssetDownloadRequestStrategyTests
+
 class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
     var sut: LinkPreviewAssetDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!

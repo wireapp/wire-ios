@@ -19,10 +19,14 @@
 import Foundation
 import WireDataModel
 
+// MARK: - SelfUserProviderProtocol
+
 // sourcery: AutoMockable
 public protocol SelfUserProviderProtocol {
     func fetchSelfUser() -> ZMUser
 }
+
+// MARK: - SelfUserProvider
 
 @available(*, deprecated, message: "Use UserRepository instead")
 public final class SelfUserProvider: SelfUserProviderProtocol {

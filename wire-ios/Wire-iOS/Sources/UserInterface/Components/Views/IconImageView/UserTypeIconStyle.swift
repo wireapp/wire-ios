@@ -20,6 +20,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - UserTypeIconStyle
+
 enum UserTypeIconStyle: String, IconImageStyle {
     case guest
     case external

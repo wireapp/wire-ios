@@ -20,9 +20,13 @@ import Foundation
 import WireLinkPreview
 @testable import WireDataModel
 
+// MARK: - ContentType
+
 enum ContentType {
     case textMessage, editMessage
 }
+
+// MARK: - ClientMessageTests_ZMImageOwner
 
 class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
     func insertMessageWithLinkPreview(contentType: ContentType) -> ZMClientMessage {

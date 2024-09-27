@@ -22,12 +22,16 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - CallInfoRootViewControllerDelegate
+
 protocol CallInfoRootViewControllerDelegate: CallingActionsViewDelegate {
     func infoRootViewController(
         _ viewController: CallInfoRootViewController,
         contextDidChange context: CallInfoRootViewController.Context
     )
 }
+
+// MARK: - CallInfoRootViewController
 
 final class CallInfoRootViewController: UIViewController, UINavigationControllerDelegate,
     CallInfoViewControllerDelegate,

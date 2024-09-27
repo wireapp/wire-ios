@@ -19,6 +19,8 @@
 import Foundation
 import UserNotifications
 
+// MARK: - UserNotificationCenter
+
 /// An abstraction of the `UNUserNotificationCenter` object to facilitate
 /// mocking for unit tests.
 
@@ -44,6 +46,8 @@ public protocol UserNotificationCenter: AnyObject {
     /// Removes all pending requests and delivered notifications with the given identifiers.
     func removeAllNotifications(withIdentifiers identifiers: [String])
 }
+
+// MARK: - UNUserNotificationCenter + UserNotificationCenter
 
 extension UNUserNotificationCenter: UserNotificationCenter {
     public func removeAllNotifications(withIdentifiers identifiers: [String]) {

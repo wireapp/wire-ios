@@ -20,6 +20,8 @@ import Foundation
 
 private let log = ZMSLog(tag: "Calling System Message")
 
+// MARK: - CallSystemMessageGenerator
+
 /// Inserts a calling system message for V3 calls.
 final class CallSystemMessageGenerator: NSObject {
     var startDateByConversation = [ZMConversation: Date]()

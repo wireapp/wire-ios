@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - CompanyLoginRequesterTests
+
 final class CompanyLoginRequesterTests: XCTestCase {
     func testThatItGeneratesLoginURLForToken() {
         // GIVEN
@@ -194,7 +196,7 @@ final class CompanyLoginRequesterTests: XCTestCase {
     }
 }
 
-// MARK: - Helper
+// MARK: - MockSession
 
 private final class MockSession: NSObject, URLSessionProtocol {
     class MockURLSessionDataTask: URLSessionDataTask {

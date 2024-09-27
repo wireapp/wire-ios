@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - ConversationTypingEventProcessorProtocol
+
 /// Process conversation typing events.
 
 protocol ConversationTypingEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol ConversationTypingEventProcessorProtocol {
 
     func processEvent(_ event: ConversationTypingEvent) async throws
 }
+
+// MARK: - ConversationTypingEventProcessor
 
 struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
     func processEvent(_: ConversationTypingEvent) async throws {

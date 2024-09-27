@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - LogConvertible
+
 public protocol LogConvertible {
     var logDescription: String { get }
 }
+
+// MARK: - String + LogConvertible
 
 extension String: LogConvertible {
     public var logDescription: String {

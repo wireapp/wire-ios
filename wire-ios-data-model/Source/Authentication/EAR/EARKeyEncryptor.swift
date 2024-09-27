@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - EARKeyEncryptorInterface
+
 // sourcery: AutoMockable
 protocol EARKeyEncryptorInterface {
     func encryptDatabaseKey(
@@ -30,6 +32,8 @@ protocol EARKeyEncryptorInterface {
         privateKey: SecKey
     ) throws -> Data
 }
+
+// MARK: - EARKeyEncryptor
 
 struct EARKeyEncryptor: EARKeyEncryptorInterface {
     private var databaseKeyAlgorithm: SecKeyAlgorithm {

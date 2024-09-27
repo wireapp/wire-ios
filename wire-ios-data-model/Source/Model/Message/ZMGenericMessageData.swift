@@ -19,6 +19,8 @@
 import Foundation
 import WireCryptobox
 
+// MARK: - ZMGenericMessageData
+
 @objc(ZMGenericMessageData)
 @objcMembers
 public class ZMGenericMessageData: ZMManagedObject {
@@ -130,7 +132,7 @@ public class ZMGenericMessageData: ZMManagedObject {
     }
 }
 
-// MARK: - Encryption Error
+// MARK: ZMGenericMessageData.ProcessingError
 
 extension ZMGenericMessageData {
     enum ProcessingError: LocalizedError {
@@ -153,6 +155,8 @@ extension ZMGenericMessageData {
         }
     }
 }
+
+// MARK: EncryptionAtRestMigratable
 
 extension ZMGenericMessageData: EncryptionAtRestMigratable {
     static let predicateForObjectsNeedingMigration: NSPredicate? = nil

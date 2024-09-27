@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - ClientMessageTests
+
 final class ClientMessageTests: BaseZMClientMessageTests {
     override static func setUp() {
         super.setUp()

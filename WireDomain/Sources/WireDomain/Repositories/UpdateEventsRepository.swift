@@ -21,6 +21,8 @@ import WireAPI
 import WireDataModel
 import WireFoundation
 
+// MARK: - UpdateEventsRepositoryProtocol
+
 // sourcery: AutoMockable
 /// Access update events.
 protocol UpdateEventsRepositoryProtocol {
@@ -76,6 +78,8 @@ protocol UpdateEventsRepositoryProtocol {
 
     func storeLastEventEnvelopeID(_ id: UUID)
 }
+
+// MARK: - UpdateEventsRepository
 
 final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let selfClientID: String

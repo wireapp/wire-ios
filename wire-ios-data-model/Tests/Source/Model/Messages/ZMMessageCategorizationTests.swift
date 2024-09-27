@@ -30,6 +30,8 @@ extension ZMConversationMessage {
     }
 }
 
+// MARK: - ZMMessageCategorizationTests
+
 class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     var conversation: ZMConversation!
 

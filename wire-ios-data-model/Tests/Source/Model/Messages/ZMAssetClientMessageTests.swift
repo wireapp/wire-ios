@@ -19,9 +19,13 @@
 import Foundation
 @testable import WireDataModel
 
+// MARK: - MimeType
+
 enum MimeType: String {
     case text = "text/plain"
 }
+
+// MARK: - BaseZMAssetClientMessageTests
 
 class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
     var message: ZMAssetClientMessage!
@@ -101,6 +105,8 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
         return message
     }
 }
+
+// MARK: - ZMAssetClientMessageTests
 
 final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
     func testThatItDeletesCopiesOfDownloadedFilesIntoTemporaryFolder() {

@@ -19,10 +19,14 @@
 import UIKit
 import WireSystem
 
+// MARK: - MaskDimension
+
 /// The dimension to use when calculating relative radii.
 enum MaskDimension: Int {
     case width, height
 }
+
+// MARK: - MaskShape
 
 /// Define the MaskShape enum to include the required shapes
 enum MaskShape {
@@ -36,6 +40,8 @@ enum MaskShape {
         case height
     }
 }
+
+// MARK: - ContinuousMaskLayer
 
 /// A layer whose corners are rounded with a continuous mask (“squircle“).
 final class ContinuousMaskLayer: CALayer {

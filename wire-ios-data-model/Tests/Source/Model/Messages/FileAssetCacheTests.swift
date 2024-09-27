@@ -21,6 +21,8 @@ import WireTesting
 import XCTest
 @testable import WireDataModel
 
+// MARK: - FileAssetCacheTests
+
 class FileAssetCacheTests: XCTestCase {
     var sut: FileAssetCache!
     var location: URL!

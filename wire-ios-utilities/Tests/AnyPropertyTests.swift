@@ -19,7 +19,7 @@
 import WireUtilities
 import XCTest
 
-// MARK: Type Erased Scenario
+// MARK: - Message
 
 protocol Message: AnyObject {
     associatedtype Content
@@ -27,6 +27,8 @@ protocol Message: AnyObject {
     var sender: String { get }
     var numberOfLikes: Int { get set }
 }
+
+// MARK: - TextMessage
 
 class TextMessage: Message {
     var content: String
@@ -39,6 +41,8 @@ class TextMessage: Message {
     }
 }
 
+// MARK: - ImageMessage
+
 class ImageMessage: Message {
     var content: UIImage
     let sender: String
@@ -49,6 +53,8 @@ class ImageMessage: Message {
         self.sender = sender
     }
 }
+
+// MARK: - AnyMessage
 
 class AnyMessage {
     private let _sender: AnyConstantProperty<String>
@@ -69,7 +75,7 @@ class AnyMessage {
     }
 }
 
-// MARK: - Tests
+// MARK: - AnyPropertyTests
 
 class AnyPropertyTests: XCTestCase {
     var textMessage: TextMessage!

@@ -21,6 +21,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - LegalHoldDetailsViewController
+
 final class LegalHoldDetailsViewController: UIViewController {
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let collectionViewController: SectionCollectionViewController
@@ -141,6 +143,8 @@ final class LegalHoldDetailsViewController: UIViewController {
         return [headerSection, legalHoldParticipantsSection]
     }
 }
+
+// MARK: LegalHoldParticipantsSectionControllerDelegate
 
 extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionControllerDelegate {
     func legalHoldParticipantsSectionWantsToPresentUserProfile(for user: UserType) {

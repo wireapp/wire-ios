@@ -21,6 +21,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - MockAddressBookHelper
+
 final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
     var isAddressBookAccessDisabled = false
 
@@ -43,6 +45,8 @@ final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
         callback?(false)
     }
 }
+
+// MARK: - StartUIViewControllerSnapshotTests
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     // MARK: - Properties

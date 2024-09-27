@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ModifiedKeyObjectSyncTranscoder
+
 protocol ModifiedKeyObjectSyncTranscoder: AnyObject {
     associatedtype Object: ZMManagedObject
 
@@ -31,6 +33,8 @@ protocol ModifiedKeyObjectSyncTranscoder: AnyObject {
     ///                 object has been synchronzied with the backend.
     func synchronize(key: String, for object: Object, completion: @escaping () -> Void)
 }
+
+// MARK: - ModifiedKeyObjectSync
 
 /// ModifiedKeyObjectSync synchronizes an object when a given property has been modified on
 /// the object.

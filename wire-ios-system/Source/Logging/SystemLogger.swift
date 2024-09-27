@@ -19,9 +19,13 @@
 import Foundation
 import OSLog
 
+// MARK: - FileLoggerDestination
+
 public protocol FileLoggerDestination {
     var log: URL? { get }
 }
+
+// MARK: - SystemLogger
 
 struct SystemLogger: LoggerProtocol {
     let persistQueue = DispatchQueue(label: "persistQueue")

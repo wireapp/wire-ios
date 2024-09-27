@@ -21,6 +21,8 @@ import UserNotifications
 import WireRequestStrategy
 import WireTransport
 
+// MARK: - PushTokenMetadata
+
 struct PushTokenMetadata {
     let isSandbox: Bool
 
@@ -123,7 +125,7 @@ extension ZMUserSession {
     }
 }
 
-// MARK: - UNUserNotificationCenterDelegate
+// MARK: - ZMUserSession + UNUserNotificationCenterDelegate
 
 // Note: Although ZMUserSession conforms to UNUserNotificationCenterDelegate,
 // it should not actually be assigned as the delegate of UNUserNotificationCenter.

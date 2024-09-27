@@ -22,6 +22,8 @@ import WireCommonComponents
 import WireDataModel
 import WireSystem
 
+// MARK: - DebugAlert
+
 /// Presents debug alerts
 enum DebugAlert {
     private struct Action {
@@ -146,6 +148,8 @@ enum DebugAlert {
         }
     }
 }
+
+// MARK: - DebugLogSender
 
 /// Sends debug logs by email
 final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {

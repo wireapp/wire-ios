@@ -22,6 +22,8 @@ import XCTest
 private typealias ClientListByUser = [String: [String]]
 private typealias UserListByDomain = [String: ClientListByUser]
 
+// MARK: - TransportDataConvertible
+
 private protocol TransportDataConvertible: Codable {
     var transportData: ZMTransportData { get }
 }
@@ -32,6 +34,8 @@ extension TransportDataConvertible {
         return try! JSONSerialization.jsonObject(with: encoded, options: []) as! ZMTransportData
     }
 }
+
+// MARK: - ClientUpdateResponse
 
 private struct ClientUpdateResponse: Codable, TransportDataConvertible {
     enum ErrorLabel: String, Codable {
@@ -48,6 +52,8 @@ private struct ClientUpdateResponse: Codable, TransportDataConvertible {
     }
 }
 
+// MARK: - Payload.MessageSendingStatusV1 + TransportDataConvertible
+
 extension Payload.MessageSendingStatusV1: TransportDataConvertible {
     fileprivate init(missing: UserListByDomain) {
         self.init(
@@ -59,6 +65,8 @@ extension Payload.MessageSendingStatusV1: TransportDataConvertible {
         )
     }
 }
+
+// MARK: - Payload.MessageSendingStatusV4 + TransportDataConvertible
 
 extension Payload.MessageSendingStatusV4: TransportDataConvertible {
     fileprivate init(missing: UserListByDomain) {
@@ -72,6 +80,8 @@ extension Payload.MessageSendingStatusV4: TransportDataConvertible {
         )
     }
 }
+
+// MARK: - VerifyLegalHoldRequestStrategyTests
 
 class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
     var sut: VerifyLegalHoldRequestStrategy!

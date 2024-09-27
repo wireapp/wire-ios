@@ -23,6 +23,8 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
 
+// MARK: - ConversationListViewModel
+
 final class ConversationListViewModel: NSObject {
     typealias SectionIdentifier = String
 
@@ -655,7 +657,7 @@ final class ConversationListViewModel: NSObject {
 
 private let log = ZMSLog(tag: "ConversationListViewModel")
 
-// MARK: - ConversationDirectoryObserver
+// MARK: ConversationDirectoryObserver
 
 extension ConversationListViewModel: ConversationDirectoryObserver {
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo) {

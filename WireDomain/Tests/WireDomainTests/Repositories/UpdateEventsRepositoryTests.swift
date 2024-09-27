@@ -24,6 +24,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
+// MARK: - UpdateEventsRepositoryTests
+
 final class UpdateEventsRepositoryTests: XCTestCase {
     var sut: UpdateEventsRepository!
     var updateEventsAPI: MockUpdateEventsAPI!
@@ -365,6 +367,8 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         lastEventIDRepository.storeLastEventID_Invocations = [id]
     }
 }
+
+// MARK: - Scaffolding
 
 private enum Scaffolding {
     // MARK: - Local domain

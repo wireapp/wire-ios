@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire_Notification_Service_Extension
 
+// MARK: - JobTests
+
 class JobTests: XCTestCase {
     var mockNetworkSession: MockNetworkSession!
     var mockAccessAPIClient: MockAccessAPIClient!
@@ -177,6 +179,8 @@ class JobTests: XCTestCase {
     }
 }
 
+// MARK: - MockNetworkSession
+
 final class MockNetworkSession: NetworkSessionProtocol {
     var accessToken: AccessToken?
     var isAuthenticated = true
@@ -206,6 +210,8 @@ final class MockNetworkSession: NetworkSessionProtocol {
     }
 }
 
+// MARK: - MockAccessAPIClient
+
 final class MockAccessAPIClient: AccessAPIClientProtocol {
     var mockFetchAccessToken: (() async throws -> AccessToken)?
 
@@ -217,6 +223,8 @@ final class MockAccessAPIClient: AccessAPIClientProtocol {
         return try await mock()
     }
 }
+
+// MARK: - MockNotificationsAPIClient
 
 final class MockNotificationsAPIClient: NotificationsAPIClientProtocol {
     var mockFetchEvent: ((UUID) async throws -> ZMUpdateEvent)?

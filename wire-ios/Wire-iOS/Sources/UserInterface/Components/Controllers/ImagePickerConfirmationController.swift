@@ -27,6 +27,8 @@ extension UIImage {
     }
 }
 
+// MARK: - ImagePickerConfirmationController
+
 /// Shows a confirmation dialog after picking an image in UIImagePickerController. If the user accepts
 /// the image the imagePickedBlock is called.
 final class ImagePickerConfirmationController: NSObject {
@@ -36,6 +38,8 @@ final class ImagePickerConfirmationController: NSObject {
     /// We need to store this reference to close the @c SketchViewController
     private var presentingPickerController: UIImagePickerController?
 }
+
+// MARK: UIImagePickerControllerDelegate
 
 extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
     func imagePickerController(
@@ -86,5 +90,7 @@ extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
         }
     }
 }
+
+// MARK: UINavigationControllerDelegate
 
 extension ImagePickerConfirmationController: UINavigationControllerDelegate {}

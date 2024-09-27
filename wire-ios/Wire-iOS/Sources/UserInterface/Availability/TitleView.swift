@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - TitleView
+
 class TitleView: UIView, DynamicTypeCapable {
     // MARK: - Properties
 

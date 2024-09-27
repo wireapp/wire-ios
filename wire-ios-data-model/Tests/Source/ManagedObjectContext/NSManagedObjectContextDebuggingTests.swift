@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - NSManagedObjectContextDebuggingTests
+
 final class NSManagedObjectContextDebuggingTests: ZMBaseManagedObjectTest {
     func testThatItInvokesCallbackWhenFailedToSave() {
         // GIVEN

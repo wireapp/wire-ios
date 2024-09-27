@@ -56,7 +56,7 @@ extension NSManagedObjectContext {
     }
 }
 
-// MARK: Cache
+// MARK: - UserImageLocalCache
 
 @objcMembers
 open class UserImageLocalCache: NSObject {

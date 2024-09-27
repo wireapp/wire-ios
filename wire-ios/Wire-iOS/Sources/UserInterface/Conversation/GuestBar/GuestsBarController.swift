@@ -21,6 +21,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - GuestsBarController
+
 final class GuestsBarController: UIViewController {
     // MARK: Properties
 
@@ -155,7 +157,7 @@ final class GuestsBarController: UIViewController {
     }
 }
 
-// MARK: - Bar
+// MARK: Bar
 
 extension GuestsBarController: Bar {
     var weight: Float {

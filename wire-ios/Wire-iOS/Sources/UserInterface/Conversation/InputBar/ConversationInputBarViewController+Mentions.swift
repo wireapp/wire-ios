@@ -74,6 +74,8 @@ extension ConversationInputBarViewController {
     }
 }
 
+// MARK: - ConversationInputBarViewController + UserSearchResultsViewControllerDelegate
+
 extension ConversationInputBarViewController: UserSearchResultsViewControllerDelegate {
     func didSelect(user: UserType) {
         insertMention(for: user)

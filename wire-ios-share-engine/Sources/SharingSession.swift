@@ -22,11 +22,15 @@ import WireLinkPreview
 import WireRequestStrategy
 import WireTransport
 
+// MARK: - PushMessageHandlerDummy
+
 final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
     func didFailToSend(_: ZMMessage) {
         // nop
     }
 }
+
+// MARK: - ClientRegistrationStatus
 
 final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     let context: NSManagedObjectContext
@@ -49,6 +53,8 @@ final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         // nop
     }
 }
+
+// MARK: - AuthenticationStatus
 
 final class AuthenticationStatus: AuthenticationStatusProvider {
     let transportSession: ZMTransportSession
@@ -80,6 +86,8 @@ extension BackendEnvironmentProvider {
         cookieStorage(for: account).hasAuthenticationCookie
     }
 }
+
+// MARK: - ApplicationStatusDirectory
 
 final class ApplicationStatusDirectory: ApplicationStatus {
     let transportSession: ZMTransportSession
@@ -140,6 +148,8 @@ final class ApplicationStatusDirectory: ApplicationStatus {
         // we don't resync Resources in the share engine
     }
 }
+
+// MARK: - SharingSession
 
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of
@@ -490,6 +500,8 @@ public final class SharingSession {
         }
     }
 }
+
+// MARK: LinkPreviewDetectorType
 
 extension SharingSession: LinkPreviewDetectorType {
     public func downloadLinkPreviews(

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ClientUpdateObserver
+
 @objc(ZMClientUpdateObserver)
 public protocol ClientUpdateObserver: NSObjectProtocol {
     @objc(finishedFetchingClients:)

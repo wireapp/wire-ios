@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - TeamMemberUpdateEventProcessorProtocol
+
 /// Process team member update events.
 
 protocol TeamMemberUpdateEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol TeamMemberUpdateEventProcessorProtocol {
 
     func processEvent(_ event: TeamMemberUpdateEvent) async throws
 }
+
+// MARK: - TeamMemberUpdateEventProcessor
 
 struct TeamMemberUpdateEventProcessor: TeamMemberUpdateEventProcessorProtocol {
     func processEvent(_: TeamMemberUpdateEvent) async throws {

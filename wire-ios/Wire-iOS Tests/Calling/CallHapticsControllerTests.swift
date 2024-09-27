@@ -19,6 +19,8 @@
 import XCTest
 @testable import Wire
 
+// MARK: - MockCallHapticsGenerator
+
 private final class MockCallHapticsGenerator: CallHapticsGeneratorType {
     var triggeredEvents = [CallHapticsEvent]()
 
@@ -30,6 +32,8 @@ private final class MockCallHapticsGenerator: CallHapticsGeneratorType {
         triggeredEvents.removeAll()
     }
 }
+
+// MARK: - CallHapticsControllerTests
 
 final class CallHapticsControllerTests: ZMSnapshotTestCase {
     private var sut: CallHapticsController!

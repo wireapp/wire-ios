@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 @testable import WireSyncEngine
 
+// MARK: - CallParticipantsSnapshotTests
+
 final class CallParticipantsSnapshotTests: MessagingTest {
     private typealias Sut = WireSyncEngine.CallParticipantsSnapshot
 

@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - SearchSectionControllerDelegate
+
 protocol SearchSectionControllerDelegate: AnyObject {
     func searchSectionController(
         _ searchSectionController: CollectionViewSectionController,
@@ -43,6 +45,8 @@ protocol SearchSectionControllerDelegate: AnyObject {
         wantsToDisplayError error: LocalizedError
     )
 }
+
+// MARK: - SearchSectionController
 
 class SearchSectionController: NSObject, CollectionViewSectionController {
     var isHidden: Bool {

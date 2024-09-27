@@ -21,10 +21,14 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - MarkdownBarViewDelegate
+
 protocol MarkdownBarViewDelegate: AnyObject {
     func markdownBarView(_ view: MarkdownBarView, didSelectMarkdown markdown: Markdown, with sender: IconButton)
     func markdownBarView(_ view: MarkdownBarView, didDeselectMarkdown markdown: Markdown, with sender: IconButton)
 }
+
+// MARK: - MarkdownBarView
 
 final class MarkdownBarView: UIView {
     weak var delegate: MarkdownBarViewDelegate?
@@ -212,6 +216,8 @@ final class MarkdownBarView: UIView {
         buttons.forEach { $0.isAccessibilityElement = isAccessible }
     }
 }
+
+// MARK: PopUpIconButtonDelegate
 
 extension MarkdownBarView: PopUpIconButtonDelegate {
     func popUpIconButton(_ button: PopUpIconButton, didSelectIcon icon: StyleKitIcon) {

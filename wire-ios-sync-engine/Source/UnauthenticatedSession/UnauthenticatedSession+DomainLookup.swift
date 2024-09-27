@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - DomainLookupError
+
 public enum DomainLookupError: Error, Equatable {
     case networkFailure
     case malformedData
@@ -25,6 +27,8 @@ public enum DomainLookupError: Error, Equatable {
     case noApiVersion
     case unknown
 }
+
+// MARK: - DomainInfo
 
 public struct DomainInfo: Codable, Equatable {
     public let configurationURL: URL

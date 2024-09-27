@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - LastEventIDRepositoryInterface
+
 // sourcery: AutoMockable
 @objc
 public protocol LastEventIDRepositoryInterface {
     func fetchLastEventID() -> UUID?
     func storeLastEventID(_ id: UUID?)
 }
+
+// MARK: - LastEventIDRepository
 
 @objc
 public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterface {

@@ -20,6 +20,8 @@ import MessageUI
 import UIKit
 import WireSyncEngine
 
+// MARK: - BlockerViewControllerContext
+
 enum BlockerViewControllerContext {
     case blacklist
     case jailbroken
@@ -27,6 +29,8 @@ enum BlockerViewControllerContext {
     case backendNotSupported
     case pendingCertificateEnroll
 }
+
+// MARK: - BlockerViewController
 
 final class BlockerViewController: LaunchImageViewController {
     private var context: BlockerViewControllerContext = .blacklist
@@ -235,7 +239,7 @@ final class BlockerViewController: LaunchImageViewController {
     }
 }
 
-// MARK: - Application state observing
+// MARK: ApplicationStateObserving
 
 extension BlockerViewController: ApplicationStateObserving {
     func addObserverToken(_ token: NSObjectProtocol) {
@@ -246,6 +250,8 @@ extension BlockerViewController: ApplicationStateObserving {
         showAlert()
     }
 }
+
+// MARK: SendTechnicalReportPresenter
 
 extension BlockerViewController: SendTechnicalReportPresenter {}
 

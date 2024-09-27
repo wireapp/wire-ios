@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AssetClientMessageRequestStrategy
+
 /// The `AssetClientMessageRequestStrategy` for creating requests to insert the genericMessage of a
 /// `ZMAssetClientMessage` remotely. This is only necessary for the `/assets/v3' endpoint as we
 /// upload the asset, receive the asset ID in the response, manually add it to the genericMessage and
@@ -61,6 +63,8 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
         ])
     }
 }
+
+// MARK: InsertedObjectSyncTranscoder
 
 extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMAssetClientMessage

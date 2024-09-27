@@ -20,6 +20,8 @@ import SwiftUI
 import WireDesign
 import WireSyncEngine
 
+// MARK: - OtherUserClientsListViewController
+
 final class OtherUserClientsListViewController: UIViewController,
     UICollectionViewDelegateFlowLayout,
     UICollectionViewDataSource {
@@ -235,6 +237,8 @@ final class OtherUserClientsListViewController: UIViewController,
     }
 }
 
+// MARK: UserObserving
+
 extension OtherUserClientsListViewController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.clientsChanged || changeInfo.trustLevelChanged else { return }
@@ -246,6 +250,8 @@ extension OtherUserClientsListViewController: UserObserving {
         updateCertificatesForUserClients()
     }
 }
+
+// MARK: ParticipantDeviceHeaderViewDelegate
 
 extension OtherUserClientsListViewController: ParticipantDeviceHeaderViewDelegate {
     func participantsDeviceHeaderViewDidTapLearnMore(_: ParticipantDeviceHeaderView) {

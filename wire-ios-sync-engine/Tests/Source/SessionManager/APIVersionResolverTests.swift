@@ -20,6 +20,8 @@ import WireTransport
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - APIVersionResolverTests
+
 final class APIVersionResolverTests: ZMTBaseTest {
     private var transportSession: MockTransportSession!
     private var mockDelegate: MockAPIVersionResolverDelegate!
@@ -397,7 +399,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
     }
 }
 
-// MARK: - Mocks
+// MARK: - MockAPIVersionResolverDelegate
 
 private class MockAPIVersionResolverDelegate: APIVersionResolverDelegate {
     var blacklistReason: BlacklistReason?

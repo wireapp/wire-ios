@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+// MARK: - PreferredAPIVersionView
+
 struct PreferredAPIVersionView: View {
     // MARK: - Properties
 
@@ -56,7 +58,7 @@ struct PreferredAPIVersionView: View {
     }
 }
 
-// MARK: - Previews
+// MARK: - PreferredAPIVersionView_Previews
 
 struct PreferredAPIVersionView_Previews: PreviewProvider {
     static var previews: some View {

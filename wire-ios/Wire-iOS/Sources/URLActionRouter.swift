@@ -24,7 +24,7 @@ extension Notification.Name {
     static let companyLoginDidFinish = Notification.Name("Wire.CompanyLoginDidFinish")
 }
 
-// MARK: - URLActionRouterDelegete
+// MARK: - URLActionRouterDelegate
 
 protocol URLActionRouterDelegate: AnyObject {
     func urlActionRouterWillShowCompanyLoginError()
@@ -136,7 +136,7 @@ class URLActionRouter: URLActionRouterProtocol {
     }
 }
 
-// MARK: - PresentationDelegate
+// MARK: PresentationDelegate
 
 extension URLActionRouter: PresentationDelegate {
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {

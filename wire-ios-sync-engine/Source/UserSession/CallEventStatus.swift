@@ -20,6 +20,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
+// MARK: - CallEventStatus
+
 /// CallEventStatus keep track of call events which are waiting to be processed. this is important to know when
 /// the app is launched via push notification since then we need keep the app running until we've processed all
 /// call events.

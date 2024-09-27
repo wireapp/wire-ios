@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ProteusError
+
 public enum ProteusError: Int, Error, Equatable {
     /// An internal storage error occurred.
     ///
@@ -159,6 +161,8 @@ public enum ProteusError: Int, Error, Equatable {
         }
     }
 }
+
+// MARK: SafeForLoggingStringConvertible
 
 extension ProteusError: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {

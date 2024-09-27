@@ -20,6 +20,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - IncomingRequestFooterTests
+
 final class IncomingRequestFooterTests: XCTestCase {
     // MARK: - Properties
 

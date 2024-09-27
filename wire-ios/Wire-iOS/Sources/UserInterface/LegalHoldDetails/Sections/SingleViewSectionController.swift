@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - CollectionViewCellAdapter
+
 final class CollectionViewCellAdapter: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -48,6 +50,8 @@ final class CollectionViewCellAdapter: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+// MARK: - SingleViewSectionController
 
 final class SingleViewSectionController: NSObject, CollectionViewSectionController {
     fileprivate var view: UIView

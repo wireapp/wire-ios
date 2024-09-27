@@ -20,13 +20,19 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - PopUpIconButtonExpandDirection
+
 enum PopUpIconButtonExpandDirection {
     case left, right
 }
 
+// MARK: - PopUpIconButtonDelegate
+
 protocol PopUpIconButtonDelegate: AnyObject {
     func popUpIconButton(_ button: PopUpIconButton, didSelectIcon icon: StyleKitIcon)
 }
+
+// MARK: - PopUpIconButton
 
 final class PopUpIconButton: IconButton {
     weak var delegate: PopUpIconButtonDelegate?

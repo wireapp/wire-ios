@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - SelfPostingNotification
+
 protocol SelfPostingNotification {
     static var notificationName: Notification.Name { get }
 }
@@ -35,11 +37,13 @@ extension SelfPostingNotification {
     }
 }
 
-// MARK: - Network Quality observer
+// MARK: - NetworkQualityObserver
 
 public protocol NetworkQualityObserver: AnyObject {
     func callCenterDidChange(networkQuality: NetworkQuality)
 }
+
+// MARK: - WireCallCenterNetworkQualityNotification
 
 struct WireCallCenterNetworkQualityNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterNetworkQualityNotification")
@@ -47,11 +51,13 @@ struct WireCallCenterNetworkQualityNotification: SelfPostingNotification {
     public let networkQuality: NetworkQuality
 }
 
-// MARK: - CBR observer
+// MARK: - ConstantBitRateAudioObserver
 
 public protocol ConstantBitRateAudioObserver: AnyObject {
     func callCenterDidChange(constantAudioBitRateAudioEnabled: Bool)
 }
+
+// MARK: - WireCallCenterCBRNotification
 
 struct WireCallCenterCBRNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterCBRNotification")
@@ -59,11 +65,13 @@ struct WireCallCenterCBRNotification: SelfPostingNotification {
     public let enabled: Bool
 }
 
-// MARK: - Mute state observer
+// MARK: - MuteStateObserver
 
 public protocol MuteStateObserver: AnyObject {
     func callCenterDidChange(muted: Bool)
 }
+
+// MARK: - WireCallCenterMutedNotification
 
 struct WireCallCenterMutedNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterMutedNotification")
@@ -71,27 +79,31 @@ struct WireCallCenterMutedNotification: SelfPostingNotification {
     public let muted: Bool
 }
 
-// MARK: - Conference calling unavailable observer
+// MARK: - ConferenceCallingUnavailableObserver
 
 public protocol ConferenceCallingUnavailableObserver: AnyObject {
     func callCenterDidNotStartConferenceCall()
 }
 
+// MARK: - WireCallCenterConferenceCallingUnavailableNotification
+
 struct WireCallCenterConferenceCallingUnavailableNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterConferenceCallingUnavailableNotification")
 }
 
-// MARK: - Active speakers observer
+// MARK: - ActiveSpeakersObserver
 
 public protocol ActiveSpeakersObserver: AnyObject {
     func callCenterDidChangeActiveSpeakers()
 }
 
+// MARK: - WireCallCenterActiveSpeakersNotification
+
 struct WireCallCenterActiveSpeakersNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterActiveSpeakersNotification")
 }
 
-// MARK: - Call state observer
+// MARK: - WireCallCenterCallStateObserver
 
 public protocol WireCallCenterCallStateObserver: AnyObject {
     /// Called when the callState changes in a conversation
@@ -109,6 +121,8 @@ public protocol WireCallCenterCallStateObserver: AnyObject {
     )
 }
 
+// MARK: - WireCallCenterCallStateNotification
+
 public struct WireCallCenterCallStateNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterNotification")
 
@@ -120,11 +134,13 @@ public struct WireCallCenterCallStateNotification: SelfPostingNotification {
     let previousCallState: CallState?
 }
 
-// MARK: - Missed call observer
+// MARK: - WireCallCenterMissedCallObserver
 
 public protocol WireCallCenterMissedCallObserver: AnyObject {
     func callCenterMissedCall(conversation: ZMConversation, caller: UserType, timestamp: Date, video: Bool)
 }
+
+// MARK: - WireCallCenterMissedCallNotification
 
 public struct WireCallCenterMissedCallNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterMissedCallNotification")
@@ -136,11 +152,13 @@ public struct WireCallCenterMissedCallNotification: SelfPostingNotification {
     let video: Bool
 }
 
-// MARK: - Received call observer
+// MARK: - WireCallCenterCallErrorObserver
 
 public protocol WireCallCenterCallErrorObserver: AnyObject {
     func callCenterDidReceiveCallError(_ error: CallError, conversationId: AVSIdentifier)
 }
+
+// MARK: - WireCallCenterCallErrorNotification
 
 public struct WireCallCenterCallErrorNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterCallErrorNotification")
@@ -151,7 +169,7 @@ public struct WireCallCenterCallErrorNotification: SelfPostingNotification {
     let conversationId: AVSIdentifier
 }
 
-// MARK: - CallParticipantObserver
+// MARK: - WireCallCenterCallParticipantObserver
 
 public protocol WireCallCenterCallParticipantObserver: AnyObject {
     /// Called when a participant of the call joins / leaves or when their call state changes
@@ -160,6 +178,8 @@ public protocol WireCallCenterCallParticipantObserver: AnyObject {
     /// - parameter particpants: updated list of call participants
     func callParticipantsDidChange(conversation: ZMConversation, participants: [CallParticipant])
 }
+
+// MARK: - WireCallCenterCallParticipantNotification
 
 public struct WireCallCenterCallParticipantNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("VoiceChannelParticipantNotification")
@@ -173,6 +193,8 @@ public struct WireCallCenterCallParticipantNotification: SelfPostingNotification
 public protocol VoiceGainObserver: AnyObject {
     func voiceGainDidChange(forParticipant participant: UserType, volume: Float)
 }
+
+// MARK: - VoiceGainNotification
 
 public class VoiceGainNotification: SelfPostingNotification {
     static let notificationName = Notification.Name("VoiceGainNotification")

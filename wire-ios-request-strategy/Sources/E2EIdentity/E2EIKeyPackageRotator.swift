@@ -21,6 +21,8 @@ import Foundation
 import WireCoreCrypto
 import WireDataModel
 
+// MARK: - E2EIKeyPackageRotating
+
 // sourcery: AutoMockable
 public protocol E2EIKeyPackageRotating {
     func rotateKeysAndMigrateConversations(
@@ -28,6 +30,8 @@ public protocol E2EIKeyPackageRotating {
         certificateChain: String
     ) async throws
 }
+
+// MARK: - E2EIKeyPackageRotator
 
 public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     // MARK: - Types

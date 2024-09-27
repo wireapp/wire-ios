@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - SearchOptions
+
 public struct SearchOptions: OptionSet {
     public let rawValue: Int
 
@@ -77,6 +79,8 @@ extension SearchOptions {
         }
     }
 }
+
+// MARK: - SearchRequest
 
 public struct SearchRequest {
     public enum Query {

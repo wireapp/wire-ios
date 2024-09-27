@@ -19,6 +19,8 @@
 import Foundation
 import WireAPI
 
+// MARK: - UpdateEventProcessorProtocol
+
 // sourcery: AutoMockable
 /// Process update events.
 protocol UpdateEventProcessorProtocol {
@@ -31,6 +33,8 @@ protocol UpdateEventProcessorProtocol {
 
     func processEvent(_ event: UpdateEvent) async throws
 }
+
+// MARK: - UpdateEventProcessor
 
 struct UpdateEventProcessor {
     let conversationEventProcessor: any ConversationEventProcessorProtocol

@@ -18,7 +18,7 @@
 
 import Foundation
 
-// MARK: - ConversationCompositeMessage
+// MARK: - ZMClientMessage + ConversationCompositeMessage
 
 extension ZMClientMessage: ConversationCompositeMessage {
     public var compositeMessageData: CompositeMessageData? {
@@ -29,7 +29,7 @@ extension ZMClientMessage: ConversationCompositeMessage {
     }
 }
 
-// MARK: - CompositeMessageData
+// MARK: - ZMClientMessage + CompositeMessageData
 
 extension ZMClientMessage: CompositeMessageData {
     public var items: [CompositeMessageItem] {

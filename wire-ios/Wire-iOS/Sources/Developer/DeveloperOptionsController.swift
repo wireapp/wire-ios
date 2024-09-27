@@ -21,6 +21,8 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
+// MARK: - DeveloperOptionsController
+
 final class DeveloperOptionsController: UIViewController {
     /// Cells
     var tableCells: [UITableViewCell]!
@@ -199,6 +201,8 @@ final class DeveloperOptionsController: UIViewController {
         }
     }
 }
+
+// MARK: UITableViewDataSource
 
 extension DeveloperOptionsController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

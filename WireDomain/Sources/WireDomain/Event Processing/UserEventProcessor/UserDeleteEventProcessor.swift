@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - UserDeleteEventProcessorProtocol
+
 /// Process user delete events.
 
 protocol UserDeleteEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol UserDeleteEventProcessorProtocol {
 
     func processEvent(_ event: UserDeleteEvent) async throws
 }
+
+// MARK: - UserDeleteEventProcessor
 
 struct UserDeleteEventProcessor: UserDeleteEventProcessorProtocol {
     func processEvent(_: UserDeleteEvent) async throws {

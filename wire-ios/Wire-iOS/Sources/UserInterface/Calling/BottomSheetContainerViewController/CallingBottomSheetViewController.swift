@@ -24,6 +24,8 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "calling")
 
+// MARK: - ActiveCallViewControllerDelegate
+
 protocol ActiveCallViewControllerDelegate: AnyObject {
     func activeCallViewControllerDidDisappear(
         _ activeCallViewController: UIViewController,
@@ -31,9 +33,13 @@ protocol ActiveCallViewControllerDelegate: AnyObject {
     )
 }
 
+// MARK: - CallInfoConfigurationObserver
+
 protocol CallInfoConfigurationObserver: AnyObject {
     func didUpdateConfiguration(configuration: CallInfoConfiguration)
 }
+
+// MARK: - CallingBottomSheetViewController
 
 final class CallingBottomSheetViewController: BottomSheetContainerViewController {
     private let bottomSheetMaxHeight = UIScreen.main.bounds.height * 0.7
@@ -254,6 +260,8 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     }
 }
 
+// MARK: CallInfoConfigurationObserver
+
 extension CallingBottomSheetViewController: CallInfoConfigurationObserver {
     func didUpdateConfiguration(configuration: CallInfoConfiguration) {
         if configuration.state != callInfoConfiguration?.state {
@@ -274,11 +282,15 @@ extension CallingBottomSheetViewController: CallInfoConfigurationObserver {
     }
 }
 
+// MARK: WireCallCenterCallParticipantObserver
+
 extension CallingBottomSheetViewController: WireCallCenterCallParticipantObserver {
     func callParticipantsDidChange(conversation: ZMConversation, participants: [CallParticipant]) {
         callingActionsInfoViewController.participants = voiceChannel.getParticipantsList()
     }
 }
+
+// MARK: WireCallCenterCallStateObserver
 
 extension CallingBottomSheetViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(
@@ -292,6 +304,8 @@ extension CallingBottomSheetViewController: WireCallCenterCallStateObserver {
     }
 }
 
+// MARK: CallDegradationControllerDelegate
+
 extension CallingBottomSheetViewController: CallDegradationControllerDelegate {
     func continueDegradedCall() {
         visibleVoiceChannelViewController.callingActionsViewPerformAction(.continueDegradedCall)
@@ -301,6 +315,8 @@ extension CallingBottomSheetViewController: CallDegradationControllerDelegate {
         visibleVoiceChannelViewController.callingActionsViewPerformAction(.terminateDegradedCall)
     }
 }
+
+// MARK: CallViewControllerDelegate
 
 extension CallingBottomSheetViewController: CallViewControllerDelegate {
     func callViewControllerDidDisappear(
@@ -332,6 +348,8 @@ extension VoiceChannel {
         }
     }
 }
+
+// MARK: - PassThroughOpaqueView
 
 private final class PassThroughOpaqueView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {

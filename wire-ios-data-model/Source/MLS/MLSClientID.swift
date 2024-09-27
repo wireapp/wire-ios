@@ -19,6 +19,8 @@
 import Foundation
 import WireTransport
 
+// MARK: - MLSClientID
+
 /// An ID representing a identifying a single user client.
 public struct MLSClientID: Equatable, Hashable {
     // MARK: - Properties
@@ -103,6 +105,8 @@ public struct MLSClientID: Equatable, Hashable {
         self.domain = domain.lowercased()
     }
 }
+
+// MARK: CustomStringConvertible
 
 extension MLSClientID: CustomStringConvertible {
     public var description: String {

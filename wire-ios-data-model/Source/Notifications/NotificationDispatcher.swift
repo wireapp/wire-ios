@@ -19,6 +19,8 @@
 import CoreData
 import Foundation
 
+// MARK: - NotificationDispatcher
+
 /// The `NotificationDispatcher` listens for changes to observable entities (e.g message, users, and conversations),
 /// extracts information about those changes (e.g which properties changed), and posts notifications about those
 /// changes.

@@ -25,6 +25,8 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// MARK: - AudioRecordKeyboardViewController
+
 final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBaseViewController {
     enum State {
         case ready, recording, effects
@@ -500,7 +502,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 }
 
-// MARK: - AudioEffectsPickerDelegate
+// MARK: AudioEffectsPickerDelegate
 
 extension AudioRecordKeyboardViewController: AudioEffectsPickerDelegate {
     func audioEffectsPickerDidPickEffect(

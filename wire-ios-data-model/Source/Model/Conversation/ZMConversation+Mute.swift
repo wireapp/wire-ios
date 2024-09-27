@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - MutedMessageOptionValue
+
 @objc
 public enum MutedMessageOptionValue: Int32 {
     case none = 0
@@ -25,6 +27,8 @@ public enum MutedMessageOptionValue: Int32 {
     case mentionsAndReplies = 2
     case all = 3
 }
+
+// MARK: - MutedMessageTypes
 
 /// Defines what kind of messages are muted.
 /// +--------------------+----------------+----------------------------------------+--------+

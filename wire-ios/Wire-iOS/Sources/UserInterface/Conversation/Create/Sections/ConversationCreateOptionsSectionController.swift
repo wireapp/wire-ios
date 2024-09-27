@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ConversationCreateOptionsSectionController
+
 final class ConversationCreateOptionsSectionController: ConversationCreateSectionController {
     typealias Cell = ConversationCreateOptionsCell
 

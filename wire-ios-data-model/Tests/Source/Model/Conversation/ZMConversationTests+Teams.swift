@@ -19,6 +19,8 @@
 import WireTesting
 @testable import WireDataModel
 
+// MARK: - ConversationTests_Teams
+
 final class ConversationTests_Teams: ZMConversationTestsBase {
     var team: Team!
     var user: ZMUser!

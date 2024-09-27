@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireUtilities
 
+// MARK: - ConversationMessageCellDelegate
+
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
     func conversationMessageWantsToOpenMessageDetails(
@@ -39,6 +41,8 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
     )
     func conversationMessageShouldUpdate()
 }
+
+// MARK: - ConversationMessageCell
 
 /// A generic view that displays conversation contents.
 
@@ -102,6 +106,8 @@ extension ConversationMessageCell {
 
     func prepareForReuse() {}
 }
+
+// MARK: - ConversationMessageCellDescription
 
 /// An object that prepares the contents of a conversation cell before
 /// it is displayed.
@@ -232,6 +238,8 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
         return configuration == otherConfig
     }
 }
+
+// MARK: - AnyConversationMessageCellDescription
 
 /// A type erased box containing a conversation message cell description.
 

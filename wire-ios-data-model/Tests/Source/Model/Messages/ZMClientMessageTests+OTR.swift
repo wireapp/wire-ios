@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - ClientMessageTests_OTR
+
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: this class is the same tests as ClientMessageTests_OTR_legacy but with proteusViaCoreCrypto true
 // + mockProteusService setup

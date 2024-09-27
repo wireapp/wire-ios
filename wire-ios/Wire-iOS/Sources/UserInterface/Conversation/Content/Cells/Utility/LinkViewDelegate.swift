@@ -20,6 +20,8 @@ import UIKit
 
 typealias ContextMenuLinkViewDelegate = ContextMenuDelegate & LinkViewDelegate
 
+// MARK: - LinkViewDelegate
+
 protocol LinkViewDelegate: AnyObject {
     var url: URL? { get }
     func linkViewWantsToOpenURL(_ view: UIView)

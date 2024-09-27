@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - LabelType
+
 @objc
 public protocol LabelType: NSObjectProtocol {
     var remoteIdentifier: UUID? { get }
     var kind: Label.Kind { get }
     var name: String? { get }
 }
+
+// MARK: - Label
 
 @objcMembers
 public class Label: ZMManagedObject, LabelType {

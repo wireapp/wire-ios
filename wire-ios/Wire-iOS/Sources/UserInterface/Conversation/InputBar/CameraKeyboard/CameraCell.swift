@@ -19,10 +19,14 @@
 import avs
 import Foundation
 
+// MARK: - CameraCellDelegate
+
 protocol CameraCellDelegate: AnyObject {
     func cameraCellWantsToOpenFullCamera(_ cameraCell: CameraCell)
     func cameraCell(_ cameraCell: CameraCell, didPickImageData: Data)
 }
+
+// MARK: - CameraCell
 
 final class CameraCell: UICollectionViewCell {
     let cameraController: CameraController?

@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - Availability
+
 @objc(ZMAvailability)
 public enum Availability: Int, CaseIterable {
     case none, available, busy, away
 }
+
+// MARK: CustomStringConvertible
 
 extension Availability: CustomStringConvertible {
     public var description: String {

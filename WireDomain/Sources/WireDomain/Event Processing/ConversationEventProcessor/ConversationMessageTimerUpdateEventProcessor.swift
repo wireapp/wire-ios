@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - ConversationMessageTimerUpdateEventProcessorProtocol
+
 /// Process conversation message timer update events.
 
 protocol ConversationMessageTimerUpdateEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol ConversationMessageTimerUpdateEventProcessorProtocol {
 
     func processEvent(_ event: ConversationMessageTimerUpdateEvent) async throws
 }
+
+// MARK: - ConversationMessageTimerUpdateEventProcessor
 
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
     func processEvent(_: ConversationMessageTimerUpdateEvent) async throws {

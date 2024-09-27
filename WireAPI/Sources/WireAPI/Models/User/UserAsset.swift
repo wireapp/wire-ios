@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserAssetSize
+
 /// Describes the size of the user asset.
 
 public enum UserAssetSize: String, Codable, Equatable {
@@ -30,6 +32,8 @@ public enum UserAssetSize: String, Codable, Equatable {
     case complete
 }
 
+// MARK: - UserAssetType
+
 /// Describes the purpose of the user asset.
 
 public enum UserAssetType: String, Codable, Equatable {
@@ -37,6 +41,8 @@ public enum UserAssetType: String, Codable, Equatable {
 
     case image
 }
+
+// MARK: - UserAsset
 
 /// An asset associated with a user, typically a profile picture.
 

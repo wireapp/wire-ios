@@ -22,6 +22,8 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - SelfProfileViewController
+
 /// The first page of the user settings.
 
 final class SelfProfileViewController: UIViewController {
@@ -227,7 +229,7 @@ final class SelfProfileViewController: UIViewController {
     }
 }
 
-// MARK: - AccountSelectorViewDelegate
+// MARK: AccountSelectorViewDelegate
 
 extension SelfProfileViewController: AccountSelectorViewDelegate {
     func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
@@ -241,7 +243,7 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
     }
 }
 
-// MARK: - SettingsPropertyFactoryDelegate
+// MARK: SettingsPropertyFactoryDelegate
 
 extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
     private var topViewController: UIViewController! {
@@ -309,6 +311,8 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
         }
     }
 }
+
+// MARK: PasscodeSetupViewControllerDelegate
 
 extension SelfProfileViewController: PasscodeSetupViewControllerDelegate {
     func passcodeSetupControllerDidFinish() {

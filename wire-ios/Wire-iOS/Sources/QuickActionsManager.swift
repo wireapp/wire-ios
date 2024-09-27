@@ -30,6 +30,8 @@ extension UIApplicationShortcutItem {
     )
 }
 
+// MARK: - QuickActionsManager
+
 final class QuickActionsManager: NSObject {
     // MARK: - Public Property
 

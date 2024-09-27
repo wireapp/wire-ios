@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AuthenticationActioner
+
 /// An object that can execute authentication actions.
 
 protocol AuthenticationActioner: AnyObject {
@@ -41,6 +43,8 @@ extension AuthenticationActioner {
         executeAction(.repeatAction)
     }
 }
+
+// MARK: - AuthenticationActionable
 
 /// An object that can trigger authentication actions.
 

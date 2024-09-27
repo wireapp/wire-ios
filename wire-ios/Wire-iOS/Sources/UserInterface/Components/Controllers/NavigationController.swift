@@ -20,6 +20,8 @@ import UIKit
 import WireDesign
 import WireUtilities
 
+// MARK: - NavigationController
+
 final class NavigationController: UINavigationController {
     private lazy var pushTransition = NavigationTransition(operation: .push)
     private lazy var popTransition = NavigationTransition(operation: .pop)
@@ -121,6 +123,8 @@ final class NavigationController: UINavigationController {
     }
 }
 
+// MARK: UINavigationControllerDelegate
+
 extension NavigationController: UINavigationControllerDelegate {
     func navigationController(
         _ navigationController: UINavigationController,
@@ -143,6 +147,8 @@ extension NavigationController: UINavigationControllerDelegate {
     }
 }
 
+// MARK: UIViewControllerTransitioningDelegate
+
 extension NavigationController: UIViewControllerTransitioningDelegate {
     func animationController(
         forPresented presented: UIViewController,
@@ -156,6 +162,8 @@ extension NavigationController: UIViewControllerTransitioningDelegate {
         SwizzleTransition(direction: .vertical)
     }
 }
+
+// MARK: UIGestureRecognizerDelegate
 
 extension NavigationController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

@@ -19,14 +19,20 @@
 import Foundation
 import WireDataModel
 
+// MARK: - UserProfileImageUpdateError
+
 enum UserProfileImageUpdateError: Error {
     case preprocessingFailed
     case uploadFailed(Error)
 }
 
+// MARK: - UserProfileImageUpdateStateDelegate
+
 protocol UserProfileImageUpdateStateDelegate: AnyObject {
     func failed(withError: UserProfileImageUpdateError)
 }
+
+// MARK: - UserProfileImageUploadStatusProtocol
 
 protocol UserProfileImageUploadStatusProtocol: AnyObject {
     func hasAssetToDelete() -> Bool
@@ -37,11 +43,15 @@ protocol UserProfileImageUploadStatusProtocol: AnyObject {
     func uploadingFailed(imageSize: ProfileImageSize, error: Error)
 }
 
+// MARK: - UserProfileImageUpdateProtocol
+
 @objc
 public protocol UserProfileImageUpdateProtocol: AnyObject {
     @objc(updateImageWithImageData:)
     func updateImage(imageData: Data)
 }
+
+// MARK: - UserProfileImageUploadStateChangeDelegate
 
 protocol UserProfileImageUploadStateChangeDelegate: AnyObject {
     func didTransition(
@@ -54,6 +64,8 @@ protocol UserProfileImageUploadStateChangeDelegate: AnyObject {
         for size: ProfileImageSize
     )
 }
+
+// MARK: - UserProfileImageUpdateStatus
 
 public final class UserProfileImageUpdateStatus: NSObject {
     fileprivate var log = ZMSLog(tag: "UserProfileImageUpdateStatus")
@@ -276,6 +288,8 @@ extension UserProfileImageUpdateStatus {
     }
 }
 
+// MARK: UserProfileImageUpdateProtocol
+
 // Called from the UI to update a v3 image
 extension UserProfileImageUpdateStatus: UserProfileImageUpdateProtocol {
     /// Starts the process of updating profile picture.
@@ -289,6 +303,8 @@ extension UserProfileImageUpdateStatus: UserProfileImageUpdateProtocol {
         }
     }
 }
+
+// MARK: ZMAssetsPreprocessorDelegate
 
 extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
     public func completedDownsampleOperation(
@@ -319,6 +335,8 @@ extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
         }
     }
 }
+
+// MARK: UserProfileImageUploadStatusProtocol
 
 extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
     /// Checks if there are assets that needs to be deleted

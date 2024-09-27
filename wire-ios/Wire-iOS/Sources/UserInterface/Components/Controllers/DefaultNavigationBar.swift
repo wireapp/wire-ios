@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - DefaultNavigationBar
+
 class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
     func redrawFont() {
         titleTextAttributes?[.font] = FontSpec.smallSemiboldFont.font!

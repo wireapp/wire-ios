@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireDataModel
 
+// MARK: - ZMUserLegalHoldTests
+
 class ZMUserLegalHoldTests: ModelObjectsTests {
     override func setUp() {
         DeveloperFlag.storage = .temporary()

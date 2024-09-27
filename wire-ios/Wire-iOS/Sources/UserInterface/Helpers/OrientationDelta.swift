@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - OrientationDelta
+
 /// Represents the orientation delta between the interface orientation (as a reference) and the device orientation
 enum OrientationDelta: Int, CaseIterable {
     case equal
@@ -67,6 +69,8 @@ enum OrientationDelta: Int, CaseIterable {
         }
     }
 }
+
+// MARK: - OrientationAngle
 
 enum OrientationAngle {
     case none // 0°

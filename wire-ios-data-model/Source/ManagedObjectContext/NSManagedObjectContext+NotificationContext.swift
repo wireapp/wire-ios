@@ -18,8 +18,12 @@
 
 import Foundation
 
+// MARK: - NotificationContext
+
 @objc
 public protocol NotificationContext: NSObjectProtocol {}
+
+// MARK: - NSPersistentStoreCoordinator + NotificationContext
 
 extension NSPersistentStoreCoordinator: NotificationContext {}
 

@@ -22,6 +22,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - UserClientTests
+
 final class UserClientTests: ZMBaseManagedObjectTest {
     override static func setUp() {
         super.setUp()

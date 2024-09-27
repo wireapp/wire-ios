@@ -19,6 +19,8 @@
 import UIKit
 import WireReusableUIComponents
 
+// MARK: - BackupViewController
+
 final class BackupViewController: UIViewController {
     private let tableView = UITableView(frame: .zero)
     private var cells: [UITableViewCell.Type] = []
@@ -73,7 +75,7 @@ final class BackupViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource & UITableViewDelegate
+// MARK: UITableViewDataSource, UITableViewDelegate
 
 extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {

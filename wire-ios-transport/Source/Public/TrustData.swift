@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - TrustData
+
 struct TrustData: Decodable {
     struct Host: Decodable {
         enum Rule: String, Decodable {

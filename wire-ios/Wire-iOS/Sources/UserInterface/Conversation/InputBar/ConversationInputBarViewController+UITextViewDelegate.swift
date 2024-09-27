@@ -37,6 +37,8 @@ extension ConversationInputBarViewController {
     }
 }
 
+// MARK: - ConversationInputBarViewController + UITextViewDelegate
+
 extension ConversationInputBarViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         guard let conversation = conversation as? ZMConversation else { return }

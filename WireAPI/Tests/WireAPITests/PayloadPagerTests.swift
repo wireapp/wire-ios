@@ -19,6 +19,8 @@
 import XCTest
 @testable import WireAPI
 
+// MARK: - PayloadPagerTests
+
 final class PayloadPagerTests: XCTestCase {
     func test_PagerIteratesThroughPages() async throws {
         // Given
@@ -102,6 +104,8 @@ final class PayloadPagerTests: XCTestCase {
         }
     }
 }
+
+// MARK: - TestError
 
 private struct TestError: Error, Equatable {
     let message: String

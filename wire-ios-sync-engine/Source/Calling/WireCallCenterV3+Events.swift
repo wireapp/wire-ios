@@ -21,7 +21,7 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
-// MARK: Conversation Changes
+// MARK: - WireCallCenterV3 + ZMConversationObserver
 
 extension WireCallCenterV3: ZMConversationObserver {
     public func conversationDidChange(_ changeInfo: ConversationChangeInfo) {

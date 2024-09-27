@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - FeatureConfigsPayload
+
 struct FeatureConfigsPayload: Decodable {
     let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
     let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>?
@@ -30,6 +32,8 @@ struct FeatureConfigsPayload: Decodable {
     let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
     let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
 }
+
+// MARK: - FeatureConfigsPayloadAPIV6
 
 struct FeatureConfigsPayloadAPIV6: Decodable {
     let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
@@ -44,9 +48,13 @@ struct FeatureConfigsPayloadAPIV6: Decodable {
     let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
 }
 
+// MARK: - FeatureStatus
+
 struct FeatureStatus: Decodable {
     let status: Feature.Status
 }
+
+// MARK: - FeatureStatusWithConfig
 
 struct FeatureStatusWithConfig<Config: Codable>: Decodable {
     let status: Feature.Status

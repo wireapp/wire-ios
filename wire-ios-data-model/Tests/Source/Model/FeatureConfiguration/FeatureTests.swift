@@ -20,6 +20,8 @@ import CoreData
 import XCTest
 @testable import WireDataModel
 
+// MARK: - FeatureTests
+
 final class FeatureTests: ZMBaseManagedObjectTest {
     private var context: NSManagedObjectContext { syncMOC }
 

@@ -20,12 +20,16 @@ import Foundation
 import WireDataModel
 import WireRequestStrategy
 
+// MARK: - FetchUserClientsUseCaseProtocol
+
 public protocol FetchUserClientsUseCaseProtocol {
     func fetchUserClients(
         userIDs: Set<QualifiedID>,
         in context: NSManagedObjectContext
     ) async throws -> Set<QualifiedClientID>
 }
+
+// MARK: - FetchUserClientsUseCase
 
 public class FetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
     public init() {}

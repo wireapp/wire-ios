@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - ConversationEventProcessorProtocol
+
 /// Process conversation update events.
 
 protocol ConversationEventProcessorProtocol {
@@ -30,6 +32,8 @@ protocol ConversationEventProcessorProtocol {
 
     func processEvent(_ event: ConversationEvent) async throws
 }
+
+// MARK: - ConversationEventProcessor
 
 struct ConversationEventProcessor {
     let accessUpdateEventProcessor: any ConversationAccessUpdateEventProcessorProtocol

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UUID + TransportCoding
+
 extension UUID: TransportCoding {
     public func transportString() -> String {
         uuidString.lowercased()

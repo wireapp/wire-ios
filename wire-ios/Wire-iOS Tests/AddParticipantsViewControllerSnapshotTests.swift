@@ -20,6 +20,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - MockTeam
+
 final class MockTeam: TeamType {
     var conversations: Set<ZMConversation> = []
 
@@ -41,6 +43,8 @@ final class MockTeam: TeamType {
         // no-op
     }
 }
+
+// MARK: - AddParticipantsViewControllerSnapshotTests
 
 final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
     // MARK: - Properties

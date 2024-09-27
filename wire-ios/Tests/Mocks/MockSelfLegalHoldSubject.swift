@@ -19,10 +19,14 @@
 import Foundation
 import WireDataModel
 
+// MARK: - MockLegalHoldDataSource
+
 final class MockLegalHoldDataSource: NSObject {
     var legalHoldRequest: LegalHoldRequest?
     var needsToAcknowledgeLegalHoldStatus = false
 }
+
+// MARK: - MockUser + SelfLegalHoldSubject
 
 extension MockUser: SelfLegalHoldSubject {
     public var needsToAcknowledgeLegalHoldStatus: Bool {

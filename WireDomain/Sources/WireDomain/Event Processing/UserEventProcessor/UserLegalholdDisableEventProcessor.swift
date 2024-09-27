@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - UserLegalholdDisableEventProcessorProtocol
+
 /// Process user legalhold disable events.
 
 protocol UserLegalholdDisableEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol UserLegalholdDisableEventProcessorProtocol {
 
     func processEvent(_ event: UserLegalholdDisableEvent) async throws
 }
+
+// MARK: - UserLegalholdDisableEventProcessor
 
 struct UserLegalholdDisableEventProcessor: UserLegalholdDisableEventProcessorProtocol {
     func processEvent(_: UserLegalholdDisableEvent) async throws {

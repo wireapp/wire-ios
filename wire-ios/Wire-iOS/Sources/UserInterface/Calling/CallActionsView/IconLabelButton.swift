@@ -20,11 +20,15 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - IconLabelButtonInput
+
 protocol IconLabelButtonInput {
     func icon(forState state: UIControl.State) -> StyleKitIcon
     var label: String { get }
     var accessibilityIdentifier: String { get }
 }
+
+// MARK: - IconLabelButton
 
 class IconLabelButton: ButtonWithLargerHitArea {
     private static let width: CGFloat = 64

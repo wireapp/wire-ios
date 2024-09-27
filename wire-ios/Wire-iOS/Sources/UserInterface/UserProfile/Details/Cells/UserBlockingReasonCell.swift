@@ -21,6 +21,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - UserBlockingReasonCell
+
 final class UserBlockingReasonCell: UITableViewCell {
     // MARK: - Properties
 

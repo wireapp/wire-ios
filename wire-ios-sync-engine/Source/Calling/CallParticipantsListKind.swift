@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - CallParticipantsListKind
+
 public enum CallParticipantsListKind {
     /// All the active participants, including the real time active speakers
 

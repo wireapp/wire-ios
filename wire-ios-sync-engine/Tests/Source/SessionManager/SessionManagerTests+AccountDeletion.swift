@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireSyncEngine
 
+// MARK: - SessionManagerAccountDeletionTests
+
 final class SessionManagerAccountDeletionTests: IntegrationTest {
     override func setUp() {
         super.setUp()
@@ -95,6 +97,8 @@ final class SessionManagerAccountDeletionTests: IntegrationTest {
     }
 }
 
+// MARK: - SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThreshold
+
 class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThreshold: IntegrationTest {
     private var threshold: Int? = 2
     override func setUp() {
@@ -145,6 +149,8 @@ class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThr
         XCTAssertTrue(FileManager.default.fileExists(atPath: accountFolder.path))
     }
 }
+
+// MARK: - SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictionFailure
 
 class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictionFailure: IntegrationTest {
     override func setUp() {

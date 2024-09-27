@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+// MARK: - EventProcessingTrackerProtocol
+
 @objc
 public protocol EventProcessingTrackerProtocol: AnyObject {
     func registerEventProcessed()
@@ -29,6 +31,8 @@ public protocol EventProcessingTrackerProtocol: AnyObject {
     func persistedAttributes(for event: String) -> [String: NSObject]
     var debugDescription: String { get }
 }
+
+// MARK: - EventProcessingTracker
 
 @objc
 public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {

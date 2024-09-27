@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - RegistrationStatusDelegate
+
 /// Used to signal changes to the registration state.
 public protocol RegistrationStatusDelegate: AnyObject {
     /// The team was successfully created.
@@ -45,6 +47,8 @@ public protocol RegistrationStatusDelegate: AnyObject {
     func activationCodeValidationFailed(with error: Error)
 }
 
+// MARK: - RegistrationStatusProtocol
+
 /// A protocol for objects that handle registration of users and teams.
 
 protocol RegistrationStatusProtocol: AnyObject {
@@ -58,7 +62,7 @@ protocol RegistrationStatusProtocol: AnyObject {
     func success()
 }
 
-// MARK: - Registration Status
+// MARK: - RegistrationStatus
 
 /// Handles regisitration of users and teams.
 

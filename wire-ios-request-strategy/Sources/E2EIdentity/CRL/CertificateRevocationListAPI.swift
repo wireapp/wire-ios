@@ -19,10 +19,14 @@
 import Foundation
 import WireDataModel
 
+// MARK: - CertificateRevocationListAPIProtocol
+
 // sourcery: AutoMockable
 public protocol CertificateRevocationListAPIProtocol {
     func getRevocationList(from distributionPoint: URL) async throws -> Data
 }
+
+// MARK: - CertificateRevocationListAPI
 
 public class CertificateRevocationListAPI: CertificateRevocationListAPIProtocol {
     private let httpClient: HttpClientCustom

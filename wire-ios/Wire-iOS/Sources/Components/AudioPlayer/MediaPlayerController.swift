@@ -20,6 +20,8 @@ import AVFoundation
 import Foundation
 import WireDataModel
 
+// MARK: - MediaPlayerController
+
 /// For playing videos in conversation
 /// Controls and observe the state of a AVPlayer instance for integration with the AVSMediaManager
 final class MediaPlayerController: NSObject {
@@ -60,6 +62,8 @@ final class MediaPlayerController: NSObject {
         }
     }
 }
+
+// MARK: MediaPlayer
 
 extension MediaPlayerController: MediaPlayer {
     var title: String? {

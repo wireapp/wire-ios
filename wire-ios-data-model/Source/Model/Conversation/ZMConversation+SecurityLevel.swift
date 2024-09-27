@@ -19,6 +19,8 @@
 import Foundation
 import WireCryptobox
 
+// MARK: - ZMConversationLegalHoldStatus
+
 @objc
 public enum ZMConversationLegalHoldStatus: Int16 {
     case disabled = 0
@@ -34,6 +36,8 @@ public enum ZMConversationLegalHoldStatus: Int16 {
         }
     }
 }
+
+// MARK: - ZMConversationRemoteClientChangeSet
 
 /// Represents a set of client changes in a conversation.
 

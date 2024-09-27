@@ -18,11 +18,15 @@
 
 import WireSyncEngine
 
+// MARK: - GuestLinkFeatureStatus
+
 enum GuestLinkFeatureStatus {
     case enabled
     case disabled
     case unknown
 }
+
+// MARK: - ZMConversation.OptionsConfigurationContainer
 
 extension ZMConversation {
     final class OptionsConfigurationContainer: NSObject, ConversationGuestOptionsViewModelConfiguration,

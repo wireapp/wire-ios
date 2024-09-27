@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ClaimMLSKeyPackageAction
+
 public class ClaimMLSKeyPackageAction: EntityAction {
     // MARK: - Types
 
@@ -76,6 +78,8 @@ public class ClaimMLSKeyPackageAction: EntityAction {
         self.resultHandler = resultHandler
     }
 }
+
+// MARK: - KeyPackage
 
 // Temporary solution until we know what we need from the result. Once we do, this should move to the action handler
 // extension.

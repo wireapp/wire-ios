@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - NewUnreadMessagesChangeInfo
+
 //////////////////////////
 ///
 /// NewUnreadMessage
@@ -33,6 +35,8 @@ public final class NewUnreadMessagesChangeInfo: ObjectChangeInfo {
         object as? [ZMConversationMessage] ?? []
     }
 }
+
+// MARK: - ZMNewUnreadMessagesObserver
 
 @objc
 public protocol ZMNewUnreadMessagesObserver: NSObjectProtocol {
@@ -59,6 +63,8 @@ extension NewUnreadMessagesChangeInfo {
     }
 }
 
+// MARK: - NewUnreadKnockMessagesChangeInfo
+
 //////////////////////////
 ///
 /// NewUnreadKnockMessage
@@ -75,6 +81,8 @@ public final class NewUnreadKnockMessagesChangeInfo: ObjectChangeInfo {
         object as? [ZMConversationMessage] ?? []
     }
 }
+
+// MARK: - ZMNewUnreadKnocksObserver
 
 @objc
 public protocol ZMNewUnreadKnocksObserver: NSObjectProtocol {
@@ -101,6 +109,8 @@ extension NewUnreadKnockMessagesChangeInfo {
     }
 }
 
+// MARK: - NewUnreadUnsentMessageChangeInfo
+
 //////////////////////////
 ///
 /// NewUnreadUndeliveredMessage
@@ -117,6 +127,8 @@ public final class NewUnreadUnsentMessageChangeInfo: ObjectChangeInfo {
         object as? [ZMConversationMessage] ?? []
     }
 }
+
+// MARK: - ZMNewUnreadUnsentMessageObserver
 
 @objc
 public protocol ZMNewUnreadUnsentMessageObserver: NSObjectProtocol {

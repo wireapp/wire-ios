@@ -85,6 +85,8 @@ extension UnsafeMutablePointer where Pointee == xmlNode {
 /// A sequence of HTML elements.
 typealias HTMLChildrenSequence = IteratorSequence<HTMLChildrenIterator>
 
+// MARK: - HTMLChildrenIterator
+
 final class HTMLChildrenIterator: IteratorProtocol {
     let rootElement: HTMLElement
     var currentChild: HTMLElement?
@@ -105,6 +107,8 @@ final class HTMLChildrenIterator: IteratorProtocol {
         return currentChild
     }
 }
+
+// MARK: - HTMLStringBuffer
 
 /// Wrapper around a `xmlCharPtr`, that represents an HTML string.
 

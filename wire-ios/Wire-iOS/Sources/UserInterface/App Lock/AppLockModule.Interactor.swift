@@ -21,6 +21,8 @@ import LocalAuthentication
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - AppLockModule.Interactor
+
 extension AppLockModule {
     final class Interactor: InteractorInterface {
         // MARK: - Properties
@@ -84,7 +86,7 @@ extension AppLockModule {
     }
 }
 
-// MARK: - Execute request
+// MARK: - AppLockModule.Interactor + AppLockInteractorPresenterInterface
 
 extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
     func executeRequest(_ request: AppLockModule.Request) {

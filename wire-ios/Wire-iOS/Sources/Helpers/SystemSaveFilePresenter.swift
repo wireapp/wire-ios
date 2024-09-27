@@ -18,9 +18,13 @@
 
 import UIKit
 
+// MARK: - SystemSaveFilePresenting
+
 protocol SystemSaveFilePresenting {
     func presentSystemPromptToSave(file fileURL: URL, completed: @escaping () -> Void)
 }
+
+// MARK: - SystemSavePresenter
 
 final class SystemSavePresenter: NSObject, SystemSaveFilePresenting {
     private var finishedPresenting: (() -> Void)?
@@ -40,6 +44,8 @@ final class SystemSavePresenter: NSObject, SystemSaveFilePresenting {
         documentInteractionController.presentPreview(animated: true)
     }
 }
+
+// MARK: UIDocumentInteractionControllerDelegate
 
 extension SystemSavePresenter: UIDocumentInteractionControllerDelegate {
     @MainActor

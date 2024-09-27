@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - DeveloperFlag
+
 public enum DeveloperFlag: String, CaseIterable {
     public static var storage = UserDefaults.standard
 
@@ -113,6 +115,8 @@ public enum DeveloperFlag: String, CaseIterable {
         flag.isOn = enabled
     }
 }
+
+// MARK: - DeveloperFlagsDefault
 
 private final class DeveloperFlagsDefault {
     static func isEnabled(for bundleKey: String) -> Bool {

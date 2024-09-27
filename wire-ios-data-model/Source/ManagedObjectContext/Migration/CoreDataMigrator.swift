@@ -18,12 +18,16 @@
 
 import CoreData
 
+// MARK: - CoreDataMigratorProtocol
+
 protocol CoreDataMigratorProtocol {
     associatedtype DatabaseVersion
 
     func requiresMigration(at storeURL: URL, toVersion version: DatabaseVersion) -> Bool
     func migrateStore(at storeURL: URL, toVersion version: DatabaseVersion) throws
 }
+
+// MARK: - CoreDataMigratorError
 
 enum CoreDataMigratorError: Error {
     case missingStoreURL
@@ -34,6 +38,8 @@ enum CoreDataMigratorError: Error {
     case failedToReplacePersistentStore(sourceURL: URL, targetURL: URL, underlyingError: Error)
     case failedToDestroyPersistentStore(storeURL: URL)
 }
+
+// MARK: LocalizedError
 
 extension CoreDataMigratorError: LocalizedError {
     var errorDescription: String? {
@@ -65,6 +71,8 @@ extension CoreDataMigratorError: LocalizedError {
         }
     }
 }
+
+// MARK: - CoreDataMigrator
 
 final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigratorProtocol {
     private let isInMemoryStore: Bool

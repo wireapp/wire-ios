@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - BottomSheetContainerViewController
+
 class BottomSheetContainerViewController: UIViewController {
     // MARK: - Configuration
 
@@ -246,6 +248,8 @@ class BottomSheetContainerViewController: UIViewController {
     func bottomSheetChangedOffset(fullHeightPercentage: CGFloat) {}
 }
 
+// MARK: UIGestureRecognizerDelegate
+
 extension BottomSheetContainerViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
@@ -258,6 +262,8 @@ extension BottomSheetContainerViewController: UIGestureRecognizerDelegate {
         return true
     }
 }
+
+// MARK: BottomSheetScrollingDelegate
 
 extension BottomSheetContainerViewController: BottomSheetScrollingDelegate {
     var isBottomSheetExpanded: Bool {

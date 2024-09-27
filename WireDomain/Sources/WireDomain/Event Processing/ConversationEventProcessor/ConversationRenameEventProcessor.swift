@@ -18,6 +18,8 @@
 
 import WireAPI
 
+// MARK: - ConversationRenameEventProcessorProtocol
+
 /// Process conversation rename events.
 
 protocol ConversationRenameEventProcessorProtocol {
@@ -27,6 +29,8 @@ protocol ConversationRenameEventProcessorProtocol {
 
     func processEvent(_ event: ConversationRenameEvent) async throws
 }
+
+// MARK: - ConversationRenameEventProcessor
 
 struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtocol {
     func processEvent(_: ConversationRenameEvent) async throws {

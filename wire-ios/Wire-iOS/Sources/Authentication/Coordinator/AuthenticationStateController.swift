@@ -22,6 +22,8 @@ import WireSystem
 
 private let log = ZMSLog(tag: "Authentication")
 
+// MARK: - AuthenticationStateControllerDelegate
+
 /// A type of object that observes changes from an authentication state controller.
 
 protocol AuthenticationStateControllerDelegate: AnyObject {
@@ -32,6 +34,8 @@ protocol AuthenticationStateControllerDelegate: AnyObject {
 
     func stateDidChange(_ newState: AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
 }
+
+// MARK: - AuthenticationStateController
 
 /// An object that controls the state of authentication. Provides advancement
 /// and unwinding functionality.

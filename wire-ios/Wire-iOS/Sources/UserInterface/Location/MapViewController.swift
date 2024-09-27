@@ -121,7 +121,7 @@ final class MapViewController: UIViewController {
     }
 }
 
-// MARK: - MKMapViewDelegate
+// MARK: MKMapViewDelegate
 
 extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {

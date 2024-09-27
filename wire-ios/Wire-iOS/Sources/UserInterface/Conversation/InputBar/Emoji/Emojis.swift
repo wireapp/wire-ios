@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - EmojiDataSource
+
 final class EmojiDataSource: NSObject, UICollectionViewDataSource {
     // MARK: - Properties
 
@@ -199,6 +201,8 @@ extension EmojiDataSource {
         }
     }
 }
+
+// MARK: - EmojiSectionType
 
 enum EmojiSectionType: Int, CaseIterable {
     case recent

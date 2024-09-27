@@ -19,6 +19,8 @@
 import Foundation
 import WireSystem
 
+// MARK: - ZMClientMessage
+
 @objcMembers
 public class ZMClientMessage: ZMOTRMessage {
     public static let linkPreviewStateKey = "linkPreviewState"

@@ -20,6 +20,8 @@ import Foundation
 
 private var zmLog = ZMSLog(tag: "ZMManagedObjectGrouping")
 
+// MARK: - TupleKeyArrayType
+
 // Describing the generic storage type that contains the data in the format of
 // Key => [Value,
 //         Value,
@@ -30,6 +32,8 @@ private protocol TupleKeyArrayType {
     var key: Key { get }
     var value: [Value] { get }
 }
+
+// MARK: - TupleKeyArray
 
 // Struct to store the pairs of key-value, where value is an array of @c Value.
 // Generic struct conforming to @c TupleKeyArrayType.

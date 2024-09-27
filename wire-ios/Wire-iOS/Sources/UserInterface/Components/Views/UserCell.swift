@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+// MARK: - UserCell
+
 final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     // MARK: - Properties
 
@@ -441,7 +443,7 @@ extension UserCell {
     }
 }
 
-// MARK: - Subtitle
+// MARK: UserCellSubtitleProtocol
 
 extension UserCell: UserCellSubtitleProtocol {}
 

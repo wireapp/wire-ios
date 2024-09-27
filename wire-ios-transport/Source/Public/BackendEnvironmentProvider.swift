@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - BackendTrustProvider
+
 @objc
 public protocol BackendTrustProvider: NSObjectProtocol {
     /// Returns true if certificate matches what we expect it to be OR it's a host we don't need to check
@@ -25,6 +27,8 @@ public protocol BackendTrustProvider: NSObjectProtocol {
     @objc
     func verifyServerTrust(trust: SecTrust, host: String?) -> Bool
 }
+
+// MARK: - EnvironmentTypeProvider
 
 // Wrapper around Swift-only EnvironmentType so that it would be useable in Objective-C
 @objc
@@ -34,6 +38,8 @@ public final class EnvironmentTypeProvider: NSObject {
         self.value = environmentType
     }
 }
+
+// MARK: - BackendEndpointsProvider
 
 // Swift migration notice: this protocol conforms to NSObjectProtocol only to be usable from Obj-C.
 @objc
@@ -50,6 +56,8 @@ public protocol BackendEndpointsProvider: NSObjectProtocol {
     var countlyURL: URL? { get }
 }
 
+// MARK: - BackendEnvironmentProvider
+
 @objc
 public protocol BackendEnvironmentProvider: BackendTrustProvider, BackendEndpointsProvider {
     /// Descriptive name of the backend
@@ -58,6 +66,8 @@ public protocol BackendEnvironmentProvider: BackendTrustProvider, BackendEndpoin
     var environmentType: EnvironmentTypeProvider { get }
     var proxy: ProxySettingsProvider? { get }
 }
+
+// MARK: - ProxySettingsProvider
 
 @objc
 public protocol ProxySettingsProvider: NSObjectProtocol {

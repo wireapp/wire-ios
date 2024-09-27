@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+// MARK: - SwitchBackendView
+
 struct SwitchBackendView: View {
     // MARK: - Properties
 
@@ -55,7 +57,7 @@ struct SwitchBackendView: View {
     }
 }
 
-// MARK: - Previews
+// MARK: - SwitchBackendView_Previews
 
 struct SwitchBackendView_Previews: PreviewProvider {
     static var previews: some View {

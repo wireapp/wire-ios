@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - Pasteboard
+
 // sourcery: AutoMockable
 /// Abstracts access to the system's pasteboard.
 public protocol Pasteboard: AnyObject {
     /// The text copied by the user, if any.
     var text: String? { get }
 }
+
+// MARK: - UIPasteboard + Pasteboard
 
 extension UIPasteboard: Pasteboard {
     public var text: String? {

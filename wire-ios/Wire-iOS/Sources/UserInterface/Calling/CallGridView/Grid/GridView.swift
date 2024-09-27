@@ -19,9 +19,13 @@
 import UIKit
 import WireUtilities
 
+// MARK: - GridViewDelegate
+
 protocol GridViewDelegate: AnyObject {
     func gridView(_ gridView: GridView, didChangePageTo page: Int)
 }
+
+// MARK: - GridView
 
 /// A collection view that displays its items in a dynamic grid layout
 /// depending on the number of items.
@@ -186,7 +190,7 @@ extension GridView {
     }
 }
 
-// MARK: - UICollectionViewDelegateFlowLayout
+// MARK: UICollectionViewDelegateFlowLayout
 
 extension GridView: UICollectionViewDelegateFlowLayout {
     func collectionView(
@@ -257,7 +261,7 @@ extension GridView: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - UIScrollViewDelegate
+// MARK: UIScrollViewDelegate
 
 extension GridView: UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {

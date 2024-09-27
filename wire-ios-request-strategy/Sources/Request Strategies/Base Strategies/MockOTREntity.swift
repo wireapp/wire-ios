@@ -20,6 +20,8 @@ import WireDataModel
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - MockOTREntity
+
 final class MockOTREntity: OTREntity {
     var context: NSManagedObjectContext
     var expirationDate: Date?
@@ -65,6 +67,8 @@ final class MockOTREntity: OTREntity {
         isFailedToSendUsers = true
     }
 }
+
+// MARK: ProteusMessage
 
 extension MockOTREntity: ProteusMessage {
     var debugInfo: String {

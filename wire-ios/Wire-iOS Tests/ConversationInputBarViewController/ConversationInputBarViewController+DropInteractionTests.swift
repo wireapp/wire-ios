@@ -20,6 +20,8 @@ import WireSyncEngineSupport
 import XCTest
 @testable import Wire
 
+// MARK: - ConversationInputBarViewControllerDropInteractionTests
+
 final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
     private var mockUserSession: UserSessionMock!
     private var mockSecurityClassificationProviding: MockSecurityClassificationProviding!
@@ -76,7 +78,7 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
     }
 }
 
-// MARK: - Helpers
+// MARK: - MediaShareRestrictionManagerMock
 
 private final class MediaShareRestrictionManagerMock: MediaShareRestrictionManager {
     let canFilesBeShared: Bool

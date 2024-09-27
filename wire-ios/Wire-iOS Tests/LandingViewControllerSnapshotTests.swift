@@ -21,6 +21,8 @@ import WireTransport
 import XCTest
 @testable import Wire
 
+// MARK: - LandingViewControllerSnapshotTests
+
 final class LandingViewControllerSnapshotTests: XCTestCase {
     // MARK: - Properties
 

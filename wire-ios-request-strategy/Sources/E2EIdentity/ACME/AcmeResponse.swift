@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AcmeDirectoriesResponse
+
 struct AcmeDirectoriesResponse: Codable, Equatable {
     var newNonce: String
     var newAccount: String
@@ -26,11 +28,15 @@ struct AcmeDirectoriesResponse: Codable, Equatable {
     var keyChange: String
 }
 
+// MARK: - ACMEResponse
+
 public struct ACMEResponse: Equatable {
     var nonce: String
     var location: String
     var response: Data
 }
+
+// MARK: - ACMEAuthorizationResponse
 
 public struct ACMEAuthorizationResponse: Equatable {
     var nonce: String
@@ -38,6 +44,8 @@ public struct ACMEAuthorizationResponse: Equatable {
     var response: Data
     var challengeType: AuthorizationChallengeType
 }
+
+// MARK: - AuthorizationChallengeType
 
 enum AuthorizationChallengeType: String, Decodable {
     case DPoP = "wire-dpop-01"

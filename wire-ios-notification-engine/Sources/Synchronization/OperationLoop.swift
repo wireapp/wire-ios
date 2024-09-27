@@ -24,6 +24,8 @@ import WireTransport
 
 let contextWasMergedNotification = Notification.Name("zm_contextWasSaved")
 
+// MARK: - RequestGeneratorStore
+
 public final class RequestGeneratorStore {
     let requestGenerators: [ZMTransportRequestGenerator]
     public let changeTrackers: [ZMContextChangeTracker]
@@ -92,6 +94,8 @@ public final class RequestGeneratorStore {
     }
 }
 
+// MARK: - RequestGeneratorObserver
+
 final class RequestGeneratorObserver {
     private let context: NSManagedObjectContext
     public var observedGenerator: ZMTransportRequestGenerator?
@@ -105,6 +109,8 @@ final class RequestGeneratorObserver {
         return request
     }
 }
+
+// MARK: - OperationLoop
 
 final class OperationLoop: NSObject, RequestAvailableObserver {
     typealias RequestAvailableClosure = () -> Void
@@ -213,6 +219,8 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
         requestAvailableClosure?()
     }
 }
+
+// MARK: - RequestGeneratingOperationLoop
 
 final class RequestGeneratingOperationLoop {
     private let operationLoop: OperationLoop!

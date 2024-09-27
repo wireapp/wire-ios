@@ -21,10 +21,14 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "ContactAddressBook")
 
+// MARK: - ContactAddressBook
+
 /// iOS Contacts-based address book
 final class ContactAddressBook: AddressBook {
     let store = CNContactStore()
 }
+
+// MARK: AddressBookAccessor
 
 extension ContactAddressBook: AddressBookAccessor {
     /// Gets a specific address book user by the local address book indentifier
@@ -80,6 +84,8 @@ extension ContactAddressBook: AddressBookAccessor {
         0
     }
 }
+
+// MARK: - CNContact + ContactRecord
 
 extension CNContact: ContactRecord {
     var rawEmails: [String] {

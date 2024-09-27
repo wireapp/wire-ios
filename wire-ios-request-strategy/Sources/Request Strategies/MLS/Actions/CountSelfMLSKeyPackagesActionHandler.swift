@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - CountSelfMLSKeyPackagesActionHandler
+
 class CountSelfMLSKeyPackagesActionHandler: ActionHandler<CountSelfMLSKeyPackagesAction> {
     // MARK: - Methods
 
@@ -70,6 +72,8 @@ class CountSelfMLSKeyPackagesActionHandler: ActionHandler<CountSelfMLSKeyPackage
         }
     }
 }
+
+// MARK: CountSelfMLSKeyPackagesActionHandler.ResponsePayload
 
 extension CountSelfMLSKeyPackagesActionHandler {
     // MARK: - Payload

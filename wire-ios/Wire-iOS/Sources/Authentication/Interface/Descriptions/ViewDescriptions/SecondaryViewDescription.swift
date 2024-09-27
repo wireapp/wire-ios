@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - SecondaryViewDescription
+
 protocol SecondaryViewDescription {
     var views: [ViewDescriptor] { get }
     func display(on error: Error) -> ViewDescriptor?
@@ -26,6 +28,8 @@ protocol SecondaryViewDescription {
 extension SecondaryViewDescription {
     func display(on error: Error) -> ViewDescriptor? { nil }
 }
+
+// MARK: - FooterViewDescription
 
 protocol FooterViewDescription {
     var views: [ViewDescriptor] { get }

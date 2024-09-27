@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - Copyable
+
 protocol Copyable {
     init(instance: Self)
 }

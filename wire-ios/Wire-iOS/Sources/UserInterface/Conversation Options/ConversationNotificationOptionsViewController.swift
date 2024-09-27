@@ -21,6 +21,8 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+// MARK: - ConversationNotificationOptionsViewController
+
 final class ConversationNotificationOptionsViewController: UIViewController {
     private var items: [MutedMessageTypes] = [.none, .regular, .all]
 
@@ -97,7 +99,7 @@ final class ConversationNotificationOptionsViewController: UIViewController {
     }
 }
 
-// MARK: - Table View
+// MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
 
 extension ConversationNotificationOptionsViewController: UICollectionViewDelegateFlowLayout,
     UICollectionViewDataSource {
@@ -203,6 +205,8 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         CGSize(width: collectionView.bounds.size.width, height: 32)
     }
 }
+
+// MARK: ZMConversationObserver
 
 extension ConversationNotificationOptionsViewController: ZMConversationObserver {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {

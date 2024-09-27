@@ -18,6 +18,8 @@
 
 import WireSyncEngine
 
+// MARK: - CallStateExtending
+
 protocol CallStateExtending {
     var isConnected: Bool { get }
     var isTerminating: Bool { get }
@@ -31,6 +33,8 @@ extension CallStateExtending {
             canAccept == other.canAccept
     }
 }
+
+// MARK: - CallState + CallStateExtending
 
 extension CallState: CallStateExtending {
     var isConnected: Bool {

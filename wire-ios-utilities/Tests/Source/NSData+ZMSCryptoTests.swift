@@ -19,6 +19,8 @@
 import WireTesting
 import XCTest
 
+// MARK: - NSData_ZMSCryptoTests
+
 class NSData_ZMSCryptoTests: XCTestCase {
     /// Key to use to read the test data
     var sampleKey: Data {

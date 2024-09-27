@@ -19,12 +19,16 @@
 import Foundation
 import WireUtilities
 
+// MARK: - EmojiRepositoryInterface
+
 protocol EmojiRepositoryInterface {
     func emojis(for category: EmojiCategory) -> [Emoji]
     func emoji(for id: String) -> Emoji?
     func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID])
     func fetchRecentlyUsedEmojis() -> [Emoji]
 }
+
+// MARK: - EmojiRepository
 
 final class EmojiRepository: EmojiRepositoryInterface {
     // MARK: - Properties

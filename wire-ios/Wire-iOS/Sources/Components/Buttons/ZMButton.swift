@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - ZMButton
+
 final class ZMButton: LegacyButton {
     var style: ButtonStyle?
 
@@ -58,6 +60,8 @@ final class ZMButton: LegacyButton {
     }
 }
 
+// MARK: - LegacyButtonStyle
+
 enum LegacyButtonStyle: Int {
     // background color: accent, text color: white
     case full
@@ -65,6 +69,8 @@ enum LegacyButtonStyle: Int {
     case fullMonochrome
     case emptyMonochrome
 }
+
+// MARK: - LegacyButton
 
 class LegacyButton: ButtonWithLargerHitArea {
     private var previousState: UIControl.State?

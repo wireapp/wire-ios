@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - ConmpanyLoginRequestError
+
 /// Errors that can occur when requesting a company login session from a link.
 
 public enum ConmpanyLoginRequestError: Error, Equatable {
     /// The SSO link provided by the user was invalid.
     case invalidLink
 }
+
+// MARK: - CompanyLoginError
 
 /// Errors that can occur within the company login flow.
 

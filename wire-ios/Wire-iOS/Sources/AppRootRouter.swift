@@ -193,7 +193,7 @@ final class AppRootRouter {
     }
 }
 
-// MARK: - AppStateCalculatorDelegate
+// MARK: AppStateCalculatorDelegate
 
 extension AppRootRouter: AppStateCalculatorDelegate {
     func appStateCalculator(
@@ -574,7 +574,7 @@ extension AppRootRouter {
     }
 }
 
-// MARK: - URLActionRouterDelegate
+// MARK: URLActionRouterDelegate
 
 extension AppRootRouter: URLActionRouterDelegate {
     func urlActionRouterWillShowCompanyLoginError() {
@@ -591,7 +591,7 @@ extension AppRootRouter: URLActionRouterDelegate {
     }
 }
 
-// MARK: - ApplicationStateObserving
+// MARK: ApplicationStateObserving
 
 extension AppRootRouter: ApplicationStateObserving {
     func addObserverToken(_ token: NSObjectProtocol) {
@@ -622,7 +622,7 @@ extension AppRootRouter: ApplicationStateObserving {
     }
 }
 
-// MARK: - ContentSizeCategoryObserving
+// MARK: ContentSizeCategoryObserving
 
 extension AppRootRouter: ContentSizeCategoryObserving {
     func contentSizeCategoryDidChange() {
@@ -649,7 +649,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
     }
 }
 
-// MARK: - AudioPermissionsObserving
+// MARK: AudioPermissionsObserving
 
 extension AppRootRouter: AudioPermissionsObserving {
     func userDidGrantAudioPermissions() {

@@ -25,6 +25,8 @@ public typealias ProteusServicePerformBlock<T> = (ProteusServiceInterface) throw
 public typealias KeyStorePerformAsyncBlock<T> = (UserClientKeysStore) async throws -> T
 public typealias ProteusServicePerformAsyncBlock<T> = (ProteusServiceInterface) async throws -> T
 
+// MARK: - ProteusProviding
+
 public protocol ProteusProviding {
     func perform<T>(
         withProteusService proteusServiceBlock: ProteusServicePerformBlock<T>,
@@ -38,6 +40,8 @@ public protocol ProteusProviding {
 
     var canPerform: Bool { get }
 }
+
+// MARK: - ProteusProvider
 
 public class ProteusProvider: ProteusProviding {
     private let proteusService: ProteusServiceInterface?

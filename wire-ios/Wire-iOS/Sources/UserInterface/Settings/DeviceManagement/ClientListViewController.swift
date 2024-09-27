@@ -24,6 +24,8 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
 
+// MARK: - ClientListViewController
+
 final class ClientListViewController: UIViewController,
     UITableViewDelegate,
     UITableViewDataSource,
@@ -589,6 +591,8 @@ final class ClientListViewController: UIViewController,
     }
 }
 
+// MARK: EditingStateControllable
+
 extension ClientListViewController: EditingStateControllable {
     /// Sets the editing state of the ClientListViewController.
     /// This method is primarily used for testing purposes to directly
@@ -600,7 +604,7 @@ extension ClientListViewController: EditingStateControllable {
     }
 }
 
-// MARK: - ClientRemovalObserverDelegate
+// MARK: ClientRemovalObserverDelegate
 
 extension ClientListViewController: ClientRemovalObserverDelegate {
     func setIsLoadingViewVisible(_ clientRemovalObserver: ClientRemovalObserver, isVisible: Bool) {
@@ -619,6 +623,8 @@ extension ClientListViewController: ClientRemovalObserverDelegate {
         present(viewControllerToPresent, animated: true)
     }
 }
+
+// MARK: UserObserving
 
 extension ClientListViewController: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {

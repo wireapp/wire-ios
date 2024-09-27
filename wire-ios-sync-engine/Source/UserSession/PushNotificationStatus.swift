@@ -27,6 +27,8 @@ extension UUID {
     }
 }
 
+// MARK: - PushNotificationStatus
+
 @objcMembers
 open class PushNotificationStatus: NSObject {
     private var eventIdRanking = NSMutableOrderedSet()

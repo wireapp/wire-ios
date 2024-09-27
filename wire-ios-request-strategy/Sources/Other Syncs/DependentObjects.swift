@@ -20,6 +20,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
+// MARK: - DependentObjects
+
 public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     public init() {
         zmLog.debug("Initialized DependentObject for \(Object.self), \(Dependency.self)")
@@ -100,6 +102,8 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
         }
     }
 }
+
+// MARK: - DependentObjectsObjc
 
 /// List of dependency.
 /// This is an adapter class for Obj-c, because Obj-c can't use generics.

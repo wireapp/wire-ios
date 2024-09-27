@@ -25,6 +25,8 @@ import WireUtilities
 import XCTest
 @testable import WireSyncEngine
 
+// MARK: - MockClientRegistrationStatusDelegate
+
 @objcMembers
 public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
     public var didCallRegisterMLSClient = false
@@ -51,6 +53,8 @@ public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegis
         didCallDeleteSelfUserClient = true
     }
 }
+
+// MARK: - UserClientRequestStrategyTests
 
 final class UserClientRequestStrategyTests: RequestStrategyTestBase {
     var sut: UserClientRequestStrategy!

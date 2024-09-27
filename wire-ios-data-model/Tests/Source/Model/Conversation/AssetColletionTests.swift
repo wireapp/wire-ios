@@ -18,6 +18,8 @@
 
 @testable import WireDataModel
 
+// MARK: - MockAssetCollectionDelegate
+
 final class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
     var messagesByFilter = [[CategoryMatch: [ZMMessage]]]()
     var didCallDelegate = false
@@ -55,6 +57,8 @@ final class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
         }
     }
 }
+
+// MARK: - AssetColletionTests
 
 final class AssetColletionTests: ModelObjectsTests {
     var sut: AssetCollection!

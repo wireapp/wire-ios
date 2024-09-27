@@ -23,6 +23,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
+// MARK: - ProteusMessageDecryptorTests
+
 final class ProteusMessageDecryptorTests: XCTestCase {
     var sut: ProteusMessageDecryptor!
     var proteusService: MockProteusServiceInterface!
@@ -342,6 +344,8 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         }
     }
 }
+
+// MARK: - Scaffolding
 
 private enum Scaffolding {
     static let localDomain = "local.com"

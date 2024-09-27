@@ -20,11 +20,15 @@ import Foundation
 
 typealias DataTaskCompletion = (Data?, URLResponse?, Error?) -> Void
 
+// MARK: - URLSessionType
+
 protocol URLSessionType {
     func dataTask(with request: URLRequest) -> URLSessionDataTaskType
     func dataTaskWithURL(_ url: URL, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTaskType
     func invalidateAndCancel()
 }
+
+// MARK: - URLSessionDataTaskType
 
 protocol URLSessionDataTaskType {
     func resume()
@@ -35,7 +39,11 @@ protocol URLSessionDataTaskType {
     var state: URLSessionTask.State { get }
 }
 
+// MARK: - URLSessionTask + URLSessionDataTaskType
+
 extension URLSessionTask: URLSessionDataTaskType {}
+
+// MARK: - URLSession + URLSessionType
 
 extension URLSession: URLSessionType {
     func dataTask(with request: URLRequest) -> URLSessionDataTaskType {

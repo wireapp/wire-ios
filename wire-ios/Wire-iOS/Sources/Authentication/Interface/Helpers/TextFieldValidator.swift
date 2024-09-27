@@ -19,6 +19,8 @@
 import UIKit
 import WireUtilities
 
+// MARK: - TextFieldValidator
+
 final class TextFieldValidator {
     var customValidator: ((String) -> ValidationError?)?
 
@@ -96,6 +98,8 @@ extension PasswordRuleSet {
         UITextInputPasswordRules(descriptor: encodeInKeychainFormat())
     }
 }
+
+// MARK: - TextFieldValidator.ValidationError + LocalizedError
 
 extension TextFieldValidator.ValidationError: LocalizedError {
     var errorDescription: String? {

@@ -21,6 +21,8 @@ import Foundation
 import WireCoreCrypto
 import WireSystem
 
+// MARK: - MLSDecryptionServiceInterface
+
 // sourcery: AutoMockable
 public protocol MLSDecryptionServiceInterface {
     /// Publishes an event when the epoch has changed.
@@ -65,10 +67,14 @@ public protocol MLSDecryptionServiceInterface {
     ) async throws -> MLSGroupID
 }
 
+// MARK: - MLSDecryptResult
+
 public enum MLSDecryptResult: Equatable {
     case message(_ messageData: Data, _ senderClientID: String?)
     case proposal(_ commitDelay: UInt64)
 }
+
+// MARK: - DecryptedMessageBundle
 
 protocol DecryptedMessageBundle {
     var message: Data? { get }
@@ -80,8 +86,15 @@ protocol DecryptedMessageBundle {
     var identity: WireCoreCrypto.WireIdentity { get }
 }
 
+// MARK: - DecryptedMessage + DecryptedMessageBundle
+
 extension DecryptedMessage: DecryptedMessageBundle {}
+
+// MARK: - BufferedDecryptedMessage + DecryptedMessageBundle
+
 extension BufferedDecryptedMessage: DecryptedMessageBundle {}
+
+// MARK: - MLSDecryptionService
 
 /// A class responsible for decrypting messages for MLS groups.
 /// It is also responsible for processing welcome messages and publishing events

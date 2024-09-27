@@ -21,6 +21,8 @@ import WireDataModelSupport
 import XCTest
 @testable import WireRequestStrategy
 
+// MARK: - GetE2eIdentityCertificatesUseCaseTests
+
 final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     private let coreDataStackHelper = CoreDataStackHelper()
     private var stack: CoreDataStack!

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - E2EIdentityCertificateUpdateStatus
+
 public enum E2EIdentityCertificateUpdateStatus {
     // Alert was already shown within snooze period, so do not remind user to update certificate
     case noAction
@@ -29,10 +31,14 @@ public enum E2EIdentityCertificateUpdateStatus {
     case block
 }
 
+// MARK: - E2EIdentityCertificateUpdateStatusUseCaseProtocol
+
 // sourcery: AutoMockable
 public protocol E2EIdentityCertificateUpdateStatusUseCaseProtocol {
     func invoke() async throws -> E2EIdentityCertificateUpdateStatus
 }
+
+// MARK: - E2EIdentityCertificateUpdateStatusUseCase
 
 public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
     private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol

@@ -21,6 +21,8 @@ import WireTesting
 import XCTest
 @testable import WireDataModel
 
+// MARK: - DiskDatabaseTest
+
 public class DiskDatabaseTest: ZMTBaseTest {
     var cacheURL: URL!
     var sharedContainerURL: URL!

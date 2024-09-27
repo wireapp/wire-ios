@@ -21,6 +21,8 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - ClientSection
+
 enum ClientSection: Int {
     case info = 0
     case fingerprintAndVerify = 1
@@ -29,6 +31,8 @@ enum ClientSection: Int {
 }
 
 typealias SettingsClientViewModel = ProfileClientViewModel
+
+// MARK: - SettingsClientViewController
 
 final class SettingsClientViewController: UIViewController,
     UITableViewDelegate,
@@ -423,7 +427,7 @@ final class SettingsClientViewController: UIViewController,
     }
 }
 
-// MARK: - ClientRemovalObserverDelegate
+// MARK: ClientRemovalObserverDelegate
 
 extension SettingsClientViewController: ClientRemovalObserverDelegate {
     func setIsLoadingViewVisible(_ clientRemovalObserver: ClientRemovalObserver, isVisible: Bool) {

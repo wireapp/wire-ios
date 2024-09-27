@@ -19,13 +19,21 @@
 import DifferenceKit
 import WireDataModel
 
+// MARK: - ConversationListItem
+
 /// a item which can be presented in the conversaton list
 protocol ConversationListItem: NSObject {}
 
+// MARK: - ZMConversation + ConversationListItem
+
 extension ZMConversation: ConversationListItem {}
+
+// MARK: - ConversationListConnectRequestsItem
 
 // Placeholder for conversation requests item
 final class ConversationListConnectRequestsItem: NSObject, ConversationListItem {}
+
+// MARK: - ConversationListViewModelDelegate
 
 protocol ConversationListViewModelDelegate: AnyObject {
     func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?)

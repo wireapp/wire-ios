@@ -24,9 +24,13 @@ import WireDataModel
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - CallGridViewControllerDelegate
+
 protocol CallGridViewControllerDelegate: AnyObject {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction)
 }
+
+// MARK: - CallGridViewController
 
 final class CallGridViewController: UIViewController {
     // MARK: - Statics
@@ -502,7 +506,7 @@ final class CallGridViewController: UIViewController {
     }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: UICollectionViewDataSource
 
 extension CallGridViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -549,7 +553,7 @@ extension CallGridViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - GridViewDelegate
+// MARK: GridViewDelegate
 
 extension CallGridViewController: GridViewDelegate {
     func gridView(_ gridView: GridView, didChangePageTo page: Int) {
@@ -558,7 +562,7 @@ extension CallGridViewController: GridViewDelegate {
     }
 }
 
-// MARK: - NetworkQualityObserver
+// MARK: NetworkQualityObserver
 
 extension CallGridViewController: NetworkQualityObserver {
     func callCenterDidChange(networkQuality: NetworkQuality) {

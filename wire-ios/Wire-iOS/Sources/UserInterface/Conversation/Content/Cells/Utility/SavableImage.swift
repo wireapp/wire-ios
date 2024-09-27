@@ -21,6 +21,8 @@ import UIKit
 import WireSystem
 import WireUtilities
 
+// MARK: - PhotoLibraryProtocol
+
 protocol PhotoLibraryProtocol {
     func performChanges(_ changeBlock: @escaping () -> Swift.Void, completionHandler: ((Bool, Error?) -> Swift.Void)?)
 
@@ -28,7 +30,11 @@ protocol PhotoLibraryProtocol {
     func unregisterChangeObserver(_ observer: PHPhotoLibraryChangeObserver)
 }
 
+// MARK: - PHPhotoLibrary + PhotoLibraryProtocol
+
 extension PHPhotoLibrary: PhotoLibraryProtocol {}
+
+// MARK: - AssetChangeRequestProtocol
 
 protocol AssetChangeRequestProtocol: AnyObject {
     @discardableResult
@@ -36,6 +42,8 @@ protocol AssetChangeRequestProtocol: AnyObject {
     @discardableResult
     static func creationRequestForAssetFromImage(atFileURL fileURL: URL) -> Self?
 }
+
+// MARK: - AssetCreationRequestProtocol
 
 protocol AssetCreationRequestProtocol: AnyObject {
     static func forAsset() -> Self
@@ -46,10 +54,17 @@ protocol AssetCreationRequestProtocol: AnyObject {
     )
 }
 
+// MARK: - PHAssetChangeRequest + AssetChangeRequestProtocol
+
 extension PHAssetChangeRequest: AssetChangeRequestProtocol {}
+
+// MARK: - PHAssetCreationRequest + AssetCreationRequestProtocol
+
 extension PHAssetCreationRequest: AssetCreationRequestProtocol {}
 
 private let log = ZMSLog(tag: "SavableImage")
+
+// MARK: - SavableImage
 
 final class SavableImage: NSObject {
     enum Source {

@@ -21,6 +21,8 @@ import WireRequestStrategy
 import WireTesting
 import XCTest
 
+// MARK: - MessageExpirationTimerTests
+
 final class MessageExpirationTimerTests: MessagingTestBase {
     var sut: MessageExpirationTimer!
     var localNotificationDispatcher: MockPushMessageHandler!

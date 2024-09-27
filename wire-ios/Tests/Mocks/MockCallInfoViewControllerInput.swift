@@ -20,6 +20,8 @@ import Foundation
 import WireSyncEngine
 @testable import Wire
 
+// MARK: - MockCallInfoViewControllerInput
+
 struct MockCallInfoViewControllerInput: CallInfoViewControllerInput {
     var allowPresentationModeUpdates: Bool
     var videoGridPresentationMode: VideoGridPresentationMode
@@ -42,5 +44,7 @@ struct MockCallInfoViewControllerInput: CallInfoViewControllerInput {
     var isForcedCBR: Bool
     var classification: SecurityClassification?
 }
+
+// MARK: CustomDebugStringConvertible
 
 extension MockCallInfoViewControllerInput: CustomDebugStringConvertible {}

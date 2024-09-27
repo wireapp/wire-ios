@@ -21,6 +21,8 @@ import XCTest
 @testable import WireDataModelSupport
 @testable import WireSyncEngine
 
+// MARK: - EventProcessorTests
+
 final class EventProcessorTests: MessagingTest {
     struct MockError: Error {}
 
@@ -248,6 +250,8 @@ final class EventProcessorTests: MessagingTest {
         }
     }
 }
+
+// MARK: - MockOperationStateProvider
 
 class MockOperationStateProvider: OperationStateProvider {
     var operationState = SyncEngineOperationState.background

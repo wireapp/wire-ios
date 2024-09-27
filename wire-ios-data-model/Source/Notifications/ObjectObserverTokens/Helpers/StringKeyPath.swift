@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - StringKeyPath
+
 /// A key path (as in key-value-coding).
 public final class StringKeyPath: Hashable {
     public let rawValue: String
@@ -69,12 +71,16 @@ public final class StringKeyPath: Hashable {
     }()
 }
 
+// MARK: Equatable
+
 extension StringKeyPath: Equatable {}
 
 public func == (lhs: StringKeyPath, rhs: StringKeyPath) -> Bool {
     // We store the hash which makes comparison very cheap.
     (lhs.hashValue == rhs.hashValue) && (lhs.rawValue == rhs.rawValue)
 }
+
+// MARK: CustomDebugStringConvertible
 
 extension StringKeyPath: CustomDebugStringConvertible {
     public var description: String {

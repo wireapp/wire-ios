@@ -18,9 +18,13 @@
 
 import Foundation
 
+// MARK: - ZMUserKeys
+
 public enum ZMUserKeys {
     public static let RichProfile = "richProfile"
 }
+
+// MARK: - UserRichProfileField
 
 @objc
 public class UserRichProfileField: NSObject, Codable {

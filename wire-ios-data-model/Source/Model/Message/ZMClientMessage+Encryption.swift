@@ -23,7 +23,7 @@ private var zmLog = ZMSLog(tag: "message encryption")
 
 public let ZMFailedToCreateEncryptedMessagePayloadString = "💣"
 
-// MARK: - Encrypted data for recipients
+// MARK: - EncryptedPayloadGenerator
 
 public protocol EncryptedPayloadGenerator {
     typealias Payload = (data: Data, strategy: MissingClientsStrategy)
@@ -39,6 +39,8 @@ public protocol EncryptedPayloadGenerator {
 
     var debugInfo: String { get }
 }
+
+// MARK: - MissingClientsStrategy
 
 /// Strategy for handling missing clients.
 ///
@@ -124,7 +126,7 @@ extension ZMAssetClientMessage {
     }
 }
 
-// MARK: - Proteus
+// MARK: - ZMClientMessage + EncryptedPayloadGenerator
 
 extension ZMClientMessage: EncryptedPayloadGenerator {
     public func encryptForTransport() async -> Payload? {
@@ -164,6 +166,8 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
         underlyingMessage?.safeForLoggingDescription ?? ""
     }
 }
+
+// MARK: - ZMAssetClientMessage + EncryptedPayloadGenerator
 
 extension ZMAssetClientMessage: EncryptedPayloadGenerator {
     public func encryptForTransport() async -> Payload? {
@@ -1126,7 +1130,7 @@ extension GenericMessage {
     }
 }
 
-// MARK: - MLS
+// MARK: - MLSEncryptedPayloadGenerator
 
 /// A type that can generate payloads encrypted via mls.
 
@@ -1147,10 +1151,14 @@ public protocol MLSEncryptedPayloadGenerator {
     func encryptForTransport(using encrypt: EncryptionFunction) async throws -> Data
 }
 
+// MARK: - MLSEncryptedPayloadGeneratorError
+
 public enum MLSEncryptedPayloadGeneratorError: Error {
     case noContext
     case noUnencryptedData
 }
+
+// MARK: - ZMClientMessage + MLSEncryptedPayloadGenerator
 
 extension ZMClientMessage: MLSEncryptedPayloadGenerator {
     public func encryptForTransport(using encrypt: EncryptionFunction) async throws -> Data {
@@ -1171,6 +1179,8 @@ extension ZMClientMessage: MLSEncryptedPayloadGenerator {
     }
 }
 
+// MARK: - ZMAssetClientMessage + MLSEncryptedPayloadGenerator
+
 extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
     public func encryptForTransport(using encrypt: EncryptionFunction) async throws -> Data {
         guard let context = managedObjectContext else {
@@ -1189,6 +1199,8 @@ extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
         return try await genericMessage.encryptForTransport(using: encrypt)
     }
 }
+
+// MARK: - GenericMessage + MLSEncryptedPayloadGenerator
 
 extension GenericMessage: MLSEncryptedPayloadGenerator {
     public func encryptForTransport(

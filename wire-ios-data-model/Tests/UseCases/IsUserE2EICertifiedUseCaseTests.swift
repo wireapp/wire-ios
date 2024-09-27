@@ -21,6 +21,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// MARK: - IsUserE2EICertifiedUseCaseTests
+
 final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     private var sut: IsUserE2EICertifiedUseCase!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!

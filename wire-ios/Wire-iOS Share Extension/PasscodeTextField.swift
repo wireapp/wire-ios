@@ -20,9 +20,13 @@ import UIKit
 import WireDesign
 import WireReusableUIComponents
 
+// MARK: - PasscodeTextFieldDelegate
+
 protocol PasscodeTextFieldDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)
 }
+
+// MARK: - PasscodeTextField
 
 final class PasscodeTextField: AccessoryTextField {
     // MARK: - Constants

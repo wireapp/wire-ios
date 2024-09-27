@@ -20,6 +20,8 @@ import MessageUI
 import WireDataModel
 import WireReusableUIComponents
 
+// MARK: - SettingsDebugReportRouterProtocol
+
 // sourcery: AutoMockable
 protocol SettingsDebugReportRouterProtocol {
     /// Presents the mail composer with the debug report
@@ -42,6 +44,8 @@ protocol SettingsDebugReportRouterProtocol {
         debugReport: ShareableDebugReport
     )
 }
+
+// MARK: - SettingsDebugReportRouter
 
 final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
     // MARK: - Properties
@@ -106,6 +110,8 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         )
     }
 }
+
+// MARK: MFMailComposeViewControllerDelegate
 
 extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
     func mailComposeController(

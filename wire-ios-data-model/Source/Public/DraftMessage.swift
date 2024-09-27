@@ -19,6 +19,8 @@
 import Foundation
 import WireCryptobox
 
+// MARK: - DraftMessage
+
 /// This object holds information about a message draft that has not yet been sent
 /// by the user but was put into the input field.
 @objcMembers
@@ -42,6 +44,8 @@ public final class DraftMessage: NSObject {
         return (text, mentions, quote) == (other.text, other.mentions, other.quote)
     }
 }
+
+// MARK: - StorableDraftMessage
 
 /// A serializable version of `DraftMessage` that conforms to `Codable` and
 /// holds on to a `StorableMention` values instead `Mention`.
@@ -74,6 +78,8 @@ private final class StorableDraftMessage: NSObject, Codable {
     }
 }
 
+// MARK: - StorableMention
+
 /// A serializable version of `Mention` that conforms to `Codable` and
 /// stores a user identifier instead of a whole `UserType` value.
 private struct StorableMention: Codable {
@@ -89,6 +95,8 @@ private struct StorableMention: Codable {
             .map { Mention(range: range, user: $0) }
     }
 }
+
+// MARK: - StorableQuote
 
 /// A serializable version of `ZMMessage` that conforms to `Codable` and
 /// stores the message identifier instead of a whole `ZMMessage` value.

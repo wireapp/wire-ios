@@ -20,11 +20,15 @@ import UIKit
 import WireDesign
 import WireReusableUIComponents
 
+// MARK: - UIColor.AlarmButton
+
 extension UIColor {
     enum AlarmButton {
         static let alarmRed = UIColor(rgb: 0xFB0807)
     }
 }
+
+// MARK: - SpinnerButton
 
 /// A button with spinner at the trailing side. Title text is non truncated.
 final class SpinnerButton: LegacyButton {

@@ -19,6 +19,8 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - CallController
+
 final class CallController: NSObject {
     // MARK: - Public Implentation
 
@@ -139,7 +141,7 @@ final class CallController: NSObject {
     }
 }
 
-// MARK: - WireCallCenterCallStateObserver
+// MARK: WireCallCenterCallStateObserver
 
 extension CallController: WireCallCenterCallStateObserver {
     func callCenterDidChange(
@@ -226,7 +228,7 @@ extension CallController: WireCallCenterCallStateObserver {
     }
 }
 
-// MARK: - ActiveCallViewControllerDelegate
+// MARK: ActiveCallViewControllerDelegate
 
 extension CallController: ActiveCallViewControllerDelegate {
     func activeCallViewControllerDidDisappear(
@@ -238,7 +240,7 @@ extension CallController: ActiveCallViewControllerDelegate {
     }
 }
 
-// MARK: - WireCallCenterCallErrorObserver
+// MARK: WireCallCenterCallErrorObserver
 
 extension CallController: WireCallCenterCallErrorObserver {
     func callCenterDidReceiveCallError(_ error: CallError, conversationId: AVSIdentifier) {

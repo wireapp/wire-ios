@@ -22,6 +22,8 @@ import UIKit
 import UniformTypeIdentifiers
 import WireDesign
 
+// MARK: - PreviewItem
+
 /// The description of the preview that can be displayed for an attachment.
 
 enum PreviewItem {

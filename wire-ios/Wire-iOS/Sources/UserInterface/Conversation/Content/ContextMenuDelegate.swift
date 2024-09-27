@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - ContextMenuDelegate
+
 protocol ContextMenuDelegate: AnyObject {
     var delegate: ConversationMessageCellDelegate? { get }
     var message: ZMConversationMessage? { get }

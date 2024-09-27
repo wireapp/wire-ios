@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - FileMessageRestrictionView
+
 final class FileMessageRestrictionView: BaseMessageRestrictionView {
     // MARK: - Properties
 

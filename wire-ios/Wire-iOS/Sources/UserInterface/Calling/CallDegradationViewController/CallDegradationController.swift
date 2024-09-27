@@ -19,10 +19,14 @@
 import UIKit
 import WireDataModel
 
+// MARK: - CallDegradationReason
+
 enum CallDegradationReason: Equatable {
     case invalidCertificate
     case degradedUser(user: HashBoxUser?)
 }
+
+// MARK: - CallDegradationState
 
 enum CallDegradationState: Equatable {
     case none
@@ -31,10 +35,14 @@ enum CallDegradationState: Equatable {
     case terminating(reason: CallDegradationReason)
 }
 
+// MARK: - CallDegradationControllerDelegate
+
 protocol CallDegradationControllerDelegate: AnyObject {
     func continueDegradedCall()
     func cancelDegradedCall()
 }
+
+// MARK: - CallDegradationController
 
 final class CallDegradationController: UIViewController {
     weak var delegate: CallDegradationControllerDelegate?

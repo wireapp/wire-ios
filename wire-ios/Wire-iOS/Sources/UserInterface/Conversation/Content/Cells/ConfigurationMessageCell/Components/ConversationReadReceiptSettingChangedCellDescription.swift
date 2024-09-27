@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
+// MARK: - ReadReceiptViewModel
+
 struct ReadReceiptViewModel {
     let icon: StyleKitIcon
     let iconColor: UIColor?
@@ -81,6 +83,8 @@ struct ReadReceiptViewModel {
         return updateText
     }
 }
+
+// MARK: - ConversationReadReceiptSettingChangedCellDescription
 
 final class ConversationReadReceiptSettingChangedCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationSystemMessageCell

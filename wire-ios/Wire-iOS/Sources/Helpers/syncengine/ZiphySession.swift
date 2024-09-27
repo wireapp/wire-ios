@@ -20,6 +20,8 @@ import WireDataModel
 import WireSyncEngine
 import Ziphy
 
+// MARK: - ZiphySession
+
 final class ZiphySession: ZiphyURLRequester {
     private let userSession: UserSession
 
@@ -67,5 +69,7 @@ final class ZiphySession: ZiphyURLRequester {
         )
     }
 }
+
+// MARK: - ProxyRequest + ZiphyRequestIdentifier
 
 extension ProxyRequest: ZiphyRequestIdentifier {}

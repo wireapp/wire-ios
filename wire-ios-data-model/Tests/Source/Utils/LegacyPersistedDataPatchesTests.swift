@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
-// MARK: - Framework comparison
+// MARK: - FrameworkVersionTests
 
 class FrameworkVersionTests: XCTestCase {
     func testThatCorrectVersionsAreParsed() {
@@ -108,7 +108,7 @@ class FrameworkVersionTests: XCTestCase {
     }
 }
 
-// MARK: - Test patches
+// MARK: - LegacyPersistedDataPatchesTests
 
 class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
     override class func setUp() {

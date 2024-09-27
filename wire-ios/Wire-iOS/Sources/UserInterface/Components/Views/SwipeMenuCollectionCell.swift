@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - SwipeMenuCollectionCell
+
 class SwipeMenuCollectionCell: UICollectionViewCell {
     static let MaxVisualDrawerOffsetRevealDistance: CGFloat = 21
 
@@ -375,7 +377,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
     }
 }
 
-// MARK: - UIGestureRecognizerDelegate
+// MARK: UIGestureRecognizerDelegate
 
 extension SwipeMenuCollectionCell: UIGestureRecognizerDelegate {
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

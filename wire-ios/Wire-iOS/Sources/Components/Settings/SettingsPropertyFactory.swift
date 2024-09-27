@@ -21,22 +21,32 @@ import WireCommonComponents
 import WireSyncEngine
 import WireUtilities
 
+// MARK: - TrackingInterface
+
 protocol TrackingInterface {
     var disableAnalyticsSharing: Bool { get set }
 }
+
+// MARK: - AVSMediaManagerInterface
 
 protocol AVSMediaManagerInterface {
     var intensityLevel: AVSIntensityLevel { get set }
     var isMicrophoneMuted: Bool { get set }
 }
 
+// MARK: - AVSMediaManager + AVSMediaManagerInterface
+
 extension AVSMediaManager: AVSMediaManagerInterface {}
 
 typealias SettingsSelfUser = EditableUserType & UserType
 
+// MARK: - SettingsPropertyError
+
 enum SettingsPropertyError: Error {
     case WrongValue(String)
 }
+
+// MARK: - SettingsPropertyFactoryDelegate
 
 protocol SettingsPropertyFactoryDelegate: AnyObject {
     func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory)
@@ -48,6 +58,8 @@ protocol SettingsPropertyFactoryDelegate: AnyObject {
         callback: @escaping  ResultHandler
     )
 }
+
+// MARK: - SettingsPropertyFactory
 
 final class SettingsPropertyFactory {
     let userDefaults: UserDefaults

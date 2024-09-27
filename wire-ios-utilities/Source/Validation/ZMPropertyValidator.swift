@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ZMManagedObjectValidationErrorCode
+
 @objc
 public enum ZMManagedObjectValidationErrorCode: Int {
     case tooLong
@@ -25,6 +27,8 @@ public enum ZMManagedObjectValidationErrorCode: Int {
     case emailAddressIsInvalid
     case phoneNumberContainsInvalidCharacters
 }
+
+// MARK: - ZMPropertyValidator
 
 public protocol ZMPropertyValidator {
     static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws

@@ -51,6 +51,8 @@ extension StartUIViewController {
     }
 }
 
+// MARK: - StartUIViewController + SearchResultsViewControllerDelegate
+
 extension StartUIViewController: SearchResultsViewControllerDelegate {
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
@@ -173,6 +175,8 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 }
 
+// MARK: - StartUIViewController + ConversationCreationControllerDelegate
+
 extension StartUIViewController: ConversationCreationControllerDelegate {
     func conversationCreationController(
         _ controller: ConversationCreationController,
@@ -207,6 +211,8 @@ extension StartUIViewController: ConversationCreationControllerDelegate {
         }
     }
 }
+
+// MARK: - StartUIViewController + EmptySearchResultsViewDelegate
 
 extension StartUIViewController: EmptySearchResultsViewDelegate {
     func execute(action: EmptySearchResultsViewAction, from: EmptySearchResultsView) {

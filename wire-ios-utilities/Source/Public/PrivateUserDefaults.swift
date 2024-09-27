@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - PrivateUserDefaults
+
 public final class PrivateUserDefaults<Key: DefaultsKey> {
     // MARK: - Properties
 
@@ -92,9 +94,13 @@ extension PrivateUserDefaults {
     }
 }
 
+// MARK: - DefaultsKey
+
 public protocol DefaultsKey {
     var rawValue: String { get }
 }
+
+// MARK: - Never + DefaultsKey
 
 extension Never: DefaultsKey {
     public var rawValue: String { fatalError() }

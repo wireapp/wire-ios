@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AVSIdentifier
+
 public struct AVSIdentifier: Hashable, Equatable {
     public let identifier: UUID
     public let domain: String?

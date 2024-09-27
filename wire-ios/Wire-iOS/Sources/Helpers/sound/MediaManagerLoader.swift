@@ -20,6 +20,8 @@ import avs
 import Foundation
 import WireSyncEngine
 
+// MARK: - LoadingMessage
+
 // The AVS library consists of several components, those are:
 // - FlowManager: the component for establishing the network media flows.
 // - MediaManager: the part responsible for audio routing on the device.
@@ -33,6 +35,8 @@ enum LoadingMessage {
     // Called whem the FlowManager is created.
     case flowManagerLoaded
 }
+
+// MARK: - MediaManagerState
 
 enum MediaManagerState {
     // MediaManager is not loaded.
@@ -55,6 +59,8 @@ extension MediaManagerState {
         }
     }
 }
+
+// MARK: - MediaManagerLoader
 
 final class MediaManagerLoader: NSObject {
     private var flowManagerObserver: AnyObject?

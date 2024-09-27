@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - ModalPresentationConfiguration
+
 struct ModalPresentationConfiguration {
     let alpha: CGFloat
     let duration: TimeInterval
@@ -28,6 +30,8 @@ extension UIViewControllerContextTransitioning {
         completeTransition(!transitionWasCancelled)
     }
 }
+
+// MARK: - ModalInteractionController
 
 private final class ModalInteractionController: UIPercentDrivenInteractiveTransition {
     var interactionInProgress = false
@@ -72,6 +76,8 @@ private final class ModalInteractionController: UIPercentDrivenInteractiveTransi
         }
     }
 }
+
+// MARK: - ModalPresentationViewController
 
 final class ModalPresentationViewController: UIViewController, UIViewControllerTransitioningDelegate {
     fileprivate unowned let viewController: UIViewController

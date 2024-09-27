@@ -20,6 +20,8 @@ import Combine
 import Foundation
 import WireCoreCrypto
 
+// MARK: - CommitSending
+
 // sourcery: AutoMockable
 public protocol CommitSending {
     /// Sends a commit bundle.
@@ -63,6 +65,8 @@ public protocol CommitSending {
 
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
 }
+
+// MARK: - CommitSender
 
 /// An actor responsible for sending commits and external commits and handling the results.
 /// In case of failures, it will provide a recovery strategy to handle the failure.

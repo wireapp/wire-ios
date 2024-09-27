@@ -18,6 +18,8 @@
 
 import UIKit
 
+// MARK: - Reusable
+
 protocol Reusable {
     static var reuseIdentifier: String { get }
     var reuseIdentifier: String? { get }
@@ -34,5 +36,10 @@ extension Reusable {
     }
 }
 
+// MARK: - UITableViewCell + Reusable
+
 extension UITableViewCell: Reusable {}
+
+// MARK: - UICollectionReusableView + Reusable
+
 extension UICollectionReusableView: Reusable {}

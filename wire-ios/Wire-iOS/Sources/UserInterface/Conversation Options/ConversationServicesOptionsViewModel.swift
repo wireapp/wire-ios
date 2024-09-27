@@ -19,12 +19,16 @@
 import UIKit
 import WireUtilities
 
+// MARK: - ConversationServicesOptionsViewModelConfiguration
+
 protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
     var allowServices: Bool { get }
     var areServicePresent: Bool { get }
     var allowServicesChangedHandler: ((Bool) -> Void)? { get set }
     func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void)
 }
+
+// MARK: - ConversationServicesOptionsViewModelDelegate
 
 protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
     func conversationServicesOptionsViewModel(
@@ -43,6 +47,8 @@ protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
         confirmRemovingServices completion: @escaping (Bool) -> Void
     ) -> UIAlertController?
 }
+
+// MARK: - ConversationServicesOptionsViewModel
 
 final class ConversationServicesOptionsViewModel {
     struct State {

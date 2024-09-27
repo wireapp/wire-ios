@@ -18,6 +18,8 @@
 
 import UserNotifications
 
+// MARK: - LocalNotificationType
+
 /// Defines the various types of local notifications, some of which
 /// have associated subtypes.
 ///
@@ -29,6 +31,8 @@ enum LocalNotificationType {
     case availabilityBehaviourChangeAlert(AvailabilityKind)
 }
 
+// MARK: - NotificationBuilder
+
 /// A notification builder provides the main components used to configure
 /// a local notification.
 ///
@@ -39,6 +43,8 @@ protocol NotificationBuilder {
     func bodyText() -> String
     func userInfo() -> NotificationUserInfo?
 }
+
+// MARK: - ZMLocalNotification
 
 /// This class encapsulates all the data necessary to produce a local
 /// notification. It configures and formats the textual content for

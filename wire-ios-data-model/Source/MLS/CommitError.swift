@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - CommitError
+
 enum CommitError: Error, Equatable {
     case failedToGenerateCommit
     case failedToSendCommit(recovery: RecoveryStrategy, cause: SendCommitBundleAction.Failure)

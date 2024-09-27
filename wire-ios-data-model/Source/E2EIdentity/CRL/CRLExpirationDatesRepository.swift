@@ -18,12 +18,16 @@
 
 import Foundation
 
+// MARK: - CRLExpirationDatesRepositoryProtocol
+
 // sourcery: AutoMockable
 public protocol CRLExpirationDatesRepositoryProtocol {
     func crlExpirationDateExists(for distributionPoint: URL) -> Bool
     func storeCRLExpirationDate(_ expirationDate: Date, for distributionPoint: URL)
     func fetchAllCRLExpirationDates() -> [URL: Date]
 }
+
+// MARK: - CRLExpirationDatesRepository
 
 public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol {
     // MARK: - Types

@@ -23,6 +23,8 @@ import WireUtilities
 
 private let zmLog = ZMSLog(tag: "NetworkStatus")
 
+// MARK: - ServerReachability
+
 public enum ServerReachability {
     /// Backend can be reached.
     case ok
@@ -34,12 +36,16 @@ extension Notification.Name {
     public static let NetworkStatus = Notification.Name("NetworkStatusNotification")
 }
 
+// MARK: - NetworkStatusObservable
+
 // sourcery: AutoMockable
 /// Abstracts network status observation.
 public protocol NetworkStatusObservable {
     /// Determines if the server is reachable.
     var reachability: ServerReachability { get }
 }
+
+// MARK: - NetworkStatus
 
 /// This class monitors the reachability of backend. It emits notifications to its observers if the status changes.
 public final class NetworkStatus: NetworkStatusObservable {

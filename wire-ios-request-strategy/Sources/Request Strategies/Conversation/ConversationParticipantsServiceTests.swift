@@ -21,6 +21,8 @@ import XCTest
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
+// MARK: - ConversationParticipantsServiceTests
+
 class ConversationParticipantsServiceTests: MessagingTestBase {
     // MARK: - Properties
 

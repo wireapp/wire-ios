@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+// MARK: - AnimatedPenView
+
 final class AnimatedPenView: UIView {
     private let WritingAnimationKey = "writing"
     private let dots = UIImageView()
@@ -110,6 +112,8 @@ final class AnimatedPenView: UIView {
         startWritingAnimation()
     }
 }
+
+// MARK: - TypingIndicatorView
 
 final class TypingIndicatorView: UIView {
     let nameLabel: UILabel = {

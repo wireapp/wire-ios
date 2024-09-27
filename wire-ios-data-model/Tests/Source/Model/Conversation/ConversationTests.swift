@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConversationTests
+
 final class ConversationTests: ZMConversationTestsBase {
     @discardableResult
     private func insertMockGroupConversation(userDefinedName: String) -> ZMConversation {

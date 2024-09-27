@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UsersAPIV0
+
 class UsersAPIV0: UsersAPI, VersionedAPI {
     let httpClient: any HTTPClient
 
@@ -60,6 +62,8 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
             .parse(response)
     }
 }
+
+// MARK: - UserResponseV0
 
 struct UserResponseV0: Decodable, ToAPIModelConvertible {
     let id: UserID
@@ -106,6 +110,8 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     }
 }
 
+// MARK: - ListUsersRequestV0
+
 struct ListUsersRequestV0: Encodable {
     let qualifiedIDs: [QualifiedID]
 
@@ -116,11 +122,15 @@ struct ListUsersRequestV0: Encodable {
 
 typealias ListUsersResponseV0 = [UserResponseV0]
 
+// MARK: ToAPIModelConvertible
+
 extension ListUsersResponseV0: ToAPIModelConvertible {
     func toAPIModel() -> UserList {
         UserList(found: map { $0.toAPIModel() }, failed: [])
     }
 }
+
+// MARK: - ServiceResponseV0
 
 struct ServiceResponseV0: Decodable, ToAPIModelConvertible {
     let id: UUID

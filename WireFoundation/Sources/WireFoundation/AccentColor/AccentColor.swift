@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - AccentColor
+
 public enum AccentColor: Int16, CaseIterable, Hashable {
     case blue = 1
     case green

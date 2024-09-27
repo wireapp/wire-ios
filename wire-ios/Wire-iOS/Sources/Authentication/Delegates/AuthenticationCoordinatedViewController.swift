@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - AuthenticationErrorFeedbackAction
+
 /// Actions that can be performed by the view controllers when authentication fails.
 
 enum AuthenticationErrorFeedbackAction: Int {
@@ -26,6 +28,8 @@ enum AuthenticationErrorFeedbackAction: Int {
     /// The view should clear the input fields.
     case clearInputFields
 }
+
+// MARK: - AuthenticationCoordinatedViewController
 
 /// A view controller that is managed by an authentication coordinator.
 protocol AuthenticationCoordinatedViewController: AnyObject {

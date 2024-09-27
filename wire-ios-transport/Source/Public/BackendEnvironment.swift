@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - EnvironmentType
+
 public enum EnvironmentType: Equatable {
     case production
     case staging
@@ -119,6 +121,8 @@ extension EnvironmentType {
     }
 }
 
+// MARK: - BackendEnvironment
+
 public final class BackendEnvironment: NSObject {
     public let title: String
     let endpoints: BackendEndpointsProvider
@@ -167,6 +171,8 @@ public final class BackendEnvironment: NSObject {
         }
     }
 }
+
+// MARK: BackendEnvironmentProvider
 
 extension BackendEnvironment: BackendEnvironmentProvider {
     public var environmentType: EnvironmentTypeProvider {

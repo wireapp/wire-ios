@@ -19,6 +19,8 @@
 import CoreData
 import WireSystem
 
+// MARK: - NSManagedObjectContext + GroupQueue
+
 extension NSManagedObjectContext: GroupQueue {
     @objc public var dispatchGroup: ZMSDispatchGroup? {
         dispatchGroupContext?.groups.first

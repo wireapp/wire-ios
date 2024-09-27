@@ -18,9 +18,13 @@
 
 import Foundation
 
+// MARK: - ConversationListType
+
 public enum ConversationListType {
     case archived, unarchived, pending, contacts, groups, favorites, folder(_ folder: LabelType)
 }
+
+// MARK: - ConversationDirectoryChangeInfo
 
 public struct ConversationDirectoryChangeInfo {
     public var reloaded: Bool
@@ -34,9 +38,13 @@ public struct ConversationDirectoryChangeInfo {
     }
 }
 
+// MARK: - ConversationDirectoryObserver
+
 public protocol ConversationDirectoryObserver: AnyObject {
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo)
 }
+
+// MARK: - ConversationDirectoryType
 
 public protocol ConversationDirectoryType {
     /// All folder created by the user
@@ -53,6 +61,8 @@ public protocol ConversationDirectoryType {
     /// NOTE that returned token must be retained for as long you want the observer to be active
     func addObserver(_ observer: ConversationDirectoryObserver) -> Any
 }
+
+// MARK: - ZMConversationListDirectory + ConversationDirectoryType
 
 extension ZMConversationListDirectory: ConversationDirectoryType {
     public func conversations(by type: ConversationListType) -> [ZMConversation] {
@@ -108,6 +118,8 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
         return label
     }
 }
+
+// MARK: - ConversationListObserverProxy
 
 private class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver,
     ZMConversationListFolderObserver {

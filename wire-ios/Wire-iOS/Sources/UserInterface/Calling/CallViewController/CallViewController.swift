@@ -21,12 +21,16 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - CallViewControllerDelegate
+
 protocol CallViewControllerDelegate: AnyObject {
     func callViewControllerDidDisappear(
         _ callController: CallViewController,
         for conversation: ZMConversation?
     )
 }
+
+// MARK: - CallViewController
 
 final class CallViewController: UIViewController {
     weak var delegate: CallViewControllerDelegate?
@@ -420,6 +424,8 @@ final class CallViewController: UIViewController {
     }
 }
 
+// MARK: ZMConversationObserver
+
 extension CallViewController: ZMConversationObserver {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard
@@ -432,6 +438,8 @@ extension CallViewController: ZMConversationObserver {
         classification = userSession.classification(users: participants, conversationDomain: nil)
     }
 }
+
+// MARK: WireCallCenterCallStateObserver
 
 extension CallViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(
@@ -447,13 +455,15 @@ extension CallViewController: WireCallCenterCallStateObserver {
     }
 }
 
+// MARK: ActiveSpeakersObserver
+
 extension CallViewController: ActiveSpeakersObserver {
     func callCenterDidChangeActiveSpeakers() {
         updateConfiguration()
     }
 }
 
-// MARK: - WireCallCenterCallParticipantObserver
+// MARK: WireCallCenterCallParticipantObserver
 
 extension CallViewController: WireCallCenterCallParticipantObserver {
     func callParticipantsDidChange(
@@ -472,11 +482,15 @@ extension CallViewController: WireCallCenterCallParticipantObserver {
     }
 }
 
+// MARK: AVSMediaManagerClientObserver
+
 extension CallViewController: AVSMediaManagerClientObserver {
     func mediaManagerDidChange(_: AVSMediaManagerClientChangeNotification!) {
         updateConfiguration()
     }
 }
+
+// MARK: MuteStateObserver
 
 extension CallViewController: MuteStateObserver {
     func callCenterDidChange(muted: Bool) {
@@ -534,11 +548,15 @@ extension CallViewController {
     }
 }
 
+// MARK: ConstantBitRateAudioObserver
+
 extension CallViewController: ConstantBitRateAudioObserver {
     func callCenterDidChange(constantAudioBitRateAudioEnabled: Bool) {
         updateConfiguration()
     }
 }
+
+// MARK: CallInfoRootViewControllerDelegate
 
 extension CallViewController: CallInfoRootViewControllerDelegate {
     func callingActionsViewPerformAction(_ action: CallAction) {
@@ -591,6 +609,8 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         }
     }
 }
+
+// MARK: CallGridViewControllerDelegate
 
 extension CallViewController: CallGridViewControllerDelegate {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction) {

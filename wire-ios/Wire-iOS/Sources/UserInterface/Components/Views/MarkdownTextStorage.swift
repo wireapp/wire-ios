@@ -23,6 +23,8 @@ extension NSAttributedString.Key {
     static let markdownID = NSAttributedString.Key(rawValue: "MarkdownIDAttributeName")
 }
 
+// MARK: - MarkdownTextStorage
+
 class MarkdownTextStorage: NSTextStorage {
     private let storage = NSTextStorage()
 

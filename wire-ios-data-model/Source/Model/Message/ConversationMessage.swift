@@ -21,6 +21,8 @@ import WireLinkPreview
 
 private var zmLog = ZMSLog(tag: "Message")
 
+// MARK: - ZMDeliveryState
+
 @objc
 public enum ZMDeliveryState: UInt {
     case invalid = 0
@@ -31,11 +33,15 @@ public enum ZMDeliveryState: UInt {
     case failedToSend = 5
 }
 
+// MARK: - MessageSendFailure
+
 @objc
 public enum MessageSendFailure: Int {
     case unknown
     case federationRemoteError
 }
+
+// MARK: - ReadReceipt
 
 @objc
 public protocol ReadReceipt {
@@ -45,6 +51,8 @@ public protocol ReadReceipt {
 
     var serverTimestamp: Date? { get }
 }
+
+// MARK: - ZMConversationMessage
 
 @objc
 public protocol ZMConversationMessage: NSObjectProtocol {
@@ -169,10 +177,14 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     var isRestricted: Bool { get }
 }
 
+// MARK: - ConversationCompositeMessage
+
 public protocol ConversationCompositeMessage {
     /// The composite message associated with the message. If the message is not a composite message, it will be nil
     var compositeMessageData: CompositeMessageData? { get }
 }
+
+// MARK: - SwiftConversationMessage
 
 public protocol SwiftConversationMessage {
     /// Reason why the message has not been sent
@@ -222,7 +234,7 @@ extension ZMMessage {
     }
 }
 
-// MARK: - Conversation Message protocol implementation
+// MARK: - ZMMessage + ZMConversationMessage
 
 extension ZMMessage: ZMConversationMessage {
     public var conversationLike: ConversationLike? {

@@ -25,9 +25,13 @@ import XCTest
 @testable import WireDataModelSupport
 @testable import WireShareEngine
 
+// MARK: - FakeAuthenticationStatus
+
 final class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
 }
+
+// MARK: - BaseSharingSessionTests
 
 class BaseSharingSessionTests: BaseTest {
     var sharingSession: SharingSession!
@@ -45,6 +49,8 @@ class BaseSharingSessionTests: BaseTest {
         super.tearDown()
     }
 }
+
+// MARK: - BaseTest
 
 class BaseTest: ZMTBaseTest {
     var authenticationStatus: FakeAuthenticationStatus!

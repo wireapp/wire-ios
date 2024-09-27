@@ -19,6 +19,8 @@
 import Foundation
 import WireCoreCrypto
 
+// MARK: - MLSEncryptionServiceInterface
+
 // sourcery: AutoMockable
 public protocol MLSEncryptionServiceInterface {
     /// Encrypts a message for the given group.
@@ -37,6 +39,8 @@ public protocol MLSEncryptionServiceInterface {
         for groupID: MLSGroupID
     ) async throws -> Data
 }
+
+// MARK: - MLSEncryptionService
 
 /// A class responsible for encrypting messages for MLS groups.
 

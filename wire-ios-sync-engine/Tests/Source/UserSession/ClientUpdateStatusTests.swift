@@ -21,11 +21,15 @@ import WireDataModel
 import WireTesting
 @testable import WireSyncEngine
 
+// MARK: - ClientUpdateStatusChange
+
 struct ClientUpdateStatusChange {
     let type: ZMClientUpdateNotificationType
     var clientObjectIDs: [NSManagedObjectID]
     var error: NSError?
 }
+
+// MARK: - ClientUpdateStatusTests
 
 class ClientUpdateStatusTests: MessagingTest {
     var sut: ClientUpdateStatus!

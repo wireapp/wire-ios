@@ -23,6 +23,8 @@ import WireTesting
 import XCTest
 @testable import WireShareEngine
 
+// MARK: - OperationLoopTests
+
 final class OperationLoopTests: ZMTBaseTest {
     var coreDataStack: CoreDataStack! = nil
     var sut: OperationLoop! = nil

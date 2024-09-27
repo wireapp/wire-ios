@@ -29,6 +29,8 @@ extension ConversationActionController {
     }
 }
 
+// MARK: - ConversationActionController + FolderPickerViewControllerDelegate
+
 extension ConversationActionController: FolderPickerViewControllerDelegate {
     func didPickFolder(_ folder: LabelType, for conversation: ZMConversation) {
         userSession.enqueue {

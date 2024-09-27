@@ -22,6 +22,8 @@ import WireDesign
 
 private let verifiedShieldImage = WireStyleKit.imageOfShieldverified
 
+// MARK: - ShareDestinationCell
+
 final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
     let checkmarkSize: CGFloat = 24
     let avatarSize: CGFloat = 32

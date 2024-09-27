@@ -21,7 +21,11 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - MockShareViewControllerConversation
+
 final class MockShareViewControllerConversation: SwiftMockConversation {}
+
+// MARK: ShareDestination
 
 extension MockShareViewControllerConversation: ShareDestination {
     var showsGuestIcon: Bool {
@@ -29,11 +33,15 @@ extension MockShareViewControllerConversation: ShareDestination {
     }
 }
 
+// MARK: StableRandomParticipantsProvider
+
 extension MockShareViewControllerConversation: StableRandomParticipantsProvider {
     var stableRandomParticipants: [UserType] {
         sortedOtherParticipants
     }
 }
+
+// MARK: - ShareViewControllerTests
 
 // TODO: [WPB-10223] Fix the snapshots
 final class ShareViewControllerTests: XCTestCase {
@@ -178,6 +186,8 @@ final class ShareViewControllerTests: XCTestCase {
         snapshotHelper.verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
     }
 }
+
+// MARK: - MockShareableMessage
 
 final class MockShareableMessage: MockMessage, Shareable {
     func previewView() -> UIView? {

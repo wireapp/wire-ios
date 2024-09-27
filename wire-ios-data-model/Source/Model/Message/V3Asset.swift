@@ -21,6 +21,8 @@ import MobileCoreServices
 
 private let zmLog = ZMSLog(tag: "AssetV3")
 
+// MARK: - AssetProxyType
+
 /// This protocol is used to hide the implementation of the different
 /// asset types (v2 image & file vs. v3 file) from ZMAssetClientMessage.
 /// It only includes methods in which these two versions differentiate.
@@ -40,6 +42,8 @@ public protocol AssetProxyType {
     @objc(fetchImageDataWithQueue:completionHandler:)
     func fetchImageData(with queue: DispatchQueue!, completionHandler: ((Data?) -> Void)!)
 }
+
+// MARK: - V3Asset
 
 @objcMembers
 public class V3Asset: NSObject, ZMImageMessageData {
@@ -175,6 +179,8 @@ public class V3Asset: NSObject, ZMImageMessageData {
         return assetClientMessage.preprocessedSize
     }
 }
+
+// MARK: AssetProxyType
 
 extension V3Asset: AssetProxyType {
     public var hasDownloadedPreview: Bool {

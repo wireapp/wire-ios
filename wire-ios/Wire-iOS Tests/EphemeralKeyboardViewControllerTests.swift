@@ -21,6 +21,8 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
+// MARK: - EphemeralKeyboardViewControllerTests
+
 final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
     var sut: EphemeralKeyboardViewController!
     var conversation: ZMConversation!

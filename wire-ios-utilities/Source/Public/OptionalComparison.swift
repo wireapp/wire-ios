@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - OptionalComparison
+
 public enum OptionalComparison {
     /// Compares two optional values in ascending order.
     ///

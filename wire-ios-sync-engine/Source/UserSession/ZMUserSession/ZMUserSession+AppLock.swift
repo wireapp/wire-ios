@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - UserSessionAppLockInterface
+
 public protocol UserSessionAppLockInterface {
     var appLockController: AppLockType { get set }
 
@@ -34,6 +36,8 @@ extension UserSessionAppLockInterface {
     }
 }
 
+// MARK: - SessionLock
+
 /// The various types of session locks, i.e reasons why the session is inaccessible.
 
 public enum SessionLock {
@@ -46,9 +50,13 @@ public enum SessionLock {
     case database
 }
 
+// MARK: - UserSessionAppLockDelegate
+
 protocol UserSessionAppLockDelegate: AnyObject {
     func userSessionDidUnlock(_ session: ZMUserSession)
 }
+
+// MARK: - ZMUserSession + AppLockDelegate
 
 extension ZMUserSession: AppLockDelegate {
     public func appLockDidOpen(_: AppLockType) {

@@ -23,6 +23,8 @@ import WireUtilities
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 
+// MARK: - EventDecoderProtocol
+
 // sourcery: AutoMockable
 public protocol EventDecoderProtocol {
     func decryptAndStoreEvents(
@@ -36,6 +38,8 @@ public protocol EventDecoderProtocol {
         _ block: @escaping ([ZMUpdateEvent]) async -> Void
     ) async
 }
+
+// MARK: - EventDecoder
 
 /// Decodes and stores events from various sources to be processed later
 public final class EventDecoder: NSObject, EventDecoderProtocol {

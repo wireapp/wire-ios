@@ -23,6 +23,8 @@ import WireDesign
 
 typealias GroupConversationCellConversation = Conversation & StableRandomParticipantsProvider
 
+// MARK: - GroupConversationCell
+
 final class GroupConversationCell: UICollectionViewCell {
     let avatarSpacer = UIView()
     let avatarView = ConversationAvatarView()

@@ -18,6 +18,8 @@
 
 import Foundation
 
+// MARK: - ConnectToUserError
+
 public enum ConnectToUserError: Error {
     case unknown
     case noIdentity
@@ -26,6 +28,8 @@ public enum ConnectToUserError: Error {
     case internalInconsistency
     case federationDenied
 }
+
+// MARK: - UpdateConnectionError
 
 public enum UpdateConnectionError: Error {
     case unknown
@@ -36,6 +40,8 @@ public enum UpdateConnectionError: Error {
     case internalInconsistency
     case federationDenied
 }
+
+// MARK: - ConnectToUserAction
 
 public struct ConnectToUserAction: EntityAction {
     public typealias Result = Void
@@ -50,6 +56,8 @@ public struct ConnectToUserAction: EntityAction {
         self.domain = domain
     }
 }
+
+// MARK: - UpdateConnectionAction
 
 public struct UpdateConnectionAction: EntityAction {
     public typealias Result = Void

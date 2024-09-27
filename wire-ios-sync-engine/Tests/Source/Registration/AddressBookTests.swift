@@ -20,6 +20,8 @@ import AddressBook
 import Foundation
 @testable import WireSyncEngine
 
+// MARK: - AddressBookTests
+
 final class AddressBookTests: XCTestCase {
     fileprivate var addressBook: MockAddressBook!
 

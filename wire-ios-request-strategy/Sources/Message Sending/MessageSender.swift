@@ -18,6 +18,8 @@
 
 import WireDataModel
 
+// MARK: - MessageSendError
+
 public enum MessageSendError: Error, Equatable {
     case missingMessageProtocol
     case missingGroupID
@@ -29,12 +31,16 @@ public enum MessageSendError: Error, Equatable {
 
 public typealias SendableMessage = MLSMessage & ProteusMessage
 
+// MARK: - MessageSenderInterface
+
 // sourcery: AutoMockable
 public protocol MessageSenderInterface {
     func sendMessage(message: any SendableMessage) async throws
 
     func broadcastMessage(message: any ProteusMessage) async throws
 }
+
+// MARK: - MessageSender
 
 public final class MessageSender: MessageSenderInterface {
     public init(

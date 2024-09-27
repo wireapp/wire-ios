@@ -214,7 +214,7 @@ extension ConversationListViewController {
     }
 }
 
-// MARK: - UserStatusViewControllerDelegate
+// MARK: - ConversationListViewController + UserStatusViewControllerDelegate
 
 extension ConversationListViewController: UserStatusViewControllerDelegate {
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {

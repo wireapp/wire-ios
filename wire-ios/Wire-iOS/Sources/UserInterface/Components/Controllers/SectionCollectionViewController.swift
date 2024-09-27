@@ -19,11 +19,15 @@
 import UIKit
 import WireSystem
 
+// MARK: - CollectionViewSectionController
+
 protocol CollectionViewSectionController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     var isHidden: Bool { get }
 
     func prepareForUse(in collectionView: UICollectionView?)
 }
+
+// MARK: - SectionCollectionViewController
 
 final class SectionCollectionViewController: NSObject {
     var collectionView: UICollectionView? {
@@ -58,6 +62,8 @@ final class SectionCollectionViewController: NSObject {
     }
 }
 
+// MARK: UICollectionViewDelegate
+
 extension SectionCollectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
         guard visibleSections.indices.contains(indexPath.section) else { return true }
@@ -84,6 +90,8 @@ extension SectionCollectionViewController: UICollectionViewDelegate {
         visibleSections[indexPath.section].collectionView?(collectionView, didDeselectItemAt: indexPath)
     }
 }
+
+// MARK: UICollectionViewDataSource
 
 extension SectionCollectionViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -133,6 +141,8 @@ extension SectionCollectionViewController: UICollectionViewDataSource {
         )
     }
 }
+
+// MARK: UICollectionViewDelegateFlowLayout
 
 extension SectionCollectionViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(

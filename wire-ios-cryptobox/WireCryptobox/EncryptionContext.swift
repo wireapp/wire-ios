@@ -19,7 +19,11 @@
 import Foundation
 import WireSystem
 
+// MARK: - _CBox
+
 class _CBox: PointerWrapper {}
+
+// MARK: - EncryptionContext
 
 /// A cryptobox context that manages access to sessions, allowing the
 /// same sessions to be accessed by multuple processes in a safe way.

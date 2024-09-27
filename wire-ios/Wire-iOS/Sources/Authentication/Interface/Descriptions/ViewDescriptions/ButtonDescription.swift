@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// MARK: - ButtonDescription
+
 final class ButtonDescription {
     var buttonTapped: (() -> Void)?
     let title: String
@@ -30,6 +32,8 @@ final class ButtonDescription {
         self.accessibilityIdentifier = accessibilityIdentifier
     }
 }
+
+// MARK: ViewDescriptor
 
 extension ButtonDescription: ViewDescriptor {
     func create() -> UIView {

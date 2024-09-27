@@ -18,10 +18,14 @@
 
 import Foundation
 
+// MARK: - IsE2EICertificateEnrollmentRequiredProtocol
+
 // sourcery: AutoMockable
 public protocol IsE2EICertificateEnrollmentRequiredProtocol {
     func invoke() async throws -> Bool
 }
+
+// MARK: - IsE2EICertificateEnrollmentRequiredUseCase
 
 public final class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificateEnrollmentRequiredProtocol {
     // MARK: - Properties

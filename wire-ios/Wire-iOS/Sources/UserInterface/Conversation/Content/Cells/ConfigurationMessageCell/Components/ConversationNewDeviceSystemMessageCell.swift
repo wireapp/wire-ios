@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - ConversationNewDeviceSystemMessageCell
+
 final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
     static let userClientURL = URL(string: "settings://user-client")!
 
