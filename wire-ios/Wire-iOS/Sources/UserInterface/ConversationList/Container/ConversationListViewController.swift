@@ -32,7 +32,7 @@ final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
     let mainCoordinator: MainCoordinatorProtocol
-    let conversationListCoordinator: ConversationListCoordinatorProtocol
+    let conversationListCoordinator: ConversationListCoordinator<ConversationListParentCoordinator>
     weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
@@ -145,7 +145,7 @@ final class ConversationListViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
-        self.conversationListCoordinator = ConversationListCoordinator(
+        self.conversationListCoordinator = ConversationListCoordinator( // TODO: inject?
             parentCoordinator: ConversationListParentCoordinator() // TODO: use mainCoordinator
         )
 

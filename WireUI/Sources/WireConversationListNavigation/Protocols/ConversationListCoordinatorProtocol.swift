@@ -18,4 +18,11 @@
 
 public protocol ConversationListCoordinatorProtocol: AnyObject {
     func showConversation<ConversationID: Sendable>(conversationID: ConversationID) async
+    func showConversation<ConversationID: Sendable, MessageID: Sendable>(conversationID: ConversationID, messageID: MessageID?) async
+}
+
+public extension ConversationListCoordinatorProtocol {
+//    func showConversation<ConversationID: Sendable>(conversationID: ConversationID) async {
+//        showConversation(conversationID: conversationID, messageID: nil)
+//    }
 }

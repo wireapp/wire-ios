@@ -27,7 +27,11 @@ public final class ConversationListCoordinator<ParentCoordinator: ConversationLi
         self.parentCoordinator = parentCoordinator
     }
 
-    public func showConversation<ConversationID: Sendable>(conversationID: ConversationID) async {
+    public func showConversation<ConversationID: Sendable>(conversationID: ConversationID) {
+        fatalError("TODO")
+    }
+
+    public func showConversation<ConversationID, MessageID>(conversationID: ConversationID, messageID: MessageID?) where ConversationID : Sendable, MessageID : Sendable {
         fatalError("TODO")
     }
 }
