@@ -99,7 +99,7 @@ final class ConversationListViewController: UIViewController {
 
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
-    let selfProfileViewControllerBuilder: any MainCoordinatorInjectingViewControllerBuilder
+    let selfProfileViewControllerBuilder: any MainCoordinatorInjectingViewControllerBuilder // TODO: is it needed?
     var splitViewInterface: MainSplitViewState = .expanded { // TODO: rename property `mainSplitViewState`
         didSet {
             setupTitleView()

@@ -23,7 +23,7 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     var sidebar: MockSidebarViewController!
     var conversationList: MockConversationListViewController?
     var archive: UIViewController?
-    var newConversation: UIViewController?
+    var connect: UIViewController?
     var settings: UIViewController?
     var conversation: UIViewController?
     var tabContainer: UIViewController!

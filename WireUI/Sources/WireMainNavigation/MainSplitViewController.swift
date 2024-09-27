@@ -51,9 +51,9 @@ public final class MainSplitViewController<
         }
     }
 
-    public weak var newConversation: UIViewController? {
+    public weak var connect: UIViewController? {
         didSet {
-            supplementaryNavigationController?.viewControllers = [newConversation].compactMap { $0 }
+            supplementaryNavigationController?.viewControllers = [connect].compactMap { $0 }
             supplementaryNavigationController?.view.layoutIfNeeded()
         }
     }

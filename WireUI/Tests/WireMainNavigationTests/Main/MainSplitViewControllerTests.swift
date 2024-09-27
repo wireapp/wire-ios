@@ -131,13 +131,13 @@ final class MainSplitViewControllerTests: XCTestCase {
     }
 
     @MainActor
-    func testConversationIsReleasedWhenNewConversationIsSet() async {
+    func testConversationIsReleasedWhenConnectIsSet() async {
         // Given
         weak var conversationList = conversationList
         self.conversationList = nil
 
         // When
-        sut.newConversation = .init()
+        sut.connect = .init()
 
         // Then
         await Task.yield()

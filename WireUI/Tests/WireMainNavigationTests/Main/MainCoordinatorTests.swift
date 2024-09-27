@@ -45,7 +45,7 @@ final class MainCoordinatorTests: XCTestCase {
         sut = .init(
             mainSplitViewController: splitViewController,
             mainTabBarController: tabBarController,
-            newConversationBuilder: .init(),
+            connectBuilder: .init(),
             selfProfileBuilder: .init()
         )
     }
@@ -62,7 +62,7 @@ final class MainCoordinatorTests: XCTestCase {
     func testShowingGroupConversations() {
         // When
         let conversationFilter: MockConversationListViewController.ConversationFilter = .groups
-        sut.showConversationList(conversationFilter: conversationFilter)
+        sut.showConversationList(conversationFilter: conversationFilter, conversationID: nil, messageID: nil)
 
         // Then
         XCTAssertNotNil(splitViewController.conversationList)
@@ -105,6 +105,6 @@ final class MainCoordinatorTests: XCTestCase {
     // TODO: [WPB-10903] add many more tests, e.g.
     // - collapsing archive, connect, settings, selfProfile
     // - expanding archive, connect, settings, selfProfile
-    // - dismissing conversationList, archive, connect, newConversation, settings, selfProfile
+    // - dismissing conversationList, archive, connect, connect, settings, selfProfile
     // - tabBarController(_:didSelect:)
 }

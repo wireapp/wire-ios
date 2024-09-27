@@ -16,4 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ConversationListParentCoordinatorProtocol {}
+import UIKit
+
+public protocol ConversationListParentCoordinatorProtocol {
+    associatedtype Conversation: UIViewController
+
+    func showConversation(conversation: Conversation) async
+}

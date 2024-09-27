@@ -17,12 +17,19 @@
 //
 
 public protocol MainCoordinatorProtocol: AnyObject {
-    // var conversationListCoordinator: MainConversationListCoordinatorRepresentable
-    func showConversationList<ConversationFilter>(conversationFilter: ConversationFilter?) async
-        where ConversationFilter: MainConversationFilterRepresentable
-    // func showConversation<Conversation>(conversation: Conversation) async
+
+    func showConversationList<ConversationFilter, ConversationID, MessageID>(
+        conversationFilter: ConversationFilter?,
+        conversationID: ConversationID?,
+        messageID: MessageID?
+    ) async where
+    ConversationFilter: MainConversationFilterRepresentable,
+    ConversationID: Sendable,
+    MessageID: Sendable
+
     func showArchivedConversations() async
+    func showSettings<SettingsContent: MainSettingsContentRepresentable>(content: SettingsContent?) async
+
     func showSelfProfile() async
-    func showSettings() async
-    func showNewConversation() async // TODO: consider renaming, like `showStartConversation()`
+    func showConnect() async
 }

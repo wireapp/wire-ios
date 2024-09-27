@@ -16,6 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireConversationListNavigation
+public enum MainSettingsContent {
+    case account, todo
+}
 
-struct ConversationListParentCoordinator: ConversationListParentCoordinatorProtocol {}
+public protocol MainSettingsContentRepresentable: Sendable {
+
+    init(_ mainSettingsContent: MainSettingsContent)
+    init?<SettingsContent: MainSettingsContentRepresentable>(mappingFrom settingsContent: SettingsContent?)
+
+    func mapToMainSettingsContent() -> MainSettingsContent
+}
+
+public extension MainSettingsContentRepresentable {
+
+    init?(mappingFrom settingsContent: (some MainSettingsContentRepresentable)?) {
+        guard let settingsContent else { return nil }
+        self.init(settingsContent.mapToMainSettingsContent())
+    }
+}
