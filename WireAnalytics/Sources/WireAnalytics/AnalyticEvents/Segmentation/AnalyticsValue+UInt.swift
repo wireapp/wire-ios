@@ -16,10 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 extension UInt: AnalyticsValue {
 
     public var analyticsValue: String {
         String(logRound())
+    }
+
+    /// Rounds the integer value logarithmically to protect the privacy of BI data.
+    ///
+    /// The `logRound` method rounds numeric values into buckets of increasing size.
+    /// This logarithmic rounding means that smaller numbers are only slightly rounded,
+    /// whereas larger numbers are rounded more significantly. This approach helps to
+    /// protect privacy by reducing the precision of the values in a controlled manner.
+    ///
+    /// - Returns: A rounded integer value based on the base-2 logarithm of the original value.
+    
+    func logRound() -> UInt {
+        UInt(log2(Double(self)).rounded())
     }
 
 }
