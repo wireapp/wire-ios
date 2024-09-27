@@ -29,10 +29,13 @@ extension LocalNotificationType {
         switch self {
         case .calling(.incomingCall):
             .call
+
         case .calling(.missedCall):
             .newMessage
+
         case .event:
             .newMessage
+
         case let .message(contentType):
             switch contentType {
             case .knock:
@@ -40,8 +43,10 @@ extension LocalNotificationType {
             default:
                 .newMessage
             }
+
         case .failedMessage, .availabilityBehaviourChangeAlert:
             .newMessage
+
         case .bundledMessages:
             .newMessage
         }

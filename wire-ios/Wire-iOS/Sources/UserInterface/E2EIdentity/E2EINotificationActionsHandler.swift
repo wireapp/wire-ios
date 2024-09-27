@@ -207,10 +207,12 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
                 Task { [weak self] in
                     await self?.getCertificate()
                 }
+
             case .remindLater:
                 Task { [weak self] in
                     await self?.snoozeReminder()
                 }
+
             case .learnMore:
                 break
             }

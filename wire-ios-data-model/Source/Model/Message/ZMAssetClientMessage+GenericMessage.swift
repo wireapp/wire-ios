@@ -125,6 +125,7 @@ extension ZMAssetClientMessage {
                       case .uploaded? = assetData.status
                 else { return nil }
                 return genericMessage
+
             case .placeholder:
                 return underlyingMessageMergedFromDataSet(filter: { message -> Bool in
                     guard let assetData = message.assetData else { return false }
@@ -133,6 +134,7 @@ extension ZMAssetClientMessage {
                     }
                     return true
                 })
+
             case .thumbnail:
                 return underlyingMessageMergedFromDataSet(filter: { message -> Bool in
                     guard let assetData = message.assetData else { return false }

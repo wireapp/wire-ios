@@ -28,14 +28,17 @@ enum PrimaryKeyGenerator {
             let domain = object.value(forKeyPath: #keyPath(ZMUser.domain)) as? String
 
             return ZMUser.primaryKey(from: remoteIdentifier, domain: domain)
+
         case ZMConversation.entityName():
             let remoteIdentifier = remoteIdentifierData.flatMap(UUID.init(data:))
             let domain = object.value(forKeyPath: #keyPath(ZMConversation.domain)) as? String
 
             return ZMConversation.primaryKey(from: remoteIdentifier, domain: domain)
+
         case Team.entityName():
 
             return remoteIdentifierData.flatMap { UUID(data: $0)?.uuidString } ?? "<nil>"
+
         default:
             fatal("Entity named \(entityName) is not supported")
         }

@@ -1527,6 +1527,7 @@ extension SessionManager: WireCallCenterCallStateObserver {
                 where session.managedObjectContext == moc && activeUserSession != session {
                 showConversation(conversation, at: nil, in: session)
             }
+
         default:
             return
         }

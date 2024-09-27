@@ -95,8 +95,10 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
         case .legalHoldEnabled:
             L10n.Localizable.Content.System.MessageLegalHold
                 .enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+
         case .legalHoldDisabled:
             L10n.Localizable.Content.System.MessageLegalHold.disabled
+
         default:
             ""
         }

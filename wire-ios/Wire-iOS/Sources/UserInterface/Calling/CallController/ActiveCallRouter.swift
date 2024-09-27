@@ -210,6 +210,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                         postCallActionCompletion()
                     }
                 )
+
             case .invalidCertificate:
                 UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
                     completion(.ok)
@@ -243,6 +244,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                         postCallActionCompletion()
                     }
                 )
+
             case .invalidCertificate:
                 UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
                     completion(answerDegradedCall ? .confirm : .cancel)

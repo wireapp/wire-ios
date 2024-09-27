@@ -38,9 +38,11 @@ final class CallSystemMessageGenerator: NSObject {
         case .outgoing:
             log.info("Setting call start date for \(conversation.displayName ?? ""))")
             startDateByConversation[conversation] = Date()
+
         case .established:
             log.info("Setting call connect date for \(conversation.displayName ?? "")")
             connectDateByConversation[conversation] = Date()
+
         case let .terminating(reason: reason):
             systemMessage = appendCallEndedSystemMessage(
                 reason: reason,
@@ -49,6 +51,7 @@ final class CallSystemMessageGenerator: NSObject {
                 timestamp: timestamp,
                 previousCallState: previousCallState
             )
+
         case .none, .unknown, .answered, .establishedDataChannel, .incoming, .mediaStopped:
             break
         }

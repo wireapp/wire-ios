@@ -62,22 +62,31 @@ public enum EnvironmentType: Equatable {
         switch stringValue {
         case EnvironmentType.staging.stringValue:
             self = .staging
+
         case EnvironmentType.qaDemo.stringValue:
             self = .qaDemo
+
         case EnvironmentType.qaDemo2.stringValue:
             self = .qaDemo2
+
         case EnvironmentType.anta.stringValue:
             self = .anta
+
         case EnvironmentType.bella.stringValue:
             self = .bella
+
         case EnvironmentType.chala.stringValue:
             self = .chala
+
         case EnvironmentType.diya.stringValue:
             self = .diya
+
         case EnvironmentType.elna.stringValue:
             self = .elna
+
         case EnvironmentType.foma.stringValue:
             self = .foma
+
         case let value where value.hasPrefix("custom-"):
             let urlString = value.dropFirst("custom-".count)
             if let url = URL(string: String(urlString)) {
@@ -85,6 +94,7 @@ public enum EnvironmentType: Equatable {
             } else {
                 self = .production
             }
+
         default:
             self = .production
         }

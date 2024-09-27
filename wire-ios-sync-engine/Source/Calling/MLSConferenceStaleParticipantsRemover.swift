@@ -112,8 +112,10 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                         from: input.subconversationID,
                         after: removalTimeout
                     )
+
                 case (false, _), (_, .connected):
                     cancelRemoval(for: clientID)
+
                 default: break
                 }
             }

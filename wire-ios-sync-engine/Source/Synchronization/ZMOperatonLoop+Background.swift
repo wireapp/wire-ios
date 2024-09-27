@@ -64,6 +64,7 @@ extension ZMOperationLoop {
                let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
                 return UUID(uuidString: rawUUID)
             }
+
         case .cipher:
             return messageNonce(fromEncryptedPushChannelData: notificationData)
         }

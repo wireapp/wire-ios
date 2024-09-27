@@ -129,14 +129,18 @@ public class RegistrationStatus: RegistrationStatusProtocol {
         switch phase {
         case .sendActivationCode:
             delegate?.activationCodeSent()
+
         case .checkActivationCode:
             delegate?.activationCodeValidated()
+
         case .createTeam:
             completedRegistration = true
             delegate?.teamRegistered()
+
         case .createUser:
             completedRegistration = true
             delegate?.userRegistered()
+
         case .none:
             break
         }

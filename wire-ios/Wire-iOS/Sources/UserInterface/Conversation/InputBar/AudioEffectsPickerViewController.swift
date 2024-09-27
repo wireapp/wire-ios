@@ -246,6 +246,7 @@ final class AudioEffectsPickerViewController: UIViewController {
             subtitleLabel.text = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.filterTip
                 .localizedUppercase
             subtitleLabel.textColor = SemanticColors.Label.textDefault
+
         case .time:
             let duration = if let player = audioPlayerController?.player {
                 Int(ceil(player.duration))
@@ -257,6 +258,7 @@ final class AudioEffectsPickerViewController: UIViewController {
             subtitleLabel.text = String(format: "%d:%02d", minutes, seconds)
             subtitleLabel.accessibilityValue = subtitleLabel.text
             subtitleLabel.textColor = SemanticColors.Label.textDefault
+
         default:
             // no-op
             break

@@ -30,6 +30,7 @@ extension ZMUpdateEvent {
              .conversationAssetAdd,
              .conversationKnock:
             return payload.dictionary(forKey: "data")?["nonce"] as? UUID
+
         case .conversationClientMessageAdd,
              .conversationOtrMessageAdd,
              .conversationOtrAssetAdd,
@@ -39,6 +40,7 @@ extension ZMUpdateEvent {
                 return nil
             }
             return UUID(uuidString: messageID)
+
         default:
             return nil
         }

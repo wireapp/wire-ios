@@ -60,14 +60,18 @@ extension UIApplication: ApplicationProtocol {
                 case .restricted:
                     self.wr_warnAboutPhotoLibraryRestricted()
                     grantedHandler(false)
+
                 case .denied,
                      .notDetermined:
                     self.wr_warnAboutPhotoLibaryDenied()
                     grantedHandler(false)
+
                 case .authorized:
                     grantedHandler(true)
+
                 case .limited:
                     fallthrough
+
                 @unknown default:
                     break
                 }

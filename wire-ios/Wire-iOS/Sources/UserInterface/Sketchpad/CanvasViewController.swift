@@ -272,6 +272,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             hideEmojiKeyboard(animated: animated)
             canvas.mode = .draw
             updateButtonSelection()
+
         case .emoji:
             canvas.mode = .edit
             updateButtonSelection()

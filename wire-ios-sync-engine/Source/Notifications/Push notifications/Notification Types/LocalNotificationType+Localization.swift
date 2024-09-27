@@ -112,6 +112,7 @@ extension LocalNotificationType {
             case .messageTimerUpdate:
                 ZMPushStringMessageTimerUpdate
             }
+
         case let .calling(callState):
             switch callState {
             case .incoming(video: true, shouldRing: _, degraded: _):
@@ -123,6 +124,7 @@ extension LocalNotificationType {
             default:
                 ZMPushStringDefault
             }
+
         case let .event(eventType):
             switch eventType {
             case .conversationCreated:
@@ -136,8 +138,10 @@ extension LocalNotificationType {
             case .newConnection:
                 ZMPushStringNewConnection
             }
+
         case .failedMessage:
             ZMPushStringFailedToSend
+
         case .availabilityBehaviourChangeAlert:
             ZMPushStringAlertAvailability
         }
@@ -292,6 +296,7 @@ extension LocalNotificationType {
             default:
                 break
             }
+
         default: break
         }
 

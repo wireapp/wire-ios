@@ -329,6 +329,7 @@ extension CompanyLoginController {
                     BackendEnvironment.shared = backendEnvironment
                     self.startAutomaticSSOFlow(promptOnError: false)
                 }
+
             case let .failure(error):
                 if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
                     presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)

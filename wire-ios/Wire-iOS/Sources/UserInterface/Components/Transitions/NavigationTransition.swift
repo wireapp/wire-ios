@@ -55,9 +55,11 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
         case .push:
             toViewStartTransform = rightToLeft ? offscreenLeft : offscreenRight
             fromViewEndTransform = rightToLeft ? offscreenRight : offscreenLeft
+
         case .pop:
             toViewStartTransform = rightToLeft ? offscreenRight : offscreenLeft
             fromViewEndTransform = rightToLeft ? offscreenLeft : offscreenRight
+
         default:
             return
         }

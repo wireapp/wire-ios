@@ -108,6 +108,7 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
                 in: conversation,
                 callInfo: callInfo
             )
+
         case .incoming(video: let video, shouldRing: true, degraded: _):
             let callInfo = CallInfo(
                 connectingDate: nil,
@@ -119,12 +120,14 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
             )
             callInfos[conversationId] = callInfo
             analytics.tag(callEvent: .received, in: conversation, callInfo: callInfo)
+
         case .answered:
             if var callInfo = callInfos[conversationId] {
                 callInfo.connectingDate = Date()
                 analytics.tag(callEvent: .answered, in: conversation, callInfo: callInfo)
                 callInfos[conversationId] = callInfo
             }
+
         case .established:
             if var callInfo = callInfos[conversationId] {
                 defer { callInfos[conversationId] = callInfo }
@@ -150,6 +153,7 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
                 for: conversation,
                 userSession: userSession
             )
+
         case let .terminating(reason: reason):
             if let callInfo = callInfos[conversationId] {
                 analytics.tag(callEvent: .ended(reason: reason.analyticsValue), in: conversation, callInfo: callInfo)
@@ -161,6 +165,7 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
             }
 
             callParticipantObserverToken = nil
+
         default:
             break
         }

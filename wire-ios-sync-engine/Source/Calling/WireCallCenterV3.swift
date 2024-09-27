@@ -322,6 +322,7 @@ extension WireCallCenterV3 {
                     domain: key.domain,
                     in: userSession.managedObjectContext
                 )
+
             default:
                 return nil
             }
@@ -490,6 +491,7 @@ extension WireCallCenterV3 {
                 previousParticipants: previousParticipants,
                 newParticipants: newParticipants
             )
+
         case .mixed, .proteus:
             return shouldEndCallForProteus(
                 previousParticipants: previousParticipants,

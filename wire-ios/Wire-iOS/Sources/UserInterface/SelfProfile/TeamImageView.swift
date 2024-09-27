@@ -111,6 +111,7 @@ final class TeamImageView: UIImageView {
         case let .teamImage(data):
             image = UIImage(data: data)
             initialLabel.text = ""
+
         case let .teamName(name):
             image = nil
             initialLabel.text = name.first.map(String.init)

@@ -26,16 +26,23 @@ extension ConversationActionType {
     fileprivate func formatKey(senderIsSelfUser: Bool) -> String {
         switch self {
         case .left: localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
+
         case .added(herself: true): "content.system.conversation.guest.joined"
+
         case .added(herself: false): localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
+
         case .removed(reason: .legalHoldPolicyConflict): localizationKey(
                 with: "removed",
                 senderIsSelfUser: senderIsSelfUser
             ) +
                 ".legalhold"
+
         case .removed: localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser)
+
         case .started(withName: .none), .none: localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
+
         case .started(withName: .some): "content.system.conversation.with_name.participants"
+
         case .teamMemberLeave: "content.system.conversation.team.member-leave"
         }
     }
@@ -226,12 +233,14 @@ final class ParticipantsStringFormatter {
         case 1:
             // "x"
             result.append(names.last!, with: attrsForLastName)
+
         case 2:
             // "x and y"
             let part = L10n.Localizable.Content.System.participants1Other(names.first!, names.last!)
             result.append(part, with: normalAttributes)
             result.define(boldAttributes, forComponent: names.first!)
             result.define(attrsForLastName, forComponent: names.last!)
+
         default:
             // "x, y, "
             result.append(names.dropLast().map { $0 + ", " }.joined(), with: boldAttributes)

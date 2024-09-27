@@ -66,6 +66,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
             case .modal, .alert:
                 tableCell.isAccessoryIconHidden = false
                 tableCell.hideDisclosureIndicator()
+
             case .navigation:
                 tableCell.isAccessoryIconHidden = true
                 tableCell.showDisclosureIndicator()
@@ -85,8 +86,10 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
                 popoverPresentationController.sourceRect = sender.frame
             }
             viewController?.present(controllerToShow, animated: true)
+
         case .navigation:
             viewController?.navigationController?.pushViewController(controllerToShow, animated: true)
+
         case .modal:
             break
         }

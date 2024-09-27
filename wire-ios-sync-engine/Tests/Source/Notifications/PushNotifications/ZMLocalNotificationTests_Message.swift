@@ -567,9 +567,11 @@ enum FileType {
         case .txt:
             name = "Lorem Ipsum"
             fileExtension = "txt"
+
         case .video:
             name = "video"
             fileExtension = "mp4"
+
         case  .audio:
             name = "audio"
             fileExtension = "m4a"

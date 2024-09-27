@@ -43,6 +43,7 @@ extension Unicode.Scalar {
              0xE007F,           // cancelTag
              0xFE00 ... 0xFE0F:   // Variation Selectors
             true
+
         default:
             false
         }

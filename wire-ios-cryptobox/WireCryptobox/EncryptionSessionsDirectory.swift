@@ -334,6 +334,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         case CBOX_SESSION_NOT_FOUND:
             zmLog.safePublic("Tried to load session for client \(identifier), no session found")
             return nil
+
         case CBOX_SUCCESS:
             let session = EncryptionSession(
                 id: identifier,
@@ -345,6 +346,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
             pendingSessionsCache[identifier] = session
             zmLog.safePublic("Loaded session for client \(identifier) - fingerprint \(session.remoteFingerprint)")
             return session
+
         default:
             fatalError("Error in loading from cbox: \(result)")
         }

@@ -186,12 +186,14 @@ final class NetworkStatusView: UIView {
 
             connectingViewBottomMargin.isActive = false
             offlineViewBottomMargin.isActive = true
+
         case .onlineSynchronizing:
             connectingViewBottomMargin.constant = -bottomMargin
             offlineViewTopMargin.constant = topMargin
 
             offlineViewBottomMargin.isActive = false
             connectingViewBottomMargin.isActive = true
+
         case .offlineExpanded:
             offlineViewBottomMargin.constant = -bottomMargin
             offlineViewTopMargin.constant = topMargin

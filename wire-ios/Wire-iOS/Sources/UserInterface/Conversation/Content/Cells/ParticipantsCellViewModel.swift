@@ -60,9 +60,13 @@ extension ZMConversationMessage {
         case .participantsRemoved:  return systemMessage.userIsTheSender
             ? .left
             : .removed(reason: systemMessage.participantsRemovedReason)
+
         case .participantsAdded:    return .added(herself: systemMessage.userIsTheSender)
+
         case .newConversation:      return .started(withName: systemMessage.text)
+
         case .teamMemberLeave:      return .teamMemberLeave
+
         default:                    return .none
         }
     }

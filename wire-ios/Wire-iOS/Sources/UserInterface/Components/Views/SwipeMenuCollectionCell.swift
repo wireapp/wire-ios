@@ -207,12 +207,14 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
             drawerScrollingStarts()
             initialDrawerOffset = visualDrawerOffset
             initialDragPoint = pan.location(in: self)
+
         case .changed:
             userInteractionHorizontalOffset = offset.x
             if initialDrawerWidth == 0 {
                 initialDrawerWidth = menuView.bounds.size.width
             }
             openedFeedbackGenerator.prepare()
+
         case .ended,
              .failed,
              .cancelled:
@@ -232,6 +234,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
                     setDrawerOpen(false, animated: true)
                 }
             }
+
         default:
             break
         }

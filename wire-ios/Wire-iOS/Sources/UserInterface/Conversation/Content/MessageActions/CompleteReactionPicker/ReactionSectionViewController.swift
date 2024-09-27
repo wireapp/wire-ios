@@ -112,9 +112,11 @@ final class ReactionSectionViewController: UIViewController {
     private func didPan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .possible: break
+
         case .began:
             ignoreSelectionUpdates = true
             fallthrough
+
         case .changed:
             let location = recognizer.location(in: view)
             guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first,
@@ -122,8 +124,10 @@ final class ReactionSectionViewController: UIViewController {
             else { return }
             sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
             selectedType = type
+
         case .ended, .failed, .cancelled:
             ignoreSelectionUpdates = false
+
         @unknown default:
             break
         }

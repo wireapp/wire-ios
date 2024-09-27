@@ -34,18 +34,22 @@ final class CollectionHeaderView: UICollectionReusableView {
                 titleLabel.text = Section.Images.title
                 titleLabel.accessibilityLabel = ConversationSearch.ImagesSection.description
                 icon = .photo
+
             case CollectionsSectionSet.filesAndAudio:
                 titleLabel.text = Section.Files.title
                 titleLabel.accessibilityLabel = ConversationSearch.FilesSection.description
                 icon = .document
+
             case CollectionsSectionSet.videos:
                 titleLabel.text = Section.Videos.title
                 titleLabel.accessibilityLabel = ConversationSearch.VideosSection.description
                 icon = .movie
+
             case CollectionsSectionSet.links:
                 titleLabel.text = Section.Links.title
                 titleLabel.accessibilityLabel = ConversationSearch.LinksSection.description
                 icon = .link
+
             default: fatal("Unknown section")
             }
 

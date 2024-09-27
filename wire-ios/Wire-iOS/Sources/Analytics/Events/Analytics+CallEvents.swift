@@ -81,9 +81,11 @@ extension Analytics {
             attributes.merge(attributesForCallDuration(with: callInfo)) { _, new in new }
             attributes.merge(attributesForVideoToogle(with: callInfo)) { _, new in new }
             attributes.merge(["reason": reason]) { _, new in new }
+
         case let .screenSharing(duration):
             attributes["screen_share_direction"] = "incoming"
             attributes["screen_share_duration"] = Int(round(duration / 5)) * 5
+
         default:
             break
         }

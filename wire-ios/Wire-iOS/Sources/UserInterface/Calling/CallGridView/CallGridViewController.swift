@@ -248,8 +248,10 @@ final class CallGridViewController: UIViewController {
         switch event {
         case .viewDidLoad:
             break
+
         case .connectionEstablished:
             hintView.show(hint: .fullscreen)
+
         case .configurationChanged where configuration.callHasTwoParticipants:
             guard
                 let stream = configuration.streams.first,
@@ -261,12 +263,14 @@ final class CallGridViewController: UIViewController {
             } else if isMaximized(stream: stream) {
                 hintView.show(hint: .goBackOrZoom)
             }
+
         case let .maximizationChanged(stream: stream, maximized: maximized):
             if maximized {
                 hintView.show(hint: stream.isSharingVideo ? .goBackOrZoom : .goBack)
             } else {
                 hintView.hideAndStopTimer()
             }
+
         default: break
         }
     }

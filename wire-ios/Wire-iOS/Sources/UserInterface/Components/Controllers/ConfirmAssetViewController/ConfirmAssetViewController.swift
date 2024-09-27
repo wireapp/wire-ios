@@ -394,6 +394,7 @@ final class ConfirmAssetViewController: UIViewController {
                     ]
                 }
             }
+
         // Player View
         case .video:
             if let playerView = playerViewController?.view {

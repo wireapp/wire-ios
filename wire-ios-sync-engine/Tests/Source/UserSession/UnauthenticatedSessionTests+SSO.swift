@@ -138,10 +138,12 @@ final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
                 if lhsSSOSettings == rhsSSOSettings {
                     resultExpectation.fulfill()
                 }
+
             case let (.failure(lhsError), .failure(rhsError)):
                 if (lhsError as? SSOSettingsError) == (rhsError as? SSOSettingsError) {
                     resultExpectation.fulfill()
                 }
+
             default:
                 break
             }

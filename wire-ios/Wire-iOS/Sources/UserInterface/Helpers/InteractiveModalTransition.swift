@@ -51,12 +51,15 @@ private final class ModalInteractionController: UIPercentDrivenInteractiveTransi
         case .began:
             interactionInProgress = true
             presentationViewController.dismiss(animated: true)
+
         case .changed:
             shouldCompleteTransition = progress > 0.2
             update(progress)
+
         case .cancelled:
             interactionInProgress = false
             cancel()
+
         case .ended:
             interactionInProgress = false
             if !shouldCompleteTransition {
@@ -64,6 +67,7 @@ private final class ModalInteractionController: UIPercentDrivenInteractiveTransi
             } else {
                 finish()
             }
+
         default: break
         }
     }

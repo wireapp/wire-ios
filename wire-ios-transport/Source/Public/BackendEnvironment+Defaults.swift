@@ -39,6 +39,7 @@ extension BackendEnvironment {
                 return nil
             }
             self.init(environmentType: environmentType, data: data)
+
         case .custom:
             guard let data = userDefaults.data(forKey: BackendEnvironment.defaultsKey) else {
                 Logging.backendEnvironment.error("Could not read data from user defaults")
@@ -82,6 +83,7 @@ extension BackendEnvironment {
             let data = SerializedData(title: title, endpoints: backendEndpoints, apiProxy: proxy)
             let encoded = try? JSONEncoder().encode(data)
             userDefaults.set(encoded, forKey: BackendEnvironment.defaultsKey)
+
         default:
             break
         }

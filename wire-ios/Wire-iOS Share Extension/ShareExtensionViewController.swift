@@ -680,6 +680,7 @@ extension ShareExtensionViewController {
         case .granted:
             localAuthenticationStatus = .granted
             completion()
+
         case .needCustomPasscode:
             let isCustomPasscodeSet = sharingSession?.appLockController.isCustomPasscodeSet ?? false
             if !isCustomPasscodeSet {
@@ -705,6 +706,7 @@ extension ShareExtensionViewController {
                     completion()
                 }
             }
+
         default:
             localAuthenticationStatus = .denied
             completion()

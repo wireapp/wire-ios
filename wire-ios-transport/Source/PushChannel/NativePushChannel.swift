@@ -161,6 +161,7 @@ final class NativePushChannel: NSObject, PushChannelType {
             case let .failure(error):
                 WireLogger.pushChannel.debug("Failed to receive message \(error)")
                 self?.onClose()
+
             case let .success(message):
                 guard case let .data(data) = message else {
                     break

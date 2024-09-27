@@ -62,22 +62,27 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         switch signatureStatus.state {
         case .initial:
             break
+
         case .waitingForConsentURL:
             guard let requestSync else {
                 return nil
             }
             requestSync.readyForNextRequestIfNotBusy()
             return requestSync.nextRequest(for: apiVersion)
+
         case .waitingForCodeVerification:
             break
+
         case .waitingForSignature:
             guard let retrieveSync else {
                 return nil
             }
             retrieveSync.readyForNextRequestIfNotBusy()
             return retrieveSync.nextRequest(for: apiVersion)
+
         case .signatureInvalid:
             break
+
         case .finished:
             break
         }
@@ -115,10 +120,12 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
             default:
                 break
             }
+
         case .temporaryError,
              .tryAgainLater,
              .expired:
             break
+
         case .permanentError:
             switch sync {
             case requestSync:
@@ -128,6 +135,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
             default:
                 break
             }
+
         default:
             switch sync {
             case requestSync:

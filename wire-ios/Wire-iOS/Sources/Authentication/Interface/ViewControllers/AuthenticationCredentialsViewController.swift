@@ -97,11 +97,13 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
             self.init(description: description, contentCenterConstraintActivation: false)
             self.prefilledCredentials = credentials
             self.shouldUseScrollView = true
+
         case let .reauthentication(credentials):
             let description = ReauthenticateStepDescription(prefilledCredentials: credentials)
             self.init(description: description, contentCenterConstraintActivation: false)
             self.prefilledCredentials = credentials
             self.shouldUseScrollView = true
+
         case .registration:
             let description = PersonalRegistrationStepDescription()
             self.init(description: description, contentCenterConstraintActivation: true)

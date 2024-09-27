@@ -379,9 +379,11 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             closeEffectsPicker(animated: false)
             recordTapGestureRecognizer.isEnabled = true
             updateTimeLabel(0)
+
         case .recording:
             closeEffectsPicker(animated: false)
             recordTapGestureRecognizer.isEnabled = false
+
         case .effects:
             openEffectsPicker()
             recordTapGestureRecognizer.isEnabled = false

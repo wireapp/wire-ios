@@ -42,6 +42,7 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
                 "email": unverifiedEmail,
                 "locale": NSLocale.formattedLocaleIdentifier()!,
             ]
+
         case let .checkActivationCode(unverifiedEmail, code):
             path = "/activate"
             payload = [
@@ -49,6 +50,7 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
                 "code": code,
                 "dryrun": true,
             ]
+
         default:
             let phaseString = currentStatus.phase.map { "\($0)" } ?? "<nil>"
             fatal("Generating request for invalid phase: \(phaseString)")
@@ -76,9 +78,11 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
                     NSError.emailAddressInUse(with: response) ??
                     NSError.invalidEmail(with: response)
                 error = decodedError ?? NSError(userSessionErrorCode: .unknownError, userInfo: [:])
+
             case .checkActivationCode:
                 error = NSError.invalidActivationCode(with: response) ??
                     NSError(userSessionErrorCode: .unknownError, userInfo: [:])
+
             default:
                 let phaseString = registrationStatus.phase.map { "\($0)" } ?? "<nil>"
                 fatal("Error occurs for invalid phase: \(phaseString)")
@@ -94,6 +98,7 @@ extension RegistationCredentialVerificationStrategy: RequestStrategy {
         case .sendActivationCode, .checkActivationCode:
             codeSendingSync.readyForNextRequestIfNotBusy()
             return codeSendingSync.nextRequest(for: apiVersion)
+
         default:
             return nil
         }

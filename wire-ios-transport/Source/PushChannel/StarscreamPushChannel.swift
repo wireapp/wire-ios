@@ -242,28 +242,38 @@ extension StarscreamPushChannel: WebSocketDelegate {
         case .connected:
             WireLogger.pushChannel.debug("Sending ping")
             onOpen()
+
         case .disconnected:
             WireLogger.pushChannel.debug("Websocket disconnected")
             onClose()
+
         case .text:
             break
+
         case let .binary(data):
             WireLogger.pushChannel.debug("Received data")
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(data)
             }
+
         case .pong:
             break
+
         case .ping:
             break
+
         case .error:
             onClose()
+
         case .viabilityChanged:
             break
+
         case .reconnectSuggested:
             break
+
         case .cancelled:
             onClose()
+
         case .peerClosed:
             onClose()
         }

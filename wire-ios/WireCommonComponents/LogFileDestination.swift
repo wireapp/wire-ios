@@ -47,6 +47,7 @@ public enum LogFileDestination: CaseIterable, FileLoggerDestination {
                 return nil
             }
             return url.appendingPathComponent(filename)
+
         case .main:
             return Self.cachesDirectory?.appendingPathComponent(filename)
         }

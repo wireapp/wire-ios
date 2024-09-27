@@ -81,11 +81,13 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
                 iconImageView.backgroundColor = UIColor.clear
                 subtitleLabel.text = nil
                 titleLabelToIconInset.isActive = true
+
             case let .color(color):
                 iconImageView.backgroundColor = color
                 iconImageView.image = .none
                 subtitleLabel.text = AccentColor.current.name
                 titleLabelToIconInset.isActive = true
+
             default:
                 subtitleLabel.text = nil
                 iconImageView.backgroundColor = UIColor.clear

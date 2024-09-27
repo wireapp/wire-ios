@@ -1000,8 +1000,10 @@ extension GenericMessage {
                 )
             }
             recipientUsers = recipients
+
         case .buttonAction?:
             recipientUsers = recipientForButtonActionMessage()
+
         default:
             if let deletedEphemeral = recipientsForDeletedEphemeral() {
                 recipientUsers = deletedEphemeral

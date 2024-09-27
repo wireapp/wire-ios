@@ -137,6 +137,7 @@ final class SettingsPropertyFactory {
                     userSession?.enqueue {
                         selfUser.name = stringValue
                     }
+
                 default:
                     throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                 }
@@ -170,6 +171,7 @@ final class SettingsPropertyFactory {
                     userSession?.enqueue {
                         self.selfUser?.accentColorValue = number.int16Value
                     }
+
                 default:
                     throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                 }
@@ -199,6 +201,7 @@ final class SettingsPropertyFactory {
                     } else {
                         throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                     }
+
                 default:
                     throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                 }
@@ -231,6 +234,7 @@ final class SettingsPropertyFactory {
                         throw SettingsPropertyError
                             .WrongValue("Cannot use value \(intValue) for AVSIntensivityLevel at \(propertyName)")
                     }
+
                 default:
                     throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                 }

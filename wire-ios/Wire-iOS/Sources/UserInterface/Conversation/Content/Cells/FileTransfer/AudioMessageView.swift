@@ -228,10 +228,13 @@ final class AudioMessageView: UIView, TransferView {
 
         switch state {
         case .obfuscated: visibleViews = []
+
         case .unavailable: visibleViews = [loadingView]
+
         case .downloading, .uploading:
             visibleViews.append(downloadProgressView)
             downloadProgressView.setProgress(fileMessageData.progress, animated: !isInitial)
+
         default:
             break
         }
@@ -498,11 +501,13 @@ extension AudioMessageView: WireCallCenterCallStateObserver {
                 player.pause()
                 isPausedForIncomingCall = true
             }
+
         case (.incoming?, .terminating):
             if isPausedForIncomingCall, !player.isPlaying {
                 player.play()
             }
             isPausedForIncomingCall = false
+
         default:
             break
         }

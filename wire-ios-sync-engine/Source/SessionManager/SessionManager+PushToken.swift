@@ -64,6 +64,7 @@ extension SessionManager {
                     Logging.push.safePublic("generateLocalToken: voip: token already generated, storing...")
                     self.pushTokenService.storeLocalToken(.createVOIPToken(from: token))
                 }
+
             case .standard:
                 Logging.push.safePublic("generateLocalToken: standard")
                 self.application.registerForRemoteNotifications()

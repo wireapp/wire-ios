@@ -113,9 +113,11 @@ extension LinkAttachment {
         case .soundCloudPlaylist:
             guard openGraphData.type.hasPrefix("music.playlist") || openGraphData.type.hasPrefix("soundcloud:set")
             else { return nil }
+
         case .soundCloudTrack:
             guard openGraphData.type.hasPrefix("music.song") || openGraphData.type.hasPrefix("soundcloud:sound")
             else { return nil }
+
         case .youTubeVideo:
             guard openGraphData.type.hasPrefix("video") else { return nil }
         }

@@ -180,9 +180,11 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
             } else if sessionManager.callNotificationStyle != .callKit {
                 playSoundIfAllowed(.ringingFromThemSound)
             }
+
         case .incoming(video: _, shouldRing: false, degraded: _):
             mediaManager.stop(sound: .ringingFromThemInCallSound)
             mediaManager.stop(sound: .ringingFromThemSound)
+
         case let .terminating(reason: reason):
             switch reason {
             case .normal, .canceled:
@@ -190,6 +192,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
             default:
                 playSoundIfAllowed(.callDropped)
             }
+
         default:
             break
         }

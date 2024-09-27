@@ -55,6 +55,7 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
             let article = ArticleMetadata(protocolBuffer: buffer)
 
             return article
+
         case .articleWithPicture:
             let buffer = LinkPreview(
                 withOriginalURL: linkPreviewURL.rawValue,
@@ -70,6 +71,7 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
             article.imageURLs = [mockImageURL]
 
             return article
+
         case .tweet:
             let buffer = LinkPreview(
                 withOriginalURL: linkPreviewURL.rawValue,
@@ -84,6 +86,7 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
             let tweet = TwitterStatusMetadata(protocolBuffer: buffer)
 
             return tweet
+
         case .tweetWithPicture:
             let buffer = LinkPreview(
                 withOriginalURL: linkPreviewURL.rawValue,

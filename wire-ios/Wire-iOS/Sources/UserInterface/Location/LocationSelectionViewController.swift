@@ -303,11 +303,14 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
         switch status {
         case .notDetermined:
             appLocationManager.requestLocationAuthorization()
+
         case .restricted, .denied:
             presentUnauthorizedAlert()
+
         case .authorizedAlways, .authorizedWhenInUse:
             appLocationManager.startUpdatingLocation()
             mapViewController.mapView.showsUserLocation = true
+
         @unknown default: break
         }
     }

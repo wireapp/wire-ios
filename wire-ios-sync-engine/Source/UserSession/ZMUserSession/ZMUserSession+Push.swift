@@ -207,18 +207,24 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         switch actionIdentifier {
         case CallNotificationAction.ignore.rawValue:
             ignoreCall(with: userInfo, completionHandler: completionHandler)
+
         case CallNotificationAction.accept.rawValue:
             acceptCall(with: userInfo, completionHandler: completionHandler)
+
         case ConversationNotificationAction.mute.rawValue:
             muteConversation(with: userInfo, completionHandler: completionHandler)
+
         case ConversationNotificationAction.like.rawValue:
             likeMessage(with: userInfo, completionHandler: completionHandler)
+
         case ConversationNotificationAction.reply.rawValue:
             if let textInput = userText {
                 reply(with: userInfo, message: textInput, completionHandler: completionHandler)
             }
+
         case ConversationNotificationAction.connect.rawValue:
             acceptConnectionRequest(with: userInfo, completionHandler: completionHandler)
+
         default:
             showContent(for: userInfo)
             completionHandler()

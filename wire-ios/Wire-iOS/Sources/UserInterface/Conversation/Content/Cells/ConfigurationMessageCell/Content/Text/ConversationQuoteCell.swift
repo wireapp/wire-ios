@@ -265,6 +265,7 @@ final class ConversationReplyContentView: UIView {
             contentTextView.isAccessibilityElement = true
             assetThumbnail.isHidden = true
             assetThumbnail.isAccessibilityElement = false
+
         case let .imagePreview(resource, isVideo):
             assetThumbnail.setResource(resource, isVideoPreview: isVideo)
             assetThumbnail.isHidden = false

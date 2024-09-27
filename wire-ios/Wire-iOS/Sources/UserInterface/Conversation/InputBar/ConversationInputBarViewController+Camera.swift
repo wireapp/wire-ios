@@ -76,6 +76,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         videoEditor.preferredContentSize = parentView.frame.size
                     }
                 }
+
             default:
                 present(videoEditor, animated: true) {}
             }

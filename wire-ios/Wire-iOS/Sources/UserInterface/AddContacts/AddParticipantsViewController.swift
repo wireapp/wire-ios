@@ -76,6 +76,7 @@ extension AddParticipantsViewController.Context {
         case let .add(conversation):
             let freeSpace = conversation.freeParticipantSlots
             message = AddParticipantsAlert.Message.existingConversation(max, freeSpace)
+
         case .create:
             message = AddParticipantsAlert.Message.newConversation(max)
         }
@@ -448,9 +449,11 @@ final class AddParticipantsViewController: UIViewController {
         case (.services, _):
             searchResultsViewController.mode = .search
             searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText)
+
         case (.people, false):
             searchResultsViewController.mode = .list
             searchResultsViewController.searchContactList()
+
         case (.people, true):
             searchResultsViewController.mode = .search
             searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)

@@ -225,6 +225,7 @@ extension ConversationListViewController.ViewModel {
                                 )
                             })
                     }
+
                 case .success:
                     // The user already gave a marketing consent, no need to ask for it again.
                     return

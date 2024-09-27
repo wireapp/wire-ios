@@ -77,14 +77,17 @@ extension UnauthenticatedSession {
                 }
 
                 return completion(.success(domainInfo))
+
             case .expired, .temporaryError, .tryAgainLater:
                 completion(.failure(DomainLookupError.networkFailure))
+
             case .permanentError:
                 if response.payloadLabel() == "custom-instance-not-found" {
                     completion(.failure(DomainLookupError.notFound))
                 } else {
                     completion(.failure(DomainLookupError.unknown))
                 }
+
             default:
                 completion(.failure(DomainLookupError.unknown))
             }

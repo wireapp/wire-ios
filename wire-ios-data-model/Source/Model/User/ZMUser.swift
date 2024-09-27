@@ -400,6 +400,7 @@ extension ZMUser {
                     if key.stringValue != previewProfileAssetIdentifier {
                         previewProfileAssetIdentifier = key.stringValue
                     }
+
                 case .complete:
                     if key.stringValue != completeProfileAssetIdentifier {
                         completeProfileAssetIdentifier = key.stringValue

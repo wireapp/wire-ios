@@ -74,6 +74,7 @@ enum FileMessageViewState {
             default:
                 return .uploaded
             }
+
         case .uploading:
             if fileMessageData.hasLocalFileData {
                 return .uploading
@@ -82,12 +83,14 @@ enum FileMessageViewState {
             } else {
                 return .unavailable
             }
+
         case .uploadingFailed:
             if fileMessageData.hasLocalFileData {
                 return .failedUpload
             } else {
                 return .unavailable
             }
+
         case .uploadingCancelled:
             if fileMessageData.hasLocalFileData {
                 return .cancelledUpload

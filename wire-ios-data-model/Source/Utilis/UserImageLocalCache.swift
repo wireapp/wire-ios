@@ -130,6 +130,7 @@ open class UserImageLocalCache: NSObject {
                         "Setting [\(user.name ?? "")] preview image [\(imageData)] cache key: \(String(describing: key))"
                     )
             }
+
         case .complete:
             let stored = setImage(inCache: largeUserImageCache, cacheKey: key, data: imageData)
             if stored {

@@ -220,6 +220,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 )
 
                 cells += textCells
+
             case let .button(data):
 
                 let button =

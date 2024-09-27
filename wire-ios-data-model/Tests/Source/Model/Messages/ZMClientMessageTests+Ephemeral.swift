@@ -74,6 +74,7 @@ extension ZMClientMessageTests_Ephemeral {
             default:
                 XCTFail()
             }
+
         default:
             XCTFail()
         }

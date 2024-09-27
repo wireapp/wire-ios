@@ -284,11 +284,13 @@ extension GenericMessage {
         switch content {
         case .asset:
             block(&asset)
+
         case .ephemeral:
             guard case .asset = ephemeral.content else {
                 return
             }
             block(&ephemeral.asset)
+
         default:
             return
         }

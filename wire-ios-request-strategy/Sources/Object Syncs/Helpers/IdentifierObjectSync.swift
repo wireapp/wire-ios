@@ -114,6 +114,7 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
                         self.managedObjectContext.enqueueDelayedSave()
                     }
                 }
+
             default:
                 downloading.subtract(scheduled)
                 pending.formUnion(scheduled)

@@ -417,6 +417,7 @@ extension Canvas: UIGestureRecognizerDelegate {
         case .began:
             guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
             initialOrienation.position = selection.position
+
         case .changed:
             guard let selection else { break }
             let translation = gestureRecognizer.translation(in: self)
@@ -424,6 +425,7 @@ extension Canvas: UIGestureRecognizerDelegate {
                 x: initialOrienation.position.x + translation.x,
                 y: initialOrienation.position.y + translation.y
             )
+
         default:
             break
         }
@@ -435,9 +437,11 @@ extension Canvas: UIGestureRecognizerDelegate {
         case .began:
             guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
             initialOrienation.scale = selection.scale
+
         case .changed:
             guard let selection else { break }
             selection.scale = min(max(initialOrienation.scale * gestureRecognizer.scale, minimumScale), maximumScale)
+
         default:
             break
         }
@@ -449,9 +453,11 @@ extension Canvas: UIGestureRecognizerDelegate {
         case .began:
             guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
             initialOrienation.rotation = selection.rotation
+
         case .changed:
             guard let selection else { break }
             selection.rotation = initialOrienation.rotation + gestureRecognizer.rotation
+
         default:
             break
         }

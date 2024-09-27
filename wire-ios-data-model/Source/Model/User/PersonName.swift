@@ -43,9 +43,11 @@ public class PersonName: NSObject {
         switch self.nameOrder {
         case .givenNameLast:
             lastIndex = self.components.count - 2
+
         case .givenNameFirst:
             startIndex = 1
             lastIndex = self.components.count - 1
+
         case .arabicGivenName:
             startIndex = 1
             lastIndex = self.components.count - 1
@@ -83,6 +85,7 @@ public class PersonName: NSObject {
         case .givenNameLast:
             _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
             _initials += (firstComponent.zmSecondComposedCharacter() ?? "")
+
         case .arabicGivenName, .givenNameFirst:
             _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
             guard self.components.count > 1, let lastComponent = self.components.last else { break }

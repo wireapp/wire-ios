@@ -122,6 +122,7 @@ final class EmojiKeyboardViewController: UIViewController {
         case .began:
             deleting = true
             delete()
+
         default: deleting = false
         }
     }

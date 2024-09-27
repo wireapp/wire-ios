@@ -88,48 +88,62 @@ final class ConversationActionController {
             requestDeleteGroupResult { result in
                 self.handleDeleteGroupResult(result, conversation: conversation, in: userSession)
             }
+
         case let .archive(isArchived: isArchived): transitionToListAndEnqueue {
                 conversation.isArchived = !isArchived
             }
+
         case .markRead: enqueue {
                 conversation.markAsRead()
             }
+
         case .markUnread: enqueue {
                 conversation.markAsUnread()
             }
+
         case .configureNotifications: requestNotificationResult(for: conversation) { result in
                 self.handleNotificationResult(result, for: conversation)
             }
+
         case let .silence(isSilenced: isSilenced): enqueue {
                 conversation.mutedMessageTypes = isSilenced ? .none : .all
             }
+
         case .leave:
             request(LeaveResult.self) { result in
                 self.handleLeaveResult(result, for: conversation)
             }
+
         case .clearContent:
             requestClearContentResult(for: conversation) { result in
                 self.handleClearContentResult(result, for: conversation)
             }
+
         case .cancelRequest:
             guard let user = conversation.connectedUser else { return }
             requestCancelConnectionRequestResult(for: user) { result in
                 self.handleConnectionRequestResult(result, for: conversation)
             }
+
         case .block: requestBlockResult(for: conversation) { result in
                 self.handleBlockResult(result, for: conversation)
             }
+
         case .moveToFolder:
             openMoveToFolder(for: conversation)
+
         case .removeFromFolder:
             enqueue {
                 conversation.removeFromFolder()
             }
+
         case let .favorite(isFavorite: isFavorite):
             enqueue {
                 conversation.isFavorite = !isFavorite
             }
+
         case .remove: fatalError()
+
         case .duplicateConversation:
             duplicateConversation()
         }

@@ -239,6 +239,7 @@ final class ConversationGuestOptionsViewModel {
                     self.link = nil
                     self.securedLink = nil
                     self.updateRows()
+
                 case let .failure(error):
                     self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
                 }
@@ -337,6 +338,7 @@ final class ConversationGuestOptionsViewModel {
                             presentCreateSecureGuestLink: navigationController,
                             animated: true
                         )
+
                     case .normal:
                         createLink()
                     }
@@ -370,6 +372,7 @@ final class ConversationGuestOptionsViewModel {
                     if link == nil, securedLink == nil, allowGuests {
                         fetchLink()
                     }
+
                 case let .failure(error): delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
                 }
             }

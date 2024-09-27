@@ -64,16 +64,19 @@ final class RequestPasswordController {
             message = L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.message
             placeholder = L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.password
             okActionStyle = .destructive
+
         case .logout:
             title = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title
             message = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message
             placeholder = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.password
             okActionStyle = .destructive
+
         case let .unlock(unlockMessage):
             title = L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
             message = unlockMessage
             placeholder = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.password
             okActionStyle = .default
+
         case .wiping:
             title = L10n.Localizable.WipeDatabase.Alert.description
             message = L10n.Localizable.WipeDatabase.Alert.message
@@ -89,6 +92,7 @@ final class RequestPasswordController {
             case .wiping:
                 textField.isSecureTextEntry = false
                 textField.autocapitalizationType = .words
+
             default:
                 textField.isSecureTextEntry = true
                 textField.textContentType = .password

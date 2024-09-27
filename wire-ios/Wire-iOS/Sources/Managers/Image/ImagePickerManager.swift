@@ -101,6 +101,7 @@ class ImagePickerManager: NSObject {
             imagePickerController.allowsEditing = true
             imagePickerController.cameraDevice = .front
             imagePickerController.modalTransitionStyle = .coverVertical
+
         case .photoLibrary, .savedPhotosAlbum:
             if viewController.isIPadRegular() {
                 imagePickerController.modalPresentationStyle = .popover
@@ -108,6 +109,7 @@ class ImagePickerManager: NSObject {
                 let popover: UIPopoverPresentationController? = imagePickerController.popoverPresentationController
                 popover?.backgroundColor = UIColor.white
             }
+
         default:
             break
         }

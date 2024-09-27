@@ -346,6 +346,7 @@ final class FullscreenImageViewController: UIViewController {
             if isDraggingImage {
                 initiateImageDrag(fromLocation: locationInView, translationOffset: .zero)
             }
+
         case .changed:
             if isDraggingImage {
                 var newAnchor = imageDragStartingPoint
@@ -361,6 +362,7 @@ final class FullscreenImageViewController: UIViewController {
                     initiateImageDrag(fromLocation: locationInView, translationOffset: translationOffset)
                 }
             }
+
         default:
             if vectorDistance > 300, abs(translation.y) > 100 {
                 if isDraggingImage {
@@ -778,6 +780,7 @@ extension FullscreenImageViewController: MessageActionResponder {
             dismiss(animated: true) {
                 self.perform(action: action)
             }
+
         case .openDetails:
             let detailsViewController = MessageDetailsViewController(
                 message: message,
@@ -785,6 +788,7 @@ extension FullscreenImageViewController: MessageActionResponder {
                 mainCoordinator: mainCoordinator
             )
             present(detailsViewController, animated: true)
+
         default:
             perform(action: action)
         }

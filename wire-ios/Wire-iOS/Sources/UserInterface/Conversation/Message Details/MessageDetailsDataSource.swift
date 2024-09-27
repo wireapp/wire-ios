@@ -93,12 +93,15 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         case (true, true):
             self.displayMode = .combined
             self.title = MessageDetails.combinedTitle
+
         case (false, true):
             self.displayMode = .receipts
             self.title = MessageDetails.receiptsTitle
+
         case (true, false):
             self.displayMode = .reactions
             self.title = MessageDetails.reactionsTitle
+
         default:
             fatal("Trying to display a message that does not support reactions or receipts.")
         }

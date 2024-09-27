@@ -58,6 +58,7 @@ class UserHandleTests: IntegrationTest {
         case let .didCheckAvailabilityOfHandle(_handle, available):
             XCTAssertEqual(handle, _handle)
             XCTAssertTrue(available)
+
         default:
             XCTFail()
         }
@@ -82,6 +83,7 @@ class UserHandleTests: IntegrationTest {
         case let .didCheckAvailabilityOfHandle(_handle, available):
             XCTAssertEqual(handle, _handle)
             XCTAssertFalse(available)
+
         default:
             XCTFail()
         }

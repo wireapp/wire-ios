@@ -233,8 +233,10 @@ extension ZMConversation {
         case .addedClients, .addedUsers:
             appendNewAddedClientSystemMessage(cause: cause)
             expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
+
         case let .ignoredClients(clients):
             appendIgnoredClientsSystemMessage(ignored: clients)
+
         default:
             break
         }
@@ -248,10 +250,12 @@ extension ZMConversation {
             legalHoldStatus = .pendingApproval
             appendLegalHoldEnabledSystemMessageForConversationAfterReceivingMessage(at: timestamp)
             expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
+
         case .disabled where legalHoldStatus.denotesEnabledComplianceDevice:
             needsToVerifyLegalHold = true
             legalHoldStatus = .disabled
             appendLegalHoldDisabledSystemMessageForConversationAfterReceivingMessage(at: timestamp)
+
         default:
             break
         }
@@ -582,13 +586,16 @@ extension ZMConversation {
         switch cause {
         case let .removedUsers(users):
             appendNewIsSecureSystemMessage(verified: [], for: users)
+
         case let .verifiedClients(userClients):
             let users = Set(userClients.compactMap(\.user))
             appendNewIsSecureSystemMessage(verified: userClients, for: users)
+
         case let .removedClients(userClients):
             let users = Set(userClients.keys)
             let clients = Set(userClients.values.flatMap { $0 })
             appendNewIsSecureSystemMessage(verified: clients, for: users)
+
         default:
             // no-op: the conversation is not secure in other cases
             return
@@ -629,6 +636,7 @@ extension ZMConversation {
         case let .addedUsers(users):
             affectedUsers = users
             addedUsers = users
+
         case let .addedClients(clients, message):
             affectedUsers = Set(clients.compactMap(\.user))
             addedClients = clients
@@ -637,6 +645,7 @@ extension ZMConversation {
             } else {
                 timestamp = clients.compactMap(\.discoveryDate).first?.previousNearestTimestamp
             }
+
         default:
             // unsupported cause
             return

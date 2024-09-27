@@ -211,14 +211,17 @@ final class SettingsClientViewController: UIViewController,
         switch clientSection {
         case .info:
             return 1
+
         case .fingerprintAndVerify:
             if userClient == userSession.selfUserClient {
                 return 1
             } else {
                 return 2
             }
+
         case .resetSession:
             return 1
+
         case .removeDevice:
             return 1
         }

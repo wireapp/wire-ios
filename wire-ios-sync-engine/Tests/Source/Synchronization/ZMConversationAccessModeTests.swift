@@ -299,9 +299,11 @@ public class ZMConversationAccessModeTests: MessagingTest {
 
         switch options.team {
         case .none: conversation.team = nil
+
         case .teamA:
             conversation.team = teamA
             conversation.teamRemoteIdentifier = teamA.remoteIdentifier
+
         case .teamB:
             conversation.team = teamB
             conversation.teamRemoteIdentifier = teamB.remoteIdentifier

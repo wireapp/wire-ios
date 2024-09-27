@@ -48,6 +48,7 @@ extension AVAsset {
                 DispatchQueue.main.async {
                     completion?(false)
                 }
+
             default:
                 DispatchQueue.main.async {
                     completion?(true)

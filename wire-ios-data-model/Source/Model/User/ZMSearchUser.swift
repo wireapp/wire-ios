@@ -625,6 +625,7 @@ public class ZMSearchUser: NSObject, UserType {
                 self?.updateLocalUser()
                 self?.notifySearchUserChanged()
                 completion(nil)
+
             case let .failure(error):
                 completion(error)
             }

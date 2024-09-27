@@ -32,6 +32,7 @@ struct HorizontalMargins {
         case .regular:
             self.left = 96
             self.right = 96
+
         default:
             self.left = 56
             self.right = 16

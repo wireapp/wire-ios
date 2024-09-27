@@ -125,6 +125,7 @@ extension GenericMessage {
         switch content {
         case let .location(data):
             return data
+
         case let .ephemeral(data):
             switch data.content {
             case let .location(data)?:
@@ -132,6 +133,7 @@ extension GenericMessage {
             default:
                 return nil
             }
+
         default:
             return nil
         }
@@ -152,6 +154,7 @@ extension GenericMessage {
         switch content {
         case let .image(data):
             return data
+
         case let .ephemeral(data):
             switch data.content {
             case let .image(data)?:
@@ -159,6 +162,7 @@ extension GenericMessage {
             default:
                 return nil
             }
+
         default:
             return nil
         }
@@ -169,6 +173,7 @@ extension GenericMessage {
         switch content {
         case let .asset(data):
             return data
+
         case let .ephemeral(data):
             switch data.content {
             case let .asset(data)?:
@@ -176,6 +181,7 @@ extension GenericMessage {
             default:
                 return nil
             }
+
         default:
             return nil
         }
@@ -186,6 +192,7 @@ extension GenericMessage {
         switch content {
         case let .knock(data):
             return data
+
         case let .ephemeral(data):
             switch data.content {
             case let .knock(data)?:
@@ -193,6 +200,7 @@ extension GenericMessage {
             default:
                 return nil
             }
+
         default:
             return nil
         }
@@ -203,14 +211,17 @@ extension GenericMessage {
         switch content {
         case let .text(data):
             return data
+
         case let .edited(messageEdit):
             if case let .text(data)? = messageEdit.content {
                 return data
             }
+
         case let .ephemeral(ephemeral):
             if case let .text(data)? = ephemeral.content {
                 return data
             }
+
         default:
             return nil
         }
@@ -262,14 +273,17 @@ extension GenericMessage {
         switch content {
         case .text:
             return text.linkPreview.compactMap { $0 }
+
         case .edited:
             return edited.text.linkPreview.compactMap { $0 }
+
         case let .ephemeral(ephemeral):
             if case .text? = ephemeral.content {
                 return ephemeral.text.linkPreview.compactMap { $0 }
             } else {
                 return []
             }
+
         default:
             return []
         }

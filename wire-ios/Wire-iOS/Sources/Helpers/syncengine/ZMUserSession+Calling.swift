@@ -39,6 +39,7 @@ extension ZMUserSession {
                 case .incoming(video: _, shouldRing: true, degraded: _):
                     return conversation
                         .mutedMessageTypesIncludingAvailability == .none && callNotificationStyle != .callKit
+
                 default:
                     return false
                 }

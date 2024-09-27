@@ -116,6 +116,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
                         connectionList.connections,
                         hasMore: connectionList.hasMore
                     )
+
                 case .failure:
                     self?.failSyncPhase()
                 }
@@ -129,6 +130,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
                         connectionList.connections,
                         hasMore: connectionList.hasMore
                     )
+
                 case .failure:
                     self?.failSyncPhase()
                 }

@@ -95,11 +95,13 @@ class IconButton: ButtonWithLargerHitArea {
         switch style {
         case .default:
             break
+
         case .circular:
             self.circular = true
             self.borderWidth = 0
             titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             contentHorizontalAlignment = .center
+
         case .navigation:
             titleEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: -5)
             titleLabel?.font = fontSpec.font

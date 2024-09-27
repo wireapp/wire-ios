@@ -109,6 +109,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             iconButton.accessibilityIdentifier = "RevealButton"
             iconButton.accessibilityLabel = "Reveal passcode"
             iconButton.isEnabled = true
+
         default:
             iconButton = IconButton(style: .circular, variant: .dark)
             iconButton.accessibilityIdentifier = "ConfirmButton"
@@ -206,23 +207,28 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             autocapitalizationType = .none
             accessibilityIdentifier = "EmailField"
             textContentType = .emailAddress
+
         case let .password(rules, isNew):
             isSecureTextEntry = true
             accessibilityIdentifier = "PasswordField"
             autocapitalizationType = .none
             textContentType = isNew ? .newPassword : .password
             passwordRules = rules.textInputPasswordRules
+
         case let .name(isTeam):
             autocapitalizationType = .words
             accessibilityIdentifier = "NameField"
             textContentType = isTeam ? .organizationName : .name
+
         case .username:
             autocapitalizationType = .none
             accessibilityIdentifier = "UsernameField"
             textContentType = .username
+
         case .unknown:
             keyboardType = .asciiCapable
             textContentType = nil
+
         case let .passcode(rules, isNew):
             keyboardType = .asciiCapable
             isSecureTextEntry = true
@@ -270,6 +276,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
                 confirmButton.setIconColor(UIColor.Team.textColor, for: .disabled)
                 confirmButton.setBackgroundImageColor(.clear, for: .normal)
                 confirmButton.setBackgroundImageColor(.clear, for: .disabled)
+
             default:
                 confirmButton.setIconColor(UIColor.Team.textfieldColor, for: .normal)
                 confirmButton.setIconColor(UIColor.Team.textfieldColor, for: .disabled)

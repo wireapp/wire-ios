@@ -234,6 +234,7 @@ final class ConversationInputBarViewController: UIViewController,
                 locationButton,
                 videoButton,
             ]
+
         case .securityFlag:
             buttonsArray = [
                 photoButton,
@@ -244,6 +245,7 @@ final class ConversationInputBarViewController: UIViewController,
                 locationButton,
                 videoButton,
             ]
+
         case .APIFlag:
             buttonsArray = [
                 mentionButton,
@@ -299,6 +301,7 @@ final class ConversationInputBarViewController: UIViewController,
                 inputController = nil
                 singleTapGestureRecognizerEnabled = false
                 selectedButton = nil
+
             case .audioRecord:
                 clearTextInputAssistentItemIfNeeded()
                 config(viewController: audioRecordKeyboardViewController) {
@@ -310,6 +313,7 @@ final class ConversationInputBarViewController: UIViewController,
                 }
                 singleTapGestureRecognizerEnabled = true
                 selectedButton = audioButton
+
             case .camera:
                 clearTextInputAssistentItemIfNeeded()
                 config(viewController: cameraKeyboardViewController) {
@@ -317,6 +321,7 @@ final class ConversationInputBarViewController: UIViewController,
                 }
                 singleTapGestureRecognizerEnabled = true
                 selectedButton = photoButton
+
             case .timeoutConfguration:
                 clearTextInputAssistentItemIfNeeded()
                 config(viewController: ephemeralKeyboardViewController) {

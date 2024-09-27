@@ -33,6 +33,7 @@ extension VoiceChannel {
                   let initiator
             else { return .none }
             return .avatar(HashBox(value: initiator))
+
         case .unknown,
              .none,
              .terminating,

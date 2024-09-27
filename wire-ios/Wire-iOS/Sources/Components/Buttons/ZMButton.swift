@@ -130,12 +130,15 @@ class LegacyButton: ButtonWithLargerHitArea {
         switch style {
         case .full:
             updateFullStyle()
+
         case .fullMonochrome:
             setBackgroundImageColor(UIColor.white, for: .normal)
             setTitleColor(UIColor.from(scheme: .textForeground, variant: .light), for: .normal)
             setTitleColor(UIColor.from(scheme: .textDimmed, variant: .light), for: .highlighted)
+
         case .empty:
             updateEmptyStyle()
+
         case .emptyMonochrome:
             setBackgroundImageColor(UIColor.clear, for: .normal)
             setTitleColor(UIColor.white, for: .normal)

@@ -226,6 +226,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
                     // here we could use a different sync, or do the switch inside.
                     self?.conversationByQualifiedIDListSync.sync(identifiers: qualifiedConversationIDList.conversations)
+
                 case .failure:
                     self?.syncProgress.failCurrentSyncPhase(phase: .fetchingConversations)
                 }

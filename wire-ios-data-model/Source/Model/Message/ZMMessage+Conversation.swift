@@ -39,6 +39,7 @@ extension ZMMessage {
         case .conversationMessageAdd,
              .conversationKnock:
             return payload.dictionary(forKey: "data")?["nonce"] as? UUID
+
         case .conversationClientMessageAdd,
              .conversationOtrMessageAdd,
              .conversationMLSMessageAdd:
@@ -49,6 +50,7 @@ extension ZMMessage {
                 return nil
             }
             return UUID(uuidString: messageID)
+
         default:
             return nil
         }

@@ -66,12 +66,14 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
             switch messageProtocol {
             case .proteus:
                 return true
+
             case .mls:
                 guard let groupID = await context.perform({ conversation.mlsGroupID }) else {
                     throw CheckOneOnOneConversationIsReadyError.missingGroupID
                 }
 
                 return try await isMLSConversationEstablished(groupID: groupID)
+
             case .mixed:
                 // Message protocol for one to one conversations should never be mixed
                 assertionFailure("Message protocol for one to one conversations should never be mixed")

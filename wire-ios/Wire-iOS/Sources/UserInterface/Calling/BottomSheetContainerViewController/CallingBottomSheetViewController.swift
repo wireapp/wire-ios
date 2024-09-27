@@ -172,6 +172,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         case .initial:
             visibleVoiceChannelViewController.view.accessibilityElementsHidden = false
             visibleVoiceChannelViewController.view.isUserInteractionEnabled = true
+
         case .full:
             visibleVoiceChannelViewController.view.accessibilityElementsHidden = true
             visibleVoiceChannelViewController.view.isUserInteractionEnabled = false

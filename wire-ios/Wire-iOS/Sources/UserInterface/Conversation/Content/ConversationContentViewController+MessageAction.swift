@@ -77,6 +77,7 @@ extension ConversationContentViewController {
 
                 message.fileMessageData?.cancelTransfer()
             }
+
         case .resend:
             userSession.enqueue {
                 WireLogger.messaging.info(
@@ -89,6 +90,7 @@ extension ConversationContentViewController {
 
                 message.resend()
             }
+
         case .delete:
             assert(message.canBeDeleted)
 
@@ -102,9 +104,11 @@ extension ConversationContentViewController {
                     self.presentedViewController?.dismiss(animated: true)
                 }
             }
+
         case .present:
             dataSource.selectedMessage = message
             presentDetails(for: message)
+
         case .save:
             if Message.isImage(message) {
                 saveImage(from: message, view: view)
@@ -123,6 +127,7 @@ extension ConversationContentViewController {
                 WireLogger.conversation
                     .warn("Saving a message of any type other than image or file is currently not handled.")
             }
+
         case .digitallySign:
             dataSource.selectedMessage = message
             if message.isFileDownloaded() {
@@ -130,31 +135,40 @@ extension ConversationContentViewController {
             } else {
                 presentDownloadNecessaryAlert(for: message)
             }
+
         case .edit:
             dataSource.editingMessage = message
             delegate?.conversationContentViewController(self, didTriggerEditing: message)
+
         case .sketchDraw:
             openSketch(for: message, in: .draw)
+
         case .sketchEmoji:
             openSketch(for: message, in: .emoji)
+
         case .showInConversation:
             scroll(to: message) { _ in
                 self.dataSource.highlight(message: message)
             }
+
         case .copy:
             message.copy(in: .general)
+
         case .download:
             userSession.enqueue {
                 message.fileMessageData?.requestFileDownload()
             }
+
         case .reply:
             delegate?.conversationContentViewController(self, didTriggerReplyingTo: message)
+
         case .openQuote:
             if let quote = message.textMessageData?.quoteMessage {
                 scroll(to: quote) { _ in
                     self.dataSource.highlight(message: quote)
                 }
             }
+
         case .openDetails:
             let detailsViewController = MessageDetailsViewController(
                 message: message,
@@ -162,16 +176,19 @@ extension ConversationContentViewController {
                 mainCoordinator: mainCoordinator
             )
             parent?.present(detailsViewController, animated: true)
+
         case .resetSession:
             guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
             activityIndicator.start()
             userClientToken = UserClientChangeInfo.add(observer: self, for: client)
             client.resetSession()
+
         case let .react(reaction):
             Analytics.shared.tagReacted(in: conversation)
             userSession.perform {
                 message.react(reaction)
             }
+
         case .visitLink:
             if let textMessageData = message.textMessageData,
                let path = textMessageData.linkPreview?.originalURLString ?? textMessageData.messageText,
@@ -257,6 +274,7 @@ extension ConversationContentViewController: SignatureObserver {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
                     self?.retriveSignature()
                 }
+
             case let .failure(error):
                 self?.dismissDigitalSignatureVerification(completion: {
                     if case DigitalSignatureVerificationError.otherError = error {

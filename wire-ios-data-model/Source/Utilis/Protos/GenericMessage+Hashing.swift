@@ -33,6 +33,7 @@ extension GenericMessage {
              .edited(let data as BigEndianDataConvertible),
              .asset(let data as BigEndianDataConvertible):
             return data.hashWithTimestamp(timestamp: timestamp.timeIntervalSince1970)
+
         case let .ephemeral(data):
             guard let content = data.content else {
                 return nil
@@ -45,6 +46,7 @@ extension GenericMessage {
             default:
                 return nil
             }
+
         default:
             return nil
         }

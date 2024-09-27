@@ -111,6 +111,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .foregroundColor: style.baseFontColor,
                 .paragraphStyle: style.baseParagraphStyle,
             ]
+
         case .h1, .h2, .h3,
              [.h1, .bold],
              [.h2, .bold],
@@ -121,6 +122,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .foregroundColor: style.baseFontColor,
                 .paragraphStyle: style.baseParagraphStyle,
             ]
+
         case [.h1, .italic], [.h1, .bold, .italic],
              [.h2, .italic], [.h2, .bold, .italic],
              [.h3, .italic], [.h3, .bold, .italic]:
@@ -130,6 +132,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .foregroundColor: style.baseFontColor,
                 .paragraphStyle: style.baseParagraphStyle,
             ]
+
         case [.h1, .code],
              [.h2, .code],
              [.h3, .code]:
@@ -139,6 +142,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .foregroundColor: style.codeColor!,
                 .paragraphStyle: style.baseParagraphStyle,
             ]
+
         case .bold:
             return [
                 .markdownID: markdown,
@@ -146,6 +150,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .foregroundColor: style.baseFontColor,
                 .paragraphStyle: style.baseParagraphStyle,
             ]
+
         case .italic:
             return [
                 .markdownID: markdown,
@@ -153,6 +158,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .foregroundColor: style.baseFontColor,
                 .paragraphStyle: style.baseParagraphStyle,
             ]
+
         case .code:
             return [
                 .markdownID: markdown,
@@ -160,6 +166,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .foregroundColor: style.codeColor!,
                 .paragraphStyle: style.baseParagraphStyle,
             ]
+
         case [.bold, .italic]:
             return [
                 .markdownID: markdown,
@@ -167,6 +174,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .foregroundColor: style.baseFontColor,
                 .paragraphStyle: style.baseParagraphStyle,
             ]
+
         default:
             break
         }

@@ -157,9 +157,11 @@ final class ConversationListAccessoryView: UIView {
             iconView.tintColor = iconTintColor
             accessibilityValue = ConversationListVoiceOver.pendingConnection
             return iconView
+
         case .activeCall(false):
             accessibilityValue = ConversationListVoiceOver.activeCall
             return .none
+
         case .activeCall(true):
             textLabel.text = L10n.Localizable.ConversationList.RightAccessory.JoinButton.title
             textLabel.textColor = textLabelColor
@@ -170,10 +172,12 @@ final class ConversationListAccessoryView: UIView {
             badgeView.accessibilityValue = ConversationsListAccessibility.JoinButton.description
             badgeView.accessibilityHint = ConversationsListAccessibility.JoinButton.hint
             return textLabel
+
         case .missedCall:
             iconView.setTemplateIcon(.endCall, size: iconSize)
             iconView.tintColor = iconTintColor
             return iconView
+
         case .playingMedia:
             if let mediaPlayer = activeMediaPlayer, mediaPlayer.state == .playing {
                 iconView.setTemplateIcon(.pause, size: iconSize)
@@ -185,26 +189,32 @@ final class ConversationListAccessoryView: UIView {
                 accessibilityValue = ConversationListVoiceOver.playMedia
             }
             return iconView
+
         case .silenced:
             configureSilencedNotificationsIcon()
             return iconView
+
         case .typing:
             return .none
+
         case let .unreadMessages(count):
             textLabel.text = String(count)
             textLabel.textColor = textLabelColor
             accessibilityValue = ConversationsListAccessibility.BadgeView.value(count)
             return textLabel
+
         case .mention:
             iconView.setTemplateIcon(.mention, size: iconSize)
             iconView.tintColor = iconTintColor
             accessibilityValue = ConversationsListAccessibility.MentionStatus.value
             return iconView
+
         case .reply:
             iconView.setTemplateIcon(.reply, size: iconSize)
             iconView.tintColor = iconTintColor
             accessibilityValue = ConversationsListAccessibility.ReplyStatus.value
             return iconView
+
         case .unreadPing:
             iconView.setTemplateIcon(.ping, size: iconSize)
             iconView.tintColor = iconTintColor

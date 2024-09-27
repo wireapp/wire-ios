@@ -115,6 +115,7 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             case .username:
                 L10n.Localizable.Name.Guidance.tooshort
             }
+
         case let .tooLong(kind: kind):
             switch kind {
             case .name:
@@ -130,13 +131,17 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             case .username:
                 L10n.Localizable.Name.Guidance.toolong
             }
+
         case .invalidEmail:
             L10n.Localizable.Email.Guidance.invalid
+
         case let .custom(description):
             description
+
         case let .invalidPassword(violations):
             violations.contains(.tooLong) ? L10n.Localizable.Password.Guidance.toolong : PasswordRuleSet
                 .localizedErrorMessage
+
         case .invalidUsername:
             "invalid"
         }

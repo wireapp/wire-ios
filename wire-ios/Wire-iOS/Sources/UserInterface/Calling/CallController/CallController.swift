@@ -185,11 +185,14 @@ extension CallController: WireCallCenterCallStateObserver {
             case .cancel:
                 self?.cancelCall(conversation: conversation)
                 continueCallBlock(false)
+
             case .confirm:
                 self?.acceptDegradedCall(conversation: conversation)
                 continueCallBlock(true)
+
             case .ok:
                 continueCallBlock(true)
+
             case .alreadyPresented:
                 // do nothing
                 break

@@ -128,8 +128,10 @@ final class PreviewImageView: UIImageView {
         case .placeholder?, .link?:
             layer.borderColor = UIColor.gray.cgColor
             layer.borderWidth = UIScreen.hairline
+
         case let .mixed(_, mainMode)?:
             updateBorders(for: mainMode)
+
         default:
             layer.borderColor = nil
             layer.borderWidth = 0
@@ -142,11 +144,13 @@ final class PreviewImageView: UIImageView {
             detailsContainer.isHidden = false
             videoBadgeImageView.isHidden = false
             countLabel.isHidden = true
+
         case let .mixed(count, _)?:
             detailsContainer.isHidden = false
             videoBadgeImageView.isHidden = true
             countLabel.isHidden = false
             countLabel.text = String(count)
+
         default:
             detailsContainer.isHidden = true
             videoBadgeImageView.isHidden = true

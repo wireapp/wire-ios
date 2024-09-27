@@ -73,32 +73,40 @@ extension MockTransportSession {
         switch request {
         case "/teams":
             response = fetchAllTeams(query: request.queryParameters, apiVersion: apiVersion)
+
         case "/teams/*":
             response = fetchTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
+
         case "/teams/*/conversations/*" where request.method == .delete:
             response = deleteTeamConversation(
                 teamId: request.RESTComponents(index: 1),
                 conversationId: request.RESTComponents(index: 3),
                 apiVersion: apiVersion
             )
+
         case "/teams/*/conversations/roles" /* where request.method == .get*/:
             response = fetchRolesForTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
+
         case "/teams/*/services/whitelisted":
             response = fetchWhitelistedServicesForTeam(
                 with: request.RESTComponents(index: 1),
                 query: request.queryParameters,
                 apiVersion: apiVersion
             )
+
         case "/teams/*/invitations":
             response = sendTeamInvitation(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
+
         case "/teams/*/members":
             response = fetchMembersForTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
+
         case "/teams/*/members/*":
             response = fetchMemberForTeam(
                 withTeamId: request.RESTComponents(index: 1),
                 userId: request.RESTComponents(index: 3),
                 apiVersion: apiVersion
             )
+
         case "/teams/*/get-members-by-ids-using-post" where request.method == .post:
             let payload = request.payload?.asDictionary()
             let userIDs = payload?["user_ids"] as? [String]
@@ -107,6 +115,7 @@ extension MockTransportSession {
                 userIds: userIDs,
                 apiVersion: apiVersion
             )
+
         case "/teams/*/legalhold/*/approve":
             response = approveUserLegalHold(
                 inTeam: request.RESTComponents(index: 1),
@@ -115,6 +124,7 @@ extension MockTransportSession {
                 method: request.method,
                 apiVersion: apiVersion
             )
+
         default:
             break
         }

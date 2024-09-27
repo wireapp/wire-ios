@@ -218,20 +218,27 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         switch appState {
         case .retryStart:
             retryStart(completion: completion)
+
         case let .blacklisted(reason: reason):
             showBlacklisted(reason: reason, completion: completion)
+
         case .jailbroken:
             showJailbroken(completion: completion)
+
         case .certificateEnrollmentRequired:
             showCertificateEnrollRequest(completion: completion)
+
         case let .databaseFailure(error):
             showDatabaseLoadingFailure(error: error, completion: completion)
+
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completion)
+
         case let .unauthenticated(error: error):
             screenCurtainWindow.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completion)
+
         case let .authenticated(userSession):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
@@ -240,10 +247,13 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 userSession: userSession,
                 completion: completion
             )
+
         case .headless:
             showLaunchScreen(completion: completion)
+
         case .loading:
             completion()
+
         case let .locked(userSession):
             screenCurtainWindow.userSession = userSession
             showAppLock(userSession: userSession, completion: completion)
@@ -255,6 +265,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         case .authenticated:
             authenticationCoordinator?.tearDown()
             authenticationCoordinator = nil
+
         default:
             break
         }
@@ -464,6 +475,7 @@ extension AppRootRouter {
         case let .unauthenticated(error: error):
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
+
         case .authenticated:
             // This is needed to display an ongoing call when coming from the background.
             authenticatedRouter?.updateActiveCallPresentationState()
@@ -471,6 +483,7 @@ extension AppRootRouter {
             ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .appOpen)
             sessionManager.processPendingURLActionRequiresAuthentication()
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
+
         default:
             break
         }

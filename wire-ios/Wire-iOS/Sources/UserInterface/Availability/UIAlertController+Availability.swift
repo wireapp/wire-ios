@@ -29,12 +29,15 @@ extension UIAlertController {
         case .none:
             title = AvailabilityReminderLocale.None.title
             message = AvailabilityReminderLocale.None.message
+
         case .available:
             title = AvailabilityReminderLocale.Available.title
             message = AvailabilityReminderLocale.Available.message
+
         case .busy:
             title = AvailabilityReminderLocale.Busy.title
             message = AvailabilityReminderLocale.Busy.message
+
         case .away:
             title = AvailabilityReminderLocale.Away.title
             message = AvailabilityReminderLocale.Away.message

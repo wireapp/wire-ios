@@ -38,6 +38,7 @@ class StartLoginURLActionProcessor: URLActionProcessor {
                 return
             }
             authenticationStatus.startLogin()
+
         default:
             break
         }

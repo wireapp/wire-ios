@@ -85,6 +85,7 @@ extension ConversationCreateSectionController {
                 for: indexPath
             )
             return view
+
         default:
             let view = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,

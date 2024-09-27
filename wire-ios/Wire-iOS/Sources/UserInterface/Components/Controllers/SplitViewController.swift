@@ -511,10 +511,12 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         case (.compact, _):
             leftViewWidthConstraint.constant = size.width
             rightViewWidthConstraint.constant = size.width
+
         case (.regularPortrait, true),
              (.regularLandscape, _):
             leftViewWidthConstraint.constant = leftViewMinWidth(size: size)
             rightViewWidthConstraint.constant = size.width - leftViewWidthConstraint.constant
+
         case (.regularPortrait, false):
             leftViewWidthConstraint.constant = leftViewMinWidth(size: size)
             rightViewWidthConstraint.constant = size.width
@@ -539,6 +541,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             leftViewController?.beginAppearanceTransition(!isLeftViewControllerRevealed, animated: true)
             rightViewController?.beginAppearanceTransition(isLeftViewControllerRevealed, animated: true)
             leftView.isHidden = false
+
         case .changed:
             if let width = leftViewController?.view.bounds.size.width {
                 if offset.x > 0, view.isRightToLeft {
@@ -551,6 +554,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
                 openPercentage = abs(offset.x) / width
                 view.layoutIfNeeded()
             }
+
         case .cancelled,
              .ended:
             let isRevealing = gestureRecognizer.velocity(in: view).x > 0
@@ -562,6 +566,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
                     self?.rightViewController?.endAppearanceTransition()
                 }
             }
+
         default:
             break
         }

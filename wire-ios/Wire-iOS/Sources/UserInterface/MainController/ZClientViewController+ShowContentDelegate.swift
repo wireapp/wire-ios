@@ -63,6 +63,7 @@ extension ZClientViewController {
         switch conversation.conversationType {
         case .connection:
             selectIncomingContactRequestsAndFocus(onView: true)
+
         case .group, .oneOnOne:
             select(
                 conversation: conversation,
@@ -70,6 +71,7 @@ extension ZClientViewController {
                 focusOnView: true,
                 animated: true
             )
+
         default:
             break
         }

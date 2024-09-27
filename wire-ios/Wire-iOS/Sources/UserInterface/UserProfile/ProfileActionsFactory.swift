@@ -44,22 +44,35 @@ enum ProfileAction: Equatable {
     var buttonText: String {
         switch self {
         case .createGroup: L10n.Localizable.Profile.createConversationButtonTitle
+
         case let .mute(isMuted): isMuted
             ? L10n.Localizable.Meta.Menu.Silence.unmute
             : L10n.Localizable.Meta.Menu.Silence.mute
+
         case .manageNotifications: L10n.Localizable.Meta.Menu.configureNotifications
+
         case .archive: L10n.Localizable.Meta.Menu.archive
+
         case .deleteContents: L10n.Localizable.Meta.Menu.clearContent
+
         case let .block(isBlocked): isBlocked
             ? L10n.Localizable.Profile.unblockButtonTitle
             : L10n.Localizable.Profile.blockButtonTitle
+
         case .openOneToOne: L10n.Localizable.Profile.openConversationButtonTitle
+
         case .startOneToOne: L10n.Localizable.Profile.startConversationButtonTitle
+
         case .removeFromGroup: L10n.Localizable.Profile.removeDialogButtonRemove
+
         case .connect: L10n.Localizable.Profile.ConnectionRequestDialog.buttonConnect
+
         case .cancelConnectionRequest: L10n.Localizable.Meta.Menu.cancelConnectionRequest
+
         case .openSelfProfile: L10n.Localizable.Meta.Menu.openSelfProfile
+
         case .duplicateUser: "⚠️ DEBUG - Duplicate User"
+
         case .duplicateTeam: "⚠️ DEBUG - Duplicate Team"
         }
     }

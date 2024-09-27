@@ -163,9 +163,11 @@ final class LegalHoldDisclosureController: UserObserving {
         case .warningAboutPendingRequest, .warningAboutAcceptationResult:
             currentState = .none
             return
+
         case .warningAboutDisabled:
             // If we are already warning about disabled, do nothing
             return
+
         default:
             break
         }
@@ -201,11 +203,13 @@ final class LegalHoldDisclosureController: UserObserving {
                 for: selfUserLegalHoldSubject,
                 suggestedStateChangeHandler: assignState
             )
+
         case .warningAboutEnabled:
             alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(
                 for: selfUserLegalHoldSubject,
                 suggestedStateChangeHandler: assignState
             )
+
         case let .warningAboutPendingRequest(request, fingerprint):
             alertController = LegalHoldAlertFactory.makeLegalHoldActivationAlert(
                 for: request,
@@ -213,8 +217,10 @@ final class LegalHoldDisclosureController: UserObserving {
                 user: selfUserLegalHoldSubject,
                 suggestedStateChangeHandler: assignState
             )
+
         case let .warningAboutAcceptationResult(alert):
             alertController = alert
+
         case .acceptingRequest, .none:
             break
         }

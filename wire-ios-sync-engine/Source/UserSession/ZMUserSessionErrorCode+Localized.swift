@@ -28,26 +28,33 @@ extension UserSessionErrorCode: LocalizedError {
                 value: nil,
                 table: "ZMLocalizable"
             )
+
         case .domainBlocked:
             return bundle.localizedString(
                 forKey: "user_session.error.domain-blocked",
                 value: nil,
                 table: "ZMLocalizable"
             )
+
         case .emailIsAlreadyRegistered:
             return bundle.localizedString(forKey: "user_session.error.email-exists", value: nil, table: "ZMLocalizable")
+
         case .invalidEmail:
             return bundle.localizedString(
                 forKey: "user_session.error.invalid-email",
                 value: nil,
                 table: "ZMLocalizable"
             )
+
         case .invalidActivationCode:
             return bundle.localizedString(forKey: "user_session.error.invalid-code", value: nil, table: "ZMLocalizable")
+
         case .unknownError:
             return bundle.localizedString(forKey: "user_session.error.unknown", value: nil, table: "ZMLocalizable")
+
         case .unauthorizedEmail:
             return bundle.localizedString(forKey: "user_session.error.unknown", value: nil, table: "ZMLocalizable")
+
         default:
             return nil
         }

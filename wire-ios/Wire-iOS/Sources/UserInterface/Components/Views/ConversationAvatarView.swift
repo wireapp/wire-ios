@@ -107,11 +107,14 @@ extension Mode {
         switch (users.count, conversationType) {
         case (0, _):
             self = .none
+
         case (1, .group?):
             let isServiceUser = users[0].isServiceUser
             self = isServiceUser ? .one(serviceUser: isServiceUser) : .four
+
         case (1, _):
             self = .one(serviceUser: users[0].isServiceUser)
+
         default:
             self = .four
         }
@@ -148,6 +151,7 @@ final class ConversationAvatarView: UIView {
         case let .connect(users):
             self.users = users
             mode = Mode(users: users)
+
         case let .conversation(conversation):
             self.conversation = conversation
             mode = Mode(conversationType: conversation.conversationType, users: users)
@@ -282,10 +286,12 @@ final class ConversationAvatarView: UIView {
         switch mode {
         case .none:
             break
+
         case .one:
             for userImage in userImages() {
                 userImage.frame = clippingView.bounds
             }
+
         case .four:
             layoutMultipleAvatars(with: CGSize(
                 width: (containerSize.width - interAvatarInset) / 2.0,
@@ -316,6 +322,7 @@ final class ConversationAvatarView: UIView {
         case let .one(serviceUser: serviceUser):
             layer.cornerRadius = serviceUser ? 0 : layer.bounds.width / 2.0
             clippingView.layer.cornerRadius = serviceUser ? 0 : clippingView.layer.bounds.width / 2.0
+
         default:
             layer.cornerRadius = 6
             clippingView.layer.cornerRadius = 4

@@ -95,12 +95,14 @@ final class BreathLoadingBar: UIView {
             heightConstraint.constant = 0
             alpha = 0
             layer.cornerRadius = 0
+
         case .onlineSynchronizing:
             heightConstraint.constant = CGFloat.SyncBar.height
             alpha = 1
             layer.cornerRadius = CGFloat.SyncBar.cornerRadius
 
             backgroundColor = UIColor.accent()
+
         case .offlineExpanded:
             heightConstraint.constant = CGFloat.OfflineBar.expandedHeight
             alpha = 0

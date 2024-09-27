@@ -40,6 +40,7 @@ extension GenericMessage {
         switch content {
         case let .image(data):
             return data.isRaster
+
         case let .ephemeral(data):
             switch data.content {
             case let .image(image)?:
@@ -47,6 +48,7 @@ extension GenericMessage {
             default:
                 return false
             }
+
         default:
             return false
         }

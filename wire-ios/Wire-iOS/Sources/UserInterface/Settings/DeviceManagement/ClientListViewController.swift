@@ -352,8 +352,10 @@ final class ClientListViewController: UIViewController,
             } else {
                 0
             }
+
         case 1:
             sortedClients.count
+
         default:
             0
         }
@@ -367,8 +369,10 @@ final class ClientListViewController: UIViewController,
             } else {
                 nil
             }
+
         case 1:
             L10n.Localizable.Registration.Devices.activeListHeader
+
         default:
             nil
         }
@@ -411,9 +415,11 @@ final class ClientListViewController: UIViewController,
                     cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
                     cell.wr_editable = false
                 }
+
             case 1:
                 cell.viewModel = .init(userClient: sortedClients[indexPath.row], shouldSetType: false)
                 cell.wr_editable = true
+
             default:
                 cell.viewModel = nil
             }
@@ -438,6 +444,7 @@ final class ClientListViewController: UIViewController,
             let userClient = sortedClients[indexPath.row]
 
             deleteUserClient(userClient, credentials: credentials)
+
         default: break
         }
     }

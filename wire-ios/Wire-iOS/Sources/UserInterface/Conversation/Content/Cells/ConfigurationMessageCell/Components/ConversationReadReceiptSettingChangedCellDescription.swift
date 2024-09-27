@@ -64,13 +64,16 @@ struct ReadReceiptViewModel {
         switch systemMessageType {
         case .readReceiptsDisabled:
             updateText = createSystemMessage(template: "content.system.message_read_receipt_off")
+
         case .readReceiptsEnabled:
             updateText = createSystemMessage(template: "content.system.message_read_receipt_on")
+
         case .readReceiptsOn:
             updateText = NSAttributedString(
                 string: L10n.Localizable.Content.System.messageReadReceiptOnAddToGroup,
                 attributes: baseAttributes
             )
+
         default:
             assertionFailure("invalid systemMessageType for ReadReceiptViewModel")
         }

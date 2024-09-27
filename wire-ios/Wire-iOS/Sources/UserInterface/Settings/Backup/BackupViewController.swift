@@ -110,6 +110,7 @@ extension BackupViewController {
                 case let .failure(error):
                     self.presentAlert(for: error)
                     BackupEvent.exportFailed.track()
+
                 case let .success(url):
                     self.presentShareSheet(with: url, from: indexPath)
                 }

@@ -40,20 +40,26 @@ extension CoreDataMigratorError: LocalizedError {
         switch self {
         case .missingStoreURL:
             return "missingStoreURL"
+
         case let .missingFiles(message):
             return "missingFiles: \(message)"
+
         case .unknownVersion:
             return "unknownVersion"
+
         case let .migrateStoreFailed(error):
             let nsError = error as NSError
             return "migrateStoreFailed: \(error.localizedDescription). "
                 + "NSError code: \(nsError.code) --- domain \(nsError.domain) --- userInfo: \(dump(nsError.userInfo))."
+
         case .failedToForceWALCheckpointing:
             return "failedToForceWALCheckpointing"
+
         case let .failedToReplacePersistentStore(sourceURL, targetURL, underlyingError):
             let nsError = underlyingError as NSError
             return "failedToReplacePersistentStore: \(underlyingError.localizedDescription). sourceURL: \(sourceURL). targetURL: \(targetURL). "
                 + "NSError code: \(nsError.code) --- domain \(nsError.domain) --- userInfo: \(dump(nsError.userInfo))"
+
         case let .failedToDestroyPersistentStore(storeURL):
             return "failedToDestroyPersistentStore: \(storeURL)"
         }

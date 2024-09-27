@@ -104,15 +104,18 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
             if systemMessage.isDecryptionErrorRecoverable {
                 components.append(resetSessionString)
             }
+
         case .decryptionFailedResolved:
             components = [
                 messageString,
                 errorDetailsString,
             ]
+
         case .decryptionFailed_RemoteIdentityChanged:
             components = [
                 messageString,
             ]
+
         default:
             fatal("Incorrect cell configuration")
         }

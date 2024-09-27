@@ -652,6 +652,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             header.desiredWidth = size.width
             header.desiredHeight = size.height
             return header
+
         default:
             fatal("No supplementary view for \(kind)")
         }

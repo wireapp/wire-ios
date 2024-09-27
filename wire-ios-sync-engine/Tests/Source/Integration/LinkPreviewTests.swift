@@ -58,10 +58,12 @@ class LinkPreviewTests: ConversationTestsBase {
                 XCTAssertEqual(linkPreview.urlOffset, expectedLinkPreview.urlOffset)
                 XCTAssertEqual(linkPreview.title, expectedLinkPreview.title)
                 XCTAssertEqual(linkPreview.summary, expectedLinkPreview.summary)
+
             case .article:
                 XCTAssertEqual(linkPreview.urlOffset, expectedLinkPreview.urlOffset)
                 XCTAssertEqual(linkPreview.title, expectedLinkPreview.title)
                 XCTAssertEqual(linkPreview.summary, expectedLinkPreview.summary)
+
             case .tweet:
                 XCTAssertEqual(linkPreview.urlOffset, expectedLinkPreview.urlOffset)
                 XCTAssertEqual(linkPreview.title, expectedLinkPreview.title)

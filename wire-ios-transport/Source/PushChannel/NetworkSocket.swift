@@ -360,20 +360,25 @@ extension NetworkSocket: StreamDelegate {
                     delegate.didOpen(socket: self)
                 }, sync: false)
             }
+
         case (.connected, .hasBytesAvailable):
             guard aStream == inputStream, checkTrust(for: aStream) else {
                 return
             }
             onBytesAvailable()
+
         case (.connected, .hasSpaceAvailable):
             guard aStream == outputStream, checkTrust(for: aStream) else {
                 return
             }
             onHasSpaceAvailable()
+
         case (_, .errorOccurred):
             fallthrough
+
         case (_, .endEncountered):
             close()
+
         default:
             return
         }

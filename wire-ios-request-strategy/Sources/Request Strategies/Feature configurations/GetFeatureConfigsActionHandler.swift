@@ -65,6 +65,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
                         data: data,
                         repository: repository
                     )
+
                 case .v6:
                     try processor.processActionPayloadAPIV6(
                         data: data,

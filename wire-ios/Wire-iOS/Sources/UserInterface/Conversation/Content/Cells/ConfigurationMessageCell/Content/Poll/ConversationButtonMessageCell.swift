@@ -73,11 +73,13 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
             button.isLoading = false
             button.isEnabled = true
             button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.unselected
+
         case .selected:
             button.legacyStyle = .empty
             button.isLoading = true
             button.isEnabled = false
             button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.selected
+
         case .confirmed:
             button.legacyStyle = .full
             button.isLoading = false

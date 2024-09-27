@@ -220,6 +220,7 @@ public final class MessageSender: MessageSenderInterface {
             } else {
                 return Set(messageSendingStatus.missing.qualifiedClientIDs)
             }
+
         default:
             if case .tryAgainLater = failure.response?.result {
                 if await context.perform({ message.isExpired }) {

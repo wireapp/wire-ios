@@ -54,6 +54,7 @@ enum AvailabilityStringBuilder {
                 }
                 iconColor = self.color(for: availability)
             }
+
         case .participants:
             do {
                 title = name.localizedUppercase

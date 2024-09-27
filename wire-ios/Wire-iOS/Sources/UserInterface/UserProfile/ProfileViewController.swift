@@ -342,34 +342,47 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         switch action {
         case .createGroup:
             bringUpConversationCreationFlow()
+
         case let .mute(isMuted):
             viewModel.updateMute(enableNotifications: isMuted)
+
         case .manageNotifications:
             presentNotificationsOptions(from: targetView)
+
         case .archive:
             viewModel.archiveConversation()
+
         case .deleteContents:
             presentDeleteConfirmationPrompt(from: targetView)
+
         case let .block(isBlocked):
             if isBlocked {
                 handleBlockAndUnblock()
             } else {
                 presentBlockActionSheet(from: targetView)
             }
+
         case .openOneToOne:
             viewModel.openOneToOneConversation()
+
         case .startOneToOne:
             viewModel.startOneToOneConversation()
+
         case .removeFromGroup:
             presentRemoveUserMenuSheetController(from: targetView)
+
         case .connect:
             viewModel.sendConnectionRequest()
+
         case .cancelConnectionRequest:
             bringUpCancelConnectionRequestSheet(from: targetView)
+
         case .openSelfProfile:
             openSelfProfile()
+
         case .duplicateUser:
             duplicateUser()
+
         case .duplicateTeam:
             duplicateTeam()
         }

@@ -121,6 +121,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+
             case .v3, .v4, .v5, .v6:
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
                 self.legacyAccessRole = nil
@@ -145,6 +146,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
+
             case .v3, .v4, .v5, .v6:
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
             }

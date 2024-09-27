@@ -153,6 +153,7 @@ final class ZMUserConsentTests: DatabaseTest {
             case let .failure(error):
                 XCTAssertEqual(error as! WireSyncEngine.ConsentRequestError, WireSyncEngine.ConsentRequestError.unknown)
                 receivedError.fulfill()
+
             case .success:
                 XCTFail()
             }
@@ -186,6 +187,7 @@ final class ZMUserConsentTests: DatabaseTest {
                     WireSyncEngine.ConsentRequestError.notAvailable
                 )
                 receivedError.fulfill()
+
             case .success:
                 XCTFail()
             }
@@ -247,6 +249,7 @@ final class ZMUserConsentTests: DatabaseTest {
             case let .failure(error):
                 XCTAssertEqual(error as! WireSyncEngine.ConsentRequestError, WireSyncEngine.ConsentRequestError.unknown)
                 receivedError.fulfill()
+
             case .success:
                 XCTFail()
             }

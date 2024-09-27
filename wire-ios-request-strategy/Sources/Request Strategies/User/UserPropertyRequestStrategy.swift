@@ -106,6 +106,7 @@ extension UserProperty {
             if updateType.source == .notificationStream {
                 selfUser.readReceiptsEnabledChangedRemotely = true
             }
+
         case (.readReceiptsEnabled, .delete):
             selfUser.readReceiptsEnabled = false
             if updateType.source == .notificationStream {

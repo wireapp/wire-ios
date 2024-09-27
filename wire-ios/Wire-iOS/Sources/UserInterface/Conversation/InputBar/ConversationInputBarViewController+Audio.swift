@@ -57,6 +57,7 @@ extension ConversationInputBarViewController {
             } else {
                 inputBar.textView.becomeFirstResponder()
             }
+
         default:
             UIApplication.wr_requestOrWarnAboutMicrophoneAccess { accepted in
                 if accepted {
@@ -87,10 +88,13 @@ extension ConversationInputBarViewController {
         case .began:
             createAudioViewController(userSession: userSession)
             showAudioRecordViewControllerIfGrantedAccess()
+
         case .changed:
             audioRecordViewController?.updateWithChangedRecognizer(sender)
+
         case .ended, .cancelled, .failed:
             audioRecordViewController?.finishRecordingIfNeeded(sender)
+
         default: break
         }
     }

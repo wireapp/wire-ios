@@ -178,10 +178,12 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
                 if lhsDomainInfo == rhsDomainInfo {
                     resultExpectation.fulfill()
                 }
+
             case let (.failure(lhsError), .failure(rhsError)):
                 if (lhsError as? DomainLookupError) == (rhsError as? DomainLookupError) {
                     resultExpectation.fulfill()
                 }
+
             default:
                 break
             }

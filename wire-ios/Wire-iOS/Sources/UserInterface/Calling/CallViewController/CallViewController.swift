@@ -548,19 +548,30 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         switch action {
         case .continueDegradedCall: userSession
             .enqueue { self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession) }
+
         case .acceptCall: acceptCallIfPossible()
+
         case .acceptDegradedCall: acceptDegradedCall()
+
         case .terminateCall: voiceChannel.leave(userSession: userSession, completion: nil)
+
         case .terminateDegradedCall: userSession.enqueue { self.voiceChannel.leave(
                 userSession: userSession,
                 completion: nil
             ) }
+
         case .toggleMuteState: voiceChannel.toggleMuteState(userSession: userSession)
+
         case .toggleSpeakerState: AVSMediaManager.sharedInstance().toggleSpeaker()
+
         case .minimizeOverlay: minimizeOverlay()
+
         case .toggleVideoState: toggleVideoState()
+
         case .alertVideoUnavailable: alertVideoUnavailable()
+
         case .flipCamera: toggleCameraAnimated()
+
         case .showParticipantsList: return // Handled in `CallInfoRootViewController`, we don't want to update.
         case let .updateVideoGridPresentationMode(mode): voiceChannel.videoGridPresentationMode = mode
         }

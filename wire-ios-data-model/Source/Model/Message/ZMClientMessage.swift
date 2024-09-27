@@ -110,6 +110,7 @@ public class ZMClientMessage: ZMOTRMessage {
             // this message
             let originalID = underlyingMessage.flatMap { UUID(uuidString: $0.edited.replacingMessageID) }
             nonce = originalID
+
         case .buttonAction:
             guard
                 let managedObjectContext,
@@ -121,6 +122,7 @@ public class ZMClientMessage: ZMOTRMessage {
                 forConversation: conversation,
                 inContext: managedObjectContext
             )
+
         default:
             break
         }
@@ -150,6 +152,7 @@ public class ZMClientMessage: ZMOTRMessage {
         switch content {
         case .confirmation, .reaction:
             return
+
         case .deleted:
             let originalID = UUID(uuidString: genericMessage.deleted.messageID)
             guard
@@ -161,6 +164,7 @@ public class ZMClientMessage: ZMOTRMessage {
             let original = ZMMessage.fetch(withNonce: originalID, for: conversation, in: managedObjectContext)
             original?.sender = nil
             original?.senderClientID = nil
+
         case .edited:
             if let nonce = nonce(fromPostPayload: payload),
                self.nonce != nonce {
@@ -174,6 +178,7 @@ public class ZMClientMessage: ZMOTRMessage {
             if let serverTimestamp = (payload as NSDictionary).optionalDate(forKey: "time") {
                 updatedTimestamp = serverTimestamp
             }
+
         default:
             super.update(withPostPayload: payload, updatedKeys: nil)
         }

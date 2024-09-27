@@ -230,8 +230,10 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
                 break
             }
             updateTimeout(value)
+
         case .customValue:
             requestCustomValue()
+
         default:
             break
         }

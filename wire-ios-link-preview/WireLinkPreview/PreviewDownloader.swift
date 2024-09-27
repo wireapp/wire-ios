@@ -122,6 +122,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         case .running:
             guard container.reachedEndOfHead else { return }
             cancel(task: task)
+
         default:
             break
         }

@@ -48,18 +48,24 @@ final class DeleteMessageTests: XCTestCase {
         switch conversationType {
         case .text:
             message = MockMessageFactory.textMessage(includingRichMedia: false)
+
         case .textWithRichMedia:
             message = MockMessageFactory.textMessage(includingRichMedia: true)
+
         case .image:
             message = MockMessageFactory.imageMessage()
+
         case .ping:
             message = MockMessageFactory.pingMessage()
+
         case .fileTransfer:
             message = MockMessageFactory.fileTransferMessage()
             message?.backingFileMessageData?.transferState = .uploaded
             message?.backingFileMessageData?.downloadState = .downloaded
+
         case .systemMessage:
             message = MockMessageFactory.systemMessage(with: .missedCall, users: 1, clients: 1)
+
         case .count:
             XCTFail("You can't just give the ConversationCellTypeCOUNT and expect a message!")
         }

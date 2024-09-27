@@ -415,6 +415,7 @@ struct CacheAsset: AssetType {
                 token: token,
                 domain: domain
             )
+
         case .image, .file:
             genericMessage.updateUploaded(
                 assetId: assetId,
@@ -484,6 +485,7 @@ struct CacheAsset: AssetType {
                     attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
                 )
             }
+
         case .image:
             if !needsPreprocessing, let original {
                 // Even if we don't do any preprocessing on an image we still need to copy it to .medium
@@ -501,6 +503,7 @@ struct CacheAsset: AssetType {
                     attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
                 )
             }
+
         case .thumbnail:
             WireLogger.assets.debug(
                 "encrypting thumbnail",

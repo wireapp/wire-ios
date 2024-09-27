@@ -318,6 +318,7 @@ private class DebugCommandVariables: DebugCommandMixin {
             return onComplete(.success(info: state.map { v in
                 "\(v.key) => \(v.value)"
             }.joined(separator: "\n")))
+
         case "set":
             guard arguments.count == 2 || arguments.count == 3 else {
                 return onComplete(.failure(error: "Usage: set <name> [<value>]"))
@@ -331,6 +332,7 @@ private class DebugCommandVariables: DebugCommandMixin {
             }
             saveState(userSession: userSession, state: state)
             return onComplete(.success(info: nil))
+
         case "get":
             guard arguments.count == 2 else {
                 return onComplete(.failure(error: "Usage: get <name>"))
@@ -338,6 +340,7 @@ private class DebugCommandVariables: DebugCommandMixin {
             return onComplete(
                 .success(info: String(describing: state[arguments[1]]))
             )
+
         default:
             return onComplete(.unknownCommand)
         }

@@ -354,6 +354,7 @@ final class SearchResultsViewController: UIViewController {
         switch (searchGroup, isAddingParticipants) {
         case (.services, _):
             sections = [servicesSection]
+
         case (.people, true):
             switch (mode, team != nil) {
             case (.search, false):
@@ -369,6 +370,7 @@ final class SearchResultsViewController: UIViewController {
             case (.list, true):
                 sections = [teamMemberAndContactsSection]
             }
+
         case (.people, false):
             switch (mode, team != nil) {
             case (.search, false):

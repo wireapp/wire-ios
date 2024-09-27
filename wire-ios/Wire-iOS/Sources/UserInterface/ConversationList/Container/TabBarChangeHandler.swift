@@ -64,10 +64,13 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
             principleViewController.presentPeoplePicker { [self] in
                 tabBarController.selectedIndex = principleTabIndex
             }
+
         case .conversations:
             principleTab = .conversations
+
         case .folders:
             principleTab = .folders
+
         case .archive:
             principleViewController.setState(.archived, animated: true) { [self] in
                 tabBarController.selectedIndex = principleTabIndex

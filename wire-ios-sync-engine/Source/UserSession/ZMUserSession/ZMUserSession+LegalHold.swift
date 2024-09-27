@@ -106,6 +106,7 @@ extension ZMUserSession {
                     await MainActor.run {
                         completionHandler(.invalidPassword)
                     }
+
                 default:
                     await MainActor.run {
                         completionHandler(.invalidResponse(response.httpStatus, errorLabel))

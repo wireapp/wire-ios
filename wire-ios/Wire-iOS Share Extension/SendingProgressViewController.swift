@@ -55,6 +55,7 @@ final class SendingProgressViewController: UIViewController {
         case .sending:
             circularProgress.deterministic = true
             title = L10n.ShareExtension.SendingProgress.title
+
         case .preparing:
             circularProgress.deterministic = false
             circularProgress.setProgress(minimumProgress, animated: false)

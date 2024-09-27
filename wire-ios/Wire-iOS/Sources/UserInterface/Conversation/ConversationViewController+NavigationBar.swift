@@ -157,6 +157,7 @@ extension ConversationViewController {
 
         switch conversation.conversationType {
         case .group: return true
+
         case .oneOnOne:
             if let connection = conversation.oneOnOneUser?.connection,
                connection.status != .pending, connection.status != .sent {
@@ -164,6 +165,7 @@ extension ConversationViewController {
             } else {
                 return conversation.teamRemoteIdentifier != nil
             }
+
         default: return false
         }
     }

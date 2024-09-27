@@ -102,10 +102,13 @@ final class ConversationViewController: UIViewController {
                 mainCoordinator: mainCoordinator,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
             )
+
         case .`self`, .oneOnOne, .connection:
             viewController = createUserDetailViewController()
+
         case .invalid:
             fatal("Trying to open invalid conversation")
+
         default:
             break
         }
@@ -240,6 +243,7 @@ final class ConversationViewController: UIViewController {
                         self?.presentLocalizedErrorAlert(error)
                     }
                 })
+
             case .archive:
                 self?.userSession.enqueue {
                     self?.conversation.isArchived = true

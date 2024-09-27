@@ -30,6 +30,7 @@ enum Database {
             let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
             let name = "store" + fixedVersion
             return name
+
         case .event:
             return "event_\(version)"
         }

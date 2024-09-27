@@ -59,10 +59,12 @@ extension URL {
 
         switch saved {
         case .none: return false
+
         case .tweetbot:
             guard let url = tweetbotURL, app.canOpenURL(url) else { return false }
             log.debug("Trying to open tweetbot app using \"\(url)\"")
             app.open(url)
+
         case .twitterrific:
             guard let url = twitterrificURL, app.canOpenURL(url) else { return false }
             log.debug("Trying to open twitterific app using \"\(url)\"")

@@ -377,14 +377,19 @@ final class ConversationListViewModel: NSObject {
                 item: contactRequestsItem,
                 kind: kind
             )]
+
         case .conversations:
             conversationListType = .unarchived
+
         case .contacts:
             conversationListType = .contacts
+
         case .groups:
             conversationListType = .groups
+
         case .favorites:
             conversationListType = .favorites
+
         case let .folder(label: label):
             conversationListType = .folder(label)
         }

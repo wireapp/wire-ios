@@ -120,6 +120,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             let selfUser = selfUserProvider.fetchSelfUser()
             selfUser.supportedProtocols = service.calculateSupportedProtocols()
             finishSlowSync()
+
         default:
             failSlowSync()
         }

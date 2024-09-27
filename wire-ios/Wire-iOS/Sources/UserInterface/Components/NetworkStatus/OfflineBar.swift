@@ -78,10 +78,12 @@ final class OfflineBar: UIView {
             heightConstraint.constant = 0
             offlineLabel.alpha = 0
             layer.cornerRadius = 0
+
         case .onlineSynchronizing:
             heightConstraint.constant = CGFloat.SyncBar.height
             offlineLabel.alpha = 0
             layer.cornerRadius = CGFloat.SyncBar.cornerRadius
+
         case .offlineExpanded:
             heightConstraint.constant = CGFloat.OfflineBar.expandedHeight
             offlineLabel.alpha = 1

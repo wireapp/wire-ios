@@ -61,6 +61,7 @@ final class BackupRestoreStepDescription: AuthenticationStepDescription {
         case .newDevice:
             self.headline = L10n.Localizable.Registration.NoHistory.hero
             self.subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.subtitle, style: .login)
+
         case .loggedOut:
             self.headline = L10n.Localizable.Registration.NoHistory.LoggedOut.hero
             self.subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle, style: .login)

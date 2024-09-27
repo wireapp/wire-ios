@@ -472,12 +472,15 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     } else {
                         errorCode = .invalidCredentials
                     }
+
                 case "too-many-clients":
                     errorCode = .canNotRegisterMoreClients
+
                 case "invalid-credentials",
                      "code-authentication-failed",
                      "code-authentication-required":
                     errorCode = .invalidCredentials
+
                 default:
                     break
                 }
@@ -492,8 +495,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             if let payload = response.payload?.asArray() as? [[String: AnyObject]] {
                 received(clients: payload)
             }
+
         case .expired:
             clientUpdateStatus?.failedToFetchClients()
+
         default:
             break
         }

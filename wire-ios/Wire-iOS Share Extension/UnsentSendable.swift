@@ -49,8 +49,10 @@ extension UnsentSendableError: LocalizedError {
             )
 
             return L10n.ShareExtension.Content.File.tooBig(maxSizeString)
+
         case .unsupportedAttachment:
             return L10n.ShareExtension.Content.File.unsupportedAttachment
+
         case .conversationDoesNotExist:
             return L10n.ShareExtension.Error.ConversationDoesNotExist.message
         }

@@ -102,10 +102,12 @@ extension UIAlertController {
                     Task {
                         await actionsHandler.getCertificate()
                     }
+
                 case .remindLater:
                     Task {
                         await actionsHandler.snoozeReminder()
                     }
+
                 case .learnMore:
                     break
                 }

@@ -214,6 +214,7 @@ class BottomSheetContainerViewController: UIViewController {
             let percent = (-topConstraint.constant - configuration.initialOffset) /
                 (configuration.height - configuration.initialOffset)
             bottomSheetChangedOffset(fullHeightPercentage: percent)
+
         case .ended:
             if state == .full {
                 if velocity.y < 0 {
@@ -230,12 +231,14 @@ class BottomSheetContainerViewController: UIViewController {
                     hideBottomSheet()
                 }
             }
+
         case .failed:
             if state == .full {
                 showBottomSheet()
             } else {
                 hideBottomSheet()
             }
+
         default: break
         }
     }

@@ -125,8 +125,10 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
 
             controllerToShow.modalPresentationCapturesStatusBarAppearance = true
             viewController?.present(controllerToShow, animated: true, completion: .none)
+
         case .navigation:
             viewController?.navigationController?.pushViewController(controllerToShow, animated: true)
+
         case .alert:
             break
         }
@@ -153,8 +155,10 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
                 } else {
                     groupCell.showDisclosureIndicator()
                 }
+
             case .alwaysHide:
                 groupCell.hideDisclosureIndicator()
+
             case .alwaysShow:
                 groupCell.showDisclosureIndicator()
             }

@@ -142,11 +142,14 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             case .incoming(video: _, shouldRing: let shouldRing, degraded: _):
                 uiConv.isIgnoringCall = uiConv.mutedMessageTypesIncludingAvailability != .none || !shouldRing
                 uiConv.isCallDeviceActive = false
+
             case .terminating, .none, .mediaStopped:
                 uiConv.isCallDeviceActive = false
                 uiConv.isIgnoringCall = false
+
             case .outgoing, .answered, .established:
                 uiConv.isCallDeviceActive = true
+
             case .unknown, .establishedDataChannel:
                 break
             }
@@ -196,6 +199,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             }
 
             syncContext.enqueueDelayedSave()
+
         default: break
         }
     }

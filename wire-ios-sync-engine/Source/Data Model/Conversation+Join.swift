@@ -161,6 +161,7 @@ extension ZMConversation {
 
                 let fetchResult = (conversationId, conversationName, hasPassword)
                 completion(.success(fetchResult))
+
             default:
                 let error = ConversationFetchError(response: response)
                 Logging.network.debug("Error fetching conversation ID and name: \(error)")

@@ -304,6 +304,7 @@ extension LocalNotificationType {
             default:
                 break
             }
+
         default: break
         }
 

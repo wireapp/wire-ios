@@ -160,6 +160,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                     code: code,
                     delegate: delegate
                 )
+
             case let .failure(error):
                 delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
             }

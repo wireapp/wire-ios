@@ -74,13 +74,17 @@ public final class UserProfileImageUpdateStatus: NSObject {
                  (.uploading, .uploaded),
                  (.ready, .upload): // When re-uploading a preprocessed v2 to v3
                 true
+
             case (.uploaded, .ready),
                  (.failed, .ready):
                 true
+
             case (.failed, .failed):
                 false
+
             case (_, .failed):
                 true
+
             default:
                 false
             }
@@ -99,13 +103,17 @@ public final class UserProfileImageUpdateStatus: NSObject {
                  (.preprocess, .update),
                  (.ready, .update): // When re-uploading a preprocessed v2 to v3
                 true
+
             case (.update, .ready),
                  (.failed, .ready):
                 true
+
             case (.failed, .failed):
                 false
+
             case (_, .failed):
                 true
+
             default:
                 false
             }
@@ -245,6 +253,7 @@ extension UserProfileImageUpdateStatus {
         case let (_, .upload(image)):
             resizedImages[size] = image
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
+
         case (_, .uploaded):
             // When one image is uploaded we check state of all other images
             let previewState = imageState(for: .preview)
@@ -257,8 +266,10 @@ extension UserProfileImageUpdateStatus {
             default:
                 break // Need to wait until both images are uploaded
             }
+
         case let (_, .failed(error)):
             setState(state: .failed(error))
+
         default:
             break
         }
@@ -348,6 +359,7 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
         case let .upload(image: image):
             setState(state: .uploading, for: size)
             return image
+
         default:
             return nil
         }

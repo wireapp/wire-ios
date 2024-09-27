@@ -57,16 +57,22 @@ class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: Action
             }
 
             action.succeed(with: data)
+
         case (400, "mls-not-enabled"):
             action.fail(with: .mlsNotEnabled)
+
         case (400, _):
             action.fail(with: .invalidParameters)
+
         case (404, "mls-missing-group-info"):
             action.fail(with: .missingGroupInfo)
+
         case (404, "no-conversation"):
             action.fail(with: .noConversation)
+
         case (404, _):
             action.fail(with: .conversationIdOrDomainNotFound)
+
         default:
             let errorInfo = response.errorInfo
             action.fail(with: .unknown(

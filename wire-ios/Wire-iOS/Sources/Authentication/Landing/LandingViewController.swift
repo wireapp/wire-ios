@@ -510,6 +510,7 @@ final class LandingViewController: AuthenticationStepViewController {
             }
             customBackendView.isHidden = false
             customBackendView.setBackendUrl(url)
+
         default:
             customBackendView.isHidden = true
         }

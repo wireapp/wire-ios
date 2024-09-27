@@ -190,6 +190,7 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
                 requestedPreviewAssets.removeValue(forKey: user)
             }
             requestedPreviewAssetsInProgress.remove(user)
+
         case .complete:
             if !tryAgain {
                 requestedCompleteAssets.removeValue(forKey: user)

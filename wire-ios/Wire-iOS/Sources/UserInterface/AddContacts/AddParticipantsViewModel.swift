@@ -82,6 +82,7 @@ struct AddParticipantsViewModel {
             item.tintColor = SemanticColors.Icon.foregroundDefault
             item.accessibilityIdentifier = "close"
             return item
+
         case let .create(values):
             let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable
                 .Peoplepicker.Group.done

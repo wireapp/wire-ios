@@ -63,6 +63,7 @@ final class CallDegradationController: UIViewController {
                         continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?
                             .cancelDegradedCall()
                     }
+
             case let .degradedUser(user: degradeduser):
                 visibleAlertController = UIAlertController.makeOutgoingDegradedProteusCall(
                     degradedUser: degradeduser?.value
@@ -74,6 +75,7 @@ final class CallDegradationController: UIViewController {
                     }
                 }
             }
+
         case .none, .incoming, .terminating:
             return
         }

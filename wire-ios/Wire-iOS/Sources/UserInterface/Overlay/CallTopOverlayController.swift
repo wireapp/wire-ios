@@ -37,12 +37,16 @@ extension CallState {
         case .incoming:
             let toAppend = (isGroup ? conversation + "・" : "")
             return toAppend + L10n.Localizable.Call.Status.Incoming.user(callee)
+
         case .outgoing:
             return L10n.Localizable.Call.Status.Outgoing.user(conversation)
+
         case .answered, .establishedDataChannel:
             return L10n.Localizable.Call.Status.connecting
+
         case .terminating:
             return L10n.Localizable.Call.Status.terminating
+
         default:
             return ""
         }
@@ -206,6 +210,7 @@ final class CallTopOverlayController: UIViewController {
         case .established, .establishedDataChannel:
             let duration = callDurationFormatter.string(from: callDuration) ?? ""
             return L10n.Localizable.Voice.TopOverlay.tapToReturn + "・" + duration
+
         default:
             let initiator = conversation.voiceChannel?.initiator?.name ?? ""
             let conversation = conversation.displayNameWithFallback

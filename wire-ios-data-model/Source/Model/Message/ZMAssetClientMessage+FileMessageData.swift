@@ -364,6 +364,7 @@ extension ZMAssetClientMessage {
             expire()
             updateTransferState(.uploadingCancelled, synchronize: false)
             progress = 0
+
         case .uploaded:
             progress = 0
             obtainPermanentObjectID()
@@ -374,6 +375,7 @@ extension ZMAssetClientMessage {
                 object: objectID,
                 userInfo: [:]
             ).post()
+
         default:
             break
         }

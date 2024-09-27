@@ -177,8 +177,10 @@ extension ZMConversation {
                     callerName
                 )
             }
+
         case .oneOnOne:
             result = connectedUser?.name
+
         default:
             break
         }

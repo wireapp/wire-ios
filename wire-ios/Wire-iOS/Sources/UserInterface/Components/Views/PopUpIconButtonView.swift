@@ -59,6 +59,7 @@ class PopUpIconButtonView: UIView {
         case .left:
             rect.origin.x -= largeRadius + CGFloat(button.itemIcons.count - 1) * itemWidth
             rect.origin.y -= largeRadius + lowerRect.height * 1.5
+
         case .right:
             rect.origin.x -= largeRadius
             rect.origin.y -= largeRadius + lowerRect.height * 1.5

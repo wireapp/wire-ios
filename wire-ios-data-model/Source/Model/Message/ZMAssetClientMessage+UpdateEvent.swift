@@ -41,6 +41,7 @@ extension ZMAssetClientMessage {
         switch status {
         case let .uploaded(data) where data.hasAssetID:
             updateTransferState(.uploaded, synchronize: false)
+
         case .notUploaded where transferState != .uploaded:
             switch assetData.notUploaded {
             case .cancelled:
@@ -48,6 +49,7 @@ extension ZMAssetClientMessage {
             case .failed:
                 updateTransferState(.uploadingFailed, synchronize: false)
             }
+
         default: break
         }
     }

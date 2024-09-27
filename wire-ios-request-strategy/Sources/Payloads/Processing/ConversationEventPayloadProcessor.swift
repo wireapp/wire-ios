@@ -879,6 +879,7 @@ struct ConversationEventPayloadProcessor {
             case .mixed:
                 conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
                 conversation.messageProtocol = newMessageProtocol
+
             case .mls:
                 let date = conversation.lastModifiedDate ?? .now
                 conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
@@ -892,6 +893,7 @@ struct ConversationEventPayloadProcessor {
                     .warn(
                         "update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!"
                     )
+
             case .mixed:
                 break // no update, ignore
             case .mls:
@@ -906,6 +908,7 @@ struct ConversationEventPayloadProcessor {
                     .warn(
                         "update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"
                     )
+
             case .mls:
                 break // no update, ignore
             }

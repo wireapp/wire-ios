@@ -33,13 +33,17 @@ final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
         switch currentStep {
         case .enrollE2EIdentity:
             return [.showLoadingView, .startE2EIEnrollment]
+
         case .noHistory:
             return [.showLoadingView, .configureNotifications, .completeBackupStep]
+
         case let .clientManagement(clients):
             let nextStep = AuthenticationFlowStep.deleteClient(clients: clients)
             return [AuthenticationCoordinatorAction.transition(nextStep, mode: .normal)]
+
         case .pendingEmailLinkVerification:
             return [.repeatAction]
+
         default:
             return nil
         }

@@ -41,6 +41,7 @@ extension UIView {
                 trailingAnchor.constraint(equalTo: parentView.trailingAnchor),
                 heightAnchor.constraint(equalToConstant: borderWidth),
             ])
+
         case .bottom:
             NSLayoutConstraint.activate([
                 bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
@@ -48,6 +49,7 @@ extension UIView {
                 trailingAnchor.constraint(equalTo: parentView.trailingAnchor),
                 heightAnchor.constraint(equalToConstant: borderWidth),
             ])
+
         case .leading:
             NSLayoutConstraint.activate([
                 leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
@@ -55,6 +57,7 @@ extension UIView {
                 bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
                 widthAnchor.constraint(equalToConstant: borderWidth),
             ])
+
         case .trailing:
             NSLayoutConstraint.activate([
                 trailingAnchor.constraint(equalTo: parentView.trailingAnchor),

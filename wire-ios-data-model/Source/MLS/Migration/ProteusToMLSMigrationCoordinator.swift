@@ -119,6 +119,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             logger.info("starting proteus-to-mls migration")
             try await mlsService.startProteusToMLSMigration()
             storage.migrationStatus = .started
+
         case let .cannotStart(reason: reason):
             logger.info("proteus-to-mls migration can't start (reason: \(reason))")
         }

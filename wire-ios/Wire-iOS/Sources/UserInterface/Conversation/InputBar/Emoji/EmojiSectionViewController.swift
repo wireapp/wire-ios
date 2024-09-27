@@ -102,17 +102,21 @@ final class EmojiSectionViewController: UIViewController {
     private func didPan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .possible: break
+
         case .began:
             ignoreSelectionUpdates = true
             fallthrough
+
         case .changed:
             let location = recognizer.location(in: view)
             guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first else { return }
             guard let type = typesByButton[button] else { return }
             sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
             selectedType = type
+
         case .ended, .failed, .cancelled:
             ignoreSelectionUpdates = false
+
         @unknown default:
             break
         }
@@ -146,6 +150,7 @@ final class EmojiSectionViewController: UIViewController {
             case 0:
                 constraints.append(button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: inset))
                 constraints.append(view.heightAnchor.constraint(equalToConstant: iconSize + inset))
+
             default:
                 let previous = sectionButtons[idx - 1]
                 constraints.append(button.centerXAnchor.constraint(equalTo: previous.centerXAnchor, constant: padding))

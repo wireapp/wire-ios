@@ -79,14 +79,17 @@ struct DeviceDetailsButtonsView: View {
                 }
                 Divider()
                 showCertificateButton.padding()
+
             case .notActivated:
                 if !viewModel.isFromConversation, viewModel.isSelfClient {
                     Divider()
                     getCertificateButton.padding()
                 }
+
             case .revoked, .invalid:
                 Divider()
                 showCertificateButton.padding()
+
             case .expired:
                 if !viewModel.isFromConversation, viewModel.isSelfClient {
                     Divider()

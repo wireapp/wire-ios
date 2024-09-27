@@ -113,6 +113,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         case .success:
             completion?(.success(()))
             decisionHandler(.cancel)
+
         case let .failure(error):
             completion?(.failure(error))
             decisionHandler(.cancel)

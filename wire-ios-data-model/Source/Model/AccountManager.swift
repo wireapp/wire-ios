@@ -147,10 +147,13 @@ public final class AccountManager: NSObject {
         store.load().sorted { lhs, rhs in
             switch (lhs.teamName, rhs.teamName) {
             case (.some, .none): return false
+
             case (.none, .some): return true
+
             case let (.some(leftName), .some(rightName)):
                 guard leftName != rightName else { fallthrough }
                 return leftName < rightName
+
             default: return lhs.userName < rhs.userName
             }
         }

@@ -138,6 +138,7 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
         case let .valid(name):
             validName = name
             textField.endEditing(true)
+
         case .error:
             // TODO: show error
             textField.endEditing(true)

@@ -97,8 +97,10 @@ extension ChaCha20Poly1305 {
                         guard Array(partition) == [UInt8](Header.platform) else {
                             throw EncryptionError.malformedHeader
                         }
+
                     case .emptySpace:
                         break
+
                     case .version:
                         guard UInt16(
                             bigEndian: Data(Array(partition))
@@ -107,8 +109,10 @@ extension ChaCha20Poly1305 {
                             .version else {
                             throw EncryptionError.malformedHeader
                         }
+
                     case .salt:
                         salt = Array(partition)
+
                     case .uuidHash:
                         hash = Array(partition)
                     }

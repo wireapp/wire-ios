@@ -152,17 +152,21 @@ extension SLComposeServiceViewController {
         switch type {
         case .video:
             .movie
+
         case .image:
             .photo
+
         case .walletPass,
              .fileUrl:
             .document
+
         case .rawFile:
             if item.hasItemConformingToTypeIdentifier(UTType.audio.identifier) {
                 .microphone
             } else {
                 .document
             }
+
         case .url:
             .paperclip
         }

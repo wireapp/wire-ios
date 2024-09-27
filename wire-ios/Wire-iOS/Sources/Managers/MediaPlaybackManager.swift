@@ -135,8 +135,10 @@ extension MediaPlaybackManager: MediaPlayerDelegate {
             }
             delegate?.didStartPlaying(self)
             activeMediaPlayer = mediaPlayer
+
         case .paused:
             delegate?.didPausePlaying(self)
+
         case .completed:
             if activeMediaPlayer === mediaPlayer {
                 activeMediaPlayer = nil

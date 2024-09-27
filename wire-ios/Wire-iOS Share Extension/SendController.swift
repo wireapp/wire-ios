@@ -136,6 +136,7 @@ final class SendController {
                     self?.sentAllSendables = true
                     progress(.done)
                 }
+
             case let .failure(error):
                 progress(.error(error))
             }

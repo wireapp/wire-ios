@@ -60,16 +60,22 @@ class FetchSubgroupActionHandler: ActionHandler<FetchSubgroupAction> {
                 return
             }
             action.succeed(with: mlsSubgroup)
+
         case (400, _):
             action.fail(with: .invalidParameters)
+
         case (403, "access-denied"):
             action.fail(with: .accessDenied)
+
         case (403, "mls-subconv-unsupported-convtype"):
             action.fail(with: .unsupportedConversationType)
+
         case (404, "no-conversation"):
             action.fail(with: .noConversation)
+
         case (404, _):
             action.fail(with: .conversationIdOrDomainNotFound)
+
         default:
             let errorInfo = response.errorInfo
             action.fail(with: .unknown(

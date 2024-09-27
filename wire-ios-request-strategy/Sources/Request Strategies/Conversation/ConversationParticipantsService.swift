@@ -212,6 +212,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                     excludingDomains: domains
                 )
             }
+
         case let .nonFederatingDomains(domains):
             try await retryAddingParticipants(
                 users,

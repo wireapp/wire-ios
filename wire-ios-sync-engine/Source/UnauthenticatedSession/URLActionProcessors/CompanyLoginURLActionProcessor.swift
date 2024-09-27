@@ -35,6 +35,7 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
         switch urlAction {
         case let .companyLoginSuccess(userInfo):
             authenticationStatus.loginSucceeded(with: userInfo)
+
         case let .startCompanyLogin(code):
             guard delegate?.isAllowedToCreateNewAccount == true else {
                 presentationDelegate?.failedToPerformAction(
@@ -44,6 +45,7 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
                 return
             }
             authenticationStatus.notifyCompanyLoginCodeDidBecomeAvailable(code)
+
         default:
             break
         }

@@ -64,6 +64,7 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
             conversation.addParticipantAndUpdateConversationState(user: participant, role: role)
             conversation.managedObjectContext?.saveOrRollback()
             action.notifyResult(.success(()))
+
         default:
             action.notifyResult(.failure(UpdateRoleError.unknown))
         }

@@ -714,8 +714,10 @@ extension AuthenticationCoordinator {
         case let .enterEmailVerificationCode(email, password, _):
             let credentials = UserEmailCredentials(email: email, password: password, emailVerificationCode: code)
             requestEmailLogin(with: credentials)
+
         case let .enterActivationCode(unverifiedEmail, user):
             activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code)
+
         default:
             log.error("Cannot continue flow with user code in the current state (\(stateController.currentStep)")
         }
@@ -890,6 +892,7 @@ extension AuthenticationCoordinator {
                             message: AlreadyTakenError.message,
                             actions: [.ok]
                         )
+
                     case .unknown:
                         AuthenticationCoordinatorAlert(
                             title: UnknownError.title,

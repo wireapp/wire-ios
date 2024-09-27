@@ -346,6 +346,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             navigationController.modalPresentationStyle = .currentContext
 
             present(navigationController, animated: true)
+
         case .more:
             actionController = ConversationActionController(
                 conversation: conversation,

@@ -41,6 +41,7 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
                 payload: user.payload,
                 apiVersion: apiVersion.rawValue
             )
+
         case let .createTeam(team):
             return ZMTransportRequest(
                 path: "/register",
@@ -48,6 +49,7 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
                 payload: team.payload,
                 apiVersion: apiVersion.rawValue
             )
+
         default:
             let phaseString = registrationStatus.phase.map { "\($0)" } ?? "<nil>"
             fatal("Generating request for invalid phase: \(phaseString)")
@@ -78,6 +80,7 @@ extension RegistrationStrategy: RequestStrategy {
         case .createTeam, .createUser:
             registrationSync.readyForNextRequestIfNotBusy()
             return registrationSync.nextRequest(for: apiVersion)
+
         default:
             return nil
         }

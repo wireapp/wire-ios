@@ -73,20 +73,24 @@ final class EmptySearchResultsView: UIView {
         switch state {
         case .everyoneAdded:
             return Message.usersAllAdded
+
         case .noUsers:
             if isFederationEnabled {
                 return Message.usersAndFederation
             } else {
                 return Message.users
             }
+
         case .noServices:
             return Message.services
+
         case .noServicesEnabled:
             if isSelfUserAdmin {
                 return Message.servicesNotEnabledAdmin
             } else {
                 return Message.servicesNotEnabled
             }
+
         case .initialSearch:
             return ""
         }

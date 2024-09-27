@@ -59,6 +59,7 @@ final class QuickActionsManager: NSObject {
             sessionManager?.markAllConversationsAsRead {
                 completionHandler?(true)
             }
+
         default:
             break
         }

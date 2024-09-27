@@ -228,9 +228,11 @@ final class ProfileDetailsContentController: NSObject,
         case .groupAdminStatus:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
+
         case .richProfile:
             header.titleLabel.text = L10n.Localizable.Profile.ExtendedMetadata.header.uppercased()
             header.accessibilityIdentifier = "InformationHeader"
+
         case let .readReceiptsStatus(enabled):
             header.accessibilityIdentifier = "ReadReceiptsStatusHeader"
             if enabled {
@@ -238,9 +240,11 @@ final class ProfileDetailsContentController: NSObject,
             } else {
                 header.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsDisabledMemo.header.uppercased()
             }
+
         case .blockingReason:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
+
         case .messageProtocol:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
@@ -305,18 +309,22 @@ final class ProfileDetailsContentController: NSObject,
         switch contents[section] {
         case .richProfile:
             return nil
+
         case .readReceiptsStatus:
             let footer = SectionTableFooter()
             footer.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsMemo.body
             footer.accessibilityIdentifier = "ReadReceiptsStatusFooter"
             return footer
+
         case .groupAdminStatus:
             let footer = SectionTableFooter()
             footer.titleLabel.text = L10n.Localizable.Profile.GroupAdminStatusMemo.body
             footer.accessibilityIdentifier = "GroupAdminStatusFooter"
             return footer
+
         case .blockingReason:
             return nil
+
         case .messageProtocol:
             return nil
         }

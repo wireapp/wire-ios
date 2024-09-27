@@ -53,6 +53,7 @@ final class CallParticipantDetailsView: RoundedBlurView {
             case .unconnectedButMayConnect, .connecting:
                 connectingLabel.isHidden = false
                 nameLabel.textColor = SemanticColors.Label.textInactive
+
             default:
                 nameLabel.textColor = SemanticColors.Label.textWhite
                 connectingLabel.isHidden = true
@@ -142,8 +143,10 @@ final class CallParticipantDetailsView: RoundedBlurView {
         case .unmutedPulsing:
             labelsContainerView.backgroundColor = UIColor.accent()
             nameLabel.textColor = SemanticColors.Label.textDefaultWhite
+
         case .muted:
             makeMicrophone(hidden: false)
+
         case .unmuted, .hidden:
             break
         }

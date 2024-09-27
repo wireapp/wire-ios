@@ -34,8 +34,10 @@ extension LocalNotificationType {
             default:
                 .newMessage
             }
+
         case .event:
             .newMessage
+
         case let .message(contentType):
             switch contentType {
             case .knock:
@@ -43,6 +45,7 @@ extension LocalNotificationType {
             default:
                 .newMessage
             }
+
         case .failedMessage, .availabilityBehaviourChangeAlert:
             .newMessage
         }

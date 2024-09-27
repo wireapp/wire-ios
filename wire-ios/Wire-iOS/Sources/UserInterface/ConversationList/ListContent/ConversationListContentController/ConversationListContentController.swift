@@ -172,6 +172,7 @@ final class ConversationListContentController: UICollectionViewController {
             } else {
                 fatal("Unknown supplementary view for \(kind)")
             }
+
         default:
             fatal("No supplementary view for \(kind)")
         }

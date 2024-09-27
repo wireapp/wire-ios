@@ -79,9 +79,11 @@ extension ContactsViewController {
         switch contact.contactDetails.count {
         case 1:
             try inviteWithSingleAddress(for: contact)
+
         case 2...:
             let actionSheet = try addressActionSheet(for: contact, in: view)
             present(actionSheet, animated: true)
+
         default:
             throw InvitationError.noContactInformation
         }

@@ -82,14 +82,19 @@ extension UIAlertController {
                 case .ssoAndEmail:
                     return LoginSSOErrorAlertLocale.InvalidFormat.Message.ssoAndEmail
                 }
+
             case .domainNotRegistered:
                 return LoginSSOErrorAlertLocale.DomainNotRegistered.message
+
             case .domainAssociatedWithWrongServer:
                 return LoginSSOErrorAlertLocale.DomainAssociatedWithWrongServer.message
+
             case .invalidCode:
                 return LoginSSOErrorAlertLocale.InvalidCode.message
+
             case let .invalidStatus(status):
                 return LoginSSOErrorAlertLocale.InvalidStatus.message(String(status))
+
             case .unknown:
                 return LoginSSOErrorAlertLocale.Unknown.message
             }

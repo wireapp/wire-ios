@@ -83,6 +83,7 @@ extension PasscodeSetupPresenter: PasscodeSetupInteractorOutput {
         case .valid:
             userInterface?.createButtonEnabled = true
             resetValidationLabels(errors: Set(PasscodeError.allCases), passed: true)
+
         case let .invalid(violations):
             userInterface?.createButtonEnabled = false
 

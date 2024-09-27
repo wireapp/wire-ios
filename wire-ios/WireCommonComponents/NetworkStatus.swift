@@ -119,8 +119,10 @@ public final class NetworkStatus: NetworkStatusObservable {
             case (true, false):
                 zmLog.info("Reachability status: reachable and connected.")
                 returnValue = .ok
+
             case (true, true):
                 zmLog.info("Reachability status: reachable but connection required.")
+
             case (false, _):
                 zmLog.info("Reachability status: not reachable.")
             }

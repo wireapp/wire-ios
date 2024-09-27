@@ -52,21 +52,35 @@ public enum CompanyLoginError: Error, Equatable {
     init(label: String) {
         switch label {
         case "0": self = .unknownLabel
+
         case "-2063": self = .missingRequiredParameter
+
         case "-67700": self = .invalidCookie
+
         case "-25346": self = .tokenNotFound
 
         // MARK: - SAML
+
         case "server-error-unsupported-saml": self = .serverErrorUnsupportedSAML
+
         case "bad-success-redirect": self = .badSuccessRedirect
+
         case "bad-failure-redirect": self = .badFailureRedirect
+
         case "bad-username": self = .badUsername
+
         case "bad-upstream": self = .badUpstream
+
         case "server-error": self = .serverError
+
         case "not-found": self = .notFound
+
         case "forbidden": self = .forbidden
+
         case "no-matching-auth-req": self = .noMatchingAuthReq
+
         case "insufficient-permissions": self = .insufficientPermissions
+
         default:
             self = .unknownLabel
         }

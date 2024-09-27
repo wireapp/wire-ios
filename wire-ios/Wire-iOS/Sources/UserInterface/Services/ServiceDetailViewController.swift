@@ -93,9 +93,11 @@ final class ServiceDetailViewController: UIViewController {
         case let .addService(conversation):
             self.actionButton = .createAddServiceButton()
             actionButton.isHidden = !selfUser.canAddService(to: conversation)
+
         case let .removeService(conversation):
             self.actionButton = .createDestructiveServiceButton()
             actionButton.isHidden = !selfUser.canRemoveService(from: conversation)
+
         case .openConversation:
             self.actionButton = .openServiceConversationButton()
             actionButton.isHidden = !selfUser.canCreateService
@@ -211,6 +213,7 @@ final class ServiceDetailViewController: UIViewController {
                             context: .startUI
                         ))
                         completion?(.success(conversation: conversation))
+
                     case let .failure(error):
                         completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
                     }

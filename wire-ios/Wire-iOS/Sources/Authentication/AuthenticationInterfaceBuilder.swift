@@ -190,9 +190,11 @@ final class AuthenticationInterfaceBuilder {
         case .setName:
             let nameStep = SetFullNameStepDescription()
             return makeViewController(for: nameStep)
+
         case .setPassword:
             let passwordStep = SetPasswordStepDescription()
             return makeViewController(for: passwordStep)
+
         default:
             return nil
         }

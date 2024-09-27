@@ -144,6 +144,7 @@ final class BackupPasswordViewController: UIViewController {
         case .valid:
             password = text
             navigationItem.rightBarButtonItem?.isEnabled = true
+
         case .invalid:
             password = nil
             navigationItem.rightBarButtonItem?.isEnabled = false
