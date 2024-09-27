@@ -48,7 +48,6 @@ jobs:
           HEAD_BRANCH="chore/update-localization"
           TITLE="chore: Update localization - no ticket"
           BODY="This PR pulls in the latest localization translations from Crowdin."
-          REVIEWER="wireapp/iOS"
 
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
