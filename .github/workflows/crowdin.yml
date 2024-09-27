@@ -40,7 +40,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Trim unused localizations from string catalogs
+      - name: Trim unused localizations from string catalogs and create PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -48,7 +48,6 @@ jobs:
           HEAD_BRANCH="chore/update-localization"
           TITLE="chore: Update localization - no ticket"
           BODY="This PR pulls in the latest localization translations from Crowdin."
-          REVIEWER="wireapp/ios"
 
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
@@ -75,7 +74,7 @@ jobs:
           # abort if the pr already exists
           apt update && apt install -y gh
           PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
-          if [ -z "$PR_EXISTS" ]; then
+          if [ -n "$PR_EXISTS" ]; then
           echo "A PR already exists, aborting."
           exit 0
           fi
@@ -85,4 +84,3 @@ jobs:
           --head "$HEAD_BRANCH" \
           --title "$TITLE" \
           --body "$BODY" \
-          --reviewer "$REVIEWER"
