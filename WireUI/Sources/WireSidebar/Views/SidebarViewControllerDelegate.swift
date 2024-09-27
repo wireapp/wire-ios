@@ -18,8 +18,6 @@
 
 public protocol SidebarViewControllerDelegate: AnyObject {
     func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController)
-    func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?)
-    func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController)
-    func sidebarViewControllerDidSelectSettings(_ viewController: SidebarViewController)
+    func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarMenuItem)
     func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController)
 }

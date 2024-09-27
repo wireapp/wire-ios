@@ -28,8 +28,8 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
     var userSession: UserSessionMock!
     var mockMessage: MockMessage!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
 
         coreDataFixture = CoreDataFixture()
 

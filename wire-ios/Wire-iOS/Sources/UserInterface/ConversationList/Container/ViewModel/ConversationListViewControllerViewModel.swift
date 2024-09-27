@@ -18,12 +18,13 @@
 
 import UIKit
 import UserNotifications
+import WireAccountImage
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
+import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
-import WireAccountImage
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
@@ -42,7 +43,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
     @MainActor
     func showPermissionDeniedViewController()
 
@@ -100,7 +100,7 @@ extension ConversationListViewController {
         var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
-        let mainCoordinator: MainCoordinating
+        let mainCoordinator: MainCoordinatorProtocol
 
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
@@ -114,7 +114,7 @@ extension ConversationListViewController {
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default,
-            mainCoordinator: some MainCoordinating,
+            mainCoordinator: some MainCoordinatorProtocol,
             getUserAccountImageUseCase: any GetUserAccountImageUseCaseProtocol
         ) {
             self.account = account
@@ -150,15 +150,6 @@ extension ConversationListViewController.ViewModel {
     func setupObservers() {
 
         if let userSession = ZMUserSession.shared() {
-            initialSyncObserverToken = NotificationInContext.addObserver(
-                name: .initialSync,
-                context: userSession.notificationContext
-            ) { [weak self] _ in
-                userSession.managedObjectContext.performGroupedBlock {
-                    self?.requestMarketingConsentIfNeeded()
-                }
-            }
-
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
 
             if let team = userSession.selfUser.membership?.team {
@@ -227,35 +218,6 @@ extension ConversationListViewController.ViewModel {
             focusOnView: focus,
             animated: animated
         )
-    }
-
-    func requestMarketingConsentIfNeeded() {
-        if let userSession = ZMUserSession.shared(), let selfUser = ZMUser.selfUser() {
-            guard
-                userSession.hasCompletedInitialSync == true,
-                userSession.isPendingHotFixChanges == false
-            else {
-                return
-            }
-
-            selfUser.fetchMarketingConsent(in: userSession) { [weak self] result in
-                switch result {
-                case .failure(let error):
-                    switch error {
-                    case ConsentRequestError.notAvailable:
-                        // don't show the alert there is no consent to show
-                        break
-                    default:
-                        self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
-                            selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
-                        })
-                    }
-                case .success:
-                    // The user already gave a marketing consent, no need to ask for it again.
-                    return
-                }
-            }
-        }
     }
 
     /// show PushPermissionDeniedDialog when necessary

@@ -200,6 +200,49 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		59AB81822C7CAB1500A18B37 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59AB81862C7CAB8200A18B37 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59D588832C7CD83D00CAFA0F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59D588872C7CD98800CAFA0F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		01461A3F2A60422B00C3C85E /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Developer-Flags.xcconfig"; path = "../../../wire-ios/Configuration/Developer-Flags.xcconfig"; sourceTree = "<group>"; };
 		067BB07025068D6500946EC8 /* String+HexDecodedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HexDecodedData.swift"; sourceTree = "<group>"; };
@@ -875,6 +918,8 @@
 				3E88BD331B1F3EA300232589 /* Sources */,
 				3E88BD341B1F3EA300232589 /* Frameworks */,
 				3E88BD361B1F3EA300232589 /* Resources */,
+				59D588832C7CD83D00CAFA0F /* Embed Frameworks */,
+				59AB81822C7CAB1500A18B37 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -895,6 +940,8 @@
 				3E88BD3F1B1F3EA300232589 /* Sources */,
 				3E88BD401B1F3EA300232589 /* Frameworks */,
 				3E88BD411B1F3EA300232589 /* Resources */,
+				59D588872C7CD98800CAFA0F /* Embed Frameworks */,
+				59AB81862C7CAB8200A18B37 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

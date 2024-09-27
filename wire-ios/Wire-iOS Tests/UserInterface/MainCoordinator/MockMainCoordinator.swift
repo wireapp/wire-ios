@@ -17,40 +17,35 @@
 //
 
 import WireDataModel
+import WireMainNavigation
 
 @testable import Wire
 
-final class MockMainCoordinator: MainCoordinating {
+final class MockMainCoordinator: MainCoordinatorProtocol {
 
-    func openConversation(
-        _ conversation: ZMConversation,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
+    func showConversationList<ConversationFilter: MainConversationFilterRepresentable>(conversationFilter: ConversationFilter?) async {
         fatalError("Mock method not implemented")
     }
 
-    func openConversation<Message>(
-        _ conversation: ZMConversation,
-        scrollTo message: Message,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) where Message: ZMConversationMessage {
+    func showArchivedConversations() async {
         fatalError("Mock method not implemented")
     }
 
-    func showConversationList() {
+    func showSelfProfile() async {
         fatalError("Mock method not implemented")
     }
 
-    func showSelfProfile() {
+    func showSettings() async {
+        fatalError("Mock method not implemented")
+    }
+
+    func showNewConversation() async {
         fatalError("Mock method not implemented")
     }
 }
 
-// MARK: - MainCoordinating + mock
+// MARK: - MainCoordinatorProtocol + mock
 
-extension MainCoordinating where Self == MockMainCoordinator {
-
+extension MainCoordinatorProtocol where Self == MockMainCoordinator {
     static var mock: Self { .init() }
 }

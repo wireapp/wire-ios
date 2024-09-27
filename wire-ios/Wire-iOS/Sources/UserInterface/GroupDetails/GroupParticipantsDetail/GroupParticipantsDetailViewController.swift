@@ -19,11 +19,12 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: MainCoordinatorProtocol
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let searchViewController = SearchHeaderViewController(userSelection: .init())
     let viewModel: GroupParticipantsDetailViewModel
@@ -45,7 +46,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
         selectedParticipants: [UserType],
         conversation: GroupParticipantsDetailConversation,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating
+        mainCoordinator: MainCoordinatorProtocol
     ) {
         self.mainCoordinator = mainCoordinator
 
@@ -235,7 +236,9 @@ extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
-            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+            fatalError("TODO")
+            // TODO: fix
+            // self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

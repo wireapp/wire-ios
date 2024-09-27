@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: remove file
+
 import UIKit
 
 /// Implements the delegate method `splitViewControllerSupportedInterfaceOrientations(_: UISplitViewController)`

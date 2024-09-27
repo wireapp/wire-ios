@@ -92,7 +92,7 @@ class CallQualityController: NSObject {
 
     private func handleCallCompletion(in conversation: ZMConversation, reason: CallClosedReason, eventDate: Date) {
         // Check for the call start date (do not show feedback for unanswered calls)
-        guard let callStartDate = answeredCalls[conversation.remoteIdentifier!] else {
+        guard let callStartDate = answeredCalls[conversation.remoteIdentifier!], let rootViewController = mainWindow.rootViewController else {
             return
         }
 

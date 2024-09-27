@@ -19,6 +19,7 @@
 import AVKit
 import Foundation
 import PassKit
+import WireMainNavigation
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "MessagePresenter")
@@ -176,7 +177,7 @@ final class MessagePresenter: NSObject {
         targetView: UIView,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         fileAvailabilityObserver = nil
         modalTargetController?.view.window?.endEditing(true)
@@ -204,7 +205,7 @@ final class MessagePresenter: NSObject {
         _ message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         let imageViewController = viewController(
             forImageMessage: message,
@@ -223,7 +224,7 @@ final class MessagePresenter: NSObject {
         forImageMessage message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),
               message.imageMessageData != nil else {
@@ -243,7 +244,7 @@ final class MessagePresenter: NSObject {
         forImageMessagePreview message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),
               message.imageMessageData != nil else {

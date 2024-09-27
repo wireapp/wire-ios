@@ -19,11 +19,12 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigation
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
 
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: MainCoordinatorProtocol
     private let visibleMessage: ZMConversationMessage?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
@@ -112,7 +113,7 @@ final class ConversationViewController: UIViewController {
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: MainCoordinatorProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable
@@ -301,8 +302,10 @@ final class ConversationViewController: UIViewController {
     }
 
     func openConversationList() {
-        guard let leftControllerRevealed = wr_splitViewController?.isLeftViewControllerRevealed else { return }
-        wr_splitViewController?.setLeftViewControllerRevealed(!leftControllerRevealed, animated: true, completion: nil)
+        // TODO: fix
+        fatalError("TODO")
+        // guard let leftControllerRevealed = wr_splitViewController?.isLeftViewControllerRevealed else { return }
+        // wr_splitViewController?.setLeftViewControllerRevealed(!leftControllerRevealed, animated: true, completion: nil)
     }
 
     // MARK: - Application Events & Notifications
@@ -436,7 +439,9 @@ final class ConversationViewController: UIViewController {
             return
         }
 
-        mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
+        fatalError("TODO")
+        // TODO: fix
+        // mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
     }
 
     // MARK: - ParticipantsPopover

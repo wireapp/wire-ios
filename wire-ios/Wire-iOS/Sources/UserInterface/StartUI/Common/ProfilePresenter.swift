@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireMainNavigation
 import WireSyncEngine
 
 final class ProfilePresenter: NSObject, ViewControllerDismisser {
@@ -25,13 +26,13 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     var profileOpenedFromPeoplePicker = false
     var keyboardPersistedAfterOpeningProfile = false
 
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: MainCoordinatorProtocol
     private var presentedFrame: CGRect = .zero
     private weak var viewToPresentOn: UIView?
     private weak var controllerToPresentOn: UIViewController?
     private var onDismiss: (() -> Void)?
 
-    init(mainCoordinator: MainCoordinating) {
+    init(mainCoordinator: MainCoordinatorProtocol) {
         self.mainCoordinator = mainCoordinator
         super.init()
 

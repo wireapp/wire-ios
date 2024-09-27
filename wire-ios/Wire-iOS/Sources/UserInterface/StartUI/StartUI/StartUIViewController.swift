@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -80,15 +81,17 @@ final class StartUIViewController: UIViewController {
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating
+        mainCoordinator: MainCoordinatorProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
-        self.searchResultsViewController = SearchResultsViewController(userSelection: UserSelection(),
-                                                                       userSession: userSession,
-                                                                       isAddingParticipants: false,
-                                                                       shouldIncludeGuests: true,
-                                                                       isFederationEnabled: isFederationEnabled)
+        self.searchResultsViewController = SearchResultsViewController(
+            userSelection: UserSelection(),
+            userSession: userSession,
+            isAddingParticipants: false,
+            shouldIncludeGuests: true,
+            isFederationEnabled: isFederationEnabled
+        )
         self.userSession = userSession
         profilePresenter = .init(mainCoordinator: mainCoordinator)
         super.init(nibName: nil, bundle: nil)
@@ -107,6 +110,7 @@ final class StartUIViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = SemanticColors.View.backgroundDefault
         activityIndicator = .init(view: view)
     }
 
@@ -118,8 +122,6 @@ final class StartUIViewController: UIViewController {
         }
 
         setupNavigationBarButtonItems()
-        navigationController?.navigationBar.barTintColor = backgroundColor
-        navigationController?.navigationBar.isTranslucent = false
     }
 
     override func accessibilityPerformEscape() -> Bool {
@@ -131,13 +133,15 @@ final class StartUIViewController: UIViewController {
 
     func setupViews() {
         configGroupSelector()
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: userSession.selfUser.canManageTeam,
-                                                 isFederationEnabled: isFederationEnabled)
+        emptyResultView = EmptySearchResultsView(
+            isSelfUserAdmin: userSession.selfUser.canManageTeam,
+            isFederationEnabled: isFederationEnabled
+        )
 
         emptyResultView.delegate = self
 
         searchResultsViewController.mode = .list
-        searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
         setupSearchController()
@@ -153,7 +157,7 @@ final class StartUIViewController: UIViewController {
 
         quickActionsBar.inviteButton.addTarget(self, action: #selector(inviteMoreButtonTapped(_:)), for: .touchUpInside)
 
-        view.backgroundColor = UIColor.clear
+        // view.backgroundColor = UIColor.clear
 
         createConstraints()
         updateActionBar()

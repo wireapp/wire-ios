@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireMainNavigation
 import WireSyncEngine
 
 typealias DismissAction = (_ completion: Completion?) -> Void
@@ -77,7 +78,7 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: MainCoordinatorProtocol
 
     var dismissAction: DismissAction? = .none {
         didSet {
@@ -92,7 +93,7 @@ final class ConversationImagesViewController: UIViewController {
         initialMessage: ZMConversationMessage,
         inverse: Bool = false,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         assert(initialMessage.isImage)
 
@@ -170,7 +171,7 @@ final class ConversationImagesViewController: UIViewController {
         NSLayoutConstraint.activate([
             buttonsBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             buttonsBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            buttonsBar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            buttonsBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             overlay.topAnchor.constraint(equalTo: buttonsBar.topAnchor),
             overlay.bottomAnchor.constraint(equalTo: buttonsBar.bottomAnchor),
             overlay.trailingAnchor.constraint(equalTo: buttonsBar.trailingAnchor),

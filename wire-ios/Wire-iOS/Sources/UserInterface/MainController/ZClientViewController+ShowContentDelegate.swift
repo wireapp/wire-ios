@@ -26,9 +26,9 @@ extension ZClientViewController {
         let navWrapperController: UINavigationController = viewController.wrapInNavigationController()
         navWrapperController.modalPresentationStyle = .formSheet
 
-        dismissAllModalControllers(callback: { [weak self] in
+        dismissAllModalControllers { [weak self] in
             self?.present(navWrapperController, animated: true)
-        })
+        }
     }
 
     func showConnectionRequest(userId: UUID) {
@@ -36,7 +36,7 @@ extension ZClientViewController {
             userId: userId,
             profileViewControllerDelegate: self,
             userSession: userSession,
-            mainCoordinator: MainCoordinator(zClientViewController: self)
+            mainCoordinator: mainCoordinator
         )
 
         wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
@@ -53,7 +53,7 @@ extension ZClientViewController {
             viewer: selfUser,
             context: .profileViewer,
             userSession: userSession,
-            mainCoordinator: MainCoordinator(zClientViewController: self)
+            mainCoordinator: mainCoordinator
         )
         profileViewController.delegate = self
 

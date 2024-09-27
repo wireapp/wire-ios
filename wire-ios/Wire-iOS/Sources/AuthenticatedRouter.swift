@@ -36,9 +36,8 @@ final class AuthenticatedRouter {
 
     // MARK: - Private Property
 
-    private let builder: AuthenticatedWireFrame
+    private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
-    private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -47,10 +46,12 @@ final class AuthenticatedRouter {
 
     // MARK: - Public Property
 
-    var viewController: UIViewController {
-        let viewController = _viewController ?? builder.build(router: self)
-        _viewController = viewController
-        return viewController
+    private weak var _zClientViewController: ZClientViewController?
+
+    var zClientViewController: ZClientViewController {
+        let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
+        _zClientViewController = zClientViewController
+        return zClientViewController
     }
 
     // MARK: - Init
@@ -68,11 +69,7 @@ final class AuthenticatedRouter {
             userSession: userSession,
             topOverlayPresenter: .init(mainWindow: mainWindow)
         )
-
-        builder = AuthenticatedWireFrame(
-            account: account,
-            userSession: userSession
-        )
+        zClientControllerBuilder = .init(account: account, userSession: userSession)
 
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
@@ -114,15 +111,13 @@ final class AuthenticatedRouter {
                                                                  actionsHandler: featureChangeActionsHandler)
                 : UIAlertController.fromFeatureChange(change,
                                                       acknowledger: featureRepositoryProvider.featureRepository)
-        else {
-            return
-        }
+        else { return }
 
         if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
-        _viewController?.present(alert, animated: true)
+        _zClientViewController?.present(alert, animated: true)
     }
 
     private func notifyRevokedCertificate() {
@@ -132,7 +127,7 @@ final class AuthenticatedRouter {
             sessionManager.logoutCurrentSession()
         }
 
-        _viewController?.present(alert, animated: true)
+        _zClientViewController?.present(alert, animated: true)
     }
 }
 
@@ -152,35 +147,14 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
         switch destination {
         case .conversation(let converation, let message):
-            _viewController?.showConversation(converation, at: message)
+            _zClientViewController?.showConversation(converation, at: message)
         case .connectionRequest(let userId):
-            _viewController?.showConnectionRequest(userId: userId)
+            _zClientViewController?.showConnectionRequest(userId: userId)
         case .conversationList:
-            _viewController?.showConversationList()
+            _zClientViewController?.showConversationList()
         case .userProfile(let user):
-            _viewController?.showUserProfile(user: user)
+            _zClientViewController?.showUserProfile(user: user)
         }
-    }
-}
-
-// MARK: - AuthenticatedWireFrame
-struct AuthenticatedWireFrame {
-
-    private var account: Account
-    private var userSession: UserSession
-
-    init(
-        account: Account,
-        userSession: UserSession
-    ) {
-        self.account = account
-        self.userSession = userSession
-    }
-
-    func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, userSession: userSession)
-        viewController.router = router
-        return viewController
     }
 }
 

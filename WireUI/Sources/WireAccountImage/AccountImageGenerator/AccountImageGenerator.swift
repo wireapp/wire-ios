@@ -21,7 +21,7 @@ import UIKit
 @MainActor
 public struct AccountImageGenerator: AccountImageGeneratorProtocol {
 
-    private let renderer = InitialsRenderer(frame: .init(x: 0, y: 0, width: 40, height: 40))
+    private let renderer = InitialsRenderer(frame: .init(x: 0, y: 0, width: 26, height: 26))
 
     public init() {}
 
@@ -60,11 +60,12 @@ private final class InitialsRenderer: UIView {
     }
 
     private func setupLabel(_ initials: String) {
-        initialsLabel.font = .systemFont(ofSize: 27, weight: .light)
+        initialsLabel.font = .systemFont(ofSize: 13, weight: .light)
         initialsLabel.textAlignment = .center
         initialsLabel.text = initials
-        initialsLabel.frame = bounds
+        initialsLabel.frame = bounds.insetBy(dx: 2, dy: 2)
         initialsLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        initialsLabel.adjustsFontSizeToFitWidth = true
         addSubview(initialsLabel)
     }
 
@@ -80,4 +81,11 @@ private final class InitialsRenderer: UIView {
             layer.render(in: rendererContext.cgContext)
         }
     }
+}
+
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview {
+    AccountImageGeneratorPreview("WW")
 }

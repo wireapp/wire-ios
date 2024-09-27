@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMainNavigation
+
 /// Enum representing different filter icons based on the user's selection.
 enum FilterImageName: String {
 
@@ -46,7 +48,7 @@ enum FilterImageName: String {
     /// Returns the appropriate `FilterImageName` based on the type of conversation filter and its selection state.
     ///
     /// - Parameters:
-    ///   - filter: The type of conversation filter. The `ConversationFilterType` enum is assumed to have the following cases:
+    ///   - filter: The type of conversation filter. The `MainConversationFilter` enum is assumed to have the following cases:
     ///     - `.allConversations`: Represents all conversations.
     ///     - `.favorites`: Represents favorite conversations.
     ///     - `.groups`: Represents group conversations.
@@ -54,7 +56,7 @@ enum FilterImageName: String {
     ///   - isSelected: A boolean value indicating whether the filter is selected.
     /// - Returns: The corresponding `FilterImageName` based on the provided filter type and selection state.
     static func filterImageName(
-        for filter: ConversationFilterType?,
+        for filter: ConversationFilter?,
         isSelected: Bool
     ) -> FilterImageName {
         guard let filter else {
@@ -66,7 +68,7 @@ enum FilterImageName: String {
             return isSelected ? .starFill : .star
         case .groups:
             return isSelected ? .person3Fill : .person3
-        case .oneToOneConversations:
+        case .oneOnOne:
             return isSelected ? .personFill : .person
         }
     }

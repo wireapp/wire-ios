@@ -17,12 +17,13 @@
 //
 
 import UIKit
+import WireAccountImage
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
-import WireAccountImage
 
 extension ConversationListViewController {
 
@@ -64,8 +65,11 @@ extension ConversationListViewController {
         accountImageView.accountImage = viewModel.accountImage.image
         accountImageView.availability = viewModel.selfUserStatus.availability.map()
         accountImageView.accessibilityTraits = .button
-        accountImageView.accessibilityIdentifier = "bottomBarSettingsButton"
+        accountImageView.accessibilityIdentifier = "bottomBarSettingsButton" // TODO: fix, can't be correct
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
+        accountImageView.translatesAutoresizingMaskIntoConstraints = false
+        accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        accountImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
@@ -113,35 +117,35 @@ extension ConversationListViewController {
             stackView.addArrangedSubview(imageView)
         }
 
-        navigationItem.leftBarButtonItem = .init(customView: stackView)
+        navigationItem.leftBarButtonItems = [.init(customView: stackView)]
+    }
+
+    func setupLeftNavigationBarButtons_SplitView() {
+        navigationItem.leftBarButtonItems = []
     }
 
     func setupTitleView() {
-
-        let titleLabel = UILabel()
-        titleLabel.font = .font(for: .h2)
-        titleLabel.textColor = ColorTheme.Backgrounds.onSurfaceVariant
-        titleLabel.accessibilityTraits = .header
-        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
-        titleLabel.setContentHuggingPriority(.required, for: .vertical)
-        titleLabel.text = L10n.Localizable.List.title
-        titleLabel.accessibilityValue = L10n.Localizable.List.title
-
-        navigationItem.titleView = titleLabel
-        self.titleViewLabel = titleLabel
+        switch splitViewInterface {
+        case .expanded:
+            navigationItem.title = L10n.Localizable.ConversationList.Filter.AllConversations.title
+        case .collapsed:
+            navigationItem.title = L10n.Localizable.List.title
+        }
     }
 
     func setupRightNavigationBarButtons() {
+
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
 
         // New Conversation Button
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
-            self?.presentNewConversationViewController()
+            Task {
+                await self?.mainCoordinator.showNewConversation()
+            }
         }
+        // TODO: accessibility
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
 
         let defaultFilterImage = UIImage(resource: .ConversationList.Header.filterConversations)
@@ -150,7 +154,7 @@ extension ConversationListViewController {
         var selectedFilterImage: UIImage
 
         switch listContentController.listViewModel.selectedFilter {
-        case .favorites, .groups, .oneToOneConversations:
+        case .favorites, .groups, .oneOnOne:
             selectedFilterImage = filledFilterImage
         case .none:
             selectedFilterImage = defaultFilterImage
@@ -175,8 +179,8 @@ extension ConversationListViewController {
         )
         let oneToOneConversationsAction = createFilterAction(
             title: FilterMenuLocale.OneOnOneConversations.title,
-            filter: .oneToOneConversations,
-            isSelected: listContentController.listViewModel.selectedFilter == .oneToOneConversations
+            filter: .oneOnOne,
+            isSelected: listContentController.listViewModel.selectedFilter == .oneOnOne
         )
 
         // Create the menu
@@ -201,7 +205,29 @@ extension ConversationListViewController {
         // Trigger a layout update to ensure the correct positioning
         // of the add conversation button and filter button
         // when the filter button is tapped.
-        self.view.setNeedsLayout()
+        view.setNeedsLayout()
+    }
+
+    func setupRightNavigationBarButtons_SplitView() {
+
+        let newConversationBarButton = IconButton()
+        newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
+        newConversationBarButton.accessibilityIdentifier = "???????????" // TODO: accessibilityIdentifier
+        newConversationBarButton.accessibilityLabel = "" // TODO: accessibilityLabel
+        newConversationBarButton.addAction(.init { [weak self] _ in
+            Task {
+                await self?.mainCoordinator.showNewConversation()
+            }
+        }, for: .primaryActionTriggered)
+        newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem
+        newConversationBarButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
+        newConversationBarButton.layer.borderWidth = 1
+        newConversationBarButton.setBorderColor(SemanticColors.Button.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        newConversationBarButton.layer.cornerRadius = 12
+        newConversationBarButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+        newConversationBarButton.bounds.size = newConversationBarButton.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
+
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: newConversationBarButton)]
     }
 
     /// Creates a `UIAction` for a filter button with the specified title, filter type, and selection state.
@@ -220,7 +246,7 @@ extension ConversationListViewController {
     /// - Note: It also customizes the action's image and title appearance based on the selection state.
     private func createFilterAction(
         title: String,
-        filter: ConversationFilterType?,
+        filter: ConversationFilter?,
         isSelected: Bool
     ) -> UIAction {
         let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
@@ -228,7 +254,11 @@ extension ConversationListViewController {
         let attributedTitle = FilterButtonStyleHelper.makeAttributedTitle(for: title, isSelected: isSelected)
 
         let action = UIAction(title: title, image: actionImage) { [weak self] _ in
-            self?.applyFilter(filter)
+            if let filter {
+                self?.applyFilter(filter)
+            } else {
+                self?.clearFilter()
+            }
         }
 
         action.setValue(attributedTitle, forKey: "attributedTitle")
@@ -238,7 +268,7 @@ extension ConversationListViewController {
     }
 
     func accessibilityLabelForFilterAction(
-        for filter: ConversationFilterType?,
+        for filter: ConversationFilter?,
         isSelected: Bool
     ) -> String {
 
@@ -251,7 +281,7 @@ extension ConversationListViewController {
         case .groups:
             return isSelected ? accessibilityLocale.Groups.Selected.description : accessibilityLocale.Groups.description
 
-        case .oneToOneConversations:
+        case .oneOnOne:
             return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne.description
 
         case .none:
@@ -262,45 +292,28 @@ extension ConversationListViewController {
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
     func adjustRightBarButtonItemsSpace() {
-        guard
-            let rightBarButtonItems = navigationItem.rightBarButtonItems,
-            rightBarButtonItems.count == 3, // new conversation, spacer, filter
-            let newConversationButton = rightBarButtonItems[0].customView,
-            let filterConversationsButton = rightBarButtonItems[2].customView,
-            let titleViewLabel,
-            let window = viewIfLoaded?.window
-        else { return }
-
-        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
-        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
-        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
-        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
-        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
+        // TODO: fix
+//        guard
+//            let rightBarButtonItems = navigationItem.rightBarButtonItems,
+//            rightBarButtonItems.count == 3, // new conversation, spacer, filter
+//            let newConversationButton = rightBarButtonItems[0].customView,
+//            let filterConversationsButton = rightBarButtonItems[2].customView,
+//            let titleViewLabel,
+//            let window = viewIfLoaded?.window
+//        else { return }
+//
+//        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
+//        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
+//        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
+//        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
+//        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
     }
 
     @objc
-    func presentProfile() {
-        guard let selfUser = ZMUser.selfUser() else {
-            assertionFailure("ZMUser.selfUser() is nil")
-            return
+    private func presentProfile() {
+        Task {
+            await mainCoordinator.showSelfProfile()
         }
-
-        let settingsViewController = createSettingsViewController(selfUser: selfUser)
-        let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
-
-        if wr_splitViewController?.layoutSize == .compact {
-            present(keyboardAvoidingViewController, animated: true)
-        } else {
-            keyboardAvoidingViewController.modalPresentationStyle = .formSheet
-            keyboardAvoidingViewController.view.backgroundColor = .black
-            present(keyboardAvoidingViewController, animated: true)
-        }
-    }
-
-    func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
-        selfProfileViewControllerBuilder
-            .build()
-            .wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
 
     // MARK: - Legal Hold

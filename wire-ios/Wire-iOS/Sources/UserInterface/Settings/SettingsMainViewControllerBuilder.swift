@@ -18,14 +18,16 @@
 
 import UIKit
 import WireCommonComponents
+import WireMainNavigation
 import WireSyncEngine
 
-struct SettingsMainViewControllerBuilder: ViewControllerBuilder {
+struct SettingsMainViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
+    // TODO: can selfUser be taken from the userSession?
     var userSession: UserSession
     var selfUser: SettingsSelfUser
 
-    func build() -> UIViewController {
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsPropertyFactory = SettingsPropertyFactory(
             userSession: userSession,
             selfUser: selfUser

@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -31,7 +32,7 @@ final class SearchUserViewController: UIViewController {
     private let userId: UUID
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: MainCoordinatorProtocol
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
@@ -44,7 +45,7 @@ final class SearchUserViewController: UIViewController {
         userId: UUID,
         profileViewControllerDelegate: ProfileViewControllerDelegate?,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: MainCoordinatorProtocol
     ) {
         self.userId = userId
         self.profileViewControllerDelegate = profileViewControllerDelegate

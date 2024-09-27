@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigation
 import WireSyncEngine
 
 // MARK: - ConversationRootViewController
@@ -50,7 +51,7 @@ final class ConversationRootViewController: UIViewController {
         conversation: ZMConversation,
         message: ZMConversationMessage?,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: MainCoordinatorProtocol,
         mediaPlaybackManager: MediaPlaybackManager?
     ) {
         let conversationController = ConversationViewController(

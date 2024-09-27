@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
 
-    func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
+    func startUIViewController(_ startUI: StartUIViewController, didSelect user: UserType) {
         guard let userID = user.qualifiedID else { return }
 
         let conversation = user.oneToOneConversation
@@ -52,7 +52,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         }
     }
 
-    func startUI(_ startUI: StartUIViewController, didSelect conversation: ZMConversation) {
+    func startUIViewController(_ startUI: StartUIViewController, didSelect conversation: ZMConversation) {
         startUI.dismissIfNeeded(animated: true) {
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
         }
@@ -63,6 +63,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
     }
 
+    // TODO: migrate this code into MainCoordinator
     @MainActor
     func openUserProfile(_ user: UserType) {
         let profileViewController = ProfileViewController(

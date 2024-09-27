@@ -18,13 +18,16 @@
 
 import WireDataModel
 
+// TODO: ProfilePresenter?
 extension ProfilePresenter: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         guard let controller else { return }
 
         dismiss(viewController: controller) {
-            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+            fatalError("TODO")
+            // TODO: fix
+            // self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }
