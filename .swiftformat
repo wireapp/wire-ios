@@ -85,6 +85,7 @@
     wrapSingleLineComments, \
     yodaConditions, \
     # OPTIONAL
+    # acronyms, \ - Difficult to use because it messes with coding keys etc. So a lot of disabling this rule would be necessary 
     blockComments, \
     # docComments - Cannot enable due to our floating doc comment style
     isEmpty, \ # Rare false positives in situations where a type provides a `count` but not a `isEmpty` property.
