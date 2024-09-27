@@ -139,12 +139,13 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             return nil
         }
 
-        let remoteId: String? = switch size {
-        case .preview:
-            user.previewProfileAssetIdentifier
-        case .complete:
-            user.completeProfileAssetIdentifier
-        }
+        let remoteId: String? =
+            switch size {
+            case .preview:
+                user.previewProfileAssetIdentifier
+            case .complete:
+                user.completeProfileAssetIdentifier
+            }
         guard let assetId = remoteId else {
             return nil
         }
@@ -155,11 +156,12 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             path = "/assets/v3/\(assetId)"
 
         case .v1:
-            let domain = if let domain = user.domain, !domain.isEmpty {
-                domain
-            } else {
-                BackendInfo.domain
-            }
+            let domain =
+                if let domain = user.domain, !domain.isEmpty {
+                    domain
+                } else {
+                    BackendInfo.domain
+                }
             guard let domain else {
                 return nil
             }
@@ -167,11 +169,12 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             path = "/assets/v4/\(domain)/\(assetId)"
 
         case .v2, .v3, .v4, .v5, .v6:
-            let domain = if let domain = user.domain, !domain.isEmpty {
-                domain
-            } else {
-                BackendInfo.domain
-            }
+            let domain =
+                if let domain = user.domain, !domain.isEmpty {
+                    domain
+                } else {
+                    BackendInfo.domain
+                }
             guard let domain else {
                 return nil
             }
@@ -303,12 +306,13 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     fileprivate var observers: [Any] = []
 
     fileprivate func whitelistUserImageSync(for size: ProfileImageSize) -> ZMDownstreamObjectSyncWithWhitelist {
-        let predicate: NSPredicate = switch size {
-        case .preview:
-            ZMUser.previewImageDownloadFilter
-        case .complete:
-            ZMUser.completeImageDownloadFilter
-        }
+        let predicate: NSPredicate =
+            switch size {
+            case .preview:
+                ZMUser.previewImageDownloadFilter
+            case .complete:
+                ZMUser.completeImageDownloadFilter
+            }
 
         return ZMDownstreamObjectSyncWithWhitelist(
             transcoder: self,

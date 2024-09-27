@@ -99,12 +99,14 @@ enum AvailabilityStringBuilder {
             return nil
         }
 
-        let verticalCorrection: CGFloat = switch size {
-        case .small:
-            -1
-        case .body, .bodyTwo, .buttonBig, .buttonSmall, .header, .large, .medium, .normal, .subHeadline, .titleThree:
-            0
-        }
+        let verticalCorrection: CGFloat =
+            switch size {
+            case .small:
+                -1
+            case .body, .bodyTwo, .buttonBig, .buttonSmall, .header, .large, .medium, .normal, .subHeadline,
+                 .titleThree:
+                0
+            }
 
         return NSTextAttachment.textAttachment(
             for: iconType,

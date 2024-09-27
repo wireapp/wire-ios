@@ -48,11 +48,12 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
         for availability in Availability.allCases + [Availability?.none] {
             // Given
             sut.availability = availability
-            let testName = if let availability {
-                "\(availability)"
-            } else {
-                "none"
-            }
+            let testName =
+                if let availability {
+                    "\(availability)"
+                } else {
+                    "none"
+                }
 
             // Then
             snapshotHelper

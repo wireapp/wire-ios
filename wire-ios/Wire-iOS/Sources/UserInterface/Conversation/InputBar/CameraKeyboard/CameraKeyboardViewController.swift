@@ -315,13 +315,14 @@ class CameraKeyboardViewController: UIViewController {
                 return
             }
 
-            let returnData: Data = if (uti == "public.heif") ||
+            let returnData: Data =
+                if (uti == "public.heif") ||
                 (uti == "public.heic"),
                 let convertedJPEGData = data.convertHEIFToJPG() {
-                convertedJPEGData
-            } else {
-                data
-            }
+                    convertedJPEGData
+                } else {
+                    data
+                }
 
             DispatchQueue.main.async {
                 self.delegate?.cameraKeyboardViewController(

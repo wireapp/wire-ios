@@ -208,11 +208,12 @@ final class AudioEffectsPickerViewController: UIViewController {
             subtitleLabel.textColor = SemanticColors.Label.textDefault
 
         case .time:
-            let duration = if let player = audioPlayerController?.player {
-                Int(ceil(player.duration))
-            } else {
-                Int(ceil(self.duration))
-            }
+            let duration =
+                if let player = audioPlayerController?.player {
+                    Int(ceil(player.duration))
+                } else {
+                    Int(ceil(self.duration))
+                }
 
             let (seconds, minutes) = (duration % 60, duration / 60)
             subtitleLabel.text = String(format: "%d:%02d", minutes, seconds)

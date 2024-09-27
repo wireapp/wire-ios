@@ -155,12 +155,13 @@ open class UserImageLocalCache: NSObject {
         guard let cacheKey = user.imageCacheKey(for: size) else {
             return nil
         }
-        let data: Data? = switch size {
-        case .preview:
-            smallUserImageCache.object(forKey: cacheKey) as? Data
-        case .complete:
-            largeUserImageCache.object(forKey: cacheKey) as? Data
-        }
+        let data: Data? =
+            switch size {
+            case .preview:
+                smallUserImageCache.object(forKey: cacheKey) as? Data
+            case .complete:
+                largeUserImageCache.object(forKey: cacheKey) as? Data
+            }
         if let data {
             log
                 .info(

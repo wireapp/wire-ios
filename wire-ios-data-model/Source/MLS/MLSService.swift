@@ -1453,14 +1453,15 @@ public final class MLSService: MLSServiceInterface {
             }
             let keyPackages = try await claimKeyPackages(for: users, ciphersuite: ciphersuite)
 
-            let events = if keyPackages.isEmpty {
-                // CC does not accept empty keypackages in addMembers, but
-                // when creating a group we still need to send a commit to backend
-                // to inform we are in the group
-                try await mlsActionExecutor.updateKeyMaterial(for: groupID)
-            } else {
-                try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
-            }
+            let events =
+                if keyPackages.isEmpty {
+                    // CC does not accept empty keypackages in addMembers, but
+                    // when creating a group we still need to send a commit to backend
+                    // to inform we are in the group
+                    try await mlsActionExecutor.updateKeyMaterial(for: groupID)
+                } else {
+                    try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
+                }
             await conversationEventProcessor.processConversationEvents(events)
 
         } catch {
@@ -2264,11 +2265,12 @@ public struct MLSUser: Equatable {
 
     public init(from user: ZMUser) {
         self.id = user.remoteIdentifier
-        self.domain = if let domain = user.domain, !domain.isEmpty {
-            domain
-        } else {
-            BackendInfo.domain!
-        }
+        self.domain =
+            if let domain = user.domain, !domain.isEmpty {
+                domain
+            } else {
+                BackendInfo.domain!
+            }
 
         if user.isSelfUser, let selfClientID = user.selfClient()?.remoteIdentifier {
             self.selfClientID = selfClientID

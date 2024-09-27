@@ -52,12 +52,13 @@ class BaseAccountView: UIView {
 
         let containerInset: CGFloat = 6
 
-        let iconWidth = switch displayContext {
-        case .conversationListHeader:
-            CGFloat.ConversationListHeader.avatarSize
-        case .accountSelector:
-            CGFloat.AccountView.iconWidth
-        }
+        let iconWidth =
+            switch displayContext {
+            case .conversationListHeader:
+                CGFloat.ConversationListHeader.avatarSize
+            case .accountSelector:
+                CGFloat.AccountView.iconWidth
+            }
 
         for item in [self, dotView, selectionView, imageViewContainer] {
             item.translatesAutoresizingMaskIntoConstraints = false

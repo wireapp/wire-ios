@@ -99,13 +99,14 @@ extension Analytics {
         guard let selfUser = SelfUser.provider?.providedSelfUser else {
             return [:]
         }
-        var userType = if selfUser.isWirelessUser {
-            "temporary_guest"
-        } else if selfUser.isGuest(in: conversation) {
-            "guest"
-        } else {
-            "user"
-        }
+        var userType =
+            if selfUser.isWirelessUser {
+                "temporary_guest"
+            } else if selfUser.isGuest(in: conversation) {
+                "guest"
+            } else {
+                "user"
+            }
 
         return ["user_type": userType]
     }

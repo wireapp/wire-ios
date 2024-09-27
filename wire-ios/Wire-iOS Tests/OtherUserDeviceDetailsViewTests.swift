@@ -58,18 +58,19 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
     ) -> DeviceInfoViewModel {
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         mockSession.isE2eIdentityEnabled = isE2eIdentityEnabled
-        var certificate: E2eIdentityCertificate = switch status {
-        case .notActivated:
-            .mockNotActivated
-        case .revoked:
-            .mockRevoked
-        case .expired:
-            .mockExpired
-        case .valid:
-            .mockValid
-        case .invalid:
-            .mockInvalid
-        }
+        var certificate: E2eIdentityCertificate =
+            switch status {
+            case .notActivated:
+                .mockNotActivated
+            case .revoked:
+                .mockRevoked
+            case .expired:
+                .mockExpired
+            case .valid:
+                .mockValid
+            case .invalid:
+                .mockInvalid
+            }
 
         let emailCredentials = UserEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
         let deviceActions = MockDeviceDetailsViewActions()

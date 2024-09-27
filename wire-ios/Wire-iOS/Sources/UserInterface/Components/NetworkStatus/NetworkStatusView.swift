@@ -203,11 +203,12 @@ final class NetworkStatusView: UIView {
     private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor
         .constraint(equalTo: bottomAnchor)
 
-    private lazy var topMargin: CGFloat = if UIScreen.hasNotch {
-        0
-    } else {
-        CGFloat.NetworkStatusBar.topMargin
-    }
+    private lazy var topMargin: CGFloat =
+        if UIScreen.hasNotch {
+            0
+        } else {
+            CGFloat.NetworkStatusBar.topMargin
+        }
 
     private func createConstraints() {
         [offlineView, connectingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }

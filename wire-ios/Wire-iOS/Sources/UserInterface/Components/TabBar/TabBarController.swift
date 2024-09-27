@@ -198,11 +198,12 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         let startPercentage = increment * CGFloat(selectedIndex)
 
         // The adjusted percentage of the movement based on the scroll direction
-        let adjustedPercent: CGFloat = if startOffset <= scrollView.contentOffset.x {
-            startPercentage + percent // going right or not moving
-        } else {
-            startPercentage - percent // going left
-        }
+        let adjustedPercent: CGFloat =
+            if startOffset <= scrollView.contentOffset.x {
+                startPercentage + percent // going right or not moving
+            } else {
+                startPercentage - percent // going left
+            }
 
         tabBar?.setOffsetPercentage(adjustedPercent)
     }

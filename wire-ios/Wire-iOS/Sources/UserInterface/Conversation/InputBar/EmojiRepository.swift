@@ -80,13 +80,14 @@ final class EmojiRepository: EmojiRepositoryInterface {
 
     private static let logger = WireLogger(tag: "EmojiRepository")
 
-    private static let supportedEmojiVersion = if #available(iOS 16.4, *) {
-        15.0
-    } else if #available(iOS 15.4, *) {
-        14.0
-    } else {
-        13.1
-    }
+    private static let supportedEmojiVersion =
+        if #available(iOS 16.4, *) {
+            15.0
+        } else if #available(iOS 15.4, *) {
+            14.0
+        } else {
+            13.1
+        }
 
     // MARK: - Properties
 

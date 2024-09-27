@@ -540,16 +540,16 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     /// Fetches the preview image for the given website.
     private func fetchWebsitePreview(for url: URL) {
         sharingSession?.downloadLinkPreviews(inText: url.absoluteString, excluding: []) { previews in
-            let previewImage: UIImage?
+            let previewImage: UIImage? =
 
                 // Size the image to fill the image view
-                = if let imageData = previews.first?.imageData.first,
+                if let imageData = previews.first?.imageData.first,
                 let image = UIImage(data: imageData),
                 let requiredSize = self.preview?.frame.size.shortestLength {
-                image.downsized(shorterSizeLength: requiredSize)
-            } else {
-                nil
-            }
+                    image.downsized(shorterSizeLength: requiredSize)
+                } else {
+                    nil
+                }
 
             DispatchQueue.main.async {
                 self.preview?.displayMode = .link
@@ -687,13 +687,14 @@ extension ShareExtensionViewController {
         let appLock = sharingSession.appLockController
 
         let description = L10n.ShareExtension.PrivacySecurity.LockApp.description
-        let passcodePreference: AppLockPasscodePreference = if sharingSession.encryptMessagesAtRest {
-            .deviceOnly
-        } else if appLock.requireCustomPasscode {
-            .customOnly
-        } else {
-            .deviceThenCustom
-        }
+        let passcodePreference: AppLockPasscodePreference =
+            if sharingSession.encryptMessagesAtRest {
+                .deviceOnly
+            } else if appLock.requireCustomPasscode {
+                .customOnly
+            } else {
+                .deviceThenCustom
+            }
 
         appLock.evaluateAuthentication(
             passcodePreference: passcodePreference,

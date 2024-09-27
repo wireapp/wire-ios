@@ -38,11 +38,12 @@ extension ZMManagedObject {
         domain: String?,
         in context: NSManagedObjectContext
     ) -> Self? {
-        let domain: String? = if BackendInfo.isFederationEnabled, let domain, !domain.isEmpty {
-            domain
-        } else {
-            .none
-        }
+        let domain: String? =
+            if BackendInfo.isFederationEnabled, let domain, !domain.isEmpty {
+                domain
+            } else {
+                .none
+            }
 
         let localDomain = ZMUser.selfUser(in: context).domain
         let isSearchingLocalDomain = domain == nil || localDomain == nil || localDomain == domain

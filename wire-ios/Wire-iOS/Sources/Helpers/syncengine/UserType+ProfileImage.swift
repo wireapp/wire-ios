@@ -133,11 +133,12 @@ extension UserType {
                 }
             }
 
-            var image: UIImage? = if let sizeLimit {
-                UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * UIScreen.main.scale)
-            } else {
-                UIImage(data: imageData)?.decoded
-            }
+            var image: UIImage? =
+                if let sizeLimit {
+                    UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * UIScreen.main.scale)
+                } else {
+                    UIImage(data: imageData)?.decoded
+                }
 
             if isDesaturated, image != nil {
                 let transformer = CoreImageBasedImageTransformer()

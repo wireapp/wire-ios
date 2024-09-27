@@ -164,23 +164,24 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
     }
 
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
-        let updatedLists: [ConversationListType] = if changeInfo.conversationList === directory.oneToOneConversations {
-            [.contacts]
-        } else if changeInfo.conversationList === directory.groupConversations {
-            [.groups]
-        } else if changeInfo.conversationList === directory.archivedConversations {
-            [.archived]
-        } else if changeInfo.conversationList === directory.pendingConnectionConversations {
-            [.pending]
-        } else if changeInfo.conversationList === directory.unarchivedConversations {
-            [.unarchived]
-        } else if changeInfo.conversationList === directory.favoriteConversations {
-            [.favorites]
-        } else if let label = changeInfo.conversationList.label, label.kind == .folder {
-            [.folder(label)]
-        } else {
-            []
-        }
+        let updatedLists: [ConversationListType] =
+            if changeInfo.conversationList === directory.oneToOneConversations {
+                [.contacts]
+            } else if changeInfo.conversationList === directory.groupConversations {
+                [.groups]
+            } else if changeInfo.conversationList === directory.archivedConversations {
+                [.archived]
+            } else if changeInfo.conversationList === directory.pendingConnectionConversations {
+                [.pending]
+            } else if changeInfo.conversationList === directory.unarchivedConversations {
+                [.unarchived]
+            } else if changeInfo.conversationList === directory.favoriteConversations {
+                [.favorites]
+            } else if let label = changeInfo.conversationList.label, label.kind == .folder {
+                [.folder(label)]
+            } else {
+                []
+            }
 
         observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(
             reloaded: false,

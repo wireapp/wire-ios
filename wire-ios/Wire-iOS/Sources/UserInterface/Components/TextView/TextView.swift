@@ -62,11 +62,12 @@ class TextView: UITextView {
 
     var attributedPlaceholder: NSAttributedString? {
         didSet {
-            let mutableCopy = if let attributedPlaceholder {
-                NSMutableAttributedString(attributedString: attributedPlaceholder)
-            } else {
-                NSMutableAttributedString()
-            }
+            let mutableCopy =
+                if let attributedPlaceholder {
+                    NSMutableAttributedString(attributedString: attributedPlaceholder)
+                } else {
+                    NSMutableAttributedString()
+                }
             mutableCopy.addAttribute(
                 .foregroundColor,
                 value: placeholderTextColor,

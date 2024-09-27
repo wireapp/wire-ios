@@ -49,12 +49,13 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
             linkPreviews: [article],
             replyingTo: nil
         )
-        var genericMessage: GenericMessage! = switch contentType {
-        case .textMessage:
-            GenericMessage(content: text, nonce: nonce)
-        case .editMessage:
-            GenericMessage(content: MessageEdit(replacingMessageID: UUID.create(), text: text), nonce: nonce)
-        }
+        var genericMessage: GenericMessage! =
+            switch contentType {
+            case .textMessage:
+                GenericMessage(content: text, nonce: nonce)
+            case .editMessage:
+                GenericMessage(content: MessageEdit(replacingMessageID: UUID.create(), text: text), nonce: nonce)
+            }
         do {
             try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {

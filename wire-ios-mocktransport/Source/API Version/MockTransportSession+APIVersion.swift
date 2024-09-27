@@ -34,25 +34,25 @@ extension MockTransportSession {
             )
         }
 
-        let payload: NSDictionary
+        let payload: NSDictionary =
 
             // development versions was added to the endpoint payload
             // at a later date, so we need to be able to mock both
             // the old and new response payloads.
-            = if developmentAPIVersions.isEmpty {
-            [
-                "supported": supportedAPIVersions,
-                "domain": domain,
-                "federation": federation,
-            ]
-        } else {
-            [
-                "supported": supportedAPIVersions,
-                "development": developmentAPIVersions,
-                "domain": domain,
-                "federation": federation,
-            ]
-        }
+            if developmentAPIVersions.isEmpty {
+                [
+                    "supported": supportedAPIVersions,
+                    "domain": domain,
+                    "federation": federation,
+                ]
+            } else {
+                [
+                    "supported": supportedAPIVersions,
+                    "development": developmentAPIVersions,
+                    "domain": domain,
+                    "federation": federation,
+                ]
+            }
 
         return ZMTransportResponse(
             payload: payload,

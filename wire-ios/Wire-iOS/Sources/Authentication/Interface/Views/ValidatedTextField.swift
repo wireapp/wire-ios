@@ -58,25 +58,26 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         self.textFieldValidator = TextFieldValidator()
         self.kind = kind
 
-        var textFieldAttributes: Attributes = if setNewColors == false {
-            AccessoryTextField.Attributes(
-                textFont: ValidatedTextField.enteredTextFont,
-                textColor: UIColor.Team.textColor,
-                placeholderFont: ValidatedTextField.placeholderFont,
-                placeholderColor: UIColor.Team.placeholderColor,
-                backgroundColor: UIColor.Team.textfieldColor,
-                cornerRadius: cornerRadius ?? 0
-            )
-        } else {
-            AccessoryTextField.Attributes(
-                textFont: ValidatedTextField.enteredTextFont,
-                textColor: TextFieldColors.textInputView,
-                placeholderFont: ValidatedTextField.placeholderFont,
-                placeholderColor: TextFieldColors.textInputViewPlaceholder,
-                backgroundColor: TextFieldColors.backgroundInputView,
-                cornerRadius: cornerRadius ?? 0
-            )
-        }
+        var textFieldAttributes: Attributes =
+            if setNewColors == false {
+                AccessoryTextField.Attributes(
+                    textFont: ValidatedTextField.enteredTextFont,
+                    textColor: UIColor.Team.textColor,
+                    placeholderFont: ValidatedTextField.placeholderFont,
+                    placeholderColor: UIColor.Team.placeholderColor,
+                    backgroundColor: UIColor.Team.textfieldColor,
+                    cornerRadius: cornerRadius ?? 0
+                )
+            } else {
+                AccessoryTextField.Attributes(
+                    textFont: ValidatedTextField.enteredTextFont,
+                    textColor: TextFieldColors.textInputView,
+                    placeholderFont: ValidatedTextField.placeholderFont,
+                    placeholderColor: TextFieldColors.textInputViewPlaceholder,
+                    backgroundColor: TextFieldColors.backgroundInputView,
+                    cornerRadius: cornerRadius ?? 0
+                )
+            }
 
         super.init(
             leftInset: leftInset,

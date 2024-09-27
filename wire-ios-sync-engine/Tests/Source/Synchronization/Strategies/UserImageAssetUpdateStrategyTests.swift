@@ -349,14 +349,15 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        let expectedPath = switch apiVersion {
-        case .v0:
-            "/assets/v3/\(assetId)"
-        case .v1:
-            "/v1/assets/v4/\(domain)/\(assetId)"
-        case .v2, .v3, .v4, .v5, .v6:
-            "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
-        }
+        let expectedPath =
+            switch apiVersion {
+            case .v0:
+                "/assets/v3/\(assetId)"
+            case .v1:
+                "/v1/assets/v4/\(domain)/\(assetId)"
+            case .v2, .v3, .v4, .v5, .v6:
+                "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
+            }
 
         syncMOC.performAndWait {
             let request = self.sut.downstreamRequestSyncs[size]?.nextRequest(for: apiVersion)

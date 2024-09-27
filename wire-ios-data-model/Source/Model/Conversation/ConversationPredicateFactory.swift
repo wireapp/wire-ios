@@ -174,11 +174,12 @@ public final class ConversationPredicateFactory: NSObject {
                 format: "\(#keyPath(ZMConversation.oneOnOneUser)).connection.status == \(ZMConnectionStatus.accepted.rawValue)"
             )
 
-        let isOtherUserInSameTeam = if let selfTeam {
-            NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.membership.team)) == %@", selfTeam)
-        } else {
-            NSPredicate(value: false)
-        }
+        let isOtherUserInSameTeam =
+            if let selfTeam {
+                NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.membership.team)) == %@", selfTeam)
+            } else {
+                NSPredicate(value: false)
+            }
 
         let isOtherUserBot = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.serviceIdentifier)) != NULL")
 

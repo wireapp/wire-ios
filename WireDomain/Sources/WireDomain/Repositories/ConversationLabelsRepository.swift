@@ -72,16 +72,17 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
     private func storeLabelLocally(_ conversationLabel: ConversationLabel) async throws {
         try await context.perform { [context] in
             var created = false
-            let label: Label? = if conversationLabel.type == Label.Kind.favorite.rawValue {
-                Label.fetchFavoriteLabel(in: context)
-            } else {
-                Label.fetchOrCreate(
-                    remoteIdentifier: conversationLabel.id,
-                    create: true,
-                    in: context,
-                    created: &created
-                )
-            }
+            let label: Label? =
+                if conversationLabel.type == Label.Kind.favorite.rawValue {
+                    Label.fetchFavoriteLabel(in: context)
+                } else {
+                    Label.fetchOrCreate(
+                        remoteIdentifier: conversationLabel.id,
+                        create: true,
+                        in: context,
+                        created: &created
+                    )
+                }
 
             guard let label else {
                 throw ConversationLabelsRepositoryError.failedToStoreLabelLocally(conversationLabel)

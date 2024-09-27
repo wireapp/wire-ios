@@ -360,10 +360,11 @@ class PopUpIconButtonView: UIView {
     }
 
     private func rectForItem(_ item: StyleKitIcon) -> CGRect? {
-        let icons: [StyleKitIcon] = switch expandDirection {
-        case .left:     button.itemIcons.reversed()
-        case .right:    button.itemIcons
-        }
+        let icons: [StyleKitIcon] =
+            switch expandDirection {
+            case .left:     button.itemIcons.reversed()
+            case .right:    button.itemIcons
+            }
 
         guard let index = icons.firstIndex(of: item) else {
             return nil

@@ -137,14 +137,15 @@ extension AssetDeletionRequestStrategyTests {
         let request = sut.nextRequest(for: apiVersion)
 
         // Then
-        let expectedPath = switch apiVersion {
-        case .v0:
-            "/assets/v3/\(identifier)"
-        case .v1:
-            "/v1/assets/v3/\(identifier)"
-        case .v2, .v3, .v4, .v5, .v6:
-            "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
-        }
+        let expectedPath =
+            switch apiVersion {
+            case .v0:
+                "/assets/v3/\(identifier)"
+            case .v1:
+                "/v1/assets/v3/\(identifier)"
+            case .v2, .v3, .v4, .v5, .v6:
+                "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
+            }
         XCTAssertNotNil(request)
         XCTAssertEqual(request?.method, .delete)
         XCTAssertEqual(request?.path, expectedPath)

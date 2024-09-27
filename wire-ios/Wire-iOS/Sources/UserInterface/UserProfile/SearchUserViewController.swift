@@ -114,13 +114,14 @@ final class SearchUserViewController: UIViewController {
             return
         }
 
-        let profileUser: UserType? = if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
-            searchUser
-        } else if let memberUser = searchResult.teamMembers.first?.user, !memberUser.isAccountDeleted {
-            memberUser
-        } else {
-            nil
-        }
+        let profileUser: UserType? =
+            if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
+                searchUser
+            } else if let memberUser = searchResult.teamMembers.first?.user, !memberUser.isAccountDeleted {
+                memberUser
+            } else {
+                nil
+            }
 
         if let profileUser {
             let profileViewController = ProfileViewController(

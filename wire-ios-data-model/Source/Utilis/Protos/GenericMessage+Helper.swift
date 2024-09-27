@@ -48,11 +48,12 @@ extension GenericMessage {
     ) {
         self = GenericMessage.with {
             $0.messageID = nonce.transportString()
-            let messageContent: MessageCapable = if let timeout, timeout > 0 {
-                Ephemeral(content: content, expiresAfter: timeout)
-            } else {
-                content
-            }
+            let messageContent: MessageCapable =
+                if let timeout, timeout > 0 {
+                    Ephemeral(content: content, expiresAfter: timeout)
+                } else {
+                    content
+                }
             messageContent.setContent(on: &$0)
         }
     }

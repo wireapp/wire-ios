@@ -170,22 +170,23 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             "sending request for asset",
             attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
         )
-        var request: ZMTransportRequest? = if shouldUseBackgroundSession {
-            requestFactory.backgroundUpstreamRequestForAsset(
-                message: message,
-                withData: data,
-                shareable: false,
-                retention: retention,
-                apiVersion: apiVersion
-            )
-        } else {
-            requestFactory.upstreamRequestForAsset(
-                withData: data,
-                shareable: false,
-                retention: retention,
-                apiVersion: apiVersion
-            )
-        }
+        var request: ZMTransportRequest? =
+            if shouldUseBackgroundSession {
+                requestFactory.backgroundUpstreamRequestForAsset(
+                    message: message,
+                    withData: data,
+                    shareable: false,
+                    retention: retention,
+                    apiVersion: apiVersion
+                )
+            } else {
+                requestFactory.upstreamRequestForAsset(
+                    withData: data,
+                    shareable: false,
+                    retention: retention,
+                    apiVersion: apiVersion
+                )
+            }
 
         guard let request else {
             fatal("Could not create asset request")

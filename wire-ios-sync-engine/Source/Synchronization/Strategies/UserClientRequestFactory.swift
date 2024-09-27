@@ -250,16 +250,17 @@ extension UserClientRequestFactory {
         credentials: UserEmailCredentials?,
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest {
-        let payload: [AnyHashable: Any] = if let credentials,
-                                             let email = credentials.email,
-                                             let password = credentials.password {
-            [
-                "email": email,
-                "password": password,
-            ]
-        } else {
-            [:]
-        }
+        let payload: [AnyHashable: Any] =
+            if let credentials,
+            let email = credentials.email,
+            let password = credentials.password {
+                [
+                    "email": email,
+                    "password": password,
+                ]
+            } else {
+                [:]
+            }
 
         let request = ZMTransportRequest(
             path: "/clients/\(client.remoteIdentifier!)",

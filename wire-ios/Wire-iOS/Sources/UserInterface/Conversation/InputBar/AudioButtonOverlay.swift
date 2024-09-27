@@ -132,11 +132,12 @@ final class AudioButtonOverlay: UIView {
 
     @objc
     func buttonPressed(_ sender: IconButton) {
-        let type: AudioButtonOverlayButtonType = if sender == sendButton {
-            .send
-        } else {
-            playingState == .idle ? .play : .stop
-        }
+        let type: AudioButtonOverlayButtonType =
+            if sender == sendButton {
+                .send
+            } else {
+                playingState == .idle ? .play : .stop
+            }
 
         buttonHandler?(type)
     }

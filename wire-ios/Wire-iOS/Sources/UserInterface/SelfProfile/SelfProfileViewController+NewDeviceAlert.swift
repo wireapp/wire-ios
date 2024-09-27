@@ -105,17 +105,19 @@ extension UIAlertController {
         var deviceNamesAndDates: [String] = []
 
         for userClient in clients {
-            let deviceName: String = if let model = userClient.model, !model.isEmpty {
-                model
-            } else {
-                userClient.type.rawValue
-            }
+            let deviceName: String =
+                if let model = userClient.model, !model.isEmpty {
+                    model
+                } else {
+                    userClient.type.rawValue
+                }
 
-            let formattedDate: String = if let activationDate = userClient.activationDate {
-                activationDate.formattedDate
-            } else {
-                ""
-            }
+            let formattedDate: String =
+                if let activationDate = userClient.activationDate {
+                    activationDate.formattedDate
+                } else {
+                    ""
+                }
 
             let deviceActivationDate = L10n.Localizable.Registration.Devices.activated(formattedDate)
 
@@ -126,11 +128,12 @@ extension UIAlertController {
 
         let messageBody = deviceNamesAndDates.joined(separator: "\n\n")
 
-        let messageFormat: String = if clients.count > 1 {
-            L10n.Localizable.Self.NewDeviceAlert.messagePlural(messageBody)
-        } else {
-            L10n.Localizable.Self.NewDeviceAlert.message(messageBody)
-        }
+        let messageFormat: String =
+            if clients.count > 1 {
+                L10n.Localizable.Self.NewDeviceAlert.messagePlural(messageBody)
+            } else {
+                L10n.Localizable.Self.NewDeviceAlert.message(messageBody)
+            }
 
         self.init(title: title, message: messageFormat, preferredStyle: .alert)
     }

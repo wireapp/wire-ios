@@ -51,11 +51,12 @@ enum ConversationActionType {
     }
 
     func image(with color: UIColor) -> UIImage {
-        let icon: StyleKitIcon = switch self {
-        case .none,                   .started: .conversation
-        case .added:                            .plus
-        case .left, .removed, .teamMemberLeave: .minus
-        }
+        let icon: StyleKitIcon =
+            switch self {
+            case .none,                   .started: .conversation
+            case .added:                            .plus
+            case .left, .removed, .teamMemberLeave: .minus
+            }
 
         return icon.makeImage(size: .tiny, color: color)
     }
@@ -137,14 +138,15 @@ final class ParticipantsCellViewModel {
             return []
         }
 
-        let usersWithoutSender: Set<AnyHashable> = if case let .removed(reason) = action,
-                                                      reason == .federationTermination {
-            systemMessage.userTypes
-        } else if let hashableSender = sender as? AnyHashable {
-            systemMessage.userTypes.subtracting([hashableSender])
-        } else {
-            systemMessage.userTypes
-        }
+        let usersWithoutSender: Set<AnyHashable> =
+            if case let .removed(reason) = action,
+            reason == .federationTermination {
+                systemMessage.userTypes
+            } else if let hashableSender = sender as? AnyHashable {
+                systemMessage.userTypes.subtracting([hashableSender])
+            } else {
+                systemMessage.userTypes
+            }
         guard let users = Array(usersWithoutSender) as? [UserType] else {
             return []
         }

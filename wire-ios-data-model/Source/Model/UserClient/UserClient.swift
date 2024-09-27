@@ -353,11 +353,12 @@ public class UserClient: ZMManagedObject, UserClientType {
     private var pushToken: PushToken? {
         get {
             willAccessValue(forKey: Keys.PushToken)
-            let token: PushToken? = if let data = primitivePushToken {
-                try? JSONDecoder().decode(PushToken.self, from: data)
-            } else {
-                nil
-            }
+            let token: PushToken? =
+                if let data = primitivePushToken {
+                    try? JSONDecoder().decode(PushToken.self, from: data)
+                } else {
+                    nil
+                }
             didAccessValue(forKey: Keys.PushToken)
             return token
         }

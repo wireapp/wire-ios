@@ -32,11 +32,12 @@ extension NSTextAttachment {
         verticalCorrection: CGFloat = 0,
         insets: UIEdgeInsets? = nil
     ) -> NSTextAttachment {
-        let image: UIImage = if let insets {
-            icon.makeImage(size: iconSize, color: color).with(insets: insets, backgroundColor: .clear)!
-        } else {
-            icon.makeImage(size: iconSize, color: color)
-        }
+        let image: UIImage =
+            if let insets {
+                icon.makeImage(size: iconSize, color: color).with(insets: insets, backgroundColor: .clear)!
+            } else {
+                icon.makeImage(size: iconSize, color: color)
+            }
 
         let attachment = NSTextAttachment()
         attachment.image = image

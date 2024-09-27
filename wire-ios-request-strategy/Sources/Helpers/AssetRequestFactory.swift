@@ -58,13 +58,14 @@ public final class AssetRequestFactory: NSObject {
             return nil
         }
 
-        let path = switch apiVersion {
-        case .v0, .v1:
-            "/assets/v3"
+        let path =
+            switch apiVersion {
+            case .v0, .v1:
+                "/assets/v3"
 
-        case .v2, .v3, .v4, .v5, .v6:
-            "/assets"
-        }
+            case .v2, .v3, .v4, .v5, .v6:
+                "/assets"
+            }
 
         let request = ZMTransportRequest.uploadRequest(
             withFileURL: uploadURL,
@@ -96,13 +97,14 @@ public final class AssetRequestFactory: NSObject {
             return nil
         }
 
-        let path = switch apiVersion {
-        case .v0, .v1:
-            "/assets/v3"
+        let path =
+            switch apiVersion {
+            case .v0, .v1:
+                "/assets/v3"
 
-        case .v2, .v3, .v4, .v5, .v6:
-            "/assets"
-        }
+            case .v2, .v3, .v4, .v5, .v6:
+                "/assets"
+            }
 
         return ZMTransportRequest(
             path: path,

@@ -85,16 +85,17 @@ final class LabelIndicator: UIView {
     private let context: LabelIndicatorContext
 
     private func setupViews() {
-        var accessibilityString = switch context {
-        case .guest:
-            "guest"
-        case .groupRole:
-            "group_role"
-        case .external:
-            "team_role"
-        case .federated:
-            "federated"
-        }
+        var accessibilityString =
+            switch context {
+            case .guest:
+                "guest"
+            case .groupRole:
+                "group_role"
+            case .external:
+                "team_role"
+            case .federated:
+                "federated"
+            }
 
         titleLabel.accessibilityIdentifier = "label." + accessibilityString
         titleLabel.numberOfLines = 0

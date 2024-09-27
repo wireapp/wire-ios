@@ -62,11 +62,12 @@ final class ProfileViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) {
-        let profileViewControllerContext: ProfileViewControllerContext = if let context {
-            context
-        } else {
-            conversation?.conversationType.profileViewControllerContext ?? .oneToOneConversation
-        }
+        let profileViewControllerContext: ProfileViewControllerContext =
+            if let context {
+                context
+            } else {
+                conversation?.conversationType.profileViewControllerContext ?? .oneToOneConversation
+            }
 
         let profileActionsFactory = ProfileActionsFactory(
             user: user,
@@ -406,11 +407,12 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
     private func openSelfProfile() {
         // Do not reveal list view for iPad regular mode
-        let leftViewControllerRevealed: Bool = if let presentingViewController {
-            !presentingViewController.isIPadRegular(device: .current)
-        } else {
-            true
-        }
+        let leftViewControllerRevealed: Bool =
+            if let presentingViewController {
+                !presentingViewController.isIPadRegular(device: .current)
+            } else {
+                true
+            }
 
         dismiss(animated: true) {
             self.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {

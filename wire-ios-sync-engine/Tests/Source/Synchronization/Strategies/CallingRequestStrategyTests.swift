@@ -554,15 +554,16 @@ class CallingRequestStrategyTests: MessagingTest {
 
         syncMOC.performAndWait {
             // Then we send the message to the targeted clients
-            let targetRecipients = if case let .clients(recipients) = sentMessage?.targetRecipients {
-                recipients.mapValues { clients in
-                    clients.map { userClient in
-                        userClient.clientId
+            let targetRecipients =
+                if case let .clients(recipients) = sentMessage?.targetRecipients {
+                    recipients.mapValues { clients in
+                        clients.map { userClient in
+                            userClient.clientId
+                        }
                     }
+                } else {
+                    [:] as [ZMUser: [Proteus_ClientId]]
                 }
-            } else {
-                [:] as [ZMUser: [Proteus_ClientId]]
-            }
 
             XCTAssertEqual(targetRecipients.count, 2)
 

@@ -69,11 +69,12 @@ extension ModelObjectsTests {
     // MARK: Files
 
     func createFileMetadata(filename: String? = nil) -> ZMFileMetadata {
-        let fileURL: URL = if let fileName = filename {
-            testURLWithFilename(fileName)
-        } else {
-            testURLWithFilename("file.dat")
-        }
+        let fileURL: URL =
+            if let fileName = filename {
+                testURLWithFilename(fileName)
+            } else {
+                testURLWithFilename("file.dat")
+            }
 
         _ = createTestFile(at: fileURL)
 

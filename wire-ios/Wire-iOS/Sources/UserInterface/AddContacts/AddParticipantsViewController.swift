@@ -428,10 +428,11 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func updateTitle() {
-        title = switch viewModel.context {
-        case let .create(values): viewModel.title(with: values.participants)
-        case .add: viewModel.title(with: userSelection.users)
-        }
+        title =
+            switch viewModel.context {
+            case let .create(values): viewModel.title(with: values.participants)
+            case .add: viewModel.title(with: userSelection.users)
+            }
 
         guard let title else {
             return

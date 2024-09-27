@@ -68,11 +68,12 @@ extension XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) {
-        let nameWithProperty = if let name {
-            "\(name)-\(width)"
-        } else {
-            "\(width)"
-        }
+        let nameWithProperty =
+            if let name {
+                "\(name)-\(width)"
+            } else {
+                "\(width)"
+            }
 
         verify(
             matching: value,

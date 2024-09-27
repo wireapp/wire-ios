@@ -70,23 +70,24 @@ extension ZMConnection {
         searchingLocalDomain: Bool,
         in context: NSManagedObjectContext
     ) -> ZMConnection? {
-        let predicate = if searchingLocalDomain {
-            if let domain {
-                NSPredicate(
-                    format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)",
-                    userID.uuidData as NSData,
-                    domain
-                )
+        let predicate =
+            if searchingLocalDomain {
+                if let domain {
+                    NSPredicate(
+                        format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)",
+                        userID.uuidData as NSData,
+                        domain
+                    )
+                } else {
+                    NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)
+                }
             } else {
-                NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)
+                NSPredicate(
+                    format: "to.remoteIdentifier_data == %@ AND to.domain == %@",
+                    userID.uuidData as NSData,
+                    domain ?? NSNull()
+                )
             }
-        } else {
-            NSPredicate(
-                format: "to.remoteIdentifier_data == %@ AND to.domain == %@",
-                userID.uuidData as NSData,
-                domain ?? NSNull()
-            )
-        }
 
         let fetchRequest = ZMConnection.sortedFetchRequest(with: predicate)
         fetchRequest.fetchLimit = 2 // We only want 1, but want to check if there are too many.

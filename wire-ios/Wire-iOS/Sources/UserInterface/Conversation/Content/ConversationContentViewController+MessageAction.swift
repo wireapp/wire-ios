@@ -302,12 +302,13 @@ extension ConversationContentViewController: SignatureObserver {
     }
 
     private func presentDigitalSignatureErrorAlert(errorType: SignatureStatus.ErrorYpe) {
-        var message: String? = switch errorType {
-        case .noConsentURL:
-            L10n.Localizable.DigitalSignature.Alert.Error.noConsentUrl
-        case .retrieveFailed:
-            L10n.Localizable.DigitalSignature.Alert.Error.noSignature
-        }
+        var message: String? =
+            switch errorType {
+            case .noConsentURL:
+                L10n.Localizable.DigitalSignature.Alert.Error.noConsentUrl
+            case .retrieveFailed:
+                L10n.Localizable.DigitalSignature.Alert.Error.noSignature
+            }
 
         let alertController = UIAlertController(
             title: "",

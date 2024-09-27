@@ -127,12 +127,13 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             self.sut.objectsDidChange(conversationSet)
 
             // THEN
-            var expectedPath = switch apiVersion {
-            case .v0:
-                "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
-            case .v1, .v2, .v3, .v4, .v5, .v6:
-                "/v\(apiVersion.rawValue)/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
-            }
+            var expectedPath =
+                switch apiVersion {
+                case .v0:
+                    "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
+                case .v1, .v2, .v3, .v4, .v5, .v6:
+                    "/v\(apiVersion.rawValue)/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
+                }
 
             XCTAssertEqual(self.sut.nextRequest(for: apiVersion)?.path, expectedPath)
         }
@@ -202,14 +203,15 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: apiVersion)
             let clientListByUserID = [self.otherUser.remoteIdentifier.transportString(): [clientID]]
 
-            var transportData: ZMTransportData = switch apiVersion {
-            case .v0:
-                ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3:
-                Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
-            case .v4, .v5, .v6:
-                Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
-            }
+            var transportData: ZMTransportData =
+                switch apiVersion {
+                case .v0:
+                    ClientUpdateResponse(missing: clientListByUserID).transportData
+                case .v1, .v2, .v3:
+                    Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+                case .v4, .v5, .v6:
+                    Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+                }
 
             // WHEN
             request?.complete(with: ZMTransportResponse(
@@ -260,14 +262,15 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: apiVersion)
             let clientListByUserID = [self.otherUser.remoteIdentifier.transportString(): [existingClientID]]
 
-            var transportData: ZMTransportData = switch apiVersion {
-            case .v0:
-                ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3:
-                Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
-            case .v4, .v5, .v6:
-                Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
-            }
+            var transportData: ZMTransportData =
+                switch apiVersion {
+                case .v0:
+                    ClientUpdateResponse(missing: clientListByUserID).transportData
+                case .v1, .v2, .v3:
+                    Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+                case .v4, .v5, .v6:
+                    Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+                }
 
             // WHEN
             request?.complete(with: ZMTransportResponse(
@@ -316,14 +319,15 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
 
             let request = self.sut.nextRequest(for: apiVersion)
 
-            var transportData: ZMTransportData = switch apiVersion {
-            case .v0:
-                ClientUpdateResponse(missing: ClientListByUser()).transportData
-            case .v1, .v2, .v3:
-                Payload.MessageSendingStatusV1(missing: UserListByDomain()).transportData
-            case .v4, .v5, .v6:
-                Payload.MessageSendingStatusV4(missing: UserListByDomain()).transportData
-            }
+            var transportData: ZMTransportData =
+                switch apiVersion {
+                case .v0:
+                    ClientUpdateResponse(missing: ClientListByUser()).transportData
+                case .v1, .v2, .v3:
+                    Payload.MessageSendingStatusV1(missing: UserListByDomain()).transportData
+                case .v4, .v5, .v6:
+                    Payload.MessageSendingStatusV4(missing: UserListByDomain()).transportData
+                }
 
             // WHEN
             request?.complete(with: ZMTransportResponse(
@@ -361,14 +365,15 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: apiVersion)
             let clientListByUserID = [selfUser.remoteIdentifier.transportString(): [selfClientID]]
 
-            var transportData: ZMTransportData = switch apiVersion {
-            case .v0:
-                ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3:
-                Payload.MessageSendingStatusV1(missing: [selfUser.domain!: clientListByUserID]).transportData
-            case .v4, .v5, .v6:
-                Payload.MessageSendingStatusV4(missing: [selfUser.domain!: clientListByUserID]).transportData
-            }
+            var transportData: ZMTransportData =
+                switch apiVersion {
+                case .v0:
+                    ClientUpdateResponse(missing: clientListByUserID).transportData
+                case .v1, .v2, .v3:
+                    Payload.MessageSendingStatusV1(missing: [selfUser.domain!: clientListByUserID]).transportData
+                case .v4, .v5, .v6:
+                    Payload.MessageSendingStatusV4(missing: [selfUser.domain!: clientListByUserID]).transportData
+                }
 
             // WHEN
             request?.complete(with: ZMTransportResponse(

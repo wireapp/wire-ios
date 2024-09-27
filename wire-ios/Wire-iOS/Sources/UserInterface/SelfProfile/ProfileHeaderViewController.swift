@@ -315,12 +315,13 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateGroupRoleIndicator() {
-        let groupRoleIndicatorHidden: Bool = switch conversation?.conversationType {
-        case .group?:
-            !(conversation.map(user.isGroupAdmin) ?? false)
-        default:
-            true
-        }
+        let groupRoleIndicatorHidden: Bool =
+            switch conversation?.conversationType {
+            case .group?:
+                !(conversation.map(user.isGroupAdmin) ?? false)
+            default:
+                true
+            }
         groupRoleIndicator.isHidden = groupRoleIndicatorHidden
     }
 
@@ -377,13 +378,14 @@ final class ProfileHeaderViewController: UIViewController {
 
         Task { @MainActor [conversation] in
             do {
-                userStatus.isE2EICertified = if let conversation {
-                    try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
-                } else if user.isSelfUser {
-                    try await isSelfUserE2EICertifiedUseCase.invoke()
-                } else {
-                    false
-                }
+                userStatus.isE2EICertified =
+                    if let conversation {
+                        try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    } else if user.isSelfUser {
+                        try await isSelfUserE2EICertifiedUseCase.invoke()
+                    } else {
+                        false
+                    }
             } catch {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }

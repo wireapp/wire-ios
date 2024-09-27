@@ -95,11 +95,12 @@ extension AVURLAsset {
 
         let size = track.naturalSize
 
-        let cappedQuality: String = if size.width > 1920 || size.height > 1920 {
-            AVAssetExportPreset1920x1080
-        } else {
-            quality
-        }
+        let cappedQuality: String =
+            if size.width > 1920 || size.height > 1920 {
+                AVAssetExportPreset1920x1080
+            } else {
+                quality
+            }
 
         asset.convert(
             filename: filename,

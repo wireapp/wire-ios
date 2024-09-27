@@ -80,14 +80,15 @@ final class ConversationListHeaderView: UICollectionReusableView {
             badgeMarginConstraint?.constant = isHidden ? 0 : -spacing
             badgeWidthConstraint?.constant = isHidden ? 0 : 28
 
-            let text: String? = switch folderBadge {
-            case 1 ... 99:
-                String(folderBadge)
-            case 100...:
-                "99+"
-            default:
-                nil
-            }
+            let text: String? =
+                switch folderBadge {
+                case 1 ... 99:
+                    String(folderBadge)
+                case 100...:
+                    "99+"
+                default:
+                    nil
+                }
             badgeView.textLabel.text = text
         }
     }

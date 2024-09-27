@@ -99,12 +99,13 @@ final class DeletionDialogPresenter: NSObject {
         }
 
         if let popoverPresentationController = alert.popoverPresentationController {
-            let sourceView = if let selectableView = sourceView as? SelectableView,
-                                let selectionView = selectableView.selectionView {
-                selectionView
-            } else {
-                sourceView
-            }
+            let sourceView =
+                if let selectableView = sourceView as? SelectableView,
+                let selectionView = selectableView.selectionView {
+                    selectionView
+                } else {
+                    sourceView
+                }
             popoverPresentationController.sourceView = sourceView.superview
             popoverPresentationController.sourceRect = sourceView.frame.insetBy(dx: -4, dy: -4)
         }

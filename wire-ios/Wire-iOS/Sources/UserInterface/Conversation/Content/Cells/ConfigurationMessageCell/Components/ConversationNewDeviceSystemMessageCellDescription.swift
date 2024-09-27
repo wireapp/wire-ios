@@ -162,11 +162,12 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         )
         let attributedText = attributedSenderNames
 
-        var linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
-            .user(user)
-        } else {
-            .conversation(conversation)
-        }
+        var linkTarget: View.LinkTarget =
+            if let user = users.first, users.count == 1 {
+                .user(user)
+            } else {
+                .conversation(conversation)
+            }
 
         return View.Configuration(attributedText: attributedText, icon: verifiedIcon, linkTarget: linkTarget)
     }

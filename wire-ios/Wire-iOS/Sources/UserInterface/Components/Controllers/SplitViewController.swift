@@ -277,16 +277,17 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         // without this line on iPad the text is displayed next to the tab item icon
         newLeftViewController.map { setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: $0) }
 
-        let animator: UIViewControllerAnimatedTransitioning = if leftViewController == nil || newLeftViewController ==
+        let animator: UIViewControllerAnimatedTransitioning =
+            if leftViewController == nil || newLeftViewController ==
             nil {
-            CrossfadeTransition()
-        } else if transition == .present {
-            VerticalTransition(offset: 88)
-        } else if transition == .dismiss {
-            VerticalTransition(offset: -88)
-        } else {
-            CrossfadeTransition()
-        }
+                CrossfadeTransition()
+            } else if transition == .present {
+                VerticalTransition(offset: 88)
+            } else if transition == .dismiss {
+                VerticalTransition(offset: -88)
+            } else {
+                CrossfadeTransition()
+            }
 
         if self.transition(
             from: leftViewController,

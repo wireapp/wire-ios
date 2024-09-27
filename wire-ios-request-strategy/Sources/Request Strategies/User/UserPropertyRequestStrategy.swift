@@ -202,10 +202,11 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
             return nil
         }
 
-        let request: ZMTransportRequest = switch property {
-        case .readReceiptsEnabled:
-            property.upstreamRequest(newValue: property.transportValue(for: selfUser), apiVersion: apiVersion)
-        }
+        let request: ZMTransportRequest =
+            switch property {
+            case .readReceiptsEnabled:
+                property.upstreamRequest(newValue: property.transportValue(for: selfUser), apiVersion: apiVersion)
+            }
 
         return ZMUpstreamRequest(keys: keys, transportRequest: request)
     }

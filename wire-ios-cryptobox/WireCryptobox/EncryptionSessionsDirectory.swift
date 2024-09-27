@@ -31,14 +31,15 @@ enum EncryptionSessionError: Int {
     // MARK: Internal
 
     var userInfo: [String: AnyObject] {
-        var info = switch self {
-        case .unknown:
-            "Unknown EncryptionSessionError"
-        case .encryptionFailed:
-            "Encryption Failed"
-        case .decryptionFailed:
-            "Decryption Failed"
-        }
+        var info =
+            switch self {
+            case .unknown:
+                "Unknown EncryptionSessionError"
+            case .encryptionFailed:
+                "Encryption Failed"
+            case .decryptionFailed:
+                "Decryption Failed"
+            }
 
         return [kCFErrorLocalizedDescriptionKey as String: info as AnyObject]
     }

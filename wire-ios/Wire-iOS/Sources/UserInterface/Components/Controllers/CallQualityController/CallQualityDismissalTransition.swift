@@ -34,13 +34,14 @@ final class CallQualityDismissalTransition: NSObject, UIViewControllerAnimatedTr
 
         // Animate Presentation
 
-        let hideTransform = switch containerView.traitCollection.horizontalSizeClass {
-        case .regular:
-            CGAffineTransform(scaleX: 0, y: 0)
+        let hideTransform =
+            switch containerView.traitCollection.horizontalSizeClass {
+            case .regular:
+                CGAffineTransform(scaleX: 0, y: 0)
 
-        default:
-            CGAffineTransform(translationX: 0, y: containerView.frame.height)
-        }
+            default:
+                CGAffineTransform(translationX: 0, y: containerView.frame.height)
+            }
 
         let duration = transitionDuration(using: transitionContext)
 

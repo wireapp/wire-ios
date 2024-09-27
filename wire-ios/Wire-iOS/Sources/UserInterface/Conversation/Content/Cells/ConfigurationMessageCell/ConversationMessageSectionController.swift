@@ -312,35 +312,36 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func addContent(context: ConversationMessageContext, isSenderVisible: Bool) {
         messageCellIndex = cellDescriptions.count
 
-        let contentCellDescriptions: [AnyConversationMessageCellDescription] = if message.isKnock {
-            addPingMessageCells()
-        } else if message.isComposite {
-            addCompositeMessageCells
-        } else if message.isText {
-            ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
-        } else if message.isImage {
-            [AnyConversationMessageCellDescription(ConversationImageMessageCellDescription(
-                message: message,
-                image: message
-                    .imageMessageData!
-            ))]
-        } else if message.isLocation {
-            addLocationMessageCells()
-        } else if message.isAudio {
-            [AnyConversationMessageCellDescription(ConversationAudioMessageCellDescription(message: message))]
-        } else if message.isVideo {
-            [AnyConversationMessageCellDescription(ConversationVideoMessageCellDescription(message: message))]
-        } else if message.isFile {
-            [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
-        } else if message.isSystem {
-            ConversationSystemMessageCellDescription.cells(
-                for: message,
-                isCollapsed: isCollapsed,
-                buttonAction: buttonAction
-            )
-        } else {
-            [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
-        }
+        let contentCellDescriptions: [AnyConversationMessageCellDescription] =
+            if message.isKnock {
+                addPingMessageCells()
+            } else if message.isComposite {
+                addCompositeMessageCells
+            } else if message.isText {
+                ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
+            } else if message.isImage {
+                [AnyConversationMessageCellDescription(ConversationImageMessageCellDescription(
+                    message: message,
+                    image: message
+                        .imageMessageData!
+                ))]
+            } else if message.isLocation {
+                addLocationMessageCells()
+            } else if message.isAudio {
+                [AnyConversationMessageCellDescription(ConversationAudioMessageCellDescription(message: message))]
+            } else if message.isVideo {
+                [AnyConversationMessageCellDescription(ConversationVideoMessageCellDescription(message: message))]
+            } else if message.isFile {
+                [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
+            } else if message.isSystem {
+                ConversationSystemMessageCellDescription.cells(
+                    for: message,
+                    isCollapsed: isCollapsed,
+                    buttonAction: buttonAction
+                )
+            } else {
+                [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
+            }
 
         if let topContentCellDescription = contentCellDescriptions.first {
             topContentCellDescription.showEphemeralTimer = message.isEphemeral && !message.isObfuscated

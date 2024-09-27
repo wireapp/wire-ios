@@ -112,11 +112,12 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                     }
 
                 case .v2, .v3, .v4, .v5, .v6:
-                    let domain = if let domain = user.domain, !domain.isEmpty {
-                        domain
-                    } else {
-                        BackendInfo.domain
-                    }
+                    let domain =
+                        if let domain = user.domain, !domain.isEmpty {
+                            domain
+                        } else {
+                            BackendInfo.domain
+                        }
                     if let domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                         self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
@@ -247,11 +248,12 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func qualifiedIDWithFallback(from userClient: UserClient) -> QualifiedID? {
-        let domain = if let domain = userClient.user?.domain, !domain.isEmpty {
-            domain
-        } else {
-            BackendInfo.domain
-        }
+        let domain =
+            if let domain = userClient.user?.domain, !domain.isEmpty {
+                domain
+            } else {
+                BackendInfo.domain
+            }
         guard let userID = userClient.user?.remoteIdentifier, let domain else {
             return nil
         }

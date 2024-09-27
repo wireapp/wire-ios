@@ -223,12 +223,13 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         from participants: [MLSParticipant]
     ) -> [MLSClientID: XCTestExpectation] {
         participants.reduce(into: [MLSClientID: XCTestExpectation]()) { expectations, participant in
-            var expectation = switch participant.callParticipant.state {
-            case .connecting:
-                XCTestExpectation(description: "removed stale participant (\(participant.mlsClientID))")
-            default:
-                XCTestExpectation(description: "did not remove participant (\(participant.mlsClientID))").inverted()
-            }
+            var expectation =
+                switch participant.callParticipant.state {
+                case .connecting:
+                    XCTestExpectation(description: "removed stale participant (\(participant.mlsClientID))")
+                default:
+                    XCTestExpectation(description: "did not remove participant (\(participant.mlsClientID))").inverted()
+                }
 
             expectations[participant.mlsClientID] = expectation
         }

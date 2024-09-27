@@ -214,23 +214,24 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         }
 
         executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
-            let alert = switch reason {
-            case let .degradedUser(user: user):
-                UIAlertController.makeOutgoingDegradedProteusCall(
-                    degradedUser: user?.value,
-                    callEnded: true,
-                    confirmationBlock: { continueDegradedCall in
-                        completion(continueDegradedCall ? .confirm : .cancel)
-                        postCallActionCompletion()
-                    }
-                )
+            let alert =
+                switch reason {
+                case let .degradedUser(user: user):
+                    UIAlertController.makeOutgoingDegradedProteusCall(
+                        degradedUser: user?.value,
+                        callEnded: true,
+                        confirmationBlock: { continueDegradedCall in
+                            completion(continueDegradedCall ? .confirm : .cancel)
+                            postCallActionCompletion()
+                        }
+                    )
 
-            case .invalidCertificate:
-                UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
-                    completion(.ok)
-                    postCallActionCompletion()
-                })
-            }
+                case .invalidCertificate:
+                    UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
+                        completion(.ok)
+                        postCallActionCompletion()
+                    })
+                }
 
             self?.presentedDegradedAlert = alert
 
@@ -248,23 +249,24 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         }
 
         executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
-            let alert = switch reason {
-            case let .degradedUser(user: user):
-                UIAlertController.makeIncomingDegradedProteusCall(
-                    degradedUser: user?.value,
-                    callEnded: false,
-                    confirmationBlock: { continueDegradedCall in
-                        completion(continueDegradedCall ? .confirm : .cancel)
-                        postCallActionCompletion()
-                    }
-                )
+            let alert =
+                switch reason {
+                case let .degradedUser(user: user):
+                    UIAlertController.makeIncomingDegradedProteusCall(
+                        degradedUser: user?.value,
+                        callEnded: false,
+                        confirmationBlock: { continueDegradedCall in
+                            completion(continueDegradedCall ? .confirm : .cancel)
+                            postCallActionCompletion()
+                        }
+                    )
 
-            case .invalidCertificate:
-                UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
-                    completion(answerDegradedCall ? .confirm : .cancel)
-                    postCallActionCompletion()
-                })
-            }
+                case .invalidCertificate:
+                    UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
+                        completion(answerDegradedCall ? .confirm : .cancel)
+                        postCallActionCompletion()
+                    })
+                }
 
             self?.presentedDegradedAlert = alert
 

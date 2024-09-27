@@ -735,14 +735,15 @@ extension ZMLocalNotificationTests_Message {
         sender: ZMUser,
         isEphemeral: Bool = false
     ) -> ZMLocalNotification? {
-        var asset = switch fileType {
-        case .video:
-            WireProtos.Asset(ZMVideoMetadata(fileURL: fileType.testURL))
-        case .audio:
-            WireProtos.Asset(ZMAudioMetadata(fileURL: fileType.testURL))
-        default:
-            WireProtos.Asset(ZMFileMetadata(fileURL: fileType.testURL))
-        }
+        var asset =
+            switch fileType {
+            case .video:
+                WireProtos.Asset(ZMVideoMetadata(fileURL: fileType.testURL))
+            case .audio:
+                WireProtos.Asset(ZMAudioMetadata(fileURL: fileType.testURL))
+            default:
+                WireProtos.Asset(ZMFileMetadata(fileURL: fileType.testURL))
+            }
         let expiresAfter: TimeInterval = isEphemeral ? 10 : 0
         let assetMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfterTimeInterval: expiresAfter)
         let payload: [String: Any] = [

@@ -91,11 +91,12 @@ extension ZMUserSession {
             return
         }
 
-        let payload: [String: Any] = if let password = credentials.password, !password.isEmpty {
-            ["password": password]
-        } else {
-            [:]
-        }
+        let payload: [String: Any] =
+            if let password = credentials.password, !password.isEmpty {
+                ["password": password]
+            } else {
+                [:]
+            }
 
         let request = ZMTransportRequest(
             path: "/clients/\(selfClientIdentifier)",
@@ -121,27 +122,28 @@ extension ZMUserSession {
     }
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
-        var errorCode: UserSessionErrorCode = switch response.result {
-        case .permanentError:
-            switch response.payload?.asDictionary()?["label"] as? String {
-            case "client-not-found":
-                .clientDeletedRemotely
+        var errorCode: UserSessionErrorCode =
+            switch response.result {
+            case .permanentError:
+                switch response.payload?.asDictionary()?["label"] as? String {
+                case "client-not-found":
+                    .clientDeletedRemotely
 
-            case "bad-request", // in case the password not matching password format requirement
-                 "invalid-credentials",
-                 "missing-auth":
-                .invalidCredentials
+                case "bad-request", // in case the password not matching password format requirement
+                     "invalid-credentials",
+                     "missing-auth":
+                    .invalidCredentials
+
+                default:
+                    .unknownError
+                }
+
+            case .expired, .temporaryError, .tryAgainLater:
+                .networkError
 
             default:
                 .unknownError
             }
-
-        case .expired, .temporaryError, .tryAgainLater:
-            .networkError
-
-        default:
-            .unknownError
-        }
 
         var userInfo: [String: Any]?
         if let transportSessionError = response.transportSessionError {

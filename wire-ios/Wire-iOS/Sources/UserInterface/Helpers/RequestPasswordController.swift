@@ -29,12 +29,13 @@ final class RequestPasswordController {
         self.callback = callback
         self.inputValidation = inputValidation
 
-        let okTitle: String = switch context {
-        case .wiping:
-            L10n.Localizable.WipeDatabase.Alert.confirm
-        default:
-            L10n.Localizable.General.ok
-        }
+        let okTitle: String =
+            switch context {
+            case .wiping:
+                L10n.Localizable.WipeDatabase.Alert.confirm
+            default:
+                L10n.Localizable.General.ok
+            }
 
         let cancelTitle: String = L10n.Localizable.General.cancel
         let title: String

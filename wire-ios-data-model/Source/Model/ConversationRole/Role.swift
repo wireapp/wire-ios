@@ -195,12 +195,13 @@ public final class Role: ZMManagedObject {
     ) -> Role? {
         let fetchRequest = NSFetchRequest<Role>(entityName: Role.entityName())
         let namePredicate = NSPredicate(format: "%K == %@", Role.nameKey, name)
-        let teamOrConvoPredicate = switch teamOrConversation {
-        case let .team(team):
-            NSPredicate(format: "%K == %@", Role.teamKey, team)
-        case let .conversation(convo):
-            NSPredicate(format: "%K == %@", Role.conversationKey, convo)
-        }
+        let teamOrConvoPredicate =
+            switch teamOrConversation {
+            case let .team(team):
+                NSPredicate(format: "%K == %@", Role.teamKey, team)
+            case let .conversation(convo):
+                NSPredicate(format: "%K == %@", Role.conversationKey, convo)
+            }
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             namePredicate,
             teamOrConvoPredicate,

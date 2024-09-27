@@ -47,12 +47,13 @@ final class ConversationActionController {
     let userSession: UserSession
 
     func presentMenu(from sourceView: UIView, context: Context) {
-        let actions: [ZMConversation.Action] = switch context {
-        case .details:
-            (conversation as? ZMConversation)?.detailActions ?? []
-        case .list:
-            (conversation as? ZMConversation)?.listActions ?? []
-        }
+        let actions: [ZMConversation.Action] =
+            switch context {
+            case .details:
+                (conversation as? ZMConversation)?.detailActions ?? []
+            case .list:
+                (conversation as? ZMConversation)?.listActions ?? []
+            }
 
         let title = context == .list ? conversation.displayName : nil
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)

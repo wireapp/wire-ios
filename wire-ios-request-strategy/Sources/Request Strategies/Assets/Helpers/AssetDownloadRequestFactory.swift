@@ -26,11 +26,12 @@ public final class AssetDownloadRequestFactory {
         domain: String?,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-        let domain = if let domain, !domain.isEmpty {
-            domain
-        } else {
-            BackendInfo.domain
-        }
+        let domain =
+            if let domain, !domain.isEmpty {
+                domain
+            } else {
+                BackendInfo.domain
+            }
         let path: String
         switch apiVersion {
         case .v0:

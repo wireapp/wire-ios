@@ -212,11 +212,12 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
         for (expectedBody, arguments) in cases {
             // when
-            var note: ZMLocalNotification? = if arguments.count == 2 {
-                noteForConnectionRequestEvent(to: arguments[0] as? ZMUser, status: arguments[1] as! String)
-            } else {
-                noteForConnectionRequestEvent(to: nil, status: arguments[0] as! String)
-            }
+            var note: ZMLocalNotification? =
+                if arguments.count == 2 {
+                    noteForConnectionRequestEvent(to: arguments[0] as? ZMUser, status: arguments[1] as! String)
+                } else {
+                    noteForConnectionRequestEvent(to: nil, status: arguments[0] as! String)
+                }
 
             // then
             XCTAssertNotNil(note)

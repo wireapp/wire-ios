@@ -189,11 +189,12 @@ public final class AccountImageView: UIView {
             return
         }
 
-        accountImageViewWrapper.layer.cornerRadius = if isTeamAccount {
-            teamAccountImageCornerRadius
-        } else {
-            accountImageViewWrapper.frame.height / 2
-        }
+        accountImageViewWrapper.layer.cornerRadius =
+            if isTeamAccount {
+                teamAccountImageCornerRadius
+            } else {
+                accountImageViewWrapper.frame.height / 2
+            }
     }
 
     private func updateAvailabilityIndicator() {

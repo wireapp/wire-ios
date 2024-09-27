@@ -109,11 +109,12 @@ final class HTMLChildrenIterator: IteratorProtocol {
     var currentChild: HTMLElement?
 
     func next() -> HTMLElement? {
-        let nextPtr: xmlNodePtr? = if let currentChild {
-            xmlNextElementSibling(currentChild)
-        } else {
-            xmlFirstElementChild(rootElement)
-        }
+        let nextPtr: xmlNodePtr? =
+            if let currentChild {
+                xmlNextElementSibling(currentChild)
+            } else {
+                xmlFirstElementChild(rootElement)
+            }
 
         currentChild = nextPtr
         return currentChild
@@ -154,12 +155,13 @@ final class HTMLStringBuffer {
 
     /// Returns the value of the string, with unescaped HTML entities.
     func stringValue(removingEntities removeEntities: Bool) -> String {
-        let stringValue = switch storage {
-        case let .retained(ptr):
-            String(cString: ptr)
-        case let .unowned(ptr):
-            String(cString: ptr)
-        }
+        let stringValue =
+            switch storage {
+            case let .retained(ptr):
+                String(cString: ptr)
+            case let .unowned(ptr):
+                String(cString: ptr)
+            }
 
         return removeEntities ? stringValue.removingHTMLEntities() : stringValue
     }

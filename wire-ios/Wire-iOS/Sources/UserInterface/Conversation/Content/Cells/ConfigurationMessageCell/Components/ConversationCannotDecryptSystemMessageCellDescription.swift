@@ -25,17 +25,18 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     // MARK: Lifecycle
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
-        let icon: UIImage = if data.systemMessageType == .decryptionFailedResolved {
-            StyleKitIcon.checkmark.makeImage(
-                size: 16,
-                color: IconColors.foregroundCheckMarkInSystemMessage
-            )
-        } else {
-            StyleKitIcon.exclamationMark.makeImage(
-                size: 16,
-                color: IconColors.foregroundExclamationMarkInSystemMessage
-            )
-        }
+        let icon: UIImage =
+            if data.systemMessageType == .decryptionFailedResolved {
+                StyleKitIcon.checkmark.makeImage(
+                    size: 16,
+                    color: IconColors.foregroundCheckMarkInSystemMessage
+                )
+            } else {
+                StyleKitIcon.exclamationMark.makeImage(
+                    size: 16,
+                    color: IconColors.foregroundExclamationMarkInSystemMessage
+                )
+            }
 
         let title = ConversationCannotDecryptSystemMessageCellDescription.makeAttributedString(
             systemMessage: data,

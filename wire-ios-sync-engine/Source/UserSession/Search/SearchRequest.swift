@@ -151,11 +151,12 @@ extension SearchRequest {
         }
 
         let text = components[0]
-        let domain = if components.indices.contains(1) {
-            components[1]
-        } else {
-            String?.none
-        }
+        let domain =
+            if components.indices.contains(1) {
+                components[1]
+            } else {
+                String?.none
+            }
 
         if searchString.hasPrefix("@") {
             return (.exactHandle(text), domain)

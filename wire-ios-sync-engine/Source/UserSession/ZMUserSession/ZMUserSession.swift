@@ -793,15 +793,16 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
     func updateNetworkState() {
-        let state: NetworkState = if isNetworkOnline {
-            if isPerformingSync {
-                .onlineSynchronizing
+        let state: NetworkState =
+            if isNetworkOnline {
+                if isPerformingSync {
+                    .onlineSynchronizing
+                } else {
+                    .online
+                }
             } else {
-                .online
+                .offline
             }
-        } else {
-            .offline
-        }
 
         networkState = state
     }

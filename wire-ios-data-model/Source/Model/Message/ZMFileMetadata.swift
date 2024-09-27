@@ -31,11 +31,12 @@ open class ZMFileMetadata: NSObject {
 
     public required init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
         self.fileURL = fileURL
-        self.thumbnail = if let thumbnail, !thumbnail.isEmpty {
-            thumbnail
-        } else {
-            nil
-        }
+        self.thumbnail =
+            if let thumbnail, !thumbnail.isEmpty {
+                thumbnail
+            } else {
+                nil
+            }
         let endName = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" : fileURL.lastPathComponent)
 
         self.filename = endName.removingExtremeCombiningCharacters

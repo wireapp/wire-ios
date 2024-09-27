@@ -28,11 +28,12 @@ extension ZMConversationMessage {
             }
         } else if isImage,
                   let imageData = imageMessageData?.imageData {
-            let mediaAsset: MediaAsset? = if imageMessageData?.isAnimatedGIF == true {
-                FLAnimatedImage(animatedGIFData: imageData)
-            } else {
-                UIImage(data: imageData)
-            }
+            let mediaAsset: MediaAsset? =
+                if imageMessageData?.isAnimatedGIF == true {
+                    FLAnimatedImage(animatedGIFData: imageData)
+                } else {
+                    UIImage(data: imageData)
+                }
 
             UIPasteboard.general.setMediaAsset(mediaAsset)
         } else if isLocation {

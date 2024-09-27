@@ -899,21 +899,22 @@ extension AuthenticationCoordinator {
                 try await changeUsername?.invoke(username: username)
             } catch let error as ChangeUsernameError {
                 await MainActor.run {
-                    let alert = switch error {
-                    case .taken:
-                        AuthenticationCoordinatorAlert(
-                            title: AlreadyTakenError.title,
-                            message: AlreadyTakenError.message,
-                            actions: [.ok]
-                        )
+                    let alert =
+                        switch error {
+                        case .taken:
+                            AuthenticationCoordinatorAlert(
+                                title: AlreadyTakenError.title,
+                                message: AlreadyTakenError.message,
+                                actions: [.ok]
+                            )
 
-                    case .unknown:
-                        AuthenticationCoordinatorAlert(
-                            title: UnknownError.title,
-                            message: UnknownError.message,
-                            actions: [.ok]
-                        )
-                    }
+                        case .unknown:
+                            AuthenticationCoordinatorAlert(
+                                title: UnknownError.title,
+                                message: UnknownError.message,
+                                actions: [.ok]
+                            )
+                        }
                     executeAction(.presentAlert(alert))
                 }
             } catch {

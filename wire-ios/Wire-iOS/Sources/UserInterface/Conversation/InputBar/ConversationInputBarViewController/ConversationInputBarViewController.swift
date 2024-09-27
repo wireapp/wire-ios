@@ -264,11 +264,12 @@ final class ConversationInputBarViewController: UIViewController,
             ) {
                 if inputController == nil ||
                     inputController != viewController {
-                    let newViewController: UIViewController = if let viewController {
-                        viewController
-                    } else {
-                        setupClosure()
-                    }
+                    let newViewController: UIViewController =
+                        if let viewController {
+                            viewController
+                        } else {
+                            setupClosure()
+                        }
 
                     inputController = newViewController
                 }
@@ -870,11 +871,12 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
     ) {
         clearInputBar()
         dismiss(animated: true) {
-            let messageText: String = if searchTerm == "" {
-                String(format: L10n.Localizable.Giphy.Conversation.randomMessage, searchTerm)
-            } else {
-                L10n.Localizable.Giphy.Conversation.message(searchTerm)
-            }
+            let messageText: String =
+                if searchTerm == "" {
+                    String(format: L10n.Localizable.Giphy.Conversation.randomMessage, searchTerm)
+                } else {
+                    L10n.Localizable.Giphy.Conversation.message(searchTerm)
+                }
 
             self.sendController.sendTextMessage(
                 messageText,
