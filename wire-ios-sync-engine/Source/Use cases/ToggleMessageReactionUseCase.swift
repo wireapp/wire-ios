@@ -29,7 +29,6 @@ public protocol ToggleMessageReactionUseCaseProtocol {
 }
 
 public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol {
-
     private let analyticsSession: AnalyticsSessionProtocol?
 
     public init(analyticsSession: AnalyticsSessionProtocol?) {
@@ -41,23 +40,22 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
         for message: ZMConversationMessage,
         in conversation: Conversation
     ) {
-        if message.selfUserReactions().contains(reaction) {
+        let currentReactions = message.selfUserReactions()
+        if currentReactions.contains(reaction) {
             ZMMessage.removeReaction(reaction, from: message)
         } else {
             ZMMessage.addReaction(reaction, to: message)
-
-            analyticsSession?.trackEvent(
-                ConversationContributionAnalyticsEvent(
-                    contributionType: .likeMessage,
-                    conversationType: .init(conversation.conversationType),
-                    conversationSize: UInt(
-                        conversation.localParticipants.count
+            if reaction == "❤️" {
+                analyticsSession?.trackEvent(
+                    ConversationContributionAnalyticsEvent(
+                        contributionType: .likeMessage,
+                        conversationType: .init(conversation.conversationType),
+                        conversationSize: UInt(conversation.localParticipants.count)
                     )
                 )
-            )
+            }
         }
     }
-
 }
 
 extension ZMConversationMessage {
