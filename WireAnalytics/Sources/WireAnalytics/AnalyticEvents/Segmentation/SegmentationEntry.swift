@@ -21,8 +21,7 @@
 /// This struct is used to provide additional, structured information about an analytics event.
 /// Each `SegmentationEntry` consists of a key (identifying the type of information) and a value
 /// (the actual data point).
-///
-/// - Note: This struct conforms to `Hashable`, allowing it to be used in sets and as dictionary keys.
+
 public struct SegmentationEntry: Hashable {
 
     let key: String
