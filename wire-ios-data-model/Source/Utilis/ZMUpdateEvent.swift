@@ -28,15 +28,15 @@ import Foundation
 extension ZMUpdateEvent {
     public var messageNonce: UUID? {
         switch type {
-        case .conversationMessageAdd,
-             .conversationAssetAdd,
-             .conversationKnock:
+        case .conversationAssetAdd,
+             .conversationKnock,
+             .conversationMessageAdd:
             return payload.dictionary(forKey: "data")?["nonce"] as? UUID
 
         case .conversationClientMessageAdd,
-             .conversationOtrMessageAdd,
+             .conversationMLSMessageAdd,
              .conversationOtrAssetAdd,
-             .conversationMLSMessageAdd:
+             .conversationOtrMessageAdd:
             let message = GenericMessage(from: self)
             guard let messageID = message?.messageID else {
                 return nil

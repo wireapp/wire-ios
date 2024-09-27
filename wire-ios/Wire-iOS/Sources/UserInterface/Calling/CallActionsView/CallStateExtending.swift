@@ -46,7 +46,7 @@ extension CallState: CallStateExtending {
 
     var isTerminating: Bool {
         switch self {
-        case .terminating, .incoming(video: _, shouldRing: false, degraded: _): true
+        case .incoming(video: _, shouldRing: false, degraded: _), .terminating: true
         default: false
         }
     }

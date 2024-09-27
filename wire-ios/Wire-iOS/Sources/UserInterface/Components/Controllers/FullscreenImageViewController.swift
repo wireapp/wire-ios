@@ -789,8 +789,8 @@ extension FullscreenImageViewController: UIGestureRecognizerDelegate {
 extension FullscreenImageViewController: MessageActionResponder {
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         switch action {
-        case .showInConversation,
-             .reply:
+        case .reply,
+             .showInConversation:
             dismiss(animated: true) {
                 self.perform(action: action)
             }

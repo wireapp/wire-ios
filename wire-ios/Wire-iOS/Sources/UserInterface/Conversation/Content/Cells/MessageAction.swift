@@ -97,10 +97,10 @@ enum MessageAction: CaseIterable, Equatable {
             return L10n.Localizable.Image.addEmoji
         case .visitLink:
             return MessageActionLocale.OpenLinkAlert.title
-        case .present,
-             .openQuote,
-             .resetSession,
-             .react:
+        case .openQuote,
+             .present,
+             .react,
+             .resetSession:
             return nil
         }
     }
@@ -133,11 +133,11 @@ enum MessageAction: CaseIterable, Equatable {
             .emoji
         case .visitLink:
             .externalLink
-        case .present,
+        case .digitallySign,
              .openQuote,
-             .digitallySign,
-             .resetSession,
-             .react:
+             .present,
+             .react,
+             .resetSession:
             nil
         }
     }
@@ -170,11 +170,11 @@ enum MessageAction: CaseIterable, Equatable {
             #selector(ConversationMessageActionController.addReaction(reaction:))
         case .visitLink:
             #selector(ConversationMessageActionController.visitLink)
-        case .present,
+        case .openQuote,
+             .present,
+             .resetSession,
              .sketchDraw,
-             .sketchEmoji,
-             .openQuote,
-             .resetSession:
+             .sketchEmoji:
             // no message related actions are not handled in ConversationMessageActionController
             nil
         }
@@ -233,11 +233,11 @@ enum MessageAction: CaseIterable, Equatable {
             "scribble"
         case .sketchEmoji:
             "smiley.fill"
-        case .present,
+        case .digitallySign,
              .openQuote,
-             .digitallySign,
-             .resetSession,
+             .present,
              .react,
+             .resetSession,
              .visitLink:
             nil
         }

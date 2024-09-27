@@ -265,7 +265,7 @@ extension ZMSLog {
 
             var logLevel: OSLogType {
                 switch level {
-                case .public, .error, .warn:
+                case .error, .public, .warn:
                     .error
                 case .info:
                     .info

@@ -29,7 +29,7 @@ extension ZMLocalNotification {
         var builderType: EventNotificationBuilder.Type?
 
         switch event.type {
-        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
+        case .conversationMLSMessageAdd, .conversationOtrMessageAdd:
             guard conversation?.isForcedReadOnly != true else { break }
             guard let message = GenericMessage(from: event) else { break }
             builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder

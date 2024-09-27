@@ -443,7 +443,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     ///   - traitCollection: the new traitCollection
     private func updateLayoutSize(for traitCollection: UITraitCollection) {
         switch (isiOSAppOnMac, traitCollection.horizontalSizeClass, UIWindow.interfaceOrientation?.isPortrait) {
-        case (true, _, true), (false, .regular, false):
+        case (false, .regular, false), (true, _, true):
             layoutSize = .regularLandscape
         case (false, .regular, true):
             layoutSize = .regularPortrait
@@ -577,8 +577,8 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             leftViewWidthConstraint.constant = size.width
             rightViewWidthConstraint.constant = size.width
 
-        case (.regularPortrait, true),
-             (.regularLandscape, _):
+        case (.regularLandscape, _),
+             (.regularPortrait, true):
             leftViewWidthConstraint.constant = leftViewMinWidth(size: size)
             rightViewWidthConstraint.constant = size.width - leftViewWidthConstraint.constant
 

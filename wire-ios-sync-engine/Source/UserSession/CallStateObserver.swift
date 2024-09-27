@@ -125,8 +125,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
                 previousCallState: previousCallState
             ) {
                 switch (systemMessage.systemMessageType, callState, conversation.conversationType) {
-                case (.missedCall, .terminating(reason: .normal), .group),
-                     (.missedCall, .terminating(reason: .canceled), _):
+                case (.missedCall, .terminating(reason: .canceled), _),
+                     (.missedCall, .terminating(reason: .normal), .group):
                     // group calls we didn't join, end with reason .normal. We should still insert a missed call in this
                     // case.
                     // since the systemMessageGenerator keeps track whether we joined or not, we can use it to decide
@@ -153,14 +153,14 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
                 uiConv.isIgnoringCall = uiConv.mutedMessageTypesIncludingAvailability != .none || !shouldRing
                 uiConv.isCallDeviceActive = false
 
-            case .terminating, .none, .mediaStopped:
+            case .mediaStopped, .none, .terminating:
                 uiConv.isCallDeviceActive = false
                 uiConv.isIgnoringCall = false
 
-            case .outgoing, .answered, .established:
+            case .answered, .established, .outgoing:
                 uiConv.isCallDeviceActive = true
 
-            case .unknown, .establishedDataChannel:
+            case .establishedDataChannel, .unknown:
                 break
             }
 

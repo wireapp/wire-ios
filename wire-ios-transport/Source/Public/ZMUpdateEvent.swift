@@ -272,8 +272,8 @@ open class ZMUpdateEvent: NSObject {
     /// True if the event is encoded with ZMGenericMessage
     open var isGenericMessageEvent: Bool {
         switch type {
-        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd,
-             .conversationMLSMessageAdd:
+        case .conversationClientMessageAdd, .conversationMLSMessageAdd, .conversationOtrAssetAdd,
+             .conversationOtrMessageAdd:
             true
         default:
             false

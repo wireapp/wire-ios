@@ -348,7 +348,7 @@ extension URLActionRouter {
             case ConversationJoinError.tooManyMembers:
                 self = .conversationIsFull
 
-            case ConversationJoinError.guestLinksDisabled, ConversationFetchError.guestLinksDisabled:
+            case ConversationFetchError.guestLinksDisabled, ConversationJoinError.guestLinksDisabled:
                 self = .conversationLinkIsDisabled
 
             case ConversationJoinError.invalidConversationPassword:
@@ -370,7 +370,7 @@ extension URLActionRouter {
             case .conversationIsFull:
                 AlertStrings.ConverationIsFull.message
 
-            case .conversationLinkIsInvalid, .conversationLinkIsDisabled:
+            case .conversationLinkIsDisabled, .conversationLinkIsInvalid:
                 AlertStrings.LinkIsInvalid.message
 
             case .invalidConversationPassword:

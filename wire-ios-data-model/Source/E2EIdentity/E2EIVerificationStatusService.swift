@@ -89,7 +89,7 @@ extension WireCoreCrypto.E2eiConversationState {
         switch self {
         case .verified:
             return .verified
-        case .notVerified, .notEnabled:
+        case .notEnabled, .notVerified:
             return .notVerified
         @unknown default:
             fatalError("unsupported value of 'E2eiConversationState'!")

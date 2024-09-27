@@ -42,7 +42,7 @@ public enum AppLockPasscodePreference {
 
     var policy: LAPolicy {
         switch self {
-        case .deviceThenCustom, .deviceOnly:
+        case .deviceOnly, .deviceThenCustom:
             .deviceOwnerAuthentication
         case .customOnly:
             .deviceOwnerAuthenticationWithBiometrics

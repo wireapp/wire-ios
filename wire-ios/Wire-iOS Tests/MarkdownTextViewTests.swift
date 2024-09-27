@@ -119,9 +119,9 @@ final class MarkdownTextViewTests: XCTestCase {
                 .paragraphStyle: style.baseParagraphStyle,
             ]
 
-        case .h1, .h2, .h3,
-             [.h1, .bold],
+        case .h1, [.h1, .bold], .h2,
              [.h2, .bold],
+             .h3,
              [.h3, .bold]:
             return [
                 .markdownID: markdown,
@@ -130,9 +130,9 @@ final class MarkdownTextViewTests: XCTestCase {
                 .paragraphStyle: style.baseParagraphStyle,
             ]
 
-        case [.h1, .italic], [.h1, .bold, .italic],
-             [.h2, .italic], [.h2, .bold, .italic],
-             [.h3, .italic], [.h3, .bold, .italic]:
+        case [.h1, .bold, .italic], [.h1, .italic],
+             [.h2, .bold, .italic], [.h2, .italic],
+             [.h3, .bold, .italic], [.h3, .italic]:
             return [
                 .markdownID: markdown,
                 .font: style.baseFont.withSize(style.headerSize(for: markdown.headerValue!)!).bold.italic,

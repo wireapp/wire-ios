@@ -65,7 +65,7 @@ final class ConversationContentViewController: UIViewController {
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
-            case .fileSharingEnabled, .fileSharingDisabled:
+            case .fileSharingDisabled, .fileSharingEnabled:
                 self?.updateVisibleCells()
 
             default:

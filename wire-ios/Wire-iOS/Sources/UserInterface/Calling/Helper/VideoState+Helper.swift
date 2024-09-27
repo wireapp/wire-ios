@@ -25,7 +25,7 @@ extension VideoState {
 
     var isSending: Bool {
         switch self {
-        case .started, .paused, .badConnection, .screenSharing: true
+        case .badConnection, .paused, .screenSharing, .started: true
         case .stopped: false
         }
     }

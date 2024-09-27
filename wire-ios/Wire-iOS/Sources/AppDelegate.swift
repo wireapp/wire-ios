@@ -175,8 +175,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         switch launchType {
-        case .url,
-             .push:
+        case .push,
+             .url:
             break
         default:
             launchType = .direct

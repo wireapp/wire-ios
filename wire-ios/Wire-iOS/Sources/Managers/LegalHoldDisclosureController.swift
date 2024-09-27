@@ -166,7 +166,7 @@ final class LegalHoldDisclosureController: UserObserving {
 
     private func discloseDisabledStateIfPossible() {
         switch currentState {
-        case .warningAboutPendingRequest, .warningAboutAcceptationResult:
+        case .warningAboutAcceptationResult, .warningAboutPendingRequest:
             currentState = .none
             return
 

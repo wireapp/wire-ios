@@ -105,7 +105,7 @@ public enum DeveloperFlag: String, CaseIterable {
             "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             "ForceDatabaseLoadingFailure"
-        case .nseV2, .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep:
+        case .debugDuplicateObjects, .decryptAndStoreEventsSleep, .forceCRLExpiryAfterOneMinute, .nseV2:
             nil
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"

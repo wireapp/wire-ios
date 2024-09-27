@@ -30,10 +30,10 @@ extension GenericMessage {
             return nil
         }
         switch content {
-        case let .location(data as BigEndianDataConvertible),
-             .text(let data as BigEndianDataConvertible),
+        case let .asset(data as BigEndianDataConvertible),
              .edited(let data as BigEndianDataConvertible),
-             .asset(let data as BigEndianDataConvertible):
+             let .location(data as BigEndianDataConvertible),
+             .text(let data as BigEndianDataConvertible):
             return data.hashWithTimestamp(timestamp: timestamp.timeIntervalSince1970)
 
         case let .ephemeral(data):
@@ -41,9 +41,9 @@ extension GenericMessage {
                 return nil
             }
             switch content {
-            case let .location(data as BigEndianDataConvertible),
-                 .text(let data as BigEndianDataConvertible),
-                 .asset(let data as BigEndianDataConvertible):
+            case let .asset(data as BigEndianDataConvertible),
+                 let .location(data as BigEndianDataConvertible),
+                 .text(let data as BigEndianDataConvertible):
                 return data.hashWithTimestamp(timestamp: timestamp.timeIntervalSince1970)
             default:
                 return nil

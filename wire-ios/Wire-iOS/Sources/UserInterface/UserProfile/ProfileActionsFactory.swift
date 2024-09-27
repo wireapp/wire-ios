@@ -258,9 +258,9 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
                 }
             }
 
-        case (.profileViewer, .none),
-             (.search, .none),
-             (_, .group?):
+        case (_, .group?),
+             (.profileViewer, .none),
+             (.search, .none):
             // Do nothing if the viewer is a wireless user because they can't have 1:1's
             if viewer.isWirelessUser {
                 break

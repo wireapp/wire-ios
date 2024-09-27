@@ -133,7 +133,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         }
 
         switch (messageProtocol, isSelfUser) {
-        case (.proteus, _), (.mixed, _), (.mls, true):
+        case (.mixed, _), (.mls, true), (.proteus, _):
             try await proteusParticipantsService.removeParticipant(user, from: conversation)
         case (.mls, false):
             guard let mlsParticipantsService else {

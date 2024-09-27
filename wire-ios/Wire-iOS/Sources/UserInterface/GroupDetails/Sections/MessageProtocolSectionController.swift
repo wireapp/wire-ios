@@ -61,7 +61,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         case .proteus:
             return 1
 
-        case .mls, .mixed:
+        case .mixed, .mls:
             return Bundle.developerModeEnabled ? 3 : 2
         }
     }

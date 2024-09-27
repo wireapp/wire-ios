@@ -318,7 +318,7 @@ extension CallState {
 
     var isCallOngoing: Bool {
         switch self {
-        case .none, .incoming: false
+        case .incoming, .none: false
         default: true
         }
     }

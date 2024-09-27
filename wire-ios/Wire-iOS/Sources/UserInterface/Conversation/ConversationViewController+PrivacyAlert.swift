@@ -207,7 +207,7 @@ extension ConversationViewController {
 extension ConversationViewController: PrivacyWarningPresenter {
     func presentPrivacyWarningAlert(_ notification: Notification) {
         switch conversation.messageProtocol {
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             presentClientVerificationPrivacyWarningAlert(notification)
         case .mls:
             presentE2EIPrivacyWarningAlert(notification)

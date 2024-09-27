@@ -125,16 +125,16 @@ extension ZMUserSession {
             case "client-not-found":
                 .clientDeletedRemotely
 
-            case "invalid-credentials",
-                 "missing-auth",
-                 "bad-request": // in case the password not matching password format requirement
+            case "bad-request", // in case the password not matching password format requirement
+                 "invalid-credentials",
+                 "missing-auth":
                 .invalidCredentials
 
             default:
                 .unknownError
             }
 
-        case .temporaryError, .tryAgainLater, .expired:
+        case .expired, .temporaryError, .tryAgainLater:
             .networkError
 
         default:

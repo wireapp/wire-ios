@@ -64,7 +64,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
                 tableCell.type = previewGenerator(self)
             }
             switch presentationStyle {
-            case .modal, .alert:
+            case .alert, .modal:
                 tableCell.isAccessoryIconHidden = false
                 tableCell.hideDisclosureIndicator()
 

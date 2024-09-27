@@ -251,7 +251,7 @@ enum WirelessRequestFactory {
             path = "/conversations/\(domain)/\(identifier)/access"
             payload["access_role"] = accessRoles.map(\.rawValue)
 
-        case .v2, .v1, .v0:
+        case .v0, .v1, .v2:
             path = "/conversations/\(identifier)/access"
             payload["access_role"] = ConversationAccessRole.fromAccessRoleV2(accessRoles).rawValue
             payload["access_role_v2"] = accessRoles.map(\.rawValue)

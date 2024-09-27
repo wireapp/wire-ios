@@ -31,7 +31,7 @@ public enum ZMConversationLegalHoldStatus: Int16 {
 
     public var denotesEnabledComplianceDevice: Bool {
         switch self {
-        case .pendingApproval, .enabled:
+        case .enabled, .pendingApproval:
             true
         case .disabled:
             false
@@ -192,7 +192,7 @@ extension ZMConversation {
             appendLegalHoldEnabledSystemMessageForConversation(cause: cause)
             expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
 
-        case (.pendingApproval, false), (.enabled, false):
+        case (.enabled, false), (.pendingApproval, false):
             legalHoldStatus = .disabled
             appendLegalHoldDisabledSystemMessageForConversation()
 
@@ -204,10 +204,10 @@ extension ZMConversation {
 
     private func updateSecurityLevel(cause: SecurityChangeCause) {
         switch cause {
-        case .addedUsers, .addedClients, .ignoredClients:
+        case .addedClients, .addedUsers, .ignoredClients:
             degradeSecurityLevelIfNeeded(for: cause)
 
-        case .removedUsers, .removedClients, .verifiedClients:
+        case .removedClients, .removedUsers, .verifiedClients:
             increaseSecurityLevelIfNeeded(for: cause)
 
         case .verifyLegalHold:
@@ -358,7 +358,7 @@ extension ZMConversation {
                 timestamp: date
             )
 
-        case .oneOnOne, .connection:
+        case .connection, .oneOnOne:
             if
                 user.connection == nil,
                 let context = managedObjectContext,
@@ -433,7 +433,7 @@ extension ZMConversation {
 extension ZMConversation {
     public var isDegraded: Bool {
         switch messageProtocol {
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             securityLevel == .secureWithIgnored
         case .mls:
             mlsVerificationStatus == .degraded
@@ -446,7 +446,7 @@ extension ZMConversation {
         // Downgrade the conversation to be unverified
         if isDegraded {
             switch messageProtocol {
-            case .proteus, .mixed:
+            case .mixed, .proteus:
                 securityLevel = .notSecure
             case .mls:
                 mlsVerificationStatus = .notVerified

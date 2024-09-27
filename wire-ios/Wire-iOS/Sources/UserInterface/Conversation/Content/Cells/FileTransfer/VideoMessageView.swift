@@ -234,7 +234,7 @@ final class VideoMessageView: UIView, TransferView {
         var visibleViews: [UIView] = [playButton, previewImageView]
 
         switch state {
-        case .uploading, .downloading:
+        case .downloading, .uploading:
             visibleViews.append(progressView)
         default:
             break

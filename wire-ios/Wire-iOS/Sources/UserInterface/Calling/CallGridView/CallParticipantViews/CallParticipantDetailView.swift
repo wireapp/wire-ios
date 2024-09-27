@@ -61,7 +61,7 @@ final class CallParticipantDetailsView: RoundedBlurView {
     var callState: CallParticipantState = .connecting {
         didSet {
             switch callState {
-            case .unconnectedButMayConnect, .connecting:
+            case .connecting, .unconnectedButMayConnect:
                 connectingLabel.isHidden = false
                 nameLabel.textColor = SemanticColors.Label.textInactive
 
@@ -162,7 +162,7 @@ final class CallParticipantDetailsView: RoundedBlurView {
         case .muted:
             makeMicrophone(hidden: false)
 
-        case .unmuted, .hidden:
+        case .hidden, .unmuted:
             break
         }
     }

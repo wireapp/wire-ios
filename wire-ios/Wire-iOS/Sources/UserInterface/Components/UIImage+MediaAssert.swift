@@ -35,7 +35,7 @@ extension UIImage: MediaAsset {
         guard let alpha: CGImageAlphaInfo = cgImage?.alphaInfo else { return false }
 
         switch alpha {
-        case .first, .last, .premultipliedFirst, .premultipliedLast, .alphaOnly:
+        case .alphaOnly, .first, .last, .premultipliedFirst, .premultipliedLast:
             return true
         default:
             return false

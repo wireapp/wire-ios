@@ -74,7 +74,7 @@ extension AudioButtonOverlayState {
 
     var duration: TimeInterval {
         switch self {
-        case .expanded, .default: 0.3
+        case .default, .expanded: 0.3
         default: 0.2
         }
     }

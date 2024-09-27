@@ -108,15 +108,15 @@ public final class UserProfileImageUpdateStatus: NSObject {
 
         func canTransition(to newState: ImageState) -> Bool {
             switch (self, newState) {
-            case (.ready, .preprocessing),
-                 (.preprocessing, .upload),
+            case (.preprocessing, .upload),
+                 (.ready, .preprocessing),
+                 (.ready, .upload), // When re-uploading a preprocessed v2 to v3
                  (.upload, .uploading),
-                 (.uploading, .uploaded),
-                 (.ready, .upload): // When re-uploading a preprocessed v2 to v3
+                 (.uploading, .uploaded):
                 true
 
-            case (.uploaded, .ready),
-                 (.failed, .ready):
+            case (.failed, .ready),
+                 (.uploaded, .ready):
                 true
 
             case (.failed, .failed):
@@ -141,13 +141,13 @@ public final class UserProfileImageUpdateStatus: NSObject {
 
         func canTransition(to newState: ProfileUpdateState) -> Bool {
             switch (self, newState) {
-            case (.ready, .preprocess),
-                 (.preprocess, .update),
+            case (.preprocess, .update),
+                 (.ready, .preprocess),
                  (.ready, .update): // When re-uploading a preprocessed v2 to v3
                 true
 
-            case (.update, .ready),
-                 (.failed, .ready):
+            case (.failed, .ready),
+                 (.update, .ready):
                 true
 
             case (.failed, .failed):

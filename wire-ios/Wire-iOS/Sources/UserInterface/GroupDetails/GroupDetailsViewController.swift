@@ -417,7 +417,7 @@ extension GroupDetailsViewController {
         typealias ConversationVerificationStatus = L10n.Localizable.GroupDetails.ConversationVerificationStatus
 
         switch conversation.messageProtocol {
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             return ConversationVerificationStatus.proteus
         case .mls:
             return ConversationVerificationStatus.e2ei
@@ -426,7 +426,7 @@ extension GroupDetailsViewController {
 
     private var verificationStatusIcon: UIImage {
         switch conversation.messageProtocol {
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             .init(resource: .verifiedShield)
         case .mls:
             .init(resource: .certificateValid)
@@ -435,7 +435,7 @@ extension GroupDetailsViewController {
 
     private var verificationStatusColor: UIColor {
         switch conversation.messageProtocol {
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             SemanticColors.Label.textCertificateVerified
         case .mls:
             SemanticColors.Label.textCertificateValid

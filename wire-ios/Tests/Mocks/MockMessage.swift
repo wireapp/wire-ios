@@ -437,7 +437,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
 
     var isSent: Bool {
         switch deliveryState {
-        case .failedToSend, .pending, .invalid:
+        case .failedToSend, .invalid, .pending:
             false
         default:
             true

@@ -149,8 +149,8 @@ final class ConversationMessageActionController {
             message.canAddReaction
         case .visitLink:
             message.canVisitLink
-        case .present,
-             .openQuote,
+        case .openQuote,
+             .present,
              .resetSession:
             false
         }

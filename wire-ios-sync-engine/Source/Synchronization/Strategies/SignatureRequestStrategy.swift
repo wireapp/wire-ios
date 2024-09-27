@@ -116,9 +116,9 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
                 break
             }
 
-        case .temporaryError,
-             .tryAgainLater,
-             .expired:
+        case .expired,
+             .temporaryError,
+             .tryAgainLater:
             break
 
         case .permanentError:

@@ -68,7 +68,7 @@ extension ZMUpdateEvent {
     /// Payload dictionary key that holds the plaintext (protobuf) data
     private var plaintextPayloadKey: String {
         switch type {
-        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
+        case .conversationMLSMessageAdd, .conversationOtrMessageAdd:
             "text"
         case .conversationOtrAssetAdd:
             "info"

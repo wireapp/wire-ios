@@ -32,7 +32,7 @@ enum ConversationActionType {
     /// Some actions only involve the sender, others involve other users too.
     var involvesUsersOtherThanSender: Bool {
         switch self {
-        case .left, .teamMemberLeave, .added(herself: true): false
+        case .added(herself: true), .left, .teamMemberLeave: false
         default:                                             true
         }
     }
@@ -48,9 +48,9 @@ enum ConversationActionType {
 
     func image(with color: UIColor) -> UIImage {
         let icon: StyleKitIcon = switch self {
-        case .started, .none:                   .conversation
+        case .none,                   .started: .conversation
         case .added:                            .plus
-        case .removed, .left, .teamMemberLeave: .minus
+        case .left, .removed, .teamMemberLeave: .minus
         }
 
         return icon.makeImage(size: .tiny, color: color)

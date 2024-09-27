@@ -61,18 +61,18 @@ struct NetworkInfo {
 
     private func qualityType(from cellularTypeString: String) -> NetworkQualityType {
         switch cellularTypeString {
-        case CTRadioAccessTechnologyGPRS,
+        case CTRadioAccessTechnologyCDMA1x,
              CTRadioAccessTechnologyEdge,
-             CTRadioAccessTechnologyCDMA1x:
+             CTRadioAccessTechnologyGPRS:
             .type2G
 
-        case CTRadioAccessTechnologyWCDMA,
-             CTRadioAccessTechnologyHSDPA,
-             CTRadioAccessTechnologyHSUPA,
-             CTRadioAccessTechnologyCDMAEVDORev0,
+        case CTRadioAccessTechnologyCDMAEVDORev0,
              CTRadioAccessTechnologyCDMAEVDORevA,
              CTRadioAccessTechnologyCDMAEVDORevB,
-             CTRadioAccessTechnologyeHRPD:
+             CTRadioAccessTechnologyeHRPD,
+             CTRadioAccessTechnologyHSDPA,
+             CTRadioAccessTechnologyHSUPA,
+             CTRadioAccessTechnologyWCDMA:
             .type3G
 
         case CTRadioAccessTechnologyLTE:

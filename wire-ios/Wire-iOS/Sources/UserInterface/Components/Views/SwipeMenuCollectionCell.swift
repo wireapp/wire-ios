@@ -322,9 +322,9 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
             }
             openedFeedbackGenerator.prepare()
 
-        case .ended,
-             .failed,
-             .cancelled:
+        case .cancelled,
+             .ended,
+             .failed:
             drawerScrollingEnded(withOffset: offset.x)
 
             if offset.x + initialDrawerOffset > bounds.size.width * overscrollFraction {

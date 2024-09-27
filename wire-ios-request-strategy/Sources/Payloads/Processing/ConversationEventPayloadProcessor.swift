@@ -1025,7 +1025,7 @@ struct ConversationEventPayloadProcessor {
 
         case .mls:
             switch newMessageProtocol {
-            case .proteus, .mixed:
+            case .mixed, .proteus:
                 WireLogger.updateEvent
                     .warn(
                         "update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"

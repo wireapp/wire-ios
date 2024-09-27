@@ -25,21 +25,21 @@ import WireSyncEngine
 extension VoiceChannel {
     func accessoryType() -> CallInfoViewControllerAccessoryType {
         switch state {
-        case .incoming(_, shouldRing: true, _),
-             .answered,
+        case .answered,
              .establishedDataChannel,
+             .incoming(_, shouldRing: true, _),
              .outgoing:
             guard !videoState.isSending,
                   let initiator
             else { return .none }
             return .avatar(HashBox(value: initiator))
 
-        case .unknown,
+        case .established,
+             .incoming(_, shouldRing: false, _),
+             .mediaStopped,
              .none,
              .terminating,
-             .mediaStopped,
-             .established,
-             .incoming(_, shouldRing: false, _):
+             .unknown:
             return .participantsList(sortedParticipants().map {
                 .callParticipant(
                     user: HashBox(value: $0.user),
@@ -170,7 +170,7 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         case .outgoing: .ringingOutgoing
         case .answered, .establishedDataChannel: .connecting
         case .established: .established(duration: -voiceChannelSnapshot.callStartDate.timeIntervalSinceNow.rounded())
-        case .terminating, .mediaStopped, .incoming(_, shouldRing: false, _): .terminating
+        case .incoming(_, shouldRing: false, _), .mediaStopped, .terminating: .terminating
         case .none, .unknown: .none
         }
     }
@@ -283,7 +283,7 @@ extension VoiceChannel {
         guard let degradationReason else { return .none }
 
         switch state {
-        case .incoming(video: _, shouldRing: _, degraded: true), .answered(degraded: true):
+        case .answered(degraded: true), .incoming(video: _, shouldRing: _, degraded: true):
             return .incoming(reason: degradationReason)
         case .outgoing(degraded: true):
             return .outgoing(reason: degradationReason)
@@ -308,7 +308,7 @@ extension VoiceChannel {
         switch conversation.messageProtocol {
         case .mls:
             return .invalidCertificate
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             return .degradedUser(user: hashboxFirstDegradedUser)
         }
     }

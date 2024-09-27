@@ -32,9 +32,9 @@ enum VideoKind {
             return
         }
         switch state {
-        case .stopped, .paused:
+        case .paused, .stopped:
             self = .none
-        case .started, .badConnection:
+        case .badConnection, .started:
             self = .camera
         case .screenSharing:
             self = .screenshare

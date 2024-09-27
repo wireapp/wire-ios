@@ -197,7 +197,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
 
         case let .terminating(reason: reason):
             switch reason {
-            case .normal, .canceled:
+            case .canceled, .normal:
                 break
             default:
                 playSoundIfAllowed(.callDropped)
@@ -208,7 +208,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
         }
 
         switch callState {
-        case .outgoing, .incoming:
+        case .incoming, .outgoing:
             break
         default:
             if case .outgoing = previousCallState {

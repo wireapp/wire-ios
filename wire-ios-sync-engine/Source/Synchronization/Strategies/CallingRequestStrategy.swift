@@ -468,7 +468,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             }
 
             switch conversation.messageProtocol {
-            case .proteus, .mixed:
+            case .mixed, .proteus:
                 // With proteus, we discover clients by posting an otr message to no-one,
                 // then parse the error response that contains the list of all clients.
                 clientDiscoveryRequest = ClientDiscoveryRequest(

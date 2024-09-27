@@ -44,7 +44,7 @@ extension LocalNotificationType {
                 .newMessage
             }
 
-        case .failedMessage, .availabilityBehaviourChangeAlert:
+        case .availabilityBehaviourChangeAlert, .failedMessage:
             .newMessage
 
         case .bundledMessages:
@@ -93,7 +93,7 @@ extension PushNotificationCategory {
 
     fileprivate init(contentType: LocalNotificationContentType) {
         switch contentType {
-        case .audio, .video, .fileUpload, .image, .text, .location:
+        case .audio, .fileUpload, .image, .location, .text, .video:
             self = .conversationWithLike
         case .hidden:
             self = .alert
@@ -123,7 +123,7 @@ extension PushNotificationCategory {
         switch self {
         case .conversation, .conversationWithLike:
             return .conversationUnderEncryptionAtRest
-        case .conversationWithMute, .conversationWithLikeAndMute:
+        case .conversationWithLikeAndMute, .conversationWithMute:
             return .conversationUnderEncryptionAtRestWithMute
         default:
             return self

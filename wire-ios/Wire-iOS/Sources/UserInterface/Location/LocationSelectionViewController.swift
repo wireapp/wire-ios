@@ -312,7 +312,7 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
         case .notDetermined:
             appLocationManager.requestLocationAuthorization()
 
-        case .restricted, .denied:
+        case .denied, .restricted:
             presentUnauthorizedAlert()
 
         case .authorizedAlways, .authorizedWhenInUse:

@@ -98,7 +98,7 @@ enum AvailabilityStringBuilder {
         let verticalCorrection: CGFloat = switch size {
         case .small:
             -1
-        case .medium, .large, .normal, .header, .titleThree, .subHeadline, .bodyTwo, .buttonSmall, .body, .buttonBig:
+        case .body, .bodyTwo, .buttonBig, .buttonSmall, .header, .large, .medium, .normal, .subHeadline, .titleThree:
             0
         }
 

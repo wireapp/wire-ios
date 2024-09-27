@@ -110,7 +110,7 @@ extension TextFieldValidator.ValidationError: LocalizedError {
                 L10n.Localizable.Name.Guidance.tooshort
             case .email:
                 L10n.Localizable.Email.Guidance.tooshort
-            case .password, .passcode:
+            case .passcode, .password:
                 PasswordRuleSet.localizedErrorMessage
             case .unknown:
                 // swiftlint:disable:next todo_requires_jira_link
@@ -126,7 +126,7 @@ extension TextFieldValidator.ValidationError: LocalizedError {
                 L10n.Localizable.Name.Guidance.toolong
             case .email:
                 L10n.Localizable.Email.Guidance.toolong
-            case .password, .passcode:
+            case .passcode, .password:
                 L10n.Localizable.Password.Guidance.toolong
             case .unknown:
                 // swiftlint:disable:next todo_requires_jira_link

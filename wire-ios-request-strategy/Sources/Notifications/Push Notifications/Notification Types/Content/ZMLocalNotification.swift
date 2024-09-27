@@ -233,8 +233,8 @@ extension LocalNotificationType {
         }
 
         switch contentType {
-        case .text(_, isMention: true, isReply: _),
-             .ephemeral(isMention: true, isReply: _):
+        case .ephemeral(isMention: true, isReply: _),
+             .text(_, isMention: true, isReply: _):
             return true
         default:
             return false
@@ -247,8 +247,8 @@ extension LocalNotificationType {
         }
 
         switch contentType {
-        case .text(_, isMention: _, isReply: true),
-             .ephemeral(isMention: _, isReply: true):
+        case .ephemeral(isMention: _, isReply: true),
+             .text(_, isMention: _, isReply: true):
             return true
         default:
             return false

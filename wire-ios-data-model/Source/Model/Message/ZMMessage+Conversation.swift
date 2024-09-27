@@ -36,13 +36,13 @@ extension ZMMessage {
     func nonce(fromPostPayload payload: [AnyHashable: Any]) -> UUID? {
         let eventType = ZMUpdateEvent.updateEventType(for: payload.optionalString(forKey: "type") ?? "")
         switch eventType {
-        case .conversationMessageAdd,
-             .conversationKnock:
+        case .conversationKnock,
+             .conversationMessageAdd:
             return payload.dictionary(forKey: "data")?["nonce"] as? UUID
 
         case .conversationClientMessageAdd,
-             .conversationOtrMessageAdd,
-             .conversationMLSMessageAdd:
+             .conversationMLSMessageAdd,
+             .conversationOtrMessageAdd:
             // if event is otr message then payload should be already decrypted and should contain generic message data
             let base64Content = payload.string(forKey: "data")
             let message = GenericMessage(withBase64String: base64Content)

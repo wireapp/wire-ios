@@ -185,7 +185,7 @@ public class Feature: ZMManagedObject {
         case .conferenceCalling, .e2ei:
             needsToNotifyUser = hasStatusChanged && newStatus == .enabled
 
-        case .fileSharing, .selfDeletingMessages, .conversationGuestLinks:
+        case .conversationGuestLinks, .fileSharing, .selfDeletingMessages:
             needsToNotifyUser = hasStatusChanged
 
         default:
@@ -225,14 +225,14 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
-        case .conferenceCalling,
-             .fileSharing,
+        case .classifiedDomains,
+             .conferenceCalling,
              .conversationGuestLinks,
-             .classifiedDomains,
              .digitalSignature,
+             .e2ei,
+             .fileSharing,
              .mls,
-             .mlsMigration,
-             .e2ei:
+             .mlsMigration:
             break
         }
     }

@@ -96,13 +96,13 @@ enum CellConfiguration {
 
     var action: Action? {
         switch self {
-        case .iconToggle,
-             .linkHeader,
-             .secureLinkHeader,
-             .loading,
-             .text,
+        case .appearance,
+             .iconToggle,
              .info,
-             .appearance: nil
+             .linkHeader,
+             .loading,
+             .secureLinkHeader,
+             .text: nil
         case let .leadingButton(_, _, action: action): action
         case let .iconAction(_, _, _, action: action): action
         }

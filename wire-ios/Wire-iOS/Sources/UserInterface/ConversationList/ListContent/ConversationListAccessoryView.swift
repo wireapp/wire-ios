@@ -164,11 +164,11 @@ final class ConversationListAccessoryView: UIView {
             transparentIconView.setTemplateIcon(.pencil, size: iconSize)
             transparentIconView.tintColor = IconColors.foregroundDefaultBlack
 
-        case .unreadMessages, .mention:
+        case .mention, .unreadMessages:
             textLabel.textColor = textLabelColor
             badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
 
-        case .unreadPing, .reply, .missedCall:
+        case .missedCall, .reply, .unreadPing:
             badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
 
         default:

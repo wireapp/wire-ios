@@ -105,7 +105,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     var isCustomBackend: Bool {
         switch backendEnvironment.environmentType.value {
-        case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:
+        case .anta, .bella, .chala, .diya, .elna, .foma, .production, .qaDemo, .qaDemo2, .staging:
             false
         case .custom:
             true

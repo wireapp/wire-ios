@@ -159,7 +159,7 @@ extension ZMConversation: GroupDetailsConversation {
 extension GroupDetailsConversation {
     var isVerified: Bool {
         switch messageProtocol {
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             securityLevel == .secure
         case .mls:
             isE2EIEnabled && mlsVerificationStatus == .verified

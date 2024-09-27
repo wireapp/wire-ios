@@ -52,7 +52,7 @@ extension Payload {
 
         init(_ action: CreateGroupConversationAction) {
             switch action.messageProtocol {
-            case .mls, .mixed:
+            case .mixed, .mls:
                 self.messageProtocol = "mls"
                 self.creatorClient = action.creatorClientID
                 self.qualifiedUsers = nil

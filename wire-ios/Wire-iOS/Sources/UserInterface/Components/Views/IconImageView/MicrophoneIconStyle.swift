@@ -67,7 +67,7 @@ extension MicrophoneIconStyle: IconImageStyle {
         switch self {
         case .unmuted, .unmutedPulsing:
             return Calling.MicrophoneOn.description
-        case .muted, .hidden:
+        case .hidden, .muted:
             return Calling.MicrophoneOff.description
         }
     }

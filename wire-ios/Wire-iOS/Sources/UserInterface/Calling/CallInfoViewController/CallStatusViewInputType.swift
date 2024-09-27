@@ -46,9 +46,9 @@ extension CallStatusViewInputType {
 
     var overlayBackgroundColor: UIColor {
         switch (isVideoCall, state, callingConfig.isAudioCallColorSchemable) {
-        case (true, .ringingOutgoing, _), (true, .ringingIncoming, _):
+        case (true, .ringingIncoming, _), (true, .ringingOutgoing, _):
             UIColor.black.withAlphaComponent(0.4)
-        case (true, _, _), (false, _, false):
+        case (false, _, false), (true, _, _):
             UIColor.black.withAlphaComponent(0.64)
         case (false, _, true):
             UIColor.black.withAlphaComponent(0.64)

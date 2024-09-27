@@ -56,10 +56,10 @@ public enum URLAction: Equatable {
 
     public var requiresAuthentication: Bool {
         switch self {
-        case .joinConversation,
+        case .connectBot,
+             .joinConversation,
              .openConversation,
-             .openUserProfile,
-             .connectBot:
+             .openUserProfile:
             true
         default: false
         }

@@ -242,7 +242,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
         // Then
         switch payloadAndStrategy.strategy {
-        case .ignoreAllMissingClientsNotFromUsers, .ignoreAllMissingClients:
+        case .ignoreAllMissingClients, .ignoreAllMissingClientsNotFromUsers:
             XCTFail()
         default:
             break

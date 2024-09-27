@@ -60,7 +60,7 @@ extension SLComposeServiceViewController {
                 nil
 
             switch attachmentType {
-            case .walletPass, .image:
+            case .image, .walletPass:
                 self.loadSystemPreviewForAttachment(attachment, type: attachmentType) { image, preferredDisplayMode in
                     completeTask(image, .combined(defaultDisplayMode, preferredDisplayMode))
                 }
@@ -70,8 +70,8 @@ extension SLComposeServiceViewController {
                     completeTask(image, .combined(defaultDisplayMode, preferredDisplayMode) ?? .video)
                 }
 
-            case .rawFile,
-                 .fileUrl:
+            case .fileUrl,
+                 .rawFile:
                 let fallbackIcon = self.fallbackIcon(forAttachment: attachment, ofType: .rawFile)
                 completeTask(.placeholder(fallbackIcon), .combined(defaultDisplayMode, .placeholder))
 
@@ -158,8 +158,8 @@ extension SLComposeServiceViewController {
         case .image:
             .photo
 
-        case .walletPass,
-             .fileUrl:
+        case .fileUrl,
+             .walletPass:
             .document
 
         case .rawFile:

@@ -570,7 +570,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
         switch splitLayoutObservable.layoutSize {
         case .compact:
             CGSize(width: view.bounds.size.width / 2, height: view.bounds.size.height)
-        case .regularPortrait, .regularLandscape:
+        case .regularLandscape, .regularPortrait:
             CGSize(width: splitLayoutObservable.leftViewControllerWidth, height: view.bounds.size.height)
         }
     }

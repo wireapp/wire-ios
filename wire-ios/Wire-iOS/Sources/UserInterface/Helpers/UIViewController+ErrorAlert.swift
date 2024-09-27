@@ -69,7 +69,7 @@ extension UIViewController {
                 message = L10n.Localizable.Error.User.networkError
             case .emailIsAlreadyRegistered:
                 message = L10n.Localizable.Error.User.emailIsTaken
-            case .invalidEmailVerificationCode, .invalidActivationCode:
+            case .invalidActivationCode, .invalidEmailVerificationCode:
                 message = L10n.Localizable.Error.User.verificationCodeInvalid
             case .registrationDidFailWithUnknownError:
                 message = L10n.Localizable.Error.User.registrationUnknownError

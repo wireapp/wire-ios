@@ -103,7 +103,7 @@ extension UIDevice {
         case "iPad14,1", "iPad14,2":                        return "iPad Mini 6"
         case "iPad14,3", "iPad14,4":                        return "iPad Pro 11-inch 4th Gen"
         case "iPad14,5", "iPad14,6":                        return "iPad Pro 12.9-inch 6th Gen"
-        case "i386", "x86_64", "arm64":                     return "Simulator"
+        case "arm64",                     "i386", "x86_64": return "Simulator"
         default:                                            return identifier
         }
     }

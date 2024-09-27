@@ -439,7 +439,7 @@ struct CacheAsset: AssetType {
                 domain: domain
             )
 
-        case .image, .file:
+        case .file, .image:
             genericMessage.updateUploaded(
                 assetId: assetId,
                 token: token,

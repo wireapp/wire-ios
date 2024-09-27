@@ -76,7 +76,7 @@ public enum ZMSound: String, CustomStringConvertible {
         switch self {
         case .None:
             return nil
-        case .WireText, .WirePing, .WireCall:
+        case .WireCall, .WirePing, .WireText:
             guard let path = Bundle.main.path(
                 forResource: rawValue,
                 ofType: type(of: self).fileExtension,

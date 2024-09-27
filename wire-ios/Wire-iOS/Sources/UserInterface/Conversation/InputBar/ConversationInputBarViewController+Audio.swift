@@ -92,7 +92,7 @@ extension ConversationInputBarViewController {
         case .changed:
             audioRecordViewController?.updateWithChangedRecognizer(sender)
 
-        case .ended, .cancelled, .failed:
+        case .cancelled, .ended, .failed:
             audioRecordViewController?.finishRecordingIfNeeded(sender)
 
         default: break

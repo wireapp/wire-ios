@@ -324,7 +324,7 @@ extension WireCallCenterV3 {
         guard isEnabled else { return  [] }
         return nonIdleCalls.compactMap { (key: AVSIdentifier, value: CallState) -> ZMConversation? in
             switch value {
-            case .establishedDataChannel, .established, .answered, .outgoing:
+            case .answered, .established, .establishedDataChannel, .outgoing:
                 return ZMConversation.fetch(
                     with: key.identifier,
                     domain: key.domain,
@@ -595,7 +595,7 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             break
 
         case .mls:
@@ -682,7 +682,7 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             break
         case .mls:
             guard conversationType == .mlsConference else { return }
@@ -1150,10 +1150,10 @@ extension WireCallCenterV3 {
         case (.oneOnOne, _):
             getAVSConversationTypeForOneOnOne(conversation)
 
-        case (.group, .proteus), (.group, .mixed):
+        case (.group, .mixed), (.group, .proteus):
             .conference
 
-        case (.group, .mls), (.`self`, .mls):
+        case (.`self`, .mls), (.group, .mls):
             .mlsConference
 
         default:
@@ -1173,7 +1173,7 @@ extension WireCallCenterV3 {
         switch conversation.messageProtocol {
         case .mls:
             return .mlsConference
-        case .proteus, .mixed:
+        case .mixed, .proteus:
             return .conference
         }
     }

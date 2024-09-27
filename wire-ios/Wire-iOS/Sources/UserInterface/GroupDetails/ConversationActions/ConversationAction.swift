@@ -52,9 +52,9 @@ extension ZMConversation {
             availablePendingActions()
         case .oneOnOne:
             availableOneToOneActions()
-        case .self,
-             .group,
-             .invalid:
+        case .group,
+             .invalid,
+             .self:
             availableGroupActions()
         }
     }
@@ -141,8 +141,8 @@ extension ZMConversation {
 extension ZMConversation.Action {
     fileprivate var isDestructive: Bool {
         switch self {
-        case .remove,
-             .deleteGroup:
+        case .deleteGroup,
+             .remove:
             true
         default: false
         }

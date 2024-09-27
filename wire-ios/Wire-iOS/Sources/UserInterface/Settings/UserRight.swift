@@ -59,8 +59,8 @@ final class UserRight: UserRightInterface {
             // NOTE we always allow editing for now since settting profile picture is not yet supported by SCIM.
             return true
 
-        case .editName,
-             .editHandle,
+        case .editHandle,
+             .editName,
              .editPhone:
             return isProfileEditable
 

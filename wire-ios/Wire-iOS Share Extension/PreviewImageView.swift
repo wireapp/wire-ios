@@ -130,7 +130,7 @@ final class PreviewImageView: UIImageView {
         switch displayMode {
         case .none:
             contentMode = .scaleAspectFit
-        case .video?, .link?:
+        case .link?, .video?:
             contentMode = .scaleAspectFill
         case .placeholder?:
             contentMode = .center
@@ -141,7 +141,7 @@ final class PreviewImageView: UIImageView {
 
     private func updateBorders(for displayMode: PreviewDisplayMode?) {
         switch displayMode {
-        case .placeholder?, .link?:
+        case .link?, .placeholder?:
             layer.borderColor = UIColor.gray.cgColor
             layer.borderWidth = UIScreen.hairline
 

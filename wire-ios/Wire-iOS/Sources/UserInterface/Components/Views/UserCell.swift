@@ -297,7 +297,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
                 switch microphoneStyle {
                 case .unmuted, .unmutedPulsing:
                     content += ", " + Calling.MicrophoneOn.description
-                case .muted, .hidden:
+                case .hidden, .muted:
                     content += ", " + Calling.MicrophoneOff.description
                 }
             }

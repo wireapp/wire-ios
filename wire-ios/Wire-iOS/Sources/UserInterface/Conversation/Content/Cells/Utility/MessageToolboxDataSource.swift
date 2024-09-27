@@ -108,7 +108,7 @@ final class MessageToolboxDataSource {
         // 2) Failed to send
         else if failedToSend, isSentBySelfUser {
             var detailsString: String = switch message.failedToSendReason {
-            case .unknown, .none:
+            case .none, .unknown:
                 FailedToSendMessage.generalReason
             case .federationRemoteError:
                 FailedToSendMessage.federationRemoteErrorReason(
@@ -225,7 +225,7 @@ final class MessageToolboxDataSource {
             deliveryStateString = ContentSystem.messageDeliveredTimestamp
         case .sent:
             deliveryStateString = ContentSystem.messageSentTimestamp
-        case .invalid, .failedToSend:
+        case .failedToSend, .invalid:
             return nil
         }
 

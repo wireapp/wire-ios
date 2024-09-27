@@ -129,7 +129,7 @@ enum RestrictedMessageType: String {
         switch self {
         case .audio, .file:
             .small
-        case .video, .image:
+        case .image, .video:
             .tiny
         }
     }

@@ -95,6 +95,7 @@
     noExplicitOwnership, \
     organizeDeclarations, \
     redundantProperty, \
+    sortSwitchCases, \
 
 # Options
 

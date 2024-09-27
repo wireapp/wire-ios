@@ -143,8 +143,8 @@ class Settings {
             switch index {
             case .sendButtonDisabled:
                 notifyDisableSendButtonChanged()
-            case .messageSoundName,
-                 .callSoundName,
+            case .callSoundName,
+                 .messageSoundName,
                  .pingSoundName:
                 AVSMediaManager.sharedInstance().configureSounds()
             case .disableCallKit:

@@ -140,7 +140,7 @@ extension StatusMessageType {
 
     var parentSummaryType: StatusMessageType? {
         switch self {
-        case .link, .image, .location, .audio, .video, .file: .text
+        case .audio, .file, .image, .link, .location, .video: .text
         default: nil
         }
     }

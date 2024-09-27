@@ -144,7 +144,7 @@ extension GridView {
 
         init(_ layoutDirection: UICollectionView.ScrollDirection, _ segmentType: SegmentType) {
             switch (layoutDirection, segmentType) {
-            case (.vertical, .row), (.horizontal, .column):
+            case (.horizontal, .column), (.vertical, .row):
                 self = .middleSplit
             case (.horizontal, .row), (.vertical, .column):
                 self = .proportionalSplit

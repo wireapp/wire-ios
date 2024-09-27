@@ -936,7 +936,7 @@ extension CallClosedReason {
         switch self {
         case .timeout, .timeoutECONN:
             .unanswered
-        case .normal, .canceled:
+        case .canceled, .normal:
             .remoteEnded
         case .answeredElsewhere:
             .answeredElsewhere
