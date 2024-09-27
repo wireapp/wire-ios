@@ -23,24 +23,27 @@ let package = Package(
     ],
     targets: [
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign", WireTestingPackage]),
+        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
 
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
-        .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage]),
+        .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
 
         .target(name: "WireMainNavigation", dependencies: ["WireDesign"]),
-        .testTarget(name: "WireMainNavigationTests", dependencies: ["WireMainNavigation", WireTestingPackage]),
+        .testTarget(name: "WireMainNavigationTests", dependencies: ["WireMainNavigation"]),
 
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage", WireTestingPackage]),
+        .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage"]),
 
         .target(name: "WireSidebar", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireSidebarTests", dependencies: ["WireSidebar", WireTestingPackage])
+        .testTarget(name: "WireSidebarTests", dependencies: ["WireSidebar"])
     ]
 )
 
 for target in package.targets {
     target.plugins = (target.plugins ?? []) + [SnapshotTestReferenceDirectoryPlugin]
+    if target.isTest {
+        target.dependencies += [WireTestingPackage]
+    }
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
