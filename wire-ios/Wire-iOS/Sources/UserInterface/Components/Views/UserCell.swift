@@ -127,7 +127,9 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else {
+            return
+        }
 
         // Border colors are not dynamically updating for Dark Mode
         // When you use adaptive colors with CALayers you’ll notice that these colors,
@@ -463,7 +465,9 @@ extension UserCell {
     }
 
     private func subtitle(forServiceUser service: SearchServiceUser) -> NSAttributedString? {
-        guard let summary = service.summary else { return nil }
+        guard let summary = service.summary else {
+            return nil
+        }
         return .init(string: summary, attributes: [.font: UserCell.boldFont.font].compactMapValues { $0 })
     }
 }

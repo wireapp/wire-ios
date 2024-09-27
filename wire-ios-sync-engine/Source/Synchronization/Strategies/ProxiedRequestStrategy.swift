@@ -61,7 +61,9 @@ public final class ProxiedRequestStrategy: AbstractRequestStrategy {
     // MARK: Public
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let status = requestsStatus else { return nil }
+        guard let status = requestsStatus else {
+            return nil
+        }
 
         if let proxyRequest = status.pendingRequests.popFirst() {
             let fullPath = ProxiedRequestStrategy.BasePath + proxyRequest.type.basePath + proxyRequest.path

@@ -116,7 +116,9 @@ extension LocalNotificationDispatcherTests {
         guard
             let note = sut.eventNotifications.notifications.first,
             let request = scheduledRequests.first
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
 
         XCTAssertTrue(note.body.contains(text))
         XCTAssertEqual(note.body, request.content.body)
@@ -150,7 +152,9 @@ extension LocalNotificationDispatcherTests {
         guard
             let note = sut.eventNotifications.notifications.first,
             let request = scheduledRequests.first
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
 
         XCTAssertTrue(note.body.contains("User 1 set the message timer to"))
         XCTAssertEqual(note.body, request.content.body)

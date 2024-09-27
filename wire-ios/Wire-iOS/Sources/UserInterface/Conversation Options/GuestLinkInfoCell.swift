@@ -41,7 +41,9 @@ final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
     // MARK: - Configuration
 
     func configure(with configuration: CellConfiguration) {
-        guard case let .info(infoText) = configuration else { preconditionFailure() }
+        guard case let .info(infoText) = configuration else {
+            preconditionFailure()
+        }
         accessibilityIdentifier = "guest_links.not_allowed.cell"
         iconImageView.tintColor = SemanticColors.Label.textDefault
         iconImageView.setTemplateIcon(.about, size: .tiny)

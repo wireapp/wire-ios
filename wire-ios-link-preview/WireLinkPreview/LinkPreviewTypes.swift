@@ -59,9 +59,13 @@ open class LinkMetadata: NSObject {
     // MARK: Internal
 
     func requestAssets(withImageDownloader downloader: ImageDownloaderType, completion: @escaping DownloadCompletion) {
-        guard let imageURL = imageURLs.first else { return completion(false) }
+        guard let imageURL = imageURLs.first else {
+            return completion(false)
+        }
         downloader.downloadImage(fromURL: imageURL) { [weak self] imageData in
-            guard let self, let data = imageData else { return completion(false) }
+            guard let self, let data = imageData else {
+                return completion(false)
+            }
             self.imageData.append(data)
             completion(imageData != nil)
         }

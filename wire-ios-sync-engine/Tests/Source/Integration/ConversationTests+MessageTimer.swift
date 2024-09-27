@@ -129,7 +129,9 @@ class ConversationMessageTimerTests: IntegrationTest {
         mockTransportSession.resetReceivedRequests()
         let identifier = conversation.remoteIdentifier!.transportString()
         mockTransportSession.responseGeneratorBlock = { request in
-            guard request.path == "/conversations/\(identifier)/message-timer" else { return nil }
+            guard request.path == "/conversations/\(identifier)/message-timer" else {
+                return nil
+            }
             return ZMTransportResponse(
                 payload: self.responsePayload(for: conversation, timeout: timeout),
                 httpStatus: 200,
@@ -150,7 +152,9 @@ class ConversationMessageTimerTests: IntegrationTest {
 
         // then
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1, "wrong request count", file: file, line: line)
-        guard let request = mockTransportSession.receivedRequests().first else { return }
+        guard let request = mockTransportSession.receivedRequests().first else {
+            return
+        }
         XCTAssertEqual(
             request.path,
             "/conversations/\(identifier)/message-timer",

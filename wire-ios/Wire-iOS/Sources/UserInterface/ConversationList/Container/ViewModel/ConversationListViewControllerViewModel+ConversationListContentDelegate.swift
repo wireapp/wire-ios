@@ -41,7 +41,9 @@ extension ConversationListViewController.ViewModel: ConversationListContentDeleg
 
 extension ConversationListViewController.ViewModel {
     func showActionMenu(for conversation: ZMConversation!, from view: UIView!) {
-        guard let viewController = viewController as? UIViewController else { return }
+        guard let viewController = viewController as? UIViewController else {
+            return
+        }
 
         actionsController = ConversationActionController(
             conversation: conversation,

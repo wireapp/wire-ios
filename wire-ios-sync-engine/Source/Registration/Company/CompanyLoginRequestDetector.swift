@@ -106,8 +106,12 @@ public final class CompanyLoginRequestDetector: NSObject {
         }
 
         processQueue.async { [pasteboard, previouslyDetectedSSOCode] in
-            guard let text = pasteboard.text else { return complete(nil) }
-            guard let code = CompanyLoginRequestDetector.requestCode(in: text) else { return complete(nil) }
+            guard let text = pasteboard.text else {
+                return complete(nil)
+            }
+            guard let code = CompanyLoginRequestDetector.requestCode(in: text) else {
+                return complete(nil)
+            }
 
             let validSSOCode = "wire-" + code.uuidString
             let isNew = validSSOCode != previouslyDetectedSSOCode
@@ -126,7 +130,9 @@ public final class CompanyLoginRequestDetector: NSObject {
     /// - Parameter email: the email to extract the domain from. e.g. bob@domain.com
     /// - Returns: domain. e.g. domain.com
     private static func domain(from email: String) -> String? {
-        guard ZMEmailAddressValidator.isValidEmailAddress(email) else { return nil }
+        guard ZMEmailAddressValidator.isValidEmailAddress(email) else {
+            return nil
+        }
         return email.components(separatedBy: "@").last
     }
 }

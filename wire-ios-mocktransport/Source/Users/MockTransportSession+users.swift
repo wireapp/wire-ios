@@ -33,13 +33,15 @@ extension MockTransportSession {
 
     @objc(processRichProfileFetchForUser:apiVersion:)
     public func processRichProfileFetchFor(user userID: String, apiVersion: APIVersion) -> ZMTransportResponse {
-        guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(
-            payload: nil,
-            httpStatus: 404,
-            transportSessionError: nil,
-            apiVersion: apiVersion
-                .rawValue
-        ) }
+        guard let user = fetchUser(withIdentifier: userID) else {
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: apiVersion
+                    .rawValue
+            )
+        }
         if let members = selfUser.currentTeamMembers {
             guard members.contains(user) else {
                 return ZMTransportResponse(

@@ -71,7 +71,9 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         _ contentViewController: ConversationContentViewController,
         didTriggerEditing message: ZMConversationMessage
     ) {
-        guard message.textMessageData?.messageText != nil else { return }
+        guard message.textMessageData?.messageText != nil else {
+            return
+        }
 
         inputBarController.editMessage(message)
     }

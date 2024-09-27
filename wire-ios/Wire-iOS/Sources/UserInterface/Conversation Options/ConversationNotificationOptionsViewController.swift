@@ -151,7 +151,9 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
                     for: indexPath
                 )
 
-            guard let view = dequeuedView as? SectionFooter else { return UICollectionReusableView(frame: .zero) }
+            guard let view = dequeuedView as? SectionFooter else {
+                return UICollectionReusableView(frame: .zero)
+            }
             view.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
             return view
         }
@@ -169,7 +171,9 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
                 for: IndexPath(item: 0, section: section)
             )
 
-        guard let view = dequeuedView as? SectionFooter else { return .zero }
+        guard let view = dequeuedView as? SectionFooter else {
+            return .zero
+        }
 
         view.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
         view.size(fittingWidth: collectionView.bounds.width)
@@ -182,7 +186,9 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         collectionView.deselectItem(at: indexPath, animated: true)
         let selectedItem = items[indexPath.row]
 
-        guard selectedItem != conversation.mutedMessageTypes else { return }
+        guard selectedItem != conversation.mutedMessageTypes else {
+            return
+        }
         updateMutedMessageTypes(selectedItem)
     }
 
@@ -215,7 +221,9 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
 
 extension ConversationNotificationOptionsViewController: ZMConversationObserver {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
-        guard changeInfo.mutedMessageTypesChanged else { return }
+        guard changeInfo.mutedMessageTypesChanged else {
+            return
+        }
         collectionView.reloadData()
     }
 }

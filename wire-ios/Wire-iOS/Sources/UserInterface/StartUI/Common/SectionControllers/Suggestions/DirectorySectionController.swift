@@ -40,7 +40,9 @@ final class DirectorySectionController: SearchSectionController {
         super.prepareForUse(in: collectionView)
 
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.zm_reuseIdentifier)
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         token = UserChangeInfo.add(searchUserObserver: self, in: userSession)
 
         self.collectionView = collectionView
@@ -82,19 +84,25 @@ final class DirectorySectionController: SearchSectionController {
 
     @objc
     func connect(_ sender: AnyObject) {
-        guard let button = sender as? UIButton else { return }
+        guard let button = sender as? UIButton else {
+            return
+        }
 
         let indexPath = IndexPath(row: button.tag, section: 0)
         let user = suggestions[indexPath.row]
 
         if user.isBlocked {
             user.accept { [weak self] error in
-                guard let self, let error = error as? LocalizedError else { return }
+                guard let self, let error = error as? LocalizedError else {
+                    return
+                }
                 delegate?.searchSectionController(self, wantsToDisplayError: error)
             }
         } else {
             user.connect { [weak self] error in
-                guard let self, let error = error as? ConnectToUserError else { return }
+                guard let self, let error = error as? ConnectToUserError else {
+                    return
+                }
                 delegate?.searchSectionController(self, wantsToDisplayError: error)
             }
         }
@@ -110,7 +118,9 @@ final class DirectorySectionController: SearchSectionController {
 
 extension DirectorySectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.connectionStateChanged else { return }
+        guard changeInfo.connectionStateChanged else {
+            return
+        }
 
         collectionView?.reloadData()
     }

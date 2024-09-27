@@ -227,7 +227,9 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
                 withRemoteId: clientID,
                 forUser: self.otherUser,
                 createIfNeeded: false
-            ) else { return XCTFail("Failed to fetch client") }
+            ) else {
+                return XCTFail("Failed to fetch client")
+            }
 
             XCTAssertEqual(client.remoteIdentifier, clientID)
         }
@@ -283,7 +285,9 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
                 withRemoteId: existingClientID,
                 forUser: self.otherUser,
                 createIfNeeded: false
-            ) else { return XCTFail("Failed to fetch existing client") }
+            ) else {
+                return XCTFail("Failed to fetch existing client")
+            }
 
             XCTAssertNil(UserClient.fetchUserClient(
                 withRemoteId: deletedClientID,

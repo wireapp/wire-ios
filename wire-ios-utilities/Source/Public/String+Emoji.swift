@@ -76,7 +76,9 @@ extension String {
     }
 
     var containsOnlyEmoji: Bool {
-        guard count > 0 else { return false }
+        guard count > 0 else {
+            return false
+        }
 
         let cancelTag = Unicode.Scalar.cancelTag
 
@@ -86,7 +88,9 @@ extension String {
                 continue
             }
 
-            if char.unicodeScalars.contains(where: { !$0.isEmoji }) { return false }
+            if char.unicodeScalars.contains(where: { !$0.isEmoji }) {
+                return false
+            }
         }
 
         return true

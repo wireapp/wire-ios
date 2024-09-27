@@ -85,7 +85,9 @@ final class LegalHoldDisclosureController: UserObserving {
     /// The current state of legal hold disclosure. Defaults to none.
     var currentState: DisclosureState = .none {
         didSet {
-            guard currentState != oldValue else { return }
+            guard currentState != oldValue else {
+                return
+            }
             presentAlertController(for: currentState)
         }
     }
@@ -154,7 +156,9 @@ final class LegalHoldDisclosureController: UserObserving {
     /// Present an alert about a pending legal hold request.
     private func disclosePendingRequestIfPossible(_ request: LegalHoldRequest) {
         // Do not present alert if we already in process of accepting the request
-        if case .acceptingRequest = currentState { return }
+        if case .acceptingRequest = currentState {
+            return
+        }
 
         Task {
             let fingerprint = await selfUserLegalHoldSubject.fingerprint ?? "<fingerprint unavailable>"

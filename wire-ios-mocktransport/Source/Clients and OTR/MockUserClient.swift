@@ -239,7 +239,9 @@ extension MockUserClient {
     /// If needed, it will use the last prekey to create a session
     /// - returns: false if it was not possible to establish a session
     public func establishSession(client: MockUserClient) -> Bool {
-        guard let identifier = client.sessionIdentifier else { return false }
+        guard let identifier = client.sessionIdentifier else {
+            return false
+        }
         var hasSession = false
         encryptionContext.perform { session in
             if !session.hasSession(for: identifier) {
@@ -256,7 +258,9 @@ extension MockUserClient {
     /// one using the last prekey
     public static func encrypted(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
         var encryptedData: Data?
-        guard from.establishSession(client: to) else { fatalError() }
+        guard from.establishSession(client: to) else {
+            fatalError()
+        }
         from.encryptionContext.perform { session in
             encryptedData = try? session.encrypt(data, for: to.sessionIdentifier!)
         }
@@ -281,7 +285,9 @@ extension MockUserClient {
 
     /// Returns whether there is a encryption session between self and the give client
     public func hasSession(with client: MockUserClient) -> Bool {
-        guard let identifier = client.sessionIdentifier else { return false }
+        guard let identifier = client.sessionIdentifier else {
+            return false
+        }
         var hasSession = false
         encryptionContext.perform { session in
             hasSession = session.hasSession(for: identifier)

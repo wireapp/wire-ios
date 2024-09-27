@@ -94,9 +94,13 @@ final class MentionTextAttachment: NSTextAttachment {
             at: charIndex,
             effectiveRange: nil
         ) as? UIFont,
-            let textContainerSize = textContainer?.size else { return }
+            let textContainerSize = textContainer?.size else {
+            return
+        }
 
-        guard font != self.font || textContainerSize != lastFittingSize else { return }
+        guard font != self.font || textContainerSize != lastFittingSize else {
+            return
+        }
 
         self.font = font
         lastFittingSize = textContainerSize

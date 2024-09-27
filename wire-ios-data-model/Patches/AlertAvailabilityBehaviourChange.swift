@@ -31,7 +31,9 @@ enum AvailabilityBehaviourChange {
     static func notifyAvailabilityBehaviourChange(in moc: NSManagedObjectContext) {
         let selfUser = ZMUser.selfUser(in: moc)
 
-        guard selfUser.hasTeam else { return }
+        guard selfUser.hasTeam else {
+            return
+        }
 
         switch selfUser.availability {
         case .away, .busy:

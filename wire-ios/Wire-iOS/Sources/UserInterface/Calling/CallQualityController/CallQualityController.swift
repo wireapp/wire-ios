@@ -139,7 +139,9 @@ extension CallQualityController: WireCallCenterCallStateObserver {
         timestamp: Date?,
         previousCallState: CallState?
     ) {
-        guard canPresentCallQualitySurvey else { return }
+        guard canPresentCallQualitySurvey else {
+            return
+        }
         let eventDate = Date()
 
         switch callState {
@@ -164,7 +166,9 @@ extension CallQualityController: CallQualityViewControllerDelegate {
             guard
                 self?.callQualityRejectionRange.contains(score) ?? false,
                 let mainWindow = self?.mainWindow
-            else { return }
+            else {
+                return
+            }
 
             self?.router?.presentCallQualityRejection(mainWindow: mainWindow)
         }

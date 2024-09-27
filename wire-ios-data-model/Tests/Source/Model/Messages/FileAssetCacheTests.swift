@@ -422,8 +422,12 @@ class FileAssetCacheTests: XCTestCase {
         let assetURL = sut.storeTransportData(requestData, for: message)
 
         // then
-        guard let url = assetURL else { return XCTFail() }
-        guard let data = try? Data(contentsOf: url) else { return XCTFail() }
+        guard let url = assetURL else {
+            return XCTFail()
+        }
+        guard let data = try? Data(contentsOf: url) else {
+            return XCTFail()
+        }
         XCTAssertTrue(requestData == data)
     }
 
@@ -493,7 +497,9 @@ class FileAssetCacheTests: XCTestCase {
 
 extension FileManager {
     func removeItemIfExists(at url: URL) throws {
-        guard fileExists(atPath: url.path) else { return }
+        guard fileExists(atPath: url.path) else {
+            return
+        }
         try removeItem(atPath: url.path)
     }
 }

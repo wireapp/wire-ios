@@ -91,7 +91,9 @@ extension AppLockModule {
         }
 
         var message: String {
-            guard case let .locked(authenticationType) = self else { return "" }
+            guard case let .locked(authenticationType) = self else {
+                return ""
+            }
 
             switch authenticationType {
             case .faceID:

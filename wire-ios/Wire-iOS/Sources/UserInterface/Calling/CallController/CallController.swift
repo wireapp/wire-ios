@@ -88,8 +88,12 @@ final class CallController: NSObject {
     }
 
     private func presentCall(in conversation: ZMConversation) {
-        guard let voiceChannel = conversation.voiceChannel else { return }
-        if minimizedCall == conversation { minimizedCall = nil }
+        guard let voiceChannel = conversation.voiceChannel else {
+            return
+        }
+        if minimizedCall == conversation {
+            minimizedCall = nil
+        }
 
         let animated = shouldAnimateTransitionForCall(in: conversation)
         router?.presentActiveCall(for: voiceChannel, animated: animated)
@@ -133,7 +137,9 @@ final class CallController: NSObject {
     }
 
     private func acceptDegradedCall(conversation: ZMConversation) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
 
         userSession.enqueue({
             conversation.voiceChannel?.continueByDecreasingConversationSecurity(userSession: userSession)
@@ -143,7 +149,9 @@ final class CallController: NSObject {
     }
 
     private func cancelCall(conversation: ZMConversation) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
     }
 }
@@ -167,7 +175,9 @@ extension CallController: WireCallCenterCallStateObserver {
     }
 
     private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {
-        guard isClientOutdated(callState: callState) else { return }
+        guard isClientOutdated(callState: callState) else {
+            return
+        }
         router?.presentUnsupportedVersionAlert()
     }
 

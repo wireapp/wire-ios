@@ -126,7 +126,9 @@ extension MockUser {
     @objc public var connectionsAndTeamMembers: Set<MockUser> {
         let acceptedUsers: (Any) -> MockUser? = { connection in
             guard let connection = connection as? MockConnection,
-                  MockConnection.status(from: connection.status) == .accepted else { return nil }
+                  MockConnection.status(from: connection.status) == .accepted else {
+                return nil
+            }
             return connection.to == self ? connection.from : connection.to
         }
 
@@ -256,7 +258,9 @@ extension MockUser {
 
     var assetData: [[String: Any]]? {
         guard let previewId = previewProfileAssetIdentifier,
-              let completeId = completeProfileAssetIdentifier else { return nil }
+              let completeId = completeProfileAssetIdentifier else {
+            return nil
+        }
         return [
             ["size": "preview", "type": "image", "key": previewId],
             ["size": "complete", "type": "image", "key": completeId],

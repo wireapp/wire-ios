@@ -271,17 +271,23 @@ final class UserSessionMock: UserSession {
     }
 
     func conversationList() -> ConversationList {
-        guard let mockConversationList else { fatalError("mockConversationList is not set") }
+        guard let mockConversationList else {
+            fatalError("mockConversationList is not set")
+        }
         return mockConversationList
     }
 
     func pendingConnectionConversationsInUserSession() -> ConversationList {
-        guard let mockConversationList else { fatalError("mockConversationList is not set") }
+        guard let mockConversationList else {
+            fatalError("mockConversationList is not set")
+        }
         return mockConversationList
     }
 
     func archivedConversationsInUserSession() -> ConversationList {
-        guard let mockConversationList else { fatalError("mockConversationList is not set") }
+        guard let mockConversationList else {
+            fatalError("mockConversationList is not set")
+        }
         return mockConversationList
     }
 

@@ -101,7 +101,9 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
             line: line
         )
 
-        guard let changes = userObserver.notifications.first else { return }
+        guard let changes = userObserver.notifications.first else {
+            return
+        }
         changes.checkForExpectedChangeFields(
             userInfoKeys: Set(userInfoChangeKeys.map(\.rawValue)),
             expectedChangedFields: Set(expectedChangedFields.map(\.rawValue))
@@ -378,7 +380,9 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
         // then
         guard let changeInfo = userObserver.notifications.first
-        else { return XCTFail("Should receive a changeInfo for the added client") }
+        else {
+            return XCTFail("Should receive a changeInfo for the added client")
+        }
         XCTAssertTrue(changeInfo.clientsChanged)
         XCTAssertTrue(changeInfo.changedKeys.contains(UserClientsKey))
     }
@@ -402,7 +406,9 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
         // then
         guard let changeInfo = userObserver.notifications.first
-        else { return XCTFail("Should receive a changeInfo for the added client") }
+        else {
+            return XCTFail("Should receive a changeInfo for the added client")
+        }
         XCTAssertTrue(changeInfo.clientsChanged)
         XCTAssertTrue(changeInfo.changedKeys.contains(UserClientsKey))
         XCTAssertEqual(selfUser.clients, [selfClient])

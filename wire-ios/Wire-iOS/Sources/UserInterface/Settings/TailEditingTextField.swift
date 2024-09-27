@@ -68,7 +68,9 @@ class TailEditingTextField: UITextField {
     @objc
     func replaceNonBreakingSpacesWithNormalSpaces() {
         guard let isContainsNonBreakingSpace = (text?.contains(String.nonBreakingSpace)),
-              isContainsNonBreakingSpace else { return }
+              isContainsNonBreakingSpace else {
+            return
+        }
 
         text = text?.replacingOccurrences(of: String.nonBreakingSpace, with: String.breakingSpace)
     }

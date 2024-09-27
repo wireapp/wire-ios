@@ -25,7 +25,9 @@ private let zmLog = ZMSLog(tag: "DuplicateEntity")
 enum DuplicatedEntityRemoval {
     static func removeDuplicated(in moc: NSManagedObjectContext) {
         // will skip this during test unless on disk
-        guard moc.persistentStoreCoordinator!.persistentStores.first!.type != NSInMemoryStoreType else { return }
+        guard moc.persistentStoreCoordinator!.persistentStores.first!.type != NSInMemoryStoreType else {
+            return
+        }
         deleteDuplicatedClients(in: moc)
         moc.saveOrRollback()
     }

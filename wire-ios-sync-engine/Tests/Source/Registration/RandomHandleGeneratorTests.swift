@@ -127,7 +127,9 @@ final class RandomHandleGeneratorTests: XCTestCase {
         )
 
         // THEN
-        guard let handle = handles.first else { XCTFail(); return }
+        guard let handle = handles.first else {
+            XCTFail(); return
+        }
         XCTAssertGreaterThan(handle.utf8.count, 2)
     }
 }

@@ -227,7 +227,9 @@ extension String {
         mentions.sorted(by: {
             $0.range.location > $1.range.location
         }).compactMap { mention in
-            guard let range = Range(mention.range, in: self) else { return nil }
+            guard let range = Range(mention.range, in: self) else {
+                return nil
+            }
 
             let name = String(self[range].dropFirst()) // drop @
             let textObject = TextMarker<Mention>(mention, replacementText: name)

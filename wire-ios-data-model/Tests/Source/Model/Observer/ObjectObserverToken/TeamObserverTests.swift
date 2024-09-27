@@ -82,7 +82,9 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         // then
         XCTAssertEqual(teamObserver.notifications.count, changeCount, "Should not have changed further once")
 
-        guard let changes = teamObserver.notifications.first else { return }
+        guard let changes = teamObserver.notifications.first else {
+            return
+        }
         changes.checkForExpectedChangeFields(
             userInfoKeys: userInfoKeys,
             expectedChangedFields: expectedChangedFields

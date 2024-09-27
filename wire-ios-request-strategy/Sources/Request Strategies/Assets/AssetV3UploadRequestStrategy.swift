@@ -87,7 +87,9 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
             guard let message = object as? ZMAssetClientMessage,
                   message.version >= 3,
                   message.transferState == .uploadingCancelled
-            else { return nil }
+            else {
+                return nil
+            }
             return message
         }
 
@@ -103,7 +105,9 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
     }
 
     fileprivate func cancelOutstandingUploadRequests(forMessage message: ZMAssetClientMessage) {
-        guard let identifier = message.associatedTaskIdentifier else { return }
+        guard let identifier = message.associatedTaskIdentifier else {
+            return
+        }
         applicationStatus?.requestCancellation.cancelTask(with: identifier)
         message.associatedTaskIdentifier = nil
     }
@@ -138,9 +142,13 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
         guard let message = managedObject as? AssetMessage
-        else { fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))") }
+        else {
+            fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))")
+        }
         guard let asset = message.assets.first(where: { !$0.isUploaded })
-        else { return nil } // TODO: jacob are we sure we only have one upload per message active?
+        else {
+            return nil
+        } // TODO: jacob are we sure we only have one upload per message active?
 
         return requestForUploadingAsset(asset, for: managedObject as! ZMAssetClientMessage, apiVersion: apiVersion)
     }
@@ -150,9 +158,13 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         for message: ZMAssetClientMessage,
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest {
-        guard let data = asset.encrypted else { fatal("Encrypted data not available") }
+        guard let data = asset.encrypted else {
+            fatal("Encrypted data not available")
+        }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init)
-        else { fatal("Trying to send message that doesn't have a conversation") }
+        else {
+            fatal("Trying to send message that doesn't have a conversation")
+        }
 
         WireLogger.assets.debug(
             "sending request for asset",

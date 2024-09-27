@@ -120,7 +120,9 @@ open class PushNotificationStatus: NSObject {
             attributes: .safePublic
         )
 
-        guard finished else { return }
+        guard finished else {
+            return
+        }
 
         // We take all events that are older than or equal to lastEventId and add highest ranking event ID
         for eventId in completionHandlers.keys.filter({ self.lastEventIdIsNewerThan(
@@ -138,7 +140,9 @@ open class PushNotificationStatus: NSObject {
     public func didFailToFetchEvents(recoverable: Bool) {
         defer { isFetching = false }
 
-        guard !recoverable else { return }
+        guard !recoverable else {
+            return
+        }
 
         for completionHandler in completionHandlers.values {
             completionHandler(.failure(.unknown))
@@ -157,7 +161,9 @@ open class PushNotificationStatus: NSObject {
     private var isFetching = false
 
     private func lastEventIdIsNewerThan(lastEventId: UUID?, eventId: UUID) -> Bool {
-        guard let order = lastEventId?.compare(withType1: eventId) else { return false }
+        guard let order = lastEventId?.compare(withType1: eventId) else {
+            return false
+        }
         return order == .orderedDescending || order == .orderedSame
     }
 }

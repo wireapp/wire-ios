@@ -191,7 +191,9 @@ enum ConversationJoinRequestFactory {
         code: String,
         password: String? = nil
     ) -> ZMTransportRequest? {
-        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+        guard let apiVersion = BackendInfo.apiVersion else {
+            return nil
+        }
 
         let path = joinConversationsPath
 
@@ -213,7 +215,9 @@ enum ConversationJoinRequestFactory {
     }
 
     static func requestForGetConversation(key: String, code: String) -> ZMTransportRequest? {
-        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+        guard let apiVersion = BackendInfo.apiVersion else {
+            return nil
+        }
 
         var url = URLComponents()
         url.path = joinConversationsPath

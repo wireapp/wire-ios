@@ -23,7 +23,9 @@ private let endEditingNotificationName = "ConversationInputBarViewControllerShou
 
 extension ConversationInputBarViewController {
     func editMessage(_ message: ZMConversationMessage) {
-        guard let text = message.textMessageData?.messageText else { return }
+        guard let text = message.textMessageData?.messageText else {
+            return
+        }
         mode = .textInput
         editingMessage = message
         updateRightAccessoryView()
@@ -45,7 +47,9 @@ extension ConversationInputBarViewController {
     @objc
     func endEditingMessageIfNeeded() {
         guard let message = editingMessage,
-              let conversation = conversation as? ZMConversation else { return }
+              let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         delegate?.conversationInputBarViewControllerDidCancelEditing(message)
         editingMessage = nil
@@ -67,7 +71,9 @@ extension ConversationInputBarViewController {
     }
 
     func updateWritingState(animated: Bool) {
-        guard editingMessage == nil else { return }
+        guard editingMessage == nil else {
+            return
+        }
         inputBar.setInputBarState(.writing(ephemeral: ephemeralState), animated: animated)
         updateRightAccessoryView()
         updateMarkdownButton()
@@ -87,7 +93,9 @@ extension ConversationInputBarViewController: InputBarEditViewDelegate {
     }
 
     func inputBarEditViewDidLongPressUndoButton(_: InputBarEditView) {
-        guard let text = editingMessage?.textMessageData?.messageText else { return }
+        guard let text = editingMessage?.textMessageData?.messageText else {
+            return
+        }
         inputBar.setInputBarText(text, mentions: editingMessage?.textMessageData?.mentions ?? [])
     }
 }

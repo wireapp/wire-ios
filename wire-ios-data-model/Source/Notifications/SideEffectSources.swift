@@ -40,7 +40,9 @@ extension ZMManagedObject {
         keyStore: DependencyKeyStore,
         affectedKey: String
     ) -> ObjectAndChanges {
-        guard let object else { return [:] }
+        guard let object else {
+            return [:]
+        }
         let classIdentifier = type(of: object).entityName()
         return [object: Changes(changedKeys: keyStore.observableKeysAffectedByValue(classIdentifier, key: affectedKey))]
     }
@@ -53,7 +55,9 @@ extension ZMManagedObject {
         originalChangeKey: String? = nil,
         keyMapping: (String) -> String
     ) -> ObjectAndChanges {
-        guard let object else { return [:] }
+        guard let object else {
+            return [:]
+        }
         let classIdentifier = type(of: object).entityName()
 
         var changes = changedValues()
@@ -107,12 +111,16 @@ extension ZMUser: SideEffectSource {
 
     func affectedObjectsAndKeys(keyStore: DependencyKeyStore, knownKeys: Set<String>) -> ObjectAndChanges {
         let changes = changedValues()
-        guard !changes.isEmpty || !knownKeys.isEmpty else { return [:] }
+        guard !changes.isEmpty || !knownKeys.isEmpty else {
+            return [:]
+        }
 
         let allKeys = knownKeys.union(changes.keys)
 
         let conversations = allConversations
-        guard !conversations.isEmpty else { return  [:] }
+        guard !conversations.isEmpty else {
+            return  [:]
+        }
 
         return conversationChanges(
             changedKeys: allKeys,
@@ -156,7 +164,9 @@ extension ZMUser: SideEffectSource {
 
     func affectedObjectsForInsertionOrDeletion(keyStore: DependencyKeyStore) -> ObjectAndChanges {
         let conversations = allConversations
-        guard !conversations.isEmpty else { return  [:] }
+        guard !conversations.isEmpty else {
+            return  [:]
+        }
 
         let classIdentifier = ZMConversation.entityName()
         let affectedKeys = keyStore.observableKeysAffectedByValue(

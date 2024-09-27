@@ -438,7 +438,9 @@ extension ConversationParticipantsServiceTests {
         var firstAttempt = true
 
         mockProteusParticipantsService.addParticipantsTo_MockMethod = { _, _ in
-            guard firstAttempt else { return }
+            guard firstAttempt else {
+                return
+            }
             firstAttempt = false
             throw error
         }
@@ -448,7 +450,9 @@ extension ConversationParticipantsServiceTests {
         var firstAttempt = true
 
         mockMLSParticipantsService.addParticipantsTo_MockMethod = { _, _ in
-            guard firstAttempt else { return }
+            guard firstAttempt else {
+                return
+            }
             firstAttempt = false
             throw error
         }

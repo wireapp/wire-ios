@@ -71,7 +71,9 @@ class TitleView: UIView, DynamicTypeCapable {
         interactive: Bool,
         showInteractiveIcon: Bool
     ) {
-        guard let font = titleFont, let color = titleColor else { return }
+        guard let font = titleFont, let color = titleColor else {
+            return
+        }
         let shouldShowInteractiveIcon = interactive && showInteractiveIcon
         let normalLabel = IconStringsBuilder.iconString(
             leadingIcons: leadingIcons,

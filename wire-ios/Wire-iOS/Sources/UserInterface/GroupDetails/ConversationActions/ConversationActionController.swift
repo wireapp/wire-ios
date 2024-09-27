@@ -81,11 +81,15 @@ final class ConversationActionController {
     }
 
     func handleAction(_ action: ZMConversation.Action) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         switch action {
         case .deleteGroup:
-            guard let userSession = ZMUserSession.shared() else { return }
+            guard let userSession = ZMUserSession.shared() else {
+                return
+            }
 
             requestDeleteGroupResult { result in
                 self.handleDeleteGroupResult(result, conversation: conversation, in: userSession)
@@ -122,7 +126,9 @@ final class ConversationActionController {
             }
 
         case .cancelRequest:
-            guard let user = conversation.connectedUser else { return }
+            guard let user = conversation.connectedUser else {
+                return
+            }
             requestCancelConnectionRequestResult(for: user) { result in
                 self.handleConnectionRequestResult(result, for: conversation)
             }
@@ -170,13 +176,17 @@ final class ConversationActionController {
 
     private func alertAction(for action: ZMConversation.Action) -> UIAlertAction {
         action.alertAction { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             handleAction(action)
         }
     }
 
     private func duplicateConversation() {
-        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
+        guard DeveloperFlag.debugDuplicateObjects.isOn else {
+            return
+        }
 
         guard let context = (userSession as? ZMUserSession)?.syncContext,
               let conversation = conversation as? ZMConversation else {

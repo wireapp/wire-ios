@@ -249,7 +249,9 @@ extension MessageChangeInfo {
         ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? MessageChangeInfo
-            else { return }
+            else {
+                return
+            }
 
             observer.messageDidChange(changeInfo)
         }

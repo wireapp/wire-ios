@@ -136,7 +136,9 @@ extension LinkPreviewPreprocessorTests {
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
             let data = self.syncMOC.zm_fileAssetCache.originalImageData(for: message)
             XCTAssertEqual(data, preview.imageData.first!)
-            guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
+            guard let genericMessage = message.underlyingMessage else {
+                return XCTFail("No generic message")
+            }
             XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
         }
     }
@@ -165,7 +167,9 @@ extension LinkPreviewPreprocessorTests {
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.uploaded)
             let data = self.syncMOC.zm_fileAssetCache.originalImageData(for: message)
             XCTAssertNil(data)
-            guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
+            guard let genericMessage = message.underlyingMessage else {
+                return XCTFail("No generic message")
+            }
             XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
         }
     }
@@ -288,7 +292,9 @@ extension LinkPreviewPreprocessorTests {
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
             let data = self.syncMOC.zm_fileAssetCache.originalImageData(for: message)
             XCTAssertEqual(data, preview.imageData.first!)
-            guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
+            guard let genericMessage = message.underlyingMessage else {
+                return XCTFail("No generic message")
+            }
             guard case .ephemeral? = genericMessage.content else {
                 return XCTFail("No ephemeral content found")
             }
@@ -320,7 +326,9 @@ extension LinkPreviewPreprocessorTests {
 
         syncMOC.performGroupedAndWait {
             // THEN
-            guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
+            guard let genericMessage = message.underlyingMessage else {
+                return XCTFail("No generic message")
+            }
             if case .ephemeral? = genericMessage.content {
                 return XCTFail("No ephemeral content found")
             }

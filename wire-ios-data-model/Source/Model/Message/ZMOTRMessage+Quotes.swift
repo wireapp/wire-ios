@@ -27,7 +27,9 @@ extension ZMOTRMessage {
                   withNonce: quotedMessageId,
                   for: conversation,
                   in: managedObjectContext
-              ) else { return }
+              ) else {
+            return
+        }
 
         if quotedMessage.hashOfContent == quote.quotedMessageSha256 {
             quotedMessage.replies.insert(self)

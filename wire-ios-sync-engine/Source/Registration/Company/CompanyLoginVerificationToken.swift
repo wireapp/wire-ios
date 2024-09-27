@@ -93,7 +93,9 @@ extension CompanyLoginVerificationToken {
     /// Deletes the current verification token if it is expired.
     /// - parameter defaults: The defaults to delete the token from.
     public static func flushIfNeeded(in defaults: UserDefaults = .shared()) {
-        guard let token = current(in: defaults), token.isExpired else { return }
+        guard let token = current(in: defaults), token.isExpired else {
+            return
+        }
         flush(in: defaults)
     }
 }

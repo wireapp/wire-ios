@@ -52,7 +52,9 @@ final class TextCell: UITableViewCell, CellConfigurationConfigurable {
     // MARK: Internal
 
     func configure(with configuration: CellConfiguration) {
-        guard case let .text(text) = configuration else { preconditionFailure() }
+        guard case let .text(text) = configuration else {
+            preconditionFailure()
+        }
         label.attributedText = text && .lineSpacing(8)
 
         label.textColor = SemanticColors.Label.textDefault

@@ -89,7 +89,9 @@ final class FileTransferView: UIView, TransferView {
 
         let dot = " " + String.MessageToolbox.middleDot + " " && labelFont && labelTextBlendedColor
 
-        guard let filename = message.filename else { return }
+        guard let filename = message.filename else {
+            return
+        }
         let fileNameAttributed = filename.uppercased() && labelBoldFont && labelTextColor
         let extAttributed = ext.uppercased() && labelFont && labelTextBlendedColor
 
@@ -100,7 +102,9 @@ final class FileTransferView: UIView, TransferView {
         fileTypeIconView.setTemplateIcon(.document, size: .small)
 
         fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
-            guard let image else { return }
+            guard let image else {
+                return
+            }
 
             self?.fileTypeIconView.contentMode = .scaleAspectFit
             self?.fileTypeIconView.mediaAsset = image
@@ -110,7 +114,9 @@ final class FileTransferView: UIView, TransferView {
 
         switch fileMessageData.transferState {
         case .uploading:
-            if fileMessageData.size == 0 { fallthrough }
+            if fileMessageData.size == 0 {
+                fallthrough
+            }
             let statusText = L10n.Localizable.Content.File.uploading
                 .localizedUppercase && labelFont && labelTextBlendedColor
             let firstLine = fileNameAttributed
@@ -175,7 +181,9 @@ final class FileTransferView: UIView, TransferView {
 
         switch fileMessageData.transferState {
         case .uploading:
-            guard fileMessageData.hasLocalFileData else { return }
+            guard fileMessageData.hasLocalFileData else {
+                return
+            }
             delegate?.transferView(self, didSelect: .cancel)
 
         case .uploadingCancelled, .uploadingFailed:
@@ -194,7 +202,9 @@ final class FileTransferView: UIView, TransferView {
     // MARK: Fileprivate
 
     fileprivate func configureVisibleViews(with message: ZMConversationMessage, isInitial: Bool) {
-        guard let state = FileMessageViewState.fromConversationMessage(message) else { return }
+        guard let state = FileMessageViewState.fromConversationMessage(message) else {
+            return
+        }
 
         var visibleViews: [UIView] = [topLabel, bottomLabel]
 

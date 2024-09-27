@@ -74,11 +74,17 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
         completion: @escaping DetectCompletion
     ) {
         guard let (url, range) = linkDetector?.detectLinksAndRanges(in: text, excluding: excluding).first,
-              !PreviewBlacklist.isBlacklisted(url) else { return completion([]) }
+              !PreviewBlacklist.isBlacklisted(url) else {
+            return completion([])
+        }
         previewDownloader.requestOpenGraphData(fromURL: url) { [weak self] openGraphData in
-            guard let self, let substringRange = Range<String.Index>(range, in: text) else { return }
+            guard let self, let substringRange = Range<String.Index>(range, in: text) else {
+                return
+            }
             let originalURLString = String(text[substringRange])
-            guard let data = openGraphData else { return completion([]) }
+            guard let data = openGraphData else {
+                return completion([])
+            }
 
             let linkPreview = data.linkPreview(originalURLString, offset: range.location)
             linkPreview.requestAssets(withImageDownloader: imageDownloader) { _ in

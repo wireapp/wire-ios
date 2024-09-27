@@ -92,7 +92,9 @@ public final class AssetRequestFactory: NSObject {
             data,
             shareable: shareable,
             retention: retention
-        ) else { return nil }
+        ) else {
+            return nil
+        }
 
         let path = switch apiVersion {
         case .v0, .v1:

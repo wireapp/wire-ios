@@ -79,7 +79,9 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
         // then
         XCTAssertEqual(labelObserver.notifications.count, changeCount, "Should not have changed further once")
 
-        guard let changes = labelObserver.notifications.first else { return }
+        guard let changes = labelObserver.notifications.first else {
+            return
+        }
         changes.checkForExpectedChangeFields(userInfoKeys: userInfoKeys, expectedChangedFields: expectedChangedFields)
     }
 

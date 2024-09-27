@@ -70,7 +70,9 @@ enum AvailabilityStringBuilder {
             title += youSuffix
         }
 
-        guard let textColor = color, let iconColor else { return nil }
+        guard let textColor = color, let iconColor else {
+            return nil
+        }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         var attributedText = IconStringsBuilder.iconString(
             leadingIcons: [icon].compactMap { $0 },
@@ -93,7 +95,9 @@ enum AvailabilityStringBuilder {
 
     static func icon(for availability: Availability, with color: UIColor, and size: FontSize) -> NSTextAttachment? {
         guard availability != .none, let iconType = availability.iconType
-        else { return nil }
+        else {
+            return nil
+        }
 
         let verticalCorrection: CGFloat = switch size {
         case .small:

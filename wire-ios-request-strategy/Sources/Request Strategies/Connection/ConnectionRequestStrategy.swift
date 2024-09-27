@@ -130,7 +130,9 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     var oneOnOneResolutionDelay: TimeInterval = 3
 
     func fetchAllConnections(for apiVersion: APIVersion) {
-        guard !isFetchingAllConnections else { return }
+        guard !isFetchingAllConnections else {
+            return
+        }
 
         isFetchingAllConnections = true
 
@@ -195,7 +197,9 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConnection, completion: @escaping () -> Void) {
         defer { completion() }
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion = BackendInfo.apiVersion else {
+            return
+        }
 
         switch apiVersion {
         case .v0:
@@ -303,7 +307,9 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
     let encoder: JSONEncoder = .defaultEncoder
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let userID = identifiers.first.map({ $0.transportString() }) else { return nil }
+        guard let userID = identifiers.first.map({ $0.transportString() }) else {
+            return nil
+        }
 
         // GET /connections/<UUID>
         return ZMTransportRequest(getFromPath: "/connections/\(userID)", apiVersion: apiVersion.rawValue)

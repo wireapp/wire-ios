@@ -28,7 +28,9 @@ extension UIDevice {
         let identifier: String = machineMirror
             .children
             .reduce(into: "") { identifier, element in
-                guard let value = element.value as? Int8, value != 0 else { return }
+                guard let value = element.value as? Int8, value != 0 else {
+                    return
+                }
                 identifier.append(String(UnicodeScalar(UInt8(value))))
             }
 

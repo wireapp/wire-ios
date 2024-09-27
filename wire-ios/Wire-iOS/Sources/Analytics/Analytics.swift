@@ -64,7 +64,9 @@ final class Analytics: NSObject {
         _ event: String,
         attributes: [String: Any]
     ) {
-        guard let attributes = attributes as? [String: NSObject] else { return }
+        guard let attributes = attributes as? [String: NSObject] else {
+            return
+        }
 
         tagEvent(event, attributes: attributes)
     }

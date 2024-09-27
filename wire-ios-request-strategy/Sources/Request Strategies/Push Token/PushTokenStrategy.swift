@@ -55,14 +55,18 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
         liveEvents: Bool,
         prefetchResult: ZMFetchRequestBatchResult?
     ) {
-        guard liveEvents else { return }
+        guard liveEvents else {
+            return
+        }
         events.forEach(process(updateEvent:))
     }
 
     // MARK: Internal
 
     func process(updateEvent event: ZMUpdateEvent) {
-        guard event.type == .userPushRemove else { return }
+        guard event.type == .userPushRemove else {
+            return
+        }
 
         // expected payload:
         // { "type: "user.push-remove",

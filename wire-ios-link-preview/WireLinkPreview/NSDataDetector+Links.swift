@@ -58,7 +58,9 @@ extension NSDataDetector {
 
         return matches(in: text, options: [], range: wholeTextRange).compactMap {
             let range = $0.range
-            guard let url = $0.url, validRangeIndexSet.contains(in: range) else { return nil }
+            guard let url = $0.url, validRangeIndexSet.contains(in: range) else {
+                return nil
+            }
             return (url, range)
         }
     }

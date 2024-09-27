@@ -60,14 +60,20 @@ extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
         downstreamSync: ZMObjectSync!,
         apiVersion: APIVersion
     ) -> ZMTransportRequest! {
-        guard let user = object as? ZMUser else { fatal("Object \(object.classForCoder) is not ZMUser") }
-        guard let remoteIdentifier = user.remoteIdentifier else { fatal("User does not have remote identifier") }
+        guard let user = object as? ZMUser else {
+            fatal("Object \(object.classForCoder) is not ZMUser")
+        }
+        guard let remoteIdentifier = user.remoteIdentifier else {
+            fatal("User does not have remote identifier")
+        }
         let path = "/users/\(remoteIdentifier)/rich-info"
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        guard let user = object as? ZMUser else { fatal("Object \(object.classForCoder) is not ZMUser") }
+        guard let user = object as? ZMUser else {
+            fatal("Object \(object.classForCoder) is not ZMUser")
+        }
         user.needsRichProfileUpdate = false
     }
 
@@ -81,8 +87,12 @@ extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
             var fields: [Field]
         }
 
-        guard let user = object as? ZMUser else { fatal("Object \(object.classForCoder) is not ZMUser") }
-        guard let data = response.rawData else { zmLog.error("Response has no rawData"); return }
+        guard let user = object as? ZMUser else {
+            fatal("Object \(object.classForCoder) is not ZMUser")
+        }
+        guard let data = response.rawData else {
+            zmLog.error("Response has no rawData"); return
+        }
         do {
             let values = try JSONDecoder().decode(Response.self, from: data)
             user.richProfile = values.fields.map { UserRichProfileField(type: $0.type, value: $0.value) }

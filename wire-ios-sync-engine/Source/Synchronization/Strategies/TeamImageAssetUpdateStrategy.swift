@@ -67,7 +67,9 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         downstreamSync: ZMObjectSync!,
         apiVersion: APIVersion
     ) -> ZMTransportRequest! {
-        guard let team = object as? Team, let assetId = team.pictureAssetId else { return nil }
+        guard let team = object as? Team, let assetId = team.pictureAssetId else {
+            return nil
+        }
 
         let path: String
 
@@ -75,20 +77,26 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         case .v0, .v1:
             path = "/assets/v3/\(assetId)"
         case .v2, .v3, .v4, .v5, .v6:
-            guard let domain = BackendInfo.domain else { return nil }
+            guard let domain = BackendInfo.domain else {
+                return nil
+            }
             path = "/assets/\(domain)/\(assetId)"
         }
         return ZMTransportRequest.imageGet(fromPath: path, apiVersion: apiVersion.rawValue)
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        guard let team = object as? Team else { return }
+        guard let team = object as? Team else {
+            return
+        }
 
         team.pictureAssetId = nil
     }
 
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        guard let team = object as? Team else { return }
+        guard let team = object as? Team else {
+            return
+        }
 
         team.imageData = response.rawData
     }
@@ -103,7 +111,9 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     private func requestAssetForNotification(note: NotificationInContext) {
         managedObjectContext.performGroupedBlock {
             guard let objectID = note.object as? NSManagedObjectID,
-                  let object = self.managedObjectContext.object(with: objectID) as? ZMManagedObject else { return }
+                  let object = self.managedObjectContext.object(with: objectID) as? ZMManagedObject else {
+                return
+            }
 
             self.downstreamRequestSync.whiteListObject(object)
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)

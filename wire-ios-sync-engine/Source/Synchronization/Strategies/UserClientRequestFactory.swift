@@ -82,7 +82,9 @@ extension UserClientRequestFactory {
 
     func storeMaxRangeID(_ client: UserClient, maxRangeID: UInt16) -> ZMCompletionHandler {
         ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
-            guard let client else { return }
+            guard let client else {
+                return
+            }
             if response.result == .success {
                 client.preKeysRangeMax = Int64(maxRangeID)
             }
@@ -91,7 +93,9 @@ extension UserClientRequestFactory {
 
     func storeAPSSignalingKeys(_ client: UserClient, signalingKeys: SignalingKeys) -> ZMCompletionHandler {
         ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
-            guard let client else { return }
+            guard let client else {
+                return
+            }
             if response.result == .success {
                 client.apsDecryptionKey = signalingKeys.decryptionKey
                 client.apsVerificationKey = signalingKeys.verificationKey
@@ -102,7 +106,9 @@ extension UserClientRequestFactory {
 
     func storeCapabilitiesHandler(_ client: UserClient) -> ZMCompletionHandler {
         ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
-            guard let client else { return }
+            guard let client else {
+                return
+            }
             if response.result == .success {
                 client.needsToUpdateCapabilities = false
             }

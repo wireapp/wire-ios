@@ -46,7 +46,9 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
 
     func featureCell(_ cell: SettingsCellType) {
         cell.titleText = title
-        guard let textCell = cell as? SettingsTextCell else { return }
+        guard let textCell = cell as? SettingsTextCell else {
+            return
+        }
 
         if let stringValue = settingsProperty.rawValue() as? String {
             textCell.textInput.text = stringValue.trimmingCharacters(in: .whitespacesAndNewlines)

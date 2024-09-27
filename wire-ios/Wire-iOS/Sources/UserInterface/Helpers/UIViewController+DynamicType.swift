@@ -33,7 +33,9 @@ extension UIViewController {
 extension UIView {
     func redrawAllFonts() {
         visitSubviews { view in
-            guard let dynamicTypeCapableView = view as? DynamicTypeCapable else { return }
+            guard let dynamicTypeCapableView = view as? DynamicTypeCapable else {
+                return
+            }
             dynamicTypeCapableView.redrawFont()
         }
     }

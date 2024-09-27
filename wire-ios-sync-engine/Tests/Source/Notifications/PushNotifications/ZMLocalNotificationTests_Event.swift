@@ -309,30 +309,40 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItCreatesTheCorrectAlertBody_ConvWithoutName() {
-        guard let alertBody = alertBody(groupConversationWithoutName, aSender: otherUser1) else { return XCTFail() }
+        guard let alertBody = alertBody(groupConversationWithoutName, aSender: otherUser1) else {
+            return XCTFail()
+        }
         XCTAssertEqual(alertBody, "Other User1 ❤️ your message in a conversation")
     }
 
     func testThatItCreatesTheCorrectAlertBody() {
-        guard let alertBody = alertBody(groupConversation, aSender: otherUser1) else { return XCTFail() }
+        guard let alertBody = alertBody(groupConversation, aSender: otherUser1) else {
+            return XCTFail()
+        }
         XCTAssertEqual(alertBody, "Other User1 ❤️ your message")
     }
 
     func testThatItCreatesTheCorrectAlertBody_UnknownUser() {
         otherUser1.name = ""
-        guard let alertBody = alertBody(groupConversation, aSender: otherUser1) else { return XCTFail() }
+        guard let alertBody = alertBody(groupConversation, aSender: otherUser1) else {
+            return XCTFail()
+        }
         XCTAssertEqual(alertBody, "Someone ❤️ your message")
     }
 
     func testThatItCreatesTheCorrectAlertBody_UnknownUser_UnknownConversationName() {
         otherUser1.name = ""
-        guard let alertBody = alertBody(groupConversationWithoutName, aSender: otherUser1) else { return XCTFail() }
+        guard let alertBody = alertBody(groupConversationWithoutName, aSender: otherUser1) else {
+            return XCTFail()
+        }
         XCTAssertEqual(alertBody, "Someone ❤️ your message in a conversation")
     }
 
     func testThatItCreatesTheCorrectAlertBody_UnknownUser_OneOnOneConv() {
         otherUser1.name = ""
-        guard let alertBody = alertBody(oneOnOneConversation, aSender: otherUser1) else { return XCTFail() }
+        guard let alertBody = alertBody(oneOnOneConversation, aSender: otherUser1) else {
+            return XCTFail()
+        }
         XCTAssertEqual(alertBody, "Someone ❤️ your message")
     }
 

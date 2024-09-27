@@ -45,7 +45,9 @@ final class DeveloperE2eiViewModel: ObservableObject {
         guard
             let session = userSession,
             let topmostViewController = UIApplication.shared.topmostViewController()
-        else { return }
+        else {
+            return
+        }
 
         let e2eiCertificateUseCase = session.enrollE2EICertificate as? EnrollE2EICertificateUseCase
         let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
@@ -64,14 +66,18 @@ final class DeveloperE2eiViewModel: ObservableObject {
     }
 
     func removeAllExpirationDates() {
-        guard let crlExpirationDatesRepository else { return }
+        guard let crlExpirationDatesRepository else {
+            return
+        }
 
         crlExpirationDatesRepository.removeAllExpirationDates()
         refreshCRLExpirationDates()
     }
 
     func refreshCRLExpirationDates() {
-        guard let crlExpirationDatesRepository else { return }
+        guard let crlExpirationDatesRepository else {
+            return
+        }
 
         let expirationDates = crlExpirationDatesRepository.fetchAllCRLExpirationDates()
 
@@ -102,7 +108,9 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
     private var crlExpirationDatesRepository: CRLExpirationDatesRepository? {
-        guard let userSession else { return nil }
+        guard let userSession else {
+            return nil
+        }
         return CRLExpirationDatesRepository(userID: userSession.selfUser.remoteIdentifier)
     }
 

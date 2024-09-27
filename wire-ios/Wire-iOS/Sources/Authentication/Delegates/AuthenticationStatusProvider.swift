@@ -29,7 +29,9 @@ final class AuthenticationStatusProvider {
     }
 
     var authenticatedUserNeedsEmailCredentials: Bool {
-        guard let emailAddress = selfUser?.emailAddress else { return false }
+        guard let emailAddress = selfUser?.emailAddress else {
+            return false
+        }
         return emailAddress.isEmpty
     }
 

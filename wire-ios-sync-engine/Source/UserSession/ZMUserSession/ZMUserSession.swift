@@ -303,7 +303,9 @@ public final class ZMUserSession: NSObject {
     }
 
     public func tearDown() {
-        guard !tornDown else { return }
+        guard !tornDown else {
+            return
+        }
 
         tearDownMLSGroupVerification()
 
@@ -764,7 +766,9 @@ public final class ZMUserSession: NSObject {
             let apiVersion = BackendInfo.apiVersion,
             apiVersion > .v2,
             let clientID = userClient.remoteIdentifier
-        else { return }
+        else {
+            return
+        }
 
         renewAccessToken(with: clientID)
     }
@@ -834,7 +838,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     public func didFinishSlowSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             hasCompletedInitialSync = true
             notificationDispatcher.isEnabled = true
@@ -917,7 +923,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        guard DeveloperFlag.enableMLSSupport.isOn else {
+            return
+        }
 
         let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
         do {
@@ -928,7 +936,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func performPostQuickSyncE2EIActions() {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        guard DeveloperFlag.enableMLSSupport.isOn else {
+            return
+        }
 
         checkExpiredCertificateRevocationLists()
         checkE2EICertificateExpiryStatus()

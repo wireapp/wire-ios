@@ -74,7 +74,9 @@ extension ConversationNewDeviceSystemMessageCell {
     ) -> Bool {
         guard let linkTarget,
               url == type(of: self).userClientURL,
-              let zClientViewController = ZClientViewController.shared else { return false }
+              let zClientViewController = ZClientViewController.shared else {
+            return false
+        }
 
         switch linkTarget {
         case let .user(user):

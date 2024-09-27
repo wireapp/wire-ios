@@ -69,22 +69,30 @@ extension URL {
         case .safari: return false
 
         case .chrome:
-            guard let url = chromeURL, app.canOpenURL(url) else { return false }
+            guard let url = chromeURL, app.canOpenURL(url) else {
+                return false
+            }
             log.debug("Trying to open chrome app using \"\(url)\"")
             app.open(url)
 
         case .firefox:
-            guard let url = firefoxURL, app.canOpenURL(url) else { return false }
+            guard let url = firefoxURL, app.canOpenURL(url) else {
+                return false
+            }
             log.debug("Trying to open firefox app using \"\(url)\"")
             app.open(url)
 
         case .snowhaze:
-            guard let url = snowhazeURL, app.canOpenURL(url) else { return false }
+            guard let url = snowhazeURL, app.canOpenURL(url) else {
+                return false
+            }
             log.debug("Trying to open snowhaze app using \"\(url)\"")
             app.open(url)
 
         case .brave:
-            guard let url = braveURL, app.canOpenURL(url) else { return false }
+            guard let url = braveURL, app.canOpenURL(url) else {
+                return false
+            }
             log.debug("Trying to open brave app using \"\(url)\"")
             app.open(url)
         }

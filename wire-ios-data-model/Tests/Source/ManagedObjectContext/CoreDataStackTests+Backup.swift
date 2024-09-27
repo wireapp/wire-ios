@@ -155,7 +155,9 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         // when
         let result = createBackup(accountIdentifier: uuid)
 
-        guard case let .failure(error) = result else { return XCTFail() }
+        guard case let .failure(error) = result else {
+            return XCTFail()
+        }
 
         switch error as? CoreDataStack.BackupError {
         case .failedToWrite?: break
@@ -230,7 +232,9 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         let result = createBackup(accountIdentifier: uuid)
 
         // then
-        guard case .success = result else { return XCTFail() }
+        guard case .success = result else {
+            return XCTFail()
+        }
         let fetchConversations = ZMConversation.sortedFetchRequest()
         XCTAssertEqual(try directory.viewContext.count(for: fetchConversations), 1)
     }
@@ -246,7 +250,9 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         let result = createBackup(accountIdentifier: uuid)
 
         // then
-        guard case .success = result else { return XCTFail() }
+        guard case .success = result else {
+            return XCTFail()
+        }
         let anotherDirectory = createStorageStackAndWaitForCompletion(userID: uuid)
         let fetchConversations = ZMConversation.sortedFetchRequest()
         XCTAssertEqual(try anotherDirectory.viewContext.count(for: fetchConversations), 1)
@@ -264,10 +270,14 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             accountIdentifier: uuid,
             backup: backup,
             migrator: migrator
-        ) else { return XCTFail() }
+        ) else {
+            return XCTFail()
+        }
 
         // then
-        guard case .success = result else { return XCTFail() }
+        guard case .success = result else {
+            return XCTFail()
+        }
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         let fetchConversations = ZMConversation.sortedFetchRequest()
         XCTAssertEqual(try directory.viewContext.count(for: fetchConversations), 1)
@@ -298,8 +308,12 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             accountIdentifier: uuid,
             backup: backup,
             migrator: migrator
-        ) else { return XCTFail() }
-        guard case .success = result else { return XCTFail() }
+        ) else {
+            return XCTFail()
+        }
+        guard case .success = result else {
+            return XCTFail()
+        }
         let importedDirectory = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // then
@@ -329,10 +343,14 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             accountIdentifier: differentUUID,
             backup: backup,
             migrator: migrator
-        ) else { return XCTFail() }
+        ) else {
+            return XCTFail()
+        }
 
         // then
-        guard case let .failure(error) = result else { return XCTFail() }
+        guard case let .failure(error) = result else {
+            return XCTFail()
+        }
         switch error as? CoreDataStack.BackupImportError {
         case .incompatibleBackup?: break
         default: XCTFail()
@@ -349,10 +367,14 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             accountIdentifier: uuid,
             backup: backup,
             migrator: migrator
-        ) else { return XCTFail() }
+        ) else {
+            return XCTFail()
+        }
 
         // then
-        guard case let .failure(error) = result else { return XCTFail() }
+        guard case let .failure(error) = result else {
+            return XCTFail()
+        }
         switch error as? CoreDataStack.BackupImportError {
         case .failedToCopy?: break
         default: XCTFail()
@@ -369,10 +391,14 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             accountIdentifier: accountIdentifier,
             backup: backup,
             migrator: migrator
-        ) else { return XCTFail() }
+        ) else {
+            return XCTFail()
+        }
 
         // then
-        guard case .success = result else { return XCTFail() }
+        guard case .success = result else {
+            return XCTFail()
+        }
         let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
         let fetchConversations = ZMConversation.sortedFetchRequest()
         XCTAssertEqual(try directory.viewContext.count(for: fetchConversations), 1)

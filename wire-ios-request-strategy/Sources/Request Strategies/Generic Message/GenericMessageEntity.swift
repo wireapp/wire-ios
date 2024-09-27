@@ -59,7 +59,9 @@ public class GenericMessageEntity: NSObject, ProteusMessage {
     public var shouldIgnoreTheSecurityLevelCheck = false
 
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
-        guard let conversation else { return nil }
+        guard let conversation else {
+            return nil
+        }
 
         return dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
     }
@@ -99,7 +101,9 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
     public func encryptForTransport() async -> EncryptedPayloadGenerator.Payload? {
         switch targetRecipients {
         case .conversationParticipants:
-            guard let conversation else { return nil }
+            guard let conversation else {
+                return nil
+            }
             return await message.encryptForTransport(for: conversation, in: context)
 
         case let .users(users):
@@ -113,7 +117,9 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
     public func encryptForTransportQualified() async -> EncryptedPayloadGenerator.Payload? {
         switch targetRecipients {
         case .conversationParticipants:
-            guard let conversation else { return nil }
+            guard let conversation else {
+                return nil
+            }
             return await message.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
 
         case let .users(users):

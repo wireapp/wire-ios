@@ -67,7 +67,9 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
             \.contentSize,
             options: .new,
             changeHandler: { [weak self] cell, _ in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
                 collectionViewHeightConstraint.constant = cell.contentSize.height
                 collectionViewHeightConstraint.isActive = true
             }

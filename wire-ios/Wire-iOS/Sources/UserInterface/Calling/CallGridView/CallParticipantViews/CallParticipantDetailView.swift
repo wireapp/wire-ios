@@ -129,7 +129,9 @@ final class CallParticipantDetailsView: RoundedBlurView {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else {
+            return
+        }
         microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(
             size: .tiny,
             color: IconColors.foregroundMicrophone

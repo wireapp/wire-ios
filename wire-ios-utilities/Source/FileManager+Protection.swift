@@ -89,7 +89,9 @@ extension URL {
 
     /// Returns whether the item is excluded from backups
     public var isExcludedFromBackup: Bool {
-        guard let values = try? resourceValues(forKeys: [.isExcludedFromBackupKey]) else { return false }
+        guard let values = try? resourceValues(forKeys: [.isExcludedFromBackupKey]) else {
+            return false
+        }
         return values.isExcludedFromBackup ?? false
     }
 

@@ -92,7 +92,9 @@ final class NativePushChannel: NSObject, PushChannelType {
     }
 
     var websocketURL: URL? {
-        guard let clientID else { return nil }
+        guard let clientID else {
+            return nil
+        }
 
         let url = environment.backendWSURL.appendingPathComponent("/await")
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
@@ -112,7 +114,9 @@ final class NativePushChannel: NSObject, PushChannelType {
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable
-        guard didGoOnline else { return }
+        guard didGoOnline else {
+            return
+        }
 
         scheduleOpen()
     }

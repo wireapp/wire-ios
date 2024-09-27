@@ -203,7 +203,9 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
 
     func runPostMigrationStep(_ step: CoreDataMigrationStep<Version>, for storeURL: URL) throws {
         guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion)
-        else { return }
+        else {
+            return
+        }
 
         WireLogger.localStorage.debug("run postMigration step \(step.destinationVersion)", attributes: .safePublic)
         try action.perform(

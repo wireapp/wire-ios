@@ -80,7 +80,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .emailUpdateDidFail(error: UserProfileUpdateError.emailNotSet):
             break
@@ -142,7 +144,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .emailUpdateDidFail(error: UserProfileUpdateError.emailAlreadySet):
             break
@@ -210,7 +214,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .emailDidSendVerification:
             break
@@ -276,7 +282,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .passwordUpdateDidFail:
             break
@@ -315,7 +323,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case let .emailUpdateDidFail(_error):
             XCTAssertEqual(error, _error as NSError)
@@ -496,7 +506,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .didCheckAvailabilityOfHandle(handle: handle, available: true):
             break
@@ -516,7 +528,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .didCheckAvailabilityOfHandle(handle: handle, available: false):
             break
@@ -536,7 +550,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .didFailToCheckAvailabilityOfHandle(handle: handle):
             break
@@ -654,7 +670,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .didSetHandle:
             break
@@ -674,7 +692,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .didFailToSetHandle:
             break
@@ -694,7 +714,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .didFailToSetHandleBecauseExisting:
             break
@@ -834,7 +856,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case let .didFindHandleSuggestion(_handle):
             XCTAssertEqual(handle, _handle)
@@ -855,7 +879,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
         // THEN
         XCTAssertEqual(observer.invokedCallbacks.count, 1)
-        guard let first = observer.invokedCallbacks.first else { return }
+        guard let first = observer.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case let .didFindHandleSuggestion(_handle):
             XCTAssertEqual(handle, _handle)

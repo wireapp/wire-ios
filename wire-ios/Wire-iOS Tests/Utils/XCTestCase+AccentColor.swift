@@ -21,7 +21,9 @@ import XCTest
 
 extension UIColor {
     fileprivate class var accentOverrideColor: ZMAccentColor? {
-        guard let accentColorValue = ZMUser.selfUser()?.accentColorValue else { return nil }
+        guard let accentColorValue = ZMUser.selfUser()?.accentColorValue else {
+            return nil
+        }
         return .from(rawValue: accentColorValue)
     }
 }

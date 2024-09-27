@@ -83,7 +83,9 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// database key.
 
     public var encryptMessagesAtRest: Bool {
-        guard let context = coreDataStack?.viewContext else { return false }
+        guard let context = coreDataStack?.viewContext else {
+            return false
+        }
         return context.encryptMessagesAtRest
     }
 
@@ -108,7 +110,9 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         ) { note in
             guard let note = note
                 .userInfo[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification
-            else { return }
+            else {
+                return
+            }
             handler(note.databaseIsEncrypted)
         }
     }
@@ -119,7 +123,9 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// until the database is unlocked.
 
     func lockDatabase() {
-        guard managedObjectContext.encryptMessagesAtRest else { return }
+        guard managedObjectContext.encryptMessagesAtRest else {
+            return
+        }
 
         BackgroundActivityFactory.shared.notifyWhenAllBackgroundActivitiesEnd { [weak self] in
             self?.earService.lockDatabase()

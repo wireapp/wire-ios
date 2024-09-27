@@ -35,7 +35,9 @@ final class IncomingConnectionViewController: UIViewController {
         self.user = user
         super.init(nibName: .none, bundle: .none)
 
-        guard !self.user.isConnected else { return }
+        guard !self.user.isConnected else {
+            return
+        }
         user.refreshData()
     }
 
@@ -53,11 +55,15 @@ final class IncomingConnectionViewController: UIViewController {
     override func loadView() {
         connectionView = IncomingConnectionView(user: user)
         connectionView.onAccept = { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             onAction?(.accept)
         }
         connectionView.onIgnore = { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             onAction?(.ignore)
         }
 
@@ -79,7 +85,9 @@ final class UserConnectionViewController: UIViewController {
         self.user = user
         super.init(nibName: .none, bundle: .none)
 
-        guard !self.user.isConnected else { return }
+        guard !self.user.isConnected else {
+            return
+        }
         user.refreshData()
     }
 

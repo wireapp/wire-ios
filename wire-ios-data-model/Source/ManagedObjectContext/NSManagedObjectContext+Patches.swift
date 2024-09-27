@@ -32,7 +32,9 @@ extension NSManagedObjectContext {
 extension NSManagedObjectContext {
     public func batchDeleteEntities(named entityName: String, matching predicate: NSPredicate) throws {
         // will skip this during test unless on disk
-        guard persistentStoreCoordinator!.persistentStores.first!.type != NSInMemoryStoreType else { return }
+        guard persistentStoreCoordinator!.persistentStores.first!.type != NSInMemoryStoreType else {
+            return
+        }
 
         let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
         fetch.predicate = predicate

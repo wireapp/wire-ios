@@ -98,12 +98,16 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        guard case .showAll = self.collectionView.rows[indexPath.item] else { return false }
+        guard case .showAll = self.collectionView.rows[indexPath.item] else {
+            return false
+        }
         return true
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        guard case .showAll = self.collectionView.rows[indexPath.item] else { return false }
+        guard case .showAll = self.collectionView.rows[indexPath.item] else {
+            return false
+        }
         return true
     }
 

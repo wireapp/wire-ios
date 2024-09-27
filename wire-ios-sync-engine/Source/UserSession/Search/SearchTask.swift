@@ -155,7 +155,9 @@ public class SearchTask {
 extension SearchTask {
     /// look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() {
-        guard case let .lookup(userId) = task else { return }
+        guard case let .lookup(userId) = task else {
+            return
+        }
 
         tasksRemaining += 1
 
@@ -208,7 +210,9 @@ extension SearchTask {
     }
 
     func performLocalSearch() {
-        guard case let .search(request) = task else { return }
+        guard case let .search(request) = task else {
+            return
+        }
 
         tasksRemaining += 1
 
@@ -290,7 +294,9 @@ extension SearchTask {
         let selfUser = ZMUser.selfUser(in: searchContext)
 
         return members.filter {
-            guard let user = $0.user else { return false }
+            guard let user = $0.user else {
+                return false
+            }
             return selfUser.membership?.createdBy == user || activeContacts.contains(user)
         }
     }
@@ -365,7 +371,9 @@ extension SearchTask {
             case let .lookup(userId) = task,
             let apiVersion = BackendInfo.apiVersion,
             apiVersion <= .v1
-        else { return }
+        else {
+            return
+        }
 
         tasksRemaining += 1
 
@@ -385,7 +393,9 @@ extension SearchTask {
                         contextProvider: contextProvider,
                         searchUsersCache: self?.searchUsersCache
                     )
-                else { return }
+                else {
+                    return
+                }
 
                 if let updatedResult = self?.result.union(withDirectoryResult: result) {
                     self?.result = updatedResult
@@ -562,7 +572,9 @@ extension SearchTask {
             case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.directory)
-        else { return }
+        else {
+            return
+        }
 
         tasksRemaining += 1
 
@@ -656,13 +668,17 @@ extension SearchTask {
             case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.services)
-        else { return }
+        else {
+            return
+        }
 
         tasksRemaining += 1
 
         searchContext.performGroupedBlock { [self] in
             let selfUser = ZMUser.selfUser(in: searchContext)
-            guard let teamIdentifier = selfUser.team?.remoteIdentifier else { return }
+            guard let teamIdentifier = selfUser.team?.remoteIdentifier else {
+                return
+            }
 
             let request = type(of: self).servicesSearchRequest(
                 teamIdentifier: teamIdentifier,

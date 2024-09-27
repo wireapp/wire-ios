@@ -75,7 +75,9 @@ func += (left: inout NSAttributedString, right: NSAttributedString) -> NSAttribu
 
 @discardableResult
 func += (left: inout NSAttributedString, right: NSAttributedString?) -> NSAttributedString {
-    guard let rhs = right else { return left }
+    guard let rhs = right else {
+        return left
+    }
     return left += rhs
 }
 
@@ -91,7 +93,9 @@ func && (left: String, right: UIFont) -> NSAttributedString {
 }
 
 func && (left: NSAttributedString, right: UIFont?) -> NSAttributedString {
-    guard let font = right else { return left }
+    guard let font = right else {
+        return left
+    }
     let result = NSMutableAttributedString(attributedString: left)
     result.addAttributes([.font: font], range: NSRange(location: 0, length: result.length))
     return NSAttributedString(attributedString: result)
@@ -239,7 +243,9 @@ extension NSAttributedString {
         toSubstring substring: String
     ) -> NSAttributedString {
         let substringRange = (string as NSString).range(of: substring)
-        guard substringRange.location != NSNotFound else { return self }
+        guard substringRange.location != NSNotFound else {
+            return self
+        }
 
         let mutableSelf = NSMutableAttributedString(attributedString: self)
         mutableSelf.setAttributes(attributes, range: substringRange)
@@ -259,7 +265,9 @@ extension NSMutableAttributedString {
     func addAttributes(_ attributes: [NSAttributedString.Key: AnyObject], to substring: String) {
         let substringRange = (string as NSString).range(of: substring)
 
-        guard substringRange.location != NSNotFound else { return }
+        guard substringRange.location != NSNotFound else {
+            return
+        }
 
         addAttributes(attributes, range: substringRange)
     }

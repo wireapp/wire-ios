@@ -160,7 +160,9 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         }
 
         guard let lastCompletion = sessionMock.recordedCompletionHandler
-        else { return XCTFail("No completion handler") }
+        else {
+            return XCTFail("No completion handler")
+        }
 
         // then
         do {

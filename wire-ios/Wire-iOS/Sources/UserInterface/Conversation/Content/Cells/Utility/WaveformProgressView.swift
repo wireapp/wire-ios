@@ -54,7 +54,9 @@ private final class WaveformBarsView: UIView {
     }
 
     override fileprivate func draw(_ rect: CGRect) {
-        guard let c = UIGraphicsGetCurrentContext()  else { return }
+        guard let c = UIGraphicsGetCurrentContext()  else {
+            return
+        }
 
         c.clear(bounds)
         backgroundColor?.setFill()
@@ -195,7 +197,9 @@ final class WaveformProgressView: UIView {
     // MARK: Private
 
     private func createConstraints() {
-        guard let superview = backgroundWaveform.superview else { return }
+        guard let superview = backgroundWaveform.superview else {
+            return
+        }
 
         for item in [backgroundWaveform, foregroundWaveform] {
             item.translatesAutoresizingMaskIntoConstraints = false

@@ -190,7 +190,9 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
                 self?.transition(to: conversation)
             case let .failure(error):
                 WireLogger.conversation.warn("failed to create team one on one from profile view: \(error)")
-                guard let username = self?.user.name else { return }
+                guard let username = self?.user.name else {
+                    return
+                }
                 self?.viewModelDelegate?.presentConversationCreationError(username: username)
             }
         }
@@ -233,7 +235,9 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     // MARK: - Deletion
 
     func handleDeleteResult(_ result: ClearContentResult) {
-        guard case let .delete(leave: leave) = result else { return }
+        guard case let .delete(leave: leave) = result else {
+            return
+        }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return

@@ -173,7 +173,9 @@ final class CollectionsViewController: UIViewController {
             object: nil,
             queue: .main
         ) { [weak self] note in
-            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+            guard let change = note.object as? FeatureRepository.FeatureChange else {
+                return
+            }
 
             switch change {
             case .fileSharingDisabled, .fileSharingEnabled:
@@ -284,7 +286,9 @@ final class CollectionsViewController: UIViewController {
     }
 
     private func trackOpeningIfNeeded() {
-        guard shouldTrackOnNextOpen, fetchingDone else { return }
+        guard shouldTrackOnNextOpen, fetchingDone else {
+            return
+        }
 
         shouldTrackOnNextOpen = false
     }
@@ -808,7 +812,9 @@ extension CollectionsViewController: CollectionCellDelegate {
                 source: source,
                 userSession: userSession
             ) { [weak self] deleted in
-                guard deleted else { return }
+                guard deleted else {
+                    return
+                }
                 _ = self?.navigationController?.popViewController(animated: true)
                 self?.refetchCollection()
             }
@@ -853,7 +859,9 @@ extension CollectionsViewController: CollectionCellDelegate {
         case .save:
             if message.isImage {
                 guard let imageMessageData = message.imageMessageData,
-                      let imageData = imageMessageData.imageData else { return }
+                      let imageData = imageMessageData.imageData else {
+                    return
+                }
 
                 let saveableImage = SavableImage(data: imageData, isGIF: imageMessageData.isAnimatedGIF)
                 saveableImage.saveToLibrary()

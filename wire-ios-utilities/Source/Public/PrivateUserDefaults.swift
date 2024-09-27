@@ -57,7 +57,9 @@ extension PrivateUserDefaults {
     }
 
     public func getUUID(forKey key: Key) -> UUID? {
-        guard let uuidString = storage.string(forKey: scopeKey(key)) else { return nil }
+        guard let uuidString = storage.string(forKey: scopeKey(key)) else {
+            return nil
+        }
         return UUID(uuidString: uuidString)
     }
 

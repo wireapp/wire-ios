@@ -160,7 +160,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 return
             }
 
-            guard let jsonData = response.rawData else { return }
+            guard let jsonData = response.rawData else {
+                return
+            }
 
             let apiVersion = APIVersion(rawValue: response.apiVersion)!
             decoder.userInfo = [ClientDiscoveryResponsePayload.apiVersionKey: apiVersion]
@@ -186,7 +188,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     }
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        guard callCenter == nil else { return }
+        guard callCenter == nil else {
+            return
+        }
 
         for object in objects {
             if let userClient = object as? UserClient, userClient.isSelfClient(),
@@ -304,7 +308,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private func processEvent(_ event: ZMUpdateEvent) {
         let serverTimeDelta = managedObjectContext.serverTimeDelta
-        guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
+        guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else {
+            return
+        }
 
         if let genericMessage = GenericMessage(from: event), genericMessage.hasCalling {
             guard

@@ -92,7 +92,9 @@ final class FolderCreationController: UIViewController {
     fileprivate var navBarBackgroundView = UIView()
 
     fileprivate func tryToProceed() {
-        guard let value = nameSection.value else { return }
+        guard let value = nameSection.value else {
+            return
+        }
         proceedWith(value: value)
     }
 

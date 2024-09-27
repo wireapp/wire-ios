@@ -269,7 +269,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
             let otherUser = user as? MockUserType,
             let teamIdentifier,
             let otherTeamIdentifier = otherUser.teamIdentifier
-        else { return false }
+        else {
+            return false
+        }
 
         return teamIdentifier == otherTeamIdentifier
     }

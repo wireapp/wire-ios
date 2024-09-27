@@ -159,7 +159,9 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
+            return
+        }
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             guard
@@ -197,7 +199,9 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         apiVersion: APIVersion
     ) -> ZMTransportRequest! {
         guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
-              let team = object as? Team else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
+              let team = object as? Team else {
+            fatal("Wrong sync or object for: \(object.safeForLoggingDescription)")
+        }
         return team.remoteIdentifier.map { TeamDownloadRequestFactory.getRequest(for: [$0], apiVersion: apiVersion) }
     }
 
@@ -206,7 +210,9 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
             downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
             let team = object as? Team,
             let rawData = response.rawData,
-            let teamPayload = TeamPayload(rawData) else { return }
+            let teamPayload = TeamPayload(rawData) else {
+            return
+        }
 
         teamPayload.updateTeam(team, in: managedObjectContext)
 
@@ -216,7 +222,9 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
-              let team = object as? Team else { return }
+              let team = object as? Team else {
+            return
+        }
 
         managedObjectContext.delete(team)
     }
@@ -262,11 +270,19 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     private func processRemovedMember(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let team = Team.fetch(with: identifier, in: managedObjectContext) else { return }
+        guard let identifier = event.teamId, let data = event.dataPayload else {
+            return
+        }
+        guard let team = Team.fetch(with: identifier, in: managedObjectContext) else {
+            return
+        }
         guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String)
-            .flatMap(UUID.init(transportString:)) else { return }
-        guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else { return }
+            .flatMap(UUID.init(transportString:)) else {
+            return
+        }
+        guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else {
+            return
+        }
         if let member = user.membership {
             if user.isSelfUser {
                 deleteAccount()
@@ -280,10 +296,16 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     private func processUpdatedMember(with event: ZMUpdateEvent) {
-        guard event.teamId != nil, let data = event.dataPayload else { return }
+        guard event.teamId != nil, let data = event.dataPayload else {
+            return
+        }
         guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:))
-        else { return }
-        guard let member = Member.fetch(with: userId, in: managedObjectContext) else { return }
+        else {
+            return
+        }
+        guard let member = Member.fetch(with: userId, in: managedObjectContext) else {
+            return
+        }
         member.needsToBeUpdatedFromBackend = true
     }
 

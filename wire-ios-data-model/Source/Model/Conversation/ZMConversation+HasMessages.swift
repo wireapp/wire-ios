@@ -28,11 +28,15 @@ extension ZMConversation {
     ///
     public var estimatedHasMessages: Bool {
         // If we haven't read any messages, then we don't have any.
-        guard let lastRead = lastReadServerTimeStamp else { return false }
+        guard let lastRead = lastReadServerTimeStamp else {
+            return false
+        }
 
         // If we've read something, but have never cleared, then we have
         // messages.
-        guard let cleared = clearedTimeStamp else { return true }
+        guard let cleared = clearedTimeStamp else {
+            return true
+        }
 
         // If we've read messages after the cleared date, then we have
         // messages.

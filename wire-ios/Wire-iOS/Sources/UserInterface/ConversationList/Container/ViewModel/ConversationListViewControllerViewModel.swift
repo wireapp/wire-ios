@@ -121,7 +121,9 @@ extension ConversationListViewController {
 
         weak var viewController: ConversationListContainerViewModelDelegate? {
             didSet {
-                guard viewController != nil else { return }
+                guard viewController != nil else {
+                    return
+                }
 
                 updateNoConversationVisibility(animated: false)
                 showPushPermissionDeniedDialogIfNeeded()
@@ -254,7 +256,9 @@ extension ConversationListViewController.ViewModel {
         guard
             selfUserLegalHoldSubject.handle != nil,
             !AutomationHelper.sharedHelper.skipFirstLoginAlerts
-        else { return }
+        else {
+            return
+        }
 
         Task {
             let shouldPresent = await shouldPresentNotificationPermissionHintUseCase.invoke()

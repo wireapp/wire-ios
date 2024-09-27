@@ -84,7 +84,9 @@ extension ConversationViewController {
                 withKeyboardNotification: notification,
                 in: view,
                 animations: { [weak self] keyboardFrameInView in
-                    guard let self else { return }
+                    guard let self else {
+                        return
+                    }
                     inputBarBottomMargin?.constant = -keyboardFrameInView.size.height
                 }
             )

@@ -73,7 +73,9 @@ final class BreathLoadingBar: UIView {
 
     var animating = false {
         didSet {
-            guard animating != oldValue else { return }
+            guard animating != oldValue else {
+                return
+            }
 
             if animating {
                 startAnimation()

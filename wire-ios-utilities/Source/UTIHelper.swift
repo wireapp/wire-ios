@@ -57,7 +57,9 @@ public final class UTIHelper: NSObject {
     // MARK: - MIME conformation
 
     public static func conformsToGifType(mime: String) -> Bool {
-        guard let uti = convertToUti(mime: mime) else { return false }
+        guard let uti = convertToUti(mime: mime) else {
+            return false
+        }
 
         return conformsToGifType(uti: uti)
     }
@@ -85,7 +87,9 @@ public final class UTIHelper: NSObject {
     }
 
     public static func conformsToVectorType(mime: String) -> Bool {
-        guard let uti = convertToUti(mime: mime) else { return false }
+        guard let uti = convertToUti(mime: mime) else {
+            return false
+        }
 
         return conformsToVectorType(uti: uti)
     }

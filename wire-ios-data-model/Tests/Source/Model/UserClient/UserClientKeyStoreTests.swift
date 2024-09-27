@@ -61,7 +61,9 @@ class UserClientKeysStoreTests: OtrBaseTest {
     func testThatTheOTRFolderHasBackupDisabled() {
         // when
         guard let values = try? sut.cryptoboxDirectory
-            .resourceValues(forKeys: [URLResourceKey.isExcludedFromBackupKey]) else { return XCTFail() }
+            .resourceValues(forKeys: [URLResourceKey.isExcludedFromBackupKey]) else {
+            return XCTFail()
+        }
 
         // then
         XCTAssertTrue(values.isExcludedFromBackup!)

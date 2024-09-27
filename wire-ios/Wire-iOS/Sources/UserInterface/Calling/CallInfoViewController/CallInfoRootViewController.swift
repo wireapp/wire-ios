@@ -80,7 +80,9 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
 
     var configuration: CallInfoViewControllerInput {
         didSet {
-            guard !configuration.isEqual(toConfiguration: oldValue) else { return }
+            guard !configuration.isEqual(toConfiguration: oldValue) else {
+                return
+            }
             updateConfiguration(animated: true)
         }
     }
@@ -107,7 +109,9 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
         didShow viewController: UIViewController,
         animated: Bool
     ) {
-        guard viewController is CallInfoViewController else { return }
+        guard viewController is CallInfoViewController else {
+            return
+        }
         context = .overview
     }
 
@@ -176,7 +180,9 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     }
 
     private func updatePresentedParticipantsListIfNeeded() {
-        guard case let .participantsList(participants) = configuration.accessoryType else { return }
+        guard case let .participantsList(participants) = configuration.accessoryType else {
+            return
+        }
         participantsViewController?.participants = participants
     }
 }

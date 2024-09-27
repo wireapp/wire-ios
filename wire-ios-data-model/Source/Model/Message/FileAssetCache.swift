@@ -862,7 +862,9 @@ extension FileAssetCache {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?) -> [FileAttributeKey: Any]? {
-    guard let input else { return nil }
+    guard let input else {
+        return nil
+    }
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
 }
 
@@ -937,7 +939,9 @@ private struct FileCache: Cache {
     }
 
     func storeAssetFromURL(_ fromUrl: URL, key: String, createdAt creationDate: Date = Date()) {
-        guard fromUrl.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(fromUrl)") }
+        guard fromUrl.scheme == NSURLFileScheme else {
+            fatal("Can't save remote URL to cache: \(fromUrl)")
+        }
 
         let toUrl = URLForKey(key)
         let coordinator = NSFileCoordinator()
@@ -1026,7 +1030,9 @@ private struct FileCache: Cache {
         return try files.filter { file -> Bool in
             let attributes = try fileManager.attributesOfItem(atPath: file.path)
 
-            guard let creationDate = attributes[.creationDate] as? Date else { return true }
+            guard let creationDate = attributes[.creationDate] as? Date else {
+                return true
+            }
 
             return creationDate < date
         }
@@ -1036,7 +1042,9 @@ private struct FileCache: Cache {
 
     /// Returns the expected URL of a cache entry
     fileprivate func URLForKey(_ key: String) -> URL {
-        guard key != ".", key != ".." else { fatal("Can't use \(key) as cache key") }
+        guard key != ".", key != ".." else {
+            fatal("Can't use \(key) as cache key")
+        }
         var safeKey = key
         for c in ":\\/%\"" { // see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
             safeKey = safeKey.replacingOccurrences(of: "\(c)", with: "_")

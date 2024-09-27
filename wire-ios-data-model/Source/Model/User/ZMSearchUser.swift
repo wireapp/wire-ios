@@ -69,7 +69,9 @@ public struct SearchUserAssetKeys {
                 guard let size = (asset[ResponseKey.assetSize.rawValue] as? String).flatMap(AssetSize.init),
                       let key = asset[ResponseKey.assetKey.rawValue] as? String,
                       let type = (asset[ResponseKey.assetType.rawValue] as? String).flatMap(AssetKind.init),
-                      type == .image else { continue }
+                      type == .image else {
+                    continue
+                }
 
                 switch size {
                 case .preview: previewKey = key
@@ -284,7 +286,9 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isSelfUser: Bool {
-        guard let user else { return false }
+        guard let user else {
+            return false
+        }
 
         return user.isSelfUser
     }
@@ -306,7 +310,9 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isPendingMetadataRefresh: Bool {
-        guard let user else { return false }
+        guard let user else {
+            return false
+        }
 
         return user.isPendingMetadataRefresh
     }
@@ -487,7 +493,9 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc public var canBeConnected: Bool {
-        guard !isServiceUser else { return false }
+        guard !isServiceUser else {
+            return false
+        }
 
         if let user {
             return user.canBeConnected
@@ -518,7 +526,9 @@ public class ZMSearchUser: NSObject, UserType {
         guard
             let uuidString = payload["id"] as? String,
             let remoteIdentifier = UUID(uuidString: uuidString)
-        else { return nil }
+        else {
+            return nil
+        }
 
         let domain = payload.optionalDictionary(forKey: "qualified_id")?.string(forKey: "domain")
         let localUser = ZMUser.fetch(
@@ -601,7 +611,9 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let otherSearchUser = object as? ZMSearchUser else { return false }
+        guard let otherSearchUser = object as? ZMSearchUser else {
+            return false
+        }
 
         if let lhsRemoteIdentifier = remoteIdentifier, let rhsRemoteIdentifier = otherSearchUser.remoteIdentifier {
             return lhsRemoteIdentifier == rhsRemoteIdentifier
@@ -661,7 +673,9 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public func requestPreviewProfileImage() {
-        guard previewImageData == nil else { return }
+        guard previewImageData == nil else {
+            return
+        }
 
         if let user {
             user.requestPreviewProfileImage()
@@ -676,7 +690,9 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public func requestCompleteProfileImage() {
-        guard completeImageData == nil else { return }
+        guard completeImageData == nil else {
+            return
+        }
 
         if let user {
             user.requestCompleteProfileImage()
@@ -691,7 +707,9 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public func isGuest(in conversation: ConversationLike) -> Bool {
-        guard let user else { return false }
+        guard let user else {
+            return false
+        }
 
         return user.isGuest(in: conversation)
     }

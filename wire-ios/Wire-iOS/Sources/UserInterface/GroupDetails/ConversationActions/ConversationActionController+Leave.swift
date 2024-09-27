@@ -49,14 +49,18 @@ enum LeaveResult: AlertResultConfiguration {
     // MARK: Private
 
     private var style: UIAlertAction.Style {
-        guard case .cancel = self else { return .destructive }
+        guard case .cancel = self else {
+            return .destructive
+        }
         return .cancel
     }
 }
 
 extension ConversationActionController {
     func handleLeaveResult(_ result: LeaveResult, for conversation: ZMConversation) {
-        guard  case let .leave(delete: delete) = result else { return }
+        guard  case let .leave(delete: delete) = result else {
+            return
+        }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return

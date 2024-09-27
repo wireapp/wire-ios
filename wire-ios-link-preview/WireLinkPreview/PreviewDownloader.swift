@@ -88,7 +88,9 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     }
 
     func urlSession(_ session: URLSessionType, task: URLSessionDataTaskType, didCompleteWithError error: NSError?) {
-        guard let url = task.originalRequest?.url, let completion = completionByURL[url] else { return }
+        guard let url = task.originalRequest?.url, let completion = completionByURL[url] else {
+            return
+        }
 
         // We do not want to call the completion handler when we cancelled the task,
         // as we cancel it when we received enough data to generate the link preview and will call the completion
@@ -111,7 +113,9 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         didReceive response: URLResponse,
         completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
     ) {
-        guard let httpResponse = response as? HTTPURLResponse else { return }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            return
+        }
         urlSession(
             session as URLSessionType,
             dataTask: dataTask as URLSessionDataTaskType,
@@ -126,11 +130,15 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         containerByTaskID[identifier] = container
 
         guard let url = task.originalRequest?.url,
-              let completion = completionByURL[url] else { return }
+              let completion = completionByURL[url] else {
+            return
+        }
 
         switch task.state {
         case .running:
-            guard container.reachedEndOfHead else { return }
+            guard container.reachedEndOfHead else {
+                return
+            }
             cancel(task: task)
 
         default:
@@ -138,7 +146,9 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         }
 
         parseMetaHeader(container, url: url) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
         }
     }
@@ -158,7 +168,9 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     }
 
     func parseMetaHeader(_ container: MetaStreamContainer, url: URL, completion: @escaping DownloadCompletion) {
-        guard let xmlString = container.head else { return completion(nil) }
+        guard let xmlString = container.head else {
+            return completion(nil)
+        }
         let scanner = OpenGraphScanner(xmlString, url: url) { [weak self] result in
             self?.resultsQueue.addOperation {
                 completion(result)
@@ -183,7 +195,9 @@ extension PreviewDownloader {
         didReceiveHTTPResponse response: HTTPURLResponse,
         completionHandler: (URLSession.ResponseDisposition) -> Void
     ) {
-        guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
+        guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else {
+            return
+        }
         let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)
         let contentType = headers[contentTypeKey] as? String ?? headers[contentTypeKey.lowercased()] as? String
         if let contentType, !contentType.lowercased().contains("text/html") || !response.isSuccess {

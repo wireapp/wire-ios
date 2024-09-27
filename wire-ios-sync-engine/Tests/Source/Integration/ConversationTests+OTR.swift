@@ -29,7 +29,9 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         mockTransportSession.responseGeneratorBlock = { [weak self] request -> ZMTransportResponse? in
             guard let self,
                   let path = (request.path as NSString?),
-                  path.pathComponents.contains("prekeys") else { return nil }
+                  path.pathComponents.contains("prekeys") else {
+                return nil
+            }
 
             let payload: NSDictionary = [
                 user1.identifier: [
@@ -64,9 +66,13 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         // when resending after fetching the (faulty) prekeys
         var messagesReceived = 0
         for request in mockTransportSession.receivedRequests() {
-            guard request.path.hasPrefix(expectedPath), let data = request.binaryData else { continue }
+            guard request.path.hasPrefix(expectedPath), let data = request.binaryData else {
+                continue
+            }
             guard let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
-            else { return XCTFail("otrMessage was nil") }
+            else {
+                return XCTFail("otrMessage was nil")
+            }
 
             let userEntries = otrMessage.recipients
             let clientEntry = userEntries.first?.clients.first
@@ -89,7 +95,9 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         mockTransportSession.responseGeneratorBlock = { [weak self] request -> ZMTransportResponse? in
             guard let self,
                   let path = request.path as NSString?,
-                  path.pathComponents.contains("prekeys") else { return nil }
+                  path.pathComponents.contains("prekeys") else {
+                return nil
+            }
             let payload: NSDictionary = [
                 user1.identifier: [
                     (user1.clients.anyObject() as? MockUserClient)?.identifier: [
@@ -126,8 +134,12 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         var bombsReceived = 0
 
         for request in mockTransportSession.receivedRequests() {
-            guard request.path.hasPrefix(expectedPath), let data = request.binaryData else { continue }
-            guard let otrMessage = try? Proteus_NewOtrMessage(serializedData: data) else { return XCTFail() }
+            guard request.path.hasPrefix(expectedPath), let data = request.binaryData else {
+                continue
+            }
+            guard let otrMessage = try? Proteus_NewOtrMessage(serializedData: data) else {
+                return XCTFail()
+            }
 
             let userEntries = otrMessage.recipients
             let clientEntry = userEntries.first?.clients.first

@@ -31,7 +31,9 @@ final class LegalHoldDetailsViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) {
-        guard let conversation = user.oneToOneConversation else { return nil }
+        guard let conversation = user.oneToOneConversation else {
+            return nil
+        }
         self.init(
             conversation: conversation,
             userSession: userSession,
@@ -78,7 +80,9 @@ final class LegalHoldDetailsViewController: UIViewController {
             user: user,
             userSession: userSession,
             mainCoordinator: mainCoordinator
-        ) else { return nil }
+        ) else {
+            return nil
+        }
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }

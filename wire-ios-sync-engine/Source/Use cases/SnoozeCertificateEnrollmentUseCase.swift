@@ -72,7 +72,9 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
         let isE2EIEnabled = await featureRepositoryContext.perform {
             self.featureRepository.fetchE2EI().isEnabled
         }
-        guard isE2EIEnabled else { return }
+        guard isE2EIEnabled else {
+            return
+        }
 
         let recurringAction = RecurringAction(
             id: actionId,

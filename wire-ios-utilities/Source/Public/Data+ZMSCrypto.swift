@@ -142,7 +142,9 @@ extension Data {
 
 extension Range where Index == Int {
     fileprivate func chunked(by chunkSize: Int) -> [Self] {
-        guard chunkSize > 0 else { return [] }
+        guard chunkSize > 0 else {
+            return []
+        }
 
         let numberOfWholeChunks = endIndex / chunkSize
         let numberOfChunks = endIndex.isMultiple(of: chunkSize) ? numberOfWholeChunks : numberOfWholeChunks + 1

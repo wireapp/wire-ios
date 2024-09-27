@@ -138,7 +138,9 @@ final class TextSearchViewController: NSObject {
 
 extension TextSearchViewController: TextSearchQueryDelegate {
     func textSearchQueryDidReceive(result: TextQueryResult) {
-        guard result.query == textSearchQuery else { return }
+        guard result.query == textSearchQuery else {
+            return
+        }
         if !result.matches.isEmpty || !result.hasMore {
             hideLoadingSpinner()
             results = result.matches

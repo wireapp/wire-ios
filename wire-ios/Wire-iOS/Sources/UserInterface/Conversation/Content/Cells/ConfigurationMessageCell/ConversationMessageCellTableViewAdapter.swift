@@ -191,7 +191,9 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     // MARK: - Menu
 
     func showMenu() {
-        guard let controller = messageActionsMenuController(with: MessageAction.allCases) else { return }
+        guard let controller = messageActionsMenuController(with: MessageAction.allCases) else {
+            return
+        }
         display(messageActionsController: controller)
     }
 
@@ -204,7 +206,9 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
             MessageAction.delete,
             MessageAction.cancel,
         ]
-        guard let controller = messageActionsMenuController(with: actions) else { return }
+        guard let controller = messageActionsMenuController(with: actions) else {
+            return
+        }
         display(messageActionsController: controller)
     }
 
@@ -219,7 +223,9 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         with actions: [MessageAction] = MessageAction
             .allCases
     ) -> MessageActionsViewController? {
-        guard let actionController = cellDescription?.actionController else { return nil }
+        guard let actionController = cellDescription?.actionController else {
+            return nil
+        }
         let actionsMenuController = MessageActionsViewController.controller(
             withActions: actions,
             actionController: actionController
@@ -246,7 +252,9 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer == singleTapGesture
-        else { return super.gestureRecognizerShouldBegin(gestureRecognizer) }
+        else {
+            return super.gestureRecognizerShouldBegin(gestureRecognizer)
+        }
 
         // We fail the single tap gesture recognizer if there's no single tap action to perform, which gives
         // other gesture recognizers the opportunity to fire.

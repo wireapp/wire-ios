@@ -57,13 +57,17 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
         loginDelegate?.clientRegistrationDidFail(error, accountId: accountId)
 
         let account = accountManager.account(with: accountId)
-        guard account == accountManager.selectedAccount else { return }
+        guard account == accountManager.selectedAccount else {
+            return
+        }
         delegate?.sessionManagerDidFailToLogin(error: error)
     }
 
     public func clientCompletedInitialSync(accountId: UUID) {
         let account = accountManager.account(with: accountId)
-        guard account == accountManager.selectedAccount else { return }
+        guard account == accountManager.selectedAccount else {
+            return
+        }
         delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
     }
 }

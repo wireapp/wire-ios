@@ -48,9 +48,13 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
 
     /// Removes from dependencies those objects for which the `block` returns true
     public func enumerateAndRemoveObjects(for dependency: Dependency, block: (Object) -> Bool) {
-        guard let objects = dependenciesToDependents[dependency] else { return }
+        guard let objects = dependenciesToDependents[dependency] else {
+            return
+        }
         let objectsToRemove = objects.filter { block($0) }
-        guard !objectsToRemove.isEmpty else { return }
+        guard !objectsToRemove.isEmpty else {
+            return
+        }
         for item in objectsToRemove {
             remove(dependency: dependency, for: item)
         }
@@ -70,7 +74,9 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     }
 
     public func removeAllDependencies(for dependent: Object) {
-        guard let dependencies = dependentsToDependencies[dependent] else { return }
+        guard let dependencies = dependentsToDependencies[dependent] else {
+            return
+        }
 
         for dependency in dependencies {
             remove(dependency: dependency, for: dependent)
@@ -83,7 +89,9 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     private var dependentsToDependencies: [Object: Set<Dependency>] = [:] // inverse of the previous one
 
     private func updateDependencies(dependency: Dependency, removing dependent: Object) {
-        guard let currentSet = dependenciesToDependents[dependency] else { return }
+        guard let currentSet = dependenciesToDependents[dependency] else {
+            return
+        }
         if currentSet.contains(dependent) {
             zmLog.debug("Removing dependency \(toPtr(dependency)) from object \(toPtr(dependent))")
         }
@@ -96,7 +104,9 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     }
 
     private func updateDependents(dependent: Object, removing dependency: Dependency) {
-        guard let currentSet = dependentsToDependencies[dependent] else { return }
+        guard let currentSet = dependentsToDependencies[dependent] else {
+            return
+        }
         let newSet = currentSet.subtracting([dependency])
         if currentSet.contains(dependency) {
             zmLog.debug("Removing dependent object \(toPtr(dependent))for dependency \(toPtr(dependency))")

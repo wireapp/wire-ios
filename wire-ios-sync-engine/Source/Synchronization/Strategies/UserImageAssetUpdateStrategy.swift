@@ -106,7 +106,9 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             }
         }
 
-        guard let updateStatus = imageUploadStatus else { return nil }
+        guard let updateStatus = imageUploadStatus else {
+            return nil
+        }
 
         // There are assets added for deletion
         if updateStatus.hasAssetToDelete() {
@@ -127,9 +129,15 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         downstreamSync: ZMObjectSync!,
         apiVersion: APIVersion
     ) -> ZMTransportRequest! {
-        guard let whitelistSync = downstreamSync as? ZMDownstreamObjectSyncWithWhitelist else { return nil }
-        guard let user = object as? ZMUser else { return nil }
-        guard let size = size(for: whitelistSync) else { return nil }
+        guard let whitelistSync = downstreamSync as? ZMDownstreamObjectSyncWithWhitelist else {
+            return nil
+        }
+        guard let user = object as? ZMUser else {
+            return nil
+        }
+        guard let size = size(for: whitelistSync) else {
+            return nil
+        }
 
         let remoteId: String? = switch size {
         case .preview:
@@ -137,7 +145,9 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         case .complete:
             user.completeProfileAssetIdentifier
         }
-        guard let assetId = remoteId else { return nil }
+        guard let assetId = remoteId else {
+            return nil
+        }
 
         let path: String
         switch apiVersion {
@@ -145,14 +155,26 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             path = "/assets/v3/\(assetId)"
 
         case .v1:
-            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
-            guard let domain else { return nil }
+            let domain = if let domain = user.domain, !domain.isEmpty {
+                domain
+            } else {
+                BackendInfo.domain
+            }
+            guard let domain else {
+                return nil
+            }
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
         case .v2, .v3, .v4, .v5, .v6:
-            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
-            guard let domain else { return nil }
+            let domain = if let domain = user.domain, !domain.isEmpty {
+                domain
+            } else {
+                BackendInfo.domain
+            }
+            guard let domain else {
+                return nil
+            }
 
             path = "/assets/\(domain)/\(assetId)"
         }
@@ -161,8 +183,12 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        guard let whitelistSync = downstreamSync as? ZMDownstreamObjectSyncWithWhitelist else { return }
-        guard let user = object as? ZMUser else { return }
+        guard let whitelistSync = downstreamSync as? ZMDownstreamObjectSyncWithWhitelist else {
+            return
+        }
+        guard let user = object as? ZMUser else {
+            return
+        }
 
         switch size(for: whitelistSync) {
         case .preview?: user.previewProfileAssetIdentifier = nil
@@ -172,9 +198,15 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     }
 
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        guard let whitelistSync = downstreamSync as? ZMDownstreamObjectSyncWithWhitelist else { return }
-        guard let user = object as? ZMUser else { return }
-        guard let size = size(for: whitelistSync) else { return }
+        guard let whitelistSync = downstreamSync as? ZMDownstreamObjectSyncWithWhitelist else {
+            return
+        }
+        guard let user = object as? ZMUser else {
+            return
+        }
+        guard let size = size(for: whitelistSync) else {
+            return
+        }
 
         user.setImage(data: response.rawData, size: size)
     }
@@ -207,14 +239,18 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        guard let size = size(for: sync) else { return }
+        guard let size = size(for: sync) else {
+            return
+        }
         guard response.result == .success else {
             let error = AssetTransportError(response: response)
             imageUploadStatus?.uploadingFailed(imageSize: size, error: error)
             return
         }
         guard let payload = response.payload?.asDictionary(),
-              let assetId = payload["key"] as? String else { fatal("No asset ID present in payload") }
+              let assetId = payload["key"] as? String else {
+            fatal("No asset ID present in payload")
+        }
         imageUploadStatus?.uploadingDone(imageSize: size, assetId: assetId)
     }
 
@@ -245,7 +281,9 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         moc.performGroupedBlock {
             guard let objectID = note.object as? NSManagedObjectID,
                   let object = self.moc.object(with: objectID) as? ZMManagedObject
-            else { return }
+            else {
+                return
+            }
 
             switch note.name {
             case .userDidRequestPreviewAsset:

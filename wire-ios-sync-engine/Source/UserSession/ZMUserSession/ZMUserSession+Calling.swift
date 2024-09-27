@@ -38,7 +38,9 @@ extension ZMUserSession: CallNotificationStyleProvider {
     }
 
     public var isCallOngoing: Bool {
-        guard let callCenter else { return false }
+        guard let callCenter else {
+            return false
+        }
 
         return !callCenter.activeCallConversations(in: self).isEmpty
     }

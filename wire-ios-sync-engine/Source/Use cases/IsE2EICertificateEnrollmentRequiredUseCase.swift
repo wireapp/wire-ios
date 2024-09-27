@@ -45,7 +45,9 @@ public final class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificate
     // MARK: - Methods
 
     public func invoke() async throws -> Bool {
-        guard let gracePeriodEndDate else { return false }
+        guard let gracePeriodEndDate else {
+            return false
+        }
 
         let hasCertificate = await selfClientCertificateProvider.hasCertificate
         return isE2EIdentityEnabled && !hasCertificate && gracePeriodEndDate.isInThePast

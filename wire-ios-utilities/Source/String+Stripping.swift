@@ -20,7 +20,9 @@ import Foundation
 
 extension String {
     mutating func stripPrefix(_ prefix: String) {
-        guard hasPrefix(prefix) else { return }
+        guard hasPrefix(prefix) else {
+            return
+        }
         removeFirst(prefix.count)
     }
 

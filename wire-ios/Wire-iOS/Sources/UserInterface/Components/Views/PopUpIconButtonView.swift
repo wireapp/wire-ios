@@ -69,7 +69,9 @@ class PopUpIconButtonView: UIView {
     var selectedIndex = 0
 
     override func draw(_: CGRect) {
-        guard let path = pathForOverlay(), let context = UIGraphicsGetCurrentContext() else { return }
+        guard let path = pathForOverlay(), let context = UIGraphicsGetCurrentContext() else {
+            return
+        }
 
         context.saveGState()
 
@@ -363,7 +365,9 @@ class PopUpIconButtonView: UIView {
         case .right:    button.itemIcons
         }
 
-        guard let index = icons.firstIndex(of: item) else { return nil }
+        guard let index = icons.firstIndex(of: item) else {
+            return nil
+        }
 
         var rect = CGRect(origin: upperRect.origin, size: CGSize(width: itemWidth, height: upperRect.height))
 

@@ -84,7 +84,9 @@ public final class Account: NSObject, Codable {
     /// from the account store.
     ///
     public func updateWith(_ account: Account) {
-        guard userIdentifier == account.userIdentifier else { return }
+        guard userIdentifier == account.userIdentifier else {
+            return
+        }
         userName = account.userName
         teamName = account.teamName
         imageData = account.imageData
@@ -93,7 +95,9 @@ public final class Account: NSObject, Codable {
     }
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? Account else { return false }
+        guard let other = object as? Account else {
+            return false
+        }
         return userIdentifier == other.userIdentifier
     }
 

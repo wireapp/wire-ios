@@ -37,7 +37,9 @@ extension UnauthenticatedSession {
     public func login(with credentials: UserCredentials) {
         let updatedCredentialsInUserSession = delegate?.session(session: self, updatedCredentials: credentials) ?? false
 
-        guard !updatedCredentialsInUserSession else { return }
+        guard !updatedCredentialsInUserSession else {
+            return
+        }
 
         if credentials.isInvalid {
             let error = NSError(userSessionErrorCode: .needsCredentials, userInfo: nil)

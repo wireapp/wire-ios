@@ -153,7 +153,9 @@ private struct ParticipantsSectionViewModel {
         maxParticipants: Int,
         maxDisplayedParticipants: Int
     ) -> [ParticipantsRowType] {
-        guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.user) }
+        guard participants.count > maxParticipants else {
+            return participants.map(ParticipantsRowType.user)
+        }
         return participants[0 ..< maxDisplayedParticipants]
             .map(ParticipantsRowType.user) + [.showAll(totalParticipantsCount)]
     }
@@ -270,10 +272,15 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
         switch configuration {
         case let .user(user):
-            guard let cell = cell as? UserCell else { return unexpectedCellHandler() }
+            guard let cell = cell as? UserCell else {
+                return unexpectedCellHandler()
+            }
             let isE2EICertified = if let userID = user.remoteIdentifier,
-                                     let userStatus = viewModel.userStatuses[userID] { userStatus.isE2EICertified }
-            else { false }
+                                     let userStatus = viewModel.userStatuses[userID] {
+                userStatus.isE2EICertified
+            } else {
+                false
+            }
             cell.configure(
                 user: user,
                 isE2EICertified: isE2EICertified,
@@ -282,7 +289,9 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             )
 
         case let .showAll(totalParticipantsCount):
-            guard let cell = cell as? ShowAllParticipantsCell else { return unexpectedCellHandler() }
+            guard let cell = cell as? ShowAllParticipantsCell else {
+                return unexpectedCellHandler()
+            }
             cell.configure(
                 totalParticipantsCount: totalParticipantsCount,
                 conversation: conversation,
@@ -350,7 +359,9 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     fileprivate weak var collectionView: UICollectionView? {
         didSet {
-            guard let collectionView else { return }
+            guard let collectionView else {
+                return
+            }
             SectionFooter.register(collectionView: collectionView)
         }
     }
@@ -367,7 +378,9 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
 extension ParticipantsSectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.connectionStateChanged || changeInfo.nameChanged else { return }
+        guard changeInfo.connectionStateChanged || changeInfo.nameChanged else {
+            return
+        }
         collectionView?.reloadData()
     }
 }

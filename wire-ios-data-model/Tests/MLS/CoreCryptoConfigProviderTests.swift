@@ -33,7 +33,9 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
     var coreCryptoKeyMock: CoreCryptoKeyMock?
 
     override func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
-        guard let mock = coreCryptoKeyMock else { throw MockError.unmockedMethodCalled }
+        guard let mock = coreCryptoKeyMock else {
+            throw MockError.unmockedMethodCalled
+        }
         return try mock()
     }
 }

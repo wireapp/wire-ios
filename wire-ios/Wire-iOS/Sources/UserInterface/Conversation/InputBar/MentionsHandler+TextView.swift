@@ -57,7 +57,9 @@ extension MentionsHandler {
     }
 
     fileprivate static func needsSpace(text: NSAttributedString, position: Int) -> Bool {
-        guard text.wholeRange.contains(position) else { return false }
+        guard text.wholeRange.contains(position) else {
+            return false
+        }
         return !text.hasSpaceAt(position: position)
     }
 }

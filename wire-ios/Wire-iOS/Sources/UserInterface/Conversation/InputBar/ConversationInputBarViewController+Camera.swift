@@ -171,7 +171,9 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         let context = ConfirmAssetViewController.Context(
             asset: .image(mediaAsset: mediaAsset),
             onConfirm: { [weak self] (editedImage: UIImage?) in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
                 dismiss(animated: true) {
                     self.writeToSavedPhotoAlbumIfNecessary(
                         imageData: imageData,
@@ -287,7 +289,9 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
 extension ConversationInputBarViewController: CanvasViewControllerDelegate {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
         hideCameraKeyboardViewController { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             dismiss(animated: true) {
                 if let imageData = image.pngData() {

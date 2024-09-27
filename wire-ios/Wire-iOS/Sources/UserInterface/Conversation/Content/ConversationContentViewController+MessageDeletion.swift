@@ -24,7 +24,9 @@ extension ZMConversationMessage {
     /// Whether the `Delete for everyone` option should be allowed and shown for this message.
     private var canBeDeletedForEveryone: Bool {
         guard let sender = senderUser,
-              let conversation = conversationLike else { return false }
+              let conversation = conversationLike else {
+            return false
+        }
         return sender.isSelfUser && conversation.isSelfAnActiveMember
     }
 
@@ -124,7 +126,9 @@ final class DeletionDialogPresenter: NSObject {
         userSession: UserSession,
         completion: @escaping (_ succeeded: Bool) -> Void
     ) {
-        guard !message.hasBeenDeleted else { return }
+        guard !message.hasBeenDeleted else {
+            return
+        }
 
         let alert = deleteAlert(
             message: message,

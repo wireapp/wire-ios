@@ -75,7 +75,9 @@ final class ConversationListViewModel: NSObject {
     static let contactRequestsItem = ConversationListConnectRequestsItem()
 
     static var persistentURL: URL? {
-        guard let persistentDirectory else { return nil }
+        guard let persistentDirectory else {
+            return nil
+        }
 
         return URL.directoryURL(persistentDirectory)?
             .appendingPathComponent(ConversationListViewModel.persistentFilename)
@@ -90,7 +92,9 @@ final class ConversationListViewModel: NSObject {
         didSet {
             /// expand the section if selcted item is update
             guard let indexPath = indexPath(for: selectedItem),
-                  collapsed(at: indexPath.section) else { return }
+                  collapsed(at: indexPath.section) else {
+                return
+            }
 
             setCollapsed(sectionIndex: indexPath.section, collapsed: false, batchUpdate: false)
         }
@@ -108,7 +112,9 @@ final class ConversationListViewModel: NSObject {
         }
 
         set {
-            guard newValue != state.folderEnabled else { return }
+            guard newValue != state.folderEnabled else {
+                return
+            }
 
             state.folderEnabled = newValue
 
@@ -139,7 +145,9 @@ final class ConversationListViewModel: NSObject {
     func sectionHeaderVisible(section: Int) -> Bool {
         guard sections.indices.contains(section),
               kind(of: section) != .contactRequests,
-              folderEnabled else { return false }
+              folderEnabled else {
+            return false
+        }
 
         return !sections[section].items.isEmpty
     }
@@ -158,7 +166,9 @@ final class ConversationListViewModel: NSObject {
 
     func numberOfItems(inSection sectionIndex: Int) -> Int {
         guard sections.indices.contains(sectionIndex),
-              !collapsed(at: sectionIndex) else { return 0 }
+              !collapsed(at: sectionIndex) else {
+            return 0
+        }
 
         return sections[sectionIndex].elements.count
     }
@@ -173,7 +183,9 @@ final class ConversationListViewModel: NSObject {
 
     func item(for indexPath: IndexPath) -> ConversationListItem? {
         guard let items = section(at: indexPath.section),
-              items.indices.contains(indexPath.item) else { return nil }
+              items.indices.contains(indexPath.item) else {
+            return nil
+        }
 
         return items[indexPath.item]
     }
@@ -181,7 +193,9 @@ final class ConversationListViewModel: NSObject {
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
     func indexPath(for item: ConversationListItem?) -> IndexPath? {
-        guard let item else { return nil }
+        guard let item else {
+            return nil
+        }
 
         for (sectionIndex, section) in sections.enumerated() {
             if let index = section.index(for: item) {
@@ -200,7 +214,9 @@ final class ConversationListViewModel: NSObject {
         }
 
         if indexPath(for: itemToSelect) == nil {
-            guard let conversation = itemToSelect as? ZMConversation else { return false }
+            guard let conversation = itemToSelect as? ZMConversation else {
+                return false
+            }
 
             ZMUserSession.shared()?.enqueue({
                 conversation.isArchived = false
@@ -241,10 +257,18 @@ final class ConversationListViewModel: NSObject {
         collapsed: Bool,
         batchUpdate: Bool = true
     ) {
-        guard let conversationDirectory = userSession?.conversationDirectory else { return }
-        guard let kind = kind(of: sectionIndex) else { return }
-        guard self.collapsed(at: sectionIndex) != collapsed else { return }
-        guard let sectionNumber = sectionNumber(for: kind) else { return }
+        guard let conversationDirectory = userSession?.conversationDirectory else {
+            return
+        }
+        guard let kind = kind(of: sectionIndex) else {
+            return
+        }
+        guard self.collapsed(at: sectionIndex) != collapsed else {
+            return
+        }
+        guard let sectionNumber = sectionNumber(for: kind) else {
+            return
+        }
 
         if collapsed {
             state.collapsed.insert(kind.identifier)
@@ -454,7 +478,9 @@ final class ConversationListViewModel: NSObject {
     }
 
     private static var persistentDirectory: String? {
-        guard let userID = ZMUser.selfUser()?.remoteIdentifier else { return nil }
+        guard let userID = ZMUser.selfUser()?.remoteIdentifier else {
+            return nil
+        }
 
         return "UI_state/\(userID)"
     }
@@ -469,10 +495,13 @@ final class ConversationListViewModel: NSObject {
 
     /// for folder enabled and collapse presistent
     private lazy var _state: State = {
-        guard isFolderStatePersistenceEnabled else { return .init() }
+        guard isFolderStatePersistenceEnabled else {
+            return .init()
+        }
 
         guard let persistentPath = ConversationListViewModel.persistentURL,
-              let jsonData = try? Data(contentsOf: persistentPath) else { return State()
+              let jsonData = try? Data(contentsOf: persistentPath) else {
+            return State()
         }
 
         do {
@@ -550,7 +579,9 @@ final class ConversationListViewModel: NSObject {
     }
 
     private func kind(of sectionIndex: Int) -> Section.Kind? {
-        guard sections.indices.contains(sectionIndex) else { return nil }
+        guard sections.indices.contains(sectionIndex) else {
+            return nil
+        }
 
         return sections[sectionIndex].kind
     }
@@ -561,7 +592,9 @@ final class ConversationListViewModel: NSObject {
 
     /// Create the section structure
     private func createSections() -> [Section] {
-        guard let conversationDirectory = userSession?.conversationDirectory else { return [] }
+        guard let conversationDirectory = userSession?.conversationDirectory else {
+            return []
+        }
 
         var kinds: [Section.Kind]
         if folderEnabled {
@@ -597,7 +630,9 @@ final class ConversationListViewModel: NSObject {
     }
 
     private func update(for kind: Section.Kind? = nil) {
-        guard let conversationDirectory = userSession?.conversationDirectory else { return }
+        guard let conversationDirectory = userSession?.conversationDirectory else {
+            return
+        }
 
         var newValue: [Section]
         if let kind,
@@ -650,7 +685,9 @@ final class ConversationListViewModel: NSObject {
     }
 
     private func collapsed(at sectionIndex: Int, state: State) -> Bool {
-        guard let kind = kind(of: sectionIndex) else { return false }
+        guard let kind = kind(of: sectionIndex) else {
+            return false
+        }
 
         return state.collapsed.contains(kind.identifier)
     }
@@ -659,7 +696,9 @@ final class ConversationListViewModel: NSObject {
         guard isFolderStatePersistenceEnabled,
               let jsonString = state.jsonString,
               let persistentDirectory = ConversationListViewModel.persistentDirectory,
-              let directoryURL = URL.directoryURL(persistentDirectory) else { return }
+              let directoryURL = URL.directoryURL(persistentDirectory) else {
+            return
+        }
 
         try! FileManager.default.createAndProtectDirectory(at: directoryURL)
 

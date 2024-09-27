@@ -34,7 +34,9 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
     func testThatItLoadsAndKeepsBackgroundUserSession() {
         // GIVEN
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
 
         let manager = AccountManager(sharedDirectory: sharedContainer)
         let account1 = Account(userName: "Test Account 1", userIdentifier: currentUserIdentifier)
@@ -161,7 +163,9 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         let account = createAccount()
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
 
-        guard let application else { return XCTFail() }
+        guard let application else {
+            return XCTFail()
+        }
 
         let sessionManagerExpectation = customExpectation(description: "Session manager and session is loaded")
 
@@ -351,7 +355,9 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         guard
             let sessionManager,
             let account = sessionManager.accountManager.account(with: currentUserIdentifier)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
 
         // WHEN
         sessionManager.select(account, completion: { userSession in

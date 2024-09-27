@@ -188,7 +188,9 @@ extension ZMUpdateEventType {
     init(string: String) {
         let result = ZMUpdateEventType.allCases.lazy
             .compactMap { eventType -> (ZMUpdateEventType, String)? in
-                guard let stringValue = eventType.stringValue else { return nil }
+                guard let stringValue = eventType.stringValue else {
+                    return nil
+                }
                 return (eventType, stringValue)
             }
             .filter { _, stringValue -> Bool in
@@ -232,8 +234,12 @@ open class ZMUpdateEvent: NSObject {
         decrypted: Bool,
         source: ZMUpdateEventSource
     ) {
-        guard let payload else { return nil }
-        guard let payloadType = payload["type"] as? String else { return nil }
+        guard let payload else {
+            return nil
+        }
+        guard let payloadType = payload["type"] as? String else {
+            return nil
+        }
 
         self.uuid = uuid
         self.payload = payload
@@ -241,7 +247,9 @@ open class ZMUpdateEvent: NSObject {
         self.wasDecrypted = decrypted
 
         let eventType = ZMUpdateEventType(string: payloadType)
-        guard eventType != .unknown else { return nil }
+        guard eventType != .unknown else {
+            return nil
+        }
         self.type = eventType
         self.source = source
         self.wasDecrypted = false
@@ -326,8 +334,12 @@ open class ZMUpdateEvent: NSObject {
         pushStartingAt threshold: UUID?
     ) -> [ZMUpdateEvent]? {
         let dictionary = transportData.asDictionary()
-        guard let uuidString = dictionary?["id"] as? String, let uuid = UUID(uuidString: uuidString) else { return nil }
-        guard let payloadArray = dictionary?["payload"] as? [Any] else { return nil }
+        guard let uuidString = dictionary?["id"] as? String, let uuid = UUID(uuidString: uuidString) else {
+            return nil
+        }
+        guard let payloadArray = dictionary?["payload"] as? [Any] else {
+            return nil
+        }
         let transient = (dictionary?["transient"] as? Bool) ?? false
 
         return eventsArray(

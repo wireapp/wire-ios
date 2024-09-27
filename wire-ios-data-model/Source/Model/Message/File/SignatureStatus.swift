@@ -93,7 +93,9 @@ public final class SignatureStatus: NSObject {
     }
 
     public func retrieveSignature() {
-        guard case .waitingForCodeVerification = state else { return }
+        guard case .waitingForCodeVerification = state else {
+            return
+        }
         state = .waitingForSignature
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }

@@ -74,7 +74,9 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             self.boostrapChangeTrackers(with: convo1)
 
             // then
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
             XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/conversations/\(convo1.remoteIdentifier!.transportString())/roles")
         }
@@ -121,7 +123,9 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             self.boostrapChangeTrackers(with: convo1!)
 
             // when
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
             request.complete(with: ZMTransportResponse(
                 payload: self.sampleRolesPayload as ZMTransportData,
                 httpStatus: 200,
@@ -153,7 +157,9 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             self.boostrapChangeTrackers(with: convo1!)
 
             // when
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
             request.complete(with: ZMTransportResponse(
                 payload: nil,
                 httpStatus: 404,

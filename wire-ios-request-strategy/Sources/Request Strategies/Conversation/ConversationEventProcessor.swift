@@ -89,7 +89,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         qualifiedID: QualifiedID?,
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
-        guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
+        guard let conversationID = id ?? qualifiedID?.uuid else {
+            return nil
+        }
         return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
     }
 
@@ -148,7 +150,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.Conversation>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await processor.processPayload(payload, in: context)
     }
@@ -157,7 +161,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.UpdateConversationDeleted>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await processor.processPayload(payload, in: context)
     }
@@ -166,7 +172,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await processor.processPayload(payload, originalEvent: event, in: context)
     }
@@ -175,7 +183,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         if let conversationID = payload.qualifiedID {
             await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
@@ -193,7 +203,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.UpdateConversationName>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await context.perform {
             self.processor.processPayload(
@@ -208,7 +220,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.ConversationMember>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await context.perform {
             self.processor.processPayload(
@@ -222,7 +236,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.UpdateConversationAccess>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await context.perform {
             self.processor.processPayload(
@@ -236,7 +252,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.UpdateConversationMessageTimer>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await context.perform {
             self.processor.processPayload(
@@ -250,7 +268,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await context.perform {
             self.processor.processPayload(
@@ -264,7 +284,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await context.perform {
             self.processor.processPayload(
@@ -284,7 +306,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             let qualifiedID = payload.qualifiedID ?? BackendInfo.domain.map({
                 QualifiedID(uuid: payload.id, domain: $0)
             })
-        else { return }
+        else {
+            return
+        }
 
         await mlsEventProcessor.process(
             welcomeMessage: payload.data,
@@ -297,7 +321,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         guard let payload = try? eventPayloadDecoder.decode(
             Payload.ConversationEvent<Payload.UpdateConversationProtocolChange>.self,
             from: event.payload
-        ) else { return }
+        ) else {
+            return
+        }
 
         await processor.processPayload(
             payload,

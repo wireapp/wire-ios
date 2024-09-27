@@ -168,7 +168,9 @@ extension SearchRequest {
 extension String {
     fileprivate func normalizedAndTrimmed() -> String {
         // swiftformat:disable:next redundantSelf
-        guard let normalized = self.normalizedForSearch() as String? else { return "" }
+        guard let normalized = self.normalizedForSearch() as String? else {
+            return ""
+        }
         return normalized.trimmingCharacters(in: .whitespaces)
     }
 }

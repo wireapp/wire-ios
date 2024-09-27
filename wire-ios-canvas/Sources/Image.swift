@@ -84,7 +84,9 @@ final class Image: Editable {
     }
 
     func draw(context: CGContext) {
-        guard !selected else { return }
+        guard !selected else {
+            return
+        }
 
         context.saveGState()
         context.concatenate(transform)

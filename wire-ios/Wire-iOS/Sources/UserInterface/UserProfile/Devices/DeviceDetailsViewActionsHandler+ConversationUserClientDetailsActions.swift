@@ -32,7 +32,9 @@ protocol ConversationUserClientDetailsActions {
 
 extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions {
     func showMyDevice() {
-        guard let selfUserClient = userSession.selfUserClient else { return }
+        guard let selfUserClient = userSession.selfUserClient else {
+            return
+        }
 
         let selfClientController = SettingsClientViewController(
             userClient: selfUserClient,

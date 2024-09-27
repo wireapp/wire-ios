@@ -380,9 +380,13 @@ extension MockTransportSessionTeamTests {
         XCTAssertEqual(userId as? String, user.identifier)
 
         guard let permissionsPayload = payload?["permissions"] as? [String: Any]
-        else { return XCTFail("No permissions payload") }
+        else {
+            return XCTFail("No permissions payload")
+        }
         guard let permissionsValue = permissionsPayload["self"] as? NSNumber
-        else { return XCTFail("No permissions value") }
+        else {
+            return XCTFail("No permissions value")
+        }
         let permissions = MockPermissions(rawValue: permissionsValue.int64Value)
         XCTAssertEqual(permissions, [permission1, permission2])
     }

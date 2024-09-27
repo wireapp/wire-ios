@@ -36,7 +36,9 @@ final class SoundEventRulesWatchDog {
         // Check this property when it is allowed to playback any sounds
         // Otherwise check if we passed the @c ignoreTime starting from @c watchTime
         guard !isMuted,
-              let stayQuiteTillTime = startIgnoreDate?.addingTimeInterval(ignoreTime) else { return false }
+              let stayQuiteTillTime = startIgnoreDate?.addingTimeInterval(ignoreTime) else {
+            return false
+        }
 
         return Date().compare(stayQuiteTillTime) == .orderedDescending
     }

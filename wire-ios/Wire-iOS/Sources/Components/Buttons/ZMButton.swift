@@ -57,7 +57,9 @@ final class ZMButton: LegacyButton {
 
     override var isHighlighted: Bool {
         didSet {
-            guard let style else { return }
+            guard let style else {
+                return
+            }
 
             applyStyle(style)
         }
@@ -168,7 +170,9 @@ class LegacyButton: ButtonWithLargerHitArea {
 
     override var isEnabled: Bool {
         didSet {
-            guard oldValue != isEnabled else { return }
+            guard oldValue != isEnabled else {
+                return
+            }
             updateAppearance(with: previousState)
         }
     }
@@ -230,7 +234,9 @@ class LegacyButton: ButtonWithLargerHitArea {
     private var borderColorByState: [UIControl.State.RawValue: UIColor] = [:]
 
     private func updateStyle(variant: ColorSchemeVariant) {
-        guard let style = legacyStyle else { return }
+        guard let style = legacyStyle else {
+            return
+        }
 
         switch style {
         case .full:

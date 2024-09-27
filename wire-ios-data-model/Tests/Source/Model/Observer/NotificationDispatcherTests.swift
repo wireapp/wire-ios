@@ -90,7 +90,9 @@ public class NotificationDispatcherTestBase: ZMBaseManagedObjectTest {
 
     @discardableResult
     public func mergeLastChangesWithoutNotifying() -> [NSManagedObjectID] {
-        guard let change = mergeNotifications.last else { return [] }
+        guard let change = mergeNotifications.last else {
+            return []
+        }
         let changedObjects = (change.userInfo?[NSUpdatedObjectsKey] as? Set<ZMManagedObject>)?.map(\.objectID) ?? []
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -553,7 +555,9 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
             XCTAssertEqual(changes.count, 1)
             guard let userChanges = changes[ZMUser.entityName()] as? [UserChangeInfo],
                   let change = userChanges.first
-            else { return XCTFail() }
+            else {
+                return XCTFail()
+            }
             XCTAssertTrue(change.nameChanged)
         }
     }
@@ -610,7 +614,9 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
             let changeInfos = conversationObserver.notifications
             XCTAssertEqual(changeInfos.count, 1)
 
-            guard let changeInfo = changeInfos.first else { return XCTFail() }
+            guard let changeInfo = changeInfos.first else {
+                return XCTFail()
+            }
             XCTAssertTrue(changeInfo.changedKeys.isEmpty)
             XCTAssertTrue(changeInfo.considerAllKeysChanged)
         }
@@ -662,7 +668,9 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
             let changeInfos = conversationObserver.notifications
             XCTAssertEqual(changeInfos.count, 1)
 
-            guard let changeInfo = changeInfos.first else { return XCTFail() }
+            guard let changeInfo = changeInfos.first else {
+                return XCTFail()
+            }
             XCTAssertTrue(changeInfo.changedKeys.isEmpty)
             XCTAssertTrue(changeInfo.considerAllKeysChanged)
 
@@ -677,7 +685,9 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
             let newChangeInfos = conversationObserver.notifications
             XCTAssertEqual(newChangeInfos.count, 1)
 
-            guard let newChangeInfo = newChangeInfos.first else { return XCTFail() }
+            guard let newChangeInfo = newChangeInfos.first else {
+                return XCTFail()
+            }
             XCTAssertEqual(newChangeInfo.changedKeys, [#keyPath(ZMConversation.displayName)])
             XCTAssertFalse(newChangeInfo.considerAllKeysChanged)
         }

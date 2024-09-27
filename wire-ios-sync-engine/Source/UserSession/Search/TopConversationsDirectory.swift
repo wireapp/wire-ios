@@ -147,13 +147,21 @@ extension ZMConversation {
     }
 
     fileprivate func lastMonthMessageCount() -> Int {
-        guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else { return 0 }
+        guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else {
+            return 0
+        }
 
         var count = 0
         for message in lastMessages() {
-            guard let timestamp = message.serverTimestamp else { continue }
-            guard message.systemMessageData == nil else { continue }
-            guard timestamp >= oneMonthAgo else { return count }
+            guard let timestamp = message.serverTimestamp else {
+                continue
+            }
+            guard message.systemMessageData == nil else {
+                continue
+            }
+            guard timestamp >= oneMonthAgo else {
+                return count
+            }
             count += 1
         }
 

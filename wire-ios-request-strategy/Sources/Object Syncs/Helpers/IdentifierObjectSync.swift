@@ -86,17 +86,23 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard !pending.isEmpty, let fetchLimit = transcoder?.fetchLimit else { return nil }
+        guard !pending.isEmpty, let fetchLimit = transcoder?.fetchLimit else {
+            return nil
+        }
 
         let scheduled = Set(pending.prefix(fetchLimit))
 
-        guard let request = transcoder?.request(for: scheduled, apiVersion: apiVersion) else { return nil }
+        guard let request = transcoder?.request(for: scheduled, apiVersion: apiVersion) else {
+            return nil
+        }
 
         downloading.formUnion(scheduled)
         pending.subtract(scheduled)
 
         request.add(ZMCompletionHandler(on: managedObjectContext) { [weak self] response in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             switch response.result {
             case .permanentError, .success:

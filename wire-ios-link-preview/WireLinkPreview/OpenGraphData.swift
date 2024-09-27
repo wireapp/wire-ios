@@ -65,7 +65,9 @@ public struct OpenGraphData {
 extension OpenGraphData: CustomStringConvertible {
     public var description: String {
         var description = "<\(Swift.type(of: self))> \(String(describing: siteNameString)): \(url):\n\t\(title)"
-        if let content { description += "\n\(content)" }
+        if let content {
+            description += "\n\(content)"
+        }
         return description
     }
 }
@@ -82,7 +84,9 @@ public struct FoursquareMetaData {
 
     init?(propertyMapping mapping: OpenGraphData.PropertyMapping) {
         guard let latitude = mapping[.latitudeFSQ].flatMap(Float.init),
-              let longitude = mapping[.longitudeFSQ].flatMap(Float.init) else { return nil }
+              let longitude = mapping[.longitudeFSQ].flatMap(Float.init) else {
+            return nil
+        }
         self.init(latitude: latitude, longitude: longitude)
     }
 
@@ -97,7 +101,9 @@ extension OpenGraphData {
 
     init?(propertyMapping mapping: PropertyMapping, resolvedURL: URL, images: [String]) {
         guard let title = mapping[.title],
-              let url = mapping[.url] else { return nil }
+              let url = mapping[.url] else {
+            return nil
+        }
 
         self.init(
             title: title,
@@ -144,7 +150,9 @@ extension ArticleMetadata {
         )
         title = openGraphData.title
         summary = openGraphData.content
-        guard let imageURL = openGraphData.imageUrls.compactMap(URL.init).first else { return }
+        guard let imageURL = openGraphData.imageUrls.compactMap(URL.init).first else {
+            return
+        }
         imageURLs.append(imageURL)
     }
 }
@@ -152,7 +160,9 @@ extension ArticleMetadata {
 extension FoursquareLocationMetadata {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
         guard openGraphData.type == OpenGraphTypeType.foursquare.rawValue,
-              openGraphData.siteName == .foursquare else { return nil }
+              openGraphData.siteName == .foursquare else {
+            return nil
+        }
 
         self.init(
             originalURLString: originalURLString,
@@ -164,7 +174,9 @@ extension FoursquareLocationMetadata {
         subtitle = openGraphData.content
         longitude = openGraphData.foursquareMetaData?.longitude
         latitude = openGraphData.foursquareMetaData?.latitude
-        guard let imageURL = openGraphData.imageUrls.compactMap(URL.init).first else { return }
+        guard let imageURL = openGraphData.imageUrls.compactMap(URL.init).first else {
+            return
+        }
         imageURLs.append(imageURL)
     }
 }
@@ -172,7 +184,9 @@ extension FoursquareLocationMetadata {
 extension InstagramPictureMetadata {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
         guard openGraphData.type == OpenGraphTypeType.instagram.rawValue,
-              openGraphData.siteName == .instagram else { return nil }
+              openGraphData.siteName == .instagram else {
+            return nil
+        }
         self.init(
             originalURLString: originalURLString,
             permanentURLString: openGraphData.url,
@@ -181,7 +195,9 @@ extension InstagramPictureMetadata {
         )
         title = openGraphData.title
         subtitle = openGraphData.content
-        guard let imageURL = openGraphData.imageUrls.compactMap(URL.init).first else { return }
+        guard let imageURL = openGraphData.imageUrls.compactMap(URL.init).first else {
+            return
+        }
         imageURLs.append(imageURL)
     }
 }
@@ -189,7 +205,9 @@ extension InstagramPictureMetadata {
 extension TwitterStatusMetadata {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
         guard openGraphData.type == OpenGraphTypeType.article.rawValue,
-              openGraphData.siteName == .twitter else { return nil }
+              openGraphData.siteName == .twitter else {
+            return nil
+        }
         self.init(
             originalURLString: originalURLString,
             permanentURLString: openGraphData.url,

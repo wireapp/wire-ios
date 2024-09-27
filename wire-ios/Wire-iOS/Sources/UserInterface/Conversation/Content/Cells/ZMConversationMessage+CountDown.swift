@@ -24,7 +24,9 @@ extension ZMConversationMessage {
     /// Return nil if self is not a ephemeral message or invalid deletionTimeout or deliveryState is pending
     var countdownProgress: Double? {
         guard deliveryState != .pending,
-              let destructionDate, deletionTimeout > 0 else { return nil }
+              let destructionDate, deletionTimeout > 0 else {
+            return nil
+        }
 
         return 1 - destructionDate.timeIntervalSinceNow / deletionTimeout
     }

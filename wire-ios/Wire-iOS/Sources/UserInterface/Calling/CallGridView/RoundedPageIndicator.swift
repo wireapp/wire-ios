@@ -38,7 +38,9 @@ class RoundedPageIndicator: RoundedBlurView {
     var currentPage = 0 {
         didSet {
             pageControl.currentPage = currentPage
-            guard numberOfPages > 0 else { return }
+            guard numberOfPages > 0 else {
+                return
+            }
             let lastPageIndex = numberOfPages - 1
             for index in 0 ... lastPageIndex {
                 pageControl.setIndicatorImage(defaultPageIndicator, forPage: index)

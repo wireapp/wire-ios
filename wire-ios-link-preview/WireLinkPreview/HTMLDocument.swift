@@ -36,11 +36,15 @@ extension UnsafeMutablePointer where Pointee == xmlDoc {
         let data = Data(xmlString.utf8)
 
         let decodedDocument = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> xmlDocPtr? in
-            guard let cString = pointer.baseAddress?.assumingMemoryBound(to: Int8.self) else { return nil }
+            guard let cString = pointer.baseAddress?.assumingMemoryBound(to: Int8.self) else {
+                return nil
+            }
             return htmlReadMemory(cString, Int32(data.count), "", nil, options)
         }
 
-        guard let rawPtr = decodedDocument else { return nil }
+        guard let rawPtr = decodedDocument else {
+            return nil
+        }
         self = rawPtr
     }
 
@@ -63,7 +67,9 @@ extension UnsafeMutablePointer where Pointee == xmlNode {
 
     /// The textual content of the element.
     var content: HTMLStringBuffer? {
-        guard let text = xmlNodeGetContent(self) else { return nil }
+        guard let text = xmlNodeGetContent(self) else {
+            return nil
+        }
         return HTMLStringBuffer(retaining: text)
     }
 
@@ -75,7 +81,9 @@ extension UnsafeMutablePointer where Pointee == xmlNode {
 
     /// Returns the attribute of the element for the given name.
     subscript(attribute attributeName: String) -> HTMLStringBuffer? {
-        guard let xmlProp = xmlGetProp(self, attributeName) else { return nil }
+        guard let xmlProp = xmlGetProp(self, attributeName) else {
+            return nil
+        }
         return HTMLStringBuffer(retaining: xmlProp)
     }
 }

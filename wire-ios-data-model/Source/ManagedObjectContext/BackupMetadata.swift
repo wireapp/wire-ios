@@ -122,12 +122,16 @@ extension BackupMetadata {
         using userIdentifier: UUID,
         modelVersionProvider: VersionProvider = CoreDataStack.loadMessagingModel()
     ) -> VerificationError? {
-        guard self.userIdentifier == userIdentifier else { return .userMismatch }
+        guard self.userIdentifier == userIdentifier else {
+            return .userMismatch
+        }
         let current = Version(string: modelVersionProvider.version)
         let backup = Version(string: modelVersion)
 
         // Backup has been created on a newer app version.
-        guard current >= backup else { return .backupFromNewerAppVersion }
+        guard current >= backup else {
+            return .backupFromNewerAppVersion
+        }
         return nil
     }
 }

@@ -107,7 +107,9 @@ final class GiphyConfirmationViewController: UIViewController {
     }
 
     func fetchImage() {
-        guard let ziph, let searchResultController else { return }
+        guard let ziph, let searchResultController else {
+            return
+        }
 
         searchResultController.fetchImageData(for: ziph, imageType: .downsized) { [weak self] result in
             guard case let .success(imageData) = result else {

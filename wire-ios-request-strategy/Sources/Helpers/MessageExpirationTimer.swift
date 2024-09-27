@@ -87,11 +87,17 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         let now = Date()
         let messages = objects.compactMap { $0 as? ZMMessage }
         messages.forEach {
-            guard self.entityNames.contains(type(of: $0).entityName()) else { return }
+            guard self.entityNames.contains(type(of: $0).entityName()) else {
+                return
+            }
 
-            if let filter = self.filter, !filter.evaluate(with: $0) { return }
+            if let filter = self.filter, !filter.evaluate(with: $0) {
+                return
+            }
 
-            guard let expirationDate = $0.expirationDate else { return }
+            guard let expirationDate = $0.expirationDate else {
+                return
+            }
 
             if expirationDate < .now {
                 logWithMessage("expiring message when trying to start timer", message: $0)
@@ -106,7 +112,9 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     }
 
     private func logWithMessage(_ text: String, message: ZMMessage) {
-        guard let proteusMessage = message as? (any ProteusMessage) else { return }
+        guard let proteusMessage = message as? (any ProteusMessage) else {
+            return
+        }
 
         let logAttributes = logAttributesBuilder.syncLogAttributes(proteusMessage)
         WireLogger.messaging.debug(text, attributes: logAttributes)

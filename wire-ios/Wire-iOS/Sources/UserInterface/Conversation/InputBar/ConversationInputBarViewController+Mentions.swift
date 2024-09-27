@@ -42,7 +42,9 @@ extension ConversationInputBarViewController {
     }
 
     func insertMention(for user: UserType) {
-        guard let handler = mentionsHandler else { return }
+        guard let handler = mentionsHandler else {
+            return
+        }
 
         let text = inputBar.textView.attributedText ?? NSAttributedString(string: inputBar.textView.text)
 
@@ -63,7 +65,9 @@ extension ConversationInputBarViewController {
 
     @objc
     private func mentionButtonTapped(sender: Any) {
-        guard !isInMentionsFlow else { return }
+        guard !isInMentionsFlow else {
+            return
+        }
 
         let textView = inputBar.textView
         textView.becomeFirstResponder()
@@ -89,7 +93,9 @@ extension ConversationInputBarViewController {
     }
 
     func triggerMentionsIfNeeded(from textView: UITextView, with selection: UITextRange? = nil) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         if let position = MentionsHandler.cursorPosition(in: textView, range: selection) {
             mentionsHandler = MentionsHandler(text: textView.text, cursorPosition: position)
@@ -104,7 +110,9 @@ extension ConversationInputBarViewController {
     }
 
     func registerForTextFieldSelectionChange() {
-        guard !ProcessInfo.processInfo.isRunningTests else { return }
+        guard !ProcessInfo.processInfo.isRunningTests else {
+            return
+        }
 
         textfieldObserverToken = inputBar.textView
             .observe(\MarkdownTextView.selectedTextRange, options: [.new]) { [weak self] (

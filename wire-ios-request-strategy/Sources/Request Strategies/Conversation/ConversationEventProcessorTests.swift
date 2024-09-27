@@ -717,7 +717,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             // THEN
             XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
             guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage
-            else { return XCTFail("Last conversation message is not a system message")
+            else {
+                return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(firstMessage, secondMessage) // Check that no other messages are appended in the conversation
         }

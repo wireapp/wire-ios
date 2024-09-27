@@ -62,7 +62,9 @@ public struct OrderedSetState<T: Hashable>: Equatable {
 
     @discardableResult
     public mutating func move(item: T, to: Int) -> Int? {
-        guard let oldIndex = order[item] else { return nil }
+        guard let oldIndex = order[item] else {
+            return nil
+        }
 
         array.remove(at: oldIndex)
         array.insert(item, at: to)

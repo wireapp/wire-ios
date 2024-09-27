@@ -30,7 +30,9 @@ final class MetaStreamContainer {
     }
 
     var head: String? {
-        guard let content = stringContent else { return nil }
+        guard let content = stringContent else {
+            return nil
+        }
         var startBound = content.range(of: OpenGraphXMLNode.headStart.rawValue)?.lowerBound ??
             content.range(of: OpenGraphXMLNode.headStartNoAttributes.rawValue)?.lowerBound ??
             content.startIndex
@@ -55,7 +57,9 @@ final class MetaStreamContainer {
     // MARK: Private
 
     private func updateReachedEndOfHead(withData data: Data) {
-        guard let string = parseString(from: data)?.lowercased() else { return }
+        guard let string = parseString(from: data)?.lowercased() else {
+            return
+        }
         if string.contains(OpenGraphXMLNode.headEnd.rawValue) {
             reachedEndOfHead = true
         }

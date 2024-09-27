@@ -20,9 +20,15 @@ import UIKit
 
 extension CGSize {
     func minZoom(imageSize: CGSize?) -> CGFloat {
-        guard let imageSize else { return 1 }
-        guard imageSize != .zero else { return 1 }
-        guard self != .zero else { return 1 }
+        guard let imageSize else {
+            return 1
+        }
+        guard imageSize != .zero else {
+            return 1
+        }
+        guard self != .zero else {
+            return 1
+        }
 
         var minZoom = min(width / imageSize.width, height / imageSize.height)
 

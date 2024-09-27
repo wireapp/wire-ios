@@ -80,7 +80,9 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     var websocketURL: URL? {
-        guard let clientID else { return nil }
+        guard let clientID else {
+            return nil
+        }
 
         let url = environment.backendWSURL.appendingPathComponent("/await")
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
@@ -97,7 +99,9 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable
 
-        guard didGoOnline else { return }
+        guard didGoOnline else {
+            return
+        }
         WireLogger.backend.debug("reachability did change. didGoOnline", attributes: .safePublic)
 
         scheduleOpen()

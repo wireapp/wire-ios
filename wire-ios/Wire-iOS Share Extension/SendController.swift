@@ -114,7 +114,9 @@ final class SendController {
         self.progress = progress
 
         let completion: SendableCompletion = { [weak self] sendableResult in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             switch sendableResult {
             case let .success(sendables):
@@ -138,7 +140,9 @@ final class SendController {
         if unsentSendables.contains(where: \.needsPreparation) {
             progress(.preparing)
             prepare(unsentSendables: unsentSendables) { [weak self] in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
                 guard !isCancelled else {
                     return progress(.done)
                 }
@@ -152,7 +156,9 @@ final class SendController {
     }
 
     func tryToTimeout() {
-        if timedOut { return }
+        if timedOut {
+            return
+        }
 
         cancelTimeout()
         timeoutWorkItem = DispatchWorkItem { [weak self] in
@@ -234,7 +240,9 @@ final class SendController {
 
         let appendToMessages: (Sendable?) -> Void = { sendable in
             defer { sendingGroup.leave() }
-            guard let sendable else { return }
+            guard let sendable else {
+                return
+            }
             messages.append(sendable)
         }
 

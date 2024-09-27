@@ -49,7 +49,9 @@ extension CGSize {
     }
 
     func withOrientation(_ orientation: UIDeviceOrientation) -> CGSize {
-        guard orientation.aspectRatio != aspectRatio else { return self }
+        guard orientation.aspectRatio != aspectRatio else {
+            return self
+        }
         return flipped()
     }
 }

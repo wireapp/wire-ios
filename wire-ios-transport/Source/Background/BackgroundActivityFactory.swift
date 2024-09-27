@@ -275,7 +275,9 @@ public final class BackgroundActivityFactory: NSObject {
 
     @objc
     private func startTimer() {
-        guard backgroundTaskTimer == nil else { return }
+        guard backgroundTaskTimer == nil else {
+            return
+        }
 
         backgroundTaskTimer = Timer.scheduledTimer(
             withTimeInterval: backgroundTaskTimeout,

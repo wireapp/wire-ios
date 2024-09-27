@@ -96,7 +96,9 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
             context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
-            guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
+            guard let changeInfo = note.changeInfo as? UserChangeInfo else {
+                return
+            }
             XCTAssertTrue(changeInfo.imageSmallProfileDataChanged)
             expectation.fulfill()
         }
@@ -131,7 +133,9 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
             context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
-            guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
+            guard let changeInfo = note.changeInfo as? UserChangeInfo else {
+                return
+            }
             XCTAssertTrue(changeInfo.connectionStateChanged)
             expectation.fulfill()
         }
@@ -166,7 +170,9 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
             context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
-            guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
+            guard let changeInfo = note.changeInfo as? UserChangeInfo else {
+                return
+            }
             XCTAssertTrue(changeInfo.connectionStateChanged)
             expectation.fulfill()
         }

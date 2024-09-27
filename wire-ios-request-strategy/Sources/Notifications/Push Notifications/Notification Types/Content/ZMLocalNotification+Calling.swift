@@ -70,7 +70,9 @@ extension ZMLocalNotification {
         }
 
         func shouldCreateNotification() -> Bool {
-            guard conversation.mutedMessageTypesIncludingAvailability != .all else { return false }
+            guard conversation.mutedMessageTypesIncludingAvailability != .all else {
+                return false
+            }
             return true
         }
 
@@ -88,7 +90,9 @@ extension ZMLocalNotification {
             guard let selfUserID = selfUser.remoteIdentifier,
                   let senderID = caller.remoteIdentifier,
                   let conversationID = conversation.remoteIdentifier
-            else { return nil }
+            else {
+                return nil
+            }
 
             let userInfo = NotificationUserInfo()
             userInfo.selfUserID = selfUserID

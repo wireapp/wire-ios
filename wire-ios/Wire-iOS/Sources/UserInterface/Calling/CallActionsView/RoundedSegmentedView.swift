@@ -89,7 +89,9 @@ class RoundedSegmentedView: UIView {
         guard
             !sender.isSelected,
             let index = buttons.firstIndex(of: sender)
-        else { return }
+        else {
+            return
+        }
 
         setSelected(true, forItemAt: index)
         actionHandlers[sender]?()

@@ -61,9 +61,13 @@ public class MockTeamConversationEvent: NSObject {
         let conversationsKey = #keyPath(MockTeam.conversations)
         let oldConversations = team.committedValues(forKeys: [conversationsKey])
 
-        guard let currentConversations = changedValues[conversationsKey] as? Set<MockConversation> else { return [] }
+        guard let currentConversations = changedValues[conversationsKey] as? Set<MockConversation> else {
+            return []
+        }
         guard let previousConversations = oldConversations[conversationsKey] as? Set<MockConversation>
-        else { return [] }
+        else {
+            return []
+        }
 
         let removedConversationsEvents = previousConversations
             .subtracting(currentConversations)

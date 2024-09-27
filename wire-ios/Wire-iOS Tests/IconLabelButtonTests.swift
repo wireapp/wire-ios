@@ -133,7 +133,9 @@ struct IconLabelButtonTestCase {
         // MARK: Internal
 
         var isBlurred: Bool {
-            if case .blurred = self { return true }
+            if case .blurred = self {
+                return true
+            }
             return false
         }
     }
@@ -144,7 +146,9 @@ struct IconLabelButtonTestCase {
         // MARK: Internal
 
         var isSelected: Bool {
-            if case .selected = self { return true }
+            if case .selected = self {
+                return true
+            }
             return false
         }
     }
@@ -155,7 +159,9 @@ struct IconLabelButtonTestCase {
         // MARK: Internal
 
         var isEnabled: Bool {
-            if case .enabled = self { return true }
+            if case .enabled = self {
+                return true
+            }
             return false
         }
     }

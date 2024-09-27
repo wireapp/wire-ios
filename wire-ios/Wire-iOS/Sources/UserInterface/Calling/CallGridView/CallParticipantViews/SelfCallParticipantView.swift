@@ -33,7 +33,9 @@ final class SelfCallParticipantView: BaseCallParticipantView {
 
     override var stream: Stream {
         didSet {
-            guard stream.callParticipantState.videoState != videoState else { return }
+            guard stream.callParticipantState.videoState != videoState else {
+                return
+            }
             updateCaptureState(with: stream.callParticipantState.videoState)
         }
     }
@@ -71,7 +73,9 @@ final class SelfCallParticipantView: BaseCallParticipantView {
         )
         userDetailsView.callState = stream.callParticipantState
 
-        guard let name = stream.user?.name else { return }
+        guard let name = stream.user?.name else {
+            return
+        }
         userDetailsView.name = name + L10n.Localizable.UserCell.Title.youSuffix
     }
 
@@ -84,7 +88,9 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     }
 
     func updateCaptureState(with newVideoState: VideoState?) {
-        guard newVideoState != videoState else { return }
+        guard newVideoState != videoState else {
+            return
+        }
 
         if newVideoState == .some(.started) {
             startCapture()

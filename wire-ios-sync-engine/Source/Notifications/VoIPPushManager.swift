@@ -78,10 +78,14 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         Self.logger.trace("did update push credentials")
 
         // We're only interested in voIP tokens.
-        guard type == .voIP else { return }
+        guard type == .voIP else {
+            return
+        }
 
         // We only want to store the voip token if required.
-        guard requiredPushTokenType == .voip else { return }
+        guard requiredPushTokenType == .voip else {
+            return
+        }
 
         pushTokenService.storeLocalToken(.createVOIPToken(from: pushCredentials.token))
     }
@@ -93,10 +97,14 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         Self.logger.trace("did invalidate push token")
 
         // We're only interested in voIP tokens.
-        guard type == .voIP else { return }
+        guard type == .voIP else {
+            return
+        }
 
         // We don't want to delete a standard push token by accident.
-        guard requiredPushTokenType == .voip else { return }
+        guard requiredPushTokenType == .voip else {
+            return
+        }
 
         pushTokenService.storeLocalToken(.none)
     }
@@ -110,7 +118,9 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         Self.logger.trace("did receive incoming push")
 
         // We're only interested in voIP tokens.
-        guard type == .voIP else { return completion() }
+        guard type == .voIP else {
+            return completion()
+        }
 
         switch requiredPushTokenType {
         case .standard:

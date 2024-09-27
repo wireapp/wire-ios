@@ -156,7 +156,9 @@ final class ParticipantsStringFormatter {
         names: NameList,
         isSelfIncludedInUsers: Bool = false
     ) -> NSAttributedString? {
-        guard !names.names.isEmpty else { return nil }
+        guard !names.names.isEmpty else {
+            return nil
+        }
 
         var result: NSAttributedString
         let formatKey = message.actionType.formatKey
@@ -227,7 +229,9 @@ final class ParticipantsStringFormatter {
     /// of usernames for shown users (complete with punctuation) and a count string
     /// for collapsed users, if any. E.g: "x, y, z, and 3 others"
     private func format(_ nameList: NameList) -> FormatSequence {
-        guard !nameList.names.isEmpty else { preconditionFailure() }
+        guard !nameList.names.isEmpty else {
+            preconditionFailure()
+        }
         let result = FormatSequence()
 
         // all team users added?
@@ -280,7 +284,9 @@ final class ParticipantsStringFormatter {
             let systemMessage = message as? ZMSystemMessage,
             systemMessage.allTeamUsersAdded,
             (message.conversationLike as? CanManageAccessProvider)?.canManageAccess ?? false
-        else { return nil }
+        else {
+            return nil
+        }
 
         // we only collapse whole team if there are more than 10 participants
         guard nameList.totalUsers + Int(systemMessage.numberOfGuestsAdded) > 10 else {

@@ -172,7 +172,9 @@ public final class AccountImageView: UIView {
     }
 
     private func updateAccountImageBorder() {
-        guard let accountImageViewWrapper = accountImageView.superview else { return }
+        guard let accountImageViewWrapper = accountImageView.superview else {
+            return
+        }
 
         accountImageViewWrapper.layer.borderWidth = 1
         accountImageViewWrapper.layer.borderColor = accountImageViewBorderColor.cgColor
@@ -183,7 +185,9 @@ public final class AccountImageView: UIView {
     }
 
     private func updateShape() {
-        guard let accountImageViewWrapper = accountImageView.superview else { return }
+        guard let accountImageViewWrapper = accountImageView.superview else {
+            return
+        }
 
         accountImageViewWrapper.layer.cornerRadius = if isTeamAccount {
             teamAccountImageCornerRadius

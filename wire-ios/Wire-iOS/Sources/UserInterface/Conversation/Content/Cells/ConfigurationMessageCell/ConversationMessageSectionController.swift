@@ -268,7 +268,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var changeObservers: [Any] = []
 
     private var addCompositeMessageCells: [AnyConversationMessageCellDescription] {
-        guard let compositeMessage = message as? ConversationCompositeMessage else { return [] }
+        guard let compositeMessage = message as? ConversationCompositeMessage else {
+            return []
+        }
 
         var cells: [AnyConversationMessageCellDescription] = []
 

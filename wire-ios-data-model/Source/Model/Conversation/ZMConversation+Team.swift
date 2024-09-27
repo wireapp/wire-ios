@@ -24,7 +24,9 @@ extension ZMConversation {
         guard
             let teamRemoteIdentifier,
             let managedObjectContext
-        else { return false }
+        else {
+            return false
+        }
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 

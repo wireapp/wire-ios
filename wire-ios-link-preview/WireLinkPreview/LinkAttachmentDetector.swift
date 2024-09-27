@@ -84,12 +84,18 @@ public final class LinkAttachmentDetector: NSObject, LinkAttachmentDetectorType 
         completion: @escaping ([LinkAttachment]) -> Void
     ) {
         guard let (url, (type, range)) = linkDetector?.detectLinkAttachments(in: text, excluding: excludedRanges).first
-        else { return completion([]) }
+        else {
+            return completion([])
+        }
 
         previewDownloader.requestOpenGraphData(fromURL: url) { openGraphData in
-            guard let data = openGraphData else { return completion([]) }
+            guard let data = openGraphData else {
+                return completion([])
+            }
             guard let linkAttachment = LinkAttachment(openGraphData: data, detectedType: type, originalRange: range)
-            else { return }
+            else {
+                return
+            }
             completion([linkAttachment])
         }
     }

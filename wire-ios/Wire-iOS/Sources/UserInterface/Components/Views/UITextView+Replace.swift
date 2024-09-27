@@ -23,7 +23,9 @@ extension UITextView {
         guard
             range.lowerBound >= attributedText.wholeRange.lowerBound,
             range.upperBound <= attributedText.wholeRange.upperBound
-        else { return }
+        else {
+            return
+        }
         let updatedString = NSMutableAttributedString(attributedString: attributedText)
         updatedString.replaceCharacters(in: range, with: replacement)
 
@@ -34,8 +36,12 @@ extension UITextView {
             from: beginningOfDocument,
             offset:
             selectionOffset
-        ) else { return }
-        guard let updatedSelection = textRange(from: cursorPosition, to: cursorPosition) else { return }
+        ) else {
+            return
+        }
+        guard let updatedSelection = textRange(from: cursorPosition, to: cursorPosition) else {
+            return
+        }
         selectedTextRange = updatedSelection
     }
 }

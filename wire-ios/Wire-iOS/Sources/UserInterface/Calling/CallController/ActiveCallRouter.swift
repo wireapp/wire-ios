@@ -185,7 +185,9 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     // MARK: - CallTopOverlay
 
     func showCallTopOverlay(for conversation: ZMConversation) {
-        guard !isCallTopOverlayShown else { return }
+        guard !isCallTopOverlayShown else {
+            return
+        }
         let callTopOverlayController = CallTopOverlayController(conversation: conversation)
         callTopOverlayController.delegate = self
         topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
@@ -268,7 +270,9 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func dismissSecurityDegradedAlertIfNeeded() {
-        guard let alert = presentedDegradedAlert else { return }
+        guard let alert = presentedDegradedAlert else {
+            return
+        }
 
         alert.dismissIfNeeded()
         presentedDegradedAlert = nil
@@ -327,7 +331,9 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     }
 
     func dismissCallQualitySurvey(completion: Completion? = nil) {
-        guard isCallQualityShown else { return }
+        guard isCallQualityShown else {
+            return
+        }
         mainWindow.rootViewController?.dismiss(animated: true) { [weak self] in
             self?.isCallQualityShown = false
             completion?()
@@ -397,7 +403,9 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 
 extension ActiveCallRouter: CallTopOverlayControllerDelegate {
     func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?) {
-        guard let voiceChannel else { return }
+        guard let voiceChannel else {
+            return
+        }
         isActiveCallShown = false
         presentActiveCall(for: voiceChannel, animated: true)
     }

@@ -193,7 +193,9 @@ extension URLActionRouter: PresentationDelegate {
     }
 
     func completedURLAction(_ action: URLAction) {
-        guard case URLAction.companyLoginSuccess = action else { return }
+        guard case URLAction.companyLoginSuccess = action else {
+            return
+        }
         notifyCompanyLoginCompletion()
     }
 
@@ -282,12 +284,16 @@ extension URLActionRouter: PresentationDelegate {
         }
 
         sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             switch result {
             case let .success(backendEnvironment):
                 requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
-                    guard didConfirm else { return }
+                    guard didConfirm else {
+                        return
+                    }
                     sessionManager.switchBackend(to: backendEnvironment)
                     BackendEnvironment.shared = backendEnvironment
                 }

@@ -53,7 +53,9 @@ class UserHandleTests: IntegrationTest {
         // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case let .didCheckAvailabilityOfHandle(_handle, available):
             XCTAssertEqual(handle, _handle)
@@ -78,7 +80,9 @@ class UserHandleTests: IntegrationTest {
         // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case let .didCheckAvailabilityOfHandle(_handle, available):
             XCTAssertEqual(handle, _handle)
@@ -99,7 +103,9 @@ class UserHandleTests: IntegrationTest {
         // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .didSetHandle:
             break
@@ -131,7 +137,9 @@ class UserHandleTests: IntegrationTest {
         // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .didFailToSetHandleBecauseExisting:
             break
@@ -163,7 +171,9 @@ class UserHandleTests: IntegrationTest {
         // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else {
+            return
+        }
         switch first {
         case .didFailToSetHandle:
             break

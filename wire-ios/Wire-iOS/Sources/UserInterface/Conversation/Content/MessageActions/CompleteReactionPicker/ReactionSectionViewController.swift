@@ -54,12 +54,16 @@ final class ReactionSectionViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let firstType = types.first else { return }
+        guard let firstType = types.first else {
+            return
+        }
         selectedType = firstType
     }
 
     func didSelectSection(_ type: EmojiSectionType) {
-        guard let selected = selectedType, type != selected, !ignoreSelectionUpdates else { return }
+        guard let selected = selectedType, type != selected, !ignoreSelectionUpdates else {
+            return
+        }
         selectedType = type
     }
 
@@ -78,7 +82,9 @@ final class ReactionSectionViewController: UIViewController {
 
     private var selectedType: EmojiSectionType? {
         willSet(value) {
-            guard isEnabled, let type = value else { return }
+            guard isEnabled, let type = value else {
+                return
+            }
             for (button, sectionType) in typesByButton {
                 button.isSelected = type == sectionType
             }
@@ -111,7 +117,9 @@ final class ReactionSectionViewController: UIViewController {
 
     @objc
     private func didTappButton(_ sender: ReactionCategoryButton) {
-        guard let type = typesByButton[sender] else { return }
+        guard let type = typesByButton[sender] else {
+            return
+        }
         sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: false)
     }
 
@@ -128,7 +136,9 @@ final class ReactionSectionViewController: UIViewController {
             let location = recognizer.location(in: view)
             guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first,
                   let type = typesByButton[button]
-            else { return }
+            else {
+                return
+            }
             sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
             selectedType = type
 

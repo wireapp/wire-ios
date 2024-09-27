@@ -224,7 +224,9 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             XCTAssertNotNil(ZMUser.fetch(with: userId, in: self.syncMOC))
 
             // users won't be deleted as we might be in other (non-team) conversations with them
-            guard let team = Team.fetch(with: teamId, in: self.syncMOC) else { return XCTFail("No team") }
+            guard let team = Team.fetch(with: teamId, in: self.syncMOC) else {
+                return XCTFail("No team")
+            }
             XCTAssertEqual(team.members, [])
         }
     }
@@ -306,13 +308,21 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
         // then
         syncMOC.performGroupedAndWait {
-            guard let user = ZMUser.fetch(with: userId, in: self.syncMOC) else { return XCTFail("No User") }
-            guard Team.fetch(with: teamId, in: self.syncMOC) != nil else { return XCTFail("No User") }
+            guard let user = ZMUser.fetch(with: userId, in: self.syncMOC) else {
+                return XCTFail("No User")
+            }
+            guard Team.fetch(with: teamId, in: self.syncMOC) != nil else {
+                return XCTFail("No User")
+            }
             XCTAssertNil(user.membership)
             guard let teamConversation = ZMConversation.fetch(with: teamConversationId, in: self.syncMOC)
-            else { return XCTFail("No Team Conversation") }
+            else {
+                return XCTFail("No Team Conversation")
+            }
             guard let conversation = ZMConversation.fetch(with: conversationId, in: self.syncMOC)
-            else { return XCTFail("No Conversation") }
+            else {
+                return XCTFail("No Conversation")
+            }
             XCTAssertFalse(teamConversation.localParticipants.contains(user))
             XCTAssertFalse(conversation.localParticipants.contains(user))
         }
@@ -368,15 +378,25 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
         // then
         syncMOC.performGroupedAndWait {
-            guard let user = ZMUser.fetch(with: userId, in: self.syncMOC) else { return XCTFail("No User") }
-            guard Team.fetch(with: teamId, in: self.syncMOC) != nil else { return XCTFail("No User") }
+            guard let user = ZMUser.fetch(with: userId, in: self.syncMOC) else {
+                return XCTFail("No User")
+            }
+            guard Team.fetch(with: teamId, in: self.syncMOC) != nil else {
+                return XCTFail("No User")
+            }
             XCTAssertNil(user.membership)
             guard let teamConversation = ZMConversation.fetch(with: teamConversationId, in: self.syncMOC)
-            else { return XCTFail("No Team Conversation") }
+            else {
+                return XCTFail("No Team Conversation")
+            }
             guard let teamAnotherConversation = ZMConversation.fetch(with: teamAnotherConversationId, in: self.syncMOC)
-            else { return XCTFail("No Team Conversation") }
+            else {
+                return XCTFail("No Team Conversation")
+            }
             guard let conversation = ZMConversation.fetch(with: conversationId, in: self.syncMOC)
-            else { return XCTFail("No Conversation") }
+            else {
+                return XCTFail("No Conversation")
+            }
 
             self.checkLastMessage(in: teamConversation, isLeaveMessageFor: user, at: timestamp)
             self.checkLastMessage(in: teamAnotherConversation, isLeaveMessageFor: user, at: timestamp)
@@ -420,9 +440,15 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
         // then
         uiMOC.performAndWait { [self] in
-            guard let user = ZMUser.fetch(with: userId, in: uiMOC) else { return XCTFail("No user") }
-            guard let team = Team.fetch(with: teamId, in: uiMOC) else { return XCTFail("No team") }
-            guard let member = user.membership else { return XCTFail("No member") }
+            guard let user = ZMUser.fetch(with: userId, in: uiMOC) else {
+                return XCTFail("No user")
+            }
+            guard let team = Team.fetch(with: teamId, in: uiMOC) else {
+                return XCTFail("No team")
+            }
+            guard let member = user.membership else {
+                return XCTFail("No member")
+            }
 
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
             XCTAssert(member.needsToBeUpdatedFromBackend)
@@ -471,21 +497,27 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         file: StaticString = #file,
         line: UInt = #line
     ) {
-        guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else { XCTFail(
-            "Last message is not system message",
-            file: file,
-            line: line
-        ); return }
-        guard lastMessage.systemMessageType == .teamMemberLeave else { XCTFail(
-            "System message is not teamMemberLeave: but '\(lastMessage.systemMessageType.rawValue)'",
-            file: file,
-            line: line
-        ); return }
-        guard let serverTimestamp = lastMessage.serverTimestamp else { XCTFail(
-            "System message should have timestamp",
-            file: file,
-            line: line
-        ); return }
+        guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else {
+            XCTFail(
+                "Last message is not system message",
+                file: file,
+                line: line
+            ); return
+        }
+        guard lastMessage.systemMessageType == .teamMemberLeave else {
+            XCTFail(
+                "System message is not teamMemberLeave: but '\(lastMessage.systemMessageType.rawValue)'",
+                file: file,
+                line: line
+            ); return
+        }
+        guard let serverTimestamp = lastMessage.serverTimestamp else {
+            XCTFail(
+                "System message should have timestamp",
+                file: file,
+                line: line
+            ); return
+        }
         XCTAssertEqual(
             serverTimestamp.timeIntervalSince1970,
             timestamp.timeIntervalSince1970,

@@ -108,7 +108,9 @@ class NotificationLabel: RoundedBlurView {
     // MARK: - Helpers
 
     private func animateMessage(show: Bool, completion: (() -> Void)? = nil) {
-        if show { isHidden = false }
+        if show {
+            isHidden = false
+        }
 
         let animationBlock: () -> Void = { [weak self] in
             self?.alpha = show ? 1 : 0
@@ -128,7 +130,9 @@ class NotificationLabel: RoundedBlurView {
     }
 
     private func startTimer(with timeInterval: TimeInterval?) {
-        guard let timeInterval else { return }
+        guard let timeInterval else {
+            return
+        }
 
         timer = .scheduledTimer(withTimeInterval: timeInterval, repeats: false) { [weak self] _ in
             self?.animateMessage(show: false)

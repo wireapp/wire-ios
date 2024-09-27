@@ -175,7 +175,9 @@ class UserImageView: AvatarImageView, UserObserving {
             isDesaturated: desaturate
         ) { [weak self] image, cacheHit in
             // Don't set image if nil or if user has changed during fetch
-            guard let image, user.isEqual(self?.user) else { return }
+            guard let image, user.isEqual(self?.user) else {
+                return
+            }
             self?.setAvatar(.image(image), user: user, animated: !cacheHit)
         }
     }

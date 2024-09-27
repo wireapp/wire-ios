@@ -33,7 +33,9 @@ final class ConversationCallController: NSObject {
 
     func startAudioCall(started: Completion?) {
         let startCall = { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             conversation.confirmJoiningCallIfNeeded(alertPresenter: target) {
                 started?()
                 self.conversation.startAudioCall()
@@ -46,7 +48,9 @@ final class ConversationCallController: NSObject {
             confirmGroupCall { [weak self] accepted in
                 self?.target.setNeedsStatusBarAppearanceUpdate()
 
-                guard accepted else { return }
+                guard accepted else {
+                    return
+                }
                 startCall()
             }
         }
@@ -54,7 +58,9 @@ final class ConversationCallController: NSObject {
 
     func startVideoCall(started: Completion?) {
         let startVideoCall = { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             conversation.confirmJoiningCallIfNeeded(alertPresenter: target) {
                 started?()
                 self.conversation.startVideoCall()
@@ -67,14 +73,18 @@ final class ConversationCallController: NSObject {
             confirmGroupCall { [weak self] accepted in
                 self?.target.setNeedsStatusBarAppearanceUpdate()
 
-                guard accepted else { return }
+                guard accepted else {
+                    return
+                }
                 startVideoCall()
             }
         }
     }
 
     func joinCall() {
-        guard conversation.canJoinCall else { return }
+        guard conversation.canJoinCall else {
+            return
+        }
 
         let checker = PrivacyWarningChecker(
             conversation: conversation,
@@ -86,7 +96,9 @@ final class ConversationCallController: NSObject {
                 }
             },
             cancelAction: { [weak self] in
-                guard let userSession = ZMUserSession.shared() else { return }
+                guard let userSession = ZMUserSession.shared() else {
+                    return
+                }
                 self?.conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
 
             },

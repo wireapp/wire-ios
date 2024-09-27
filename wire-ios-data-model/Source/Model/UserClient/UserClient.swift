@@ -99,7 +99,9 @@ public class UserClient: ZMManagedObject, UserClientType {
         guard
             let managedObjectContext,
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-        else { return false }
+        else {
+            return false
+        }
         return selfClient.remoteIdentifier == remoteIdentifier || selfClient.trustedClients.contains(self)
     }
 
@@ -242,7 +244,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// - returns: the legacy push token if it exists.
 
     public func retrieveLegacyPushToken() -> PushToken? {
-        guard let token = pushToken else { return nil }
+        guard let token = pushToken else {
+            return nil
+        }
         pushToken = nil
         return token
     }
@@ -265,7 +269,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     public func update(with payload: [String: Any]) {
         needsToBeUpdatedFromBackend = false
 
-        guard user?.isSelfUser == false, let deviceClass = payload["class"] as? String else { return }
+        guard user?.isSelfUser == false, let deviceClass = payload["class"] as? String else {
+            return
+        }
 
         self.deviceClass = DeviceClass(rawValue: deviceClass)
     }
@@ -365,7 +371,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     private func deleteClient() {
-        guard let managedObjectContext else { return }
+        guard let managedObjectContext else {
+            return
+        }
 
         assert(managedObjectContext.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
@@ -399,7 +407,9 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     private func conversation(for user: ZMUser) -> ZMConversation? {
         if user.isSelfUser {
-            guard let moc = user.managedObjectContext else { return nil }
+            guard let moc = user.managedObjectContext else {
+                return nil
+            }
             return ZMConversation.selfConversation(in: moc)
         } else {
             return user.oneToOneConversation
@@ -573,7 +583,9 @@ extension UserClient {
     public func isSelfClient() -> Bool {
         guard let managedObjectContext,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-        else { return false }
+        else {
+            return false
+        }
         return self == selfClient
     }
 
@@ -773,7 +785,9 @@ extension UserClient {
     /// Will change conversations security level as side effect
     @objc
     public func trustClients(_ clients: Set<UserClient>) {
-        guard !clients.isEmpty else { return }
+        guard !clients.isEmpty else {
+            return
+        }
         mutableSetValue(forKey: ZMUserClientIgnoredKey).minus(clients)
         mutableSetValue(forKey: ZMUserClientTrustedKey).union(clients)
 
@@ -794,7 +808,9 @@ extension UserClient {
     private func addIgnoredClients(_ clients: Set<UserClient>) -> Set<UserClient> {
         let notSelfClients = Set(clients.filter { $0 != self })
 
-        guard !notSelfClients.isEmpty else { return notSelfClients }
+        guard !notSelfClients.isEmpty else {
+            return notSelfClients
+        }
 
         zmLog.debug("Marking client as ignored")
 
@@ -808,7 +824,9 @@ extension UserClient {
     @objc
     public func ignoreClients(_ clients: Set<UserClient>) {
         let notSelfClients = addIgnoredClients(clients)
-        guard !notSelfClients.isEmpty else { return }
+        guard !notSelfClients.isEmpty else {
+            return
+        }
         changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
     }
 
@@ -859,7 +877,9 @@ extension UserClient {
         for conversation in conversations {
             if !conversation.isReadOnly {
                 let clientsInConversation = clients.filter { client in
-                    guard let user = client.user else { return false }
+                    guard let user = client.user else {
+                        return false
+                    }
                     return conversation.localParticipants.contains(user)
                 }
                 securityChangeType.changeSecurityLevel(
@@ -877,7 +897,9 @@ extension UserClient {
 extension UserClient {
     public static func resetSignalingKeysInContext(_ context: NSManagedObjectContext) {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient()
-        else { return }
+        else {
+            return
+        }
 
         selfClient.apsDecryptionKey = nil
         selfClient.apsVerificationKey = nil
@@ -892,7 +914,9 @@ extension UserClient {
 
 extension UserClient {
     public static func triggerSelfClientCapabilityUpdate(_ context: NSManagedObjectContext) {
-        guard let selfClient = ZMUser.selfUser(in: context).selfClient() else { return }
+        guard let selfClient = ZMUser.selfUser(in: context).selfClient() else {
+            return
+        }
 
         selfClient.needsToUpdateCapabilities = true
         selfClient.setLocallyModifiedKeys([ZMUserClientNeedsToUpdateCapabilitiesKey])
@@ -994,7 +1018,9 @@ extension UserClient {
     }
 
     private var proteusSessionID_V1: ProteusSessionID? {
-        guard let clientID = remoteIdentifier else { return nil }
+        guard let clientID = remoteIdentifier else {
+            return nil
+        }
         return ProteusSessionID(fromLegacyV1Identifier: clientID)
     }
 

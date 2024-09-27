@@ -95,9 +95,13 @@ enum DebugAlert {
         title: String = "DEBUG MESSAGE",
         cancelText: String? = "Cancel"
     ) {
-        guard Bundle.developerModeEnabled else { return }
+        guard Bundle.developerModeEnabled else {
+            return
+        }
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
-              !isShown else { return }
+              !isShown else {
+            return
+        }
         isShown = true
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -166,7 +170,9 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         presentingViewController: UIViewController,
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
-        guard senderInstance == nil else { return }
+        guard senderInstance == nil else {
+            return
+        }
 
         // Prepare subject & body
         let user = SelfUser.provider?.providedSelfUser as? ZMUser

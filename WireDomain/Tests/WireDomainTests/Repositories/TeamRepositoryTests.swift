@@ -150,7 +150,9 @@ final class TeamRepositoryTests: XCTestCase {
             let request = NSFetchRequest<Role>(entityName: Role.entityName())
             request.sortDescriptors = [NSSortDescriptor(key: Role.nameKey, ascending: true)]
             let roles = try context.fetch(request)
-            guard roles.count == 2 else { return XCTFail("roles.count != 2") }
+            guard roles.count == 2 else {
+                return XCTFail("roles.count != 2")
+            }
 
             // One is for the admin.
             let firstRole = try XCTUnwrap(roles[0])

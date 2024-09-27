@@ -24,7 +24,9 @@ extension ZMConversation {
             labels.any { $0.kind == .favorite }
         }
         set {
-            guard let managedObjectContext else { return }
+            guard let managedObjectContext else {
+                return
+            }
 
             let favoriteLabel = Label.fetchFavoriteLabel(in: managedObjectContext)
 
@@ -42,7 +44,9 @@ extension ZMConversation {
 
     @objc
     public func moveToFolder(_ folder: LabelType) {
-        guard let label = folder as? Label, !label.isZombieObject, label.kind == .folder else { return }
+        guard let label = folder as? Label, !label.isZombieObject, label.kind == .folder else {
+            return
+        }
 
         removeFromFolder()
         assignLabel(label)

@@ -684,7 +684,9 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let message = try? conversation.appendText(content: "hello")
         uiMOC.saveOrRollback()
 
-        guard let user = conversation.participantRoles.first?.user else { XCTFail(); return }
+        guard let user = conversation.participantRoles.first?.user else {
+            XCTFail(); return
+        }
 
         message?.textMessageData?.editText(
             user.name ?? "",
@@ -966,7 +968,9 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
 
         // when
-        guard let changes1 = testObserver.changes.last else { return XCTFail("Did not sent notification") }
+        guard let changes1 = testObserver.changes.last else {
+            return XCTFail("Did not sent notification")
+        }
         XCTAssertEqual(
             changes1.orderedSetState,
             OrderedSetState(array: [conversation1, conversation2]),
@@ -994,7 +998,9 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(conversationList.items.count, 3, file: file, line: line)
 
         // The set of the new notification contains the new state
-        guard let changes2 = testObserver.changes.last else { return XCTFail("Did not sent notification") }
+        guard let changes2 = testObserver.changes.last else {
+            return XCTFail("Did not sent notification")
+        }
         XCTAssertEqual(
             changes2.orderedSetState,
             OrderedSetState(array: [conversation1, conversation2, conversation3]),
@@ -1266,7 +1272,9 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
-        guard let first = testObserver.changes.first else { return }
+        guard let first = testObserver.changes.first else {
+            return
+        }
         XCTAssertEqual(first.insertedIndexes, IndexSet())
         XCTAssertEqual(first.deletedIndexes, IndexSet())
         XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
@@ -1296,7 +1304,9 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
-        guard let first = testObserver.changes.first else { return }
+        guard let first = testObserver.changes.first else {
+            return
+        }
         XCTAssertEqual(first.insertedIndexes, IndexSet())
         XCTAssertEqual(first.deletedIndexes, IndexSet())
         XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))

@@ -135,10 +135,12 @@ final class SettingsPropertyFactory {
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
                 case let .string(stringValue):
-                    guard let selfUser else { requireInternal(
-                        false,
-                        "Attempt to modify a user property without a self user"
-                    ); break }
+                    guard let selfUser else {
+                        requireInternal(
+                            false,
+                            "Attempt to modify a user property without a self user"
+                        ); break
+                    }
 
                     var inOutString: String? = stringValue as String
                     _ = try userPropertyValidator.validate(name: &inOutString)
@@ -279,7 +281,9 @@ final class SettingsPropertyFactory {
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
                 case let .number(number):
-                    guard let userSession else { return }
+                    guard let userSession else {
+                        return
+                    }
 
                     userSession.perform {
                         self.delegate?.asyncMethodDidStart(self)
@@ -444,7 +448,9 @@ final class SettingsPropertyFactory {
                     return SettingsPropertyValue(value)
                 },
                 setAction: { [weak self] _, value in
-                    guard case let .number(enabled) = value else { return }
+                    guard case let .number(enabled) = value else {
+                        return
+                    }
                     try? self?.userSession?.setEncryptionAtRest(enabled: enabled.boolValue, skipMigration: false)
                 }
             )

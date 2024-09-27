@@ -90,7 +90,9 @@ final class VideoMessageView: UIView, TransferView {
 
         guard let fileMessage,
               let fileMessageData = fileMessage.fileMessageData,
-              let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
+              let state = FileMessageViewState.fromConversationMessage(fileMessage) else {
+            return
+        }
 
         self.state = state
         previewImageView.image = nil
@@ -100,7 +102,9 @@ final class VideoMessageView: UIView, TransferView {
             timeLabel.textColor = SemanticColors.Label.textDefault
 
             fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
-                guard let image else { return }
+                guard let image else {
+                    return
+                }
                 self?.updatePreviewImage(image)
             }
         }
@@ -132,7 +136,9 @@ final class VideoMessageView: UIView, TransferView {
 
         switch fileMessageData.transferState {
         case .uploading:
-            guard fileMessageData.hasLocalFileData else { return }
+            guard fileMessageData.hasLocalFileData else {
+                return
+            }
             delegate?.transferView(self, didSelect: .cancel)
 
         case .uploadingCancelled, .uploadingFailed:

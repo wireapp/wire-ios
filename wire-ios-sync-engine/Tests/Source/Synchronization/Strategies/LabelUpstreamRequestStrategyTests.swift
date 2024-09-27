@@ -72,7 +72,9 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
             self.sut.objectsDidChange(Set([label]))
 
             // when
-            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else {
+                return XCTFail()
+            }
 
             // then
             let payload = try! JSONSerialization.data(withJSONObject: request.payload as Any, options: [])
@@ -106,7 +108,9 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
             self.sut.objectsDidChange(Set([label]))
 
             // when
-            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else {
+                return XCTFail()
+            }
 
             // then
             let payload = try! JSONSerialization.data(withJSONObject: request.payload as Any, options: [])
@@ -159,7 +163,9 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
 
         // when
         syncMOC.performGroupedAndWait {
-            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else {
+                return XCTFail()
+            }
             label2.modifiedKeys = Set(["name"])
             self.syncMOC.saveOrRollback()
             self.sut.objectsDidChange(Set([label2]))
@@ -190,7 +196,9 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
 
         // when
         syncMOC.performGroupedAndWait {
-            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else {
+                return XCTFail()
+            }
             request.complete(with: ZMTransportResponse(
                 payload: nil,
                 httpStatus: 201,
@@ -219,7 +227,9 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
 
         // when
         syncMOC.performGroupedAndWait {
-            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else {
+                return XCTFail()
+            }
             request.complete(with: ZMTransportResponse(
                 payload: nil,
                 httpStatus: 201,

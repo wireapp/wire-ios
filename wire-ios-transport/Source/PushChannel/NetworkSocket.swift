@@ -273,7 +273,9 @@ public final class NetworkSocket: NSObject {
         var inputBuffer = Data(count: inputBufferCount)
 
         let bytesRead = inputBuffer.withUnsafeMutableBytes { (pointer: UnsafeMutableRawBufferPointer) -> Int in
-            guard let bytes = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return 0 }
+            guard let bytes = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
+                return 0
+            }
             return inputStream.read(bytes, maxLength: inputBufferCount)
         }
 

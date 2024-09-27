@@ -64,11 +64,15 @@ public class MockTeamMemberEvent: NSObject {
         let membersKey = #keyPath(MockTeam.members)
         let oldMembers = team.committedValues(forKeys: [membersKey])
 
-        guard let currentMembers = changedValues[membersKey] as? Set<MockMember> else { return [] }
+        guard let currentMembers = changedValues[membersKey] as? Set<MockMember> else {
+            return []
+        }
         let previousMembers = oldMembers[membersKey] as? Set<MockMember> ?? Set()
 
         guard    currentMembers.contains(where: { $0.user == selfUser })
-            || previousMembers.contains(where: { $0.user == selfUser }) else { return [] }
+            || previousMembers.contains(where: { $0.user == selfUser }) else {
+            return []
+        }
 
         return previousMembers
             .subtracting(currentMembers)

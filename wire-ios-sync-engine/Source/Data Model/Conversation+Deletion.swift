@@ -61,7 +61,9 @@ extension ZMConversation {
         }
 
         request.add(ZMCompletionHandler(on: contextProvider.syncContext) { [weak contextProvider] response in
-            guard let contextProvider else { return completion(.failure(ConversationDeletionError.unknown)) }
+            guard let contextProvider else {
+                return completion(.failure(ConversationDeletionError.unknown))
+            }
 
             if response.httpStatus == 200 {
                 let conversation = ZMConversation.fetch(
@@ -114,7 +116,9 @@ enum ConversationDeletionRequestFactory {
             let apiVersion = BackendInfo.apiVersion,
             let conversationId = conversation.remoteIdentifier,
             let teamRemoteIdentifier = conversation.teamRemoteIdentifier
-        else { return nil }
+        else {
+            return nil
+        }
 
         let path = "/teams/\(teamRemoteIdentifier.transportString())/conversations/\(conversationId.transportString())"
 

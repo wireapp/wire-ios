@@ -142,7 +142,9 @@ extension MockTransportSession {
     }
 
     private func fetchTeam(with identifier: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let identifier else { return nil }
+        guard let identifier else {
+            return nil
+        }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         // swiftformat:disable:next redundantType
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate),
@@ -205,7 +207,9 @@ extension MockTransportSession {
         conversationId: String?,
         apiVersion: APIVersion
     ) -> ZMTransportResponse? {
-        guard let teamId, let conversationId  else { return nil }
+        guard let teamId, let conversationId  else {
+            return nil
+        }
 
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
 
@@ -233,11 +237,15 @@ extension MockTransportSession {
     }
 
     private func sendTeamInvitation(with identifier: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let identifier else { return nil }
+        guard let identifier else {
+            return nil
+        }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         // swiftformat:disable:next redundantType
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate)
-        else { return .teamNotFound(apiVersion: apiVersion) }
+        else {
+            return .teamNotFound(apiVersion: apiVersion)
+        }
 
         if let permissionError = ensurePermission(.addTeamMember, in: team, apiVersion: apiVersion) {
             return permissionError
@@ -252,11 +260,15 @@ extension MockTransportSession {
     }
 
     private func fetchMembersForTeam(with teamId: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let teamId else { return nil }
+        guard let teamId else {
+            return nil
+        }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         // swiftformat:disable:next redundantType
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate)
-        else { return .teamNotFound(apiVersion: apiVersion) }
+        else {
+            return .teamNotFound(apiVersion: apiVersion)
+        }
         if let permissionError = ensurePermission(.getMemberPermissions, in: team, apiVersion: apiVersion) {
             return permissionError
         }
@@ -279,11 +291,15 @@ extension MockTransportSession {
         userIds: [String]?,
         apiVersion: APIVersion
     ) -> ZMTransportResponse? {
-        guard let teamId, let userIds else { return nil }
+        guard let teamId, let userIds else {
+            return nil
+        }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         // swiftformat:disable:next redundantType
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate)
-        else { return .teamNotFound(apiVersion: apiVersion) }
+        else {
+            return .teamNotFound(apiVersion: apiVersion)
+        }
         let members = team.members.filter { userIds.contains($0.user.identifier) }
         if let permissionError = ensurePermission(.getMemberPermissions, in: team, apiVersion: apiVersion) {
             return permissionError
@@ -303,11 +319,15 @@ extension MockTransportSession {
     }
 
     private func fetchRolesForTeam(with identifier: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let identifier else { return nil }
+        guard let identifier else {
+            return nil
+        }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         // swiftformat:disable:next redundantType
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate)
-        else { return .teamNotFound(apiVersion: apiVersion) }
+        else {
+            return .teamNotFound(apiVersion: apiVersion)
+        }
 
         let payload: [String: Any] = [
             "conversation_roles": team.roles.map(\.payload),
@@ -326,13 +346,19 @@ extension MockTransportSession {
         userId: String?,
         apiVersion: APIVersion
     ) -> ZMTransportResponse? {
-        guard let teamId, let userId else { return nil }
+        guard let teamId, let userId else {
+            return nil
+        }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         // swiftformat:disable:next redundantType
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate)
-        else { return .teamNotFound(apiVersion: apiVersion) }
+        else {
+            return .teamNotFound(apiVersion: apiVersion)
+        }
         guard let member = team.members.first(where: { $0.user.identifier == userId })
-        else { return .notTeamMember(apiVersion: apiVersion) }
+        else {
+            return .notTeamMember(apiVersion: apiVersion)
+        }
         if let permissionError = ensurePermission(.getMemberPermissions, in: team, apiVersion: apiVersion) {
             return permissionError
         }
@@ -351,7 +377,9 @@ extension MockTransportSession {
     ) -> ZMTransportResponse? {
         guard let selfTeams = selfUser.memberships,
               let member = selfTeams.union(team.members).first
-        else { return .notTeamMember(apiVersion: apiVersion) }
+        else {
+            return .notTeamMember(apiVersion: apiVersion)
+        }
 
         guard member.permissions.contains(permissions) else {
             return .operationDenied(apiVersion: apiVersion)
@@ -370,16 +398,24 @@ extension MockTransportSession {
         apiVersion: APIVersion
     ) -> ZMTransportResponse? {
         // 1) Assert request contents
-        guard let teamId, let userId else { return nil }
-        guard method == .put else { return nil }
+        guard let teamId, let userId else {
+            return nil
+        }
+        guard method == .put else {
+            return nil
+        }
 
         // 2) Check the user in the team
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         // swiftformat:disable:next redundantType
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate)
-        else { return .teamNotFound(apiVersion: apiVersion) }
+        else {
+            return .teamNotFound(apiVersion: apiVersion)
+        }
         guard let member = team.members.first(where: { $0.user.identifier == userId })
-        else { return .notTeamMember(apiVersion: apiVersion) }
+        else {
+            return .notTeamMember(apiVersion: apiVersion)
+        }
 
         // 3) Check the password
         guard let password = payload?.asDictionary()?["password"] as? String, password == member.user.password else {
@@ -427,7 +463,9 @@ extension MockTransportSession {
         deleted: Set<NSManagedObject>,
         shouldSendEventsToSelfUser: Bool
     ) -> [MockPushEvent] {
-        guard shouldSendEventsToSelfUser else { return [] }
+        guard shouldSendEventsToSelfUser else {
+            return []
+        }
 
         return inserted
             .lazy

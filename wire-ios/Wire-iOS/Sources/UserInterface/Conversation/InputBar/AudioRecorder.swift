@@ -192,7 +192,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     func startRecording(_ completion: @escaping (_ success: Bool) -> Void) {
         createAudioRecorderIfNeeded()
 
-        guard let audioRecorder else { return }
+        guard let audioRecorder else {
+            return
+        }
 
         AVSMediaManager.sharedInstance().startRecording {
             guard self.state == .initializing else {
@@ -246,7 +248,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         guard
             let audioRecorder,
             ZMUserSession.shared()?.isCallOngoing == false
-        else { return }
+        else {
+            return
+        }
 
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
@@ -259,11 +263,15 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         audioPlayer?.isMeteringEnabled = true
 
         audioPlayerDelegate = AudioPlayerDelegate { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             removeDisplayLink()
             playingStateCallback?(.idle)
             recordLevelCallBack?(0)
-            guard let duration = audioPlayer?.duration else { return }
+            guard let duration = audioPlayer?.duration else {
+                return
+            }
             recordTimerCallback?(duration)
         }
 
@@ -296,7 +304,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
             return nil
 
         case let .recording(startTime):
-            guard let recorder = audioRecorder else { return nil }
+            guard let recorder = audioRecorder else {
+                return nil
+            }
             return recorder.deviceCurrentTime - startTime
 
         case .stopped:
@@ -321,7 +331,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
             alertMessage = L10n.Localizable.Conversation.InputBar.AudioMessage.TooLongSize.message(size)
         }
 
-        guard alertMessage != nil else { return nil }
+        guard alertMessage != nil else {
+            return nil
+        }
 
         let alertController = UIAlertController(
             title: L10n.Localizable.Conversation.InputBar.AudioMessage.TooLong.title,
@@ -345,7 +357,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         guard let fileURL,
               let attribs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
               let size = attribs[.size] as? UInt32,
-              size > maxAllowedSize else { return false }
+              size > maxAllowedSize else {
+            return false
+        }
         WireLogger.ui
             .debug(
                 "Audio message size is over the maximum amount allowed. File size is \(size), threshold is \(maxAllowedSize)"
@@ -356,7 +370,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     fileprivate func postRecordingProcessing() -> Bool {
         recordLevelCallBack?(0)
         removeDisplayLink()
-        guard let filePath = audioRecorder?.url.path, fm.fileExists(atPath: filePath) else { return false }
+        guard let filePath = audioRecorder?.url.path, fm.fileExists(atPath: filePath) else {
+            return false
+        }
         fileURL = audioRecorder?.url
         return true
     }
@@ -374,7 +390,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     @objc
     fileprivate func displayLinkDidFire() {
         recordLevelCallBack?(levelForCurrentState())
-        guard let duration = durationForCurrentState(), currentDuration != duration else { return }
+        guard let duration = durationForCurrentState(), currentDuration != duration else {
+            return
+        }
         currentDuration = duration
         recordTimerCallback?(currentDuration)
 
@@ -388,7 +406,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     private var token: Any?
 
     private var maxAllowedSize: UInt32 {
-        guard let maxSize = maxFileSize else { return 0 }
+        guard let maxSize = maxFileSize else {
+            return 0
+        }
         return UInt32(Double(maxSize) * (1.00 - 0.01)) // 1% of tolerance
     }
 
@@ -440,7 +460,9 @@ extension AudioRecorder: AVAudioRecorderDelegate {
 
         // in the case that the recording finished due to the maxRecordingDuration
         // reached, we should still clean up afterwards
-        if recordedToMaxDuration { _ = postRecordingProcessing() }
+        if recordedToMaxDuration {
+            _ = postRecordingProcessing()
+        }
 
         if recordedToMaxSize {
             recordEndedCallback?(.failure(RecordingError.toMaxSize))

@@ -58,7 +58,9 @@ final class CopyableLabel: UILabel {
               let view = recognizer.view,
               let superview = view.superview,
               view == self,
-              becomeFirstResponder() else { return }
+              becomeFirstResponder() else {
+            return
+        }
 
         NotificationCenter.default.addObserver(
             self,

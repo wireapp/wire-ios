@@ -149,7 +149,9 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     public func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
         logger.info("continue user activity")
-        guard let interaction = userActivity.interaction else { return false }
+        guard let interaction = userActivity.interaction else {
+            return false
+        }
 
         let intent = interaction.intent
         var contacts: [INPerson]?
@@ -277,7 +279,9 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         }
 
         delegate?.lookupConversation(by: callHandle) { result in
-            guard case let .success(conversation) = result else { return }
+            guard case let .success(conversation) = result else {
+                return
+            }
             completion(conversation)
         }
     }
@@ -872,7 +876,9 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
         timestamp: Date,
         video: Bool
     ) {
-        guard isEnabled else { return }
+        guard isEnabled else {
+            return
+        }
 
         // Since we missed the call we will not have an assigned callUUID and can just create a random one
         provider.reportCall(
@@ -919,7 +925,9 @@ extension ZMConversation {
     }
 
     func localizedCallerNameForOutgoingCall() -> String? {
-        guard let managedObjectContext  else { return nil }
+        guard let managedObjectContext  else {
+            return nil
+        }
 
         return localizedCallerName(with: ZMUser.selfUser(in: managedObjectContext))
     }
@@ -950,7 +958,9 @@ extension CallClosedReason {
 
 extension CallKitCallRegister {
     func lookupCall(by conversation: ZMConversation) -> CallKitCall? {
-        guard let handle = conversation.callHandle else { return nil }
+        guard let handle = conversation.callHandle else {
+            return nil
+        }
         return lookupCall(by: handle)
     }
 }

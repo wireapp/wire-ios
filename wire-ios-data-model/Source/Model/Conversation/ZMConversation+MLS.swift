@@ -158,7 +158,9 @@ extension ZMConversation {
             let value = primitiveValue(forKey: Self.mlsVerificationStatusKey) as? MLSVerificationStatus.RawValue
             didAccessValue(forKey: Self.mlsVerificationStatusKey)
 
-            guard let value else { return nil }
+            guard let value else {
+                return nil
+            }
             guard let status = MLSVerificationStatus(rawValue: value) else {
                 return nil
             }
@@ -249,7 +251,9 @@ extension ZMConversation {
         }
 
         syncContext.perform {
-            guard let mlsService = syncContext.mlsService else { return }
+            guard let mlsService = syncContext.mlsService else {
+                return
+            }
 
             Task {
                 do {

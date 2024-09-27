@@ -91,7 +91,9 @@ final class SavableImage: NSObject {
     var applicationType: ApplicationProtocol.Type = UIApplication.self
 
     func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {
-        guard !writeInProgess else { return }
+        guard !writeInProgess else {
+            return
+        }
         writeInProgess = true
         let source = createSource()
 
@@ -104,7 +106,9 @@ final class SavableImage: NSObject {
         }
 
         applicationType.wr_requestOrWarnAboutPhotoLibraryAccess { granted in
-            guard granted else { return cleanup(false) }
+            guard granted else {
+                return cleanup(false)
+            }
 
             self.photoLibrary.performChanges {
                 self.saveImage(using: source)

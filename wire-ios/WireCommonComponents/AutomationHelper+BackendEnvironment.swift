@@ -26,7 +26,9 @@ extension AutomationHelper {
     }
 
     public func persistBackendTypeOverrideIfNeeded(with type: String?) {
-        guard shouldPersistBackendType else { return }
+        guard shouldPersistBackendType else {
+            return
+        }
         UserDefaults.applicationGroup.set(type, forKey: AutomationHelper.backendEnvironmentTypeOverrideKey)
     }
 

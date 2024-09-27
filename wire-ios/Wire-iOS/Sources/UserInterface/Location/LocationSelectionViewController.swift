@@ -140,7 +140,9 @@ final class LocationSelectionViewController: UIViewController {
     }
 
     private func createConstraints() {
-        guard let sendController = sendViewController.view else { return }
+        guard let sendController = sendViewController.view else {
+            return
+        }
 
         [mapViewController.view, sendController, toolBar, locationButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -199,7 +201,9 @@ final class LocationSelectionViewController: UIViewController {
             title: L10n.Localizable.Location.UnauthorizedAlert.settings,
             style: .default
         ) { _ in
-            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            guard let url = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
             UIApplication.shared.open(url)
         }
 
@@ -208,13 +212,17 @@ final class LocationSelectionViewController: UIViewController {
     }
 
     private func formatAndUpdateAddress() {
-        guard mapDidRender else { return }
+        guard mapDidRender else {
+            return
+        }
         geocoder
             .reverseGeocodeLocation(
                 mapViewController.mapView.centerCoordinate
                     .location
             ) { [weak self] placemarks, error in
-                guard error == nil, let placemark = placemarks?.first else { return }
+                guard error == nil, let placemark = placemarks?.first else {
+                    return
+                }
                 if let address = placemark.formattedAddress(false), !address.isEmpty {
                     self?.sendViewController.address = address
                 } else {
@@ -231,7 +239,9 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
         sendControllerHeightConstraint?.isActive = isActive
 
         if isActive {
-            guard let window = view.window else { return }
+            guard let window = view.window else {
+                return
+            }
 
             let bottomInset = window.safeAreaInsets.bottom
             sendControllerHeightConstraint?.constant = 56 + bottomInset
@@ -281,7 +291,9 @@ extension LocationSelectionViewController: MapViewControllerDelegate {
 
 extension LocationSelectionViewController: AppLocationManagerDelegate {
     func didUpdateLocations(_ locations: [CLLocation]) {
-        guard let newLocation = locations.first else { return }
+        guard let newLocation = locations.first else {
+            return
+        }
 
         if !userShowedInitially {
             userShowedInitially = true

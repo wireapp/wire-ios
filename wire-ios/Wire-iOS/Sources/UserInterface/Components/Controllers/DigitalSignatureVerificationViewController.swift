@@ -90,7 +90,9 @@ final class DigitalSignatureVerificationViewController: UIViewController {
     }
 
     private func loadURL() {
-        guard let url else { return }
+        guard let url else {
+            return
+        }
         let request = URLRequest(url: url)
         webView.load(request)
     }

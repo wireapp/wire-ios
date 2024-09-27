@@ -32,12 +32,18 @@ extension ZMUserSession: CallConversationProvider {}
 
 extension ZMUserSession {
     var priorityCallConversation: ZMConversation? {
-        guard let callNotificationStyle = SessionManager.shared?.callNotificationStyle else { return nil }
-        guard let callCenter else { return nil }
+        guard let callNotificationStyle = SessionManager.shared?.callNotificationStyle else {
+            return nil
+        }
+        guard let callCenter else {
+            return nil
+        }
 
         let conversationsWithIncomingCall = callCenter.nonIdleCallConversations(in: self)
             .filter { conversation -> Bool in
-                guard let callState = conversation.voiceChannel?.state else { return false }
+                guard let callState = conversation.voiceChannel?.state else {
+                    return false
+                }
 
                 switch callState {
                 case .incoming(video: _, shouldRing: true, degraded: _):
@@ -57,10 +63,14 @@ extension ZMUserSession {
     }
 
     var ongoingCallConversation: ZMConversation? {
-        guard let callCenter else { return nil }
+        guard let callCenter else {
+            return nil
+        }
 
         return callCenter.nonIdleCallConversations(in: self).first { conversation -> Bool in
-            guard let callState = conversation.voiceChannel?.state else { return false }
+            guard let callState = conversation.voiceChannel?.state else {
+                return false
+            }
 
             switch callState {
             case .answered, .established, .establishedDataChannel, .outgoing:

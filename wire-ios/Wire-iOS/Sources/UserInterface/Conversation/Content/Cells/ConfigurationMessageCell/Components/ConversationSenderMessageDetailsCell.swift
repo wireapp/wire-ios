@@ -94,7 +94,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     @objc
     func tappedOnAvatar() {
-        guard let user = avatar.user else { return }
+        guard let user = avatar.user else {
+            return
+        }
 
         SessionManager.shared?.showUserProfile(user: user)
     }
@@ -263,7 +265,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             color: textColor
         ).with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0), backgroundColor: .clear)
 
-        guard let icon else { return nil }
+        guard let icon else {
+            return nil
+        }
 
         let iconSize = icon.size
 

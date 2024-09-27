@@ -116,7 +116,9 @@ public class ZMGenericMessageData: ZMManagedObject {
     }
 
     private func encryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> (data: Data, nonce: Data?) {
-        guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
+        guard moc.encryptMessagesAtRest else {
+            return (data, nonce: nil)
+        }
 
         do {
             return try moc.encryptData(data: data)
@@ -127,7 +129,9 @@ public class ZMGenericMessageData: ZMManagedObject {
     }
 
     private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
-        guard let nonce else { return data }
+        guard let nonce else {
+            return data
+        }
 
         do {
             return try moc.decryptData(data: data, nonce: nonce)

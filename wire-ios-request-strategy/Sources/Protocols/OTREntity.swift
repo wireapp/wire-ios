@@ -194,7 +194,9 @@ extension OTREntity {
         redundantUsers.remove(ZMUser.selfUser(in: context))
 
         for (user, remoteClientIdentifiers) in clientListByUser {
-            if user.isSelfUser { continue }
+            if user.isSelfUser {
+                continue
+            }
 
             redundantUsers.remove(user)
 
@@ -203,10 +205,14 @@ extension OTREntity {
 
             // Compute changes
             let deletedClients = localIdentifiers.subtracting(remoteIdentifiers)
-            if !deletedClients.isEmpty { changes.insert(.deleted) }
+            if !deletedClients.isEmpty {
+                changes.insert(.deleted)
+            }
 
             let missingClients = remoteIdentifiers.subtracting(localIdentifiers)
-            if !missingClients.isEmpty { changes.insert(.missing) }
+            if !missingClients.isEmpty {
+                changes.insert(.missing)
+            }
 
             // Process deletions
             for deletedClientID in deletedClients {
@@ -253,7 +259,9 @@ extension OTREntity {
 
     /// Adds clients to those missing for this message
     func registersNewMissingClients(_ missingClients: Set<UserClient>) {
-        guard !missingClients.isEmpty else { return }
+        guard !missingClients.isEmpty else {
+            return
+        }
 
         let selfClient = ZMUser.selfUser(in: context).selfClient()!
         selfClient.missesClients(missingClients)

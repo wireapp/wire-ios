@@ -59,7 +59,9 @@ extension ZMConversation {
     /// The state of external participants in the conversation.
     public var externalParticipantsState: ExternalParticipantsState {
         // Exception 1) We don't consider guests/services as external participants in 1:1 conversations
-        guard conversationType == .group else { return [] }
+        guard conversationType == .group else {
+            return []
+        }
 
         // Exception 2) If there is only one user in the group and it's a service, we don't consider it as external
         let participants = Set(localParticipants)

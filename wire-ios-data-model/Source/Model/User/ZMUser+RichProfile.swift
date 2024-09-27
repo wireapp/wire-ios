@@ -42,7 +42,9 @@ public class UserRichProfileField: NSObject, Codable {
     public var value: String
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? UserRichProfileField else { return false }
+        guard let other = object as? UserRichProfileField else {
+            return false
+        }
         return type == other.type && value == other.value
     }
 }

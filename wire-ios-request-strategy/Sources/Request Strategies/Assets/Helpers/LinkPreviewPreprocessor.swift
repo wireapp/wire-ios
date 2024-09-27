@@ -45,7 +45,9 @@ public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
     // MARK: Internal
 
     override func objectsToPreprocess(_ object: NSObject) -> ZMClientMessage? {
-        guard let message = object as? ZMClientMessage else { return nil }
+        guard let message = object as? ZMClientMessage else {
+            return nil
+        }
         return message.linkPreviewState == .waitingToBeProcessed ? message : nil
     }
 

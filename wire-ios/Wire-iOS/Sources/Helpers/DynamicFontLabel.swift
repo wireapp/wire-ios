@@ -66,7 +66,9 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
     // MARK: Methods
 
     func redrawFont() {
-        guard let newFont = onRedrawFont() else { return }
+        guard let newFont = onRedrawFont() else {
+            return
+        }
         font = newFont
     }
 

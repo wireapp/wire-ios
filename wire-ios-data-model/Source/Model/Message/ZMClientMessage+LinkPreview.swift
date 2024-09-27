@@ -44,12 +44,16 @@ extension ZMClientMessage {
     }
 
     public var linkPreview: LinkMetadata? {
-        guard let linkPreview = firstZMLinkPreview else { return nil }
+        guard let linkPreview = firstZMLinkPreview else {
+            return nil
+        }
         if case .tweet? = linkPreview.metaData {
             return TwitterStatusMetadata(protocolBuffer: linkPreview)
         } else {
             let metadata = ArticleMetadata(protocolBuffer: linkPreview)
-            guard !metadata.isBlacklisted else { return nil }
+            guard !metadata.isBlacklisted else {
+                return nil
+            }
             return metadata
         }
     }
@@ -71,9 +75,13 @@ extension ZMClientMessage {
         guard !objectID.isTemporaryID,
               self.linkPreview != nil,
               let moc = managedObjectContext,
-              let linkPreview = firstZMLinkPreview else { return }
+              let linkPreview = firstZMLinkPreview else {
+            return
+        }
 
-        guard linkPreview.image.uploaded.hasAssetID, !hasDownloadedImage() else { return }
+        guard linkPreview.image.uploaded.hasAssetID, !hasDownloadedImage() else {
+            return
+        }
 
         NotificationInContext(
             name: ZMClientMessage.linkPreviewImageDownloadNotification,
@@ -176,14 +184,18 @@ extension ZMClientMessage: ZMImageOwner {
 
     @objc
     public func originalImageSize() -> CGSize {
-        guard let originalImageData = originalImageData() else { return CGSize.zero }
+        guard let originalImageData = originalImageData() else {
+            return CGSize.zero
+        }
         return ZMImagePreprocessor.sizeOfPrerotatedImage(with: originalImageData)
     }
 
     @objc
     public func processingDidFinish() {
         linkPreviewState = .processed
-        guard let moc = managedObjectContext else { return }
+        guard let moc = managedObjectContext else {
+            return
+        }
         moc.zm_fileAssetCache.deleteOriginalImageData(for: self)
         moc.enqueueDelayedSave()
     }
@@ -197,7 +209,9 @@ extension ZMClientMessage: ZMImageOwner {
     }
 
     public var linkPreviewHasImage: Bool {
-        guard let linkPreview = firstZMLinkPreview else { return false }
+        guard let linkPreview = firstZMLinkPreview else {
+            return false
+        }
         return linkPreview.hasImage
     }
 

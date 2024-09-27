@@ -53,7 +53,9 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
     typealias Object = ZMUser
 
     func synchronize(key: String, for object: ZMUser, completion: @escaping () -> Void) {
-        guard object.isSelfUser else { return completion() }
+        guard object.isSelfUser else {
+            return completion()
+        }
 
         let message = GenericMessage(content: WireProtos.Availability(object.availability))
         let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(

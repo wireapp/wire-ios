@@ -41,7 +41,9 @@ public class Member: ZMManagedObject {
 
     public var remoteIdentifier: UUID? {
         get {
-            guard let data = remoteIdentifier_data else { return nil }
+            guard let data = remoteIdentifier_data else {
+                return nil
+            }
             return UUID(data: data)
         }
         set {
@@ -107,7 +109,9 @@ extension Member {
         context: NSManagedObjectContext
     ) -> Member? {
         guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init(transportString:))
-        else { return nil }
+        else {
+            return nil
+        }
 
         let user = ZMUser.fetchOrCreate(with: id, domain: nil, in: context)
         let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String)
@@ -124,14 +128,20 @@ extension Member {
 
     public func updatePermissions(with payload: [String: Any]) {
         guard let userID = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init(transportString:))
-        else { return }
+        else {
+            return
+        }
         precondition(
             remoteIdentifier == userID,
             "Trying to update member with non-matching payload: \(payload), \(self)"
         )
-        guard let permissionsPayload = payload[ResponseKey.permissions.rawValue] as? [String: Any] else { return }
+        guard let permissionsPayload = payload[ResponseKey.permissions.rawValue] as? [String: Any] else {
+            return
+        }
         guard let selfPermissions = permissionsPayload[ResponseKey.Permissions.`self`.rawValue] as? NSNumber
-        else { return }
+        else {
+            return
+        }
         permissions = Permissions(rawValue: selfPermissions.int64Value)
     }
 }

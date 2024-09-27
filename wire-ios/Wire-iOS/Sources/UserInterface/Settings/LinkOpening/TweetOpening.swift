@@ -57,7 +57,9 @@ enum TweetOpeningOption: Int, LinkOpeningOption {
 extension URL {
     func openAsTweet() -> Bool {
         log.debug("Trying to open \"\(self)\" as tweet, isTweet: \(isTweet)")
-        guard isTweet else { return false }
+        guard isTweet else {
+            return false
+        }
         let saved = TweetOpeningOption.storedPreference
         log.debug("Saved option to open a tweet: \(saved.displayString)")
         let app = UIApplication.shared
@@ -66,12 +68,16 @@ extension URL {
         case .none: return false
 
         case .tweetbot:
-            guard let url = tweetbotURL, app.canOpenURL(url) else { return false }
+            guard let url = tweetbotURL, app.canOpenURL(url) else {
+                return false
+            }
             log.debug("Trying to open tweetbot app using \"\(url)\"")
             app.open(url)
 
         case .twitterrific:
-            guard let url = twitterrificURL, app.canOpenURL(url) else { return false }
+            guard let url = twitterrificURL, app.canOpenURL(url) else {
+                return false
+            }
             log.debug("Trying to open twitterific app using \"\(url)\"")
             app.open(url)
         }
@@ -100,7 +106,9 @@ extension URL {
 
 extension URL {
     private var tweetbotURL: URL? {
-        guard isTweet else { return nil }
+        guard isTweet else {
+            return nil
+        }
 
         let components = [
             "https://twitter.com/",
@@ -121,7 +129,9 @@ extension URL {
     }
 
     private var tweetID: String? {
-        guard let statusRange = absoluteString.range(of: "status/") else { return nil }
+        guard let statusRange = absoluteString.range(of: "status/") else {
+            return nil
+        }
         return String(absoluteString[statusRange.upperBound...])
     }
 }

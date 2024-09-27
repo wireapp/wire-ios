@@ -47,7 +47,9 @@ final class CollectionAudioCell: CollectionCell {
         typealias ConversationSearch = L10n.Accessibility.ConversationSearch
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let message else { return }
+        guard let message else {
+            return
+        }
         headerView.message = message
 
         if message.canBeShared {

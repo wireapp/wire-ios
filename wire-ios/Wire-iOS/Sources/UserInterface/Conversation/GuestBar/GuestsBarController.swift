@@ -143,7 +143,9 @@ final class GuestsBarController: UIViewController {
         }
 
         let completion: (Bool) -> Void = { _ in
-            guard collapsed else { return }
+            guard collapsed else {
+                return
+            }
             self.containerHeightConstraint.constant = collapsed ? GuestsBarController
                 .collapsedHeight : GuestsBarController.expandedHeight
         }

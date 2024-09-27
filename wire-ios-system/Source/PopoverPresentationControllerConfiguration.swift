@@ -38,7 +38,9 @@ public enum PopoverPresentationControllerConfiguration {
         of view: UIView,
         insetBy inset: (dx: CGFloat, dy: CGFloat) = (0, 0)
     ) -> Self! {
-        guard let superview = view.superview else { return nil }
+        guard let superview = view.superview else {
+            return nil
+        }
         return .sourceView(sourceView: superview, sourceRect: view.frame.insetBy(dx: inset.dx, dy: inset.dy))
     }
 }
@@ -54,7 +56,9 @@ extension UIViewController {
     public func configurePopoverPresentationController(
         using configuration: PopoverPresentationControllerConfiguration
     ) -> Bool {
-        guard let popoverPresentationController else { return false }
+        guard let popoverPresentationController else {
+            return false
+        }
 
         switch configuration {
         case let .barButtonItem(barButtonItem):

@@ -59,9 +59,13 @@ final class ScalableView: UIView, UIGestureRecognizerDelegate {
             gestureRecognizer.state == .began
             || gestureRecognizer.state == .changed
             || gestureRecognizer.state == .ended
-        else { return }
+        else {
+            return
+        }
 
-        guard let view = gestureRecognizer.view else { return }
+        guard let view = gestureRecognizer.view else {
+            return
+        }
 
         // get location of the gesture's centroid
         var location = gestureRecognizer.location(in: view)
@@ -91,10 +95,14 @@ final class ScalableView: UIView, UIGestureRecognizerDelegate {
 
     @objc
     func handlePanGesture(_ gestureRecognizer: UIPanGestureRecognizer) {
-        guard let view = gestureRecognizer.view else { return }
+        guard let view = gestureRecognizer.view else {
+            return
+        }
 
         // prevent translation if the view transform is identity
-        guard view.transform != .identity else { return }
+        guard view.transform != .identity else {
+            return
+        }
 
         let translation = gestureRecognizer.translation(in: view)
 

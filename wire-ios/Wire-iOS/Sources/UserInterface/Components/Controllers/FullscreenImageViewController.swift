@@ -117,7 +117,9 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
-        guard let imageSize = imageView?.image?.size else { return }
+        guard let imageSize = imageView?.image?.size else {
+            return
+        }
 
         let isImageZoomedToMax = scrollView.zoomScale == scrollView.maximumZoomScale
 
@@ -155,7 +157,9 @@ final class FullscreenImageViewController: UIViewController {
     // MARK: - Utilities, custom UI
 
     func performSaveImageAnimation(from saveView: UIView) {
-        guard let imageView else { return }
+        guard let imageView else {
+            return
+        }
 
         let ghostImageView = UIImageView(image: imageView.image)
         ghostImageView.contentMode = .scaleAspectFit
@@ -254,7 +258,9 @@ final class FullscreenImageViewController: UIViewController {
     func handleDoubleTap(_ doubleTapper: UITapGestureRecognizer) {
         setSelectedByMenu(false, animated: false)
 
-        guard let image = imageView?.image else { return }
+        guard let image = imageView?.image else {
+            return
+        }
 
         hideMenu()
 
@@ -303,7 +309,9 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     func updateZoom() {
-        guard let size = parent?.view?.frame.size else { return }
+        guard let size = parent?.view?.frame.size else {
+            return
+        }
         updateZoom(withSize: size)
     }
 
@@ -311,8 +319,12 @@ final class FullscreenImageViewController: UIViewController {
     ///
     /// - Parameter size: size of the view which contains imageView
     func updateZoom(withSize size: CGSize) {
-        guard let image = imageView?.image else { return }
-        guard !(size.width == 0 && size.height == 0) else { return }
+        guard let image = imageView?.image else {
+            return
+        }
+        guard !(size.width == 0 && size.height == 0) else {
+            return
+        }
 
         var minZoom = size.minZoom(imageSize: image.size)
 
@@ -437,7 +449,9 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     private func setupSnapshotBackgroundView() {
-        guard let snapshotBackgroundView = delegate?.backgroundScreenshot(for: self) else { return }
+        guard let snapshotBackgroundView = delegate?.backgroundScreenshot(for: self) else {
+            return
+        }
 
         snapshotBackgroundView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -556,7 +570,8 @@ final class FullscreenImageViewController: UIViewController {
                 newAnchor.x += (translation.x) + imageDragOffsetFromActualTranslation.horizontal
                 newAnchor.y += (translation.y) + imageDragOffsetFromActualTranslation.vertical
                 attachmentBehavior?.anchorPoint = newAnchor
-                if let center = imageView?.center { updateBackgroundColor(imageViewCenter: center)
+                if let center = imageView?.center {
+                    updateBackgroundColor(imageViewCenter: center)
                 }
             } else {
                 isDraggingImage = imageView?.frame.contains(locationInView) == true
@@ -582,7 +597,9 @@ final class FullscreenImageViewController: UIViewController {
     // MARK: - Dynamic Image Dragging
 
     private func initiateImageDrag(fromLocation panGestureLocationInView: CGPoint, translationOffset: UIOffset) {
-        guard let imageView else { return }
+        guard let imageView else {
+            return
+        }
         setupSnapshotBackgroundView()
         isShowingChrome = false
 
@@ -612,7 +629,9 @@ final class FullscreenImageViewController: UIViewController {
         attachmentBehavior = UIAttachmentBehavior(item: proxy, offsetFromCenter: offset, attachedToAnchor: anchor)
         attachmentBehavior?.damping = 1
         attachmentBehavior?.action = { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             self.imageView?.center = CGPoint(x: self.imageView?.center.x ?? 0.0, y: proxy.center.y)
             self.imageView?.transform = proxy.transform.concatenating(imageViewStartingTransform)
         }
@@ -644,7 +663,9 @@ final class FullscreenImageViewController: UIViewController {
                 initialSpringVelocity: 0,
                 options: [.allowUserInteraction, .beginFromCurrentState],
                 animations: { [weak self] in
-                    guard let self else { return }
+                    guard let self else {
+                        return
+                    }
                     if !isDraggingImage {
                         imageView?.transform = imageViewStartingTransform
                         updateBackgroundColor(progress: 0)
@@ -658,7 +679,9 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     private func dismissImageFlicking(withVelocity velocity: CGPoint) {
-        guard let imageView else { return }
+        guard let imageView else {
+            return
+        }
         // Proxy object is used because the UIDynamics messing up the zoom level transform on imageView
         let proxy = DynamicsProxy()
         proxy.center = imageView.center
@@ -680,7 +703,9 @@ final class FullscreenImageViewController: UIViewController {
         push.magnitude = max(minimumDismissMagnitude, abs(velocity.y) / 6)
 
         push.action = { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             self.imageView?.center = CGPoint(x: imageView.center.x, y: proxy.center.y)
 
             updateBackgroundColor(imageViewCenter: imageView.center)
@@ -716,7 +741,9 @@ final class FullscreenImageViewController: UIViewController {
 
     @objc
     private func handleLongPress(_ longPressRecognizer: UILongPressGestureRecognizer?) {
-        guard longPressRecognizer?.state == .began else { return }
+        guard longPressRecognizer?.state == .began else {
+            return
+        }
 
         NotificationCenter.default.addObserver(
             self,

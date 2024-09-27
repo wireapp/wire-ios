@@ -62,7 +62,9 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
 
     @objc
     func didTapView(sender: UIGestureRecognizer) {
-        guard recognizerInSelectedRow(sender) else { return }
+        guard recognizerInSelectedRow(sender) else {
+            return
+        }
         didTapViewClosure?()
     }
 
@@ -100,8 +102,12 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
     /// delegate for the rowHeight and using it to calculate the rect
     /// of the center (selected) row.
     private func recognizerInSelectedRow(_ recognizer: UIGestureRecognizer) -> Bool {
-        guard selectedRow(inComponent: 0) != -1 else { return false }
-        guard let height = delegate?.pickerView?(self, rowHeightForComponent: 0) else { return false }
+        guard selectedRow(inComponent: 0) != -1 else {
+            return false
+        }
+        guard let height = delegate?.pickerView?(self, rowHeightForComponent: 0) else {
+            return false
+        }
         let rect = bounds.insetBy(dx: 0, dy: bounds.midY - height / 2)
         let location = recognizer.location(in: self)
         return rect.contains(location)

@@ -37,7 +37,9 @@ extension PINDiskCache {
     func makeURLSecure() {
         let secureBlock: (any PINCaching) -> Void = { cache in
             // exclude disk cache from backup
-            guard let cache = cache as? PINDiskCache else { return }
+            guard let cache = cache as? PINDiskCache else {
+                return
+            }
 
             do {
                 var url = cache.cacheURL

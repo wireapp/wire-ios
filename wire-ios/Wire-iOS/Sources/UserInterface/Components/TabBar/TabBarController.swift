@@ -105,7 +105,9 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         let toViewController = viewControllers[index]
         let fromViewController = pageViewController.viewControllers?.first
 
-        guard toViewController != fromViewController else { return }
+        guard toViewController != fromViewController else {
+            return
+        }
 
         let toIndex = viewControllers.firstIndex(of: toViewController) ?? 0
         let fromIndex = fromViewController.flatMap(viewControllers.firstIndex) ?? 0
@@ -117,7 +119,9 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
             delegate,
             tabBar
         ] complete in
-            guard complete else { return }
+            guard complete else {
+                return
+            }
             tabBar?.setSelectedIndex(index, animated: animated)
             delegate?.tabBarController(self, tabBarDidSelectIndex: index)
         }
@@ -129,7 +133,9 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     ) -> UIViewController? {
         viewControllers.firstIndex(of: viewController).flatMap {
             let index = $0 + 1
-            guard index >= 0, index < viewControllers.count else { return nil }
+            guard index >= 0, index < viewControllers.count else {
+                return nil
+            }
             return viewControllers[index]
         }
     }
@@ -140,7 +146,9 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     ) -> UIViewController? {
         viewControllers.firstIndex(of: viewController).flatMap {
             let index = $0 - 1
-            guard index >= 0, index < viewControllers.count else { return nil }
+            guard index >= 0, index < viewControllers.count else {
+                return nil
+            }
             return viewControllers[index]
         }
     }
@@ -151,8 +159,12 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         previousViewControllers: [UIViewController],
         transitionCompleted completed: Bool
     ) {
-        guard let selected = pageViewController.viewControllers?.first else { return }
-        guard let index = viewControllers.firstIndex(of: selected) else { return }
+        guard let selected = pageViewController.viewControllers?.first else {
+            return
+        }
+        guard let index = viewControllers.firstIndex(of: selected) else {
+            return
+        }
 
         if completed {
             isSwiping = false
@@ -172,7 +184,9 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard isSwiping else { return }
+        guard isSwiping else {
+            return
+        }
 
         let startPosition = abs(startOffset - scrollView.contentOffset.x)
         let numberOfItems = CGFloat(viewControllers.count)

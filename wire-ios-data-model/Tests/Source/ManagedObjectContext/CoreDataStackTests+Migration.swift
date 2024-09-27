@@ -63,7 +63,9 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         }
 
         // then
-        guard case .success = result else { return XCTFail() }
+        guard case .success = result else {
+            return XCTFail()
+        }
 
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         let storedValue = directory.viewContext.persistentStoreMetadata(forKey: metadataKey) as? Int
@@ -89,7 +91,9 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
 
         // then
         guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
 
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         let storedValue = directory.viewContext.persistentStoreMetadata(forKey: metadataKey) as? Int
@@ -107,7 +111,9 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         }
 
         // then
-        guard case .failure(CoreDataStack.MigrationError.missingLocalStore) = result else { return XCTFail() }
+        guard case .failure(CoreDataStack.MigrationError.missingLocalStore) = result else {
+            return XCTFail()
+        }
     }
 
     func testThatLocalStoreMigration_DeletesTemporaryStore_OnSuccess() throws {
@@ -119,7 +125,9 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         let result = performMigration(accountIdentifier: uuid) { _ in }
 
         // then
-        guard case .success = result else { return XCTFail() }
+        guard case .success = result else {
+            return XCTFail()
+        }
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
@@ -139,7 +147,9 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
 
         // then
         guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }

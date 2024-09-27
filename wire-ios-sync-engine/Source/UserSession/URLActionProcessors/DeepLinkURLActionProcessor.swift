@@ -156,7 +156,9 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             eventProcessor: eventProcessor,
             contextProvider: contextProvider
         ) { [weak self] response in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             switch response {
             case let .success(conversation):

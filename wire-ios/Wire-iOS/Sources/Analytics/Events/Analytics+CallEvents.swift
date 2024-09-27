@@ -96,7 +96,9 @@ extension Analytics {
     }
 
     private func attributesForUser(in conversation: ZMConversation) -> [String: Any] {
-        guard let selfUser = SelfUser.provider?.providedSelfUser else { return [:] }
+        guard let selfUser = SelfUser.provider?.providedSelfUser else {
+            return [:]
+        }
         var userType = if selfUser.isWirelessUser {
             "temporary_guest"
         } else if selfUser.isGuest(in: conversation) {

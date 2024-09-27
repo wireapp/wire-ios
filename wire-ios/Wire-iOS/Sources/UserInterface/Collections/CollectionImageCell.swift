@@ -78,7 +78,9 @@ final class CollectionImageCell: CollectionCell {
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let changeInfo, changeInfo.imageChanged else { return }
+        guard let changeInfo, changeInfo.imageChanged else {
+            return
+        }
 
         updateViews()
     }
@@ -94,7 +96,9 @@ final class CollectionImageCell: CollectionCell {
     private var reuseToken = UUID()
 
     private func updateViews() {
-        guard let message else { return }
+        guard let message else {
+            return
+        }
 
         if message.canBeShared {
             imageView.contentMode = .scaleAspectFill

@@ -116,7 +116,9 @@ final class NetworkStatusViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        guard !finishedViewWillAppear else { return }
+        guard !finishedViewWillAppear else {
+            return
+        }
 
         finishedViewWillAppear = true
         if let userSession = ZMUserSession.shared() {
@@ -146,7 +148,9 @@ final class NetworkStatusViewController: UIViewController {
 
     @objc
     func applyPendingState() {
-        guard let state = pendingState else { return }
+        guard let state = pendingState else {
+            return
+        }
         update(state: state)
         pendingState = nil
     }
@@ -154,7 +158,9 @@ final class NetworkStatusViewController: UIViewController {
     func update(state newState: NetworkStatusViewState) {
         state = newState
 
-        guard shouldShowOnIPad() else { return }
+        guard shouldShowOnIPad() else {
+            return
+        }
 
         networkStatusView.update(state: newState, animated: true)
     }
@@ -211,8 +217,12 @@ extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
 
 extension NetworkStatusViewController {
     func shouldShowOnIPad() -> Bool {
-        guard isIPadRegular(device: device) else { return true }
-        guard let delegate else { return true }
+        guard isIPadRegular(device: device) else {
+            return true
+        }
+        guard let delegate else {
+            return true
+        }
 
         let newOrientation = application.statusBarOrientation
 
@@ -221,7 +231,9 @@ extension NetworkStatusViewController {
 
     @objc
     func updateStateForIPad() {
-        guard device.userInterfaceIdiom == .pad else { return }
+        guard device.userInterfaceIdiom == .pad else {
+            return
+        }
 
         switch traitCollection.horizontalSizeClass {
         case .regular:

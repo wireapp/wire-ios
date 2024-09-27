@@ -101,7 +101,9 @@ extension ConversationListChangeInfo {
             managedObjectContext: managedObjectContext,
             object: list
         ) { [weak observer] note in
-            guard let observer, let aList = note.object as? ConversationList else { return }
+            guard let observer, let aList = note.object as? ConversationList else {
+                return
+            }
 
             zmLog.debug("Notifying registered observer \(observer) about changes in list: \(aList.identifier)")
 

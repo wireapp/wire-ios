@@ -80,7 +80,9 @@ final class CallActionsView: UIView {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else { return }
+        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else {
+            return
+        }
         updateToLayoutSize(layoutSize)
         setNeedsLayout()
         layoutIfNeeded()

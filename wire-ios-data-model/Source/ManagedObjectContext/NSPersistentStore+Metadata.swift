@@ -111,7 +111,9 @@ extension NSManagedObjectContext {
     @objc
     func makeMetadataPersistent() -> Bool {
         // swiftformat:disable:next isEmpty
-        guard nonCommittedMetadata.count > 0 || nonCommittedDeletedMetadataKeys.count > 0 else { return false }
+        guard nonCommittedMetadata.count > 0 || nonCommittedDeletedMetadataKeys.count > 0 else {
+            return false
+        }
 
         let store = persistentStoreCoordinator!.persistentStores.first!
         var storedMetadata = persistentStoreCoordinator!.metadata(for: store)

@@ -135,7 +135,9 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
             || changes.mlsStatusChanged
             || changes.oneOnOneUserChanged
 
-        guard hasChanged else { return }
+        guard hasChanged else {
+            return
+        }
 
         zmLog.debug("conversationDidChange with changes \(changes.customDebugDescription)")
         forwardToSnapshots { $0.processConversationChanges(changes) }
@@ -171,7 +173,9 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     /// Stores inserted or deleted folders temporarily until save / merge completes
     func folderChanges(inserted: [Label], deleted: [Label]) {
-        guard !inserted.isEmpty || !deleted.isEmpty else { return }
+        guard !inserted.isEmpty || !deleted.isEmpty else {
+            return
+        }
 
         zmLog.debug("\(inserted.count) folder(s) inserted - \(deleted.count) folder(s) deleted")
 
@@ -181,7 +185,9 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     /// Stores inserted or deleted conversations temporarily until save / merge completes
     func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
-        if deleted.isEmpty, inserted.isEmpty { return }
+        if deleted.isEmpty, inserted.isEmpty {
+            return
+        }
         zmLog.debug("\(inserted.count) conversation inserted - \(deleted.count) conversation deleted")
         for item in inserted {
             zmLog.debug("Inserted: \(item.objectID) conversationType: \(item.conversationType.rawValue)")
@@ -200,7 +206,9 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     // MARK: Private
 
     private func labelDidChange(_ changes: LabelChangeInfo) {
-        guard let label = changes.label as? Label else { return }
+        guard let label = changes.label as? Label else {
+            return
+        }
 
         if changes.markedForDeletion, label.kind == .folder, label.markedForDeletion {
             managedObjectContext.conversationListDirectory().deleteFolders([label])
@@ -217,7 +225,9 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     /// Handles updated messages that could be visible in the conversation list
     private func messagesDidChange(_ changes: MessageChangeInfo) {
-        guard let conversation = changes.message.conversation, changes.underlyingMessageChanged else { return }
+        guard let conversation = changes.message.conversation, changes.underlyingMessageChanged else {
+            return
+        }
 
         let changeInfo = ConversationChangeInfo(object: conversation)
         changeInfo.changedKeys.insert(#keyPath(ZMConversation.allMessages))
@@ -244,7 +254,9 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
 extension ConversationListObserverCenter: TearDownCapable {
     public func tearDown() {
-        if isTornDown { return }
+        if isTornDown {
+            return
+        }
         isTornDown = true
         listSnapshots = [:]
     }
@@ -270,7 +282,9 @@ class ConversationListSnapshot: NSObject {
 
     /// Handles inserted and removed conversations and updates lists
     func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
-        guard let list = conversationList else { return }
+        guard let list = conversationList else {
+            return
+        }
 
         let conversationsToInsert = Set(inserted.filter { list.predicateMatchesConversation($0) })
         let conversationsToRemove = Set(deleted.filter { list.items.contains($0) })
@@ -328,7 +342,9 @@ class ConversationListSnapshot: NSObject {
             "Posting notification for list \(String(describing: conversationList?.identifier)) with conversationChanges: \n"
         message.append(conversationChanges.map(\.customDebugDescription).joined(separator: "\n"))
 
-        guard let changeInfo = listChanges else { return message }
+        guard let changeInfo = listChanges else {
+            return message
+        }
         message.append("\n ConversationListChangeInfo: \(changeInfo.description)")
         return message
     }
@@ -340,7 +356,9 @@ class ConversationListSnapshot: NSObject {
 
     /// Processes conversationChanges and removes or insert conversations and notifies observers
     fileprivate func processConversationChanges(_ changes: ConversationChangeInfo) {
-        guard let list = conversationList else { return }
+        guard let list = conversationList else {
+            return
+        }
 
         let conversation = changes.conversation
         if list.items.contains(conversation) {
@@ -389,7 +407,9 @@ class ConversationListSnapshot: NSObject {
         conversationChanges: [ConversationChangeInfo],
         listChanges: ConversationListChangeInfo?
     ) {
-        guard listChanges != nil || !conversationChanges.isEmpty else { return }
+        guard listChanges != nil || !conversationChanges.isEmpty else {
+            return
+        }
 
         var userInfo = [String: Any]()
         if !conversationChanges.isEmpty {

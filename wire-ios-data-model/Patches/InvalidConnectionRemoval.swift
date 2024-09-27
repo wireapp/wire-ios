@@ -20,7 +20,9 @@ import Foundation
 
 enum InvalidConnectionRemoval {
     static func removeInvalid(in moc: NSManagedObjectContext) {
-        guard let selfConnection = ZMUser.selfUser(in: moc).connection else { return }
+        guard let selfConnection = ZMUser.selfUser(in: moc).connection else {
+            return
+        }
         moc.delete(selfConnection)
     }
 }

@@ -33,7 +33,9 @@ struct ShouldPresentNotificationPermissionHintUseCase<
     func invoke() async -> Bool {
         // show hint only if `authorizationStatus` is `.denied`
         let notificationSettings = await userNotificationCenter.notificationSettings()
-        guard notificationSettings.authorizationStatus == .denied else { return false }
+        guard notificationSettings.authorizationStatus == .denied else {
+            return false
+        }
 
         let lastPresentationDate = userDefaults.value(for: .lastTimeNotificationPermissionHintWasShown)
         if let lastPresentationDate, lastPresentationDate > currentDateProvider.now.addingTimeInterval(-.oneDay) {

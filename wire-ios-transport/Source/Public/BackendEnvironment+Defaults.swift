@@ -98,7 +98,9 @@ extension BackendEnvironment {
 
 extension UserDefaults {
     fileprivate static func moveValue(forKey key: String, from: UserDefaults, to: UserDefaults) {
-        guard let value = from.value(forKey: key) else { return }
+        guard let value = from.value(forKey: key) else {
+            return
+        }
 
         to.setValue(value, forKey: key)
         from.removeObject(forKey: key)

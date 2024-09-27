@@ -69,7 +69,9 @@ public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment>
     // MARK: Internal
 
     override func objectsToPreprocess(_ object: NSObject) -> ZMClientMessage? {
-        guard let message = object as? ZMClientMessage else { return nil }
+        guard let message = object as? ZMClientMessage else {
+            return nil
+        }
         return message.needsLinkAttachmentsUpdate ? message : nil
     }
 

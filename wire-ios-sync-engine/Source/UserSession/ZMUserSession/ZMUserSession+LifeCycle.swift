@@ -87,7 +87,9 @@ extension ZMUserSession {
         let storedNotifications = storedDidSaveNotifications.storedNotifications
         storedDidSaveNotifications.clear()
 
-        guard !storedNotifications.isEmpty else { return }
+        guard !storedNotifications.isEmpty else {
+            return
+        }
 
         for changes in storedNotifications {
             NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [managedObjectContext])

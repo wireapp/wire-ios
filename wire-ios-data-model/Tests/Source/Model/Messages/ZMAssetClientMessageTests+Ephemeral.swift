@@ -431,7 +431,9 @@ extension ZMAssetClientMessageTests_Ephemeral {
 
         // then
         guard let deleteMessage = conversation.hiddenMessages
-            .first(where: { $0 is ZMClientMessage }) as? ZMClientMessage else { return XCTFail() }
+            .first(where: { $0 is ZMClientMessage }) as? ZMClientMessage else {
+            return XCTFail()
+        }
 
         guard let genericMessage = deleteMessage.underlyingMessage,
               case .deleted? = genericMessage.content else {

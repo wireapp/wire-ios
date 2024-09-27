@@ -50,32 +50,44 @@ public struct WireLogger: LoggerProtocol {
     }
 
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
+        guard shouldLogMessage(message) else {
+            return
+        }
         Self.provider.debug(message, attributes: finalizedAttributes(attributes))
     }
 
     public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
+        guard shouldLogMessage(message) else {
+            return
+        }
         Self.provider.info(message, attributes: finalizedAttributes(attributes))
     }
 
     public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
+        guard shouldLogMessage(message) else {
+            return
+        }
         Self.provider.notice(message, attributes: finalizedAttributes(attributes))
     }
 
     public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
+        guard shouldLogMessage(message) else {
+            return
+        }
         Self.provider.warn(message, attributes: finalizedAttributes(attributes))
     }
 
     public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
+        guard shouldLogMessage(message) else {
+            return
+        }
         Self.provider.error(message, attributes: finalizedAttributes(attributes))
     }
 
     public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
+        guard shouldLogMessage(message) else {
+            return
+        }
         Self.provider.critical(message, attributes: finalizedAttributes(attributes))
     }
 

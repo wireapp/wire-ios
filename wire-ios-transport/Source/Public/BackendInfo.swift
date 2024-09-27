@@ -70,7 +70,9 @@ public enum BackendInfo {
     private static func apiVersion(for key: Key) -> APIVersion? {
         // Fetching an integer will default to 0 if no value exists for the key,
         // so explicitly check there is a value.
-        guard storage.object(forKey: key.rawValue) != nil else { return nil }
+        guard storage.object(forKey: key.rawValue) != nil else {
+            return nil
+        }
         let storedValue = storage.integer(forKey: key.rawValue)
         return APIVersion(rawValue: Int32(storedValue))
     }

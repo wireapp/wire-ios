@@ -23,7 +23,9 @@ extension ZMHotFixDirectory {
     public static func moveOrUpdateSignalingKeysInContext(_ context: NSManagedObjectContext) {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient(), selfClient.apsVerificationKey == nil,
               selfClient.apsDecryptionKey == nil
-        else { return }
+        else {
+            return
+        }
 
         if let keys = APSSignalingKeysStore.keysStoredInKeyChain() {
             selfClient.apsVerificationKey = keys.verificationKey
@@ -55,7 +57,9 @@ extension ZMHotFixDirectory {
 
         let fetchRequest = ZMAssetClientMessage.sortedFetchRequest(with: predicate)
 
-        guard let messages = context.fetchOrAssert(request: fetchRequest) as? [ZMAssetClientMessage] else { return }
+        guard let messages = context.fetchOrAssert(request: fetchRequest) as? [ZMAssetClientMessage] else {
+            return
+        }
 
         for message in messages {
             message.updateTransferState(.uploadingFailed, synchronize: false)
@@ -70,7 +74,9 @@ extension ZMHotFixDirectory {
     public static func insertNewConversationSystemMessage(_ context: NSManagedObjectContext) {
         let fetchRequest = ZMConversation.sortedFetchRequest()
 
-        guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
+        guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else {
+            return
+        }
 
         // Add .newConversation system message in all group conversations if not already present
         conversations.filter { $0.conversationType == .group }.forEach { conversation in
@@ -94,7 +100,9 @@ extension ZMHotFixDirectory {
     public static func markAllNewConversationSystemMessagesAsRead(_ context: NSManagedObjectContext) {
         let fetchRequest = ZMConversation.sortedFetchRequest()
 
-        guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
+        guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else {
+            return
+        }
 
         conversations.filter { $0.conversationType == .group }.forEach { conversation in
 
@@ -125,7 +133,9 @@ extension ZMHotFixDirectory {
     public static func updateSystemMessages(_ context: NSManagedObjectContext) {
         let fetchRequest = ZMConversation.sortedFetchRequest()
 
-        guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
+        guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else {
+            return
+        }
         let filteredConversations = conversations
             .filter { $0.conversationType == .oneOnOne || $0.conversationType == .group }
 
@@ -142,7 +152,9 @@ extension ZMHotFixDirectory {
             in: .userDomainMask,
             appropriateFor: nil,
             create: false
-        ) else { return }
+        ) else {
+            return
+        }
         let PINCacheFolders = [
             "com.pinterest.PINDiskCache.images",
             "com.pinterest.PINDiskCache.largeUserImages",
@@ -271,7 +283,9 @@ extension ZMHotFixDirectory {
     }
 
     public static func migrateBackendEnvironmentToSharedUserDefaults() {
-        guard let sharedUserDefaults = UserDefaults.shared() else { return }
+        guard let sharedUserDefaults = UserDefaults.shared() else {
+            return
+        }
 
         BackendEnvironment.migrate(from: .standard, to: sharedUserDefaults)
     }

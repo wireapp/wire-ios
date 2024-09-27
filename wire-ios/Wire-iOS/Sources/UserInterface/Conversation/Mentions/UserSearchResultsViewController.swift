@@ -57,7 +57,9 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
     private(set) var isKeyboardCollapsed = true {
         didSet {
-            guard oldValue != isKeyboardCollapsed || isKeyboardCollapsedFirstCalled else { return }
+            guard oldValue != isKeyboardCollapsed || isKeyboardCollapsedFirstCalled else {
+                return
+            }
             collectionView.reloadData()
 
             isKeyboardCollapsedFirstCalled = false
@@ -112,7 +114,9 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     @objc
     dynamic func keyboardWillChangeFrame(_ notification: Notification) {
         guard let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
-        else { return }
+        else {
+            return
+        }
         resizeTable()
         UIView.animate(withDuration: duration) {
             self.view.layoutIfNeeded()
@@ -164,7 +168,9 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
     private func setupKeyboardObserver() {
         keyboardObserver = KeyboardBlockObserver { [weak self] info in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             if let isKeyboardCollapsed = info.isKeyboardCollapsed {
                 self.isKeyboardCollapsed = isKeyboardCollapsed
             }
@@ -249,7 +255,9 @@ extension UserSearchResultsViewController: UserList {
     }
 
     func selectNextUser() {
-        guard let collectionViewSelectedIndex else { return }
+        guard let collectionViewSelectedIndex else {
+            return
+        }
 
         self.collectionViewSelectedIndex = collectionViewSelectedIndex + 1
 
@@ -257,7 +265,9 @@ extension UserSearchResultsViewController: UserList {
     }
 
     func selectPreviousUser() {
-        guard let collectionViewSelectedIndex else { return }
+        guard let collectionViewSelectedIndex else {
+            return
+        }
 
         self.collectionViewSelectedIndex = collectionViewSelectedIndex - 1
 
@@ -267,7 +277,9 @@ extension UserSearchResultsViewController: UserList {
     func updateHighlightedItem() {
         collectionView.reloadData()
 
-        guard let collectionViewSelectedIndex else { return }
+        guard let collectionViewSelectedIndex else {
+            return
+        }
 
         collectionView.scrollToItem(
             at: IndexPath(item: collectionViewSelectedIndex, section: 0),

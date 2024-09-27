@@ -270,7 +270,9 @@ extension WireImageResource {
                 }
             }
 
-            guard let imageData else { return }
+            guard let imageData else {
+                return
+            }
 
             if isAnimatedGIF {
                 image = FLAnimatedImage(animatedGIFData: imageData)

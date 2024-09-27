@@ -151,7 +151,9 @@ extension LocalNotificationType {
     }
 
     private func senderKey(_ sender: ZMUser?, _: ZMConversation?) -> String? {
-        guard let sender else { return NoUserNameKey }
+        guard let sender else {
+            return NoUserNameKey
+        }
 
         if case .failedMessage = self {
             return nil
@@ -213,7 +215,9 @@ extension LocalNotificationType {
 
     public func alertTitleText(team: Team?) -> String? {
         guard case let .availabilityBehaviourChangeAlert(availability) = self,
-              availability.isOne(of: .away, .busy) else { return nil }
+              availability.isOne(of: .away, .busy) else {
+            return nil
+        }
 
         let teamName = team?.name
         let teamKey = teamName != nil ? TeamKey : nil
@@ -224,7 +228,9 @@ extension LocalNotificationType {
 
     public func alertMessageBodyText() -> String {
         guard case let .availabilityBehaviourChangeAlert(availability) = self,
-              availability.isOne(of: .away, .busy) else { return "" }
+              availability.isOne(of: .away, .busy) else {
+            return ""
+        }
 
         let availabilityKey = availability == .away ? "away" : "busy"
         let localizationKey = [baseKey, availabilityKey, "message"].compactMap { $0 }.joined(separator: ".")
@@ -232,7 +238,9 @@ extension LocalNotificationType {
     }
 
     func bundledMessagesBodyText(messageCount: Int) -> String {
-        guard case .bundledMessages = self else { return "" }
+        guard case .bundledMessages = self else {
+            return ""
+        }
         return .localizedStringWithFormat(baseKey.pushFormatString, arguments: [messageCount])
     }
 

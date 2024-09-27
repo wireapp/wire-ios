@@ -39,7 +39,9 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
         file: StaticString = #file,
         line: UInt = #line
     ) {
-        guard let event else { XCTFail("Should have event", file: file, line: line); return }
+        guard let event else {
+            XCTFail("Should have event", file: file, line: line); return
+        }
 
         XCTAssertEqual(
             event.type,
@@ -49,15 +51,19 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
             line: line
         )
 
-        guard let payload = event.payload as? [String: Any] else { XCTFail(
-            "Event should have payload",
-            file: file,
-            line: line
-        ); return }
+        guard let payload = event.payload as? [String: Any] else {
+            XCTFail(
+                "Event should have payload",
+                file: file,
+                line: line
+            ); return
+        }
 
         XCTAssertEqual(payload["team"] as? String, teamIdentifier, "Wrong team identifier", file: file, line: line)
         guard let date = (payload as NSDictionary).optionalDate(forKey: "time")
-        else { XCTFail("Event should have time", file: file, line: line); return }
+        else {
+            XCTFail("Event should have time", file: file, line: line); return
+        }
 
         // workaroud: the date decoded from a string can have a rounded time in the milliseconds and then be "in the future",
         // so we add one second here for the comparison to avoid flakiness.
@@ -73,7 +79,9 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
             return
         }
         guard let receivedData = payload["data"] as? [String: String?]
-        else { XCTFail("Event payload should have data", file: file, line: line); return }
+        else {
+            XCTFail("Event payload should have data", file: file, line: line); return
+        }
 
         for (key, value) in data {
             guard let dataValue = receivedData[key] else {

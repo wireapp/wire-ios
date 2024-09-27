@@ -24,8 +24,12 @@ extension ZMConversation {
         service: ServiceUser,
         team: Team?
     ) -> ZMConversation? {
-        guard let team else { return nil }
-        guard let serviceID = service.serviceIdentifier else { return nil }
+        guard let team else {
+            return nil
+        }
+        guard let serviceID = service.serviceIdentifier else {
+            return nil
+        }
         let sameTeam = predicateForConversations(in: team)
         let groupConversation = NSPredicate(
             format: "%K == %d",

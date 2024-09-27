@@ -67,7 +67,9 @@ final class AccountTests: XCTestCase {
         }
 
         // when
-        guard let account = Account.load(from: url) else { return XCTFail("Unable to load account") }
+        guard let account = Account.load(from: url) else {
+            return XCTFail("Unable to load account")
+        }
 
         // then
         XCTAssertEqual(account.userName, userName)
@@ -105,7 +107,9 @@ final class AccountTests: XCTestCase {
         }
 
         // when
-        guard let account = Account.load(from: url) else { return XCTFail("Unable to load account") }
+        guard let account = Account.load(from: url) else {
+            return XCTFail("Unable to load account")
+        }
 
         // then
         XCTAssertEqual(account.userName, userName)

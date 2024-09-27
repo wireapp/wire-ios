@@ -41,7 +41,9 @@ final class ConversationInputBarButtonState {
     }
 
     var ephemeral: Bool {
-        guard let timeout = destructionTimeout else { return false }
+        guard let timeout = destructionTimeout else {
+            return false
+        }
         return timeout != .none
     }
 

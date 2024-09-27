@@ -22,7 +22,9 @@ extension URL {
     /// return nil if can not obtain the file size from URL
     public var fileSize: UInt64? {
         guard let attributes: [FileAttributeKey: Any] = try? FileManager.default.attributesOfItem(atPath: path)
-        else { return nil }
+        else {
+            return nil
+        }
 
         return attributes[FileAttributeKey.size] as? UInt64
     }

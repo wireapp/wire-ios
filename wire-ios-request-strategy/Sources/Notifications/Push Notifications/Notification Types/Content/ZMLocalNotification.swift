@@ -63,7 +63,9 @@ public class ZMLocalNotification: NSObject {
     // MARK: Lifecycle
 
     public init?(builder: NotificationBuilder, moc: NSManagedObjectContext) {
-        guard builder.shouldCreateNotification() else { return nil }
+        guard builder.shouldCreateNotification() else {
+            return nil
+        }
         self.type = builder.notificationType
         self.title = builder.titleText()
         self.body = builder.bodyText()
@@ -153,7 +155,9 @@ extension ZMLocalNotification {
 
     /// Returns true if it is a ephemeral notification, else false.
     var isEphemeral: Bool {
-        guard case .message(.ephemeral) = type else { return false }
+        guard case .message(.ephemeral) = type else {
+            return false
+        }
         return true
     }
 }

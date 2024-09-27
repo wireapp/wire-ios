@@ -77,7 +77,9 @@ public class ZMAssetClientMessage: ZMOTRMessage {
 
     /// Original file size
     public var size: UInt64 {
-        guard let asset = underlyingMessage?.assetData else { return 0 }
+        guard let asset = underlyingMessage?.assetData else {
+            return 0
+        }
         let originalSize = asset.original.size
         let previewSize = asset.preview.size
 
@@ -382,12 +384,16 @@ struct CacheAsset: AssetType {
     }
 
     var hasPreprocessed: Bool {
-        guard needsPreprocessing else { return false }
+        guard needsPreprocessing else {
+            return false
+        }
         return cache.hasMediumImageData(for: owner)
     }
 
     var preprocessed: Data? {
-        guard needsPreprocessing else { return nil }
+        guard needsPreprocessing else {
+            return nil
+        }
         return cache.mediumImageData(for: owner)
     }
 

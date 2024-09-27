@@ -121,7 +121,9 @@ class LinkAttachmentDetectorTests: XCTestCase {
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
 
-        guard let attachment = result.first else { return XCTFail("Wrong preview type") }
+        guard let attachment = result.first else {
+            return XCTFail("Wrong preview type")
+        }
         XCTAssertEqual(attachment.type, .youTubeVideo)
         XCTAssertEqual(attachment.thumbnails.first?.absoluteString, openGraphData.imageUrls.first)
         XCTAssertEqual(attachment.permalink.absoluteString, openGraphData.url)
@@ -145,7 +147,9 @@ class LinkAttachmentDetectorTests: XCTestCase {
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
 
-        guard let attachment = result.first else { return XCTFail("Wrong preview type") }
+        guard let attachment = result.first else {
+            return XCTFail("Wrong preview type")
+        }
         XCTAssertEqual(attachment.type, .youTubeVideo)
         XCTAssertEqual(attachment.thumbnails.first?.absoluteString, openGraphData.imageUrls.first)
         XCTAssertEqual(attachment.permalink.absoluteString, openGraphData.url)

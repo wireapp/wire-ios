@@ -40,7 +40,9 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     var searchUsersCache: SearchUsersCache?
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        guard case let .connectBot(serviceUserData) = urlAction else { return }
+        guard case let .connectBot(serviceUserData) = urlAction else {
+            return
+        }
 
         let serviceUser = ZMSearchUser(
             contextProvider: contextProvider,

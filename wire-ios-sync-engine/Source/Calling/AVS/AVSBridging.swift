@@ -90,7 +90,9 @@ extension UUID: AVSValue {
 
     /// Creates the UUID from a C string pointer, if it is valid.
     init?(cString: UnsafePointer<Int8>?) {
-        guard let aString = String(cString: cString) else { return nil }
+        guard let aString = String(cString: cString) else {
+            return nil
+        }
         self.init(uuidString: aString)
     }
 }
@@ -117,7 +119,9 @@ extension String: AVSValue {
 extension AVSWrapper {
     @discardableResult
     static func withCallCenter(_ contextRef: UnsafeMutableRawPointer?, _ block: (WireCallCenterV3) -> Void) -> Int32 {
-        guard let contextRef else { return EINVAL }
+        guard let contextRef else {
+            return EINVAL
+        }
         let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
         block(callCenter)
         return 0
@@ -129,7 +133,9 @@ extension AVSWrapper {
         _ v1: A1.AVSType?,
         _ block: (WireCallCenterV3, A1) -> Void
     ) -> Int32 {
-        guard let contextRef, let value1 = v1.flatMap(A1.init) else { return EINVAL }
+        guard let contextRef, let value1 = v1.flatMap(A1.init) else {
+            return EINVAL
+        }
         let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
         block(callCenter, value1)
         return 0
@@ -142,7 +148,9 @@ extension AVSWrapper {
         _ v2: A2.AVSType?,
         _ block: (WireCallCenterV3, A1, A2) -> Void
     ) -> Int32 {
-        guard let contextRef, let value1 = v1.flatMap(A1.init), let value2 = v2.flatMap(A2.init) else { return EINVAL }
+        guard let contextRef, let value1 = v1.flatMap(A1.init), let value2 = v2.flatMap(A2.init) else {
+            return EINVAL
+        }
         let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
         block(callCenter, value1, value2)
         return 0
@@ -157,7 +165,9 @@ extension AVSWrapper {
         _ block: (WireCallCenterV3, A1, A2, A3) -> Void
     ) -> Int32 {
         guard let contextRef, let value1 = v1.flatMap(A1.init), let value2 = v2.flatMap(A2.init),
-              let value3 = v3.flatMap(A3.init) else { return EINVAL }
+              let value3 = v3.flatMap(A3.init) else {
+            return EINVAL
+        }
         let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
         block(callCenter, value1, value2, value3)
         return 0
@@ -173,7 +183,9 @@ extension AVSWrapper {
         _ block: (WireCallCenterV3, A1, A2, A3, A4) -> Void
     ) -> Int32 {
         guard let contextRef, let value1 = v1.flatMap(A1.init), let value2 = v2.flatMap(A2.init),
-              let value3 = v3.flatMap(A3.init), let value4 = v4.flatMap(A4.init) else { return EINVAL }
+              let value3 = v3.flatMap(A3.init), let value4 = v4.flatMap(A4.init) else {
+            return EINVAL
+        }
         let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
         block(callCenter, value1, value2, value3, value4)
         return 0
@@ -191,7 +203,9 @@ extension AVSWrapper {
     ) -> Int32 {
         guard let contextRef, let value1 = v1.flatMap(A1.init), let value2 = v2.flatMap(A2.init),
               let value3 = v3.flatMap(A3.init), let value4 = v4.flatMap(A4.init),
-              let value5 = v5.flatMap(A5.init) else { return EINVAL }
+              let value5 = v5.flatMap(A5.init) else {
+            return EINVAL
+        }
         let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
         block(callCenter, value1, value2, value3, value4, value5)
         return 0
@@ -210,7 +224,9 @@ extension AVSWrapper {
     ) -> Int32 {
         guard let contextRef, let value1 = v1.flatMap(A1.init), let value2 = v2.flatMap(A2.init),
               let value3 = v3.flatMap(A3.init), let value4 = v4.flatMap(A4.init), let value5 = v5.flatMap(A5.init),
-              let value6 = v6.flatMap(A6.init) else { return EINVAL }
+              let value6 = v6.flatMap(A6.init) else {
+            return EINVAL
+        }
         let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
         block(callCenter, value1, value2, value3, value4, value5, value6)
         return 0
@@ -239,7 +255,9 @@ extension AVSWrapper {
         Logger(subsystem: "VoIP Push", category: "AVSWrapper").trace("with call center")
         guard let contextRef, let value1 = v1.flatMap(A1.init), let value2 = v2.flatMap(A2.init),
               let value3 = v3.flatMap(A3.init), let value4 = v4.flatMap(A4.init), let value5 = v5.flatMap(A5.init),
-              let value6 = v6.flatMap(A6.init), let value7 = v7.flatMap(A7.init) else { return EINVAL }
+              let value6 = v6.flatMap(A6.init), let value7 = v7.flatMap(A7.init) else {
+            return EINVAL
+        }
         let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
         block(callCenter, value1, value2, value3, value4, value5, value6, value7)
         return 0

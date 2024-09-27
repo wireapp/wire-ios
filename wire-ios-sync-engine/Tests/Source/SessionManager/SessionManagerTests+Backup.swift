@@ -94,7 +94,9 @@ final class SessionManagerBackupTests: IntegrationTest {
             accountId: ZMUser.selfUser(in: moc).remoteIdentifier!
         )
 
-        guard decryptedURL.unzip(to: unzippedURL) else { return XCTFail("Decompression failed") }
+        guard decryptedURL.unzip(to: unzippedURL) else {
+            return XCTFail("Decompression failed")
+        }
 
         // Then
         let formatter = DateFormatter()
@@ -125,7 +127,9 @@ final class SessionManagerBackupTests: IntegrationTest {
         // Given
         XCTAssert(login())
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
 
         let backupResult = backupActiveAcount(password: name)
         let url = try backupResult.get()
@@ -276,8 +280,12 @@ final class SessionManagerBackupTests: IntegrationTest {
 
         // Then
         wait(forConditionToBeTrue: {
-            guard let moc = self.sessionManager?.activeUserSession?.managedObjectContext else { return false }
-            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return false }
+            guard let moc = self.sessionManager?.activeUserSession?.managedObjectContext else {
+                return false
+            }
+            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else {
+                return false
+            }
             let message = ZMMessage.fetch(withNonce: nonce, for: conversation, in: moc)
             return message?.textMessageData?.messageText == nil && message?.sender == nil
         }(), timeout: 5)

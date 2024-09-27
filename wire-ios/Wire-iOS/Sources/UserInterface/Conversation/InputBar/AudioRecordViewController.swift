@@ -190,7 +190,9 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
             visibleViews.append(recordingDotView)
         }
 
-        if traitCollection.userInterfaceIdiom == .pad { visibleViews.append(rightSeparator) }
+        if traitCollection.userInterfaceIdiom == .pad {
+            visibleViews.append(rightSeparator)
+        }
 
         return visibleViews
     }
@@ -228,7 +230,9 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     func sendAudio() {
         recorder.stopPlaying()
-        guard let url = recorder.fileURL else { return zmLog.warn("Nil url passed to send as audio file") }
+        guard let url = recorder.fileURL else {
+            return zmLog.warn("Nil url passed to send as audio file")
+        }
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
@@ -431,12 +435,16 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     private func configureAudioRecorder() {
         recorder.recordTimerCallback = { [weak self] time in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             updateTimeLabel(time)
         }
 
         recorder.recordEndedCallback = { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             recordingState = .finishedRecording
 
@@ -447,12 +455,16 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         }
 
         recorder.playingStateCallback = { [weak self] state in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             buttonOverlay.playingState = state
         }
 
         recorder.recordLevelCallBack = { [weak self] level in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             audioPreviewView.updateWithLevel(level)
         }
     }

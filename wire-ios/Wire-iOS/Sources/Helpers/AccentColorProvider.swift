@@ -33,7 +33,9 @@ extension UnregisteredUser {
     /// The accent color value of the unregistered user.
     var accentColor: AccentColor? {
         get {
-            guard let accentColorValue else { return nil }
+            guard let accentColorValue else {
+                return nil
+            }
             return .init(rawValue: accentColorValue)
         }
         set {

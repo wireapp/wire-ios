@@ -137,7 +137,9 @@ extension ChaCha20Poly1305 {
                 keyBytes                    // the key used to encrypt the original message
             )
 
-            guard result == 0 else { throw EncryptionError.failedToDecrypt }
+            guard result == 0 else {
+                throw EncryptionError.failedToDecrypt
+            }
 
             return Data(messageBytes)
         }
@@ -163,17 +165,23 @@ extension ChaCha20Poly1305 {
         // MARK: - Private Helpers
 
         private static func initializeSodium() throws {
-            guard sodium_init() >= 0 else { throw EncryptionError.failedToInitializeSodium }
+            guard sodium_init() >= 0 else {
+                throw EncryptionError.failedToInitializeSodium
+            }
         }
 
         // MARK: - Verification
 
         private static func verifyKey(bytes: [Byte]) throws {
-            guard bytes.count == keyLength else { throw EncryptionError.malformedKey }
+            guard bytes.count == keyLength else {
+                throw EncryptionError.malformedKey
+            }
         }
 
         private static func verifyNonce(bytes: [Byte]) throws {
-            guard bytes.count == nonceLength else { throw EncryptionError.malformedNonce }
+            guard bytes.count == nonceLength else {
+                throw EncryptionError.malformedNonce
+            }
         }
 
         private static func verifyCiphertext(length: UInt64, messageLength: UInt64) throws {

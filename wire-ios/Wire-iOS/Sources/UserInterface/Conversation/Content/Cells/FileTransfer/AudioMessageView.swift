@@ -229,7 +229,9 @@ final class AudioMessageView: UIView, TransferView {
 
     private func configureVisibleViews(forFileMessageData fileMessageData: ZMFileMessageData, isInitial: Bool) {
         guard let fileMessage,
-              let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
+              let state = FileMessageViewState.fromConversationMessage(fileMessage) else {
+            return
+        }
 
         var visibleViews = [playButton, timeLabel]
 
@@ -295,7 +297,9 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     private func updateActivePlayButton() {
-        guard let audioTrackPlayer else { return }
+        guard let audioTrackPlayer else {
+            return
+        }
 
         playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
 
@@ -317,7 +321,9 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     private func updateActivePlayerProgressAnimated(_ animated: Bool) {
-        guard let audioTrackPlayer else { return }
+        guard let audioTrackPlayer else {
+            return
+        }
 
         let progress: Float
         var animated = animated
@@ -376,7 +382,9 @@ final class AudioMessageView: UIView, TransferView {
         guard let destructionDate = fileMessage?.destructionDate,
               endDate > destructionDate,
               let assetMsg = fileMessage as? ZMAssetClientMessage
-        else { return }
+        else {
+            return
+        }
 
         assetMsg.extendDestructionTimer(to: endDate)
     }
@@ -412,11 +420,15 @@ final class AudioMessageView: UIView, TransferView {
 
         switch fileMessageData.transferState {
         case .uploading:
-            guard fileMessageData.hasLocalFileData else { return }
+            guard fileMessageData.hasLocalFileData else {
+                return
+            }
             delegate?.transferView(self, didSelect: .cancel)
 
         case .uploadingCancelled, .uploadingFailed:
-            guard fileMessageData.hasLocalFileData else { return }
+            guard fileMessageData.hasLocalFileData else {
+                return
+            }
             delegate?.transferView(self, didSelect: .resend)
 
         case .uploaded:
@@ -465,7 +477,9 @@ final class AudioMessageView: UIView, TransferView {
     // MARK: - Proximity Listener
 
     private func updateProximityObserverState() {
-        guard let audioTrackPlayer, isOwnTrackPlayingInAudioPlayer() else { return }
+        guard let audioTrackPlayer, isOwnTrackPlayingInAudioPlayer() else {
+            return
+        }
 
         if audioTrackPlayer.isPlaying {
             proximityMonitorManager?.startListening()
@@ -499,8 +513,12 @@ extension AudioMessageView: WireCallCenterCallStateObserver {
         timestamp: Date?,
         previousCallState: CallState?
     ) {
-        guard let player = audioTrackPlayer else { return }
-        guard isOwnTrackPlayingInAudioPlayer() else { return }
+        guard let player = audioTrackPlayer else {
+            return
+        }
+        guard isOwnTrackPlayingInAudioPlayer() else {
+            return
+        }
 
         // Pause the audio player when call is incoming to prevent the audio player is reset.
         // Resume playing when the call is terminating (and the audio is paused by this method)

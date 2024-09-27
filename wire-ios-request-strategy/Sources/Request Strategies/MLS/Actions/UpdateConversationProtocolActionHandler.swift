@@ -81,8 +81,12 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
 
 extension UpdateConversationProtocolAction.Failure.APIFailure {
     fileprivate init?(_ statusCode: Int, _ label: String?) {
-        guard let label else { return nil }
+        guard let label else {
+            return nil
+        }
         self.init(rawValue: label)
-        guard self.statusCode == statusCode else { return nil }
+        guard self.statusCode == statusCode else {
+            return nil
+        }
     }
 }

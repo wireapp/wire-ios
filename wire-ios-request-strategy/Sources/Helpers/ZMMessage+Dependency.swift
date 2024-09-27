@@ -30,7 +30,9 @@ extension ZMOTRMessage: OTREntity {
 
     /// Which object this message depends on when sending
     @objc override public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
-        guard let conversation else { return nil }
+        guard let conversation else {
+            return nil
+        }
 
         let dependent = dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
         return dependent ?? super.dependentObjectNeedingUpdateBeforeProcessing
@@ -70,7 +72,9 @@ extension ZMMessage {
     /// Which object this message depends on when sending
     @objc public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         // conversation not created yet on the BE?
-        guard let conversation else { return nil }
+        guard let conversation else {
+            return nil
+        }
 
         if conversation.remoteIdentifier == nil {
             zmLog.debug("conversation has no remote identifier")

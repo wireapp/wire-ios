@@ -30,7 +30,9 @@ extension URL {
             return true
         } else {
             log.debug("Did not open \"\(self)\" in a twitter application or third party browser.")
-            guard UIApplication.shared.canOpenURL(self) else { return false }
+            guard UIApplication.shared.canOpenURL(self) else {
+                return false
+            }
             UIApplication.shared.open(self)
             return true
         }

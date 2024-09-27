@@ -73,7 +73,9 @@ extension FileManager {
         let enumerator = enumerator(at: source, includingPropertiesForKeys: [.nameKey, .isDirectoryKey])!
         try enumerator.forEach { item in
             let sourceItem = item as! URL
-            guard self.fileExists(atPath: sourceItem.path, isDirectory: &isDirectory) else { return }
+            guard self.fileExists(atPath: sourceItem.path, isDirectory: &isDirectory) else {
+                return
+            }
             let destinationItem = destination.appendingPathComponent(sourceItem.lastPathComponent)
 
             if isDirectory.boolValue {

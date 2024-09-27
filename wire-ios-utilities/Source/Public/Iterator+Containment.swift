@@ -18,12 +18,16 @@
 
 extension IteratorProtocol {
     public mutating func any(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
-        guard let current = next() else { return false }
+        guard let current = next() else {
+            return false
+        }
         return try predicate(current) || any(predicate)
     }
 
     public mutating func all(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
-        guard let current = next() else { return true }
+        guard let current = next() else {
+            return true
+        }
         return try predicate(current) && all(predicate)
     }
 }

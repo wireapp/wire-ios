@@ -102,7 +102,9 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
         // then
         XCTAssertEqual(observer.notifications.count, changeCount, "Should not have changed further once")
 
-        guard let changes = observer.notifications.first else { return }
+        guard let changes = observer.notifications.first else {
+            return
+        }
         changes.checkForExpectedChangeFields(
             userInfoKeys: userInfoKeys,
             expectedChangedFields: expectedChangedFields,

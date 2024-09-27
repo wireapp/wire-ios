@@ -53,7 +53,9 @@ extension MessageProtocol {
     }
 
     init?(int16Value: Int16) {
-        guard Self.allCases.indices.contains(.init(int16Value)) else { return nil }
+        guard Self.allCases.indices.contains(.init(int16Value)) else {
+            return nil
+        }
         self = Self.allCases[.init(int16Value)]
     }
 }

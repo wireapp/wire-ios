@@ -22,7 +22,9 @@ import MobileCoreServices
 extension NSExtensionContext {
     /// Get all the attachments to this post.
     var attachments: [NSItemProvider] {
-        guard let items = inputItems as? [NSExtensionItem] else { return [] }
+        guard let items = inputItems as? [NSExtensionItem] else {
+            return []
+        }
         return items.flatMap { $0.attachments ?? [] }
     }
 }

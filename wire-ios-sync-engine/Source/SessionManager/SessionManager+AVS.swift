@@ -36,7 +36,9 @@ extension SessionManager {
             object: nil,
             queue: nil
         ) { [weak logger] note in
-            guard let message = note.userInfo?["message"] as? String else { return }
+            guard let message = note.userInfo?["message"] as? String else {
+                return
+            }
             logger?.log(message: message)
         })
     }

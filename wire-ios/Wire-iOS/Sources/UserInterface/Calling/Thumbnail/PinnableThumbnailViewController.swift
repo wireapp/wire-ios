@@ -183,7 +183,9 @@ final class PinnableThumbnailViewController: UIViewController {
     }
 
     private func updateThumbnailFrame(animated: Bool, parentSize: CGSize) {
-        guard thumbnailContentSize != .zero else { return }
+        guard thumbnailContentSize != .zero else {
+            return
+        }
         let size = thumbnailContentSize.withOrientation(UIDevice.current.orientation)
         let position = thumbnailPosition(for: size, parentSize: parentSize)
 

@@ -53,7 +53,9 @@ final class CallDegradationController: UIViewController {
 
     var state: CallDegradationState = .none {
         didSet {
-            guard oldValue != state else { return }
+            guard oldValue != state else {
+                return
+            }
 
             updateState()
         }
@@ -112,7 +114,9 @@ final class CallDegradationController: UIViewController {
             viewIsReady,
             let alertViewController = visibleAlertController,
             !alertViewController.isBeingPresented
-        else { return }
+        else {
+            return
+        }
 
         Log.calling.debug("Presenting alert about degraded call")
         targetViewController?.present(alertViewController, animated: !ProcessInfo.processInfo.isRunningTests)

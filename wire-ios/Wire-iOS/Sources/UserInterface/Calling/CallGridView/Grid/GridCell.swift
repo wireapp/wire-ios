@@ -53,7 +53,9 @@ class GridCell: UICollectionViewCell {
     }
 
     func add(streamView: OrientableView) {
-        guard !contentView.subviews.contains(streamView) else { return }
+        guard !contentView.subviews.contains(streamView) else {
+            return
+        }
         contentView.subviews.forEach { $0.removeFromSuperview() }
         contentView.addSubview(streamView)
         streamView.layoutForOrientation()

@@ -24,11 +24,15 @@ struct CoreImageBasedImageTransformer: ImageTransformer {
     func adjustInputSaturation(value: CGFloat, image: UIImage) -> UIImage? {
         let filter = CIFilter(name: "CIColorControls")
         let inputImage = image.ciImage ?? image.cgImage.map { .init(cgImage: $0) }
-        guard let filter, let inputImage else { return nil }
+        guard let filter, let inputImage else {
+            return nil
+        }
 
         filter.setValue(inputImage, forKey: kCIInputImageKey)
         filter.setValue(value, forKey: kCIInputSaturationKey)
-        guard let outputImage = filter.outputImage else { return nil }
+        guard let outputImage = filter.outputImage else {
+            return nil
+        }
 
         return .init(ciImage: outputImage, scale: image.scale, orientation: image.imageOrientation)
     }

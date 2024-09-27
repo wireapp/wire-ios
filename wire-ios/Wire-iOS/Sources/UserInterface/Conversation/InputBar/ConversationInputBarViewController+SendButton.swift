@@ -32,10 +32,14 @@ extension ConversationInputBarViewController {
         let (text, mentions) = inputBar.textView.preparedText
         let quote = quotedMessage
 
-        guard !showAlertIfTextIsTooLong(text: text) else { return }
+        guard !showAlertIfTextIsTooLong(text: text) else {
+            return
+        }
 
         if inputBar.isEditing, let message = editingMessage {
-            guard message.textMessageData?.messageText != text else { return }
+            guard message.textMessageData?.messageText != text else {
+                return
+            }
 
             delegate?.conversationInputBarViewControllerDidFinishEditing(message, withText: text, mentions: mentions)
             editingMessage = nil
@@ -55,7 +59,9 @@ extension ConversationInputBarViewController {
     func showAlertIfTextIsTooLong(text: String) -> Bool {
         let maximumMessageLength = 8000
 
-        guard text.count > maximumMessageLength else { return false }
+        guard text.count > maximumMessageLength else {
+            return false
+        }
 
         let alert = UIAlertController(
             title: L10n.Localizable.Conversation.InputBar.MessageTooLong.title,

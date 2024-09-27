@@ -32,7 +32,9 @@ public class PersonName: NSObject {
     // MARK: Public
 
     public lazy var initials: String = {
-        guard let firstComponent = self.components.first else { return "" }
+        guard let firstComponent = self.components.first else {
+            return ""
+        }
 
         var _initials = String()
         switch self.nameOrder {
@@ -42,7 +44,9 @@ public class PersonName: NSObject {
 
         case .arabicGivenName, .givenNameFirst:
             _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
-            guard self.components.count > 1, let lastComponent = self.components.last else { break }
+            guard self.components.count > 1, let lastComponent = self.components.last else {
+                break
+            }
             _initials += (lastComponent.zmFirstComposedCharacter() ?? "")
         }
         return _initials
@@ -66,7 +70,9 @@ public class PersonName: NSObject {
     }
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? PersonName else { return false }
+        guard let other = object as? PersonName else {
+            return false
+        }
         return components == other.components
     }
 
@@ -84,7 +90,9 @@ public class PersonName: NSObject {
     let rawFullName: String
     let nameOrder: NameOrder
     lazy var secondNameComponents: [String] = {
-        guard self.components.count < 2  else { return [] }
+        guard self.components.count < 2  else {
+            return []
+        }
 
         var startIndex = 0
         var lastIndex = 0
@@ -100,15 +108,21 @@ public class PersonName: NSObject {
         case .arabicGivenName:
             startIndex = 1
             lastIndex = self.components.count - 1
-            guard self.components.count > 1, self.components[1].zmIsGodName() else { break }
-            guard self.components.count > 2 else { return [] }
+            guard self.components.count > 1, self.components[1].zmIsGodName() else {
+                break
+            }
+            guard self.components.count > 2 else {
+                return []
+            }
             startIndex += 1
         }
         return Array(self.components[startIndex ... lastIndex])
     }()
 
     lazy var givenName: String = {
-        guard let firstComponent = self.components.first else { return self.fullName }
+        guard let firstComponent = self.components.first else {
+            return self.fullName
+        }
 
         var name = String()
         switch self.nameOrder {
@@ -118,9 +132,13 @@ public class PersonName: NSObject {
             name += firstComponent
         case .arabicGivenName:
             name += firstComponent
-            guard self.components.count > 1 else { break }
+            guard self.components.count > 1 else {
+                break
+            }
             let comp = self.components[1]
-            guard comp.zmIsGodName() else { break }
+            guard comp.zmIsGodName() else {
+                break
+            }
             name = [name, comp].joined(separator: " ")
         }
         return name
@@ -164,7 +182,9 @@ public class PersonName: NSObject {
             options: options,
             orthography: nil
         ) { tag, substringRange, _, _ in
-            guard tag == NSLinguisticTag.word.rawValue else { return }
+            guard tag == NSLinguisticTag.word.rawValue else {
+                return
+            }
             let substring = fullName[substringRange]
             if let aComponent = component {
                 if let lastRangeBound = lastRange?.upperBound, lastRangeBound == substringRange.lowerBound {
@@ -188,7 +208,9 @@ public class PersonName: NSObject {
     }
 
     func stringStarts(withUppercaseString string: String) -> Bool {
-        guard let scalar = string.unicodeScalars.first else { return false }
+        guard let scalar = string.unicodeScalars.first else {
+            return false
+        }
 
         let uppercaseCharacterSet = NSCharacterSet.uppercaseLetters
         return uppercaseCharacterSet.contains(scalar)

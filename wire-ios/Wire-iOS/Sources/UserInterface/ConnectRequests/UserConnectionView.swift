@@ -66,7 +66,9 @@ final class UserConnectionView: UIView, Copyable {
     private let guestWarningView = GuestAccountWarningView()
 
     private var handleLabelText: NSAttributedString? {
-        guard let handle = user.handleDisplayString(withDomain: user.isFederated), !handle.isEmpty else { return nil }
+        guard let handle = user.handleDisplayString(withDomain: user.isFederated), !handle.isEmpty else {
+            return nil
+        }
 
         return handle && [
             .foregroundColor: SemanticColors.Label.textDefault,
@@ -115,7 +117,9 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private func updateSecondLabel() {
-        guard handleLabelText != nil else { return }
+        guard handleLabelText != nil else {
+            return
+        }
         secondLabel.attributedText = correlationLabelText ?? NSAttributedString(string: "")
         secondLabel.accessibilityIdentifier = "correlation"
     }

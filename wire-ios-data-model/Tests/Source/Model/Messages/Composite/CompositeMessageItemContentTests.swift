@@ -23,7 +23,9 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
     func testThatButtonTouchActionInsertsMessageInConversationIfNoneIsSelected() {
         // GIVEN
         let message = compositeMessage(with: compositeProto(items: compositeItemButton(), compositeItemText()))
-        guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
+        guard case let .some(.button(button)) = message.items.first else {
+            return XCTFail()
+        }
         let conversation = conversation(withMessage: message)
 
         // WHEN
@@ -32,14 +34,18 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
 
         // THEN
         let hiddenMessage = conversation.hiddenMessages.first as? ZMClientMessage
-        guard case .some(.buttonAction) = hiddenMessage?.underlyingMessage?.content else { return XCTFail() }
+        guard case .some(.buttonAction) = hiddenMessage?.underlyingMessage?.content else {
+            return XCTFail()
+        }
     }
 
     func testThatButtonTouchActionDoesNotInsertMessageInConversationIfAButtonIsSelected() {
         // GIVEN
         let buttonItem = compositeItemButton()
         let message = compositeMessage(with: compositeProto(items: buttonItem))
-        guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
+        guard case let .some(.button(button)) = message.items.first else {
+            return XCTFail()
+        }
         let conversation = conversation(withMessage: message)
 
         uiMOC.performAndWait {
@@ -56,7 +62,9 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
 
             // THEN
             let lastmessage = conversation.hiddenMessages.first as? ZMClientMessage
-            if case .some(.buttonAction) = lastmessage?.underlyingMessage?.content { XCTFail() }
+            if case .some(.buttonAction) = lastmessage?.underlyingMessage?.content {
+                XCTFail()
+            }
         }
     }
 
@@ -65,7 +73,9 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         let id = "123"
         let buttonItem = compositeItemButton(buttonID: id)
         let message = compositeMessage(with: compositeProto(items: buttonItem))
-        guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
+        guard case let .some(.button(button)) = message.items.first else {
+            return XCTFail()
+        }
         _ = conversation(withMessage: message)
 
         // WHEN
@@ -83,7 +93,9 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         let id = "123"
         let buttonItem = compositeItemButton(buttonID: id)
         let message = compositeMessage(with: compositeProto(items: buttonItem))
-        guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
+        guard case let .some(.button(button)) = message.items.first else {
+            return XCTFail()
+        }
         let conversation = conversation(withMessage: message, addSender: false)
 
         // WHEN
@@ -95,6 +107,8 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         XCTAssertEqual(buttonState?.isExpired, true)
         XCTAssertEqual(buttonState?.state, WireDataModel.ButtonState.State.unselected)
         let lastmessage = conversation.hiddenMessages.first as? ZMClientMessage
-        if case .some(.buttonAction) = lastmessage?.underlyingMessage?.content { XCTFail() }
+        if case .some(.buttonAction) = lastmessage?.underlyingMessage?.content {
+            XCTFail()
+        }
     }
 }

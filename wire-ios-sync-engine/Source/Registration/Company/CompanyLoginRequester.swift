@@ -143,7 +143,9 @@ public class CompanyLoginRequester {
     /// - parameter completion: The completion closure called with the validation result.
 
     public func validate(host: String, token: UUID, completion: @escaping (ValidationError?) -> Void) {
-        guard let url = urlComponents(host: host, token: token).url else { fatalError("Invalid company login url.") }
+        guard let url = urlComponents(host: host, token: token).url else {
+            fatalError("Invalid company login url.")
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "HEAD"
 

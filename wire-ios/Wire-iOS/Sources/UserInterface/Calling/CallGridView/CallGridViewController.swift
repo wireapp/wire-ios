@@ -83,7 +83,9 @@ final class CallGridViewController: UIViewController {
 
     var configuration: CallGridViewControllerInput {
         didSet {
-            guard !configuration.isEqual(to: oldValue) else { return }
+            guard !configuration.isEqual(to: oldValue) else {
+                return
+            }
             dismissMaximizedViewIfNeeded(oldPresentationMode: oldValue.presentationMode)
             updateState()
             if configuration.isGroupCall, configuration.isConnected, !oldValue.isConnected {
@@ -99,7 +101,9 @@ final class CallGridViewController: UIViewController {
     /// Update view visibility when this view controller is covered or not
     var isCovered = false {
         didSet {
-            guard isCovered != oldValue else { return }
+            guard isCovered != oldValue else {
+                return
+            }
             notifyVisibilityChanged()
             displayNetworkConditionViewIfNeeded(for: networkQuality)
             animateNetworkConditionView()
@@ -147,7 +151,9 @@ final class CallGridViewController: UIViewController {
             guard
                 let stream = configuration.streams.first,
                 stream.isSharingVideo
-            else { return }
+            else {
+                return
+            }
 
             if stream.isScreenSharing {
                 hintView.show(hint: .zoom)
@@ -173,13 +179,17 @@ final class CallGridViewController: UIViewController {
 
         guard dataSource.indices.contains(startIndex),
               endIndex > startIndex
-        else { return }
+        else {
+            return
+        }
 
         let clients = dataSource[startIndex ..< endIndex]
             .filter(\.isSharingVideo)
             .map(\.streamId)
 
-        guard Set(clients) != Set(visibleClientsSharingVideo) else { return }
+        guard Set(clients) != Set(visibleClientsSharingVideo) else {
+            return
+        }
 
         delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clients))
         visibleClientsSharingVideo = clients
@@ -189,7 +199,9 @@ final class CallGridViewController: UIViewController {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else { return }
+        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else {
+            return
+        }
         thumbnailViewController.updateThumbnailContentSize(.previewSize(for: traitCollection), animated: false)
         updateGridViewAxis()
     }
@@ -306,8 +318,12 @@ final class CallGridViewController: UIViewController {
     // MARK: - View maximization
 
     private func toggleMaximized(view: BaseCallParticipantView?) {
-        guard let view else { return }
-        guard allowMaximizationToggling(for: view.stream) else { return }
+        guard let view else {
+            return
+        }
+        guard allowMaximizationToggling(for: view.stream) else {
+            return
+        }
 
         let shouldMaximize = !isMaximized(stream: view.stream)
 
@@ -328,13 +344,17 @@ final class CallGridViewController: UIViewController {
         guard
             let streamId = stream?.streamId,
             let maximizedStreamId = maximizedView?.stream.streamId
-        else { return false }
+        else {
+            return false
+        }
 
         return streamId == maximizedStreamId
     }
 
     private func dismissMaximizedViewIfNeeded(oldPresentationMode: VideoGridPresentationMode) {
-        guard oldPresentationMode != configuration.presentationMode else { return }
+        guard oldPresentationMode != configuration.presentationMode else {
+            return
+        }
         maximizedView?.isMaximized = false
         maximizedView = nil
     }
@@ -391,7 +411,9 @@ final class CallGridViewController: UIViewController {
     }
 
     private func updateSelfCallParticipantView() {
-        guard let selfStreamId = ZMUser.selfUser()?.selfStreamId else { return }
+        guard let selfStreamId = ZMUser.selfUser()?.selfStreamId else {
+            return
+        }
 
         // No stream to show. Update the capture state.
         guard let selfStream = stream(with: selfStreamId) else {
@@ -468,7 +490,9 @@ final class CallGridViewController: UIViewController {
         let currentStreamsIds = configuration.allStreamIds
 
         for deletedStreamId in existingStreamsIds.subtracting(currentStreamsIds) {
-            guard deletedStreamId != ZMUser.selfUser()?.selfStreamId else { return }
+            guard deletedStreamId != ZMUser.selfUser()?.selfStreamId else {
+                return
+            }
             viewCache[deletedStreamId]?.removeFromSuperview()
             viewCache.removeValue(forKey: deletedStreamId)
         }
@@ -476,7 +500,9 @@ final class CallGridViewController: UIViewController {
 
     private func updateGridViewAxis() {
         let newAxis = gridAxis(for: traitCollection)
-        guard newAxis != gridView.layoutDirection else { return }
+        guard newAxis != gridView.layoutDirection else {
+            return
+        }
         gridView.layoutDirection = newAxis
     }
 

@@ -120,7 +120,9 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             return
         }
 
-        guard let changes = observer.notifications.first else { return }
+        guard let changes = observer.notifications.first else {
+            return
+        }
         changes.checkForExpectedChangeFields(
             userInfoKeys: conversationInfoKeys,
             expectedChangedFields: expectedChangedFields,
@@ -610,7 +612,9 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         let changeCount = observer.notifications.count
         XCTAssertEqual(changeCount, 1, "Observer expected 1 notification, but received \(changeCount).")
 
-        guard let changes = observer.notifications.first else { return XCTFail() }
+        guard let changes = observer.notifications.first else {
+            return XCTFail()
+        }
         changes.checkForExpectedChangeFields(
             userInfoKeys: conversationInfoKeys,
             expectedChangedFields: [
@@ -902,7 +906,9 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         let changeCount = observer.notifications.count
         XCTAssertEqual(changeCount, 1, "Observer expected 1 notification, but received \(changeCount).")
 
-        guard let changes = observer.notifications.first else { return XCTFail() }
+        guard let changes = observer.notifications.first else {
+            return XCTFail()
+        }
         changes.checkForExpectedChangeFields(
             userInfoKeys: conversationInfoKeys,
             expectedChangedFields: [
@@ -1024,7 +1030,9 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // then
         XCTAssertEqual(observer.notifications.count, 2)
 
-        guard let first = observer.notifications.first, let second = observer.notifications.last else { return }
+        guard let first = observer.notifications.first, let second = observer.notifications.last else {
+            return
+        }
 
         // We get two notifications - one for messages added and another for non-core data change
         let messagesNotification = first.messagesChanged ? first : second

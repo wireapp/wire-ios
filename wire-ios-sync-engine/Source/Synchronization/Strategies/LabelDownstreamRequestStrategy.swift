@@ -31,7 +31,9 @@ struct LabelUpdate: Codable, Equatable {
     }
 
     init?(_ label: Label) {
-        guard let remoteIdentifier = label.remoteIdentifier else { return nil }
+        guard let remoteIdentifier = label.remoteIdentifier else {
+            return nil
+        }
 
         self = .init(
             id: remoteIdentifier,
@@ -82,7 +84,9 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard syncStatus.currentSyncPhase == .fetchingLabels || ZMUser.selfUser(in: managedObjectContext)
-            .needsToRefetchLabels else { return nil }
+            .needsToRefetchLabels else {
+            return nil
+        }
 
         slowSync.readyForNextRequestIfNotBusy()
 
@@ -93,7 +97,9 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
-            guard event.type == .userPropertiesSet, (event.payload["key"] as? String) == "labels" else { continue }
+            guard event.type == .userPropertiesSet, (event.payload["key"] as? String) == "labels" else {
+                continue
+            }
 
             guard let value = event.payload["value"],
                   let data = try? JSONSerialization.data(withJSONObject: value, options: []) else {

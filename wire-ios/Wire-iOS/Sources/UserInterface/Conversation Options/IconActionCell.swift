@@ -34,7 +34,9 @@ final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
     // MARK: Internal
 
     func configure(with configuration: CellConfiguration) {
-        guard case let .iconAction(title, icon, _, _) = configuration else { preconditionFailure() }
+        guard case let .iconAction(title, icon, _, _) = configuration else {
+            preconditionFailure()
+        }
         iconImageView.setTemplateIcon(icon, size: .tiny)
         iconImageView.tintColor = SemanticColors.Icon.foregroundDefault
         label.textColor = SemanticColors.Label.textDefault

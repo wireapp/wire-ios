@@ -44,7 +44,9 @@ extension CoreDataStack {
 
     static func removeDirectory(at url: URL) {
         do {
-            guard fileManager.fileExists(atPath: url.path) else { return }
+            guard fileManager.fileExists(atPath: url.path) else {
+                return
+            }
             try fileManager.removeItem(at: url)
         } catch {
             Logging.localStorage.debug("error removing directory: \(error)")
@@ -86,7 +88,9 @@ extension CoreDataStack {
         )
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
-        guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.missingLocalStore) }
+        guard fileManager.fileExists(atPath: accountDirectory.path) else {
+            return fail(.missingLocalStore)
+        }
 
         let migrationDirectory = migrationDirectory.appendingPathComponent(UUID().uuidString)
         let databaseDirectory = migrationDirectory.appendingPathComponent(databaseDirectoryName)

@@ -34,7 +34,9 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
         excluding: [NSRange],
         completion: @escaping ([LinkMetadata]) -> Void
     ) {
-        guard let linkPreviewURL = LinkPreviewURL(rawValue: text) else { return completion([]) }
+        guard let linkPreviewURL = LinkPreviewURL(rawValue: text) else {
+            return completion([])
+        }
 
         completion([linkMetaData(linkPreviewURL)])
     }

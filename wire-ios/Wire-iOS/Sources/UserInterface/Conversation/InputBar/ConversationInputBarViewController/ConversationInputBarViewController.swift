@@ -388,7 +388,9 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
-        guard let coordinator else { return }
+        guard let coordinator else {
+            return
+        }
 
         super.viewWillTransition(to: size, with: coordinator)
         inRotation = true
@@ -406,9 +408,13 @@ final class ConversationInputBarViewController: UIViewController,
             inputBar.updateColors()
         }
 
-        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
+        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else {
+            return
+        }
 
-        guard !inRotation else { return }
+        guard !inRotation else {
+            return
+        }
     }
 
     func updateRightAccessoryView() {
@@ -493,7 +499,9 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     func postImage(_ image: MediaAsset) {
-        guard let data = image.imageData else { return }
+        guard let data = image.imageData else {
+            return
+        }
         sendController.sendMessage(withImageData: data, userSession: userSession)
     }
 
@@ -639,7 +647,9 @@ final class ConversationInputBarViewController: UIViewController,
             object: nil,
             queue: .main
         ) { [weak self] note in
-            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+            guard let change = note.object as? FeatureRepository.FeatureChange else {
+                return
+            }
 
             switch change {
             case .fileSharingDisabled, .fileSharingEnabled:
@@ -747,7 +757,9 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     private func appendKnock() {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         notificationFeedbackGenerator.prepare()
         userSession.enqueue {
@@ -775,7 +787,9 @@ final class ConversationInputBarViewController: UIViewController,
         guard
             case .ok = networkStatusObservable.reachability,
             let conversation = conversation as? ZMConversation
-        else { return }
+        else {
+            return
+        }
 
         presentMLSPrivacyWarningIfNeeded {
             self.showGiphy(for: conversation)
@@ -814,7 +828,9 @@ final class ConversationInputBarViewController: UIViewController,
             queue: .main
         ) { [weak self] _ in
 
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             let inRotation = inRotation
             let isRecording = audioRecordKeyboardViewController?.isRecording ?? false

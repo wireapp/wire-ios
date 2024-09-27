@@ -64,7 +64,9 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         // set expectations
         let expectations = expectations(from: participants)
         mlsService.removeMembersFromConversationWithFor_MockMethod = { clientIDs, _ in
-            guard let id = clientIDs.first else { return }
+            guard let id = clientIDs.first else {
+                return
+            }
             expectations[id]?.fulfill()
         }
 
@@ -111,7 +113,9 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
 
         let expectations = expectations(from: participants)
         mlsService.removeMembersFromConversationWithFor_MockMethod = { clientIDs, _ in
-            guard let id = clientIDs.first else { return }
+            guard let id = clientIDs.first else {
+                return
+            }
             expectations[id]?.fulfill()
         }
 

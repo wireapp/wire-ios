@@ -105,7 +105,9 @@ extension SearchResult {
 
         var identifiersToContact = [String: ZMAddressBookContact]()
         contacts.forEach {
-            guard let identifier = $0.localIdentifier else { return }
+            guard let identifier = $0.localIdentifier else {
+                return
+            }
             identifiersToContact[identifier] = $0
         }
 
@@ -118,7 +120,9 @@ extension SearchResult {
         }
 
         for user in users {
-            guard let localIdentifier = user.addressBookEntry?.localIdentifier else { continue }
+            guard let localIdentifier = user.addressBookEntry?.localIdentifier else {
+                continue
+            }
             identifiersToContact.removeValue(forKey: localIdentifier)
         }
 

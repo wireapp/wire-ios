@@ -112,7 +112,9 @@ class KeyboardAvoidingViewController: UIViewController {
 
     @objc
     private func keyboardFrameWillChange(_ notification: Notification?) {
-        guard let bottomEdgeConstraint else { return }
+        guard let bottomEdgeConstraint else {
+            return
+        }
 
         guard !disabledWhenInsidePopover || !isInsidePopover else {
             bottomEdgeConstraint.constant = 0
@@ -122,7 +124,9 @@ class KeyboardAvoidingViewController: UIViewController {
 
         guard let userInfo = notification?.userInfo,
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
-        else { return }
+        else {
+            return
+        }
 
         let keyboardFrameInView = UIView.keyboardFrame(in: view, forKeyboardNotification: notification)
         var bottomOffset: CGFloat
@@ -142,7 +146,9 @@ class KeyboardAvoidingViewController: UIViewController {
             bottomOffset += frame.minY
         }
 
-        guard bottomEdgeConstraint.constant != bottomOffset else { return }
+        guard bottomEdgeConstraint.constant != bottomOffset else {
+            return
+        }
 
         // When the keyboard is dismissed and then quickly revealed again, then
         // the dismiss animation will be cancelled.

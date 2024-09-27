@@ -380,7 +380,9 @@ extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
 
 extension GiphySearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        guard let searchText = searchController.searchBar.text else { return }
+        guard let searchText = searchController.searchBar.text else {
+            return
+        }
         searchTerm = searchText
         performSearchAfter(delay: 0.3)
     }

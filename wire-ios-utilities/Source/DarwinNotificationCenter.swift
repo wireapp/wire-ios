@@ -38,10 +38,14 @@ public final class DarwinNotificationCenter {
         defer { handlers[notification, default: []].append(handler) }
 
         // we only want to internally observe each notification once
-        guard handlers[notification] == nil else { return }
+        guard handlers[notification] == nil else {
+            return
+        }
 
         notification.observe { _, _, name, _, _ in
-            guard let name else { return }
+            guard let name else {
+                return
+            }
             DarwinNotificationCenter.shared.forward(notification: name.rawValue as String)
         }
     }
@@ -51,7 +55,9 @@ public final class DarwinNotificationCenter {
     /// `CFNotificationCallback`s can't capture the environment, so instead we
     /// forward the fired notification name and then invoke the relevant handlers.
     func forward(notification name: String) {
-        guard let notification = DarwinNotification(rawValue: name) else { return }
+        guard let notification = DarwinNotification(rawValue: name) else {
+            return
+        }
         handlers[notification]?.forEach { $0() }
     }
 

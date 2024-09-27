@@ -33,7 +33,9 @@ public enum CompositeMessageItem {
     // MARK: Lifecycle
 
     init?(with protoItem: Composite.Item, message: ZMClientMessage) {
-        guard let content = protoItem.content else { return nil }
+        guard let content = protoItem.content else {
+            return nil
+        }
         let itemContent = CompositeMessageItemContent(with: protoItem, message: message)
         switch content {
         case .button:
@@ -46,7 +48,9 @@ public enum CompositeMessageItem {
 
 extension CompositeMessageItem {
     public var textData: TextMessageData? {
-        guard case let .text(data) = self else { return nil }
+        guard case let .text(data) = self else {
+            return nil
+        }
         return data
     }
 }

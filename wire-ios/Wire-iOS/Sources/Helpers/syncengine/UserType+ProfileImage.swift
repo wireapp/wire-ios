@@ -65,7 +65,9 @@ extension UserType {
     // MARK: ImageSize Helper
 
     private func profileImageSize(with sizeLimit: Int?) -> ProfileImageSize {
-        guard let sizeLimit else { return .complete }
+        guard let sizeLimit else {
+            return .complete
+        }
 
         let screenScale = UIScreen.main.scale
         let previewSizeLimit: CGFloat = 280

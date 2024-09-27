@@ -718,7 +718,9 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func updateKeyMaterialForAllStaleGroupsIfNeeded() async {
-        guard lastKeyMaterialUpdateCheck.ageInDays >= 1 else { return }
+        guard lastKeyMaterialUpdateCheck.ageInDays >= 1 else {
+            return
+        }
 
         await updateKeyMaterialForAllStaleGroups()
         lastKeyMaterialUpdateCheck = Date()
@@ -726,7 +728,9 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite {
-        guard let context else { throw MLSGroupCreationError.failedToCreateGroup }
+        guard let context else {
+            throw MLSGroupCreationError.failedToCreateGroup
+        }
 
         do {
             let ciphersuite = try await createGroup(for: groupID)
@@ -761,7 +765,9 @@ public final class MLSService: MLSServiceInterface {
 
     public func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite {
         do {
-            guard let context else { throw MLSAddMembersError.noManagedObjectContext }
+            guard let context else {
+                throw MLSAddMembersError.noManagedObjectContext
+            }
             let ciphersuite = try await createGroup(for: groupID)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
@@ -817,7 +823,9 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("aborting key packages upload: \(reason)")
         }
 
-        guard await shouldQueryUnclaimedKeyPackagesCount() else { return }
+        guard await shouldQueryUnclaimedKeyPackagesCount() else {
+            return
+        }
 
         guard let context else {
             return logWarn(abortedWithReason: "missing context")
@@ -925,7 +933,9 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Out-of-sync conversations
 
     public func repairOutOfSyncConversations() async throws {
-        guard let context else { return }
+        guard let context else {
+            return
+        }
 
         let outOfSyncConversationInfos = try await outOfSyncConversations(in: context)
 
@@ -1109,7 +1119,9 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
 
-            guard subconversation.members.contains(selfClientID) else { return }
+            guard subconversation.members.contains(selfClientID) else {
+                return
+            }
             try await leaveSubconversation(id: subconversation.groupID)
         }
     }
@@ -1356,7 +1368,9 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private var hasMoreThan24HoursPassedSinceLastCheck: Bool {
-        guard let storedDate = userDefaults.date(forKey: .keyPackageQueriedTime) else { return true }
+        guard let storedDate = userDefaults.date(forKey: .keyPackageQueriedTime) else {
+            return true
+        }
 
         if let hour = Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour, hour > 24 {
             return true
@@ -1430,7 +1444,9 @@ public final class MLSService: MLSServiceInterface {
     ) async throws {
         do {
             logger.info("adding members to group (\(groupID.safeForLoggingDescription)) with users: \(users)")
-            guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
+            guard !users.isEmpty else {
+                throw MLSAddMembersError.noMembersToAdd
+            }
             let mlsConfig = await featureRepository.fetchMLS().config
             guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
                 throw MLSAddMembersError.invalidCiphersuite
@@ -1497,7 +1513,9 @@ public final class MLSService: MLSServiceInterface {
     ) async throws {
         do {
             logger.info("removing members from group (\(groupID.safeForLoggingDescription)), members: \(clientIds)")
-            guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
+            guard !clientIds.isEmpty else {
+                throw MLSRemoveParticipantsError.noClientsToRemove
+            }
             let clientIds = clientIds.compactMap(\.rawValue.utf8Data)
             let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
             await conversationEventProcessor.processConversationEvents(events)
@@ -1667,7 +1685,9 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func fetchAndRepairSubgroup(parentGroupID: MLSGroupID) async {
-        guard let context else { return }
+        guard let context else {
+            return
+        }
 
         do {
             logger.info("repairing out of sync subgroup... (parent: \(parentGroupID.safeForLoggingDescription))")
@@ -1736,7 +1756,9 @@ public final class MLSService: MLSServiceInterface {
             var outOfSyncConversations = [ZMConversation]()
             for conversation in allMLSConversations {
                 guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context)
-                else { continue }
+                else {
+                    continue
+                }
                 outOfSyncConversations.append(conversation)
             }
             return outOfSyncConversations
@@ -1770,7 +1792,9 @@ public final class MLSService: MLSServiceInterface {
                 epoch = conversation.epoch
             }
         }
-        guard let groupID, let epoch else { return false }
+        guard let groupID, let epoch else {
+            return false
+        }
 
         do {
             let localEpoch = try await coreCrypto.conversationEpoch(conversationId: groupID.data)
@@ -1830,7 +1854,9 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("sending proposal in group (\(groupID.safeForLoggingDescription))")
 
-            guard let context else { return }
+            guard let context else {
+                return
+            }
 
             let updateEvents = try await actionsProvider.sendMessage(
                 data,
@@ -1890,7 +1916,9 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("sending external commit to join group (\(logInfo))")
 
-            guard let context else { return }
+            guard let context else {
+                return
+            }
 
             guard let parentConversationInfo = fetchConversationInfo(
                 with: parentID,
@@ -1995,7 +2023,9 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func commitPendingProposalsIfNeeded(in groupID: MLSGroupID) async throws {
-        guard existsPendingProposals(in: groupID) else { return }
+        guard existsPendingProposals(in: groupID) else {
+            return
+        }
         // Sending a message while there are pending proposals will result in an error,
         // so commit any first.
         logger.info("preemptively committing pending proposals in group (\(groupID.safeForLoggingDescription))")
@@ -2004,7 +2034,9 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func existsPendingProposals(in groupID: MLSGroupID) -> Bool {
-        guard let context else { return false }
+        guard let context else {
+            return false
+        }
 
         var groupHasPendingProposals = false
 
@@ -2232,7 +2264,11 @@ public struct MLSUser: Equatable {
 
     public init(from user: ZMUser) {
         self.id = user.remoteIdentifier
-        self.domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain! }
+        self.domain = if let domain = user.domain, !domain.isEmpty {
+            domain
+        } else {
+            BackendInfo.domain!
+        }
 
         if user.isSelfUser, let selfClientID = user.selfClient()?.remoteIdentifier {
             self.selfClientID = selfClientID

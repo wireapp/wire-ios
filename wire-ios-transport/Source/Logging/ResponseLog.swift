@@ -22,7 +22,9 @@ struct ResponseLog: Codable {
     // MARK: Lifecycle
 
     init?(_ response: HTTPURLResponse) {
-        guard let url = response.url else { return nil }
+        guard let url = response.url else {
+            return nil
+        }
         self.endpoint = url.endpointRemoteLogDescription
         self.status = response.statusCode
     }

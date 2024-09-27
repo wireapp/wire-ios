@@ -110,7 +110,9 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     override func layoutSubviews() {
         super.layoutSubviews()
         // The zoomLevel calculation depends on the frame of the mapView, so we need to call this here again
-        guard let locationData = lastConfiguration?.location else { return }
+        guard let locationData = lastConfiguration?.location else {
+            return
+        }
         updateMapLocation(withLocationData: locationData)
     }
 
@@ -150,7 +152,9 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressContainerView.addSubview(addressLabel)
         obfuscationView.isHidden = true
 
-        guard let font = labelFont, let color = labelTextColor, let containerColor else { return }
+        guard let font = labelFont, let color = labelTextColor, let containerColor else {
+            return
+        }
         addressLabel.font = font
         addressLabel.textColor = color
         addressContainerView.backgroundColor = containerColor

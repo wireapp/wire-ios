@@ -127,7 +127,9 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(newClientCell)]
 
         case .ignoredClient:
-            guard let user = systemMessageData.userTypes.first as? UserType else { fallthrough }
+            guard let user = systemMessageData.userTypes.first as? UserType else {
+                fallthrough
+            }
             let ignoredClientCell = ConversationIgnoredDeviceSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData,

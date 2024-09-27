@@ -107,7 +107,9 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
         defer { tearDown() }
 
-        guard let contentHandler else { return }
+        guard let contentHandler else {
+            return
+        }
 
         guard let content = notification.content as? UNMutableNotificationContent else {
             WireLogger.notifications.error("generated notification is not mutable")
@@ -174,7 +176,9 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     }
 
     private func removeNotification(withSameMessageId messageNonce: UUID?) {
-        guard let messageNonce else { return }
+        guard let messageNonce else {
+            return
+        }
 
         let notificationCenter = UNUserNotificationCenter.current()
 

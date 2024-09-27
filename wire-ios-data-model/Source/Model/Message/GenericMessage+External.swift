@@ -56,7 +56,9 @@ extension GenericMessage {
     ///   - updateEvent: the decrypted  ZMUpdateEvent containing the external data
     ///   - external: the External containing the otrKey used for the symmetric encryption and the sha256 checksum
     init?(from updateEvent: ZMUpdateEvent, withExternal external: External) {
-        guard let externalDataString = updateEvent.payload.optionalString(forKey: "external") else { return nil }
+        guard let externalDataString = updateEvent.payload.optionalString(forKey: "external") else {
+            return nil
+        }
         let externalData = Data(base64Encoded: externalDataString)
         let externalSha256 = externalData?.zmSHA256Digest()
 

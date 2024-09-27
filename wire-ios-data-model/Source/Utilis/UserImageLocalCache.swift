@@ -26,7 +26,9 @@ private let MEGABYTE = UInt(1 * 1000 * 1000)
 
 extension ZMUser {
     private func cacheIdentifier(suffix: String?) -> String? {
-        guard let userRemoteId = remoteIdentifier?.transportString(), let suffix else { return nil }
+        guard let userRemoteId = remoteIdentifier?.transportString(), let suffix else {
+            return nil
+        }
         return userRemoteId + "-" + suffix
     }
 
@@ -135,7 +137,9 @@ open class UserImageLocalCache: NSObject {
         queue: DispatchQueue,
         completion: @escaping (_ imageData: Data?) -> Void
     ) {
-        guard let cacheKey = user.imageCacheKey(for: size) else { return completion(nil) }
+        guard let cacheKey = user.imageCacheKey(for: size) else {
+            return completion(nil)
+        }
 
         queue.async {
             switch size {
@@ -148,7 +152,9 @@ open class UserImageLocalCache: NSObject {
     }
 
     open func userImage(_ user: ZMUser, size: ProfileImageSize) -> Data? {
-        guard let cacheKey = user.imageCacheKey(for: size) else { return nil }
+        guard let cacheKey = user.imageCacheKey(for: size) else {
+            return nil
+        }
         let data: Data? = switch size {
         case .preview:
             smallUserImageCache.object(forKey: cacheKey) as? Data
@@ -166,7 +172,9 @@ open class UserImageLocalCache: NSObject {
     }
 
     open func hasUserImage(_ user: ZMUser, size: ProfileImageSize) -> Bool {
-        guard let cacheKey = user.imageCacheKey(for: size) else { return false }
+        guard let cacheKey = user.imageCacheKey(for: size) else {
+            return false
+        }
 
         switch size {
         case .preview:

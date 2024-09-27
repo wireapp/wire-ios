@@ -67,7 +67,9 @@ final class TokenField: UIView {
 
     var hasAccessoryButton = false {
         didSet {
-            guard oldValue != hasAccessoryButton else { return }
+            guard oldValue != hasAccessoryButton else {
+                return
+            }
 
             accessoryButton.isHidden = !hasAccessoryButton
             updateExcludePath()
@@ -78,28 +80,36 @@ final class TokenField: UIView {
 
     var toLabelText: String? {
         didSet {
-            guard oldValue != toLabelText else { return }
+            guard oldValue != toLabelText else {
+                return
+            }
             updateTextAttributes()
         }
     }
 
     var font: UIFont = FontSpec(.normal, .regular).font! {
         didSet {
-            guard oldValue != font else { return }
+            guard oldValue != font else {
+                return
+            }
             updateTokenAttachments()
         }
     }
 
     var tokenTitleColor: UIColor = SemanticColors.Label.textDefault {
         didSet {
-            guard oldValue != tokenTitleColor else { return }
+            guard oldValue != tokenTitleColor else {
+                return
+            }
             updateTokenAttachments()
         }
     }
 
     var tokenSelectedTitleColor = UIColor(red: 0.103, green: 0.382, blue: 0.691, alpha: 1) {
         didSet {
-            guard oldValue != tokenSelectedTitleColor else { return }
+            guard oldValue != tokenSelectedTitleColor else {
+                return
+            }
 
             updateTokenAttachments()
         }
@@ -107,7 +117,9 @@ final class TokenField: UIView {
 
     var tokenBackgroundColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
-            guard oldValue != tokenBackgroundColor else { return }
+            guard oldValue != tokenBackgroundColor else {
+                return
+            }
 
             updateTokenAttachments()
         }
@@ -115,7 +127,9 @@ final class TokenField: UIView {
 
     var tokenSelectedBackgroundColor = UIColor.white {
         didSet {
-            guard oldValue != tokenSelectedBackgroundColor else { return }
+            guard oldValue != tokenSelectedBackgroundColor else {
+                return
+            }
 
             updateTokenAttachments()
         }
@@ -123,7 +137,9 @@ final class TokenField: UIView {
 
     var tokenBorderColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
-            guard oldValue != tokenBorderColor else { return }
+            guard oldValue != tokenBorderColor else {
+                return
+            }
 
             updateTokenAttachments()
         }
@@ -131,7 +147,9 @@ final class TokenField: UIView {
 
     var tokenSelectedBorderColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
-            guard oldValue != tokenSelectedBorderColor else { return }
+            guard oldValue != tokenSelectedBorderColor else {
+                return
+            }
 
             updateTokenAttachments()
         }
@@ -151,7 +169,9 @@ final class TokenField: UIView {
     // horisontal distance between tokens, and btw "To:" and first token
     var tokenTitleVerticalAdjustment: CGFloat = 1 {
         didSet {
-            guard oldValue != tokenTitleVerticalAdjustment else { return }
+            guard oldValue != tokenTitleVerticalAdjustment else {
+                return
+            }
 
             updateTokenAttachments()
         }
@@ -162,7 +182,9 @@ final class TokenField: UIView {
     /// rect for excluded path in textView text container
     var excludedRect = CGRect.zero {
         didSet {
-            guard oldValue != excludedRect else { return }
+            guard oldValue != excludedRect else {
+                return
+            }
 
             updateExcludePath()
         }
@@ -327,7 +349,9 @@ final class TokenField: UIView {
 
         let compeltionBlock: ((Bool) -> Void)? = { [weak self] _ in
 
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             if isCollapsed {
                 textView.attributedText = collapsedString
@@ -357,7 +381,9 @@ final class TokenField: UIView {
 
     /// clean filter text other then NSTextAttachment
     func clearFilterText() {
-        guard let text = textView.text else { return }
+        guard let text = textView.text else {
+            return
+        }
 
         guard let attachmentCharacter = UnicodeScalar.textAttachmentCharacter,
               let firstCharacterIndex = text.unicodeScalars
@@ -390,7 +416,9 @@ final class TokenField: UIView {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else {
+            return
+        }
         updateTokenAttachments()
     }
 

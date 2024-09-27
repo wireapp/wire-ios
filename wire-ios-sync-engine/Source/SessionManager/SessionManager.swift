@@ -490,7 +490,9 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var activeUserSession: ZMUserSession? {
         willSet {
-            guard activeUserSession != newValue else { return }
+            guard activeUserSession != newValue else {
+                return
+            }
             activeUserSession?.appLockController.beginTimer()
         }
     }
@@ -564,12 +566,16 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func removeProxyCredentials() {
-        guard let proxy = environment.proxy else { return }
+        guard let proxy = environment.proxy else {
+            return
+        }
         _ = ProxyCredentials.destroy(for: proxy)
     }
 
     public func saveProxyCredentials(username: String, password: String) {
-        guard let proxy = environment.proxy else { return }
+        guard let proxy = environment.proxy else {
+            return
+        }
         proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
         do {
             try proxyCredentials?.persist()
@@ -660,7 +666,9 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public func addAccount(userInfo: [String: Any]? = nil) {
         confirmSwitchingAccount { [weak self] isConfirmed in
-            guard isConfirmed else { return }
+            guard isConfirmed else {
+                return
+            }
             let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
             self?.delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
                 self?.activeUserSession = nil
@@ -807,7 +815,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {
-        guard session.lock == .none else { return }
+        guard session.lock == .none else {
+            return
+        }
         processPendingURLActionRequiresAuthentication()
     }
 
@@ -889,7 +899,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     func checkJailbreakIfNeeded() {
-        guard configuration.blockOnJailbreakOrRoot || configuration.wipeOnJailbreakOrRoot else { return }
+        guard configuration.blockOnJailbreakOrRoot || configuration.wipeOnJailbreakOrRoot else {
+            return
+        }
 
         if jailbreakDetector?.isJailbroken() == true {
             if configuration.wipeOnJailbreakOrRoot {
@@ -910,7 +922,9 @@ public final class SessionManager: NSObject, SessionManagerType {
               let systemBootTime = ProcessInfo.processInfo.bootTime(),
               let previousSystemBootTime = SessionManager.previousSystemBootTime,
               abs(systemBootTime.timeIntervalSince(previousSystemBootTime)) > 1.0
-        else { return false }
+        else {
+            return false
+        }
 
         WireLogger.sessionManager
             .debug(
@@ -961,7 +975,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func deleteTemporaryData() {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: [F] replace with TemporaryFileServiceInterface
-        guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
+        guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else {
+            return
+        }
         let manager = FileManager.default
         try? manager
             .contentsOfDirectory(
@@ -1092,12 +1108,16 @@ public final class SessionManager: NSObject, SessionManagerType {
             name: .AccountUnreadCountDidChangeNotification,
             context: account
         ) { [weak self] note in
-            guard let account = note.context as? Account else { return }
+            guard let account = note.context as? Account else {
+                return
+            }
             self?.accountManager.addOrUpdate(account)
         }
 
         let databaseEncryptionObserverToken = session.registerDatabaseLockedHandler { [weak self] _ in
-            guard session == self?.activeUserSession else { return }
+            guard session == self?.activeUserSession else {
+                return
+            }
             self?.delegate?.sessionManagerDidReportLockChange(forSession: session)
         }
 
@@ -1152,7 +1172,9 @@ public final class SessionManager: NSObject, SessionManagerType {
                 application: application,
                 minTLSVersion: minTLSVersion,
                 blacklistCallback: { [weak self] blacklisted in
-                    guard let self, !self.isAppVersionBlacklisted else { return }
+                    guard let self, !self.isAppVersionBlacklisted else {
+                        return
+                    }
 
                     if blacklisted {
                         isAppVersionBlacklisted = true
@@ -1207,7 +1229,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         loadSession(for: account) { [weak self] session in
-            guard let self, let session else { return }
+            guard let self, let session else {
+                return
+            }
             updateCurrentAccount(in: session.managedObjectContext)
             session.application(application, didFinishLaunching: launchOptions)
         }
@@ -1263,13 +1287,17 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private func clearCacheDirectory() {
-        guard let cachesDirectoryPath = cachesDirectory else { return }
+        guard let cachesDirectoryPath = cachesDirectory else {
+            return
+        }
         let manager = FileManager.default
         try? manager.removeItem(at: cachesDirectoryPath)
     }
 
     private func deleteMessagesOlderThanRetentionLimit(contextProvider: ContextProvider) {
-        guard let messageRetentionInternal = configuration.messageRetentionInterval else { return }
+        guard let messageRetentionInternal = configuration.messageRetentionInterval else {
+            return
+        }
 
         WireLogger.sessionManager
             .debug("Deleting messages older than the retention limit = \(messageRetentionInternal)")
@@ -1389,7 +1417,9 @@ extension SessionManager {
     /// Needs to be called before we try to register another device because API requires password
     public func update(credentials: UserCredentials) -> Bool {
         guard let userSession = activeUserSession,
-              let emailCredentials = credentials as? UserEmailCredentials else { return false }
+              let emailCredentials = credentials as? UserEmailCredentials else {
+            return false
+        }
 
         userSession.setEmailCredentials(emailCredentials)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
@@ -1493,7 +1523,9 @@ extension SessionManager {
     @objc
     private func applicationDidBecomeActive(_: Notification) {
         notificationsTracker?.dispatchEvent()
-        guard let session = activeUserSession, session.isLoggedIn else { return }
+        guard let session = activeUserSession, session.isLoggedIn else {
+            return
+        }
         session.checkE2EICertificateExpiryStatus()
     }
 }
@@ -1503,7 +1535,9 @@ extension SessionManager {
 extension SessionManager: ZMConversationListObserver {
     public func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         // find which account/session the conversation list belongs to & update count
-        guard let moc = changeInfo.conversationList.managedObjectContext else { return }
+        guard let moc = changeInfo.conversationList.managedObjectContext else {
+            return
+        }
 
         for (accountId, session) in backgroundUserSessions where session.managedObjectContext == moc {
             updateUnreadCount(for: accountId)
@@ -1549,7 +1583,9 @@ extension SessionManager: WireCallCenterCallStateObserver {
         timestamp: Date?,
         previousCallState: CallState?
     ) {
-        guard let moc = conversation.managedObjectContext else { return }
+        guard let moc = conversation.managedObjectContext else {
+            return
+        }
 
         switch callState {
         case .answered, .outgoing:
@@ -1584,7 +1620,9 @@ extension SessionManager {
     }
 
     private func requestCertificateEnrollmentIfNeeded() async {
-        guard let userSession = activeUserSession else { return }
+        guard let userSession = activeUserSession else {
+            return
+        }
 
         do {
             let isE2EICertificateEnrollmentRequired = try await userSession.isE2EICertificateEnrollmentRequired.invoke()

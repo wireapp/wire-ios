@@ -160,7 +160,9 @@ final class VoIPPushHelperOperation: LaunchSequenceOperation {
 
 final class CleanUpDebugStateOperation: LaunchSequenceOperation {
     func execute() {
-        guard !Bundle.developerModeEnabled else { return }
+        guard !Bundle.developerModeEnabled else {
+            return
+        }
 
         // Clearing this ensures that the api version is negotiated with the backend
         // and not set explicitly.

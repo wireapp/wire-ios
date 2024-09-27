@@ -114,11 +114,15 @@ extension SessionManager {
         }
 
         guard let userId = unauthenticatedSession?.authenticationStatus.authenticatedUserIdentifier
-        else { return completion(.failure(BackupError.notAuthenticated)) }
+        else {
+            return completion(.failure(BackupError.notAuthenticated))
+        }
 
         // Verify the imported file has the correct file extension.
         guard BackupFileExtensions.allCases.contains(where: { $0.rawValue == location.pathExtension })
-        else { return completion(.failure(BackupError.invalidFileExtension)) }
+        else {
+            return completion(.failure(BackupError.invalidFileExtension))
+        }
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
             guard let self else {
@@ -150,7 +154,9 @@ extension SessionManager {
             }
 
             let url = SessionManager.unzippedBackupURL(for: location)
-            guard decryptedURL.unzip(to: url) else { return complete(.failure(BackupError.compressionError)) }
+            guard decryptedURL.unzip(to: url) else {
+                return complete(.failure(BackupError.compressionError))
+            }
             CoreDataStack.importLocalStorage(
                 accountIdentifier: userId,
                 from: url,
@@ -165,15 +171,23 @@ extension SessionManager {
     // MARK: - Encryption & Decryption
 
     static func encrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
-        guard let inputStream = InputStream(url: input) else { throw BackupError.unknown }
-        guard let outputStream = OutputStream(url: output, append: false) else { throw BackupError.unknown }
+        guard let inputStream = InputStream(url: input) else {
+            throw BackupError.unknown
+        }
+        guard let outputStream = OutputStream(url: output, append: false) else {
+            throw BackupError.unknown
+        }
         let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountId)
         try ChaCha20Poly1305.StreamEncryption.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
     }
 
     static func decrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
-        guard let inputStream = InputStream(url: input) else { throw BackupError.unknown }
-        guard let outputStream = OutputStream(url: output, append: false) else { throw BackupError.unknown }
+        guard let inputStream = InputStream(url: input) else {
+            throw BackupError.unknown
+        }
+        guard let outputStream = OutputStream(url: output, append: false) else {
+            throw BackupError.unknown
+        }
         let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountId)
         try ChaCha20Poly1305.StreamEncryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
     }
@@ -194,7 +208,9 @@ extension SessionManager {
 
     private static func compress(backup: CoreDataStack.BackupInfo) throws -> URL {
         let url = temporaryURL(for: backup.url)
-        guard backup.url.zipDirectory(to: url) else { throw BackupError.compressionError }
+        guard backup.url.zipDirectory(to: url) else {
+            throw BackupError.compressionError
+        }
         return url
     }
 

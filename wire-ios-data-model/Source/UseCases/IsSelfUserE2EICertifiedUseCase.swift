@@ -48,14 +48,18 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
         let isE2EIEnabled = await featureRepositoryContext.perform {
             featureRepository.fetchE2EI().isEnabled
         }
-        guard isE2EIEnabled else { return false }
+        guard isE2EIEnabled else {
+            return false
+        }
 
         let (selfUser, selfMLSConversation) = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
             let selfMLSConversation = ZMConversation.fetchSelfMLSConversation(in: context)
             return (selfUser, selfMLSConversation)
         }
-        guard let selfMLSConversation else { throw Error.failedToGetTheSelfMLSConversation }
+        guard let selfMLSConversation else {
+            throw Error.failedToGetTheSelfMLSConversation
+        }
 
         return try await isUserE2EICertifiedUseCase.invoke(
             conversation: selfMLSConversation,

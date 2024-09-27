@@ -67,7 +67,9 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     }
 
     func configure(with configuration: CellConfiguration) {
-        guard case let .appearance(title) = configuration else { preconditionFailure() }
+        guard case let .appearance(title) = configuration else {
+            preconditionFailure()
+        }
         titleLabel.text = title
     }
 

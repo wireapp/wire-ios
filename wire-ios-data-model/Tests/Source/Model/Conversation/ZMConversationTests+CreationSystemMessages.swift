@@ -113,7 +113,9 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
                 name: self.name,
                 team: team
             )
-            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
+            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else {
+                return XCTFail()
+            }
 
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
@@ -142,7 +144,9 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
                 name: self.name,
                 team: team
             )
-            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
+            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else {
+                return XCTFail()
+            }
 
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
@@ -173,7 +177,9 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
                 name: self.name,
                 team: team
             )
-            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
+            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else {
+                return XCTFail()
+            }
 
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
@@ -204,7 +210,9 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
                 name: self.name,
                 team: team
             )
-            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
+            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else {
+                return XCTFail()
+            }
 
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)

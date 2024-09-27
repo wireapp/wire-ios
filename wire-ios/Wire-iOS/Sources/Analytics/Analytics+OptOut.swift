@@ -23,7 +23,9 @@ extension Analytics {
     /// Opt the user out of sending analytics data
     var isOptedOut: Bool {
         get {
-            guard let provider else { return true }
+            guard let provider else {
+                return true
+            }
             return provider.isOptedOut
         }
 

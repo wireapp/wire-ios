@@ -36,7 +36,9 @@ extension Bundle {
         if UIApplication.runningInExtension {
             let extensionBundleURL = Bundle.main.bundleURL
             let mainAppBundleURL = extensionBundleURL.deletingLastPathComponent().deletingLastPathComponent()
-            guard let bundle = Bundle(url: mainAppBundleURL) else { fatalError("Failed to find main app bundle") }
+            guard let bundle = Bundle(url: mainAppBundleURL) else {
+                fatalError("Failed to find main app bundle")
+            }
             mainBundle = bundle
         } else {
             mainBundle = .main

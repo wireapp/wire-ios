@@ -208,7 +208,9 @@ final class ConversationListViewController: UIViewController {
     }
 
     func showNoContactLabel(animated: Bool = true) {
-        if state != .conversationList { return }
+        if state != .conversationList {
+            return
+        }
 
         let closure = {
             let hasArchivedConversations = self.viewModel.hasArchivedConversations
@@ -311,7 +313,9 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func createViewConstraints() {
-        guard let conversationList = listContentController.view else { return }
+        guard let conversationList = listContentController.view else {
+            return
+        }
 
         contentContainer.translatesAutoresizingMaskIntoConstraints = false
         conversationList.translatesAutoresizingMaskIntoConstraints = false

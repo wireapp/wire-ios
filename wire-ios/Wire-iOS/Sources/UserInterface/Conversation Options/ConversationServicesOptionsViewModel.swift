@@ -93,7 +93,9 @@ final class ConversationServicesOptionsViewModel {
             }
 
             configuration.setAllowServices(allowServices) { [weak self] result in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
                 item.cancel()
                 state.isLoading = false
 
@@ -106,7 +108,9 @@ final class ConversationServicesOptionsViewModel {
             }
         }
 
-        guard allowServices != configuration.allowServices else { return nil }
+        guard allowServices != configuration.allowServices else {
+            return nil
+        }
 
         // In case allow services mode should be deactivated & service in conversation, ask the delegate
         // to confirm this action as all services will be removed.
@@ -119,9 +123,13 @@ final class ConversationServicesOptionsViewModel {
                     sourceRect: sender.frame.insetBy(dx: -4, dy: -4)
                 )
             ) { [weak self] remove in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
 
-                guard remove else { return updateRows() }
+                guard remove else {
+                    return updateRows()
+                }
                 _setAllowServices()
             }
         } else {

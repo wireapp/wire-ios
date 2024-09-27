@@ -64,7 +64,9 @@ extension CoreDataStack {
     public static func clearBackupDirectory(dispatchGroup: ZMSDispatchGroup) {
         func remove(at url: URL) {
             do {
-                guard fileManager.fileExists(atPath: url.path) else { return }
+                guard fileManager.fileExists(atPath: url.path) else {
+                    return
+                }
                 try fileManager.removeItem(at: url)
             } catch {
                 log.debug("error removing directory: \(error)")
@@ -107,7 +109,9 @@ extension CoreDataStack {
         )
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
-        guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.failedToRead) }
+        guard fileManager.fileExists(atPath: accountDirectory.path) else {
+            return fail(.failedToRead)
+        }
 
         let backupDirectory = backupsDirectory.appendingPathComponent(UUID().uuidString)
         let databaseDirectory = backupDirectory.appendingPathComponent(databaseDirectoryName)
@@ -317,7 +321,9 @@ extension CoreDataStack {
 
         try context.performGroupedAndWait {
             if context.encryptMessagesAtRest {
-                guard let databaseKey else { throw BackupError.missingEAREncryptionKey }
+                guard let databaseKey else {
+                    throw BackupError.missingEAREncryptionKey
+                }
                 try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
                 context.encryptMessagesAtRest = false
                 _ = context.makeMetadataPersistent()

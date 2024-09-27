@@ -56,7 +56,9 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         guard let convo = conversation(for: selfToUser1Conversation)
-        else { return XCTFail("Undable to get conversation") }
+        else {
+            return XCTFail("Undable to get conversation")
+        }
         let lastMessage = convo.lastMessage
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, "Hello there!")
 
@@ -89,8 +91,12 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         guard let convo = conversation(for: selfToUser1Conversation)
-        else { return XCTFail("Undable to get conversation") }
-        guard let lastMessage = convo.lastMessage else { return XCTFail("Undable to get message") }
+        else {
+            return XCTFail("Undable to get conversation")
+        }
+        guard let lastMessage = convo.lastMessage else {
+            return XCTFail("Undable to get message")
+        }
         XCTAssertEqual(lastMessage.textMessageData?.messageText, "Hello there!")
 
         // And when
@@ -113,7 +119,9 @@ class TextSearchTests: ConversationTestsBase {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        guard let editedMessage = convo.lastMessage else { return XCTFail("Undable to get message") }
+        guard let editedMessage = convo.lastMessage else {
+            return XCTFail("Undable to get message")
+        }
         XCTAssertEqual(editedMessage.textMessageData?.messageText, "This is an edit!!")
 
         // Then
@@ -147,7 +155,9 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         guard let convo = conversation(for: selfToUser1Conversation)
-        else { return XCTFail("Undable to get conversation") }
+        else {
+            return XCTFail("Undable to get conversation")
+        }
         let lastMessage = convo.lastMessage
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, text)
 
@@ -181,7 +191,9 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         guard let convo = conversation(for: selfToUser1Conversation)
-        else { return XCTFail("Undable to get conversation") }
+        else {
+            return XCTFail("Undable to get conversation")
+        }
         let lastMessage = convo.lastMessage
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, "Hello there!")
 
@@ -225,11 +237,15 @@ class TextSearchTests: ConversationTestsBase {
 
         // Then
         guard let result = delegate.results.last
-        else { return XCTFail("No search result found", file: file, line: line) }
+        else {
+            return XCTFail("No search result found", file: file, line: line)
+        }
 
         if let message {
             XCTAssertEqual(result.matches.count, 1, file: file, line: line)
-            guard let match = result.matches.first else { return XCTFail("No match found", file: file, line: line) }
+            guard let match = result.matches.first else {
+                return XCTFail("No match found", file: file, line: line)
+            }
             XCTAssertEqual(
                 match.textMessageData?.messageText,
                 message.textMessageData?.messageText,

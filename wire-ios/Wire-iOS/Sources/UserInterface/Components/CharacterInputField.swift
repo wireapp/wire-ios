@@ -319,7 +319,9 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
 extension CharacterInputField: UIKeyInput {
     func insertText(_ text: String) {
         let shouldInsert = delegate?.shouldAcceptChanges(self) ?? true
-        guard shouldInsert else { return }
+        guard shouldInsert else {
+            return
+        }
 
         if text.rangeOfCharacter(from: CharacterSet.newlines) != nil {
             resignFirstResponder()
@@ -344,7 +346,9 @@ extension CharacterInputField: UIKeyInput {
         }
 
         let shouldDelete = delegate?.shouldAcceptChanges(self) ?? true
-        guard shouldDelete else { return }
+        guard shouldDelete else {
+            return
+        }
 
         notifyingDelegate {
             self.storage.removeLast()

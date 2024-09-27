@@ -55,7 +55,9 @@ final class SessionManagerAuthenticationFailureTests: IntegrationTest {
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let accountFolder = CoreDataStack.accountDataFolder(
             accountIdentifier: account.userIdentifier,
             applicationContainer: sharedContainer

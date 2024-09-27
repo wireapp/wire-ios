@@ -114,13 +114,23 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
-        guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+        guard let receivedPayload = response?.payload as? [String: Any] else {
+            XCTFail(); return
+        }
         XCTAssertEqual(receivedPayload["type"] as? String, "conversation.access-update")
         XCTAssertEqual(receivedPayload["conversation"] as? String, conversation.identifier)
-        guard let payloadData = receivedPayload["data"] as? [String: Any] else { XCTFail(); return }
-        guard let responseRole = payloadData["access_role"] as? String else { XCTFail(); return }
-        guard let responseRoleV2 = payloadData["access_role_v2"] as? [String] else { XCTFail(); return }
-        guard let responseAccess = payloadData["access"] as? [String] else { XCTFail(); return }
+        guard let payloadData = receivedPayload["data"] as? [String: Any] else {
+            XCTFail(); return
+        }
+        guard let responseRole = payloadData["access_role"] as? String else {
+            XCTFail(); return
+        }
+        guard let responseRoleV2 = payloadData["access_role_v2"] as? [String] else {
+            XCTFail(); return
+        }
+        guard let responseAccess = payloadData["access"] as? [String] else {
+            XCTFail(); return
+        }
 
         XCTAssertEqual(responseRole, role)
         XCTAssertEqual(responseRoleV2, accessRoleV2)
@@ -140,11 +150,15 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
 
         // then
         XCTAssertEqual(response?.httpStatus, 201)
-        guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+        guard let receivedPayload = response?.payload as? [String: Any] else {
+            XCTFail(); return
+        }
 
         XCTAssertEqual(receivedPayload["type"] as? String, "conversation.code-update")
         XCTAssertEqual(receivedPayload["conversation"] as? String, conversation.identifier)
-        guard let payloadData = receivedPayload["data"] as? [String: Any] else { XCTFail(); return }
+        guard let payloadData = receivedPayload["data"] as? [String: Any] else {
+            XCTFail(); return
+        }
         XCTAssertNotNil(payloadData["uri"])
         XCTAssertNotNil(payloadData["code"])
         XCTAssertNotNil(payloadData["key"])
@@ -181,7 +195,9 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
-        guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+        guard let receivedPayload = response?.payload as? [String: Any] else {
+            XCTFail(); return
+        }
 
         XCTAssertEqual(receivedPayload["uri"] as! String, existingLink)
         XCTAssertNotNil(receivedPayload["code"])
@@ -203,7 +219,9 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
 
         // THEN
         XCTAssertEqual(response?.httpStatus, 200)
-        guard let receivedPayload = response?.payload as? [String: Any], let status else { XCTFail(); return }
+        guard let receivedPayload = response?.payload as? [String: Any], let status else {
+            XCTFail(); return
+        }
 
         XCTAssertEqual(receivedPayload["status"] as? String, status)
     }
@@ -240,7 +258,9 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
-        guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+        guard let receivedPayload = response?.payload as? [String: Any] else {
+            XCTFail(); return
+        }
 
         XCTAssertEqual(receivedPayload["uri"] as! String, existingLink)
         XCTAssertNotNil(receivedPayload["code"])

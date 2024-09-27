@@ -62,7 +62,9 @@ final class ConversationContentViewController: UIViewController {
             object: nil,
             queue: .main
         ) { [weak self] note in
-            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+            guard let change = note.object as? FeatureRepository.FeatureChange else {
+                return
+            }
 
             switch change {
             case .fileSharingDisabled, .fileSharingEnabled:
@@ -155,7 +157,9 @@ final class ConversationContentViewController: UIViewController {
     var searchQueries: [String]? {
         didSet {
             guard let searchQueries,
-                  !searchQueries.isEmpty else { return }
+                  !searchQueries.isEmpty else {
+                return
+            }
 
             dataSource.searchQueries = searchQueries
         }
@@ -315,7 +319,9 @@ final class ConversationContentViewController: UIViewController {
 
     @discardableResult
     func willSelectRow(at indexPath: IndexPath, tableView: UITableView) -> IndexPath? {
-        guard dataSource.messages.indices.contains(indexPath.section) == true else { return nil }
+        guard dataSource.messages.indices.contains(indexPath.section) == true else {
+            return nil
+        }
 
         // If the menu is visible, hide it and do nothing
         if UIMenuController.shared.isMenuVisible {
@@ -454,7 +460,9 @@ final class ConversationContentViewController: UIViewController {
     }
 
     private func displaysMessage(_ message: ZMConversationMessage) -> Bool {
-        guard let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows else { return false }
+        guard let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows else {
+            return false
+        }
         let index = dataSource.indexOfMessage(message)
         return indexPathsForVisibleRows.contains { $0.section == index }
     }
@@ -462,7 +470,9 @@ final class ConversationContentViewController: UIViewController {
     // MARK: - Feature config changes
 
     private func updateVisibleCells() {
-        guard let visibleRows = tableView.indexPathsForVisibleRows else { return }
+        guard let visibleRows = tableView.indexPathsForVisibleRows else {
+            return
+        }
         tableView.beginUpdates()
         tableView.reloadRows(at: visibleRows, with: .none)
         tableView.endUpdates()

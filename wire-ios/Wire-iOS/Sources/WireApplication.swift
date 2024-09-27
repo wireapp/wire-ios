@@ -29,7 +29,9 @@ final class WireApplication: UIApplication {
             return
         }
 
-        guard motion == .motionShake else { return }
+        guard motion == .motionShake else {
+            return
+        }
 
         presenter.presentIfNotDisplayed(
             with: AppDelegate.shared.appRootRouter,

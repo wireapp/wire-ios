@@ -76,7 +76,9 @@ final class DatabaseStatisticsController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.Self.Settings.DeveloperOptions.DatabaseStatistics.title.capitalized)
-        guard let session = ZMUserSession.shared() else { return }
+        guard let session = ZMUserSession.shared() else {
+            return
+        }
         let syncMoc = session.managedObjectContext.zm_sync!
         syncMoc.performGroupedBlock {
             do {

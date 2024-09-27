@@ -47,7 +47,9 @@ extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
     func storePasscode(passcode: String) throws {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: [John] Inject the app lock controller.
-        guard let appLock = ZMUserSession.shared()?.appLockController else { return }
+        guard let appLock = ZMUserSession.shared()?.appLockController else {
+            return
+        }
 
         try appLock.updatePasscode(passcode)
         _ = appLock.evaluateAuthentication(customPasscode: passcode)

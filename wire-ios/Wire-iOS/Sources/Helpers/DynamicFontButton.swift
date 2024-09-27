@@ -51,7 +51,9 @@ class DynamicFontButton: StylableButton, DynamicTypeCapable {
     // MARK: - Methods
 
     func redrawFont() {
-        guard let newFont = onRedrawFont() else { return }
+        guard let newFont = onRedrawFont() else {
+            return
+        }
         titleLabel?.font = newFont
     }
 

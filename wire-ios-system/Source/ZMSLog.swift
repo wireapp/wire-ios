@@ -308,7 +308,9 @@ extension ZMSLog {
 
     @objc
     public static func clearLogs() {
-        guard let currentLogURL else { return }
+        guard let currentLogURL else {
+            return
+        }
 
         logQueue.async {
             closeHandle()
@@ -329,7 +331,9 @@ extension ZMSLog {
 
     @objc
     public static func switchCurrentLogToPrevious() {
-        guard let currentLogURL else { return }
+        guard let currentLogURL else {
+            return
+        }
 
         logQueue.async {
             closeHandle()
@@ -396,7 +400,9 @@ extension ZMSLog {
     }
 
     static func appendToCurrentLog(_ string: String) {
-        guard let currentLogPath = currentLogURL?.path else { return }
+        guard let currentLogPath = currentLogURL?.path else {
+            return
+        }
         let manager = FileManager.default
 
         if !manager.fileExists(atPath: currentLogPath) {

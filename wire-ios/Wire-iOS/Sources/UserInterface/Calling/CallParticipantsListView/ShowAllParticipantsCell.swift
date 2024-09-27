@@ -142,7 +142,9 @@ extension ShowAllParticipantsCell: CallParticipantsListCellConfigurable {
         with configuration: CallParticipantsListCellConfiguration,
         selfUser: UserType
     ) {
-        guard case let .showAll(totalCount: totalCount) = configuration else { preconditionFailure() }
+        guard case let .showAll(totalCount: totalCount) = configuration else {
+            preconditionFailure()
+        }
 
         titleLabel.text = Participants.showAll(totalCount)
     }

@@ -93,7 +93,9 @@ extension EventDecoder {
             // Get the highest index of events in the DB
             lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
 
-            guard let index = lastIndex else { return }
+            guard let index = lastIndex else {
+                return
+            }
             decryptedEvents = self.decryptAndStoreEvents(filteredEvents, startingAtIndex: index)
         }
 
@@ -130,7 +132,9 @@ extension EventDecoder {
         var decryptedEvents: [ZMUpdateEvent] = []
 
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] sessionsDirectory in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 if event.type == .conversationOtrMessageAdd || event.type == .conversationOtrAssetAdd {

@@ -31,7 +31,9 @@ extension VoiceChannel {
              .outgoing:
             guard !videoState.isSending,
                   let initiator
-            else { return .none }
+            else {
+                return .none
+            }
             return .avatar(HashBox(value: initiator))
 
         case .established,
@@ -61,7 +63,9 @@ extension VoiceChannel {
         with permissions: CallPermissionsConfiguration,
         selfUser: UserType
     ) -> Bool {
-        guard !permissions.isVideoDisabledForever, !permissions.isAudioDisabledForever else { return false }
+        guard !permissions.isVideoDisabledForever, !permissions.isAudioDisabledForever else {
+            return false
+        }
 
         // The user can only re-enable their video if the conversation allows GVC
         if videoState == .stopped {
@@ -82,14 +86,22 @@ extension VoiceChannel {
             canBeToggled: !isPadOrPod
         )
 
-        guard permissions.canAcceptVideoCalls else { return .notSendingVideo(speakerState: speakerState) }
-        guard !videoState.isSending else { return .sendingVideo(speakerState: speakerState) }
+        guard permissions.canAcceptVideoCalls else {
+            return .notSendingVideo(speakerState: speakerState)
+        }
+        guard !videoState.isSending else {
+            return .sendingVideo(speakerState: speakerState)
+        }
         return .notSendingVideo(speakerState: speakerState)
     }
 
     var videoPlaceholderState: CallVideoPlaceholderState? {
-        guard internalIsVideoCall else { return .hidden }
-        guard case .incoming = state else { return .hidden }
+        guard internalIsVideoCall else {
+            return .hidden
+        }
+        guard case .incoming = state else {
+            return .hidden
+        }
         return nil
     }
 
@@ -187,7 +199,9 @@ private struct VoiceChannelSnapshot {
 
     init(_ voiceChannel: VoiceChannel) {
         self.callerName = {
-            guard voiceChannel.conversation?.conversationType != .oneOnOne else { return nil }
+            guard voiceChannel.conversation?.conversationType != .oneOnOne else {
+                return nil
+            }
             return voiceChannel.initiator?.name ?? ""
         }()
         self.state = voiceChannel.state
@@ -205,7 +219,9 @@ private struct VoiceChannelSnapshot {
 
 extension CallParticipantState {
     var isConnected: Bool {
-        guard case .connected = self else { return false }
+        guard case .connected = self else {
+            return false
+        }
         return true
     }
 
@@ -280,7 +296,9 @@ extension VoiceChannel {
     }
 
     var degradationState: CallDegradationState {
-        guard let degradationReason else { return .none }
+        guard let degradationReason else {
+            return .none
+        }
 
         switch state {
         case .answered(degraded: true), .incoming(video: _, shouldRing: _, degraded: true):
@@ -303,7 +321,9 @@ extension VoiceChannel {
     }
 
     var degradationReason: CallDegradationReason? {
-        guard let conversation else { return nil }
+        guard let conversation else {
+            return nil
+        }
 
         switch conversation.messageProtocol {
         case .mls:
@@ -314,7 +334,9 @@ extension VoiceChannel {
     }
 
     var isLegacyGroupVideoParticipantLimitReached: Bool {
-        guard let conversation else { return false }
+        guard let conversation else {
+            return false
+        }
         return conversation.localParticipants.count > ZMConversation.legacyGroupVideoParticipantLimit
     }
 }

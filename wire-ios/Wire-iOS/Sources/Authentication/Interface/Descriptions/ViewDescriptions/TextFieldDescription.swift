@@ -102,14 +102,18 @@ extension TextFieldDescription: ViewDescriptor {
 extension TextFieldDescription: UITextFieldDelegate {
     @objc
     func confirmButtonTapped(_: AnyObject) {
-        guard let textField, acceptsInput else { return }
+        guard let textField, acceptsInput else {
+            return
+        }
         submitValue(with: textField.input)
     }
 
     @objc
     func editingChanged(sender: ValidatedTextField) {
         // If we use deferred validation, remove the error when the text changes
-        guard useDeferredValidation else { return }
+        guard useDeferredValidation else {
+            return
+        }
         valueValidated?(nil)
     }
 
@@ -118,7 +122,9 @@ extension TextFieldDescription: UITextFieldDelegate {
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String
     ) -> Bool {
-        guard !acceptInvalidInput else { return acceptsInput }
+        guard !acceptInvalidInput else {
+            return acceptsInput
+        }
 
         let editedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string)
 
@@ -131,7 +137,9 @@ extension TextFieldDescription: UITextFieldDelegate {
     }
 
     func textFieldShouldReturn(_: UITextField) -> Bool {
-        guard let textField, acceptsInput else { return false }
+        guard let textField, acceptsInput else {
+            return false
+        }
 
         textField.validateInput()
 

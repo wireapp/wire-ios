@@ -102,13 +102,17 @@ final class ContactsViewController: UIViewController {
             let userInfo = notification.userInfo,
             let beginFrame = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect,
             let endFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-        else { return }
+        else {
+            return
+        }
 
         let willAppear = (beginFrame.minY - endFrame.minY) > 0
         let padding: CGFloat = 12
 
         UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrame in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
             bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : UIScreen.safeArea.bottom)
             view.layoutIfNeeded()

@@ -41,7 +41,9 @@ final class UserSelection: NSObject {
     private(set) var limit: Int?
 
     var hasReachedLimit: Bool {
-        guard let limit, users.count >= limit else { return false }
+        guard let limit, users.count >= limit else {
+            return false
+        }
         limitReachedHandler?()
         return true
     }
@@ -62,13 +64,17 @@ final class UserSelection: NSObject {
     }
 
     func add(observer: UserSelectionObserver) {
-        guard !observers.contains(where: { $0.unbox === observer }) else { return }
+        guard !observers.contains(where: { $0.unbox === observer }) else {
+            return
+        }
 
         observers.append(UnownedObject(observer))
     }
 
     func remove(observer: UserSelectionObserver) {
-        guard let index = observers.firstIndex(where: { $0.unbox === observer }) else { return }
+        guard let index = observers.firstIndex(where: { $0.unbox === observer }) else {
+            return
+        }
 
         observers.remove(at: index)
     }

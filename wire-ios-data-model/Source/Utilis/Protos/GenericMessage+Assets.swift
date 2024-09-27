@@ -152,8 +152,12 @@ extension WireProtos.Asset.Original {
 
     /// Returns the normalized loudness as floats between 0 and 1
     public var normalizedLoudnessLevels: [Float] {
-        guard audio.hasNormalizedLoudness else { return [] }
-        guard !audio.normalizedLoudness.isEmpty else { return [] }
+        guard audio.hasNormalizedLoudness else {
+            return []
+        }
+        guard !audio.normalizedLoudness.isEmpty else {
+            return []
+        }
 
         let data = audio.normalizedLoudness
         let offsets = 0 ..< data.count
@@ -233,7 +237,9 @@ extension GenericMessage {
     }
 
     mutating func updateAssetPreview(withUploadedOTRKey otrKey: Data, sha256: Data) {
-        guard var preview = assetData?.preview else { return }
+        guard var preview = assetData?.preview else {
+            return
+        }
 
         preview.remote = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
         let asset = WireProtos.Asset(original: nil, preview: preview)

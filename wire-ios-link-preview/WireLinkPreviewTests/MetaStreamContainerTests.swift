@@ -172,7 +172,9 @@ class MetaStreamContainerTests: XCTestCase {
 
         // then
         XCTAssertTrue(sut.reachedEndOfHead, "Should reach end of head", file: file, line: line)
-        guard let head = sut.head else { return XCTFail("Head was nil", file: file, line: line) }
+        guard let head = sut.head else {
+            return XCTFail("Head was nil", file: file, line: line)
+        }
         XCTAssertEqual(head, expectedHead, "Should have expected head", file: file, line: line)
     }
 

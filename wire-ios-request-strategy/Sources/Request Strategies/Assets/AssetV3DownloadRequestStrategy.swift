@@ -37,8 +37,12 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
         configuration = .allowsRequestsWhileOnline
 
         let downloadPredicate = NSPredicate { object, _ -> Bool in
-            guard let message = object as? ZMAssetClientMessage else { return false }
-            guard message.version >= 3 else { return false }
+            guard let message = object as? ZMAssetClientMessage else {
+                return false
+            }
+            guard message.version >= 3 else {
+                return false
+            }
 
             return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading && message
                 .underlyingMessage?.assetData?.hasUploaded == true
@@ -124,7 +128,9 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             context: managedObjectContext.notificationContext,
             object: nil
         ) { [weak self] note in
-            guard let objectID = note.object as? NSManagedObjectID else { return }
+            guard let objectID = note.object as? NSManagedObjectID else {
+                return
+            }
             self?.cancelOngoingRequestForAssetClientMessage(objectID)
         })
     }
@@ -135,16 +141,24 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             context: managedObjectContext.notificationContext,
             object: nil
         ) { [weak self] note in
-            guard let objectID = note.object as? NSManagedObjectID else { return }
+            guard let objectID = note.object as? NSManagedObjectID else {
+                return
+            }
             self?.didRequestToDownloadAsset(objectID)
         })
     }
 
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
-            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
-            guard let message = object as? ZMAssetClientMessage, !message.hasDownloadedFile else { return }
+            guard let self else {
+                return
+            }
+            guard let object = try? managedObjectContext.existingObject(with: objectID) else {
+                return
+            }
+            guard let message = object as? ZMAssetClientMessage, !message.hasDownloadedFile else {
+                return
+            }
             message.isDownloading = true
             assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
@@ -153,11 +167,19 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
     func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self  else { return }
+            guard let self  else {
+                return
+            }
             guard let message = managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage
-            else { return }
-            guard message.version >= 3 else { return }
-            guard let identifier = message.associatedTaskIdentifier else { return }
+            else {
+                return
+            }
+            guard message.version >= 3 else {
+                return
+            }
+            guard let identifier = message.associatedTaskIdentifier else {
+                return
+            }
             applicationStatus?.requestCancellation.cancelTask(with: identifier)
             message.isDownloading = false
             message.associatedTaskIdentifier = nil

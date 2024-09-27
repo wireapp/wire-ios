@@ -119,7 +119,9 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else { return }
+        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else {
+            return
+        }
 
         updateAccessoryView()
     }

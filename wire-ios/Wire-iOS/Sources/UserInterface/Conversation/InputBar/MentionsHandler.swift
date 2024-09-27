@@ -31,23 +31,31 @@ final class MentionsHandler: NSObject {
     // MARK: Lifecycle
 
     init?(text: String?, cursorPosition: Int) {
-        guard let text, !text.isEmpty else { return nil }
+        guard let text, !text.isEmpty else {
+            return nil
+        }
 
         let matches = mentionRegex.matches(in: text, range: text.wholeRange)
         // Cursor is a separator between characters, we are interested in the character before the cursor
         let characterPosition = max(0, cursorPosition - 1)
         guard let match = matches.first(where: { result in result.range.contains(characterPosition) })
-        else { return nil }
+        else {
+            return nil
+        }
         // Should be 4 matches:
         // 0. whole string
         // 1. space or start of string
         // 2. whole mention
         // 3. only the search string without @
-        guard match.numberOfRanges == 4 else { return nil }
+        guard match.numberOfRanges == 4 else {
+            return nil
+        }
         self.mentionMatchRange = match.range(at: 2)
         self.searchQueryMatchRange = match.range(at: 3)
         // Character to the left of the cursor position should be inside the mention
-        guard mentionMatchRange.contains(characterPosition) else { return nil }
+        guard mentionMatchRange.contains(characterPosition) else {
+            return nil
+        }
     }
 
     // MARK: Internal
@@ -56,8 +64,12 @@ final class MentionsHandler: NSObject {
     let searchQueryMatchRange: NSRange
 
     func searchString(in text: String?) -> String? {
-        guard let text else { return nil }
-        guard let range = Range(searchQueryMatchRange, in: text) else { return nil }
+        guard let text else {
+            return nil
+        }
+        guard let range = Range(searchQueryMatchRange, in: text) else {
+            return nil
+        }
         return String(text[range])
     }
 

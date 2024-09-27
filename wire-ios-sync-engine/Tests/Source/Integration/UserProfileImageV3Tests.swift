@@ -42,7 +42,9 @@ class UserProfileImageV3Tests: IntegrationTest {
         )
 
         guard let previewId = remote.previewProfileAssetIdentifier,
-              let completeId = remote.completeProfileAssetIdentifier else { return }
+              let completeId = remote.completeProfileAssetIdentifier else {
+            return
+        }
         let previewAsset = MockAsset(in: mockTransportSession.managedObjectContext, forID: previewId)
         let completeAsset = MockAsset(in: mockTransportSession.managedObjectContext, forID: completeId)
         checkProfileImagesMatch(

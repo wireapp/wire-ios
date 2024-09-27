@@ -51,7 +51,9 @@ final class EmojiSectionViewController: UIViewController {
     weak var sectionDelegate: EmojiSectionViewControllerDelegate?
 
     func didSelectSection(_ type: EmojiSectionType) {
-        guard let selected = selectedType, type != selected, !ignoreSelectionUpdates else { return }
+        guard let selected = selectedType, type != selected, !ignoreSelectionUpdates else {
+            return
+        }
         selectedType = type
     }
 
@@ -77,7 +79,9 @@ final class EmojiSectionViewController: UIViewController {
 
     private var selectedType: EmojiSectionType? {
         willSet(value) {
-            guard let type = value else { return }
+            guard let type = value else {
+                return
+            }
             for (button, sectionType) in typesByButton {
                 button.isSelected = type == sectionType
             }
@@ -117,7 +121,9 @@ final class EmojiSectionViewController: UIViewController {
 
     @objc
     private func didTappButton(_ sender: IconButton) {
-        guard let type = typesByButton[sender] else { return }
+        guard let type = typesByButton[sender] else {
+            return
+        }
         sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
     }
 
@@ -132,8 +138,12 @@ final class EmojiSectionViewController: UIViewController {
 
         case .changed:
             let location = recognizer.location(in: view)
-            guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first else { return }
-            guard let type = typesByButton[button] else { return }
+            guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first else {
+                return
+            }
+            guard let type = typesByButton[button] else {
+                return
+            }
             sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
             selectedType = type
 

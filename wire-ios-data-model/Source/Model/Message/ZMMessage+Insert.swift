@@ -27,16 +27,26 @@ extension ZMMessage {
     /// If we are adding the message to a degraded conversation we want to expire it immediately
     /// and fire a notification on conversation security level change so that UI could act accordingly
     private func expireAndNotifyIfInsertingIntoDegradedConversation() {
-        guard let conversation else { return }
-        guard let currentMoc = managedObjectContext else { return }
-        guard let syncMoc = currentMoc.zm_sync else { return }
-        guard let uiMoc = currentMoc.zm_userInterface else { return }
+        guard let conversation else {
+            return
+        }
+        guard let currentMoc = managedObjectContext else {
+            return
+        }
+        guard let syncMoc = currentMoc.zm_sync else {
+            return
+        }
+        guard let uiMoc = currentMoc.zm_userInterface else {
+            return
+        }
         if conversation.isDegraded, deliveryState == .pending {
             let verificationStatusKey = verificationStatusKey(for: conversation.messageProtocol)
 
             currentMoc.saveOrRollback()
             syncMoc.performGroupedBlock {
-                guard let message = (try? syncMoc.existingObject(with: self.objectID)) as? ZMOTRMessage else { return }
+                guard let message = (try? syncMoc.existingObject(with: self.objectID)) as? ZMOTRMessage else {
+                    return
+                }
                 message.causedSecurityLevelDegradation = true
                 WireLogger.messaging
                     .warn(

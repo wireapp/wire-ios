@@ -104,7 +104,9 @@ final class ZMUserConsentTests: DatabaseTest {
     func testThatItCanFetchState() {
         // given
         mockTransportSession.responseGeneratorBlock = { request in
-            guard request.path == "/self/consent" else { return nil }
+            guard request.path == "/self/consent" else {
+                return nil
+            }
 
             return ZMTransportResponse(
                 payload: ["results": [["type": 2, "value": 1]]] as ZMTransportData,
@@ -135,7 +137,9 @@ final class ZMUserConsentTests: DatabaseTest {
     func testThatItFailsOnInvalidOperation_get() {
         // given
         mockTransportSession.responseGeneratorBlock = { request in
-            guard request.path == "/self/consent" else { return nil }
+            guard request.path == "/self/consent" else {
+                return nil
+            }
 
             return ZMTransportResponse(
                 payload: ["label": "invalid-op"] as ZMTransportData,
@@ -167,7 +171,9 @@ final class ZMUserConsentTests: DatabaseTest {
     func testThatItFailsOn404_get() {
         // GIVEN
         mockTransportSession.responseGeneratorBlock = { request in
-            guard request.path == "/self/consent" else { return nil }
+            guard request.path == "/self/consent" else {
+                return nil
+            }
 
             return ZMTransportResponse(
                 payload: [] as ZMTransportData,
@@ -201,7 +207,9 @@ final class ZMUserConsentTests: DatabaseTest {
     func testThatItCanSetTheState() {
         // given
         mockTransportSession.responseGeneratorBlock = { request in
-            guard request.path == "/self/consent" else { return nil }
+            guard request.path == "/self/consent" else {
+                return nil
+            }
 
             return ZMTransportResponse(
                 payload: nil,
@@ -231,7 +239,9 @@ final class ZMUserConsentTests: DatabaseTest {
     func testThatItFailsOnInvalidOperation_set() {
         // given
         mockTransportSession.responseGeneratorBlock = { request in
-            guard request.path == "/self/consent" else { return nil }
+            guard request.path == "/self/consent" else {
+                return nil
+            }
 
             return ZMTransportResponse(
                 payload: ["label": "invalid-op"] as ZMTransportData,

@@ -272,7 +272,9 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             users: usersToExclude
         )
 
-        guard !usersToAdd.isEmpty else { return }
+        guard !usersToAdd.isEmpty else {
+            return
+        }
 
         try await internalAddParticipants(
             Array(usersToAdd),

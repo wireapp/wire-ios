@@ -183,7 +183,9 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                 for: clientID,
                 duration: duration,
                 completion: { [weak self] in
-                    guard let self else { return }
+                    guard let self else {
+                        return
+                    }
 
                     WaitingGroupTask(context: syncContext) { [self] in
                         // swiftformat:disable:next redundantSelf

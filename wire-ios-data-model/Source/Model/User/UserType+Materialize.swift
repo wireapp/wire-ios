@@ -62,7 +62,9 @@ extension Sequence where Element: ZMSearchUser {
 
         context.performGroupedAndWait {
             nonExistingUsers.forEach {
-                guard let remoteIdentifier = $0.userID else { return }
+                guard let remoteIdentifier = $0.userID else {
+                    return
+                }
 
                 let user = ZMUser.fetchOrCreate(with: remoteIdentifier, domain: $0.domain, in: context)
                 user.teamIdentifier = $0.teamID

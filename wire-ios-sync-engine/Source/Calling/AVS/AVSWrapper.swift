@@ -192,7 +192,9 @@ public final class AVSWrapper: AVSWrapperType {
         var result: CallError?
 
         callEvent.data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
-            guard let bytes = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return }
+            guard let bytes = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
+                return
+            }
             let currentTime = UInt32(callEvent.currentTimestamp.timeIntervalSince1970)
             let serverTime = UInt32(callEvent.serverTimestamp.timeIntervalSince1970)
             zmLog.debug("wcall_recv_msg: currentTime = \(currentTime), serverTime = \(serverTime)")
@@ -460,7 +462,9 @@ public final class AVSWrapper: AVSWrapperType {
     }
 
     private let sendSFTCallMessageHandler: Handler.SFTCallMessageSend = { token, url, data, dataLength, contextRef in
-        guard let token else { return EINVAL }
+        guard let token else {
+            return EINVAL
+        }
 
         let bytes = UnsafeBufferPointer<UInt8>(start: data, count: dataLength)
         let transformedData = Data(buffer: bytes)

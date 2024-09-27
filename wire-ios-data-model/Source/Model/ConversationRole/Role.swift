@@ -154,7 +154,9 @@ public final class Role: ZMManagedObject {
     ) -> Role? {
         guard let conversationRole = payload["conversation_role"] as? String,
               let actionNames = payload["actions"] as? [String]
-        else { return nil }
+        else {
+            return nil
+        }
 
         let fetchedRole = fetchExistingRole(
             with: conversationRole,

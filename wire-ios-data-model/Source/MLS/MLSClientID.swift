@@ -26,7 +26,9 @@ public struct MLSClientID: Equatable, Hashable {
     // MARK: Lifecycle
 
     public init?(user: ZMUser) {
-        guard let selfClient = user.selfClient() else { return nil }
+        guard let selfClient = user.selfClient() else {
+            return nil
+        }
         self.init(userClient: selfClient)
     }
 

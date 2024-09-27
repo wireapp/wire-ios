@@ -20,7 +20,9 @@ import Foundation
 
 extension ZMAssetClientMessage {
     override open func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
-        guard let message = GenericMessage(from: updateEvent) else { return }
+        guard let message = GenericMessage(from: updateEvent) else {
+            return
+        }
 
         do {
             try setUnderlyingMessage(message)

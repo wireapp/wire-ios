@@ -37,7 +37,9 @@ public class ZMMovedIndex: NSObject {
     }
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? ZMMovedIndex else { return false }
+        guard let other = object as? ZMMovedIndex else {
+            return false
+        }
         return other.from == from && other.to == to
     }
 }

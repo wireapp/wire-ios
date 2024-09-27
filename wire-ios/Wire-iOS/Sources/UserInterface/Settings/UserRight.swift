@@ -39,7 +39,9 @@ final class UserRight: UserRightInterface {
     }
 
     static func selfUserIsPermitted(to permission: UserRight.Permission) -> Bool {
-        guard let selfUser = SelfUser.provider?.providedSelfUser else { return false }
+        guard let selfUser = SelfUser.provider?.providedSelfUser else {
+            return false
+        }
 
         let isProfileEditable = selfUser.managedByWire
         let usesCompanyLogin = selfUser.usesCompanyLogin

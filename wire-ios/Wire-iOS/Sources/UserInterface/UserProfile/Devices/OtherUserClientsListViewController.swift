@@ -131,7 +131,9 @@ final class OtherUserClientsListViewController: UIViewController,
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let client = clients[indexPath.row] as? UserClient else { return }
+        guard let client = clients[indexPath.row] as? UserClient else {
+            return
+        }
         openDetailsOfClient(client)
     }
 
@@ -247,7 +249,9 @@ final class OtherUserClientsListViewController: UIViewController,
 
 extension OtherUserClientsListViewController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.clientsChanged || changeInfo.trustLevelChanged else { return }
+        guard changeInfo.clientsChanged || changeInfo.trustLevelChanged else {
+            return
+        }
 
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: add clients to userType

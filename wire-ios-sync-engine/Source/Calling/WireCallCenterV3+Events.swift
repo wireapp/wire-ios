@@ -97,7 +97,9 @@ extension WireCallCenterV3: ZMConversationObserver {
     }
 
     private func endCallIfNeeded(_ changeInfo: ConversationChangeInfo) {
-        guard let conversationId = changeInfo.conversation.avsIdentifier else { return }
+        guard let conversationId = changeInfo.conversation.avsIdentifier else {
+            return
+        }
 
         if changeInfo.isDeletedChanged, changeInfo.conversation.isDeletedRemotely {
             Self.logger.info("closing call because conversation was deleted")
@@ -229,7 +231,9 @@ extension WireCallCenterV3 {
         messageTime: Date?,
         userId: AVSIdentifier
     ) {
-        guard isEnabled else { return }
+        guard isEnabled else {
+            return
+        }
         handleEvent("closed-call") {
             self.handle(
                 callState: .terminating(reason: reason),
@@ -245,7 +249,9 @@ extension WireCallCenterV3 {
         do {
             let metricsData = Data(metrics.utf8)
             let jsonObject = try JSONSerialization.jsonObject(with: metricsData, options: .mutableContainers)
-            guard let attributes = jsonObject as? [String: NSObject] else { return }
+            guard let attributes = jsonObject as? [String: NSObject] else {
+                return
+            }
             analytics?.tagEvent("calling.avs_metrics_ended_call", attributes: attributes)
         } catch {
             zmLog.error("Unable to parse call metrics JSON: \(error)")
@@ -269,7 +275,9 @@ extension WireCallCenterV3 {
         data: Data,
         overMLSSelfConversation: Bool = false
     ) {
-        guard isEnabled else { return }
+        guard isEnabled else {
+            return
+        }
 
         handleEventInContext("send-call-message") { managedObjectContext in
             let selfUser = ZMUser.selfUser(in: managedObjectContext)

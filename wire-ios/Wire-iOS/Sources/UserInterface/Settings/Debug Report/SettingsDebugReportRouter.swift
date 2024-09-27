@@ -96,7 +96,9 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
 
     @MainActor
     func presentFallbackAlert(sender: UIView) {
-        guard let viewController else { return }
+        guard let viewController else {
+            return
+        }
 
         DebugAlert.displayFallbackActivityController(
             email: mailRecipient,

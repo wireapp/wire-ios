@@ -29,7 +29,9 @@ enum MediaState: Equatable {
     }
 
     var isSendingVideo: Bool {
-        guard case .sendingVideo = self else { return false }
+        guard case .sendingVideo = self else {
+            return false
+        }
         return true
     }
 

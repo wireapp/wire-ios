@@ -440,7 +440,9 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         syncMOC.performAndWait {
-            guard let request = sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("nil request generated") }
+            guard let request = sut.nextRequestIfAllowed(for: .v0) else {
+                return XCTFail("nil request generated")
+            }
             XCTAssertEqual(request.path, "/assets/v3/\(assetId)")
             XCTAssertEqual(request.method, .get)
 
@@ -480,7 +482,9 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         syncMOC.performAndWait {
-            guard let request = sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("nil request generated") }
+            guard let request = sut.nextRequestIfAllowed(for: .v0) else {
+                return XCTFail("nil request generated")
+            }
             XCTAssertEqual(request.path, "/assets/v3/\(assetId)")
             XCTAssertEqual(request.method, .get)
 

@@ -257,7 +257,9 @@ extension UserClientRequestStrategyTests {
             XCTAssertEqual(maxID_before, 0)
 
             self.sut.notifyChangeTrackers(client)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail()
+            }
             let response = ZMTransportResponse(
                 payload: ["id": "fakeRemoteID"] as ZMTransportData,
                 httpStatus: 200,
@@ -290,7 +292,9 @@ extension UserClientRequestStrategyTests {
             XCTAssertNil(client.apsVerificationKey)
 
             self.sut.notifyChangeTrackers(client)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail()
+            }
             let response = ZMTransportResponse(
                 payload: ["id": "fakeRemoteID"] as ZMTransportData,
                 httpStatus: 200,
@@ -320,7 +324,9 @@ extension UserClientRequestStrategyTests {
             let client = self.createSelfClient(self.syncMOC)
             self.sut.notifyChangeTrackers(client)
 
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail()
+            }
             let response = ZMTransportResponse(
                 payload: ["id": "fakeRemoteID"] as ZMTransportData,
                 httpStatus: 200,
@@ -347,7 +353,9 @@ extension UserClientRequestStrategyTests {
             let client = self.createSelfClient(self.syncMOC)
             self.sut.notifyChangeTrackers(client)
 
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail()
+            }
             let responsePayload = [
                 "code": 403,
                 "message": "Re-authentication via password required",
@@ -390,7 +398,9 @@ extension UserClientRequestStrategyTests {
             let client = self.createSelfClient(self.syncMOC)
             self.sut.notifyChangeTrackers(client)
 
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail()
+            }
             let responsePayload = [
                 "code": 403,
                 "message": "Re-authentication via password required",

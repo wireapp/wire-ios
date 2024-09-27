@@ -246,7 +246,9 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     // MARK: - Configure Constraints
 
     private func createConstraints() {
-        guard let colorPicker = colorPickerController.view else { return }
+        guard let colorPicker = colorPickerController.view else {
+            return
+        }
 
         [
             canvas,
@@ -300,7 +302,9 @@ extension CanvasViewController: CanvasDelegate {
 
 extension CanvasViewController: EmojiPickerViewControllerDelegate {
     func showEmojiKeyboard(animated: Bool) {
-        guard !isEmojiKeyboardInTransition, let emojiKeyboardView = emojiKeyboardViewController.view else { return }
+        guard !isEmojiKeyboardInTransition, let emojiKeyboardView = emojiKeyboardViewController.view else {
+            return
+        }
 
         emojiKeyboardViewController.willMove(toParent: self)
         view.addSubview(emojiKeyboardViewController.view)
@@ -338,7 +342,9 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
     }
 
     func hideEmojiKeyboard(animated: Bool) {
-        guard children.contains(emojiKeyboardViewController), !isEmojiKeyboardInTransition else { return }
+        guard children.contains(emojiKeyboardViewController), !isEmojiKeyboardInTransition else {
+            return
+        }
 
         emojiKeyboardViewController.willMove(toParent: nil)
 

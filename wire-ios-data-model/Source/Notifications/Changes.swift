@@ -46,7 +46,9 @@ struct Changes: Mergeable {
     }
 
     func merged(with other: Changes) -> Changes {
-        guard other.hasChangeInfo else { return self }
+        guard other.hasChangeInfo else {
+            return self
+        }
 
         return Changes(
             changedKeys: changedKeys.union(other.changedKeys),

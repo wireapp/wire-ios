@@ -71,7 +71,9 @@ public final class MessageSender: MessageSenderInterface {
         await quickSyncObserver.waitForQuickSyncToFinish()
 
         do {
-            guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
+            guard let apiVersion = BackendInfo.apiVersion else {
+                throw MessageSendError.unresolvedApiVersion
+            }
             try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
         } catch {
             let logAttributes = await logAttributesBuilder.logAttributes(message)
@@ -121,7 +123,9 @@ public final class MessageSender: MessageSenderInterface {
     private func attemptToSend(message: any SendableMessage) async throws {
         let messageProtocol = await context.perform { message.conversation?.messageProtocol }
 
-        guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
+        guard let apiVersion = BackendInfo.apiVersion else {
+            throw MessageSendError.unresolvedApiVersion
+        }
         guard let messageProtocol else {
             throw MessageSendError.missingMessageProtocol
         }

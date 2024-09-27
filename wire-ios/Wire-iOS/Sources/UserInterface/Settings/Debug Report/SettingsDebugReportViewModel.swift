@@ -75,7 +75,9 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
                 name: logsURL.lastPathComponent
             ) { [weak self] metadata in
 
-                guard let `self` else { return }
+                guard let `self` else {
+                    return
+                }
 
                 let shareableDebugReport = ShareableDebugReport(
                     logFileMetadata: metadata,

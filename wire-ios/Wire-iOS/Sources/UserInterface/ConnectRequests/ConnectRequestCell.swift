@@ -39,7 +39,9 @@ final class ConnectRequestCell: UITableViewCell {
 
     var user: UserType! {
         didSet {
-            guard let user else { return }
+            guard let user else {
+                return
+            }
 
             connectRequestViewController?.view.removeFromSuperview()
 

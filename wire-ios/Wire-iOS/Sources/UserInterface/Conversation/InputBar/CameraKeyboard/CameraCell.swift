@@ -107,7 +107,11 @@ final class CameraCell: UICollectionViewCell {
 
     override func didMoveToWindow() {
         super.didMoveToWindow()
-        if window == .none { cameraController?.stopRunning() } else { cameraController?.startRunning() }
+        if window == .none {
+            cameraController?.stopRunning()
+        } else {
+            cameraController?.startRunning()
+        }
     }
 
     override func layoutSubviews() {
@@ -117,7 +121,9 @@ final class CameraCell: UICollectionViewCell {
     }
 
     func updateVideoOrientation() {
-        guard UIDevice.current.userInterfaceIdiom == .pad else { return }
+        guard UIDevice.current.userInterfaceIdiom == .pad else {
+            return
+        }
         cameraController?.updatePreviewOrientation()
     }
 

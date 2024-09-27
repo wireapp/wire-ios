@@ -92,7 +92,9 @@ public final class AccountManager: NSObject {
     /// - parameter account: The account to select.
     public func select(_ account: Account) {
         precondition(accounts.contains(account), "Selecting an account without first adding it is not allowed")
-        guard account != selectedAccount else { return }
+        guard account != selectedAccount else {
+            return
+        }
         defaults?.selectedAccountIdentifier = account.userIdentifier
         updateAccounts()
     }
@@ -159,7 +161,9 @@ public final class AccountManager: NSObject {
             case (.none, .some): return true
 
             case let (.some(leftName), .some(rightName)):
-                guard leftName != rightName else { fallthrough }
+                guard leftName != rightName else {
+                    fallthrough
+                }
                 return leftName < rightName
 
             default: return lhs.userName < rhs.userName

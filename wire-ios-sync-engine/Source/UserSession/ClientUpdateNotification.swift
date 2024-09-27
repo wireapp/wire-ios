@@ -43,7 +43,9 @@ public class ZMClientUpdateNotification: NSObject {
             name: name,
             context: context.notificationContext
         ) { note in
-            guard let type = note.userInfo[self.typeKey] as? ZMClientUpdateNotificationType else { return }
+            guard let type = note.userInfo[self.typeKey] as? ZMClientUpdateNotificationType else {
+                return
+            }
             let clientObjectIDs = (note.userInfo[self.clientObjectIDsKey] as? [NSManagedObjectID]) ?? []
             let error = note.userInfo[self.errorKey] as? NSError
             block(type, clientObjectIDs, error)

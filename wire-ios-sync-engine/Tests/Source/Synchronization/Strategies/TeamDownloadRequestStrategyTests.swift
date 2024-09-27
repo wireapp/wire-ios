@@ -124,7 +124,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             self.boostrapChangeTrackers(with: team)
 
             // then
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
             XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/teams/\(team.remoteIdentifier!.transportString())")
         }
@@ -142,7 +144,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
             team.needsToBeUpdatedFromBackend = true
             self.boostrapChangeTrackers(with: team)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
 
             // when
             let payload = self.sampleResponse(team: team, creatorId: creatorId)
@@ -163,7 +167,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             // then
             XCTAssertFalse(team.needsToBeUpdatedFromBackend)
             XCTAssertEqual(team.name, "Wire GmbH")
-            guard let creator = team.creator else { return XCTFail("No creator") }
+            guard let creator = team.creator else {
+                return XCTFail("No creator")
+            }
             XCTAssertEqual(creator.remoteIdentifier, creatorId)
             XCTAssertTrue(creator.needsToBeUpdatedFromBackend)
         }
@@ -181,7 +187,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
             team.needsToBeUpdatedFromBackend = true
             self.boostrapChangeTrackers(with: team)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
 
             // when
             let payload = self.sampleResponse(team: team, creatorId: creatorId, isBound: false)
@@ -216,7 +224,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             self.mockApplicationStatus.mockSynchronizationState = .online
             self.boostrapChangeTrackers(with: team)
 
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
 
             // when
             let payload = self.sampleResponse(team: team, creatorId: UUID(), isBound: false)
@@ -254,7 +264,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
             team.needsToBeUpdatedFromBackend = true
             self.boostrapChangeTrackers(with: team)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
 
             // when
             let response = ZMTransportResponse(
@@ -293,7 +305,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
             team.needsToBeUpdatedFromBackend = true
             self.boostrapChangeTrackers(with: team)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
 
             // when
             let response = ZMTransportResponse(
@@ -314,7 +328,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             XCTAssertNil(Team.fetch(with: teamId, in: self.syncMOC))
 
             guard let conversation = ZMConversation.fetch(with: conversationId, in: self.syncMOC)
-            else { return XCTFail("No conversation") }
+            else {
+                return XCTFail("No conversation")
+            }
             XCTAssertEqual(conversation.teamRemoteIdentifier, teamId)
             XCTAssert(ZMUser.selfUser(in: self.syncMOC).isGuest(in: conversation))
         }
@@ -466,7 +482,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
+        guard let request = sutNextRequest(for: .v0) else {
+            return XCTFail("No request generated")
+        }
         let teamCreatorID = UUID.create()
         let teamID = UUID.create()
 
@@ -501,7 +519,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
+        guard let request = sutNextRequest(for: .v0) else {
+            return XCTFail("No request generated")
+        }
 
         // when
         let response = ZMTransportResponse(
@@ -524,7 +544,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // when
         do {
-            guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = sutNextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
             let payload: [String: Any] = [
                 "has_more": false,
                 "teams": [sampleResponse(teamID: UUID(), creatorId: UUID())],
@@ -549,7 +571,9 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // when
         do {
-            guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = sutNextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
             let payload: [String: Any] = [
                 "has_more": false,
                 "teams": [],

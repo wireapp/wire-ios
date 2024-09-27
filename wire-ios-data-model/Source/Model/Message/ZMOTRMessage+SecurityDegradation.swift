@@ -25,14 +25,22 @@ extension ZMOTRMessage {
     /// from any context.
     override public var causedSecurityLevelDegradation: Bool {
         get {
-            guard let conversation, let moc = managedObjectContext else { return false }
+            guard let conversation, let moc = managedObjectContext else {
+                return false
+            }
             let messagesByConversation = moc.messagesThatCausedSecurityLevelDegradationByConversation
-            guard let messages = messagesByConversation[conversation.objectID] else { return false }
+            guard let messages = messagesByConversation[conversation.objectID] else {
+                return false
+            }
             return messages.contains(objectID)
         }
         set {
-            guard let conversation, let moc = managedObjectContext else { return }
-            guard moc.zm_isSyncContext else { fatal("Cannot mark message as degraded security on non-sync moc") }
+            guard let conversation, let moc = managedObjectContext else {
+                return
+            }
+            guard moc.zm_isSyncContext else {
+                fatal("Cannot mark message as degraded security on non-sync moc")
+            }
 
             // make sure it's persisted
             if objectID.isTemporaryID {
@@ -66,16 +74,22 @@ extension ZMConversation {
     /// in this user session (i.e. since the app was started. This will be kept in memory
     /// and not persisted).
     public var messagesThatCausedSecurityLevelDegradation: [ZMOTRMessage] {
-        guard let moc = managedObjectContext else { return [] }
+        guard let moc = managedObjectContext else {
+            return []
+        }
         guard let messageIds = moc.messagesThatCausedSecurityLevelDegradationByConversation[objectID]
-        else { return [] }
+        else {
+            return []
+        }
         return messageIds.compactMap {
             (try? moc.existingObject(with: $0)) as? ZMOTRMessage
         }
     }
 
     public func clearMessagesThatCausedSecurityLevelDegradation() {
-        guard let moc = managedObjectContext else { return }
+        guard let moc = managedObjectContext else {
+            return
+        }
         var currentMessages = moc.messagesThatCausedSecurityLevelDegradationByConversation
         if currentMessages.removeValue(forKey: objectID) != nil {
             moc.messagesThatCausedSecurityLevelDegradationByConversation = currentMessages
@@ -104,7 +118,9 @@ extension NSManagedObjectContext {
 
     /// Merge list of messages that caused security level degradation from one context to another
     func mergeSecurityLevelDegradationInfo(fromUserInfo userInfo: [String: Any]) {
-        guard zm_isUserInterfaceContext else { return } // we don't merge anything to sync, sync is autoritative
+        guard zm_isUserInterfaceContext else {
+            return
+        } // we don't merge anything to sync, sync is autoritative
         let valuesToMerge =
             userInfo[messagesThatCausedSecurityLevelDegradationKey] as? SecurityDegradingMessagesByConversation
         messagesThatCausedSecurityLevelDegradationByConversation = valuesToMerge ??

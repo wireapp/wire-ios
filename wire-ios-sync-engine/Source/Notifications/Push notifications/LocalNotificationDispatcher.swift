@@ -155,7 +155,9 @@ extension LocalNotificationDispatcher {
         let selfUser = ZMUser.selfUser(in: syncMOC)
         var notify = selfUser.needsToNotifyAvailabilityBehaviourChange
 
-        guard notify.contains(.notification) else { return }
+        guard notify.contains(.notification) else {
+            return
+        }
 
         let note = ZMLocalNotification(availability: selfUser.availability, managedObjectContext: syncMOC)
         note.map(scheduleLocalNotification)
@@ -228,7 +230,9 @@ extension LocalNotificationDispatcher {
 
     /// Cancels all notification in the conversation that is speficied as object of the notification
     func cancelNotificationForLastReadChanged(notification: NotificationInContext) {
-        guard let conversation = notification.object as? ZMConversation else { return }
+        guard let conversation = notification.object as? ZMConversation else {
+            return
+        }
         let isUIObject = conversation.managedObjectContext?.zm_isUserInterfaceContext ?? false
 
         syncMOC.performGroupedBlock {

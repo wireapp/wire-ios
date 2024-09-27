@@ -99,7 +99,9 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     var elapsedTime: TimeInterval {
-        guard let time = avPlayer?.currentTime() else { return 0 }
+        guard let time = avPlayer?.currentTime() else {
+            return 0
+        }
 
         if CMTIME_IS_VALID(time) {
             return TimeInterval(time.value) / TimeInterval(time.timescale)
@@ -191,7 +193,9 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
             forInterval: CMTimeMake(value: 1, timescale: 60),
             queue: DispatchQueue.main,
             using: { [weak self] time in
-                guard let self, let duration = avPlayer?.currentItem?.asset.duration else { return }
+                guard let self, let duration = avPlayer?.currentItem?.asset.duration else {
+                    return
+                }
 
                 let itemRange = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: duration)
 
@@ -320,7 +324,9 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
             state = .error
         }
 
-        guard let status = avPlayer?.status else { return }
+        guard let status = avPlayer?.status else {
+            return
+        }
 
         switch status {
         case .readyToPlay:
@@ -358,7 +364,9 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     private func itemDidPlay(toEndTime notification: Notification?) {
         // AUDIO-557 workaround for AVSMediaManager trying to pause already paused tracks.
         delay(0.1) { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             clearNowPlayingState()
             state = .completed

@@ -89,8 +89,12 @@ final class AssetDeletionStatusTests: MessagingTest {
         identifierProvider.assetIdentifiersToBeDeleted = [identifier1, identifier2]
 
         // When
-        guard let first = sut.nextIdentifierToDelete() else { return XCTFail("no first identifier") }
-        guard let second = sut.nextIdentifierToDelete() else { return XCTFail("no second identifier") }
+        guard let first = sut.nextIdentifierToDelete() else {
+            return XCTFail("no first identifier")
+        }
+        guard let second = sut.nextIdentifierToDelete() else {
+            return XCTFail("no second identifier")
+        }
 
         // Then
         let expected = Set([identifier1, identifier2])
@@ -120,13 +124,17 @@ final class AssetDeletionStatusTests: MessagingTest {
         let identifier1 = UUID.create().transportString()
         let identifier2 = UUID.create().transportString()
         identifierProvider.assetIdentifiersToBeDeleted = Set([identifier1, identifier2])
-        guard let first = sut.nextIdentifierToDelete() else { return XCTFail("no first identifier") }
+        guard let first = sut.nextIdentifierToDelete() else {
+            return XCTFail("no first identifier")
+        }
 
         // When
         sut.didDelete(identifier: first)
 
         // Then
-        guard let second = sut.nextIdentifierToDelete() else { return XCTFail("no second identifier") }
+        guard let second = sut.nextIdentifierToDelete() else {
+            return XCTFail("no second identifier")
+        }
         XCTAssertNotEqual(first, second)
         XCTAssertNil(sut.nextIdentifierToDelete())
     }
@@ -136,13 +144,17 @@ final class AssetDeletionStatusTests: MessagingTest {
         let identifier1 = UUID.create().transportString()
         let identifier2 = UUID.create().transportString()
         identifierProvider.assetIdentifiersToBeDeleted = Set([identifier1, identifier2])
-        guard let first = sut.nextIdentifierToDelete() else { return XCTFail("no first identifier") }
+        guard let first = sut.nextIdentifierToDelete() else {
+            return XCTFail("no first identifier")
+        }
 
         // When
         sut.didFailToDelete(identifier: first)
 
         // Then
-        guard let second = sut.nextIdentifierToDelete() else { return XCTFail("no second identifier") }
+        guard let second = sut.nextIdentifierToDelete() else {
+            return XCTFail("no second identifier")
+        }
         XCTAssertNotEqual(first, second)
         XCTAssertNil(sut.nextIdentifierToDelete())
     }

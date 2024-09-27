@@ -26,7 +26,9 @@ extension ZMUserSession {
         guard let senderID = userInfo.senderID,
               let sender = ZMUser.fetch(with: senderID, in: managedObjectContext),
               let conversation = sender.oneOnOneConversation
-        else { return }
+        else {
+            return
+        }
 
         sender.accept(completion: { [weak self] _ in
             self?.showConversation(conversation)
@@ -35,14 +37,18 @@ extension ZMUserSession {
     }
 
     public func acceptCall(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
-        guard let conversation = userInfo.conversation(in: managedObjectContext) else { return }
+        guard let conversation = userInfo.conversation(in: managedObjectContext) else {
+            return
+        }
 
         defer {
             showConversation(conversation)
             completionHandler()
         }
 
-        guard let callState = conversation.voiceChannel?.state else { return }
+        guard let callState = conversation.voiceChannel?.state else {
+            return
+        }
 
         if case let .incoming(video: video, shouldRing: _, degraded: _) = callState,
            callCenter?.activeCallConversations(in: self).isEmpty == true {
@@ -109,7 +115,9 @@ extension ZMUserSession {
         guard
             !message.isEmpty,
             let conversation = userInfo.conversation(in: managedObjectContext)
-        else { return completionHandler() }
+        else {
+            return completionHandler()
+        }
 
         guard let activity = BackgroundActivityFactory.shared
             .startBackgroundActivity(name: "DirectReply Action Handler") else {
@@ -117,7 +125,9 @@ extension ZMUserSession {
         }
 
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             messageReplyObserver = nil
             syncManagedObjectContext.performGroupedBlock {
@@ -181,7 +191,9 @@ extension ZMUserSession {
             case .incoming = callState,
             let callCenter,
             callCenter.activeCallConversations(in: self).isEmpty
-        else { return }
+        else {
+            return
+        }
 
         let type: ConversationMediaAction = callCenter
             .isVideoCall(conversationId: conversationId) ? .videoCall : .audioCall
@@ -190,7 +202,9 @@ extension ZMUserSession {
             guard
                 let self,
                 let conversationInSyncContext = userInfo.conversation(in: syncManagedObjectContext)
-            else { return }
+            else {
+                return
+            }
 
             syncManagedObjectContext.analytics?.tagActionOnPushNotification(
                 conversation: conversationInSyncContext,
@@ -203,7 +217,9 @@ extension ZMUserSession {
         guard
             let conversation = userInfo.conversation(in: managedObjectContext),
             let message = userInfo.message(in: conversation, managedObjectContext: managedObjectContext)
-        else { return completionHandler() }
+        else {
+            return completionHandler()
+        }
 
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Like Message Activity")
         else {
@@ -211,7 +227,9 @@ extension ZMUserSession {
         }
 
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             likeMesssageObserver = nil
             if result == .failed {
@@ -222,7 +240,9 @@ extension ZMUserSession {
         }
 
         enqueue {
-            guard let reaction = ZMMessage.addReaction("❤️", to: message) else { return }
+            guard let reaction = ZMMessage.addReaction("❤️", to: message) else {
+                return
+            }
             self.appendReadReceiptIfNeeded(with: userInfo, in: conversation)
             self.likeMesssageObserver = ManagedObjectContextChangeObserver(
                 context: self.managedObjectContext,

@@ -273,7 +273,9 @@ extension ZMConversation {
     public func appendMLSMigrationMLSNotSupportedForSelfUser(
         user: ZMUser
     ) {
-        guard let context = managedObjectContext else { return }
+        guard let context = managedObjectContext else {
+            return
+        }
 
         appendSystemMessage(
             type: .mlsNotSupportedSelfUser,
@@ -287,7 +289,9 @@ extension ZMConversation {
     public func appendMLSMigrationMLSNotSupportedForOtherUser(
         user: ZMUser
     ) {
-        guard let context = managedObjectContext else { return }
+        guard let context = managedObjectContext else {
+            return
+        }
 
         appendSystemMessage(
             type: .mlsNotSupportedOtherUser,

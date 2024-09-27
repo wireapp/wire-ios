@@ -124,14 +124,18 @@ final class InputBarButtonsView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard bounds.size.width != lastLayoutWidth else { return }
+        guard bounds.size.width != lastLayoutWidth else {
+            return
+        }
         layoutAndConstrainButtonRows()
         lastLayoutWidth = bounds.size.width
     }
 
     func showRow(_ rowIndex: RowIndex, animated: Bool) {
         let animationDuration = 0.35
-        guard rowIndex != currentRow else { return }
+        guard rowIndex != currentRow else {
+            return
+        }
         currentRow = rowIndex
         buttonRowTopInset.constant = CGFloat(rowIndex) * InputBarRowConstants.buttonsBarHeight
         UIView.animate(easing: .easeInOutExpo, duration: animated ? animationDuration : 0, animations: layoutIfNeeded)
@@ -341,7 +345,9 @@ final class InputBarButtonsView: UIView {
         rowIsFull: Bool,
         buttonPadding: CGFloat
     ) -> [NSLayoutConstraint] {
-        guard let firstButton = buttons.first, let lastButton = buttons.last else { return [] }
+        guard let firstButton = buttons.first, let lastButton = buttons.last else {
+            return []
+        }
 
         var constraints = [NSLayoutConstraint]()
         firstButton.translatesAutoresizingMaskIntoConstraints = false
@@ -475,7 +481,9 @@ final class InputBarButtonsView: UIView {
     }
 
     private func setupInsets(forButtons buttons: [UIButton], rowIsFull: Bool) {
-        guard !buttons.isEmpty else { return }
+        guard !buttons.isEmpty else {
+            return
+        }
 
         setupInsets(for: buttons.first!, position: .first)
 

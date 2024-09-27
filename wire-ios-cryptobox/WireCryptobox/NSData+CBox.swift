@@ -22,7 +22,9 @@ extension Data {
     /// Moves from a CBoxVector to this data
     /// During this call, the CBoxVector is freed
     static func moveFromCBoxVector(_ vector: OpaquePointer?) -> Data? {
-        guard let vector else { return nil }
+        guard let vector else {
+            return nil
+        }
 
         let data = cbox_vec_data(vector)
         let length = cbox_vec_len(vector)

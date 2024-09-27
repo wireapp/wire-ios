@@ -26,7 +26,9 @@ public struct MLSGroupID: Equatable, Hashable {
     // MARK: Lifecycle
 
     public init?(base64Encoded string: String) {
-        guard !string.isEmpty, let data = Data(base64Encoded: string) else { return nil }
+        guard !string.isEmpty, let data = Data(base64Encoded: string) else {
+            return nil
+        }
         self.init(data)
     }
 

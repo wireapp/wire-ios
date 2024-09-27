@@ -31,7 +31,9 @@ class FileManager_CryptoboxTests: XCTestCase {
         // then
         var components = storeURL.pathComponents
 
-        guard !components.isEmpty else { return XCTFail() }
+        guard !components.isEmpty else {
+            return XCTFail()
+        }
         let otrComp = components.removeLast()
         XCTAssertEqual(otrComp, FileManager.keyStoreFolderPrefix)
         XCTAssertEqual(components, url.pathComponents)
@@ -69,15 +71,21 @@ class FileManager_CacheTests: XCTestCase {
         // then
         var components = cachesURL.pathComponents
 
-        guard !components.isEmpty else { return XCTFail() }
+        guard !components.isEmpty else {
+            return XCTFail()
+        }
         let accountIdComp = components.removeLast()
         XCTAssertEqual(accountIdComp, FileManager.cachesFolderPrefix + "-" + accountId.uuidString)
 
-        guard !components.isEmpty else { return XCTFail() }
+        guard !components.isEmpty else {
+            return XCTFail()
+        }
         let cachesComp = components.removeLast()
         XCTAssertEqual(cachesComp, "Caches")
 
-        guard !components.isEmpty else { return XCTFail() }
+        guard !components.isEmpty else {
+            return XCTFail()
+        }
         let libraryComp = components.removeLast()
         XCTAssertEqual(libraryComp, "Library")
 
@@ -94,11 +102,15 @@ class FileManager_CacheTests: XCTestCase {
         // then
         var components = cachesURL.pathComponents
 
-        guard !components.isEmpty else { return XCTFail() }
+        guard !components.isEmpty else {
+            return XCTFail()
+        }
         let cachesComp = components.removeLast()
         XCTAssertEqual(cachesComp, "Caches")
 
-        guard !components.isEmpty else { return XCTFail() }
+        guard !components.isEmpty else {
+            return XCTFail()
+        }
         let libraryComp = components.removeLast()
         XCTAssertEqual(libraryComp, "Library")
 

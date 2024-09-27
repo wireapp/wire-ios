@@ -35,8 +35,12 @@ class StylableButton: UIButton, Stylable {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        guard let style = buttonStyle else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else {
+            return
+        }
+        guard let style = buttonStyle else {
+            return
+        }
         // We need to call this method here because the background,
         // and the border color of the button when switching from dark to light mode
         // or vice versa can be updated only inside traitCollectionDidChange.
@@ -64,7 +68,9 @@ class StylableButton: UIButton, Stylable {
     private func setBorder(for style: ButtonStyle) {
         guard style.highlightedStateColors.border != nil ||
             style.normalStateColors.border != nil ||
-            style.selectedStateColors?.border != nil else { return }
+            style.selectedStateColors?.border != nil else {
+            return
+        }
         let normalStateColor = style.normalStateColors.border?.cgColor ?? UIColor.clear.cgColor
         let highlightedStateColor = style.highlightedStateColors.border?.cgColor ?? UIColor.clear.cgColor
         let selectedStateColor = style.selectedStateColors?.border.cgColor ?? UIColor.clear.cgColor

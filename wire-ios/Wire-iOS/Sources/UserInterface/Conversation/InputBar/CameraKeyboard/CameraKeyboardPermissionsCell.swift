@@ -60,7 +60,9 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
         containerView.addSubview(descriptionLabel)
 
-        if SecurityFlags.cameraRoll.isEnabled { addSubview(containerView) }
+        if SecurityFlags.cameraRoll.isEnabled {
+            addSubview(containerView)
+        }
     }
 
     @available(*, unavailable)
@@ -116,7 +118,9 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     @objc
     private func openSettings() {
         guard let url = URL(string: UIApplication.openSettingsURLString),
-              UIApplication.shared.canOpenURL(url) else { return }
+              UIApplication.shared.canOpenURL(url) else {
+            return
+        }
         UIApplication.shared.open(url)
     }
 

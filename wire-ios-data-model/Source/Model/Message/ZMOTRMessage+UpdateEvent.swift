@@ -101,7 +101,9 @@ extension ZMOTRMessage {
             ZMMessage.remove(remotelyHiddenMessage: message.hidden, inContext: moc)
 
         case let .dataTransfer(dataTransfer) where conversation.isSelfConversation:
-            guard let trackingIdentifier = dataTransfer.trackingIdentifierData else { break }
+            guard let trackingIdentifier = dataTransfer.trackingIdentifierData else {
+                break
+            }
             ZMUser.selfUser(in: moc).analyticsIdentifier = trackingIdentifier
 
         case .deleted:
@@ -253,7 +255,9 @@ extension ZMOTRMessage {
     }
 
     private static func isZombieObject(_ message: ZMOTRMessage?) -> Bool {
-        guard let message else { return false }
+        guard let message else {
+            return false
+        }
         return message.isZombieObject
     }
 

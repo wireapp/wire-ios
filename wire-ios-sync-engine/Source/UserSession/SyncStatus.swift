@@ -227,7 +227,9 @@ extension SyncStatus {
     }
 
     public func persistLastUpdateEventID() {
-        guard let lastUpdateEventID else { return }
+        guard let lastUpdateEventID else {
+            return
+        }
         WireLogger.sync.debug("persist last eventID: \(lastUpdateEventID)")
         lastEventIDRepository.storeLastEventID(lastUpdateEventID)
     }

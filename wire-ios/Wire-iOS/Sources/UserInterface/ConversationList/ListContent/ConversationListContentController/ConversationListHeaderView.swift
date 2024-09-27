@@ -94,7 +94,9 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
     var collapsed = false {
         didSet {
-            guard collapsed != oldValue else { return }
+            guard collapsed != oldValue else {
+                return
+            }
             // update rotation
 
             if collapsed {

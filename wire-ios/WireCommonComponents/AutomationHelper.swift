@@ -168,7 +168,9 @@ public final class AutomationHelper: NSObject {
 
     // Switches on all flags that you would like to log listed after `--debug-log=` tags should be separated by comma
     private static func enableLogTags(_ arguments: ArgumentsType) {
-        guard let tagsString = arguments.flagValueIfPresent(AutomationKey.logTags.rawValue) else { return }
+        guard let tagsString = arguments.flagValueIfPresent(AutomationKey.logTags.rawValue) else {
+            return
+        }
         let tags = tagsString.components(separatedBy: ",")
         tags.forEach { ZMSLog.set(level: .debug, tag: $0) }
     }
@@ -244,7 +246,9 @@ private struct FileArguments: ArgumentsType {
     // MARK: Lifecycle
 
     init?(url: URL) {
-        guard let argumentsString = try? String(contentsOfFile: url.path, encoding: .utf8) else { return nil }
+        guard let argumentsString = try? String(contentsOfFile: url.path, encoding: .utf8) else {
+            return nil
+        }
         self.arguments = Set(argumentsString.components(separatedBy: .whitespaces))
     }
 
@@ -260,7 +264,9 @@ extension AutomationHelper {
     /// in the shared folder, erasing any other file in that folder.
     public func installDebugDataIfNeeded() {
         guard let packageURL = debugDataToInstall,
-              let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return }
+              let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else {
+            return
+        }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
         // DELETE
         let filesToDelete = try! FileManager.default.contentsOfDirectory(atPath: sharedContainerURL.path)

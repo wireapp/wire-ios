@@ -34,12 +34,16 @@ class CompositeMessageItemContent: NSObject {
     private let item: Composite.Item
 
     private var text: Text? {
-        guard case .some(.text) = item.content else { return nil }
+        guard case .some(.text) = item.content else {
+            return nil
+        }
         return item.text
     }
 
     private var button: Button? {
-        guard case .some(.button) = item.content else { return nil }
+        guard case .some(.button) = item.content else {
+            return nil
+        }
         return item.button
     }
 }
@@ -118,10 +122,14 @@ extension CompositeMessageItemContent: ButtonMessageData {
         guard let moc = parentMessage.managedObjectContext,
               let buttonId = button?.id,
               let messageId = parentMessage.nonce,
-              !hasSelectedButton else { return }
+              !hasSelectedButton else {
+            return
+        }
 
         moc.performGroupedBlock { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             let buttonState = buttonState ??
                 ButtonState.insert(with: buttonId, message: parentMessage, inContext: moc)
             parentMessage.buttonStates?.resetExpired()
@@ -154,10 +162,14 @@ extension CompositeMessageItemContent {
     }
 
     private var buttonState: ButtonState? {
-        guard let button else { return nil }
+        guard let button else {
+            return nil
+        }
 
         return parentMessage.buttonStates?.first(where: { buttonState in
-            guard let remoteIdentifier = buttonState.remoteIdentifier else { return false }
+            guard let remoteIdentifier = buttonState.remoteIdentifier else {
+                return false
+            }
             return remoteIdentifier == button.id
         })
     }

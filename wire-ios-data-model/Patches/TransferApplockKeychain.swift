@@ -46,7 +46,9 @@ enum TransferApplockKeychain {
     /// keychain entries.
 
     static func migrateAppLockPasscode(in moc: NSManagedObjectContext) {
-        guard let selfUserId = ZMUser.selfUser(in: moc).remoteIdentifier else { return }
+        guard let selfUserId = ZMUser.selfUser(in: moc).remoteIdentifier else {
+            return
+        }
 
         let legacyKeychainItem = AppLockController.PasscodeKeychainItem.makeLegacyItem()
 

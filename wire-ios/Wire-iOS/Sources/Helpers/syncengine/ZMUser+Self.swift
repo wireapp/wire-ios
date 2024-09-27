@@ -35,7 +35,9 @@ import WireSyncEngine
             if let mockUserClass = NSClassFromString("MockUser") as? SelfUserProviderUI.Type {
                 return mockUserClass.selfUser
             } else {
-                guard let session = ZMUserSession.shared() else { return nil }
+                guard let session = ZMUserSession.shared() else {
+                    return nil
+                }
 
                 return ZMUser.selfUser(inUserSession: session)
             }
@@ -47,7 +49,9 @@ import WireSyncEngine
         ///
         /// - Returns: a ZMUser object for app target
         static func selfUser() -> ZMUser? {
-            guard let session = ZMUserSession.shared() else { return nil }
+            guard let session = ZMUserSession.shared() else {
+                return nil
+            }
 
             return ZMUser.selfUser(inUserSession: session)
         }

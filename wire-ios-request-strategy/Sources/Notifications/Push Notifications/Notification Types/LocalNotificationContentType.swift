@@ -53,14 +53,18 @@ public enum LocalNotificationContentType: Equatable {
             self = .participantsRemoved(reason: event.participantsRemovedReason)
 
         case .conversationMessageTimerUpdate:
-            guard let payload = event.payload["data"] as? [String: AnyHashable] else { return nil }
+            guard let payload = event.payload["data"] as? [String: AnyHashable] else {
+                return nil
+            }
             let timeoutIntegerValue = (payload["message_timer"] as? Int64) ?? 0
             let timeoutIntegerValueInSeconds = timeoutIntegerValue / 1000
             let timeoutValue = MessageDestructionTimeoutValue(rawValue: TimeInterval(timeoutIntegerValueInSeconds))
             self = timeoutValue == .none ? .messageTimerUpdate(nil) : .messageTimerUpdate(timeoutValue.displayString)
 
         case .conversationMLSMessageAdd, .conversationOtrMessageAdd:
-            guard let message = GenericMessage(from: event) else { return nil }
+            guard let message = GenericMessage(from: event) else {
+                return nil
+            }
             self.init(message: message, conversation: conversation, in: moc)
 
         default:
@@ -76,7 +80,9 @@ public enum LocalNotificationContentType: Equatable {
             conversation: ZMConversation?,
             in moc: NSManagedObjectContext
         ) -> ZMOTRMessage? {
-            guard let conversation else { return nil }
+            guard let conversation else {
+                return nil
+            }
             let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
             return ZMOTRMessage.fetch(withNonce: quotedMessageId, for: conversation, in: moc)
         }
@@ -120,7 +126,9 @@ public enum LocalNotificationContentType: Equatable {
             )
 
         case .composite:
-            guard let textData = message.composite.items.map(\.text).first else { return nil }
+            guard let textData = message.composite.items.map(\.text).first else {
+                return nil
+            }
             self = .text(textData.content, isMention: textData.isMentioningSelf(selfUser), isReply: false)
 
         case let .asset(assetData):

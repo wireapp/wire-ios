@@ -119,7 +119,9 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
 
             // WHEN
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail()
+            }
 
             // THEN
             XCTAssertEqual(
@@ -177,7 +179,9 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             expectedLegalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
 
             let payload = type(of: self).payloadForReceivingLegalHoldRequestStatus(request: expectedLegalHoldRequest)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail()
+            }
             request.complete(with: ZMTransportResponse(
                 payload: payload,
                 httpStatus: 200,
@@ -189,7 +193,9 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
         syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            guard case let .pending(legalHoldRequest) = selfUser.legalHoldStatus else { return XCTFail() }
+            guard case let .pending(legalHoldRequest) = selfUser.legalHoldStatus else {
+                return XCTFail()
+            }
             XCTAssertEqual(legalHoldRequest.clientIdentifier, expectedLegalHoldRequest.clientIdentifier)
         }
     }
@@ -211,7 +217,9 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             let payload: [AnyHashable: Any] = [
                 "status": "disabled",
             ]
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail()
+            }
             request.complete(with: ZMTransportResponse(
                 payload: payload as ZMTransportData,
                 httpStatus: 200,

@@ -53,7 +53,9 @@ extension ZMClientMessage: TextMessageData {
     }
 
     public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
-        guard let nonce, isEditableMessage else { return }
+        guard let nonce, isEditableMessage else {
+            return
+        }
 
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
         let editedText = Text(

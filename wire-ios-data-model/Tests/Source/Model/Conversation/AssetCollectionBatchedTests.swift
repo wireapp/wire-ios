@@ -83,7 +83,9 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         XCTAssertEqual(receivedMessageCount, totalMessageCount)
 
         guard let lastMessage = delegate.messagesByFilter.last?[defaultMatchPair]?.last,
-              let context = lastMessage.managedObjectContext else { return XCTFail() }
+              let context = lastMessage.managedObjectContext else {
+            return XCTFail()
+        }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
 
@@ -122,7 +124,9 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         // then
         XCTAssertEqual(messages.count, 1)
         guard let message = messages.first as? ZMMessage,
-              let moc = message.managedObjectContext else { return XCTFail() }
+              let moc = message.managedObjectContext else {
+            return XCTFail()
+        }
         XCTAssertTrue(moc.zm_isUserInterfaceContext)
     }
 
@@ -148,7 +152,9 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         XCTAssertEqual(receivedMessageCount, totalMessageCount)
 
         guard let lastMessage = delegate.messagesByFilter.last?[defaultMatchPair]?.last,
-              let context = lastMessage.managedObjectContext else { return XCTFail() }
+              let context = lastMessage.managedObjectContext else {
+            return XCTFail()
+        }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
 
@@ -175,7 +181,9 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         XCTAssertEqual(receivedMessages.count, totalMessageCount)
 
         guard let lastMessage = receivedMessages.last,
-              let context = lastMessage.managedObjectContext else { return XCTFail() }
+              let context = lastMessage.managedObjectContext else {
+            return XCTFail()
+        }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
 
@@ -413,7 +421,9 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         let allMessages = sut.assets(for: defaultMatchPair)
         XCTAssertEqual(allMessages.count, 20)
         XCTAssertTrue(allMessages.allSatisfy { element in
-            guard let message = element as? ZMMessage else { return false }
+            guard let message = element as? ZMMessage else {
+                return false
+            }
             return message.managedObjectContext!.zm_isUserInterfaceContext
         })
     }

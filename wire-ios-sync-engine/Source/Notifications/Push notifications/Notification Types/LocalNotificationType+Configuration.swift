@@ -100,7 +100,9 @@ extension PushNotificationCategory {
     }
 
     fileprivate func addMuteIfNeeded(hasTeam: Bool) -> Self {
-        guard !hasTeam else { return self }
+        guard !hasTeam else {
+            return self
+        }
 
         switch self {
         case .conversation:
@@ -115,7 +117,9 @@ extension PushNotificationCategory {
     }
 
     fileprivate func addEncryptionAtRestIfNeeded(encryptionAtRestEnabled: Bool) -> Self {
-        guard encryptionAtRestEnabled else { return self }
+        guard encryptionAtRestEnabled else {
+            return self
+        }
 
         switch self {
         case .conversation, .conversationWithLike:

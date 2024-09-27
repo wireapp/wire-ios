@@ -44,7 +44,9 @@ public final class DraftMessage: NSObject {
     public let quote: ZMMessage?
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? DraftMessage else { return false }
+        guard let other = object as? DraftMessage else {
+            return false
+        }
         return (text, mentions, quote) == (other.text, other.mentions, other.quote)
     }
 }
@@ -117,7 +119,9 @@ private struct StorableQuote: Codable {
     /// Converts the storable mention into a regular `Mention` object.
     /// The passed in `context` is needed to fetch the user object.
     func quote(in context: NSManagedObjectContext, for conversation: ZMConversation) -> ZMMessage? {
-        guard let nonce else { return nil }
+        guard let nonce else {
+            return nil
+        }
         return ZMMessage.fetch(withNonce: nonce, for: conversation, in: context)
     }
 }
@@ -141,7 +145,9 @@ extension ZMConversation {
                 let data = draftMessageData,
                 let context = managedObjectContext,
                 let decryptedData = try? decryptDataIfNeeded(data: data, in: context)
-            else { return nil }
+            else {
+                return nil
+            }
             do {
                 let storable = try JSONDecoder().decode(StorableDraftMessage.self, from: decryptedData)
                 return storable.draftMessage(in: context, for: self)
@@ -156,7 +162,9 @@ extension ZMConversation {
                 guard
                     let encodedData = try? JSONEncoder().encode(value.storable),
                     let context = managedObjectContext
-                else { return }
+                else {
+                    return
+                }
 
                 do {
                     let (data, nonce) = try encryptDataIfNeeded(data: encodedData, in: context)
@@ -175,12 +183,16 @@ extension ZMConversation {
 
     @nonobjc
     private func encryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> (data: Data, nonce: Data?) {
-        guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
+        guard moc.encryptMessagesAtRest else {
+            return (data, nonce: nil)
+        }
         return try moc.encryptData(data: data)
     }
 
     private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
-        guard let nonce = draftMessageNonce else { return data }
+        guard let nonce = draftMessageNonce else {
+            return data
+        }
         return try moc.decryptData(data: data, nonce: nonce)
     }
 }

@@ -25,7 +25,9 @@ extension UIViewController {
     ///   - viewController: the view controller to add
     ///   - view: the viewController parameter's view will be added to this view
     func add(_ viewController: UIViewController?, to view: UIView) {
-        guard let viewController else { return }
+        guard let viewController else {
+            return
+        }
         viewController.willMove(toParent: self)
         addChild(viewController)
         view.addSubview(viewController.view)

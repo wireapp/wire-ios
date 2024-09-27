@@ -38,7 +38,9 @@ final class RequestGeneratorStore {
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
                     requestGenerators.append {
-                        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+                        guard let apiVersion = BackendInfo.apiVersion else {
+                            return nil
+                        }
                         return requestGenerator.nextRequest(for: apiVersion)
                     }
                 }
@@ -54,7 +56,9 @@ final class RequestGeneratorStore {
 
             if let requestStrategy = strategy as? RequestStrategy {
                 requestGenerators.append {
-                    guard let apiVersion = BackendInfo.apiVersion else { return nil }
+                    guard let apiVersion = BackendInfo.apiVersion else {
+                        return nil
+                    }
                     return requestStrategy.nextRequest(for: apiVersion)
                 }
             }
@@ -116,7 +120,9 @@ final class RequestGeneratorObserver {
     public var observedGenerator: ZMTransportRequestGenerator?
 
     public func nextRequest() -> ZMTransportRequest? {
-        guard let request = observedGenerator?() else { return nil }
+        guard let request = observedGenerator?() else {
+            return nil
+        }
 
         request.add(ZMCompletionHandler(on: context) { [weak self] _ in
             self?.context.saveOrRollback()

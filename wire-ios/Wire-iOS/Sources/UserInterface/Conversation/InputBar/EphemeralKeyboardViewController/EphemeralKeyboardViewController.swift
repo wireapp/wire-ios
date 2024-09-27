@@ -87,7 +87,9 @@ final class EphemeralKeyboardViewController: UIViewController {
         super.viewWillAppear(animated)
 
         let currentTimeout = conversation.messageDestructionTimeoutValue(for: .selfUser)
-        guard let index = timeouts.firstIndex(of: currentTimeout) else { return }
+        guard let index = timeouts.firstIndex(of: currentTimeout) else {
+            return
+        }
         picker.selectRow(index, inComponent: 0, animated: false)
     }
 
@@ -177,7 +179,9 @@ extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDat
         attributedTitleForRow row: Int,
         forComponent component: Int
     ) -> NSAttributedString? {
-        guard let font = pickerFont, let color = pickerColor else { return nil }
+        guard let font = pickerFont, let color = pickerColor else {
+            return nil
+        }
         let timeout = timeouts[row]
         if let actualTimeout = timeout, let title = actualTimeout.displayString {
             return NSAttributedString(string: title, attributes: [.font: font, .foregroundColor: color])

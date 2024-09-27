@@ -207,7 +207,9 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         let response = try createResponse(cookie: cookie, userId: userId, userIdKey: "id")
         mockDelegate.existingAccounts = [Account(userName: "", userIdentifier: userId)]
 
-        guard let userInfo = response.extractUserInfo() else { return XCTFail("no userinfo") }
+        guard let userInfo = response.extractUserInfo() else {
+            return XCTFail("no userinfo")
+        }
         // when
         let exists = sut.accountExistsLocally(from: userInfo)
 
@@ -302,7 +304,9 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertLessThanOrEqual(mockDelegate.createdAccounts.count, 1, line: line)
-        if mockDelegate.createdAccounts.isEmpty { throw NSError(domain: "No account", code: 1) }
+        if mockDelegate.createdAccounts.isEmpty {
+            throw NSError(domain: "No account", code: 1)
+        }
         return mockDelegate.createdAccounts.first!
     }
 }

@@ -168,7 +168,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
             $0.status = fileSharing.status
         }
 
-        guard needsToNotifyUser(for: .fileSharing) else { return }
+        guard needsToNotifyUser(for: .fileSharing) else {
+            return
+        }
 
         switch fileSharing.status {
         case .disabled:
@@ -209,7 +211,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
                 $0.config = config
             }
 
-            guard needsToNotifyUser(for: .selfDeletingMessages) else { return }
+            guard needsToNotifyUser(for: .selfDeletingMessages) else {
+                return
+            }
 
             switch (selfDeletingMessages.status, selfDeletingMessages.config.enforcedTimeoutSeconds) {
             case (.disabled, _):
@@ -240,7 +244,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
             $0.status = conversationGuestLinks.status
         }
 
-        guard needsToNotifyUser(for: .conversationGuestLinks) else { return }
+        guard needsToNotifyUser(for: .conversationGuestLinks) else {
+            return
+        }
 
         switch conversationGuestLinks.status {
         case .disabled:

@@ -180,7 +180,9 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
         // then
         do {
             XCTAssertNil(ZMUser.fetch(with: userId, in: uiMOC))
-            guard let team = Team.fetch(with: teamId, in: uiMOC) else { return XCTFail("No team") }
+            guard let team = Team.fetch(with: teamId, in: uiMOC) else {
+                return XCTFail("No team")
+            }
             XCTAssertTrue(team.members.isEmpty)
         }
     }
@@ -209,9 +211,13 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
 
         // then
         do {
-            guard let user = ZMUser.fetch(with: userId, in: uiMOC) else { return XCTFail("No user") }
+            guard let user = ZMUser.fetch(with: userId, in: uiMOC) else {
+                return XCTFail("No user")
+            }
             XCTAssertNil(user.membership)
-            guard let team = Team.fetch(with: teamId, in: uiMOC) else { return XCTFail("No team") }
+            guard let team = Team.fetch(with: teamId, in: uiMOC) else {
+                return XCTFail("No team")
+            }
             XCTAssertTrue(team.members.isEmpty)
         }
     }

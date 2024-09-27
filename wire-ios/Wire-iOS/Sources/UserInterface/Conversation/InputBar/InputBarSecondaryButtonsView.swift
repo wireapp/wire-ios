@@ -53,7 +53,9 @@ final class InputBarSecondaryButtonsView: UIView {
 
     private func setView(_ newView: UIView) {
         // only if newView isnt already a subview
-        guard !newView.isDescendant(of: self) else { return }
+        guard !newView.isDescendant(of: self) else {
+            return
+        }
 
         subviews.forEach { $0.removeFromSuperview() }
         addSubview(newView)

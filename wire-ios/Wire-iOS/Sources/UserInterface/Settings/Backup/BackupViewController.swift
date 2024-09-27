@@ -98,7 +98,9 @@ extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard indexPath.row == 1 else { return }
+        guard indexPath.row == 1 else {
+            return
+        }
         backupActiveAccount(indexPath: indexPath)
     }
 }
@@ -108,7 +110,9 @@ extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
 extension BackupViewController {
     private func backupActiveAccount(indexPath: IndexPath) {
         requestBackupPassword { [weak self] result in
-            guard let self, let password = result else { return }
+            guard let self, let password = result else {
+                return
+            }
             activityIndicator.start()
 
             backupSource.backupActiveAccount(password: password) { backupResult in

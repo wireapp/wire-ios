@@ -227,7 +227,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     }
 
     func fetchAllConversations(for apiVersion: APIVersion) {
-        guard !isFetchingAllConversations else { return }
+        guard !isFetchingAllConversations else {
+            return
+        }
 
         isFetchingAllConversations = true
 
@@ -272,11 +274,15 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConversation, completion: @escaping () -> Void) {
         defer { completion() }
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion = BackendInfo.apiVersion else {
+            return
+        }
 
         switch apiVersion {
         case .v0:
-            guard let identifier = object.remoteIdentifier else { return }
+            guard let identifier = object.remoteIdentifier else {
+                return
+            }
             synchronize(unqualifiedID: identifier)
 
         case .v1, .v2, .v3, .v4, .v5, .v6:
@@ -450,8 +456,14 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 )
 
             case .v1, .v2, .v3, .v4, .v5, .v6:
-                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
-                guard let domain else { return nil }
+                let domain = if let domain = conversation.domain, !domain.isEmpty {
+                    domain
+                } else {
+                    BackendInfo.domain
+                }
+                guard let domain else {
+                    return nil
+                }
 
                 request = ZMTransportRequest(
                     path: "/conversations/\(domain)/\(conversationID)/name",
@@ -491,8 +503,14 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 )
 
             case .v1, .v2, .v3, .v4, .v5, .v6:
-                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
-                guard let domain else { return nil }
+                let domain = if let domain = conversation.domain, !domain.isEmpty {
+                    domain
+                } else {
+                    BackendInfo.domain
+                }
+                guard let domain else {
+                    return nil
+                }
 
                 request = ZMTransportRequest(
                     path: "/conversations/\(domain)/\(conversationID)/self",
@@ -551,7 +569,9 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     let encoder: JSONEncoder = .defaultEncoder
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let converationID = identifiers.first.map({ $0.transportString() }) else { return nil }
+        guard let converationID = identifiers.first.map({ $0.transportString() }) else {
+            return nil
+        }
 
         // GET /conversations/<UUID>
         return ZMTransportRequest(getFromPath: "/conversations/\(converationID)", apiVersion: apiVersion.rawValue)
@@ -613,7 +633,9 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
                 return (conversation, conversation?.conversationType)
             }
 
-            guard let conversation, conversationType == .group else { continue }
+            guard let conversation, conversationType == .group else {
+                continue
+            }
 
             do {
                 try await removeLocalConversation.invoke(
@@ -765,7 +787,9 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                 }
             }
 
-            guard let conversation else { continue }
+            guard let conversation else {
+                continue
+            }
 
             do {
                 try await removeLocalConversation.invoke(
@@ -831,7 +855,9 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         // GET /conversations?ids=?
-        guard apiVersion < .v2 else { return nil }
+        guard apiVersion < .v2 else {
+            return nil
+        }
         let converationIDs = identifiers.map { $0.transportString() }.joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/conversations?ids=\(converationIDs)", apiVersion: apiVersion.rawValue)
     }

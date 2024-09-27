@@ -148,7 +148,9 @@ extension ZMConversation {
         let doesExistsOnBackend = remoteIdentifier != nil
 
         let addedRoles = usersAndRoles.compactMap { user, role -> ParticipantRole? in
-            guard !user.isAccountDeleted else { return nil }
+            guard !user.isAccountDeleted else {
+                return nil
+            }
 
             // make sure the role is the right team/conversation role
             require(
@@ -156,7 +158,9 @@ extension ZMConversation {
                 "Tried to add a role that does not belong to the conversation"
             )
 
-            guard let (result, pr) = updateExistingOrCreateParticipantRole(for: user, with: role) else { return nil }
+            guard let (result, pr) = updateExistingOrCreateParticipantRole(for: user, with: role) else {
+                return nil
+            }
             return (result == .created) ? pr : nil
         }
 
@@ -186,7 +190,9 @@ extension ZMConversation {
         for user: ZMUser,
         with role: Role?
     ) -> (FetchOrCreation, ParticipantRole)? {
-        guard let moc = managedObjectContext else { return nil }
+        guard let moc = managedObjectContext else {
+            return nil
+        }
 
         // If the user is already there, just change the role
         if let current = participantRoles.first(where: { $0.user == user }) {
@@ -250,7 +256,9 @@ extension ZMConversation {
     /// status, etc.
     @objc
     public func removeParticipantsAndUpdateConversationState(users: Set<ZMUser>, initiatingUser: ZMUser? = nil) {
-        guard let moc = managedObjectContext else { return }
+        guard let moc = managedObjectContext else {
+            return
+        }
         let existingUsers = Set(participantRoles.map(\.user))
 
         let removedUsers = Set(users.compactMap { user -> ZMUser? in
@@ -258,7 +266,9 @@ extension ZMConversation {
             guard
                 existingUsers.contains(user),
                 let existingRole = participantRoles.first(where: { $0.user == user })
-            else { return nil }
+            else {
+                return nil
+            }
 
             participantRoles.remove(existingRole)
             moc.delete(existingRole)
@@ -314,7 +324,9 @@ extension ZMConversation {
         guard
             conversationType == .group,
             !isTeamConversation
-        else { return }
+        else {
+            return
+        }
 
         // if there are no roles with actions
         if nonTeamRoles.isEmpty || !nonTeamRoles.contains(where: { !$0.actions.isEmpty }) {
@@ -325,7 +337,9 @@ extension ZMConversation {
     // MARK: - Utils
 
     func has(participantWithId userId: Proteus_UserId?) -> Bool {
-        guard let userId else { return false }
+        guard let userId else {
+            return false
+        }
         return localParticipants.contains { $0.userId == userId }
     }
 }
@@ -333,7 +347,9 @@ extension ZMConversation {
 extension Collection<ZMUser> {
     public func belongingTo(domains: Set<String>) -> Set<ZMUser> {
         let result = filter { user in
-            guard let domain = user.domain else { return false }
+            guard let domain = user.domain else {
+                return false
+            }
             return domain.isOne(of: domains)
         }
 

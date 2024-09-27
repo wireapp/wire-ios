@@ -43,7 +43,9 @@ extension ConversationCreateOptionsSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let cell = cell as? Cell else { return }
+        guard let cell = cell as? Cell else {
+            return
+        }
         cell.expanded.toggle()
         tapHandler?(cell.expanded)
     }

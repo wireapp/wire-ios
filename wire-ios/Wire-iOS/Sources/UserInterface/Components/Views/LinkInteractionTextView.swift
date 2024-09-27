@@ -57,8 +57,12 @@ final class LinkInteractionTextView: UITextView {
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let isInside = super.point(inside: point, with: event)
-        guard !UIMenuController.shared.isMenuVisible else { return false }
-        guard let position = characterRange(at: point), isInside else { return false }
+        guard !UIMenuController.shared.isMenuVisible else {
+            return false
+        }
+        guard let position = characterRange(at: point), isInside else {
+            return false
+        }
         let index = offset(from: beginningOfDocument, to: position.start)
         return urlAttribute(at: index)
     }
@@ -83,7 +87,9 @@ final class LinkInteractionTextView: UITextView {
     // MARK: Private
 
     private func urlAttribute(at index: Int) -> Bool {
-        guard attributedText.length > 0 else { return false }
+        guard attributedText.length > 0 else {
+            return false
+        }
         let attributes = attributedText.attributes(at: index, effectiveRange: nil)
         return attributes[.link] != nil
     }
@@ -119,7 +125,9 @@ extension LinkInteractionTextView: UITextViewDelegate {
         in characterRange: NSRange,
         interaction: UITextItemInteraction
     ) -> Bool {
-        guard interaction == .presentActions else { return true }
+        guard interaction == .presentActions else {
+            return true
+        }
         interactionDelegate?.textViewDidLongPress(self)
         return false
     }
@@ -147,7 +155,9 @@ extension LinkInteractionTextView: UITextViewDelegate {
 
             let performLinkInteraction: () -> Bool = {
                 // if alert shown, link opening is handled in alert actions
-                if self.showAlertIfNeeded(for: URL, in: characterRange) { return false }
+                if self.showAlertIfNeeded(for: URL, in: characterRange) {
+                    return false
+                }
 
                 // data detector links should be handle by the system
                 return self.dataDetectedURLSchemes

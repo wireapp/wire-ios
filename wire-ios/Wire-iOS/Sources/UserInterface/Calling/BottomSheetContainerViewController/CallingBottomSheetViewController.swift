@@ -138,7 +138,9 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     }
 
     func transition(to toViewController: CallViewController, from fromViewController: CallViewController) {
-        guard toViewController != fromViewController else { return }
+        guard toViewController != fromViewController else {
+            return
+        }
         addChild(toViewController)
 
         transition(
@@ -237,7 +239,9 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             height: bottomSheetMaxHeight,
             initialOffset: bottomSheetMinimalOffset
         )
-        guard configuration != newConfiguration else { return }
+        guard configuration != newConfiguration else {
+            return
+        }
         configuration = newConfiguration
         callingActionsInfoViewController.updateActionViewHeight()
         callingActionsInfoViewController.actionsView.viewWillRotate(toPortrait: !isLandscape)
@@ -256,7 +260,9 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         stopCallDurationTimer()
         callDurationTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             guard let configuration = self?.callInfoConfiguration,
-                  case .established = configuration.state else { return }
+                  case .established = configuration.state else {
+                return
+            }
             self?.headerBar.updateConfiguration(configuration: configuration)
         }
     }

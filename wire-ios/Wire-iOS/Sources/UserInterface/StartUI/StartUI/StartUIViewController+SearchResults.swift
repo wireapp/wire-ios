@@ -30,7 +30,9 @@ extension StartUIViewController {
 
         guard let indexPath,
               let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath)
-        else { return }
+        else {
+            return
+        }
 
         profilePresenter.presentProfileViewController(
             for: bareUser,
@@ -83,7 +85,9 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         _ searchResultsViewController: SearchResultsViewController,
         didTapOnConversation conversation: ZMConversation
     ) {
-        guard conversation.conversationType == .group || conversation.conversationType == .oneOnOne else { return }
+        guard conversation.conversationType == .group || conversation.conversationType == .oneOnOne else {
+            return
+        }
 
         delegate?.startUI(self, didSelect: conversation)
     }
@@ -97,7 +101,9 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             actionType: .openConversation,
             userSession: userSession
         ) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             if let result {
                 switch result {
@@ -162,7 +168,9 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         ) { [weak self] in
             switch $0 {
             case let .success(conversation):
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
                 delegate?.startUI(
                     self,
                     didSelect: conversation
@@ -183,7 +191,9 @@ extension StartUIViewController: ConversationCreationControllerDelegate {
         didCreateConversation conversation: ZMConversation
     ) {
         dismiss(controller: controller) { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             delegate?.startUI(
                 self,

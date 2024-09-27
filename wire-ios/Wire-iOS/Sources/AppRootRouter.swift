@@ -188,7 +188,9 @@ final class AppRootRouter {
         // Perform the wait on a background queue so we don't cause a
         // deadlock on the main queue.
         appStateTransitionQueue.async { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             appStateTransitionGroup.wait()
 
@@ -409,7 +411,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
     }
 
     private func retryStart(completion: @escaping () -> Void) {
-        guard let launchOptions = lastLaunchOptions else { return }
+        guard let launchOptions = lastLaunchOptions else {
+            return
+        }
         completion()
         enqueueTransition(to: .headless) { [weak self] in
             self?.sessionManager.start(launchOptions: launchOptions)
@@ -446,7 +450,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         account: Account,
         userSession: UserSession
     ) -> AuthenticatedRouter? {
-        guard let userSession = ZMUserSession.shared() else { return nil }
+        guard let userSession = ZMUserSession.shared() else {
+            return nil
+        }
 
         return AuthenticatedRouter(
             mainWindow: mainWindow,
@@ -509,7 +515,9 @@ extension AppRootRouter {
     }
 
     private func resetSelfUserProviderIfNeeded(for appState: AppState) {
-        guard AppDelegate.shared.shouldConfigureSelfUserProvider else { return }
+        guard AppDelegate.shared.shouldConfigureSelfUserProvider else {
+            return
+        }
 
         switch appState {
         case .authenticated: break
@@ -519,7 +527,9 @@ extension AppRootRouter {
     }
 
     private func configureSelfUserProviderIfNeeded(for appState: AppState) {
-        guard AppDelegate.shared.shouldConfigureSelfUserProvider else { return }
+        guard AppDelegate.shared.shouldConfigureSelfUserProvider else {
+            return
+        }
 
         if case .authenticated = appState {
             SelfUser.provider = ZMUserSession.shared()

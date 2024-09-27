@@ -128,11 +128,15 @@ public class SnapshotCenter {
             }
         }
         snapshot.toManyRelationships.forEach {
-            guard let count = (object.value(forKey: $0) as? Countable)?.count, count != $1 else { return }
+            guard let count = (object.value(forKey: $0) as? Countable)?.count, count != $1 else {
+                return
+            }
             changedKeys.insert($0)
         }
         snapshot.toOneRelationships.forEach {
-            guard (object.value(forKey: $0) as? NSManagedObject)?.objectID != $1 else { return }
+            guard (object.value(forKey: $0) as? NSManagedObject)?.objectID != $1 else {
+                return
+            }
             changedKeys.insert($0)
         }
         // Update snapshot

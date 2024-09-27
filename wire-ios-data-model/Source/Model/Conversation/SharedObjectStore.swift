@@ -18,10 +18,14 @@
 
 extension Notification {
     fileprivate var contextDidSaveData: [AnyHashable: AnyObject] {
-        guard let info = userInfo else { return [:] }
+        guard let info = userInfo else {
+            return [:]
+        }
         var changes = [AnyHashable: AnyObject]()
         for (key, value) in info {
-            guard let set = value as? NSSet else { continue }
+            guard let set = value as? NSSet else {
+                continue
+            }
             changes[key] = set.compactMap {
                 ($0 as? NSManagedObject)?.objectID.uriRepresentation()
             } as AnyObject
@@ -76,7 +80,9 @@ public class StorableTrackingEvent: NSObject {
 
     public convenience init?(dictionary dict: [String: Any]) {
         guard let name = dict[StorableTrackingEvent.eventNameKey] as? String,
-              var attributes = dict[StorableTrackingEvent.eventAttributesKey] as? [String: Any] else { return nil }
+              var attributes = dict[StorableTrackingEvent.eventAttributesKey] as? [String: Any] else {
+            return nil
+        }
         attributes["timestamp"] = Date().transportString()
         self.init(name: name, attributes: attributes)
     }
@@ -215,7 +221,9 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
 
     public func clear() {
         do {
-            guard fileManager.fileExists(atPath: url.path) else { return }
+            guard fileManager.fileExists(atPath: url.path) else {
+                return
+            }
             try fileManager.removeItem(at: url)
             zmLog.debug("Cleared shared objects from \(url)")
         } catch {

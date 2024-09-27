@@ -86,27 +86,37 @@ public final class ConversationList: NSObject {
     }
 
     public static func conversationsIncludingArchived(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
+        guard let session else {
+            return nil
+        }
         return session.viewContext.conversationListDirectory().conversationsIncludingArchived
     }
 
     public static func conversations(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
+        guard let session else {
+            return nil
+        }
         return session.viewContext.conversationListDirectory().unarchivedConversations
     }
 
     public static func archivedConversations(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
+        guard let session else {
+            return nil
+        }
         return session.viewContext.conversationListDirectory().archivedConversations
     }
 
     public static func pendingConnectionConversations(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
+        guard let session else {
+            return nil
+        }
         return session.viewContext.conversationListDirectory().pendingConnectionConversations
     }
 
     public static func clearedConversations(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
+        guard let session else {
+            return nil
+        }
         return session.viewContext.conversationListDirectory().clearedConversations
     }
 

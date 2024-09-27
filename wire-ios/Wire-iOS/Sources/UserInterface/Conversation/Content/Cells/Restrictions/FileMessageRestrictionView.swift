@@ -47,7 +47,9 @@ final class FileMessageRestrictionView: BaseMessageRestrictionView {
     func configure(for message: ZMConversationMessage?) {
         super.configure()
 
-        guard let filename = message?.filename else { return }
+        guard let filename = message?.filename else {
+            return
+        }
         let fileNameAttributed = filename.uppercased() && .smallSemiboldFont && SemanticColors.Label.textDefault
 
         topLabel.attributedText = fileNameAttributed

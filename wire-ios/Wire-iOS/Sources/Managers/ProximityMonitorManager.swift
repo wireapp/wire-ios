@@ -68,7 +68,9 @@ final class ProximityMonitorManager: NSObject {
     func updateProximityMonitorState() {
         // Only do proximity monitoring on phones
         guard UIDevice.current.userInterfaceIdiom == .phone, let callCenter = ZMUserSession.shared()?.callCenter,
-              !listening else { return }
+              !listening else {
+            return
+        }
 
         let ongoingCalls = callCenter.nonIdleCalls.filter { (_, callState: CallState) -> Bool in
             switch callState {

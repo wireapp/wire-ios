@@ -93,7 +93,9 @@ enum StatusMessageType: Int, CaseIterable {
     }
 
     func localizedString(with count: UInt) -> String? {
-        guard let localizationKey else { return nil }
+        guard let localizationKey else {
+            return nil
+        }
 
         return String(format: localizationKey.localized, count)
     }
@@ -790,7 +792,9 @@ final class UsernameMatcher: ConversationStatusMatcher {
         guard
             let user = conversation.connectedUserType,
             let handle = user.handleDisplayString(withDomain: user.isFederated)
-        else { return .none }
+        else {
+            return .none
+        }
 
         return handle && type(of: self).regularStyle
     }
@@ -893,7 +897,9 @@ extension ZMConversation {
             }
 
         let isOngoingCall: Bool = {
-            guard let state = voiceChannel?.state else { return false }
+            guard let state = voiceChannel?.state else {
+                return false
+            }
             switch state {
             case .none, .terminating: return false
             case .incoming: return true

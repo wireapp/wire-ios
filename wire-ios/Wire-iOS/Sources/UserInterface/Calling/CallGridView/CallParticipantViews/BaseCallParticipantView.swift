@@ -114,7 +114,9 @@ class BaseCallParticipantView: OrientableView {
 
     var pinchToZoomRule: PinchToZoomRule {
         didSet {
-            guard oldValue != pinchToZoomRule else { return }
+            guard oldValue != pinchToZoomRule else {
+                return
+            }
             updateScalableView()
         }
     }
@@ -191,7 +193,9 @@ class BaseCallParticipantView: OrientableView {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else {
+            return
+        }
         borderLayer.borderColor = SemanticColors.View.backgroundDefaultWhite.cgColor
     }
 
@@ -215,7 +219,9 @@ class BaseCallParticipantView: OrientableView {
         forInterfaceOrientation interfaceOrientation: UIInterfaceOrientation,
         deviceOrientation: UIDeviceOrientation
     ) {
-        guard let superview else { return }
+        guard let superview else {
+            return
+        }
 
         delta = .equal
 
@@ -247,7 +253,9 @@ class BaseCallParticipantView: OrientableView {
 
     private var videoKind: VideoKind = .none {
         didSet {
-            guard oldValue != videoKind else { return }
+            guard oldValue != videoKind else {
+                return
+            }
             updateFillMode()
             updateScalableView()
         }

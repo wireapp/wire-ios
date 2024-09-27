@@ -52,7 +52,9 @@ public class Mention: NSObject {
     public let user: UserType
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let otherMention = object as? Mention else { return false }
+        guard let otherMention = object as? Mention else {
+            return false
+        }
 
         return user.isEqual(otherMention.user) && NSEqualRanges(range, otherMention.range)
     }
@@ -66,7 +68,9 @@ extension Mention {
     ) -> [Mention] {
         guard let protos,
               let messageText,
-              let managedObjectContext = moc else { return [] }
+              let managedObjectContext = moc else {
+            return []
+        }
 
         let mentions = Array(protos.compactMap { Mention($0, context: managedObjectContext) }.prefix(500))
         var mentionRanges = IndexSet()
@@ -76,7 +80,9 @@ extension Mention {
             let range = mention.range.range
 
             guard !mentionRanges.intersects(integersIn: range),
-                  range.upperBound <= messageRange.upperBound else { return false }
+                  range.upperBound <= messageRange.upperBound else {
+                return false
+            }
 
             mentionRanges.insert(integersIn: range)
 

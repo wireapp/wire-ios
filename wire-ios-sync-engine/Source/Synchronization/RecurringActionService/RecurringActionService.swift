@@ -53,7 +53,9 @@ final class RecurringActionService: RecurringActionServiceInterface {
     }
 
     public func forcePerformAction(id: String) {
-        guard let action = actionsByID[id] else { return }
+        guard let action = actionsByID[id] else {
+            return
+        }
         action()
         persistLastCheckDate(for: id)
     }

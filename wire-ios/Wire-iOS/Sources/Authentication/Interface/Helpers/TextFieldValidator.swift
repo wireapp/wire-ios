@@ -82,9 +82,15 @@ final class TextFieldValidator {
 
         case .username:
             let subset = CharacterSet(charactersIn: text).isSubset(of: HandleValidation.allowedCharacters)
-            guard subset, text.isEqualToUnicodeName else { return .invalidUsername }
-            guard text.count >= HandleValidation.allowedLength.lowerBound else { return .tooShort(kind: .username) }
-            guard text.count <= HandleValidation.allowedLength.upperBound else { return .tooLong(kind: .username) }
+            guard subset, text.isEqualToUnicodeName else {
+                return .invalidUsername
+            }
+            guard text.count >= HandleValidation.allowedLength.lowerBound else {
+                return .tooShort(kind: .username)
+            }
+            guard text.count <= HandleValidation.allowedLength.upperBound else {
+                return .tooLong(kind: .username)
+            }
 
         case .unknown: break
         }
@@ -156,10 +162,14 @@ extension TextFieldValidator.ValidationError: LocalizedError {
 
 extension String {
     var isEmail: Bool {
-        guard !hasPrefix("mailto:") else { return false }
+        guard !hasPrefix("mailto:") else {
+            return false
+        }
 
         guard let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-        else { return false }
+        else {
+            return false
+        }
 
         let stringToMatch =
             trimmingCharacters(in: .whitespacesAndNewlines) // We should ignore leading/trailing whitespace
@@ -176,13 +186,23 @@ extension String {
             range: range
         )
 
-        if firstMatch?.range.location == NSNotFound { return false }
-        if firstMatch?.url?.scheme != "mailto" { return false }
-        if firstMatch?.url?.absoluteString.hasSuffix(stringToMatch) == false { return false }
-        if numberOfMatches != 1 { return false }
+        if firstMatch?.range.location == NSNotFound {
+            return false
+        }
+        if firstMatch?.url?.scheme != "mailto" {
+            return false
+        }
+        if firstMatch?.url?.absoluteString.hasSuffix(stringToMatch) == false {
+            return false
+        }
+        if numberOfMatches != 1 {
+            return false
+        }
 
         /// patch the NSDataDetector for its false-positive cases
-        if contains("..") { return false }
+        if contains("..") {
+            return false
+        }
 
         return true
     }

@@ -189,7 +189,9 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
         forKeys keys: Set<String>,
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
-        guard let selfUser = managedObject as? ZMUser else { return nil }
+        guard let selfUser = managedObject as? ZMUser else {
+            return nil
+        }
 
         let allProperties = Set(UserProperty.allCases.map(\.propertyName))
 

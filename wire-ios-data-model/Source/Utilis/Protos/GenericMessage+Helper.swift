@@ -27,7 +27,9 @@ extension GenericMessage {
             let string = base64String,
             let data = Data(base64Encoded: string),
             let message = GenericMessage.with({ try? $0.merge(serializedData: data) }).validatingFields()
-        else { return nil }
+        else {
+            return nil
+        }
         self = message
     }
 
@@ -73,7 +75,9 @@ extension GenericMessage {
 
 extension GenericMessage {
     public var messageData: MessageCapable? {
-        guard let content else { return nil }
+        guard let content else {
+            return nil
+        }
         switch content {
         case let .text(data):
             return data
@@ -121,7 +125,9 @@ extension GenericMessage {
     }
 
     var locationData: Location? {
-        guard let content else { return nil }
+        guard let content else {
+            return nil
+        }
         switch content {
         case let .location(data):
             return data
@@ -140,7 +146,9 @@ extension GenericMessage {
     }
 
     public var compositeData: Composite? {
-        guard let content else { return nil }
+        guard let content else {
+            return nil
+        }
         switch content {
         case let .composite(data):
             return data
@@ -150,7 +158,9 @@ extension GenericMessage {
     }
 
     public var imageAssetData: ImageAsset? {
-        guard let content else { return nil }
+        guard let content else {
+            return nil
+        }
         switch content {
         case let .image(data):
             return data
@@ -169,7 +179,9 @@ extension GenericMessage {
     }
 
     public var assetData: WireProtos.Asset? {
-        guard let content else { return nil }
+        guard let content else {
+            return nil
+        }
         switch content {
         case let .asset(data):
             return data
@@ -188,7 +200,9 @@ extension GenericMessage {
     }
 
     public var knockData: Knock? {
-        guard let content else { return nil }
+        guard let content else {
+            return nil
+        }
         switch content {
         case let .knock(data):
             return data
@@ -207,7 +221,9 @@ extension GenericMessage {
     }
 
     public var textData: Text? {
-        guard let content else { return nil }
+        guard let content else {
+            return nil
+        }
         switch content {
         case let .text(data):
             return data
@@ -269,7 +285,9 @@ extension GenericMessage {
 
 extension GenericMessage {
     public var linkPreviews: [LinkPreview] {
-        guard let content else { return [] }
+        guard let content else {
+            return []
+        }
         switch content {
         case .text:
             return text.linkPreview.compactMap { $0 }
@@ -301,7 +319,9 @@ extension Ephemeral {
     }
 
     public var messageData: MessageCapable? {
-        guard let content else { return nil }
+        guard let content else {
+            return nil
+        }
         switch content {
         case let .text(data):
             return data
@@ -517,7 +537,9 @@ extension WireProtos.Reaction {
     }
 
     func toReactionSet() -> Set<String> {
-        guard !emoji.isEmpty else { return [] }
+        guard !emoji.isEmpty else {
+            return []
+        }
 
         let result = emoji
             .components(separatedBy: ",")
@@ -661,14 +683,18 @@ extension WireProtos.Mention {
 
 extension WireDataModel.Mention {
     public func convertToProtosMention() -> WireProtos.Mention? {
-        guard let userID = (user as? ZMUser)?.remoteIdentifier.transportString() else { return nil }
+        guard let userID = (user as? ZMUser)?.remoteIdentifier.transportString() else {
+            return nil
+        }
 
         return WireProtos.Mention.with {
             $0.start = Int32(range.location)
             $0.length = Int32(range.length)
             $0.userID = userID
 
-            guard let domain = user.domain else { return }
+            guard let domain = user.domain else {
+                return
+            }
 
             $0.qualifiedUserID = WireProtos.QualifiedUserId.with {
                 $0.id = userID
@@ -730,7 +756,9 @@ extension LinkPreview {
             }
 
             guard let author = twitterMetadata.author,
-                  let username = twitterMetadata.username else { return }
+                  let username = twitterMetadata.username else {
+                return
+            }
 
             $0.tweet = WireProtos.Tweet.with {
                 $0.author = author

@@ -126,7 +126,9 @@ extension ChaCha20Poly1305 {
 
                 bytesReadReadAhead = input.read(&messageBufferReadAhead, maxLength: bufferSize)
 
-                guard bytesRead > 0 else { break }
+                guard bytesRead > 0 else {
+                    break
+                }
 
                 let messageLength = UInt64(bytesRead)
                 var cipherLength: UInt64 = 0
@@ -215,7 +217,9 @@ extension ChaCha20Poly1305 {
             repeat {
                 bytesRead = input.read(&cipherBuffer, maxLength: cipherBufferSize)
 
-                guard bytesRead > 0 else { continue }
+                guard bytesRead > 0 else {
+                    continue
+                }
 
                 var messageLength: UInt64 = 0
                 let cipherLength = UInt64(bytesRead)

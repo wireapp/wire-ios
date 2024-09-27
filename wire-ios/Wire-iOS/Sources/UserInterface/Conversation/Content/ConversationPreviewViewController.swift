@@ -88,7 +88,9 @@ final class ConversationPreviewViewController: UIViewController {
     // MARK: Private
 
     private func createConstraints() {
-        guard let conversationView = contentViewController.view else { return }
+        guard let conversationView = contentViewController.view else {
+            return
+        }
 
         conversationView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -108,7 +110,9 @@ final class ConversationPreviewViewController: UIViewController {
     )
     private func makePreviewAction(for action: ZMConversation.Action) -> UIPreviewAction {
         action.previewAction { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             actionController.handleAction(action)
         }
     }

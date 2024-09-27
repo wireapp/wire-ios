@@ -95,7 +95,9 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         guard let conversation = identifiers.first, identifiers.count == 1,
               let conversationID = conversation.remoteIdentifier,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-        else { return nil }
+        else {
+            return nil
+        }
 
         return requestFactory.upstreamRequestForFetchingClients(
             conversationId: conversationID,
@@ -110,7 +112,9 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         for identifiers: Set<ZMConversation>,
         completionHandler: @escaping () -> Void
     ) {
-        guard let conversation = identifiers.first else { return completionHandler() }
+        guard let conversation = identifiers.first else {
+            return completionHandler()
+        }
 
         let verifyClientsParser = VerifyClientsParser(context: managedObjectContext, conversation: conversation)
         let clientChanges = verifyClientsParser.processEmptyUploadResponse(
@@ -123,7 +127,9 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
 
             var newMissingClients = [UserClient]()
             for missingClient in clientChanges.missingClients {
-                guard await !missingClient.hasSessionWithSelfClient else { continue }
+                guard await !missingClient.hasSessionWithSelfClient else {
+                    continue
+                }
                 newMissingClients.append(missingClient)
             }
 

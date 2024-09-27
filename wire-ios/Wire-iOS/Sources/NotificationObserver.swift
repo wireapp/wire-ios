@@ -44,7 +44,9 @@ extension ApplicationStateObserving {
             object: nil,
             queue: nil
         ) { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             applicationDidEnterBackground()
         })
 
@@ -53,7 +55,9 @@ extension ApplicationStateObserving {
             object: nil,
             queue: nil
         ) { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             applicationDidBecomeActive()
         })
 
@@ -62,7 +66,9 @@ extension ApplicationStateObserving {
             object: nil,
             queue: nil
         ) { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             applicationWillEnterForeground()
         })
     }
@@ -81,7 +87,9 @@ extension ContentSizeCategoryObserving {
             object: nil,
             queue: nil
         ) { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             contentSizeCategoryDidChange()
         })
     }

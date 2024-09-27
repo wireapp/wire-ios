@@ -29,7 +29,9 @@ protocol TemporaryFileServiceInterface {
 
 final class TemporaryFileService: TemporaryFileServiceInterface {
     func removeTemporaryData() {
-        guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
+        guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else {
+            return
+        }
         let manager = FileManager.default
 
         try? manager

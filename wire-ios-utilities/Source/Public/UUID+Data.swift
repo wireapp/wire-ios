@@ -28,7 +28,9 @@ extension UUID {
     ///
     /// - Parameter data: a data with count = 16.
     public init?(data: Data) {
-        guard data.count == 16 else { return nil }
+        guard data.count == 16 else {
+            return nil
+        }
 
         self.init(uuid: (
             data[0],

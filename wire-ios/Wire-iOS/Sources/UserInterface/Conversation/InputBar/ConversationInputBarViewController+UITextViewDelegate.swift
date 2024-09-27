@@ -29,9 +29,13 @@ extension CharacterSet {
 extension ConversationInputBarViewController {
     func hideLeftView() {
         let currentDevice = DeviceWrapper(device: .current)
-        guard isIPadRegularPortrait(device: currentDevice, application: UIApplication.shared) else { return }
+        guard isIPadRegularPortrait(device: currentDevice, application: UIApplication.shared) else {
+            return
+        }
         guard let splitViewController = wr_splitViewController,
-              splitViewController.isLeftViewControllerRevealed else { return }
+              splitViewController.isLeftViewControllerRevealed else {
+            return
+        }
 
         splitViewController.setLeftViewControllerRevealed(false, animated: true)
     }
@@ -41,7 +45,9 @@ extension ConversationInputBarViewController {
 
 extension ConversationInputBarViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         // In case the conversation isDeleted
         if conversation.managedObjectContext == nil {
@@ -118,7 +124,9 @@ extension ConversationInputBarViewController: UITextViewDelegate {
     }
 
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-        guard mode != .audioRecord else { return true }
+        guard mode != .audioRecord else {
+            return true
+        }
         triggerMentionsIfNeeded(from: textView)
         return delegate?.conversationInputBarViewControllerShouldBeginEditing(self) ?? true
     }
@@ -138,7 +146,9 @@ extension ConversationInputBarViewController: UITextViewDelegate {
             conversation.setIsTyping(false)
         }
 
-        guard let textView = textView as? MarkdownTextView else { preconditionFailure("Invalid textView class") }
+        guard let textView = textView as? MarkdownTextView else {
+            preconditionFailure("Invalid textView class")
+        }
         let draft = draftMessage(from: textView)
         delegate?.conversationInputBarViewControllerDidComposeDraft(message: draft)
     }

@@ -214,7 +214,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         do {
             try recreateSharingSession(account: account)
         } catch let error as SharingSession.InitializationError {
-            guard error == .loggedOut else { return }
+            guard error == .loggedOut else {
+                return
+            }
 
             let alert = UIAlertController(
                 title: L10n.ShareExtension.LoggedOut.title,
@@ -236,12 +238,16 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         accountItem.value = account?.shareExtensionDisplayName ?? ""
         conversationItem.value = L10n.ShareExtension.ConversationSelection.Empty.value
 
-        guard account != currentAccount else { return }
+        guard account != currentAccount else {
+            return
+        }
         postContent?.target = nil
     }
 
     func showChooseConversation() {
-        guard let sharingSession else { return }
+        guard let sharingSession else {
+            return
+        }
 
         let allConversations = sharingSession.writeableNonArchivedConversations + sharingSession
             .writebleArchivedConversations
@@ -257,7 +263,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     func showChooseAccount() {
-        guard let accountManager else { return }
+        guard let accountManager else {
+            return
+        }
         let accountSelectionViewController = AccountSelectionViewController(
             accounts: accountManager.accounts,
             current: currentAccount
@@ -294,13 +302,17 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     // MARK: - Host App State
 
     private var accountManager: AccountManager? {
-        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
+        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else {
+            return nil
+        }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         return AccountManager(sharedDirectory: sharedContainerURL)
     }
 
     private var authenticatedAccounts: [Account] {
-        guard let accountManager else { return [] }
+        guard let accountManager else {
+            return []
+        }
         return accountManager.accounts.filter { BackendEnvironment.shared.isAuthenticated($0) }
     }
 
@@ -324,7 +336,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func setupNavigationBar() {
         let iconSize = CGSize(width: 32, height: 26.3)
-        guard let item = navigationController?.navigationBar.items?.first else { return }
+        guard let item = navigationController?.navigationBar.items?.first else {
+            return
+        }
         item.rightBarButtonItem?.action = #selector(appendPostTapped)
         item.rightBarButtonItem?.title = L10n.ShareExtension.SendButton.title
         item
@@ -338,7 +352,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
               let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
               let accountIdentifier = account?.userIdentifier
-        else { return }
+        else {
+            return
+        }
 
         let legacyConfig = AppLockController.LegacyConfig.fromBundle()
 
@@ -370,7 +386,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
         urlItems.first?.fetchURL { url in
             DispatchQueue.main.async {
-                guard let url, !url.isFileURL else { return }
+                guard let url, !url.isFileURL else {
+                    return
+                }
                 let separator = self.textView.text.isEmpty ? "" : "\n"
                 self.textView.text += separator + url.absoluteString
                 self.textView.delegate?.textViewDidChange?(self.textView)
@@ -389,7 +407,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             options: nil,
             completionHandler: { url, error in
                 error?.log(message: "Unable to fetch URL for type URL")
-                guard let url = url as? URL, url.isFileURL else { return }
+                guard let url = url as? URL, url.isFileURL else {
+                    return
+                }
 
                 let filename = url.lastPathComponent
                 let separator = self.textView.text.isEmpty ? "" : "\n"
@@ -416,20 +436,26 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         navigationController?.navigationBar.items?.first?.rightBarButtonItem?.isEnabled = false
 
         postContent?.send(text: contentText, sharingSession: sharingSession) { [weak self] progress in
-            guard let self, let postContent else { return }
+            guard let self, let postContent else {
+                return
+            }
 
             switch progress {
             case .preparing:
                 WireLogger.shareExtension.info("progress event: preparing")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
-                    guard !postContent.sentAllSendables, self.progressViewController == nil else { return }
+                    guard !postContent.sentAllSendables, self.progressViewController == nil else {
+                        return
+                    }
                     self.presentSendingProgress(mode: .preparing)
                 }
 
             case .startingSending:
                 WireLogger.shareExtension.info("progress event: start sending")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
-                    guard postContent.sentAllSendables, self.progressViewController == nil else { return }
+                    guard postContent.sentAllSendables, self.progressViewController == nil else {
+                        return
+                    }
                     self.presentSendingProgress(mode: .sending)
                 }
 
@@ -566,7 +592,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func presentChooseConversation() {
         requireLocalAuthenticationIfNeeded { [weak self] in
             guard let self,
-                  localAuthenticationStatus == .granted else { return }
+                  localAuthenticationStatus == .granted else {
+                return
+            }
 
             showChooseConversation()
         }
@@ -671,7 +699,9 @@ extension ShareExtensionViewController {
             passcodePreference: passcodePreference,
             description: description
         ) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             DispatchQueue.main.async {
                 if case .granted = result {
@@ -708,7 +738,9 @@ extension ShareExtensionViewController {
                 completion()
             } else {
                 requestCustomPasscode { [weak self] status in
-                    guard let self else { return }
+                    guard let self else {
+                        return
+                    }
 
                     localAuthenticationStatus = status
                     completion()
@@ -723,7 +755,9 @@ extension ShareExtensionViewController {
 
     private func requestCustomPasscode(with callback: @escaping (_ status: LocalAuthenticationStatus) -> Void) {
         presentUnlockScreen { [weak self] customPasscode in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             guard
                 let passcode = customPasscode,

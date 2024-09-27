@@ -65,7 +65,9 @@ extension VoiceChannel {
     typealias StreamArrangment = (preview: Stream?, grid: [Stream])
 
     fileprivate func createStreamArrangment() -> StreamArrangment {
-        guard isEstablished else { return streamArrangementForNonEstablishedCall }
+        guard isEstablished else {
+            return streamArrangementForNonEstablishedCall
+        }
 
         let participants = participants(forPresentationMode: videoGridPresentationMode)
 
@@ -98,8 +100,12 @@ extension VoiceChannel {
 
     func sortByVideo(streamData: [Stream]) -> [Stream] {
         streamData.sorted {
-            guard let videoStatusArgument0 = $0.videoState?.isSending else { return false }
-            guard let videoStatusArgument1 = $1.videoState?.isSending else { return false }
+            guard let videoStatusArgument0 = $0.videoState?.isSending else {
+                return false
+            }
+            guard let videoStatusArgument1 = $1.videoState?.isSending else {
+                return false
+            }
             return videoStatusArgument0 && !videoStatusArgument1
         }
     }

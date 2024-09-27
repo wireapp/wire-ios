@@ -66,7 +66,9 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     deinit {
-        guard let observer else { return }
+        guard let observer else {
+            return
+        }
         NotificationCenter.default.removeObserver(observer)
     }
 
@@ -91,7 +93,9 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     func updateCertificate() async {
         do {
-            guard let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else { return }
+            guard let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else {
+                return
+            }
 
             switch result {
             case .noAction:
@@ -123,7 +127,9 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let alert = await UIAlertController.reminderGetCertificate(timeLeft: formattedDuration) {
             Task { [weak self] in
 
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
 
                 await snoozeCertificateEnrollmentUseCase.invoke(
                     endOfPeriod: endOfPeriod,
@@ -210,7 +216,9 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
         typealias E2EIUpdateStrings = L10n.Localizable.UpdateCertificate.Alert
 
-        guard alertForE2EIChange == nil else { return }
+        guard alertForE2EIChange == nil else {
+            return
+        }
 
         let alert = UIAlertController.alertForE2EIChangeWithActions(
             title: E2EIUpdateStrings.title,

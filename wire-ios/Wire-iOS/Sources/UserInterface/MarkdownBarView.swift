@@ -132,7 +132,9 @@ final class MarkdownBarView: UIView {
 
     @objc
     func textViewDidChangeActiveMarkdown(note: Notification) {
-        guard let textView = note.object as? MarkdownTextView else { return }
+        guard let textView = note.object as? MarkdownTextView else {
+            return
+        }
         updateIcons(for: textView.activeMarkdown)
     }
 
@@ -143,7 +145,9 @@ final class MarkdownBarView: UIView {
         }
 
         for button in buttons {
-            guard let buttonMarkdown = self.markdown(for: button) else { continue }
+            guard let buttonMarkdown = self.markdown(for: button) else {
+                continue
+            }
             let iconColor = markdown.contains(buttonMarkdown) ? highlightedStateIconColor : enabledStateIconColor
             let backgroundColor = markdown
                 .contains(buttonMarkdown) ? highlightedStateBackgroundColor : enabledStateBackgroundColor
@@ -215,7 +219,9 @@ final class MarkdownBarView: UIView {
 
     @objc
     private func buttonTapped(sender: IconButton) {
-        guard let markdown = markdown(for: sender) else { return }
+        guard let markdown = markdown(for: sender) else {
+            return
+        }
 
         if sender.iconColor(for: .normal) != enabledStateIconColor {
             delegate?.markdownBarView(self, didDeselectMarkdown: markdown, with: sender)

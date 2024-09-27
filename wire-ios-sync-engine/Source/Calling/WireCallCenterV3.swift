@@ -321,7 +321,9 @@ extension WireCallCenterV3 {
 
     /// Returns conversations with active calls.
     public func activeCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
-        guard isEnabled else { return  [] }
+        guard isEnabled else {
+            return  []
+        }
         return nonIdleCalls.compactMap { (key: AVSIdentifier, value: CallState) -> ZMConversation? in
             switch value {
             case .answered, .established, .establishedDataChannel, .outgoing:
@@ -387,7 +389,9 @@ extension WireCallCenterV3 {
         kind: CallParticipantsListKind,
         activeSpeakersLimit limit: Int? = nil
     ) -> [CallParticipant] {
-        guard isEnabled else { return  [] }
+        guard isEnabled else {
+            return  []
+        }
         guard
             let callMembers = callSnapshots[conversationId]?.callParticipants.members.array,
             let context = uiMOC
@@ -416,7 +420,9 @@ extension WireCallCenterV3 {
         conversationId: AVSIdentifier,
         limitedBy limit: Int? = nil
     ) -> [AVSActiveSpeakersChange.ActiveSpeaker] {
-        guard isEnabled else { return [] }
+        guard isEnabled else {
+            return []
+        }
         guard let activeSpeakers = callSnapshots[conversationId]?.activeSpeakers else {
             return []
         }
@@ -430,13 +436,17 @@ extension WireCallCenterV3 {
 
     /// Returns the remote identifier of the user that initiated the call.
     func initiatorForCall(conversationId: AVSIdentifier) -> AVSIdentifier? {
-        guard isEnabled else { return nil }
+        guard isEnabled else {
+            return nil
+        }
         return callSnapshots[conversationId]?.callStarter
     }
 
     /// Call this method when the callParticipants changed and avs calls the handler `wcall_participant_changed_h`
     func callParticipantsChanged(conversationId: AVSIdentifier, participants: [AVSCallMember]) {
-        guard isEnabled else { return }
+        guard isEnabled else {
+            return
+        }
         let shouldEndCall = shouldEndCall(
             conversationId: conversationId,
             previousParticipants: callSnapshots[conversationId]?.callParticipants.members.array ?? [],
@@ -685,7 +695,9 @@ extension WireCallCenterV3 {
         case .mixed, .proteus:
             break
         case .mls:
-            guard conversationType == .mlsConference else { return }
+            guard conversationType == .mlsConference else {
+                return
+            }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -694,7 +706,9 @@ extension WireCallCenterV3 {
         guard usePackagingFeatureConfig else {
             return true
         }
-        guard let context = uiMOC else { return false }
+        guard let context = uiMOC else {
+            return false
+        }
         let conferenceCalling = FeatureRepository(context: context).fetchConferenceCalling()
         return conferenceCalling.status == .enabled
     }
@@ -874,8 +888,10 @@ extension WireCallCenterV3 {
 
     public func endAllCalls(exluding: AVSIdentifier? = nil) {
         Self.logger.info("ending all calls")
-        nonIdleCalls.forEach { (key: AVSIdentifier, callState: CallState) in
-            guard exluding == nil || key != exluding else { return }
+        for (key, callState) in nonIdleCalls {
+            guard exluding == nil || key != exluding else {
+                continue
+            }
 
             switch callState {
             case .incoming:
@@ -892,7 +908,9 @@ extension WireCallCenterV3 {
 
     public func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
         Self.logger.info("setting video state")
-        guard videoState != .badConnection else { return }
+        guard videoState != .badConnection else {
+            return
+        }
 
         if let snapshot = callSnapshots[conversationId] {
             callSnapshots[conversationId] = snapshot.updateVideoState(videoState)
@@ -992,7 +1010,9 @@ extension WireCallCenterV3 {
     func requestCallConfig() {
         zmLog.debug("\(self): requestCallConfig(), transport = \(String(describing: transport))")
         transport?.requestCallConfig(completionHandler: { [weak self] config, httpStatusCode in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             zmLog.debug("\(self): self.avsWrapper.update with \(String(describing: config))")
             avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)
         })
@@ -1065,7 +1085,9 @@ extension WireCallCenterV3 {
     }
 
     func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
-        guard let context = uiMOC else { return nil }
+        guard let context = uiMOC else {
+            return nil
+        }
 
         var conversationType: AVSConversationType?
 

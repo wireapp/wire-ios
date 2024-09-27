@@ -62,7 +62,9 @@ final class ImageToolbarView: UIView {
 
     var configuration: ImageToolbarConfiguration {
         didSet {
-            guard oldValue != configuration else { return }
+            guard oldValue != configuration else {
+                return
+            }
 
             updateButtonConfiguration()
         }
@@ -70,14 +72,18 @@ final class ImageToolbarView: UIView {
 
     var showsSketchButton = true {
         didSet {
-            guard oldValue != showsSketchButton else { return }
+            guard oldValue != showsSketchButton else {
+                return
+            }
             updateButtonConfiguration()
         }
     }
 
     var imageIsEphemeral = false {
         didSet {
-            guard oldValue != imageIsEphemeral else { return }
+            guard oldValue != imageIsEphemeral else {
+                return
+            }
             updateButtonConfiguration()
         }
     }

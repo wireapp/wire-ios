@@ -72,7 +72,9 @@ final class ColorSchemeController: NSObject {
 
 extension ColorSchemeController: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
-        guard note.accentColorValueChanged else { return }
+        guard note.accentColorValueChanged else {
+            return
+        }
 
         let colorScheme = ColorScheme.default
 

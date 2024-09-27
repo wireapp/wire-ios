@@ -251,7 +251,9 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             XCTAssertFalse(message.needsLinkAttachmentsUpdate)
             let data = self.syncMOC.zm_fileAssetCache.originalImageData(for: message)
             XCTAssertNil(data)
-            guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
+            guard let genericMessage = message.underlyingMessage else {
+                return XCTFail("No generic message")
+            }
             guard case .ephemeral? = genericMessage.content else {
                 return XCTFail("No ephemeral content found")
             }

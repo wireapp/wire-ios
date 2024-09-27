@@ -345,8 +345,12 @@ extension IntegrationTest {
 
     @objc
     func createSharedSearchDirectory() {
-        guard sharedSearchDirectory == nil else { return }
-        guard let userSession else { XCTFail("Could not create shared SearchDirectory");  return }
+        guard sharedSearchDirectory == nil else {
+            return
+        }
+        guard let userSession else {
+            XCTFail("Could not create shared SearchDirectory");  return
+        }
         sharedSearchDirectory = SearchDirectory(userSession: userSession)
     }
 
@@ -545,7 +549,9 @@ extension IntegrationTest {
 
     @objc(prefetchRemoteClientByInsertingMessageInConversation:)
     func prefetchClientByInsertingMessage(in mockConversation: MockConversation) {
-        guard let convo = conversation(for: mockConversation) else { return }
+        guard let convo = conversation(for: mockConversation) else {
+            return
+        }
         userSession?.perform {
             try! convo.appendText(content: "hum, t'es sûr?")
         }

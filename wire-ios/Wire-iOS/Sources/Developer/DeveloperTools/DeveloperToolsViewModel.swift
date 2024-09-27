@@ -178,7 +178,9 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private var canSwitchBackend: Bool {
-        guard let sessionManager = SessionManager.shared else { return false }
+        guard let sessionManager = SessionManager.shared else {
+            return false
+        }
         return sessionManager.canSwitchBackend() == nil
     }
 
@@ -205,7 +207,9 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private var apiVersion: String {
-        guard let version = BackendInfo.apiVersion else { return "None" }
+        guard let version = BackendInfo.apiVersion else {
+            return "None"
+        }
         return String(describing: version.rawValue)
     }
 
@@ -214,12 +218,16 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private var selfUser: ZMUser? {
-        guard let userSession else { return nil }
+        guard let userSession else {
+            return nil
+        }
         return ZMUser.selfUser(inUserSession: userSession)
     }
 
     private var selfClient: UserClient? {
-        guard let userSession else { return nil }
+        guard let userSession else {
+            return nil
+        }
         return userSession.selfUserClient
     }
 
@@ -309,7 +317,9 @@ final class DeveloperToolsViewModel: ObservableObject {
         ]
 
         let actions = actionsProviders.reduce(into: []) { $0 += ($1?.getActionItems() ?? []) }
-        guard !actions.isEmpty else { return }
+        guard !actions.isEmpty else {
+            return
+        }
 
         sections.append(
             Section(

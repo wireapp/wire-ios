@@ -94,7 +94,9 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // Given
             guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)
-            else { return XCTFail("No message") }
+            else {
+                return XCTFail("No message")
+            }
             assetMessage = message
 
             // When
@@ -114,7 +116,9 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // Given
             guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)
-            else { return XCTFail("No message") }
+            else {
+                return XCTFail("No message")
+            }
             self.syncMOC.zm_fileAssetCache.storeOriginalFile(data: Data(), for: message)
             assetMessage = message
 
@@ -135,8 +139,12 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // Given
             guard let (message, assetId, token, domain) = self.createFileMessageWithAssetId(in: self.conversation)
-            else { return XCTFail("No message") }
-            guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
+            else {
+                return XCTFail("No message")
+            }
+            guard let assetData = message.underlyingMessage?.assetData else {
+                return XCTFail("No assetData found")
+            }
 
             expectedAssetId = assetId
             XCTAssert(assetData.hasUploaded)
@@ -152,7 +160,9 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // When
             guard let request = self.sut.nextRequest(for: self.apiVersion)
-            else { return XCTFail("No request generated") }
+            else {
+                return XCTFail("No request generated")
+            }
 
             // Then
             XCTAssertEqual(request.method, .get)
@@ -167,8 +177,12 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             // Given
             self.conversation.setMessageDestructionTimeoutValue(.custom(5), for: .selfUser)
             guard let (message, assetId, token, domain) = self.createFileMessageWithAssetId(in: self.conversation)
-            else { return XCTFail("No message") }
-            guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
+            else {
+                return XCTFail("No message")
+            }
+            guard let assetData = message.underlyingMessage?.assetData else {
+                return XCTFail("No assetData found")
+            }
 
             expectedAssetId = assetId
             XCTAssert(assetData.hasUploaded)
@@ -187,7 +201,9 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // When
             guard let request = self.sut.nextRequest(for: self.apiVersion)
-            else { return XCTFail("No request generated") }
+            else {
+                return XCTFail("No request generated")
+            }
 
             // Then
             XCTAssertEqual(request.method, .get)
@@ -204,8 +220,12 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // Given
             guard let (message, assetId, token, domain) = self.createFileMessageWithAssetId(in: self.conversation)
-            else { return XCTFail("No message") }
-            guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
+            else {
+                return XCTFail("No message")
+            }
+            guard let assetData = message.underlyingMessage?.assetData else {
+                return XCTFail("No assetData found")
+            }
 
             expectedAssetId = assetId
             expectedDomain = domain
@@ -221,7 +241,9 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // When
             guard let request = self.sut.nextRequest(for: self.apiVersion)
-            else { return XCTFail("No request generated") }
+            else {
+                return XCTFail("No request generated")
+            }
 
             // Then
             XCTAssertEqual(request.method, .get)
@@ -240,8 +262,12 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             // Given
             self.conversation.setMessageDestructionTimeoutValue(.custom(5), for: .selfUser)
             guard let (message, assetId, token, domain) = self.createFileMessageWithAssetId(in: self.conversation)
-            else { return XCTFail("No message") }
-            guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
+            else {
+                return XCTFail("No message")
+            }
+            guard let assetData = message.underlyingMessage?.assetData else {
+                return XCTFail("No assetData found")
+            }
 
             expectedAssetId = assetId
             expectedDomain = domain
@@ -260,7 +286,9 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // When
             guard let request = self.sut.nextRequest(for: self.apiVersion)
-            else { return XCTFail("No request generated") }
+            else {
+                return XCTFail("No request generated")
+            }
 
             // Then
             XCTAssertEqual(request.method, .get)
@@ -561,7 +589,9 @@ extension AssetV3DownloadRequestStrategyTests {
         // WHEN
         syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequest(for: self.apiVersion)
-            else { return XCTFail("Did not create expected request") }
+            else {
+                return XCTFail("Did not create expected request")
+            }
             request.markStartOfUploadTimestamp()
             let response = ZMTransportResponse(
                 imageData: encryptedData,
@@ -769,7 +799,9 @@ extension AssetV3DownloadRequestStrategyTests {
 
         syncMOC.performGroupedAndWait {
             //  task has been created
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request created") }
+            guard let request = self.sut.nextRequest(for: self.apiVersion) else {
+                return XCTFail("No request created")
+            }
 
             request.callTaskCreationHandlers(withIdentifier: 42, sessionIdentifier: self.name)
             XCTAssertTrue(self.syncMOC.saveOrRollback())

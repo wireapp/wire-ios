@@ -250,7 +250,9 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     private func joinMLSGroupIfNeeded(_ groupID: MLSGroupID, mlsService: MLSServiceInterface) async throws {
-        guard try await !mlsService.conversationExists(groupID: groupID) else { return }
+        guard try await !mlsService.conversationExists(groupID: groupID) else {
+            return
+        }
         try await mlsService.joinGroup(with: groupID)
     }
 
@@ -267,7 +269,9 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return users?.compactMap(\.qualifiedID)
         }
 
-        guard let qualifiedIDs else { return }
+        guard let qualifiedIDs else {
+            return
+        }
 
         try await actionsProvider.syncUsers(qualifiedIDs: qualifiedIDs, context: context.notificationContext)
     }
@@ -286,7 +290,9 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     private func updateConversationProtocolToMLS(for conversation: ZMConversation) async throws {
         let qualifiedID = await context.perform { conversation.qualifiedID }
-        guard let qualifiedID else { return }
+        guard let qualifiedID else {
+            return
+        }
 
         try await actionsProvider.updateConversationProtocol(
             qualifiedID: qualifiedID,

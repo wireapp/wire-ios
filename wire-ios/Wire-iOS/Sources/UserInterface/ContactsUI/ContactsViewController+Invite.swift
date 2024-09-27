@@ -51,7 +51,9 @@ extension ContactsViewController {
         guard
             user.isConnected,
             let conversation = user.oneToOneConversation
-        else { return }
+        else {
+            return
+        }
 
         let showConversation: Completion = {
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
@@ -66,7 +68,9 @@ extension ContactsViewController {
 
     func invite(user: UserType) {
         do {
-            guard let contact = (user as? ZMSearchUser)?.contact else { throw InvitationError.noContactInformation }
+            guard let contact = (user as? ZMSearchUser)?.contact else {
+                throw InvitationError.noContactInformation
+            }
             try invite(contact: contact, from: view)
         } catch let InvitationError.canNotSend(client) {
             present(unableToSendController(client: client), animated: true)
@@ -91,11 +95,15 @@ extension ContactsViewController {
 
     private func inviteWithSingleAddress(for contact: ZMAddressBookContact) throws {
         if let emailAddress = contact.emailAddresses.first {
-            guard canInviteByEmail else { throw InvitationError.canNotSend(.email) }
+            guard canInviteByEmail else {
+                throw InvitationError.canNotSend(.email)
+            }
             contact.inviteLocallyWithEmail(emailAddress)
 
         } else if let phoneNumber = contact.rawPhoneNumbers.first {
-            guard canInviteByPhone else { throw InvitationError.canNotSend(.sms) }
+            guard canInviteByPhone else {
+                throw InvitationError.canNotSend(.sms)
+            }
             contact.inviteLocallyWithPhoneNumber(phoneNumber)
 
         } else {
@@ -104,7 +112,9 @@ extension ContactsViewController {
     }
 
     private func addressActionSheet(for contact: ZMAddressBookContact, in view: UIView) throws -> UIAlertController {
-        guard canInviteByEmail || canInviteByPhone else { throw InvitationError.canNotSend(.any) }
+        guard canInviteByEmail || canInviteByPhone else {
+            throw InvitationError.canNotSend(.any)
+        }
 
         let chooseContactDetailController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 

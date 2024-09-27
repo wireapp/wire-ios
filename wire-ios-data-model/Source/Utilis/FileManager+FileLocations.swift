@@ -49,7 +49,9 @@ extension FileManager {
     @objc
     public func cachesURL(forAppGroupIdentifier appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
         guard let sharedContainerURL = containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
-        else { return nil }
+        else {
+            return nil
+        }
         return cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)
     }
 

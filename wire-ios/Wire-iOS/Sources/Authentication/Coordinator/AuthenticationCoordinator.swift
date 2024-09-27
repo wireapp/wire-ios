@@ -820,7 +820,9 @@ extension AuthenticationCoordinator {
     private func startE2EIdentityEnrollment() {
         typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 
-        guard let session = statusProvider.sharedUserSession else { return }
+        guard let session = statusProvider.sharedUserSession else {
+            return
+        }
         let e2eiCertificateUseCase = session.enrollE2EICertificate
         guard let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
@@ -855,7 +857,9 @@ extension AuthenticationCoordinator {
 
     private func completeE2EIdentityEnrollment() {
         executeActions([.showLoadingView])
-        guard let session = statusProvider.sharedUserSession else { return }
+        guard let session = statusProvider.sharedUserSession else {
+            return
+        }
         session.reportEndToEndIdentityEnrollmentSuccess()
     }
 

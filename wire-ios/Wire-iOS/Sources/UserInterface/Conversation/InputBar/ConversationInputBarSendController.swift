@@ -37,7 +37,9 @@ final class ConversationInputBarSendController: NSObject {
         userSession: UserSession,
         completion completionHandler: Completion? = nil
     ) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         feedbackGenerator.prepare()
         userSession.enqueue({
@@ -59,7 +61,9 @@ final class ConversationInputBarSendController: NSObject {
         userSession: UserSession,
         replyingTo message: ZMConversationMessage?
     ) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         userSession.enqueue({
             let shouldFetchLinkPreview = !Settings.disableLinkPreviews
@@ -82,7 +86,9 @@ final class ConversationInputBarSendController: NSObject {
     }
 
     func sendTextMessage(_ text: String, mentions: [Mention], userSession: UserSession, withImageData data: Data) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 

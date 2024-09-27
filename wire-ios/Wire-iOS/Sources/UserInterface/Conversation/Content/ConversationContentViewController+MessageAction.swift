@@ -178,7 +178,9 @@ extension ConversationContentViewController {
             parent?.present(detailsViewController, animated: true)
 
         case .resetSession:
-            guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
+            guard let client = message.systemMessageData?.clients.first as? UserClient else {
+                return
+            }
             activityIndicator.start()
             userClientToken = UserClientChangeInfo.add(observer: self, for: client)
             client.resetSession()

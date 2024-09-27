@@ -34,13 +34,17 @@ extension ZMOTRMessage {
               let daysElapsed = Calendar.current.dateComponents([.day], from: serverTimestamp, to: currentDate).day,
               deliveryState != .delivered,
               deliveryState != .read
-        else { return false }
+        else {
+            return false
+        }
 
         return daysElapsed <= ZMOTRMessage.deliveryConfirmationDayThreshold
     }
 
     func needsReadConfirmation(_ genericMessage: GenericMessage) -> Bool {
-        guard let conversation, let managedObjectContext else { return false }
+        guard let conversation, let managedObjectContext else {
+            return false
+        }
 
         if conversation.conversationType == .oneOnOne {
             var expectsReadConfirmation: Bool {

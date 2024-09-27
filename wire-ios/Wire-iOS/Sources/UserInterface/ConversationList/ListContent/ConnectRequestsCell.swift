@@ -121,7 +121,9 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
 
     private
     func updateAppearance() {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
 
         let connectionRequests: ConversationList = .pendingConnectionConversations(inUserSession: userSession)
         let users = connectionRequests.items.compactMap(\.oneOnOneUser)

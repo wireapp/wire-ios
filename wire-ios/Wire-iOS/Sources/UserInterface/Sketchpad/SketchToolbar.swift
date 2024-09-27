@@ -23,7 +23,9 @@ final class SketchToolbar: UIView {
     // MARK: Lifecycle
 
     init(buttons: [UIButton]) {
-        guard buttons.count >= 2 else {  fatalError("SketchToolbar needs to be initialized with at least two buttons") }
+        guard buttons.count >= 2 else {
+            fatalError("SketchToolbar needs to be initialized with at least two buttons")
+        }
 
         var unassignedButtons = buttons
 
@@ -108,7 +110,9 @@ final class SketchToolbar: UIView {
     private func createCenterButtonConstraints() {
         guard !centerButtons.isEmpty,
               let leftButton = centerButtons.first,
-              let rightButton = centerButtons.last else { return }
+              let rightButton = centerButtons.last else {
+            return
+        }
 
         let buttonSpacing: CGFloat = 32
 

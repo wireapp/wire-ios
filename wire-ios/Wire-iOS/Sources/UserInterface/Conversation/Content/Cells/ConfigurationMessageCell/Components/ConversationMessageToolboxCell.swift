@@ -74,7 +74,9 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         _ messageToolboxView: MessageToolboxView,
         preferredDisplayMode: MessageDetailsDisplayMode
     ) {
-        guard let message, let delegate else { return }
+        guard let message, let delegate else {
+            return
+        }
         delegate.conversationMessageWantsToOpenMessageDetails(
             self,
             for: message,

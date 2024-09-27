@@ -87,7 +87,9 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
             isEnabled,
             get,
             set
-        ) = configuration else { preconditionFailure() }
+        ) = configuration else {
+            preconditionFailure()
+        }
 
         let mainColor = SemanticColors.Label.textDefault
 

@@ -137,7 +137,9 @@ extension ZMMessage {
     func removeEmptyReactions() {
         // Remove "empty" leftover reactions that have no user attached to treat them as fresh reactions in case of
         // adding them again
-        guard let moc = managedObjectContext else { return }
+        guard let moc = managedObjectContext else {
+            return
+        }
         let reactionsCopy = reactions
         for reaction in reactionsCopy where reaction.users.isEmpty {
             mutableSetValue(forKey: "reactions").remove(reaction)
@@ -149,7 +151,9 @@ extension ZMMessage {
     public func clearAllReactions() {
         let oldReactions = reactions
         reactions.removeAll()
-        guard let moc = managedObjectContext else { return }
+        guard let moc = managedObjectContext else {
+            return
+        }
         oldReactions.forEach(moc.delete)
     }
 
@@ -157,7 +161,9 @@ extension ZMMessage {
     public func clearConfirmations() {
         let oldConfirmations = confirmations
         mutableSetValue(forKey: ZMMessageConfirmationKey).removeAllObjects()
-        guard let moc = managedObjectContext else { return }
+        guard let moc = managedObjectContext else {
+            return
+        }
         oldConfirmations.forEach(moc.delete)
     }
 }

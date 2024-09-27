@@ -22,7 +22,9 @@ extension WireProtos.Asset.Original {
             return false
         }
 
-        guard let uti = UTIHelper.convertToUti(mime: mimeType) else { return false }
+        guard let uti = UTIHelper.convertToUti(mime: mimeType) else {
+            return false
+        }
 
         return !UTIHelper.conformsToVectorType(uti: uti)
     }
@@ -36,7 +38,9 @@ extension ImageAsset {
 
 extension GenericMessage {
     public var hasRasterImage: Bool {
-        guard let content else { return false }
+        guard let content else {
+            return false
+        }
         switch content {
         case let .image(data):
             return data.isRaster

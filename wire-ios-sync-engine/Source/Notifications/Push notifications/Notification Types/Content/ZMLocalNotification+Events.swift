@@ -30,7 +30,9 @@ extension ZMLocalNotification {
 
         switch event.type {
         case .conversationOtrMessageAdd:
-            guard let message = GenericMessage(from: event) else { break }
+            guard let message = GenericMessage(from: event) else {
+                break
+            }
             builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder
                 .self
 
@@ -47,7 +49,9 @@ extension ZMLocalNotification {
             builderType = NewUserEventNotificationBuilder.self
 
         case .conversationMemberJoin, .conversationMemberLeave, .conversationMessageTimerUpdate:
-            guard conversation?.remoteIdentifier != nil else { return nil }
+            guard conversation?.remoteIdentifier != nil else {
+                return nil
+            }
             builderType = NewSystemMessageNotificationBuilder.self
 
         default:
@@ -93,7 +97,9 @@ private class EventNotificationBuilder: NotificationBuilder {
 
     func shouldCreateNotification() -> Bool {
         // if there is a sender, it's not the selfUser
-        if let sender, sender.isSelfUser { return false }
+        if let sender, sender.isSelfUser {
+            return false
+        }
 
         if let conversation {
             if conversation.mutedMessageTypesIncludingAvailability != .none {
@@ -120,7 +126,9 @@ private class EventNotificationBuilder: NotificationBuilder {
 
     func userInfo() -> NotificationUserInfo? {
         let selfUser = ZMUser.selfUser(in: moc)
-        guard let selfUserRemoteID = selfUser.remoteIdentifier else { return nil }
+        guard let selfUserRemoteID = selfUser.remoteIdentifier else {
+            return nil
+        }
 
         let userInfo = NotificationUserInfo()
         userInfo.selfUserID = selfUserRemoteID
@@ -166,10 +174,14 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
     }
 
     override func shouldCreateNotification() -> Bool {
-        guard super.shouldCreateNotification() else { return false }
+        guard super.shouldCreateNotification() else {
+            return false
+        }
 
         // If the message is an "unlike", we don't want to display a notification
-        guard message.reaction.emoji != "" else { return false }
+        guard message.reaction.emoji != "" else {
+            return false
+        }
 
         // fetch message that was reacted to and make sure the sender of the original message is the selfUser
         guard let conversation,
@@ -178,7 +190,9 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
                   for: conversation,
                   in: moc
               ),
-              reactionMessage.sender == ZMUser.selfUser(in: moc) else { return false }
+              reactionMessage.sender == ZMUser.selfUser(in: moc) else {
+            return false
+        }
 
         return true
     }

@@ -24,7 +24,9 @@ struct RequestLog: Codable {
     // MARK: Lifecycle
 
     init?(_ request: NSURLRequest) {
-        guard let method = request.httpMethod, let url = request.url else { return nil }
+        guard let method = request.httpMethod, let url = request.url else {
+            return nil
+        }
         self.endpoint = url.endpointRemoteLogDescription
 
         var filteredHeaders = request.allHTTPHeaderFields?.filter {
@@ -154,7 +156,9 @@ extension WireLogger {
     }
 
     func log(response: HTTPURLResponse) {
-        guard let info = ResponseLog(response) else { return }
+        guard let info = ResponseLog(response) else {
+            return
+        }
 
         do {
             let data = try JSONEncoder().encode(info)

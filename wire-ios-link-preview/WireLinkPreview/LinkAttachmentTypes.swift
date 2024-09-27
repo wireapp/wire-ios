@@ -118,18 +118,26 @@ extension LinkAttachment {
         switch detectedType {
         case .soundCloudPlaylist:
             guard openGraphData.type.hasPrefix("music.playlist") || openGraphData.type.hasPrefix("soundcloud:set")
-            else { return nil }
+            else {
+                return nil
+            }
 
         case .soundCloudTrack:
             guard openGraphData.type.hasPrefix("music.song") || openGraphData.type.hasPrefix("soundcloud:sound")
-            else { return nil }
+            else {
+                return nil
+            }
 
         case .youTubeVideo:
-            guard openGraphData.type.hasPrefix("video") else { return nil }
+            guard openGraphData.type.hasPrefix("video") else {
+                return nil
+            }
         }
 
         let thumbnails = openGraphData.imageUrls.compactMap(URL.init)
-        guard let permalink = URL(string: openGraphData.resolvedURL) else { return nil }
+        guard let permalink = URL(string: openGraphData.resolvedURL) else {
+            return nil
+        }
 
         self.init(
             type: detectedType,

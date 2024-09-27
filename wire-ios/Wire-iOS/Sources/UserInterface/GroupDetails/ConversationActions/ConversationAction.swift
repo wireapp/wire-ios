@@ -128,7 +128,9 @@ extension ZMConversation {
     }
 
     private func markAsReadAction() -> Action? {
-        guard Bundle.developerModeEnabled else { return nil }
+        guard Bundle.developerModeEnabled else {
+            return nil
+        }
         if !unreadMessages.isEmpty {
             return .markRead
         } else if unreadMessages.isEmpty, canMarkAsUnread() {

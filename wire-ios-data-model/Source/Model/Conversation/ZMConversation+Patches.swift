@@ -166,7 +166,9 @@ extension ZMConversation {
         }
 
         conversations.forEach {
-            guard $0.isSelfAnActiveMember else { return }
+            guard $0.isSelfAnActiveMember else {
+                return
+            }
             $0.needsToBeUpdatedFromBackend = true
             $0.needsToDownloadRoles = $0.team == nil || $0.team != selfUser.team
         }
@@ -207,7 +209,9 @@ extension ZMConversation {
         }
 
         conversations.forEach {
-            guard $0.isSelfAnActiveMember else { return }
+            guard $0.isSelfAnActiveMember else {
+                return
+            }
             $0.needsToBeUpdatedFromBackend = true
         }
     }

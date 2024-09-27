@@ -175,7 +175,9 @@ extension Payload.ClientListByQualifiedUserID {
                 }
 
                 let userClients = user.clients.filter {
-                    guard let clientID = $0.remoteIdentifier else { return false }
+                    guard let clientID = $0.remoteIdentifier else {
+                        return false
+                    }
                     return userClientIDs.contains(clientID)
                 }
 

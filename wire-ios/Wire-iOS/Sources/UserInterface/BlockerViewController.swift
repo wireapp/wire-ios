@@ -183,7 +183,9 @@ final class BlockerViewController: LaunchImageViewController {
             title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
             style: .default
         ) { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             let fallbackActivityPopoverConfiguration = PopoverPresentationControllerConfiguration.sourceView(
                 sourceView: view,
                 sourceRect: .init(origin: view.safeAreaLayoutGuide.layoutFrame.origin, size: .zero)

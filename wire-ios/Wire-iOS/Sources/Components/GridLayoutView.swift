@@ -63,7 +63,9 @@ final class GridLayoutView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        guard !views.isEmpty else { return }
+        guard !views.isEmpty else {
+            return
+        }
 
         stackView.removeArrangedSubviews()
 

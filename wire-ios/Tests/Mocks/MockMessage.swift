@@ -53,7 +53,9 @@ final class MockTextMessageData: NSObject, TextMessageData {
     }
 
     var linkPreview: LinkMetadata? {
-        guard let linkPreview = backingLinkPreview, !linkPreview.isBlacklisted else { return nil }
+        guard let linkPreview = backingLinkPreview, !linkPreview.isBlacklisted else {
+            return nil
+        }
         return linkPreview
     }
 

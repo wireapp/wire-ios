@@ -20,7 +20,9 @@ import Foundation
 
 extension Bundle {
     public var applicationGroupIdentifier: String? {
-        guard let groupId = infoDictionary?["WireGroupId"] as? String else { return nil }
+        guard let groupId = infoDictionary?["WireGroupId"] as? String else {
+            return nil
+        }
         return "group.\(groupId)"
     }
 

@@ -63,7 +63,11 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         for action: ActionHandler<ConnectToUserAction>.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-        let domain = if let domain = action.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        let domain = if let domain = action.domain, !domain.isEmpty {
+            domain
+        } else {
+            BackendInfo.domain
+        }
         guard apiVersion > .v0, let domain else {
             Logging.network.error("Can't create request for connection request")
             return nil

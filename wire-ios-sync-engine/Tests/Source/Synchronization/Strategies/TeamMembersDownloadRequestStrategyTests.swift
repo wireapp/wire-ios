@@ -131,7 +131,9 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
             self.mockSyncStatus.mockPhase = .fetchingTeamMembers
             _ = self.createTeam()
 
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
 
             // when
             let response = ZMTransportResponse(
@@ -161,7 +163,9 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
             self.mockSyncStatus.mockPhase = .fetchingTeamMembers
             team = self.createTeam()
 
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
 
             // when
             let response = ZMTransportResponse(
@@ -191,7 +195,9 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
             team = self.createTeam()
             initialTeamMembersCount = team.members.count
 
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                return XCTFail("No request generated")
+            }
 
             // when
             let response = ZMTransportResponse(

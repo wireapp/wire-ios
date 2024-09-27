@@ -85,7 +85,9 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
     }
 
     var currentCorner: Corner? {
-        guard dynamicAnimator != nil else { return nil }
+        guard dynamicAnimator != nil else {
+            return nil
+        }
 
         let position = item.center
         for (i, fieldBehavior) in fieldBehaviors.enumerated() {

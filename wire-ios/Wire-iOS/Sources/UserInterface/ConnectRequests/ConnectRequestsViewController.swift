@@ -187,7 +187,9 @@ final class ConnectRequestsViewController: UIViewController,
             if let error = error as? LocalizedError {
                 self?.presentLocalizedErrorAlert(error)
             } else {
-                guard self?.connectionRequests.isEmpty == true else { return }
+                guard self?.connectionRequests.isEmpty == true else {
+                    return
+                }
 
                 ZClientViewController.shared?.hideIncomingContactRequests {
                     if let oneToOneConversation = user.oneToOneConversation {

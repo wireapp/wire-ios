@@ -123,9 +123,13 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // then
         XCTAssertNotNil(conversation.changePushPayload)
-        guard let access = conversation.changePushPayload?["access"] as? [String] else { XCTFail(); return }
+        guard let access = conversation.changePushPayload?["access"] as? [String] else {
+            XCTFail(); return
+        }
         guard let accessRoleV2 = conversation.changePushPayload?["access_role_v2"] as? [String]
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
         XCTAssertEqual(access, newAccessMode)
         XCTAssertEqual(accessRoleV2, newAccessRoleV2)
     }
@@ -148,9 +152,13 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // then
         XCTAssertNotNil(conversation.changePushPayload)
-        guard let accessRole = conversation.changePushPayload?["access_role"] as? String else { XCTFail(); return }
+        guard let accessRole = conversation.changePushPayload?["access_role"] as? String else {
+            XCTFail(); return
+        }
         guard let accessRoleV2 = conversation.changePushPayload?["access_role_v2"] as? [String]
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
 
         XCTAssertEqual(accessRole, newAccessRole)
         XCTAssertEqual(accessRoleV2, newAccessRoleV2)
@@ -180,9 +188,15 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // then
         XCTAssertEqual(sut.generatedPushEvents.count, eventsCount + 1)
-        guard let lastEvent = sut.generatedPushEvents.lastObject as? MockPushEvent else { XCTFail(); return }
-        guard let payloadData = lastEvent.payload as? [String: Any] else { XCTFail(); return }
-        guard let data = payloadData["data"] as? [String: Any] else { XCTFail(); return }
+        guard let lastEvent = sut.generatedPushEvents.lastObject as? MockPushEvent else {
+            XCTFail(); return
+        }
+        guard let payloadData = lastEvent.payload as? [String: Any] else {
+            XCTFail(); return
+        }
+        guard let data = payloadData["data"] as? [String: Any] else {
+            XCTFail(); return
+        }
 
         XCTAssertNotNil(data["access"])
         XCTAssertNotNil(data["access_role"])

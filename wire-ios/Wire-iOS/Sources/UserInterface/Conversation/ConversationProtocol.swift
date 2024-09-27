@@ -81,13 +81,17 @@ typealias InputBarConversationType = ConversationLike & InputBarConversation & T
 
 extension ZMConversation: InputBarConversation {
     var isSelfDeletingMessageSendingDisabled: Bool {
-        guard let context = managedObjectContext else { return false }
+        guard let context = managedObjectContext else {
+            return false
+        }
         let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
         return feature.status == .disabled
     }
 
     var isSelfDeletingMessageTimeoutForced: Bool {
-        guard let context = managedObjectContext else { return false }
+        guard let context = managedObjectContext else {
+            return false
+        }
         let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
         return feature.config.enforcedTimeoutSeconds > 0
     }
@@ -150,7 +154,9 @@ extension ZMConversation: GroupDetailsConversation {
     }
 
     var isE2EIEnabled: Bool {
-        guard let context = managedObjectContext else { return false }
+        guard let context = managedObjectContext else {
+            return false
+        }
         let feature = FeatureRepository(context: context).fetchE2EI()
         return feature.status == .enabled
     }

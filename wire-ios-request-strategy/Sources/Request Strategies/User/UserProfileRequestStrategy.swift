@@ -126,7 +126,9 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     func fetch(users: Set<ZMUser>, for apiVersion: APIVersion) {
         let users = users.filter { !$0.isSelfUser }
-        guard !users.isEmpty else { return }
+        guard !users.isEmpty else {
+            return
+        }
 
         switch apiVersion {
         case .v0:
@@ -147,7 +149,9 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion = BackendInfo.apiVersion else {
+            return
+        }
 
         let usersNeedingToBeUpdated = objects
             .compactMap { $0 as? ZMUser }
@@ -189,7 +193,9 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
     }
 
     func processUserUpdate(_ updateEvent: ZMUpdateEvent) {
-        guard updateEvent.type == .userUpdate else { return }
+        guard updateEvent.type == .userUpdate else {
+            return
+        }
 
         guard
             let payloadAsDictionary = updateEvent.payload["user"] as? [String: Any],
@@ -215,7 +221,9 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
     }
 
     func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
-        guard updateEvent.type == .userDelete else { return }
+        guard updateEvent.type == .userDelete else {
+            return
+        }
 
         guard let userId = (updateEvent.payload["id"] as? String).flatMap(UUID.init(transportString:)),
               let user = ZMUser.fetch(with: userId, in: managedObjectContext)
@@ -258,7 +266,9 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     let encoder: JSONEncoder = .defaultEncoder
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard apiVersion == .v0 else { return nil }
+        guard apiVersion == .v0 else {
+            return nil
+        }
         // GET /users?ids=?
         let userIDs = identifiers.map { $0.transportString() }.joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
@@ -357,7 +367,9 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         defer { completionHandler() }
 
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
-            guard case .notFound = responseFailure.label else { return }
+            guard case .notFound = responseFailure.label else {
+                return
+            }
             markUserProfilesAsFetched(identifiers)
             return
         }
@@ -371,7 +383,9 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
+            return
+        }
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             guard

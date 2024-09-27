@@ -40,7 +40,9 @@ extension NSManagedObjectContext {
         precondition(zm_isSyncContext)
         let value = NSNumber(value: newValue)
         setPersistentStoreMetadata(value, key: key)
-        guard let uiContext = zm_userInterface else { return }
+        guard let uiContext = zm_userInterface else {
+            return
+        }
         uiContext.performGroupedBlock {
             uiContext.setPersistentStoreMetadata(value, key: key)
         }

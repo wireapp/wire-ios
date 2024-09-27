@@ -41,7 +41,9 @@ final class ShapeView: LayerHostView<CAShapeLayer> {
     private var lastBounds: CGRect = .zero
 
     private func updatePath() {
-        guard let generator = pathGenerator else { return }
+        guard let generator = pathGenerator else {
+            return
+        }
         hostedLayer.path = generator(bounds.size).cgPath
     }
 }

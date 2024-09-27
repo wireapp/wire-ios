@@ -60,7 +60,9 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
 
         // Then
         let expected = [NSInsertedObjectsKey: [uri] as AnyObject] as [AnyHashable: AnyObject]
-        guard sut.storedNotifications.count == 1 else { return XCTFail("Wrong amount of notifications") }
+        guard sut.storedNotifications.count == 1 else {
+            return XCTFail("Wrong amount of notifications")
+        }
 
         for (key, value) in sut.storedNotifications.first! {
             XCTAssertEqual(value as? Set<NSManagedObject>, expected[key] as? Set<NSManagedObject>)
@@ -111,7 +113,9 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
             NSUpdatedObjectsKey: [secondURI] as AnyObject,
         ] as [AnyHashable: AnyObject]
 
-        guard sut.storedNotifications.count == 2 else { return XCTFail("Wrong amount of notifications") }
+        guard sut.storedNotifications.count == 2 else {
+            return XCTFail("Wrong amount of notifications")
+        }
 
         for (key, value) in sut.storedNotifications.first! {
             XCTAssertEqual(value as? Set<NSManagedObject>, firstExpected[key] as? Set<NSManagedObject>)

@@ -159,7 +159,9 @@ extension UnauthenticatedSession: TearDownCapable {
 extension UnauthenticatedSession: UserInfoParser {
     public func accountExistsLocally(from info: UserInfo) -> Bool {
         let account = Account(userName: "", userIdentifier: info.identifier)
-        guard let delegate else { return false }
+        guard let delegate else {
+            return false
+        }
         return delegate.session(session: self, isExistingAccount: account)
     }
 

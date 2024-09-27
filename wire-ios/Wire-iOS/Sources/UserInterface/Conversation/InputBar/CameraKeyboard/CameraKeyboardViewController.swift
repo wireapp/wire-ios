@@ -310,7 +310,9 @@ class CameraKeyboardViewController: UIViewController {
 
     private func forwardSelectedPhotoAsset(_ asset: PHAsset) {
         let completeBlock = { (data: Data?, uti: String?) in
-            guard let data else { return }
+            guard let data else {
+                return
+            }
 
             let returnData: Data = if (uti == "public.heif") ||
                 (uti == "public.heic"),
@@ -411,14 +413,18 @@ class CameraKeyboardViewController: UIViewController {
 
     private func forwardSelectedVideoAsset(_ asset: PHAsset) {
         activityIndicator.start()
-        guard let fileLengthLimit: UInt64 = ZMUserSession.shared()?.maxUploadFileSize else { return }
+        guard let fileLengthLimit: UInt64 = ZMUserSession.shared()?.maxUploadFileSize else {
+            return
+        }
 
         asset.getVideoURL { url in
             DispatchQueue.main.async {
                 self.activityIndicator.stop()
             }
 
-            guard let url else { return }
+            guard let url else {
+                return
+            }
 
             DispatchQueue.main.async {
                 self.activityIndicator.start()
@@ -434,7 +440,9 @@ class CameraKeyboardViewController: UIViewController {
 
                 guard error == nil,
                       let resultURL,
-                      let asset else { return }
+                      let asset else {
+                    return
+                }
 
                 DispatchQueue.main.async {
                     self.delegate?.cameraKeyboardViewController(
@@ -464,7 +472,9 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard permissions.areCameraOrPhotoLibraryAuthorized else { return 1 }
+        guard permissions.areCameraOrPhotoLibraryAuthorized else {
+            return 1
+        }
 
         switch CameraKeyboardSection(rawValue: UInt(section))! {
         case .camera:
@@ -548,7 +558,9 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        guard permissions.areCameraOrPhotoLibraryAuthorized else { return collectionView.frame.size }
+        guard permissions.areCameraOrPhotoLibraryAuthorized else {
+            return collectionView.frame.size
+        }
 
         switch CameraKeyboardSection(rawValue: UInt((indexPath as NSIndexPath).section))! {
         case .camera:
@@ -576,7 +588,9 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard permissions.areCameraOrPhotoLibraryAuthorized else { return }
+        guard permissions.areCameraOrPhotoLibraryAuthorized else {
+            return
+        }
 
         switch CameraKeyboardSection(rawValue: UInt((indexPath as NSIndexPath).section))! {
         case .camera:

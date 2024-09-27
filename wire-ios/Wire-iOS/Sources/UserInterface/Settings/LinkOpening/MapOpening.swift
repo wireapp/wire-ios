@@ -61,7 +61,9 @@ extension URL {
         switch saved {
         case .apple: return false
         case .google:
-            guard UIApplication.shared.canOpenURL(self) else { return false }
+            guard UIApplication.shared.canOpenURL(self) else {
+                return false
+            }
             UIApplication.shared.open(self)
             return true
         }

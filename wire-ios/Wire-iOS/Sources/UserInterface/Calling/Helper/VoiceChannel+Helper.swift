@@ -25,7 +25,9 @@ extension VoiceChannel {
     }
 
     func getSecondParticipant() -> ZMUser? {
-        guard let participants = conversation?.participants as? [ZMUser] else { return nil }
+        guard let participants = conversation?.participants as? [ZMUser] else {
+            return nil
+        }
         if case .incoming = state, let initiator = initiator as? ZMUser {
             return initiator
         }

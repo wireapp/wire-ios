@@ -67,7 +67,9 @@ final class AvailabilityLabelTests: XCTestCase {
         _ availability: Availability,
         appendYouSuffix: Bool = false
     ) -> UILabel {
-        guard let user = ZMUser.selfUser() else { return UILabel() }
+        guard let user = ZMUser.selfUser() else {
+            return UILabel()
+        }
         user.availability = availability
         let attributedString = AvailabilityStringBuilder.titleForUser(
             name: user.name ?? "",
@@ -105,7 +107,9 @@ final class AvailabilityLabelTests: XCTestCase {
     // MARK: - Helper Method
 
     func createLabelForParticipants(_ availability: Availability) -> UILabel {
-        guard let user = ZMUser.selfUser() else { return UILabel() }
+        guard let user = ZMUser.selfUser() else {
+            return UILabel()
+        }
         user.availability = availability
         let attributedString = AvailabilityStringBuilder.titleForUser(
             name: user.name ?? "",

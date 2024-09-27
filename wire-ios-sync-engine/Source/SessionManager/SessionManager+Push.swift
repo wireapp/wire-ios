@@ -78,7 +78,9 @@ extension SessionManager: UNUserNotificationCenterDelegate {
 
     public func configureUserNotifications() {
         guard (application as? NotificationSettingsRegistrable)?.shouldRegisterUserNotificationSettings ?? true
-        else { return }
+        else {
+            return
+        }
         notificationCenter.setNotificationCategories(PushNotificationCategory.allCategories)
         notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, _ in })
         notificationCenter.delegate = self
@@ -88,7 +90,9 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         guard
             let selfID = userInfo.selfUserID,
             let account = accountManager.account(with: selfID)
-        else { return }
+        else {
+            return
+        }
 
         withSession(for: account, perform: block)
     }

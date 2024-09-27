@@ -277,7 +277,9 @@ extension ZMConversation {
     /// the conversation
     @objc
     public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
-        guard let context = managedObjectContext else { return }
+        guard let context = managedObjectContext else {
+            return
+        }
 
         let previousLastMessage = lastMessage
         let systemMessage = appendSystemMessage(
@@ -471,10 +473,14 @@ extension ZMConversation {
     /// Discards all unsent messages since conversation's privacy changed.
     @objc(discardPendingMessagesAfterPrivacyChanges)
     public func discardPendingMessagesAfterPrivacyChanges() {
-        guard let syncMOC = managedObjectContext?.zm_sync else { return }
+        guard let syncMOC = managedObjectContext?.zm_sync else {
+            return
+        }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation
-            else { return }
+            else {
+                return
+            }
             conversation.clearMessagesThatCausedSecurityLevelDegradation()
             syncMOC.saveOrRollback()
         }
@@ -494,10 +500,14 @@ extension ZMConversation {
         block: @escaping (ZMOTRMessage)
             -> Void
     ) {
-        guard let syncMOC = managedObjectContext?.zm_sync else { return }
+        guard let syncMOC = managedObjectContext?.zm_sync else {
+            return
+        }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation
-            else { return }
+            else {
+                return
+            }
             conversation.messagesThatCausedSecurityLevelDegradation.forEach(block)
             syncMOC.saveOrRollback()
         }
@@ -525,7 +535,9 @@ extension ZMConversation {
     }
 
     private var undeliveredMessages: [ZMOTRMessage] {
-        guard let managedObjectContext else { return [] }
+        guard let managedObjectContext else {
+            return []
+        }
 
         let timeoutLimit = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime())
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
@@ -567,7 +579,9 @@ extension ZMConversation {
     @objc
     public func replaceNewClientMessageIfNeededWithNewDeviceMesssage() {
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
-        guard let selfClient = selfUser.selfClient() else { return }
+        guard let selfClient = selfUser.selfClient() else {
+            return
+        }
 
         NSOrderedSet(array: lastMessages()).enumerateObjects { msg, idx, stop in
             guard idx <= 2 else {
@@ -661,7 +675,9 @@ extension ZMConversation {
             return
         }
 
-        guard !addedClients.isEmpty || !addedUsers.isEmpty else { return }
+        guard !addedClients.isEmpty || !addedUsers.isEmpty else {
+            return
+        }
 
         appendSystemMessage(
             type: .newClient,
@@ -674,7 +690,9 @@ extension ZMConversation {
     }
 
     private func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
-        guard !clients.isEmpty else { return }
+        guard !clients.isEmpty else {
+            return
+        }
         let users = Set(clients.compactMap(\.user))
         appendSystemMessage(
             type: .ignoredClient,
@@ -729,14 +747,18 @@ extension ZMConversation {
     /// Returns a timestamp that is shortly (as short as possible) before the given message,
     /// or the last modified date if the message is nil
     private func timestamp(before: ZMMessage?) -> Date? {
-        guard let timestamp = before?.serverTimestamp ?? lastModifiedDate else { return nil }
+        guard let timestamp = before?.serverTimestamp ?? lastModifiedDate else {
+            return nil
+        }
         return timestamp.previousNearestTimestamp
     }
 
     /// Returns a timestamp that is shortly (as short as possible) after the given message,
     /// or the last modified date if the message is nil
     private func timestamp(after: ZMConversationMessage?) -> Date? {
-        guard let timestamp = after?.serverTimestamp ?? lastModifiedDate else { return nil }
+        guard let timestamp = after?.serverTimestamp ?? lastModifiedDate else {
+            return nil
+        }
         return timestamp.nextNearestTimestamp
     }
 
@@ -753,7 +775,9 @@ extension ZMConversation {
     /// Returns true if all participants are connected to the self user and all participants are trusted
     @objc public var allUsersTrusted: Bool {
         guard !localParticipants.isEmpty,
-              isSelfAnActiveMember else { return false }
+              isSelfAnActiveMember else {
+            return false
+        }
 
         let hasOnlyTrustedUsers = localParticipants.allSatisfy { $0.isTrusted && !$0.clients.isEmpty }
 
@@ -809,7 +833,9 @@ extension ZMConversation {
 extension ZMSystemMessage {
     /// Fetch the first system message in the conversation about "started to use this device"
     fileprivate static func fetchStartedUsingOnThisDeviceMessage(conversation: ZMConversation) -> ZMSystemMessage? {
-        guard let selfClient = ZMUser.selfUser(in: conversation.managedObjectContext!).selfClient() else { return nil }
+        guard let selfClient = ZMUser.selfUser(in: conversation.managedObjectContext!).selfClient() else {
+            return nil
+        }
         let conversationPredicate = NSPredicate(
             format: "%K == %@ OR %K == %@",
             ZMMessageConversationKey,
@@ -840,7 +866,9 @@ extension ZMMessage {
     /// True if the message is a "conversation degraded because of new client"
     /// system message
     private var isConversationNotVerifiedSystemMessage: Bool {
-        guard let system = self as? ZMSystemMessage else { return false }
+        guard let system = self as? ZMSystemMessage else {
+            return false
+        }
         return system.systemMessageType == .ignoredClient
     }
 }

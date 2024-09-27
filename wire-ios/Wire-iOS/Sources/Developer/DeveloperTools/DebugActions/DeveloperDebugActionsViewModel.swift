@@ -81,7 +81,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     private func performQuickSync() {
-        guard let userSession else { return }
+        guard let userSession else {
+            return
+        }
 
         Task {
             await userSession.syncStatus.performQuickSync()
@@ -91,7 +93,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: Proteus to MLS migration
 
     private func updateMLSMigrationStatus() {
-        guard let userSession else { return }
+        guard let userSession else {
+            return
+        }
 
         Task {
             do {
@@ -117,7 +121,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             let selfClient,
             let context = selfClient.managedObjectContext,
             let userSession
-        else { return }
+        else {
+            return
+        }
 
         Task {
             guard let qualifiedID = await qualifiedIDOfFirstGroupConversation(of: selfClient, in: context) else {
@@ -151,7 +157,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                     guard
                         let lhsDate = $0.lastModifiedDate,
                         let rhsDate = $1.lastModifiedDate
-                    else { return false }
+                    else {
+                        return false
+                    }
                     return lhsDate > rhsDate
                 }
                 .first?

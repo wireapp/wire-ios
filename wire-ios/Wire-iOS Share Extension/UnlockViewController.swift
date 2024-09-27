@@ -203,7 +203,9 @@ extension UnlockViewController {
     }
 
     private func unlock() {
-        guard let passcode = passcodeTextField.text else { return }
+        guard let passcode = passcodeTextField.text else {
+            return
+        }
         callback?(passcode)
     }
 

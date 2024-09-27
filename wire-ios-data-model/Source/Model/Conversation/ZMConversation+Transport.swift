@@ -161,7 +161,9 @@ extension ZMConversation {
 
     public func updateTeam(identifier: UUID?) {
         guard let teamId = identifier,
-              let moc = managedObjectContext else { return }
+              let moc = managedObjectContext else {
+            return
+        }
         teamRemoteIdentifier = teamId
         team = Team.fetch(with: teamId, in: moc)
     }
@@ -169,7 +171,9 @@ extension ZMConversation {
     @objc
     func updatePotentialGapSystemMessagesIfNeeded(users: Set<ZMUser>) {
         guard let latestSystemMessage = ZMSystemMessage.fetchLatestPotentialGapSystemMessage(in: self)
-        else { return }
+        else {
+            return
+        }
 
         let removedUsers = latestSystemMessage.users.subtracting(users)
         let addedUsers = users.subtracting(latestSystemMessage.users)

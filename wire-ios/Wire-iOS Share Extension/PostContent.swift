@@ -40,7 +40,9 @@ final class PostContent {
     var attachments: [NSItemProvider]
 
     var sentAllSendables: Bool {
-        guard let sendController else { return false }
+        guard let sendController else {
+            return false
+        }
         return sendController.sentAllSendables
     }
 

@@ -40,7 +40,9 @@ final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
     // MARK: - Configuration
 
     func featureCell(_ cell: SettingsCellType) {
-        guard let linkCell = cell as? SettingsLinkTableCell else { return }
+        guard let linkCell = cell as? SettingsLinkTableCell else {
+            return
+        }
 
         linkCell.linkText = link && .lineSpacing(8)
         linkCell.titleText = title

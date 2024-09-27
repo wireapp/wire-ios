@@ -271,7 +271,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
               changeInfo.destructionTimeoutChanged ||
               changeInfo.mutedMessageTypesChanged ||
               changeInfo.legalHoldStatusChanged
-        else { return }
+        else {
+            return
+        }
 
         updateLegalHoldIndicator()
         collectionViewController.sections = computeVisibleSections()
@@ -315,7 +317,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
@@ -392,7 +396,9 @@ extension GroupDetailsViewController {
 
     @objc
     func presentLegalHoldDetails() {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         LegalHoldDetailsViewController.present(
             in: self,
@@ -463,8 +469,12 @@ extension GroupDetailsViewController {
     private func updateUserE2EICertificationStatuses() {
         Task { @MainActor in
             for user in conversation.sortedOtherParticipants {
-                guard let user = user as? ZMUser else { continue }
-                guard let conversation = conversation as? ZMConversation else { continue }
+                guard let user = user as? ZMUser else {
+                    continue
+                }
+                guard let conversation = conversation as? ZMConversation else {
+                    continue
+                }
                 do {
                     let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
                         conversation: conversation,
@@ -502,7 +512,9 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
 
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
     func presentDetails(for user: UserType) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
@@ -521,30 +533,46 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     }
 
     func presentGuestOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         let menu = ConversationGuestOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
     }
 
     func presentServicesOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         let menu = ConversationServicesOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
     }
 
     func presentTimeoutOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         let menu = ConversationTimeoutOptionsViewController(conversation: conversation, userSession: userSession)
         menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
     }
 
     func presentNotificationsOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: userSession)
         menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)

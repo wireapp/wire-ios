@@ -57,7 +57,9 @@ final class ZMLocalNotificationSet: NSObject {
     func unarchiveOldNotifications() {
         guard let archive = keyValueStore.storedValue(key: archivingKey) as? Data,
               let unarchivedNotes = NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
-        else { return }
+        else {
+            return
+        }
         oldNotifications = unarchivedNotes
     }
 
@@ -98,7 +100,9 @@ final class ZMLocalNotificationSet: NSObject {
 
     /// Cancel all notifications created in this run
     func cancelCurrentNotifications(_ conversation: ZMConversation) {
-        guard !notifications.isEmpty else { return }
+        guard !notifications.isEmpty else {
+            return
+        }
         let toRemove = notifications.filter { $0.conversationID == conversation.remoteIdentifier }
         notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map(\.id.uuidString))
         notifications.subtract(toRemove)
@@ -106,13 +110,17 @@ final class ZMLocalNotificationSet: NSObject {
 
     /// Cancels all notifications created in previous runs
     func cancelOldNotifications(_ conversation: ZMConversation) {
-        guard !oldNotifications.isEmpty else { return }
+        guard !oldNotifications.isEmpty else {
+            return
+        }
 
         oldNotifications = oldNotifications.filter { userInfo in
             guard
                 userInfo.conversationID == conversation.remoteIdentifier,
                 let requestID = userInfo.requestID?.uuidString
-            else { return true }
+            else {
+                return true
+            }
 
             notificationCenter.removeAllNotifications(withIdentifiers: [requestID])
             return false
@@ -121,7 +129,9 @@ final class ZMLocalNotificationSet: NSObject {
 
     /// Cancal all notifications with the given message nonce
     func cancelCurrentNotifications(messageNonce: UUID) {
-        guard !notifications.isEmpty else { return }
+        guard !notifications.isEmpty else {
+            return
+        }
         let toRemove = notifications.filter { $0.messageNonce == messageNonce }
         notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map(\.id.uuidString))
         notifications.subtract(toRemove)

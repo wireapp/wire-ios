@@ -69,7 +69,9 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         // Given
         let identifier = UUID.create().transportString()
         mockIdentifierProvider.nextIdentifier = identifier
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request created") }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail("No request created")
+        }
 
         // When
         let response = ZMTransportResponse(
@@ -91,7 +93,9 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         // Given
         let identifier = UUID.create().transportString()
         mockIdentifierProvider.nextIdentifier = identifier
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request created") }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail("No request created")
+        }
 
         // When
         let response = ZMTransportResponse(

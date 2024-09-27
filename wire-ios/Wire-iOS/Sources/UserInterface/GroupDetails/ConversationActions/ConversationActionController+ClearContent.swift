@@ -53,7 +53,9 @@ enum ClearContentResult {
     // MARK: Private
 
     private var style: UIAlertAction.Style {
-        guard case .cancel = self else { return .destructive }
+        guard case .cancel = self else {
+            return .destructive
+        }
         return .cancel
     }
 }
@@ -69,7 +71,9 @@ extension ConversationActionController {
     }
 
     func handleClearContentResult(_ result: ClearContentResult, for conversation: ZMConversation) {
-        guard case let .delete(leave: leave) = result else { return }
+        guard case let .delete(leave: leave) = result else {
+            return
+        }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return

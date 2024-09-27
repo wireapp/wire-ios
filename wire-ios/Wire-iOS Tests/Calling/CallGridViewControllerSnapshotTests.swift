@@ -108,7 +108,9 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         sut.isCovered = false
         sut.view.backgroundColor = .black
         sut.delegate = delegate
-        if hideHintView { sut.hideHintView() }
+        if hideHintView {
+            sut.hideHintView()
+        }
     }
 
     // MARK: - Snapshots

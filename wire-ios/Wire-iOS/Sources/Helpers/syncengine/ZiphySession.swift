@@ -53,7 +53,9 @@ final class ZiphySession: ZiphyURLRequester {
     }
 
     func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier) {
-        guard let requestIdentifier = requestIdentifier as? ProxyRequest else { return }
+        guard let requestIdentifier = requestIdentifier as? ProxyRequest else {
+            return
+        }
         userSession.cancelProxiedRequest(requestIdentifier)
     }
 

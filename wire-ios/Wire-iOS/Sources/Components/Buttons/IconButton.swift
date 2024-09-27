@@ -335,7 +335,9 @@ class IconButton: ButtonWithLargerHitArea {
     }
 
     private func updateCircularCornerRadius() {
-        guard circular else { return }
+        guard circular else {
+            return
+        }
 
         // Create a circular mask. It would also mask subviews.
 
@@ -357,7 +359,9 @@ class IconButton: ButtonWithLargerHitArea {
     }
 
     private func updateForNewStateIfNeeded() {
-        guard state != priorState else { return }
+        guard state != priorState else {
+            return
+        }
 
         priorState = state
         // Update for new state (selected, highlighted, disabled) here if needed

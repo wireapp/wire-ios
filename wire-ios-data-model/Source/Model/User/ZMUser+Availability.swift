@@ -69,7 +69,9 @@ extension ZMUser {
         recipients.formUnion(teamMembers)
         remainingSlots = maxCount - recipients.count
 
-        guard remainingSlots > 0 else { return recipients }
+        guard remainingSlots > 0 else {
+            return recipients
+        }
 
         let teamUsers = knownTeamUsers(in: context)
             .sorted(by: sortByIdentifer)
@@ -89,7 +91,9 @@ extension ZMUser {
     static func knownTeamMembers(in context: NSManagedObjectContext) -> Set<ZMUser> {
         let selfUser = ZMUser.selfUser(in: context)
 
-        guard selfUser.hasTeam else { return Set() }
+        guard selfUser.hasTeam else {
+            return Set()
+        }
 
         let teamMembersInConversationWithSelfUser = selfUser.conversations.lazy
             .flatMap(\.participantRoles)
@@ -123,7 +127,9 @@ extension ZMUser {
         }
 
         set {
-            guard isSelfUser else { return } // TODO: move this setter to ZMEditableUserType
+            guard isSelfUser else {
+                return
+            } // TODO: move this setter to ZMEditableUserType
 
             updateAvailability(newValue)
         }
@@ -147,7 +153,9 @@ extension ZMUser {
         get {
             guard let rawValue = managedObjectContext?
                 .persistentStoreMetadata(forKey: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey) as? Int
-            else { return [] }
+            else {
+                return []
+            }
             return NotificationMethod(rawValue: rawValue)
         }
         set {

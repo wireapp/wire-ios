@@ -48,7 +48,9 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
         let isE2EIEnabled = await context.perform {
             self.featureRepository.fetchE2EI().isEnabled
         }
-        guard isE2EIEnabled else { return }
+        guard isE2EIEnabled else {
+            return
+        }
 
         try await updateStatus(for: conversation, groupID: groupID)
     }

@@ -82,7 +82,9 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
 
         cell.configure(with: conversation)
         cell.action = { [weak self] enabled in
-            guard let userSession = ZMUserSession.shared(), let conversation = self?.conversation else { return }
+            guard let userSession = ZMUserSession.shared(), let conversation = self?.conversation else {
+                return
+            }
 
             cell.isUserInteractionEnabled = false
             (conversation as? ZMConversation)?.setEnableReadReceipts(enabled, in: userSession) { result in
@@ -141,11 +143,13 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        guard kind == UICollectionView.elementKindSectionFooter else { return super.collectionView(
-            collectionView,
-            viewForSupplementaryElementOfKind: kind,
-            at: indexPath
-        ) }
+        guard kind == UICollectionView.elementKindSectionFooter else {
+            return super.collectionView(
+                collectionView,
+                viewForSupplementaryElementOfKind: kind,
+                at: indexPath
+            )
+        }
 
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionFooter,

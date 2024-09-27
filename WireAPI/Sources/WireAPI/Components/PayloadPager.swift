@@ -71,7 +71,9 @@ public struct PayloadPager<Payload>: AsyncSequence {
         // MARK: Public
 
         public mutating func next() async throws -> [Payload]? {
-            guard hasMore else { return nil }
+            guard hasMore else {
+                return nil
+            }
             let page = try await fetchPage(start)
             hasMore = page.hasMore
             start = page.nextStart

@@ -110,7 +110,9 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         // then
         XCTAssertTrue(actionHandler.didPerformAction)
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
-        guard let note = testObserver.receivedChangeInfo.first else { return XCTFail() }
+        guard let note = testObserver.receivedChangeInfo.first else {
+            return XCTFail()
+        }
         XCTAssertEqual(note.user as? ZMSearchUser, searchUser)
         XCTAssertTrue(note.connectionStateChanged)
     }

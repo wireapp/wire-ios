@@ -224,7 +224,9 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
             withKeyboardNotification: notification,
             in: view,
             animations: { [weak self] keyboardFrameInView in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
 
                 let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
                 bottomConstraint?.constant = keyboardHeight == 0 ? -view.safeAreaInsetsOrFallback.bottom : CGFloat(0)

@@ -198,7 +198,9 @@ extension ZMConversationMessage {
     /// Whether the given user is the sender of the message.
 
     public func isUserSender(_ user: UserType) -> Bool {
-        guard let zmUser = user as? ZMUser else { return false }
+        guard let zmUser = user as? ZMUser else {
+            return false
+        }
 
         return zmUser == senderUser as? ZMUser
     }
@@ -312,7 +314,9 @@ extension ZMMessage: ZMConversationMessage {
         guard
             isFile || isImage,
             let managedObjectContext
-        else { return false }
+        else {
+            return false
+        }
 
         let featureRepository = FeatureRepository(context: managedObjectContext)
         let fileSharingFeature = featureRepository.fetchFileSharing()

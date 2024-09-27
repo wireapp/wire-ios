@@ -46,7 +46,9 @@ extension UserClient {
         }
 
         set {
-            guard newValue != mlsPublicKeys else { return }
+            guard newValue != mlsPublicKeys else {
+                return
+            }
             willChangeValue(forKey: Self.mlsPublicKeysKey)
             primitiveMlsPublicKeys = encodedMLSPublicKeys(newValue)
             didChangeValue(forKey: Self.mlsPublicKeysKey)

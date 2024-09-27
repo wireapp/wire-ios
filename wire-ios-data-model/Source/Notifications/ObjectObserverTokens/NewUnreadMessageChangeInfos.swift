@@ -61,7 +61,9 @@ extension NewUnreadMessagesChangeInfo {
         ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadMessagesChangeInfo
-            else { return }
+            else {
+                return
+            }
             observer.didReceiveNewUnreadMessages(changeInfo)
         }
     }
@@ -111,7 +113,9 @@ extension NewUnreadKnockMessagesChangeInfo {
         ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadKnockMessagesChangeInfo
-            else { return }
+            else {
+                return
+            }
             observer.didReceiveNewUnreadKnockMessages(changeInfo)
         }
     }
@@ -161,7 +165,9 @@ extension NewUnreadUnsentMessageChangeInfo {
         ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadUnsentMessageChangeInfo
-            else { return }
+            else {
+                return
+            }
             observer.didReceiveNewUnreadUnsentMessages(changeInfo)
         }
     }

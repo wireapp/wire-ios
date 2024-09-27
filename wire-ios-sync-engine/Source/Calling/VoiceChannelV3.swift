@@ -64,7 +64,9 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         guard
             let conversationId = conversation?.avsIdentifier,
             let callCenter
-        else { return .none }
+        else {
+            return .none
+        }
 
         return callCenter.callState(conversationId: conversationId)
     }
@@ -73,7 +75,9 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         guard
             let conversationId = conversation?.avsIdentifier,
             let callCenter
-        else { return false }
+        else {
+            return false
+        }
 
         return callCenter.isVideoCall(conversationId: conversationId)
     }
@@ -82,7 +86,9 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         guard
             let conversationId = conversation?.avsIdentifier,
             let callCenter
-        else { return false }
+        else {
+            return false
+        }
 
         return callCenter.isContantBitRate(conversationId: conversationId)
     }
@@ -91,7 +97,9 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         guard
             let conversationId = conversation?.avsIdentifier,
             let callCenter
-        else { return .normal }
+        else {
+            return .normal
+        }
 
         return callCenter.networkQuality(conversationId: conversationId)
     }
@@ -111,12 +119,16 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
             guard
                 let conversationId = conversation?.avsIdentifier,
                 let callCenter
-            else { return .stopped }
+            else {
+                return .stopped
+            }
 
             return callCenter.videoState(conversationId: conversationId)
         }
         set {
-            guard let conversationId = conversation?.avsIdentifier else { return }
+            guard let conversationId = conversation?.avsIdentifier else {
+                return
+            }
 
             callCenter?.setVideoState(conversationId: conversationId, videoState: newValue)
         }
@@ -131,7 +143,9 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         guard
             let conversationId = conversation?.avsIdentifier,
             let callCenter
-        else { return false }
+        else {
+            return false
+        }
 
         return callCenter.isConferenceCall(conversationId: conversationId)
     }
@@ -160,7 +174,9 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
             return callCenter.videoGridPresentationMode(conversationId: conversationId)
         }
         set {
-            guard let conversationId = conversation?.avsIdentifier else { return }
+            guard let conversationId = conversation?.avsIdentifier else {
+                return
+            }
             callCenter?.setVideoGridPresentationMode(newValue, for: conversationId)
         }
     }
@@ -172,7 +188,9 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         guard
             let callCenter,
             let conversationId = conversation?.avsIdentifier
-        else { return [] }
+        else {
+            return []
+        }
 
         return callCenter.callParticipants(conversationId: conversationId, kind: kind, activeSpeakersLimit: limit)
     }
@@ -198,7 +216,9 @@ extension VoiceChannelV3: CallActions {
     }
 
     public func continueByDecreasingConversationSecurity(userSession: ZMUserSession) {
-        guard let conversation else { return }
+        guard let conversation else {
+            return
+        }
         conversation.acknowledgePrivacyWarningAndResendMessages()
     }
 
@@ -221,7 +241,9 @@ extension VoiceChannelV3: CallActions {
     }
 
     public func request(videoStreams: [AVSClient]) {
-        guard let conversationId = conversation?.avsIdentifier else { return }
+        guard let conversationId = conversation?.avsIdentifier else {
+            return
+        }
 
         callCenter?.requestVideoStreams(conversationId: conversationId, clients: videoStreams)
     }
@@ -254,7 +276,9 @@ extension VoiceChannelV3: CallActionsInternal {
     }
 
     public func leave() {
-        guard let conversationId = conversation?.avsIdentifier else { return }
+        guard let conversationId = conversation?.avsIdentifier else {
+            return
+        }
 
         switch state {
         case .incoming:

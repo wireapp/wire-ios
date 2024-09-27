@@ -154,7 +154,9 @@ final class ConversationImagesViewController: UIViewController {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else {
+            return
+        }
         buttonsBar.buttons = createControlsBarButtons()
         setupExpandRowButton()
     }
@@ -575,7 +577,9 @@ extension ConversationImagesViewController: MenuVisibilityController {
     }
 
     private func showNavigationBarVisible(hidden: Bool, duration: TimeInterval) {
-        guard let view = navigationController?.view else { return }
+        guard let view = navigationController?.view else {
+            return
+        }
 
         UIView.transition(with: view, duration: duration, animations: {
             self.navigationController?.setNavigationBarHidden(hidden, animated: false)

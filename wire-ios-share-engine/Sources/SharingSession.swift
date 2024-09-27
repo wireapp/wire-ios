@@ -213,7 +213,9 @@ public final class SharingSession {
             storeError = storeError
         }
 
-        guard storeError == nil else { throw InitializationError.missingSharedContainer }
+        guard storeError == nil else {
+            throw InitializationError.missingSharedContainer
+        }
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
@@ -292,7 +294,9 @@ public final class SharingSession {
         )
 
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated
-        else { throw InitializationError.loggedOut }
+        else {
+            throw InitializationError.loggedOut
+        }
 
         let accountDirectory = coreDataStack.accountContainer
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {

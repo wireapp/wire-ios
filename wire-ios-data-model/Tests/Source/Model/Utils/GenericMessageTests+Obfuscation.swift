@@ -56,7 +56,9 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
 
         // then
         XCTAssertNotEqual(obfuscatedMessage?.text.content, text)
-        guard let content = obfuscatedMessage?.content else { return }
+        guard let content = obfuscatedMessage?.content else {
+            return
+        }
         switch content {
         case .text:
             XCTAssertNotNil(obfuscatedMessage)
@@ -76,7 +78,9 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         // then
         XCTAssertNotEqual(obfuscatedMessage?.text.content, text)
 
-        guard let content = obfuscatedMessage?.content else { return }
+        guard let content = obfuscatedMessage?.content else {
+            return
+        }
         switch content {
         case .text:
             XCTAssertNotNil(obfuscatedMessage)
@@ -96,7 +100,9 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         // then
         XCTAssertNotEqual(obfuscatedMessage?.text.content, text)
 
-        guard let content = obfuscatedMessage?.content else { return }
+        guard let content = obfuscatedMessage?.content else {
+            return
+        }
         switch content {
         case .text:
             XCTAssertNotNil(obfuscatedMessage)
@@ -160,7 +166,9 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
-        guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else { return XCTFail() }
+        guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else {
+            return XCTFail()
+        }
 
         // then
         let obfText = obfuscated!.text.content
@@ -208,7 +216,9 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
-        guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else { return XCTFail() }
+        guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else {
+            return XCTFail()
+        }
         let obfuscatedAsset = obfuscatedLinkPreview.image
         XCTAssertTrue(obfuscatedAsset.hasOriginal)
         XCTAssertEqual(obfuscatedAsset.original.size, 10)
@@ -253,7 +263,9 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
-        guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else { return XCTFail() }
+        guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else {
+            return XCTFail()
+        }
 
         // then
         let obfuscatedTweet = obfuscatedLinkPreview.tweet
@@ -273,7 +285,9 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
-        guard let obfuscatedAsset = obfuscated?.asset else { return XCTFail() }
+        guard let obfuscatedAsset = obfuscated?.asset else {
+            return XCTFail()
+        }
 
         // then
         XCTAssertTrue(obfuscatedAsset.hasOriginal)
@@ -308,7 +322,9 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
-        guard let obfuscatedAsset = obfuscated?.asset else { return XCTFail() }
+        guard let obfuscatedAsset = obfuscated?.asset else {
+            return XCTFail()
+        }
 
         // then
         XCTAssertTrue(obfuscatedAsset.hasOriginal)
@@ -341,14 +357,18 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let obfuscated = genericMessage.obfuscatedMessage()
 
         // then
-        guard let obfuscatedAsset = obfuscated?.asset else { return XCTFail() }
+        guard let obfuscatedAsset = obfuscated?.asset else {
+            return XCTFail()
+        }
 
         XCTAssertTrue(obfuscatedAsset.hasOriginal)
         XCTAssertEqual(obfuscatedAsset.original.size, 10)
         XCTAssertEqual(obfuscatedAsset.original.mimeType, "audio")
         XCTAssertNotEqual(obfuscatedAsset.original.name, "foo")
 
-        guard case .audio? = obfuscatedAsset.original.metaData else { return XCTFail() }
+        guard case .audio? = obfuscatedAsset.original.metaData else {
+            return XCTFail()
+        }
 
         XCTAssertFalse(obfuscatedAsset.original.audio.hasDurationInMillis)
         XCTAssertFalse(obfuscatedAsset.original.audio.hasNormalizedLoudness)

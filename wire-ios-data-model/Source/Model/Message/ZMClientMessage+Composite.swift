@@ -38,7 +38,9 @@ extension ZMClientMessage: CompositeMessageData {
         }
         var items = [CompositeMessageItem]()
         for protoItem in message.composite.items {
-            guard let compositeMessageItem = CompositeMessageItem(with: protoItem, message: self) else { continue }
+            guard let compositeMessageItem = CompositeMessageItem(with: protoItem, message: self) else {
+                continue
+            }
             items += [compositeMessageItem]
         }
         return items
@@ -73,7 +75,9 @@ extension ZMClientMessage {
 
 extension ZMClientMessage {
     private func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation) {
-        guard let moc = managedObjectContext else { return }
+        guard let moc = managedObjectContext else {
+            return
+        }
 
         if !containsButtonState(withId: confirmation.buttonID) {
             ButtonState.insert(with: confirmation.buttonID, message: self, inContext: moc)

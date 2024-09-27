@@ -27,7 +27,9 @@ final class DeveloperToolsPresenter: NSObject {
         with router: AppRootRouter?,
         from topMostViewController: @escaping @autoclosure () -> UIViewController?
     ) {
-        guard !displayedDeveloperTools else { return }
+        guard !displayedDeveloperTools else {
+            return
+        }
 
         let developerTools = UIHostingController(
             rootView: NavigationView {

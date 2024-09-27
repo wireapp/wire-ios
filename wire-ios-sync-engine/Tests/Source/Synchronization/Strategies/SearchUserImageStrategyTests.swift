@@ -121,7 +121,9 @@ final class SearchUserImageStrategyTests: MessagingTest {
         searchSet.forEach { $0.requestPreviewProfileImage() }
 
         // when
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
 
         // then
         XCTAssertNotNil(request)
@@ -150,12 +152,16 @@ final class SearchUserImageStrategyTests: MessagingTest {
         // given
         let searchSet1 = setupSearchDirectory(userCount: 2)
         searchSet1.forEach { $0.requestPreviewProfileImage() }
-        guard sut.nextRequest(for: .v0) != nil else { return XCTFail() } // start first request
+        guard sut.nextRequest(for: .v0) != nil else {
+            return XCTFail()
+        } // start first request
 
         // when
         let searchSet2 = setupSearchDirectory(userCount: 1)
         searchSet2.forEach { $0.requestPreviewProfileImage() }
-        guard let request2 = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request2 = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
 
         // then
         XCTAssertNotNil(request2)
@@ -197,7 +203,9 @@ final class SearchUserImageStrategyTests: MessagingTest {
         )
 
         // When
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         request.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -221,7 +229,9 @@ final class SearchUserImageStrategyTests: MessagingTest {
         )
 
         // when
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         request.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -241,12 +251,16 @@ final class SearchUserImageStrategyTests: MessagingTest {
         )
 
         // when
-        guard let request1 = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request1 = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         request1.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let request2 = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request2 = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         let expectedUserIDs = userIDs(from: searchUsers)
         XCTAssertEqual(userIDs(in: request2), expectedUserIDs)
     }
@@ -268,12 +282,16 @@ final class SearchUserImageStrategyTests: MessagingTest {
         )
 
         // when
-        guard let request1 = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request1 = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         request1.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let request2 = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request2 = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         XCTAssertEqual(userIDs(in: request2).count, 0)
     }
 
@@ -289,7 +307,9 @@ final class SearchUserImageStrategyTests: MessagingTest {
         searchUser.requestPreviewProfileImage()
 
         // when
-        guard let request = sut.nextRequest(for: apiVersion) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: apiVersion) else {
+            return XCTFail()
+        }
 
         // then
         XCTAssertNotNil(request)
@@ -344,8 +364,12 @@ final class SearchUserImageStrategyTests: MessagingTest {
         searchUser2.requestPreviewProfileImage()
 
         // when
-        guard let request1 = sut.nextRequest(for: .v0) else { return XCTFail() }
-        guard let request2 = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request1 = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
+        guard let request2 = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
 
         // then
         XCTAssertNotNil(request1)
@@ -380,7 +404,9 @@ final class SearchUserImageStrategyTests: MessagingTest {
         )
 
         // when
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         XCTAssertEqual(request.path, "/assets/v3/\(assetID1)")
 
         request.complete(with: response)
@@ -407,7 +433,9 @@ final class SearchUserImageStrategyTests: MessagingTest {
         )
 
         // when
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         XCTAssertEqual(request.path, "/assets/v3/\(assetID1)")
 
         request.complete(with: response)
@@ -431,7 +459,9 @@ final class SearchUserImageStrategyTests: MessagingTest {
         )
 
         // when
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         XCTAssertEqual(request.path, "/assets/v3/\(assetID1)")
 
         request.complete(with: response)
@@ -456,14 +486,18 @@ final class SearchUserImageStrategyTests: MessagingTest {
         )
 
         // when
-        guard let request1 = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request1 = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         XCTAssertEqual(request1.path, "/assets/v3/\(assetID1)")
 
         request1.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let request2 = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request2 = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         XCTAssertEqual(request2.path, "/assets/v3/\(assetID1)")
     }
 
@@ -487,12 +521,16 @@ final class SearchUserImageStrategyTests: MessagingTest {
         let userObserver = UserObserver(user: searchUser1, managedObjectContext: uiMOC)!
 
         // when
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         request.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let note = userObserver.notifications.firstObject as? UserChangeInfo else { return XCTFail() }
+        guard let note = userObserver.notifications.firstObject as? UserChangeInfo else {
+            return XCTFail()
+        }
         XCTAssertTrue(note.imageSmallProfileDataChanged)
         XCTAssertEqual(note.user as? ZMSearchUser, searchUser1)
     }
@@ -522,12 +560,16 @@ final class SearchUserImageStrategyTests: MessagingTest {
         let userObserver = UserObserver(user: searchUser1, managedObjectContext: uiMOC)!
 
         // when
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
         request.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let note = userObserver.notifications.firstObject as? UserChangeInfo else { return XCTFail() }
+        guard let note = userObserver.notifications.firstObject as? UserChangeInfo else {
+            return XCTFail()
+        }
         XCTAssertTrue(note.imageMediumDataChanged)
         XCTAssertEqual(note.user as? ZMSearchUser, searchUser1)
     }

@@ -142,7 +142,9 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     }
 
     private func deleteMessageIfNecessary(_ message: ZMClientMessage) {
-        guard let underlyingMessage = message.underlyingMessage else { return }
+        guard let underlyingMessage = message.underlyingMessage else {
+            return
+        }
 
         if underlyingMessage.hasReaction {
             WireLogger.messaging.debug("deleting message: \(message.debugInfo)")

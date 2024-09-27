@@ -63,7 +63,9 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             fatal("syncMOC not accessible")
         }
         syncMOC.performGroupedBlock { [weak self] in
-            guard let self, !self.tornDown else { return }
+            guard let self, !self.tornDown else {
+                return
+            }
             guard let conversation = self.conversation,
                   let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation
             else {
@@ -147,7 +149,9 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
 
         guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request as! NSFetchRequest<T>)
-        else { return [] }
+        else {
+            return []
+        }
         return result
     }
 
@@ -175,7 +179,9 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         let request: NSFetchRequest<T> = AssetCollectionBatched.fetchRequestForUnCategorizedMessages(in: conversation)
         request.fetchBatchSize = AssetCollectionBatched.defaultFetchCount
 
-        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else { return [] }
+        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else {
+            return []
+        }
         return result
     }
 
@@ -213,7 +219,9 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         allMessages: [ZMMessage],
         managedObjectContext: NSManagedObjectContext
     ) {
-        guard !tornDown else { return }
+        guard !tornDown else {
+            return
+        }
 
         // get next offset
         let offset = (type == .asset) ? assetMessageOffset : clientMessageOffset
@@ -253,7 +261,9 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         }
 
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self, !self.tornDown else { return }
+            guard let self, !self.tornDown else {
+                return
+            }
             categorizeNextBatch(type: type, allMessages: allMessages, managedObjectContext: managedObjectContext)
         }
     }
@@ -267,7 +277,9 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             return
         }
         uiMOC?.performGroupedBlock { [weak self] in
-            guard let self, !self.tornDown else { return }
+            guard let self, !self.tornDown else {
+                return
+            }
 
             // Map assets to UI assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
@@ -293,7 +305,9 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
 
     private func notifyDelegateFetchingIsDone(result: AssetFetchResult) {
         uiMOC?.performGroupedBlock { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             var result = result
             if result == .success {
                 // Since we are setting the assets in a performGroupedBlock on the uiMOC, we might not know if there are
@@ -323,11 +337,13 @@ extension AssetCollectionBatched {
         }
 
         let unionIncluding: MessageCategory = matchingCategories.reduce(.none) { $0.union($1.including) }
-        messages.forEach { message in
+        for message in messages {
             let category = message.cachedCategory
             guard category.intersection(unionIncluding) != .none,
                   !(category.contains(MessageCategory.excludedFromCollection))
-            else { return }
+            else {
+                continue
+            }
 
             for matchingCategory in matchingCategories {
                 if category.contains(matchingCategory.including),

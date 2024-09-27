@@ -60,7 +60,9 @@ public enum AppBuild: UInt8 {
     // MARK: Internal
 
     static var current: AppBuild {
-        guard let identifier = Bundle.main.bundleIdentifier else { return .unknown }
+        guard let identifier = Bundle.main.bundleIdentifier else {
+            return .unknown
+        }
         switch identifier {
         case "com.wearezeta.zclient.ios": return .appStore
         case "com.wearezeta.zclient.alpha": return .debug
@@ -86,7 +88,9 @@ public func requireInternal(
     file: StaticString = #file,
     line: UInt = #line
 ) {
-    guard !condition else { return }
+    guard !condition else {
+        return
+    }
     let errorMessage = message()
     if AppBuild.current.canFatalError {
         fatal(errorMessage, file: file, line: line)

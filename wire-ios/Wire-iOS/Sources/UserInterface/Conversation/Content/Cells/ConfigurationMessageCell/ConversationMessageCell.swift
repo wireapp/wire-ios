@@ -208,7 +208,9 @@ extension ConversationMessageCellDescription {
     }
 
     func configureCell(_ cell: UITableViewCell, animated: Bool = false) {
-        guard let adapterCell = cell as? ConversationMessageCellTableViewAdapter<Self> else { return }
+        guard let adapterCell = cell as? ConversationMessageCellTableViewAdapter<Self> else {
+            return
+        }
 
         adapterCell.cellView.configure(with: configuration, animated: animated)
 
@@ -233,7 +235,9 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
     /// - Parameter other: other object to compare
     /// - Returns: true if both self and other having same type, and configures are equal
     func isConfigurationEqual(with other: Any) -> Bool {
-        guard let otherConfig = (other as? Self)?.configuration else { return false }
+        guard let otherConfig = (other as? Self)?.configuration else {
+            return false
+        }
 
         return configuration == otherConfig
     }

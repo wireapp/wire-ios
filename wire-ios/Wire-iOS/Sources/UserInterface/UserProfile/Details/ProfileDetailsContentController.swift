@@ -108,7 +108,9 @@ final class ProfileDetailsContentController: NSObject,
     weak var delegate: ProfileDetailsContentControllerDelegate?
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.readReceiptsEnabledChanged || changeInfo.richProfileChanged else { return }
+        guard changeInfo.readReceiptsEnabledChanged || changeInfo.richProfileChanged else {
+            return
+        }
         updateContent()
     }
 

@@ -115,7 +115,9 @@ extension ClientMessageTests_OTR_Legacy {
         }
         await syncMOC.perform {
             guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user })
-            else { return XCTFail() }
+            else {
+                return XCTFail()
+            }
 
             XCTAssertEqual(userEntry.clients.count, 1)
             XCTAssertEqual(
@@ -150,7 +152,9 @@ extension ClientMessageTests_OTR_Legacy {
                 try? $0.merge(serializedData: dataAndStrategy.data)
             }
             guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user })
-            else { return XCTFail() }
+            else {
+                return XCTFail()
+            }
 
             XCTAssertEqual(userEntry.clients.count, 1)
             XCTAssertEqual(
@@ -206,7 +210,9 @@ extension ClientMessageTests_OTR_Legacy {
         }
 
         // When
-        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail() }
+        guard let payloadAndStrategy = await message.encryptForTransport() else {
+            return XCTFail()
+        }
 
         // Then
         switch payloadAndStrategy.strategy {
@@ -253,7 +259,9 @@ extension ClientMessageTests_OTR_Legacy {
         }
 
         // When
-        guard let payloadAndStrategy = await sut?.encryptForTransport() else { return XCTFail() }
+        guard let payloadAndStrategy = await sut?.encryptForTransport() else {
+            return XCTFail()
+        }
 
         // Then
         await syncMOC.perform {
@@ -313,7 +321,9 @@ extension ClientMessageTests_OTR_Legacy {
 
         // Then
         await syncMOC.perform {
-            guard let payloadAndStrategy = payload else { return XCTFail() }
+            guard let payloadAndStrategy = payload else {
+                return XCTFail()
+            }
             switch payloadAndStrategy.strategy {
             case let .ignoreAllMissingClientsNotFromUsers(users: users):
                 XCTAssertEqual(users, [self.syncSelfUser])
@@ -339,7 +349,9 @@ extension ClientMessageTests_OTR_Legacy {
         }
 
         // When
-        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail() }
+        guard let payloadAndStrategy = await message.encryptForTransport() else {
+            return XCTFail()
+        }
 
         // Then
         await syncMOC.perform {
@@ -367,7 +379,9 @@ extension ClientMessageTests_OTR_Legacy {
         }
 
         // When
-        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail() }
+        guard let payloadAndStrategy = await message.encryptForTransport() else {
+            return XCTFail()
+        }
 
         await syncMOC.perform {
             // Then

@@ -30,8 +30,12 @@ extension ZMLocalNotification {
 
         switch event.type {
         case .conversationMLSMessageAdd, .conversationOtrMessageAdd:
-            guard conversation?.isForcedReadOnly != true else { break }
-            guard let message = GenericMessage(from: event) else { break }
+            guard conversation?.isForcedReadOnly != true else {
+                break
+            }
+            guard let message = GenericMessage(from: event) else {
+                break
+            }
             builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder
                 .self
 
@@ -48,7 +52,9 @@ extension ZMLocalNotification {
             builderType = NewUserEventNotificationBuilder.self
 
         case .conversationMemberJoin, .conversationMemberLeave, .conversationMessageTimerUpdate:
-            guard conversation?.remoteIdentifier != nil else { return nil }
+            guard conversation?.remoteIdentifier != nil else {
+                return nil
+            }
             builderType = NewSystemMessageNotificationBuilder.self
 
         default:
@@ -100,7 +106,9 @@ private class EventNotificationBuilder: NotificationBuilder {
 
     func shouldCreateNotification() -> Bool {
         // if there is a sender, it's not the selfUser
-        if let sender, sender.isSelfUser { return false }
+        if let sender, sender.isSelfUser {
+            return false
+        }
 
         if let conversation {
             if conversation.mutedMessageTypesIncludingAvailability != .none {
@@ -127,7 +135,9 @@ private class EventNotificationBuilder: NotificationBuilder {
 
     func userInfo() -> NotificationUserInfo? {
         let selfUser = ZMUser.selfUser(in: moc)
-        guard let selfUserRemoteID = selfUser.remoteIdentifier else { return nil }
+        guard let selfUserRemoteID = selfUser.remoteIdentifier else {
+            return nil
+        }
 
         let userInfo = NotificationUserInfo()
         userInfo.selfUserID = selfUserRemoteID

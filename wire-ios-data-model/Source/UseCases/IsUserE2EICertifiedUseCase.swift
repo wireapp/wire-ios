@@ -45,7 +45,9 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         let isE2EIEnabled = await featureRepositoryContext.perform {
             featureRepository.fetchE2EI().isEnabled
         }
-        guard isE2EIEnabled else { return false }
+        guard isE2EIEnabled else {
+            return false
+        }
 
         guard let userContext = user.managedObjectContext else {
             throw Error.usersManagedObjectContextNotSet

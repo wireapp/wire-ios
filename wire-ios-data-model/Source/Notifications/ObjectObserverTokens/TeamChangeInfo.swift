@@ -104,7 +104,9 @@ extension TeamChangeInfo {
         ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? TeamChangeInfo
-            else { return }
+            else {
+                return
+            }
 
             observer.teamDidChange(changeInfo)
         }

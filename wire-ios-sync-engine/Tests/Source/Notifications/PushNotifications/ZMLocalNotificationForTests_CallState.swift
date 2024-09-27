@@ -56,7 +56,9 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
 
         syncMOC.performAndWait {
             // when
-            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+            guard let note = self.note(for: state) else {
+                return XCTFail("Did not create notification")
+            }
 
             // then
             XCTAssertEqual(note.title, "Callie")
@@ -111,7 +113,9 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
 
         // when
         syncMOC.performAndWait {
-            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+            guard let note = self.note(for: state) else {
+                return XCTFail("Did not create notification")
+            }
 
             // then
             XCTAssertEqual(note.title, "Callie")
@@ -137,7 +141,9 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             let state: CallState = .terminating(reason: .canceled)
 
             // when
-            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+            guard let note = self.note(for: state) else {
+                return XCTFail("Did not create notification")
+            }
 
             // then
             XCTAssertEqual(note.title, "Callie")
@@ -168,7 +174,9 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
 
         // when
         syncMOC.performAndWait {
-            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+            guard let note = self.note(for: state) else {
+                return XCTFail("Did not create notification")
+            }
 
             // then
             XCTAssertEqual(note.title, "Callie")
@@ -192,7 +200,9 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
                 conversation: conversation,
                 caller: caller,
                 moc: syncMOC
-            ) else { return XCTFail("Did not create notification") }
+            ) else {
+                return XCTFail("Did not create notification")
+            }
 
             // then
             XCTAssertEqual(note.title, "Callie")
@@ -216,7 +226,9 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
 
             // when
-            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+            guard let note = self.note(for: state) else {
+                return XCTFail("Did not create notification")
+            }
 
             // then
             XCTAssertEqual(note.title, "Callie in \(team.name!)")
@@ -229,7 +241,9 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
 
         syncMOC.performAndWait {
             // when
-            guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
+            guard let note = self.note(for: state) else {
+                return XCTFail("Did not create notification")
+            }
 
             // then
             XCTAssertEqual(note.title, "Callie")

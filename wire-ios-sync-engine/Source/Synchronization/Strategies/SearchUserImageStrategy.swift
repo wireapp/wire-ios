@@ -72,7 +72,9 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
     }
 
     func requestAsset(with note: NotificationInContext) {
-        guard let searchUser = note.object as? ZMSearchUser, let userId = searchUser.remoteIdentifier else { return }
+        guard let searchUser = note.object as? ZMSearchUser, let userId = searchUser.remoteIdentifier else {
+            return
+        }
 
         if !searchUser.hasDownloadedFullUserProfile {
             requestedMissingFullProfiles.insert(userId)
@@ -167,14 +169,18 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
             case .v1:
                 let domain = requestedUserDomain[user]?.isEmpty == false ? requestedUserDomain[user]! : BackendInfo
                     .domain
-                guard let domain else { return nil }
+                guard let domain else {
+                    return nil
+                }
 
                 path = "/assets/v4/\(domain)/\(key)"
 
             case .v2, .v3, .v4, .v5, .v6:
                 let domain = requestedUserDomain[user]?.isEmpty == false ? requestedUserDomain[user]! : BackendInfo
                     .domain
-                guard let domain else { return nil }
+                guard let domain else {
+                    return nil
+                }
 
                 path = "/assets/\(domain)/\(key)"
             }
@@ -202,7 +208,9 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
         }
 
         uiContext.performGroupedBlock {
-            guard let searchUser = self.searchUsersCache?.object(forKey: user as NSUUID) else { return }
+            guard let searchUser = self.searchUsersCache?.object(forKey: user as NSUUID) else {
+                return
+            }
 
             if response.result == .success {
                 if let imageData = response.imageData ?? response.rawData {
@@ -237,16 +245,22 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
                         self.requestedMissingFullProfiles.subtract(missingFullProfiles)
                     }
 
-                    guard response.result == .success else { return }
+                    guard response.result == .success else {
+                        return
+                    }
 
                     self.uiContext.performGroupedBlock {
-                        guard let userProfilePayloads = response.payload as? [[String: Any]] else { return }
+                        guard let userProfilePayloads = response.payload as? [[String: Any]] else {
+                            return
+                        }
 
                         for userProfilePayload in userProfilePayloads {
                             guard
                                 let userId = (userProfilePayload["id"] as? String).flatMap(UUID.init(transportString:)),
                                 let searchUser = self.searchUsersCache?.object(forKey: userId as NSUUID)
-                            else { continue }
+                            else {
+                                continue
+                            }
 
                             searchUser.update(from: userProfilePayload)
 

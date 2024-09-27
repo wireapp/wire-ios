@@ -48,7 +48,9 @@ public final class AppLockController: AppLockType {
     public weak var delegate: AppLockDelegate?
 
     public var isAvailable: Bool {
-        guard legacyConfig == nil else { return true }
+        guard legacyConfig == nil else {
+            return true
+        }
         return config.isAvailable
     }
 
@@ -58,7 +60,9 @@ public final class AppLockController: AppLockType {
         }
 
         set {
-            guard !isForced else { return }
+            guard !isForced else {
+                return
+            }
             selfUser.isAppLockActive = newValue
         }
     }
@@ -72,7 +76,9 @@ public final class AppLockController: AppLockType {
     }
 
     public var isLocked: Bool {
-        guard isActive else { return false }
+        guard isActive else {
+            return false
+        }
 
         switch state {
         case .unlocked:
@@ -108,7 +114,9 @@ public final class AppLockController: AppLockType {
     // MARK: - Methods
 
     public func beginTimer() {
-        guard state == .unlocked else { return }
+        guard state == .unlocked else {
+            return
+        }
         state = .needsChecking
         lastCheckpoint = Date()
     }
@@ -121,7 +129,9 @@ public final class AppLockController: AppLockType {
     /// - Throws: AppLockError
 
     public func open() throws {
-        guard !isLocked else { throw AppLockError.authenticationNeeded }
+        guard !isLocked else {
+            throw AppLockError.authenticationNeeded
+        }
         delegate?.appLockDidOpen(self)
     }
 

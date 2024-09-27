@@ -53,7 +53,9 @@ public class Team: ZMManagedObject, TeamType {
 
     public var remoteIdentifier: UUID? {
         get {
-            guard let data = remoteIdentifier_data else { return nil }
+            guard let data = remoteIdentifier_data else {
+                return nil
+            }
             return UUID(data: data)
         }
         set {
@@ -165,7 +167,9 @@ extension Team {
     public static var imageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", Team.pictureAssetIdKey)
         let notCached = NSPredicate { team, _ -> Bool in
-            guard let team = team as? Team else { return false }
+            guard let team = team as? Team else {
+                return false
+            }
             return team.imageData == nil
         }
         return NSCompoundPredicate(andPredicateWithSubpredicates: [assetIdExists, notCached])

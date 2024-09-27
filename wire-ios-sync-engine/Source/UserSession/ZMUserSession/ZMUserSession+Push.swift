@@ -190,7 +190,9 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
             let shouldPresent = responder?.shouldPresentNotification(with: userInfo)
 
             var options = UNNotificationPresentationOptions()
-            if shouldPresent ?? true { options = [.list, .banner, .sound] }
+            if shouldPresent ?? true {
+                options = [.list, .banner, .sound]
+            }
 
             completionHandler(options)
         }

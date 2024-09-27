@@ -30,7 +30,9 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
             let itemProvider = dragItem.itemProvider
             if itemProvider.hasText() {
                 itemProvider.loadObject(ofClass: NSString.self) { [self] object, _ in
-                    guard let draggedText = object as? String else { return }
+                    guard let draggedText = object as? String else {
+                        return
+                    }
                     DispatchQueue.main.async {
                         self.inputBar.textView.text = draggedText
                     }
@@ -39,8 +41,12 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                 itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { object, error in
 
                     guard error == nil
-                    else { return zmLog.error("Failed to load dragged item: \(error!.localizedDescription)") }
-                    guard let draggedImage = object as? UIImage else { return }
+                    else {
+                        return zmLog.error("Failed to load dragged item: \(error!.localizedDescription)")
+                    }
+                    guard let draggedImage = object as? UIImage else {
+                        return
+                    }
 
                     DispatchQueue.main.async {
                         let context = ConfirmAssetViewController.Context(

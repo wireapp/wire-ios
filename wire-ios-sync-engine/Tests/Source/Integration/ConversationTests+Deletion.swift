@@ -51,7 +51,9 @@ class ConversationTests_Deletion: ConversationTestsBase {
             guard request
                 .path ==
                 "/teams/\(self!.team.identifier)/conversations/\(self!.groupConversationWithWholeTeam.identifier)"
-            else { return nil }
+            else {
+                return nil
+            }
 
             self?.mockTransportSession.responseGeneratorBlock = nil
 

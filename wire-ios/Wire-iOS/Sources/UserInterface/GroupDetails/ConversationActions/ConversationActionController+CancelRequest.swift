@@ -58,7 +58,9 @@ enum CancelConnectionRequestResult {
     // MARK: Private
 
     private var style: UIAlertAction.Style {
-        guard case .cancel = self else { return .cancel }
+        guard case .cancel = self else {
+            return .cancel
+        }
         return .default
     }
 }
@@ -81,7 +83,9 @@ extension ConversationActionController {
     }
 
     func handleConnectionRequestResult(_ result: CancelConnectionRequestResult, for conversation: ZMConversation) {
-        guard case .cancelRequest = result else { return }
+        guard case .cancelRequest = result else {
+            return
+        }
 
         conversation.connectedUser?.cancelConnectionRequest(completion: { [weak self] error in
             if let error = error as? LocalizedError {

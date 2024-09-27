@@ -68,7 +68,9 @@ extension SessionManager: UserSessionLogoutDelegate {
             }
 
             let account = accountManager.account(with: accountId)
-            guard account == accountManager.selectedAccount else { return }
+            guard account == accountManager.selectedAccount else {
+                return
+            }
             delegate?.sessionManagerDidFailToLogin(error: error)
         }
     }

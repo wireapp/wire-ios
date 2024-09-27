@@ -35,7 +35,9 @@ extension ZMConversation {
     /// The timeout value actively used with new messages.
 
     public var activeMessageDestructionTimeoutValue: MessageDestructionTimeoutValue? {
-        guard let type = activeMessageDestructionTimeoutType else { return nil }
+        guard let type = activeMessageDestructionTimeoutType else {
+            return nil
+        }
         return messageDestructionTimeoutValue(for: type)
     }
 
@@ -108,7 +110,9 @@ extension ZMConversation {
     // MARK: - Helpers
 
     private var hasForcedMessageDestructionTimeout: Bool {
-        guard let feature = selfDeletingMessagesFeature else { return false }
+        guard let feature = selfDeletingMessagesFeature else {
+            return false
+        }
         return feature.isForcedOff || feature.isForcedOn
     }
 
@@ -124,7 +128,9 @@ extension ZMConversation {
     }
 
     private var selfDeletingMessagesFeature: Feature.SelfDeletingMessages? {
-        guard let context = managedObjectContext else { return nil }
+        guard let context = managedObjectContext else {
+            return nil
+        }
         return FeatureRepository(context: context).fetchSelfDeletingMesssages()
     }
 }

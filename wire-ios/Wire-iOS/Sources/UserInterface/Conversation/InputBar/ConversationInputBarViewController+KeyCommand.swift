@@ -102,7 +102,9 @@ extension ConversationInputBarViewController {
 
     @objc
     func shiftReturnPressed() {
-        guard let selectedTextRange = inputBar.textView.selectedTextRange else { return }
+        guard let selectedTextRange = inputBar.textView.selectedTextRange else {
+            return
+        }
 
         inputBar.textView.replace(selectedTextRange, withText: "\n")
     }

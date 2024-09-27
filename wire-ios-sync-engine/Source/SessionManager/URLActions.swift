@@ -193,9 +193,13 @@ extension URLAction {
     }
 
     private static func validateURLSchemeRequest(with components: URLComponents, in defaults: UserDefaults) -> Bool {
-        guard let storedToken = CompanyLoginVerificationToken.current(in: defaults) else { return false }
+        guard let storedToken = CompanyLoginVerificationToken.current(in: defaults) else {
+            return false
+        }
         guard let token = components.query(for: URLQueryItem.Key.validationToken).flatMap(UUID.init(transportString:))
-        else { return false }
+        else {
+            return false
+        }
         return storedToken.matches(identifier: token)
     }
 }

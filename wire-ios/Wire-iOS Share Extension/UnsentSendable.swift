@@ -126,7 +126,9 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
             let message = conversation.appendTextMessage(text, fetchLinkPreview: fetchPreview)
             completion(message)
@@ -159,7 +161,9 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
     // MARK: Lifecycle
 
     init?(conversation: WireShareEngine.Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
-        guard attachment.hasItemConformingToTypeIdentifier(UTType.image.identifier) else { return nil }
+        guard attachment.hasItemConformingToTypeIdentifier(UTType.image.identifier) else {
+            return nil
+        }
         self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
         needsPreparation = true
@@ -228,7 +232,9 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             completion(imageData.flatMap(conversation.appendImage))
         }
     }
@@ -251,7 +257,9 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
         self.typePass = attachment.hasItemConformingToTypeIdentifier(UnsentFileSendable.passkitUTI)
         self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
-        guard typeURL || typeData || typePass else { return nil }
+        guard typeURL || typeData || typePass else {
+            return nil
+        }
         needsPreparation = true
     }
 
@@ -267,7 +275,9 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
         if typeURL {
             attachment.fetchURL { [weak self] url in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
                 if (url != nil && !url!.isFileURL) || !typeData {
                     error = .unsupportedAttachment
                     return completion()
@@ -284,7 +294,9 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             completion(metadata.flatMap(conversation.appendFile))
         }
     }
@@ -396,7 +408,9 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
         dataURL: URL,
         completion: @escaping SendingCompletion
     ) {
-        guard let fileName = nameForFile(withUTI: UTI, name: name) else { return completion(nil, nil) }
+        guard let fileName = nameForFile(withUTI: UTI, name: name) else {
+            return completion(nil, nil)
+        }
 
         do {
             let tmp = try FileManager.createTmpDirectory()
@@ -423,7 +437,9 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
         data: Data,
         completion: @escaping (URL?, Error?) -> Void
     ) {
-        guard let fileName = nameForFile(withUTI: UTI, name: name) else { return completion(nil, nil) }
+        guard let fileName = nameForFile(withUTI: UTI, name: name) else {
+            return completion(nil, nil)
+        }
 
         let fileManager = FileManager.default
 
@@ -456,7 +472,9 @@ extension AccountManager {
     // MARK: - Host App State
 
     static var sharedAccountManager: AccountManager? {
-        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
+        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else {
+            return nil
+        }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         return AccountManager(sharedDirectory: sharedContainerURL)
     }

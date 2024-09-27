@@ -291,7 +291,9 @@ extension SettingsCellDescriptorFactory {
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
             guard let option = value.flatMap({ SettingsColorScheme(rawValue: $0) })
-            else { return .text(SettingsColorScheme.defaultPreference.displayString) }
+            else {
+                return .text(SettingsColorScheme.defaultPreference.displayString)
+            }
             return .text(option.displayString)
         }
         return SettingsGroupCellDescriptor(
@@ -318,7 +320,9 @@ extension SettingsCellDescriptorFactory {
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
             guard let option = value.flatMap({ TweetOpeningOption(rawValue: $0) })
-            else { return .text(TweetOpeningOption.none.displayString) }
+            else {
+                return .text(TweetOpeningOption.none.displayString)
+            }
             return .text(option.displayString)
         }
         return SettingsGroupCellDescriptor(
@@ -350,7 +354,9 @@ extension SettingsCellDescriptorFactory {
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
             guard let option = value.flatMap({ MapsOpeningOption(rawValue: $0) })
-            else { return .text(MapsOpeningOption.apple.displayString) }
+            else {
+                return .text(MapsOpeningOption.apple.displayString)
+            }
             return .text(option.displayString)
         }
         return SettingsGroupCellDescriptor(
@@ -377,7 +383,9 @@ extension SettingsCellDescriptorFactory {
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
             guard let option = value.flatMap({ BrowserOpeningOption(rawValue: $0) })
-            else { return .text(BrowserOpeningOption.safari.displayString) }
+            else {
+                return .text(BrowserOpeningOption.safari.displayString)
+            }
             return .text(option.displayString)
         }
         return SettingsGroupCellDescriptor(
@@ -399,7 +407,9 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var appLockSectionSubtitle: String {
-        guard let lockDescription = formattedLockDescription() else { return "" }
+        guard let lockDescription = formattedLockDescription() else {
+            return ""
+        }
         var components = [lockDescription, authenticationTypeDescription()]
 
         if AuthenticationType.current == .unavailable {
@@ -411,7 +421,9 @@ extension SettingsCellDescriptorFactory {
 
     private func formattedLockDescription() -> String? {
         let timeout = TimeInterval(settingsPropertyFactory.timeout)
-        guard let amount = SettingsCellDescriptorFactory.appLockFormatter.string(from: timeout) else { return nil }
+        guard let amount = SettingsCellDescriptorFactory.appLockFormatter.string(from: timeout) else {
+            return nil
+        }
         return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.lockDescription(amount)
     }
 

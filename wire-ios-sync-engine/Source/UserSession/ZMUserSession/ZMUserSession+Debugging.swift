@@ -69,19 +69,25 @@ extension ZMUserSession {
     private var debugStateUserDefaultsKey: String? {
         guard
             let identifier = (providedSelfUser as! ZMUser).remoteIdentifier
-        else { return nil }
+        else {
+            return nil
+        }
         return "Wire-debugCommandsState-\(identifier)"
     }
 
     /// The debug state persisted for this user
     fileprivate var savedDebugState: [String: [String: Any]] {
         get {
-            guard let key = debugStateUserDefaultsKey else { return [:] }
+            guard let key = debugStateUserDefaultsKey else {
+                return [:]
+            }
             return UserDefaults.shared()?
                 .dictionary(forKey: key) as? [String: [String: Any]] ?? [:]
         }
         set {
-            guard let key = debugStateUserDefaultsKey else { return }
+            guard let key = debugStateUserDefaultsKey else {
+                return
+            }
             UserDefaults.shared()?.set(newValue, forKey: key)
         }
     }
@@ -162,7 +168,9 @@ public enum DebugCommandResult {
 extension EncryptionSessionIdentifier {
     fileprivate init?(string: String) {
         let split = string.split(separator: "_")
-        guard split.count == 2 else { return nil }
+        guard split.count == 2 else {
+            return nil
+        }
         let user = String(split[0])
         let client = String(split[1])
         self.init(userId: user, clientId: client)
@@ -243,7 +251,9 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         userSession: ZMUserSession,
         state: [String: Any]
     ) {
-        guard let logs = state[logsKey] as? [String] else { return }
+        guard let logs = state[logsKey] as? [String] else {
+            return
+        }
         currentlyEnabledLogs = Set(logs.compactMap {
             EncryptionSessionIdentifier(string: $0)
         })

@@ -54,7 +54,9 @@ public final class CookieLabel: NSObject {
     }
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? CookieLabel else { return false }
+        guard let other = object as? CookieLabel else {
+            return false
+        }
         return value == other.value
     }
 

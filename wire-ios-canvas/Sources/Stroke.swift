@@ -61,7 +61,9 @@ final class Stroke: Renderable {
     }
 
     func move(to point: CGPoint) -> CGRect {
-        guard distance(to: point) > minimumStrokeDistance else { return CGRect.zero }
+        guard distance(to: point) > minimumStrokeDistance else {
+            return CGRect.zero
+        }
 
         points.append(smooth(point: point))
 

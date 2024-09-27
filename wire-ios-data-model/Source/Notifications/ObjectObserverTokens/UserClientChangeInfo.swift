@@ -112,7 +112,9 @@ extension UserClientChangeInfo {
         ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? UserClientChangeInfo
-            else { return }
+            else {
+                return
+            }
 
             observer.userClientDidChange(changeInfo)
         }

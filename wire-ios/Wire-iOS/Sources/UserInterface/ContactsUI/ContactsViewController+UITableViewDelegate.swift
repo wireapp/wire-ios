@@ -24,14 +24,18 @@ extension ContactsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let title = headerTitle(section: section), !title.isEmpty else { return nil }
+        guard let title = headerTitle(section: section), !title.isEmpty else {
+            return nil
+        }
         let headerView = tableView.dequeueReusableHeaderFooter(ofType: ContactsSectionHeaderView.self)
         headerView.label.text = title
         return headerView
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        guard let title = headerTitle(section: section), !title.isEmpty else { return 0 }
+        guard let title = headerTitle(section: section), !title.isEmpty else {
+            return 0
+        }
         return ContactsSectionHeaderView.height
     }
 

@@ -22,7 +22,9 @@ import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
-        guard let userID = user.qualifiedID else { return }
+        guard let userID = user.qualifiedID else {
+            return
+        }
 
         let conversation = user.oneToOneConversation
 
@@ -33,7 +35,9 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
                 if isReady {
                     // If the conversation exists, and is established (in case of mls),
                     // then we open the conversation
-                    guard let conversation else { return }
+                    guard let conversation else {
+                        return
+                    }
                     await openConversation(conversation)
 
                 } else {

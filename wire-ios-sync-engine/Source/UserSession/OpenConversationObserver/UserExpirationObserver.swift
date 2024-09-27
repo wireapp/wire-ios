@@ -73,7 +73,9 @@ public class UserExpirationObserver: NSObject {
 extension UserExpirationObserver: ZMTimerClient {
     public func timerDidFire(_ timer: ZMTimer) {
         managedObjectContext.performGroupedBlock {
-            guard let user = self.timerForUser[timer] else { fatal("Unknown timer: \(timer)") }
+            guard let user = self.timerForUser[timer] else {
+                fatal("Unknown timer: \(timer)")
+            }
             user.needsToBeUpdatedFromBackend = true
             self.timerForUser[timer] = nil
             self.expiringUsers.remove(user)

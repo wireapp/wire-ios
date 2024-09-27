@@ -23,7 +23,9 @@ extension Encodable {
         if sortedKeys {
             encoder.outputFormatting = .sortedKeys
         }
-        guard let data = try? encoder.encode(self) else { return nil }
+        guard let data = try? encoder.encode(self) else {
+            return nil
+        }
 
         return String(decoding: data, as: UTF8.self)
     }

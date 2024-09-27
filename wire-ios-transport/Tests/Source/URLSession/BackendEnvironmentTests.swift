@@ -32,9 +32,13 @@ class BackendEnvironmentTests: XCTestCase {
         // Note: this is a copy of public config:
         // https://github.com/wireapp/wire-ios-build-configuration/blob/master/Backend.bundle/production.json
         guard let backendBundlePath = mainBundle.path(forResource: "Backend", ofType: "bundle")
-        else { XCTFail("Could not find Backend.bundle"); return }
+        else {
+            XCTFail("Could not find Backend.bundle"); return
+        }
         guard let backendBundle = Bundle(path: backendBundlePath)
-        else { XCTFail("Could not load Backend.bundle"); return }
+        else {
+            XCTFail("Could not load Backend.bundle"); return
+        }
 
         self.backendBundle = backendBundle
         defaultsProd = UserDefaults(suiteName: name)
@@ -129,14 +133,18 @@ class BackendEnvironmentTests: XCTestCase {
 
     func testThatWeCanLoadBackendTrust() {
         guard let environment = BackendEnvironment(userDefaults: defaultsProd, configurationBundle: backendBundle)
-        else { XCTFail("Could not read environment data from Backend.bundle"); return }
+        else {
+            XCTFail("Could not read environment data from Backend.bundle"); return
+        }
 
         guard let trust = environment.certificateTrust as? ServerCertificateTrust else {
             XCTFail(); return
         }
 
         XCTAssertEqual(trust.trustData.count, 1, "Should have one key")
-        guard let data = trust.trustData.first else { XCTFail(); return }
+        guard let data = trust.trustData.first else {
+            XCTFail(); return
+        }
 
         let hosts = Set(data.hosts.map(\.value))
         XCTAssertEqual(hosts.count, 4)

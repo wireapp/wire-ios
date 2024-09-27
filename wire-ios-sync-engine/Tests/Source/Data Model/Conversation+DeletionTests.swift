@@ -56,7 +56,9 @@ class Conversation_DeletionTests: DatabaseTest {
         ]
 
         for (expectedError, response) in errorResponses {
-            guard let error = ConversationDeletionError(response: response) else { return XCTFail() }
+            guard let error = ConversationDeletionError(response: response) else {
+                return XCTFail()
+            }
 
             if case error = expectedError {
                 // success
@@ -117,7 +119,9 @@ class Conversation_DeletionTests: DatabaseTest {
 
         // WHEN
         guard let request = WireSyncEngine.ConversationDeletionRequestFactory
-            .requestForDeletingTeamConversation(conversation) else { return XCTFail() }
+            .requestForDeletingTeamConversation(conversation) else {
+            return XCTFail()
+        }
 
         // THEN
         XCTAssertEqual(

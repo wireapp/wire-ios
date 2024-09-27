@@ -77,7 +77,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: - Properties
 
     private(set) var state: State = .ready {
-        didSet { if oldValue != state { updateRecordingState(state) }}
+        didSet { if oldValue != state {
+            updateRecordingState(state)
+        }}
     }
 
     var isRecording: Bool {
@@ -96,7 +98,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         recorder.stopRecording()
-        if isAppLockActive { AppDelegate.shared.mainWindow?.endEditing(true) }
+        if isAppLockActive {
+            AppDelegate.shared.mainWindow?.endEditing(true)
+        }
     }
 
     // MARK: - View Configuration
@@ -165,12 +169,16 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     func configureAudioRecorder() {
         recorder.recordTimerCallback = { [weak self] time in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             updateTimeLabel(time)
         }
 
         recorder.recordEndedCallback = { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             state = .effects
 
@@ -181,7 +189,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
 
         recorder.recordLevelCallBack = { [weak self] level in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             audioPreviewView.updateWithLevel(level)
         }
     }
@@ -456,7 +466,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 
     private func openEffectsPicker() {
-        guard let url = recorder.fileURL else { return zmLog.warn("Nil url passed to add effect to audio file") }
+        guard let url = recorder.fileURL else {
+            return zmLog.warn("Nil url passed to add effect to audio file")
+        }
 
         let noizeReducePath = (NSTemporaryDirectory() as NSString).appendingPathComponent("noize-reduce.wav")
         noizeReducePath.deleteFileAtPath()

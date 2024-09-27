@@ -42,7 +42,9 @@ extension CallPermissionsConfiguration {
     }
 
     var preferredVideoPlaceholderState: CallVideoPlaceholderState {
-        guard !canAcceptVideoCalls else { return .hidden }
+        guard !canAcceptVideoCalls else {
+            return .hidden
+        }
         return isPendingVideoPermissionRequest ? .statusTextHidden : .statusTextDisplayed
     }
 }

@@ -69,7 +69,9 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
         guard
             CompanyLoginController.isCompanyLoginEnabled,
             let callbackScheme = Bundle.ssoURLScheme
-        else { return nil } // Disable on public builds
+        else {
+            return nil
+        } // Disable on public builds
 
         requireInternal(Bundle.ssoURLScheme != nil, "no valid callback scheme")
 
@@ -184,7 +186,9 @@ extension CompanyLoginController {
         ssoOnly: Bool = false
     ) {
         // Do not repeatly show alert if exist
-        guard ssoAlert == nil else { return }
+        guard ssoAlert == nil else {
+            return
+        }
 
         let inputHandler = ssoOnly ? attemptLogin : parseAndHandle
 
@@ -235,14 +239,18 @@ extension CompanyLoginController {
     ///
     /// - Parameter code: The SSO team code that was extracted from the link.
     func attemptLoginWithSSOCode(_ code: UUID) {
-        guard !presentOfflineAlertIfNeeded() else { return }
+        guard !presentOfflineAlertIfNeeded() else {
+            return
+        }
 
         delegate?.controller(self, showLoadingView: true)
 
         let host = BackendEnvironment.shared.backendURL.host!
         requester.validate(host: host, token: code) {
             self.delegate?.controller(self, showLoadingView: false)
-            guard !self.handleValidationErrorIfNeeded($0) else { return }
+            guard !self.handleValidationErrorIfNeeded($0) else {
+                return
+            }
             self.requester.requestIdentity(host: host, token: code)
         }
     }
@@ -250,7 +258,9 @@ extension CompanyLoginController {
     // MARK: - Error Handling
 
     private func handleValidationErrorIfNeeded(_ error: ValidationError?) -> Bool {
-        guard let error else { return false }
+        guard let error else {
+            return false
+        }
 
         switch error {
         case .invalidCode:
@@ -269,7 +279,9 @@ extension CompanyLoginController {
     /// Attempt to login using the requester specified in `init`
     /// - returns: `true` when the application is offline and an alert was presented, `false` otherwise.
     private func presentOfflineAlertIfNeeded() -> Bool {
-        guard case .unreachable = networkStatusObservable.reachability else { return false }
+        guard case .unreachable = networkStatusObservable.reachability else {
+            return false
+        }
         delegate?.controller(self, presentAlert: .noInternetError())
         return true
     }
@@ -283,11 +295,15 @@ extension CompanyLoginController {
     func startAutomaticSSOFlow(promptOnError: Bool = true) {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.activeUnauthenticatedSession.fetchSSOSettings { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             delegate?.controller(self, showLoadingView: false)
 
             guard case let .success(settings) = result, let ssoCode = settings.ssoCode else {
-                guard promptOnError else { return }
+                guard promptOnError else {
+                    return
+                }
                 displayCompanyLoginPrompt(ssoOnly: true)
                 return
             }
@@ -305,7 +321,9 @@ extension CompanyLoginController {
     private func lookup(domain: String) {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.activeUnauthenticatedSession.lookup(domain: domain) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             delegate?.controller(self, showLoadingView: false)
 
             switch result {
@@ -328,13 +346,17 @@ extension CompanyLoginController {
         delegate?.controller(self, showLoadingView: true)
 
         sessionManager.fetchBackendEnvironment(at: url) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             delegate?.controller(self, showLoadingView: false)
 
             switch result {
             case let .success(backendEnvironment):
                 requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
-                    guard didConfirm else { return }
+                    guard didConfirm else {
+                        return
+                    }
                     sessionManager.switchBackend(to: backendEnvironment)
                     BackendEnvironment.shared = backendEnvironment
                     self.startAutomaticSSOFlow(promptOnError: false)
@@ -362,11 +384,17 @@ extension CompanyLoginController {
     /// We then check if the clipboard contains a valid SSO login code.
     /// This method will check the `isAutoDetectionEnabled` flag in order to decide if it should run.
     private func internalDetectSSOCode(onlyNew: Bool) {
-        guard isAutoDetectionEnabled else { return }
+        guard isAutoDetectionEnabled else {
+            return
+        }
         detector.detectCopiedRequestCode { [isAutoDetectionEnabled, presentCompanyLoginAlert] result in
             // This might have changed in the meantime.
-            guard isAutoDetectionEnabled else { return }
-            guard let result, !onlyNew || result.isNew else { return }
+            guard isAutoDetectionEnabled else {
+                return
+            }
+            guard let result, !onlyNew || result.isNew else {
+                return
+            }
             presentCompanyLoginAlert(result.code, nil, true)
         }
     }

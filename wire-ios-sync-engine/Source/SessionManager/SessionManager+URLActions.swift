@@ -37,7 +37,9 @@ extension SessionManager {
     /// - parameter options: options associated with the URL
     @discardableResult
     public func openURL(_ url: URL) throws -> Bool {
-        guard let action = try URLAction(url: url) else { return false }
+        guard let action = try URLAction(url: url) else {
+            return false
+        }
 
         guard action.requiresAuthentication else {
             if canProcessUrlAction {
@@ -64,7 +66,9 @@ extension SessionManager {
 
     func process(urlAction action: URLAction, on processor: URLActionProcessor) {
         presentationDelegate?.shouldPerformAction(action, decisionHandler: { [weak self] shouldPerformAction in
-            guard shouldPerformAction, let self else { return }
+            guard shouldPerformAction, let self else {
+                return
+            }
             processor.process(urlAction: action, delegate: presentationDelegate)
         })
     }

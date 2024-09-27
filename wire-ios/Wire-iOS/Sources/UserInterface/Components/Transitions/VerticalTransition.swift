@@ -47,10 +47,14 @@ final class VerticalTransition: NSObject, UIViewControllerAnimatedTransitioning 
         let containerView = transitionContext.containerView
 
         guard let toView = transitionContext.toView,
-              let toViewController = transitionContext.toViewController else { return }
+              let toViewController = transitionContext.toViewController else {
+            return
+        }
 
         guard let fromView = transitionContext.fromView,
-              let fromViewController = transitionContext.fromViewController else { return }
+              let fromViewController = transitionContext.fromViewController else {
+            return
+        }
 
         fromView.frame = transitionContext.initialFrame(for: fromViewController)
 

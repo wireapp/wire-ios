@@ -46,10 +46,14 @@ final class SessionManagerTeamsTests: IntegrationTest {
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let manager = AccountManager(sharedDirectory: sharedContainer)
         guard let account = manager.accounts.first,
-              manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
+              manager.accounts.count == 1 else {
+            XCTFail("Should have one account"); return
+        }
         XCTAssertEqual(account.userIdentifier.transportString(), selfUser.identifier)
         XCTAssertEqual(account.teamName, teamName)
         XCTAssertEqual(account.imageData, image?.data)
@@ -64,10 +68,14 @@ final class SessionManagerTeamsTests: IntegrationTest {
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let manager = AccountManager(sharedDirectory: sharedContainer)
         guard let account = manager.accounts.first,
-              manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
+              manager.accounts.count == 1 else {
+            XCTFail("Should have one account"); return
+        }
         XCTAssertEqual(account.userIdentifier.transportString(), selfUser.identifier)
         XCTAssertNil(account.teamName)
         XCTAssertEqual(account.userName, selfUser.name)
@@ -92,10 +100,14 @@ final class SessionManagerTeamsTests: IntegrationTest {
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let manager = AccountManager(sharedDirectory: sharedContainer)
         guard let account = manager.accounts.first,
-              manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
+              manager.accounts.count == 1 else {
+            XCTFail("Should have one account"); return
+        }
         XCTAssertEqual(account.userIdentifier.transportString(), selfUser.identifier)
         XCTAssertNil(account.teamName)
         XCTAssertEqual(account.userName, selfUser.name)
@@ -119,10 +131,14 @@ final class SessionManagerTeamsTests: IntegrationTest {
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let manager = AccountManager(sharedDirectory: sharedContainer)
         guard let account = manager.accounts.first,
-              manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
+              manager.accounts.count == 1 else {
+            XCTFail("Should have one account"); return
+        }
         XCTAssertEqual(account.userIdentifier.transportString(), selfUser.identifier)
         XCTAssertNil(account.teamName)
         XCTAssertEqual(account.userName, selfUser.name)

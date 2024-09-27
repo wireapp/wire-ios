@@ -79,7 +79,9 @@ class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZM
 
     func addInsertedObjects(_ objects: [Transcoder.Object]) {
         for insertedObject in objects {
-            guard !pending.contains(insertedObject) else { continue }
+            guard !pending.contains(insertedObject) else {
+                continue
+            }
 
             pending.insert(insertedObject)
             transcoder?.insert(object: insertedObject, completion: {

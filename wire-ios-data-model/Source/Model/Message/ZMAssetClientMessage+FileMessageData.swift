@@ -184,14 +184,18 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
 
     public var temporaryDirectoryURL: URL? {
-        guard let cacheKey = FileAssetCache.cacheKeyForAsset(self) else { return nil }
+        guard let cacheKey = FileAssetCache.cacheKeyForAsset(self) else {
+            return nil
+        }
         var temporaryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         temporaryURL.appendPathComponent(cacheKey)
         return temporaryURL
     }
 
     public func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
-        guard fileMessageData != nil, !isImage else { return completionHandler(nil) }
+        guard fileMessageData != nil, !isImage else {
+            return completionHandler(nil)
+        }
 
         asset?.fetchImageData(with: queue, completionHandler: completionHandler)
     }
@@ -203,11 +207,15 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     public var thumbnailAssetID: String? {
         get {
-            guard fileMessageData != nil else { return nil }
+            guard fileMessageData != nil else {
+                return nil
+            }
             guard let assetData = genericMessage(dataType: .thumbnail)?.assetData,
                   assetData.preview.remote.hasAssetID,
                   !assetData.preview.remote.assetID.isEmpty
-            else { return nil }
+            else {
+                return nil
+            }
             return assetData.preview.remote.assetID
         }
 
@@ -282,14 +290,18 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
 
     public var videoDimensions: CGSize {
-        guard let assetData = underlyingMessage?.assetData else { return CGSize.zero }
+        guard let assetData = underlyingMessage?.assetData else {
+            return CGSize.zero
+        }
         let w = assetData.original.video.width
         let h = assetData.original.video.height
         return CGSize(width: Int(w), height: Int(h))
     }
 
     public var durationMilliseconds: UInt64 {
-        guard let assetData = underlyingMessage?.assetData else { return 0 }
+        guard let assetData = underlyingMessage?.assetData else {
+            return 0
+        }
         if isVideo {
             return assetData.original.video.durationInMillis
         }

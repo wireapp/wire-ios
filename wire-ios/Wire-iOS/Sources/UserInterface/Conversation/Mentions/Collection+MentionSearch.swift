@@ -23,7 +23,9 @@ extension Collection where Iterator.Element: UserType {
     func searchForMentions(withQuery query: String) -> [UserType] {
         let usersToSearch = filter { !$0.isSelfUser && !$0.isServiceUser }
 
-        guard !query.isEmpty else { return usersToSearch }
+        guard !query.isEmpty else {
+            return usersToSearch
+        }
 
         let query = query.lowercased().normalizedForMentionSearch() as String
 

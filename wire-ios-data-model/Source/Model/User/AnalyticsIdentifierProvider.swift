@@ -30,7 +30,9 @@ public struct AnalyticsIdentifierProvider {
     public var selfUser: UserType
 
     public func setIdentifierIfNeeded() {
-        guard let user = selfUser as? ZMUser, user.analyticsIdentifier == nil else { return }
+        guard let user = selfUser as? ZMUser, user.analyticsIdentifier == nil else {
+            return
+        }
 
         let newId = UUID()
         setAnalytics(identifier: newId, forSelfUser: user)
@@ -39,7 +41,9 @@ public struct AnalyticsIdentifierProvider {
     // MARK: Internal
 
     func setAnalytics(identifier: UUID, forSelfUser user: ZMUser) {
-        guard user.isSelfUser, user.isTeamMember else { return }
+        guard user.isSelfUser, user.isTeamMember else {
+            return
+        }
 
         user.analyticsIdentifier = identifier.transportString()
 

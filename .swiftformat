@@ -96,6 +96,7 @@
     organizeDeclarations, \
     redundantProperty, \
     sortSwitchCases, \
+    wrapConditionalBodies, \
 
 # Options
 

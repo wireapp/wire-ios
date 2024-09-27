@@ -48,7 +48,9 @@ extension ZMUser: UserType {
     }
 
     public var hasDigitalSignatureEnabled: Bool {
-        guard let context = managedObjectContext else { return false }
+        guard let context = managedObjectContext else {
+            return false
+        }
         let featureRepository = FeatureRepository(context: context)
         return featureRepository.fetchDigitalSignature().status == .enabled
     }
@@ -99,7 +101,9 @@ extension ZMUser: UserType {
     // MARK: - Conversation Roles
 
     public func canManagedGroupRole(of user: UserType, conversation: ZMConversation) -> Bool {
-        guard isGroupAdmin(in: conversation) else { return false }
+        guard isGroupAdmin(in: conversation) else {
+            return false
+        }
         return !user.isSelfUser && (user.isConnected || isOnSameTeam(otherUser: user))
     }
 
@@ -372,11 +376,15 @@ extension ZMUser {
     public static var previewImageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", ZMUser.previewProfileAssetIdentifierKey)
         let assetIdIsValid = NSPredicate { user, _ -> Bool in
-            guard let user = user as? ZMUser else { return false }
+            guard let user = user as? ZMUser else {
+                return false
+            }
             return user.previewProfileAssetIdentifier?.isValidAssetID ?? false
         }
         let notCached = NSPredicate { user, _ -> Bool in
-            guard let user = user as? ZMUser else { return false }
+            guard let user = user as? ZMUser else {
+                return false
+            }
             return user.imageSmallProfileData == nil
         }
         return NSCompoundPredicate(andPredicateWithSubpredicates: [assetIdExists, assetIdIsValid, notCached])
@@ -385,18 +393,24 @@ extension ZMUser {
     public static var completeImageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", ZMUser.completeProfileAssetIdentifierKey)
         let assetIdIsValid = NSPredicate { user, _ -> Bool in
-            guard let user = user as? ZMUser else { return false }
+            guard let user = user as? ZMUser else {
+                return false
+            }
             return user.completeProfileAssetIdentifier?.isValidAssetID ?? false
         }
         let notCached = NSPredicate { user, _ -> Bool in
-            guard let user = user as? ZMUser else { return false }
+            guard let user = user as? ZMUser else {
+                return false
+            }
             return user.imageMediumData == nil
         }
         return NSCompoundPredicate(andPredicateWithSubpredicates: [assetIdExists, assetIdIsValid, notCached])
     }
 
     public func updateAndSyncProfileAssetIdentifiers(previewIdentifier: String, completeIdentifier: String) {
-        guard isSelfUser else { return }
+        guard isSelfUser else {
+            return
+        }
         previewProfileAssetIdentifier = previewIdentifier
         completeProfileAssetIdentifier = completeIdentifier
         setLocallyModifiedKeys([ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey])
@@ -407,7 +421,9 @@ extension ZMUser {
         guard !hasLocalModifications(forKeys: [
             ZMUser.previewProfileAssetIdentifierKey,
             ZMUser.completeProfileAssetIdentifierKey,
-        ]) else { return }
+        ]) else {
+            return
+        }
         guard let assets = assets as? [[String: String]], !assets.isEmpty else {
             if authoritative {
                 previewProfileAssetIdentifier = nil
@@ -437,7 +453,9 @@ extension ZMUser {
         guard let moc = managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
             self,
             size: .preview
-        ) else { return }
+        ) else {
+            return
+        }
 
         NotificationInContext(
             name: .userDidRequestPreviewAsset,
@@ -451,7 +469,9 @@ extension ZMUser {
         guard let moc = managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
             self,
             size: .complete
-        ) else { return }
+        ) else {
+            return
+        }
 
         NotificationInContext(
             name: .userDidRequestCompleteAsset,

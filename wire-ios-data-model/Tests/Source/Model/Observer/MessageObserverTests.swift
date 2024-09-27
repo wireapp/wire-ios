@@ -89,8 +89,12 @@ class MessageObserverTests: NotificationDispatcherTestBase {
                 #keyPath(MessageChangeInfo.linkAttachmentsChanged),
             ]
 
-            guard !expectedChangedFields.isEmpty else { return }
-            guard let changes = messageObserver.notifications.first else { return }
+            guard !expectedChangedFields.isEmpty else {
+                return
+            }
+            guard let changes = messageObserver.notifications.first else {
+                return
+            }
             changes.checkForExpectedChangeFields(
                 userInfoKeys: messageInfoKeys,
                 expectedChangedFields: expectedChangedFields

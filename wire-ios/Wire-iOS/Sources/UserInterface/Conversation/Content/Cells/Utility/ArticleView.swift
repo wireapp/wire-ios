@@ -93,7 +93,9 @@ final class ArticleView: UIView {
     }
 
     func updateContentMode() {
-        guard let image = imageView.image else { return }
+        guard let image = imageView.image else {
+            return
+        }
         let width = image.size.width * image.scale
         let height = image.size.height * image.scale
 

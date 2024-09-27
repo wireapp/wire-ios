@@ -23,7 +23,9 @@ extension NSManagedObjectContext {
     func setupLocalCachedSessionAndSelfUser() {
         let request = ZMSession.sortedFetchRequest()
 
-        guard let session = fetchOrAssert(request: request).first as? ZMSession else { return }
+        guard let session = fetchOrAssert(request: request).first as? ZMSession else {
+            return
+        }
 
         userInfo[SessionObjectIDKey] = session.objectID
         ZMUser.boxSelfUser(session.selfUser, inContextUserInfo: self)

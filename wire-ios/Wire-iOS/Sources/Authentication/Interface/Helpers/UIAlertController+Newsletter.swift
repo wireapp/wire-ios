@@ -29,7 +29,9 @@ extension UIAlertController {
         over viewController: UIViewController,
         completionHandler: @escaping ResultHandler
     ) {
-        guard !AutomationHelper.sharedHelper.skipFirstLoginAlerts, !dataCollectionDisabled else { return }
+        guard !AutomationHelper.sharedHelper.skipFirstLoginAlerts, !dataCollectionDisabled else {
+            return
+        }
 
         let alertController = UIAlertController(
             title: L10n.Localizable.NewsOffers.Consent.title,
@@ -90,7 +92,9 @@ extension UIAlertController {
         presentViewController: UIViewController,
         completionHandler: @escaping ResultHandler
     ) {
-        guard !UIAlertController.newsletterSubscriptionDialogWasDisplayed else { return }
+        guard !UIAlertController.newsletterSubscriptionDialogWasDisplayed else {
+            return
+        }
 
         showNewsletterSubscriptionDialog(over: presentViewController, completionHandler: completionHandler)
     }

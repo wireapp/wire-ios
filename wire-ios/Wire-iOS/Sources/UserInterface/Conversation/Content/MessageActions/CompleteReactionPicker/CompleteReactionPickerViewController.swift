@@ -116,7 +116,9 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     func updateSectionSelection() {
         let minSection = Set(collectionView.indexPathsForVisibleItems.map(\.section)).min()
-        guard let section = minSection  else { return }
+        guard let section = minSection  else {
+            return
+        }
         sectionViewController.didSelectSection(emojiDataSource[section].id)
     }
 
@@ -139,7 +141,9 @@ final class CompleteReactionPickerViewController: UIViewController {
     private var deleting = false
 
     private func createConstraints() {
-        guard let sectionViewControllerView = sectionViewController.view else { return }
+        guard let sectionViewControllerView = sectionViewController.view else {
+            return
+        }
 
         for item in [topBar, searchBar, collectionView, sectionViewControllerView] {
             item.translatesAutoresizingMaskIntoConstraints = false
@@ -184,7 +188,9 @@ final class CompleteReactionPickerViewController: UIViewController {
 
 extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelegate {
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
-        guard let section = emojiDataSource.sectionIndex(for: type) else { return }
+        guard let section = emojiDataSource.sectionIndex(for: type) else {
+            return
+        }
         let indexPath = IndexPath(item: 0, section: section)
         if let attributes = collectionView.layoutAttributesForItem(at: indexPath) {
             collectionView.setContentOffset(

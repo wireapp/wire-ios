@@ -264,7 +264,9 @@ extension UserProfileUpdateRequestStrategyTests {
         // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
-        guard let error = userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
+        guard let error = userProfileUpdateStatus.recordedDidFailEmailUpdate.first else {
+            return
+        }
         XCTAssertEqual((error as NSError).code, UserSessionErrorCode.invalidEmail.rawValue)
     }
 
@@ -282,7 +284,9 @@ extension UserProfileUpdateRequestStrategyTests {
         // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
-        guard let error = userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
+        guard let error = userProfileUpdateStatus.recordedDidFailEmailUpdate.first else {
+            return
+        }
         XCTAssertEqual((error as NSError).code, UserSessionErrorCode.emailIsAlreadyRegistered.rawValue)
     }
 
@@ -300,7 +304,9 @@ extension UserProfileUpdateRequestStrategyTests {
         // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
-        guard let error = userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
+        guard let error = userProfileUpdateStatus.recordedDidFailEmailUpdate.first else {
+            return
+        }
         XCTAssertEqual((error as NSError).code, UserSessionErrorCode.unknownError.rawValue)
     }
 

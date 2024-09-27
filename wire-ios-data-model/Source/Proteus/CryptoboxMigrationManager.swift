@@ -49,7 +49,9 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     // MARK: - Methods
 
     public func isMigrationNeeded(accountDirectory: URL) -> Bool {
-        guard DeveloperFlag.proteusViaCoreCrypto.isOn else { return false }
+        guard DeveloperFlag.proteusViaCoreCrypto.isOn else {
+            return false
+        }
         let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
         return fileManager.fileExists(atPath: cryptoboxDirectory.path)
     }
@@ -96,7 +98,9 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
 
     private func removeDirectory(in accountDirectory: URL) throws {
         let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
-        guard fileManager.fileExists(atPath: cryptoboxDirectory.path) else { return }
+        guard fileManager.fileExists(atPath: cryptoboxDirectory.path) else {
+            return
+        }
         try fileManager.removeItem(at: cryptoboxDirectory)
     }
 }

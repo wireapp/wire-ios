@@ -31,9 +31,13 @@ extension ConversationInputBarViewController {
 
     @objc
     func inputModeDidChange(_: Notification?) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
-        guard let keyboardLanguage = inputBar.textView.originalTextInputMode?.primaryLanguage else { return }
+        guard let keyboardLanguage = inputBar.textView.originalTextInputMode?.primaryLanguage else {
+            return
+        }
 
         userSession.enqueue {
             conversation.language = keyboardLanguage
@@ -42,7 +46,9 @@ extension ConversationInputBarViewController {
     }
 
     func setInputLanguage() {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         inputBar.textView.language = conversation.language
     }

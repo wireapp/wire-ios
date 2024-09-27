@@ -101,7 +101,9 @@ final class CreateSecureConversationGuestLinkViewModel {
         UIPasteboard.general.string = password
 
         conversationGuestLinkUseCase.invoke(conversation: conversation, password: password) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             switch result {
             case let .success(link?):

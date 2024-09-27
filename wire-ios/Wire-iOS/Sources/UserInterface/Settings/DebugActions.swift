@@ -26,7 +26,9 @@ enum DebugActions {
         title: String = "",
         textToCopy: String? = nil
     ) {
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         if let textToCopy {
             alert.addAction(UIAlertAction(title: "Copy", style: .default) { _ in
@@ -39,7 +41,9 @@ enum DebugActions {
 
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
     static func findUnreadConversationContributingToBadgeCount(_: SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         let predicate = ZMConversation.predicateForConversationConsideredUnread()
 
         let uiMOC = userSession.managedObjectContext
@@ -63,7 +67,9 @@ enum DebugActions {
     static func showUserId(_: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared(),
               let selfUser = (userSession.providedSelfUser as? ZMUser)
-        else { return }
+        else {
+            return
+        }
 
         alert(
             selfUser.remoteIdentifier.uuidString,
@@ -74,7 +80,9 @@ enum DebugActions {
 
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
     static func findUnreadConversationContributingToBackArrowDot(_: SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()
 
         if let convo = ConversationList.conversations(inUserSession: userSession).items
@@ -93,7 +101,9 @@ enum DebugActions {
     }
 
     static func deleteInvalidConversations(_: SettingsCellDescriptorType) {
-        guard let context = ZMUserSession.shared()?.managedObjectContext else { return }
+        guard let context = ZMUserSession.shared()?.managedObjectContext else {
+            return
+        }
 
         let predicate = NSPredicate(format: "domain = ''")
         try? context.batchDeleteEntities(named: ZMConversation.entityName(), matching: predicate)
@@ -133,7 +143,9 @@ enum DebugActions {
             userSession.enqueue {
                 try! conversation.appendText(content: "Message #\(count + 1), series \(nonce)")
             }
-            guard count + 1 < amount else { return }
+            guard count + 1 < amount else {
+                return
+            }
             DispatchQueue.main.asyncAfter(
                 deadline: .now() + 0.4,
                 execute: { sendNext(count: count + 1) }
@@ -212,7 +224,9 @@ enum DebugActions {
     }
 
     static func resetCallQualitySurveyMuteFilter(_: SettingsCellDescriptorType) {
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
 
         CallQualityController.resetSurveyMuteFilter()
 
@@ -245,7 +259,9 @@ enum DebugActions {
     }
 
     static func updateInvalidAccessRoles() {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         let predicate = NSPredicate(
             format: "\(TeamKey) == nil AND \(AccessRoleStringsKeyV2) == %@",
             [ConversationAccessRoleV2.teamMember.rawValue]
@@ -269,7 +285,9 @@ enum DebugActions {
     }
 
     static func appendMessagesToDatabase(count: Int) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
         let conversation = ConversationList.conversations(inUserSession: userSession).items.first!
         let conversationId = conversation.objectID
 
@@ -299,8 +317,12 @@ enum DebugActions {
     }
 
     static func recalculateBadgeCount(_: SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared() else { return }
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
 
         var conversations: [ZMConversation]?
         userSession.syncManagedObjectContext.performGroupedBlock {
@@ -339,7 +361,9 @@ enum DebugActions {
 
     static func askString(title: String, _ callback: @escaping (String) -> Void) {
         guard let controllerToPresentOver = UIApplication.shared.topmostViewController(onlyFullScreen: false)
-        else { return }
+        else {
+            return
+        }
 
         let controller = UIAlertController(
             title: title,

@@ -84,7 +84,9 @@ extension SimpleTextFieldValidator: UITextFieldDelegate {
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard let text = textField.text else { return true }
+        guard let text = textField.text else {
+            return true
+        }
         delegate?.textFieldValueSubmitted(text)
         return true
     }

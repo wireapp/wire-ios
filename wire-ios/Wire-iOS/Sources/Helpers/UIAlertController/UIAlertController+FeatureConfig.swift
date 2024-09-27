@@ -59,7 +59,9 @@ extension UIAlertController {
 
         case let .selfDeletingMessagesIsEnabled(enforcedTimeout?):
             let timeout = MessageDestructionTimeoutValue(rawValue: TimeInterval(enforcedTimeout))
-            guard let timeoutString = timeout.displayString else { return nil }
+            guard let timeoutString = timeout.displayString else {
+                return nil
+            }
 
             return alertForFeatureChange(
                 message: Strings.Alert.SelfDeletingMessages.Message.forcedOn(timeoutString),

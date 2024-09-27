@@ -26,7 +26,9 @@ class DeleteMessagesTests: ConversationTestsBase {
         var message: ZMConversationMessage! = nil
 
         userSession?.perform {
-            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return XCTFail() }
+            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else {
+                return XCTFail()
+            }
             message = try! conversation.appendText(content: "Hello")
         }
 
@@ -43,7 +45,9 @@ class DeleteMessagesTests: ConversationTestsBase {
         // then
         let requests = mockTransportSession.receivedRequests()
         XCTAssertEqual(requests.count, 1)
-        guard let request = requests.first else { return XCTFail() }
+        guard let request = requests.first else {
+            return XCTFail()
+        }
         XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
         XCTAssertEqual(request.path, "/conversations/\(selfToUser1Conversation.identifier)/otr/messages")
         XCTAssertTrue(message.hasBeenDeleted)
@@ -73,11 +77,15 @@ class DeleteMessagesTests: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let conversation = conversation(for: selfToUser1Conversation) else { return XCTFail() }
+        guard let conversation = conversation(for: selfToUser1Conversation) else {
+            return XCTFail()
+        }
         XCTAssertEqual(conversation.allMessages.count, 1) // inserted message
 
         guard let message = conversation.lastMessage as? ZMClientMessage,
-              message.textMessageData?.messageText == "Hello" else { return XCTFail() }
+              message.textMessageData?.messageText == "Hello" else {
+            return XCTFail()
+        }
         let genericMessage = GenericMessage(content: MessageDelete(messageId: message.nonce!))
 
         // when
@@ -99,7 +107,9 @@ class DeleteMessagesTests: ConversationTestsBase {
         XCTAssertTrue(message.hasBeenDeleted)
         XCTAssertEqual(conversation.allMessages.count, 1) // System message
         XCTAssertNotEqual(conversation.lastMessages().last as? ZMClientMessage, message)
-        guard let systemMessage = conversation.lastMessage as? ZMSystemMessage else { return XCTFail() }
+        guard let systemMessage = conversation.lastMessage as? ZMSystemMessage else {
+            return XCTFail()
+        }
         XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageType.messageDeletedForEveryone)
     }
 
@@ -128,10 +138,14 @@ class DeleteMessagesTests: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let conversation = conversation(for: groupConversation) else { return XCTFail() }
+        guard let conversation = conversation(for: groupConversation) else {
+            return XCTFail()
+        }
         XCTAssertEqual(conversation.allMessages.count, 2) // system message & inserted message
         guard let message = conversation.lastMessage,
-              message.textMessageData?.messageText == "Hello" else { return XCTFail() }
+              message.textMessageData?.messageText == "Hello" else {
+            return XCTFail()
+        }
 
         let genericMessage = GenericMessage(content: MessageDelete(messageId: message.nonce!))
 
@@ -161,7 +175,9 @@ class DeleteMessagesTests: ConversationTestsBase {
         var message: ZMConversationMessage! = nil
 
         userSession?.perform {
-            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return XCTFail() }
+            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else {
+                return XCTFail()
+            }
             message = try! conversation.appendText(content: "Hello")
         }
 
@@ -174,7 +190,9 @@ class DeleteMessagesTests: ConversationTestsBase {
 
         mockTransportSession.responseGeneratorBlock = { request in
             guard request.path == "/conversations/\(self.selfToUser1Conversation.identifier)/otr/messages"
-            else { return nil }
+            else {
+                return nil
+            }
             if requestCount < 4 {
                 requestCount += 1
                 return ZMTransportResponse(
@@ -195,7 +213,9 @@ class DeleteMessagesTests: ConversationTestsBase {
         let requests = mockTransportSession.receivedRequests()
         XCTAssertEqual(requests.count, 5)
         XCTAssertEqual(requestCount, 4)
-        guard let request = requests.last else { return XCTFail() }
+        guard let request = requests.last else {
+            return XCTFail()
+        }
         XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
         XCTAssertEqual(request.path, "/conversations/\(selfToUser1Conversation.identifier)/otr/messages")
         XCTAssertTrue(message.hasBeenDeleted)
@@ -223,13 +243,17 @@ class DeleteMessagesTests: ConversationTestsBase {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        guard let conversation = conversation(for: selfToUser1Conversation) else { return XCTFail() }
+        guard let conversation = conversation(for: selfToUser1Conversation) else {
+            return XCTFail()
+        }
 
         // then
         XCTAssertEqual(conversation.allMessages.count, 1) // inserted message
 
         guard let message = conversation.lastMessage as? ZMClientMessage,
-              message.textMessageData?.messageText == "Hello" else { return XCTFail() }
+              message.textMessageData?.messageText == "Hello" else {
+            return XCTFail()
+        }
         let genericMessage = GenericMessage(content: MessageDelete(messageId: message.nonce!))
 
         // when

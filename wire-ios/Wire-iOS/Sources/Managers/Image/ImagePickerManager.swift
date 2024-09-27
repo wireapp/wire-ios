@@ -100,8 +100,12 @@ class ImagePickerManager: NSObject {
 
         switch sourceType {
         case .camera:
-            guard UIImagePickerController.isCameraDeviceAvailable(.front) else { return }
-            guard !CameraAccess.displayAlertIfOngoingCall(at: .takePhoto, from: viewController) else { return }
+            guard UIImagePickerController.isCameraDeviceAvailable(.front) else {
+                return
+            }
+            guard !CameraAccess.displayAlertIfOngoingCall(at: .takePhoto, from: viewController) else {
+                return
+            }
 
             imagePickerController.allowsEditing = true
             imagePickerController.cameraDevice = .front

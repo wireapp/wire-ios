@@ -147,7 +147,9 @@ final class SearchUserObserverCenterTests: ModelObjectsTests {
             context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
-            guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
+            guard let changeInfo = note.changeInfo as? UserChangeInfo else {
+                return
+            }
             XCTAssertTrue(changeInfo.imageMediumDataChanged)
             expectation.fulfill()
         }

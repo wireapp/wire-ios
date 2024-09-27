@@ -70,7 +70,9 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     var conversation: ConversationListCellConversation? {
         didSet {
-            guard !(conversation === oldValue) else { return }
+            guard !(conversation === oldValue) else {
+                return
+            }
 
             typingObserverToken = nil
             if let conversation = conversation as? ZMConversation {
@@ -257,7 +259,9 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     @objc
     private func onRightAccessorySelected(_: UIButton?) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer
 
@@ -282,7 +286,9 @@ extension ConversationListCell: ZMTypingChangeObserver {
 
 extension ConversationListCell: AVSMediaManagerClientObserver {
     func mediaManagerDidChange(_ notification: AVSMediaManagerClientChangeNotification?) {
-        guard !ProcessInfo.processInfo.isRunningTests else { return }
+        guard !ProcessInfo.processInfo.isRunningTests else {
+            return
+        }
 
         // AUDIO-548 AVMediaManager notifications arrive on a background thread.
         DispatchQueue.main.async {

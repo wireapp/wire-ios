@@ -36,7 +36,9 @@ final class CallHapticsController {
 
     func updateCallState(_ newCallState: CallState) {
         defer { lastCallState = newCallState }
-        guard lastCallState != newCallState else { return }
+        guard lastCallState != newCallState else {
+            return
+        }
 
         if lastCallState?.isEnding == false || lastCallState == nil, newCallState.isEnding {
             Log.haptics.debug("triggering end event")
@@ -116,12 +118,16 @@ final class CallHapticsController {
 
 extension CallState {
     fileprivate var isEstablished: Bool {
-        guard case .established = self else { return false }
+        guard case .established = self else {
+            return false
+        }
         return true
     }
 
     fileprivate var isEnding: Bool {
-        guard case .terminating = self else { return false }
+        guard case .terminating = self else {
+            return false
+        }
         return true
     }
 }

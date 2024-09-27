@@ -79,7 +79,9 @@ extension ZMConversation: ConversationLike {
     }
 
     public func localParticipantsContain(user: UserType) -> Bool {
-        guard let user = user as? ZMUser else { return false }
+        guard let user = user as? ZMUser else {
+            return false
+        }
         return localParticipants.contains(user)
     }
 

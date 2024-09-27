@@ -99,7 +99,9 @@ public class LinkPreprocessor<Result>: NSObject, ZMContextChangeTracker {
     fileprivate var objectsBeingProcessed = Set<ZMClientMessage>()
 
     fileprivate func markdownLinkRanges(in text: String) -> [NSRange] {
-        guard let regex = try? NSRegularExpression(pattern: "\\[.+\\]\\((.+)\\)", options: []) else { return [] }
+        guard let regex = try? NSRegularExpression(pattern: "\\[.+\\]\\((.+)\\)", options: []) else {
+            return []
+        }
         let wholeRange = NSRange(text.startIndex ..< text.endIndex, in: text)
         return regex.matches(in: text, options: [], range: wholeRange).compactMap { $0.range(at: 0) }
     }

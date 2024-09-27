@@ -129,10 +129,14 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
     ) -> ZMTransportRequest! {
         guard let member = object as? Member,
               downstreamSync as? ZMDownstreamObjectSync == sync
-        else { fatal("Wrong object: \(object.safeForLoggingDescription)") }
+        else {
+            fatal("Wrong object: \(object.safeForLoggingDescription)")
+        }
         guard let identifier = member.remoteIdentifier,
               let teamId = member.team?.remoteIdentifier
-        else { fatal("No ids to sync: \(object.safeForLoggingDescription)") }
+        else {
+            fatal("No ids to sync: \(object.safeForLoggingDescription)")
+        }
         return TeamDownloadRequestFactory.getSingleMemberRequest(for: identifier, in: teamId, apiVersion: apiVersion)
     }
 
@@ -142,13 +146,17 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
             let team = (object as? Member)?.team,
             let rawData = response.rawData,
             let memberhipPayload = MembershipPayload(rawData)
-        else { return }
+        else {
+            return
+        }
 
         memberhipPayload.createOrUpdateMember(team: team, in: managedObjectContext)
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        guard downstreamSync as? ZMDownstreamObjectSync == sync, let member = object as? Member else { return }
+        guard downstreamSync as? ZMDownstreamObjectSync == sync, let member = object as? Member else {
+            return
+        }
         managedObjectContext.delete(member)
     }
 

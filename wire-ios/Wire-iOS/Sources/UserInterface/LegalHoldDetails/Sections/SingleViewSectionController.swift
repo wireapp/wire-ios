@@ -36,11 +36,15 @@ final class CollectionViewCellAdapter: UICollectionViewCell {
 
     var wrappedView: UIView? {
         didSet {
-            guard wrappedView != oldValue else { return }
+            guard wrappedView != oldValue else {
+                return
+            }
 
             contentView.subviews.forEach { $0.removeFromSuperview() }
 
-            guard let wrappedView else { return }
+            guard let wrappedView else {
+                return
+            }
 
             wrappedView.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(wrappedView)

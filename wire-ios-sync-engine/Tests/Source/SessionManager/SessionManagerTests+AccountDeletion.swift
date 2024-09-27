@@ -56,7 +56,9 @@ final class SessionManagerAccountDeletionTests: IntegrationTest {
         XCTAssert(login())
 
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
 
         let account = sessionManager!.accountManager.selectedAccount!
         let accountFolder = CoreDataStack.accountDataFolder(
@@ -122,7 +124,9 @@ class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThr
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let accountFolder = CoreDataStack.accountDataFolder(
             accountIdentifier: account.userIdentifier,
             applicationContainer: sharedContainer
@@ -141,7 +145,9 @@ class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThr
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let accountFolder = CoreDataStack.accountDataFolder(
             accountIdentifier: account.userIdentifier,
             applicationContainer: sharedContainer
@@ -178,7 +184,9 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let accountFolder = CoreDataStack.accountDataFolder(
             accountIdentifier: account.userIdentifier,
             applicationContainer: sharedContainer
@@ -201,7 +209,9 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let accountFolder = CoreDataStack.accountDataFolder(
             accountIdentifier: account.userIdentifier,
             applicationContainer: sharedContainer
@@ -238,7 +248,9 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
         let accountFolder = CoreDataStack.accountDataFolder(
             accountIdentifier: additionalAccount.userIdentifier,
             applicationContainer: sharedContainer

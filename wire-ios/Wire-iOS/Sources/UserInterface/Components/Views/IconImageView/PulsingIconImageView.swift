@@ -83,7 +83,9 @@ class PulsingIconImageView: IconImageView {
     // MARK: Private
 
     private func refreshPulsing() {
-        guard let style = style as? PulsingIconImageStyle else { return }
+        guard let style = style as? PulsingIconImageStyle else {
+            return
+        }
         if style.shouldPulse {
             startPulsing()
         } else {

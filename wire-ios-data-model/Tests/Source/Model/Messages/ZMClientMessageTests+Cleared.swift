@@ -30,10 +30,14 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
         }
 
         // given
-        guard let message else { return XCTFail("missing message") }
+        guard let message else {
+            return XCTFail("missing message")
+        }
         // when
         guard let payloadAndStrategy = await message.encryptForTransport()
-        else { return XCTFail("encryptForTransport failed") }
+        else {
+            return XCTFail("encryptForTransport failed")
+        }
 
         // then
         switch payloadAndStrategy.strategy {

@@ -87,7 +87,9 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 
     var layoutSize: SplitViewControllerLayoutSize = .compact {
         didSet {
-            guard oldValue != layoutSize else { return }
+            guard oldValue != layoutSize else {
+                return
+            }
 
             NotificationCenter.default.post(
                 name: Notification.Name.SplitLayoutObservableDidChangeToLayoutSize,

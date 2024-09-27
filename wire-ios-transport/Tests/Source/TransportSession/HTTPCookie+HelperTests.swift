@@ -36,7 +36,9 @@ final class HTTPCookieHelperTests: XCTestCase {
         // then
         XCTAssertEqual(cookies.count, 1)
 
-        guard let properties = cookies.first?.properties else { return XCTFail("no cookie properties") }
+        guard let properties = cookies.first?.properties else {
+            return XCTFail("no cookie properties")
+        }
         XCTAssertEqual(properties[.name] as? String, name)
         XCTAssertEqual(properties[.domain] as? String, domain)
         XCTAssertEqual(properties[.path] as? String, path)
@@ -54,19 +56,27 @@ final class HTTPCookieHelperTests: XCTestCase {
 
         // when
         guard let data = HTTPCookie.extractCookieData(from: cookieString, url: URL(string: "exmaple.com")!)
-        else { return XCTFail("no cookie data") }
+        else {
+            return XCTFail("no cookie data")
+        }
 
         // then
         guard let decryptedData = Data(base64Encoded: data)?.zmDecryptPrefixedIV(key: UserDefaults.cookiesKey())
-        else { return XCTFail("failed to decrypt") }
+        else {
+            return XCTFail("failed to decrypt")
+        }
         let unarchiver = try! NSKeyedUnarchiver(forReadingFrom: decryptedData)
         unarchiver.requiresSecureCoding = true
 
         guard let propertiesArray = unarchiver.decodePropertyList(forKey: "properties") as? [[String: Any]]
-        else { return XCTFail("no properties") }
+        else {
+            return XCTFail("no properties")
+        }
         XCTAssertEqual(propertiesArray.count, 1)
 
-        guard let properties = propertiesArray.first else { return XCTFail("no properties") }
+        guard let properties = propertiesArray.first else {
+            return XCTFail("no properties")
+        }
         XCTAssertEqual(properties["Name"] as? String, name)
         XCTAssertEqual(properties["Value"] as? String, value)
         XCTAssertEqual(properties["Domain"] as? String, domain)

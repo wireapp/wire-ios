@@ -54,7 +54,9 @@ extension AddressBookSearchTests {
 
         // then
         XCTAssertEqual(result.count, 1)
-        guard result.count == 1 else { return }
+        guard result.count == 1 else {
+            return
+        }
         XCTAssertEqual(result[0].emailAddresses, ["oli@example.com"])
     }
 
@@ -76,7 +78,9 @@ extension AddressBookSearchTests {
 
         // then
         XCTAssertEqual(result.count, 1)
-        guard result.count == 1 else { return }
+        guard result.count == 1 else {
+            return
+        }
         XCTAssertEqual(result[0].firstName, "Olivia 2")
     }
 

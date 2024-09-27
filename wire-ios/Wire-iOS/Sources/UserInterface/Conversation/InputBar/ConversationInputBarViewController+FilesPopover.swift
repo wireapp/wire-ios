@@ -39,7 +39,9 @@ extension ConversationInputBarViewController {
                     let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
                     guard let basePath = paths.first,
                           let sourceLocation = Bundle.main.url(forResource: "CountryCodes", withExtension: "plist")
-                    else { return }
+                    else {
+                        return
+                    }
 
                     let destLocation = URL(fileURLWithPath: basePath)
                         .appendingPathComponent(sourceLocation.lastPathComponent)
@@ -169,7 +171,9 @@ extension ConversationInputBarViewController {
     }
 
     private func recordVideo() {
-        guard !CameraAccess.displayAlertIfOngoingCall(at: .recordVideo, from: self) else { return }
+        guard !CameraAccess.displayAlertIfOngoingCall(at: .recordVideo, from: self) else {
+            return
+        }
 
         presentImagePicker(
             sourceType: .camera,

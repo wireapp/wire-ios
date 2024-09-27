@@ -74,7 +74,9 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
 
         team.requestImage()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail("nil request generated") }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail("nil request generated")
+        }
 
         // WHEN
         request.complete(with: ZMTransportResponse(
@@ -95,7 +97,9 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
         let team = createTeamWithImage()
         team.requestImage()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail("nil request generated") }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail("nil request generated")
+        }
 
         // WHEN
         request.complete(with: ZMTransportResponse(

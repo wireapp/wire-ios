@@ -87,7 +87,9 @@ final class DeveloperOptionsController: UIViewController {
             )
 
             alertController.addAction(UIAlertAction(title: "Send to Devs", style: .default) { _ in
-                guard let text = alertController.textFields?.first?.text else { return }
+                guard let text = alertController.textFields?.first?.text else {
+                    return
+                }
                 DebugLogSender.sendLogsByEmail(
                     message: text,
                     shareWithAVS: false,
@@ -97,7 +99,9 @@ final class DeveloperOptionsController: UIViewController {
             })
 
             alertController.addAction(UIAlertAction(title: "Send to Devs & AVS", style: .default) { _ in
-                guard let text = alertController.textFields?.first?.text else { return }
+                guard let text = alertController.textFields?.first?.text else {
+                    return
+                }
                 DebugLogSender.sendLogsByEmail(
                     message: text,
                     shareWithAVS: true,

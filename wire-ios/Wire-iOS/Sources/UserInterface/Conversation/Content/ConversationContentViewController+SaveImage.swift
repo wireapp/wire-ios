@@ -22,7 +22,9 @@ import WireDataModel
 extension ConversationContentViewController {
     func saveImage(from message: ZMConversationMessage, view: UIView?) {
         guard let imageMessageData = message.imageMessageData,
-              let imageData = imageMessageData.imageData else { return }
+              let imageData = imageMessageData.imageData else {
+            return
+        }
 
         let savableImage = SavableImage(data: imageData, isGIF: imageMessageData.isAnimatedGIF)
 
@@ -37,7 +39,9 @@ extension ConversationContentViewController {
             let sourceRect = sourceView.convert(sourceView.frame, from: sourceView.superview)
 
             savableImage.saveToLibrary { success in
-                guard self.view.window != nil, success else { return }
+                guard self.view.window != nil, success else {
+                    return
+                }
                 snapshot?.translatesAutoresizingMaskIntoConstraints = true
                 self.delegate?.conversationContentViewController(
                     self,

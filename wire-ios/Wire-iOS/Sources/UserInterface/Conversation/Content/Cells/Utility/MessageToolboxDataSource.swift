@@ -240,7 +240,9 @@ final class MessageToolboxDataSource {
 
     /// Creates the status for the read receipts.
     private func selfStatusForReadDeliveryState(for message: ZMConversationMessage) -> NSAttributedString? {
-        guard let conversationType = message.conversationLike?.conversationType else { return nil }
+        guard let conversationType = message.conversationLike?.conversationType else {
+            return nil
+        }
 
         switch conversationType {
         case .group:

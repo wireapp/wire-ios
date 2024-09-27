@@ -136,7 +136,9 @@ final class CallViewController: UIViewController {
 
     @objc
     func handleDoubleTap(_ sender: UITapGestureRecognizer) {
-        guard !isOverlayVisible else { return }
+        guard !isOverlayVisible else {
+            return
+        }
 
         callGridViewController.handleDoubleTap(gesture: sender)
     }
@@ -172,7 +174,9 @@ final class CallViewController: UIViewController {
     }
 
     override func accessibilityPerformEscape() -> Bool {
-        guard let delegate else { return false }
+        guard let delegate else {
+            return false
+        }
         delegate.callViewControllerDidDisappear(self, for: conversation)
         return true
     }
@@ -182,7 +186,9 @@ final class CallViewController: UIViewController {
             permissions.requestOrWarnAboutVideoPermission { isVideoPermissionGranted in
                 self.disableVideoIfNeeded()
                 self.updateVideoStatusPlaceholder()
-                guard isVideoPermissionGranted else { return }
+                guard isVideoPermissionGranted else {
+                    return
+                }
             }
         }
 
@@ -233,7 +239,9 @@ final class CallViewController: UIViewController {
 
     @objc
     private func handleSingleTap(_ sender: UITapGestureRecognizer) {
-        guard canHideOverlay else { return }
+        guard canHideOverlay else {
+            return
+        }
 
         if let overlay = callGridViewController.previewOverlay,
            overlay.point(inside: sender.location(in: overlay), with: nil), !isOverlayVisible {
@@ -264,14 +272,18 @@ final class CallViewController: UIViewController {
 
     @objc
     private func resumeVideoIfNeeded() {
-        guard voiceChannel.videoState.isPaused else { return }
+        guard voiceChannel.videoState.isPaused else {
+            return
+        }
         voiceChannel.videoState = .started
         updateConfiguration()
     }
 
     @objc
     private func pauseVideoIfNeeded() {
-        guard voiceChannel.videoState.isSending else { return }
+        guard voiceChannel.videoState.isSending else {
+            return
+        }
         voiceChannel.videoState = .paused
         updateConfiguration()
     }
@@ -319,7 +331,9 @@ final class CallViewController: UIViewController {
     }
 
     private func acceptDegradedCall() {
-        guard let userSession = userSession as? ZMUserSession else { return }
+        guard let userSession = userSession as? ZMUserSession else {
+            return
+        }
 
         userSession.enqueue({
             self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession)
@@ -358,21 +372,27 @@ final class CallViewController: UIViewController {
         establishingCallStatusView.setProfileImage(hidden: configuration.mediaState.isSendingVideo)
         establishingCallStatusView.updateState(state: state)
         establishingCallStatusView.setTitle(title: configuration.title)
-        guard establishingCallStatusView.superview == nil else { return }
+        guard establishingCallStatusView.superview == nil else {
+            return
+        }
         establishingCallStatusView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(establishingCallStatusView)
         NSLayoutConstraint.activate(
             NSLayoutConstraint.forView(view: establishingCallStatusView, inContainer: view, withInsets: .zero)
         )
         guard let user = voiceChannel.getSecondParticipant(),
-              let session = userSession as? ZMUserSession else { return }
+              let session = userSession as? ZMUserSession else {
+            return
+        }
         user.fetchProfileImage(
             session: session,
             imageCache: UIImage.defaultUserImageCache,
             sizeLimit: UserImageView.Size.normal.rawValue,
             isDesaturated: false,
             completion: { [weak self] image, _ in
-                guard let image else { return }
+                guard let image else {
+                    return
+                }
                 self?.establishingCallStatusView.setProfileImage(image: image)
             }
         )
@@ -385,7 +405,9 @@ final class CallViewController: UIViewController {
     }
 
     private func alertVideoUnavailable() {
-        guard voiceChannel.videoState == .stopped else { return }
+        guard voiceChannel.videoState == .stopped else {
+            return
+        }
 
         if !callInfoConfiguration.permissions.canAcceptVideoCalls {
             present(UIAlertController.cameraPermissionAlert(), animated: true)
@@ -482,7 +504,9 @@ extension CallViewController: WireCallCenterCallParticipantObserver {
     }
 
     private func updateVideoGridPresentationModeIfNeeded(participants: [CallParticipant]) {
-        guard !participants.hasMoreThanTwoConnectedParticipants else { return }
+        guard !participants.hasMoreThanTwoConnectedParticipants else {
+            return
+        }
 
         voiceChannel.videoGridPresentationMode = .allVideoStreams
     }
@@ -512,7 +536,9 @@ extension CallViewController {
 
         permissions.requestOrWarnAboutAudioPermission { audioGranted in
             guard audioGranted else {
-                guard let userSession = self.userSession as? ZMUserSession else { return }
+                guard let userSession = self.userSession as? ZMUserSession else {
+                    return
+                }
                 return self.voiceChannel.leave(userSession: userSession, completion: nil)
             }
 
@@ -527,7 +553,9 @@ extension CallViewController {
     }
 
     private func checkVideoPermissions(resultHandler: @escaping (Bool) -> Void) {
-        guard voiceChannel.isVideoCall else { return resultHandler(false) }
+        guard voiceChannel.isVideoCall else {
+            return resultHandler(false)
+        }
 
         if !permissions.isPendingVideoPermissionRequest {
             resultHandler(permissions.canAcceptVideoCalls)
@@ -567,7 +595,9 @@ extension CallViewController: ConstantBitRateAudioObserver {
 extension CallViewController: CallInfoRootViewControllerDelegate {
     func callingActionsViewPerformAction(_ action: CallAction) {
         Log.calling.debug("request to perform call action: \(action)")
-        guard let userSession = userSession as? ZMUserSession else { return }
+        guard let userSession = userSession as? ZMUserSession else {
+            return
+        }
 
         switch action {
         case .continueDegradedCall: userSession
@@ -608,7 +638,9 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         _ viewController: CallInfoRootViewController,
         contextDidChange context: CallInfoRootViewController.Context
     ) {
-        guard canHideOverlay else { return }
+        guard canHideOverlay else {
+            return
+        }
         switch context {
         case .overview: startOverlayTimer()
         case .participants: stopOverlayTimer()
@@ -638,7 +670,9 @@ extension CallViewController {
     }
 
     private var canHideOverlay: Bool {
-        guard case .established = callInfoConfiguration.state else { return false }
+        guard case .established = callInfoConfiguration.state else {
+            return false
+        }
 
         return !shouldOverlayStayVisibleForAutomation
     }
@@ -648,7 +682,9 @@ extension CallViewController {
     }
 
     private func animateOverlay(show: Bool) {
-        guard isOverlayEnabled else { return }
+        guard isOverlayEnabled else {
+            return
+        }
         if show {
             startOverlayTimer()
         } else {
@@ -680,13 +716,17 @@ extension CallViewController {
             canHideOverlay,
             isOverlayVisible,
             isNotAnimating
-        else { return }
+        else {
+            return
+        }
 
         animateOverlay(show: false)
     }
 
     func startOverlayTimer() {
-        guard !shouldOverlayStayVisibleForAutomation else { return }
+        guard !shouldOverlayStayVisibleForAutomation else {
+            return
+        }
 
         stopOverlayTimer()
         overlayTimer = .scheduledTimer(withTimeInterval: 8, repeats: false) { [weak self] _ in
@@ -708,7 +748,9 @@ extension CallViewController {
     }
 
     private func restartOverlayTimerIfNeeded() {
-        guard overlayTimer != nil, canHideOverlay else { return }
+        guard overlayTimer != nil, canHideOverlay else {
+            return
+        }
         startOverlayTimer()
     }
 
@@ -720,7 +762,9 @@ extension CallViewController {
 
 extension CallViewController {
     func proximityStateDidChange(_ raisedToEar: Bool) {
-        guard voiceChannel.isVideoCall, voiceChannel.videoState != .stopped else { return }
+        guard voiceChannel.isVideoCall, voiceChannel.videoState != .stopped else {
+            return
+        }
         voiceChannel.videoState = raisedToEar ? .paused : .started
         updateConfiguration()
     }

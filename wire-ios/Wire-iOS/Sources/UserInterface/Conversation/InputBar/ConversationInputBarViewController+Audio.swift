@@ -150,7 +150,9 @@ extension ConversationInputBarViewController {
 
     private func requestMicrophoneAccess() {
         UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
-            guard granted else { return }
+            guard granted else {
+                return
+            }
         }
     }
 
@@ -280,7 +282,9 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
               splitViewController.isRightViewControllerRevealed,
               rightViewController.isVisible,
               AppDelegate.shared.mainWindow.isKeyWindow
-        else { return }
+        else {
+            return
+        }
 
         wasRecordingBeforeCall = false
         mode = .audioRecord

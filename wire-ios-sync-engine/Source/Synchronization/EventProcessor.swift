@@ -97,7 +97,9 @@ actor EventProcessor: UpdateEventProcessor {
     // MARK: Methods
 
     func bufferEvents(_ events: [ZMUpdateEvent]) async {
-        guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
+        guard !DeveloperFlag.ignoreIncomingEvents.isOn else {
+            return
+        }
         for event in events {
             WireLogger.updateEvent.debug("buffer event", attributes: event.logAttributes)
         }
@@ -108,7 +110,9 @@ actor EventProcessor: UpdateEventProcessor {
         try await enqueueTask {
             NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
 
-            guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
+            guard !DeveloperFlag.ignoreIncomingEvents.isOn else {
+                return
+            }
 
             let publicKeys = try? self.earService.fetchPublicKeys()
             let decryptedEvents = try await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
@@ -144,7 +148,9 @@ actor EventProcessor: UpdateEventProcessor {
                 attributes: .safePublic
             )
 
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             let date = Date()
             let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)

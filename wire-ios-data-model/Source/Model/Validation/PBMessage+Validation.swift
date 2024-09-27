@@ -21,7 +21,9 @@ import WireProtos
 
 extension UUID {
     public static func isValid(object: Any?) -> Bool {
-        guard let string = object as? String else { return false }
+        guard let string = object as? String else {
+            return false
+        }
         return UUID(uuidString: string) != nil
     }
 
@@ -80,27 +82,56 @@ extension String {
 
 extension GenericMessage {
     public func validatingFields() -> GenericMessage? {
-        guard UUID.isValid(object: messageID), let content else { return nil }
+        guard UUID.isValid(object: messageID), let content else {
+            return nil
+        }
 
         switch content {
         case .text:
-            guard text.validatingFields() != nil else { return nil }
+            guard text.validatingFields() != nil else {
+                return nil
+            }
+
         case .lastRead:
-            guard lastRead.validatingFields() != nil else { return nil }
+            guard lastRead.validatingFields() != nil else {
+                return nil
+            }
+
         case .cleared:
-            guard cleared.validatingFields() != nil else { return nil }
+            guard cleared.validatingFields() != nil else {
+                return nil
+            }
+
         case .hidden:
-            guard hidden.validatingFields() != nil else { return nil }
+            guard hidden.validatingFields() != nil else {
+                return nil
+            }
+
         case .deleted:
-            guard deleted.validatingFields() != nil else { return nil }
+            guard deleted.validatingFields() != nil else {
+                return nil
+            }
+
         case .edited:
-            guard edited.validatingFields() != nil else { return nil }
+            guard edited.validatingFields() != nil else {
+                return nil
+            }
+
         case .confirmation:
-            guard confirmation.validatingFields() != nil else { return nil }
+            guard confirmation.validatingFields() != nil else {
+                return nil
+            }
+
         case .reaction:
-            guard reaction.validatingFields() != nil else { return nil }
+            guard reaction.validatingFields() != nil else {
+                return nil
+            }
+
         case .asset:
-            guard asset.validatingFields() != nil else { return nil }
+            guard asset.validatingFields() != nil else {
+                return nil
+            }
+
         default:
             break
         }
@@ -113,7 +144,9 @@ extension GenericMessage {
 extension Text {
     public func validatingFields() -> Text? {
         let validMentions = mentions.compactMap { $0.validatingFields() }
-        guard validMentions.count == mentions.count else { return nil }
+        guard validMentions.count == mentions.count else {
+            return nil
+        }
         return self
     }
 }
@@ -154,8 +187,12 @@ extension Cleared {
 
 extension MessageHide {
     public func validatingFields() -> MessageHide? {
-        guard UUID.isValid(object: conversationID) else { return nil }
-        guard UUID.isValid(object: messageID) else { return nil }
+        guard UUID.isValid(object: conversationID) else {
+            return nil
+        }
+        guard UUID.isValid(object: messageID) else {
+            return nil
+        }
         return self
     }
 }
@@ -180,10 +217,14 @@ extension MessageEdit {
 
 extension Confirmation {
     public func validatingFields() -> Confirmation? {
-        guard UUID.isValid(object: firstMessageID) else { return nil }
+        guard UUID.isValid(object: firstMessageID) else {
+            return nil
+        }
 
         if !moreMessageIds.isEmpty {
-            guard UUID.isValid(array: moreMessageIds) else { return nil }
+            guard UUID.isValid(array: moreMessageIds) else {
+                return nil
+            }
         }
 
         return self
@@ -211,11 +252,15 @@ extension WireProtos.Proteus_UserId {
 extension WireProtos.Asset {
     public func validatingFields() -> WireProtos.Asset? {
         if hasPreview, preview.hasRemote {
-            guard preview.remote.validatingFields() != nil else { return nil }
+            guard preview.remote.validatingFields() != nil else {
+                return nil
+            }
         }
 
         if case .uploaded? = status {
-            guard uploaded.validatingFields() != nil else { return nil }
+            guard uploaded.validatingFields() != nil else {
+                return nil
+            }
         }
 
         return self
@@ -224,8 +269,12 @@ extension WireProtos.Asset {
 
 extension WireProtos.Asset.RemoteData {
     public func validatingFields() -> WireProtos.Asset.RemoteData? {
-        guard assetID.isValidAssetID else { return nil }
-        guard assetToken.isValidBearerToken else { return nil }
+        guard assetID.isValidAssetID else {
+            return nil
+        }
+        guard assetToken.isValidBearerToken else {
+            return nil
+        }
         return self
     }
 }

@@ -268,7 +268,9 @@ extension SettingsCellDescriptorFactory {
     private func pictureElement() -> SettingsCellDescriptorType {
         let profileImagePicker = ProfileImagePickerManager()
         let previewGenerator: PreviewGeneratorType = { _ in
-            guard let image = ZMUser.selfUser()?.imageSmallProfileData.flatMap(UIImage.init) else { return .none }
+            guard let image = ZMUser.selfUser()?.imageSmallProfileData.flatMap(UIImage.init) else {
+                return .none
+            }
             return .image(image)
         }
 
@@ -354,7 +356,9 @@ extension SettingsCellDescriptorFactory {
                     alert.addAction(actionCancel)
 
                     guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false)
-                    else { return nil }
+                    else {
+                        return nil
+                    }
 
                     controller.present(alert, animated: true)
                     return nil

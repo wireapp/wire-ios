@@ -63,7 +63,9 @@ final class UserStatusViewController: UIViewController {
 
     private func presentAvailabilityPicker(_ sender: UIButton) {
         let availabilityChangedHandler = { [weak self] (availability: Availability) in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             delegate?.userStatusViewController(self, didSelect: availability)
             feedbackGenerator.impactOccurred()

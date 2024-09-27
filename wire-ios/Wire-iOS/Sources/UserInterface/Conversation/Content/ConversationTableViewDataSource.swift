@@ -166,7 +166,9 @@ final class ConversationTableViewDataSource: NSObject {
         let sectionIdentifier = sectionController.message.objectIdentifier
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
-        else { return currentSections }
+        else {
+            return currentSections
+        }
 
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
@@ -313,7 +315,9 @@ final class ConversationTableViewDataSource: NSObject {
 
     func loadNewerMessages() {
         guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
-              let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
+              let currentLimit = fetchController?.fetchRequest.fetchLimit else {
+            return
+        }
 
         let newOffset = max(0, currentOffset - ConversationTableViewDataSource.defaultBatchSize)
 
@@ -361,7 +365,9 @@ final class ConversationTableViewDataSource: NSObject {
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let scrolledToBottom = scrollView.contentOffset.y < 0
-        guard scrolledToBottom, hasNewerMessagesToLoad else { return }
+        guard scrolledToBottom, hasNewerMessagesToLoad else {
+            return
+        }
 
         // We are at the bottom and should load new messages
 
@@ -390,7 +396,9 @@ final class ConversationTableViewDataSource: NSObject {
 
     private func loadOlderMessages() {
         guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
-              let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
+              let currentLimit = fetchController?.fetchRequest.fetchLimit else {
+            return
+        }
 
         let newLimit = currentLimit + ConversationTableViewDataSource.defaultBatchSize
 
@@ -478,7 +486,9 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard currentSections.indices.contains(section) else { return 0 }
+        guard currentSections.indices.contains(section) else {
+            return 0
+        }
 
         return currentSections[section].elements.count
     }
@@ -536,11 +546,15 @@ extension ConversationTableViewDataSource {
     func isPreviousSenderSame(forMessage message: ZMConversationMessage?, at index: Int) -> Bool {
         guard let message,
               Message.isNormal(message),
-              !Message.isKnock(message) else { return false }
+              !Message.isKnock(message) else {
+            return false
+        }
 
         guard let previousMessage = messagePrevious(to: message, at: index),
               previousMessage.senderUser === message.senderUser,
-              Message.isNormal(previousMessage) else { return false }
+              Message.isNormal(previousMessage) else {
+            return false
+        }
 
         return true
     }
@@ -599,7 +613,9 @@ extension ConversationTableViewDataSource {
 
     private func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int) -> Bool {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp,
-              let current = message.serverTimestamp else { return false }
+              let current = message.serverTimestamp else {
+            return false
+        }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 }

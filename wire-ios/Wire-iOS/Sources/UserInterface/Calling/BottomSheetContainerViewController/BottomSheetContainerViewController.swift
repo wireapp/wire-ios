@@ -167,12 +167,16 @@ class BottomSheetContainerViewController: UIViewController {
         switch sender.state {
         case .began, .changed:
             if state == .full {
-                guard translation.y > 0 else { return }
+                guard translation.y > 0 else {
+                    return
+                }
                 topConstraint.constant = -(configuration.height - yTranslationMagnitude)
                 view.layoutIfNeeded()
             } else {
                 let newConstant = -(configuration.initialOffset + yTranslationMagnitude)
-                guard translation.y < 0 else { return }
+                guard translation.y < 0 else {
+                    return
+                }
                 guard newConstant.magnitude < configuration.height else {
                     showBottomSheet()
                     return

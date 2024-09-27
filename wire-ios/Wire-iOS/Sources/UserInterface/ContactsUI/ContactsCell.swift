@@ -155,7 +155,9 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
     // MARK: Private
 
     private lazy var actionButtonWidth: CGFloat = {
-        guard let font = actionButton.titleLabel?.font else { return 0 }
+        guard let font = actionButton.titleLabel?.font else {
+            return 0
+        }
 
         let transform = actionButton.textTransform
         let insets = actionButton.contentEdgeInsets

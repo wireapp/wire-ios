@@ -105,7 +105,9 @@ extension ZMUserSession {
         )
 
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             if response.httpStatus == 200 {
                 delegate?.userDidLogout(accountId: accountID)

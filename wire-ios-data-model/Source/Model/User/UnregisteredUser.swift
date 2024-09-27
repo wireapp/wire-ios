@@ -46,7 +46,9 @@ public class UnregisteredUser {
 
     public var accentColor: AccentColor? {
         get {
-            guard let accentColorValue else { return nil }
+            guard let accentColorValue else {
+                return nil
+            }
             return .init(rawValue: accentColorValue)
         }
         set {

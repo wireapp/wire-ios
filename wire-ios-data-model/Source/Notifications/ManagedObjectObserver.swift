@@ -30,7 +30,9 @@ public final class ManagedObjectContextChangeObserver: NSObject {
     }
 
     deinit {
-        guard let token else { return }
+        guard let token else {
+            return
+        }
         NotificationCenter.default.removeObserver(token)
     }
 

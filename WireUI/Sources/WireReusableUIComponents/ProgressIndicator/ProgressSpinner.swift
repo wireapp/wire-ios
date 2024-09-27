@@ -58,7 +58,9 @@ public final class ProgressSpinner: UIView {
 
     public var isAnimating = false {
         didSet {
-            guard oldValue != isAnimating else { return }
+            guard oldValue != isAnimating else {
+                return
+            }
 
             if isAnimating {
                 startAnimationInternal()

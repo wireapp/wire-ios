@@ -100,7 +100,9 @@ final class EmojiRepository: EmojiRepositoryInterface {
     // MARK: - Availability
 
     private static func isEmojiAvailable(_ emoji: Emoji) -> Bool {
-        guard let emojiVersion = Double(emoji.addedIn) else { return false }
+        guard let emojiVersion = Double(emoji.addedIn) else {
+            return false
+        }
         let emojiVersionTruncated = (emojiVersion * 100.0).rounded() / 100.0
         return emojiVersionTruncated <= supportedEmojiVersion
     }

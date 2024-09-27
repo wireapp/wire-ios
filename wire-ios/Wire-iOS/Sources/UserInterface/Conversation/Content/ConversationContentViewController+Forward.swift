@@ -100,7 +100,9 @@ extension ZMMessage: Shareable {
                 }
             }
         } else if isVideo || isAudio || isFile {
-            guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
+            guard let url = fileMessageData!.temporaryURLToDecryptedFile() else {
+                return
+            }
             FileMetaDataGenerator.shared
                 .metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
                     ZMUserSession.shared()?.perform {
@@ -152,7 +154,9 @@ extension ConversationContentViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
+        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else {
+            return
+        }
 
         if let keyboardAvoidingViewController = presentedViewController as? KeyboardAvoidingViewController,
            let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<

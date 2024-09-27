@@ -39,7 +39,9 @@ extension GenericMessage {
             message = GenericMessage(from: updateEvent, withExternal: external)
         }
 
-        guard let unwrappedMessage = message else { return nil }
+        guard let unwrappedMessage = message else {
+            return nil
+        }
         self = unwrappedMessage
     }
 

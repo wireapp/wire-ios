@@ -60,7 +60,9 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
 
     func downloadImages(fromURLs urls: [URL], completion: @escaping ([URL: ImageData]) -> Void) {
         workerQueue.addOperation { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             var result = [URL: ImageData]()
             let group = DispatchGroup()
 
@@ -86,7 +88,9 @@ extension HTTPURLResponse {
     var contentTypeImage: Bool {
         let contentTypeKey = HeaderKey.contentType.rawValue
         guard let contentType = allHeaderFields[contentTypeKey] as? String ??
-            allHeaderFields[contentTypeKey.lowercased()] as? String else { return false }
+            allHeaderFields[contentTypeKey.lowercased()] as? String else {
+            return false
+        }
 
         // we don't consider svg a valid image type b/c UIImage doesn't directly
         // support it

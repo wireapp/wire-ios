@@ -59,7 +59,9 @@ enum ConversationActionType {
 
 extension ZMConversationMessage {
     var actionType: ConversationActionType {
-        guard let systemMessage = systemMessageData else { return .none }
+        guard let systemMessage = systemMessageData else {
+            return .none
+        }
         switch systemMessage.systemMessageType {
         case .participantsRemoved:  return systemMessage.userIsTheSender
             ? .left
@@ -121,9 +123,15 @@ final class ParticipantsCellViewModel {
     /// The users involved in the conversation action sorted alphabetically by
     /// name.
     lazy var sortedUsers: [UserType] = {
-        guard let sender = message.senderUser else { return [] }
-        guard action.involvesUsersOtherThanSender else { return [sender] }
-        guard let systemMessage = message.systemMessageData else { return [] }
+        guard let sender = message.senderUser else {
+            return []
+        }
+        guard action.involvesUsersOtherThanSender else {
+            return [sender]
+        }
+        guard let systemMessage = message.systemMessageData else {
+            return []
+        }
 
         let usersWithoutSender: Set<AnyHashable> = if case let .removed(reason) = action,
                                                       reason == .federationTermination {
@@ -133,7 +141,9 @@ final class ParticipantsCellViewModel {
         } else {
             systemMessage.userTypes
         }
-        guard let users = Array(usersWithoutSender) as? [UserType] else { return [] }
+        guard let users = Array(usersWithoutSender) as? [UserType] else {
+            return []
+        }
 
         return users.sorted { name(for: $0) < name(for: $1) }
     }()
@@ -159,7 +169,9 @@ final class ParticipantsCellViewModel {
             case let .started(withName: conversationName?) = action,
             let sender = message.senderUser,
             let formatter = formatter(for: message)
-        else { return nil }
+        else {
+            return nil
+        }
 
         let senderName = name(for: sender).capitalized
         return formatter.heading(senderName: senderName, senderIsSelf: sender.isSelfUser, convName: conversationName)
@@ -169,7 +181,9 @@ final class ParticipantsCellViewModel {
         guard
             let sender = message.senderUser,
             let formatter = formatter(for: message)
-        else { return nil }
+        else {
+            return nil
+        }
 
         let senderName = name(for: sender).capitalized
 
@@ -186,7 +200,9 @@ final class ParticipantsCellViewModel {
     }
 
     func warning() -> String? {
-        guard showServiceUserWarning else { return nil }
+        guard showServiceUserWarning else {
+            return nil
+        }
         return L10n.Localizable.Content.System.Services.warning
     }
 
@@ -198,7 +214,9 @@ final class ParticipantsCellViewModel {
     /// E.g. `and 5 others`.
     private lazy var collapsedUsers: [UserType] = {
         let users = sortedUsersWithoutSelf
-        guard users.count > maxShownUsers, action.allowsCollapsing else { return [] }
+        guard users.count > maxShownUsers, action.allowsCollapsing else {
+            return []
+        }
         return Array(users.dropFirst(maxShownUsersWhenCollapsed))
     }()
 
@@ -217,8 +235,12 @@ final class ParticipantsCellViewModel {
     private var showServiceUserWarning: Bool {
         guard case .added = action,
               let messageData = message.systemMessageData,
-              let conversation = message.conversationLike else { return false }
-        guard let users = Array(messageData.userTypes) as? [UserType] else { return false }
+              let conversation = message.conversationLike else {
+            return false
+        }
+        guard let users = Array(messageData.userTypes) as? [UserType] else {
+            return false
+        }
 
         let selfAddedToServiceConversation = users.any(\.isSelfUser) && conversation.areServicesPresent
         let serviceAdded = users.any(\.isServiceUser)
@@ -250,19 +272,27 @@ final class ParticipantsCellViewModel {
     /// sentence. This is important for localization of "you".
     private func grammaticalCase(for user: UserType) -> String {
         // user is always the subject
-        if message.isUserSender(user) { return "nominative" }
+        if message.isUserSender(user) {
+            return "nominative"
+        }
         // "started with ... user"
-        if case .started = action { return "dative" }
+        if case .started = action {
+            return "dative"
+        }
 
         // If there is selfUser in the list, we should only display selfUser as "You"
         if case .removed(reason: .legalHoldPolicyConflict) = action,
-           !sortedUsers.filter(\.isSelfUser).isEmpty { return "started" }
+           !sortedUsers.filter(\.isSelfUser).isEmpty {
+            return "started"
+        }
 
         return "accusative"
     }
 
     private func formatter(for message: ZMConversationMessage) -> ParticipantsStringFormatter? {
-        guard let font, let largeFont else { return nil }
+        guard let font, let largeFont else {
+            return nil
+        }
 
         return ParticipantsStringFormatter(
             message: message, font: font,

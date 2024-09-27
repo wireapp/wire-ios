@@ -75,7 +75,9 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         withExtendedLifetime(token) {
             XCTAssertEqual(clientObserver.receivedChangeInfo.count, changeCount, "Should not have changed further once")
 
-            guard let changes = clientObserver.receivedChangeInfo.first else { return }
+            guard let changes = clientObserver.receivedChangeInfo.first else {
+                return
+            }
             changes.checkForExpectedChangeFields(
                 userInfoKeys: userInfoKeys,
                 expectedChangedFields: expectedChangedFields

@@ -100,7 +100,9 @@ final class MessagePresenter: NSObject {
     }
 
     func cleanupTemporaryFileLink() {
-        guard let url = documentInteractionController?.url else { return }
+        guard let url = documentInteractionController?.url else {
+            return
+        }
         do {
             try FileManager.default.removeItem(at: url)
         } catch let linkDeleteError {
@@ -118,7 +120,9 @@ final class MessagePresenter: NSObject {
                 message: message,
                 keypath: \.fileAvailabilityChanged
             ) { [weak self] message in
-                guard message.isFileDownloaded() else { return }
+                guard message.isFileDownloaded() else {
+                    return
+                }
 
                 self?.openFileMessage(message, targetView: targetView)
             }
@@ -267,7 +271,9 @@ final class MessagePresenter: NSObject {
     @MainActor
     func openPassesViewController(fileMessageData: ZMFileMessageData) async {
         guard PKAddPassesViewController.canAddPasses()
-        else { return } // suggestion: implement error visible for the user
+        else {
+            return
+        } // suggestion: implement error visible for the user
 
         do {
             guard let fileURL = fileMessageData.temporaryURLToDecryptedFile() else {

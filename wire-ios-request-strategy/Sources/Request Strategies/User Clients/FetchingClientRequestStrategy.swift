@@ -85,7 +85,9 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
             context: self.managedObjectContext.notificationContext,
             object: nil
         ) { [weak self] note in
-            guard let self, let objectID = note.object as? NSManagedObjectID else { return }
+            guard let self, let objectID = note.object as? NSManagedObjectID else {
+                return
+            }
             self.managedObjectContext.performGroupedBlock {
                 guard
                     let apiVersion = BackendInfo.apiVersion,
@@ -110,7 +112,11 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                     }
 
                 case .v2, .v3, .v4, .v5, .v6:
-                    let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                    let domain = if let domain = user.domain, !domain.isEmpty {
+                        domain
+                    } else {
+                        BackendInfo.domain
+                    }
                     if let domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                         self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
@@ -186,12 +192,16 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func fetch(userClients: [UserClient]) {
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion = BackendInfo.apiVersion else {
+            return
+        }
         let initialResult: ([QualifiedID], [UserClientByUserClientIDTranscoder.UserClientID]) = ([], [])
         let result = userClients.reduce(into: initialResult) { result, userClient in
             switch apiVersion {
             case .v0:
-                guard let userClientID = userClientID(from: userClient) else { return }
+                guard let userClientID = userClientID(from: userClient) else {
+                    return
+                }
                 result.1.append(userClientID)
 
             case .v1:
@@ -237,8 +247,14 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func qualifiedIDWithFallback(from userClient: UserClient) -> QualifiedID? {
-        let domain = if let domain = userClient.user?.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
-        guard let userID = userClient.user?.remoteIdentifier, let domain else { return nil }
+        let domain = if let domain = userClient.user?.domain, !domain.isEmpty {
+            domain
+        } else {
+            BackendInfo.domain
+        }
+        guard let userID = userClient.user?.remoteIdentifier, let domain else {
+            return nil
+        }
 
         return .init(uuid: userID, domain: domain)
     }
@@ -258,7 +274,9 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UserClientID
 
     public func request(for identifiers: Set<UserClientID>, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let identifier = identifiers.first else { return nil }
+        guard let identifier = identifiers.first else {
+            return nil
+        }
 
         let path = "/users/\(identifier.userId.transportString())/clients/\(identifier.clientId)"
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
@@ -355,7 +373,9 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         for identifiers: Set<QualifiedID>,
         completionHandler: @escaping () -> Void
     ) {
-        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
+            return
+        }
         switch apiVersion {
         case .v0:
             completionHandler()
@@ -502,7 +522,9 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
     public func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let userId = identifiers.first?.transportString() else { return nil }
+        guard let userId = identifiers.first?.transportString() else {
+            return nil
+        }
 
         let path = "/users/\(userId)/clients"
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)

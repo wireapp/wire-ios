@@ -31,7 +31,9 @@ extension ZMUserSession: AccessTokenRenewing {
         WireLogger.authentication.error("access token renewal failed: response status: \(response.errorInfo)")
 
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             let selfUser = ZMUser.selfUser(in: managedObjectContext)
             let error = NSError.userSessionError(
                 code: .accessTokenExpired,

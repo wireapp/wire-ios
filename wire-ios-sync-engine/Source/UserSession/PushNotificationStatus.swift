@@ -79,7 +79,9 @@ open class PushNotificationStatus: NSObject {
         highestRankingEventId.apply(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
-        guard finished else { return }
+        guard finished else {
+            return
+        }
 
         Logging.eventProcessing.info("Finished to fetching all available events")
 
@@ -110,7 +112,9 @@ open class PushNotificationStatus: NSObject {
     private let managedObjectContext: NSManagedObjectContext
 
     private func lastEventIdIsNewerThan(lastEventId: UUID?, eventId: UUID) -> Bool {
-        guard let order = lastEventId?.compare(withType1: eventId) else { return false }
+        guard let order = lastEventId?.compare(withType1: eventId) else {
+            return false
+        }
         return order == .orderedDescending || order == .orderedSame
     }
 }

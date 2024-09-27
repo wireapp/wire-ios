@@ -36,7 +36,9 @@ open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
     // MARK: Lifecycle
 
     convenience init?(object: NSObject, changes: Changes) {
-        guard changes.hasChangeInfo else { return nil }
+        guard changes.hasChangeInfo else {
+            return nil
+        }
         self.init(object: object)
         self.changedKeys = changes.changedKeys
         self.changeInfos = changes.originalChanges

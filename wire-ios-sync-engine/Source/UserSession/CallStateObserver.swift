@@ -146,7 +146,9 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
         // the change notification fires
         uiContext.performGroupedBlock {
             guard let uiConv = (try? self.uiContext.existingObject(with: convObjectID)) as? ZMConversation
-            else { return }
+            else {
+                return
+            }
 
             switch callState {
             case .incoming(video: _, shouldRing: let shouldRing, degraded: _):

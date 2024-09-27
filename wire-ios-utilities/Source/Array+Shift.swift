@@ -32,7 +32,9 @@ extension Array {
         let rightShiftAmount = (count + amount) % count
 
         // no operation if shift is 0
-        guard rightShiftAmount != 0 else { return self }
+        guard rightShiftAmount != 0 else {
+            return self
+        }
 
         // get index for the split
         guard let i = index(endIndex, offsetBy: -rightShiftAmount, limitedBy: startIndex) else {

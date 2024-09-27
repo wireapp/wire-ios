@@ -32,7 +32,9 @@ extension ConversationActionController {
     }
 
     func handleDeleteGroupResult(_ result: Bool, conversation: ZMConversation, in userSession: ZMUserSession) {
-        guard result else { return }
+        guard result else {
+            return
+        }
 
         transitionToListAndEnqueue {
             conversation.delete(in: userSession) { result in

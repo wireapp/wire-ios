@@ -182,7 +182,9 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         guard let typingEvent = typingEventQueue.nextEvent(),
               let conversation = managedObjectContext.object(with: typingEvent.objectID) as? ZMConversation,
               let remoteIdentifier = conversation.remoteIdentifier
-        else { return nil }
+        else {
+            return nil
+        }
 
         let path: String
         switch apiVersion {
@@ -190,8 +192,14 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
         case .v3, .v4, .v5, .v6:
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
-            guard let domain else { return nil }
+            let domain = if let domain = conversation.domain, !domain.isEmpty {
+                domain
+            } else {
+                BackendInfo.domain
+            }
+            guard let domain else {
+                return nil
+            }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"
         }
 
@@ -219,7 +227,9 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     // MARK: - ZMEventConsumer
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        guard liveEvents else { return }
+        guard liveEvents else {
+            return
+        }
 
         for event in events {
             process(event: event, conversationsByID: prefetchResult?.conversationsByRemoteIdentifier)
@@ -238,7 +248,9 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             ]),
             let userID = event.senderUUID,
             let conversationID = event.conversationUUID
-        else { return }
+        else {
+            return
+        }
 
         let user = ZMUser.fetchOrCreate(with: userID, domain: event.senderDomain, in: managedObjectContext)
         let conversation = conversationsByID?[conversationID] ?? ZMConversation.fetchOrCreate(
@@ -250,7 +262,9 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         if event.type == .conversationTyping {
             guard let payloadData = event.payload["data"] as? [String: String],
                   let status = payloadData[StatusKey]
-            else { return }
+            else {
+                return
+            }
             processIsTypingUpdateEvent(for: user, in: conversation, with: status)
         } else if event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) {
             if let message = GenericMessage(from: event), message.hasText || message.hasEdited {
@@ -282,7 +296,9 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     @objc
     fileprivate func addConversationForNextRequest(note: NotificationInContext) {
         guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
-        else { return }
+        else {
+            return
+        }
 
         if let isTyping = (note.userInfo[IsTypingKey] as? NSNumber)?.boolValue {
             add(conversation: conversation, isTyping: isTyping, clearIsTyping: false)
@@ -292,14 +308,18 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     @objc
     fileprivate func shouldClearTypingForConversation(note: NotificationInContext) {
         guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
-        else { return }
+        else {
+            return
+        }
 
         add(conversation: conversation, isTyping: false, clearIsTyping: true)
     }
 
     fileprivate func add(conversation: ZMConversation, isTyping: Bool, clearIsTyping: Bool) {
         guard conversation.remoteIdentifier != nil
-        else { return }
+        else {
+            return
+        }
 
         managedObjectContext.performGroupedBlock {
             if clearIsTyping {

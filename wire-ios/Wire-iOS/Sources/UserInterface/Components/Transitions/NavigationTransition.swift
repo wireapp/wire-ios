@@ -22,7 +22,9 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
     // MARK: Lifecycle
 
     init?(operation: UINavigationController.Operation) {
-        guard operation == .push || operation == .pop else { return nil }
+        guard operation == .push || operation == .pop else {
+            return nil
+        }
         self.operation = operation
 
         super.init()

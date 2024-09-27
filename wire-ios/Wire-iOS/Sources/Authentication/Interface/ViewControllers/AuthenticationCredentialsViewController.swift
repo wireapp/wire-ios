@@ -440,7 +440,9 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     private func addCustomBackendViewIfNeeded(to uiStackView: UIStackView, space: CGFloat) {
-        guard let infoView = customBackendInfo() else { return }
+        guard let infoView = customBackendInfo() else {
+            return
+        }
         uiStackView.addArrangedSubview(infoView)
         uiStackView.setCustomSpacing(space, after: infoView)
     }
@@ -457,7 +459,9 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     private func updatePrefilledCredentials() {
-        guard let prefilledCredentials else { return }
+        guard let prefilledCredentials else {
+            return
+        }
         emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
     }
 
@@ -499,7 +503,9 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     private func addProxyCredentialsSection() {
-        guard proxyCredentialsViewController.parent == nil else { return }
+        guard proxyCredentialsViewController.parent == nil else {
+            return
+        }
         addChild(proxyCredentialsViewController)
         contentStack.addArrangedSubview(proxyCredentialsViewController.view)
         proxyCredentialsViewController.didMove(toParent: self)

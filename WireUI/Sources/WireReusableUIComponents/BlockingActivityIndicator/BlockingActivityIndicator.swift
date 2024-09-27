@@ -127,7 +127,9 @@ extension UIView {
     }
 
     fileprivate func unblockAndStopAnimatingIfNeeded(blockingActivityIndicator reference: BlockingActivityIndicator?) {
-        guard var state = blockingActivityIndicatorState else { return }
+        guard var state = blockingActivityIndicatorState else {
+            return
+        }
 
         state.weakReferences = state.weakReferences.filter { $0.reference != nil && $0.reference !== reference }
         if state.weakReferences.isEmpty {

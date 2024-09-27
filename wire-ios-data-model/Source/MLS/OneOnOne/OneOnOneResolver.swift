@@ -141,7 +141,9 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         otherUser: ZMUser,
         conversation: ZMConversation
     ) {
-        if conversation.isForcedReadOnly { return }
+        if conversation.isForcedReadOnly {
+            return
+        }
 
         if !selfUser.supportedProtocols.contains(.mls) {
             conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)

@@ -45,7 +45,9 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
         countlyAppKey: String,
         serverURL: URL
     ) {
-        guard !countlyAppKey.isEmpty else { return nil }
+        guard !countlyAppKey.isEmpty else {
+            return nil
+        }
 
         self.countlyInstanceType = countlyInstanceType
         self.appKey = countlyAppKey
@@ -83,7 +85,9 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
     weak var selfUser: UserType? {
         didSet {
             endCountly()
-            guard let user = selfUser as? ZMUser else { return }
+            guard let user = selfUser as? ZMUser else {
+                return
+            }
             startCountly(for: user)
         }
     }
@@ -142,7 +146,9 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
 
     private var isRecording = false {
         didSet {
-            guard isRecording != oldValue else { return }
+            guard isRecording != oldValue else {
+                return
+            }
 
             if isRecording {
                 updateTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in self.updateSession() }
@@ -221,7 +227,9 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
     }
 
     private func updateSession() {
-        guard isRecording else { return }
+        guard isRecording else {
+            return
+        }
         Countly.sharedInstance().updateSession()
     }
 
@@ -287,12 +295,16 @@ extension AnalyticsCountlyProvider: ApplicationStateObserving {
     }
 
     func applicationDidBecomeActive() {
-        guard didInitializeCountly else { return }
+        guard didInitializeCountly else {
+            return
+        }
         beginSession()
     }
 
     func applicationDidEnterBackground() {
-        guard isRecording else { return }
+        guard isRecording else {
+            return
+        }
         endSession()
     }
 }

@@ -32,7 +32,9 @@ struct CacheFileRelocator {
         let oldCacheLocation = fm.cachesURLForAccount(with: nil, in: sharedContainerURL)
 
         guard let files = (try? fm.contentsOfDirectory(atPath: oldCacheLocation.path))
-        else { return }
+        else {
+            return
+        }
 
         try! fm.createAndProtectDirectory(at: newCacheLocation)
         // swiftlint:disable:next todo_requires_jira_link

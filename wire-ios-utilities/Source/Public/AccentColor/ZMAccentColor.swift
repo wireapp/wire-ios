@@ -56,7 +56,9 @@ public final class ZMAccentColor: NSObject {
     }
 
     public static func from(rawValue: ZMAccentColorRawValue) -> ZMAccentColor? {
-        guard let accentColor = AccentColor(rawValue: rawValue) else { return nil }
+        guard let accentColor = AccentColor(rawValue: rawValue) else {
+            return nil
+        }
         return ZMAccentColor.mapping[accentColor]!
     }
 

@@ -136,7 +136,9 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     public var legacyAppLockConfig: AppLockController.LegacyConfig?
 
     public static func load(from URL: URL) -> SessionManagerConfiguration? {
-        guard let data = try? Data(contentsOf: URL) else { return nil }
+        guard let data = try? Data(contentsOf: URL) else {
+            return nil
+        }
 
         let decoder = JSONDecoder()
 

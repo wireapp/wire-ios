@@ -59,7 +59,9 @@ final class MapViewController: UIViewController {
     }
 
     func zoomToUserLocation(animated: Bool) {
-        guard let coordinate = mapView.userLocation.location?.coordinate else { return }
+        guard let coordinate = mapView.userLocation.location?.coordinate else {
+            return
+        }
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
         mapView.setRegion(region, animated: animated)
     }

@@ -52,7 +52,9 @@ extension UIPasteboard {
 
     func setMediaAsset(_ image: MediaAsset?) {
         guard let image,
-              let data = image.imageData else { return }
+              let data = image.imageData else {
+            return
+        }
 
         UIPasteboard.general.setData(data, forPasteboardType: pasteboardType(forMediaAsset: image))
     }

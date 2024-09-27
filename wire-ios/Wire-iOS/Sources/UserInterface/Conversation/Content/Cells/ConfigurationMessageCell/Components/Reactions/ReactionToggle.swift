@@ -82,7 +82,9 @@ final class ReactionToggle: UIControl {
 
     var isToggled: Bool {
         didSet {
-            guard oldValue != isToggled else { return }
+            guard oldValue != isToggled else {
+                return
+            }
             updateAppearance()
         }
     }

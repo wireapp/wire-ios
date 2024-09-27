@@ -80,7 +80,9 @@ final class ConversationListContentController: UICollectionViewController {
 
         // viewWillAppear: can get called also when dismissing the controller above this one.
         // The self user might not be there anymore in some cases, e.g. when logging out
-        guard SelfUser.provider != nil else { return }
+        guard SelfUser.provider != nil else {
+            return
+        }
 
         updateVisibleCells()
 
@@ -155,7 +157,9 @@ final class ConversationListContentController: UICollectionViewController {
 
     /// ensures that the list selection state matches that of the model.
     func ensureCurrentSelection() {
-        guard let selectedItem = listViewModel.selectedItem else { return }
+        guard let selectedItem = listViewModel.selectedItem else {
+            return
+        }
 
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems
 
@@ -241,7 +245,9 @@ final class ConversationListContentController: UICollectionViewController {
         animator: UIContextMenuInteractionCommitAnimating
     ) {
         guard let destinationViewController = animator.previewViewController as? ConversationPreviewViewController
-        else { return }
+        else {
+            return
+        }
 
         animator.addAnimations { [weak self] in
             self?.openConversation(conversationListItem: destinationViewController.conversation)
@@ -515,7 +521,9 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
         _ previewingContext: UIViewControllerPreviewing,
         commit viewControllerToCommit: UIViewController
     ) {
-        guard let previewViewController = viewControllerToCommit as? ConversationPreviewViewController else { return }
+        guard let previewViewController = viewControllerToCommit as? ConversationPreviewViewController else {
+            return
+        }
 
         openConversation(conversationListItem: previewViewController.conversation)
     }
@@ -563,7 +571,9 @@ extension ConversationListContentController: ConversationListCellDelegate {
     }
 
     func conversationListCellJoinCallButtonTapped(_ cell: ConversationListCell) {
-        guard let conversation = cell.conversation as? ZMConversation else { return }
+        guard let conversation = cell.conversation as? ZMConversation else {
+            return
+        }
 
         startCallController = ConversationCallController(conversation: conversation, target: self)
         startCallController?.joinCall()

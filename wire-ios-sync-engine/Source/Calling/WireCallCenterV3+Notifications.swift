@@ -500,7 +500,9 @@ extension WireCallCenterV3 {
                 ] as? WireCallCenterCallParticipantNotification,
                 let observer,
                 note.conversationId == conversation.avsIdentifier
-            else { return }
+            else {
+                return
+            }
 
             observer.callParticipantsDidChange(conversation: conversation, participants: note.participants)
         }
@@ -536,7 +538,9 @@ extension WireCallCenterV3 {
                     domain: note.userId.domain,
                     in: context
                 )
-            else { return }
+            else {
+                return
+            }
             observer.voiceGainDidChange(forParticipant: user, volume: note.volume)
         }
     }
@@ -593,7 +597,9 @@ extension WireCallCenterV3 {
             guard let note = note
                 .userInfo[WireCallCenterMutedNotification.userInfoKey] as? WireCallCenterMutedNotification,
                 let observer
-            else { return }
+            else {
+                return
+            }
             observer.callCenterDidChange(muted: note.muted)
         }
     }

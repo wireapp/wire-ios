@@ -24,7 +24,9 @@ final class UserClientPayloadProcessor {
         for user: ZMUser,
         selfClient: UserClient
     ) async {
-        guard let context = user.managedObjectContext else { return }
+        guard let context = user.managedObjectContext else {
+            return
+        }
 
         let (clients, deletedClients) = await context.perform {
             let clients = payloads.map {

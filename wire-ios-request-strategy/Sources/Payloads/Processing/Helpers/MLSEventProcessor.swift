@@ -235,7 +235,9 @@ public class MLSEventProcessor: MLSEventProcessing {
         guard let (conversation, groupID) = await context.perform({
             let conversation = ZMConversation.fetch(with: conversationID, in: context)
             return (conversation, conversation?.mlsGroupID) as? (ZMConversation, MLSGroupID)
-        }) else { return }
+        }) else {
+            return
+        }
 
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
         await mlsService.uploadKeyPackagesIfNeeded()
@@ -312,7 +314,9 @@ public class MLSEventProcessor: MLSEventProcessing {
             )
         }
 
-        guard let userID else { return }
+        guard let userID else {
+            return
+        }
 
         do {
             try await oneOneOneResolver.resolveOneOnOneConversation(with: userID, in: context)

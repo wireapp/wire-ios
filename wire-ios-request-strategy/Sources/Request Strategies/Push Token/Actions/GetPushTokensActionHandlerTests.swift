@@ -71,7 +71,9 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         var receivedTokens = [PushToken]()
 
         action.onResult { result in
-            guard case let .success(tokens) = result else { return }
+            guard case let .success(tokens) = result else {
+                return
+            }
             receivedTokens = tokens
             didSucceed.fulfill()
         }
@@ -89,7 +91,9 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then
-        guard receivedTokens.count == 2 else { return XCTFail("receivedTokens.count != 2") }
+        guard receivedTokens.count == 2 else {
+            return XCTFail("receivedTokens.count != 2")
+        }
 
         let apns = PushToken(
             deviceToken: Data([0x01, 0x01, 0x01]),
@@ -117,7 +121,9 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
-            guard case .failure(.malformedResponse) = result else { return }
+            guard case .failure(.malformedResponse) = result else {
+                return
+            }
             didFail.fulfill()
         }
 
@@ -137,7 +143,9 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
-            guard case .failure(.unknown(status: 999)) = result else { return }
+            guard case .failure(.unknown(status: 999)) = result else {
+                return
+            }
             didFail.fulfill()
         }
 

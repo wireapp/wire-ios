@@ -27,7 +27,9 @@ extension ZMSLog {
         logQueue.sync {
             if recordingToken == nil {
                 recordingToken = self.nonLockingAddEntryHook(logHook: { level, tag, entry, isSafe in
-                    guard isInternal || isSafe else { return }
+                    guard isInternal || isSafe else {
+                        return
+                    }
                     let tagString = tag.flatMap { "[\($0)] " } ?? ""
                     let date = dateFormatter.string(from: entry.timestamp)
                     // Add newline if it does not have it yet
@@ -43,7 +45,9 @@ extension ZMSLog {
     public static func stopRecording() {
         var tokenToRemove: LogHookToken?
         logQueue.sync {
-            guard let token = recordingToken else { return }
+            guard let token = recordingToken else {
+                return
+            }
             tokenToRemove = token
             ZMSLog.clearLogs()
             recordingToken = nil

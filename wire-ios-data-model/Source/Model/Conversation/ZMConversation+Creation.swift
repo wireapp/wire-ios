@@ -66,7 +66,11 @@ extension ZMConversation {
             created.pointee = true
             let conversation = ZMConversation.insertNewObject(in: context)
             conversation.remoteIdentifier = remoteIdentifier
-            conversation.domain = if let domain, !domain.isEmpty { domain } else { .none }
+            conversation.domain = if let domain, !domain.isEmpty {
+                domain
+            } else {
+                .none
+            }
             return conversation
         }
     }

@@ -83,7 +83,9 @@ final class AvailabilityTests: IntegrationTest {
         // then
         let request = mockTransportSession.receivedRequests().last!
         guard let data = request.binaryData,
-              let message = try? Proteus_NewOtrMessage(serializedData: data) else { return XCTFail() }
+              let message = try? Proteus_NewOtrMessage(serializedData: data) else {
+            return XCTFail()
+        }
         let connectedAndTeamMemberUUIDs = [user1, user2, user3, user4].compactMap { user(for: $0)?.remoteIdentifier }
         let recipientsUUIDs = message.recipients.compactMap { UUID(data: $0.user.uuid) }
 

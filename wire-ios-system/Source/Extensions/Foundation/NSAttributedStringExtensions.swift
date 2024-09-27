@@ -21,7 +21,9 @@ import Foundation
 extension Sequence where Iterator.Element == NSAttributedString {
     public func joined(separator: NSAttributedString? = .none) -> NSAttributedString {
         let result = Array(self)
-        guard result.count > 1 else { return result.first ?? .init() }
+        guard result.count > 1 else {
+            return result.first ?? .init()
+        }
 
         let string = NSMutableAttributedString(attributedString: result[0])
         for i in result.indices[1...] {

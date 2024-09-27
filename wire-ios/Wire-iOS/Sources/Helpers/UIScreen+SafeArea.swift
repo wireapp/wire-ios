@@ -31,7 +31,9 @@ extension UIScreen {
 
     @available(*, deprecated, message: "Will be removed")
     static var hasBottomInset: Bool {
-        guard let window = AppDelegate.shared.mainWindow else { return false }
+        guard let window = AppDelegate.shared.mainWindow else {
+            return false
+        }
         let insets = window.safeAreaInsets
 
         return insets.bottom > 0
@@ -41,7 +43,9 @@ extension UIScreen {
     static var hasNotch: Bool {
         // On iOS12 insets.top == 20 on device without notch.
         // insets.top == 44 on device with notch.
-        guard let window = AppDelegate.shared.mainWindow else { return false }
+        guard let window = AppDelegate.shared.mainWindow else {
+            return false
+        }
         let insets = window.safeAreaInsets
 
         return insets.top > 20 || insets.bottom > 0

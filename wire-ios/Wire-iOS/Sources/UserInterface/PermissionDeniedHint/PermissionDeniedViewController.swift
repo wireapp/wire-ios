@@ -54,7 +54,9 @@ final class PermissionDeniedViewController: UIViewController {
     override func updateViewConstraints() {
         super.updateViewConstraints()
 
-        guard !initialConstraintsCreated else { return }
+        guard !initialConstraintsCreated else {
+            return
+        }
 
         initialConstraintsCreated = true
 

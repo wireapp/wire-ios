@@ -46,7 +46,9 @@ extension ZMConversation {
         }
 
         warnAboutSlowConnection { abortCall in
-            guard !abortCall else { return }
+            guard !abortCall else {
+                return
+            }
             self.joinVoiceChannel(video: true)
         }
     }
@@ -59,7 +61,9 @@ extension ZMConversation {
     }
 
     func joinVoiceChannel(video: Bool) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = ZMUserSession.shared() else {
+            return
+        }
 
         let onGranted: (_ granted: Bool) -> Void = { granted in
             if granted {
@@ -152,7 +156,9 @@ extension ZMConversation {
 
         let controller = UIAlertController
             .ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { confirmed in
-                guard confirmed else { return }
+                guard confirmed else {
+                    return
+                }
                 self.endAllCallsExceptIncoming(completion: completion)
             }
 
@@ -161,7 +167,9 @@ extension ZMConversation {
 
     /// Ends all the active calls, except the conversation's incoming call, if any.
     func endAllCallsExceptIncoming(completion: @escaping () -> Void) {
-        guard let sharedSession = ZMUserSession.shared() else { return }
+        guard let sharedSession = ZMUserSession.shared() else {
+            return
+        }
         sharedSession.callCenter?.activeCallConversations(in: sharedSession)
             .filter { $0.remoteIdentifier != self.remoteIdentifier }
             // The completion handler could potentially be called multiple times

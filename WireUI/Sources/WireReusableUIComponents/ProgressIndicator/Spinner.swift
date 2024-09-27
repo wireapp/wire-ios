@@ -44,7 +44,9 @@ public final class Spinner: UIView {
 
     public var isAnimating = false {
         didSet {
-            guard oldValue != isAnimating else { return }
+            guard oldValue != isAnimating else {
+                return
+            }
 
             if isAnimating {
                 startAnimationInternal()

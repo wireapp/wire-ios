@@ -82,7 +82,9 @@ public final class APSSignalingKeysStore: NSObject {
     static func keysStoredInKeyChain() -> SignalingKeys? {
         guard let verificationKey = ZMKeychain.data(forAccount: verificationKeyAccountName),
               let decryptionKey = ZMKeychain.data(forAccount: decryptionKeyAccountName)
-        else { return nil }
+        else {
+            return nil
+        }
 
         return SignalingKeys(verificationKey: verificationKey, decryptionKey: decryptionKey)
     }

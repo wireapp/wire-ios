@@ -87,7 +87,9 @@ final class MessageToolboxView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard let message = dataSource?.message else { return }
+        guard let message = dataSource?.message else {
+            return
+        }
         guard !bounds.equalTo(previousLayoutBounds) else {
             return
         }
@@ -122,8 +124,12 @@ final class MessageToolboxView: UIView {
     func startCountdownTimer() {
         stopCountdownTimer()
 
-        guard let message = dataSource?.message else { return }
-        guard message.isEphemeral, !message.hasBeenDeleted, !message.isObfuscated else { return }
+        guard let message = dataSource?.message else {
+            return
+        }
+        guard message.isEphemeral, !message.hasBeenDeleted, !message.isObfuscated else {
+            return
+        }
 
         timestampTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.reloadContent(animated: false)
@@ -257,7 +263,9 @@ final class MessageToolboxView: UIView {
     }
 
     private func reloadContent(animated: Bool) {
-        guard let dataSource else { return }
+        guard let dataSource else {
+            return
+        }
 
         // Do not reload the content if it didn't change.
         guard dataSource.shouldUpdateContent(
@@ -329,7 +337,9 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
     }
 
     func preferredDetailsDisplayMode() -> MessageDetailsDisplayMode? {
-        guard let dataSource else { return nil }
+        guard let dataSource else {
+            return nil
+        }
 
         switch dataSource.content {
         case .sendFailure:

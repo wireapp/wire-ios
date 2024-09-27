@@ -43,7 +43,9 @@ final class EphemeralTimeoutFormatter {
                 return nil
             }
 
-            guard !hourString.hasSuffix("0:00") else { return dayString }
+            guard !hourString.hasSuffix("0:00") else {
+                return dayString
+            }
 
             var hourStringWithoutDay = ""
 

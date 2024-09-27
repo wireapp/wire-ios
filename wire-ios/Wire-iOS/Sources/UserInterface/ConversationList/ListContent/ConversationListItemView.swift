@@ -86,7 +86,9 @@ final class ConversationListItemView: UIView {
 
     var visualDrawerOffset: CGFloat = 0 {
         didSet {
-            guard oldValue != visualDrawerOffset else { return }
+            guard oldValue != visualDrawerOffset else {
+                return
+            }
 
             NotificationCenter.default.post(name: .conversationListItemDidScroll, object: self)
         }

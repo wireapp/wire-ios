@@ -59,7 +59,9 @@ class BaseCompositeMessageTests: BaseZMMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.append(message)
 
-        guard addSender else { return conversation }
+        guard addSender else {
+            return conversation
+        }
 
         let participantRole = ParticipantRole.insertNewObject(in: uiMOC)
         participantRole.user = user

@@ -20,7 +20,9 @@ import Foundation
 
 extension AnalyticsType {
     public func tagActionOnPushNotification(conversation: ZMConversation?, action: ConversationMediaAction) {
-        guard let conversation else { return }
+        guard let conversation else {
+            return
+        }
         var attributes = conversation.ephemeralTrackingAttributes
         attributes["action"] = action.attributeValue
         attributes["conversation_type"] = conversation.conversationType.analyticsType

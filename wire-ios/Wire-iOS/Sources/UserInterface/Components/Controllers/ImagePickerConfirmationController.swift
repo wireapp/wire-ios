@@ -21,7 +21,9 @@ import UIKit
 extension UIImage {
     /// Fix the pngData method ignores orientation issue
     var flattened: UIImage {
-        if imageOrientation == .up { return self }
+        if imageOrientation == .up {
+            return self
+        }
 
         return UIGraphicsImageRenderer(size: size, format: imageRendererFormat).image { _ in draw(at: .zero) }
     }

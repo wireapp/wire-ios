@@ -83,7 +83,9 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
         ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? ParticipantRoleChangeInfo
-            else { return }
+            else {
+                return
+            }
 
             observer.participantRoleDidChange(changeInfo)
         }

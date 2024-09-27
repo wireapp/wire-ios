@@ -70,7 +70,9 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
     // MARK: - ZMSingleRequestTranscoder
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard sync == requestSync, let identifier = identifierProvider.nextIdentifierToDelete() else { return nil }
+        guard sync == requestSync, let identifier = identifierProvider.nextIdentifierToDelete() else {
+            return nil
+        }
         return AssetRequestFactory
             .request(for: identifier, on: managedObjectContext, apiVersion: apiVersion) { [weak self] response in
                 self?.handle(response: response, for: identifier)

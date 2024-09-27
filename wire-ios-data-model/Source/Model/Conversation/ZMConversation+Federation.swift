@@ -23,7 +23,9 @@ extension ZMConversation {
         guard
             let domain,
             let userDomain = user.domain
-        else { return false }
+        else {
+            return false
+        }
 
         return domain != userDomain
     }

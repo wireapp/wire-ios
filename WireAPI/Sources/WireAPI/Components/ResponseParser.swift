@@ -48,7 +48,9 @@ struct ResponseParser<Success> {
 
         var copy = self
         copy.parseBlocks.append { actualCode, data in
-            guard actualCode == code.rawValue, let data else { return nil }
+            guard actualCode == code.rawValue, let data else {
+                return nil
+            }
             let payload = try decoder.decode(Payload.self, from: data)
             return payload.toAPIModel()
         }
@@ -62,7 +64,9 @@ struct ResponseParser<Success> {
 
         var copy = self
         copy.parseBlocks.append { actualCode, data in
-            guard actualCode == code, data == nil else { return nil }
+            guard actualCode == code, data == nil else {
+                return nil
+            }
             return ()
         }
         return copy
@@ -75,9 +79,13 @@ struct ResponseParser<Success> {
     ) -> ResponseParser<Success> {
         var copy = self
         copy.parseBlocks.append { _, data in
-            guard let data else { return nil }
+            guard let data else {
+                return nil
+            }
             let failure = try decoder.decode(FailureResponse.self, from: data)
-            guard failure.code == code.rawValue, failure.label == label else { return nil }
+            guard failure.code == code.rawValue, failure.label == label else {
+                return nil
+            }
             throw error
         }
         return copy

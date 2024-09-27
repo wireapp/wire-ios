@@ -53,7 +53,9 @@ protocol NetworkStatusViewDelegate: AnyObject {
 
 extension NetworkStatusViewDelegate where Self: UIViewController {
     func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
-        guard shouldAnimateNetworkStatusView else { return }
+        guard shouldAnimateNetworkStatusView else {
+            return
+        }
 
         if animated {
             UIView.animate(

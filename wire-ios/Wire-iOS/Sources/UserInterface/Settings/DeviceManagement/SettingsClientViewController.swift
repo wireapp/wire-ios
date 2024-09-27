@@ -170,7 +170,9 @@ final class SettingsClientViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let clientSection = ClientSection(rawValue: section) else { return 0 }
+        guard let clientSection = ClientSection(rawValue: section) else {
+            return 0
+        }
         switch clientSection {
         case .info:
             return 1
@@ -192,7 +194,9 @@ final class SettingsClientViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let clientSection = ClientSection(rawValue: (indexPath as NSIndexPath).section)
-        else { return UITableViewCell() }
+        else {
+            return UITableViewCell()
+        }
 
         switch clientSection {
         case .info:
@@ -265,7 +269,9 @@ final class SettingsClientViewController: UIViewController,
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        guard let clientSection = ClientSection(rawValue: (indexPath as NSIndexPath).section) else { return }
+        guard let clientSection = ClientSection(rawValue: (indexPath as NSIndexPath).section) else {
+            return
+        }
 
         switch clientSection {
         case .resetSession:
@@ -296,7 +302,9 @@ final class SettingsClientViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        guard let clientSection = ClientSection(rawValue: section) else { return .none }
+        guard let clientSection = ClientSection(rawValue: section) else {
+            return .none
+        }
         switch clientSection {
         case .fingerprintAndVerify:
             return L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle
@@ -394,7 +402,9 @@ final class SettingsClientViewController: UIViewController,
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     private func setupNavigationTitle() {
-        guard let deviceClass = userClient.deviceClass?.localizedDescription else { return }
+        guard let deviceClass = userClient.deviceClass?.localizedDescription else {
+            return
+        }
         setupNavigationBarTitle(deviceClass.capitalized)
     }
 

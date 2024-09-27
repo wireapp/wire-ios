@@ -68,10 +68,14 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     var members = [UserType]()
 
     var indexPathOfFirstSelectedParticipant: IndexPath? {
-        guard let user = selectedParticipants.first as? ZMUser else { return nil }
+        guard let user = selectedParticipants.first as? ZMUser else {
+            return nil
+        }
         guard let row = (internalParticipants.firstIndex {
             ($0 as? ZMUser)?.remoteIdentifier == user.remoteIdentifier
-        }) else { return nil }
+        }) else {
+            return nil
+        }
         let section = user.isGroupAdmin(in: conversation) ? 0 : 1
         return IndexPath(row: row, section: section)
     }
@@ -84,7 +88,9 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     }
 
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
-        guard changeInfo.participantsChanged else { return }
+        guard changeInfo.participantsChanged else {
+            return
+        }
         internalParticipants = conversation.sortedOtherParticipants
         computeVisibleParticipants()
     }
@@ -145,8 +151,12 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         Task { @MainActor in
             let participants = conversation.sortedOtherParticipants
             for user in participants {
-                guard let user = user as? ZMUser else { continue }
-                guard let conversation = conversation as? ZMConversation else { continue }
+                guard let user = user as? ZMUser else {
+                    continue
+                }
+                guard let conversation = conversation as? ZMConversation else {
+                    continue
+                }
                 do {
                     let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
                         conversation: conversation,

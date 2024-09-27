@@ -55,7 +55,11 @@ public final class ClientMessageRequestFactory: NSObject {
             )
 
         case .v1, .v2, .v3, .v4, .v5, .v6:
-            let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            let domain = if let domain, !domain.isEmpty {
+                domain
+            } else {
+                BackendInfo.domain
+            }
             guard let domain else {
                 zmLog.error("could not create request: missing domain")
                 return nil
@@ -97,7 +101,9 @@ public final class ClientMessageRequestFactory: NSObject {
         inConversation conversationId: UUID,
         apiVersion: APIVersion
     ) -> ZMTransportRequest {
-        guard apiVersion < .v2 else { fatalError("Endpoint not availale in API v2") }
+        guard apiVersion < .v2 else {
+            fatalError("Endpoint not availale in API v2")
+        }
         let path = "/" + ["conversations", conversationId.transportString(), "otr", "assets", assetId]
             .joined(separator: "/")
         let request = ZMTransportRequest.imageGet(fromPath: path, apiVersion: apiVersion.rawValue)
@@ -118,9 +124,13 @@ extension ClientMessageRequestFactory {
         _ message: ZMAssetClientMessage,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-        guard apiVersion < .v2 else { fatalError("Endpoint not availale in API v2") }
+        guard apiVersion < .v2 else {
+            fatalError("Endpoint not availale in API v2")
+        }
         guard let conversation = message.conversation,
-              let identifier = conversation.remoteIdentifier else { return nil }
+              let identifier = conversation.remoteIdentifier else {
+            return nil
+        }
         let path = "/conversations/\(identifier.transportString())/otr/assets/\(message.assetId!.transportString())"
 
         let request = ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)

@@ -52,7 +52,9 @@ public final class UserInfo: NSObject {
     public let cookieData: Data
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? UserInfo else { return false }
+        guard let other = object as? UserInfo else {
+            return false
+        }
         return other.cookieData == cookieData && other.identifier == identifier
     }
 }
@@ -168,7 +170,9 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
             return
         }
         guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init)
-        else { preconditionFailure() }
+        else {
+            preconditionFailure()
+        }
         urlRequest.configure(with: request)
         WireLogger.network.log(request: urlRequest)
 
@@ -205,7 +209,9 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// when the amount of running requests is below the maximum after decrementing.
     private func decrement(notify: Bool) {
         let newCount = numberOfRunningRequests.decrement()
-        guard newCount < maximumNumberOfRequests, notify else { return }
+        guard newCount < maximumNumberOfRequests, notify else {
+            return
+        }
         ZMTransportSession.notifyNewRequestsAvailable(self)
     }
 
@@ -229,10 +235,12 @@ extension UnauthenticatedTransportSession: URLSessionDelegate {
             // It's safe to force-unwrap protectionSpace.serverTrust because according to docs it has to be present with
             // this authentication method
             guard environment.verifyServerTrust(trust: protectionSpace.serverTrust!, host: protectionSpace.host)
-            else { return completionHandler(
-                .cancelAuthenticationChallenge,
-                nil
-            ) }
+            else {
+                return completionHandler(
+                    .cancelAuthenticationChallenge,
+                    nil
+                )
+            }
         }
         completionHandler(.performDefaultHandling, challenge.proposedCredential)
     }
@@ -274,7 +282,9 @@ extension ZMTransportResponse {
     /// Extracts the wire cookie data from the response.
     /// - returns: The encrypted cookie data (using the cookies key) if there is any.
     private func extractCookieData() -> Data? {
-        guard let response = rawResponse else { return nil }
+        guard let response = rawResponse else {
+            return nil
+        }
         let cookies = HTTPCookie.cookies(
             withResponseHeaderFields: response.allHeaderFields as! [String: String],
             for: response.url!
@@ -283,14 +293,18 @@ extension ZMTransportResponse {
     }
 
     private func extractUserIdentifier() -> UUID? {
-        guard let data = payload as? [String: Any] else { return nil }
+        guard let data = payload as? [String: Any] else {
+            return nil
+        }
         return (data[UserKey.user.rawValue] as? String).flatMap(UUID.init(transportString:))
             ?? (data[UserKey.id.rawValue] as? String).flatMap(UUID.init(transportString:))
     }
 
     @objc
     public func extractUserInfo() -> UserInfo? {
-        guard let data = extractCookieData(), let id = extractUserIdentifier() else { return nil }
+        guard let data = extractCookieData(), let id = extractUserIdentifier() else {
+            return nil
+        }
         return .init(identifier: id, cookieData: data)
     }
 }
@@ -307,9 +321,13 @@ extension HTTPCookie {
     }
 
     fileprivate static func extractData(from cookies: [HTTPCookie]) -> Data? {
-        guard !cookies.isEmpty else { return nil }
+        guard !cookies.isEmpty else {
+            return nil
+        }
         let properties = cookies.compactMap(\.properties)
-        guard let name = properties.first?[.name] as? String, name == CookieKey.zetaId.rawValue else { return nil }
+        guard let name = properties.first?[.name] as? String, name == CookieKey.zetaId.rawValue else {
+            return nil
+        }
 
         let archiver = NSKeyedArchiver(requiringSecureCoding: true)
         archiver.encode(properties, forKey: CookieKey.properties.rawValue)

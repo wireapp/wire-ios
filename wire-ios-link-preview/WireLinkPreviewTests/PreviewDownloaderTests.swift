@@ -73,7 +73,9 @@ class PreviewDownloaderTests: XCTestCase {
         sut.processReceivedData(firstBytes, forTask: mockDataTask, withIdentifier: taskID)
 
         // then
-        guard let container = sut.containerByTaskID[taskID] else { return XCTFail("container is nil") }
+        guard let container = sut.containerByTaskID[taskID] else {
+            return XCTFail("container is nil")
+        }
         XCTAssertEqual(container.bytes, firstBytes)
 
         // when

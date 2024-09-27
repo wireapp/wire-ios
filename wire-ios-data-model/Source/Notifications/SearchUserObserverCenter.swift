@@ -75,7 +75,9 @@ public class SearchUserSnapshot {
     /// Updates the snapshot values for the observableKeys keys,
     /// returns the changes keys if keys changed or nil when nothing changed
     func updateAndNotify() {
-        guard let searchUser else { return }
+        guard let searchUser else {
+            return
+        }
         let newSnapshotValues = SearchUserSnapshot.createSnapshots(searchUser: searchUser)
 
         var changedKeys = [String]()
@@ -97,7 +99,9 @@ public class SearchUserSnapshot {
         guard !changedKeys.isEmpty,
               let searchUser,
               let moc = managedObjectContext
-        else { return }
+        else {
+            return
+        }
 
         let userChange = UserChangeInfo(object: searchUser)
         userChange.changedKeys = Set(changedKeys)
@@ -160,7 +164,9 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
     }
 
     public func objectsDidChange(changes: [ClassIdentifier: [ObjectChangeInfo]]) {
-        guard let userChanges = changes[ZMUser.entityName()] as? [UserChangeInfo] else { return }
+        guard let userChanges = changes[ZMUser.entityName()] as? [UserChangeInfo] else {
+            return
+        }
         userChanges.forEach { usersDidChange(info: $0) }
     }
 
@@ -168,7 +174,9 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
     public func notifyUpdatedSearchUser(_ searchUser: ZMSearchUser) {
         guard let remoteID = searchUser.remoteIdentifier,
               let snapshot = snapshots[remoteID]
-        else { return }
+        else {
+            return
+        }
 
         snapshot.updateAndNotify()
     }
@@ -190,7 +198,9 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
 
     /// Matches the userChangeInfo with the searchUser snapshots and updates those if needed
     func usersDidChange(info: UserChangeInfo) {
-        guard !snapshots.isEmpty else { return }
+        guard !snapshots.isEmpty else {
+            return
+        }
 
         guard info.nameChanged || info.imageMediumDataChanged || info.imageSmallProfileDataChanged || info
             .connectionStateChanged,

@@ -29,7 +29,9 @@ extension ConversationInputBarViewController {
     }
 
     private func showLocationSelection(from sender: IconButton) {
-        guard let parentViewController = parent else { return }
+        guard let parentViewController = parent else {
+            return
+        }
 
         let locationSelectionViewController = LocationSelectionViewController()
         locationSelectionViewController.modalPresentationStyle = .popover
@@ -52,7 +54,9 @@ extension ConversationInputBarViewController: LocationSelectionViewControllerDel
         _ viewController: LocationSelectionViewController,
         didSelectLocationWithData locationData: LocationData
     ) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         userSession.enqueue {
             do {

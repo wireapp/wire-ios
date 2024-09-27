@@ -62,7 +62,9 @@ final class Switch: UISwitch, Stylable {
 
     override var isOn: Bool {
         didSet {
-            guard isOn != oldValue else { return }
+            guard isOn != oldValue else {
+                return
+            }
             valueDidChange()
         }
     }

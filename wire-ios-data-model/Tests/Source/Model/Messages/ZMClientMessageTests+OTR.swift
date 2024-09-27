@@ -131,7 +131,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         }
         await syncMOC.perform {
             guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user })
-            else { return XCTFail() }
+            else {
+                return XCTFail()
+            }
 
             XCTAssertEqual(userEntry.clients.count, 1)
             XCTAssertEqual(
@@ -166,7 +168,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
                 try? $0.merge(serializedData: dataAndStrategy.data)
             }
             guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user })
-            else { return XCTFail() }
+            else {
+                return XCTFail()
+            }
 
             XCTAssertEqual(userEntry.clients.count, 1)
             XCTAssertEqual(
@@ -238,7 +242,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         }
 
         // When
-        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail() }
+        guard let payloadAndStrategy = await message.encryptForTransport() else {
+            return XCTFail()
+        }
 
         // Then
         switch payloadAndStrategy.strategy {
@@ -285,7 +291,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         }
 
         // When
-        guard let payloadAndStrategy = await sut?.encryptForTransport() else { return XCTFail() }
+        guard let payloadAndStrategy = await sut?.encryptForTransport() else {
+            return XCTFail()
+        }
 
         // Then
         await syncMOC.perform {
@@ -345,7 +353,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
         // Then
         await syncMOC.perform {
-            guard let payloadAndStrategy = payload else { return XCTFail() }
+            guard let payloadAndStrategy = payload else {
+                return XCTFail()
+            }
             switch payloadAndStrategy.strategy {
             case let .ignoreAllMissingClientsNotFromUsers(users: users):
                 XCTAssertEqual(users, [self.syncSelfUser])
@@ -371,7 +381,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         }
 
         // When
-        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail() }
+        guard let payloadAndStrategy = await message.encryptForTransport() else {
+            return XCTFail()
+        }
 
         // Then
         await syncMOC.perform {
@@ -399,7 +411,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         }
 
         // When
-        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail() }
+        guard let payloadAndStrategy = await message.encryptForTransport() else {
+            return XCTFail()
+        }
 
         await syncMOC.perform {
             // Then

@@ -26,13 +26,17 @@ extension ZMConversation {
     }
 
     public var typingUsers: [UserType] {
-        guard let users = managedObjectContext?.typingUsers?.typingUsers(in: self) else { return [] }
+        guard let users = managedObjectContext?.typingUsers?.typingUsers(in: self) else {
+            return []
+        }
         return Array(users)
     }
 
     /// Strictly for UI tests. Remove once mockable conversation abstraction exists.
     public func setTypingUsers(_ users: [UserType]) {
-        guard let typingUsers = managedObjectContext?.typingUsers else { return }
+        guard let typingUsers = managedObjectContext?.typingUsers else {
+            return
+        }
         let zmUsers = users.compactMap { $0 as? ZMUser }
         typingUsers.update(typingUsers: Set(zmUsers), in: self)
     }

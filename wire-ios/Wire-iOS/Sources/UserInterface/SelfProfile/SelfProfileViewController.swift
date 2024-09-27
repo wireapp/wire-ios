@@ -222,7 +222,9 @@ final class SelfProfileViewController: UIViewController {
 
     @objc
     private func userDidTapProfileImage(_: UIGestureRecognizer) {
-        guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
+        guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else {
+            return
+        }
 
         let alertController = profileImagePicker.selectProfileImage()
         if let popoverPresentationController = alertController.popoverPresentationController {
@@ -240,7 +242,9 @@ final class SelfProfileViewController: UIViewController {
 
 extension SelfProfileViewController: AccountSelectorViewDelegate {
     func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
-        guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
+        guard SessionManager.shared?.accountManager.selectedAccount != account else {
+            return
+        }
 
         presentingViewController?.dismiss(animated: true) {
             AppDelegate.shared.mediaPlaybackManager?

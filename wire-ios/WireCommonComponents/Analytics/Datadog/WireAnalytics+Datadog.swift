@@ -45,7 +45,9 @@ extension WireAnalytics {
         // MARK: Internal
 
         static var enableOnlyOnce = OnceOnlyThreadSafeFunction {
-            guard let shared else { return }
+            guard let shared else {
+                return
+            }
 
             shared.enable()
             WireLogger.addLogger(shared)

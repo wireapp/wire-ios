@@ -52,7 +52,9 @@ extension ZMImagePreprocessingTracker {
             ZMLinkPreviewState.downloaded.rawValue
         )
         let needsProccessing = NSPredicate { object, _ in
-            guard let message = object as? ZMClientMessage else { return false }
+            guard let message = object as? ZMClientMessage else {
+                return false
+            }
             return managedObjectContext.zm_fileAssetCache.hasOriginalImageData(for: message)
         }
 
@@ -200,10 +202,16 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse,
         keysToParse: Set<String>
     ) -> Bool {
-        guard let message = managedObject as? ZMClientMessage else { return false }
-        guard keysToParse.contains(ZMClientMessage.linkPreviewStateKey) else { return false }
+        guard let message = managedObject as? ZMClientMessage else {
+            return false
+        }
+        guard keysToParse.contains(ZMClientMessage.linkPreviewStateKey) else {
+            return false
+        }
         guard let payload = response.payload?.asDictionary(),
-              let assetKey = payload["key"] as? String else { fatal("No asset ID present in payload") }
+              let assetKey = payload["key"] as? String else {
+            fatal("No asset ID present in payload")
+        }
 
         if var linkPreview = message.underlyingMessage?.linkPreviews.first, !message.isObfuscated,
            let messageText = message.textMessageData?.messageText,

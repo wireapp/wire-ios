@@ -58,7 +58,9 @@ final class AddressBookHelper: AddressBookHelperProtocol {
     }
 
     var accessStatusDidChangeToGranted: Bool {
-        guard let lastStatus = lastAccessStatus else { return false }
+        guard let lastStatus = lastAccessStatus else {
+            return false
+        }
         return CNContactStore.authorizationStatus(for: .contacts) != lastStatus && isAddressBookAccessGranted
     }
 
@@ -88,7 +90,9 @@ final class AddressBookHelper: AddressBookHelperProtocol {
 
     private var lastAccessStatus: CNAuthorizationStatus? {
         guard let value = UserDefaults.standard.object(forKey: addressBookLastAccessStatusKey) as? NSNumber
-        else { return nil }
+        else {
+            return nil
+        }
         return CNAuthorizationStatus(rawValue: value.intValue)
     }
 }

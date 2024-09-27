@@ -63,7 +63,9 @@ extension SessionManager: APIVersionResolverDelegate {
 
     private func migrateSessions(_ sessions: [ZMUserSession], to apiVersion: APIVersion) {
         delegate?.sessionManagerWillMigrateAccount { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             Task {
                 await self.apiMigrationManager.migrateIfNeeded(
                     sessions: sessions,
@@ -89,7 +91,9 @@ extension SessionManager: APIVersionResolverDelegate {
         let dispatchQueue = DispatchQueue(label: "Accounts Migration Queue", qos: .userInitiated)
 
         dispatchQueue.async { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             activeUserSession = nil
             for account in accountManager.accounts {

@@ -54,14 +54,18 @@ enum BlockResult {
     // MARK: Private
 
     private var style: UIAlertAction.Style {
-        guard case .cancel = self else { return .destructive }
+        guard case .cancel = self else {
+            return .destructive
+        }
         return .cancel
     }
 }
 
 extension ConversationActionController {
     func requestBlockResult(for conversation: ZMConversation, handler: @escaping (BlockResult) -> Void) {
-        guard let user = conversation.connectedUser else { return }
+        guard let user = conversation.connectedUser else {
+            return
+        }
         let controller = UIAlertController(
             title: BlockResult.title(for: user),
             message: nil,
@@ -72,7 +76,9 @@ extension ConversationActionController {
     }
 
     func handleBlockResult(_ result: BlockResult, for conversation: ZMConversation) {
-        guard case .block = result else { return }
+        guard case .block = result else {
+            return
+        }
 
         conversation.connectedUser?.block(completion: { [weak self] error in
             if let error = error as? LocalizedError {

@@ -36,7 +36,9 @@ extension MockTransportSession {
         deleted: Set<NSManagedObject>,
         shouldSendEventsToSelfUser: Bool
     ) -> [MockPushEvent] {
-        guard shouldSendEventsToSelfUser else { return [] }
+        guard shouldSendEventsToSelfUser else {
+            return []
+        }
 
         let updatedEvents = updated
             .compactMap { $0 as? MockTeam }
@@ -105,7 +107,9 @@ extension MockTransportSession {
         updated: Set<NSManagedObject>,
         shouldSendEventsToSelfUser: Bool
     ) -> [MockPushEvent] {
-        guard shouldSendEventsToSelfUser else { return [] }
+        guard shouldSendEventsToSelfUser else {
+            return []
+        }
 
         let insertedPayloads: [ZMTransportData] = relevant(conversations: inserted)
             .filter { conversation -> Bool in

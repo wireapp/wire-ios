@@ -253,7 +253,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
         guard let client = managedObject as? UserClient
-        else { fatal("Called requestForInsertingObject() on \(managedObject.safeForLoggingDescription)") }
+        else {
+            fatal("Called requestForInsertingObject() on \(managedObject.safeForLoggingDescription)")
+        }
         guard let prekeys = clientRegistrationStatus?.prekeys else {
             fatal("Asked to insert client when there's no prekeys available")
         }
@@ -387,7 +389,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
             client.remoteIdentifier = remoteIdentifier
             client.numberOfKeysRemaining = Int32(prekeyGenerator.keyCount)
-            guard let moc = managedObjectContext else { return }
+            guard let moc = managedObjectContext else {
+                return
+            }
             _ = UserClient.createOrUpdateSelfUserClient(payload, context: moc)
             clientRegistrationStatus?.didRegisterProteusClient(client)
         } else {
@@ -465,7 +469,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         response: ZMTransportResponse,
         keysToParse: Set<String>
     ) -> Bool {
-        guard let userClient = managedObject as? UserClient else { return false }
+        guard let userClient = managedObject as? UserClient else {
+            return false
+        }
 
         if keysToParse.contains(ZMUserClientMarkedToDeleteKey) {
             return processResponseForDeletingClients(
@@ -562,7 +568,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     fileprivate var insertSyncFilter: NSPredicate {
         NSPredicate { object, _ -> Bool in
-            guard let client = object as? UserClient, let user = client.user else { return false }
+            guard let client = object as? UserClient, let user = client.user else {
+                return false
+            }
             return user.isSelfUser
         }
     }
@@ -570,7 +578,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     // MARK: Private
 
     private func received(clients: [[String: AnyObject]]) {
-        guard let context = managedObjectContext else { return }
+        guard let context = managedObjectContext else {
+            return
+        }
 
         let clients = clients.compactMap { clientInfo in
             UserClient.createOrUpdateSelfUserClient(clientInfo, context: context)

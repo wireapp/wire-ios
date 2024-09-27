@@ -101,12 +101,16 @@ final class StartUIInviteActionBar: UIView {
         guard let userInfo = notification.userInfo,
               let beginOrigin = (userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue.origin.y,
               let endOrigin = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.origin.y
-        else { return }
+        else {
+            return
+        }
 
         let diff: CGFloat = beginOrigin - endOrigin
 
         UIView.animate(withKeyboardNotification: notification, in: self, animations: { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             bottomEdgeConstraint.constant = -padding - (diff > 0 ? 0 : UIScreen.safeArea.bottom)
             layoutIfNeeded()

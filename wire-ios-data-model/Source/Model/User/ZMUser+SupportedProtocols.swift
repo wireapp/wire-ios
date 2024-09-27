@@ -46,7 +46,9 @@ extension ZMUser {
 
         set {
             let currentValue = supportedProtocols
-            guard newValue != currentValue else { return }
+            guard newValue != currentValue else {
+                return
+            }
 
             // We can't drop support for MLS once we've adopted it.
             if currentValue.contains(.mls), !newValue.contains(.mls) {

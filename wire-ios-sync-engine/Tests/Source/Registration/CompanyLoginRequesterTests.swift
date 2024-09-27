@@ -46,7 +46,9 @@ final class CompanyLoginRequesterTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
 
         guard let validationToken = CompanyLoginVerificationToken.current(in: defaults)
-        else { return XCTFail("no token") }
+        else {
+            return XCTFail("no token")
+        }
         let validationIdentifier = validationToken.uuid.transportString()
         let expectedURL =
             URL(

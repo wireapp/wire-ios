@@ -47,7 +47,9 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
 
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
-        guard let collectionView else { return }
+        guard let collectionView else {
+            return
+        }
         Cell.register(in: collectionView)
     }
 
@@ -55,7 +57,9 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        guard section == 0 else { return 0 }
+        guard section == 0 else {
+            return 0
+        }
 
         switch messageProtocol {
         case .proteus:

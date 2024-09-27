@@ -307,7 +307,9 @@ final class ConversationViewController: UIViewController {
     }
 
     func openConversationList() {
-        guard let leftControllerRevealed = wr_splitViewController?.isLeftViewControllerRevealed else { return }
+        guard let leftControllerRevealed = wr_splitViewController?.isLeftViewControllerRevealed else {
+            return
+        }
         wr_splitViewController?.setLeftViewControllerRevealed(!leftControllerRevealed, animated: true, completion: nil)
     }
 
@@ -696,7 +698,9 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             collections.delegate = self
 
             collections.onDismiss = { [weak self] _ in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
                 collectionController?.dismiss(animated: true)
             }
             collectionController = collections

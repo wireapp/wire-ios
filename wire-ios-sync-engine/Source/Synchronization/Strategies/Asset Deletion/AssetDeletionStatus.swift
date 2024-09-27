@@ -52,7 +52,9 @@ public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProvide
     // MARK: - AssetDeletionIdentifierProviderType
 
     public func nextIdentifierToDelete() -> String? {
-        guard let first = remainingIdentifiersToDelete.first else { return nil }
+        guard let first = remainingIdentifiersToDelete.first else {
+            return nil
+        }
         identifiersInProgress.insert(first)
         return first
     }
@@ -80,7 +82,9 @@ public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProvide
     @objc
     private func handle(note: Notification) {
         guard note.name == Notification.Name.deleteAssetNotification,
-              let identifier = note.object as? String else { return }
+              let identifier = note.object as? String else {
+            return
+        }
         queue.performGroupedBlock { [weak self] in
             self?.add(identifier)
         }

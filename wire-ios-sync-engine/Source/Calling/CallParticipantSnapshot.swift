@@ -34,7 +34,9 @@ final class CallParticipantsSnapshot {
 
     private(set) var members: OrderedSetState<AVSCallMember> {
         didSet {
-            guard let moc = callCenter.uiMOC else { return }
+            guard let moc = callCenter.uiMOC else {
+                return
+            }
 
             participants = members
                 .map { CallParticipant(member: $0, context: moc) }
@@ -65,7 +67,9 @@ final class CallParticipantsSnapshot {
     private var userVerifiedMap = [ZMUser: Bool]()
 
     private var selfUser: ZMUser? {
-        guard let moc = callCenter.uiMOC else { return nil }
+        guard let moc = callCenter.uiMOC else {
+            return nil
+        }
         return ZMUser.selfUser(in: moc)
     }
 
@@ -78,7 +82,9 @@ final class CallParticipantsSnapshot {
             userVerifiedMap[zmuser] = userIsVerified
 
             if userWasVerified, !userIsVerified {
-                guard let selfUser else { return }
+                guard let selfUser else {
+                    return
+                }
                 let degradedUser = selfUser.isTrusted ? zmuser : selfUser
                 callCenter.callDidDegrade(conversationId: conversationId, degradedUser: degradedUser)
                 break
@@ -97,7 +103,9 @@ final class CallParticipantsSnapshot {
     /// Notifies observers of a potential change in the participants set.
 
     private func notifyChange() {
-        guard let context = callCenter.uiMOC else { return }
+        guard let context = callCenter.uiMOC else {
+            return
+        }
 
         WireCallCenterCallParticipantNotification(conversationId: conversationId, participants: participants)
             .post(in: context.notificationContext)

@@ -99,7 +99,9 @@ final class ConversationListViewModelTests: XCTestCase {
     }
 
     func removeViewModelState() {
-        guard let persistentURL = ConversationListViewModel.persistentURL else { return }
+        guard let persistentURL = ConversationListViewModel.persistentURL else {
+            return
+        }
 
         try? FileManager.default.removeItem(at: persistentURL)
     }
@@ -149,7 +151,8 @@ final class ConversationListViewModelTests: XCTestCase {
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN
-        guard let indexPath = sut.indexPath(for: mockConversation) else { XCTFail("indexPath is nil ")
+        guard let indexPath = sut.indexPath(for: mockConversation) else {
+            XCTFail("indexPath is nil ")
             return
         }
 

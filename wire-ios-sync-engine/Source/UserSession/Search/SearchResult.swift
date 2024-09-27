@@ -147,7 +147,9 @@ extension SearchResult {
         query: String,
         contextProvider: ContextProvider
     ) {
-        guard searchOptions.contains(.excludeNonActivePartners) else { return }
+        guard searchOptions.contains(.excludeNonActivePartners) else {
+            return
+        }
 
         let selfUser = ZMUser.selfUser(in: contextProvider.viewContext)
         let isHandleQuery = query.hasPrefix("@")

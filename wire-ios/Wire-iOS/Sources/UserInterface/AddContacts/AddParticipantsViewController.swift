@@ -297,7 +297,9 @@ final class AddParticipantsViewController: UIViewController {
             withKeyboardNotification: notification,
             in: view,
             animations: { [weak self] keyboardFrameInView in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
 
                 let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
 
@@ -431,14 +433,18 @@ final class AddParticipantsViewController: UIViewController {
         case .add: viewModel.title(with: userSelection.users)
         }
 
-        guard let title else { return }
+        guard let title else {
+            return
+        }
 
         setupNavigationBarTitle(title.capitalized)
     }
 
     private func rightNavigationItemTapped() -> UIAction {
         UIAction { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             switch viewModel.context {
             case .add:
@@ -566,19 +572,25 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
         _ searchResultsViewController: SearchResultsViewController,
         didTapOnSeviceUser user: ServiceUser
     ) {
-        guard case let .add(conversation) = viewModel.context else { return }
+        guard case let .add(conversation) = viewModel.context else {
+            return
+        }
 
         let detail = ServiceDetailViewController(
             serviceUser: user,
             actionType: .addService(conversation as! ZMConversation),
             userSession: userSession
         ) { [weak self] result in
-            guard let self, let result else { return }
+            guard let self, let result else {
+                return
+            }
             switch result {
             case .success:
                 dismiss(animated: true)
             case let .failure(error):
-                guard let controller = navigationController?.topViewController else { return }
+                guard let controller = navigationController?.topViewController else {
+                    return
+                }
                 error.displayAddBotError(in: controller)
             }
         }

@@ -47,14 +47,18 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         guard
             let controllerToPresentOn,
             controllerToPresentOn.isIPadRegular()
-        else { return }
+        else {
+            return
+        }
 
         ZClientViewController.shared?.transitionToList(animated: false, completion: nil)
 
         guard
             viewToPresentOn != nil,
             let presentedViewController = controllerToPresentOn.presentedViewController
-        else { return }
+        else {
+            return
+        }
 
         presentedViewController.popoverPresentationController?.sourceRect = presentedFrame
         presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0)

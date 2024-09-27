@@ -275,7 +275,9 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func tryToProceed() {
-        guard let value = nameSection.value else { return }
+        guard let value = nameSection.value else {
+            return
+        }
         proceedWith(value: value)
     }
 
@@ -301,7 +303,9 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         case .create:
             // swiftlint:disable:next todo_requires_jira_link
             // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
-            guard let userSession = userSession as? ZMUserSession else { return }
+            guard let userSession = userSession as? ZMUserSession else {
+                return
+            }
 
             addParticipantsViewController.setLoadingView(isVisible: true)
             let service = ConversationService(context: userSession.viewContext)

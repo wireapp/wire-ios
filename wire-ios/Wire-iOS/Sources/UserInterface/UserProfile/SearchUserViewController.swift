@@ -106,7 +106,9 @@ final class SearchUserViewController: UIViewController {
     // MARK: - Methods
 
     private func handleSearchResult(searchResult: SearchResult, isCompleted: Bool) {
-        guard !resultHandled, isCompleted else { return }
+        guard !resultHandled, isCompleted else {
+            return
+        }
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return

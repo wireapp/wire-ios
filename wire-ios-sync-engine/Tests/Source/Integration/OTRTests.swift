@@ -31,7 +31,9 @@ class OTRTests: IntegrationTest {
     func testThatItSendsEncryptedTextMessage() {
         // given
         XCTAssert(login())
-        guard let conversation = conversation(for: selfToUser1Conversation) else { return XCTFail() }
+        guard let conversation = conversation(for: selfToUser1Conversation) else {
+            return XCTFail()
+        }
 
         // when
         var message: ZMConversationMessage?
@@ -48,7 +50,9 @@ class OTRTests: IntegrationTest {
     func testThatItSendsEncryptedImageMessage() {
         // given
         XCTAssert(login())
-        guard let conversation = conversation(for: selfToUser1Conversation) else { return XCTFail() }
+        guard let conversation = conversation(for: selfToUser1Conversation) else {
+            return XCTFail()
+        }
 
         // when
         var message: ZMConversationMessage?
@@ -99,7 +103,9 @@ class OTRTests: IntegrationTest {
         var tryCount = 0
         var (firstMac, firstEnc) = (String(), String())
         mockTransportSession.responseGeneratorBlock = { response in
-            guard let payload = response.payload?.asDictionary() else { return nil }
+            guard let payload = response.payload?.asDictionary() else {
+                return nil
+            }
 
             if response.path.contains("/clients/"), payload["sigkeys"] != nil {
                 let keys = payload["sigkeys"] as? [String: Any]
@@ -109,7 +115,9 @@ class OTRTests: IntegrationTest {
                 if tryCount == 0 {
                     tryCount += 1
                     guard let mac = macKey,
-                          let enc = encKey else { XCTFail("No signaling keys in payload"); return nil }
+                          let enc = encKey else {
+                        XCTFail("No signaling keys in payload"); return nil
+                    }
                     (firstMac, firstEnc) = (mac, enc)
                     return ZMTransportResponse(
                         payload: ["label": "bad-request"] as ZMTransportData,

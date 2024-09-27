@@ -159,12 +159,16 @@ extension SearchHeaderViewController: UserSelectionObserver {
     }
 
     func userSelection(_ userSelection: UserSelection, didAddUser user: UserType) {
-        guard allowsMultipleSelection else { return }
+        guard allowsMultipleSelection else {
+            return
+        }
         tokenField.addToken(forTitle: user.name ?? "", representedObject: user)
     }
 
     func userSelection(_ userSelection: UserSelection, didRemoveUser user: UserType) {
-        guard let token = tokenField.token(forRepresentedObject: user) else { return }
+        guard let token = tokenField.token(forRepresentedObject: user) else {
+            return
+        }
         tokenField.removeToken(token)
         updateClearIndicator(for: tokenField)
     }

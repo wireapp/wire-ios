@@ -199,7 +199,9 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
 extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDelegate {
     func presentDetails(for user: UserType) {
-        guard let conversation = viewModel.conversation as? ZMConversation else { return }
+        guard let conversation = viewModel.conversation as? ZMConversation else {
+            return
+        }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,

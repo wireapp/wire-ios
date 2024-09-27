@@ -82,7 +82,9 @@ final class GridView: UICollectionView {
 
     func scrollToPage(page: Int, animated: Bool) {
         let destinationY = bounds.height * CGFloat(page)
-        guard contentSize.height > destinationY else { return }
+        guard contentSize.height > destinationY else {
+            return
+        }
         setContentOffset(CGPoint(x: 0.0, y: destinationY), animated: animated)
     }
 
@@ -234,7 +236,9 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         guard
             let indexPath = firstIndexPath(forPage: currentPage),
             let attributes = layoutAttributesForItem(at: indexPath)
-        else { return proposedContentOffset }
+        else {
+            return proposedContentOffset
+        }
 
         return attributes.frame.origin
     }

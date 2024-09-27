@@ -113,7 +113,9 @@ final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
         // given
         let sut = appendFileMessage(to: conversation)!
         uiMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 100), for: sut)
-        guard let tempFolder = sut.temporaryDirectoryURL else { XCTFail(); return }
+        guard let tempFolder = sut.temporaryDirectoryURL else {
+            XCTFail(); return
+        }
 
         XCTAssertNotNil(sut.temporaryURLToDecryptedFile())
         XCTAssertTrue(FileManager.default.fileExists(atPath: tempFolder.path))
@@ -284,7 +286,9 @@ extension ZMAssetClientMessageTests {
         // then
         XCTAssertEqual(sut.underlyingMessage?.messageID, nonce.transportString())
 
-        guard let asset = sut.underlyingMessage?.asset else { return XCTFail() }
+        guard let asset = sut.underlyingMessage?.asset else {
+            return XCTFail()
+        }
         XCTAssertNotNil(asset)
         XCTAssertTrue(asset.hasOriginal)
         XCTAssertTrue(asset.hasPreview)
@@ -454,7 +458,9 @@ extension ZMAssetClientMessageTests {
 
             // then
             XCTAssertNotNil(sut)
-            guard let asset = sut.underlyingMessage?.asset else { return XCTFail() }
+            guard let asset = sut.underlyingMessage?.asset else {
+                return XCTFail()
+            }
             XCTAssertTrue(asset.hasUploaded)
             let uploaded = asset.uploaded
             XCTAssertEqual(uploaded.otrKey, otrKey)

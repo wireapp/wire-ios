@@ -44,8 +44,11 @@ final class AccountImageViewSnapshotTests: XCTestCase {
                     let hostingControllerView = UIHostingController(rootView: rootView).view!
                     hostingControllerView.frame = UIScreen.main.bounds
                     let accountType = isTeamAccount ? "team" : "personal"
-                    let testName = if let availability { "\(accountType).\(availability)" }
-                    else { "\(accountType).none" }
+                    let testName = if let availability {
+                        "\(accountType).\(availability)"
+                    } else {
+                        "\(accountType).none"
+                    }
 
                     // Then
                     snapshotHelper

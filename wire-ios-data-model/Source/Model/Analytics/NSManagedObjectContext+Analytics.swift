@@ -24,12 +24,16 @@ extension NSManagedObjectContext {
     /// Set when initializing the user session from the UI, used for easier tracking on SE
     @objc public var analytics: AnalyticsType? {
         get {
-            guard zm_isSyncContext else { preconditionFailure("Analytics can only be accessed on sync context") }
+            guard zm_isSyncContext else {
+                preconditionFailure("Analytics can only be accessed on sync context")
+            }
             return userInfo[analyticsUserInfoKey] as? AnalyticsType
         }
 
         set {
-            guard zm_isSyncContext else { preconditionFailure("Analytics can only be accessed on sync context") }
+            guard zm_isSyncContext else {
+                preconditionFailure("Analytics can only be accessed on sync context")
+            }
             userInfo[analyticsUserInfoKey] = newValue
         }
     }

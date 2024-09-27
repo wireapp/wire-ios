@@ -24,7 +24,9 @@ extension Team {
     )
 
     fileprivate func updateRoles(with payload: [String: Any]) {
-        guard let rolesPayload = payload["conversation_roles"] as? [[String: Any]] else { return }
+        guard let rolesPayload = payload["conversation_roles"] as? [[String: Any]] else {
+            return
+        }
         let existingRoles = roles
 
         // Update or insert new roles
@@ -92,14 +94,18 @@ public final class TeamRolesDownloadRequestStrategy:
         apiVersion: APIVersion
     ) -> ZMTransportRequest! {
         guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
-              let team = object as? Team else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
+              let team = object as? Team else {
+            fatal("Wrong sync or object for: \(object.safeForLoggingDescription)")
+        }
         return TeamDownloadRequestFactory.requestToDownloadRoles(for: team.remoteIdentifier!, apiVersion: apiVersion)
     }
 
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
               let team = object as? Team,
-              let payload = response.payload?.asDictionary() as? [String: Any] else { return }
+              let payload = response.payload?.asDictionary() as? [String: Any] else {
+            return
+        }
 
         team.needsToDownloadRoles = false
         team.updateRoles(with: payload)

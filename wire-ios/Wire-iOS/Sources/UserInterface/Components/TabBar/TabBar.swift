@@ -152,7 +152,9 @@ final class TabBar: UIView {
 
     private func updateLinePosition(animated: Bool) {
         let offset = CGFloat(selectedIndex) * selectionLineView.bounds.width
-        guard offset != lineLeadingConstraint.constant else { return }
+        guard offset != lineLeadingConstraint.constant else {
+            return
+        }
         updateLinePosition(offset: offset, animated: animated)
     }
 

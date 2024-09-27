@@ -99,7 +99,9 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         XCTAssertNotNil(uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
 
         guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first
-        else { return XCTFail("did not contain linkpreview") }
+        else {
+            return XCTFail("did not contain linkpreview")
+        }
         XCTAssertNotNil(linkPreview.image.uploaded.otrKey)
         XCTAssertNotNil(linkPreview.image.uploaded.sha256)
 
@@ -129,7 +131,9 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         XCTAssertNotNil(uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
 
         guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first
-        else { return XCTFail("did not contain linkpreview") }
+        else {
+            return XCTFail("did not contain linkpreview")
+        }
         XCTAssertNotNil(linkPreview.image.uploaded.otrKey)
         XCTAssertNotNil(linkPreview.image.uploaded.sha256)
 

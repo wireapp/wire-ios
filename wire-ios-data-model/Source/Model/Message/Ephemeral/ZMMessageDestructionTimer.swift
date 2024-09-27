@@ -154,7 +154,9 @@ public class ZMMessageDestructionTimer: ZMMessageTimer {
     func messageTimerDidFire(message: ZMMessage, userInfo: [AnyHashable: Any]?) {
         guard let userInfo = userInfo as? [String: Any],
               let type = userInfo[MessageDestructionType.UserInfoKey] as? String
-        else { return }
+        else {
+            return
+        }
 
         log.debug("message timer did fire for \(message.nonce?.transportString() ?? ""), \(type)")
         switch MessageDestructionType(rawValue: type) {

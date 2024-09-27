@@ -77,7 +77,9 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         bounds = CGRect(x: 0, y: delta, width: imageSize.width, height: imageSize.height)
 
         UIGraphicsBeginImageContextWithOptions(bounds.size, _: false, _: 0)
-        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+        guard let context = UIGraphicsGetCurrentContext() else {
+            return nil
+        }
         context.saveGState()
 
         if let backgroundColor {

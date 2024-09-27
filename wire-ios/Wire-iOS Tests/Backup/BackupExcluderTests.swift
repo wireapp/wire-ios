@@ -49,7 +49,9 @@ final class BackupExcluderTests: XCTestCase {
 
     func delete(fileNamed: String) {
         guard let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
-        else { return }
+        else {
+            return
+        }
         let file = URL(fileURLWithPath: path).appendingPathComponent(fileNamed)
 
         let fileManager = FileManager.default
@@ -58,7 +60,9 @@ final class BackupExcluderTests: XCTestCase {
 
     func write(text: String, to fileNamed: String) {
         guard let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
-        else { return }
+        else {
+            return
+        }
         let file = URL(fileURLWithPath: path).appendingPathComponent(fileNamed)
         try? text.write(to: file, atomically: false, encoding: String.Encoding.utf8)
     }

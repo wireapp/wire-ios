@@ -111,7 +111,9 @@ actor ExpiringActivityManager {
     }
 
     func stopWork() throws {
-        guard let task else { throw ExpiringActivityNotAllowedToRun() }
+        guard let task else {
+            throw ExpiringActivityNotAllowedToRun()
+        }
         task.cancel()
         self.task = nil
     }

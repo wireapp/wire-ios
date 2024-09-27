@@ -53,7 +53,9 @@ extension Sequence where Element: NSManagedObject {
 
 extension NSManagedObjectContext {
     public var isLocked: Bool {
-        guard encryptMessagesAtRest else { return false }
+        guard encryptMessagesAtRest else {
+            return false
+        }
         return databaseKey == nil
     }
 

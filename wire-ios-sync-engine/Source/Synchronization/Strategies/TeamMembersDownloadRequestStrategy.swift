@@ -42,7 +42,9 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
     // MARK: Public
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard syncStatus.currentSyncPhase == .fetchingTeamMembers else { return nil }
+        guard syncStatus.currentSyncPhase == .fetchingTeamMembers else {
+            return nil
+        }
 
         sync.readyForNextRequestIfNotBusy()
 

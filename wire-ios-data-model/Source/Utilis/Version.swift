@@ -47,11 +47,17 @@ public final class Version: NSObject, Comparable {
 
     @objc(compareWithVersion:)
     public func compare(with other: Version) -> ComparisonResult {
-        guard !other.arrayRepresentation.isEmpty else { return .orderedDescending }
-        guard versionString != other.versionString else { return .orderedSame }
+        guard !other.arrayRepresentation.isEmpty else {
+            return .orderedDescending
+        }
+        guard versionString != other.versionString else {
+            return .orderedSame
+        }
 
         for i in 0 ..< arrayRepresentation.count {
-            guard other.arrayRepresentation.count != i else { return .orderedDescending }
+            guard other.arrayRepresentation.count != i else {
+                return .orderedDescending
+            }
             let selfNumber = arrayRepresentation[i]
             let otherNumber = other.arrayRepresentation[i]
 
@@ -70,7 +76,9 @@ public final class Version: NSObject, Comparable {
     }
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? Version else { return false }
+        guard let other = object as? Version else {
+            return false
+        }
         return other == self
     }
 

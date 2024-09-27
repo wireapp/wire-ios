@@ -296,7 +296,9 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             event = events?.first
         }
 
-        guard let event else { return XCTFail("missing event") }
+        guard let event else {
+            return XCTFail("missing event")
+        }
         // when
         await sut.processEvents([event])
 

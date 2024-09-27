@@ -41,14 +41,20 @@ extension ZMMessage {
     public static func hideMessage(_ message: ZMConversationMessage) {
         // when deleting ephemeral, we must delete for everyone (only self & sender will receive delete message)
         // b/c deleting locally will void the destruction timer completion.
-        guard !message.isEphemeral else { deleteForEveryone(message); return }
-        guard let castedMessage = message as? ZMMessage else { return }
+        guard !message.isEphemeral else {
+            deleteForEveryone(message); return
+        }
+        guard let castedMessage = message as? ZMMessage else {
+            return
+        }
         castedMessage.hideForSelfUser()
     }
 
     @objc
     public func hideForSelfUser() {
-        guard !isZombieObject else { return }
+        guard !isZombieObject else {
+            return
+        }
 
         do {
             try ZMConversation.appendHideMessageToSelfConversation(self)
@@ -65,14 +71,20 @@ extension ZMMessage {
     @discardableResult @objc
     public static func deleteForEveryone(_ message: ZMConversationMessage)
         -> ZMClientMessage? {
-        guard let castedMessage = message as? ZMMessage else { return nil }
+        guard let castedMessage = message as? ZMMessage else {
+            return nil
+        }
         return castedMessage.deleteForEveryone()
     }
 
     @discardableResult @objc
     func deleteForEveryone() -> ZMClientMessage? {
-        guard !isZombieObject, let sender, sender.isSelfUser || isEphemeral else { return nil }
-        guard let conversation, let messageNonce = nonce else { return nil }
+        guard !isZombieObject, let sender, sender.isSelfUser || isEphemeral else {
+            return nil
+        }
+        guard let conversation, let messageNonce = nonce else {
+            return nil
+        }
 
         do {
             let genericMessage = GenericMessage(content: MessageDelete(messageId: messageNonce))

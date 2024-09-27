@@ -82,7 +82,9 @@ final class EmojiKeyboardViewController: UIViewController {
 
     func updateSectionSelection() {
         let minSection = Set(collectionView.indexPathsForVisibleItems.map(\.section)).min()
-        guard let section = minSection  else { return }
+        guard let section = minSection  else {
+            return
+        }
         sectionViewController.didSelectSection(emojiDataSource[section].id)
     }
 
@@ -104,7 +106,9 @@ final class EmojiKeyboardViewController: UIViewController {
 
     func delete() {
         delegate?.emojiPickerDeleteTapped()
-        guard deleting else { return }
+        guard deleting else {
+            return
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
             self.delete()
         }
@@ -120,7 +124,9 @@ final class EmojiKeyboardViewController: UIViewController {
     private var deleting = false
 
     private func createConstraints() {
-        guard let sectionViewControllerView = sectionViewController.view else { return }
+        guard let sectionViewControllerView = sectionViewController.view else {
+            return
+        }
 
         for item in [collectionView, sectionViewControllerView] {
             item.translatesAutoresizingMaskIntoConstraints = false
@@ -153,7 +159,9 @@ final class EmojiKeyboardViewController: UIViewController {
 
 extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
-        guard let section = emojiDataSource.sectionIndex(for: type) else { return }
+        guard let section = emojiDataSource.sectionIndex(for: type) else {
+            return
+        }
         let indexPath = IndexPath(item: 0, section: section)
         collectionView.scrollToItem(at: indexPath, at: .left, animated: !scrolling)
     }
@@ -166,7 +174,9 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
         collectionView.deselectItem(at: indexPath, animated: true)
         let emoji = emojiDataSource[indexPath]
         delegate?.emojiPickerDidSelectEmoji(emoji)
-        guard let result = emojiDataSource.register(used: emoji) else { return }
+        guard let result = emojiDataSource.register(used: emoji) else {
+            return
+        }
         collectionView.performBatchUpdates({
             switch result {
             case let .insert(section): collectionView.insertSections(IndexSet(integer: section))

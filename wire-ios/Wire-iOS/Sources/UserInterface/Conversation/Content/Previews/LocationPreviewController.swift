@@ -111,7 +111,9 @@ final class LocationPreviewController: UIViewController {
         [mapView, addressContainerView].forEach(containerView.addSubview)
         addressContainerView.addSubview(addressLabel)
 
-        guard let locationData = message.locationMessageData else { return }
+        guard let locationData = message.locationMessageData else {
+            return
+        }
 
         if let address = locationData.name {
             addressContainerView.isHidden = false

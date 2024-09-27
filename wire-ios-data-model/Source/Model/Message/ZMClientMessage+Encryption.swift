@@ -373,7 +373,9 @@ extension GenericMessage {
             }
             return nil
         }
-        guard let selfClient else { return nil }
+        guard let selfClient else {
+            return nil
+        }
 
         var messageData: Data?
 
@@ -663,7 +665,9 @@ extension GenericMessage {
         for (domain, recipients) in recipientsByDomain {
             var userEntries = [Proteus_UserEntry]()
             for (user, clients) in recipients {
-                guard await context.perform({ !user.isAccountDeleted }) else { continue }
+                guard await context.perform({ !user.isAccountDeleted }) else {
+                    continue
+                }
 
                 let clientEntries = await clientEntriesWithEncryptedData(
                     selfClient,
@@ -699,7 +703,9 @@ extension GenericMessage {
 
         return recipientsByDomain.compactMap { domain, recipients in
             let userEntries: [Proteus_UserEntry] = recipients.compactMap { user, clients in
-                guard context.performAndWait({ !user.isAccountDeleted }) else { return nil }
+                guard context.performAndWait({ !user.isAccountDeleted }) else {
+                    return nil
+                }
 
                 let clientEntries = legacyClientEntriesWithEncryptedData(
                     selfClient,
@@ -708,7 +714,9 @@ extension GenericMessage {
                     using: encryptionFunction
                 )
 
-                guard !clientEntries.isEmpty else { return nil }
+                guard !clientEntries.isEmpty else {
+                    return nil
+                }
 
                 return context.performAndWait { Proteus_UserEntry(withUser: user, clientEntries: clientEntries) }
             }
@@ -725,7 +733,9 @@ extension GenericMessage {
     ) async -> [Proteus_UserEntry] {
         var userEntries = [Proteus_UserEntry]()
         for (user, clients) in recipients {
-            guard await context.perform({ !user.isAccountDeleted }) else { continue }
+            guard await context.perform({ !user.isAccountDeleted }) else {
+                continue
+            }
 
             let clientEntries = await clientEntriesWithEncryptedData(
                 selfClient,
@@ -750,7 +760,9 @@ extension GenericMessage {
     ) -> [Proteus_UserEntry] {
         context.performAndWait {
             recipients.compactMap { user, clients in
-                guard !user.isAccountDeleted else { return nil }
+                guard !user.isAccountDeleted else {
+                    return nil
+                }
 
                 let clientEntries = legacyClientEntriesWithEncryptedData(
                     selfClient,
@@ -759,7 +771,9 @@ extension GenericMessage {
                     using: encryptionFunction
                 )
 
-                guard !clientEntries.isEmpty else { return nil }
+                guard !clientEntries.isEmpty else {
+                    return nil
+                }
 
                 return Proteus_UserEntry(withUser: user, clientEntries: clientEntries)
             }
@@ -798,7 +812,9 @@ extension GenericMessage {
         using encryptionFunction: LegacyEncryptionFunction
     ) -> [Proteus_ClientEntry] {
         userClients.compactMap { client in
-            guard client != selfClient else { return nil }
+            guard client != selfClient else {
+                return nil
+            }
             return legacyClientEntry(for: client, using: encryptionFunction)
         }
     }
@@ -853,7 +869,9 @@ extension GenericMessage {
         do {
             let plainText = try serializedData()
             let encryptedData = try await encryptionFunction(sessionID, plainText)
-            guard let data = encryptedData else { return nil }
+            guard let data = encryptedData else {
+                return nil
+            }
             return await client.proteusClientEntry(with: data)
         } catch {
             // this is handled by message sender, it's just that we don't throw the errors
@@ -883,7 +901,9 @@ extension GenericMessage {
         do {
             let plainText = try serializedData()
             let encryptedData = try encryptionFunction(sessionID, plainText)
-            guard let data = encryptedData else { return nil }
+            guard let data = encryptedData else {
+                return nil
+            }
             return Proteus_ClientEntry(withClientId: client.clientId, data: data)
         } catch {
             WireLogger.proteus.error("failed to encrypt payload for a client: \(String(describing: error))")
@@ -932,8 +952,12 @@ extension GenericMessage {
         }
 
         func recipientForOtherUsers() -> Set<ZMUser>? {
-            guard conversation.connectedUser != nil || (otherUsers.isEmpty == false) else { return nil }
-            if let connectedUser = conversation.connectedUser { return [connectedUser] }
+            guard conversation.connectedUser != nil || (otherUsers.isEmpty == false) else {
+                return nil
+            }
+            if let connectedUser = conversation.connectedUser {
+                return [connectedUser]
+            }
             return Set(otherUsers)
         }
 
@@ -968,14 +992,18 @@ extension GenericMessage {
             }
 
             // If self deletes their own message, we want to send a delete message for everyone, so return nil.
-            guard !sender.isSelfUser else { return nil }
+            guard !sender.isSelfUser else {
+                return nil
+            }
 
             // Otherwise we delete only for self and the sender, all other recipients are unaffected.
             return [sender, selfUser]
         }
 
         func allAuthorizedRecipients() -> Set<ZMUser> {
-            if let connectedUser = conversation.connectedUser { return [connectedUser, selfUser] }
+            if let connectedUser = conversation.connectedUser {
+                return [connectedUser, selfUser]
+            }
 
             func mentionedServices() -> Set<ZMUser> {
                 services.filter { service in
@@ -1013,7 +1041,9 @@ extension GenericMessage {
         }
 
         let hasRestrictions: Bool = {
-            if conversation.connectedUser != nil { return recipientUsers.count != 2 }
+            if conversation.connectedUser != nil {
+                return recipientUsers.count != 2
+            }
             return recipientUsers.count != conversation.localParticipants.count
         }()
 
@@ -1034,7 +1064,9 @@ extension GenericMessage {
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) async -> EncryptedPayloadGenerator.Payload? {
-        guard let encryptedDataWithKeys = GenericMessage.encryptedDataWithKeys(from: self) else { return nil }
+        guard let encryptedDataWithKeys = GenericMessage.encryptedDataWithKeys(from: self) else {
+            return nil
+        }
         let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: encryptedDataWithKeys.keys))
         return await externalGenericMessage.encryptForTransport(
             for: conversation,

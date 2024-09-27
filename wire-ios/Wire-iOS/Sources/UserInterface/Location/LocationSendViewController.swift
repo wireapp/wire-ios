@@ -129,7 +129,9 @@ final class LocationSendViewController: UIViewController {
     // MARK: - Action
 
     private func sendButtonTapped() {
-        guard let delegate else { return }
+        guard let delegate else {
+            return
+        }
         delegate.locationSendViewControllerSendButtonTapped(self)
     }
 }

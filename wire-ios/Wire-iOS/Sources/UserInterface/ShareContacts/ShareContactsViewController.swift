@@ -200,7 +200,9 @@ final class ShareContactsViewController: UIViewController {
     @objc
     private func shareContacts() {
         AddressBookHelper.sharedHelper.requestPermissions { [weak self] success in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             if success {
                 delegate?.shareContactsViewControllerDidFinish(self)
             } else {

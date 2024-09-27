@@ -87,7 +87,9 @@ extension ConversationInputBarViewController {
             popover.permittedArrowDirections = .down
         }
 
-        guard let controller = ephemeralKeyboardViewController else { return }
+        guard let controller = ephemeralKeyboardViewController else {
+            return
+        }
         parent?.present(controller, animated: true)
     }
 
@@ -142,7 +144,9 @@ extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDel
     }
 
     func ephemeralKeyboard(_ keyboard: EphemeralKeyboardViewController, didSelectMessageTimeout timeout: TimeInterval) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         inputBar.setInputBarState(.writing(ephemeral: timeout != 0 ? .message : .none), animated: true)
         updateMarkdownButton()

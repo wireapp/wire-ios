@@ -38,7 +38,9 @@ extension ConversationListViewController {
     }
 
     private func createAccountView() -> UIView {
-        guard let session = ZMUserSession.shared() else { return .init() }
+        guard let session = ZMUserSession.shared() else {
+            return .init()
+        }
 
         let user = ZMUser.selfUser(inUserSession: session)
 
@@ -94,7 +96,9 @@ extension ConversationListViewController {
     func updateTitleView() {
         if viewModel.selfUserLegalHoldSubject.isTeamMember {
             defer { userStatusViewController?.userStatus = viewModel.selfUserStatus }
-            guard userStatusViewController == nil else { return }
+            guard userStatusViewController == nil else {
+                return
+            }
 
             let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
             userStatusViewController.delegate = self
@@ -108,7 +112,9 @@ extension ConversationListViewController {
                 titleViewLabel?.text = viewModel.selfUserStatus.name
                 titleViewLabel?.accessibilityValue = viewModel.selfUserStatus.name
             }
-            guard titleViewLabel == nil else { return }
+            guard titleViewLabel == nil else {
+                return
+            }
             if let userStatusViewController {
                 removeChild(userStatusViewController)
             }
@@ -218,7 +224,9 @@ extension ConversationListViewController {
 
 extension ConversationListViewController: UserStatusViewControllerDelegate {
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
-        guard viewController === userStatusViewController else { return }
+        guard viewController === userStatusViewController else {
+            return
+        }
 
         // this should be done by some use case instead of accessing the `session` and the `UserType` directly here
         viewModel.userSession.perform { [weak self] in

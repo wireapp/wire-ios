@@ -35,9 +35,15 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let filter = NSPredicate { object, _ in
-            guard let message = object as? ZMAssetClientMessage, message.fileMessageData != nil else { return false }
-            guard message.version >= 3, message.visibleInConversation != nil else { return false }
-            guard message.underlyingMessage?.previewAssetId != nil else { return false }
+            guard let message = object as? ZMAssetClientMessage, message.fileMessageData != nil else {
+                return false
+            }
+            guard message.version >= 3, message.visibleInConversation != nil else {
+                return false
+            }
+            guard message.underlyingMessage?.previewAssetId != nil else {
+                return false
+            }
             return !message.hasDownloadedPreview
         }
 
@@ -70,16 +76,24 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
             context: managedObjectContext.notificationContext,
             object: nil
         ) { [weak self] note in
-            guard let objectID = note.object as? NSManagedObjectID else { return }
+            guard let objectID = note.object as? NSManagedObjectID else {
+                return
+            }
             self?.didRequestToDownloadImage(objectID)
         }
     }
 
     func didRequestToDownloadImage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
-            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
-            guard let message = object as? ZMAssetClientMessage else { return }
+            guard let self else {
+                return
+            }
+            guard let object = try? managedObjectContext.existingObject(with: objectID) else {
+                return
+            }
+            guard let message = object as? ZMAssetClientMessage else {
+                return
+            }
             downstreamSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }

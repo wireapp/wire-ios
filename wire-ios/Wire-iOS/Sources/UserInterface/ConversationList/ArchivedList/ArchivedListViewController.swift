@@ -174,7 +174,9 @@ final class ArchivedListViewController: UIViewController {
 
 extension ArchivedListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let conversation = viewModel[indexPath.row] else { return }
+        guard let conversation = viewModel[indexPath.row] else {
+            return
+        }
         delegate?.archivedListViewController(self, didSelectConversation: conversation)
     }
 }
@@ -243,14 +245,18 @@ extension ArchivedListViewController: ConversationListCellDelegate {
     }
 
     func conversationListCellJoinCallButtonTapped(_ cell: ConversationListCell) {
-        guard let conversation = cell.conversation as? ZMConversation else { return }
+        guard let conversation = cell.conversation as? ZMConversation else {
+            return
+        }
 
         startCallController = ConversationCallController(conversation: conversation, target: self)
         startCallController?.joinCall()
     }
 
     func conversationListCellOverscrolled(_ cell: ConversationListCell) {
-        guard let conversation = cell.conversation as? ZMConversation else { return }
+        guard let conversation = cell.conversation as? ZMConversation else {
+            return
+        }
 
         actionController = ConversationActionController(
             conversation: conversation,

@@ -46,7 +46,9 @@ final class ConversationMessageActionController {
     static var allMessageActions: [UIMenuItem] {
         MessageAction.allCases.compactMap {
             guard let selector = $0.selector,
-                  let title = $0.title else { return nil }
+                  let title = $0.title else {
+                return nil
+            }
             return UIMenuItem(title: title, action: selector)
         }
     }
@@ -64,7 +66,9 @@ final class ConversationMessageActionController {
     )
     var previewActionItems: [UIPreviewAction] {
         allPerformableMessageAction.compactMap { messageAction in
-            guard let title = messageAction.title else { return nil }
+            guard let title = messageAction.title else {
+                return nil
+            }
 
             return UIPreviewAction(
                 title: title,
@@ -100,7 +104,9 @@ final class ConversationMessageActionController {
         unowned let targetView: UIView = view
 
         return allPerformableMessageAction.compactMap { messageAction in
-            guard let title = messageAction.title else { return nil }
+            guard let title = messageAction.title else {
+                return nil
+            }
 
             let handler: UIActionHandler = { _ in
                 responder?.perform(
@@ -159,7 +165,9 @@ final class ConversationMessageActionController {
     func canPerformAction(_ selector: Selector) -> Bool {
         guard let action = MessageAction.allCases.first(where: {
             $0.selector == selector
-        }) else { return false }
+        }) else {
+            return false
+        }
 
         return canPerformAction(action: action)
     }
@@ -175,7 +183,9 @@ final class ConversationMessageActionController {
     // MARK: - Single Tap Action
 
     func performSingleTapAction() {
-        guard let singleTapAction else { return }
+        guard let singleTapAction else {
+            return
+        }
 
         perform(action: singleTapAction)
     }
@@ -183,7 +193,9 @@ final class ConversationMessageActionController {
     // MARK: - Double Tap Action
 
     func performDoubleTapAction() {
-        guard let doubleTapAction else { return }
+        guard let doubleTapAction else {
+            return
+        }
         perform(action: doubleTapAction)
     }
 

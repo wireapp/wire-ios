@@ -108,7 +108,9 @@ final class DotView: UIView {
     }
 
     private func createClientObservers() {
-        guard let user else { return }
+        guard let user else {
+            return
+        }
         clientsObserverTokens = user.clients.compactMap { UserClientChangeInfo.add(observer: self, for: $0) }
     }
 }
@@ -121,7 +123,9 @@ extension DotView: UserObserving {
             changeInfo.clientsChanged ||
             changeInfo.accentColorValueChanged ||
             changeInfo.readReceiptsEnabledChanged ||
-            changeInfo.readReceiptsEnabledChangedRemotelyChanged else { return }
+            changeInfo.readReceiptsEnabledChangedRemotelyChanged else {
+            return
+        }
 
         centerView.hostedLayer.fillColor = UIColor.accent().cgColor
 
@@ -137,7 +141,9 @@ extension DotView: UserObserving {
 
 extension DotView: UserClientObserver {
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
-        guard changeInfo.needsToNotifyUserChanged else { return }
+        guard changeInfo.needsToNotifyUserChanged else {
+            return
+        }
         updateIndicator()
     }
 }

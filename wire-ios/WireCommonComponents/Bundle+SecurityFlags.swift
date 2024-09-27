@@ -41,7 +41,9 @@ public enum SecurityFlags {
     // MARK: Public
 
     public var intValue: Int? {
-        guard let string = stringValue else { return nil }
+        guard let string = stringValue else {
+            return nil
+        }
         return Int(string)
     }
 

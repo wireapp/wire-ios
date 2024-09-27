@@ -27,7 +27,9 @@ extension ZMMessageTimer {
     /// - Returns: True if timer was started, false otherwise
     @discardableResult
     public func startTimerIfNeeded(for message: ZMMessage, fireDate: Date, userInfo: [String: Any]) -> Bool {
-        guard !isTimerRunning(for: message) else { return false }
+        guard !isTimerRunning(for: message) else {
+            return false
+        }
 
         startTimer(for: message, fireDate: fireDate, userInfo: userInfo)
         return true

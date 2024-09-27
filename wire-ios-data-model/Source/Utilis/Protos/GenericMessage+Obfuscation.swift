@@ -42,8 +42,12 @@ extension String {
 
 extension GenericMessage {
     public func obfuscatedMessage() -> GenericMessage? {
-        guard let messageID = (messageID as String?).flatMap(UUID.init(transportString:)) else { return nil }
-        guard case .ephemeral? = content else { return nil }
+        guard let messageID = (messageID as String?).flatMap(UUID.init(transportString:)) else {
+            return nil
+        }
+        guard case .ephemeral? = content else {
+            return nil
+        }
 
         if let someText = textData {
             let content = someText.content

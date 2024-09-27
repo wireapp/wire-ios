@@ -41,11 +41,15 @@ final class OpenGraphScanner: NSObject {
 
     func parse() {
         // 1. Parse the document
-        guard let document = HTMLDocument(xmlString: xmlString) else { return completion(nil) }
+        guard let document = HTMLDocument(xmlString: xmlString) else {
+            return completion(nil)
+        }
         defer { HTMLDocument.free(document) }
 
         // 2. Find the head
-        guard let headElement = findHead(in: document) else { return completion(nil) }
+        guard let headElement = findHead(in: document) else {
+            return completion(nil)
+        }
 
         // 3. Go through the attributes
         for headChild in headElement.children {
@@ -66,7 +70,9 @@ final class OpenGraphScanner: NSObject {
 
     /// Returns the first head element in the document.
     private func findHead(in document: HTMLDocument) -> HTMLElement? {
-        guard let rootElement = document.rootElement else { return nil }
+        guard let rootElement = document.rootElement else {
+            return nil
+        }
 
         if rootElement.tagName == "head" {
             return rootElement
@@ -102,12 +108,16 @@ final class OpenGraphScanner: NSObject {
     }
 
     private func insertMissingUrlIfNeeded() {
-        guard !contentsByProperty.keys.contains(.url) else { return }
+        guard !contentsByProperty.keys.contains(.url) else {
+            return
+        }
         contentsByProperty[.url] = originalURL.absoluteString
     }
 
     private func insertMissingTitleIfNeeded() {
-        guard !contentsByProperty.keys.contains(.title) else { return }
+        guard !contentsByProperty.keys.contains(.title) else {
+            return
+        }
         pageTitle.map { addProperty(.title, value: $0) }
     }
 }

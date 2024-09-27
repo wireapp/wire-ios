@@ -70,8 +70,12 @@ final class SearchTests: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let newUser = self.user(for: user!) else { XCTFail(); return }
-        guard let oneToOneConversation = newUser.oneToOneConversation else { XCTFail(); return }
+        guard let newUser = self.user(for: user!) else {
+            XCTFail(); return
+        }
+        guard let oneToOneConversation = newUser.oneToOneConversation else {
+            XCTFail(); return
+        }
         XCTAssertEqual(newUser.name, userName)
         XCTAssertNotNil(newUser.oneToOneConversation)
         XCTAssertFalse(newUser.isConnected)
@@ -125,7 +129,9 @@ final class SearchTests: IntegrationTest {
 
         // find user
         guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: "Johnny")
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
 
         // then
         var token = UserChangeInfo.add(observer: self, for: searchUser, in: userSession!)
@@ -139,7 +145,9 @@ final class SearchTests: IntegrationTest {
 
         // then
         XCTAssertEqual(userNotifications.count, 1)
-        guard let userChangeInfo = userNotifications.first else { XCTFail(); return }
+        guard let userChangeInfo = userNotifications.first else {
+            XCTFail(); return
+        }
         XCTAssertTrue(userChangeInfo.user === searchUser)
         XCTAssertTrue(userChangeInfo.connectionStateChanged)
         token = nil
@@ -162,7 +170,9 @@ final class SearchTests: IntegrationTest {
 
         // find user
         guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: "Johnny")
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
 
         // then
         var token = UserChangeInfo.add(observer: self, for: searchUser, in: userSession!)
@@ -176,7 +186,9 @@ final class SearchTests: IntegrationTest {
 
         // then
         XCTAssertEqual(userNotifications.count, 1)
-        guard let userChangeInfo = userNotifications.first else { XCTFail(); return }
+        guard let userChangeInfo = userNotifications.first else {
+            XCTFail(); return
+        }
         XCTAssertTrue(userChangeInfo.user === searchUser)
         XCTAssertTrue(userChangeInfo.connectionStateChanged)
         token = nil
@@ -198,9 +210,13 @@ final class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
+        guard let searchQuery = userName?.components(separatedBy: " ").last else {
+            XCTFail(); return
+        }
         guard let user = searchForConnectedUser(withName: userName!, searchQuery: searchQuery)
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
 
         // when
         user.requestPreviewProfileImage()
@@ -224,9 +240,13 @@ final class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
+        guard let searchQuery = userName?.components(separatedBy: " ").last else {
+            XCTFail(); return
+        }
         guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
 
         // when
         searchUser.requestPreviewProfileImage()
@@ -247,9 +267,13 @@ final class SearchTests: IntegrationTest {
         XCTAssertTrue(login())
 
         // when
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
+        guard let searchQuery = userName?.components(separatedBy: " ").last else {
+            XCTFail(); return
+        }
         guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -276,9 +300,13 @@ final class SearchTests: IntegrationTest {
             return nil
         }
 
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
+        guard let searchQuery = userName?.components(separatedBy: " ").last else {
+            XCTFail(); return
+        }
         guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
         searchUser.requestPreviewProfileImage()
         var token = UserChangeInfo.add(observer: self, for: searchUser, in: userSession!)
         XCTAssertNotNil(token)
@@ -289,7 +317,9 @@ final class SearchTests: IntegrationTest {
 
         // then
         XCTAssertEqual(userNotifications.count, 1)
-        guard let userChangeInfo = userNotifications.first else { XCTFail(); return }
+        guard let userChangeInfo = userNotifications.first else {
+            XCTFail(); return
+        }
         XCTAssertTrue(userChangeInfo.user === searchUser)
         XCTAssertTrue(userChangeInfo.imageSmallProfileDataChanged)
         token = nil
@@ -317,9 +347,13 @@ final class SearchTests: IntegrationTest {
             return nil
         }
 
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
+        guard let searchQuery = userName?.components(separatedBy: " ").last else {
+            XCTFail(); return
+        }
         guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
         searchUser.requestPreviewProfileImage()
         var token = UserChangeInfo.add(observer: self, for: searchUser, in: userSession!)
         XCTAssertNotNil(token)
@@ -337,7 +371,9 @@ final class SearchTests: IntegrationTest {
 
         // then
         XCTAssertEqual(userNotifications.count, 2)
-        guard let userChangeInfo = userNotifications.last else { XCTFail(); return }
+        guard let userChangeInfo = userNotifications.last else {
+            XCTFail(); return
+        }
         XCTAssertTrue(userChangeInfo.user === searchUser)
         XCTAssertTrue(userChangeInfo.imageMediumDataChanged)
 
@@ -360,10 +396,16 @@ final class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-        guard let userName else { XCTFail("missing userName"); return }
-        guard let searchQuery = userName.components(separatedBy: " ").last else { XCTFail("searchQuery"); return }
+        guard let userName else {
+            XCTFail("missing userName"); return
+        }
+        guard let searchQuery = userName.components(separatedBy: " ").last else {
+            XCTFail("searchQuery"); return
+        }
         guard let user = searchForConnectedUser(withName: userName, searchQuery: searchQuery)
-        else { XCTFail("missing user"); return }
+        else {
+            XCTFail("missing user"); return
+        }
 
         // when
         mockTransportSession.resetReceivedRequests()
@@ -396,9 +438,13 @@ final class SearchTests: IntegrationTest {
         mockTransportSession.resetReceivedRequests()
 
         // when
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
+        guard let searchQuery = userName?.components(separatedBy: " ").last else {
+            XCTFail(); return
+        }
         guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         searchUser.requestPreviewProfileImage()
@@ -441,11 +487,17 @@ final class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-        guard let userName else { XCTFail("missing userName"); return }
+        guard let userName else {
+            XCTFail("missing userName"); return
+        }
         guard let searchQuery = userName.components(separatedBy: " ").last
-        else { XCTFail("missing searchQuery"); return }
+        else {
+            XCTFail("missing searchQuery"); return
+        }
         guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: searchQuery)
-        else { XCTFail("missing searchUser"); return }
+        else {
+            XCTFail("missing searchUser"); return
+        }
         searchUser.requestPreviewProfileImage()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -482,9 +534,13 @@ final class SearchTests: IntegrationTest {
 
         XCTAssertTrue(login())
 
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
+        guard let searchQuery = userName?.components(separatedBy: " ").last else {
+            XCTFail(); return
+        }
         guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
-        else { XCTFail(); return }
+        else {
+            XCTFail(); return
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // We reset the requests after having performed the search and fetching the users (in comparison to the other

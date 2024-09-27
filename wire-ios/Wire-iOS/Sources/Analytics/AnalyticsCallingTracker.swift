@@ -147,7 +147,9 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
                 )
 
                 // .established is called every time a participant joins the call
-                guard callInfo.establishedDate == nil else { return }
+                guard callInfo.establishedDate == nil else {
+                    return
+                }
 
                 callInfo.establishedDate = Date()
                 analytics.tag(callEvent: .established, in: conversation, callInfo: callInfo)
@@ -182,7 +184,9 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
     }
 
     func presentIOErrorAlertIfAllowed() {
-        guard Bundle.developerModeEnabled else { return }
+        guard Bundle.developerModeEnabled else {
+            return
+        }
 
         let alert = UIAlertController(
             title: "Calling Error",

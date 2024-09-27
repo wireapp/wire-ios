@@ -93,7 +93,9 @@ final class SoundEventListener: NSObject {
     var networkAvailabilityObserverToken: Any?
 
     func playSoundIfAllowed(_ mediaManagerSound: MediaManagerSound) {
-        guard soundEventWatchDog.outputAllowed else { return }
+        guard soundEventWatchDog.outputAllowed else {
+            return
+        }
         AVSMediaManager.sharedInstance()?.play(sound: mediaManagerSound)
     }
 
@@ -179,7 +181,9 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
         switch callState {
         case .incoming(video: _, shouldRing: true, degraded: _):
             guard let sessionManager = SessionManager.shared,
-                  conversation.mutedMessageTypesIncludingAvailability == .none else { return }
+                  conversation.mutedMessageTypesIncludingAvailability == .none else {
+                return
+            }
 
             let otherNonIdleCalls = callCenter.nonIdleCalls.filter { (key: AVSIdentifier, _) -> Bool in
                 key != conversationId
@@ -244,7 +248,9 @@ extension SoundEventListener {
 
 extension SoundEventListener: ZMNetworkAvailabilityObserver {
     func didChangeAvailability(newState: NetworkState) {
-        guard UIApplication.shared.applicationState != .background else { return }
+        guard UIApplication.shared.applicationState != .background else {
+            return
+        }
 
         if newState == .online {
             soundEventWatchDog.isMuted = false

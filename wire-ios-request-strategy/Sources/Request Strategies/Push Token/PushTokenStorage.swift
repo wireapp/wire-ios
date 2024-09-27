@@ -23,7 +23,9 @@ public enum PushTokenStorage {
 
     public static var pushToken: PushToken? {
         get {
-            guard let storedValue = storage.object(forKey: Keys.pushToken.rawValue) as? Data else { return nil }
+            guard let storedValue = storage.object(forKey: Keys.pushToken.rawValue) as? Data else {
+                return nil
+            }
             return try? JSONDecoder().decode(PushToken.self, from: storedValue)
         }
 

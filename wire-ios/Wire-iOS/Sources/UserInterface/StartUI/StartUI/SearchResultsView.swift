@@ -70,7 +70,9 @@ final class SearchResultsView: UIView {
 
     var accessoryView: UIView? {
         didSet {
-            guard oldValue != accessoryView else { return }
+            guard oldValue != accessoryView else {
+                return
+            }
 
             oldValue?.removeFromSuperview()
 
@@ -95,7 +97,9 @@ final class SearchResultsView: UIView {
 
     var emptyResultView: UIView? {
         didSet {
-            guard oldValue != emptyResultView else { return }
+            guard oldValue != emptyResultView else {
+                return
+            }
 
             oldValue?.removeFromSuperview()
 
@@ -169,7 +173,9 @@ final class SearchResultsView: UIView {
             withKeyboardNotification: notification,
             in: self,
             animations: { [weak self] keyboardFrameInView in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
 
                 let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
                 accessoryViewBottomOffsetConstraint?.constant = -keyboardHeight

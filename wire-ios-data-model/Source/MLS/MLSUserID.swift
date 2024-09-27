@@ -28,7 +28,9 @@ public struct MLSUserID {
             separator: "@",
             omittingEmptySubsequences: false
         )
-        guard components.count == 2 else { return nil }
+        guard components.count == 2 else {
+            return nil
+        }
 
         self.init(userID: String(components[0]), domain: String(components[1]))
     }

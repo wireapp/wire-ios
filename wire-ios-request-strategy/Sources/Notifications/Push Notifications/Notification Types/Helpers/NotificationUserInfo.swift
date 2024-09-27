@@ -100,7 +100,9 @@ public class NotificationUserInfo: NSObject, NSCoding {
 
     public var eventTime: Date? {
         get {
-            guard let interval = self[.eventTime] as? TimeInterval else { return nil }
+            guard let interval = self[.eventTime] as? TimeInterval else {
+                return nil
+            }
             return Date(timeIntervalSince1970: interval)
         }
         set { self[.eventTime] = newValue?.timeIntervalSince1970 }
@@ -123,7 +125,9 @@ public class NotificationUserInfo: NSObject, NSCoding {
     // MARK: - Properties
 
     private func uuid(for key: NotificationUserInfoKey) -> UUID? {
-        guard let uuidString = self[key] as? String else { return nil }
+        guard let uuidString = self[key] as? String else {
+            return nil
+        }
         return UUID(uuidString: uuidString)
     }
 }
@@ -141,7 +145,9 @@ extension NotificationUserInfo {
     }
 
     override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? NotificationUserInfo else { return false }
+        guard let other = object as? NotificationUserInfo else {
+            return false
+        }
         return self == other
     }
 

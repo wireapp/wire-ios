@@ -76,7 +76,9 @@ extension UIImage {
                   source,
                   0,
                   UIImage.thumbnailOptions(withMaxSize: maxSize)
-              ) else { return nil }
+              ) else {
+            return nil
+        }
 
         self.init(cgImage: scaledImage, scale: 2.0, orientation: .up)
     }
@@ -108,7 +110,9 @@ extension UIImage {
     }
 
     convenience init?(from imageData: Data, withShorterSideLength shorterSideLength: CGFloat) {
-        guard let source: CGImageSource = CGImageSourceCreateWithData(imageData as CFData, nil) else { return nil }
+        guard let source: CGImageSource = CGImageSourceCreateWithData(imageData as CFData, nil) else {
+            return nil
+        }
 
         let size = UIImage.size(for: source)
         if size.width <= 0 || size.height <= 0 {
@@ -127,7 +131,9 @@ extension UIImage {
             source,
             0,
             UIImage.thumbnailOptions(withMaxSize: longSideLength)
-        ) else { return nil }
+        ) else {
+            return nil
+        }
 
         self.init(cgImage: scaledImage, scale: UIScreen.main.scale, orientation: .up)
     }

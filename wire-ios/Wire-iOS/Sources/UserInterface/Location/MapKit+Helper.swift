@@ -42,7 +42,9 @@ extension MKMapView {
             let float = log2(360 * (Double(frame.height / 256) / region.span.longitudeDelta))
             // MKMapView does not like NaN and Infinity, so we return 16 as a default, as 0 would represent the whole
             // world
-            guard float.isNormal else { return 16 }
+            guard float.isNormal else {
+                return 16
+            }
             return Int(float)
         }
 
@@ -52,7 +54,9 @@ extension MKMapView {
     }
 
     func setCenterCoordinate(_ coordinate: CLLocationCoordinate2D, zoomLevel: Int, animated: Bool = false) {
-        guard CLLocationCoordinate2DIsValid(coordinate) else { return }
+        guard CLLocationCoordinate2DIsValid(coordinate) else {
+            return
+        }
         let region = MKCoordinateRegion(
             center: coordinate,
             span: MKCoordinateSpan(zoomLevel: zoomLevel, viewSize: Float(frame.height))
@@ -89,7 +93,9 @@ extension MKMapView {
     }
 
     func restoreLocation(animated: Bool) {
-        guard let location: LocationData = Settings.shared[.lastUserLocation] else { return }
+        guard let location: LocationData = Settings.shared[.lastUserLocation] else {
+            return
+        }
         setCenterCoordinate(location.coordinate, zoomLevel: Int(location.zoomLevel), animated: animated)
     }
 }

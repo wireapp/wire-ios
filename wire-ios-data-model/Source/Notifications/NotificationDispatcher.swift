@@ -112,7 +112,9 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
 
     public var isEnabled = true {
         didSet {
-            guard oldValue != isEnabled else { return }
+            guard oldValue != isEnabled else {
+                return
+            }
 
             if isEnabled {
                 startObserving()
@@ -126,7 +128,9 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
 
     public var operationMode: OperationMode {
         didSet {
-            guard operationMode != oldValue else { return }
+            guard operationMode != oldValue else {
+                return
+            }
 
             let observerCenter = managedObjectContext.performAndWait {
                 managedObjectContext.conversationListObserverCenter
@@ -153,7 +157,9 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
         uiContext: NSManagedObjectContext
     ) {
         uiContext.performGroupedBlock {
-            guard let uiMessage = try? uiContext.existingObject(with: objectID) else { return }
+            guard let uiMessage = try? uiContext.existingObject(with: objectID) else {
+                return
+            }
 
             NotificationInContext(
                 name: .NonCoreDataChangeInManagedObject,
@@ -188,7 +194,9 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
     /// Call this AFTER merging the changes from syncMOC into uiMOC.
 
     public func didMergeChanges(_ changedObjectIDs: Set<NSManagedObjectID>) {
-        guard isEnabled else { return }
+        guard isEnabled else {
+            return
+        }
 
         let changedObjects = changedObjectIDs.compactMap {
             try? managedObjectContext.existingObject(with: $0) as? ZMManagedObject
@@ -220,12 +228,16 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
     // Called when objects in the context change, it may be called several times between saves.
 
     func objectsDidChange(_ note: Notification) {
-        guard isEnabled else { return }
+        guard isEnabled else {
+            return
+        }
         process(note: note)
     }
 
     func contextDidSave(_: Notification) {
-        guard isEnabled else { return }
+        guard isEnabled else {
+            return
+        }
         fireAllNotificationsIfAllowed()
     }
 
@@ -243,7 +255,9 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
 
         changeDetector.add(changes: Changes(changedKeys: Set(changedKeys)), for: object)
 
-        guard shouldFireNotifications else { return }
+        guard shouldFireNotifications else {
+            return
+        }
 
         if managedObjectContext.zm_hasChanges {
             // Fire notifications via a save.
@@ -301,7 +315,9 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
     }
 
     private func process(note: Notification) {
-        guard let objects = ModifiedObjects(notification: note) else { return }
+        guard let objects = ModifiedObjects(notification: note) else {
+            return
+        }
         forwardChangesToConversationListObserver(modifiedObjects: objects)
         checkForUnreadMessages(insertedObjects: objects.inserted, updatedObjects: objects.updated)
         changeDetector.detectChanges(for: objects)
@@ -356,7 +372,9 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
     }
 
     private func fireAllNotificationsIfAllowed() {
-        guard shouldFireNotifications else { return }
+        guard shouldFireNotifications else {
+            return
+        }
         fireAllNotifications()
     }
 
@@ -366,8 +384,10 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
         let unreadMessages = unreadMessages
         self.unreadMessages = UnreadMessages()
 
-        detectedChanges.forEach { changeInfo in
-            guard let objectInSnapshot = changeInfo.object as? ObjectInSnapshot else { return }
+        for changeInfo in detectedChanges {
+            guard let objectInSnapshot = changeInfo.object as? ObjectInSnapshot else {
+                continue
+            }
 
             postNotification(
                 name: objectInSnapshot.notificationName,
@@ -375,7 +395,9 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
                 changeInfo: changeInfo
             )
 
-            guard let managedObject = changeInfo.object as? ZMManagedObject else { return }
+            guard let managedObject = changeInfo.object as? ZMManagedObject else {
+                continue
+            }
 
             let classIdentifier = managedObject.classIdentifier
             var previousChanges = changesByClass[classIdentifier] ?? []

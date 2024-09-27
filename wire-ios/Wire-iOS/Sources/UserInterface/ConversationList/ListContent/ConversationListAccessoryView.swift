@@ -107,7 +107,9 @@ final class ConversationListAccessoryView: UIView {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else {
+            return
+        }
         // We need to call this method here because the background, the border color
         // of the icon when switching from dark to light mode
         // or vice versa can be updated only inside traitCollectionDidChange.
@@ -200,7 +202,9 @@ final class ConversationListAccessoryView: UIView {
     private var viewForState: UIView? {
         typealias ConversationListVoiceOver = L10n.Localizable.ConversationList.Voiceover.Status
 
-        guard let icon else { return nil }
+        guard let icon else {
+            return nil
+        }
         badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
         let iconTintColor = IconColors.foregroundDefaultWhite
 

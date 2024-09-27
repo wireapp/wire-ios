@@ -123,7 +123,9 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
     }
 
     func check(identifier: String?, contains items: [String], file: StaticString = #file, line: UInt = #line) {
-        guard let identifier else { XCTFail("identifier should not be nil", file: file, line: line); return }
+        guard let identifier else {
+            XCTFail("identifier should not be nil", file: file, line: line); return
+        }
         for item in items {
             XCTAssert(identifier.contains(item), "[\(identifier)] should contain [\(item)]", file: file, line: line)
         }

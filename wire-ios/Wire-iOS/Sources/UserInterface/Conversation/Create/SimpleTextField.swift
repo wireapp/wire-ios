@@ -79,7 +79,9 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     var value: Value? {
         let validator = SimpleTextFieldValidator()
-        guard let text else { return nil }
+        guard let text else {
+            return nil
+        }
         return if let error = validator.validate(text: text) {
             .error(error)
         } else {
@@ -177,7 +179,9 @@ extension SimpleTextField: SimpleTextFieldValidatorDelegate {
     func textFieldValueChanged(_ text: String?) {
         let validator = SimpleTextFieldValidator()
         let newValue = { () -> SimpleTextField.Value in
-            guard let text else { return .error(.empty) }
+            guard let text else {
+                return .error(.empty)
+            }
             if let error = validator.validate(text: text) {
                 return .error(error)
             } else {

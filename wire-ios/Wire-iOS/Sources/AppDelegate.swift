@@ -299,7 +299,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationProtectedDataDidBecomeAvailable(_: UIApplication) {
-        guard appRootRouter == nil else { return }
+        guard appRootRouter == nil else {
+            return
+        }
         createAppRootRouterAndInitialiazeOperations(launchOptions)
     }
 

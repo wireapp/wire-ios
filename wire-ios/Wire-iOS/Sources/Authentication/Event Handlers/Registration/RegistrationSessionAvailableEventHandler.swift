@@ -24,7 +24,9 @@ final class RegistrationSessionAvailableEventHandler: AuthenticationEventHandler
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {
-        guard case .createUser = currentStep else { return nil }
+        guard case .createUser = currentStep else {
+            return nil
+        }
         return [.transition(.configureDevice, mode: .normal), .configureDevicePermissions]
     }
 }

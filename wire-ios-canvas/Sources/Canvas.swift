@@ -192,7 +192,9 @@ public final class Canvas: UIView {
     }
 
     override public func draw(_: CGRect) {
-        guard let context = UIGraphicsGetCurrentContext() else { return }
+        guard let context = UIGraphicsGetCurrentContext() else {
+            return
+        }
 
         if flattenIndex == 0, referenceObject != nil {
             flatten(upTo: 1)
@@ -218,7 +220,9 @@ public final class Canvas: UIView {
 
     @objc
     public func undo() {
-        guard !sceneExcludingReferenceObject.isEmpty else { return }
+        guard !sceneExcludingReferenceObject.isEmpty else {
+            return
+        }
 
         if flattenIndex == scene.count {
             unflatten()
@@ -241,7 +245,9 @@ public final class Canvas: UIView {
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
 
-        guard mode == .draw else { return }
+        guard mode == .draw else {
+            return
+        }
 
         if let location = touches.first?.location(in: self) {
             let stroke = insert(brush: brush, at: location)
@@ -253,7 +259,9 @@ public final class Canvas: UIView {
     override public func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
 
-        guard mode == .draw else { return }
+        guard mode == .draw else {
+            return
+        }
 
         if let location = touches.first?.location(in: self), let stroke {
             setNeedsDisplay(stroke.move(to: location))
@@ -263,7 +271,9 @@ public final class Canvas: UIView {
     override public func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
 
-        guard mode == .draw else { return }
+        guard mode == .draw else {
+            return
+        }
 
         stroke?.end()
         flatten()
@@ -292,7 +302,9 @@ public final class Canvas: UIView {
 
     fileprivate var selection: Editable? {
         didSet {
-            guard selection !== oldValue else { return }
+            guard selection !== oldValue else {
+                return
+            }
 
             selectionView?.removeFromSuperview()
             selectionView = selection?.selectedView
@@ -356,7 +368,9 @@ public final class Canvas: UIView {
     private func pickObject(at position: CGPoint) -> Editable? {
         let editables = scene.compactMap { $0 as? Editable }
         return editables.reversed().first(where: { editable in
-            guard editable.selectable else { return false }
+            guard editable.selectable else {
+                return false
+            }
             let bounds = CGRect(origin: CGPoint.zero, size: editable.size)
             let position = position.applying(editable.transform.inverted())
             return bounds.contains(position)
@@ -375,7 +389,9 @@ public final class Canvas: UIView {
     private func flatten(upTo: Int) {
         let renderables = scene.prefix(upTo: upTo).suffix(from: flattenIndex)
 
-        guard !renderables.isEmpty else { return }
+        guard !renderables.isEmpty else {
+            return
+        }
 
         selection?.selected = false
         defer {
@@ -439,11 +455,15 @@ extension Canvas: UIGestureRecognizerDelegate {
     func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
-            guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
+            guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else {
+                break
+            }
             initialOrienation.position = selection.position
 
         case .changed:
-            guard let selection else { break }
+            guard let selection else {
+                break
+            }
             let translation = gestureRecognizer.translation(in: self)
             selection.position = CGPoint(
                 x: initialOrienation.position.x + translation.x,
@@ -459,11 +479,15 @@ extension Canvas: UIGestureRecognizerDelegate {
     func handlePinchGesture(gestureRecognizer: UIPinchGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
-            guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
+            guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else {
+                break
+            }
             initialOrienation.scale = selection.scale
 
         case .changed:
-            guard let selection else { break }
+            guard let selection else {
+                break
+            }
             selection.scale = min(max(initialOrienation.scale * gestureRecognizer.scale, minimumScale), maximumScale)
 
         default:
@@ -475,11 +499,15 @@ extension Canvas: UIGestureRecognizerDelegate {
     func handleRotateGesture(gestureRecognizer: UIRotationGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
-            guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
+            guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else {
+                break
+            }
             initialOrienation.rotation = selection.rotation
 
         case .changed:
-            guard let selection else { break }
+            guard let selection else {
+                break
+            }
             selection.rotation = initialOrienation.rotation + gestureRecognizer.rotation
 
         default:

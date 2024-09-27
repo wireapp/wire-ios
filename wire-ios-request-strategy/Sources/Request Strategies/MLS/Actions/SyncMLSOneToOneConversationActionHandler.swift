@@ -126,7 +126,9 @@ extension Payload.Conversation {
         guard
             let selfMember = members?.selfMember,
             members?.others.isEmpty == true
-        else { return }
+        else {
+            return
+        }
 
         members = Payload.ConversationMembers(
             selfMember: selfMember,

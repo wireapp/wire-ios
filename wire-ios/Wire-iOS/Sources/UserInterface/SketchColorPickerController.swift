@@ -69,7 +69,9 @@ final class SketchColorPickerController: UIViewController {
 
     var selectedColorIndex = 0 {
         didSet {
-            guard canSelectColor(atIndex: selectedColorIndex) else { return }
+            guard canSelectColor(atIndex: selectedColorIndex) else {
+                return
+            }
 
             colorsCollectionView.selectItem(
                 at: IndexPath(row: selectedColorIndex, section: 0),

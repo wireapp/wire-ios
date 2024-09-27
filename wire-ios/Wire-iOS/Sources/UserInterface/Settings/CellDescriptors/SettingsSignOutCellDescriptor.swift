@@ -43,7 +43,9 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
     var requestPasswordController: RequestPasswordController?
 
     override func generateViewController() -> UIViewController? {
-        guard let selfUser = ZMUser.selfUser() else { return nil }
+        guard let selfUser = ZMUser.selfUser() else {
+            return nil
+        }
 
         var viewController: UIViewController?
 
@@ -67,7 +69,9 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             viewController = alert
         } else {
             requestPasswordController = RequestPasswordController(context: .logout, callback: { [weak self] password in
-                guard let password else { return }
+                guard let password else {
+                    return
+                }
 
                 self?.logout(password: password)
             })
@@ -86,7 +90,9 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
     }()
 
     private func logout(password: String? = nil) {
-        guard let selfUser = ZMUser.selfUser() else { return }
+        guard let selfUser = ZMUser.selfUser() else {
+            return
+        }
 
         if selfUser.usesCompanyLogin || password != nil {
             Task { @MainActor in activityIndicator.start() }
@@ -104,7 +110,9 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
                 }
             }
         } else {
-            guard let account = SessionManager.shared?.accountManager.selectedAccount else { return }
+            guard let account = SessionManager.shared?.accountManager.selectedAccount else {
+                return
+            }
             SessionManager.shared?.delete(account: account)
         }
     }

@@ -55,7 +55,9 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        guard !objects.isEmpty  else { return }
+        guard !objects.isEmpty  else {
+            return
+        }
 
         upstreamSync.readyForNextRequestIfNotBusy()
     }
@@ -64,7 +66,9 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         let labels = object.compactMap { $0 as? Label }
 
         guard !labels.isEmpty,
-              labels.any({ Label.predicateForObjectsThatNeedToBeUpdatedUpstream()!.evaluate(with: $0) }) else { return }
+              labels.any({ Label.predicateForObjectsThatNeedToBeUpdatedUpstream()!.evaluate(with: $0) }) else {
+            return
+        }
 
         upstreamSync.readyForNextRequestIfNotBusy()
     }
@@ -119,7 +123,9 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         }
 
         for (label, updatedKeys) in updatedKeys {
-            guard let updatedKeys else { continue }
+            guard let updatedKeys else {
+                continue
+            }
 
             if updatedKeys.contains(#keyPath(Label.markedForDeletion)) {
                 managedObjectContext.delete(label)

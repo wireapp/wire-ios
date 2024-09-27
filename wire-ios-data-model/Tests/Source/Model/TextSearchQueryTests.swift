@@ -77,7 +77,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard results.count == 1 else { return XCTFail("Unexpected count \(results.count)") }
+        guard results.count == 1 else {
+            return XCTFail("Unexpected count \(results.count)")
+        }
 
         let result = results.first!
         XCTAssertFalse(result.hasMore)
@@ -112,7 +114,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard results.count == 1 else { return XCTFail("Unexpected count \(results.count)") }
+        guard results.count == 1 else {
+            return XCTFail("Unexpected count \(results.count)")
+        }
 
         let result = results.first!
         XCTAssertFalse(result.hasMore)
@@ -165,7 +169,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard results.count == 3 else { return XCTFail("Unexpected count \(results.count)") }
+        guard results.count == 3 else {
+            return XCTFail("Unexpected count \(results.count)")
+        }
         for result in results.dropLast() {
             XCTAssertTrue(result.hasMore)
         }
@@ -203,7 +209,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard results.count == 1 else { return XCTFail("Unexpected count \(results.count)") }
+        guard results.count == 1 else {
+            return XCTFail("Unexpected count \(results.count)")
+        }
 
         let result = results.first!
         XCTAssertFalse(result.hasMore)
@@ -250,7 +258,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard results.count == 3 else { return XCTFail("Unexpected count \(results.count)") }
+        guard results.count == 3 else {
+            return XCTFail("Unexpected count \(results.count)")
+        }
 
         for fetchedResult in results.dropLast() {
             XCTAssert(fetchedResult.hasMore)
@@ -299,7 +309,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
         // Then
         guard delegate.fetchedResults.count == 3
-        else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
+        else {
+            return XCTFail("Unexpected count \(delegate.fetchedResults.count)")
+        }
 
         let firstResult = delegate.fetchedResults.first!
         XCTAssertTrue(firstResult.hasMore)
@@ -343,7 +355,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard results.count == 4 else { return XCTFail("Unexpected count \(results.count)") }
+        guard results.count == 4 else {
+            return XCTFail("Unexpected count \(results.count)")
+        }
         for result in results.dropLast() {
             XCTAssertTrue(result.hasMore)
         }
@@ -453,7 +467,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
         // Then
         guard delegate.fetchedResults.count == 1
-        else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
+        else {
+            return XCTFail("Unexpected count \(delegate.fetchedResults.count)")
+        }
         let result = delegate.fetchedResults.first!
         XCTAssertFalse(result.hasMore)
 
@@ -546,7 +562,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     func testThatItCanSearchForAMessageThatHasALinkPreview() {
         verifyThatItFindsMessage(withText: "search term query test", whenSearchingFor: "search query") { message in
             // When we add a linkpreview to the message before searching
-            guard let clientMessage = message as? ZMClientMessage else { return XCTFail("No client message") }
+            guard let clientMessage = message as? ZMClientMessage else {
+                return XCTFail("No client message")
+            }
             let (title, summary, url, permanentURL) = (
                 "title",
                 "summary",
@@ -668,12 +686,16 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let results = search(for: query, in: conversation, file: file, line: line)
 
         // Then
-        guard results.count == 1 else { return XCTFail("Unexpected count \(results.count)", file: file, line: line) }
+        guard results.count == 1 else {
+            return XCTFail("Unexpected count \(results.count)", file: file, line: line)
+        }
         let result = results.first!
         XCTAssertFalse(result.hasMore, file: file, line: line)
 
         if shouldFind {
-            guard let match = result.matches.first else { return XCTFail("No match found", file: file, line: line) }
+            guard let match = result.matches.first else {
+                return XCTFail("No match found", file: file, line: line)
+            }
             XCTAssertEqual(
                 match.textMessageData?.messageText,
                 message.textMessageData?.messageText,

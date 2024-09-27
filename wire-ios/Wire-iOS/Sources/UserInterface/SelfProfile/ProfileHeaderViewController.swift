@@ -371,7 +371,9 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateE2EICertifiedStatus() {
-        guard let user = user as? ZMUser else { return }
+        guard let user = user as? ZMUser else {
+            return
+        }
 
         Task { @MainActor [conversation] in
             do {
@@ -393,7 +395,9 @@ final class ProfileHeaderViewController: UIViewController {
 
 extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
-        guard viewController === userStatusViewController else { return }
+        guard viewController === userStatusViewController else {
+            return
+        }
 
         userSession.perform { [weak self] in
             self?.user.availability = availability

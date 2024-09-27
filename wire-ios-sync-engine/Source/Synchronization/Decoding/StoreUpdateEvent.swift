@@ -37,7 +37,9 @@ public final class StoredUpdateEvent: NSManagedObject {
         index: Int64,
         publicKey: SecKey? = nil
     ) -> StoredUpdateEvent? {
-        guard let storedEvent = StoredUpdateEvent.insertNewObject(managedObjectContext) else { return nil }
+        guard let storedEvent = StoredUpdateEvent.insertNewObject(managedObjectContext) else {
+            return nil
+        }
         storedEvent.debugInformation = event.debugInformation
         storedEvent.isTransient = event.isTransient
         storedEvent.source = Int16(event.source.rawValue)

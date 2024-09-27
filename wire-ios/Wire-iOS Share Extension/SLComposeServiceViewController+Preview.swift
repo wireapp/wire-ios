@@ -183,8 +183,12 @@ extension PreviewDisplayMode {
         _ defaultDisplayMode: PreviewDisplayMode?,
         _ preferredDisplayMode: PreviewDisplayMode?
     ) -> Self? {
-        guard let defaultDisplayMode else { return preferredDisplayMode }
-        guard case let .mixed(count, _) = defaultDisplayMode else { return defaultDisplayMode }
+        guard let defaultDisplayMode else {
+            return preferredDisplayMode
+        }
+        guard case let .mixed(count, _) = defaultDisplayMode else {
+            return defaultDisplayMode
+        }
         return .mixed(count, preferredDisplayMode)
     }
 }

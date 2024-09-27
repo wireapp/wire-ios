@@ -169,7 +169,9 @@ extension ConversationViewController {
     }
 
     func rightNavigationItems(forConversation conversation: ZMConversation) -> [UIBarButtonItem] {
-        guard !conversation.isReadOnly, !conversation.localParticipants.isEmpty else { return [] }
+        guard !conversation.isReadOnly, !conversation.localParticipants.isEmpty else {
+            return []
+        }
 
         if conversation.canJoinCall {
             return [joinCallButton]
@@ -206,10 +208,14 @@ extension ConversationViewController {
     func updateLeftNavigationBarItems() {
         updateLeftNavigationBarItemsTask?.cancel()
         updateLeftNavigationBarItemsTask = Task {
-            if Task.isCancelled { return }
+            if Task.isCancelled {
+                return
+            }
 
             let hasUnread = self.conversation.hasUnreadMessagesInOtherConversations
-            if Task.isCancelled { return }
+            if Task.isCancelled {
+                return
+            }
 
             await MainActor.run {
                 navigationItem.leftBarButtonItems = leftNavigationItems(hasUnread: hasUnread)

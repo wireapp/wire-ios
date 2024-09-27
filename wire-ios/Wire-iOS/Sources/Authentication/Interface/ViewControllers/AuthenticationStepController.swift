@@ -401,7 +401,9 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     private func updateOffsetForKeyboard(in notification: Notification) {
         // Do not change the keyboard frame when there is a modal alert with a text field
-        guard presentedViewController == nil else { return }
+        guard presentedViewController == nil else {
+            return
+        }
 
         let keyboardFrame = UIView.keyboardFrame(in: view, forKeyboardNotification: notification)
         updateKeyboard(with: keyboardFrame)

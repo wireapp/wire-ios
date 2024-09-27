@@ -58,7 +58,9 @@ extension AppLockModule {
         // MARK: - Methods
 
         private var passcodePreference: PasscodePreference? {
-            guard let lock = userSession.lock else { return nil }
+            guard let lock = userSession.lock else {
+                return nil
+            }
 
             switch lock {
             case .screen where userSession.requireCustomAppLockPasscode:
@@ -75,8 +77,12 @@ extension AppLockModule {
         }
 
         private var needsToCreateCustomPasscode: Bool {
-            guard passcodePreference != .deviceOnly else { return false }
-            guard !userSession.isCustomAppLockPasscodeSet else { return false }
+            guard passcodePreference != .deviceOnly else {
+                return false
+            }
+            guard !userSession.isCustomAppLockPasscodeSet else {
+                return false
+            }
             return userSession.requireCustomAppLockPasscode || authenticationType.current == .unavailable
         }
 
@@ -126,7 +132,9 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
     private func handleAuthenticationResult(_ result: AppLockModule.AuthenticationResult) {
         DispatchQueue.main.async(group: dispatchGroup) { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             switch result {
             case .granted:

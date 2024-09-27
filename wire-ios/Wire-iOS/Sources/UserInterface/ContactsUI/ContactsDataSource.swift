@@ -82,13 +82,17 @@ final class ContactsDataSource: NSObject {
     // MARK: - Methods
 
     private func performSearch() {
-        guard let searchDirectory else { return }
+        guard let searchDirectory else {
+            return
+        }
 
         let request = SearchRequest(query: searchQuery, searchOptions: [.contacts, .addressBook])
         let task = searchDirectory.perform(request)
 
         task.addResultHandler { [weak self] searchResult, _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             ungroupedSearchResults = searchResult.addressBook
             delegate?.dataSource(self, didReceiveSearchResult: searchResult.addressBook)
         }
@@ -144,7 +148,9 @@ extension ContactsDataSource: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard shouldShowSectionIndex, !self.section(at: section).isEmpty else { return nil }
+        guard shouldShowSectionIndex, !self.section(at: section).isEmpty else {
+            return nil
+        }
         return collation.sectionTitles[section]
     }
 

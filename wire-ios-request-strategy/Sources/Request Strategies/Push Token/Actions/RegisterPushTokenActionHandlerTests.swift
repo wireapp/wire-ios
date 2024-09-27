@@ -74,7 +74,9 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
         let didSucceed = customExpectation(description: "didSucceed")
 
         action.onResult { result in
-            guard case .success = result else { return }
+            guard case .success = result else {
+                return
+            }
             didSucceed.fulfill()
         }
 
@@ -94,7 +96,9 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
         let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
-            guard case .failure(.appDoesNotExist) = result else { return }
+            guard case .failure(.appDoesNotExist) = result else {
+                return
+            }
             didFail.fulfill()
         }
 
@@ -114,7 +118,9 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
         let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
-            guard case .failure(.unknown(999)) = result else { return }
+            guard case .failure(.unknown(999)) = result else {
+                return
+            }
             didFail.fulfill()
         }
 

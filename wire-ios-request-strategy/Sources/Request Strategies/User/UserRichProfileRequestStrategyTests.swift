@@ -52,7 +52,9 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) }
 
             // when
-            guard let request = self.sut.nextRequest(for: .v0) else { XCTFail("Request is nil"); return }
+            guard let request = self.sut.nextRequest(for: .v0) else {
+                XCTFail("Request is nil"); return
+            }
 
             // then
             XCTAssertEqual(request.path, "/users/\(userID)/rich-info")

@@ -26,7 +26,9 @@ final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
     // MARK: Lifecycle
 
     init?(message: ZMConversationMessage, keypath: KeyPath<MessageChangeInfo, Bool>, _ changed: ChangedBlock? = nil) {
-        guard let session = ZMUserSession.shared() else { return nil }
+        guard let session = ZMUserSession.shared() else {
+            return nil
+        }
 
         self.keypath = keypath
 
@@ -43,7 +45,9 @@ final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
     var onChanged: ChangedBlock?
 
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
-        guard changeInfo[keyPath: keypath] else { return }
+        guard changeInfo[keyPath: keypath] else {
+            return
+        }
 
         onChanged?(changeInfo.message)
     }

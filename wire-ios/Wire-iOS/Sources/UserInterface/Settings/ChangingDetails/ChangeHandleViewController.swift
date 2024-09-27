@@ -122,7 +122,9 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String
     ) -> Bool {
-        guard let delegate else { return false }
+        guard let delegate else {
+            return false
+        }
         let current = (textField.text ?? "") as NSString
         let replacement = current.replacingCharacters(in: range, with: string)
         if delegate.tableViewCell(cell: self, shouldAllowEditingText: replacement) {
@@ -210,10 +212,18 @@ struct HandleChangeState {
     /// This function does not update the `HandleChangeState` itself.
     func validate(_ handle: String) throws {
         let subset = CharacterSet(charactersIn: handle).isSubset(of: HandleValidation.allowedCharacters)
-        guard subset, handle.isEqualToUnicodeName else { throw ValidationError.invalidCharacter }
-        guard handle.count >= HandleValidation.allowedLength.lowerBound else { throw ValidationError.tooShort }
-        guard handle.count <= HandleValidation.allowedLength.upperBound else { throw ValidationError.tooLong }
-        guard handle != currentHandle else { throw ValidationError.sameAsPrevious }
+        guard subset, handle.isEqualToUnicodeName else {
+            throw ValidationError.invalidCharacter
+        }
+        guard handle.count >= HandleValidation.allowedLength.lowerBound else {
+            throw ValidationError.tooShort
+        }
+        guard handle.count <= HandleValidation.allowedLength.upperBound else {
+            throw ValidationError.tooLong
+        }
+        guard handle != currentHandle else {
+            throw ValidationError.sameAsPrevious
+        }
     }
 }
 
@@ -279,7 +289,9 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     func saveButtonTapped() {
-        guard let handleToSet = state.newHandle else { return }
+        guard let handleToSet = state.newHandle else {
+            return
+        }
         userProfile?.requestSettingHandle(handle: handleToSet)
         activityIndicator.start()
     }
@@ -406,13 +418,17 @@ extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
 
 extension ChangeHandleViewController: UserProfileUpdateObserver {
     func didCheckAvailiabilityOfHandle(handle: String, available: Bool) {
-        guard handle == state.newHandle else { return }
+        guard handle == state.newHandle else {
+            return
+        }
         state.availability = available ? .available : .taken
         updateUI()
     }
 
     func didFailToCheckAvailabilityOfHandle(handle: String) {
-        guard handle == state.newHandle else { return }
+        guard handle == state.newHandle else {
+            return
+        }
         // If we fail to check we let the user check again by tapping the save button
         state.availability = .available
         updateUI()
@@ -421,7 +437,9 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
     func didSetHandle() {
         activityIndicator.stop()
         state.availability = .taken
-        guard popOnSuccess else { return }
+        guard popOnSuccess else {
+            return
+        }
         _ = navigationController?.popViewController(animated: true)
     }
 

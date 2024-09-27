@@ -170,7 +170,9 @@ final class AccountStoreTests: ZMConversationTestsBase {
         }
 
         // then
-        guard let account = store.load(uuid) else { return XCTFail("Unable to load account") }
+        guard let account = store.load(uuid) else {
+            return XCTFail("Unable to load account")
+        }
         XCTAssertEqual(account.userName, name)
         XCTAssertEqual(account.teamName, team)
         XCTAssertNil(account.imageData)
@@ -202,7 +204,9 @@ final class AccountStoreTests: ZMConversationTestsBase {
         }
 
         // then
-        guard let account = store.load(uuid) else { return XCTFail("Unable to load account") }
+        guard let account = store.load(uuid) else {
+            return XCTFail("Unable to load account")
+        }
         XCTAssertEqual(account.userName, name)
         XCTAssertEqual(account.teamName, team)
         XCTAssertEqual(account.imageData, image)

@@ -52,7 +52,9 @@ extension ConversationListViewController.ViewModel {
     }
 
     var hasArchivedConversations: Bool {
-        guard let contextProvider = userSession as? ContextProvider else { return false }
+        guard let contextProvider = userSession as? ContextProvider else {
+            return false
+        }
         return (ConversationList.archivedConversations(inUserSession: contextProvider)?.items.count ?? 0) > 0
     }
 }

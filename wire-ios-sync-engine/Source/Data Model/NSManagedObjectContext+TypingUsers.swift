@@ -23,7 +23,9 @@ extension NSManagedObjectContext {
     private static let TypingUsersKey = "ZMTypingUsers"
 
     var typingUsers: TypingUsers? {
-        guard zm_isUserInterfaceContext else { return nil }
+        guard zm_isUserInterfaceContext else {
+            return nil
+        }
 
         if let users = userInfo[NSManagedObjectContext.TypingUsersKey] as? TypingUsers {
             return users

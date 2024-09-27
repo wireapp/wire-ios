@@ -55,7 +55,9 @@ extension ZMClientMessage {
     /// If the input array is empty, this function returns a predicate always evaluating to `false`.
     /// - parameter queryComponents: The array of the search terms to match the normalized text against.
     static func predicateForMessagesMatching(_ queryComponents: [String]) -> NSPredicate {
-        guard !queryComponents.isEmpty else { return NSPredicate(value: false) }
+        guard !queryComponents.isEmpty else {
+            return NSPredicate(value: false)
+        }
         let predicates = Set(queryComponents).map { NSPredicate(
             format: "%K CONTAINS[n] %@",
             #keyPath(ZMMessage.normalizedText),
@@ -159,7 +161,9 @@ public class TextSearchQuery: NSObject {
         delegate: TextSearchQueryDelegate,
         configuration: TextSearchQueryFetchConfiguration = .init(notIndexedBatchSize: 200, indexedBatchSize: 200)
     ) {
-        guard TextSearchQuery.isValid(query: query) else { return nil }
+        guard TextSearchQuery.isValid(query: query) else {
+            return nil
+        }
         guard let uiMOC = (conversation as? ZMConversation)?.managedObjectContext,
               let syncMOC = uiMOC.zm_sync else {
             fatal("NSManagedObjectContexts not accessible.")
@@ -198,7 +202,9 @@ public class TextSearchQuery: NSObject {
         }
 
         syncMOC.performGroupedBlock { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             // We store the count of indexed and non-indexed messages in the conversation.
             // This will be used to ensure we only call the delegate with `hasMore = false` once.
@@ -284,11 +290,17 @@ public class TextSearchQuery: NSObject {
     /// `fetchOffset`
     /// - parameter completion: The completion handler which will be called after all indexed messages have been queried
     private func executeQueryForIndexedMessages(callCount: Int = 0, completion: @escaping () -> Void) {
-        guard !cancelled else { return }
-        guard indexedMessageCount > 0 else { return completion() }
+        guard !cancelled else {
+            return
+        }
+        guard indexedMessageCount > 0 else {
+            return completion()
+        }
 
         syncMOC.performGroupedBlock { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             let request = ZMClientMessage.descendingFetchRequest(with: predicateForIndexedMessagesQueryMatch)
 
@@ -297,7 +309,9 @@ public class TextSearchQuery: NSObject {
 
             guard let unwrappedRequest = request,
                   let matches = syncMOC.fetchOrAssert(request: unwrappedRequest) as? [ZMClientMessage]
-            else { return completion() }
+            else {
+                return completion()
+            }
 
             // Notify the delegate
             let nextOffset = (callCount + 1) * fetchConfiguration.indexedBatchSize
@@ -316,17 +330,23 @@ public class TextSearchQuery: NSObject {
     /// their `noralizedText` property. After the indexing the indexed messages
     /// are queried for the search term and the delegate is notified.
     private func executeQueryForNonIndexedMessages() {
-        guard !cancelled, notIndexedMessageCount > 0 else { return }
+        guard !cancelled, notIndexedMessageCount > 0 else {
+            return
+        }
 
         syncMOC.performGroupedBlock { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             let request = ZMClientMessage.descendingFetchRequest(with: predicateForNotIndexedMessages)
             request?.fetchLimit = fetchConfiguration.notIndexedBatchSize
 
             guard let unwrappedRequest = request,
                   let messagesToIndex = syncMOC.fetchOrAssert(request: unwrappedRequest) as? [ZMClientMessage]
-            else { return }
+            else {
+                return
+            }
             for item in messagesToIndex {
                 // We populate the `normalizedText` field, so the search can be
                 // performed faster on the normalized field the next time.
@@ -350,7 +370,9 @@ public class TextSearchQuery: NSObject {
     private func notifyDelegate(with messages: [ZMMessage], hasMore: Bool) {
         let objectIDs = messages.map(\.objectID)
         uiMOC.performGroupedBlock { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             let uiMessages = objectIDs.compactMap {
                 (try? self.uiMOC.existingObject(with: $0)) as? ZMMessage
             }

@@ -27,7 +27,9 @@ extension ZMConversation {
 
     fileprivate func updateRoles(with response: ZMTransportResponse) {
         guard let rolesPayload = response.payload?.asDictionary()?["conversation_roles"] as? [[String: Any]]
-        else { return }
+        else {
+            return
+        }
         let existingRoles = nonTeamRoles
 
         // Update or insert new roles

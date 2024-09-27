@@ -48,7 +48,9 @@ final class BiometricsState: BiometricsStateProtocol {
 
     func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool {
         currentPolicyDomainState = context.evaluatedPolicyDomainState
-        guard let lastState = lastPolicyDomainState else { return false }
+        guard let lastState = lastPolicyDomainState else {
+            return false
+        }
         return currentPolicyDomainState != lastState
     }
 

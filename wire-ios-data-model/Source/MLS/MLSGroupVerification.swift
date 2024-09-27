@@ -55,10 +55,14 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
 
     public func startObserving() {
         observationTask = .detached { [weak self] in
-            guard let asyncStream = self?.mlsService.epochChanges() else { return }
+            guard let asyncStream = self?.mlsService.epochChanges() else {
+                return
+            }
 
             for await groupID in asyncStream {
-                if Task.isCancelled { return }
+                if Task.isCancelled {
+                    return
+                }
                 await self?.updateConversation(by: groupID)
             }
         }

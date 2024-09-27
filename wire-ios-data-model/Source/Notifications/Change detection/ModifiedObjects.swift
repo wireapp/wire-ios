@@ -22,7 +22,9 @@ struct ModifiedObjects {
     // MARK: Lifecycle
 
     init?(notification: Notification) {
-        guard let userInfo = notification.userInfo as? [String: Any] else { return nil }
+        guard let userInfo = notification.userInfo as? [String: Any] else {
+            return nil
+        }
 
         self.init(
             updated: Self.extractObjects(for: NSUpdatedObjectsKey, from: userInfo),
@@ -69,7 +71,9 @@ struct ModifiedObjects {
     // MARK: Private
 
     private static func extractObjects(for key: String, from userInfo: [String: Any]) -> Set<ZMManagedObject> {
-        guard let objects = userInfo[key] else { return Set() }
+        guard let objects = userInfo[key] else {
+            return Set()
+        }
 
         switch objects {
         case let managedObjects as Set<ZMManagedObject>:

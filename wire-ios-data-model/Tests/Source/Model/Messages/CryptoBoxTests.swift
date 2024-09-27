@@ -35,7 +35,9 @@ class CryptoBoxTest: OtrBaseTest {
 
         // then
         guard let values = try? keyStore.cryptoboxDirectory.resourceValues(forKeys: [.isExcludedFromBackupKey])
-        else { return XCTFail() }
+        else {
+            return XCTFail()
+        }
 
         XCTAssertTrue(values.isExcludedFromBackup!)
     }

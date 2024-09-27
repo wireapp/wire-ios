@@ -28,7 +28,9 @@ final class CameraController {
     // MARK: Lifecycle
 
     init?(camera: SettingsCamera) {
-        guard !UIDevice.isSimulator else { return nil }
+        guard !UIDevice.isSimulator else {
+            return nil
+        }
         self.currentCamera = camera
         setupSession()
         self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
@@ -62,7 +64,9 @@ final class CameraController {
             !isSwitching, canSwitchInputs,
             let toRemove = input(for: currentCamera),
             let toAdd = input(for: newCamera)
-        else { return completion(currentCamera) }
+        else {
+            return completion(currentCamera)
+        }
 
         isSwitching = true
 
@@ -85,7 +89,9 @@ final class CameraController {
         guard
             let connection = previewLayer.connection,
             connection.isVideoOrientationSupported
-        else { return }
+        else {
+            return
+        }
 
         connection.videoOrientation = AVCaptureVideoOrientation.current
     }
@@ -95,11 +101,15 @@ final class CameraController {
     /// callback.
     func capturePhoto(_ handler: @escaping (PhotoResult) -> Void) {
         // For iPad split/slide over mode, the session is not running.
-        guard session.isRunning else { return }
+        guard session.isRunning else {
+            return
+        }
         let currentOrientation = AVCaptureVideoOrientation.current
 
         sessionQueue.async {
-            guard let connection = self.photoOutput.connection(with: .video) else { return }
+            guard let connection = self.photoOutput.connection(with: .video) else {
+                return
+            }
             connection.videoOrientation = currentOrientation
             connection.automaticallyAdjustsVideoMirroring = false
             connection.isVideoMirrored = false
@@ -204,7 +214,9 @@ final class CameraController {
     }
 
     private func configureSession() {
-        guard setupResult == .success else { return }
+        guard setupResult == .success else {
+            return
+        }
 
         session.beginConfiguration()
         defer { session.commitConfiguration() }
@@ -274,7 +286,9 @@ final class CameraController {
         guard
             let input = input(for: camera),
             session.canAddInput(input)
-        else { return }
+        else {
+            return
+        }
 
         sessionQueue.async {
             self.session.beginConfiguration()

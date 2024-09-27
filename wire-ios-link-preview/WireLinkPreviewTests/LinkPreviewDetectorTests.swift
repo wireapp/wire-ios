@@ -123,7 +123,9 @@ class LinkPreviewDetectorTests: XCTestCase {
         waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(result.first?.imageURLs.first?.absoluteString, openGraphData.imageUrls.first)
-        guard let article = result.first as? ArticleMetadata else { return XCTFail("Wrong preview type") }
+        guard let article = result.first as? ArticleMetadata else {
+            return XCTFail("Wrong preview type")
+        }
         XCTAssertEqual(article.permanentURL?.absoluteString, openGraphData.url)
         XCTAssertEqual(article.originalURLString, "example.com")
         XCTAssertEqual(article.characterOffsetInText, 36)
@@ -149,7 +151,9 @@ class LinkPreviewDetectorTests: XCTestCase {
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(imageDownloader.downloadImagesCallCount, 0)
 
-        guard let twitterStatus = result.first as? TwitterStatusMetadata else { return XCTFail("Wrong preview type") }
+        guard let twitterStatus = result.first as? TwitterStatusMetadata else {
+            return XCTFail("Wrong preview type")
+        }
         XCTAssertEqual(twitterStatus.imageURLs.count, 4)
         XCTAssertEqual(twitterStatus.imageURLs.map(\.absoluteString), openGraphData.imageUrls)
         XCTAssertEqual(twitterStatus.characterOffsetInText, 36)

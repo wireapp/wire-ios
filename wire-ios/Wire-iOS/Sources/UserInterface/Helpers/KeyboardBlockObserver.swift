@@ -33,10 +33,14 @@ final class KeyboardBlockObserver: NSObject {
         // MARK: Lifecycle
 
         init?(_ note: Notification, kind: Kind) {
-            guard let info = note.userInfo else { return nil }
+            guard let info = note.userInfo else {
+                return nil
+            }
             guard let endFrameValue = (info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
                   let duration = info[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
-            else { return nil }
+            else {
+                return nil
+            }
             self.frame = endFrameValue
             self.animationDuration = duration
             self.kind = kind

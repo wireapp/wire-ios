@@ -71,16 +71,22 @@ public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrat
             context: managedObjectContext.notificationContext,
             object: nil
         ) { [weak self] note in
-            guard let objectID = note.object as? NSManagedObjectID else { return }
+            guard let objectID = note.object as? NSManagedObjectID else {
+                return
+            }
             self?.didWhitelistAssetDownload(objectID)
         }
     }
 
     func didWhitelistAssetDownload(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             guard let message = try? managedObjectContext.existingObject(with: objectID) as? ZMClientMessage
-            else { return }
+            else {
+                return
+            }
             assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
@@ -157,7 +163,9 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
         apiVersion: APIVersion
     ) -> ZMTransportRequest! {
         guard let message = object as? ZMClientMessage
-        else { fatal("Unable to generate request for \(object.safeForLoggingDescription)") }
+        else {
+            fatal("Unable to generate request for \(object.safeForLoggingDescription)")
+        }
         guard let linkPreview = message.underlyingMessage?.linkPreviews.first else {
             return nil
         }

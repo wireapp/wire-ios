@@ -34,23 +34,33 @@ extension NSDataDetector {
 
         return matches(in: text, options: [], range: wholeTextRange).reduce(into: Dictionary()) {
             let range = $1.range
-            guard let url = $1.url, validRangeIndexSet.contains(in: range) else { return }
-            guard let type = matchYouTubeVideo(in: url) ?? matchSoundCloud(in: url) else { return }
+            guard let url = $1.url, validRangeIndexSet.contains(in: range) else {
+                return
+            }
+            guard let type = matchYouTubeVideo(in: url) ?? matchSoundCloud(in: url) else {
+                return
+            }
             $0[url] = (type, range)
         }
     }
 
     private func matchYouTubeVideo(in url: URL) -> LinkAttachmentType? {
         // Match the domain
-        guard let host = url.host else { return nil }
+        guard let host = url.host else {
+            return nil
+        }
 
         switch host {
         case "m.youtube.com", "www.youtube.com", "youtube.com":
-            guard url.pathComponents.indices.contains(1), url.pathComponents[1] == "watch" else { return nil }
+            guard url.pathComponents.indices.contains(1), url.pathComponents[1] == "watch" else {
+                return nil
+            }
             return .youTubeVideo
 
         case "youtu.be":
-            guard url.pathComponents.count == 2 else { return nil }
+            guard url.pathComponents.count == 2 else {
+                return nil
+            }
             return .youTubeVideo
 
         default:
@@ -60,8 +70,12 @@ extension NSDataDetector {
 
     private func matchSoundCloud(in url: URL) -> LinkAttachmentType? {
         // Match the domain
-        guard let host = url.host else { return nil }
-        guard host == "soundcloud.com" || host == "m.soundcloud.com" || host == "www.soundcloud.com" else { return nil }
+        guard let host = url.host else {
+            return nil
+        }
+        guard host == "soundcloud.com" || host == "m.soundcloud.com" || host == "www.soundcloud.com" else {
+            return nil
+        }
 
         let pathComponents = url.pathComponents
 

@@ -128,7 +128,9 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
+        guard let request = sut.nextRequest(for: .v0) else {
+            return XCTFail()
+        }
 
         // then
         XCTAssertTrue(request.shouldCompress)

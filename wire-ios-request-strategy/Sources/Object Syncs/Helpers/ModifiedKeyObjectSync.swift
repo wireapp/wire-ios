@@ -89,7 +89,9 @@ class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObje
             guard let modifiedKeys = modifiedObject.modifiedKeys,
                   modifiedKeys.contains(trackedKey),
                   !pending.contains(modifiedObject)
-            else { continue }
+            else {
+                continue
+            }
 
             pending.insert(modifiedObject)
             transcoder?.synchronize(key: trackedKey, for: modifiedObject, completion: {

@@ -82,7 +82,9 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         guard let confirmation = Confirmation(
             messageIds: deliveryReceipt.messageIDs,
             type: .delivered
-        ) else { return }
+        ) else {
+            return
+        }
         let senderUserSet: Set<ZMUser> = [deliveryReceipt.sender]
 
         WaitingGroupTask(context: managedObjectContext) { [self] in
@@ -103,11 +105,13 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
 
         var deliveryReceipts: [DeliveryReceipt] = []
 
-        eventsByConversation.forEach { (conversationID: UUID, events: [ZMUpdateEvent]) in
+        for (conversationID, events) in eventsByConversation {
             guard let conversation = ZMConversation.fetch(
                 with: conversationID,
                 in: managedObjectContext
-            ) else { return }
+            ) else {
+                continue
+            }
 
             let eventsBySender = events
                 .filter { $0.needsDeliveryConfirmation(managedObjectContext: managedObjectContext) }

@@ -20,12 +20,16 @@
 
 extension ZMLocalNotification {
     convenience init?(expiredMessage: ZMMessage, moc: NSManagedObjectContext) {
-        guard let conversation = expiredMessage.conversation else { return nil }
+        guard let conversation = expiredMessage.conversation else {
+            return nil
+        }
         self.init(expiredMessageIn: conversation, moc: moc)
     }
 
     convenience init?(expiredMessageIn conversation: ZMConversation, moc: NSManagedObjectContext) {
-        guard let builder = FailedMessageNotificationBuilder(conversation: conversation) else { return nil }
+        guard let builder = FailedMessageNotificationBuilder(conversation: conversation) else {
+            return nil
+        }
         self.init(builder: builder, moc: moc)
     }
 
@@ -33,7 +37,9 @@ extension ZMLocalNotification {
         // MARK: Lifecycle
 
         init?(conversation: ZMConversation?) {
-            guard let conversation, let managedObjectContext = conversation.managedObjectContext else { return nil }
+            guard let conversation, let managedObjectContext = conversation.managedObjectContext else {
+                return nil
+            }
 
             self.conversation = conversation
             self.managedObjectContext = managedObjectContext
@@ -64,7 +70,9 @@ extension ZMLocalNotification {
             let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
             guard let selfUserID = selfUser.remoteIdentifier,
-                  let conversationID = conversation.remoteIdentifier else { return nil }
+                  let conversationID = conversation.remoteIdentifier else {
+                return nil
+            }
 
             let userInfo = NotificationUserInfo()
             userInfo.selfUserID = selfUserID

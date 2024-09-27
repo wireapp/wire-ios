@@ -38,7 +38,9 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
     // MARK: Public
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard syncStatus.currentSyncPhase == .fetchingLegalHoldStatus else { return nil }
+        guard syncStatus.currentSyncPhase == .fetchingLegalHoldStatus else {
+            return nil
+        }
 
         singleRequstSync.readyForNextRequestIfNotBusy()
 
@@ -54,7 +56,9 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
             return nil
         }
 
-        guard let userID = selfUser.remoteIdentifier else { return nil }
+        guard let userID = selfUser.remoteIdentifier else {
+            return nil
+        }
 
         return ZMTransportRequest(
             getFromPath: "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
@@ -63,7 +67,9 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        guard response.result == .permanentError || response.result == .success else { return }
+        guard response.result == .permanentError || response.result == .success else {
+            return
+        }
 
         if response.result == .success, let payload = response.payload as? [AnyHashable: Any] {
             switch payload["status"] as? String {

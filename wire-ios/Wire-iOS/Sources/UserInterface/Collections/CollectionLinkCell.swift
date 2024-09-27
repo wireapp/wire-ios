@@ -108,7 +108,9 @@ final class CollectionLinkCell: CollectionCell {
     }
 
     override func copyDisplayedContent(in pasteboard: UIPasteboard) {
-        guard let link = message?.textMessageData?.linkPreview else { return }
+        guard let link = message?.textMessageData?.linkPreview else {
+            return
+        }
         UIPasteboard.general.url = link.openableURL as URL?
     }
 

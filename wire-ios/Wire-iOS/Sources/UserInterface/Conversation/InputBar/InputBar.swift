@@ -266,7 +266,9 @@ final class InputBar: UIView {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
+        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else {
+            return
+        }
 
         updateLeftAccessoryViewWidth()
         updateRightAccessoryStackViewLayoutMargins()
@@ -319,7 +321,9 @@ final class InputBar: UIView {
     }
 
     func updateEphemeralState() {
-        guard inputBarState.isWriting else { return }
+        guard inputBarState.isWriting else {
+            return
+        }
         updateColors()
         updatePlaceholder()
     }
@@ -337,8 +341,10 @@ final class InputBar: UIView {
 
         buttons.append(buttonsView.expandRowButton)
 
-        buttons.forEach { button in
-            guard let button = button as? IconButton else { return }
+        for button in buttons {
+            guard let button = button as? IconButton else {
+                continue
+            }
 
             button.layer.borderWidth = 1
 
@@ -366,8 +372,12 @@ final class InputBar: UIView {
     }
 
     func undo() {
-        guard inputBarState.isEditing else { return }
-        guard let undoManager = textView.undoManager, undoManager.canUndo else { return }
+        guard inputBarState.isEditing else {
+            return
+        }
+        guard let undoManager = textView.undoManager, undoManager.canUndo else {
+            return
+        }
         undoManager.undo()
         updateEditViewState()
     }
@@ -482,7 +492,9 @@ final class InputBar: UIView {
     }
 
     fileprivate func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
-        guard let writingColor = barBackgroundColor else { return nil }
+        guard let writingColor = barBackgroundColor else {
+            return nil
+        }
         return state.isWriting || state.isMarkingDown ? writingColor : editingBackgroundColor
     }
 
@@ -538,7 +550,9 @@ final class InputBar: UIView {
 
     @objc
     private func didTapBackground(_ gestureRecognizer: UITapGestureRecognizer!) {
-        guard gestureRecognizer.state == .recognized else { return }
+        guard gestureRecognizer.state == .recognized else {
+            return
+        }
         buttonsView.showRow(0, animated: true)
     }
 

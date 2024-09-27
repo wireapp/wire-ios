@@ -74,7 +74,9 @@ final class CallingActionsView: UIView {
 
     var isIncomingCall = false {
         didSet {
-            guard oldValue != isIncomingCall else { return }
+            guard oldValue != isIncomingCall else {
+                return
+            }
             topStackView.removeSubviews()
             handleContainerView.isHidden = isIncomingCall
             handleView.accessibilityElementsHidden = isIncomingCall
@@ -126,7 +128,9 @@ final class CallingActionsView: UIView {
     }
 
     func viewWillRotate(toPortrait portrait: Bool) {
-        guard isIncomingCall else { return }
+        guard isIncomingCall else {
+            return
+        }
         if portrait {
             NSLayoutConstraint.activate(largeButtonsPortraitConstraints)
             NSLayoutConstraint.deactivate(largeButtonsLandscapeConstraints)
@@ -316,7 +320,9 @@ final class CallingActionsView: UIView {
     private func updateHandleViewAccessibilityLabel() {
         typealias Calling = L10n.Accessibility.Calling
 
-        guard let bottomSheetScrollingDelegate else { return }
+        guard let bottomSheetScrollingDelegate else {
+            return
+        }
         handleView.accessibilityHint = bottomSheetScrollingDelegate.isBottomSheetExpanded
             ? Calling.SwipeDownParticipants.hint
             : Calling.SwipeUpParticipants.hint

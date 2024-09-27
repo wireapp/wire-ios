@@ -259,7 +259,9 @@ final class ProfileViewController: UIViewController {
     // MARK: - Constraints
 
     private func setupConstraints() {
-        guard let tabsView = tabsController?.view else { fatal("Tabs view is not created") }
+        guard let tabsView = tabsController?.view else {
+            fatal("Tabs view is not created")
+        }
 
         let securityBannerHeight: CGFloat = securityLevelView.isHidden ? 0 : 24
 
@@ -454,7 +456,9 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     }
 
     private func handleBlockActions(_ result: BlockResult) {
-        guard case .block = result else { return }
+        guard case .block = result else {
+            return
+        }
         handleBlockAndUnblock()
     }
 
@@ -466,7 +470,9 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     // MARK: Notifications
 
     private func presentNotificationsOptions(from targetView: UIView) {
-        guard let conversation = viewModel.conversation else { return }
+        guard let conversation = viewModel.conversation else {
+            return
+        }
 
         let title = "\(conversation.displayNameWithFallback) • \(NotificationResult.title)"
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
@@ -478,7 +484,9 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     // MARK: Delete Contents
 
     private func presentDeleteConfirmationPrompt(from targetView: UIView) {
-        guard let conversation = viewModel.conversation else { return }
+        guard let conversation = viewModel.conversation else {
+            return
+        }
 
         let controller = UIAlertController(title: ClearContentResult.title, message: nil, preferredStyle: .actionSheet)
         ClearContentResult.options(for: conversation).map { $0.action(viewModel.handleDeleteResult) }
@@ -518,7 +526,9 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     }
 
     private func duplicateUser() {
-        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
+        guard DeveloperFlag.debugDuplicateObjects.isOn else {
+            return
+        }
         guard let user = viewModel.user as? ZMUser,
               let context = (viewModel.userSession as? ZMUserSession)?.syncContext else {
             assertionFailure("couldn't get context to duplicateUser")
@@ -553,7 +563,9 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         }
 
         context.performAndWait {
-            guard let original = Team.existingObject(for: team.objectID, in: context) else { return }
+            guard let original = Team.existingObject(for: team.objectID, in: context) else {
+                return
+            }
             let duplicate = Team.insertNewObject(in: context)
             duplicate.remoteIdentifier = original.remoteIdentifier
             duplicate.name = "duplicate team \(original.name ?? "<nil>")"
@@ -578,7 +590,9 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
         didCreateConversation conversation: ZMConversation
     ) {
         controller.dismiss(animated: true) { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
 
             delegate?.profileViewController(
                 self,

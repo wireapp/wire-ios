@@ -26,7 +26,9 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
     // MARK: Lifecycle
 
     init?(conversation: Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
-        guard attachment.hasItemConformingToTypeIdentifier(UTType.gif.identifier) else { return nil }
+        guard attachment.hasItemConformingToTypeIdentifier(UTType.gif.identifier) else {
+            return nil
+        }
         self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
         needsPreparation = true
@@ -57,7 +59,9 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             completion(gifImageData.flatMap(conversation.appendImage))
         }
     }

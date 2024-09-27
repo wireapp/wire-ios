@@ -99,7 +99,9 @@ extension EntityAction {
             object: nil,
             queue: queue
         ) { [weak handler] notification in
-            guard let action = notification.userInfo[userInfoKey] as? Handler.Action else { return }
+            guard let action = notification.userInfo[userInfoKey] as? Handler.Action else {
+                return
+            }
             handler?.performAction(action)
         }
     }

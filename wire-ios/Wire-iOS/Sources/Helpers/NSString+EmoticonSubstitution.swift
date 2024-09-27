@@ -34,7 +34,9 @@ extension NSMutableString {
         var mutableRange = range
 
         for shortcut in shortcuts {
-            guard let emoticon = configuration.substitutionRules[shortcut] else { continue }
+            guard let emoticon = configuration.substitutionRules[shortcut] else {
+                continue
+            }
 
             let howManyTimesReplaced = replaceOccurrences(
                 of: shortcut,

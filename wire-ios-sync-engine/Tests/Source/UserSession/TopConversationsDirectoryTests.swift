@@ -363,7 +363,9 @@ extension TopConversationsDirectoryTests {
         file: StaticString = #file,
         line: UInt = #line
     ) {
-        guard messageCount.new > 0 || messageCount.old > 0 else { return }
+        guard messageCount.new > 0 || messageCount.old > 0 else {
+            return
+        }
         for item in 0 ..< messageCount.new {
             try! conversation.appendText(content: "Message #\(item)")
         }

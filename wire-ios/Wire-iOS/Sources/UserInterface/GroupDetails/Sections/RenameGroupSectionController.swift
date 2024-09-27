@@ -44,7 +44,9 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 
     func focus() {
-        guard conversation.isSelfAnActiveMember else { return }
+        guard conversation.isSelfAnActiveMember else {
+            return
+        }
         renameCell?.titleTextField.becomeFirstResponder()
     }
 
@@ -109,7 +111,9 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
         guard
             let user = SelfUser.provider?.providedSelfUser,
             user.hasTeam
-        else { return .zero }
+        else {
+            return .zero
+        }
 
         sizingFooter.titleLabel.text = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
         sizingFooter.size(fittingWidth: collectionView.bounds.width)
@@ -133,9 +137,13 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
 
 extension RenameGroupSectionController: ZMConversationObserver {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
-        guard changeInfo.securityLevelChanged || changeInfo.nameChanged else { return }
+        guard changeInfo.securityLevelChanged || changeInfo.nameChanged else {
+            return
+        }
 
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation else {
+            return
+        }
 
         renameCell?.configure(for: conversation, editable: ZMUser.selfUser()?.canModifyTitle(in: conversation) ?? false)
     }
@@ -145,7 +153,9 @@ extension RenameGroupSectionController: ZMConversationObserver {
 
 extension RenameGroupSectionController: SimpleTextFieldDelegate {
     func textFieldReturnPressed(_ textField: SimpleTextField) {
-        guard let value = textField.value else { return }
+        guard let value = textField.value else {
+            return
+        }
 
         switch  value {
         case let .valid(name):

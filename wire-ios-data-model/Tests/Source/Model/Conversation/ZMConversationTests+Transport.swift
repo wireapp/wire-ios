@@ -128,7 +128,9 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             guard
                 let participant1 = conversation.participantForUser(user1),
                 let participant2 = conversation.participantForUser(user2)
-            else { return XCTFail() }
+            else {
+                return XCTFail()
+            }
 
             XCTAssertNil(participant1.role)
             XCTAssertEqual(participant2.role?.name, "test_role")
@@ -162,7 +164,9 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             guard
                 let participant1 = conversation.participantForUser(user1),
                 let participant2 = conversation.participantForUser(user2)
-            else { return XCTFail() }
+            else {
+                return XCTFail()
+            }
 
             XCTAssertEqual(participant1.role?.team, team)
             XCTAssertEqual(participant2.role?.team, team)

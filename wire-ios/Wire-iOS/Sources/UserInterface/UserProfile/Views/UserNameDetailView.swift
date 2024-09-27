@@ -52,7 +52,9 @@ final class AddressBookCorrelationFormatter: NSObject {
     // MARK: Private
 
     private func addressBookText(for user: UserType, with addressBookName: String) -> NSAttributedString? {
-        guard !user.isSelfUser, let userName = user.name else { return nil }
+        guard !user.isSelfUser, let userName = user.name else {
+            return nil
+        }
         let suffix = L10n.Localizable.Conversation.ConnectionView.inAddressBook && lightFont.font! && color
         if addressBookName.lowercased() == userName.lowercased() {
             return suffix
@@ -92,7 +94,9 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondSubtitle: NSAttributedString? {
-        guard handleText != nil else { return nil }
+        guard handleText != nil else {
+            return nil
+        }
         return correlationText
     }
 
@@ -107,7 +111,9 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondAccessibilityIdentifier: String? {
-        guard handleText != nil, correlationText != nil else { return nil }
+        guard handleText != nil, correlationText != nil else {
+            return nil
+        }
         return "correlation"
     }
 
@@ -116,12 +122,16 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     static func attributedSubtitle(for user: UserType?) -> NSAttributedString? {
-        guard let user, let handle = user.handleDisplayString(withDomain: user.isFederated) else { return nil }
+        guard let user, let handle = user.handleDisplayString(withDomain: user.isFederated) else {
+            return nil
+        }
         return handle && smallBoldFont.font! && SemanticColors.Label.textDefault
     }
 
     static func attributedCorrelationText(for user: UserType?, addressBookName: String?) -> NSAttributedString? {
-        guard let user else { return nil }
+        guard let user else {
+            return nil
+        }
         return formatter.correlationText(for: user, addressBookName: addressBookName)
     }
 
@@ -166,7 +176,9 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
     }
 
     func redrawFont() {
-        guard let model else { return }
+        guard let model else {
+            return
+        }
         subtitleLabel.attributedText = model.firstSubtitle
         correlationLabel.attributedText = model.secondSubtitle
     }

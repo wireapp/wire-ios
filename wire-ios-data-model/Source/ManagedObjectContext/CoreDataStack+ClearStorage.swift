@@ -111,7 +111,9 @@ extension CoreDataStack {
     /// This either means we are running on a fresh install or the user has upgraded
     /// from a legacy installation which we no longer support.
     func clearStorageIfNecessary() {
-        guard !accountDataFolderExists() else { return }
+        guard !accountDataFolderExists() else {
+            return
+        }
 
         Logging.localStorage.info("Clearing storage on upgrade from legacy installation")
 

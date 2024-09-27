@@ -50,7 +50,9 @@ public class V3Asset: NSObject, ZMImageMessageData {
     // MARK: Lifecycle
 
     public init?(with message: ZMAssetClientMessage) {
-        guard message.version == 3 else { return nil }
+        guard message.version == 3 else {
+            return nil
+        }
         self.assetClientMessage = message
         self.moc = message.managedObjectContext!
     }
@@ -62,7 +64,9 @@ public class V3Asset: NSObject, ZMImageMessageData {
     }
 
     public var imageMessageData: ZMImageMessageData? {
-        guard isImage else { return nil }
+        guard isImage else {
+            return nil
+        }
         return self
     }
 
@@ -107,13 +111,19 @@ public class V3Asset: NSObject, ZMImageMessageData {
     }
 
     public var imageType: String? {
-        guard isImage else { return nil }
+        guard isImage else {
+            return nil
+        }
         return assetClientMessage.underlyingMessage?.assetData?.original.mimeType
     }
 
     public var originalSize: CGSize {
-        guard assetClientMessage.fileMessageData != nil, isImage else { return .zero }
-        guard let asset = assetClientMessage.underlyingMessage?.assetData else { return .zero }
+        guard assetClientMessage.fileMessageData != nil, isImage else {
+            return .zero
+        }
+        guard let asset = assetClientMessage.underlyingMessage?.assetData else {
+            return .zero
+        }
         let size = CGSize(width: Int(asset.original.image.width), height: Int(asset.original.image.height))
 
         if size != .zero {
@@ -190,7 +200,9 @@ public class V3Asset: NSObject, ZMImageMessageData {
 
 extension V3Asset: AssetProxyType {
     public var hasDownloadedPreview: Bool {
-        guard !isImage else { return false }
+        guard !isImage else {
+            return false
+        }
         return moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)
     }
 
@@ -221,7 +233,9 @@ extension V3Asset: AssetProxyType {
     }
 
     public func requestFileDownload() {
-        guard !assetClientMessage.objectID.isTemporaryID else { return }
+        guard !assetClientMessage.objectID.isTemporaryID else {
+            return
+        }
         NotificationInContext(
             name: ZMAssetClientMessage.assetDownloadNotificationName,
             context: moc.notificationContext,
@@ -231,7 +245,9 @@ extension V3Asset: AssetProxyType {
 
     public func requestPreviewDownload() {
         if assetClientMessage.underlyingMessage?.assetData?.hasPreview == true {
-            guard !assetClientMessage.objectID.isTemporaryID else { return }
+            guard !assetClientMessage.objectID.isTemporaryID else {
+                return
+            }
             NotificationInContext(
                 name: ZMAssetClientMessage.imageDownloadNotificationName,
                 context: moc.notificationContext,

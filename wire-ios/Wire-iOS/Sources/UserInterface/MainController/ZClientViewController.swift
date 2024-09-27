@@ -65,12 +65,16 @@ final class ZClientViewController: UIViewController {
 
         NotificationCenter.default
             .addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
-                guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+                guard let change = note.object as? FeatureRepository.FeatureChange else {
+                    return
+                }
 
                 switch change {
                 case .conferenceCallingIsAvailable:
                     guard let session = SessionManager.shared,
-                          session.usePackagingFeatureConfig else { break }
+                          session.usePackagingFeatureConfig else {
+                        break
+                    }
                     self?.presentConferenceCallingAvailableAlert()
 
                 default:
@@ -570,7 +574,9 @@ final class ZClientViewController: UIViewController {
                 let self,
                 !conversation.isDeleted,
                 conversation.managedObjectContext != nil
-            else { return }
+            else {
+                return
+            }
 
             conversationListViewController.viewModel.select(
                 conversation: conversation,
@@ -721,7 +727,9 @@ final class ZClientViewController: UIViewController {
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
 
     private func reloadCurrentConversation() {
-        guard let currentConversation else { return }
+        guard let currentConversation else {
+            return
+        }
 
         let currentConversationViewController = ConversationRootViewController(
             conversation: currentConversation,
@@ -739,7 +747,9 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func requestLoopNotification(_ notification: Notification?) {
-        guard let path = notification?.userInfo?["path"] as? String else { return }
+        guard let path = notification?.userInfo?["path"] as? String else {
+            return
+        }
 
         var presentingViewController = self as UIViewController
         while let presentedViewController = presentingViewController.presentedViewController {

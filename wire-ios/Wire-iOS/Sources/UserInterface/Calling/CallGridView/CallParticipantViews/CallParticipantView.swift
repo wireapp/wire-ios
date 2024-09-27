@@ -49,7 +49,9 @@ final class CallParticipantView: BaseCallParticipantView {
 
     var isPaused = false {
         didSet {
-            guard oldValue != isPaused else { return }
+            guard oldValue != isPaused else {
+                return
+            }
             updateState(animated: true)
         }
     }
@@ -157,7 +159,9 @@ final class CallParticipantView: BaseCallParticipantView {
     }
 
     private func createSnapshotView() {
-        guard let snapshotView = videoView?.snapshotView(afterScreenUpdates: true) else { return }
+        guard let snapshotView = videoView?.snapshotView(afterScreenUpdates: true) else {
+            return
+        }
         insertSubview(snapshotView, belowSubview: blurView)
         snapshotView.translatesAutoresizingMaskIntoConstraints = false
         snapshotView.fitIn(view: blurView)

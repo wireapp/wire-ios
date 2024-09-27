@@ -118,7 +118,9 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
 
     /// Returns the object as a ZMAssetClientMessage if it is asset that needs preprocessing
     private func needsPreprocessing(_ object: NSManagedObject) -> ZMAssetClientMessage? {
-        guard let message = object as? ZMAssetClientMessage else { return nil }
+        guard let message = object as? ZMAssetClientMessage else {
+            return nil
+        }
 
         return message.processingState == .preprocessing ? message : nil
     }
@@ -131,7 +133,9 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
         _ operation: ZMImageDownsampleOperationProtocol,
         imageOwner: ZMImageOwner
     ) {
-        guard let assetImageOwnerAdapter = imageOwner as? AssetImageOwnerAdapter else { return }
+        guard let assetImageOwnerAdapter = imageOwner as? AssetImageOwnerAdapter else {
+            return
+        }
 
         managedObjectContext.performGroupedBlock {
             assetImageOwnerAdapter.asset.updateWithPreprocessedData(

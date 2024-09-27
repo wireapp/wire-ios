@@ -42,7 +42,9 @@ extension ZMAssetClientMessage {
     }
 
     public var underlyingMessage: GenericMessage? {
-        guard !isZombieObject else { return nil }
+        guard !isZombieObject else {
+            return nil
+        }
 
         if cachedUnderlyingAssetMessage == nil {
             cachedUnderlyingAssetMessage = underlyingMessageMergedFromDataSet(filter: {
@@ -123,12 +125,16 @@ extension ZMAssetClientMessage {
                 guard let genericMessage = underlyingMessage,
                       let assetData = genericMessage.assetData,
                       case .uploaded? = assetData.status
-                else { return nil }
+                else {
+                    return nil
+                }
                 return genericMessage
 
             case .placeholder:
                 return underlyingMessageMergedFromDataSet(filter: { message -> Bool in
-                    guard let assetData = message.assetData else { return false }
+                    guard let assetData = message.assetData else {
+                        return false
+                    }
                     guard case .notUploaded? = assetData.status else {
                         return assetData.hasOriginal
                     }
@@ -137,9 +143,13 @@ extension ZMAssetClientMessage {
 
             case .thumbnail:
                 return underlyingMessageMergedFromDataSet(filter: { message -> Bool in
-                    guard let assetData = message.assetData else { return false }
+                    guard let assetData = message.assetData else {
+                        return false
+                    }
                     if let status = assetData.status {
-                        guard case .notUploaded = status else { return false }
+                        guard case .notUploaded = status else {
+                            return false
+                        }
                         return assetData.hasPreview
                     }
                     return assetData.hasPreview

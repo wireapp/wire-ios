@@ -58,7 +58,9 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if isSlowSyncing, slowSyncTask == nil {
             slowSyncTask = Task { [weak self, syncStatus, syncPhase] in
-                guard let self, !Task.isCancelled else { return }
+                guard let self, !Task.isCancelled else {
+                    return
+                }
 
                 WireLogger.featureConfigs.info("slow sync start fetch feature config!")
 

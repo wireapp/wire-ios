@@ -74,17 +74,23 @@ extension ZMConversationMessage {
     }
 
     public var isConnectionRequest: Bool {
-        guard isSystem else { return false }
+        guard isSystem else {
+            return false
+        }
         return systemMessageData!.systemMessageType == .connectionRequest
     }
 
     public var isMissedCall: Bool {
-        guard isSystem else { return false }
+        guard isSystem else {
+            return false
+        }
         return systemMessageData!.systemMessageType == .missedCall
     }
 
     public var isDeletion: Bool {
-        guard isSystem else { return false }
+        guard isSystem else {
+            return false
+        }
         return systemMessageData!.systemMessageType == .messageDeletedForEveryone
     }
 }

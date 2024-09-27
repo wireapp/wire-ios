@@ -45,7 +45,9 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         let client = UserClient.insertNewObject(in: uiMOC)
 
         func userClientSetWithClientCount(_ count: UInt) -> Set<UserClient>? {
-            guard count != 0 else { return nil }
+            guard count != 0 else {
+                return nil
+            }
 
             var clients = Set<UserClient>()
             for _ in 0 ..< count {
@@ -58,8 +60,12 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         let ignoredClient = userClientSetWithClientCount(ignoredClientCount)
         let missedClient = userClientSetWithClientCount(missedClientCount)
 
-        if let trustedClient { client.trustedClients = trustedClient }
-        if let ignoredClient { client.ignoredClients = ignoredClient }
+        if let trustedClient {
+            client.trustedClients = trustedClient
+        }
+        if let ignoredClient {
+            client.ignoredClients = ignoredClient
+        }
         client.missingClients = missedClient
 
         return client

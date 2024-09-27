@@ -118,7 +118,9 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
             path: "/users/\(userId)/rich-info",
             method: .get,
             apiVersion: .v0
-        ) else { XCTFail(); return }
+        ) else {
+            XCTFail(); return
+        }
 
         // then
         XCTAssertEqual(response.httpStatus, 200)
@@ -146,14 +148,20 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
             path: "/users/\(userId)/rich-info",
             method: .get,
             apiVersion: .v0
-        ) else { XCTFail(); return }
+        ) else {
+            XCTFail(); return
+        }
 
         // then
         XCTAssertEqual(response.httpStatus, 200)
         guard let payload = response.payload as? [String: [[String: String]]]
-        else { XCTFail("Malformed response: \(String(describing: response.payload))"); return }
+        else {
+            XCTFail("Malformed response: \(String(describing: response.payload))"); return
+        }
 
-        guard let fields = payload["fields"] else { XCTFail("Malformed payload: \(payload)"); return }
+        guard let fields = payload["fields"] else {
+            XCTFail("Malformed payload: \(payload)"); return
+        }
 
         let values = richProfile.map { ["type": $0.type, "value": $0.value] }
         XCTAssertEqual(fields, values)
@@ -183,7 +191,9 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
             path: "/users/\(userId)/rich-info",
             method: .get,
             apiVersion: .v0
-        ) else { XCTFail(); return }
+        ) else {
+            XCTFail(); return
+        }
 
         // then
         XCTAssertEqual(response.httpStatus, 403)

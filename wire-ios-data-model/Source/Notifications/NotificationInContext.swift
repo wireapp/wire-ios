@@ -100,7 +100,9 @@ public class NotificationInContext: NSObject {
             queue: queue
         ) { note in
             let notificationInContext = NotificationInContext(notification: note)
-            guard object == nil || object! === notificationInContext.object else { return }
+            guard object == nil || object! === notificationInContext.object else {
+                return
+            }
             using(notificationInContext)
         })
     }

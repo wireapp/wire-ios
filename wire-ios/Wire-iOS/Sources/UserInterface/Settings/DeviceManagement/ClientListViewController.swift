@@ -54,7 +54,9 @@ final class ClientListViewController: UIViewController,
         }
 
         self.clientSorter = {
-            guard let leftDate = $0.activationDate, let rightDate = $1.activationDate else { return false }
+            guard let leftDate = $0.activationDate, let rightDate = $1.activationDate else {
+                return false
+            }
             return leftDate.compare(rightDate) == .orderedDescending
         }
 
@@ -580,7 +582,9 @@ final class ClientListViewController: UIViewController,
     }
 
     private func updateE2EIdentityCertificateInDetailsView() {
-        guard let client = findE2EIdentityCertificateClient() else { return }
+        guard let client = findE2EIdentityCertificateClient() else {
+            return
+        }
         selectedDeviceInfoViewModel?.update(from: client)
     }
 
