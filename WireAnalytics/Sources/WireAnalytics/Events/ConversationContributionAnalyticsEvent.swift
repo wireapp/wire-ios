@@ -16,15 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A structure representing a conversation contributed event.
+/// An event tracking the user's contributions in a conversation.
+
 public struct ConversationContributionAnalyticsEvent: AnalyticsEvent {
 
+    /// The type of contribution.
+
+    public var contributionType: ConversationContributionType
+
+    /// The type of conversation.
+
+    public var conversationType: ConversationType
+
+    /// The size of the conversation.
+
+    public var conversationSize: UInt
+
+    /// Create a new `ConversationContributionAnalyticsEvent`.
+
+    public init(
+        contributionType: ConversationContributionType,
+        conversationType: ConversationType,
+        conversationSize: UInt
+    ) {
+        self.contributionType = contributionType
+        self.conversationType = conversationType
+        self.conversationSize = conversationSize
+    }
+
     /// The name of the event.
+
     public var eventName: String {
         "contributed"
     }
 
     /// The segmentation information for the event.
+
     public var segmentation: Set<SegmentationEntry> {
         [
             .groupType(conversationType),
@@ -33,22 +60,4 @@ public struct ConversationContributionAnalyticsEvent: AnalyticsEvent {
         ]
     }
 
-    /// The type of contribution.
-    public var contributionType: ContributionType
-
-    /// The type of conversation.
-    public var conversationType: ConversationType
-
-    /// The size of the conversation.
-    public var conversationSize: UInt
-
-    public init(
-        contributionType: ContributionType,
-        conversationType: ConversationType,
-        conversationSize: UInt
-    ) {
-        self.contributionType = contributionType
-        self.conversationType = conversationType
-        self.conversationSize = conversationSize
-    }
 }

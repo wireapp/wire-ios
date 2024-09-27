@@ -39,7 +39,7 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
     ) throws {
         let message = try conversation.appendFile(with: fileMetadata, nonce: UUID())
 
-        var contributionType: ContributionType = .fileMessage
+        var contributionType: ConversationContributionType = .fileMessage
 
         if let fileMessageData = message.fileMessageData {
             if fileMessageData.isVideo {

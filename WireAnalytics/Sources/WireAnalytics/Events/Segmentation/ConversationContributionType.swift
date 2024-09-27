@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An enumeration representing the type of contribution.
-public enum ContributionType: String, AnalyticsValue {
+/// The type of contribution made in an conversation.
+
+public enum ConversationContributionType: String, AnalyticsValue {
+
     case textMessage = "text_message"
     case likeMessage = "like_message"
     case pingMessage = "ping_message"
@@ -29,8 +31,8 @@ public enum ContributionType: String, AnalyticsValue {
     case audioCallMessage = "audio_call_message"
     case videoCallMessage = "video_call_message"
 
-    /// A string representation of the contribution type suitable for analytics tracking.
     public var analyticsValue: String {
         rawValue
     }
+
 }

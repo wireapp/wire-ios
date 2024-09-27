@@ -70,7 +70,7 @@ extension SegmentationEntry {
     /// - Parameter value: The `ContributionType` of the contribution.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func contributionType(_ value: ContributionType) -> Self {
+    static func contributionType(_ value: ConversationContributionType) -> Self {
         .init(key: "contribution_type", value: value.analyticsValue)
     }
 

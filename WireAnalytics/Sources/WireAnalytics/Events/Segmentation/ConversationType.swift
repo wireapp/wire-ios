@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An enumeration representing the type of conversation.
+/// Types of conversations.
+
 public enum ConversationType: String, AnalyticsValue {
+
     case group
     case oneOnOne = "one_on_one"
     case unknown
 
-    /// A string representation of the conversation type suitable for analytics tracking.
     public var analyticsValue: String {
         rawValue
     }
+
 }
