@@ -60,10 +60,15 @@ public final class AssetRequestFactory: NSObject {
 
         let path =
             switch apiVersion {
-            case .v0, .v1:
+            case .v0,
+                 .v1:
                 "/assets/v3"
 
-            case .v2, .v3, .v4, .v5, .v6:
+            case .v2,
+                 .v3,
+                 .v4,
+                 .v5,
+                 .v6:
                 "/assets"
             }
 
@@ -99,10 +104,15 @@ public final class AssetRequestFactory: NSObject {
 
         let path =
             switch apiVersion {
-            case .v0, .v1:
+            case .v0,
+                 .v1:
                 "/assets/v3"
 
-            case .v2, .v3, .v4, .v5, .v6:
+            case .v2,
+                 .v3,
+                 .v4,
+                 .v5,
+                 .v6:
                 "/assets"
             }
 

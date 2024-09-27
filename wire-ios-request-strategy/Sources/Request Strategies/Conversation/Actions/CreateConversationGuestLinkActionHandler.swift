@@ -38,7 +38,10 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
         let identifier = action.conversationID.transportString()
 
         switch apiVersion {
-        case .v0, .v1, .v2, .v3:
+        case .v0,
+             .v1,
+             .v2,
+             .v3:
             return ZMTransportRequest(
                 path: "/conversations/\(identifier)/code",
                 method: .post,
@@ -46,7 +49,9 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
                 apiVersion: apiVersion.rawValue
             )
 
-        case .v4, .v5, .v6:
+        case .v4,
+             .v5,
+             .v6:
             // For these versions, a payload may include a password.
             var payload: [String: Any] = [:]
             if let password = action.password {

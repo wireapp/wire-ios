@@ -72,7 +72,8 @@ class MediaShareRestrictionManager {
         switch level {
         case .none:
             true
-        case .APIFlag, .securityFlag:
+        case .APIFlag,
+             .securityFlag:
             false
         }
     }
@@ -93,7 +94,8 @@ class MediaShareRestrictionManager {
         switch level {
         case .none:
             true
-        case .APIFlag, .securityFlag:
+        case .APIFlag,
+             .securityFlag:
             false
         }
     }

@@ -183,7 +183,10 @@ extension LocalNotificationType {
         }
 
         switch contentType {
-        case .messageTimerUpdate, .participantsAdded, .participantsRemoved, .reaction:
+        case .messageTimerUpdate,
+             .participantsAdded,
+             .participantsRemoved,
+             .reaction:
             return false
         default:
             return true

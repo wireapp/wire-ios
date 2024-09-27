@@ -39,7 +39,8 @@ extension ConversationActionType {
 
         case .removed: localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser)
 
-        case .none, .started(withName: .none): localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
+        case .none,
+             .started(withName: .none): localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
 
         case .started(withName: .some): "content.system.conversation.with_name.participants"
 
@@ -140,7 +141,9 @@ final class ParticipantsStringFormatter {
         case .added(herself: true) where senderIsSelf:
             return L10n.Localizable.Content.System.Conversation.Guest.youJoined && font && textColor
 
-        case .added(herself: true), .left, .teamMemberLeave:
+        case .added(herself: true),
+             .left,
+             .teamMemberLeave:
             let formatKey = message.actionType.formatKey
             return formatKey(senderIsSelf).localized(args: senderName) && font && textColor
 
@@ -194,7 +197,9 @@ final class ParticipantsStringFormatter {
 
             return result
 
-        case .added(herself: false), .removed, .started(withName: .none):
+        case .added(herself: false),
+             .removed,
+             .started(withName: .none):
             result = formatKey(senderIsSelf).localized(args: senderName, nameSequence.string) && font && textColor
 
         case .started(withName: .some):

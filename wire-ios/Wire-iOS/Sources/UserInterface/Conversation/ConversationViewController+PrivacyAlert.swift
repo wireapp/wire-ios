@@ -34,18 +34,21 @@ extension ConversationViewController {
             switch self {
             case .verifyDevices:
                 L10n.Localizable.Meta.Degraded.verifyDevicesButton
-            case .sendAnyway, .sendAnywayWithAction:
+            case .sendAnyway,
+                 .sendAnywayWithAction:
                 L10n.Localizable.Meta.Degraded.sendAnywayButton
             case .legalHoldDetails:
                 L10n.Localizable.Meta.Legalhold.infoButton
-            case .cancel, .cancelWithAction:
+            case .cancel,
+                 .cancelWithAction:
                 L10n.Localizable.General.cancel
             }
         }
 
         var preferredStyle: UIAlertAction.Style {
             switch self {
-            case .cancel, .cancelWithAction:
+            case .cancel,
+                 .cancelWithAction:
                 .cancel
             default:
                 .default
@@ -207,7 +210,8 @@ extension ConversationViewController {
 extension ConversationViewController: PrivacyWarningPresenter {
     func presentPrivacyWarningAlert(_ notification: Notification) {
         switch conversation.messageProtocol {
-        case .mixed, .proteus:
+        case .mixed,
+             .proteus:
             presentClientVerificationPrivacyWarningAlert(notification)
         case .mls:
             presentE2EIPrivacyWarningAlert(notification)

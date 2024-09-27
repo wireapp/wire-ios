@@ -293,7 +293,8 @@ final class CallingActionsView: UIView {
         case videoButtonDisabledTapRecognizer: .alertVideoUnavailable
         case speakerButton: .toggleSpeakerState
         case flipCameraButton: .flipCamera
-        case endCallButton, largeHangUpButton: .terminateCall
+        case endCallButton,
+             largeHangUpButton: .terminateCall
         case largePickUpButton: .acceptCall
         default: fatalError("Unexpected Button: \(button)")
         }

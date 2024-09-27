@@ -112,9 +112,11 @@ extension ZClientViewController: ConferenceCallingUnavailableObserver {
         }
 
         switch selfUser.teamRole {
-        case .admin, .owner:
+        case .admin,
+             .owner:
             presentConferenceCallingRestrictionAlertForAdmin()
-        case .member, .partner:
+        case .member,
+             .partner:
             presentConferenceCallingRestrictionAlertForMember()
         case  .none:
             presentConferenceCallingRestrictionAlertForPersonalAccount()

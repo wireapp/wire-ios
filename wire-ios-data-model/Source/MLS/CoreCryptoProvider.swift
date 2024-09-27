@@ -278,9 +278,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             keys.p384 = keyData.base64EncodedString()
         case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
             keys.p521 = keyData.base64EncodedString()
-        case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448, .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
+        case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448,
+             .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
             keys.ed448 = keyData.base64EncodedString()
-        case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519, .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
+        case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
+             .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
             keys.ed25519 = keyData.base64EncodedString()
         }
 

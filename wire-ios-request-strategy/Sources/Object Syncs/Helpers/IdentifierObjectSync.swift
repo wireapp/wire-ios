@@ -105,7 +105,8 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
             }
 
             switch response.result {
-            case .permanentError, .success:
+            case .permanentError,
+                 .success:
                 downloading.subtract(scheduled)
                 transcoder?.didReceive(response: response, for: scheduled) {
                     self.managedObjectContext.perform {

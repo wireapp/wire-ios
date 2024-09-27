@@ -111,7 +111,8 @@ class ImagePickerManager: NSObject {
             imagePickerController.cameraDevice = .front
             imagePickerController.modalTransitionStyle = .coverVertical
 
-        case .photoLibrary, .savedPhotosAlbum:
+        case .photoLibrary,
+             .savedPhotosAlbum:
             if viewController.isIPadRegular() {
                 imagePickerController.modalPresentationStyle = .popover
 

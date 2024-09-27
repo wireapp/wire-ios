@@ -35,7 +35,10 @@ enum ConversationSystemMessageCellDescription {
         }
 
         switch systemMessageData.systemMessageType {
-        case .connectionRequest, .connectionUpdate, .reactivatedDevice, .usingNewDevice:
+        case .connectionRequest,
+             .connectionUpdate,
+             .reactivatedDevice,
+             .usingNewDevice:
             break // Deprecated
 
         case .conversationNameChanged:
@@ -108,7 +111,9 @@ enum ConversationSystemMessageCellDescription {
 
             return [AnyConversationMessageCellDescription(sessionResetCell)]
 
-        case .decryptionFailed, .decryptionFailed_RemoteIdentityChanged, .decryptionFailedResolved:
+        case .decryptionFailed,
+             .decryptionFailed_RemoteIdentityChanged,
+             .decryptionFailedResolved:
             let decryptionCell = ConversationCannotDecryptSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData,
@@ -146,7 +151,9 @@ enum ConversationSystemMessageCellDescription {
 
             return [AnyConversationMessageCellDescription(missingMessagesCell)]
 
-        case .participantsAdded, .participantsRemoved, .teamMemberLeave:
+        case .participantsAdded,
+             .participantsRemoved,
+             .teamMemberLeave:
             let participantsChangedCell = ConversationParticipantsChangedSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData
@@ -164,7 +171,8 @@ enum ConversationSystemMessageCellDescription {
 
             return [AnyConversationMessageCellDescription(cell)]
 
-        case .legalHoldDisabled, .legalHoldEnabled:
+        case .legalHoldDisabled,
+             .legalHoldEnabled:
             let cell = ConversationLegalHoldCellDescription(
                 systemMessageType: systemMessageData.systemMessageType,
                 conversation: conversation as! ZMConversation
@@ -210,12 +218,17 @@ enum ConversationSystemMessageCellDescription {
                 ConversationDomainsStoppedFederatingSystemMessageCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
-        case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationPotentialGap,
-             .mlsMigrationStarted, .mlsMigrationUpdateVersion:
+        case .mlsMigrationFinalized,
+             .mlsMigrationJoinAfterwards,
+             .mlsMigrationOngoingCall,
+             .mlsMigrationPotentialGap,
+             .mlsMigrationStarted,
+             .mlsMigrationUpdateVersion:
             let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(description)]
 
-        case .mlsNotSupportedOtherUser, .mlsNotSupportedSelfUser:
+        case .mlsNotSupportedOtherUser,
+             .mlsNotSupportedSelfUser:
             if let user = conversation.connectedUserType {
                 let description = MLSMigrationSupportCellDescription(
                     messageType: systemMessageData.systemMessageType,

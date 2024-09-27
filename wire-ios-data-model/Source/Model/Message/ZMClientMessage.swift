@@ -59,7 +59,8 @@ public class ZMClientMessage: ZMOTRMessage {
             return false
         }
         switch content {
-        case .edited, .reaction:
+        case .edited,
+             .reaction:
             return true
         default:
             return false
@@ -159,7 +160,8 @@ public class ZMClientMessage: ZMOTRMessage {
             return
         }
         switch content {
-        case .confirmation, .reaction:
+        case .confirmation,
+             .reaction:
             return
 
         case .deleted:

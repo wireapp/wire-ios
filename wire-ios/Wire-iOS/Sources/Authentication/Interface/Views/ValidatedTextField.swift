@@ -122,7 +122,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     lazy var confirmButton: IconButton = {
         let iconButton: IconButton
         switch kind {
-        case .passcode, .password:
+        case .passcode,
+             .password:
             iconButton = IconButton(style: .default, variant: .light)
             iconButton.accessibilityIdentifier = "RevealButton"
             iconButton.accessibilityLabel = "Reveal passcode"
@@ -316,7 +317,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             confirmButton.setBackgroundImageColor(.clear, for: .disabled)
         } else {
             switch kind {
-            case .passcode, .password:
+            case .passcode,
+                 .password:
                 confirmButton.setIconColor(UIColor.Team.textColor, for: .normal)
                 confirmButton.setIconColor(UIColor.Team.textColor, for: .disabled)
                 confirmButton.setBackgroundImageColor(.clear, for: .normal)

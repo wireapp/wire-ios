@@ -60,7 +60,8 @@ extension SLComposeServiceViewController {
                 nil
 
             switch attachmentType {
-            case .image, .walletPass:
+            case .image,
+                 .walletPass:
                 self.loadSystemPreviewForAttachment(attachment, type: attachmentType) { image, preferredDisplayMode in
                     completeTask(image, .combined(defaultDisplayMode, preferredDisplayMode))
                 }

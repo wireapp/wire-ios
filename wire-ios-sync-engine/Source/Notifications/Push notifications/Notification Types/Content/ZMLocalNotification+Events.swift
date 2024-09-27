@@ -48,7 +48,9 @@ extension ZMLocalNotification {
         case .userContactJoin:
             builderType = NewUserEventNotificationBuilder.self
 
-        case .conversationMemberJoin, .conversationMemberLeave, .conversationMessageTimerUpdate:
+        case .conversationMemberJoin,
+             .conversationMemberLeave,
+             .conversationMessageTimerUpdate:
             guard conversation?.remoteIdentifier != nil else {
                 return nil
             }
@@ -408,7 +410,8 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
         let concernsSelfUser = event.userIDs.contains(ZMUser.selfUser(in: moc).remoteIdentifier)
 
         switch contentType {
-        case .participantsAdded where concernsSelfUser == false, .participantsRemoved where concernsSelfUser == false:
+        case .participantsAdded where concernsSelfUser == false,
+             .participantsRemoved where concernsSelfUser == false:
             return false
         default:
             break

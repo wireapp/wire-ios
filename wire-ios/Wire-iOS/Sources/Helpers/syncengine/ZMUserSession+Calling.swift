@@ -73,7 +73,10 @@ extension ZMUserSession {
             }
 
             switch callState {
-            case .answered, .established, .establishedDataChannel, .outgoing:
+            case .answered,
+                 .established,
+                 .establishedDataChannel,
+                 .outgoing:
                 return true
             default:
                 return false

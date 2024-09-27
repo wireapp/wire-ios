@@ -39,14 +39,16 @@ extension CallStateExtending {
 extension CallState: CallStateExtending {
     var isConnected: Bool {
         switch self {
-        case .established, .establishedDataChannel: true
+        case .established,
+             .establishedDataChannel: true
         default: false
         }
     }
 
     var isTerminating: Bool {
         switch self {
-        case .incoming(video: _, shouldRing: false, degraded: _), .terminating: true
+        case .incoming(video: _, shouldRing: false, degraded: _),
+             .terminating: true
         default: false
         }
     }

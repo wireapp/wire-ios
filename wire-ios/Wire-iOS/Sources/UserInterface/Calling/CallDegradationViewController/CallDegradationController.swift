@@ -97,7 +97,9 @@ final class CallDegradationController: UIViewController {
                 }
             }
 
-        case .incoming, .none, .terminating:
+        case .incoming,
+             .none,
+             .terminating:
             return
         }
         presentAlertIfNeeded()

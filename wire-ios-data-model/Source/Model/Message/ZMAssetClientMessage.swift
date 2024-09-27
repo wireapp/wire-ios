@@ -152,7 +152,8 @@ public class ZMAssetClientMessage: ZMOTRMessage {
             return false
         }
         switch content {
-        case .edited, .reaction:
+        case .edited,
+             .reaction:
             return true
         default:
             return false
@@ -403,7 +404,8 @@ struct CacheAsset: AssetType {
         switch type {
         case .file:
             cache.hasEncryptedFileData(for: owner)
-        case .image, .thumbnail:
+        case .image,
+             .thumbnail:
             cache.hasEncryptedMediumImageData(for: owner)
         }
     }
@@ -412,7 +414,8 @@ struct CacheAsset: AssetType {
         switch type {
         case .file:
             cache.encryptedFileData(for: owner)
-        case .image, .thumbnail:
+        case .image,
+             .thumbnail:
             cache.encryptedMediumImageData(for: owner)
         }
     }
@@ -425,7 +428,8 @@ struct CacheAsset: AssetType {
         switch type {
         case .thumbnail:
             return genericMessage.assetData?.preview.remote.hasAssetID ?? false
-        case .file, .image:
+        case .file,
+             .image:
             return genericMessage.assetData?.uploaded.hasAssetID ?? false
         }
     }
@@ -447,7 +451,8 @@ struct CacheAsset: AssetType {
                 domain: domain
             )
 
-        case .file, .image:
+        case .file,
+             .image:
             genericMessage.updateUploaded(
                 assetId: assetId,
                 token: token,

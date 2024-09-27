@@ -57,7 +57,12 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
                 apiVersion: apiVersion.rawValue
             )
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1,
+             .v2,
+             .v3,
+             .v4,
+             .v5,
+             .v6:
             let domain =
                 if let domain = conversation.domain, !domain.isEmpty {
                     domain

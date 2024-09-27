@@ -181,7 +181,8 @@ public enum CallNotificationAction: String, NotificationAction {
 
     var opensApplication: Bool {
         switch self {
-        case .accept, .callBack:
+        case .accept,
+             .callBack:
             true
         default:
             false

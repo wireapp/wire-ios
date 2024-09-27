@@ -81,7 +81,9 @@ extension UnauthenticatedSession {
 
                 return completion(.success(ssoSettings))
 
-            case .expired, .temporaryError, .tryAgainLater:
+            case .expired,
+                 .temporaryError,
+                 .tryAgainLater:
                 completion(.failure(SSOSettingsError.networkFailure))
 
             case .permanentError:

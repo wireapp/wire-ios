@@ -156,7 +156,8 @@ class DependencyKeyStore {
             return ZMAssetClientMessage.observableKeys
         case ZMClientMessage.entityName():
             return ZMClientMessage.observableKeys
-        case TextMessage.entityName(), ZMImageMessage.entityName():
+        case TextMessage.entityName(),
+             ZMImageMessage.entityName():
             return Set()
         case ZMSystemMessage.entityName():
             return ZMSystemMessage.observableKeys

@@ -25,7 +25,8 @@ final class DeviceConfigurationEventHandler: AuthenticationEventHandler {
         // We normally expect the current step to be `configureDevice`, but in some cases
         // it also happens to be `deleteClient` so we handle in this case as well.
         switch currentStep {
-        case .configureDevice, .deleteClient:
+        case .configureDevice,
+             .deleteClient:
             if statusProvider?.sharedUserSession?.hasCompletedInitialSync == true {
                 [.hideLoadingView, .completeLoginFlow]
             } else {

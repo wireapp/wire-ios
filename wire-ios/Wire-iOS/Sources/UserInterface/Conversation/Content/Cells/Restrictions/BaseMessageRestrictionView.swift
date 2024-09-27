@@ -127,9 +127,11 @@ enum RestrictedMessageType: String {
 
     var iconSize: StyleKitIcon.Size {
         switch self {
-        case .audio, .file:
+        case .audio,
+             .file:
             .small
-        case .image, .video:
+        case .image,
+             .video:
             .tiny
         }
     }

@@ -60,7 +60,12 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
                 let processor = FeatureConfigsPayloadProcessor()
 
                 switch apiVersion {
-                case .v0, .v1, .v2, .v3, .v4, .v5:
+                case .v0,
+                     .v1,
+                     .v2,
+                     .v3,
+                     .v4,
+                     .v5:
                     try processor.processActionPayload(
                         data: data,
                         repository: repository

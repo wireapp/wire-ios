@@ -37,7 +37,11 @@ extension UIImage: MediaAsset {
         }
 
         switch alpha {
-        case .alphaOnly, .first, .last, .premultipliedFirst, .premultipliedLast:
+        case .alphaOnly,
+             .first,
+             .last,
+             .premultipliedFirst,
+             .premultipliedLast:
             return true
         default:
             return false

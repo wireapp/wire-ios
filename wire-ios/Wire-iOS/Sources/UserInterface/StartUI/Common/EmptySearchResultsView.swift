@@ -182,7 +182,8 @@ final class EmptySearchResultsView: UIView {
         switch state {
         case .initialSearch:
             return UIImage()
-        case .noServices, .noServicesEnabled:
+        case .noServices,
+             .noServicesEnabled:
             icon = .bot
         default:
             icon = .personalProfile

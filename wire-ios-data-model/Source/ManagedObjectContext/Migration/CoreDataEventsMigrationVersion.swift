@@ -46,7 +46,9 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
             .v06
         case .v04:
             .v05
-        case .v01, .v02, .v03:
+        case .v01,
+             .v02,
+             .v03:
             .v04
         }
     }

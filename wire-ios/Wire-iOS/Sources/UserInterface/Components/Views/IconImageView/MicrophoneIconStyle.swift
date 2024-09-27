@@ -37,7 +37,8 @@ extension MicrophoneIconStyle: IconImageStyle {
         switch self {
         case .muted:
             .microphoneOff
-        case .unmuted, .unmutedPulsing:
+        case .unmuted,
+             .unmutedPulsing:
             .microphone
         case .hidden:
             .none
@@ -65,9 +66,11 @@ extension MicrophoneIconStyle: IconImageStyle {
         typealias Calling = L10n.Accessibility.Calling
 
         switch self {
-        case .unmuted, .unmutedPulsing:
+        case .unmuted,
+             .unmutedPulsing:
             return Calling.MicrophoneOn.description
-        case .hidden, .muted:
+        case .hidden,
+             .muted:
             return Calling.MicrophoneOff.description
         }
     }

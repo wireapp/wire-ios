@@ -225,7 +225,8 @@ extension ZMUserSession: UserSession {
             }
 
             switch callState {
-            case .incoming, .outgoing:
+            case .incoming,
+                 .outgoing:
                 return true
 
             default:

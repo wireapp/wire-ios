@@ -119,7 +119,8 @@ extension LocalNotificationType {
                 ZMPushStringVideoCallStarts
             case .incoming(video: false, shouldRing: _, degraded: _):
                 ZMPushStringCallStarts
-            case .none, .terminating:
+            case .none,
+                 .terminating:
                 ZMPushStringCallMissed
             default:
                 ZMPushStringDefault

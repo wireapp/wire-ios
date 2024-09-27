@@ -45,8 +45,11 @@ enum CallHapticsEvent: String {
 
     var feedbackType: FeedbackType {
         switch self {
-        case .join, .reconnect, .start: .success
-        case .end, .leave: .warning
+        case .join,
+             .reconnect,
+             .start: .success
+        case .end,
+             .leave: .warning
         case .toggleVideo: .impact
         }
     }
@@ -72,7 +75,8 @@ final class CallHapticsGenerator: CallHapticsGeneratorType {
 
     private func prepareFeedback(for event: CallHapticsEvent) {
         switch event.feedbackType {
-        case .success, .warning: notificationGenerator.prepare()
+        case .success,
+             .warning: notificationGenerator.prepare()
         case .impact: impactGenerator.prepare()
         }
     }

@@ -42,7 +42,8 @@ public class PersonName: NSObject {
             _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
             _initials += (firstComponent.zmSecondComposedCharacter() ?? "")
 
-        case .arabicGivenName, .givenNameFirst:
+        case .arabicGivenName,
+             .givenNameFirst:
             _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
             guard self.components.count > 1, let lastComponent = self.components.last else {
                 break

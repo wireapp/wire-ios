@@ -36,7 +36,8 @@ enum AvailabilityBehaviourChange {
         }
 
         switch selfUser.availability {
-        case .away, .busy:
+        case .away,
+             .busy:
             selfUser.needsToNotifyAvailabilityBehaviourChange = [.alert, .notification]
         default:
             selfUser.needsToNotifyAvailabilityBehaviourChange = .alert

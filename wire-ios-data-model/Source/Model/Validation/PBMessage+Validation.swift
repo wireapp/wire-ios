@@ -67,7 +67,9 @@ extension String {
         let disallowedSuffix = decodedAssetToken.unicodeScalars.drop(while: assetTokenAllowedCharacters.contains)
 
         switch String(disallowedSuffix) {
-        case "", "=", "==":
+        case "",
+             "=",
+             "==":
             return true
 
         default:

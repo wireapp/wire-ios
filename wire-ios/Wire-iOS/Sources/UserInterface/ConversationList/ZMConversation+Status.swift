@@ -142,7 +142,12 @@ extension StatusMessageType {
 
     var parentSummaryType: StatusMessageType? {
         switch self {
-        case .audio, .file, .image, .link, .location, .video: .text
+        case .audio,
+             .file,
+             .image,
+             .link,
+             .location,
+             .video: .text
         default: nil
         }
     }
@@ -902,7 +907,8 @@ extension ZMConversation {
                 return false
             }
             switch state {
-            case .none, .terminating: return false
+            case .none,
+                 .terminating: return false
             case .incoming: return true
             default: return true
             }

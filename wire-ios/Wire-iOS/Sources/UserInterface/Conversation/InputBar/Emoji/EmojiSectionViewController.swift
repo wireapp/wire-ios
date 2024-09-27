@@ -147,7 +147,9 @@ final class EmojiSectionViewController: UIViewController {
             sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
             selectedType = type
 
-        case .cancelled, .ended, .failed:
+        case .cancelled,
+             .ended,
+             .failed:
             ignoreSelectionUpdates = false
 
         @unknown default:

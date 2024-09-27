@@ -59,7 +59,9 @@ extension VideoIconStyle {
         switch state {
         case .screenSharing:
             self = .screenshare
-        case .badConnection, .paused, .started:
+        case .badConnection,
+             .paused,
+             .started:
             self = .video
         case .stopped:
             self = .hidden

@@ -69,7 +69,8 @@ extension ZMMessage {
         switch messageProtocol {
         case .proteus:
             #keyPath(ZMConversation.securityLevel)
-        case .mixed, .mls:
+        case .mixed,
+             .mls:
             ZMConversation.mlsVerificationStatusKey
         }
     }

@@ -154,7 +154,10 @@ extension VoiceChannel {
 
         var isPaused = false
         switch (isUnconnectedOutgoingVideoCall, videoState) {
-        case (_, .badConnection), (_, .screenSharing), (_, .started), (true, _):
+        case (_, .badConnection),
+             (_, .screenSharing),
+             (_, .started),
+             (true, _):
             isPaused = false
         case (_, .paused):
             isPaused = true

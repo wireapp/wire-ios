@@ -178,7 +178,8 @@ final class CollectionsViewController: UIViewController {
             }
 
             switch change {
-            case .fileSharingDisabled, .fileSharingEnabled:
+            case .fileSharingDisabled,
+                 .fileSharingEnabled:
                 self?.reloadData()
 
             default:
@@ -495,7 +496,8 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         var desiredHeight: CGFloat?
 
         switch section {
-        case CollectionsSectionSet.images, CollectionsSectionSet.videos:
+        case CollectionsSectionSet.images,
+             CollectionsSectionSet.videos:
             desiredWidth = gridElementSize.width
             desiredHeight = gridElementSize.height
 

@@ -45,11 +45,16 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
         var action = action
 
         switch apiVersion {
-        case .v0, .v1, .v2, .v3:
+        case .v0,
+             .v1,
+             .v2,
+             .v3:
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v4, .v5, .v6:
+        case .v4,
+             .v5,
+             .v6:
             guard
                 let payloadData = RequestPayload(qualified_ids: action.qualifiedIDs).payloadString()
             else {
@@ -80,11 +85,16 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
         }
 
         switch apiVersion {
-        case .v0, .v1, .v2, .v3:
+        case .v0,
+             .v1,
+             .v2,
+             .v3:
             action.fail(with: .endpointUnavailable)
             return
 
-        case .v4, .v5, .v6:
+        case .v4,
+             .v5,
+             .v6:
             switch response.httpStatus {
             case 200:
                 guard let rawData = response.rawData,

@@ -54,7 +54,8 @@ extension VoiceChannel {
 
     var internalIsVideoCall: Bool {
         switch state {
-        case .established, .terminating: isAnyParticipantSendingVideo
+        case .established,
+             .terminating: isAnyParticipantSendingVideo
         default: isVideoCall
         }
     }
@@ -180,10 +181,14 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         switch voiceChannelSnapshot.state {
         case .incoming(_, shouldRing: true, _): .ringingIncoming(name: voiceChannelSnapshot.callerName)
         case .outgoing: .ringingOutgoing
-        case .answered, .establishedDataChannel: .connecting
+        case .answered,
+             .establishedDataChannel: .connecting
         case .established: .established(duration: -voiceChannelSnapshot.callStartDate.timeIntervalSinceNow.rounded())
-        case .incoming(_, shouldRing: false, _), .mediaStopped, .terminating: .terminating
-        case .none, .unknown: .none
+        case .incoming(_, shouldRing: false, _),
+             .mediaStopped,
+             .terminating: .terminating
+        case .none,
+             .unknown: .none
         }
     }
 
@@ -301,7 +306,8 @@ extension VoiceChannel {
         }
 
         switch state {
-        case .answered(degraded: true), .incoming(video: _, shouldRing: _, degraded: true):
+        case .answered(degraded: true),
+             .incoming(video: _, shouldRing: _, degraded: true):
             return .incoming(reason: degradationReason)
         case .outgoing(degraded: true):
             return .outgoing(reason: degradationReason)
@@ -328,7 +334,8 @@ extension VoiceChannel {
         switch conversation.messageProtocol {
         case .mls:
             return .invalidCertificate
-        case .mixed, .proteus:
+        case .mixed,
+             .proteus:
             return .degradedUser(user: hashboxFirstDegradedUser)
         }
     }

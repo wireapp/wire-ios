@@ -119,7 +119,8 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                         after: removalTimeout
                     )
 
-                case (_, .connected), (false, _):
+                case (_, .connected),
+                     (false, _):
                     cancelRemoval(for: clientID)
 
                 default: break

@@ -1588,7 +1588,8 @@ extension SessionManager: WireCallCenterCallStateObserver {
         }
 
         switch callState {
-        case .answered, .outgoing:
+        case .answered,
+             .outgoing:
             for (_, session) in backgroundUserSessions
                 where session.managedObjectContext == moc && activeUserSession != session {
                 showConversation(conversation, at: nil, in: session)

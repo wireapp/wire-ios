@@ -63,7 +63,11 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             v0Request(for: action)
         case .v1:
             v1Request(for: action)
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2,
+             .v3,
+             .v4,
+             .v5,
+             .v6:
             v2Request(for: action, apiVersion: apiVersion)
         }
     }

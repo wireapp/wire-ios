@@ -100,7 +100,8 @@ final class ImageToolbarView: UIView {
         var newButtons = showsSketchButton ? [sketchButton] : []
 
         switch configuration {
-        case .cell where imageIsEphemeral, .compactCell where imageIsEphemeral:
+        case .cell where imageIsEphemeral,
+             .compactCell where imageIsEphemeral:
             // ephemeral images should only expand
             newButtons = [expandButton]
         case .cell:

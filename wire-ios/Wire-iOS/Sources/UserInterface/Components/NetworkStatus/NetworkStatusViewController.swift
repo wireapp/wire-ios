@@ -245,7 +245,8 @@ extension NetworkStatusViewController {
                 networkStatusView.update(state: .online, animated: false)
             }
 
-        case .compact, .unspecified:
+        case .compact,
+             .unspecified:
             networkStatusView.update(state: state, animated: false)
 
         @unknown default:

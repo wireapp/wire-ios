@@ -168,7 +168,11 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2,
+             .v3,
+             .v4,
+             .v5,
+             .v6:
             let domain =
                 if let domain = user.domain, !domain.isEmpty {
                     domain

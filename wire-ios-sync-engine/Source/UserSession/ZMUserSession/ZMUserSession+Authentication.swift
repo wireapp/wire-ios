@@ -138,7 +138,9 @@ extension ZMUserSession {
                     .unknownError
                 }
 
-            case .expired, .temporaryError, .tryAgainLater:
+            case .expired,
+                 .temporaryError,
+                 .tryAgainLater:
                 .networkError
 
             default:

@@ -152,7 +152,8 @@ extension UserCell: CallParticipantsListCellConfigurable {
             connectingLabel.isHidden = true
             unconnectedStateOverlay.isHidden = true
 
-        case .connecting, .unconnectedButMayConnect:
+        case .connecting,
+             .unconnectedButMayConnect:
             microphoneIconView.set(style: MicrophoneIconStyle(
                 state: nil,
                 shouldPulse: false

@@ -188,10 +188,15 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
 
         let path: String
         switch apiVersion {
-        case .v0, .v1, .v2:
+        case .v0,
+             .v1,
+             .v2:
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
-        case .v3, .v4, .v5, .v6:
+        case .v3,
+             .v4,
+             .v5,
+             .v6:
             let domain =
                 if let domain = conversation.domain, !domain.isEmpty {
                     domain

@@ -111,7 +111,8 @@ private enum Mode {
 extension Mode {
     fileprivate init(conversation: ZMConversation) {
         switch (conversation.activeParticipants.count, conversation.conversationType) {
-        case (_, .oneOnOne), (0 ... 2, _):
+        case (_, .oneOnOne),
+             (0 ... 2, _):
             self = .one
         case (3 ... 5, _):
             self = .two

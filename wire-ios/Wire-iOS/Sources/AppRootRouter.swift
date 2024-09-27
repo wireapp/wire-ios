@@ -599,7 +599,8 @@ extension AppRootRouter: URLActionRouterDelegate {
 
     func urlActionRouterCanDisplayAlerts() -> Bool {
         switch appStateCalculator.appState {
-        case .authenticated, .unauthenticated:
+        case .authenticated,
+             .unauthenticated:
             true
         default:
             false

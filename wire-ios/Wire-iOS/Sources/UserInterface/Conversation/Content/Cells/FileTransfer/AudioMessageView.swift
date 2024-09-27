@@ -251,7 +251,8 @@ final class AudioMessageView: UIView, TransferView {
 
         case .unavailable: visibleViews = [loadingView]
 
-        case .downloading, .uploading:
+        case .downloading,
+             .uploading:
             visibleViews.append(downloadProgressView)
             downloadProgressView.setProgress(fileMessageData.progress, animated: !isInitial)
 
@@ -425,7 +426,8 @@ final class AudioMessageView: UIView, TransferView {
             }
             delegate?.transferView(self, didSelect: .cancel)
 
-        case .uploadingCancelled, .uploadingFailed:
+        case .uploadingCancelled,
+             .uploadingFailed:
             guard fileMessageData.hasLocalFileData else {
                 return
             }

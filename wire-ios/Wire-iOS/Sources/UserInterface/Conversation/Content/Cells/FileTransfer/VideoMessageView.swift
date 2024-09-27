@@ -141,7 +141,8 @@ final class VideoMessageView: UIView, TransferView {
             }
             delegate?.transferView(self, didSelect: .cancel)
 
-        case .uploadingCancelled, .uploadingFailed:
+        case .uploadingCancelled,
+             .uploadingFailed:
             delegate?.transferView(self, didSelect: .resend)
 
         case .uploaded:
@@ -240,7 +241,8 @@ final class VideoMessageView: UIView, TransferView {
         var visibleViews: [UIView] = [playButton, previewImageView]
 
         switch state {
-        case .downloading, .uploading:
+        case .downloading,
+             .uploading:
             visibleViews.append(progressView)
         default:
             break

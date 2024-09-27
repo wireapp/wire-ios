@@ -182,10 +182,13 @@ public class Feature: ZMManagedObject {
         let hasStatusChanged = oldStatus != newStatus
 
         switch name {
-        case .conferenceCalling, .e2ei:
+        case .conferenceCalling,
+             .e2ei:
             needsToNotifyUser = hasStatusChanged && newStatus == .enabled
 
-        case .conversationGuestLinks, .fileSharing, .selfDeletingMessages:
+        case .conversationGuestLinks,
+             .fileSharing,
+             .selfDeletingMessages:
             needsToNotifyUser = hasStatusChanged
 
         default:

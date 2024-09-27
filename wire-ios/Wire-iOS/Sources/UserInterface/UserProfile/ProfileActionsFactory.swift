@@ -85,7 +85,8 @@ enum ProfileAction: Equatable {
     var keyActionIcon: StyleKitIcon? {
         switch self {
         case .createGroup: .createConversation
-        case .manageNotifications, .mute: nil
+        case .manageNotifications,
+             .mute: nil
         case .archive: nil
         case .deleteContents: nil
         case .block: nil

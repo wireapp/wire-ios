@@ -88,7 +88,9 @@ extension UnauthenticatedSession {
 
                 return completion(.success(domainInfo))
 
-            case .expired, .temporaryError, .tryAgainLater:
+            case .expired,
+                 .temporaryError,
+                 .tryAgainLater:
                 completion(.failure(DomainLookupError.networkFailure))
 
             case .permanentError:

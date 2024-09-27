@@ -165,7 +165,8 @@ class BottomSheetContainerViewController: UIViewController {
         let yTranslationMagnitude = translation.y.magnitude
 
         switch sender.state {
-        case .began, .changed:
+        case .began,
+             .changed:
             if state == .full {
                 guard translation.y > 0 else {
                     return

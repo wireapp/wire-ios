@@ -65,7 +65,8 @@ extension ZMOperationLoop {
         }
 
         switch notificationType {
-        case .notice, .plain:
+        case .notice,
+             .plain:
             if let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
                let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
                 return UUID(uuidString: rawUUID)

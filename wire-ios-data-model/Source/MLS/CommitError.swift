@@ -69,7 +69,9 @@ extension CommitError.RecoveryStrategy {
         case .commitPendingProposalsAfterQuickSync:
             false
 
-        case .giveUp, .retryAfterQuickSync, .retryAfterRepairingGroup:
+        case .giveUp,
+             .retryAfterQuickSync,
+             .retryAfterRepairingGroup:
             true
         }
     }

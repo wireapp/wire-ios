@@ -216,7 +216,8 @@ extension ClientMessageTests_OTR_Legacy {
 
         // Then
         switch payloadAndStrategy.strategy {
-        case .ignoreAllMissingClients, .ignoreAllMissingClientsNotFromUsers:
+        case .ignoreAllMissingClients,
+             .ignoreAllMissingClientsNotFromUsers:
             XCTFail()
         default:
             break

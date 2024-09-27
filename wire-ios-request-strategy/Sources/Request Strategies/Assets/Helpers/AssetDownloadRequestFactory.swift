@@ -43,7 +43,11 @@ public final class AssetDownloadRequestFactory {
             }
             path = "/assets/v4/\(domain)/\(key)"
 
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2,
+             .v3,
+             .v4,
+             .v5,
+             .v6:
             guard let domain else {
                 return nil
             }

@@ -283,7 +283,8 @@ final class PinnableThumbnailViewController: UIViewController {
             // Do not move the thumbnail outside the container
             thumbnailView.frame = CGRect(x: x, y: y, width: originalFrame.width, height: originalFrame.height)
 
-        case .cancelled, .ended:
+        case .cancelled,
+             .ended:
 
             // Snap the thumbnail to the closest edge
             let velocity = recognizer.velocity(in: thumbnailContainerView)

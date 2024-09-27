@@ -166,7 +166,14 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
 extension GenericMessage {
     fileprivate var needsDeliveryConfirmation: Bool {
         switch content {
-        case .asset, .composite, .ephemeral, .external, .image, .knock, .location, .text:
+        case .asset,
+             .composite,
+             .ephemeral,
+             .external,
+             .image,
+             .knock,
+             .location,
+             .text:
             true
         default:
             false

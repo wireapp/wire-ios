@@ -21,7 +21,8 @@ import Foundation
 extension AVSConversationType {
     var isConference: Bool {
         switch self {
-        case .conference, .mlsConference:
+        case .conference,
+             .mlsConference:
             true
 
         default:

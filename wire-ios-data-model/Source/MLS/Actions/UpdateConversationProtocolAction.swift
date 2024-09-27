@@ -73,11 +73,18 @@ extension UpdateConversationProtocolAction {
 
             public var statusCode: Int {
                 switch self {
-                case .invalidBody, .mlsMigrationCriteriaNotSatisfied:
+                case .invalidBody,
+                     .mlsMigrationCriteriaNotSatisfied:
                     400
-                case .actionDenied, .invalidOp, .invalidProtocolTransition, .noTeamMember, .operationDenied:
+                case .actionDenied,
+                     .invalidOp,
+                     .invalidProtocolTransition,
+                     .noTeamMember,
+                     .operationDenied:
                     403
-                case .conversationIdOrDomainNotFound, .noConversation, .noTeam:
+                case .conversationIdOrDomainNotFound,
+                     .noConversation,
+                     .noTeam:
                     404
                 }
             }

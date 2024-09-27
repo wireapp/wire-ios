@@ -492,7 +492,8 @@ extension AuthenticationCoordinator {
     /// Repeats the current action.
     func repeatAction() {
         switch stateController.currentStep {
-        case .enterActivationCode, .enterEmailVerificationCode:
+        case .enterActivationCode,
+             .enterEmailVerificationCode:
             resendVerificationCode()
         default:
             return

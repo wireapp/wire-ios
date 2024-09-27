@@ -61,7 +61,9 @@ final class MarkdownTextViewTests: XCTestCase {
 
     func button(for markdown: Markdown) -> IconButton? {
         switch markdown {
-        case .h1, .h2, .h3: bar.headerButton
+        case .h1,
+             .h2,
+             .h3: bar.headerButton
         case .bold:         bar.boldButton
         case .italic:       bar.italicButton
         case .code:         bar.codeButton
@@ -111,7 +113,9 @@ final class MarkdownTextViewTests: XCTestCase {
     // Attributes that we expect for certain markdown combinations.
     func attrs(for markdown: Markdown) -> [NSAttributedString.Key: Any] {
         switch markdown {
-        case .none, .oList, .uList:
+        case .none,
+             .oList,
+             .uList:
             return [
                 .markdownID: markdown,
                 .font: style.baseFont,
@@ -119,7 +123,9 @@ final class MarkdownTextViewTests: XCTestCase {
                 .paragraphStyle: style.baseParagraphStyle,
             ]
 
-        case .h1, [.h1, .bold], .h2,
+        case .h1,
+             [.h1, .bold],
+             .h2,
              [.h2, .bold],
              .h3,
              [.h3, .bold]:
@@ -130,9 +136,12 @@ final class MarkdownTextViewTests: XCTestCase {
                 .paragraphStyle: style.baseParagraphStyle,
             ]
 
-        case [.h1, .bold, .italic], [.h1, .italic],
-             [.h2, .bold, .italic], [.h2, .italic],
-             [.h3, .bold, .italic], [.h3, .italic]:
+        case [.h1, .bold, .italic],
+             [.h1, .italic],
+             [.h2, .bold, .italic],
+             [.h2, .italic],
+             [.h3, .bold, .italic],
+             [.h3, .italic]:
             return [
                 .markdownID: markdown,
                 .font: style.baseFont.withSize(style.headerSize(for: markdown.headerValue!)!).bold.italic,

@@ -74,9 +74,14 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         let path: String
 
         switch apiVersion {
-        case .v0, .v1:
+        case .v0,
+             .v1:
             path = "/assets/v3/\(assetId)"
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2,
+             .v3,
+             .v4,
+             .v5,
+             .v6:
             guard let domain = BackendInfo.domain else {
                 return nil
             }

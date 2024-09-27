@@ -509,7 +509,8 @@ final class CallGridViewController: UIViewController {
     private func gridAxis(for traitCollection: UITraitCollection) -> UICollectionView.ScrollDirection {
         let isLandscape = UIWindow.interfaceOrientation?.isLandscape
         switch (traitCollection.userInterfaceIdiom, traitCollection.horizontalSizeClass, isLandscape) {
-        case (.pad, .regular, true), (.phone, _, true):
+        case (.pad, .regular, true),
+             (.phone, _, true):
             return .horizontal
         default:
             return .vertical
@@ -635,7 +636,8 @@ extension CGSize {
         switch traitCollection.horizontalSizeClass {
         case .regular:
             return .floatingPreviewLarge
-        case .compact, .unspecified:
+        case .compact,
+             .unspecified:
             return .floatingPreviewSmall
         @unknown default:
             return .floatingPreviewSmall

@@ -74,7 +74,8 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
         switch apiVersion {
-        case .v0, .v1:
+        case .v0,
+             .v1:
             if let assetClientMessage = object as? ZMAssetClientMessage {
                 let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
                     assetClientMessage.associatedTaskIdentifier = taskIdentifier
@@ -102,7 +103,11 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
             fatalError("Cannot generate request for \(object.safeForLoggingDescription)")
 
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2,
+             .v3,
+             .v4,
+             .v5,
+             .v6:
             return nil
         }
     }

@@ -474,7 +474,8 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             }
 
             switch conversation.messageProtocol {
-            case .mixed, .proteus:
+            case .mixed,
+                 .proteus:
                 // With proteus, we discover clients by posting an otr message to no-one,
                 // then parse the error response that contains the list of all clients.
                 clientDiscoveryRequest = ClientDiscoveryRequest(
@@ -627,7 +628,12 @@ extension CallingRequestStrategy {
             case .v0:
                 // `nestedContainer` contains all the user ids with no notion of domain, we can extract clients directly
                 allClients = try extractClientsFromContainer(nestedContainer, nil)
-            case .v1, .v2, .v3, .v4, .v5, .v6:
+            case .v1,
+                 .v2,
+                 .v3,
+                 .v4,
+                 .v5,
+                 .v6:
                 // `nestedContainer` has further nested containers each dynamically keyed by a domain name.
                 // we need to loop over each container to extract the clients.
                 try nestedContainer.allKeys.forEach { domainKey in

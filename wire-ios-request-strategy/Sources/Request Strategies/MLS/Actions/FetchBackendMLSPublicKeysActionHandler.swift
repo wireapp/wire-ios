@@ -48,12 +48,17 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
         switch apiVersion {
-        case .v0, .v1, .v2, .v3, .v4:
+        case .v0,
+             .v1,
+             .v2,
+             .v3,
+             .v4:
             var action = action
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v5, .v6:
+        case .v5,
+             .v6:
             return ZMTransportRequest(
                 path: "/mls/public-keys",
                 method: .get,

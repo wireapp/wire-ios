@@ -65,7 +65,11 @@ public struct APIProvider: APIProviderInterface {
 
     public func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI? {
         switch apiVersion {
-        case .v0, .v1, .v2, .v3, .v4: nil
+        case .v0,
+             .v1,
+             .v2,
+             .v3,
+             .v4: nil
         case .v5: E2eIAPIV5(httpClient: httpClient)
         case .v6: E2eIAPIV6(httpClient: httpClient)
         }

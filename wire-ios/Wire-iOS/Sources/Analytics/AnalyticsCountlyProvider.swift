@@ -321,7 +321,9 @@ extension [String: Any] {
             switch teamRole {
             case .partner:
                 return "external"
-            case .admin, .member, .owner:
+            case .admin,
+                 .member,
+                 .owner:
                 return "member"
             case .none:
                 return "wireless"

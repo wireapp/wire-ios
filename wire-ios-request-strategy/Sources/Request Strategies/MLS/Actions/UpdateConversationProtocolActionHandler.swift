@@ -61,7 +61,8 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
         let apiFailure = Action.Failure.APIFailure(statusCode, label)
 
         switch (statusCode, label, apiFailure) {
-        case (200, _, _), (204, _, _):
+        case (200, _, _),
+             (204, _, _):
             action.succeed()
 
         case let (_, _, .some(apiFailure)):

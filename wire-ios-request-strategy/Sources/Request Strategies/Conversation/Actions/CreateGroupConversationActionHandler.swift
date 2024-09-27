@@ -127,7 +127,8 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         var action = action
 
         switch (response.httpStatus, response.payloadLabel()) {
-        case (200, _), (201, _):
+        case (200, _),
+             (201, _):
             Task { [action] in
                 await handleSuccessResponse(response, action: action)
             }

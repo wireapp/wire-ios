@@ -544,9 +544,14 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
         var payloadData: Data?
         switch apiVersion {
-        case .v0, .v1, .v2, .v3:
+        case .v0,
+             .v1,
+             .v2,
+             .v3:
             payloadData = userProfiles.payloadData()
-        case .v4, .v5, .v6:
+        case .v4,
+             .v5,
+             .v6:
             let userProfiles = Payload.UserProfilesV4(found: userProfiles, failed: failed)
             payloadData = userProfiles.payloadData()
         }

@@ -84,11 +84,16 @@ extension Payload {
             self.epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
 
             switch apiVersion {
-            case .v0, .v1, .v2:
+            case .v0,
+                 .v1,
+                 .v2:
                 self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
 
-            case .v3, .v4, .v5, .v6:
+            case .v3,
+                 .v4,
+                 .v5,
+                 .v6:
 
                 // v3 replaces the field "access_role_v2" with "access_role".
                 // However, since the format of update events does not depend on versioning,
@@ -105,11 +110,16 @@ extension Payload {
             }
 
             switch apiVersion {
-            case .v0, .v1, .v2, .v3, .v4:
+            case .v0,
+                 .v1,
+                 .v2,
+                 .v3,
+                 .v4:
                 self.cipherSuite = nil
                 self.epochTimestamp = nil
 
-            case .v5, .v6:
+            case .v5,
+                 .v6:
                 self.cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
                 self.epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
             }
@@ -183,11 +193,16 @@ extension Payload {
             try container.encodeIfPresent(mlsGroupID, forKey: .mlsGroupID)
 
             switch apiVersion {
-            case .v0, .v1, .v2:
+            case .v0,
+                 .v1,
+                 .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
 
-            case .v3, .v4, .v5, .v6:
+            case .v3,
+                 .v4,
+                 .v5,
+                 .v6:
                 if legacyAccessRole == nil {
                     try container.encodeIfPresent(accessRoles, forKey: .accessRole)
                 } else {

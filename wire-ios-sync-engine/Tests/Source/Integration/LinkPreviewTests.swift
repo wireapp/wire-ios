@@ -46,7 +46,8 @@ class LinkPreviewTests: ConversationTestsBase {
         if let linkPreview = message.underlyingMessage?.linkPreviews.first {
             let expectedLinkPreview = LinkPreview(mockLinkPreviewDetector.linkMetaData(linkPreviewURL))
             switch linkPreviewURL {
-            case .articleWithPicture, .tweetWithPicture:
+            case .articleWithPicture,
+                 .tweetWithPicture:
                 XCTAssertTrue(
                     linkPreview.image.hasUploaded,
                     "Link preview with image didn't contain uploaded asset",

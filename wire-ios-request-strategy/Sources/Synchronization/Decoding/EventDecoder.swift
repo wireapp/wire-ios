@@ -232,7 +232,8 @@ extension EventDecoder {
         proteusService: ProteusServiceInterface
     ) async -> [ZMUpdateEvent] {
         switch event.type {
-        case .conversationOtrAssetAdd, .conversationOtrMessageAdd:
+        case .conversationOtrAssetAdd,
+             .conversationOtrMessageAdd:
             let proteusEvent = await decryptProteusEventAndAddClient(event, in: syncMOC) { sessionID, encryptedData in
                 try await proteusService.decrypt(
                     data: encryptedData,
@@ -268,7 +269,8 @@ extension EventDecoder {
 
             for event in events {
                 switch event.type {
-                case .conversationOtrAssetAdd, .conversationOtrMessageAdd:
+                case .conversationOtrAssetAdd,
+                     .conversationOtrMessageAdd:
                     let proteusEvent = await decryptProteusEventAndAddClient(
                         event,
                         in: syncMOC

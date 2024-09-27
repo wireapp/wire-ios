@@ -51,7 +51,9 @@ extension NSDataDetector {
         }
 
         switch host {
-        case "m.youtube.com", "www.youtube.com", "youtube.com":
+        case "m.youtube.com",
+             "www.youtube.com",
+             "youtube.com":
             guard url.pathComponents.indices.contains(1), url.pathComponents[1] == "watch" else {
                 return nil
             }

@@ -49,12 +49,17 @@ class CallObserver: WireCallCenterCallStateObserver {
         case .answered(degraded: false):
             onAnswered?()
 
-        case .established, .establishedDataChannel:
+        case .established,
+             .establishedDataChannel:
             onEstablished?()
 
         case let .terminating(reason: reason):
             switch reason {
-            case .answeredElsewhere, .inputOutputError, .internalError, .lostMedia, .unknown:
+            case .answeredElsewhere,
+                 .inputOutputError,
+                 .internalError,
+                 .lostMedia,
+                 .unknown:
                 onFailedToJoin?()
 
             default:

@@ -45,7 +45,9 @@ extension NetworkQuality {
         switch self {
         case .normal:
             true
-        case .medium, .poor, .problem:
+        case .medium,
+             .poor,
+             .problem:
             false
         }
     }

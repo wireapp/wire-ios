@@ -64,7 +64,8 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
 
     private func processUpdateEvent(_ event: ZMUpdateEvent) async throws {
         switch event.type {
-        case .userClientAdd, .userClientRemove:
+        case .userClientAdd,
+             .userClientRemove:
             try await processClientListUpdateEvent(event)
         default:
             break

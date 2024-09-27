@@ -163,7 +163,8 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     /// return true if right view (mostly conversation screen) is fully visible
     var isRightViewControllerRevealed: Bool {
         switch layoutSize {
-        case .compact, .regularPortrait:
+        case .compact,
+             .regularPortrait:
             !isLeftViewControllerRevealed
         case .regularLandscape:
             true
@@ -446,7 +447,8 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     ///   - traitCollection: the new traitCollection
     private func updateLayoutSize(for traitCollection: UITraitCollection) {
         switch (isiOSAppOnMac, traitCollection.horizontalSizeClass, UIWindow.interfaceOrientation?.isPortrait) {
-        case (false, .regular, false), (true, _, true):
+        case (false, .regular, false),
+             (true, _, true):
             layoutSize = .regularLandscape
         case (false, .regular, true):
             layoutSize = .regularPortrait
@@ -474,7 +476,8 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 
     private func updateLeftViewVisibility() {
         switch layoutSize {
-        case .compact /* fallthrough */, .regularPortrait:
+        case .compact /* fallthrough */,
+             .regularPortrait:
             leftView.isHidden = (openPercentage == 0)
         case .regularLandscape:
             leftView.isHidden = false

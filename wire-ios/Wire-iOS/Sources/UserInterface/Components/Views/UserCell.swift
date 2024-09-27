@@ -297,9 +297,11 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             accessibilityTraits = .staticText
             if let microphoneStyle = microphoneIconView.style as? MicrophoneIconStyle {
                 switch microphoneStyle {
-                case .unmuted, .unmutedPulsing:
+                case .unmuted,
+                     .unmutedPulsing:
                     content += ", " + Calling.MicrophoneOn.description
-                case .hidden, .muted:
+                case .hidden,
+                     .muted:
                     content += ", " + Calling.MicrophoneOff.description
                 }
             }

@@ -155,14 +155,19 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
                 uiConv.isIgnoringCall = uiConv.mutedMessageTypesIncludingAvailability != .none || !shouldRing
                 uiConv.isCallDeviceActive = false
 
-            case .mediaStopped, .none, .terminating:
+            case .mediaStopped,
+                 .none,
+                 .terminating:
                 uiConv.isCallDeviceActive = false
                 uiConv.isIgnoringCall = false
 
-            case .answered, .established, .outgoing:
+            case .answered,
+                 .established,
+                 .outgoing:
                 uiConv.isCallDeviceActive = true
 
-            case .establishedDataChannel, .unknown:
+            case .establishedDataChannel,
+                 .unknown:
                 break
             }
 

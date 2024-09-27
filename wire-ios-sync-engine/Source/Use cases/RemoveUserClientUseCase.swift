@@ -98,7 +98,9 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
                 throw RemoveUserClientError.clientToDeleteNotFound
 
-            case .badRequest, .invalidCredentials, .missingAuth:
+            case .badRequest,
+                 .invalidCredentials,
+                 .missingAuth:
                 throw RemoveUserClientError.invalidCredentials
 
             default:

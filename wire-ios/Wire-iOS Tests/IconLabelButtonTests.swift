@@ -116,13 +116,15 @@ struct IconLabelButtonTestCase {
 
         private var selectionState: SelectionState {
             switch self {
-            case let .dark(_, selectionState, _), let .light(selectionState, _): selectionState
+            case let .dark(_, selectionState, _),
+                 let .light(selectionState, _): selectionState
             }
         }
 
         private var interactionState: InteractionState {
             switch self {
-            case let .dark(_, _, interactionState), let .light(_, interactionState): interactionState
+            case let .dark(_, _, interactionState),
+                 let .light(_, interactionState): interactionState
             }
         }
     }

@@ -90,9 +90,12 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
 
     func processResponse(_ response: ZMTransportResponse, for email: String) {
         switch response.result {
-        case .permanentError, .success:
+        case .permanentError,
+             .success:
             teamInvitationStatus?.handle(result: InviteResult(response: response, email: email), email: email)
-        case .expired, .temporaryError, .tryAgainLater:
+        case .expired,
+             .temporaryError,
+             .tryAgainLater:
             teamInvitationStatus?.retry(email)
         case .cancelled:
             teamInvitationStatus?.handle(result: .failure(email: email, error: .cancelled), email: email)

@@ -653,7 +653,8 @@ final class ConversationInputBarViewController: UIViewController,
             }
 
             switch change {
-            case .fileSharingDisabled, .fileSharingEnabled:
+            case .fileSharingDisabled,
+                 .fileSharingEnabled:
                 self?.updateInputBarButtons()
 
             default:

@@ -64,7 +64,8 @@ extension ZClientViewController {
         case .connection:
             selectIncomingContactRequestsAndFocus(onView: true)
 
-        case .group, .oneOnOne:
+        case .group,
+             .oneOnOne:
             select(
                 conversation: conversation,
                 scrollTo: message,

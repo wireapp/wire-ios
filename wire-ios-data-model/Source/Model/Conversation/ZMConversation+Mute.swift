@@ -122,7 +122,8 @@ extension ZMConversation {
 extension ZMUser {
     var mutedMessagesTypes: MutedMessageTypes {
         switch availability {
-        case .available, .none:
+        case .available,
+             .none:
             .none
         case .busy:
             .regular

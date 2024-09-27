@@ -153,7 +153,9 @@ extension OTREntity {
                 in: context
             )
 
-        case .v1, .v2, .v3:
+        case .v1,
+             .v2,
+             .v3:
             guard let payload = Payload.MessageSendingStatusV1(
                 response,
                 decoder: .defaultDecoder
@@ -166,7 +168,9 @@ extension OTREntity {
                 context: context
             )
 
-        case .v4, .v5, .v6:
+        case .v4,
+             .v5,
+             .v6:
             guard let payload = Payload.MessageSendingStatusV4(response) else {
                 return (missingClients: Set(), deletedClients: Set())
             }

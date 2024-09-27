@@ -128,22 +128,32 @@ public enum ProteusError: Int, Error, Equatable {
         case 102:
             self = .sessionNotFound
 
-        case 3, 301, 302, 303:
+        case 3,
+             301,
+             302,
+             303:
             self = .decodeError
 
         case 204:
             self = .remoteIdentityChanged
 
-        case 206, 207, 210:
+        case 206,
+             207,
+             210:
             self = .invalidSignature
 
-        case 200, 201, 202, 205, 213:
+        case 200,
+             201,
+             202,
+             205,
+             213:
             self = .invalidMessage
 
         case 209:
             self = .duplicateMessage
 
-        case 211, 212:
+        case 211,
+             212:
             self = .tooDistantFuture
 
         case 208:

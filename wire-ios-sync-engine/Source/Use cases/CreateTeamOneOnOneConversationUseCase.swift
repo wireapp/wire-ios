@@ -98,7 +98,8 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
                 in: syncContext
             )
 
-        case .mixed, .none:
+        case .mixed,
+             .none:
             throw Error.noCommonProtocols
         }
     }

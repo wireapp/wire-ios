@@ -942,9 +942,11 @@ extension CXCallAction {
 extension CallClosedReason {
     var CXCallEndedReason: CXCallEndedReason {
         switch self {
-        case .timeout, .timeoutECONN:
+        case .timeout,
+             .timeoutECONN:
             .unanswered
-        case .canceled, .normal:
+        case .canceled,
+             .normal:
             .remoteEnded
         case .answeredElsewhere:
             .answeredElsewhere

@@ -54,7 +54,12 @@ public final class ClientMessageRequestFactory: NSObject {
                 recipients: []
             )
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1,
+             .v2,
+             .v3,
+             .v4,
+             .v5,
+             .v6:
             let domain =
                 if let domain, !domain.isEmpty {
                     domain

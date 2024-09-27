@@ -22,7 +22,8 @@ import WireSyncEngine
 extension BlacklistReason {
     var blockerViewControllerContext: BlockerViewControllerContext {
         switch self {
-        case .appVersionBlacklisted, .clientAPIVersionObsolete:
+        case .appVersionBlacklisted,
+             .clientAPIVersionObsolete:
             .blacklist
         case .backendAPIVersionObsolete:
             .backendNotSupported

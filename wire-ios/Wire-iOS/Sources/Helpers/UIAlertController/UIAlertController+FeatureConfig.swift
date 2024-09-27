@@ -41,7 +41,8 @@ extension UIAlertController {
         acknowledger: FeatureChangeAcknowledger
     ) -> UIAlertController? {
         switch change {
-        case .conferenceCallingIsAvailable, .e2eIEnabled:
+        case .conferenceCallingIsAvailable,
+             .e2eIEnabled:
             // Handled elsewhere.
             return nil
 

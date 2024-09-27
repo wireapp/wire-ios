@@ -41,7 +41,8 @@ extension CallState {
         case .outgoing:
             return L10n.Localizable.Call.Status.Outgoing.user(conversation)
 
-        case .answered, .establishedDataChannel:
+        case .answered,
+             .establishedDataChannel:
             return L10n.Localizable.Call.Status.connecting
 
         case .terminating:
@@ -224,7 +225,8 @@ final class CallTopOverlayController: UIViewController {
         }
 
         switch state {
-        case .established, .establishedDataChannel:
+        case .established,
+             .establishedDataChannel:
             let duration = callDurationFormatter.string(from: callDuration) ?? ""
             return L10n.Localizable.Voice.TopOverlay.tapToReturn + "・" + duration
 

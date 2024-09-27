@@ -31,7 +31,8 @@ public enum ZMConversationLegalHoldStatus: Int16 {
 
     public var denotesEnabledComplianceDevice: Bool {
         switch self {
-        case .enabled, .pendingApproval:
+        case .enabled,
+             .pendingApproval:
             true
         case .disabled:
             false
@@ -192,7 +193,8 @@ extension ZMConversation {
             appendLegalHoldEnabledSystemMessageForConversation(cause: cause)
             expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
 
-        case (.enabled, false), (.pendingApproval, false):
+        case (.enabled, false),
+             (.pendingApproval, false):
             legalHoldStatus = .disabled
             appendLegalHoldDisabledSystemMessageForConversation()
 
@@ -204,10 +206,14 @@ extension ZMConversation {
 
     private func updateSecurityLevel(cause: SecurityChangeCause) {
         switch cause {
-        case .addedClients, .addedUsers, .ignoredClients:
+        case .addedClients,
+             .addedUsers,
+             .ignoredClients:
             degradeSecurityLevelIfNeeded(for: cause)
 
-        case .removedClients, .removedUsers, .verifiedClients:
+        case .removedClients,
+             .removedUsers,
+             .verifiedClients:
             increaseSecurityLevelIfNeeded(for: cause)
 
         case .verifyLegalHold:
@@ -240,7 +246,8 @@ extension ZMConversation {
         securityLevel = .secureWithIgnored
 
         switch cause {
-        case .addedClients, .addedUsers:
+        case .addedClients,
+             .addedUsers:
             appendNewAddedClientSystemMessage(cause: cause)
             expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
 
@@ -360,7 +367,8 @@ extension ZMConversation {
                 timestamp: date
             )
 
-        case .connection, .oneOnOne:
+        case .connection,
+             .oneOnOne:
             if
                 user.connection == nil,
                 let context = managedObjectContext,
@@ -435,7 +443,8 @@ extension ZMConversation {
 extension ZMConversation {
     public var isDegraded: Bool {
         switch messageProtocol {
-        case .mixed, .proteus:
+        case .mixed,
+             .proteus:
             securityLevel == .secureWithIgnored
         case .mls:
             mlsVerificationStatus == .degraded
@@ -448,7 +457,8 @@ extension ZMConversation {
         // Downgrade the conversation to be unverified
         if isDegraded {
             switch messageProtocol {
-            case .mixed, .proteus:
+            case .mixed,
+                 .proteus:
                 securityLevel = .notSecure
             case .mls:
                 mlsVerificationStatus = .notVerified

@@ -21,7 +21,8 @@ import Foundation
 extension ZMParticipantsRemovedReason {
     public var stringValue: String? {
         switch self {
-        case .federationTermination, .none:
+        case .federationTermination,
+             .none:
             nil
         case .legalHoldPolicyConflict:
             "legalhold-policy-conflict"

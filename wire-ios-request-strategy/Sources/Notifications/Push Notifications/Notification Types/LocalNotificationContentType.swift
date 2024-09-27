@@ -65,7 +65,8 @@ public enum LocalNotificationContentType: Equatable {
             let timeoutValue = MessageDestructionTimeoutValue(rawValue: TimeInterval(timeoutIntegerValueInSeconds))
             self = timeoutValue == .none ? .messageTimerUpdate(nil) : .messageTimerUpdate(timeoutValue.displayString)
 
-        case .conversationMLSMessageAdd, .conversationOtrMessageAdd:
+        case .conversationMLSMessageAdd,
+             .conversationOtrMessageAdd:
             guard let message = GenericMessage(from: event) else {
                 return nil
             }

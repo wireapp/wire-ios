@@ -142,7 +142,8 @@ final class LegalHoldDisclosureController: UserObserving {
     /// Present an alert about legal hold being enabled.
     private func discloseEnabledStateIfPossible() {
         switch currentState {
-        case .acceptingRequest, .warningAboutEnabled:
+        case .acceptingRequest,
+             .warningAboutEnabled:
             // If we are already accepting the request or it's already accepted, do not show a popup
             return
         default:
@@ -170,7 +171,8 @@ final class LegalHoldDisclosureController: UserObserving {
 
     private func discloseDisabledStateIfPossible() {
         switch currentState {
-        case .warningAboutAcceptationResult, .warningAboutPendingRequest:
+        case .warningAboutAcceptationResult,
+             .warningAboutPendingRequest:
             currentState = .none
             return
 
@@ -231,7 +233,8 @@ final class LegalHoldDisclosureController: UserObserving {
         case let .warningAboutAcceptationResult(alert):
             alertController = alert
 
-        case .acceptingRequest, .none:
+        case .acceptingRequest,
+             .none:
             break
         }
 

@@ -606,7 +606,9 @@ extension MarkdownTextView: MarkdownBarViewDelegate {
         }
 
         switch markdown {
-        case .h1, .h2, .h3:
+        case .h1,
+             .h2,
+             .h3:
             // apply header to the whole line
             if let range = currentLineRange {
                 // remove any existing header styles before adding new header
@@ -627,7 +629,8 @@ extension MarkdownTextView: MarkdownBarViewDelegate {
             remove([.bold, .italic], from: selectedRange)
             activeMarkdown.subtract([.bold, .italic])
 
-        case .bold, .italic:
+        case .bold,
+             .italic:
             // selecting bold or italic deselects code
             remove(.code, from: selectedRange)
             activeMarkdown.subtract(.code)
@@ -656,13 +659,16 @@ extension MarkdownTextView: MarkdownBarViewDelegate {
         }
 
         switch markdown {
-        case .h1, .h2, .h3:
+        case .h1,
+             .h2,
+             .h3:
             // remove header from the whole line
             if let range = currentLineRange {
                 remove(markdown, from: range)
             }
 
-        case .oList, .uList:
+        case .oList,
+             .uList:
             removeListItem()
 
         default:

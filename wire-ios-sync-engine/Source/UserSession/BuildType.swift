@@ -61,7 +61,11 @@ enum BuildType: Equatable {
         case .production:
             "com.wire"
 
-        case .alpha, .beta, .development, .internal, .releaseCandidate:
+        case .alpha,
+             .beta,
+             .development,
+             .internal,
+             .releaseCandidate:
             bundleID
 
         case let .custom(bundleID):

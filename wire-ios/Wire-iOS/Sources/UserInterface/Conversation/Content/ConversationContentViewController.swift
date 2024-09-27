@@ -67,7 +67,8 @@ final class ConversationContentViewController: UIViewController {
             }
 
             switch change {
-            case .fileSharingDisabled, .fileSharingEnabled:
+            case .fileSharingDisabled,
+                 .fileSharingEnabled:
                 self?.updateVisibleCells()
 
             default:

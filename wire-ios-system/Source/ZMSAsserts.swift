@@ -76,9 +76,11 @@ public enum AppBuild: UInt8 {
 
     var canFatalError: Bool {
         switch self {
-        case .debug, .develop:
+        case .debug,
+             .develop:
             true
-        case .appStore, .unknown:
+        case .appStore,
+             .unknown:
             false
         }
     }

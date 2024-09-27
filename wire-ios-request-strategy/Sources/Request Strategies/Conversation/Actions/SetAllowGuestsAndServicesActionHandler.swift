@@ -58,7 +58,10 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
 
         let path: String
         switch apiVersion {
-        case .v3, .v4, .v5, .v6:
+        case .v3,
+             .v4,
+             .v5,
+             .v6:
             let domain =
                 if let domain = conversation.domain, !domain.isEmpty {
                     domain
@@ -72,7 +75,9 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
 
             path = "/conversations/\(domain)/\(identifier)/access"
 
-        case .v0, .v1, .v2:
+        case .v0,
+             .v1,
+             .v2:
             path = "/conversations/\(identifier)/access"
             payload["access_role_v2"] = accessRoles.map(\.rawValue)
         }

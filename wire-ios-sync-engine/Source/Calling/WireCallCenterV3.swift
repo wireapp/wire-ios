@@ -229,7 +229,8 @@ extension WireCallCenterV3 {
     public var activeCalls: [AVSIdentifier: CallState] {
         nonIdleCalls.filter { _, callState in
             switch callState {
-            case .established, .establishedDataChannel:
+            case .established,
+                 .establishedDataChannel:
                 true
             default:
                 false
@@ -275,7 +276,8 @@ extension WireCallCenterV3 {
 
     public func isActive(conversationId: AVSIdentifier) -> Bool {
         switch callState(conversationId: conversationId) {
-        case .established, .establishedDataChannel:
+        case .established,
+             .establishedDataChannel:
             true
         default:
             false
@@ -326,7 +328,10 @@ extension WireCallCenterV3 {
         }
         return nonIdleCalls.compactMap { (key: AVSIdentifier, value: CallState) -> ZMConversation? in
             switch value {
-            case .answered, .established, .establishedDataChannel, .outgoing:
+            case .answered,
+                 .established,
+                 .establishedDataChannel,
+                 .outgoing:
                 return ZMConversation.fetch(
                     with: key.identifier,
                     domain: key.domain,
@@ -506,7 +511,8 @@ extension WireCallCenterV3 {
                 newParticipants: newParticipants
             )
 
-        case .mixed, .proteus:
+        case .mixed,
+             .proteus:
             return shouldEndCallForProteus(
                 previousParticipants: previousParticipants,
                 newParticipants: newParticipants
@@ -605,7 +611,8 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .mixed, .proteus:
+        case .mixed,
+             .proteus:
             break
 
         case .mls:
@@ -692,7 +699,8 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .mixed, .proteus:
+        case .mixed,
+             .proteus:
             break
         case .mls:
             guard conversationType == .mlsConference else {
@@ -1172,10 +1180,12 @@ extension WireCallCenterV3 {
         case (.oneOnOne, _):
             getAVSConversationTypeForOneOnOne(conversation)
 
-        case (.group, .mixed), (.group, .proteus):
+        case (.group, .mixed),
+             (.group, .proteus):
             .conference
 
-        case (.`self`, .mls), (.group, .mls):
+        case (.`self`, .mls),
+             (.group, .mls):
             .mlsConference
 
         default:
@@ -1195,7 +1205,8 @@ extension WireCallCenterV3 {
         switch conversation.messageProtocol {
         case .mls:
             return .mlsConference
-        case .mixed, .proteus:
+        case .mixed,
+             .proteus:
             return .conference
         }
     }

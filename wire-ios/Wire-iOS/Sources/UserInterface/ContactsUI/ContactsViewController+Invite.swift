@@ -180,7 +180,8 @@ extension ContactsViewController {
 
             var messageKey: String {
                 switch self {
-                case .any, .email:
+                case .any,
+                     .email:
                     L10n.Localizable.Error.Invite.noEmailProvider
                 case .sms:
                     L10n.Localizable.Error.Invite.noMessagingProvider

@@ -240,7 +240,8 @@ extension CallClosedReason {
         switch self {
         case .canceled:
             "canceled"
-        case .normal, .stillOngoing:
+        case .normal,
+             .stillOngoing:
             "normal"
         case .inputOutputError:
             "io_error"
@@ -250,7 +251,8 @@ extension CallClosedReason {
             "security_degraded"
         case .answeredElsewhere:
             "answered_elsewhere"
-        case .timeout, .timeoutECONN:
+        case .timeout,
+             .timeoutECONN:
             "timeout"
         case .unknown:
             "unknown"

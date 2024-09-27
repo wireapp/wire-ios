@@ -103,7 +103,15 @@ enum AvailabilityStringBuilder {
             switch size {
             case .small:
                 -1
-            case .body, .bodyTwo, .buttonBig, .buttonSmall, .header, .large, .medium, .normal, .subHeadline,
+            case .body,
+                 .bodyTwo,
+                 .buttonBig,
+                 .buttonSmall,
+                 .header,
+                 .large,
+                 .medium,
+                 .normal,
+                 .subHeadline,
                  .titleThree:
                 0
             }

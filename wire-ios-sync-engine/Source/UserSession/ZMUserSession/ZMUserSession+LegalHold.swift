@@ -104,7 +104,8 @@ extension ZMUserSession {
 
                 let errorLabel = response.payload?.asDictionary()?["label"] as? String
                 switch errorLabel {
-                case "access-denied", "invalid-payload":
+                case "access-denied",
+                     "invalid-payload":
                     await MainActor.run {
                         completionHandler(.invalidPassword)
                     }

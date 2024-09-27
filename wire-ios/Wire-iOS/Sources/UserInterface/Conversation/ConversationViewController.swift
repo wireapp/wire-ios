@@ -148,7 +148,9 @@ final class ConversationViewController: UIViewController {
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
             )
 
-        case .`self`, .connection, .oneOnOne:
+        case .`self`,
+             .connection,
+             .oneOnOne:
             viewController = createUserDetailViewController()
 
         case .invalid:

@@ -124,7 +124,8 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
             return nil
         } else {
             switch apiVersion {
-            case .v0, .v1:
+            case .v0,
+                 .v1:
                 if message.imageMessageData != nil {
                     guard let assetId = message.assetId?.transportString() else {
                         return nil
@@ -145,7 +146,11 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
                     )
                 }
 
-            case .v2, .v3, .v4, .v5, .v6:
+            case .v2,
+                 .v3,
+                 .v4,
+                 .v5,
+                 .v6:
                 // v2 assets are legacy and no longer supported in API v2
                 return nil
             }

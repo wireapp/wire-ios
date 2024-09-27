@@ -126,7 +126,8 @@ final class FileTransferView: UIView, TransferView {
 
         case .uploaded:
             switch fileMessageData.downloadState {
-            case .downloaded, .remote:
+            case .downloaded,
+                 .remote:
                 let firstLine = fileNameAttributed
                 let secondLine = fileSizeAttributed + dot + extAttributed
                 topLabel.attributedText = firstLine
@@ -141,7 +142,8 @@ final class FileTransferView: UIView, TransferView {
                 bottomLabel.attributedText = secondLine
             }
 
-        case .uploadingCancelled, .uploadingFailed:
+        case .uploadingCancelled,
+             .uploadingFailed:
             let statusText = fileMessageData.transferState == .uploadingFailed ? L10n.Localizable.Content.File
                 .uploadFailed : L10n.Localizable.Content.File.uploadCancelled
             let attributedStatusText = statusText.localizedUppercase && labelFont && SemanticColors.Label
@@ -186,7 +188,8 @@ final class FileTransferView: UIView, TransferView {
             }
             delegate?.transferView(self, didSelect: .cancel)
 
-        case .uploadingCancelled, .uploadingFailed:
+        case .uploadingCancelled,
+             .uploadingFailed:
             delegate?.transferView(self, didSelect: .resend)
 
         case .uploaded:
@@ -215,11 +218,13 @@ final class FileTransferView: UIView, TransferView {
         case .unavailable:
             visibleViews = [loadingView]
 
-        case .downloading, .uploading:
+        case .downloading,
+             .uploading:
             visibleViews.append(progressView)
             progressView.setProgress(message.fileMessageData!.progress, animated: !isInitial)
 
-        case .downloaded, .uploaded:
+        case .downloaded,
+             .uploaded:
             visibleViews.append(contentsOf: [fileTypeIconView])
 
         default:

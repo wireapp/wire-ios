@@ -190,7 +190,9 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
 
     func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
         switch event.type {
-        case .conversationClientMessageAdd, .conversationMLSMessageAdd, .conversationOtrAssetAdd,
+        case .conversationClientMessageAdd,
+             .conversationMLSMessageAdd,
+             .conversationOtrAssetAdd,
              .conversationOtrMessageAdd:
             guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult)
             else {

@@ -56,7 +56,12 @@ final class CallSystemMessageGenerator: NSObject {
                 previousCallState: previousCallState
             )
 
-        case .answered, .establishedDataChannel, .incoming, .mediaStopped, .none, .unknown:
+        case .answered,
+             .establishedDataChannel,
+             .incoming,
+             .mediaStopped,
+             .none,
+             .unknown:
             break
         }
         return systemMessage
