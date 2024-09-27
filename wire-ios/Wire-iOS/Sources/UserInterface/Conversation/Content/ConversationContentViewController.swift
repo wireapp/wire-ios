@@ -96,7 +96,7 @@ final class ConversationContentViewController: UIViewController {
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
-    let mainCoordinator: MainCoordinatorProtocol
+    let mainCoordinator: any MainCoordinatorProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?

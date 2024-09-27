@@ -17,6 +17,8 @@
 //
 
 public protocol MainCoordinatorProtocol: AnyObject {
+    associatedtype ConversationID: Sendable
+
     // var conversationListCoordinator: MainConversationListCoordinatorRepresentable
     func showConversationList<ConversationFilter>(conversationFilter: ConversationFilter?) async
         where ConversationFilter: MainConversationFilterRepresentable
@@ -25,4 +27,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func showSelfProfile() async
     func showSettings() async
     func showNewConversation() async
+
+    //func openConversation(conversationID: ConversationID) async // TODO: remove
 }

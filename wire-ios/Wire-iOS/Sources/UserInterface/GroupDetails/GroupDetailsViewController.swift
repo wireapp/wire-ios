@@ -23,7 +23,7 @@ import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
-    private let mainCoordinator: MainCoordinatorProtocol
+    private let mainCoordinator: any MainCoordinatorProtocol
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -46,7 +46,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     init(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
-        mainCoordinator: MainCoordinatorProtocol,
+        mainCoordinator: any MainCoordinatorProtocol,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation

@@ -18,11 +18,13 @@
 
 import XCTest
 
+struct MockConversationID: Sendable {} // TODO: remove
+
 @testable import WireMainNavigation
 
 final class MainCoordinatorTests: XCTestCase {
 
-    private var sut: MainCoordinator<MockSplitViewController, MockTabBarController, MockViewControllerBuilder, MockViewControllerBuilder>!
+    private var sut: MainCoordinator<MockSplitViewController, MockTabBarController, MockConversationID, MockViewControllerBuilder, MockViewControllerBuilder>!
 
     private var splitViewController: MockSplitViewController!
     private var tabBarController: MockTabBarController!

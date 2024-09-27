@@ -36,6 +36,7 @@ public final class MainCoordinator<
 
     SplitViewController: MainSplitViewControllerProtocol,
     TabBarController: MainTabBarControllerProtocol,
+    ConversationID: Sendable,
     NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder,
     SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder
 
@@ -207,6 +208,10 @@ public final class MainCoordinator<
             // navigationController.modalPresentationStyle = .formSheet
             splitViewController.present(navigationController, animated: true)
         }
+    }
+
+    public func openConversation(conversationID: ConversationID) async { // TODO: remove
+        fatalError()
     }
 
     private func dismissConversationListIfNeeded() {

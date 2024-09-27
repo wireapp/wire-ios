@@ -28,7 +28,7 @@ private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController {
 
-    private let mainCoordinator: MainCoordinatorProtocol
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     private(set) weak var zClientViewController: ZClientViewController?
 
@@ -46,7 +46,7 @@ final class ConversationListContentController: UICollectionViewController {
 
     init(
         userSession: UserSession,
-        mainCoordinator: MainCoordinatorProtocol,
+        mainCoordinator: any MainCoordinatorProtocol,
         zClientViewController: ZClientViewController?
     ) {
         self.userSession = userSession

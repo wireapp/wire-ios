@@ -22,6 +22,7 @@ import WireMainNavigation
 @testable import Wire
 
 final class MockMainCoordinator: MainCoordinatorProtocol {
+    typealias ConversationID = MockConversationID // TODO: remove
 
     func showConversationList<ConversationFilter: MainConversationFilterRepresentable>(conversationFilter: ConversationFilter?) async {
         fatalError("Mock method not implemented")

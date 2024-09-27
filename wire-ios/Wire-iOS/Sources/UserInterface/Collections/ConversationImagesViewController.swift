@@ -78,7 +78,7 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinatorProtocol
+    let mainCoordinator: any MainCoordinatorProtocol
 
     var dismissAction: DismissAction? = .none {
         didSet {

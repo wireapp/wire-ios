@@ -27,6 +27,8 @@ import WireFoundation
 import WireSidebar
 import WireSyncEngine
 
+struct MockConversationID: Sendable {} // TODO: remove
+
 final class ZClientViewController: UIViewController {
 
     // MARK: - Private Members
@@ -98,8 +100,9 @@ final class ZClientViewController: UIViewController {
     private var networkAvailabilityObserverToken: NSObjectProtocol?
 
     private(set) lazy var mainCoordinator = {
+
         var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
-        let mainCoordinator = MainCoordinator(
+        let mainCoordinator = MainCoordinator<MainSplitViewController<SidebarViewController, ConversationListViewController>, MainTabBarController<ConversationListViewController>, MockConversationID, StartUIViewControllerBuilder, SelfProfileViewControllerBuilder>(
             mainSplitViewController: mainSplitViewController,
             mainTabBarController: mainTabBarController,
             newConversationBuilder: newConversationBuilder,

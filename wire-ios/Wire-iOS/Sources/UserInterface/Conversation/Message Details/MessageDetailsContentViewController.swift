@@ -77,7 +77,7 @@ final class MessageDetailsContentViewController: UIViewController {
     private let sectionHeaderIdentifier = "SectionHeader"
 
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinatorProtocol
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()

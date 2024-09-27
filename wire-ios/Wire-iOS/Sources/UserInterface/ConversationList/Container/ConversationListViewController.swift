@@ -30,7 +30,7 @@ final class ConversationListViewController: UIViewController {
     // MARK: - Properties
 
     let viewModel: ViewModel
-    let mainCoordinator: MainCoordinatorProtocol
+    let mainCoordinator: any MainCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
@@ -113,7 +113,7 @@ final class ConversationListViewController: UIViewController {
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinatorProtocol,
+        mainCoordinator: any MainCoordinatorProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
     ) {
@@ -136,7 +136,7 @@ final class ConversationListViewController: UIViewController {
     required init(
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinatorProtocol,
+        mainCoordinator: any MainCoordinatorProtocol,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
     ) {
         self.viewModel = viewModel

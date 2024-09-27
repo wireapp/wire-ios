@@ -55,7 +55,7 @@ final class CollectionsViewController: UIViewController {
     private var deletionDialogPresenter: DeletionDialogPresenter?
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinatorProtocol
+    let mainCoordinator: any MainCoordinatorProtocol
 
     private var fetchingDone: Bool = false {
         didSet {

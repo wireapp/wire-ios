@@ -79,7 +79,7 @@ final class FullscreenImageViewController: UIViewController {
     private var isShowingChrome = true
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinatorProtocol
+    let mainCoordinator: any MainCoordinatorProtocol
 
     private var messageObserverToken: NSObjectProtocol?
 
