@@ -881,7 +881,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
             WireLogger.sessionManager.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
-            self.switchAnalyticsUser(to: session)
 
             self.delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
             self.configureUserNotifications()
@@ -893,6 +892,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
+                self.switchAnalyticsUser(to: session)
 
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()
