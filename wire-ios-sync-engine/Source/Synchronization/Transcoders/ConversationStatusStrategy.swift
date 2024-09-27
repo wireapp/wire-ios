@@ -66,8 +66,7 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
-        return request
+        NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {

@@ -44,12 +44,11 @@ final class TeamAccountView: BaseAccountView {
         selectionView.pathGenerator = { size in
             let radius = 6
             let radii = CGSize(width: radius, height: radius)
-            let path = UIBezierPath(
+            return UIBezierPath(
                 roundedRect: CGRect(origin: .zero, size: size),
                 byRoundingCorners: UIRectCorner.allCorners,
                 cornerRadii: radii
             )
-            return path
         }
 
         createConstraints()

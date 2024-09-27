@@ -369,26 +369,22 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
         let payloadData = payload.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
-        let response = ZMTransportResponse(
+        return ZMTransportResponse(
             payload: payloadString as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
             apiVersion: apiVersion.rawValue
         )
-
-        return response
     }
 
     func successfulResponse(connection: Payload.Connection) -> ZMTransportResponse {
         let payloadData = connection.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
-        let response = ZMTransportResponse(
+        return ZMTransportResponse(
             payload: payloadString as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
             apiVersion: apiVersion.rawValue
         )
-
-        return response
     }
 }

@@ -28,8 +28,7 @@ public protocol EntityNamedProtocol: NSObjectProtocol {
 extension NSManagedObject {
     public static func insert<A: EntityNamedProtocol>(in context: NSManagedObjectContext) -> A {
         let entity = NSEntityDescription.entity(forEntityName: A.entityName, in: context)!
-        let item = A(entity: entity, insertInto: context)
-        return item
+        return A(entity: entity, insertInto: context)
     }
 
     public static func fetchAll<A: EntityNamedProtocol>(

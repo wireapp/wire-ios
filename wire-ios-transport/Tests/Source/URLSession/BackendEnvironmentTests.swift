@@ -66,15 +66,13 @@ class BackendEnvironmentTests: XCTestCase {
         let proxySettings = ProxySettings(host: "127.0.0.1", port: 1080, needsAuthentication: true)
         let trust = ServerCertificateTrust(trustData: [])
         let environmentType = EnvironmentType.custom(url: configURL)
-        let backendEnvironment = BackendEnvironment(
+        return BackendEnvironment(
             title: title,
             environmentType: environmentType,
             endpoints: endpoints,
             proxySettings: proxySettings,
             certificateTrust: trust
         )
-
-        return backendEnvironment
     }
 
     func testThatWeCanLoadBackendEndpoints() {

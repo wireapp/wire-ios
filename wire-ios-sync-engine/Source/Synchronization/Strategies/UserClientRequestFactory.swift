@@ -81,17 +81,16 @@ extension UserClientRequestFactory {
     }
 
     func storeMaxRangeID(_ client: UserClient, maxRangeID: UInt16) -> ZMCompletionHandler {
-        let completionHandler = ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
+        ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
             guard let client else { return }
             if response.result == .success {
                 client.preKeysRangeMax = Int64(maxRangeID)
             }
         })
-        return completionHandler
     }
 
     func storeAPSSignalingKeys(_ client: UserClient, signalingKeys: SignalingKeys) -> ZMCompletionHandler {
-        let completionHandler = ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
+        ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
             guard let client else { return }
             if response.result == .success {
                 client.apsDecryptionKey = signalingKeys.decryptionKey
@@ -99,17 +98,15 @@ extension UserClientRequestFactory {
                 client.needsToUploadSignalingKeys = false
             }
         })
-        return completionHandler
     }
 
     func storeCapabilitiesHandler(_ client: UserClient) -> ZMCompletionHandler {
-        let completionHandler = ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
+        ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
             guard let client else { return }
             if response.result == .success {
                 client.needsToUpdateCapabilities = false
             }
         })
-        return completionHandler
     }
 
     func payloadForPreKeys(_ prekeys: [IdPrekeyTuple]) -> [[String: Any]] {

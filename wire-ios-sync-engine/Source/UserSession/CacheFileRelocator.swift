@@ -68,13 +68,12 @@ struct CacheFileRelocator {
 
     /// Groups files by checking if the fileName starts with the cachesFolderPrefix
     func group(fileNames: [String]) -> (assigned: [String], unassigned: [String]) {
-        let result: ([String], [String]) = fileNames.reduce(([], [])) { tempResult, fileName in
+        fileNames.reduce(([], [])) { tempResult, fileName in
             if fileName.hasPrefix(FileManager.cachesFolderPrefix) {
                 return (tempResult.0 + [fileName], tempResult.1)
             }
             return (tempResult.0, tempResult.1 + [fileName])
         }
-        return result
     }
 
     // MARK: Private

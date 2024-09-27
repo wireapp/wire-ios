@@ -198,11 +198,10 @@ final class ProfileDetailsContentController: NSObject,
             fatalError("We do not create cells for the readReceiptsStatus section.")
 
         case .blockingReason:
-            let cell = tableView.dequeueReusableCell(
+            return tableView.dequeueReusableCell(
                 withIdentifier: UserBlockingReasonCell.zm_reuseIdentifier,
                 for: indexPath
             ) as! UserBlockingReasonCell
-            return cell
 
         case let .messageProtocol(messageProtocol):
             let cell = tableView.dequeueReusableCell(

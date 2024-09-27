@@ -111,13 +111,12 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("encrypting data")
 
         do {
-            let encryptedData = try await coreCrypto.perform {
+            return try await coreCrypto.perform {
                 try await $0.proteusEncrypt(
                     sessionId: id.rawValue,
                     plaintext: data
                 )
             }
-            return encryptedData
         } catch {
             throw EncryptionError.failedToEncryptData(error)
         }
@@ -132,13 +131,12 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("encrypting data batch")
 
         do {
-            let encryptedBatch = try await coreCrypto.perform {
+            return try await coreCrypto.perform {
                 try await $0.proteusEncryptBatched(
                     sessions: sessions.map(\.rawValue),
                     plaintext: data
                 )
             }
-            return encryptedBatch
         } catch {
             throw EncryptionError.failedToEncryptDataBatch(error)
         }

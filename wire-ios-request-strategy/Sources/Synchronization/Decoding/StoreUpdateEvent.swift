@@ -173,8 +173,7 @@ public final class StoredUpdateEvent: NSManagedObject {
             fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(StoredUpdateEvent.isCallEvent))
         }
 
-        let result = context.fetchOrAssert(request: fetchRequest)
-        return result
+        return context.fetchOrAssert(request: fetchRequest)
     }
 
     static func nextEventBatch(

@@ -124,9 +124,7 @@ extension Data {
         }
 
         encryptedData.count = copiedBytes
-        let output = iv + encryptedData
-
-        return output
+        return iv + encryptedData
     }
 
     public func zmDecryptPrefixedPlainTextIV(key: Data) -> Data? {

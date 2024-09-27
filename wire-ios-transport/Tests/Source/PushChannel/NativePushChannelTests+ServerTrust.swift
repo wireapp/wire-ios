@@ -144,7 +144,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         )
         protectionSpace.mockServerTrust = SecTrust.trustWithChain(certificateData: certificates.production)
 
-        let authenticationChallenge = URLAuthenticationChallenge(
+        return URLAuthenticationChallenge(
             protectionSpace: protectionSpace,
             proposedCredential: nil,
             previousFailureCount: 0,
@@ -152,7 +152,5 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
             error: nil,
             sender: MockURLAuthenticationChallengeSender()
         )
-
-        return authenticationChallenge
     }
 }

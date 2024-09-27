@@ -89,8 +89,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             remoteData: remoteData,
             imageMetadata: imageMetaData
         )
-        let asset = WireProtos.Asset(original: original, preview: preview)
-        return asset
+        return WireProtos.Asset(original: original, preview: preview)
     }
 
     func thumbnailEvent(for message: ZMAssetClientMessage) -> ZMUpdateEvent {

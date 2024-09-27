@@ -109,9 +109,8 @@ extension XCTestCase {
 extension XCTestCase {
     func snapshotDirectory(file: StaticString = #file) -> String {
         let fileName = "\(file)"
-        let path = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName)
+        return ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName)
             .deletingPathExtension().lastPathComponent
-        return path
     }
 
     /// verify for a UIAlertController

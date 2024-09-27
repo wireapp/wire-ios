@@ -164,13 +164,11 @@ extension ClientMessageTests_OTR_Legacy {
     func testThatItCreatesPayloadDataForTextMessage() async throws {
         let message = try await syncMOC.perform {
             // Given
-            let message = try self.syncConversation.appendText(
+            try self.syncConversation.appendText(
                 content: self.name,
                 fetchLinkPreview: true,
                 nonce: UUID.create()
             ) as? ZMClientMessage
-
-            return message
         }
 
         // When

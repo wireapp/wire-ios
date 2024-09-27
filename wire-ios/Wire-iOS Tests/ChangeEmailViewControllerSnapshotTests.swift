@@ -76,8 +76,6 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
         userProfile.addObserver_MockMethod = { _ in }
 
         let sut = ChangeEmailViewController(user: mockUser, userSession: userSession)
-        let viewController = sut.wrapInNavigationController()
-
-        return viewController
+        return sut.wrapInNavigationController()
     }
 }

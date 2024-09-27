@@ -83,8 +83,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             name: "",
             conversations: favorites
         )
-        let response = WireSyncEngine.LabelPayload(labels: [update])
-        return response
+        return WireSyncEngine.LabelPayload(labels: [update])
     }
 
     func folderResponse(identifier: UUID = UUID(), name: String, conversations: [UUID]) -> WireSyncEngine.LabelPayload {
@@ -94,8 +93,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             name: name,
             conversations: conversations
         )
-        let response = WireSyncEngine.LabelPayload(labels: [update])
-        return response
+        return WireSyncEngine.LabelPayload(labels: [update])
     }
 
     func updateEvent(with labels: WireSyncEngine.LabelPayload) -> ZMUpdateEvent {

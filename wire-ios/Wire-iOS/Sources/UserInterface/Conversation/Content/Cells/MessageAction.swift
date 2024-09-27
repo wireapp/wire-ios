@@ -208,7 +208,7 @@ enum MessageAction: CaseIterable, Equatable {
     // MARK: Private
 
     private func imageSystemName() -> String? {
-        let imageName: String? = switch self {
+        switch self {
         case .copy:
             "doc.on.doc"
         case .reply:
@@ -241,7 +241,5 @@ enum MessageAction: CaseIterable, Equatable {
              .visitLink:
             nil
         }
-
-        return imageName
     }
 }

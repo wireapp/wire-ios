@@ -36,7 +36,7 @@ class PrekeyGenerator {
     let keyCount: UInt16 = _test_overrideNumberOfKeys ?? 100
 
     func generatePrekeys(startIndex: UInt16 = 0) async throws -> [IdPrekeyTuple] {
-        let preKeys = try await proteusProvider.performAsync(
+        try await proteusProvider.performAsync(
             withProteusService: { proteusService in
                 try await proteusService.generatePrekeys(start: startIndex, count: keyCount)
             },
@@ -44,11 +44,10 @@ class PrekeyGenerator {
                 try keyStore.generateMoreKeys(keyCount, start: startIndex)
             }
         )
-        return preKeys
     }
 
     func generateLastResortPrekey() async throws -> IdPrekeyTuple {
-        let lastKey = try await proteusProvider.performAsync(
+        try await proteusProvider.performAsync(
             withProteusService: { proteusService in
                 try await (
                     id: proteusService.lastPrekeyID,
@@ -62,6 +61,5 @@ class PrekeyGenerator {
                 )
             }
         )
-        return lastKey
     }
 }

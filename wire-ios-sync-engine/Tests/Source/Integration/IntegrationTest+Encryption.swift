@@ -193,7 +193,6 @@ extension IntegrationTest {
         }
         let url = otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
-        let encryptionContext = EncryptionContext(path: url)
-        return encryptionContext
+        return EncryptionContext(path: url)
     }
 }

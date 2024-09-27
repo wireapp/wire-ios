@@ -308,11 +308,10 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
 extension AssetCollectionBatched {
     static func messageMap(messages: [ZMMessage], matchingCategories: [CategoryMatch]) -> [CategoryMatch: [ZMMessage]] {
         precondition(!messages.isEmpty, "messages should contain at least one value")
-        let messagesByFilter = AssetCollectionBatched.categorize(
+        return AssetCollectionBatched.categorize(
             messages: messages,
             matchingCategories: matchingCategories
         )
-        return messagesByFilter
     }
 
     static func categorize(messages: [ZMMessage], matchingCategories: [CategoryMatch])

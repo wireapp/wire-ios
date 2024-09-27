@@ -952,12 +952,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = self.oneToOneConversation.qualifiedID!
-            let payload = Payload.Conversation(
+            return Payload.Conversation(
                 qualifiedID: qualifiedID,
                 type: BackendConversationType.oneOnOne.rawValue,
                 members: members
             )
-            return payload
         }
 
         // when

@@ -228,8 +228,7 @@ extension MockUserClient {
         let directory = MockUserClient.mockEncryptionSessionDirectory
             .appendingPathComponent("mockclient_\(user?.identifier ?? "USER")_\(clientId ?? "IDENTIFIER")")
         try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [:])
-        let encryptionContext = EncryptionContext(path: directory)
-        return encryptionContext
+        return EncryptionContext(path: directory)
     }
 
     private var encryptionContext: EncryptionContext {

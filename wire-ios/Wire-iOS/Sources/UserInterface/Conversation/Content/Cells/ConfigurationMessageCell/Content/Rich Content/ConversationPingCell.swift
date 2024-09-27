@@ -66,7 +66,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     }
 
     func createAnimationBlock() -> AnimationBlock {
-        let animationBlock: AnimationBlock = { [weak self] otherBlock, reps in
+        { [weak self] otherBlock, reps in
             guard let self else { return }
             imageView.alpha = 1.0
 
@@ -104,8 +104,6 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
                 })
             }
         }
-
-        return animationBlock
     }
 
     func canAnimationContinue(for message: ZMConversationMessage?) -> Bool {

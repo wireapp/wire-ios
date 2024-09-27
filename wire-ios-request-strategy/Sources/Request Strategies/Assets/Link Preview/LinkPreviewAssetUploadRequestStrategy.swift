@@ -56,14 +56,13 @@ extension ZMImagePreprocessingTracker {
             return managedObjectContext.zm_fileAssetCache.hasOriginalImageData(for: message)
         }
 
-        let previewImagePreprocessor = ZMImagePreprocessingTracker(
+        return ZMImagePreprocessingTracker(
             managedObjectContext: managedObjectContext,
             imageProcessingQueue: OperationQueue(),
             fetch: imageFetchPredicate,
             needsProcessingPredicate: needsProccessing,
             entityClass: ZMClientMessage.self
         )
-        return previewImagePreprocessor
     }
 }
 

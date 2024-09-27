@@ -114,12 +114,11 @@ extension ZMUser: SideEffectSource {
         let conversations = allConversations
         guard !conversations.isEmpty else { return  [:] }
 
-        let affectedObjects = conversationChanges(
+        return conversationChanges(
             changedKeys: allKeys,
             conversations: conversations,
             keyStore: keyStore
         )
-        return affectedObjects
     }
 
     func conversationChanges(
@@ -184,14 +183,12 @@ extension ParticipantRole: SideEffectSource {
             "\(#keyPath(ZMConversation.participantRoles)).\($0)"
         }
 
-        let changes = byUpdateAffectedKeys(
+        return byUpdateAffectedKeys(
             for: conversation,
             knownKeys: knownKeys,
             keyStore: keyStore,
             keyMapping: keyMapping
         )
-
-        return changes
     }
 
     func affectedObjectsForInsertionOrDeletion(keyStore: DependencyKeyStore) -> ObjectAndChanges {

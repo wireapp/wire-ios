@@ -598,23 +598,19 @@ final class ConversationListCellTests: XCTestCase {
     // MARK: - Helper Methods
 
     private func createNewMessage(text: String = "Hey there!") -> MockMessage {
-        let message: MockMessage = MockMessageFactory.textMessage(
+        MockMessageFactory.textMessage(
             withText: text,
             sender: otherUser,
             conversation: otherUserConversation
         )
-
-        return message
     }
 
     private func createMentionSelfMessage() -> MockMessage {
-        let mentionMessage: MockMessage = MockMessageFactory.textMessage(
+        MockMessageFactory.textMessage(
             withText: "@self test",
             sender: otherUser,
             conversation: otherUserConversation
         )
-
-        return mentionMessage
     }
 
     private func verify(

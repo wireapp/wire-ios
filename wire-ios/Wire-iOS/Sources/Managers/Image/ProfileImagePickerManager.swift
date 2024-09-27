@@ -21,7 +21,7 @@ import WireSyncEngine
 
 final class ProfileImagePickerManager: ImagePickerManager {
     func selectProfileImage() -> UIAlertController {
-        let actionSheet = showActionSheet { image in
+        showActionSheet { image in
             guard let jpegData = image.jpegData else {
                 return
             }
@@ -29,6 +29,5 @@ final class ProfileImagePickerManager: ImagePickerManager {
                 ZMUserSession.shared()?.userProfileImage.updateImage(imageData: jpegData)
             }
         }
-        return actionSheet
     }
 }

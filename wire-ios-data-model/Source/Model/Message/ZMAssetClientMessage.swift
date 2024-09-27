@@ -134,8 +134,7 @@ public class ZMAssetClientMessage: ZMOTRMessage {
             willAccessValue(forKey: key)
             let data = primitiveValue(forKey: key) as? Data
             didAccessValue(forKey: key)
-            let value = data.flatMap { ZMTaskIdentifier(from: $0) }
-            return value
+            return data.flatMap { ZMTaskIdentifier(from: $0) }
         }
         set {
             let key = #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)

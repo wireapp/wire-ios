@@ -43,8 +43,7 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
             remoteData: remoteData,
             imageMetadata: imageMetaData
         )
-        let asset = WireProtos.Asset(original: original, preview: preview)
-        return asset
+        return WireProtos.Asset(original: original, preview: preview)
     }
 
     func testThatItObfuscatesEmojis() {

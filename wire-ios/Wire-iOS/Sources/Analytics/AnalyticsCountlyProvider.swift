@@ -320,12 +320,10 @@ extension [String: Any] {
     }
 
     var countlyStringValueDictionary: [String: String] {
-        let convertedAttributes = [String: String](
+        [String: String](
             uniqueKeysWithValues:
             map { key, value in (key, countlyValue(rawValue: value)) }
         )
-
-        return convertedAttributes
     }
 }
 

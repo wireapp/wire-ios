@@ -117,9 +117,7 @@ final class DateFormatterTests: XCTestCase {
 
         dateFormatter.dateFormat = formatString
 
-        let dateString = dateFormatter.string(from: date)
-
-        return dateString
+        return dateFormatter.string(from: date)
     }
 
     // MARK: - wr_formattedDate tests

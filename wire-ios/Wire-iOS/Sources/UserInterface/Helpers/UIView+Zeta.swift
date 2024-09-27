@@ -97,8 +97,6 @@ extension UIView {
         let windowRect = view.window?.convert(screenRect ?? CGRect.zero, from: nil)
         let viewRect = view.convert(windowRect ?? CGRect.zero, from: nil)
 
-        let intersection = viewRect.intersection(view.bounds)
-
-        return intersection
+        return viewRect.intersection(view.bounds)
     }
 }

@@ -455,14 +455,12 @@ final class SearchResultTests: DatabaseTest {
             copyPermissions: permissions.rawValue,
             selfPermissions: permissions.rawValue
         )
-        let membershipPayload = WireSyncEngine.MembershipPayload(
+        return WireSyncEngine.MembershipPayload(
             userID: userID,
             createdBy: createdBy,
             createdAt: nil,
             permissions: membershipPermissons
         )
-
-        return membershipPayload
     }
 
     // MARK: Private

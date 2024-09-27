@@ -306,11 +306,10 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         return try await message.encryptForTransport { messageData in
-            let encryptedData = try await mlsService.encrypt(
+            try await mlsService.encrypt(
                 message: messageData,
                 for: groupID
             )
-            return encryptedData
         }
     }
 }

@@ -191,13 +191,11 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
         let message = try await syncMOC.perform {
             // Given
-            let message = try self.syncConversation.appendText(
+            try self.syncConversation.appendText(
                 content: self.name,
                 fetchLinkPreview: true,
                 nonce: UUID.create()
             ) as? ZMClientMessage
-
-            return message
         }
 
         // When

@@ -80,9 +80,7 @@ struct LogFilesProvider: LogFilesProviding {
         }
 
         let logFilesURL = try generateLogFilesZip()
-        let data = try Data(contentsOf: logFilesURL)
-
-        return data
+        return try Data(contentsOf: logFilesURL)
     }
 
     func generateLogFilesZip() throws -> URL {

@@ -177,8 +177,7 @@ enum MockMessageFactory {
     }
 
     static func compositeMessage(sender: UserType? = nil) -> MockMessage {
-        let message = MockMessageFactory.messageTemplate(sender: sender)
-        return message
+        MockMessageFactory.messageTemplate(sender: sender)
     }
 
     static func videoMessage<T: MockMessage>(sender: UserType? = nil, previewImage: UIImage? = nil) -> T {

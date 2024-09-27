@@ -70,10 +70,8 @@ public class MockTeamMemberEvent: NSObject {
         guard    currentMembers.contains(where: { $0.user == selfUser })
             || previousMembers.contains(where: { $0.user == selfUser }) else { return [] }
 
-        let removedMembersEvents = previousMembers
+        return previousMembers
             .subtracting(currentMembers)
             .map { MockTeamMemberEvent(kind: .leave, team: team, user: $0.user) }
-
-        return removedMembersEvents
     }
 }

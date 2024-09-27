@@ -51,9 +51,7 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
                 imageAsset: nil
             )
 
-            let article = ArticleMetadata(protocolBuffer: buffer)
-
-            return article
+            return ArticleMetadata(protocolBuffer: buffer)
 
         case .articleWithPicture:
             let buffer = LinkPreview(
@@ -82,9 +80,7 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
                 tweet: Tweet(author: "Jean-Claude Van Damme", username: "JCVDG05U")
             )
 
-            let tweet = TwitterStatusMetadata(protocolBuffer: buffer)
-
-            return tweet
+            return TwitterStatusMetadata(protocolBuffer: buffer)
 
         case .tweetWithPicture:
             let buffer = LinkPreview(

@@ -169,15 +169,13 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         mediaManager: ZMMockAVSMediaManager
     ) -> CallViewController {
         let proximityManager = ProximityMonitorManager()
-        let callController = CallViewController(
+        return CallViewController(
             voiceChannel: mockVoiceChannel,
             selfUser: selfUser,
             proximityMonitorManager: proximityManager,
             mediaManager: mediaManager,
             userSession: userSession
         )
-
-        return callController
     }
 
     private func participants(amount: Int) -> [CallParticipant] {

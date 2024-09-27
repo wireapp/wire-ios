@@ -594,7 +594,7 @@ extension GenericMessage {
         // We do not want to send pushes for delivery receipts.
         let nativePush = !hasConfirmation
 
-        let message = context.performAndWait {
+        return context.performAndWait {
             var message = Proteus_NewOtrMessage(
                 withSender: selfClient,
                 nativePush: nativePush,
@@ -608,8 +608,6 @@ extension GenericMessage {
 
             return message
         }
-
-        return message
     }
 
     /// Returns a message for the given recipients.
@@ -632,7 +630,7 @@ extension GenericMessage {
         // We do not want to send pushes for delivery receipts.
         let nativePush = !hasConfirmation
 
-        let message = await context.perform {
+        return await context.perform {
             var message = Proteus_NewOtrMessage(
                 withSender: selfClient,
                 nativePush: nativePush,
@@ -646,8 +644,6 @@ extension GenericMessage {
 
             return message
         }
-
-        return message
     }
 
     private func qualifiedUserEntriesWithEncryptedData(

@@ -58,12 +58,10 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         }
 
         let maxResults = 2000
-        let request =
-            ZMTransportRequest(
-                getFromPath: "/teams/\(teamID.transportString())/members?maxResults=\(maxResults)",
-                apiVersion: apiVersion.rawValue
-            )
-        return request
+        return ZMTransportRequest(
+            getFromPath: "/teams/\(teamID.transportString())/members?maxResults=\(maxResults)",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

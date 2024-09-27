@@ -62,13 +62,12 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             emojis: ["❤️"],
             messageID: message.nonce!
         ))
-        let event = createUpdateEvent(
+        return createUpdateEvent(
             UUID.create(),
             conversationID: oneOnOneConversation.remoteIdentifier!,
             genericMessage: reaction,
             senderID: sender.remoteIdentifier!
         )
-        return event
     }
 
     func alertBody(_ conversation: ZMConversation, aSender: ZMUser) -> String? {
@@ -108,9 +107,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         )
 
         // when
-        let note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: syncMOC)
-
-        return note
+        return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: syncMOC)
     }
 
     // MARK: - Group Conversation Created

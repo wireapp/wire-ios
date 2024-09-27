@@ -45,8 +45,7 @@ class ImagePickerManager: NSObject {
         self.completion = completion
         self.viewController = viewController
 
-        let actionSheet = imagePickerAlert()
-        return actionSheet
+        return imagePickerAlert()
     }
 
     // MARK: Private

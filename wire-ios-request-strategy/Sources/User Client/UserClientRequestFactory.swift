@@ -34,13 +34,11 @@ public class UserClientRequestFactory {
             "password": password,
         ]
 
-        let request = ZMTransportRequest(
+        return ZMTransportRequest(
             path: "/clients/\(clientId)",
             method: ZMTransportRequestMethod.delete,
             payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )
-
-        return request
     }
 }

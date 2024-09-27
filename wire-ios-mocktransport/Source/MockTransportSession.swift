@@ -143,12 +143,10 @@ extension MockTransportSession {
                 return payload as ZMTransportData
             }
 
-        let insertedEvents = (insertedPayloads + updatedPayloads)
+        return (insertedPayloads + updatedPayloads)
             .map { payload -> MockPushEvent in
                 MockPushEvent(with: payload, uuid: NSUUID.timeBasedUUID() as UUID, isTransient: false, isSilent: false)
             }
-
-        return insertedEvents
     }
 }
 

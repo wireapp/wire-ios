@@ -97,12 +97,11 @@ extension VoiceChannel {
     }
 
     func sortByVideo(streamData: [Stream]) -> [Stream] {
-        let sortedData = streamData.sorted {
+        streamData.sorted {
             guard let videoStatusArgument0 = $0.videoState?.isSending else { return false }
             guard let videoStatusArgument1 = $1.videoState?.isSending else { return false }
             return videoStatusArgument0 && !videoStatusArgument1
         }
-        return sortedData
     }
 
     private var streamArrangementForNonEstablishedCall: StreamArrangment {

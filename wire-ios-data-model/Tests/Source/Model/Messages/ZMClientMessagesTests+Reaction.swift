@@ -42,13 +42,12 @@ extension ZMClientMessageTests_Reaction {
             emojis: ["❤️"],
             messageID: message.nonce!
         ))
-        let event = createUpdateEvent(
+        return createUpdateEvent(
             UUID(),
             conversationID: conversation.remoteIdentifier!,
             genericMessage: genericMessage,
             senderID: sender.remoteIdentifier!
         )
-        return event
     }
 
     func updateEventForRemovingReaction(to message: ZMMessage, sender: ZMUser? = nil) -> ZMUpdateEvent {
@@ -57,13 +56,12 @@ extension ZMClientMessageTests_Reaction {
             emojis: [],
             messageID: message.nonce!
         ))
-        let event = createUpdateEvent(
+        return createUpdateEvent(
             UUID(),
             conversationID: conversation.remoteIdentifier!,
             genericMessage: genericMessage,
             senderID: sender.remoteIdentifier!
         )
-        return event
     }
 
     // MARK: - Tests

@@ -86,15 +86,13 @@ extension NSAttributedString {
     func layoutSize() -> CGSize {
         let framesetter = CTFramesetterCreateWithAttributedString(self)
         let targetSize = CGSize(width: 10000, height: CGFloat.greatestFiniteMagnitude)
-        let labelSize = CTFramesetterSuggestFrameSizeWithConstraints(
+        return CTFramesetterSuggestFrameSizeWithConstraints(
             framesetter,
             CFRangeMake(0, length),
             nil,
             targetSize,
             nil
         )
-
-        return labelSize
     }
 
     // This method cuts the prefix from `self` up to the beginning of the word prior to the word on position @c from.

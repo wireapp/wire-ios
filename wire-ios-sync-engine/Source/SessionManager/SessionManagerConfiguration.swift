@@ -146,7 +146,7 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     // MARK: - Methods
 
     public func copy(with zone: NSZone? = nil) -> Any {
-        let copy = SessionManagerConfiguration(
+        SessionManagerConfiguration(
             wipeOnCookieInvalid: wipeOnCookieInvalid,
             blacklistDownloadInterval: blacklistDownloadInterval,
             blockOnJailbreakOrRoot: blockOnJailbreakOrRoot,
@@ -157,8 +157,6 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
             encryptionAtRestIsEnabledByDefault: encryptionAtRestEnabledByDefault,
             legacyAppLockConfig: legacyAppLockConfig
         )
-
-        return copy
     }
 }
 

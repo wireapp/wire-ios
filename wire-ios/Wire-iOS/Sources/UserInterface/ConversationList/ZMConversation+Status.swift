@@ -694,12 +694,11 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
             }
         }
 
-        let resultString = [
+        return [
             addedString(for: allStatusMessagesByType[.addParticipants] ?? [], in: conversation),
             removedString(for: allStatusMessagesByType[.removeParticipants] ?? [], in: conversation),
         ]
         .compactMap { $0 }.joined(separator: "; " && type(of: self).regularStyle)
-        return resultString
     }
 
     func icon(with status: ConversationStatus, conversation: MatcherConversation) -> ConversationStatusIcon? {

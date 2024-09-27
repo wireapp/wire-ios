@@ -94,9 +94,7 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
 
             if fieldBehavior.region.contains(location) {
                 // Force unwrap the result because we know we have an actual corner at this point.
-                let corner = Corner(rawValue: i)!
-
-                return corner
+                return Corner(rawValue: i)!
             }
         }
 

@@ -47,11 +47,9 @@ public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {
     public let eventName = "event.processing"
 
     override public var debugDescription: String {
-        let description = isolationQueue.sync {
+        isolationQueue.sync {
             "\(persistedAttributes(for: eventName))"
         }
-
-        return description
     }
 
     public func registerEventProcessed() {

@@ -893,7 +893,6 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             encryptionKeys: keys,
             format: format
         )
-        let message = GenericMessage(content: imageAsset, nonce: .create())
-        return message
+        return GenericMessage(content: imageAsset, nonce: .create())
     }
 }

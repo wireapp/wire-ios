@@ -140,14 +140,13 @@ public class PersonName: NSObject {
             tokenRanges: nil
         )
 
-        let nameOrder: NameOrder = if tags.contains("Arab") {
+        return if tags.contains("Arab") {
             .arabicGivenName
         } else if tags.contains(where: { ["Hani", "Jpan", "Deva", "Gurj"].contains($0) }) {
             tags.contains("Latn") ? .givenNameFirst : .givenNameLast
         } else {
             .givenNameFirst
         }
-        return nameOrder
     }
 
     static func splitNameComponents(fullName: String) -> [String] {

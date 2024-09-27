@@ -259,7 +259,7 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
 
     private func compatibleVersionForStoreMetadata(_ metadata: [String: Any]) -> Version? {
         let allVersions = Version.allCases
-        let compatibleVersion = allVersions.first {
+        return allVersions.first {
             guard let url = $0.managedObjectModelURL() else {
                 return false
             }
@@ -267,8 +267,6 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
             let model = NSManagedObjectModel(contentsOf: url)
             return model?.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata) == true
         }
-
-        return compatibleVersion
     }
 
     // MARK: - NSPersistentStoreCoordinator File Managing

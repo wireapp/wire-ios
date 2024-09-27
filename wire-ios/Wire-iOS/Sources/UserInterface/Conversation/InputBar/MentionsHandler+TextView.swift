@@ -21,8 +21,7 @@ import UIKit
 extension MentionsHandler {
     static func cursorPosition(in textView: UITextView, range: UITextRange? = nil) -> Int? {
         if let range = (range ?? textView.selectedTextRange) {
-            let position = textView.offset(from: textView.beginningOfDocument, to: range.start)
-            return position
+            return textView.offset(from: textView.beginningOfDocument, to: range.start)
         }
         return nil
     }

@@ -88,8 +88,7 @@ extension FileManager {
         if createParentIfNeeded {
             try! FileManager.default.createAndProtectDirectory(at: accountDirectory)
         }
-        let keyStoreDirectory = accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
-        return keyStoreDirectory
+        return accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
     }
 }
 

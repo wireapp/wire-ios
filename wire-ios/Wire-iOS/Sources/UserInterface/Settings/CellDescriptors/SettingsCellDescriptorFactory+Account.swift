@@ -273,8 +273,7 @@ extension SettingsCellDescriptorFactory {
         }
 
         let presentationAction: () -> (UIViewController?) = {
-            let actionSheet = profileImagePicker.selectProfileImage()
-            return actionSheet
+            profileImagePicker.selectProfileImage()
         }
         return SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.picture.capitalized,

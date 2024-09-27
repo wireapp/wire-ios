@@ -145,7 +145,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         )
         let oneOnOneResolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
 
-        let strategies: [Any] = [
+        return [
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
@@ -403,8 +403,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 syncProgress: applicationStatusDirectory.syncStatus
             ),
         ]
-
-        return strategies
     }
 
     // MARK: Private

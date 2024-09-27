@@ -40,7 +40,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 
     func getConnections() async throws -> PayloadPager<Connection> {
-        let pager = PayloadPager<Connection> { start in
+        PayloadPager<Connection> { start in
 
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
@@ -58,8 +58,6 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
                 .failure(code: .badRequest, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
         }
-
-        return pager
     }
 
     // MARK: Private

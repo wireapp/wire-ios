@@ -467,14 +467,12 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         let payloadData = payload.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
-        let response = ZMTransportResponse(
+        return ZMTransportResponse(
             payload: payloadString as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
             apiVersion: apiVersion.rawValue
         )
-
-        return response
     }
 
     func successfulResponse(
@@ -486,14 +484,12 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         let payload = Payload.QualifiedConversationList(found: found, notFound: notFound, failed: failed)
         let payloadData = payload.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
-        let response = ZMTransportResponse(
+        return ZMTransportResponse(
             payload: payloadString as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
             apiVersion: apiVersion.rawValue
         )
-
-        return response
     }
 
     func conversation(uuid: UUID, domain: String?, type: BackendConversationType = .group) -> Payload.Conversation {

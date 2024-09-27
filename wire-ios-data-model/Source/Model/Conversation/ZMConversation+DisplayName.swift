@@ -31,13 +31,11 @@ extension ZMConversation {
     private func connectionDisplayName() -> String? {
         precondition(conversationType == .connection)
 
-        let name: String? = if let connectedName = connectedUser?.name, !connectedName.isEmpty {
+        return if let connectedName = connectedUser?.name, !connectedName.isEmpty {
             connectedName
         } else {
             userDefinedName
         }
-
-        return name
     }
 
     private var selfUser: ZMUser? {

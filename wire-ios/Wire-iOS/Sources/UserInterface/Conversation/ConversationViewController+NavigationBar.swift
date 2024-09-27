@@ -142,9 +142,7 @@ extension ConversationViewController {
         }
 
         let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact
-        let icon: StyleKitIcon = isLayoutSizeCompact ? arrowIcon : .hamburger
-
-        return icon
+        return isLayoutSizeCompact ? arrowIcon : .hamburger
     }
 
     var shouldShowCollectionsButton: Bool {

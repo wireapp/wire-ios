@@ -529,7 +529,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             format: "\(UserClient.needsToUploadMLSPublicKeysKey) == YES"
         )
 
-        let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
             baseModifiedPredicate,
             NSCompoundPredicate(orPredicateWithSubpredicates: [
                 needToUploadKeysPredicate,
@@ -538,8 +538,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 needsToUploadMLSPublicKeysPredicate,
             ]),
         ])
-
-        return modifiedPredicate
     }
 
     func processResponseForDeletingClients(

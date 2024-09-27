@@ -375,7 +375,7 @@ open class ZMUpdateEvent: NSObject {
             return []
         }
 
-        let events = payloads.compactMap { payload -> ZMUpdateEvent? in
+        return payloads.compactMap { payload -> ZMUpdateEvent? in
             var actualSource = source
             if let thresholdUUID = sourceThreshold, thresholdUUID.isType1UUID, uuid.isType1UUID,
                (thresholdUUID as NSUUID).compare(withType1UUID: uuid as NSUUID) != .orderedDescending {
@@ -389,7 +389,6 @@ open class ZMUpdateEvent: NSObject {
                 source: actualSource
             )
         }
-        return events
     }
 }
 

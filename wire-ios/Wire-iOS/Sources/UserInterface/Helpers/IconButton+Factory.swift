@@ -48,7 +48,7 @@ extension IconButton {
     static func sendButton() -> IconButton {
         let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
 
-        let sendButton = IconButton(
+        return IconButton(
             icon: .send,
             accessibilityId: "sendButton",
             backgroundColor: [
@@ -62,8 +62,6 @@ extension IconButton {
                 UIControl.State.disabled.rawValue: sendButtonIconColor,
             ]
         )
-
-        return sendButton
     }
 
     private convenience init(

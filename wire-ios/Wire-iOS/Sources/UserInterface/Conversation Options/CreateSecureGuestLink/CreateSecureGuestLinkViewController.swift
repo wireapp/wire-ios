@@ -186,10 +186,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         return scrollView
     }()
 
-    private let contentView: UIView = {
-        let view = UIView()
-        return view
-    }()
+    private let contentView = UIView()
 
     private let warningLabel: UILabel = {
         var label = UILabel()

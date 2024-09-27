@@ -77,14 +77,12 @@ extension ZMConversation {
 
     @discardableResult @objc
     public func appendMessageReceiptModeIsOnMessage(timestamp: Date) -> ZMSystemMessage {
-        let message = appendSystemMessage(
+        appendSystemMessage(
             type: .readReceiptsOn,
             sender: creator,
             users: [],
             clients: nil,
             timestamp: timestamp
         )
-
-        return message
     }
 }

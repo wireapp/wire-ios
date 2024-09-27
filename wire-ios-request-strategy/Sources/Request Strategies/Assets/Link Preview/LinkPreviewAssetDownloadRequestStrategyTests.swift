@@ -91,7 +91,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
             let asset = WireProtos.Asset.with {
                 $0.uploaded = remoteData
             }
-            let linkPreview = LinkPreview.with {
+            return LinkPreview.with {
                 $0.url = URL
                 $0.permanentURL = URL
                 $0.urlOffset = 42
@@ -99,9 +99,8 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
                 $0.summary = "Summary"
                 $0.image = asset
             }
-            return linkPreview
         } else {
-            let linkPreview = LinkPreview.with {
+            return LinkPreview.with {
                 $0.url = URL
                 $0.permanentURL = URL
                 $0.urlOffset = 42
@@ -111,8 +110,6 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
                     $0.username = "UserName"
                 }
             }
-
-            return linkPreview
         }
     }
 

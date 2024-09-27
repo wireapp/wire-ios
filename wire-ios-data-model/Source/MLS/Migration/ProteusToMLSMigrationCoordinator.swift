@@ -240,14 +240,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
                 in: context
             )
 
-            let tuples: [(MLSGroupID, ZMConversation)] = conversations.compactMap {
+            return conversations.compactMap {
                 guard let groupID = $0.mlsGroupID else {
                     return nil
                 }
                 return (groupID: groupID, conversation: $0)
             }
-
-            return tuples
         }
     }
 

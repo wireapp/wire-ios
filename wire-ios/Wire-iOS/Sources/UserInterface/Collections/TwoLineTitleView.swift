@@ -54,19 +54,13 @@ final class TwoLineTitleView: UIView {
 
     // MARK: Internal
 
-    let titleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(
-            fontSpec: .headerSemiboldFont,
-            color: SemanticColors.Label.textDefault
-        )
-        return label
-    }()
+    let titleLabel = DynamicFontLabel(
+        fontSpec: .headerSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
 
-    let subtitleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(
-            fontSpec: .mediumRegularFont,
-            color: SemanticColors.Label.textDefault
-        )
-        return label
-    }()
+    let subtitleLabel = DynamicFontLabel(
+        fontSpec: .mediumRegularFont,
+        color: SemanticColors.Label.textDefault
+    )
 }

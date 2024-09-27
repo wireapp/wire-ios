@@ -137,8 +137,7 @@ final class AuthenticationInterfaceBuilder {
 
         case .addUsername:
             let addUsernameStep = AddUsernameStepDescription()
-            let viewController = makeViewController(for: addUsernameStep)
-            return viewController
+            return makeViewController(for: addUsernameStep)
 
         case let .enterActivationCode(unverifiedEmail, _):
             let step = VerifyEmailStepDescription(email: unverifiedEmail)

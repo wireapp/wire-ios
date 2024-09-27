@@ -685,7 +685,7 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
-        let conversation = await context.perform {
+        return await context.perform {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
@@ -710,8 +710,6 @@ struct ConversationEventPayloadProcessor {
 
             return conversation
         }
-
-        return conversation
     }
 
     func updateMetadata(

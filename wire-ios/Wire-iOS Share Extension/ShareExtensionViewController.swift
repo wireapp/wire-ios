@@ -627,15 +627,13 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func formattedUserNames(from users: Set<ZMUser>) -> String {
-        let names = users.compactMap(\.name).joined(separator: ", ")
-        return names
+        users.compactMap(\.name).joined(separator: ", ")
     }
 
     private func degradationMessageForUsers(_ users: String, count: Int) -> String {
         typealias DegradationReasonMessageLocale = L10n.ShareExtension.Meta.Degraded.DegradationReasonMessage
-        let messageKey = count > 1 ? DegradationReasonMessageLocale.plural(users) : DegradationReasonMessageLocale
+        return count > 1 ? DegradationReasonMessageLocale.plural(users) : DegradationReasonMessageLocale
             .singular(users)
-        return messageKey
     }
 }
 

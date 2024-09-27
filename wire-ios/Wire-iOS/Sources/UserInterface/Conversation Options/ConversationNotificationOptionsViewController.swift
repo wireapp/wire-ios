@@ -137,13 +137,12 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
-            let view = collectionView
+            return collectionView
                 .dequeueReusableSupplementaryView(
                     ofKind: UICollectionView.elementKindSectionHeader,
                     withReuseIdentifier: "SectionHeader",
                     for: indexPath
                 )
-            return view
         } else {
             let dequeuedView = collectionView
                 .dequeueReusableSupplementaryView(

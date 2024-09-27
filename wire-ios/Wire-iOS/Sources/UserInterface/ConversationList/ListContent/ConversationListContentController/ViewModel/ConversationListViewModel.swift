@@ -703,7 +703,7 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
     }
 
     private func kind(of conversationListType: ConversationListType) -> Section.Kind? {
-        let kind: Section.Kind? = switch conversationListType {
+        switch conversationListType {
         case .unarchived:
             .conversations
         case .contacts:
@@ -719,7 +719,5 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
         case .archived:
             nil
         }
-
-        return kind
     }
 }

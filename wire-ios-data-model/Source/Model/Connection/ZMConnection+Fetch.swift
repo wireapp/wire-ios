@@ -23,8 +23,7 @@ extension ZMConnection {
     class func connections(inManagedObjectContext moc: NSManagedObjectContext) -> [NSFetchRequestResult] {
         let request = sortedFetchRequest()
 
-        let result = moc.fetchOrAssert(request: request)
-        return result
+        return moc.fetchOrAssert(request: request)
     }
 
     public static func fetchOrCreate(

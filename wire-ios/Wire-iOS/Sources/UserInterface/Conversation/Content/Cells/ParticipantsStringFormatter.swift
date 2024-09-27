@@ -142,8 +142,7 @@ final class ParticipantsStringFormatter {
 
         case .left, .teamMemberLeave, .added(herself: true):
             let formatKey = message.actionType.formatKey
-            let title = formatKey(senderIsSelf).localized(args: senderName) && font && textColor
-            return title
+            return formatKey(senderIsSelf).localized(args: senderName) && font && textColor
 
         default:
             return nil

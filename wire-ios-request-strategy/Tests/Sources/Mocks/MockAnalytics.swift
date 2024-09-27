@@ -32,8 +32,7 @@ final class MockAnalytics: NSObject, AnalyticsType {
     }
 
     public func persistedAttributes(for event: String) -> [String: NSObject]? {
-        let value = eventAttributes[event] ?? [:]
-        return value
+        eventAttributes[event] ?? [:]
     }
 
     // MARK: Internal

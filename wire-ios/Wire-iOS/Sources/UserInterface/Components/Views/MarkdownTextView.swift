@@ -230,7 +230,7 @@ final class MarkdownTextView: NextResponderTextView {
 
     private func mentions(from attributedText: NSAttributedString) -> [Mention] {
         var locationOffset = 0
-        let mentions: [Mention] = mentionAttachmentsWithRange(from: attributedText).map { tuple in
+        return mentionAttachmentsWithRange(from: attributedText).map { tuple in
             let (attachment, range) = tuple
             let length = attachment.attributedText.string.utf16.count
             let adjustedRange = NSRange(location: range.location + locationOffset, length: length)
@@ -238,7 +238,6 @@ final class MarkdownTextView: NextResponderTextView {
 
             return Mention(range: adjustedRange, user: attachment.user)
         }
-        return mentions
     }
 
     private func replaceMentionAttachmentsWithPlainText(in attributedText: NSAttributedString) -> String {
@@ -475,8 +474,7 @@ final class MarkdownTextView: NextResponderTextView {
     /// Returns the bullet prefix in the given range, if it exists.
     private func bulletPrefix(at range: NSRange) -> String? {
         if let match = unorderedListItemRegex.firstMatch(in: text, options: [], range: range) {
-            let bullet = markdownTextStorage.attributedSubstring(from: match.range(at: 2)).string
-            return bullet
+            return markdownTextStorage.attributedSubstring(from: match.range(at: 2)).string
         }
         return nil
     }

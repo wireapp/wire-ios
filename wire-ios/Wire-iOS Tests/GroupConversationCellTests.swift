@@ -77,10 +77,8 @@ final class GroupConversationCellTests: XCTestCase {
     private func createOneOnOneConversation() -> MockStableRandomParticipantsConversation {
         otherUser = MockUserType.createDefaultOtherUser()
 
-        let otherUserConversation = MockStableRandomParticipantsConversation
+        return MockStableRandomParticipantsConversation
             .createOneOnOneConversation(otherUser: otherUser)
-
-        return otherUserConversation
     }
 
     private func createGroupConversation() -> MockStableRandomParticipantsConversation {

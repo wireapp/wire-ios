@@ -35,11 +35,10 @@ extension MockUserClient {
         let sender = Proteus_ClientId.with {
             $0.client = identifier!.asHexEncodedUInt
         }
-        let message = Proteus_NewOtrMessage.with {
+        return Proteus_NewOtrMessage.with {
             $0.sender = sender
             $0.recipients = userEntries(for: clients, plainText: plainText)
         }
-        return message
     }
 
     /// Returns an OTR asset message builder with the recipients correctly set

@@ -38,9 +38,7 @@ extension String {
         characterSet.addCharacters(in: "_-.")
 
         let unsafeChars = characterSet.inverted
-        let strippedString = retString.components(separatedBy: unsafeChars).joined(separator: "")
-
-        return strippedString
+        return retString.components(separatedBy: unsafeChars).joined(separator: "")
     }
 
     /// return a filename with length <= 255 characters with additional number of characters to reserve

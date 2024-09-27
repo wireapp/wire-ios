@@ -41,8 +41,7 @@ enum Database {
         case .messaging:
             // The naming scheme is slightly different for fixture files
             let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
-            let name = "store" + fixedVersion
-            return name
+            return "store" + fixedVersion
 
         case .event:
             return "event_\(version)"

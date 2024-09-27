@@ -387,14 +387,12 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         let longitude = Float(9.041169)
         let zoomLevel = Int32(16)
         let name = "天津市 နေပြည်တော် Test"
-        let locationData = LocationData(
+        return LocationData(
             latitude: latitude,
             longitude: longitude,
             name: name,
             zoomLevel: zoomLevel
         )
-
-        return locationData
     }
 
     func testThatWeCanInsertALocationMessage() {

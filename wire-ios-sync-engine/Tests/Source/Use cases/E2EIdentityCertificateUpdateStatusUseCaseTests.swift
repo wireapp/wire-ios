@@ -222,7 +222,7 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
         with expiry: TimeInterval,
         serverStoragePeriod: TimeInterval = 0
     ) -> E2eIdentityCertificate {
-        let certificate = E2eIdentityCertificate(
+        E2eIdentityCertificate(
             clientId: "sdfsdfsdfs",
             certificateDetails: .mockCertificate,
             mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
@@ -233,6 +233,5 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
             serverStoragePeriod: serverStoragePeriod,
             randomPeriod: 0
         )
-        return certificate
     }
 }

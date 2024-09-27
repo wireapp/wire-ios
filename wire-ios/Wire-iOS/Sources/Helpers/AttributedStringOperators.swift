@@ -83,13 +83,11 @@ func += (left: inout NSAttributedString, right: NSAttributedString?) -> NSAttrib
 infix operator &&: LogicalConjunctionPrecedence
 
 func && (left: String, right: [NSAttributedString.Key: Any]) -> NSAttributedString {
-    let result = NSAttributedString(string: left, attributes: right)
-    return result
+    NSAttributedString(string: left, attributes: right)
 }
 
 func && (left: String, right: UIFont) -> NSAttributedString {
-    let result = NSAttributedString(string: left, attributes: [.font: right])
-    return result
+    NSAttributedString(string: left, attributes: [.font: right])
 }
 
 func && (left: NSAttributedString, right: UIFont?) -> NSAttributedString {
@@ -100,8 +98,7 @@ func && (left: NSAttributedString, right: UIFont?) -> NSAttributedString {
 }
 
 func && (left: String, right: UIColor) -> NSAttributedString {
-    let result = NSAttributedString(string: left, attributes: [.foregroundColor: right])
-    return result
+    NSAttributedString(string: left, attributes: [.foregroundColor: right])
 }
 
 func && (left: NSAttributedString, right: UIColor) -> NSAttributedString {

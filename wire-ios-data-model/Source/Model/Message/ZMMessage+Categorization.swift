@@ -141,7 +141,7 @@ extension ZMMessage {
             return .none
         }
 
-        let category = [
+        return [
             textCategory,
             imageCategory,
             fileCategory,
@@ -152,7 +152,6 @@ extension ZMMessage {
         .reduce(MessageCategory.none) { (current: MessageCategory, other: MessageCategory) in
             current.union(other)
         }
-        return category
     }
 
     private var imageCategory: MessageCategory {
@@ -300,8 +299,7 @@ extension MessageCategory: CustomDebugStringConvertible {
             }.map { _, description -> String in
                 description
             }
-        let description = categories.isEmpty ? "None" : categories.joined(separator: ", ")
-        return description
+        return categories.isEmpty ? "None" : categories.joined(separator: ", ")
     }
 }
 

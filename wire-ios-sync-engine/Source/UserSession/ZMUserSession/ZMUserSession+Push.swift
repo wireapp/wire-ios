@@ -67,8 +67,7 @@ struct PushTokenMetadata {
         let isSandbox = ZMMobileProvisionParser().apsEnvironment == .sandbox
         let appIdentifier = buildType.certificateName
 
-        let metadata = PushTokenMetadata(isSandbox: isSandbox, appIdentifier: appIdentifier, tokenType: tokenType)
-        return metadata
+        return PushTokenMetadata(isSandbox: isSandbox, appIdentifier: appIdentifier, tokenType: tokenType)
     }
 }
 

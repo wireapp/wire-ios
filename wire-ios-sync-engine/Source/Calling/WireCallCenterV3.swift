@@ -322,7 +322,7 @@ extension WireCallCenterV3 {
     /// Returns conversations with active calls.
     public func activeCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
         guard isEnabled else { return  [] }
-        let conversations = nonIdleCalls.compactMap { (key: AVSIdentifier, value: CallState) -> ZMConversation? in
+        return nonIdleCalls.compactMap { (key: AVSIdentifier, value: CallState) -> ZMConversation? in
             switch value {
             case .establishedDataChannel, .established, .answered, .outgoing:
                 return ZMConversation.fetch(
@@ -335,21 +335,17 @@ extension WireCallCenterV3 {
                 return nil
             }
         }
-
-        return conversations
     }
 
     /// Returns conversations with a non idle call state.
     public func nonIdleCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
-        let conversations = nonIdleCalls.compactMap { (key: AVSIdentifier, _: CallState) -> ZMConversation? in
+        nonIdleCalls.compactMap { (key: AVSIdentifier, _: CallState) -> ZMConversation? in
             ZMConversation.fetch(
                 with: key.identifier,
                 domain: key.domain,
                 in: userSession.managedObjectContext
             )
         }
-
-        return conversations
     }
 
     public func networkQuality(conversationId: AVSIdentifier) -> NetworkQuality {

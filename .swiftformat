@@ -94,6 +94,7 @@
     markTypes, \
     noExplicitOwnership, \
     organizeDeclarations, \
+    redundantProperty, \
 
 # Options
 

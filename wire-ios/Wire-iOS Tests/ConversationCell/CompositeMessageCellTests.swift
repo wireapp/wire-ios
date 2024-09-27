@@ -97,9 +97,7 @@ final class CompositeMessageCellTests: ConversationMessageSnapshotTestCase {
         mockButtonMessageData.state = state
         mockButtonMessageData.title = title
         mockButtonMessageData.isExpired = isExpired
-        let buttonItem: CompositeMessageItem = .button(mockButtonMessageData)
-
-        return buttonItem
+        return .button(mockButtonMessageData)
     }
 
     private func makeMessage(

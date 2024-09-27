@@ -557,14 +557,12 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             return nil
         }
 
-        let response = ZMTransportResponse(
+        return ZMTransportResponse(
             payload: payloadString as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
             apiVersion: apiVersion.rawValue
         )
-
-        return response
     }
 
     func userProfile(for uuid: UUID, domain: String?) -> Payload.UserProfile {

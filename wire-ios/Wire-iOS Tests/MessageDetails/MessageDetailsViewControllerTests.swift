@@ -433,13 +433,11 @@ final class MessageDetailsViewControllerTests: XCTestCase {
     }
 
     private func createReceipts(users: [UserType]) -> [MockReadReceipt] {
-        let receipts: [MockReadReceipt] = users.map { user in
+        users.map { user in
             let receipt = MockReadReceipt(user: ZMUser())
             receipt.userType = user
             return receipt
         }
-
-        return receipts
     }
 
     private func verify(

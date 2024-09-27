@@ -80,9 +80,7 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
             )
         }
 
-        let attributedString = NSAttributedString.markdown(from: text, style: .systemMessage)
-
-        return attributedString
+        return NSAttributedString.markdown(from: text, style: .systemMessage)
     }
 }
 

@@ -74,9 +74,7 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
             from: fromSelf ? selfUser : otherUser,
             inGroup: inGroup
         )
-        let cell = createCell(for: message)
-
-        return cell
+        return createCell(for: message)
     }
 
     private func systemMessage(

@@ -87,12 +87,11 @@ extension ConversationCreateSectionController {
     ) -> UICollectionReusableView {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
-            let view = collectionView.dequeueReusableSupplementaryView(
+            return collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: "SectionHeader",
                 for: indexPath
             )
-            return view
 
         default:
             let view = collectionView.dequeueReusableSupplementaryView(

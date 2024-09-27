@@ -153,12 +153,11 @@ public class UserClient: ZMManagedObject, UserClientType {
         let remoteIdentifierPresentPredicate = NSPredicate(format: "\(ZMUserClientRemoteIdentifierKey) != nil")
         let notDeletedPredicate = NSPredicate(format: "\(ZMUserClientMarkedToDeleteKey) == NO")
 
-        let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
             baseModifiedPredicate!,
             notDeletedPredicate,
             remoteIdentifierPresentPredicate,
         ])
-        return modifiedPredicate
     }
 
     /// Insert a new client of the local self user.

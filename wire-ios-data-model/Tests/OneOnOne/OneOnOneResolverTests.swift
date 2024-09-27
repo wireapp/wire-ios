@@ -201,8 +201,7 @@ final class OneOnOneResolverTests: XCTestCase {
         )
 
         let conversation = await syncContext.perform { [self] in
-            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
-            return conversation
+            makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
         }
 
         do {

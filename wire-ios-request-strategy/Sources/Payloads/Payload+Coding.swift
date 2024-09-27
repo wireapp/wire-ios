@@ -136,8 +136,7 @@ extension Encodable {
 
     func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {
         let data = try encodeToJSON(encoder: encoder)
-        let string = String(decoding: data, as: UTF8.self)
-        return string
+        return String(decoding: data, as: UTF8.self)
     }
 
     func encodeToJSON(encoder: JSONEncoder = .defaultEncoder) throws -> Data {

@@ -20,18 +20,15 @@ import Foundation
 import WireUtilities
 
 extension String {
-    fileprivate static let UUIDMatcher: NSRegularExpression = {
-        let regex = try! NSRegularExpression(
-            pattern: "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
-            options: .caseInsensitive
-        )
-        return regex
-    }()
+    fileprivate static let UUIDMatcher: NSRegularExpression = try! NSRegularExpression(
+        pattern: "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+        options: .caseInsensitive
+    )
 
-    fileprivate static let clientIDMatcher: NSRegularExpression = {
-        let regex = try! NSRegularExpression(pattern: "[a-f0-9]{13,16}", options: .caseInsensitive)
-        return regex
-    }()
+    fileprivate static let clientIDMatcher: NSRegularExpression = try! NSRegularExpression(
+        pattern: "[a-f0-9]{13,16}",
+        options: .caseInsensitive
+    )
 
     fileprivate static let matchers = [UUIDMatcher, clientIDMatcher]
 

@@ -56,8 +56,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: true)]
         fetchRequest.fetchLimit = batchSize
         fetchRequest.returnsObjectsAsFaults = false
-        let result = context.fetchOrAssert(request: fetchRequest)
-        return result
+        return context.fetchOrAssert(request: fetchRequest)
     }
 
     /// Returns the highest index of all stored events
@@ -74,7 +73,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         _ storedEvents: [StoredUpdateEvent],
         encryptionKeys: EncryptionKeys? = nil
     ) -> [ZMUpdateEvent] {
-        let events: [ZMUpdateEvent] = storedEvents.compactMap {
+        storedEvents.compactMap {
             var eventUUID: UUID?
             if let uuid = $0.uuidString {
                 eventUUID = UUID(uuidString: uuid)
@@ -97,7 +96,6 @@ public final class StoredUpdateEvent: NSManagedObject {
             }
             return decryptedEvent
         }
-        return events
     }
 
     // MARK: Internal

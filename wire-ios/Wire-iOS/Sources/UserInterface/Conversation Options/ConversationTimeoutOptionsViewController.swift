@@ -142,12 +142,11 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        let view = collectionView.dequeueReusableSupplementaryView(
+        collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "SectionHeader",
             for: indexPath
         )
-        return view
     }
 
     func collectionView(

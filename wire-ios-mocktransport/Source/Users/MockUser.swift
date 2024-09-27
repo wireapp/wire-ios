@@ -210,7 +210,7 @@ extension MockUser {
         precondition(accentID != 0, "Accent ID is not set")
 
         if isAccountDeleted {
-            let payload: [String: Any?] = [
+            return [
                 "accent_id": 0,
                 "name": "default",
                 "id": identifier,
@@ -218,8 +218,6 @@ extension MockUser {
                 "picture": [],
                 "assets": [],
             ]
-
-            return payload
         } else {
             let pictureData = pictures.compactMap { ($0 as? MockPicture)?.transportData }
 
