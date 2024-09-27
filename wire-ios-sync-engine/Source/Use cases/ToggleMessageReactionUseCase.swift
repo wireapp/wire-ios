@@ -57,14 +57,3 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
         }
     }
 }
-
-extension ZMConversationMessage {
-
-    func selfUserReactions() -> Set<String> {
-        let result = usersReaction
-            .filter { _, users in users.contains(where: \.isSelfUser) }
-            .map(\.key)
-
-        return Set(result)
-    }
-}
