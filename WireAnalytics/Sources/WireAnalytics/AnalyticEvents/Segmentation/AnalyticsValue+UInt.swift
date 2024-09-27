@@ -17,7 +17,9 @@
 //
 
 extension UInt: AnalyticsValue {
+
     public var analyticsValue: String {
         String(logRound())
     }
+
 }
