@@ -27,7 +27,7 @@ public struct AppOpenAnalyticsEvent: AnalyticsEvent {
     }
 
     /// Additional segmentation data for the event.
-    public var segmentation: Set<SegmentationValue> {
+    public var segmentation: Set<SegmentationEntry> {
         []
     }
 }

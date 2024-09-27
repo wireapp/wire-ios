@@ -25,7 +25,7 @@ public struct ConversationContributionAnalyticsEvent: AnalyticsEvent {
     }
 
     /// The segmentation information for the event.
-    public var segmentation: Set<SegmentationValue> {
+    public var segmentation: Set<SegmentationEntry> {
         [
             .groupType(conversationType),
             .contributionType(contributionType),

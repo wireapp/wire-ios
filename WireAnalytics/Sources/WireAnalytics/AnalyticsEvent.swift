@@ -23,6 +23,6 @@ public protocol AnalyticsEvent {
     var eventName: String { get }
 
     /// Additional segmentation data for the event.
-    var segmentation: Set<SegmentationValue> { get }
+    var segmentation: Set<SegmentationEntry> { get }
 
 }

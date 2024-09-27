@@ -16,61 +16,61 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Convenience methods for creating common `SegmentationValue` instances.
-extension SegmentationValue {
+/// Convenience methods for creating common `SegmentationEntry` instances.
+extension SegmentationEntry {
 
-    /// Creates a `SegmentationValue` for indicating whether a call is a video call.
+    /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A string indicating device OS version of the user
-    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
     static func deviceOS(_ value: String) -> Self {
         .init(key: "os_version", value: value)
     }
 
-    /// Creates a `SegmentationValue` for indicating whether a call is a video call.
+    /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A string indicating device model of the user
-    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
     static func deviceModel(_ value: String) -> Self {
         .init(key: "device_model", value: value)
     }
 
-    /// Creates a `SegmentationValue` for indicating whether a call is a video call.
+    /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A boolean indicating if the self user is a team member.
-    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
     static func isSelfTeamMember(_ value: Bool) -> Self {
         .init(key: "is_team_member", value: value.analyticsValue)
     }
 
-    /// Creates a `SegmentationValue` for indicating whether a call is a video call.
+    /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A boolean indicating if the call is a video call.
-    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
     static func isVideoCall(_ value: Bool) -> Self {
         .init(key: "is_video_call", value: value.analyticsValue)
     }
 
-    /// Creates a `SegmentationValue` for the type of group in a conversation.
+    /// Creates a `SegmentationEntry` for the type of group in a conversation.
     ///
     /// - Parameter value: The `ConversationType` of the conversation.
-    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
     static func groupType(_ value: ConversationType) -> Self {
         .init(key: "group_type", value: value.analyticsValue)
     }
 
-    /// Creates a `SegmentationValue` for the type of contribution in a conversation.
+    /// Creates a `SegmentationEntry` for the type of contribution in a conversation.
     ///
     /// - Parameter value: The `ContributionType` of the contribution.
-    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
     static func contributionType(_ value: ContributionType) -> Self {
         .init(key: "contribution_type", value: value.analyticsValue)
     }
 
-    /// Creates a `SegmentationValue` for the size of a conversation.
+    /// Creates a `SegmentationEntry` for the size of a conversation.
     ///
     /// - Parameter value: The number of participants in the conversation.
-    /// - Returns: A `SegmentationValue` instance with the appropriate key and value.
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
     static func conversationSize(_ value: UInt) -> Self {
         .init(key: "conversation_size", value: value.analyticsValue)
     }
