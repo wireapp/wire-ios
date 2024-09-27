@@ -87,12 +87,12 @@ final class ProfileHeaderViewController: UIViewController {
     }()
 
     private let qrCodeButton = {
-        let button = UIButton(type: .system)
-
+        let button = IconButton()
         let boldConfig = UIImage.SymbolConfiguration(weight: .black)
         let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
         button.setImage(boldImage, for: .normal)
-        button.tintColor = ColorTheme.Buttons.Secondary.onEnabled
+        button.setIconColor(ColorTheme.Buttons.Secondary.onEnabled, for: .normal)
+        button.hitAreaPadding = CGSize(width: 20, height: 20)
         button.accessibilityLabel = L10n.Accessibility.Profile.ShareProfileButton.description
 
         return button
