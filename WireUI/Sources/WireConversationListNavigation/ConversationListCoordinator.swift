@@ -16,13 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainCoordinatorProtocol: AnyObject {
-    // var conversationListCoordinator: MainConversationListCoordinatorRepresentable
-    func showConversationList<ConversationFilter>(conversationFilter: ConversationFilter?) async
-        where ConversationFilter: MainConversationFilterRepresentable
-    // func showConversation<Conversation>(conversation: Conversation) async
-    func showArchivedConversations() async
-    func showSelfProfile() async
-    func showSettings() async
-    func showNewConversation() async // TODO: consider renaming, like `showStartConversation()`
+public final class ConversationListCoordinator: ConversationListCoordinatorProtocol {
+
+    public func showConversation<ConversationID>(conversationID: ConversationID) async {
+        fatalError()
+    }
 }

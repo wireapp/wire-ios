@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireFoundation
 
 // swiftlint:disable opening_brace
 
