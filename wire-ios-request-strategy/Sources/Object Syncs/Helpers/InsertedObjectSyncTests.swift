@@ -46,8 +46,6 @@ class InsertedObjectSyncTests: ZMTBaseTest {
     var transcoder: MockInsertedObjectSyncTranscoder!
     var sut: InsertedObjectSync<MockInsertedObjectSyncTranscoder>!
 
-    // MARK: - Life Cycle
-
     override func setUp() {
         super.setUp()
 

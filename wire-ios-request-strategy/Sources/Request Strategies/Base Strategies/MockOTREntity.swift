@@ -23,22 +23,24 @@ import XCTest
 // MARK: - MockOTREntity
 
 final class MockOTREntity: OTREntity {
+    // MARK: Lifecycle
+
+    init(messageData: Data = Data(), conversation: ZMConversation?, context: NSManagedObjectContext) {
+        self.messageData = messageData
+        self.conversation = conversation
+        self.context = context
+    }
+
+    // MARK: Internal
+
     var context: NSManagedObjectContext
     var expirationDate: Date?
     var shouldExpire = false
     var isExpired = false
     var shouldIgnoreTheSecurityLevelCheck = false
-    func expire() {
-        isExpired = true
-    }
-
     var expirationReasonCode: NSNumber?
 
     let messageData: Data
-
-    func missesRecipients(_: Set<UserClient>!) {
-        // no-op
-    }
 
     var conversation: ZMConversation?
 
@@ -49,10 +51,12 @@ final class MockOTREntity: OTREntity {
 
     var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
 
-    init(messageData: Data = Data(), conversation: ZMConversation?, context: NSManagedObjectContext) {
-        self.messageData = messageData
-        self.conversation = conversation
-        self.context = context
+    func expire() {
+        isExpired = true
+    }
+
+    func missesRecipients(_: Set<UserClient>!) {
+        // no-op
     }
 
     func detectedRedundantUsers(_: [ZMUser]) {

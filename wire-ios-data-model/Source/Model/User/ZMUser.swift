@@ -165,7 +165,7 @@ extension ZMUser: UserType {
 // MARK: - AssetKey
 
 public struct AssetKey {
-    static let legalCharacterSet = CharacterSet.alphanumerics.union(CharacterSet.punctuationCharacters)
+    // MARK: Lifecycle
 
     public init?(_ string: String) {
         if AssetKey.validate(string: string) {
@@ -175,7 +175,13 @@ public struct AssetKey {
         }
     }
 
+    // MARK: Internal
+
+    static let legalCharacterSet = CharacterSet.alphanumerics.union(CharacterSet.punctuationCharacters)
+
     let stringValue: String
+
+    // MARK: Fileprivate
 
     fileprivate static func validate(string: String) -> Bool {
         CharacterSet(charactersIn: string).isSubset(of: legalCharacterSet)
@@ -189,14 +195,7 @@ public enum ProfileImageSize: Int {
     case preview
     case complete
 
-    public var imageFormat: ZMImageFormat {
-        switch self {
-        case .preview:
-            .profile
-        case .complete:
-            .medium
-        }
-    }
+    // MARK: Lifecycle
 
     public init?(stringValue: String) {
         switch stringValue {
@@ -206,15 +205,28 @@ public enum ProfileImageSize: Int {
         }
     }
 
+    // MARK: Public
+
+    public static var allSizes: [ProfileImageSize] {
+        [.preview, .complete]
+    }
+
+    public var imageFormat: ZMImageFormat {
+        switch self {
+        case .preview:
+            .profile
+        case .complete:
+            .medium
+        }
+    }
+
+    // MARK: Internal
+
     var stringValue: String {
         switch self {
         case .preview: "preview"
         case .complete: "complete"
         }
-    }
-
-    public static var allSizes: [ProfileImageSize] {
-        [.preview, .complete]
     }
 }
 

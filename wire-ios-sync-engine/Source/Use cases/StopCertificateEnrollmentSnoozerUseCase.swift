@@ -28,12 +28,7 @@ public protocol StopCertificateEnrollmentSnoozerUseCaseProtocol {
 // MARK: - StopCertificateEnrollmentSnoozerUseCase
 
 final class StopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol {
-    // MARK: - Properties
-
-    private let recurringActionService: RecurringActionServiceInterface
-    private let actionId: String
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         recurringActionService: RecurringActionServiceInterface,
@@ -43,9 +38,18 @@ final class StopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSn
         self.actionId = "\(accountId).enrollCertificate"
     }
 
+    // MARK: Internal
+
     // MARK: - Methods
 
     func invoke() {
         recurringActionService.removeAction(id: actionId)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let recurringActionService: RecurringActionServiceInterface
+    private let actionId: String
 }

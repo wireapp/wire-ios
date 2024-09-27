@@ -20,6 +20,38 @@ import Foundation
 
 extension Payload {
     struct ConversationMember: CodableEventData {
+        // MARK: Lifecycle
+
+        init(
+            id: UUID? = nil,
+            qualifiedID: QualifiedID? = nil,
+            target: UUID? = nil,
+            qualifiedTarget: QualifiedID? = nil,
+            service: Service? = nil,
+            mutedStatus: Int? = nil,
+            mutedReference: Date? = nil,
+            archived: Bool? = nil,
+            archivedReference: Date? = nil,
+            hidden: Bool? = nil,
+            hiddenReference: String? = nil,
+            conversationRole: String? = nil
+        ) {
+            self.id = id
+            self.qualifiedID = qualifiedID
+            self.target = target
+            self.qualifiedTarget = qualifiedTarget
+            self.service = service
+            self.mutedStatus = mutedStatus
+            self.mutedReference = mutedReference
+            self.archived = archived
+            self.archivedReference = archivedReference
+            self.hidden = hidden
+            self.hiddenReference = hiddenReference
+            self.conversationRole = conversationRole
+        }
+
+        // MARK: Internal
+
         struct Service: Codable {
             let id: UUID
             let provider: UUID
@@ -56,33 +88,5 @@ extension Payload {
         let hidden: Bool?
         let hiddenReference: String?
         let conversationRole: String?
-
-        init(
-            id: UUID? = nil,
-            qualifiedID: QualifiedID? = nil,
-            target: UUID? = nil,
-            qualifiedTarget: QualifiedID? = nil,
-            service: Service? = nil,
-            mutedStatus: Int? = nil,
-            mutedReference: Date? = nil,
-            archived: Bool? = nil,
-            archivedReference: Date? = nil,
-            hidden: Bool? = nil,
-            hiddenReference: String? = nil,
-            conversationRole: String? = nil
-        ) {
-            self.id = id
-            self.qualifiedID = qualifiedID
-            self.target = target
-            self.qualifiedTarget = qualifiedTarget
-            self.service = service
-            self.mutedStatus = mutedStatus
-            self.mutedReference = mutedReference
-            self.archived = archived
-            self.archivedReference = archivedReference
-            self.hidden = hidden
-            self.hiddenReference = hiddenReference
-            self.conversationRole = conversationRole
-        }
     }
 }

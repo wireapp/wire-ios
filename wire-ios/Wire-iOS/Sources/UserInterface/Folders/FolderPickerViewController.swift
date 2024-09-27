@@ -30,18 +30,7 @@ protocol FolderPickerViewControllerDelegate: AnyObject {
 // MARK: - FolderPickerViewController
 
 final class FolderPickerViewController: UIViewController {
-    var delegate: FolderPickerViewControllerDelegate?
-
-    private var conversationDirectory: ConversationDirectoryType
-    private var items: [LabelType] = []
-    private let conversation: ZMConversation
-    private let hintLabel = DynamicFontLabel(
-        fontSpec: .mediumSemiboldFont,
-        color: SemanticColors.Label.textDefault
-    )
-    private let collectionViewLayout = UICollectionViewFlowLayout()
-
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
+    // MARK: Lifecycle
 
     init(conversation: ZMConversation, directory: ConversationDirectoryType) {
         self.conversation = conversation
@@ -57,6 +46,14 @@ final class FolderPickerViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var delegate: FolderPickerViewControllerDelegate?
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -64,6 +61,19 @@ final class FolderPickerViewController: UIViewController {
         configureSubviews()
         configureConstraints()
     }
+
+    // MARK: Private
+
+    private var conversationDirectory: ConversationDirectoryType
+    private var items: [LabelType] = []
+    private let conversation: ZMConversation
+    private let hintLabel = DynamicFontLabel(
+        fontSpec: .mediumSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
+    private let collectionViewLayout = UICollectionViewFlowLayout()
+
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
 
     private func configureNavbar() {
         let navigationTitleLabel = DynamicFontLabel(
@@ -90,10 +100,6 @@ final class FolderPickerViewController: UIViewController {
     private func loadFolders() {
         items = conversationDirectory.allFolders
         hintLabel.isHidden = !items.isEmpty
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
     }
 
     private func configureSubviews() {

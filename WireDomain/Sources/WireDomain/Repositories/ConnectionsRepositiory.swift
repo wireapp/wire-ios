@@ -36,8 +36,7 @@ protocol ConnectionsRepositoryProtocol {
 // MARK: - ConnectionsRepository
 
 struct ConnectionsRepository: ConnectionsRepositoryProtocol {
-    private let connectionsAPI: any ConnectionsAPI
-    private let context: NSManagedObjectContext
+    // MARK: Lifecycle
 
     init(
         connectionsAPI: any ConnectionsAPI,
@@ -46,6 +45,8 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         self.connectionsAPI = connectionsAPI
         self.context = context
     }
+
+    // MARK: Public
 
     /// Retrieve from backend and store connections locally
 
@@ -62,6 +63,11 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             }
         }
     }
+
+    // MARK: Private
+
+    private let connectionsAPI: any ConnectionsAPI
+    private let context: NSManagedObjectContext
 
     /// Save connection and related objects to local storage.
     /// - Parameter connectionPayload: connection object from WireAPI

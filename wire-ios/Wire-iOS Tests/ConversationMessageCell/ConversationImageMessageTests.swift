@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 
 final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
+    // MARK: Internal
+
     var image: UIImage!
     var message: MockMessage!
 
@@ -39,15 +41,6 @@ final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
 
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
         super.tearDown()
-    }
-
-    // MARK: - Helper Method
-
-    private func createSut(imageName: String) {
-        image = image(inTestBundleNamed: imageName)
-        message = MockMessageFactory.imageMessage(with: image)
-        let sender = MockUserType.createDefaultOtherUser()
-        message.senderUser = sender
     }
 
     // MARK: - Snapshot Tests
@@ -92,5 +85,16 @@ final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
         message.backingIsRestricted = true
 
         verify(message: message, allColorSchemes: true)
+    }
+
+    // MARK: Private
+
+    // MARK: - Helper Method
+
+    private func createSut(imageName: String) {
+        image = image(inTestBundleNamed: imageName)
+        message = MockMessageFactory.imageMessage(with: image)
+        let sender = MockUserType.createDefaultOtherUser()
+        message.senderUser = sender
     }
 }

@@ -36,23 +36,7 @@ public protocol E2EIRepositoryInterface {
 // MARK: - E2EIRepository
 
 public final class E2EIRepository: E2EIRepositoryInterface {
-    // MARK: - Types
-
-    enum Error: Swift.Error {
-        case failedToGetSelfUserInfo
-    }
-
-    // MARK: - Properties
-
-    private let acmeApi: AcmeAPIInterface
-    private let apiProvider: APIProviderInterface
-    private let e2eiSetupService: E2EISetupServiceInterface
-    private let keyRotator: E2EIKeyPackageRotating
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let logger: WireLogger = .e2ei
-    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         acmeApi: AcmeAPIInterface,
@@ -69,6 +53,8 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         self.coreCryptoProvider = coreCryptoProvider
         self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
     }
+
+    // MARK: Public
 
     // MARK: - Interface
 
@@ -136,6 +122,26 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             keyRotator: keyRotator
         )
     }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    enum Error: Swift.Error {
+        case failedToGetSelfUserInfo
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let acmeApi: AcmeAPIInterface
+    private let apiProvider: APIProviderInterface
+    private let e2eiSetupService: E2EISetupServiceInterface
+    private let keyRotator: E2EIKeyPackageRotating
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let logger: WireLogger = .e2ei
+    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
     // MARK: - Helpers
 

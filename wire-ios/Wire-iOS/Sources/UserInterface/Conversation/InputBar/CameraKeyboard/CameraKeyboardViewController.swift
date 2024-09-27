@@ -47,45 +47,7 @@ protocol CameraKeyboardViewControllerDelegate: AnyObject {
 // MARK: - CameraKeyboardViewController
 
 class CameraKeyboardViewController: UIViewController {
-    // MARK: - Properties
-
-    private var permissions: PhotoPermissionsController!
-    private var lastLayoutSize = CGSize.zero
-    private let collectionViewLayout = UICollectionViewFlowLayout()
-    private let sideMargin: CGFloat = 14
-    private var viewWasHidden = false
-    private var callStateObserverToken: Any?
-    private var goBackButtonRevealed = false {
-        didSet {
-            if goBackButtonRevealed {
-                UIView.animate(withDuration: 0.35, animations: {
-                    self.goBackButton.alpha = self.goBackButtonRevealed ? 1 : 0
-                })
-            } else {
-                goBackButton.alpha = 0
-            }
-        }
-    }
-
-    private enum CameraKeyboardSection: UInt {
-        case camera = 0, photos = 1
-    }
-
-    private let mediaSharingRestrictionsMananger = MediaShareRestrictionManager(
-        sessionRestriction: ZMUserSession.shared()
-    )
-
-    let assetLibrary: AssetLibrary?
-    let imageManagerType: ImageManagerProtocol.Type
-
-    var collectionView: UICollectionView!
-    let goBackButton = IconButton()
-    let cameraRollButton = IconButton()
-
-    let splitLayoutObservable: SplitLayoutObservable
-    weak var delegate: CameraKeyboardViewControllerDelegate?
-
-    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -125,6 +87,18 @@ class CameraKeyboardViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let assetLibrary: AssetLibrary?
+    let imageManagerType: ImageManagerProtocol.Type
+
+    var collectionView: UICollectionView!
+    let goBackButton = IconButton()
+    let cameraRollButton = IconButton()
+
+    let splitLayoutObservable: SplitLayoutObservable
+    weak var delegate: CameraKeyboardViewControllerDelegate?
 
     // MARK: - Override methods
 
@@ -166,17 +140,74 @@ class CameraKeyboardViewController: UIViewController {
         viewWasHidden = true
     }
 
+    @objc
+    func splitLayoutChanged(_: Notification!) {
+        collectionViewLayout.invalidateLayout()
+        collectionView.reloadData()
+    }
+
+    func scrollToCamera(animated: Bool) {
+        let endOfListX = UIApplication.isLeftToRightLayout ? 0 : collectionView.contentSize.width - 10
+        collectionView.scrollRectToVisible(
+            CGRect(
+                x: endOfListX,
+                y: 0,
+                width: 10,
+                height: 10
+            ),
+            animated: animated
+        )
+    }
+
+    // MARK: - Actions
+
+    @objc
+    func goBackPressed(_: AnyObject) {
+        scrollToCamera(animated: true)
+    }
+
+    @objc
+    func openCameraRollPressed(_: AnyObject) {
+        delegate?.cameraKeyboardViewControllerWantsToOpenCameraRoll(self)
+    }
+
+    // MARK: Private
+
+    private enum CameraKeyboardSection: UInt {
+        case camera = 0, photos = 1
+    }
+
+    // MARK: - Properties
+
+    private var permissions: PhotoPermissionsController!
+    private var lastLayoutSize = CGSize.zero
+    private let collectionViewLayout = UICollectionViewFlowLayout()
+    private let sideMargin: CGFloat = 14
+    private var viewWasHidden = false
+    private var callStateObserverToken: Any?
+    private let mediaSharingRestrictionsMananger = MediaShareRestrictionManager(
+        sessionRestriction: ZMUserSession.shared()
+    )
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
+    private var goBackButtonRevealed = false {
+        didSet {
+            if goBackButtonRevealed {
+                UIView.animate(withDuration: 0.35, animations: {
+                    self.goBackButton.alpha = self.goBackButtonRevealed ? 1 : 0
+                })
+            } else {
+                goBackButton.alpha = 0
+            }
+        }
+    }
+
     // MARK: - Notifications
 
     @objc
     private func applicationDidBecomeActive(_: Notification!) {
         assetLibrary?.refetchAssets()
-    }
-
-    @objc
-    func splitLayoutChanged(_: Notification!) {
-        collectionViewLayout.invalidateLayout()
-        collectionView.reloadData()
     }
 
     // MARK: - Setup UI
@@ -273,31 +304,6 @@ class CameraKeyboardViewController: UIViewController {
             collectionViewLayout.sectionInset = .zero
             cameraRollButton.isHidden = true
         }
-    }
-
-    func scrollToCamera(animated: Bool) {
-        let endOfListX = UIApplication.isLeftToRightLayout ? 0 : collectionView.contentSize.width - 10
-        collectionView.scrollRectToVisible(
-            CGRect(
-                x: endOfListX,
-                y: 0,
-                width: 10,
-                height: 10
-            ),
-            animated: animated
-        )
-    }
-
-    // MARK: - Actions
-
-    @objc
-    func goBackPressed(_: AnyObject) {
-        scrollToCamera(animated: true)
-    }
-
-    @objc
-    func openCameraRollPressed(_: AnyObject) {
-        delegate?.cameraKeyboardViewControllerWantsToOpenCameraRoll(self)
     }
 
     // MARK: - Methods

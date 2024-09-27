@@ -22,16 +22,7 @@ import WireDataModel
 // MARK: - AuthenticatedSessionFactory
 
 open class AuthenticatedSessionFactory {
-    let appVersion: String
-    let mediaManager: MediaManagerType
-    let flowManager: FlowManagerType
-    var analytics: AnalyticsType?
-    let application: ZMApplication
-
-    var environment: BackendEnvironmentProvider
-    var reachability: Reachability
-
-    let minTLSVersion: String?
+    // MARK: Lifecycle
 
     public init(
         appVersion: String,
@@ -56,6 +47,29 @@ open class AuthenticatedSessionFactory {
         self.reachability = reachability
         self.minTLSVersion = minTLSVersion
     }
+
+    // MARK: Public
+
+    public func updateProxy(username: String?, password: String?) {
+        proxyUsername = username
+        proxyPassword = password
+    }
+
+    // MARK: Internal
+
+    let appVersion: String
+    let mediaManager: MediaManagerType
+    let flowManager: FlowManagerType
+    var analytics: AnalyticsType?
+    let application: ZMApplication
+
+    var environment: BackendEnvironmentProvider
+    var reachability: Reachability
+
+    let minTLSVersion: String?
+
+    private(set) var proxyUsername: String?
+    private(set) var proxyPassword: String?
 
     func session(
         for account: Account,
@@ -109,26 +123,12 @@ open class AuthenticatedSessionFactory {
 
         return userSession
     }
-
-    public func updateProxy(username: String?, password: String?) {
-        proxyUsername = username
-        proxyPassword = password
-    }
-
-    // MARK: - Private
-
-    private(set) var proxyUsername: String?
-    private(set) var proxyPassword: String?
 }
 
 // MARK: - UnauthenticatedSessionFactory
 
 open class UnauthenticatedSessionFactory {
-    var environment: BackendEnvironmentProvider
-    var reachability: Reachability
-
-    var readyForRequests = false
-    let appVersion: String
+    // MARK: Lifecycle
 
     init(
         appVersion: String,
@@ -143,6 +143,21 @@ open class UnauthenticatedSessionFactory {
         self.reachability = reachability
         self.appVersion = appVersion
     }
+
+    // MARK: Public
+
+    public func updateProxy(username: String?, password: String?) {
+        proxyUsername = username
+        proxyPassword = password
+    }
+
+    // MARK: Internal
+
+    var environment: BackendEnvironmentProvider
+    var reachability: Reachability
+
+    var readyForRequests = false
+    let appVersion: String
 
     func session(
         delegate: UnauthenticatedSessionDelegate,
@@ -166,12 +181,7 @@ open class UnauthenticatedSessionFactory {
         )
     }
 
-    public func updateProxy(username: String?, password: String?) {
-        proxyUsername = username
-        proxyPassword = password
-    }
-
-    // MARK: - Private
+    // MARK: Private
 
     private var proxyUsername: String?
     private var proxyPassword: String?

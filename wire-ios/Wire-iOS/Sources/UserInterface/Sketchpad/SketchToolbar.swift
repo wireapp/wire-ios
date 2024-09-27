@@ -20,12 +20,7 @@ import UIKit
 import WireDesign
 
 final class SketchToolbar: UIView {
-    let containerView = UIView()
-    let leftButton: UIButton!
-    let rightButton: UIButton!
-    let centerButtons: [UIButton]
-    let centerButtonContainer = UIView()
-    let separatorLine = UIView()
+    // MARK: Lifecycle
 
     init(buttons: [UIButton]) {
         guard buttons.count >= 2 else {  fatalError("SketchToolbar needs to be initialized with at least two buttons") }
@@ -49,12 +44,23 @@ final class SketchToolbar: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let containerView = UIView()
+    let leftButton: UIButton!
+    let rightButton: UIButton!
+    let centerButtons: [UIButton]
+    let centerButtonContainer = UIView()
+    let separatorLine = UIView()
+
     func setupSubviews() {
         backgroundColor = SemanticColors.View.backgroundDefaultWhite
         addSubview(containerView)
         centerButtons.forEach(centerButtonContainer.addSubview)
         [leftButton, centerButtonContainer, rightButton, separatorLine].forEach(containerView.addSubview)
     }
+
+    // MARK: Private
 
     private func createButtonContraints(buttons: [UIButton]) {
         for button in buttons {

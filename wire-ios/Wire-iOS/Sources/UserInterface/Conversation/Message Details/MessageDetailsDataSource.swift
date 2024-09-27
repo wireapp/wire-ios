@@ -44,43 +44,7 @@ protocol MessageDetailsDataSourceObserver: AnyObject {
 /// The data source to present message details.
 
 final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving {
-    typealias MessageDetails = L10n.Localizable.MessageDetails
-
-    /// The presented message.
-    let message: ZMConversationMessage
-
-    /// The conversation where the message is
-    let conversation: ZMConversation
-
-    /// How to display the message details.
-    let displayMode: MessageDetailsDisplayMode
-
-    /// Whether read receipts are supported.
-    let supportsReadReceipts: Bool
-
-    /// The title of the message details.
-    let title: String
-
-    /// The subtitle of the message details.
-    private(set) var subtitle: String!
-
-    /// The subtitle of the message details for accessibility purposes.
-    private(set) var accessibilitySubtitle: String!
-
-    /// The list of reactions.
-    private(set) var reactions: [MessageDetailsSectionDescription] = []
-
-    /// The list of read receipts with the associated date.
-    private(set) var readReceipts: [MessageDetailsSectionDescription] = []
-
-    /// The object that receives information when the message details changes.
-    weak var observer: MessageDetailsDataSourceObserver?
-
-    private let emojiRepository: EmojiRepositoryInterface
-
-    // MARK: - Initialization
-
-    private var observationTokens: [Any] = []
+    // MARK: Lifecycle
 
     init(
         message: ZMConversationMessage,
@@ -122,26 +86,39 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         setupObservers()
     }
 
-    // MARK: - Interface Properties
+    // MARK: Internal
 
-    private func updateSubtitle() {
-        guard let sentDate = message.formattedReceivedDate() else {
-            return
-        }
+    typealias MessageDetails = L10n.Localizable.MessageDetails
 
-        let sentString = MessageDetails.subtitleSendDate(sentDate)
+    /// The presented message.
+    let message: ZMConversationMessage
 
-        var subtitle = sentString
+    /// The conversation where the message is
+    let conversation: ZMConversation
 
-        if let editedDate = message.formattedEditedDate() {
-            let editedString = MessageDetails.subtitleEditDate(editedDate)
-            subtitle += "\n" + editedString
-        }
+    /// How to display the message details.
+    let displayMode: MessageDetailsDisplayMode
 
-        self.subtitle = subtitle
-        accessibilitySubtitle = message.formattedAccessibleMessageDetails()
-        observer?.detailsFooterDidChange(self)
-    }
+    /// Whether read receipts are supported.
+    let supportsReadReceipts: Bool
+
+    /// The title of the message details.
+    let title: String
+
+    /// The subtitle of the message details.
+    private(set) var subtitle: String!
+
+    /// The subtitle of the message details for accessibility purposes.
+    private(set) var accessibilitySubtitle: String!
+
+    /// The list of reactions.
+    private(set) var reactions: [MessageDetailsSectionDescription] = []
+
+    /// The list of read receipts with the associated date.
+    private(set) var readReceipts: [MessageDetailsSectionDescription] = []
+
+    /// The object that receives information when the message details changes.
+    weak var observer: MessageDetailsDataSourceObserver?
 
     // MARK: - Changes
 
@@ -173,6 +150,46 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         }
     }
 
+    func setupReadReceipts() {
+        readReceipts = [
+            MessageDetailsSectionDescription(
+                items: MessageDetailsCellDescription
+                    .makeReceiptCell(message.sortedReadReceipts)
+            ),
+        ].filter {
+            !$0.items.isEmpty
+        }
+    }
+
+    // MARK: Private
+
+    private let emojiRepository: EmojiRepositoryInterface
+
+    // MARK: - Initialization
+
+    private var observationTokens: [Any] = []
+
+    // MARK: - Interface Properties
+
+    private func updateSubtitle() {
+        guard let sentDate = message.formattedReceivedDate() else {
+            return
+        }
+
+        let sentString = MessageDetails.subtitleSendDate(sentDate)
+
+        var subtitle = sentString
+
+        if let editedDate = message.formattedEditedDate() {
+            let editedString = MessageDetails.subtitleEditDate(editedDate)
+            subtitle += "\n" + editedString
+        }
+
+        self.subtitle = subtitle
+        accessibilitySubtitle = message.formattedAccessibleMessageDetails()
+        observer?.detailsFooterDidChange(self)
+    }
+
     private func setupReactions() {
         reactions = message.usersReaction.lazy
             .compactMap { reaction, users in
@@ -185,17 +202,6 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
             }
             .filter { !$0.items.isEmpty }
             .sorted { $0.items.count > $1.items.count }
-    }
-
-    func setupReadReceipts() {
-        readReceipts = [
-            MessageDetailsSectionDescription(
-                items: MessageDetailsCellDescription
-                    .makeReceiptCell(message.sortedReadReceipts)
-            ),
-        ].filter {
-            !$0.items.isEmpty
-        }
     }
 
     private func setupObservers() {

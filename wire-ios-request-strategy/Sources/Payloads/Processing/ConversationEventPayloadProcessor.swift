@@ -28,17 +28,7 @@ enum ConversationEventPayloadProcessorError: Error {
 // MARK: - ConversationEventPayloadProcessor
 
 struct ConversationEventPayloadProcessor {
-    enum Source {
-        case slowSync
-        case eventStream
-    }
-
-    // MARK: - Properties
-
-    private let mlsEventProcessor: MLSEventProcessing
-    private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         mlsEventProcessor: MLSEventProcessing,
@@ -46,6 +36,13 @@ struct ConversationEventPayloadProcessor {
     ) {
         self.mlsEventProcessor = mlsEventProcessor
         self.removeLocalConversation = removeLocalConversation
+    }
+
+    // MARK: Internal
+
+    enum Source {
+        case slowSync
+        case eventStream
     }
 
     // MARK: - Conversation creation
@@ -565,17 +562,6 @@ struct ConversationEventPayloadProcessor {
         return conversation
     }
 
-    private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
-        guard
-            conversation.conversationType == .oneOnOne,
-            let otherUser = conversation.localParticipantsExcludingSelf.first
-        else {
-            return
-        }
-
-        conversation.oneOnOneUser = otherUser
-    }
-
     @discardableResult
     func updateOrCreateSelfConversation(
         from payload: Payload.Conversation,
@@ -728,29 +714,6 @@ struct ConversationEventPayloadProcessor {
         return conversation
     }
 
-    private func updateAttributes(
-        from payload: Payload.Conversation,
-        for conversation: ZMConversation,
-        context: NSManagedObjectContext
-    ) {
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
-        conversation.needsToBeUpdatedFromBackend = false
-
-        if let epoch = payload.epoch {
-            conversation.epoch = UInt64(epoch)
-        }
-
-        if
-            let base64String = payload.mlsGroupID,
-            let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
-            conversation.mlsGroupID = mlsGroupID
-        }
-
-        if let ciphersuite = payload.cipherSuite, let epoch = payload.epoch, epoch > 0 {
-            conversation.ciphersuite = MLSCipherSuite(rawValue: Int(ciphersuite))
-        }
-    }
-
     func updateMetadata(
         from payload: Payload.Conversation,
         for conversation: ZMConversation,
@@ -840,99 +803,6 @@ struct ConversationEventPayloadProcessor {
         }
     }
 
-    private func assignMessageProtocol(
-        from payload: Payload.Conversation,
-        for conversation: ZMConversation,
-        in context: NSManagedObjectContext
-    ) {
-        guard let messageProtocolString = payload.messageProtocol else {
-            WireLogger.eventProcessing.warn("message protocol is missing")
-            return
-        }
-
-        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
-            WireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
-            return
-        }
-
-        conversation.messageProtocol = newMessageProtocol
-    }
-
-    private func updateMessageProtocol(
-        from payload: Payload.Conversation,
-        for conversation: ZMConversation,
-        in context: NSManagedObjectContext
-    ) {
-        guard let messageProtocolString = payload.messageProtocol else {
-            WireLogger.eventProcessing.warn("message protocol is missing")
-            return
-        }
-
-        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
-            WireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
-            return
-        }
-
-        let sender = ZMUser.selfUser(in: context)
-
-        switch conversation.messageProtocol {
-        case .proteus:
-            switch newMessageProtocol {
-            case .proteus:
-                break // no update, ignore
-            case .mixed:
-                conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
-                conversation.messageProtocol = newMessageProtocol
-
-            case .mls:
-                let date = conversation.lastModifiedDate ?? .now
-                conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
-                conversation.messageProtocol = newMessageProtocol
-            }
-
-        case .mixed:
-            switch newMessageProtocol {
-            case .proteus:
-                WireLogger.updateEvent
-                    .warn(
-                        "update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!"
-                    )
-
-            case .mixed:
-                break // no update, ignore
-            case .mls:
-                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
-                conversation.messageProtocol = newMessageProtocol
-            }
-
-        case .mls:
-            switch newMessageProtocol {
-            case .proteus, .mixed:
-                WireLogger.updateEvent
-                    .warn(
-                        "update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"
-                    )
-
-            case .mls:
-                break // no update, ignore
-            }
-        }
-    }
-
-    private func updateMLSStatus(
-        from payload: Payload.Conversation,
-        for conversation: ZMConversation,
-        context: NSManagedObjectContext,
-        source: Source
-    ) async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
-        await mlsEventProcessor.updateConversationIfNeeded(
-            conversation: conversation,
-            fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,
-            context: context
-        )
-    }
-
     func fetchCreator(
         from payload: Payload.Conversation,
         in context: NSManagedObjectContext
@@ -947,23 +817,6 @@ struct ConversationEventPayloadProcessor {
             domain: payload.qualifiedID?.domain,
             in: context
         )
-    }
-
-    private func conversationType(
-        for conversation: ZMConversation?,
-        from type: ZMConversationType
-    ) -> ZMConversationType {
-        guard let conversation else {
-            return type
-        }
-
-        // The backend can't distinguish between one-to-one and connection conversation
-        // types across federated enviroments so check locally if it's a connection.
-        if conversation.oneOnOneUser?.connection?.status == .sent {
-            return .connection
-        } else {
-            return type
-        }
     }
 
     func fetchOrCreateConversation(
@@ -1064,6 +917,157 @@ struct ConversationEventPayloadProcessor {
         }
 
         return (user, role)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let mlsEventProcessor: MLSEventProcessing
+    private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+
+    private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
+        guard
+            conversation.conversationType == .oneOnOne,
+            let otherUser = conversation.localParticipantsExcludingSelf.first
+        else {
+            return
+        }
+
+        conversation.oneOnOneUser = otherUser
+    }
+
+    private func updateAttributes(
+        from payload: Payload.Conversation,
+        for conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) {
+        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
+        conversation.needsToBeUpdatedFromBackend = false
+
+        if let epoch = payload.epoch {
+            conversation.epoch = UInt64(epoch)
+        }
+
+        if
+            let base64String = payload.mlsGroupID,
+            let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
+            conversation.mlsGroupID = mlsGroupID
+        }
+
+        if let ciphersuite = payload.cipherSuite, let epoch = payload.epoch, epoch > 0 {
+            conversation.ciphersuite = MLSCipherSuite(rawValue: Int(ciphersuite))
+        }
+    }
+
+    private func assignMessageProtocol(
+        from payload: Payload.Conversation,
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) {
+        guard let messageProtocolString = payload.messageProtocol else {
+            WireLogger.eventProcessing.warn("message protocol is missing")
+            return
+        }
+
+        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
+            WireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            return
+        }
+
+        conversation.messageProtocol = newMessageProtocol
+    }
+
+    private func updateMessageProtocol(
+        from payload: Payload.Conversation,
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) {
+        guard let messageProtocolString = payload.messageProtocol else {
+            WireLogger.eventProcessing.warn("message protocol is missing")
+            return
+        }
+
+        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
+            WireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            return
+        }
+
+        let sender = ZMUser.selfUser(in: context)
+
+        switch conversation.messageProtocol {
+        case .proteus:
+            switch newMessageProtocol {
+            case .proteus:
+                break // no update, ignore
+            case .mixed:
+                conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+
+            case .mls:
+                let date = conversation.lastModifiedDate ?? .now
+                conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
+                conversation.messageProtocol = newMessageProtocol
+            }
+
+        case .mixed:
+            switch newMessageProtocol {
+            case .proteus:
+                WireLogger.updateEvent
+                    .warn(
+                        "update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!"
+                    )
+
+            case .mixed:
+                break // no update, ignore
+            case .mls:
+                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+                conversation.messageProtocol = newMessageProtocol
+            }
+
+        case .mls:
+            switch newMessageProtocol {
+            case .proteus, .mixed:
+                WireLogger.updateEvent
+                    .warn(
+                        "update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"
+                    )
+
+            case .mls:
+                break // no update, ignore
+            }
+        }
+    }
+
+    private func updateMLSStatus(
+        from payload: Payload.Conversation,
+        for conversation: ZMConversation,
+        context: NSManagedObjectContext,
+        source: Source
+    ) async {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        await mlsEventProcessor.updateConversationIfNeeded(
+            conversation: conversation,
+            fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,
+            context: context
+        )
+    }
+
+    private func conversationType(
+        for conversation: ZMConversation?,
+        from type: ZMConversationType
+    ) -> ZMConversationType {
+        guard let conversation else {
+            return type
+        }
+
+        // The backend can't distinguish between one-to-one and connection conversation
+        // types across federated enviroments so check locally if it's a connection.
+        if conversation.oneOnOneUser?.connection?.status == .sent {
+            return .connection
+        } else {
+            return type
+        }
     }
 
     private func updateMemberStatus(

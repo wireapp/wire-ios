@@ -28,24 +28,7 @@ extension Payload {
         case cancelled
         case missingLegalholdConsent = "missing-legalhold-consent"
 
-        var internalStatus: ZMConnectionStatus {
-            switch self {
-            case .sent:
-                .sent
-            case .accepted:
-                .accepted
-            case .pending:
-                .pending
-            case .blocked:
-                .blocked
-            case .cancelled:
-                .cancelled
-            case .ignored:
-                .ignored
-            case .missingLegalholdConsent:
-                .blockedMissingLegalholdConsent
-            }
-        }
+        // MARK: Lifecycle
 
         init?(_ status: ZMConnectionStatus) {
             switch status {
@@ -67,6 +50,27 @@ extension Payload {
                 self = .missingLegalholdConsent
             @unknown default:
                 return nil
+            }
+        }
+
+        // MARK: Internal
+
+        var internalStatus: ZMConnectionStatus {
+            switch self {
+            case .sent:
+                .sent
+            case .accepted:
+                .accepted
+            case .pending:
+                .pending
+            case .blocked:
+                .blocked
+            case .cancelled:
+                .cancelled
+            case .ignored:
+                .ignored
+            case .missingLegalholdConsent:
+                .blockedMissingLegalholdConsent
             }
         }
     }
@@ -115,12 +119,12 @@ extension Payload {
             case hasMore = "has_more"
         }
 
+        let connections: [Connection]
+        let hasMore: Bool
+
         var nextStartReference: String? {
             connections.last?.to?.transportString()
         }
-
-        let connections: [Connection]
-        let hasMore: Bool
     }
 
     struct PaginatedConnectionList: Codable, Paginatable {
@@ -130,13 +134,13 @@ extension Payload {
             case hasMore = "has_more"
         }
 
-        var nextStartReference: String? {
-            pagingState
-        }
-
         let connections: [Connection]
         let pagingState: String
         let hasMore: Bool
+
+        var nextStartReference: String? {
+            pagingState
+        }
     }
 
     struct UserConnectionEvent: Codable {

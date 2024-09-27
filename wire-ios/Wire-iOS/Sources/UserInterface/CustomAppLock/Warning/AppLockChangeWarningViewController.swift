@@ -30,9 +30,43 @@ protocol AppLockChangeWarningViewControllerDelegate: AnyObject {
 // MARK: - AppLockChangeWarningViewController
 
 final class AppLockChangeWarningViewController: UIViewController {
+    // MARK: Lifecycle
+
+    init(isAppLockActive: Bool, userSession: UserSession) {
+        self.isAppLockActive = isAppLockActive
+        self.userSession = userSession
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     // MARK: - Properties
 
     weak var delegate: AppLockChangeWarningViewControllerDelegate?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupViews()
+    }
+
+    // MARK: - Actions
+
+    @objc
+    func confirmButtonTapped(sender: AnyObject?) {
+        userSession.perform {
+            self.userSession.needsToNotifyUserOfAppLockConfiguration = false
+        }
+
+        dismiss(animated: true, completion: delegate?.appLockChangeWarningViewControllerDidDismiss)
+    }
+
+    // MARK: Private
 
     private var isAppLockActive: Bool
     private let userSession: UserSession
@@ -74,25 +108,6 @@ final class AppLockChangeWarningViewController: UIViewController {
         } else {
             L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock
         }
-    }
-
-    // MARK: - Life cycle
-
-    init(isAppLockActive: Bool, userSession: UserSession) {
-        self.isAppLockActive = isAppLockActive
-        self.userSession = userSession
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupViews()
     }
 
     // MARK: - Helpers
@@ -141,16 +156,5 @@ final class AppLockChangeWarningViewController: UIViewController {
             confirmButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: contentPadding),
             confirmButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -contentPadding),
         ])
-    }
-
-    // MARK: - Actions
-
-    @objc
-    func confirmButtonTapped(sender: AnyObject?) {
-        userSession.perform {
-            self.userSession.needsToNotifyUserOfAppLockConfiguration = false
-        }
-
-        dismiss(animated: true, completion: delegate?.appLockChangeWarningViewControllerDidDismiss)
     }
 }

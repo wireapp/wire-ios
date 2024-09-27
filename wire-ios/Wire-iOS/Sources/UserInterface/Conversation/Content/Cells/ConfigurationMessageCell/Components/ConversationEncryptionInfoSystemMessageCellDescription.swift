@@ -20,7 +20,24 @@ import UIKit
 import WireDataModel
 
 final class ConversationEncryptionInfoSystemMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init() {
+        typealias connectionView = L10n.Localizable.Conversation.ConnectionView
+
+        self.configuration = View.Configuration(
+            topText: connectionView.encryptionInfo,
+            bottomText: connectionView.sensitiveInformationWarning
+        )
+
+        self.accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"
+        self.actionController = nil
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationWarningSystemMessageCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -36,16 +53,4 @@ final class ConversationEncryptionInfoSystemMessageCellDescription: Conversation
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
-
-    init() {
-        typealias connectionView = L10n.Localizable.Conversation.ConnectionView
-
-        self.configuration = View.Configuration(
-            topText: connectionView.encryptionInfo,
-            bottomText: connectionView.sensitiveInformationWarning
-        )
-
-        self.accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"
-        self.actionController = nil
-    }
 }

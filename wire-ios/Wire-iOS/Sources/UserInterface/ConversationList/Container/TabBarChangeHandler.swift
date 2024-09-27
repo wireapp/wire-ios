@@ -30,14 +30,7 @@ import WireUIFoundation
 ///
 /// - Warning: This solution is only temporary and should be removed in the ongoing navigation overhaul. [WPB-6647]
 final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
-    enum PrincipleTab {
-        case conversations
-        case folders
-    }
-
-    private let conversationsViewController: ConversationListViewController
-    private let foldersViewController: ConversationListViewController
-    private var principleTab: PrincipleTab
+    // MARK: Lifecycle
 
     /// Initializes a `TabBarChangeHandler`.
     /// - Parameters:
@@ -52,6 +45,13 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
         self.conversationsViewController = conversationsViewController
         self.foldersViewController = foldersViewController
         self.principleTab = selectedTab
+    }
+
+    // MARK: Internal
+
+    enum PrincipleTab {
+        case conversations
+        case folders
     }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
@@ -77,6 +77,12 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
             }
         }
     }
+
+    // MARK: Private
+
+    private let conversationsViewController: ConversationListViewController
+    private let foldersViewController: ConversationListViewController
+    private var principleTab: PrincipleTab
 
     private var principleViewController: ConversationListViewController {
         switch principleTab {

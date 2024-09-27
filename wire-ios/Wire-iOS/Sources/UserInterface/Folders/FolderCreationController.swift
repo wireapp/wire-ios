@@ -32,21 +32,7 @@ protocol FolderCreationControllerDelegate: AnyObject {
 // MARK: - FolderCreationController
 
 final class FolderCreationController: UIViewController {
-    private let collectionViewController = SectionCollectionViewController()
-
-    private lazy var nameSection = FolderCreationNameSectionController(
-        delegate: self,
-        conversationName: conversation
-            .displayNameWithFallback
-    )
-
-    private var folderName = ""
-    private var conversation: ZMConversation
-    private var conversationDirectory: ConversationDirectoryType
-
-    fileprivate var navBarBackgroundView = UIView()
-
-    weak var delegate: FolderCreationControllerDelegate?
+    // MARK: Lifecycle
 
     init(conversation: ZMConversation, directory: ConversationDirectoryType) {
         self.conversation = conversation
@@ -58,6 +44,10 @@ final class FolderCreationController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    weak var delegate: FolderCreationControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,6 +71,44 @@ final class FolderCreationController: UIViewController {
         super.viewWillAppear(animated)
         setupNavigationBar()
     }
+
+    func proceedWith(value: SimpleTextField.Value) {
+        switch value {
+        case let .error(error):
+            print(error)
+        case let .valid(name):
+            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            nameSection.resignFirstResponder()
+            folderName = trimmed
+
+            if let folder = ZMUserSession.shared()?.conversationDirectory.createFolder(folderName) {
+                delegate?.folderController(self, didCreateFolder: folder)
+            }
+        }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var navBarBackgroundView = UIView()
+
+    fileprivate func tryToProceed() {
+        guard let value = nameSection.value else { return }
+        proceedWith(value: value)
+    }
+
+    // MARK: Private
+
+    private let collectionViewController = SectionCollectionViewController()
+
+    private lazy var nameSection = FolderCreationNameSectionController(
+        delegate: self,
+        conversationName: conversation
+            .displayNameWithFallback
+    )
+
+    private var folderName = ""
+    private var conversation: ZMConversation
+    private var conversationDirectory: ConversationDirectoryType
 
     private func setupViews() {
         // swiftlint:disable:next todo_requires_jira_link
@@ -138,26 +166,6 @@ final class FolderCreationController: UIViewController {
 
         setupNavigationBarTitle(FolderCreationName.title)
         navigationItem.rightBarButtonItem = nextButtonItem
-    }
-
-    func proceedWith(value: SimpleTextField.Value) {
-        switch value {
-        case let .error(error):
-            print(error)
-        case let .valid(name):
-            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            nameSection.resignFirstResponder()
-            folderName = trimmed
-
-            if let folder = ZMUserSession.shared()?.conversationDirectory.createFolder(folderName) {
-                delegate?.folderController(self, didCreateFolder: folder)
-            }
-        }
-    }
-
-    fileprivate func tryToProceed() {
-        guard let value = nameSection.value else { return }
-        proceedWith(value: value)
     }
 }
 

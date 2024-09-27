@@ -21,7 +21,7 @@ import Foundation
 /// A builder of `BackendInfoAPI`.
 
 public struct BackendInfoAPIBuilder {
-    let apiService: any APIServiceProtocol
+    // MARK: Lifecycle
 
     /// Create a new builder.
     ///
@@ -31,6 +31,8 @@ public struct BackendInfoAPIBuilder {
         self.apiService = apiService
     }
 
+    // MARK: Public
+
     /// Make a `BackendInfoAPI`.
     ///
     /// - Returns: A `BackendInfoAPI`.
@@ -38,4 +40,8 @@ public struct BackendInfoAPIBuilder {
     public func makeAPI() -> any BackendInfoAPI {
         BackendInfoAPIImpl(apiService: apiService)
     }
+
+    // MARK: Internal
+
+    let apiService: any APIServiceProtocol
 }

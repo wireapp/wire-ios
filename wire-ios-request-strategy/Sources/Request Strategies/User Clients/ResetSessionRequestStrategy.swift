@@ -21,9 +21,7 @@ import Foundation
 // MARK: - ResetSessionRequestStrategy
 
 public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-    fileprivate let keyPathSync: KeyPathObjectSync<ResetSessionRequestStrategy>
-    fileprivate let messageSender: MessageSenderInterface
-    fileprivate let managedObjectContext: NSManagedObjectContext
+    // MARK: Lifecycle
 
     public init(
         managedObjectContext: NSManagedObjectContext,
@@ -41,9 +39,17 @@ public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource
         keyPathSync.transcoder = self
     }
 
+    // MARK: Public
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [keyPathSync]
     }
+
+    // MARK: Fileprivate
+
+    fileprivate let keyPathSync: KeyPathObjectSync<ResetSessionRequestStrategy>
+    fileprivate let messageSender: MessageSenderInterface
+    fileprivate let managedObjectContext: NSManagedObjectContext
 }
 
 // MARK: KeyPathObjectSyncTranscoder

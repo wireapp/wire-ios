@@ -20,9 +20,7 @@ import UIKit
 import WireDesign
 
 class ButtonWithLargerHitArea: DynamicFontButton {
-    // MARK: - Properties
-
-    var hitAreaPadding = CGSize.zero
+    // MARK: Lifecycle
 
     // MARK: - Init / Deinit
 
@@ -37,10 +35,11 @@ class ButtonWithLargerHitArea: DynamicFontButton {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupAccessibility() {
-        isAccessibilityElement = true
-        accessibilityTraits = .button
-    }
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    var hitAreaPadding = CGSize.zero
 
     // MARK: - Overridden methods
 
@@ -50,5 +49,12 @@ class ButtonWithLargerHitArea: DynamicFontButton {
         }
 
         return bounds.insetBy(dx: -hitAreaPadding.width, dy: -hitAreaPadding.height).contains(point)
+    }
+
+    // MARK: Private
+
+    private func setupAccessibility() {
+        isAccessibilityElement = true
+        accessibilityTraits = .button
     }
 }

@@ -19,7 +19,11 @@
 import Foundation
 
 public class UserClientRequestFactory {
+    // MARK: Lifecycle
+
     public init() {}
+
+    // MARK: Internal
 
     func deleteClientRequest(
         clientId: String,

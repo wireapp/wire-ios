@@ -27,11 +27,13 @@ enum EventPayloadDecoderError: Error {
 // MARK: - EventPayloadDecoder
 
 struct EventPayloadDecoder {
-    private let decoder: JSONDecoder
+    // MARK: Lifecycle
 
     init(decoder: JSONDecoder = .defaultDecoder) {
         self.decoder = decoder
     }
+
+    // MARK: Internal
 
     func decode<T>(
         _ type: T.Type,
@@ -65,4 +67,8 @@ struct EventPayloadDecoder {
             throw error
         }
     }
+
+    // MARK: Private
+
+    private let decoder: JSONDecoder
 }

@@ -22,9 +22,7 @@ import WireDataModel
 // MARK: - TeamAccountView
 
 final class TeamAccountView: BaseAccountView {
-    private let imageView: TeamImageView
-    private var teamObserver: NSObjectProtocol!
-    private var conversationListObserver: NSObjectProtocol!
+    // MARK: Lifecycle
 
     required init?(user: ZMUser?, account: Account, displayContext: DisplayContext) {
         if let content = user?.team?.teamImageViewContent ?? account.teamImageViewContent {
@@ -67,23 +65,12 @@ final class TeamAccountView: BaseAccountView {
         }
     }
 
-    private func createConstraints() {
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
-
-        let insets = Constants.teamAccountViewImageInsets
-        NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: insets.left),
-            imageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: insets.top),
-            imageViewContainer.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: insets.right),
-            imageViewContainer.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: insets.bottom),
-        ])
-    }
-
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
 
     override func update() {
         super.update()
@@ -106,6 +93,25 @@ final class TeamAccountView: BaseAccountView {
             dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
             dotView.widthAnchor.constraint(equalToConstant: dotSize),
         ]
+    }
+
+    // MARK: Private
+
+    private let imageView: TeamImageView
+    private var teamObserver: NSObjectProtocol!
+    private var conversationListObserver: NSObjectProtocol!
+
+    private func createConstraints() {
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
+
+        let insets = Constants.teamAccountViewImageInsets
+        NSLayoutConstraint.activate([
+            imageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: insets.left),
+            imageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: insets.top),
+            imageViewContainer.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: insets.right),
+            imageViewContainer.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: insets.bottom),
+        ])
     }
 }
 

@@ -63,9 +63,7 @@ class MockPreprocessor: NSObject, ZMAssetsPreprocessorProtocol {
 // MARK: - MockOperation
 
 class MockOperation: NSObject, ZMImageDownsampleOperationProtocol {
-    let downsampleImageData: Data
-    let format: ZMImageFormat
-    let properties: ZMIImageProperties
+    // MARK: Lifecycle
 
     init(
         downsampleImageData: Data = Data(),
@@ -76,6 +74,12 @@ class MockOperation: NSObject, ZMImageDownsampleOperationProtocol {
         self.format = format
         self.properties = properties
     }
+
+    // MARK: Internal
+
+    let downsampleImageData: Data
+    let format: ZMImageFormat
+    let properties: ZMIImageProperties
 }
 
 public typealias ProfileUpdateState = WireSyncEngine.UserProfileImageUpdateStatus.ProfileUpdateState
@@ -85,6 +89,8 @@ typealias ImageState = WireSyncEngine.UserProfileImageUpdateStatus.ImageState
 
 class MockChangeDelegate: WireSyncEngine.UserProfileImageUploadStateChangeDelegate {
     var states = [ProfileUpdateState]()
+    var imageStates = [ProfileImageSize: [ImageState]]()
+
     func didTransition(from oldState: ProfileUpdateState, to currentState: ProfileUpdateState) {
         states.append(currentState)
     }
@@ -105,8 +111,6 @@ class MockChangeDelegate: WireSyncEngine.UserProfileImageUploadStateChangeDelega
             line: line
         )
     }
-
-    var imageStates = [ProfileImageSize: [ImageState]]()
 
     func didTransition(from oldState: ImageState, to currentState: ImageState, for size: ProfileImageSize) {
         var states = imageStates[size] ?? [ImageState]()

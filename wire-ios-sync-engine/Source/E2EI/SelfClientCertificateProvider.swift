@@ -29,12 +29,7 @@ public protocol SelfClientCertificateProviderProtocol {
 // MARK: - SelfClientCertificateProvider
 
 public final class SelfClientCertificateProvider: SelfClientCertificateProviderProtocol {
-    // MARK: - Properties
-
-    private let getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol
-    private let context: NSManagedObjectContext
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol,
@@ -43,6 +38,8 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
         self.getE2eIdentityCertificatesUseCase = getE2eIdentityCertificatesUseCase
         self.context = context
     }
+
+    // MARK: Public
 
     public var hasCertificate: Bool {
         get async {
@@ -75,9 +72,18 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
         ).first
     }
 
+    // MARK: Internal
+
     enum Error: Swift.Error {
         case couldNotFetchMLSSelfConversation
         case failedToGetMLSGroupID(_ conversation: Conversation)
         case failedToGetSelfClientID
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol
+    private let context: NSManagedObjectContext
 }

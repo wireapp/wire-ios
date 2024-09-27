@@ -42,9 +42,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 // MARK: - GroupParticipantsDetailViewControllerTests
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
-    private var mockMainCoordinator: MockMainCoordinator!
-    private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -151,4 +149,10 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         let wrapped = sut.wrapInNavigationController()
         snapshotHelper.verify(matching: wrapped)
     }
+
+    // MARK: Private
+
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 }

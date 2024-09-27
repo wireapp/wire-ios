@@ -21,6 +21,8 @@ import Foundation
 // MARK: - SearchResult
 
 public struct SearchResult {
+    // MARK: Public
+
     /// Users already connected to.
     public var contacts: [ZMSearchUser]
     /// Users from the team.
@@ -33,6 +35,9 @@ public struct SearchResult {
     public var conversations: [ZMConversation]
     /// Bots.
     public var services: [ServiceUser]
+
+    // MARK: Internal
+
     /// Cache for search users.
     let searchUsersCache: SearchUsersCache?
 }

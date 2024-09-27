@@ -23,9 +23,7 @@ import XCTest
 @testable import Wire
 
 final class AvailabilityLabelTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setup
 
@@ -123,4 +121,10 @@ final class AvailabilityLabelTests: XCTestCase {
         label.sizeToFit()
         return label
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
 }

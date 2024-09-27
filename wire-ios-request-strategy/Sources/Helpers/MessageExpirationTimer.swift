@@ -19,11 +19,7 @@
 import Foundation
 
 public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
-    let localNotificationsDispatcher: PushMessageHandler
-    let entityNames: [String]
-    let filter: NSPredicate?
-
-    private let logAttributesBuilder: MessageLogAttributesBuilder
+    // MARK: Lifecycle
 
     override public init() {
         fatalError("Should not use this init")
@@ -49,6 +45,30 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         }
     }
 
+    // MARK: Public
+
+    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+        ZMMessage.sortedFetchRequest(with: ZMMessage.predicateForMessagesThatWillExpire())
+    }
+
+    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        startTimerIfNeeded(for: objects)
+    }
+
+    public func objectsDidChange(_ object: Set<NSManagedObject>) {
+        startTimerIfNeeded(for: object)
+    }
+
+    // MARK: Internal
+
+    let localNotificationsDispatcher: PushMessageHandler
+    let entityNames: [String]
+    let filter: NSPredicate?
+
+    // MARK: Private
+
+    private let logAttributesBuilder: MessageLogAttributesBuilder
+
     private func timerFired(for message: ZMMessage) {
         if let proteusMessage = message as? (any ProteusMessage) {
             WireLogger.messaging.debug("expiration timer fired for message \(proteusMessage.debugInfo)")
@@ -61,18 +81,6 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         message.managedObjectContext?.enqueueDelayedSave()
         localNotificationsDispatcher.didFailToSend(message)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
-    }
-
-    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        ZMMessage.sortedFetchRequest(with: ZMMessage.predicateForMessagesThatWillExpire())
-    }
-
-    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        startTimerIfNeeded(for: objects)
-    }
-
-    public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        startTimerIfNeeded(for: object)
     }
 
     private func startTimerIfNeeded(for objects: Set<AnyHashable>) {

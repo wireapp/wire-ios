@@ -26,12 +26,7 @@ typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 /// The step informing the user that they need to enroll into end-2-end identity
 
 class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
-    let backButton: BackButtonDescription? = nil
-    let mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription? = nil
+    // MARK: Lifecycle
 
     init() {
         self.mainView = SolidButtonDescription(
@@ -43,4 +38,13 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
         let details = [E2ei.subtitle, E2ei.learnMore(WireURLs.shared.endToEndIdentityInfo)].joined(separator: "\n")
         self.subtext = .markdown(from: details, style: .login)
     }
+
+    // MARK: Internal
+
+    let backButton: BackButtonDescription? = nil
+    let mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let footerView: AuthenticationFooterViewDescription? = nil
 }

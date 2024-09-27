@@ -19,6 +19,8 @@
 import UIKit
 
 final class KeyboardHeight: NSObject {
+    // MARK: Internal
+
     /// The height of the system keyboard with the prediction row
     static var current: CGFloat {
         switch UIDevice.current.userInterfaceIdiom {
@@ -30,6 +32,8 @@ final class KeyboardHeight: NSObject {
             return phoneKeyboardHeight()
         }
     }
+
+    // MARK: Private
 
     private static func phoneKeyboardHeight() -> CGFloat {
         switch UIScreen.main.bounds.height {

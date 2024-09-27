@@ -22,25 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class ConversationMessageTimerSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationSystemMessageCell
-    typealias LabelColors = SemanticColors.Label
-    typealias IconColors = SemanticColors.Icon
-
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer = false
-    var topMargin: Float = 0
-
-    let isFullWidth = true
-    let supportsActions = false
-    let containsHighlightableContent = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
+    // MARK: Lifecycle
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData, timer: NSNumber, sender: UserType) {
         let senderText = message.senderName
@@ -75,4 +57,26 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
         self.accessibilityLabel = updateText?.string
         self.actionController = nil
     }
+
+    // MARK: Internal
+
+    typealias View = ConversationSystemMessageCell
+    typealias LabelColors = SemanticColors.Label
+    typealias IconColors = SemanticColors.Icon
+
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer = false
+    var topMargin: Float = 0
+
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String?
 }

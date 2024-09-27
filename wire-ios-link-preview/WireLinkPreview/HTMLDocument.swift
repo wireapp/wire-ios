@@ -88,13 +88,17 @@ typealias HTMLChildrenSequence = IteratorSequence<HTMLChildrenIterator>
 // MARK: - HTMLChildrenIterator
 
 final class HTMLChildrenIterator: IteratorProtocol {
-    let rootElement: HTMLElement
-    var currentChild: HTMLElement?
+    // MARK: Lifecycle
 
     init(rootElement: HTMLElement) {
         self.rootElement = rootElement
         self.currentChild = nil
     }
+
+    // MARK: Internal
+
+    let rootElement: HTMLElement
+    var currentChild: HTMLElement?
 
     func next() -> HTMLElement? {
         let nextPtr: xmlNodePtr? = if let currentChild {
@@ -113,12 +117,7 @@ final class HTMLChildrenIterator: IteratorProtocol {
 /// Wrapper around a `xmlCharPtr`, that represents an HTML string.
 
 final class HTMLStringBuffer {
-    enum Storage {
-        case retained(UnsafeMutablePointer<xmlChar>)
-        case unowned(UnsafePointer<xmlChar>)
-    }
-
-    let storage: Storage
+    // MARK: Lifecycle
 
     /// Creates a new string wrapper.
     init(unowned ptr: UnsafePointer<xmlChar>) {
@@ -135,6 +134,15 @@ final class HTMLStringBuffer {
             xmlFree(ptr)
         }
     }
+
+    // MARK: Internal
+
+    enum Storage {
+        case retained(UnsafeMutablePointer<xmlChar>)
+        case unowned(UnsafePointer<xmlChar>)
+    }
+
+    let storage: Storage
 
     /// Returns the value of the string, with unescaped HTML entities.
     func stringValue(removingEntities removeEntities: Bool) -> String {

@@ -33,24 +33,7 @@ protocol CompanyLoginFlowHandlerDelegate: AnyObject {
 /// Handles opening URLs to validate company login authentication.
 
 final class CompanyLoginFlowHandler {
-    /// The delegate of the flow handler.
-    weak var delegate: CompanyLoginFlowHandlerDelegate?
-
-    /// Whether we allow the in-app browser. Defaults to `true`.
-    var enableInAppBrowser = true
-
-    /// Whether we allow the system authentication session. Defaults to `false`.
-    var enableAuthenticationSession = false
-
-    private let callbackScheme: String
-    private var currentAuthenticationSession: NSObject?
-    private var token: Any?
-
-    private var activeWebBrowser: UIViewController? {
-        didSet {
-            startListeningToFlowCompletion()
-        }
-    }
+    // MARK: Lifecycle
 
     deinit {
         token.map(NotificationCenter.default.removeObserver)
@@ -62,6 +45,17 @@ final class CompanyLoginFlowHandler {
     init(callbackScheme: String) {
         self.callbackScheme = callbackScheme
     }
+
+    // MARK: Internal
+
+    /// The delegate of the flow handler.
+    weak var delegate: CompanyLoginFlowHandlerDelegate?
+
+    /// Whether we allow the in-app browser. Defaults to `true`.
+    var enableInAppBrowser = true
+
+    /// Whether we allow the system authentication session. Defaults to `false`.
+    var enableAuthenticationSession = false
 
     // MARK: - Flow
 
@@ -78,6 +72,18 @@ final class CompanyLoginFlowHandler {
         }
 
         openSafariAuthenticationSession(at: authenticationURL)
+    }
+
+    // MARK: Private
+
+    private let callbackScheme: String
+    private var currentAuthenticationSession: NSObject?
+    private var token: Any?
+
+    private var activeWebBrowser: UIViewController? {
+        didSet {
+            startListeningToFlowCompletion()
+        }
     }
 
     private func startListeningToFlowCompletion() {

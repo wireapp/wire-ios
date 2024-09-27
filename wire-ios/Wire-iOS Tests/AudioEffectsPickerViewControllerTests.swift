@@ -23,8 +23,9 @@ import XCTest
 @testable import Wire
 
 final class AudioEffectsPickerViewControllerTests: XCTestCase {
+    // MARK: Internal
+
     var sut: AudioEffectsPickerViewController! = .none
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -88,4 +89,8 @@ final class AudioEffectsPickerViewControllerTests: XCTestCase {
         sut.selectedAudioEffect = AVSAudioEffectType.chorusMax
         snapshotHelper.verify(matching: preparedView)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

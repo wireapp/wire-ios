@@ -21,10 +21,7 @@ import WireDataModelSupport
 @testable import WireDataModel
 
 final class ZMConversationListDirectoryTests_RefetchAll: XCTestCase {
-    private var coreDataStack: CoreDataStack!
-    private var sut: ZMConversationListDirectory!
-    private var team: Team!
-    private var oneToOneTeamConversation: ZMConversation!
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -67,6 +64,13 @@ final class ZMConversationListDirectoryTests_RefetchAll: XCTestCase {
             XCTAssertEqual(sut.conversationsIncludingArchived.items, [oneToOneTeamConversation])
         }
     }
+
+    // MARK: Private
+
+    private var coreDataStack: CoreDataStack!
+    private var sut: ZMConversationListDirectory!
+    private var team: Team!
+    private var oneToOneTeamConversation: ZMConversation!
 
     private func createOneToOneTeamConversation(
         in team: Team

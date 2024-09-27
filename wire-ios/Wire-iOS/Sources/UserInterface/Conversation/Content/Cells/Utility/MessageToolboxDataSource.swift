@@ -62,23 +62,7 @@ typealias ConversationMessage = SwiftConversationMessage & ZMConversationMessage
 // MARK: - MessageToolboxDataSource
 
 final class MessageToolboxDataSource {
-    typealias ContentSystem = L10n.Localizable.Content.System
-
-    /// The displayed message.
-    let message: ConversationMessage
-
-    /// The content to display for the message.
-    private(set) var content: MessageToolboxContent
-
-    // MARK: - Formatting Properties
-
-    private let statusTextColor = SemanticColors.Label.textMessageDetails
-    private let statusFont = FontSpec.smallRegularFont.font!
-    private static let ephemeralTimeFormatter = EphemeralTimeoutFormatter()
-
-    private var attributes: [NSAttributedString.Key: AnyObject] {
-        [.font: statusFont, .foregroundColor: statusTextColor]
-    }
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -87,6 +71,16 @@ final class MessageToolboxDataSource {
         self.message = message
         self.content = .details(timestamp: nil, status: nil, countdown: nil)
     }
+
+    // MARK: Internal
+
+    typealias ContentSystem = L10n.Localizable.Content.System
+
+    /// The displayed message.
+    let message: ConversationMessage
+
+    /// The content to display for the message.
+    private(set) var content: MessageToolboxContent
 
     // MARK: - Content
 
@@ -138,6 +132,19 @@ final class MessageToolboxDataSource {
         }
 
         return true
+    }
+
+    // MARK: Private
+
+    private static let ephemeralTimeFormatter = EphemeralTimeoutFormatter()
+
+    // MARK: - Formatting Properties
+
+    private let statusTextColor = SemanticColors.Label.textMessageDetails
+    private let statusFont = FontSpec.smallRegularFont.font!
+
+    private var attributes: [NSAttributedString.Key: AnyObject] {
+        [.font: statusFont, .foregroundColor: statusTextColor]
     }
 
     // MARK: - Details Text

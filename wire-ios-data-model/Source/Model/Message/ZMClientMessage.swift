@@ -23,6 +23,15 @@ import WireSystem
 
 @objcMembers
 public class ZMClientMessage: ZMOTRMessage {
+    // MARK: Open
+
+    override open var ignoredKeys: Set<AnyHashable>? {
+        (super.ignoredKeys ?? Set())
+            .union([#keyPath(updatedTimestamp)])
+    }
+
+    // MARK: Public
+
     public static let linkPreviewStateKey = "linkPreviewState"
     public static let linkPreviewKey = "linkPreview"
 
@@ -34,18 +43,6 @@ public class ZMClientMessage: ZMOTRMessage {
     /// Link Preview state
     @NSManaged public var updatedTimestamp: Date?
 
-    /// In memory cache
-    var cachedUnderlyingMessage: GenericMessage?
-
-    override public static func entityName() -> String {
-        "ClientMessage"
-    }
-
-    override open var ignoredKeys: Set<AnyHashable>? {
-        (super.ignoredKeys ?? Set())
-            .union([#keyPath(updatedTimestamp)])
-    }
-
     override public var updatedAt: Date? {
         updatedTimestamp
     }
@@ -55,6 +52,35 @@ public class ZMClientMessage: ZMOTRMessage {
             return nil
         }
         return underlyingMessage?.hashOfContent(with: serverTimestamp)
+    }
+
+    override public var isUpdatingExistingMessage: Bool {
+        guard let content = underlyingMessage?.content else {
+            return false
+        }
+        switch content {
+        case .edited, .reaction:
+            return true
+        default:
+            return false
+        }
+    }
+
+    override public static func entityName() -> String {
+        "ClientMessage"
+    }
+
+    public static func keyPathsForValuesAffectingUnderlyingMessage() -> Set<String> {
+        Set([
+            #keyPath(ZMClientMessage.dataSet),
+            #keyPath(ZMClientMessage.dataSet) + ".data",
+        ])
+    }
+
+    override public static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
+        let encryptedNotSynced = NSPredicate(format: "%K == FALSE", DeliveredKey)
+        let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [encryptedNotSynced, notExpired])
     }
 
     override public func awakeFromFetch() {
@@ -73,25 +99,6 @@ public class ZMClientMessage: ZMOTRMessage {
         super.didTurnIntoFault()
 
         cachedUnderlyingMessage = nil
-    }
-
-    override public var isUpdatingExistingMessage: Bool {
-        guard let content = underlyingMessage?.content else {
-            return false
-        }
-        switch content {
-        case .edited, .reaction:
-            return true
-        default:
-            return false
-        }
-    }
-
-    public static func keyPathsForValuesAffectingUnderlyingMessage() -> Set<String> {
-        Set([
-            #keyPath(ZMClientMessage.dataSet),
-            #keyPath(ZMClientMessage.dataSet) + ".data",
-        ])
     }
 
     override public func expire() {
@@ -186,20 +193,6 @@ public class ZMClientMessage: ZMOTRMessage {
         }
     }
 
-    private var logInformation: LogAttributes {
-        [
-            .nonce: nonce?.safeForLoggingDescription ?? "<nil>",
-            .messageType: underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
-        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
-    }
-
-    override public static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
-        let encryptedNotSynced = NSPredicate(format: "%K == FALSE", DeliveredKey)
-        let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [encryptedNotSynced, notExpired])
-    }
-
     override public func markAsSent() {
         super.markAsSent()
 
@@ -207,6 +200,33 @@ public class ZMClientMessage: ZMOTRMessage {
             linkPreviewState = ZMLinkPreviewState.done
         }
         setObfuscationTimerIfNeeded()
+    }
+
+    // MARK: Internal
+
+    /// In memory cache
+    var cachedUnderlyingMessage: GenericMessage?
+
+    func hasDownloadedImage() -> Bool {
+        guard
+            let textMessageData,
+            textMessageData.linkPreview != nil,
+            let cache = managedObjectContext?.zm_fileAssetCache
+        else {
+            return false
+        }
+
+        return cache.hasImageData(for: self)
+    }
+
+    // MARK: Private
+
+    private var logInformation: LogAttributes {
+        [
+            .nonce: nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
     }
 
     private func setObfuscationTimerIfNeeded() {
@@ -221,18 +241,6 @@ public class ZMClientMessage: ZMOTRMessage {
             return
         }
         startDestructionIfNeeded()
-    }
-
-    func hasDownloadedImage() -> Bool {
-        guard
-            let textMessageData,
-            textMessageData.linkPreview != nil,
-            let cache = managedObjectContext?.zm_fileAssetCache
-        else {
-            return false
-        }
-
-        return cache.hasImageData(for: self)
     }
 }
 

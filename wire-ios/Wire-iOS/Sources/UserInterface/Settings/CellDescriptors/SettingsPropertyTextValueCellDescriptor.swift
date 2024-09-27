@@ -24,19 +24,24 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - SettingsPropertyTextValueCellDescriptor
 
 final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescriptorType {
-    static let cellType: SettingsTableCellProtocol.Type = SettingsTextCell.self
-    var title: String {
-        settingsProperty.propertyName.settingsPropertyLabelText
+    // MARK: Lifecycle
+
+    init(settingsProperty: SettingsProperty, identifier: String? = .none) {
+        self.settingsProperty = settingsProperty
+        self.identifier = identifier
     }
+
+    // MARK: Internal
+
+    static let cellType: SettingsTableCellProtocol.Type = SettingsTextCell.self
 
     var visible = true
     let identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
     var settingsProperty: SettingsProperty
 
-    init(settingsProperty: SettingsProperty, identifier: String? = .none) {
-        self.settingsProperty = settingsProperty
-        self.identifier = identifier
+    var title: String {
+        settingsProperty.propertyName.settingsPropertyLabelText
     }
 
     func featureCell(_ cell: SettingsCellType) {

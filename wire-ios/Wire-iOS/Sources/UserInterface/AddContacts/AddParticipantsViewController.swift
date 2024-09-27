@@ -100,43 +100,7 @@ extension AddParticipantsViewController.Context {
 // MARK: - AddParticipantsViewController
 
 final class AddParticipantsViewController: UIViewController {
-    enum CreateAction {
-        case updatedUsers(UserSet)
-        case create
-    }
-
-    enum Context {
-        case add(GroupDetailsConversationType)
-        case create(ConversationCreationValues)
-    }
-
-    private let userSession: UserSession
-
-    private let searchResultsViewController: SearchResultsViewController
-    private let searchGroupSelector: SearchGroupSelector
-    private let searchHeaderViewController: SearchHeaderViewController
-    let userSelection = UserSelection()
-    private let collectionView: UICollectionView
-    private let collectionViewLayout: UICollectionViewFlowLayout
-    private let confirmButtonHeight: CGFloat = 56.0
-    private let confirmButton: IconButton
-    private let emptyResultView: EmptySearchResultsView
-    private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(
-        equalTo: view.bottomAnchor,
-        constant: -bottomMargin
-    )
-    private let backButtonDescriptor = BackButtonDescription()
-    private let bottomMargin: CGFloat = 24
-
-    weak var conversationCreationDelegate: AddParticipantsConversationCreationDelegate?
-
-    private var activityIndicator: BlockingActivityIndicator!
-
-    private var viewModel: AddParticipantsViewModel {
-        didSet {
-            updateValues()
-        }
-    }
+    // MARK: Lifecycle
 
     deinit {
         userSelection.remove(observer: self)
@@ -155,27 +119,6 @@ final class AddParticipantsViewController: UIViewController {
             context: .add(conversation),
             userSession: userSession
         )
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        activityIndicator = .init(view: view)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        _ = searchHeaderViewController.tokenField.resignFirstResponder()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        updateTitle()
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
     }
 
     init(
@@ -299,6 +242,98 @@ final class AddParticipantsViewController: UIViewController {
         }
     }
 
+    // MARK: Internal
+
+    enum CreateAction {
+        case updatedUsers(UserSet)
+        case create
+    }
+
+    enum Context {
+        case add(GroupDetailsConversationType)
+        case create(ConversationCreationValues)
+    }
+
+    let userSelection = UserSelection()
+    weak var conversationCreationDelegate: AddParticipantsConversationCreationDelegate?
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        activityIndicator = .init(view: view)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        _ = searchHeaderViewController.tokenField.resignFirstResponder()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        updateTitle()
+    }
+
+    func setLoadingView(isVisible: Bool) {
+        activityIndicator.setIsActive(isVisible)
+        navigationItem.rightBarButtonItem?.isEnabled = !isVisible
+    }
+
+    @objc
+    func keyboardFrameWillChange(notification: Notification) {
+        // Don't adjust the frame when being presented in a popover.
+        if let arrowDirection = popoverPresentationController?.arrowDirection, arrowDirection == .unknown {
+            return
+        }
+
+        let firstResponder = UIResponder.currentFirst
+        let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
+
+        UIView.animate(
+            withKeyboardNotification: notification,
+            in: view,
+            animations: { [weak self] keyboardFrameInView in
+                guard let self else { return }
+
+                let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
+
+                bottomConstraint.constant = -(keyboardHeight + bottomMargin)
+                view.layoutIfNeeded()
+            }
+        )
+    }
+
+    // MARK: Private
+
+    private let userSession: UserSession
+
+    private let searchResultsViewController: SearchResultsViewController
+    private let searchGroupSelector: SearchGroupSelector
+    private let searchHeaderViewController: SearchHeaderViewController
+    private let collectionView: UICollectionView
+    private let collectionViewLayout: UICollectionViewFlowLayout
+    private let confirmButtonHeight: CGFloat = 56.0
+    private let confirmButton: IconButton
+    private let emptyResultView: EmptySearchResultsView
+    private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(
+        equalTo: view.bottomAnchor,
+        constant: -bottomMargin
+    )
+    private let backButtonDescriptor = BackButtonDescription()
+    private let bottomMargin: CGFloat = 24
+
+    private var activityIndicator: BlockingActivityIndicator!
+
+    private var viewModel: AddParticipantsViewModel {
+        didSet {
+            updateValues()
+        }
+    }
+
     private func createConstraints() {
         let searchMargin: CGFloat = confirmButton.isHidden ? 0 : (confirmButtonHeight + bottomMargin * 2)
         guard let searchHeaderView = searchHeaderViewController.view,
@@ -412,35 +447,6 @@ final class AddParticipantsViewController: UIViewController {
                 conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
             }
         }
-    }
-
-    func setLoadingView(isVisible: Bool) {
-        activityIndicator.setIsActive(isVisible)
-        navigationItem.rightBarButtonItem?.isEnabled = !isVisible
-    }
-
-    @objc
-    func keyboardFrameWillChange(notification: Notification) {
-        // Don't adjust the frame when being presented in a popover.
-        if let arrowDirection = popoverPresentationController?.arrowDirection, arrowDirection == .unknown {
-            return
-        }
-
-        let firstResponder = UIResponder.currentFirst
-        let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
-
-        UIView.animate(
-            withKeyboardNotification: notification,
-            in: view,
-            animations: { [weak self] keyboardFrameInView in
-                guard let self else { return }
-
-                let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-
-                bottomConstraint.constant = -(keyboardHeight + bottomMargin)
-                view.layoutIfNeeded()
-            }
-        )
     }
 
     private func performSearch() {

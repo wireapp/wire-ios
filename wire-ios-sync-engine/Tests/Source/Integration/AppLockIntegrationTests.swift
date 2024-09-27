@@ -21,7 +21,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class AppLockIntegrationTests: IntegrationTest {
-    private var appLock: MockAppLock!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -51,4 +51,8 @@ final class AppLockIntegrationTests: IntegrationTest {
         // Then
         XCTAssertNil(userSession!.lock)
     }
+
+    // MARK: Private
+
+    private var appLock: MockAppLock!
 }

@@ -25,23 +25,7 @@ import WireSyncEngine
 
 // This class wraps the conversation content view controller in order to display the navigation bar on the top
 final class ConversationRootViewController: UIViewController {
-    // MARK: - Properties
-
-    let navBarContainer: UINavigationBarContainer
-    fileprivate var contentView = UIView()
-    private var navBarHeightForFederatedUsers: CGFloat = 50
-    // This value is coming from UINavigationBarContainer. swift file
-    // where the value for the navigation bar height is set to 44.
-    private var defaultNavBarHeight: CGFloat = 44
-    var navHeight: NSLayoutConstraint?
-    var networkStatusBarHeight: NSLayoutConstraint?
-
-    /// for NetworkStatusViewDelegate
-    var shouldAnimateNetworkStatusView = false
-
-    fileprivate let networkStatusViewController = NetworkStatusViewController()
-
-    fileprivate(set) weak var conversationViewController: ConversationViewController?
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -92,6 +76,27 @@ final class ConversationRootViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let navBarContainer: UINavigationBarContainer
+    var navHeight: NSLayoutConstraint?
+    var networkStatusBarHeight: NSLayoutConstraint?
+
+    /// for NetworkStatusViewDelegate
+    var shouldAnimateNetworkStatusView = false
+
+    fileprivate(set) weak var conversationViewController: ConversationViewController?
+
+    override var childForStatusBarStyle: UIViewController? {
+        child
+    }
+
+    override var childForStatusBarHidden: UIViewController? {
+        child
+    }
+
     // MARK: - Override methods
 
     override func viewDidAppear(_ animated: Bool) {
@@ -107,18 +112,6 @@ final class ConversationRootViewController: UIViewController {
 
         navBarContainer.navigationBar.accessibilityElementsHidden = true
         conversationViewController?.view.accessibilityElementsHidden = true
-    }
-
-    private var child: UIViewController? {
-        conversationViewController?.contentViewController
-    }
-
-    override var childForStatusBarStyle: UIViewController? {
-        child
-    }
-
-    override var childForStatusBarHidden: UIViewController? {
-        child
     }
 
     func configure() {
@@ -199,6 +192,22 @@ final class ConversationRootViewController: UIViewController {
         } else {
             navHeight?.constant = defaultNavBarHeight
         }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var contentView = UIView()
+    fileprivate let networkStatusViewController = NetworkStatusViewController()
+
+    // MARK: Private
+
+    private var navBarHeightForFederatedUsers: CGFloat = 50
+    // This value is coming from UINavigationBarContainer. swift file
+    // where the value for the navigation bar height is set to 44.
+    private var defaultNavBarHeight: CGFloat = 44
+
+    private var child: UIViewController? {
+        conversationViewController?.contentViewController
     }
 }
 

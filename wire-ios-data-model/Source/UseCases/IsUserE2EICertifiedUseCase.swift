@@ -22,13 +22,7 @@ import WireCoreCrypto
 // MARK: - IsUserE2EICertifiedUseCase
 
 public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
-    private let schedule: NSManagedObjectContext.ScheduledTaskType
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let featureRepository: FeatureRepositoryInterface
-    /// The `featureRepository` operates on a context, so every operation must be dispatched
-    /// on that context's queue. Since `FeatureRepositoryInterface` doesn't contain any
-    /// `context` property, we inject the context here.
-    private let featureRepositoryContext: NSManagedObjectContext
+    // MARK: Lifecycle
 
     public init(
         schedule: NSManagedObjectContext.ScheduledTaskType,
@@ -41,6 +35,8 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         self.featureRepository = featureRepository
         self.featureRepositoryContext = featureRepositoryContext
     }
+
+    // MARK: Public
 
     public func invoke(
         conversation: ZMConversation,
@@ -92,6 +88,16 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         return !userIdentities.isEmpty && userIdentities
             .allSatisfy { $0.status == .valid && $0.credentialType == .x509 }
     }
+
+    // MARK: Private
+
+    private let schedule: NSManagedObjectContext.ScheduledTaskType
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let featureRepository: FeatureRepositoryInterface
+    /// The `featureRepository` operates on a context, so every operation must be dispatched
+    /// on that context's queue. Since `FeatureRepositoryInterface` doesn't contain any
+    /// `context` property, we inject the context here.
+    private let featureRepositoryContext: NSManagedObjectContext
 }
 
 // MARK: IsUserE2EICertifiedUseCase.Error

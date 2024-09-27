@@ -24,10 +24,7 @@ import XCTest
 @testable import Wire
 
 final class SecurityLevelViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: SecurityLevelView!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -121,4 +118,11 @@ final class SecurityLevelViewTests: XCTestCase {
                 line: #line
             )
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: SecurityLevelView!
+    private var snapshotHelper: SnapshotHelper!
 }

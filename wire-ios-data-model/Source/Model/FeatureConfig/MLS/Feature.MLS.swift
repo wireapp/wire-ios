@@ -20,22 +20,14 @@ import Foundation
 
 extension Feature {
     public struct MLS: Codable {
-        // MARK: - Properties
-
-        /// Whether MLS is availble to the user.
-
-        public let status: Status
-
-        /// The configuration used to control how the MLS behaves.
-
-        public let config: Config
-
-        // MARK: - Life cycle
+        // MARK: Lifecycle
 
         public init(status: Feature.Status = .disabled, config: Config = .init()) {
             self.status = status
             self.config = config
         }
+
+        // MARK: Public
 
         // MARK: - Types
 
@@ -43,25 +35,7 @@ extension Feature {
         // to it will require some migration code.
 
         public struct Config: Codable, Equatable {
-            /// The ids of users who have the option to create new MLS groups.
-
-            public let protocolToggleUsers: [UUID]
-
-            /// The default protocol to use when creating a conversation.
-
-            public let defaultProtocol: MessageProtocol
-
-            /// The list of cipher suites that are allowed to be used with mls.
-
-            public let allowedCipherSuites: [MLSCipherSuite]
-
-            /// The default cipher suite used when creating a new MLS group.
-
-            public let defaultCipherSuite: MLSCipherSuite
-
-            /// The list of supported message protocols.
-
-            public let supportedProtocols: Set<MessageProtocol>
+            // MARK: Lifecycle
 
             public init(
                 protocolToggleUsers: [UUID] = [],
@@ -104,6 +78,8 @@ extension Feature {
                 ) ?? [.proteus]
             }
 
+            // MARK: Public
+
             public enum MessageProtocol: String, Codable {
                 case proteus
                 case mls
@@ -120,6 +96,36 @@ extension Feature {
                 case MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448 = 6
                 case MLS_256_DHKEMP384_AES256GCM_SHA384_P384 = 7
             }
+
+            /// The ids of users who have the option to create new MLS groups.
+
+            public let protocolToggleUsers: [UUID]
+
+            /// The default protocol to use when creating a conversation.
+
+            public let defaultProtocol: MessageProtocol
+
+            /// The list of cipher suites that are allowed to be used with mls.
+
+            public let allowedCipherSuites: [MLSCipherSuite]
+
+            /// The default cipher suite used when creating a new MLS group.
+
+            public let defaultCipherSuite: MLSCipherSuite
+
+            /// The list of supported message protocols.
+
+            public let supportedProtocols: Set<MessageProtocol>
         }
+
+        // MARK: - Properties
+
+        /// Whether MLS is availble to the user.
+
+        public let status: Status
+
+        /// The configuration used to control how the MLS behaves.
+
+        public let config: Config
     }
 }

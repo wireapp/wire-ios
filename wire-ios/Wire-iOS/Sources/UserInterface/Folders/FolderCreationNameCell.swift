@@ -20,7 +20,7 @@ import UIKit
 import WireDesign
 
 final class FolderCreationNameCell: UICollectionViewCell {
-    let textField = SimpleTextField()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,6 +31,12 @@ final class FolderCreationNameCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    let textField = SimpleTextField()
+
+    // MARK: Fileprivate
 
     fileprivate func setup() {
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -43,6 +49,8 @@ final class FolderCreationNameCell: UICollectionViewCell {
 
         configureColors()
     }
+
+    // MARK: Private
 
     private func configureColors() {
         backgroundColor = SemanticColors.View.backgroundUserCell

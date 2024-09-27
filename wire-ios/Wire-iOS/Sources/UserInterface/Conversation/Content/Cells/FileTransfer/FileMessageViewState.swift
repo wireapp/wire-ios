@@ -55,6 +55,59 @@ enum FileMessageViewState {
 
     case obfuscated
 
+    // MARK: Internal
+
+    typealias ViewsStateMapping = [FileMessageViewState: FileMessageViewViewsState]
+
+    static let clearColor   = UIColor.clear
+    static let normalColor  = SemanticColors.Icon.backgroundDefault
+    static let failureColor = UIColor.red.withAlphaComponent(0.24)
+
+    /// Mapping of cell state to it's views state for media message:
+    ///  # Cell state ======>      #progressViewType
+    ///               ======>      |            #playButtonIcon
+    ///               ======>      |            |        #playButtonBackgroundColor
+    static let viewsStateForCellStateForVideoMessage: ViewsStateMapping =
+        [
+            .uploading: (.determ, .cross, normalColor),
+            .uploaded: (.none, .play, normalColor),
+            .downloading: (.determ, .cross, normalColor),
+            .downloaded: (.none, .play, normalColor),
+            .failedUpload: (.none, .redo, failureColor),
+            .cancelledUpload: (.none, .redo, normalColor),
+            .failedDownload: (.none, .redo, failureColor),
+        ]
+
+    /// Mapping of cell state to it's views state for media message:
+    ///  # Cell state ======>      #progressViewType
+    ///               ======>      |            #playButtonIcon
+    ///               ======>      |            |        #playButtonBackgroundColor
+    static let viewsStateForCellStateForAudioMessage: ViewsStateMapping =
+        [
+            .uploading: (.determ, .cross, normalColor),
+            .uploaded: (.none, .play, normalColor),
+            .downloading: (.determ, .cross, normalColor),
+            .downloaded: (.none, .play, normalColor),
+            .failedUpload: (.none, .redo, failureColor),
+            .cancelledUpload: (.none, .redo, normalColor),
+            .failedDownload: (.none, .redo, failureColor),
+        ]
+
+    /// Mapping of cell state to it's views state for normal file message:
+    ///  # Cell state ======>      #progressViewType
+    ///               ======>      |            #actionButtonIcon
+    ///               ======>      |            |        #actionButtonBackgroundColor
+    static let viewsStateForCellStateForFileMessage: ViewsStateMapping =
+        [
+            .uploading: (.determ, .cross, normalColor),
+            .downloading: (.determ, .cross, normalColor),
+            .downloaded: (.none, .none, clearColor),
+            .uploaded: (.none, .none, clearColor),
+            .failedUpload: (.none, .redo, failureColor),
+            .cancelledUpload: (.none, .redo, normalColor),
+            .failedDownload: (.none, .save, failureColor),
+        ]
+
     // Value mapping from message consolidated state (transfer state, previewData, fileURL) to FileMessageViewState
     static func fromConversationMessage(_ message: ZMConversationMessage) -> FileMessageViewState? {
         guard
@@ -103,56 +156,6 @@ enum FileMessageViewState {
             }
         }
     }
-
-    static let clearColor   = UIColor.clear
-    static let normalColor  = SemanticColors.Icon.backgroundDefault
-    static let failureColor = UIColor.red.withAlphaComponent(0.24)
-
-    typealias ViewsStateMapping = [FileMessageViewState: FileMessageViewViewsState]
-    /// Mapping of cell state to it's views state for media message:
-    ///  # Cell state ======>      #progressViewType
-    ///               ======>      |            #playButtonIcon
-    ///               ======>      |            |        #playButtonBackgroundColor
-    static let viewsStateForCellStateForVideoMessage: ViewsStateMapping =
-        [
-            .uploading: (.determ, .cross, normalColor),
-            .uploaded: (.none, .play, normalColor),
-            .downloading: (.determ, .cross, normalColor),
-            .downloaded: (.none, .play, normalColor),
-            .failedUpload: (.none, .redo, failureColor),
-            .cancelledUpload: (.none, .redo, normalColor),
-            .failedDownload: (.none, .redo, failureColor),
-        ]
-
-    /// Mapping of cell state to it's views state for media message:
-    ///  # Cell state ======>      #progressViewType
-    ///               ======>      |            #playButtonIcon
-    ///               ======>      |            |        #playButtonBackgroundColor
-    static let viewsStateForCellStateForAudioMessage: ViewsStateMapping =
-        [
-            .uploading: (.determ, .cross, normalColor),
-            .uploaded: (.none, .play, normalColor),
-            .downloading: (.determ, .cross, normalColor),
-            .downloaded: (.none, .play, normalColor),
-            .failedUpload: (.none, .redo, failureColor),
-            .cancelledUpload: (.none, .redo, normalColor),
-            .failedDownload: (.none, .redo, failureColor),
-        ]
-
-    /// Mapping of cell state to it's views state for normal file message:
-    ///  # Cell state ======>      #progressViewType
-    ///               ======>      |            #actionButtonIcon
-    ///               ======>      |            |        #actionButtonBackgroundColor
-    static let viewsStateForCellStateForFileMessage: ViewsStateMapping =
-        [
-            .uploading: (.determ, .cross, normalColor),
-            .downloading: (.determ, .cross, normalColor),
-            .downloaded: (.none, .none, clearColor),
-            .uploaded: (.none, .none, clearColor),
-            .failedUpload: (.none, .redo, failureColor),
-            .cancelledUpload: (.none, .redo, normalColor),
-            .failedDownload: (.none, .save, failureColor),
-        ]
 
     func viewsStateForVideo() -> FileMessageViewViewsState? {
         type(of: self).viewsStateForCellStateForVideoMessage[self]

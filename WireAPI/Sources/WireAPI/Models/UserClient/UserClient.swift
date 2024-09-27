@@ -21,6 +21,48 @@ import Foundation
 /// Client device for a user.
 
 public struct UserClient: Equatable, Identifiable, Codable {
+    // MARK: Lifecycle
+
+    /// Create a new `UserClient`.
+    ///
+    /// - Parameters:
+    ///   - id: The unique id of the client.
+    ///   - type: The type of user client.
+    ///   - activationDate: The date when the client was activated.
+    ///   - label: A label describing the client.
+    ///   - model: A description of the client device model.
+    ///   - deviceClass: The device class of the client.
+    ///   - lastActiveDate: When the client was last active.
+    ///   - mlsPublicKeys: The mls public keys for the client.
+    ///   - cookie: The device cookie.
+    ///   - capabilities: The capabilities of the client.
+
+    public init(
+        id: String,
+        type: UserClientType,
+        activationDate: Date,
+        label: String? = nil,
+        model: String? = nil,
+        deviceClass: DeviceClass? = nil,
+        lastActiveDate: Date? = nil,
+        mlsPublicKeys: MLSPublicKeys? = nil,
+        cookie: String? = nil,
+        capabilities: [UserClientCapability]
+    ) {
+        self.id = id
+        self.type = type
+        self.activationDate = activationDate
+        self.label = label
+        self.model = model
+        self.deviceClass = deviceClass
+        self.lastActiveDate = lastActiveDate
+        self.mlsPublicKeys = mlsPublicKeys
+        self.cookie = cookie
+        self.capabilities = capabilities
+    }
+
+    // MARK: Public
+
     /// The unique id of the client.
 
     public let id: String
@@ -61,43 +103,7 @@ public struct UserClient: Equatable, Identifiable, Codable {
 
     public let capabilities: [UserClientCapability]
 
-    /// Create a new `UserClient`.
-    ///
-    /// - Parameters:
-    ///   - id: The unique id of the client.
-    ///   - type: The type of user client.
-    ///   - activationDate: The date when the client was activated.
-    ///   - label: A label describing the client.
-    ///   - model: A description of the client device model.
-    ///   - deviceClass: The device class of the client.
-    ///   - lastActiveDate: When the client was last active.
-    ///   - mlsPublicKeys: The mls public keys for the client.
-    ///   - cookie: The device cookie.
-    ///   - capabilities: The capabilities of the client.
-
-    public init(
-        id: String,
-        type: UserClientType,
-        activationDate: Date,
-        label: String? = nil,
-        model: String? = nil,
-        deviceClass: DeviceClass? = nil,
-        lastActiveDate: Date? = nil,
-        mlsPublicKeys: MLSPublicKeys? = nil,
-        cookie: String? = nil,
-        capabilities: [UserClientCapability]
-    ) {
-        self.id = id
-        self.type = type
-        self.activationDate = activationDate
-        self.label = label
-        self.model = model
-        self.deviceClass = deviceClass
-        self.lastActiveDate = lastActiveDate
-        self.mlsPublicKeys = mlsPublicKeys
-        self.cookie = cookie
-        self.capabilities = capabilities
-    }
+    // MARK: Internal
 
     enum CodingKeys: String, CodingKey {
         case id

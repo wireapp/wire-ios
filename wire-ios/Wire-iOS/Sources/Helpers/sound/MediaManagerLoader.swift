@@ -63,7 +63,34 @@ extension MediaManagerState {
 // MARK: - MediaManagerLoader
 
 final class MediaManagerLoader: NSObject {
+    // MARK: Lifecycle
+
+    override init() {
+        super.init()
+        self.flowManagerObserver = NotificationCenter.default.addObserver(
+            forName: FlowManager.AVSFlowManagerCreatedNotification,
+            object: nil,
+            queue: OperationQueue.main,
+            using: { [weak self] _ in
+                self?.send(message: .flowManagerLoaded)
+            }
+        )
+
+        if AVSFlowManager.getInstance() != nil {
+            send(message: .flowManagerLoaded)
+        }
+    }
+
+    // MARK: Internal
+
+    func send(message: LoadingMessage) {
+        state.send(message: message)
+    }
+
+    // MARK: Private
+
     private var flowManagerObserver: AnyObject?
+
     private var state: MediaManagerState = .initial {
         didSet {
             switch state {
@@ -72,10 +99,6 @@ final class MediaManagerLoader: NSObject {
             default: break
             }
         }
-    }
-
-    func send(message: LoadingMessage) {
-        state.send(message: message)
     }
 
     private func loadMediaManager() {
@@ -93,21 +116,5 @@ final class MediaManagerLoader: NSObject {
         mediaManager.observeSoundConfigurationChanges()
         mediaManager.isMicrophoneMuted = false
         mediaManager.isSpeakerEnabled = false
-    }
-
-    override init() {
-        super.init()
-        self.flowManagerObserver = NotificationCenter.default.addObserver(
-            forName: FlowManager.AVSFlowManagerCreatedNotification,
-            object: nil,
-            queue: OperationQueue.main,
-            using: { [weak self] _ in
-                self?.send(message: .flowManagerLoaded)
-            }
-        )
-
-        if AVSFlowManager.getInstance() != nil {
-            send(message: .flowManagerLoaded)
-        }
     }
 }

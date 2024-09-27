@@ -35,6 +35,8 @@ enum MaskShape {
     case rounded(radius: CGFloat)
     case relative(multiplier: CGFloat, dimension: MaskDimension)
 
+    // MARK: Internal
+
     enum Dimension {
         case width
         case height
@@ -45,26 +47,7 @@ enum MaskShape {
 
 /// A layer whose corners are rounded with a continuous mask (“squircle“).
 final class ContinuousMaskLayer: CALayer {
-    // MARK: - Properties
-
-    override var cornerRadius: CGFloat {
-        didSet {
-            // Ensure masksToBounds is set when cornerRadius is changed
-            masksToBounds = cornerRadius > 0
-        }
-    }
-
-    var shape: MaskShape = .rectangle {
-        didSet {
-            refreshMask()
-        }
-    }
-
-    var roundedCorners: UIRectCorner = .allCorners {
-        didSet {
-            refreshMask()
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -88,12 +71,37 @@ final class ContinuousMaskLayer: CALayer {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    override var cornerRadius: CGFloat {
+        didSet {
+            // Ensure masksToBounds is set when cornerRadius is changed
+            masksToBounds = cornerRadius > 0
+        }
+    }
+
+    var shape: MaskShape = .rectangle {
+        didSet {
+            refreshMask()
+        }
+    }
+
+    var roundedCorners: UIRectCorner = .allCorners {
+        didSet {
+            refreshMask()
+        }
+    }
+
     // MARK: - Layout
 
     override func layoutSublayers() {
         super.layoutSublayers()
         refreshMask()
     }
+
+    // MARK: Private
 
     private func refreshMask() {
         switch shape {

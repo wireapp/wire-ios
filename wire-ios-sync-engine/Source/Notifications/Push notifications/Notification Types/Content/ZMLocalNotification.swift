@@ -52,16 +52,7 @@ protocol NotificationBuilder {
 /// information regarding the conversation, sender, and team name.
 ///
 class ZMLocalNotification: NSObject {
-    /// The unique identifier for this notification. Use it to later update
-    /// or remove pending or scheduled notification requests.
-    let id: UUID
-
-    let type: LocalNotificationType
-    var title: String?
-    var body: String
-    var category: PushNotificationCategory
-    var sound: NotificationSound
-    var userInfo: NotificationUserInfo?
+    // MARK: Lifecycle
 
     init?(builder: NotificationBuilder, moc: NSManagedObjectContext) {
         guard builder.shouldCreateNotification() else { return nil }
@@ -84,6 +75,19 @@ class ZMLocalNotification: NSObject {
 
         userInfo?.requestID = id
     }
+
+    // MARK: Internal
+
+    /// The unique identifier for this notification. Use it to later update
+    /// or remove pending or scheduled notification requests.
+    let id: UUID
+
+    let type: LocalNotificationType
+    var title: String?
+    var body: String
+    var category: PushNotificationCategory
+    var sound: NotificationSound
+    var userInfo: NotificationUserInfo?
 
     /// Returns a configured concrete `UNNotificationContent` object.
     lazy var content: UNNotificationContent = {

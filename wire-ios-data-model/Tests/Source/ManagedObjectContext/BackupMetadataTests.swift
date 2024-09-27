@@ -133,9 +133,13 @@ class BackupMetadataTests: XCTestCase {
 // MARK: - MockProvider
 
 private class MockProvider: VersionProvider {
-    var version: String
+    // MARK: Lifecycle
 
     init(version: String) {
         self.version = version
     }
+
+    // MARK: Internal
+
+    var version: String
 }

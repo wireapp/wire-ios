@@ -31,20 +31,7 @@ public enum UpdateAccessRolesError: Error {
 // MARK: - UpdateAccessRolesAction
 
 public class UpdateAccessRolesAction: EntityAction {
-    // MARK: - Types
-
-    public typealias Result = Void
-    public typealias Failure = UpdateAccessRolesError
-
-    // MARK: - Properties
-
-    public var resultHandler: ResultHandler?
-
-    public let conversationID: NSManagedObjectID
-    public let accessMode: ConversationAccessMode
-    public let accessRoles: Set<ConversationAccessRoleV2>
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         conversation: ZMConversation,
@@ -57,4 +44,19 @@ public class UpdateAccessRolesAction: EntityAction {
         self.accessRoles = accessRoles
         self.resultHandler = resultHandler
     }
+
+    // MARK: Public
+
+    // MARK: - Types
+
+    public typealias Result = Void
+    public typealias Failure = UpdateAccessRolesError
+
+    // MARK: - Properties
+
+    public var resultHandler: ResultHandler?
+
+    public let conversationID: NSManagedObjectID
+    public let accessMode: ConversationAccessMode
+    public let accessRoles: Set<ConversationAccessRoleV2>
 }

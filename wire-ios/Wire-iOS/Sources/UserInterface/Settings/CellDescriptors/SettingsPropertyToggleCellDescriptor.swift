@@ -26,21 +26,26 @@ private let zmLog = ZMSLog(tag: "UI")
 /// @abstract Generates the cell that displays toggle control
 
 final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptorType {
-    static let cellType: SettingsTableCellProtocol.Type = SettingsToggleCell.self
-    let inverse: Bool
-    var title: String {
-        settingsProperty.propertyName.settingsPropertyLabelText
-    }
-
-    let identifier: String?
-    var visible = true
-    weak var group: SettingsGroupCellDescriptorType?
-    var settingsProperty: SettingsProperty
+    // MARK: Lifecycle
 
     init(settingsProperty: SettingsProperty, inverse: Bool = false, identifier: String? = .none) {
         self.settingsProperty = settingsProperty
         self.inverse = inverse
         self.identifier = identifier
+    }
+
+    // MARK: Internal
+
+    static let cellType: SettingsTableCellProtocol.Type = SettingsToggleCell.self
+
+    let inverse: Bool
+    let identifier: String?
+    var visible = true
+    weak var group: SettingsGroupCellDescriptorType?
+    var settingsProperty: SettingsProperty
+
+    var title: String {
+        settingsProperty.propertyName.settingsPropertyLabelText
     }
 
     func featureCell(_ cell: SettingsCellType) {

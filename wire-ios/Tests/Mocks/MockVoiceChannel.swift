@@ -19,6 +19,14 @@
 import Foundation
 
 final class MockVoiceChannel: NSObject, VoiceChannel {
+    // MARK: Lifecycle
+
+    required init(conversation: ZMConversation?) {
+        self.conversation = conversation
+    }
+
+    // MARK: Internal
+
     var conversation: ZMConversation?
     var mockCallState: CallState = .incoming(video: false, shouldRing: true, degraded: false)
     var mockCallDuration: TimeInterval?
@@ -31,41 +39,10 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     var mockIsConferenceCall = false
     var mockFirstDegradedUser: UserType?
 
-    required init(conversation: ZMConversation?) {
-        self.conversation = conversation
-    }
-
-    func addCallStateObserver(_: WireCallCenterCallStateObserver) -> Any {
-        "token"
-    }
-
-    func addParticipantObserver(_: WireCallCenterCallParticipantObserver) -> Any {
-        "token"
-    }
-
-    func addVoiceGainObserver(_: VoiceGainObserver) -> Any {
-        "token"
-    }
-
-    func addConstantBitRateObserver(_: ConstantBitRateAudioObserver) -> Any {
-        "token"
-    }
-
-    static func addCallStateObserver(_ observer: WireCallCenterCallStateObserver, userSession: ZMUserSession) -> Any {
-        "token"
-    }
-
-    func addNetworkQualityObserver(_: NetworkQualityObserver) -> Any {
-        "token"
-    }
-
-    func addMuteStateObserver(_: MuteStateObserver) -> Any {
-        "token"
-    }
-
-    func addActiveSpeakersObserver(_: ActiveSpeakersObserver) -> Any {
-        "token"
-    }
+    var requestedCallParticipantsListKind: CallParticipantsListKind?
+    var mockMuted = false
+    var mockVideoGridPresentationMode: VideoGridPresentationMode = .allVideoStreams
+    var requestedVideoStreams: [AVSClient]?
 
     var state: CallState {
         mockCallState
@@ -81,12 +58,6 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
 
     var participants: [CallParticipant] {
         mockParticipants
-    }
-
-    var requestedCallParticipantsListKind: CallParticipantsListKind?
-    func participants(ofKind kind: CallParticipantsListKind, activeSpeakersLimit limit: Int?) -> [CallParticipant] {
-        requestedCallParticipantsListKind = kind
-        return mockParticipants
     }
 
     var isConstantBitRateAudioActive: Bool {
@@ -122,7 +93,6 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
         mockFirstDegradedUser
     }
 
-    var mockMuted = false
     var muted: Bool {
         get {
             mockMuted
@@ -132,7 +102,6 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
         }
     }
 
-    var mockVideoGridPresentationMode: VideoGridPresentationMode = .allVideoStreams
     var videoGridPresentationMode: VideoGridPresentationMode {
         get {
             mockVideoGridPresentationMode
@@ -140,6 +109,43 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
         set {
             mockVideoGridPresentationMode = newValue
         }
+    }
+
+    static func addCallStateObserver(_ observer: WireCallCenterCallStateObserver, userSession: ZMUserSession) -> Any {
+        "token"
+    }
+
+    func addCallStateObserver(_: WireCallCenterCallStateObserver) -> Any {
+        "token"
+    }
+
+    func addParticipantObserver(_: WireCallCenterCallParticipantObserver) -> Any {
+        "token"
+    }
+
+    func addVoiceGainObserver(_: VoiceGainObserver) -> Any {
+        "token"
+    }
+
+    func addConstantBitRateObserver(_: ConstantBitRateAudioObserver) -> Any {
+        "token"
+    }
+
+    func addNetworkQualityObserver(_: NetworkQualityObserver) -> Any {
+        "token"
+    }
+
+    func addMuteStateObserver(_: MuteStateObserver) -> Any {
+        "token"
+    }
+
+    func addActiveSpeakersObserver(_: ActiveSpeakersObserver) -> Any {
+        "token"
+    }
+
+    func participants(ofKind kind: CallParticipantsListKind, activeSpeakersLimit limit: Int?) -> [CallParticipant] {
+        requestedCallParticipantsListKind = kind
+        return mockParticipants
     }
 
     func setVideoCaptureDevice(_: CaptureDevice) throws {}
@@ -156,7 +162,6 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
 
     func leave() {}
 
-    var requestedVideoStreams: [AVSClient]?
     func request(videoStreams: [AVSClient]) {
         requestedVideoStreams = videoStreams
     }

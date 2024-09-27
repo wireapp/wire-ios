@@ -22,17 +22,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: ResolveOneOnOneConversationsUseCase!
-    private var mockSupportedProtocolService: MockSupportedProtocolsServiceInterface!
-    private var mockOneOnOneResolver: MockOneOnOneResolverInterface!
-    private var stack: CoreDataStack!
-    private let coreDataStackHelper = CoreDataStackHelper()
-
-    private var syncContext: NSManagedObjectContext {
-        stack.syncContext
-    }
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -130,5 +120,19 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         // THEN
         XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 0)
         XCTAssertEqual(mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 1)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ResolveOneOnOneConversationsUseCase!
+    private var mockSupportedProtocolService: MockSupportedProtocolsServiceInterface!
+    private var mockOneOnOneResolver: MockOneOnOneResolverInterface!
+    private var stack: CoreDataStack!
+    private let coreDataStackHelper = CoreDataStackHelper()
+
+    private var syncContext: NSManagedObjectContext {
+        stack.syncContext
     }
 }

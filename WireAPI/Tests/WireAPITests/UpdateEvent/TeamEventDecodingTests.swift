@@ -20,7 +20,7 @@ import XCTest
 @testable import WireAPI
 
 final class TeamEventDecodingTests: XCTestCase {
-    private var decoder: JSONDecoder!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -66,6 +66,8 @@ final class TeamEventDecodingTests: XCTestCase {
         )
     }
 
+    // MARK: Private
+
     private enum Scaffolding {
         static let memberLeaveEvent = TeamMemberLeaveEvent(
             teamID: UUID(uuidString: "6f96e56c-8b3b-4821-925a-457f62f9de32")!,
@@ -77,4 +79,6 @@ final class TeamEventDecodingTests: XCTestCase {
             membershipID: UUID(uuidString: "d6344976-f86c-4010-afe2-bc07447ab412")!
         )
     }
+
+    private var decoder: JSONDecoder!
 }

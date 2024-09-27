@@ -24,16 +24,18 @@ import WireShareEngine
 // MARK: - AttachmentType
 
 enum AttachmentType: Int, CaseIterable {
-    static func < (lhs: AttachmentType, rhs: AttachmentType) -> Bool {
-        lhs.rawValue < rhs.rawValue
-    }
-
     case walletPass = 1
     case video
     case image
     case rawFile
     case url
     case fileUrl
+
+    // MARK: Internal
+
+    static func < (lhs: AttachmentType, rhs: AttachmentType) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
 }
 
 extension NSItemProvider {

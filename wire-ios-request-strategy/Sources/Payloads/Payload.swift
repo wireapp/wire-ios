@@ -22,6 +22,8 @@ import WireDataModel
 // MARK: - Payload
 
 public enum Payload {
+    // MARK: Public
+
     public typealias UserClients = [Payload.UserClient]
     public typealias UserClientByUserID = [String: UserClients]
     public typealias UserClientByDomain = [String: UserClientByUserID]
@@ -34,70 +36,22 @@ public enum Payload {
     public typealias ClientListByUser = [ZMUser: ClientList]
     public typealias UserProfiles = [Payload.UserProfile]
 
-    struct EventContainer<T: Codable>: Codable {
-        enum CodingKeys: String, CodingKey {
-            case event
-        }
-
-        let event: T
-    }
-
-    struct QualifiedUserIDList: Codable, Hashable {
-        enum CodingKeys: String, CodingKey {
-            case qualifiedIDs = "qualified_ids"
-        }
-
-        var qualifiedIDs: [QualifiedID]
-    }
-
     public struct Prekey: Codable {
-        let key: String
-        let id: Int?
+        // MARK: Lifecycle
 
         public init(key: String, id: Int?) {
             self.key = key
             self.id = id
         }
-    }
 
-    struct PrekeyByQualifiedUserIDV4: Codable {
-        enum CodingKeys: String, CodingKey {
-            case prekeyByQualifiedUserID = "qualified_user_client_prekeys"
-            case failed = "failed_to_list"
-        }
+        // MARK: Internal
 
-        let prekeyByQualifiedUserID: Payload.PrekeyByQualifiedUserID
-        let failed: [QualifiedID]?
-    }
-
-    struct Location: Codable, Equatable {
-        enum CodingKeys: String, CodingKey {
-            case longitude = "lon"
-            case latitide = "lat"
-        }
-
-        let longitude: Double
-        let latitide: Double
+        let key: String
+        let id: Int?
     }
 
     public struct UserClient: Codable, Equatable {
-        enum CodingKeys: String, CodingKey {
-            case id
-            case type
-            case creationDate = "time"
-            case label
-            case location
-            case deviceClass = "class"
-            case deviceModel = "model"
-        }
-
-        let id: String
-        let type: String?
-        let creationDate: Date?
-        let label: String?
-        let location: Location?
-        let deviceClass: String?
-        let deviceModel: String?
+        // MARK: Lifecycle
 
         init(
             id: String,
@@ -116,105 +70,30 @@ public enum Payload {
             self.deviceClass = deviceClass
             self.deviceModel = deviceModel
         }
-    }
 
-    struct Asset: Codable {
-        enum AssetSize: String, Codable {
-            case preview
-            case complete
-        }
+        // MARK: Internal
 
-        enum AssetType: String, Codable {
-            case image
-        }
-
-        let key: String
-        let size: AssetSize
-        let type: AssetType
-    }
-
-    struct ServiceID: Codable {
-        let id: UUID
-        let provider: UUID
-    }
-
-    struct SSOID: Codable {
         enum CodingKeys: String, CodingKey {
-            case tenant
-            case subject
-            case scimExternalID = "scim_external_id"
+            case id
+            case type
+            case creationDate = "time"
+            case label
+            case location
+            case deviceClass = "class"
+            case deviceModel = "model"
         }
 
-        let tenant: String?
-        let subject: String?
-        let scimExternalID: String?
-    }
-
-    enum LegalholdStatus: String, Codable {
-        case enabled
-        case pending
-        case disabled
-        case noConsent = "no_consent"
-    }
-
-    struct UserProfilesV4: Codable {
-        enum CodingKeys: String, CodingKey {
-            case found
-            case failed
-        }
-
-        let found: [Payload.UserProfile]
-        let failed: [QualifiedID]?
+        let id: String
+        let type: String?
+        let creationDate: Date?
+        let label: String?
+        let location: Location?
+        let deviceClass: String?
+        let deviceModel: String?
     }
 
     public struct UserProfile: Codable {
-        enum MessageProtocol: String, Codable {
-            case proteus
-            case mls
-        }
-
-        enum CodingKeys: String, CodingKey, CaseIterable {
-            case id
-            case qualifiedID = "qualified_id"
-            case teamID = "team"
-            case serviceID = "service"
-            case SSOID = "sso_id"
-            case name
-            case handle
-            case phone
-            case email
-            case assets
-            case managedBy = "managed_by"
-            case accentColor = "accent_id"
-            case isDeleted = "deleted"
-            case expiresAt = "expires_at"
-            case legalholdStatus = "legalhold_status"
-            case supportedProtocols = "supported_protocols"
-        }
-
-        let id: UUID?
-        let qualifiedID: QualifiedID?
-        let teamID: UUID?
-        let serviceID: ServiceID?
-        let SSOID: SSOID?
-        let name: String?
-        let handle: String?
-        let phone: String?
-        let email: String?
-        let assets: [Asset]?
-        let managedBy: String?
-        let accentColor: Int?
-        let isDeleted: Bool?
-        let expiresAt: Date?
-        let legalholdStatus: LegalholdStatus?
-        let supportedProtocols: Set<MessageProtocol>?
-
-        /// All keys which were present in the original payload even if they
-        /// contained a null value.
-        ///
-        /// This is used to distinguish when a delta user profile update does not
-        /// contain a field from when it sets the field to nil.
-        let updatedKeys: Set<CodingKeys>
+        // MARK: Lifecycle
 
         init(
             id: UUID? = nil,
@@ -277,22 +156,89 @@ public enum Payload {
             )
             self.updatedKeys = Set(container.allKeys)
         }
+
+        // MARK: Internal
+
+        enum MessageProtocol: String, Codable {
+            case proteus
+            case mls
+        }
+
+        enum CodingKeys: String, CodingKey, CaseIterable {
+            case id
+            case qualifiedID = "qualified_id"
+            case teamID = "team"
+            case serviceID = "service"
+            case SSOID = "sso_id"
+            case name
+            case handle
+            case phone
+            case email
+            case assets
+            case managedBy = "managed_by"
+            case accentColor = "accent_id"
+            case isDeleted = "deleted"
+            case expiresAt = "expires_at"
+            case legalholdStatus = "legalhold_status"
+            case supportedProtocols = "supported_protocols"
+        }
+
+        let id: UUID?
+        let qualifiedID: QualifiedID?
+        let teamID: UUID?
+        let serviceID: ServiceID?
+        let SSOID: SSOID?
+        let name: String?
+        let handle: String?
+        let phone: String?
+        let email: String?
+        let assets: [Asset]?
+        let managedBy: String?
+        let accentColor: Int?
+        let isDeleted: Bool?
+        let expiresAt: Date?
+        let legalholdStatus: LegalholdStatus?
+        let supportedProtocols: Set<MessageProtocol>?
+
+        /// All keys which were present in the original payload even if they
+        /// contained a null value.
+        ///
+        /// This is used to distinguish when a delta user profile update does not
+        /// contain a field from when it sets the field to nil.
+        let updatedKeys: Set<CodingKeys>
     }
 
     public struct ResponseFailure: Codable, Equatable {
+        // MARK: Lifecycle
+
+        public init(code: Int, label: Label, message: String, data: FederationFailure?) {
+            self.code = code
+            self.label = label
+            self.message = message
+            self.data = data
+        }
+
+        // MARK: Public
+
         /// Endpoints involving federated calls to other domains can return some extra failure responses.
         /// The error response contains the following extra fields:
         public struct FederationFailure: Codable, Equatable {
-            public enum FailureType: String, Codable, Equatable {
-                case federation
-                case unknown
-            }
+            // MARK: Lifecycle
 
             public init(domain: String, path: String, type: FailureType) {
                 self.domain = domain
                 self.path = path
                 self.type = type
             }
+
+            // MARK: Public
+
+            public enum FailureType: String, Codable, Equatable {
+                case federation
+                case unknown
+            }
+
+            // MARK: Internal
 
             let domain: String
             let path: String
@@ -316,23 +262,20 @@ public enum Payload {
             case badRequest = "bad-request"
             case unknown
 
+            // MARK: Lifecycle
+
             public init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
                 let label = try container.decode(String.self)
                 self = Label(rawValue: label) ?? .unknown
             }
 
+            // MARK: Public
+
             public func encode(to encoder: Encoder) throws {
                 var container = encoder.singleValueContainer()
                 try container.encode(rawValue)
             }
-        }
-
-        public init(code: Int, label: Label, message: String, data: FederationFailure?) {
-            self.code = code
-            self.label = label
-            self.message = message
-            self.data = data
         }
 
         public let code: Int
@@ -444,6 +387,8 @@ public enum Payload {
     }
 
     public struct MessageSendingStatus: Equatable {
+        // MARK: Lifecycle
+
         public init(
             time: Date,
             missing: ClientListByQualifiedUserID,
@@ -459,6 +404,8 @@ public enum Payload {
             self.failedToSend = failedToSend
             self.failedToConfirm = failedToConfirm
         }
+
+        // MARK: Internal
 
         /// Time of sending message.
         let time: Date
@@ -482,16 +429,20 @@ public enum Payload {
     }
 
     public struct MLSMessageSendingStatus: Codable {
-        enum CodingKeys: String, CodingKey {
-            case time
-            case events
-            case failedToSend = "failed_to_send"
-        }
+        // MARK: Lifecycle
 
         public init(time: Date, events: [Data], failedToSend: [QualifiedID]?) {
             self.time = time
             self.events = events
             self.failedToSend = failedToSend
+        }
+
+        // MARK: Internal
+
+        enum CodingKeys: String, CodingKey {
+            case time
+            case events
+            case failedToSend = "failed_to_send"
         }
 
         /// Time of sending message.
@@ -504,7 +455,103 @@ public enum Payload {
         let failedToSend: [QualifiedID]?
     }
 
+    // MARK: Internal
+
+    struct EventContainer<T: Codable>: Codable {
+        enum CodingKeys: String, CodingKey {
+            case event
+        }
+
+        let event: T
+    }
+
+    struct QualifiedUserIDList: Codable, Hashable {
+        enum CodingKeys: String, CodingKey {
+            case qualifiedIDs = "qualified_ids"
+        }
+
+        var qualifiedIDs: [QualifiedID]
+    }
+
+    struct PrekeyByQualifiedUserIDV4: Codable {
+        enum CodingKeys: String, CodingKey {
+            case prekeyByQualifiedUserID = "qualified_user_client_prekeys"
+            case failed = "failed_to_list"
+        }
+
+        let prekeyByQualifiedUserID: Payload.PrekeyByQualifiedUserID
+        let failed: [QualifiedID]?
+    }
+
+    struct Location: Codable, Equatable {
+        enum CodingKeys: String, CodingKey {
+            case longitude = "lon"
+            case latitide = "lat"
+        }
+
+        let longitude: Double
+        let latitide: Double
+    }
+
+    struct Asset: Codable {
+        enum AssetSize: String, Codable {
+            case preview
+            case complete
+        }
+
+        enum AssetType: String, Codable {
+            case image
+        }
+
+        let key: String
+        let size: AssetSize
+        let type: AssetType
+    }
+
+    struct ServiceID: Codable {
+        let id: UUID
+        let provider: UUID
+    }
+
+    struct SSOID: Codable {
+        enum CodingKeys: String, CodingKey {
+            case tenant
+            case subject
+            case scimExternalID = "scim_external_id"
+        }
+
+        let tenant: String?
+        let subject: String?
+        let scimExternalID: String?
+    }
+
+    enum LegalholdStatus: String, Codable {
+        case enabled
+        case pending
+        case disabled
+        case noConsent = "no_consent"
+    }
+
+    struct UserProfilesV4: Codable {
+        enum CodingKeys: String, CodingKey {
+            case found
+            case failed
+        }
+
+        let found: [Payload.UserProfile]
+        let failed: [QualifiedID]?
+    }
+
     struct PaginationStatus: Codable {
+        // MARK: Lifecycle
+
+        init(pagingState: String?, size: Int) {
+            self.pagingState = pagingState?.isEmpty == true ? nil : pagingState
+            self.size = size
+        }
+
+        // MARK: Internal
+
         enum CodingKeys: String, CodingKey {
             case pagingState = "paging_state"
             case size
@@ -512,11 +559,6 @@ public enum Payload {
 
         let pagingState: String?
         let size: Int?
-
-        init(pagingState: String?, size: Int) {
-            self.pagingState = pagingState?.isEmpty == true ? nil : pagingState
-            self.size = size
-        }
     }
 }
 

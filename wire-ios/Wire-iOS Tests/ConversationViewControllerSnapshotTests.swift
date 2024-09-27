@@ -25,14 +25,10 @@ import XCTest
 // MARK: - ConversationViewControllerSnapshotTests
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
-    private var mockMainCoordinator: MockMainCoordinator!
-    private var sut: ConversationViewController!
-    private var mockConversation: ZMConversation!
-    private var serviceUser: ZMUser!
-    private var userSession: UserSessionMock!
+    // MARK: Internal
+
     var coreDataFixture: CoreDataFixture!
     var snapshotHelper: SnapshotHelper!
-    private var imageTransformerMock: MockImageTransformer!
 
     override func setupCoreDataStack() {
         coreDataFixture = CoreDataFixture()
@@ -85,6 +81,15 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     func testForInitState() {
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: ConversationViewController!
+    private var mockConversation: ZMConversation!
+    private var serviceUser: ZMUser!
+    private var userSession: UserSessionMock!
+    private var imageTransformerMock: MockImageTransformer!
 }
 
 // MARK: - Disable / Enable search in conversations

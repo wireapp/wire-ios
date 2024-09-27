@@ -34,23 +34,7 @@ struct MessageReactionMetadata: Equatable {
 // MARK: - MessageReactionsCell
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
-    // MARK: - Properties
-
-    var isSelected = false
-    var message: ZMConversationMessage?
-
-    weak var delegate: ConversationMessageCellDelegate?
-
-    private let reactionsView = GridLayoutView()
-
-    private lazy var insets = UIEdgeInsets(
-        top: 8,
-        left: conversationHorizontalMargins.left,
-        bottom: 0,
-        right: conversationHorizontalMargins.right
-    )
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -62,12 +46,14 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    // MARK: - configure Views and constraints
+    // MARK: Internal
 
-    private func configureSubviews() {
-        addSubview(reactionsView)
-        reactionsView.fitIn(view: self, insets: insets)
-    }
+    // MARK: - Properties
+
+    var isSelected = false
+    var message: ZMConversationMessage?
+
+    weak var delegate: ConversationMessageCellDelegate?
 
     // MARK: - configure method
 
@@ -117,5 +103,23 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
             withHorizontalFittingPriority: horizontalFittingPriority,
             verticalFittingPriority: verticalFittingPriority
         )
+    }
+
+    // MARK: Private
+
+    private let reactionsView = GridLayoutView()
+
+    private lazy var insets = UIEdgeInsets(
+        top: 8,
+        left: conversationHorizontalMargins.left,
+        bottom: 0,
+        right: conversationHorizontalMargins.right
+    )
+
+    // MARK: - configure Views and constraints
+
+    private func configureSubviews() {
+        addSubview(reactionsView)
+        reactionsView.fitIn(view: self, insets: insets)
     }
 }

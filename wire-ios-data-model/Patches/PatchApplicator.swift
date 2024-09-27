@@ -29,21 +29,17 @@ public protocol DataPatchInterface: CaseIterable {
 // MARK: - PatchApplicator
 
 public final class PatchApplicator<T: DataPatchInterface> {
-    // MARK: - Properties
-
-    public let name: String
-
-    var lastRunVersionKey: String {
-        "\(name)_LastRunVersion"
-    }
-
-    private lazy var logger = WireLogger(tag: "patch applicator - \(name)")
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(name: String) {
         self.name = name
     }
+
+    // MARK: Public
+
+    // MARK: - Properties
+
+    public let name: String
 
     // MARK: - Methods
 
@@ -78,4 +74,14 @@ public final class PatchApplicator<T: DataPatchInterface> {
             patch.execute(in: context)
         }
     }
+
+    // MARK: Internal
+
+    var lastRunVersionKey: String {
+        "\(name)_LastRunVersion"
+    }
+
+    // MARK: Private
+
+    private lazy var logger = WireLogger(tag: "patch applicator - \(name)")
 }

@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ConversationTitleViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: ConversationTitleView!
-    private var conversation: MockGroupDetailsConversation!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -45,15 +41,6 @@ final class ConversationTitleViewTests: XCTestCase {
         conversation = nil
         snapshotHelper = nil
         super.tearDown()
-    }
-
-    // MARK: - Helper method
-
-    private func createSut(conversation: MockGroupDetailsConversation) -> ConversationTitleView {
-        let view = ConversationTitleView(conversation: conversation, interactive: true)
-        view.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
-        view.backgroundColor = .white
-        return view
     }
 
     // MARK: - Snapshot Tests
@@ -146,5 +133,22 @@ final class ConversationTitleViewTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(callCount, 1)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ConversationTitleView!
+    private var conversation: MockGroupDetailsConversation!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - Helper method
+
+    private func createSut(conversation: MockGroupDetailsConversation) -> ConversationTitleView {
+        let view = ConversationTitleView(conversation: conversation, interactive: true)
+        view.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
+        view.backgroundColor = .white
+        return view
     }
 }

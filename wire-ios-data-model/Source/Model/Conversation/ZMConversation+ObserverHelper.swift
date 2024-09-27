@@ -19,14 +19,18 @@
 import Foundation
 
 class ConversationObserverToken: NSObject, ZMConversationObserver {
-    let block: () -> Void
-    let filter: (ConversationChangeInfo) -> Bool
-    var token: NSObjectProtocol?
+    // MARK: Lifecycle
 
     init(filter: @escaping (ConversationChangeInfo) -> Bool, block: @escaping () -> Void) {
         self.block = block
         self.filter = filter
     }
+
+    // MARK: Internal
+
+    let block: () -> Void
+    let filter: (ConversationChangeInfo) -> Bool
+    var token: NSObjectProtocol?
 
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         if filter(changeInfo) {

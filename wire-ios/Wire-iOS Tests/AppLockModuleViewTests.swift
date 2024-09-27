@@ -22,9 +22,7 @@ import XCTest
 @testable import Wire
 
 final class AppLockModuleViewTests: XCTestCase {
-    private var sut: AppLockModule.View!
-    private var presenter: AppLockModule.MockPresenter!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -141,4 +139,10 @@ final class AppLockModuleViewTests: XCTestCase {
         // Then
         XCTAssertNotNil(sut)
     }
+
+    // MARK: Private
+
+    private var sut: AppLockModule.View!
+    private var presenter: AppLockModule.MockPresenter!
+    private var snapshotHelper: SnapshotHelper!
 }

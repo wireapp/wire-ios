@@ -22,51 +22,7 @@ import WireSystem
 
 extension AppLockModule.View {
     final class LockView: UIView {
-        // MARK: - Properties
-
-        var actionRequested: Completion?
-
-        var message = "" {
-            didSet {
-                messageLabel.text = message
-            }
-        }
-
-        var buttonTitle = "" {
-            didSet {
-                actionButton.setTitle(buttonTitle, for: .normal)
-            }
-        }
-
-        var showReauth = false {
-            didSet {
-                messageLabel.isHidden = !showReauth
-                actionButton.isHidden = !showReauth
-            }
-        }
-
-        private let shieldViewContainer = UIView()
-        private let contentContainerView = UIView()
-        private lazy var blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-
-        private let messageLabel = DynamicFontLabel(fontSpec: .largeRegularFont, color: SemanticColors.Label.textWhite)
-
-        private let actionButton = ZMButton(
-            style: .primaryTextButtonStyle,
-            cornerRadius: 16,
-            fontSpec: .mediumSemiboldFont
-        )
-
-        private var contentWidthConstraint: NSLayoutConstraint!
-        private var contentCenterConstraint: NSLayoutConstraint!
-        private var contentLeadingConstraint: NSLayoutConstraint!
-        private var contentTrailingConstraint: NSLayoutConstraint!
-
-        var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
-            traitEnvironment.traitCollection.horizontalSizeClass
-        }
-
-        // MARK: - Life cycle
+        // MARK: Lifecycle
 
         init() {
             super.init(frame: .zero)
@@ -97,6 +53,66 @@ extension AppLockModule.View {
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder) is not implemented")
         }
+
+        // MARK: Internal
+
+        // MARK: - Properties
+
+        var actionRequested: Completion?
+
+        var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
+            traitEnvironment.traitCollection.horizontalSizeClass
+        }
+
+        var message = "" {
+            didSet {
+                messageLabel.text = message
+            }
+        }
+
+        var buttonTitle = "" {
+            didSet {
+                actionButton.setTitle(buttonTitle, for: .normal)
+            }
+        }
+
+        var showReauth = false {
+            didSet {
+                messageLabel.isHidden = !showReauth
+                actionButton.isHidden = !showReauth
+            }
+        }
+
+        override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+            super.traitCollectionDidChange(previousTraitCollection)
+            toggleConstraints()
+        }
+
+        // MARK: - Actions
+
+        @objc
+        func onButtonPressed(_: AnyObject!) {
+            actionRequested?()
+        }
+
+        // MARK: Private
+
+        private let shieldViewContainer = UIView()
+        private let contentContainerView = UIView()
+        private lazy var blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+
+        private let messageLabel = DynamicFontLabel(fontSpec: .largeRegularFont, color: SemanticColors.Label.textWhite)
+
+        private let actionButton = ZMButton(
+            style: .primaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .mediumSemiboldFont
+        )
+
+        private var contentWidthConstraint: NSLayoutConstraint!
+        private var contentCenterConstraint: NSLayoutConstraint!
+        private var contentLeadingConstraint: NSLayoutConstraint!
+        private var contentTrailingConstraint: NSLayoutConstraint!
 
         // MARK: - Helpers
 
@@ -162,23 +178,11 @@ extension AppLockModule.View {
             ])
         }
 
-        override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-            super.traitCollectionDidChange(previousTraitCollection)
-            toggleConstraints()
-        }
-
         private func toggleConstraints() {
             userInterfaceSizeClass(self).toggle(
                 compactConstraints: [contentLeadingConstraint, contentTrailingConstraint],
                 regularConstraints: [contentCenterConstraint, contentWidthConstraint]
             )
-        }
-
-        // MARK: - Actions
-
-        @objc
-        func onButtonPressed(_: AnyObject!) {
-            actionRequested?()
         }
     }
 }

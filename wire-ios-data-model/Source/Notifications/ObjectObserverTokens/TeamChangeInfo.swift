@@ -40,14 +40,14 @@ extension Team: ObjectInSnapshot {
 
 @objcMembers
 public class TeamChangeInfo: ObjectChangeInfo {
-    static func changeInfo(for team: Team, changes: Changes) -> TeamChangeInfo? {
-        TeamChangeInfo(object: team, changes: changes)
-    }
+    // MARK: Lifecycle
 
     public required init(object: NSObject) {
         self.team = object as! Team
         super.init(object: object)
     }
+
+    // MARK: Public
 
     public let team: TeamType
 
@@ -61,6 +61,12 @@ public class TeamChangeInfo: ObjectChangeInfo {
 
     public var imageDataChanged: Bool {
         changedKeysContain(keys: #keyPath(Team.imageData), #keyPath(Team.pictureAssetId))
+    }
+
+    // MARK: Internal
+
+    static func changeInfo(for team: Team, changes: Changes) -> TeamChangeInfo? {
+        TeamChangeInfo(object: team, changes: changes)
     }
 }
 

@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ChangeEmailViewModelTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: ChangeEmailViewModel!
-    private var mockUserProfile: MockUserProfile!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -74,4 +71,11 @@ final class ChangeEmailViewModelTests: XCTestCase {
         }
         XCTAssertEqual(mockUserProfile.requestEmailChangeEmail_Invocations, ["new@example.com"])
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ChangeEmailViewModel!
+    private var mockUserProfile: MockUserProfile!
 }

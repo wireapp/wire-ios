@@ -22,8 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class CollectionLinkCell: CollectionCell {
-    private var articleView: ArticleView? = .none
-    private var headerView = CollectionCellHeader()
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -33,6 +32,12 @@ final class CollectionLinkCell: CollectionCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupAccessibility()
+    }
+
+    // MARK: Internal
+
+    override var obfuscationIcon: StyleKitIcon {
+        .link
     }
 
     func createArticleView(with textMessageData: TextMessageData) {
@@ -73,10 +78,6 @@ final class CollectionLinkCell: CollectionCell {
         self.articleView = articleView
     }
 
-    override var obfuscationIcon: StyleKitIcon {
-        .link
-    }
-
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
         typealias ConversationSearch = L10n.Accessibility.ConversationSearch
 
@@ -115,6 +116,11 @@ final class CollectionLinkCell: CollectionCell {
         super.prepareForReuse()
         message = .none
     }
+
+    // MARK: Private
+
+    private var articleView: ArticleView? = .none
+    private var headerView = CollectionCellHeader()
 
     private func setupAccessibility() {
         isAccessibilityElement = true

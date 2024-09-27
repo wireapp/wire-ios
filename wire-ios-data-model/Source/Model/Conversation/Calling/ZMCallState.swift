@@ -106,10 +106,19 @@ extension ZMConversation {
 
 @objc
 open class ZMCallState: NSObject, Sequence {
-    fileprivate var conversationStates: [NSManagedObjectID: ZMConversationCallState] = [:]
+    // MARK: Open
 
-    fileprivate var allObjectIDs: Set<NSManagedObjectID> {
-        Set(conversationStates.keys)
+    open var isEmpty: Bool {
+        conversationStates.isEmpty
+    }
+
+    override open var description: String {
+        "CallState \(SwiftDebugging.address(self)) \n" +
+            " --> states : \(conversationStates) \n"
+    }
+
+    override open var debugDescription: String {
+        description
     }
 
     open func allContainedConversationsInContext(_ moc: NSManagedObjectContext) -> Set<ZMConversation> {
@@ -131,6 +140,16 @@ open class ZMCallState: NSObject, Sequence {
         return stateForConversationID(conversation.objectID)
     }
 
+    open func makeIterator() -> Iterator {
+        conversationStates.makeIterator()
+    }
+
+    // MARK: Public
+
+    public typealias Iterator = DictionaryIterator<NSManagedObjectID, ZMConversationCallState>
+
+    // MARK: Internal
+
     func stateForConversationID(_ conversationID: NSManagedObjectID) -> ZMConversationCallState {
         conversationStates[conversationID] ?? {
             zmLog.debug("inserting new state for conversationID \(conversationID) into \(SwiftDebugging.address(self))")
@@ -140,22 +159,12 @@ open class ZMCallState: NSObject, Sequence {
         }()
     }
 
-    public typealias Iterator = DictionaryIterator<NSManagedObjectID, ZMConversationCallState>
-    open func makeIterator() -> Iterator {
-        conversationStates.makeIterator()
-    }
+    // MARK: Fileprivate
 
-    open var isEmpty: Bool {
-        conversationStates.isEmpty
-    }
+    fileprivate var conversationStates: [NSManagedObjectID: ZMConversationCallState] = [:]
 
-    override open var description: String {
-        "CallState \(SwiftDebugging.address(self)) \n" +
-            " --> states : \(conversationStates) \n"
-    }
-
-    override open var debugDescription: String {
-        description
+    fileprivate var allObjectIDs: Set<NSManagedObjectID> {
+        Set(conversationStates.keys)
     }
 }
 
@@ -166,12 +175,6 @@ open class ZMConversationCallState: NSObject {
     open var isCallDeviceActive = false
     open var isIgnoringCall = false
 
-    /// returns true if the merge changed the current state
-    open func mergeChangesFromState(_ other: ZMConversationCallState) {
-        isCallDeviceActive = other.isCallDeviceActive
-        isIgnoringCall = other.isIgnoringCall
-    }
-
     override open var description: String {
         "CallState \(SwiftDebugging.address(self)) \n" +
             " --> isCallDeviceActive: \(isCallDeviceActive) \n"
@@ -179,6 +182,12 @@ open class ZMConversationCallState: NSObject {
 
     override open var debugDescription: String {
         description
+    }
+
+    /// returns true if the merge changed the current state
+    open func mergeChangesFromState(_ other: ZMConversationCallState) {
+        isCallDeviceActive = other.isCallDeviceActive
+        isIgnoringCall = other.isIgnoringCall
     }
 }
 

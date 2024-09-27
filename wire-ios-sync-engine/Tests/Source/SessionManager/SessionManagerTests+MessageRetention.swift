@@ -21,15 +21,15 @@ import XCTest
 @testable import WireSyncEngine
 
 final class SessionManagerMessageRetentionTests: IntegrationTest {
+    override var useInMemoryStore: Bool {
+        false
+    }
+
     override func setUp() {
         super.setUp()
 
         createSelfUserAndConversation()
         createExtraUsersAndConversations()
-    }
-
-    override var useInMemoryStore: Bool {
-        false
     }
 
     func testThatItDeletesMessagesOlderThanTheRetentionLimit() {

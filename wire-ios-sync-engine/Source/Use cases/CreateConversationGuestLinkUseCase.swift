@@ -41,7 +41,7 @@ public protocol CreateConversationGuestLinkUseCaseProtocol {
 // MARK: - CreateConversationGuestLinkUseCase
 
 struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
-    let setGuestsAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol
+    // MARK: Public
 
     public func invoke(
         conversation: ZMConversation,
@@ -65,6 +65,12 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
             createGuestLink(conversation: conversation, password: password, completion)
         }
     }
+
+    // MARK: Internal
+
+    let setGuestsAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol
+
+    // MARK: Private
 
     private func createGuestLink(
         conversation: ZMConversation,

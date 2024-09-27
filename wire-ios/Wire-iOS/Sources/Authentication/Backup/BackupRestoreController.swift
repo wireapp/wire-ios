@@ -35,17 +35,7 @@ private let zmLog = ZMSLog(tag: "Backup")
 // MARK: - BackupRestoreController
 
 final class BackupRestoreController: NSObject {
-    // There are some external apps that users can use to transfer backup files, which can modify
-    // their attachments and change the underscore with a dash. This is the reason we accept 2 types
-    // of file extensions: 'ios_wbu' and 'ios-wbu'.
-
-    static let WireBackupUTIs = ["com.wire.backup-ios-underscore", "com.wire.backup-ios-hyphen"]
-
-    weak var delegate: BackupRestoreControllerDelegate?
-
-    private let target: UIViewController
-    private let activityIndicator: BlockingActivityIndicator
-    private var temporaryFilesService: TemporaryFileServiceInterface
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -55,6 +45,16 @@ final class BackupRestoreController: NSObject {
         self.activityIndicator = .init(view: target.view)
         super.init()
     }
+
+    // MARK: Internal
+
+    // There are some external apps that users can use to transfer backup files, which can modify
+    // their attachments and change the underscore with a dash. This is the reason we accept 2 types
+    // of file extensions: 'ios_wbu' and 'ios-wbu'.
+
+    static let WireBackupUTIs = ["com.wire.backup-ios-underscore", "com.wire.backup-ios-hyphen"]
+
+    weak var delegate: BackupRestoreControllerDelegate?
 
     // MARK: - Flow
 
@@ -75,6 +75,12 @@ final class BackupRestoreController: NSObject {
 
         target.present(controller, animated: true)
     }
+
+    // MARK: Private
+
+    private let target: UIViewController
+    private let activityIndicator: BlockingActivityIndicator
+    private var temporaryFilesService: TemporaryFileServiceInterface
 
     private func showFilePicker() {
         let picker = UIDocumentPickerViewController(

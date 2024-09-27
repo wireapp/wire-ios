@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class BasicReactionPickerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var picker: BasicReactionPicker!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -59,6 +56,13 @@ final class BasicReactionPickerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: picker)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var picker: BasicReactionPicker!
 
     // MARK: - Helper method
 

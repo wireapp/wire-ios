@@ -23,6 +23,21 @@ import WireSyncEngine
 // MARK: - SuccessfulCertificateEnrollmentViewController
 
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
+    // MARK: Lifecycle
+
+    init(isUpdateMode: Bool = false) {
+        self.isUpdateMode = isUpdateMode
+        super.init(nibName: nil, bundle: nil)
+        setupViews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     typealias LocalizedEnrollE2eiCertificate = L10n.Localizable.EnrollE2eiCertificate
     typealias LocalizedUpdateE2eiCertificate = L10n.Localizable.UpdateE2eiCertificate
 
@@ -31,36 +46,24 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     var certificateDetails = ""
     var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
 
+    // MARK: - AuthenticationStepViewController
+
+    weak var authenticationCoordinator: AuthenticationCoordinator?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+    }
+
+    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {}
+
+    func displayError(_: Error) {}
+
+    // MARK: Private
+
     // Based on this value, appropriate texts are displayed for update certifcate or enroll certificate for E2EI
     private let isUpdateMode: Bool
-
-    private var titleLabel: UILabel {
-        let title = isUpdateMode ? LocalizedUpdateE2eiCertificate.title : LocalizedEnrollE2eiCertificate.title
-        let label = DynamicFontLabel(
-            text: title,
-            style: .largeTitle,
-            color: SemanticColors.Label.textDefault
-        )
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.accessibilityIdentifier = "titleLabel"
-
-        return label
-    }
-
-    private var detailsLabel: UILabel {
-        let subtitle = isUpdateMode ? LocalizedUpdateE2eiCertificate.subtitle : LocalizedEnrollE2eiCertificate.subtitle
-        let label = DynamicFontLabel(
-            text: subtitle,
-            style: .body1,
-            color: SemanticColors.Label.textDefault
-        )
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        label.accessibilityIdentifier = "detailsLabel"
-
-        return label
-    }
 
     private let shieldImageView = {
         let shieldImage = ImageResource.E_2_EI.Enrollment.certificateValid
@@ -115,23 +118,32 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         return stack
     }()
 
-    // MARK: - Life cycle
+    private var titleLabel: UILabel {
+        let title = isUpdateMode ? LocalizedUpdateE2eiCertificate.title : LocalizedEnrollE2eiCertificate.title
+        let label = DynamicFontLabel(
+            text: title,
+            style: .largeTitle,
+            color: SemanticColors.Label.textDefault
+        )
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.accessibilityIdentifier = "titleLabel"
 
-    init(isUpdateMode: Bool = false) {
-        self.isUpdateMode = isUpdateMode
-        super.init(nibName: nil, bundle: nil)
-        setupViews()
+        return label
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private var detailsLabel: UILabel {
+        let subtitle = isUpdateMode ? LocalizedUpdateE2eiCertificate.subtitle : LocalizedEnrollE2eiCertificate.subtitle
+        let label = DynamicFontLabel(
+            text: subtitle,
+            style: .body1,
+            color: SemanticColors.Label.textDefault
+        )
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.accessibilityIdentifier = "detailsLabel"
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = SemanticColors.View.backgroundDefault
+        return label
     }
 
     // MARK: - Helpers
@@ -210,14 +222,6 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     private func okTapped() {
         onOkTapped?(self)
     }
-
-    // MARK: - AuthenticationStepViewController
-
-    weak var authenticationCoordinator: AuthenticationCoordinator?
-
-    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {}
-
-    func displayError(_: Error) {}
 }
 
 // MARK: - SuccessfulCertificateEnrollmentViewController_Previews

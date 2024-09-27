@@ -20,16 +20,7 @@ import UIKit
 import WireDesign
 
 final class ReactionCategoryButton: UIButton {
-    private var selectionIndicator = UIView()
-    private let selectedTintColor = SemanticColors.Icon.emojiCategorySelected
-    private let defaultTintColor = SemanticColors.Icon.emojiCategoryDefault
-
-    override var isSelected: Bool {
-        didSet {
-            selectionIndicator.isHidden = !isSelected
-            imageView?.tintColor = isSelected ? selectedTintColor : defaultTintColor
-        }
-    }
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero)
@@ -40,6 +31,21 @@ final class ReactionCategoryButton: UIButton {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    override var isSelected: Bool {
+        didSet {
+            selectionIndicator.isHidden = !isSelected
+            imageView?.tintColor = isSelected ? selectedTintColor : defaultTintColor
+        }
+    }
+
+    // MARK: Private
+
+    private var selectionIndicator = UIView()
+    private let selectedTintColor = SemanticColors.Icon.emojiCategorySelected
+    private let defaultTintColor = SemanticColors.Icon.emojiCategoryDefault
 
     private func setupViews() {
         selectionIndicator.backgroundColor = UIColor.accent()

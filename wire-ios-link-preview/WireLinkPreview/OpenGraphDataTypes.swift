@@ -60,6 +60,8 @@ enum OpenGraphSiteName: String {
     case instagram
     case foursquare
 
+    // MARK: Lifecycle
+
     init?(string: String) {
         self.init(rawValue: string.lowercased())
     }

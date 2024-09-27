@@ -23,14 +23,18 @@ import WireDesign
 // MARK: - ButtonDescription
 
 final class ButtonDescription {
-    var buttonTapped: (() -> Void)?
-    let title: String
-    let accessibilityIdentifier: String
+    // MARK: Lifecycle
 
     init(title: String, accessibilityIdentifier: String) {
         self.title = title
         self.accessibilityIdentifier = accessibilityIdentifier
     }
+
+    // MARK: Internal
+
+    var buttonTapped: (() -> Void)?
+    let title: String
+    let accessibilityIdentifier: String
 }
 
 // MARK: ViewDescriptor

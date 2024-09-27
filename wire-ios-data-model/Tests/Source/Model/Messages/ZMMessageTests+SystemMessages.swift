@@ -22,6 +22,8 @@ import XCTest
 // MARK: - ZMMessageTests_SystemMessages
 
 class ZMMessageTests_SystemMessages: BaseZMMessageTests {
+    // MARK: Internal
+
     func testThatOnlyRecoverableDecryptionErrorsAreReportedAsRecoverable() throws {
         let allEncryptionErrors = [
             CBOX_STORAGE_ERROR,
@@ -56,6 +58,8 @@ class ZMMessageTests_SystemMessages: BaseZMMessageTests {
             )
         }
     }
+
+    // MARK: Private
 
     private func assertDecryptionErrorIsReportedAsRecoverable(
         _ decryptionError: CBoxResult,

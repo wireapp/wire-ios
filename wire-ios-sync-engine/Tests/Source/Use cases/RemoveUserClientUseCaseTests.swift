@@ -22,11 +22,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class RemoveUserClientUseCaseTests: XCTestCase {
-    private var sut: RemoveUserClientUseCase!
-    private var stack: CoreDataStack!
-    private let coreDataStackHelper = CoreDataStackHelper()
-    private let mockApiProvider = MockAPIProviderInterface()
-    private let userClientAPI = MockUserClientAPI()
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -96,6 +92,14 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
             try await sut.invoke(clientId: clientId, password: "")
         }
     }
+
+    // MARK: Private
+
+    private var sut: RemoveUserClientUseCase!
+    private var stack: CoreDataStack!
+    private let coreDataStackHelper = CoreDataStackHelper()
+    private let mockApiProvider = MockAPIProviderInterface()
+    private let userClientAPI = MockUserClientAPI()
 
     private func createSelfClient(clientId: String) async throws {
         let selfUserHandle = "foo"

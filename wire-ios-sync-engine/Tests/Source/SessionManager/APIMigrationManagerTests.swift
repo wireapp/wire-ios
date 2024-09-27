@@ -26,11 +26,15 @@ import XCTest
 // MARK: - APIMigrationMock
 
 class APIMigrationMock: APIMigration {
-    var version: APIVersion
+    // MARK: Lifecycle
 
     init(version: APIVersion) {
         self.version = version
     }
+
+    // MARK: Internal
+
+    var version: APIVersion
 
     var performCalls = [(session: ZMUserSession, clientID: String)]()
 
@@ -42,6 +46,8 @@ class APIMigrationMock: APIMigration {
 // MARK: - APIMigrationManagerTests
 
 final class APIMigrationManagerTests: MessagingTest {
+    // MARK: Internal
+
     // MARK: - Verifying if migration is needed
 
     func test_itReturnsTrue_WhenMigrationIsNeeded() async {
@@ -198,6 +204,8 @@ final class APIMigrationManagerTests: MessagingTest {
         // clean up
         await tearDownSessions([userSession1, userSession2])
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

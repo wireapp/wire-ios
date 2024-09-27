@@ -21,15 +21,7 @@ import WireDataModelSupport
 @testable import WireDataModel
 
 final class SearchUserObserverTests: NotificationDispatcherTestBase {
-    private final class TestSearchUserObserver: UserObserving {
-        var receivedChangeInfo: [UserChangeInfo] = []
-
-        func userDidChange(_ changeInfo: UserChangeInfo) {
-            receivedChangeInfo.append(changeInfo)
-        }
-    }
-
-    private var testObserver: TestSearchUserObserver!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -122,6 +114,18 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(note.user as? ZMSearchUser, searchUser)
         XCTAssertTrue(note.connectionStateChanged)
     }
+
+    // MARK: Private
+
+    private final class TestSearchUserObserver: UserObserving {
+        var receivedChangeInfo: [UserChangeInfo] = []
+
+        func userDidChange(_ changeInfo: UserChangeInfo) {
+            receivedChangeInfo.append(changeInfo)
+        }
+    }
+
+    private var testObserver: TestSearchUserObserver!
 
     // MARK: - Helpers
 

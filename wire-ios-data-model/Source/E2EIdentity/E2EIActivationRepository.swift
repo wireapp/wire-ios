@@ -32,17 +32,7 @@ public protocol E2EIActivationDateRepositoryProtocol {
 // MARK: - E2EIActivationDateRepository
 
 public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRepositoryProtocol {
-    // MARK: - Properties
-
-    private let storage: PrivateUserDefaults<Key>
-
-    // MARK: - Types
-
-    private enum Key: String, DefaultsKey {
-        case e2eiActivatedAt
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         userID: UUID,
@@ -56,7 +46,7 @@ public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRep
         super.init()
     }
 
-    // MARK: - Public
+    // MARK: Public
 
     public var e2eiActivatedAt: Date? {
         storage.date(forKey: .e2eiActivatedAt)
@@ -69,4 +59,16 @@ public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRep
     public func removeE2EIActivationDate() {
         storage.removeObject(forKey: .e2eiActivatedAt)
     }
+
+    // MARK: Private
+
+    // MARK: - Types
+
+    private enum Key: String, DefaultsKey {
+        case e2eiActivatedAt
+    }
+
+    // MARK: - Properties
+
+    private let storage: PrivateUserDefaults<Key>
 }

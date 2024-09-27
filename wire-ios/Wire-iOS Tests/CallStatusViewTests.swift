@@ -36,8 +36,7 @@ struct MockStatusViewConfiguration: CallStatusViewInputType {
 // MARK: - CallStatusViewTests
 
 final class CallStatusViewTests: XCTestCase {
-    private var sut: CallStatusView!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -454,4 +453,9 @@ final class CallStatusViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var sut: CallStatusView!
+    private var snapshotHelper: SnapshotHelper!
 }

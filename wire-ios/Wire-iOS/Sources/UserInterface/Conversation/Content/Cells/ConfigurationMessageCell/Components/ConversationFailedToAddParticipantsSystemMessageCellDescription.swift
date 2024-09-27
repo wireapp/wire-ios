@@ -20,6 +20,20 @@ import UIKit
 import WireDataModel
 
 final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
+        self.configuration = View.Configuration(
+            title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
+            content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
+            isCollapsed: isCollapsed,
+            icon: .init(resource: .attention),
+            buttonAction: buttonAction
+        )
+    }
+
+    // MARK: Internal
+
     typealias SystemContent = L10n.Localizable.Content.System
     typealias View = FailedUsersSystemMessageCell
 
@@ -39,15 +53,7 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
-        self.configuration = View.Configuration(
-            title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
-            content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
-            isCollapsed: isCollapsed,
-            icon: .init(resource: .attention),
-            buttonAction: buttonAction
-        )
-    }
+    // MARK: Private
 
     private static func configureTitle(for failedUsers: [UserType]) -> NSAttributedString? {
         guard failedUsers.count > 1 else {

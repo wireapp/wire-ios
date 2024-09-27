@@ -25,21 +25,7 @@ import WireSyncEngine
 
 extension AppLockModule {
     final class Interactor: InteractorInterface {
-        // MARK: - Properties
-
-        weak var presenter: AppLockPresenterInteractorInterface!
-
-        private let userSession: UserSession
-        private let authenticationType: AuthenticationTypeProvider
-        private let applicationStateProvider: ApplicationStateProvider
-
-        let dispatchGroup = DispatchGroup()
-
-        /// The message to display on the OS authentication screen.
-
-        private let deviceAuthenticationDescription = L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
-
-        // MARK: - Life cycle
+        // MARK: Lifecycle
 
         init(
             userSession: UserSession,
@@ -50,6 +36,24 @@ extension AppLockModule {
             self.authenticationType = authenticationType
             self.applicationStateProvider = applicationStateProvider
         }
+
+        // MARK: Internal
+
+        // MARK: - Properties
+
+        weak var presenter: AppLockPresenterInteractorInterface!
+
+        let dispatchGroup = DispatchGroup()
+
+        // MARK: Private
+
+        private let userSession: UserSession
+        private let authenticationType: AuthenticationTypeProvider
+        private let applicationStateProvider: ApplicationStateProvider
+
+        /// The message to display on the OS authentication screen.
+
+        private let deviceAuthenticationDescription = L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
 
         // MARK: - Methods
 

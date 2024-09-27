@@ -23,6 +23,8 @@ import UIKit
 enum CallActionAppearance: Equatable {
     case light, dark(blurred: Bool)
 
+    // MARK: Internal
+
     var showBlur: Bool {
         switch self {
         case .light: false

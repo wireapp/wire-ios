@@ -38,6 +38,14 @@ extension TransportDataConvertible {
 // MARK: - ClientUpdateResponse
 
 private struct ClientUpdateResponse: Codable, TransportDataConvertible {
+    // MARK: Lifecycle
+
+    init(missing: ClientListByUser) {
+        self.missing = missing
+    }
+
+    // MARK: Internal
+
     enum ErrorLabel: String, Codable {
         case unknownClient = "unknown-client"
     }
@@ -46,10 +54,6 @@ private struct ClientUpdateResponse: Codable, TransportDataConvertible {
     var missing: ClientListByUser?
     var deleted: ClientListByUser?
     var redundant: ClientListByUser?
-
-    init(missing: ClientListByUser) {
-        self.missing = missing
-    }
 }
 
 // MARK: - Payload.MessageSendingStatusV1 + TransportDataConvertible
@@ -84,6 +88,8 @@ extension Payload.MessageSendingStatusV4: TransportDataConvertible {
 // MARK: - VerifyLegalHoldRequestStrategyTests
 
 class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
+    // MARK: Internal
+
     var sut: VerifyLegalHoldRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
 
@@ -165,6 +171,23 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         testThatItRegistersMissingClients(apiVersion: .v1)
     }
 
+    func testThatItDeletesDeletedClients() {
+        testThatItRegistersMissingClients(apiVersion: .v0)
+        testThatItRegistersMissingClients(apiVersion: .v1)
+    }
+
+    func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry() {
+        testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v0)
+        testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v1)
+    }
+
+    func testThatItIgnoresMissingSelfClients() {
+        testThatItIgnoresMissingSelfClients(apiVersion: .v0)
+        testThatItIgnoresMissingSelfClients(apiVersion: .v1)
+    }
+
+    // MARK: Private
+
     private func testThatItRegistersMissingClients(apiVersion: APIVersion) {
         var conversation: ZMConversation!
         let clientID = "client123"
@@ -208,11 +231,6 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
 
             XCTAssertEqual(client.remoteIdentifier, clientID)
         }
-    }
-
-    func testThatItDeletesDeletedClients() {
-        testThatItRegistersMissingClients(apiVersion: .v0)
-        testThatItRegistersMissingClients(apiVersion: .v1)
     }
 
     private func testThatItDeletesDeletedClients(apiVersion: APIVersion) {
@@ -276,11 +294,6 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry() {
-        testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v0)
-        testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v1)
-    }
-
     private func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: APIVersion) {
         var conversation: ZMConversation!
         let deletedClientID = "client1"
@@ -326,11 +339,6 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
                 createIfNeeded: false
             ))
         }
-    }
-
-    func testThatItIgnoresMissingSelfClients() {
-        testThatItIgnoresMissingSelfClients(apiVersion: .v0)
-        testThatItIgnoresMissingSelfClients(apiVersion: .v1)
     }
 
     private func testThatItIgnoresMissingSelfClients(apiVersion: APIVersion) {

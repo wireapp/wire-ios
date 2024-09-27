@@ -20,8 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
-    let UserClientsKey = "clients"
-
     enum UserInfoChangeKey: String, CaseIterable {
         case name = "nameChanged"
         case accentColor = "accentColorValueChanged"
@@ -40,6 +38,8 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         case isUnderLegalHold = "isUnderLegalHoldChanged"
         case analyticsIdentifier = "analyticsIdentifierChanged"
     }
+
+    let UserClientsKey = "clients"
 
     let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
 

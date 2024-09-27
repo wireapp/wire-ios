@@ -20,13 +20,14 @@ import WireSystem
 import WireTransport
 
 public struct HttpClientImpl: HttpClient {
-    let transportSession: any TransportSessionType
-    let queue: any GroupQueue
+    // MARK: Lifecycle
 
     public init(transportSession: any TransportSessionType, queue: any GroupQueue) {
         self.transportSession = transportSession
         self.queue = queue
     }
+
+    // MARK: Public
 
     public func send(_ request: ZMTransportRequest) async -> ZMTransportResponse {
         await withCheckedContinuation { continuation in
@@ -38,4 +39,9 @@ public struct HttpClientImpl: HttpClient {
             transportSession.enqueueOneTime(request)
         }
     }
+
+    // MARK: Internal
+
+    let transportSession: any TransportSessionType
+    let queue: any GroupQueue
 }

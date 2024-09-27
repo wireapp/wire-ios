@@ -21,8 +21,6 @@ import Foundation
 // MARK: - DeveloperFlag
 
 public enum DeveloperFlag: String, CaseIterable {
-    public static var storage = UserDefaults.standard
-
     case enableMLSSupport
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
@@ -32,6 +30,10 @@ public enum DeveloperFlag: String, CaseIterable {
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
+
+    // MARK: Public
+
+    public static var storage = UserDefaults.standard
 
     public var description: String {
         switch self {
@@ -74,18 +76,24 @@ public enum DeveloperFlag: String, CaseIterable {
         }
     }
 
-    private var defaultValue: Bool {
-        guard let bundleKey else {
-            return false
-        }
-        return DeveloperFlagsDefault.isEnabled(for: bundleKey)
-    }
-
     public static func clearAllFlags() {
         for item in allCases {
             storage.set(nil, forKey: item.rawValue)
         }
     }
+
+    /// Convenience method to set flag on or off
+    ///
+    /// - Note: it can be used in Tests to change storage if provided
+    public func enable(_ enabled: Bool, storage: UserDefaults? = nil) {
+        if let storage {
+            DeveloperFlag.storage = storage
+        }
+        var flag = self
+        flag.isOn = enabled
+    }
+
+    // MARK: Internal
 
     var bundleKey: String? {
         switch self {
@@ -104,15 +112,13 @@ public enum DeveloperFlag: String, CaseIterable {
         }
     }
 
-    /// Convenience method to set flag on or off
-    ///
-    /// - Note: it can be used in Tests to change storage if provided
-    public func enable(_ enabled: Bool, storage: UserDefaults? = nil) {
-        if let storage {
-            DeveloperFlag.storage = storage
+    // MARK: Private
+
+    private var defaultValue: Bool {
+        guard let bundleKey else {
+            return false
         }
-        var flag = self
-        flag.isOn = enabled
+        return DeveloperFlagsDefault.isEnabled(for: bundleKey)
     }
 }
 

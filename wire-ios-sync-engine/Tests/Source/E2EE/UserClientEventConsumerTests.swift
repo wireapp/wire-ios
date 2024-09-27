@@ -28,6 +28,31 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     var resolveOneOnOneConversations: MockResolveOneOnOneConversationsUseCaseProtocol!
 
+    static func payloadForAddingClient(
+        _ clientId: String,
+        label: String = "device label",
+        time: Date = Date(timeIntervalSince1970: 12345)
+    ) -> ZMTransportData {
+        [
+            "client": [
+                "id": clientId,
+                "label": label,
+                "time": time.transportString(),
+                "type": "permanent",
+            ],
+            "type": "user.client-add",
+        ] as ZMTransportData
+    }
+
+    static func payloadForDeletingClient(_ clientId: String) -> ZMTransportData {
+        [
+            "client": [
+                "id": clientId,
+            ],
+            "type": "user.client-remove",
+        ] as ZMTransportData
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -70,31 +95,6 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         clientUpdateStatus = nil
         sut = nil
         super.tearDown()
-    }
-
-    static func payloadForAddingClient(
-        _ clientId: String,
-        label: String = "device label",
-        time: Date = Date(timeIntervalSince1970: 12345)
-    ) -> ZMTransportData {
-        [
-            "client": [
-                "id": clientId,
-                "label": label,
-                "time": time.transportString(),
-                "type": "permanent",
-            ],
-            "type": "user.client-add",
-        ] as ZMTransportData
-    }
-
-    static func payloadForDeletingClient(_ clientId: String) -> ZMTransportData {
-        [
-            "client": [
-                "id": clientId,
-            ],
-            "type": "user.client-remove",
-        ] as ZMTransportData
     }
 
     func testThatItAddsAnIgnoredSelfUserClientWhenReceivingAPush() async {

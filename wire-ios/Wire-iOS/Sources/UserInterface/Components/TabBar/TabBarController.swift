@@ -45,9 +45,24 @@ extension UIViewController {
 
 final class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource,
     UIScrollViewDelegate {
-    weak var delegate: TabBarControllerDelegate?
+    // MARK: Lifecycle
 
-    private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+    // MARK: - Initialization
+
+    init(viewControllers: [UIViewController]) {
+        self.viewControllers = viewControllers
+        self.selectedIndex = 0
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    weak var delegate: TabBarControllerDelegate?
 
     private(set) var viewControllers: [UIViewController]
     private(set) var selectedIndex: Int
@@ -74,77 +89,12 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         }
     }
 
-    // MARK: - Views
-
-    private var tabBar: TabBar!
-    private var contentView = UIView()
-    private var isSwiping = false
-    private var startOffset: CGFloat = 0
-    private var tabBarHeight: NSLayoutConstraint!
-
-    // MARK: - Initialization
-
-    init(viewControllers: [UIViewController]) {
-        self.viewControllers = viewControllers
-        self.selectedIndex = 0
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         createViews()
         createConstraints()
         selectIndex(selectedIndex, animated: false)
-    }
-
-    fileprivate func createViews() {
-        view.addSubview(contentView)
-        contentView.backgroundColor = viewControllers.first?.view?.backgroundColor
-        add(pageViewController, to: contentView)
-        pageViewController.scrollView?.delegate = self
-
-        if isInteractive {
-            pageViewController.dataSource = self
-            pageViewController.delegate = self
-        }
-
-        let items = viewControllers.map { $0.tabBarItem! }
-        tabBar = TabBar(items: items, selectedIndex: selectedIndex)
-        tabBar?.animatesTransition = isInteractive
-        tabBar?.isHidden = isTabBarHidden
-        tabBar?.delegate = self
-        tabBar?.isUserInteractionEnabled = isEnabled && items.count > 1
-        view.addSubview(tabBar!)
-    }
-
-    fileprivate func createConstraints() {
-        tabBar.translatesAutoresizingMaskIntoConstraints = false
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
-
-        tabBarHeight = tabBar.heightAnchor.constraint(equalToConstant: 0)
-        tabBarHeight?.isActive = isTabBarHidden
-
-        pageViewController.view.fitIn(view: contentView)
-
-        NSLayoutConstraint.activate([
-            // tabBar
-            tabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tabBar.topAnchor.constraint(equalTo: view.topAnchor),
-            tabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
-            // contentView
-            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentView.topAnchor.constraint(equalTo: tabBar.bottomAnchor),
-            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
     }
 
     // MARK: - Interacting with the Tab Bar
@@ -242,6 +192,64 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
 
         tabBar?.setOffsetPercentage(adjustedPercent)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate func createViews() {
+        view.addSubview(contentView)
+        contentView.backgroundColor = viewControllers.first?.view?.backgroundColor
+        add(pageViewController, to: contentView)
+        pageViewController.scrollView?.delegate = self
+
+        if isInteractive {
+            pageViewController.dataSource = self
+            pageViewController.delegate = self
+        }
+
+        let items = viewControllers.map { $0.tabBarItem! }
+        tabBar = TabBar(items: items, selectedIndex: selectedIndex)
+        tabBar?.animatesTransition = isInteractive
+        tabBar?.isHidden = isTabBarHidden
+        tabBar?.delegate = self
+        tabBar?.isUserInteractionEnabled = isEnabled && items.count > 1
+        view.addSubview(tabBar!)
+    }
+
+    fileprivate func createConstraints() {
+        tabBar.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
+
+        tabBarHeight = tabBar.heightAnchor.constraint(equalToConstant: 0)
+        tabBarHeight?.isActive = isTabBarHidden
+
+        pageViewController.view.fitIn(view: contentView)
+
+        NSLayoutConstraint.activate([
+            // tabBar
+            tabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tabBar.topAnchor.constraint(equalTo: view.topAnchor),
+            tabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            // contentView
+            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            contentView.topAnchor.constraint(equalTo: tabBar.bottomAnchor),
+            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+
+    // MARK: Private
+
+    private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+
+    // MARK: - Views
+
+    private var tabBar: TabBar!
+    private var contentView = UIView()
+    private var isSwiping = false
+    private var startOffset: CGFloat = 0
+    private var tabBarHeight: NSLayoutConstraint!
 }
 
 // MARK: TabBarDelegate

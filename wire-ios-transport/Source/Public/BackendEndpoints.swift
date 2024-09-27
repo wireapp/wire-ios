@@ -19,13 +19,7 @@
 import Foundation
 
 final class BackendEndpoints: NSObject, BackendEndpointsProvider, Codable {
-    let backendURL: URL
-    let backendWSURL: URL
-    let blackListURL: URL
-    let teamsURL: URL
-    let accountsURL: URL
-    let websiteURL: URL
-    let countlyURL: URL?
+    // MARK: Lifecycle
 
     init(
         backendURL: URL,
@@ -46,4 +40,14 @@ final class BackendEndpoints: NSObject, BackendEndpointsProvider, Codable {
 
         super.init()
     }
+
+    // MARK: Internal
+
+    let backendURL: URL
+    let backendWSURL: URL
+    let blackListURL: URL
+    let teamsURL: URL
+    let accountsURL: URL
+    let websiteURL: URL
+    let countlyURL: URL?
 }

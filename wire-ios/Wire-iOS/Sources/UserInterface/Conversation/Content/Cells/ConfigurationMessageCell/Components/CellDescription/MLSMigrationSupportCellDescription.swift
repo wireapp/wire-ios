@@ -21,6 +21,18 @@ import WireDataModel
 import WireDesign
 
 final class MLSMigrationSupportCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(messageType: ZMSystemMessageType, for user: UserType) {
+        let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
+        let content = Self.makeAttributedString(messageType: messageType, for: user)
+
+        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
+        self.accessibilityLabel = content?.string
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationSystemMessageCell
     typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
 
@@ -40,13 +52,7 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
 
-    init(messageType: ZMSystemMessageType, for user: UserType) {
-        let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
-        let content = Self.makeAttributedString(messageType: messageType, for: user)
-
-        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
-        self.accessibilityLabel = content?.string
-    }
+    // MARK: Private
 
     // MARK: Attributed Strings
 

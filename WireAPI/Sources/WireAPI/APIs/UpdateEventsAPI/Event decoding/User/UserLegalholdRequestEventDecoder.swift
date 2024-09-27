@@ -19,6 +19,8 @@
 import Foundation
 
 struct UserLegalholdRequestEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserLegalholdRequestEvent {
@@ -46,6 +48,8 @@ struct UserLegalholdRequestEventDecoder {
             )
         )
     }
+
+    // MARK: Private
 
     private struct ClientPayload: Decodable {
         let id: String

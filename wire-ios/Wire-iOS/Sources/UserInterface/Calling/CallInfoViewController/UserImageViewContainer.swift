@@ -21,15 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 final class UserImageViewContainer: UIView {
-    private let userImageView: UserImageView
-    private let maxSize: CGFloat
-    private let yOffset: CGFloat
-
-    var user: UserType? {
-        didSet {
-            userImageView.user = user
-        }
-    }
+    // MARK: Lifecycle
 
     init(
         size: UserImageView.Size,
@@ -51,6 +43,20 @@ final class UserImageViewContainer: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var user: UserType? {
+        didSet {
+            userImageView.user = user
+        }
+    }
+
+    // MARK: Private
+
+    private let userImageView: UserImageView
+    private let maxSize: CGFloat
+    private let yOffset: CGFloat
 
     private func setupViews() {
         userImageView.isAccessibilityElement = false

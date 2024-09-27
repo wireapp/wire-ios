@@ -21,6 +21,8 @@ import XCTest
 @testable import WireSyncEngine
 
 class AVSBridgingTests: MessagingTest {
+    // MARK: Internal
+
     var rawString: UnsafePointer<CChar>!
     var rawUUID: UnsafePointer<CChar>!
     var rawTrue: Int32!
@@ -139,6 +141,13 @@ class AVSBridgingTests: MessagingTest {
         XCTAssertEqual(result, EINVAL)
     }
 
+    func checkDecodingResult(_ center: WireCallCenterV3, uuid: UUID) {
+        XCTAssertEqual(center.selfUserId, userID)
+        XCTAssertEqual(uuid.uuidString, "D2BC8C1E-43DE-4BE8-8868-A66BF565A842")
+    }
+
+    // MARK: Private
+
     // MARK: - Helpers
 
     private func checkDecodingResult(_ center: WireCallCenterV3, _ string: String) {
@@ -150,11 +159,6 @@ class AVSBridgingTests: MessagingTest {
         XCTAssertEqual(center.selfUserId, userID)
         XCTAssertEqual(string, "Wire")
         XCTAssertEqual(uuidString, "D2BC8C1E-43DE-4BE8-8868-A66BF565A842")
-    }
-
-    func checkDecodingResult(_ center: WireCallCenterV3, uuid: UUID) {
-        XCTAssertEqual(center.selfUserId, userID)
-        XCTAssertEqual(uuid.uuidString, "D2BC8C1E-43DE-4BE8-8868-A66BF565A842")
     }
 
     private func makeCString(_ string: String) -> UnsafePointer<CChar> {

@@ -23,6 +23,14 @@ import WireTesting
 // MARK: - ZMAssetClientMessageTests_Ephemeral
 
 class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
+    var obfuscationTimer: ZMMessageDestructionTimer? {
+        syncMOC.zm_messageObfuscationTimer
+    }
+
+    var deletionTimer: ZMMessageDestructionTimer? {
+        uiMOC.zm_messageDeletionTimer
+    }
+
     override func setUp() {
         super.setUp()
         deletionTimer?.isTesting = true
@@ -43,14 +51,6 @@ class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         super.tearDown()
-    }
-
-    var obfuscationTimer: ZMMessageDestructionTimer? {
-        syncMOC.zm_messageObfuscationTimer
-    }
-
-    var deletionTimer: ZMMessageDestructionTimer? {
-        uiMOC.zm_messageDeletionTimer
     }
 }
 

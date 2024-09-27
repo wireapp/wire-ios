@@ -42,7 +42,17 @@ final class MockCell: UIView, ConversationMessageCell {
 // MARK: - MockCellDescription
 
 final class MockCellDescription<T>: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init() {
+        let backgroundColor = AccentColor.red.uiColor
+        self.configuration = View.Configuration(backgroundColor: backgroundColor)
+    }
+
+    // MARK: Internal
+
     typealias View = MockCell
+
     let configuration: View.Configuration
 
     var showEphemeralTimer = false
@@ -57,9 +67,4 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
 
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
-
-    init() {
-        let backgroundColor = AccentColor.red.uiColor
-        self.configuration = View.Configuration(backgroundColor: backgroundColor)
-    }
 }

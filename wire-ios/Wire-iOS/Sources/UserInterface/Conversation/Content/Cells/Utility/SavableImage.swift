@@ -67,22 +67,7 @@ private let log = ZMSLog(tag: "SavableImage")
 // MARK: - SavableImage
 
 final class SavableImage: NSObject {
-    enum Source {
-        case gif(URL)
-        case image(Data)
-    }
-
-    /// Protocols used to inject mock photo services in tests
-    var photoLibrary: PhotoLibraryProtocol = PHPhotoLibrary.shared()
-    var assetChangeRequestType: AssetChangeRequestProtocol.Type = PHAssetChangeRequest.self
-    var assetCreationRequestType: AssetCreationRequestProtocol.Type = PHAssetCreationRequest.self
-    var applicationType: ApplicationProtocol.Type = UIApplication.self
-
-    typealias ImageSaveCompletion = (Bool) -> Void
-
-    private var writeInProgess = false
-    private let imageData: Data
-    private let isGIF: Bool
+    // MARK: Lifecycle
 
     init(data: Data, isGIF: Bool) {
         self.isGIF = isGIF
@@ -90,23 +75,20 @@ final class SavableImage: NSObject {
         super.init()
     }
 
-    private static  func storeGIF(_ data: Data) -> URL {
-        let url = URL(fileURLWithPath: NSTemporaryDirectory() + "\(UUID().uuidString).gif")
+    // MARK: Internal
 
-        do {
-            try data.write(to: url, options: .atomic)
-        } catch {
-            log.error("error writing image data to \(url): \(error)")
-        }
-
-        return url
+    enum Source {
+        case gif(URL)
+        case image(Data)
     }
 
-    // SavableImage instances get created when image cells etc are being created and
-    // we don't want to write data to disk when we didn't start a save operation, yet.
-    private func createSource() -> Source {
-        isGIF ? .gif(SavableImage.storeGIF(imageData)) : .image(imageData)
-    }
+    typealias ImageSaveCompletion = (Bool) -> Void
+
+    /// Protocols used to inject mock photo services in tests
+    var photoLibrary: PhotoLibraryProtocol = PHPhotoLibrary.shared()
+    var assetChangeRequestType: AssetChangeRequestProtocol.Type = PHAssetChangeRequest.self
+    var assetCreationRequestType: AssetCreationRequestProtocol.Type = PHAssetCreationRequest.self
+    var applicationType: ApplicationProtocol.Type = UIApplication.self
 
     func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {
         guard !writeInProgess else { return }
@@ -134,6 +116,30 @@ final class SavableImage: NSObject {
                 }
             }
         }
+    }
+
+    // MARK: Private
+
+    private var writeInProgess = false
+    private let imageData: Data
+    private let isGIF: Bool
+
+    private static  func storeGIF(_ data: Data) -> URL {
+        let url = URL(fileURLWithPath: NSTemporaryDirectory() + "\(UUID().uuidString).gif")
+
+        do {
+            try data.write(to: url, options: .atomic)
+        } catch {
+            log.error("error writing image data to \(url): \(error)")
+        }
+
+        return url
+    }
+
+    // SavableImage instances get created when image cells etc are being created and
+    // we don't want to write data to disk when we didn't start a save operation, yet.
+    private func createSource() -> Source {
+        isGIF ? .gif(SavableImage.storeGIF(imageData)) : .image(imageData)
     }
 
     // Has to be called from inside a `photoLibrary.perform` block

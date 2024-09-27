@@ -27,8 +27,7 @@ private let zmLog = ZMSLog(tag: "Network")
 // MARK: - ClientMessageRequestFactory
 
 public final class ClientMessageRequestFactory: NSObject {
-    let protobufContentType = "application/x-protobuf"
-    let octetStreamContentType = "application/octet-stream"
+    // MARK: Public
 
     public func upstreamRequestForFetchingClients(
         conversationId: UUID,
@@ -105,6 +104,11 @@ public final class ClientMessageRequestFactory: NSObject {
         request.forceToBackgroundSession()
         return request
     }
+
+    // MARK: Internal
+
+    let protobufContentType = "application/x-protobuf"
+    let octetStreamContentType = "application/octet-stream"
 }
 
 // MARK: - Downloading

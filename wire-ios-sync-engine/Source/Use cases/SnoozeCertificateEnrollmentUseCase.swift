@@ -29,14 +29,7 @@ public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
 // MARK: - SnoozeCertificateEnrollmentUseCase
 
 final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol {
-    // MARK: - Properties
-
-    private let featureRepository: FeatureRepositoryInterface
-    private let featureRepositoryContext: NSManagedObjectContext
-    private let recurringActionService: RecurringActionServiceInterface
-    private let actionId: String
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         featureRepository: FeatureRepositoryInterface,
@@ -50,6 +43,8 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
         self.actionId = "\(accountId).enrollCertificate"
     }
 
+    // MARK: Internal
+
     // MARK: - Methods
 
     /// Schedules recurring actions to check for enrolling or updating E2EI certificate
@@ -61,6 +56,15 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
         let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfPeriod)
         await registerRecurringActionIfNeeded(isUpdateMode: isUpdateMode, interval: interval)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepositoryContext: NSManagedObjectContext
+    private let recurringActionService: RecurringActionServiceInterface
+    private let actionId: String
 
     // MARK: - Helpers
 
@@ -92,15 +96,13 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 // MARK: - SnoozeTimeProvider
 
 final class SnoozeTimeProvider {
-    // MARK: - Properties
-
-    private let dateProvider: CurrentDateProviding
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(dateProvider: CurrentDateProviding = .system) {
         self.dateProvider = dateProvider
     }
+
+    // MARK: Internal
 
     func getSnoozeTime(endOfPeriod: Date) -> TimeInterval {
         let timeLeft = dateProvider.now.distance(to: endOfPeriod)
@@ -123,4 +125,10 @@ final class SnoozeTimeProvider {
             return .oneDay
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let dateProvider: CurrentDateProviding
 }

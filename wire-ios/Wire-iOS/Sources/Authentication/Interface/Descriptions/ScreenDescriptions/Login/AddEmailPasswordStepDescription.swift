@@ -22,21 +22,7 @@ import WireUtilities
 // MARK: - AddEmailPasswordStepDescription
 
 final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
-    let backButton: BackButtonDescription?
-    var mainView: ViewDescriptor & ValueSubmission {
-        emailPasswordFieldDescription
-    }
-
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let initialValidation: ValueValidation
-    let footerView: AuthenticationFooterViewDescription?
-
-    private let emailPasswordFieldDescription = EmailPasswordFieldDescription(
-        forRegistration: true,
-        usePasswordDeferredValidation: true
-    )
+    // MARK: Lifecycle
 
     init() {
         self.backButton = BackButtonDescription()
@@ -54,6 +40,19 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
         updateLoginButtonState(emailPasswordFieldDescription.textField)
     }
 
+    // MARK: Internal
+
+    let backButton: BackButtonDescription?
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let initialValidation: ValueValidation
+    let footerView: AuthenticationFooterViewDescription?
+
+    var mainView: ViewDescriptor & ValueSubmission {
+        emailPasswordFieldDescription
+    }
+
     @objc
     func loginButtonTapped(sender: Any) {
         if let passwordError = emailPasswordFieldDescription.textField.passwordValidationError {
@@ -67,6 +66,13 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
         )
         emailPasswordFieldDescription.valueSubmitted?(credentials)
     }
+
+    // MARK: Private
+
+    private let emailPasswordFieldDescription = EmailPasswordFieldDescription(
+        forRegistration: true,
+        usePasswordDeferredValidation: true
+    )
 
     private func updateLoginButtonState(_ textField: EmailPasswordTextField) {
         (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField
@@ -90,9 +96,13 @@ extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
 // MARK: - CTAFooterDescription
 
 private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondaryViewDescription {
-    var views: [ViewDescriptor] {
-        [self]
+    // MARK: Lifecycle
+
+    init() {
+        ctaButton.setTitle(L10n.Localizable.AddEmailPasswordStep.CtaButton.title.capitalized, for: .normal)
     }
+
+    // MARK: Internal
 
     var actioner: AuthenticationActioner?
 
@@ -102,8 +112,8 @@ private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondar
         fontSpec: .buttonBigSemibold
     )
 
-    init() {
-        ctaButton.setTitle(L10n.Localizable.AddEmailPasswordStep.CtaButton.title.capitalized, for: .normal)
+    var views: [ViewDescriptor] {
+        [self]
     }
 
     func create() -> UIView {

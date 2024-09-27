@@ -24,18 +24,22 @@ typealias MockDataTaskCompletionHandler = (Data?, URLResponse?, Error?) -> Void
 // MARK: - MockDataTask
 
 class MockDataTask: DataTask {
-    weak var session: MockURLSession?
-    let taskIdentifier: Int
-    let completionHandler: MockDataTaskCompletionHandler
-
-    var currentRequest: URLRequest?
-    var response: URLResponse?
+    // MARK: Lifecycle
 
     init(session: MockURLSession, taskIdentifier: Int, completionHandler: @escaping MockDataTaskCompletionHandler) {
         self.session = session
         self.taskIdentifier = taskIdentifier
         self.completionHandler = completionHandler
     }
+
+    // MARK: Internal
+
+    weak var session: MockURLSession?
+    let taskIdentifier: Int
+    let completionHandler: MockDataTaskCompletionHandler
+
+    var currentRequest: URLRequest?
+    var response: URLResponse?
 
     func resume() {
         session?.resume(dataTask: self)

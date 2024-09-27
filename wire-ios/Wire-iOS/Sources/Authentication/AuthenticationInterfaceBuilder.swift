@@ -28,14 +28,7 @@ typealias AuthenticationStepViewController = AuthenticationCoordinatedViewContro
 /// An object that builds view controllers for authentication steps.
 
 final class AuthenticationInterfaceBuilder {
-    /// The object to use when checking for features.
-    let featureProvider: AuthenticationFeatureProvider
-
-    var backendEnvironmentProvider: () -> BackendEnvironmentProvider
-
-    var backendEnvironment: BackendEnvironmentProvider {
-        backendEnvironmentProvider()
-    }
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -48,6 +41,17 @@ final class AuthenticationInterfaceBuilder {
     ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
+    }
+
+    // MARK: Internal
+
+    /// The object to use when checking for features.
+    let featureProvider: AuthenticationFeatureProvider
+
+    var backendEnvironmentProvider: () -> BackendEnvironmentProvider
+
+    var backendEnvironment: BackendEnvironmentProvider {
+        backendEnvironmentProvider()
     }
 
     // MARK: - Interface Building
@@ -175,6 +179,8 @@ final class AuthenticationInterfaceBuilder {
             return nil
         }
     }
+
+    // MARK: Private
 
     /// Returns the view controller that displays the interface for the given intermediate
     /// registration step.

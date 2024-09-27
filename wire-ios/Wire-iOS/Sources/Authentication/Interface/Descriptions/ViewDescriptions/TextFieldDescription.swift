@@ -21,18 +21,7 @@ import UIKit
 // MARK: - TextFieldDescription
 
 final class TextFieldDescription: NSObject, ValueSubmission {
-    let placeholder: String
-    let actionDescription: String
-    let kind: ValidatedTextField.Kind
-    var valueSubmitted: ValueSubmitted?
-    var valueValidated: ValueValidated?
-    var acceptsInput = true
-    var validationError: TextFieldValidator.ValidationError?
-    var showConfirmButton = true
-    var canSubmit: (() -> Bool)?
-    var textField: ValidatedTextField?
-    var useDeferredValidation = false
-    var acceptInvalidInput = true
+    // MARK: Lifecycle
 
     init(placeholder: String, actionDescription: String, kind: ValidatedTextField.Kind) {
         self.placeholder = placeholder
@@ -45,6 +34,21 @@ final class TextFieldDescription: NSObject, ValueSubmission {
             (self?.acceptsInput == true) && (self?.validationError == nil)
         }
     }
+
+    // MARK: Internal
+
+    let placeholder: String
+    let actionDescription: String
+    let kind: ValidatedTextField.Kind
+    var valueSubmitted: ValueSubmitted?
+    var valueValidated: ValueValidated?
+    var acceptsInput = true
+    var validationError: TextFieldValidator.ValidationError?
+    var showConfirmButton = true
+    var canSubmit: (() -> Bool)?
+    var textField: ValidatedTextField?
+    var useDeferredValidation = false
+    var acceptInvalidInput = true
 }
 
 // MARK: ViewDescriptor

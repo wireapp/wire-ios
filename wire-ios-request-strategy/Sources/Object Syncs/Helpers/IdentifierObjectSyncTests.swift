@@ -28,12 +28,13 @@ class MockTranscoder: IdentifierObjectSyncTranscoder {
     var fetchLimit = 1
 
     var lastRequestedIdentifiers: Set<UUID> = Set()
+    var lastReceivedResponse: (response: ZMTransportResponse, identifiers: Set<UUID>)?
+
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         lastRequestedIdentifiers = identifiers
         return ZMTransportRequest(getFromPath: "/dummy/path", apiVersion: APIVersion.v0.rawValue)
     }
 
-    var lastReceivedResponse: (response: ZMTransportResponse, identifiers: Set<UUID>)?
     func didReceive(
         response: ZMTransportResponse,
         for identifiers: Set<UUID>,

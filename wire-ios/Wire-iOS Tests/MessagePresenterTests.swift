@@ -22,15 +22,12 @@ import XCTest
 @testable import Wire
 
 final class MessagePresenterTests: XCTestCase {
+    // MARK: Internal
+
     var sut: MessagePresenter!
     var mediaPlaybackManager: MediaPlaybackManager!
     var originalRootViewController: UIViewController!
     var userSession: UserSessionMock!
-
-    private var rootViewController: UIViewController! {
-        get { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController }
-        set { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController = newValue }
-    }
 
     override func setUp() {
         super.setUp()
@@ -107,5 +104,12 @@ final class MessagePresenterTests: XCTestCase {
 
         // THEN
         // expected not to throw an error!
+    }
+
+    // MARK: Private
+
+    private var rootViewController: UIViewController! {
+        get { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController }
+        set { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController = newValue }
     }
 }

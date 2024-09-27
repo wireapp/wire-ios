@@ -21,20 +21,19 @@ import WireSyncEngine
 // MARK: - SessionManagerLifeCycleObserver
 
 final class SessionManagerLifeCycleObserver {
-    // MARK: - Public Property
-
-    var sessionManager: SessionManager?
-
-    // MARK: - Private Property
-
-    private var observerTokens: [Any] = []
-    private var soundEventListeners = [UUID: SoundEventListener]()
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
     init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
     }
+
+    // MARK: Internal
+
+    // MARK: - Public Property
+
+    var sessionManager: SessionManager?
 
     // MARK: - Public Implementation
 
@@ -49,6 +48,13 @@ final class SessionManagerLifeCycleObserver {
         }
         observerTokens.append(destroyedSessionObserverToken)
     }
+
+    // MARK: Private
+
+    // MARK: - Private Property
+
+    private var observerTokens: [Any] = []
+    private var soundEventListeners = [UUID: SoundEventListener]()
 }
 
 // MARK: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver

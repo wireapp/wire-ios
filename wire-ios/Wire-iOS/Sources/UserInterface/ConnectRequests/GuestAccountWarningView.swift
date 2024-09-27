@@ -20,16 +20,7 @@ import UIKit
 import WireDesign
 
 final class GuestAccountWarningView: UIView {
-    private let stackView = UIStackView(axis: .vertical)
-    private let encryptionLabel = DynamicFontLabel(
-        fontSpec: .mediumRegularFont,
-        color: SemanticColors.Label.textDefault
-    )
-    private let sensitiveInfoLabel = DynamicFontLabel(
-        fontSpec: .mediumRegularFont,
-        color: SemanticColors.Label.textDefault
-    )
-    private let imageView = UIImageView(image: UIImage(named: "Info"))
+    // MARK: Lifecycle
 
     // MARK: - Setup
 
@@ -43,6 +34,19 @@ final class GuestAccountWarningView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Private
+
+    private let stackView = UIStackView(axis: .vertical)
+    private let encryptionLabel = DynamicFontLabel(
+        fontSpec: .mediumRegularFont,
+        color: SemanticColors.Label.textDefault
+    )
+    private let sensitiveInfoLabel = DynamicFontLabel(
+        fontSpec: .mediumRegularFont,
+        color: SemanticColors.Label.textDefault
+    )
+    private let imageView = UIImageView(image: UIImage(named: "Info"))
 
     private func setupViews() {
         typealias connectionView = L10n.Localizable.Conversation.ConnectionView

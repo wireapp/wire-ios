@@ -24,6 +24,74 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
     var mockDirectoryResponse: ((Data) async throws -> AcmeDirectory)?
 
+    // MARK: - newAccountRequest
+
+    var mockNewAccountRequest: ((String) async throws -> Data)?
+
+    // MARK: - newAccountResponse
+
+    var mockNewAccountResponse: ((Data) async throws -> Void)?
+
+    // MARK: - newOrderRequest
+
+    var mockNewOrderRequest: ((String) async throws -> Data)?
+
+    // MARK: - newOrderResponse
+
+    var mockNewOrderResponse: ((Data) async throws -> NewAcmeOrder)?
+
+    // MARK: - newAuthzRequest
+
+    var mockNewAuthzRequest: ((String, String) async throws -> Data)?
+
+    // MARK: - newAuthzResponse
+
+    var mockNewAuthzResponse: ((Data) async throws -> NewAcmeAuthz)?
+
+    // MARK: - createDpopToken
+
+    var mockCreateDpopToken: ((UInt32, String) throws -> String)?
+
+    // MARK: - getRefreshToken
+
+    var mockGetRefreshToken: (() async throws -> String)?
+
+    // MARK: - newDpopChallengeRequest
+
+    var mockNewDpopChallengeRequest: ((String, String) async throws -> Data)?
+
+    // MARK: - newOidcChallengeRequest
+
+    var mockNewOidcChallengeRequest: ((String, String, String) async throws -> Data)?
+
+    // MARK: - newDpopChallengeResponse
+
+    var mockNewDpopChallengeResponse: ((Data) async throws -> Void)?
+
+    // MARK: - newOidcChallengeResponse
+
+    var mockNewOidcChallengeResponse: ((WireCoreCrypto.CoreCrypto, Data) async throws -> Void)?
+
+    // MARK: - checkOrderRequest
+
+    var mockCheckOrderRequest: ((String, String) async throws -> Data)?
+
+    // MARK: - checkOrderResponse
+
+    var mockCheckOrderResponse: ((Data) async throws -> String)?
+
+    // MARK: - finalizeRequest
+
+    var mockFinalizeRequest: ((String) async throws -> Data)?
+
+    // MARK: - finalizeResponse
+
+    var mockFinalizeResponse: ((Data) async throws -> String)?
+
+    // MARK: - certificateRequest
+
+    var mockCertificateRequest: ((String) async throws -> Data)?
+
     func directoryResponse(directory: Data) async throws -> AcmeDirectory {
         guard let mock = mockDirectoryResponse else {
             fatalError("no mock for `mockDirectoryResponse`")
@@ -31,10 +99,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock(directory)
     }
-
-    // MARK: - newAccountRequest
-
-    var mockNewAccountRequest: ((String) async throws -> Data)?
 
     func newAccountRequest(previousNonce: String) async throws -> Data {
         guard let mock = mockNewAccountRequest else {
@@ -44,10 +108,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
         return try await mock(previousNonce)
     }
 
-    // MARK: - newAccountResponse
-
-    var mockNewAccountResponse: ((Data) async throws -> Void)?
-
     func newAccountResponse(account: Data) async throws {
         guard let mock = mockNewAccountResponse else {
             fatalError("no mock for `mockNewAccountResponse`")
@@ -55,10 +115,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock(account)
     }
-
-    // MARK: - newOrderRequest
-
-    var mockNewOrderRequest: ((String) async throws -> Data)?
 
     func newOrderRequest(previousNonce: String) async throws -> Data {
         guard let mock = mockNewOrderRequest else {
@@ -68,10 +124,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
         return try await mock(previousNonce)
     }
 
-    // MARK: - newOrderResponse
-
-    var mockNewOrderResponse: ((Data) async throws -> NewAcmeOrder)?
-
     func newOrderResponse(order: Data) async throws -> NewAcmeOrder {
         guard let mock = mockNewOrderResponse else {
             fatalError("no mock for `mockNewOrderResponse`")
@@ -79,10 +131,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock(order)
     }
-
-    // MARK: - newAuthzRequest
-
-    var mockNewAuthzRequest: ((String, String) async throws -> Data)?
 
     func newAuthzRequest(url: String, previousNonce: String) async throws -> Data {
         guard let mock = mockNewAuthzRequest else {
@@ -92,10 +140,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
         return try await mock(url, previousNonce)
     }
 
-    // MARK: - newAuthzResponse
-
-    var mockNewAuthzResponse: ((Data) async throws -> NewAcmeAuthz)?
-
     func newAuthzResponse(authz: Data) async throws -> NewAcmeAuthz {
         guard let mock = mockNewAuthzResponse else {
             fatalError("no mock for `mockNewAuthzResponse`")
@@ -103,10 +147,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock(authz)
     }
-
-    // MARK: - createDpopToken
-
-    var mockCreateDpopToken: ((UInt32, String) throws -> String)?
 
     func createDpopToken(expirySecs: UInt32, backendNonce: String) throws -> String {
         guard let mock = mockCreateDpopToken else {
@@ -116,10 +156,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
         return try mock(expirySecs, backendNonce)
     }
 
-    // MARK: - getRefreshToken
-
-    var mockGetRefreshToken: (() async throws -> String)?
-
     func getRefreshToken() async throws -> String {
         guard let mock = mockGetRefreshToken else {
             fatalError("no mock for `mockGetRefreshToken`")
@@ -127,10 +163,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock()
     }
-
-    // MARK: - newDpopChallengeRequest
-
-    var mockNewDpopChallengeRequest: ((String, String) async throws -> Data)?
 
     func newDpopChallengeRequest(accessToken: String, previousNonce: String) async throws -> Data {
         guard let mock = mockNewDpopChallengeRequest else {
@@ -140,10 +172,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
         return try await mock(accessToken, previousNonce)
     }
 
-    // MARK: - newOidcChallengeRequest
-
-    var mockNewOidcChallengeRequest: ((String, String, String) async throws -> Data)?
-
     func newOidcChallengeRequest(idToken: String, refreshToken: String, previousNonce: String) async throws -> Data {
         guard let mock = mockNewOidcChallengeRequest else {
             fatalError("no mock for `mockNewOidcChallengeRequest`")
@@ -151,10 +179,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock(idToken, refreshToken, previousNonce)
     }
-
-    // MARK: - newDpopChallengeResponse
-
-    var mockNewDpopChallengeResponse: ((Data) async throws -> Void)?
 
     func newDpopChallengeResponse(challenge: Data) async throws {
         guard let mock = mockNewDpopChallengeResponse else {
@@ -164,10 +188,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
         return try await mock(challenge)
     }
 
-    // MARK: - newOidcChallengeResponse
-
-    var mockNewOidcChallengeResponse: ((WireCoreCrypto.CoreCrypto, Data) async throws -> Void)?
-
     func newOidcChallengeResponse(cc: WireCoreCrypto.CoreCrypto, challenge: Data) async throws {
         guard let mock = mockNewOidcChallengeResponse else {
             fatalError("no mock for `mockNewOidcChallengeResponse`")
@@ -175,10 +195,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock(cc, challenge)
     }
-
-    // MARK: - checkOrderRequest
-
-    var mockCheckOrderRequest: ((String, String) async throws -> Data)?
 
     func checkOrderRequest(orderUrl: String, previousNonce: String) async throws -> Data {
         guard let mock = mockCheckOrderRequest else {
@@ -188,10 +204,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
         return try await mock(orderUrl, previousNonce)
     }
 
-    // MARK: - checkOrderResponse
-
-    var mockCheckOrderResponse: ((Data) async throws -> String)?
-
     func checkOrderResponse(order: Data) async throws -> String {
         guard let mock = mockCheckOrderResponse else {
             fatalError("no mock for `mockCheckOrderResponse`")
@@ -199,10 +211,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock(order)
     }
-
-    // MARK: - finalizeRequest
-
-    var mockFinalizeRequest: ((String) async throws -> Data)?
 
     func finalizeRequest(previousNonce: String) async throws -> Data {
         guard let mock = mockFinalizeRequest else {
@@ -212,10 +220,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
         return try await mock(previousNonce)
     }
 
-    // MARK: - finalizeResponse
-
-    var mockFinalizeResponse: ((Data) async throws -> String)?
-
     func finalizeResponse(finalize: Data) async throws -> String {
         guard let mock = mockFinalizeResponse else {
             fatalError("no mock for `mockFinalizeResponse`")
@@ -223,10 +227,6 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock(finalize)
     }
-
-    // MARK: - certificateRequest
-
-    var mockCertificateRequest: ((String) async throws -> Data)?
 
     func certificateRequest(previousNonce: String) async throws -> Data {
         guard let mock = mockCertificateRequest else {

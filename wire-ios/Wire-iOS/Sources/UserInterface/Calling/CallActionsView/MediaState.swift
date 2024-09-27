@@ -19,12 +19,14 @@
 import Foundation
 
 enum MediaState: Equatable {
+    case sendingVideo(speakerState: SpeakerState), notSendingVideo(speakerState: SpeakerState)
+
+    // MARK: Internal
+
     struct SpeakerState: Equatable {
         let isEnabled: Bool
         let canBeToggled: Bool
     }
-
-    case sendingVideo(speakerState: SpeakerState), notSendingVideo(speakerState: SpeakerState)
 
     var isSendingVideo: Bool {
         guard case .sendingVideo = self else { return false }

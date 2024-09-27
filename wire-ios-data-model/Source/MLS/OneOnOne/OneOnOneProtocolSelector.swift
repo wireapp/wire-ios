@@ -37,7 +37,11 @@ public enum OneOnOneProtocolSelectorError: Error {
 // MARK: - OneOnOneProtocolSelector
 
 public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
+    // MARK: Lifecycle
+
     public init() {}
+
+    // MARK: Public
 
     public func getProtocolForUser(
         with id: QualifiedID,

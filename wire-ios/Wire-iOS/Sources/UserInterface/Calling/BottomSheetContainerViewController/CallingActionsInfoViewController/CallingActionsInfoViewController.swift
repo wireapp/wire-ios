@@ -23,30 +23,7 @@ import WireDesign
 // MARK: - CallingActionsInfoViewController
 
 final class CallingActionsInfoViewController: UIViewController, UICollectionViewDelegateFlowLayout {
-    private let participantsHeaderHeight: CGFloat = 42
-    private let cellHeight: CGFloat = 56
-    private var topConstraint: NSLayoutConstraint?
-    private let selfUser: UserType
-
-    private var collectionView: CallParticipantsListView!
-    private let stackView = UIStackView(axis: .vertical)
-    private var participantsHeaderView = UIView()
-    private let securityLevelView = SecurityLevelView()
-    private var participantsHeaderLabel = DynamicFontLabel(
-        fontSpec: .smallSemiboldFont,
-        color: SemanticColors.Label.textSectionHeader
-    )
-    private(set) var actionsViewHeightConstraint: NSLayoutConstraint!
-    var isIncomingCall = false
-
-    let actionsView = CallingActionsView()
-
-    var participants: CallParticipantsList {
-        didSet {
-            updateRows()
-            participantsHeaderLabel.text = L10n.Localizable.Call.Participants.showAll(participants.count).uppercased()
-        }
-    }
+    // MARK: Lifecycle
 
     init(
         participants: CallParticipantsList,
@@ -60,6 +37,20 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    private(set) var actionsViewHeightConstraint: NSLayoutConstraint!
+    var isIncomingCall = false
+
+    let actionsView = CallingActionsView()
+
+    var participants: CallParticipantsList {
+        didSet {
+            updateRows()
+            participantsHeaderLabel.text = L10n.Localizable.Call.Participants.showAll(participants.count).uppercased()
+        }
     }
 
     override func viewDidLoad() {
@@ -76,6 +67,48 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     func setCallingActionsViewDelegate(actionsDelegate: CallingActionsViewDelegate?) {
         actionsView.delegate = actionsDelegate
     }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        updateActionViewHeight()
+    }
+
+    func updateActionViewHeight() {
+        actionsViewHeightConstraint.constant = calculateHeightConstant()
+        actionsView.verticalStackView.alignment = determineStackViewAlignment()
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: cellHeight)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+        false
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        false
+    }
+
+    // MARK: Private
+
+    private let participantsHeaderHeight: CGFloat = 42
+    private let cellHeight: CGFloat = 56
+    private var topConstraint: NSLayoutConstraint?
+    private let selfUser: UserType
+
+    private var collectionView: CallParticipantsListView!
+    private let stackView = UIStackView(axis: .vertical)
+    private var participantsHeaderView = UIView()
+    private let securityLevelView = SecurityLevelView()
+    private var participantsHeaderLabel = DynamicFontLabel(
+        fontSpec: .smallSemiboldFont,
+        color: SemanticColors.Label.textSectionHeader
+    )
 
     private func setupViews() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -141,16 +174,6 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         ])
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        updateActionViewHeight()
-    }
-
-    func updateActionViewHeight() {
-        actionsViewHeightConstraint.constant = calculateHeightConstant()
-        actionsView.verticalStackView.alignment = determineStackViewAlignment()
-    }
-
     private func calculateHeightConstant() -> CGFloat {
         if UIDevice.current.twoDimensionOrientation.isLandscape {
             128
@@ -169,22 +192,6 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
 
     private func updateRows() {
         collectionView?.rows = participants
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        CGSize(width: collectionView.bounds.size.width, height: cellHeight)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        false
-    }
-
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        false
     }
 }
 

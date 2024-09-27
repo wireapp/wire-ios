@@ -20,19 +20,7 @@ import Foundation
 import OSLog
 
 public struct Logger {
-    private typealias LogHandler = (String) -> Void
-
-    private var logger: Any?
-
-    private var onDebug: LogHandler?
-    private var onInfo: LogHandler?
-    private var onTrace: LogHandler?
-    private var onWarning: LogHandler?
-    private var onError: LogHandler?
-    private var onCritical: LogHandler?
-
-    // Disabled for now, re-enable when you want to debug.
-    private var isDebugLoggingEnabled = false
+    // MARK: Lifecycle
 
     public init(
         subsystem: String,
@@ -72,6 +60,8 @@ public struct Logger {
         }
     }
 
+    // MARK: Public
+
     public func debug(_ message: String) {
         onDebug?(message)
     }
@@ -95,4 +85,20 @@ public struct Logger {
     public func critical(_ message: String) {
         onCritical?(message)
     }
+
+    // MARK: Private
+
+    private typealias LogHandler = (String) -> Void
+
+    private var logger: Any?
+
+    private var onDebug: LogHandler?
+    private var onInfo: LogHandler?
+    private var onTrace: LogHandler?
+    private var onWarning: LogHandler?
+    private var onError: LogHandler?
+    private var onCritical: LogHandler?
+
+    // Disabled for now, re-enable when you want to debug.
+    private var isDebugLoggingEnabled = false
 }

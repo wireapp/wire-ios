@@ -38,12 +38,10 @@ protocol AddressBookHelperProtocol: AnyObject {
 
 /// Allows access to address book for search
 final class AddressBookHelper: AddressBookHelperProtocol {
+    // MARK: Internal
+
     /// Singleton
     static var sharedHelper: AddressBookHelperProtocol = AddressBookHelper()
-
-    // MARK: - Constants
-
-    private let addressBookLastAccessStatusKey = "AddressBookLastAccessStatus"
 
     // MARK: - Permissions
 
@@ -57,6 +55,11 @@ final class AddressBookHelper: AddressBookHelperProtocol {
 
     var isAddressBookAccessDisabled: Bool {
         CNContactStore.authorizationStatus(for: .contacts) == .denied
+    }
+
+    var accessStatusDidChangeToGranted: Bool {
+        guard let lastStatus = lastAccessStatus else { return false }
+        return CNContactStore.authorizationStatus(for: .contacts) != lastStatus && isAddressBookAccessGranted
     }
 
     /// Request access to the user. Will asynchronously invoke the callback passing as argument
@@ -77,14 +80,15 @@ final class AddressBookHelper: AddressBookHelperProtocol {
         UserDefaults.standard.set(NSNumber(value: status), forKey: addressBookLastAccessStatusKey)
     }
 
+    // MARK: Private
+
+    // MARK: - Constants
+
+    private let addressBookLastAccessStatusKey = "AddressBookLastAccessStatus"
+
     private var lastAccessStatus: CNAuthorizationStatus? {
         guard let value = UserDefaults.standard.object(forKey: addressBookLastAccessStatusKey) as? NSNumber
         else { return nil }
         return CNAuthorizationStatus(rawValue: value.intValue)
-    }
-
-    var accessStatusDidChangeToGranted: Bool {
-        guard let lastStatus = lastAccessStatus else { return false }
-        return CNContactStore.authorizationStatus(for: .contacts) != lastStatus && isAddressBookAccessGranted
     }
 }

@@ -21,13 +21,7 @@ import XCTest
 @testable import WireSyncEngine
 
 class ShareFileUseCaseTests: ZMTBaseTest {
-    // MARK: - Properties
-
-    private var sut: ShareFileUseCase!
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var coreDataStack: CoreDataStack!
-
-    // MARK: - Life cycle
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -84,6 +78,14 @@ class ShareFileUseCaseTests: ZMTBaseTest {
 
         try deleteTemporaryFile(at: url)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ShareFileUseCase!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var coreDataStack: CoreDataStack!
 
     // MARK: - Helpers
 

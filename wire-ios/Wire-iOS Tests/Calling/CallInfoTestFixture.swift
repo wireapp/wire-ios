@@ -26,6 +26,17 @@ extension CallStateMock {
 // MARK: - CallInfoTestFixture
 
 struct CallInfoTestFixture {
+    // MARK: Lifecycle
+
+    init(otherUser: UserType, selfUser: UserType, groupSize: GroupSize = .small, mockUsers: [UserType]) {
+        self.otherUser = otherUser
+        self.selfUser = selfUser
+        self.groupSize = groupSize
+        self.mockUsers = mockUsers
+    }
+
+    // MARK: Internal
+
     enum GroupSize: Int {
         case large = 10
         case small = 4
@@ -35,23 +46,6 @@ struct CallInfoTestFixture {
     let selfUser: UserType
     let groupSize: GroupSize
     let mockUsers: [UserType]
-
-    init(otherUser: UserType, selfUser: UserType, groupSize: GroupSize = .small, mockUsers: [UserType]) {
-        self.otherUser = otherUser
-        self.selfUser = selfUser
-        self.groupSize = groupSize
-        self.mockUsers = mockUsers
-    }
-
-    // MARK: - OneToOne Audio
-
-    private var hashBoxOtherUser: HashBoxUser {
-        HashBox(value: otherUser)
-    }
-
-    private var hashBoxSelfUser: HashBoxUser {
-        HashBox(value: selfUser)
-    }
 
     var oneToOneOutgoingAudioRinging: CallInfoViewControllerInput {
         MockCallInfoViewControllerInput(
@@ -627,96 +621,6 @@ struct CallInfoTestFixture {
         )
     }
 
-    func groupAudioEstablished(mockUsers: [UserType]) -> CallInfoViewControllerInput {
-        MockCallInfoViewControllerInput(
-            allowPresentationModeUpdates: true,
-            videoGridPresentationMode: .allVideoStreams,
-            videoPlaceholderState: .hidden,
-            permissions: CallPermissions(),
-            degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(
-                count: groupSize.rawValue,
-                videoState: .stopped,
-                microphoneState: .unmuted,
-                mockUsers: mockUsers
-            )),
-            canToggleMediaType: true,
-            isMuted: false,
-            callState: CallStateMock.ongoing,
-            mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            state: .established(duration: 10),
-            isConstantBitRate: false,
-            title: otherUser.name ?? "",
-            isVideoCall: false,
-            disableIdleTimer: false,
-            cameraType: .front,
-            networkQuality: .normal,
-            userEnabledCBR: false,
-            isForcedCBR: false,
-            classification: .none
-        )
-    }
-
-    func groupAudioEstablishedRemoteTurnedVideoOn(mockUsers: [UserType]) -> CallInfoViewControllerInput {
-        MockCallInfoViewControllerInput(
-            allowPresentationModeUpdates: true,
-            videoGridPresentationMode: .allVideoStreams,
-            videoPlaceholderState: .hidden,
-            permissions: CallPermissions(),
-            degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(
-                count: groupSize.rawValue,
-                videoState: .started,
-                microphoneState: .unmuted,
-                mockUsers: mockUsers
-            )),
-            canToggleMediaType: true,
-            isMuted: false,
-            callState: CallStateMock.ongoing,
-            mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            state: .established(duration: 10),
-            isConstantBitRate: false,
-            title: otherUser.name ?? "",
-            isVideoCall: true,
-            disableIdleTimer: true,
-            cameraType: .front,
-            networkQuality: .normal,
-            userEnabledCBR: false,
-            isForcedCBR: false,
-            classification: .none
-        )
-    }
-
-    func groupAudioEstablishedVideoUnavailable(mockUsers: [MockUserType]) -> CallInfoViewControllerInput {
-        MockCallInfoViewControllerInput(
-            allowPresentationModeUpdates: true,
-            videoGridPresentationMode: .allVideoStreams,
-            videoPlaceholderState: .hidden,
-            permissions: CallPermissions(),
-            degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(
-                count: groupSize.rawValue,
-                videoState: .stopped,
-                microphoneState: .unmuted,
-                mockUsers: mockUsers
-            )),
-            canToggleMediaType: false,
-            isMuted: false,
-            callState: CallStateMock.ongoing,
-            mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            state: .established(duration: 10),
-            isConstantBitRate: false,
-            title: otherUser.name ?? "",
-            isVideoCall: false,
-            disableIdleTimer: false,
-            cameraType: .front,
-            networkQuality: .normal,
-            userEnabledCBR: false,
-            isForcedCBR: false,
-            classification: .none
-        )
-    }
-
     var groupAudioEstablishedCBR: CallInfoViewControllerInput {
         MockCallInfoViewControllerInput(
             allowPresentationModeUpdates: false,
@@ -880,36 +784,6 @@ struct CallInfoTestFixture {
         )
     }
 
-    func groupVideoEstablished(mockUsers: [MockUserType]) -> CallInfoViewControllerInput {
-        MockCallInfoViewControllerInput(
-            allowPresentationModeUpdates: true,
-            videoGridPresentationMode: .allVideoStreams,
-            videoPlaceholderState: .hidden,
-            permissions: MockCallPermissions.videoAllowedForever,
-            degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(
-                count: groupSize.rawValue,
-                videoState: .started,
-                microphoneState: .unmuted,
-                mockUsers: mockUsers
-            )),
-            canToggleMediaType: true,
-            isMuted: false,
-            callState: CallStateMock.ongoing,
-            mediaState: .sendingVideo(speakerState: .deselectedCanBeToggled),
-            state: .established(duration: 10),
-            isConstantBitRate: false,
-            title: otherUser.name ?? "",
-            isVideoCall: true,
-            disableIdleTimer: true,
-            cameraType: .front,
-            networkQuality: .normal,
-            userEnabledCBR: false,
-            isForcedCBR: false,
-            classification: .none
-        )
-    }
-
     var groupVideoEstablishedCBR: CallInfoViewControllerInput {
         MockCallInfoViewControllerInput(
             allowPresentationModeUpdates: false,
@@ -1018,5 +892,137 @@ struct CallInfoTestFixture {
             isForcedCBR: false,
             classification: .none
         )
+    }
+
+    func groupAudioEstablished(mockUsers: [UserType]) -> CallInfoViewControllerInput {
+        MockCallInfoViewControllerInput(
+            allowPresentationModeUpdates: true,
+            videoGridPresentationMode: .allVideoStreams,
+            videoPlaceholderState: .hidden,
+            permissions: CallPermissions(),
+            degradationState: .none,
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .stopped,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
+            canToggleMediaType: true,
+            isMuted: false,
+            callState: CallStateMock.ongoing,
+            mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
+            state: .established(duration: 10),
+            isConstantBitRate: false,
+            title: otherUser.name ?? "",
+            isVideoCall: false,
+            disableIdleTimer: false,
+            cameraType: .front,
+            networkQuality: .normal,
+            userEnabledCBR: false,
+            isForcedCBR: false,
+            classification: .none
+        )
+    }
+
+    func groupAudioEstablishedRemoteTurnedVideoOn(mockUsers: [UserType]) -> CallInfoViewControllerInput {
+        MockCallInfoViewControllerInput(
+            allowPresentationModeUpdates: true,
+            videoGridPresentationMode: .allVideoStreams,
+            videoPlaceholderState: .hidden,
+            permissions: CallPermissions(),
+            degradationState: .none,
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .started,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
+            canToggleMediaType: true,
+            isMuted: false,
+            callState: CallStateMock.ongoing,
+            mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
+            state: .established(duration: 10),
+            isConstantBitRate: false,
+            title: otherUser.name ?? "",
+            isVideoCall: true,
+            disableIdleTimer: true,
+            cameraType: .front,
+            networkQuality: .normal,
+            userEnabledCBR: false,
+            isForcedCBR: false,
+            classification: .none
+        )
+    }
+
+    func groupAudioEstablishedVideoUnavailable(mockUsers: [MockUserType]) -> CallInfoViewControllerInput {
+        MockCallInfoViewControllerInput(
+            allowPresentationModeUpdates: true,
+            videoGridPresentationMode: .allVideoStreams,
+            videoPlaceholderState: .hidden,
+            permissions: CallPermissions(),
+            degradationState: .none,
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .stopped,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
+            canToggleMediaType: false,
+            isMuted: false,
+            callState: CallStateMock.ongoing,
+            mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
+            state: .established(duration: 10),
+            isConstantBitRate: false,
+            title: otherUser.name ?? "",
+            isVideoCall: false,
+            disableIdleTimer: false,
+            cameraType: .front,
+            networkQuality: .normal,
+            userEnabledCBR: false,
+            isForcedCBR: false,
+            classification: .none
+        )
+    }
+
+    func groupVideoEstablished(mockUsers: [MockUserType]) -> CallInfoViewControllerInput {
+        MockCallInfoViewControllerInput(
+            allowPresentationModeUpdates: true,
+            videoGridPresentationMode: .allVideoStreams,
+            videoPlaceholderState: .hidden,
+            permissions: MockCallPermissions.videoAllowedForever,
+            degradationState: .none,
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .started,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
+            canToggleMediaType: true,
+            isMuted: false,
+            callState: CallStateMock.ongoing,
+            mediaState: .sendingVideo(speakerState: .deselectedCanBeToggled),
+            state: .established(duration: 10),
+            isConstantBitRate: false,
+            title: otherUser.name ?? "",
+            isVideoCall: true,
+            disableIdleTimer: true,
+            cameraType: .front,
+            networkQuality: .normal,
+            userEnabledCBR: false,
+            isForcedCBR: false,
+            classification: .none
+        )
+    }
+
+    // MARK: Private
+
+    // MARK: - OneToOne Audio
+
+    private var hashBoxOtherUser: HashBoxUser {
+        HashBox(value: otherUser)
+    }
+
+    private var hashBoxSelfUser: HashBoxUser {
+        HashBox(value: selfUser)
     }
 }

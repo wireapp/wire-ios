@@ -59,28 +59,12 @@ protocol LogFilesProviding {
 /// In each logs archive, an extra file `info.txt` is added. It contains general information about the app.
 ///
 struct LogFilesProvider: LogFilesProviding {
+    // MARK: Internal
+
     // MARK: - Types
 
     enum Error: Swift.Error {
         case noLogs(description: String)
-    }
-
-    // MARK: - Properties
-
-    private var logsDirectory: URL = {
-        let baseURL = URL(
-            fileURLWithPath: NSTemporaryDirectory(),
-            isDirectory: true
-        )
-        return baseURL
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathComponent("logs")
-    }()
-
-    private var logFilesURLs: [URL] {
-        var urls = WireLogger.logFiles
-        urls.append(contentsOf: ZMSLog.pathsForExistingLogs)
-        return urls
     }
 
     // MARK: - Interface
@@ -128,6 +112,26 @@ struct LogFilesProvider: LogFilesProviding {
 
     func clearLogsDirectory() throws {
         try FileManager.default.removeItem(atPath: logsDirectory.path)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var logsDirectory: URL = {
+        let baseURL = URL(
+            fileURLWithPath: NSTemporaryDirectory(),
+            isDirectory: true
+        )
+        return baseURL
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathComponent("logs")
+    }()
+
+    private var logFilesURLs: [URL] {
+        var urls = WireLogger.logFiles
+        urls.append(contentsOf: ZMSLog.pathsForExistingLogs)
+        return urls
     }
 
     // MARK: - Helpers

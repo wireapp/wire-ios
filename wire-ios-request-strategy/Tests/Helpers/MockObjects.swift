@@ -23,6 +23,14 @@ import WireRequestStrategy
 // MARK: - MockApplicationStatus
 
 public class MockApplicationStatus: NSObject, ApplicationStatus {
+    public var mockSynchronizationState: SynchronizationState = .unauthenticated
+    public let mockTaskCancellationDelegate = MockTaskCancellationDelegate()
+    public var mockClientRegistrationStatus = MockClientRegistrationStatus()
+
+    public var mockOperationState: OperationState = .foreground
+
+    public var resyncResourcesWasRequested = false
+
     public var requestCancellation: ZMRequestCancellation {
         mockTaskCancellationDelegate
     }
@@ -31,15 +39,9 @@ public class MockApplicationStatus: NSObject, ApplicationStatus {
         mockClientRegistrationStatus
     }
 
-    public var mockSynchronizationState: SynchronizationState = .unauthenticated
-    public let mockTaskCancellationDelegate = MockTaskCancellationDelegate()
-    public var mockClientRegistrationStatus = MockClientRegistrationStatus()
-
     public var synchronizationState: SynchronizationState {
         mockSynchronizationState
     }
-
-    public var mockOperationState: OperationState = .foreground
 
     public var operationState: OperationState {
         mockOperationState
@@ -53,7 +55,6 @@ public class MockApplicationStatus: NSObject, ApplicationStatus {
         mockClientRegistrationStatus.deletionCalls
     }
 
-    public var resyncResourcesWasRequested = false
     public func requestResyncResources() {
         resyncResourcesWasRequested = true
     }
@@ -74,22 +75,26 @@ public class MockTaskCancellationDelegate: NSObject, ZMRequestCancellation {
 public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public var deletionCalls = 0
 
+    public var clientIsReadyForRequests: Bool {
+        true
+    }
+
     /// Notify that the current client was deleted remotely
     public func didDetectCurrentClientDeletion() {
         deletionCalls += 1
-    }
-
-    public var clientIsReadyForRequests: Bool {
-        true
     }
 }
 
 // MARK: - MockPushMessageHandler
 
 class MockPushMessageHandler: NSObject, PushMessageHandler {
+    // MARK: Public
+
     public func didFailToSend(_ message: ZMMessage) {
         failedToSend.append(message)
     }
+
+    // MARK: Internal
 
     fileprivate(set) var failedToSend: [ZMMessage] = []
 }

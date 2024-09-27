@@ -21,10 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 final class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
-    private let bundle = Bundle(for: ZMManagedObject.self)
-    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
-    private let migrationHelper = DatabaseMigrationHelper()
-    private let modelHelper = ModelHelper()
+    // MARK: Internal
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -59,4 +56,11 @@ final class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
             for: self
         )
     }
+
+    // MARK: Private
+
+    private let bundle = Bundle(for: ZMManagedObject.self)
+    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
+    private let migrationHelper = DatabaseMigrationHelper()
+    private let modelHelper = ModelHelper()
 }

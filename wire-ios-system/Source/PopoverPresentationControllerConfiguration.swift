@@ -25,6 +25,8 @@ public enum PopoverPresentationControllerConfiguration {
     case barButtonItem(_ barButtonItem: UIBarButtonItem)
     case sourceView(sourceView: UIView, sourceRect: CGRect)
 
+    // MARK: Public
+
     // MARK: Static
 
     public static func sourceView(_ sourceView: UIView, _ sourceRect: CGRect) -> Self {

@@ -21,8 +21,7 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class CertificateRevocationListAPITests: XCTestCase {
-    private var sut: CertificateRevocationListAPI!
-    private var mockHttpClient: MockHttpClient!
+    // MARK: Internal
 
     override func setUp() {
         mockHttpClient = MockHttpClient()
@@ -85,4 +84,9 @@ final class CertificateRevocationListAPITests: XCTestCase {
             _ = try await sut.getRevocationList(from: url)
         }
     }
+
+    // MARK: Private
+
+    private var sut: CertificateRevocationListAPI!
+    private var mockHttpClient: MockHttpClient!
 }

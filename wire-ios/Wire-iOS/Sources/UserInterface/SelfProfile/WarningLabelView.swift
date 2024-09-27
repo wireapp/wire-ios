@@ -22,12 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class WarningLabelView: UIView {
-    private let stackView = UIStackView(axis: .horizontal)
-    private let imageView = UIImageView(image: UIImage(named: "Info"))
-    private let label = DynamicFontLabel(
-        fontSpec: .mediumSemiboldFont,
-        color: SemanticColors.Label.textErrorDefault
-    )
+    // MARK: Lifecycle
 
     // MARK: - Setup
 
@@ -40,6 +35,31 @@ final class WarningLabelView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    func update(withUser user: UserType) {
+        typealias profileDetails = L10n.Localizable.Profile.Details
+        if user.isPendingApprovalBySelfUser {
+            isHidden = false
+            label.text = profileDetails.requestedIdentityWarning
+        }
+        guard let name = user.name else {
+            isHidden = true
+            return
+        }
+        isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
+        label.text = profileDetails.identityWarning(name)
+    }
+
+    // MARK: Private
+
+    private let stackView = UIStackView(axis: .horizontal)
+    private let imageView = UIImageView(image: UIImage(named: "Info"))
+    private let label = DynamicFontLabel(
+        fontSpec: .mediumSemiboldFont,
+        color: SemanticColors.Label.textErrorDefault
+    )
 
     private func setupViews() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,19 +81,5 @@ final class WarningLabelView: UIView {
                     withInsets: .zero
                 )
         )
-    }
-
-    func update(withUser user: UserType) {
-        typealias profileDetails = L10n.Localizable.Profile.Details
-        if user.isPendingApprovalBySelfUser {
-            isHidden = false
-            label.text = profileDetails.requestedIdentityWarning
-        }
-        guard let name = user.name else {
-            isHidden = true
-            return
-        }
-        isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
-        label.text = profileDetails.identityWarning(name)
     }
 }

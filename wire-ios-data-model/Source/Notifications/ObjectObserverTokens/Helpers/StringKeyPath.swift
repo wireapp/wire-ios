@@ -22,20 +22,7 @@ import Foundation
 
 /// A key path (as in key-value-coding).
 public final class StringKeyPath: Hashable {
-    public let rawValue: String
-    public let count: Int
-
-    private static var KeyPathCache: [String: StringKeyPath] = [:]
-
-    public static func keyPathForString(_ string: String) -> StringKeyPath {
-        if let keyPath = KeyPathCache[string] {
-            return keyPath
-        } else {
-            let instance = StringKeyPath(string)
-            KeyPathCache[string] = instance
-            return instance
-        }
-    }
+    // MARK: Lifecycle
 
     private init(_ s: String) {
         self.rawValue = s
@@ -44,13 +31,10 @@ public final class StringKeyPath: Hashable {
         }.count + 1
     }
 
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(rawValue.hashValue)
-    }
+    // MARK: Public
 
-    public var isPath: Bool {
-        count > 1
-    }
+    public let rawValue: String
+    public let count: Int
 
     public lazy var decompose: (head: StringKeyPath, tail: StringKeyPath?)? = {
         // swiftformat:disable:next isEmpty
@@ -69,6 +53,28 @@ public final class StringKeyPath: Hashable {
         }
         return nil
     }()
+
+    public var isPath: Bool {
+        count > 1
+    }
+
+    public static func keyPathForString(_ string: String) -> StringKeyPath {
+        if let keyPath = KeyPathCache[string] {
+            return keyPath
+        } else {
+            let instance = StringKeyPath(string)
+            KeyPathCache[string] = instance
+            return instance
+        }
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawValue.hashValue)
+    }
+
+    // MARK: Private
+
+    private static var KeyPathCache: [String: StringKeyPath] = [:]
 }
 
 // MARK: Equatable

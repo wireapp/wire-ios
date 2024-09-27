@@ -39,22 +39,7 @@ public protocol PreviouslyReceivedEventIDsCollection: NSObjectProtocol {
 /// Decodes and stores events from various sources to be processed later
 @objcMembers
 public final class EventDecoder: NSObject {
-    public typealias ConsumeBlock = ([ZMUpdateEvent]) -> Void
-
-    static var BatchSize: Int {
-        if let testingBatchSize {
-            return testingBatchSize
-        }
-        return 500
-    }
-
-    /// Set this for testing purposes only
-    static var testingBatchSize: Int?
-
-    unowned let eventMOC: NSManagedObjectContext
-    unowned let syncMOC: NSManagedObjectContext
-
-    fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
+    // MARK: Lifecycle
 
     public init(eventMOC: NSManagedObjectContext, syncMOC: NSManagedObjectContext) {
         self.eventMOC = eventMOC
@@ -64,6 +49,29 @@ public final class EventDecoder: NSObject {
             self.createReceivedPushEventIDsStoreIfNecessary()
         }
     }
+
+    // MARK: Public
+
+    public typealias ConsumeBlock = ([ZMUpdateEvent]) -> Void
+
+    // MARK: Internal
+
+    /// Set this for testing purposes only
+    static var testingBatchSize: Int?
+
+    static var BatchSize: Int {
+        if let testingBatchSize {
+            return testingBatchSize
+        }
+        return 500
+    }
+
+    unowned let eventMOC: NSManagedObjectContext
+    unowned let syncMOC: NSManagedObjectContext
+
+    // MARK: Fileprivate
+
+    fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
 }
 
 // MARK: - Process events

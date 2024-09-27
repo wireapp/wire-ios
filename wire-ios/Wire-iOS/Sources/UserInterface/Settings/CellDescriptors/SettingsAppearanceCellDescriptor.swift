@@ -21,10 +21,23 @@ import UIKit
 import WireSyncEngine
 
 class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
-    static let cellType: SettingsTableCellProtocol.Type = SettingsAppearanceCell.self
+    // MARK: Lifecycle
 
-    private var text: String
-    private let presentationStyle: PresentationStyle
+    init(
+        text: String,
+        previewGenerator: PreviewGeneratorType? = .none,
+        presentationStyle: PresentationStyle,
+        presentationAction: @escaping () -> (UIViewController?)
+    ) {
+        self.text = text
+        self.previewGenerator = previewGenerator
+        self.presentationStyle = presentationStyle
+        self.presentationAction = presentationAction
+    }
+
+    // MARK: Internal
+
+    static let cellType: SettingsTableCellProtocol.Type = SettingsAppearanceCell.self
 
     weak var viewController: UIViewController?
     let presentationAction: () -> (UIViewController?)
@@ -39,18 +52,6 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
 
     var title: String {
         text
-    }
-
-    init(
-        text: String,
-        previewGenerator: PreviewGeneratorType? = .none,
-        presentationStyle: PresentationStyle,
-        presentationAction: @escaping () -> (UIViewController?)
-    ) {
-        self.text = text
-        self.previewGenerator = previewGenerator
-        self.presentationStyle = presentationStyle
-        self.presentationAction = presentationAction
     }
 
     // MARK: - Configuration
@@ -98,4 +99,9 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
     func generateViewController() -> UIViewController? {
         presentationAction()
     }
+
+    // MARK: Private
+
+    private var text: String
+    private let presentationStyle: PresentationStyle
 }

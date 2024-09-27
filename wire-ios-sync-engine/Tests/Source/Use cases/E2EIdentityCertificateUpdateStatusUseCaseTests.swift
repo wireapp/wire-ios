@@ -21,12 +21,7 @@ import WireSyncEngineSupport
 import XCTest
 
 final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
-    private var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
-    private var stack: CoreDataStack!
-    private var sut: E2EIdentityCertificateUpdateStatusUseCase!
-    private var userID: UUID!
-    private var userDefaults: UserDefaults!
-    private var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface!
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -62,10 +57,6 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
         sut = nil
 
         try await super.tearDown()
-    }
-
-    private func update(certificate: E2eIdentityCertificate) {
-        mockGetE2eIdentityCertificates.invokeMlsGroupIdClientIds_MockValue = [certificate]
     }
 
     func testThatItReturnsNoAction_WhenExpiryDateIsBeyondNudgingDate() async throws {
@@ -212,6 +203,19 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
 
         // Then
         XCTAssertEqual(result, .block)
+    }
+
+    // MARK: Private
+
+    private var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
+    private var stack: CoreDataStack!
+    private var sut: E2EIdentityCertificateUpdateStatusUseCase!
+    private var userID: UUID!
+    private var userDefaults: UserDefaults!
+    private var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface!
+
+    private func update(certificate: E2eIdentityCertificate) {
+        mockGetE2eIdentityCertificates.invokeMlsGroupIdClientIds_MockValue = [certificate]
     }
 
     private func certificate(

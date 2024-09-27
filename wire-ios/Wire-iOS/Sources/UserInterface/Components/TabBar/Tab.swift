@@ -20,6 +20,8 @@ import UIKit
 import WireDesign
 
 final class Tab: LegacyButton {
+    // MARK: Lifecycle
+
     init() {
         super.init(fontSpec: .bodyTwoSemibold)
 
@@ -28,9 +30,13 @@ final class Tab: LegacyButton {
         updateColors()
     }
 
+    // MARK: Internal
+
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: 48)
     }
+
+    // MARK: Private
 
     private func updateColors() {
         setTitleColor(SemanticColors.Label.textDefault, for: .normal)

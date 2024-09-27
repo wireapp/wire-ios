@@ -29,7 +29,7 @@ import WireUtilitiesSupport
 // MARK: - MockAuthenticatedSessionFactory
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
-    let transportSession: TransportSessionType
+    // MARK: Lifecycle
 
     init(
         application: ZMApplication,
@@ -53,6 +53,10 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             minTLSVersion: nil
         )
     }
+
+    // MARK: Internal
+
+    let transportSession: TransportSessionType
 
     override func session(
         for account: Account,
@@ -105,7 +109,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 // MARK: - MockUnauthenticatedSessionFactory
 
 final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
-    let transportSession: UnauthenticatedTransportSessionProtocol
+    // MARK: Lifecycle
 
     init(
         transportSession: UnauthenticatedTransportSessionProtocol,
@@ -121,6 +125,10 @@ final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
             reachability: reachability
         )
     }
+
+    // MARK: Internal
+
+    let transportSession: UnauthenticatedTransportSessionProtocol
 
     override func session(
         delegate: UnauthenticatedSessionDelegate,
@@ -876,44 +884,45 @@ public class MockLoginDelegate: NSObject, LoginDelegate {
     public var currentError: NSError?
 
     public var didCallLoginCodeRequestDidFail = false
+    public var didCallLoginCodeRequestDidSucceed = false
+    public var didCallAuthenticationDidFail = false
+    public var didCallAuthenticationInvalidated = false
+    public var didCallAuthenticationDidSucceed = false
+    public var didCallAuthenticationReadyToImportBackup = false
+    public var didCallClientRegistrationDidSucceed = false
+    public var didCallClientRegistrationDidFail = false
+
     public func loginCodeRequestDidFail(_ error: NSError) {
         currentError = error
         didCallLoginCodeRequestDidFail = true
     }
 
-    public var didCallLoginCodeRequestDidSucceed = false
     public func loginCodeRequestDidSucceed() {
         didCallLoginCodeRequestDidSucceed = true
     }
 
-    public var didCallAuthenticationDidFail = false
     public func authenticationDidFail(_ error: NSError) {
         currentError = error
         didCallAuthenticationDidFail = true
     }
 
-    public var didCallAuthenticationInvalidated = false
     public func authenticationInvalidated(_ error: NSError, accountId: UUID) {
         currentError = error
         didCallAuthenticationInvalidated = true
     }
 
-    public var didCallAuthenticationDidSucceed = false
     public func authenticationDidSucceed() {
         didCallAuthenticationDidSucceed = true
     }
 
-    public var didCallAuthenticationReadyToImportBackup = false
     public func authenticationReadyToImportBackup(existingAccount: Bool) {
         didCallAuthenticationReadyToImportBackup = true
     }
 
-    public var didCallClientRegistrationDidSucceed = false
     public func clientRegistrationDidSucceed(accountId: UUID) {
         didCallClientRegistrationDidSucceed = true
     }
 
-    public var didCallClientRegistrationDidFail = false
     public func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {
         currentError = error
         didCallClientRegistrationDidFail = true

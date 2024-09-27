@@ -25,21 +25,7 @@ import WireSyncEngine
 // MARK: - SecurityLevelView
 
 final class SecurityLevelView: UIView {
-    // MARK: - Constants
-
-    private static let SecurityLevelViewHeight = 24.0
-
-    // MARK: - Properties
-
-    private let securityLevelLabel = UILabel()
-    private let iconImageView = UIImageView()
-    private let topBorder = UIView()
-    private let bottomBorder = UIView()
-
-    typealias SecurityLocalization = L10n.Localizable.SecurityClassification
-    typealias ViewColors = SemanticColors.View
-    typealias LabelColors = SemanticColors.Label
-    typealias IconColors = SemanticColors.Icon
+    // MARK: Lifecycle
 
     // MARK: - Initializers
 
@@ -56,6 +42,13 @@ final class SecurityLevelView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    typealias SecurityLocalization = L10n.Localizable.SecurityClassification
+    typealias ViewColors = SemanticColors.View
+    typealias LabelColors = SemanticColors.Label
+    typealias IconColors = SemanticColors.Icon
 
     // MARK: - Methods
 
@@ -95,6 +88,19 @@ final class SecurityLevelView: UIView {
 
         configure(with: classification)
     }
+
+    // MARK: Private
+
+    // MARK: - Constants
+
+    private static let SecurityLevelViewHeight = 24.0
+
+    // MARK: - Properties
+
+    private let securityLevelLabel = UILabel()
+    private let iconImageView = UIImageView()
+    private let topBorder = UIView()
+    private let bottomBorder = UIView()
 
     private func setupViews() {
         securityLevelLabel.textAlignment = .center

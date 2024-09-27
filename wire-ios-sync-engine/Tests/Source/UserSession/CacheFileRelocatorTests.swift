@@ -20,6 +20,8 @@ import XCTest
 @testable import WireSyncEngine
 
 final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
+    // MARK: Internal
+
     func testThatItMovesCaches() throws {
         // given
         let oldLocation = FileManager.default.cachesURLForAccount(with: nil, in: sut.sharedContainerURL)
@@ -105,6 +107,8 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
                 )
         )      // tests that the file was moved to the account folder
     }
+
+    // MARK: Private
 
     private func clearFolder(at location: URL) {
         if FileManager.default.fileExists(atPath: location.path) {

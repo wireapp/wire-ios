@@ -20,9 +20,11 @@ import Foundation
 @testable import WireDataModel
 
 actor MockActorOneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {}
+
+    // MARK: Internal
 
     // MARK: - getProtocolForUser
 

@@ -48,17 +48,7 @@ extension ZMConversationType {
 // MARK: - ProfileViewController
 
 final class ProfileViewController: UIViewController {
-    weak var viewControllerDismisser: ViewControllerDismisser?
-    weak var delegate: ProfileViewControllerDelegate?
-
-    private let viewModel: ProfileViewControllerViewModeling
-    private let profileFooterView = ProfileFooterView()
-    private let incomingRequestFooter = IncomingRequestFooterView()
-    private let securityLevelView = SecurityLevelView()
-    private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
-    private var tabsController: TabBarController?
-    private let mainCoordinator: MainCoordinating
+    // MARK: Lifecycle
 
     // MARK: - init
 
@@ -129,39 +119,13 @@ final class ProfileViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Header
+    // MARK: Internal
 
-    private func setupHeader() {
-        securityLevelView.configure(with: viewModel.classification)
-        view.addSubview(securityLevelView)
-    }
+    weak var viewControllerDismisser: ViewControllerDismisser?
+    weak var delegate: ProfileViewControllerDelegate?
 
-    // MARK: - Actions
-
-    private func bringUpConversationCreationFlow() {
-        let controller = ConversationCreationController(
-            preSelectedParticipants: viewModel.userSet,
-            userSession: viewModel.userSession
-        )
-        controller.delegate = self
-
-        let wrappedController = controller.wrapInNavigationController()
-        wrappedController.modalPresentationStyle = .formSheet
-        present(wrappedController, animated: true)
-    }
-
-    private func bringUpCancelConnectionRequestSheet(from targetView: UIView) {
-        let user = viewModel.user
-
-        let controller = UIAlertController.cancelConnectionRequest(for: user) { canceled in
-            if !canceled {
-                self.viewModel.cancelConnectionRequest {
-                    self.returnToPreviousScreen()
-                }
-            }
-        }
-
-        presentAlert(controller, targetView: targetView)
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
     }
 
     override func loadView() {
@@ -196,8 +160,50 @@ final class ProfileViewController: UIViewController {
         )
     }
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
+    // MARK: Private
+
+    private let viewModel: ProfileViewControllerViewModeling
+    private let profileFooterView = ProfileFooterView()
+    private let incomingRequestFooter = IncomingRequestFooterView()
+    private let securityLevelView = SecurityLevelView()
+    private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
+    private let activityIndicator = UIActivityIndicatorView(style: .large)
+    private var tabsController: TabBarController?
+    private let mainCoordinator: MainCoordinating
+
+    // MARK: - Header
+
+    private func setupHeader() {
+        securityLevelView.configure(with: viewModel.classification)
+        view.addSubview(securityLevelView)
+    }
+
+    // MARK: - Actions
+
+    private func bringUpConversationCreationFlow() {
+        let controller = ConversationCreationController(
+            preSelectedParticipants: viewModel.userSet,
+            userSession: viewModel.userSession
+        )
+        controller.delegate = self
+
+        let wrappedController = controller.wrapInNavigationController()
+        wrappedController.modalPresentationStyle = .formSheet
+        present(wrappedController, animated: true)
+    }
+
+    private func bringUpCancelConnectionRequestSheet(from targetView: UIView) {
+        let user = viewModel.user
+
+        let controller = UIAlertController.cancelConnectionRequest(for: user) { canceled in
+            if !canceled {
+                self.viewModel.cancelConnectionRequest {
+                    self.returnToPreviousScreen()
+                }
+            }
+        }
+
+        presentAlert(controller, targetView: targetView)
     }
 
     private func setupProfileDetailsViewController() -> ProfileDetailsViewController {

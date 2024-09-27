@@ -25,6 +25,17 @@ enum Database {
     case messaging
     case event
 
+    // MARK: Internal
+
+    var `extension`: String {
+        switch self {
+        case .messaging:
+            "wiredatabase"
+        case .event:
+            "sqlite"
+        }
+    }
+
     func databaseFixtureFileName(for version: String) -> String {
         switch self {
         case .messaging:
@@ -37,24 +48,14 @@ enum Database {
             return "event_\(version)"
         }
     }
-
-    var `extension`: String {
-        switch self {
-        case .messaging:
-            "wiredatabase"
-        case .event:
-            "sqlite"
-        }
-    }
 }
 
 // MARK: - DatabaseMigrationHelper
 
 struct DatabaseMigrationHelper {
-    typealias MigrationAction = (NSManagedObjectContext) throws -> Void
+    // MARK: Internal
 
-    private let bundle = WireDataModelBundle.bundle
-    private let dataModelName = "zmessaging"
+    typealias MigrationAction = (NSManagedObjectContext) throws -> Void
 
     func createObjectModel(version: String) throws -> NSManagedObjectModel {
         let modelVersion = "\(dataModelName)\(version)"
@@ -266,6 +267,11 @@ struct DatabaseMigrationHelper {
         stack = nil
         try? FileManager.default.removeItem(at: applicationContainer)
     }
+
+    // MARK: Private
+
+    private let bundle = WireDataModelBundle.bundle
+    private let dataModelName = "zmessaging"
 }
 
 // MARK: - WireDataModelTestsBundle

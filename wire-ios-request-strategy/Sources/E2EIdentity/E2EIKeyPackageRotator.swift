@@ -34,32 +34,7 @@ public protocol E2EIKeyPackageRotating {
 // MARK: - E2EIKeyPackageRotator
 
 public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
-    // MARK: - Types
-
-    enum Error: Swift.Error {
-        case noSelfClient
-        case invalidGroupID
-        case invalidIdentity
-        case invalidCiphersuite
-    }
-
-    // MARK: - Properties
-
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let conversationEventProcessor: ConversationEventProcessorProtocol
-    private let context: NSManagedObjectContext
-    private let commitSender: CommitSending
-    private let newKeyPackageCount: UInt32 = 100
-    private let featureRepository: FeatureRepositoryInterface
-    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
-
-    private var coreCrypto: SafeCoreCryptoProtocol {
-        get async throws {
-            try await coreCryptoProvider.coreCrypto()
-        }
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
@@ -79,6 +54,8 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         )
         self.featureRepository = featureRepository
     }
+
+    // MARK: Public
 
     // MARK: - Interface
 
@@ -122,6 +99,35 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         // Publish new certificate revocation lists (CRLs) distribution points
         if let newDistributionPoints = CRLsDistributionPoints(from: rotateBundle.crlNewDistributionPoints) {
             onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+        }
+    }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    enum Error: Swift.Error {
+        case noSelfClient
+        case invalidGroupID
+        case invalidIdentity
+        case invalidCiphersuite
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let conversationEventProcessor: ConversationEventProcessorProtocol
+    private let context: NSManagedObjectContext
+    private let commitSender: CommitSending
+    private let newKeyPackageCount: UInt32 = 100
+    private let featureRepository: FeatureRepositoryInterface
+    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 

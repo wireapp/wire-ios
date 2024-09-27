@@ -31,14 +31,7 @@ public protocol MLSGroupVerificationProtocol {
 // MARK: - MLSGroupVerification
 
 public final class MLSGroupVerification: MLSGroupVerificationProtocol {
-    // MARK: - Properties
-
-    private let updateVerificationStatus: any UpdateMLSGroupVerificationStatusUseCaseProtocol
-
-    private let mlsService: MLSServiceInterface
-    private let syncContext: NSManagedObjectContext
-
-    private var observationTask: Task<Void, Never>?
+    // MARK: Lifecycle
 
     // MARK: - Initialize
 
@@ -55,6 +48,8 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
     deinit {
         observationTask?.cancel()
     }
+
+    // MARK: Public
 
     // MARK: Observing
 
@@ -109,4 +104,15 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
             await updateConversation(conversation, with: groupID)
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let updateVerificationStatus: any UpdateMLSGroupVerificationStatusUseCaseProtocol
+
+    private let mlsService: MLSServiceInterface
+    private let syncContext: NSManagedObjectContext
+
+    private var observationTask: Task<Void, Never>?
 }

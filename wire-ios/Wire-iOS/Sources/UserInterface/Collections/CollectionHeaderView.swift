@@ -22,8 +22,73 @@ import WireDesign
 import WireSystem
 
 final class CollectionHeaderView: UICollectionReusableView {
+    // MARK: Lifecycle
+
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatal("init(coder: NSCoder) is not implemented")
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        addSubview(titleLabel)
+
+        actionButton.contentHorizontalAlignment = .right
+        actionButton.isAccessibilityElement = false
+        actionButton.addTarget(self, action: #selector(CollectionHeaderView.didSelect(_:)), for: .touchUpInside)
+        addSubview(actionButton)
+
+        iconImageView.contentMode = .center
+        addSubview(iconImageView)
+
+        for item in [titleLabel, actionButton, iconImageView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
+        }
+        NSLayoutConstraint.activate([
+            iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: 16),
+            iconImageView.heightAnchor.constraint(equalToConstant: 16),
+
+            titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 8),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+
+            actionButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+            actionButton.topAnchor.constraint(equalTo: topAnchor),
+            actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            actionButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+    }
+
+    // MARK: Internal
+
     typealias Section = L10n.Localizable.Collections.Section
     typealias ConversationSearch = L10n.Accessibility.ConversationSearch
+
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .smallSemiboldFont
+        label.textColor = SemanticColors.Label.textDefault
+
+        return label
+    }()
+
+    let actionButton: UIButton = {
+        let button = UIButton()
+        button.setTitleColor(UIColor.accent(), for: .normal)
+        button.titleLabel?.font = .smallSemiboldFont
+
+        return button
+    }()
+
+    let iconImageView = UIImageView()
+
+    var selectionAction: ((CollectionsSectionSet) -> Void)? = .none
+
+    var desiredWidth: CGFloat = 0
+    var desiredHeight: CGFloat = 0
 
     var section: CollectionsSectionSet = .none {
         didSet {
@@ -67,67 +132,6 @@ final class CollectionHeaderView: UICollectionReusableView {
             actionButton.setTitle(totalCountText, for: .normal)
         }
     }
-
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .smallSemiboldFont
-        label.textColor = SemanticColors.Label.textDefault
-
-        return label
-    }()
-
-    let actionButton: UIButton = {
-        let button = UIButton()
-        button.setTitleColor(UIColor.accent(), for: .normal)
-        button.titleLabel?.font = .smallSemiboldFont
-
-        return button
-    }()
-
-    let iconImageView = UIImageView()
-
-    var selectionAction: ((CollectionsSectionSet) -> Void)? = .none
-
-    @available(*, unavailable)
-    required init(coder: NSCoder) {
-        fatal("init(coder: NSCoder) is not implemented")
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        addSubview(titleLabel)
-
-        actionButton.contentHorizontalAlignment = .right
-        actionButton.isAccessibilityElement = false
-        actionButton.addTarget(self, action: #selector(CollectionHeaderView.didSelect(_:)), for: .touchUpInside)
-        addSubview(actionButton)
-
-        iconImageView.contentMode = .center
-        addSubview(iconImageView)
-
-        for item in [titleLabel, actionButton, iconImageView] {
-            item.translatesAutoresizingMaskIntoConstraints = false
-        }
-        NSLayoutConstraint.activate([
-            iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            iconImageView.widthAnchor.constraint(equalToConstant: 16),
-            iconImageView.heightAnchor.constraint(equalToConstant: 16),
-
-            titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 8),
-            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-
-            actionButton.leadingAnchor.constraint(equalTo: leadingAnchor),
-            actionButton.topAnchor.constraint(equalTo: topAnchor),
-            actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            actionButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
-    }
-
-    var desiredWidth: CGFloat = 0
-    var desiredHeight: CGFloat = 0
 
     override var intrinsicContentSize: CGSize {
         CGSize(width: desiredWidth, height: desiredHeight)

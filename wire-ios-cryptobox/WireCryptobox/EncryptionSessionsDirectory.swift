@@ -26,6 +26,8 @@ import WireUtilities
 enum EncryptionSessionError: Int {
     case unknown, encryptionFailed, decryptionFailed
 
+    // MARK: Internal
+
     var userInfo: [String: AnyObject] {
         var info = switch self {
         case .unknown:
@@ -54,34 +56,7 @@ class _CBoxSession: PointerWrapper {}
 /// It maintains an in-memory cache of encryption sessions with other clients
 /// that is persisted to disk as soon as it is deallocated.
 public final class EncryptionSessionsDirectory: NSObject {
-    /// Used for testing only. If set to true,
-    /// will not try to validate with the generating context
-    var debug_disableContextValidityCheck = false
-
-    /// Set of session identifier that require full debugging logs
-    let extensiveLoggingSessions: Set<EncryptionSessionIdentifier>
-
-    /// Context that created this status
-    fileprivate weak var generatingContext: EncryptionContext!
-
-    /// Local fingerprint
-    public var localFingerprint: Data
-
-    fileprivate let encryptionPayloadCache: Cache<GenericHash, Data>
-
-    /// Cache of transient sessions, indexed by client ID.
-    /// Transient sessions are session that are (potentially) modified in memory
-    /// and not yet committed to disk. When trying to load a session,
-    /// and that session is already in the list of transient sessions,
-    /// the transient session will be returned without any loading
-    /// occurring. As soon as a session is saved, it is removed from the cache.
-    ///
-    /// - note: This is an optimization: instead of loading, decrypting,
-    /// saving, unloading every time, if the same session is reused within
-    /// the same execution block, we don't need to spend time reading
-    /// and writing to disk every time we use the session, we can just
-    /// load once and save once at the end.
-    fileprivate var pendingSessionsCache: [EncryptionSessionIdentifier: EncryptionSession] = [:]
+    // MARK: Lifecycle
 
     init(
         generatingContext: EncryptionContext,
@@ -96,34 +71,14 @@ public final class EncryptionSessionsDirectory: NSObject {
         zmLog.safePublic("Loaded encryption status - local fingerprint \(localFingerprint)")
     }
 
-    /// The underlying implementation of the box
-    var box: _CBox {
-        generatingContext!.implementation
-    }
-
-    /// Checks whether self is in a valid state, i.e. the generating context is still open and
-    /// this is the current status. If not, it means that we are using this status after
-    /// the context was done using this status.
-    /// Will assert if this is the case.
-    fileprivate func validateContext() -> EncryptionContext {
-        guard debug_disableContextValidityCheck || generatingContext.currentSessionsDirectory === self else {
-            // If you hit this line, check if the status was stored in a variable for later use,
-            // or if it was used from different threads - it should never be.
-            fatalError("Using encryption status outside of a context")
-        }
-        return generatingContext!
-    }
-
     deinit {
         self.commitCache()
     }
 
-    private func hash(for data: Data, recipient: EncryptionSessionIdentifier) -> GenericHash {
-        let builder = GenericHashBuilder()
-        builder.append(data)
-        builder.append(recipient.rawValue.data(using: .utf8)!)
-        return builder.build()
-    }
+    // MARK: Public
+
+    /// Local fingerprint
+    public var localFingerprint: Data
 
     /// Encrypts data for a client. Caches the encrypted payload based on `hash(data + recepient)` as the cache key.
     /// It invokes @c encrypt() in case of the cache miss.
@@ -151,6 +106,63 @@ public final class EncryptionSessionsDirectory: NSObject {
     public func purgeEncryptedPayloadCache() {
         zmLog.safePublic("Encryption cache purged")
         encryptionPayloadCache.purge()
+    }
+
+    // MARK: Internal
+
+    /// Used for testing only. If set to true,
+    /// will not try to validate with the generating context
+    var debug_disableContextValidityCheck = false
+
+    /// Set of session identifier that require full debugging logs
+    let extensiveLoggingSessions: Set<EncryptionSessionIdentifier>
+
+    /// The underlying implementation of the box
+    var box: _CBox {
+        generatingContext!.implementation
+    }
+
+    // MARK: Fileprivate
+
+    /// Context that created this status
+    fileprivate weak var generatingContext: EncryptionContext!
+
+    fileprivate let encryptionPayloadCache: Cache<GenericHash, Data>
+
+    /// Cache of transient sessions, indexed by client ID.
+    /// Transient sessions are session that are (potentially) modified in memory
+    /// and not yet committed to disk. When trying to load a session,
+    /// and that session is already in the list of transient sessions,
+    /// the transient session will be returned without any loading
+    /// occurring. As soon as a session is saved, it is removed from the cache.
+    ///
+    /// - note: This is an optimization: instead of loading, decrypting,
+    /// saving, unloading every time, if the same session is reused within
+    /// the same execution block, we don't need to spend time reading
+    /// and writing to disk every time we use the session, we can just
+    /// load once and save once at the end.
+    fileprivate var pendingSessionsCache: [EncryptionSessionIdentifier: EncryptionSession] = [:]
+
+    /// Checks whether self is in a valid state, i.e. the generating context is still open and
+    /// this is the current status. If not, it means that we are using this status after
+    /// the context was done using this status.
+    /// Will assert if this is the case.
+    fileprivate func validateContext() -> EncryptionContext {
+        guard debug_disableContextValidityCheck || generatingContext.currentSessionsDirectory === self else {
+            // If you hit this line, check if the status was stored in a variable for later use,
+            // or if it was used from different threads - it should never be.
+            fatalError("Using encryption status outside of a context")
+        }
+        return generatingContext!
+    }
+
+    // MARK: Private
+
+    private func hash(for data: Data, recipient: EncryptionSessionIdentifier) -> GenericHash {
+        let builder = GenericHashBuilder()
+        builder.append(data)
+        builder.append(recipient.rawValue.data(using: .utf8)!)
+        return builder.build()
     }
 }
 
@@ -501,23 +513,7 @@ extension _CBox {
 /// after it has been closed, and there is no easy way to ensure that sessions are always closed.
 /// By hiding the implementation inside this file, only code in this file has the chance to screw up!
 class EncryptionSession {
-    /// Whether this session has changes that require saving
-    var hasChanges: Bool
-
-    /// client ID
-    let id: EncryptionSessionIdentifier
-
-    /// Underlying C-style implementation
-    let implementation: _CBoxSession
-
-    /// The fingerpint of the client
-    let remoteFingerprint: Data
-
-    /// Path of the containing cryptobox (used for debugging)
-    let cryptoboxPath: URL
-
-    /// Whether to log additional information
-    let isExtensiveLoggingEnabled: Bool
+    // MARK: Lifecycle
 
     /// Creates a session from a C-level session pointer
     /// - parameter id: id of the client
@@ -537,11 +533,31 @@ class EncryptionSession {
         self.isExtensiveLoggingEnabled = extensiveLogging
     }
 
-    /// Closes the session in CBox
-    private func closeInCryptobox() {
-        zmLog.safePublic("Closing cryptobox session \(id)")
-        cbox_session_close(implementation.ptr)
+    deinit {
+        closeInCryptobox()
     }
+
+    // MARK: Internal
+
+    /// Whether this session has changes that require saving
+    var hasChanges: Bool
+
+    /// client ID
+    let id: EncryptionSessionIdentifier
+
+    /// Underlying C-style implementation
+    let implementation: _CBoxSession
+
+    /// The fingerpint of the client
+    let remoteFingerprint: Data
+
+    /// Path of the containing cryptobox (used for debugging)
+    let cryptoboxPath: URL
+
+    /// Whether to log additional information
+    let isExtensiveLoggingEnabled: Bool
+
+    // MARK: Fileprivate
 
     /// Save the session to disk
     fileprivate func save(_ cryptobox: _CBox) {
@@ -557,8 +573,12 @@ class EncryptionSession {
         }
     }
 
-    deinit {
-        closeInCryptobox()
+    // MARK: Private
+
+    /// Closes the session in CBox
+    private func closeInCryptobox() {
+        zmLog.safePublic("Closing cryptobox session \(id)")
+        cbox_session_close(implementation.ptr)
     }
 }
 
@@ -741,6 +761,23 @@ extension EncryptionSessionsDirectory {
 // MARK: - EncryptionSessionIdentifier
 
 public struct EncryptionSessionIdentifier: Hashable, Equatable {
+    // MARK: Lifecycle
+
+    public init(domain: String? = nil, userId: String, clientId: String) {
+        self.userId = userId
+        self.clientId = clientId
+        self.domain = domain ?? ""
+    }
+
+    /// Use when migrating from old session identifier to new session identifier
+    init(fromLegacyV1Identifier clientId: String) {
+        self.userId = String()
+        self.clientId = clientId
+        self.domain = String()
+    }
+
+    // MARK: Public
+
     public let userId: String
     public let clientId: String
     public let domain: String
@@ -754,19 +791,6 @@ public struct EncryptionSessionIdentifier: Hashable, Equatable {
         }
 
         return "\(domain)_\(userId)_\(clientId)"
-    }
-
-    public init(domain: String? = nil, userId: String, clientId: String) {
-        self.userId = userId
-        self.clientId = clientId
-        self.domain = domain ?? ""
-    }
-
-    /// Use when migrating from old session identifier to new session identifier
-    init(fromLegacyV1Identifier clientId: String) {
-        self.userId = String()
-        self.clientId = clientId
-        self.domain = String()
     }
 
     public func hash(into hasher: inout Hasher) {

@@ -62,26 +62,7 @@ private enum InputBarRowConstants {
 /// - Note: This class is intended for use as part of the `InputBar` and relies on the `InputBarConstants`
 ///         for consistent styling and layout metrics.
 final class InputBarButtonsView: UIView {
-    typealias RowIndex = UInt
-
-    private(set) var multilineLayout = false
-    private(set) var currentRow: RowIndex = 0
-
-    private lazy var buttonRowTopInset: NSLayoutConstraint = buttonOuterContainer.topAnchor
-        .constraint(equalTo: buttonInnerContainer.topAnchor)
-    private lazy var buttonRowHeight: NSLayoutConstraint = buttonInnerContainer.heightAnchor
-        .constraint(equalToConstant: 0)
-    private var lastLayoutWidth: CGFloat = 0
-
-    let expandRowButton = IconButton()
-    var buttons: [UIButton] {
-        didSet {
-            layoutAndConstrainButtonRows()
-        }
-    }
-
-    private let buttonInnerContainer = UIView()
-    private let buttonOuterContainer = UIView()
+    // MARK: Lifecycle
 
     required init(buttons: [UIButton]) {
         self.buttons = buttons
@@ -93,6 +74,21 @@ final class InputBarButtonsView: UIView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    typealias RowIndex = UInt
+
+    private(set) var multilineLayout = false
+    private(set) var currentRow: RowIndex = 0
+
+    let expandRowButton = IconButton()
+
+    var buttons: [UIButton] {
+        didSet {
+            layoutAndConstrainButtonRows()
+        }
     }
 
     func configureViews() {
@@ -126,6 +122,52 @@ final class InputBarButtonsView: UIView {
         backgroundColor = SemanticColors.SearchBar.backgroundInputView
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        guard bounds.size.width != lastLayoutWidth else { return }
+        layoutAndConstrainButtonRows()
+        lastLayoutWidth = bounds.size.width
+    }
+
+    func showRow(_ rowIndex: RowIndex, animated: Bool) {
+        let animationDuration = 0.35
+        guard rowIndex != currentRow else { return }
+        currentRow = rowIndex
+        buttonRowTopInset.constant = CGFloat(rowIndex) * InputBarRowConstants.buttonsBarHeight
+        UIView.animate(easing: .easeInOutExpo, duration: animated ? animationDuration : 0, animations: layoutIfNeeded)
+        setupAccessibility()
+    }
+
+    // MARK: Private
+
+    private enum ButtonPosition {
+        case first
+        case middle
+        case last
+    }
+
+    private lazy var buttonRowTopInset: NSLayoutConstraint = buttonOuterContainer.topAnchor
+        .constraint(equalTo: buttonInnerContainer.topAnchor)
+    private lazy var buttonRowHeight: NSLayoutConstraint = buttonInnerContainer.heightAnchor
+        .constraint(equalToConstant: 0)
+    private var lastLayoutWidth: CGFloat = 0
+
+    private let buttonInnerContainer = UIView()
+    private let buttonOuterContainer = UIView()
+
+    private var customButtonCount: Int {
+        let minButtonWidth: CGFloat = InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
+        let ratio = floorf(Float(bounds.width / minButtonWidth))
+        let numberOfButtons = Int(ratio)
+        return numberOfButtons >= 1 ? numberOfButtons - 1 : 0
+    }
+
+    // MARK: - Button Layout
+
+    private var buttonMargin: CGFloat {
+        conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
+    }
+
     private func createConstraints() {
         let widthConstraint = widthAnchor.constraint(equalToConstant: 600)
         widthConstraint.priority = UILayoutPriority(rawValue: 750)
@@ -152,22 +194,6 @@ final class InputBarButtonsView: UIView {
         ])
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        guard bounds.size.width != lastLayoutWidth else { return }
-        layoutAndConstrainButtonRows()
-        lastLayoutWidth = bounds.size.width
-    }
-
-    func showRow(_ rowIndex: RowIndex, animated: Bool) {
-        let animationDuration = 0.35
-        guard rowIndex != currentRow else { return }
-        currentRow = rowIndex
-        buttonRowTopInset.constant = CGFloat(rowIndex) * InputBarRowConstants.buttonsBarHeight
-        UIView.animate(easing: .easeInOutExpo, duration: animated ? animationDuration : 0, animations: layoutIfNeeded)
-        setupAccessibility()
-    }
-
     private func setupAccessibility() {
         if multilineLayout {
             let firstRowButtons = [UIButton](buttons.prefix(customButtonCount))
@@ -179,19 +205,6 @@ final class InputBarButtonsView: UIView {
                     : secondRowButtons.contains(button)
             }
         }
-    }
-
-    private var customButtonCount: Int {
-        let minButtonWidth: CGFloat = InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
-        let ratio = floorf(Float(bounds.width / minButtonWidth))
-        let numberOfButtons = Int(ratio)
-        return numberOfButtons >= 1 ? numberOfButtons - 1 : 0
-    }
-
-    // MARK: - Button Layout
-
-    private var buttonMargin: CGFloat {
-        conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
     }
 
     private func layoutAndConstrainButtonRows() {
@@ -420,12 +433,6 @@ final class InputBarButtonsView: UIView {
         }
 
         return constraints
-    }
-
-    private enum ButtonPosition {
-        case first
-        case middle
-        case last
     }
 
     private func setupInsets(for button: UIButton, position: ButtonPosition) {

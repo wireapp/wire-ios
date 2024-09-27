@@ -22,6 +22,23 @@ import WireDataModel
 import WireDesign
 
 final class UserClientCell: SeparatorCollectionViewCell {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        createConstraints()
+        setupStyle()
+    }
+
+    @available(*, unavailable)
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     enum EdgeInsetConstants {
         static let small: CGFloat = 2.0
         static let medium: CGFloat = 4.0
@@ -49,11 +66,6 @@ final class UserClientCell: SeparatorCollectionViewCell {
         color: LabelColors.textCellSubtitle
     )
 
-    private let statusStackView = UIStackView()
-    private let contentWrapView = UIView()
-    private let contentStackView = UIStackView()
-    private let accessoryIconView = UIImageView()
-
     var viewModel: ClientTableViewCellModel? {
         didSet {
             nameLabel.text = viewModel?.title.truncated(afterCharacterCount: 35)
@@ -68,21 +80,6 @@ final class UserClientCell: SeparatorCollectionViewCell {
             }
             setupAccessibility()
         }
-    }
-
-    private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
-
-    // MARK: - Initialization
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        createConstraints()
-        setupStyle()
-    }
-
-    @available(*, unavailable)
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: - Methods
@@ -100,6 +97,20 @@ final class UserClientCell: SeparatorCollectionViewCell {
         accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
     }
+
+    override func prepareForReuse() {
+        viewModel = nil
+        super.prepareForReuse()
+    }
+
+    // MARK: Private
+
+    private let statusStackView = UIStackView()
+    private let contentWrapView = UIView()
+    private let contentStackView = UIStackView()
+    private let accessoryIconView = UIImageView()
+
+    private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
 
     private func createConstraints() {
         [
@@ -182,11 +193,6 @@ final class UserClientCell: SeparatorCollectionViewCell {
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
-    }
-
-    override func prepareForReuse() {
-        viewModel = nil
-        super.prepareForReuse()
     }
 
     private func setupAccessibility() {

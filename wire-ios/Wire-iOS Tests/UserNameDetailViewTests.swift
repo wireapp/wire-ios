@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 class UserNameDetailViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: UserNameDetailView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -88,4 +85,11 @@ class UserNameDetailViewTests: XCTestCase {
         sut = createSutWithHeadStyle(user: user, fallbackName: "")
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: UserNameDetailView!
 }

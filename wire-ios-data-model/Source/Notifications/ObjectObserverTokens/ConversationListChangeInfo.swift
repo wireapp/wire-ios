@@ -31,14 +31,19 @@ extension ConversationList {
 
 @objcMembers
 public final class ConversationListChangeInfo: NSObject, SetChangeInfoOwner {
-    public typealias ChangeInfoContent = ZMConversation
-    public var setChangeInfo: SetChangeInfo<ZMConversation>
-
-    public var conversationList: ConversationList { setChangeInfo.observedObject as! ConversationList }
+    // MARK: Lifecycle
 
     init(setChangeInfo: SetChangeInfo<ZMConversation>) {
         self.setChangeInfo = setChangeInfo
     }
+
+    // MARK: Public
+
+    public typealias ChangeInfoContent = ZMConversation
+
+    public var setChangeInfo: SetChangeInfo<ZMConversation>
+
+    public var conversationList: ConversationList { setChangeInfo.observedObject as! ConversationList }
 
     public var orderedSetState: OrderedSetState<ChangeInfoContent> { setChangeInfo.orderedSetState }
     public var insertedIndexes: IndexSet { setChangeInfo.insertedIndexes }
@@ -47,6 +52,7 @@ public final class ConversationListChangeInfo: NSObject, SetChangeInfoOwner {
     public var updatedIndexes: IndexSet { setChangeInfo.updatedIndexes }
     public var movedIndexPairs: [MovedIndex] { setChangeInfo.movedIndexPairs }
     public var zm_movedIndexPairs: [ZMMovedIndex] { setChangeInfo.zm_movedIndexPairs }
+
     public func enumerateMovedIndexes(_ block: @escaping (_ from: Int, _ to: Int) -> Void) {
         setChangeInfo.enumerateMovedIndexes(block)
     }

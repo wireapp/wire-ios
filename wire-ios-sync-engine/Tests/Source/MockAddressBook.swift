@@ -23,11 +23,6 @@ import Foundation
 
 /// Fake to supply predefined AB hashes
 class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAccessor {
-    /// Find contact by Id
-    func contact(identifier: String) -> WireSyncEngine.ContactRecord? {
-        contacts.first { $0.localIdentifier == identifier }
-    }
-
     /// List of contacts in this address book
     var contacts = [MockAddressBookContact]()
 
@@ -35,8 +30,16 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
     /// because some contacts are filtered for not having valid email/phone)
     var numberOfAdditionalContacts: UInt = 0
 
+    /// Generate an infinite number of contacts
+    var createInfiniteContacts = false
+
     var numberOfContacts: UInt {
         UInt(contacts.count) + numberOfAdditionalContacts
+    }
+
+    /// Find contact by Id
+    func contact(identifier: String) -> WireSyncEngine.ContactRecord? {
+        contacts.first { $0.localIdentifier == identifier }
     }
 
     /// Enumerates the contacts, invoking the block for each contact.
@@ -84,24 +87,12 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
             identifier: "\(card)"
         )
     }
-
-    /// Generate an infinite number of contacts
-    var createInfiniteContacts = false
 }
 
 // MARK: - MockAddressBookContact
 
 struct MockAddressBookContact: WireSyncEngine.ContactRecord {
-    static var incrementalLocalIdentifier = ZMAtomicInteger(integer: 0)
-
-    var firstName = ""
-    var lastName = ""
-    var middleName = ""
-    var rawEmails: [String]
-    var rawPhoneNumbers: [String]
-    var nickname = ""
-    var organization = ""
-    var localIdentifier = ""
+    // MARK: Lifecycle
 
     init(firstName: String, emailAddresses: [String], phoneNumbers: [String], identifier: String? = nil) {
         self.firstName = firstName
@@ -112,6 +103,19 @@ struct MockAddressBookContact: WireSyncEngine.ContactRecord {
             return "\(MockAddressBookContact.incrementalLocalIdentifier.rawValue)"
         }()
     }
+
+    // MARK: Internal
+
+    static var incrementalLocalIdentifier = ZMAtomicInteger(integer: 0)
+
+    var firstName = ""
+    var lastName = ""
+    var middleName = ""
+    var rawEmails: [String]
+    var rawPhoneNumbers: [String]
+    var nickname = ""
+    var organization = ""
+    var localIdentifier = ""
 
     var expectedHashes: [String] {
         rawEmails.map(\.base64EncodedSHADigest) + rawPhoneNumbers.map(\.base64EncodedSHADigest)

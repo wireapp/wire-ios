@@ -22,6 +22,27 @@ import LocalAuthentication
 // MARK: - AppLockController
 
 public final class AppLockController: AppLockType {
+    // MARK: Lifecycle
+
+    public init(
+        userId: UUID,
+        selfUser: ZMUser,
+        legacyConfig: LegacyConfig?,
+        authenticationContext: any AuthenticationContextProtocol
+    ) {
+        precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
+
+        // It's safer use userId rather than selfUser.remoteIdentifier!
+        self.keychainItem = PasscodeKeychainItem(userId: userId)
+        self.selfUser = selfUser
+        self.legacyConfig = legacyConfig
+        self.authenticationContext = authenticationContext
+
+        self.featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
+    }
+
+    // MARK: Public
+
     // MARK: - Properties
 
     public weak var delegate: AppLockDelegate?
@@ -82,57 +103,6 @@ public final class AppLockController: AppLockType {
         set {
             featureRepository.setNeedsToNotifyUser(newValue, for: .appLock)
         }
-    }
-
-    // MARK: - Private properties
-
-    private let selfUser: ZMUser
-    private let featureRepository: FeatureRepository
-    private let authenticationContext: any AuthenticationContextProtocol
-
-    private(set) var state = State.locked
-
-    private(set) var lastCheckpoint = Date.distantPast
-
-    private var isTimeoutExceeded: Bool {
-        let timeSinceAuth = -lastCheckpoint.timeIntervalSinceNow
-        let timeoutWindow = 0 ..< Double(timeout)
-        return !timeoutWindow.contains(timeSinceAuth)
-    }
-
-    let keychainItem: PasscodeKeychainItem
-
-    var biometricsState: BiometricsStateProtocol = BiometricsState()
-
-    private let legacyConfig: LegacyConfig?
-
-    private var config: Config {
-        let appLock = featureRepository.fetchAppLock()
-
-        return Config(
-            isAvailable: appLock.status == .enabled,
-            isForced: appLock.config.enforceAppLock,
-            timeout: appLock.config.inactivityTimeoutSecs
-        )
-    }
-
-    // MARK: - Life cycle
-
-    public init(
-        userId: UUID,
-        selfUser: ZMUser,
-        legacyConfig: LegacyConfig?,
-        authenticationContext: any AuthenticationContextProtocol
-    ) {
-        precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
-
-        // It's safer use userId rather than selfUser.remoteIdentifier!
-        self.keychainItem = PasscodeKeychainItem(userId: userId)
-        self.selfUser = selfUser
-        self.legacyConfig = legacyConfig
-        self.authenticationContext = authenticationContext
-
-        self.featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
     }
 
     // MARK: - Methods
@@ -232,12 +202,48 @@ public final class AppLockController: AppLockType {
         try Keychain.deleteItem(keychainItem)
     }
 
-    private func storePasscode(_ passcode: String) throws {
-        try Keychain.storeItem(keychainItem, value: passcode.data(using: .utf8)!)
-    }
+    // MARK: Internal
+
+    private(set) var state = State.locked
+
+    private(set) var lastCheckpoint = Date.distantPast
+
+    let keychainItem: PasscodeKeychainItem
+
+    var biometricsState: BiometricsStateProtocol = BiometricsState()
 
     func fetchPasscode() -> Data? {
         try? Keychain.fetchItem(keychainItem)
+    }
+
+    // MARK: Private
+
+    // MARK: - Private properties
+
+    private let selfUser: ZMUser
+    private let featureRepository: FeatureRepository
+    private let authenticationContext: any AuthenticationContextProtocol
+
+    private let legacyConfig: LegacyConfig?
+
+    private var isTimeoutExceeded: Bool {
+        let timeSinceAuth = -lastCheckpoint.timeIntervalSinceNow
+        let timeoutWindow = 0 ..< Double(timeout)
+        return !timeoutWindow.contains(timeSinceAuth)
+    }
+
+    private var config: Config {
+        let appLock = featureRepository.fetchAppLock()
+
+        return Config(
+            isAvailable: appLock.status == .enabled,
+            isForced: appLock.config.enforceAppLock,
+            timeout: appLock.config.inactivityTimeoutSecs
+        )
+    }
+
+    private func storePasscode(_ passcode: String) throws {
+        try Keychain.storeItem(keychainItem, value: passcode.data(using: .utf8)!)
     }
 }
 

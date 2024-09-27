@@ -32,8 +32,12 @@ extension UIImage {
 /// Shows a confirmation dialog after picking an image in UIImagePickerController. If the user accepts
 /// the image the imagePickedBlock is called.
 final class ImagePickerConfirmationController: NSObject {
+    // MARK: Internal
+
     var previewTitle: String?
     var imagePickedBlock: ((_ imageData: Data?) -> Void)?
+
+    // MARK: Private
 
     /// We need to store this reference to close the @c SketchViewController
     private var presentingPickerController: UIImagePickerController?

@@ -27,21 +27,7 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - CollectionImageCell
 
 final class CollectionImageCell: CollectionCell {
-    static let maxCellSize: CGFloat = 100
-
-    override var message: ZMConversationMessage? {
-        didSet {
-            updateViews()
-        }
-    }
-
-    private var containerView = UIView()
-    private let imageView = ImageResourceView()
-    private let restrictionView = SimpleImageMessageRestrictionView()
-
-    /// This token is changes everytime the cell is re-used. Useful when performing
-    /// asynchronous tasks where the cell might have been re-used in the mean time.
-    private var reuseToken = UUID()
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -53,7 +39,21 @@ final class CollectionImageCell: CollectionCell {
         loadView()
     }
 
+    // MARK: Internal
+
+    static let maxCellSize: CGFloat = 100
+
     var isHeightCalculated = false
+
+    override var message: ZMConversationMessage? {
+        didSet {
+            updateViews()
+        }
+    }
+
+    override var obfuscationIcon: StyleKitIcon {
+        .photo
+    }
 
     func loadView() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -75,10 +75,6 @@ final class CollectionImageCell: CollectionCell {
         reuseToken = UUID()
     }
 
-    override var obfuscationIcon: StyleKitIcon {
-        .photo
-    }
-
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
         super.updateForMessage(changeInfo: changeInfo)
 
@@ -86,6 +82,16 @@ final class CollectionImageCell: CollectionCell {
 
         updateViews()
     }
+
+    // MARK: Private
+
+    private var containerView = UIView()
+    private let imageView = ImageResourceView()
+    private let restrictionView = SimpleImageMessageRestrictionView()
+
+    /// This token is changes everytime the cell is re-used. Useful when performing
+    /// asynchronous tasks where the cell might have been re-used in the mean time.
+    private var reuseToken = UUID()
 
     private func updateViews() {
         guard let message else { return }

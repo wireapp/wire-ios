@@ -23,8 +23,7 @@ import XCTest
 // MARK: - ConversationInputBarViewControllerDropInteractionTests
 
 final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
-    private var mockUserSession: UserSessionMock!
-    private var mockSecurityClassificationProviding: MockSecurityClassificationProviding!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -67,6 +66,11 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
         XCTAssertEqual(dropProposal.operation, UIDropOperation.forbidden, file: #file, line: #line)
     }
 
+    // MARK: Private
+
+    private var mockUserSession: UserSessionMock!
+    private var mockSecurityClassificationProviding: MockSecurityClassificationProviding!
+
     private func makeConversationInputBarViewController(conversation: MockInputBarConversationType)
         -> ConversationInputBarViewController {
         ConversationInputBarViewController(
@@ -81,13 +85,17 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
 // MARK: - MediaShareRestrictionManagerMock
 
 private final class MediaShareRestrictionManagerMock: MediaShareRestrictionManager {
-    let canFilesBeShared: Bool
+    // MARK: Lifecycle
 
     init(canFilesBeShared: Bool) {
         self.canFilesBeShared = canFilesBeShared
 
         super.init(sessionRestriction: nil)
     }
+
+    // MARK: Internal
+
+    let canFilesBeShared: Bool
 
     override var isFileSharingFlagEnabled: Bool {
         canFilesBeShared

@@ -20,7 +20,7 @@ import Foundation
 
 /// Builder for the conversations API.
 public struct ConversationsAPIBuilder {
-    private let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     /// Create a new builder for the conversations API.
     ///
@@ -28,6 +28,8 @@ public struct ConversationsAPIBuilder {
     public init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Public
 
     /// Make a versioned `ConversationsAPI`.
     ///
@@ -51,4 +53,8 @@ public struct ConversationsAPIBuilder {
             ConversationsAPIV6(httpClient: httpClient)
         }
     }
+
+    // MARK: Private
+
+    private let httpClient: any HTTPClient
 }

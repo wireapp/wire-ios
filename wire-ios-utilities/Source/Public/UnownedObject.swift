@@ -21,11 +21,15 @@ import Foundation
 // MARK: - UnownedObject
 
 public final class UnownedObject<T: AnyObject> {
-    public weak var unbox: T?
+    // MARK: Lifecycle
 
     public init(_ o: T) {
         self.unbox = o
     }
+
+    // MARK: Public
+
+    public weak var unbox: T?
 
     public var isValid: Bool { unbox != nil }
 }
@@ -34,11 +38,15 @@ public final class UnownedObject<T: AnyObject> {
 
 @objcMembers
 public final class UnownedNSObject: NSObject {
-    public weak var unbox: NSObject?
+    // MARK: Lifecycle
 
     public init(_ unbox: NSObject) {
         self.unbox = unbox
     }
+
+    // MARK: Public
+
+    public weak var unbox: NSObject?
 
     public var isValid: Bool { unbox != nil }
 }

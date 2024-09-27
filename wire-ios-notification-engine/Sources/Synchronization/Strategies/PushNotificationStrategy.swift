@@ -32,15 +32,7 @@ protocol PushNotificationStrategyDelegate: AnyObject {
 // MARK: - PushNotificationStrategy
 
 final class PushNotificationStrategy: AbstractRequestStrategy {
-    // MARK: - Properties
-
-    var sync: NotificationStreamSync!
-    private var pushNotificationStatus: PushNotificationStatus!
-    private var isProcessingNotifications = false
-
-    weak var delegate: PushNotificationStrategyDelegate?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         syncContext: NSManagedObjectContext,
@@ -64,6 +56,12 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
         self.pushNotificationStatus = pushNotificationStatus
     }
 
+    // MARK: Public
+
+    public var isFetchingStreamForAPNS: Bool {
+        pushNotificationStatus.hasEventsToFetch
+    }
+
     // MARK: - Methods
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -81,9 +79,17 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
         return request
     }
 
-    public var isFetchingStreamForAPNS: Bool {
-        pushNotificationStatus.hasEventsToFetch
-    }
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    var sync: NotificationStreamSync!
+    weak var delegate: PushNotificationStrategyDelegate?
+
+    // MARK: Private
+
+    private var pushNotificationStatus: PushNotificationStatus!
+    private var isProcessingNotifications = false
 }
 
 // MARK: NotificationStreamSyncDelegate

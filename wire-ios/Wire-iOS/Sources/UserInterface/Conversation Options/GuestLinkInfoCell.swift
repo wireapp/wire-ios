@@ -23,13 +23,7 @@ import WireDesign
 // MARK: - GuestLinkInfoCell
 
 final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
-    // MARK: - Properties
-
-    private let imageContainer = UIView()
-    private let iconImageView = UIImageView()
-    private let label = UILabel()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -41,6 +35,29 @@ final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Configuration
+
+    func configure(with configuration: CellConfiguration) {
+        guard case let .info(infoText) = configuration else { preconditionFailure() }
+        accessibilityIdentifier = "guest_links.not_allowed.cell"
+        iconImageView.tintColor = SemanticColors.Label.textDefault
+        iconImageView.setTemplateIcon(.about, size: .tiny)
+
+        label.configMultipleLineLabel()
+        label.attributedText = .markdown(from: infoText, style: .labelStyle)
+        label.textColor = SemanticColors.Label.textDefault
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let imageContainer = UIView()
+    private let iconImageView = UIImageView()
+    private let label = UILabel()
 
     // MARK: - Helpers
 
@@ -66,19 +83,6 @@ final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
             label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
-    }
-
-    // MARK: - Configuration
-
-    func configure(with configuration: CellConfiguration) {
-        guard case let .info(infoText) = configuration else { preconditionFailure() }
-        accessibilityIdentifier = "guest_links.not_allowed.cell"
-        iconImageView.tintColor = SemanticColors.Label.textDefault
-        iconImageView.setTemplateIcon(.about, size: .tiny)
-
-        label.configMultipleLineLabel()
-        label.attributedText = .markdown(from: infoText, style: .labelStyle)
-        label.textColor = SemanticColors.Label.textDefault
     }
 }
 

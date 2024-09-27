@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 
 class RichAssetFileTypeTests: XCTestCase {
+    // MARK: Internal
+
     func testThatItParsesWalletPassCorrectly() {
         assertFileType("application/vnd.apple.pkpass", .walletPass)
     }
@@ -56,6 +58,8 @@ class RichAssetFileTypeTests: XCTestCase {
         assertFileType("audio/midi", nil)
         assertFileType("audio/x-midi", nil)
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

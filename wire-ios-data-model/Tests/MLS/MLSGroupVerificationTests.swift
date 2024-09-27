@@ -22,14 +22,7 @@ import XCTest
 @testable import WireDataModel
 
 final class MLSGroupVerificationTests: XCTestCase {
-    private let coreDataStackHelper = CoreDataStackHelper()
-    private let modelHelper = ModelHelper()
-
-    private var mockCoreDataStack: CoreDataStack!
-    private var mockMLService: MockMLSServiceInterface!
-    private var mockUpdateVerificationStatus: MockUpdateMLSGroupVerificationStatusUseCaseProtocol!
-
-    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -168,6 +161,17 @@ final class MLSGroupVerificationTests: XCTestCase {
         let mlsGroupIDs = mockUpdateVerificationStatus.invokeForGroupID_Invocations.map(\.groupID)
         XCTAssertEqual(mlsGroupIDs, [mlsGroupID])
     }
+
+    // MARK: Private
+
+    private let coreDataStackHelper = CoreDataStackHelper()
+    private let modelHelper = ModelHelper()
+
+    private var mockCoreDataStack: CoreDataStack!
+    private var mockMLService: MockMLSServiceInterface!
+    private var mockUpdateVerificationStatus: MockUpdateMLSGroupVerificationStatusUseCaseProtocol!
+
+    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
     // MARK: Helpers
 

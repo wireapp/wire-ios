@@ -22,11 +22,7 @@ import WireTransport
 
 extension Payload {
     struct UpdateConversationName: CodableEventData {
-        var name: String
-
-        static var eventType: ZMUpdateEventType {
-            .conversationRename
-        }
+        // MARK: Lifecycle
 
         init?(_ conversation: ZMConversation) {
             guard
@@ -42,5 +38,13 @@ extension Payload {
         init(name: String) {
             self.name = name
         }
+
+        // MARK: Internal
+
+        static var eventType: ZMUpdateEventType {
+            .conversationRename
+        }
+
+        var name: String
     }
 }

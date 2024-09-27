@@ -21,6 +21,8 @@ import Foundation
 enum ChangeEmailError: LocalizedError {
     case invalidEmail
 
+    // MARK: Internal
+
     var errorDescription: String? {
         switch self {
         case .invalidEmail:

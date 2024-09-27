@@ -111,6 +111,8 @@ class FrameworkVersionTests: XCTestCase {
 // MARK: - LegacyPersistedDataPatchesTests
 
 class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
+    // MARK: Internal
+
     override class func setUp() {
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
@@ -353,6 +355,8 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
     func test_MigrateProteusSessionIDFromV2ToV3_WithTemporaryKeystore() async throws {
         await assertSuccessfulSessionMigration(simulateCryptoboxMigration: true)
     }
+
+    // MARK: Private
 
     private func assertSuccessfulSessionMigration(simulateCryptoboxMigration: Bool = false) async {
         // Given

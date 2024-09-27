@@ -20,8 +20,7 @@ import UIKit
 import WireDesign
 
 final class TextSearchResultsView: UIView {
-    let tableView = UITableView()
-    let noResultsView = NoResultsView()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,6 +29,18 @@ final class TextSearchResultsView: UIView {
 
         backgroundColor = SemanticColors.View.backgroundConversationList
     }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let tableView = UITableView()
+    let noResultsView = NoResultsView()
+
+    // MARK: Private
 
     private func setupViews() {
         tableView.register(TextSearchResultCell.self, forCellReuseIdentifier: TextSearchResultCell.reuseIdentifier)
@@ -59,10 +70,5 @@ final class TextSearchResultsView: UIView {
             noResultsView.centerXAnchor.constraint(equalTo: centerXAnchor),
             noResultsView.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

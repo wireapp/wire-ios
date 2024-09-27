@@ -21,14 +21,18 @@ import WireSyncEngine
 
 extension UIAlertController {
     fileprivate enum CompanyLoginCopy: String {
-        typealias LoginSSoAlertLocale = L10n.Localizable.Login.Sso.Alert
-
         case ssoAndEmail
         case ssoOnly
+
+        // MARK: Lifecycle
 
         init(ssoOnly: Bool) {
             self = ssoOnly ? .ssoOnly : .ssoAndEmail
         }
+
+        // MARK: Internal
+
+        typealias LoginSSoAlertLocale = L10n.Localizable.Login.Sso.Alert
 
         var action: String {
             LoginSSoAlertLocale.action
@@ -70,6 +74,8 @@ extension UIAlertController {
         case domainAssociatedWithWrongServer
         /// Unknown error
         case unknown
+
+        // MARK: Fileprivate
 
         fileprivate func description(for copy: CompanyLoginCopy) -> String {
             typealias LoginSSOErrorAlertLocale = L10n.Localizable.Login.Sso.Error.Alert

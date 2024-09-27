@@ -24,15 +24,9 @@ import XCTest
 // MARK: - CallQualityControllerTests
 
 final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
-    // MARK: - Properties
+    // MARK: Internal
 
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: MockCallQualityController!
     var coreDataFixture: CoreDataFixture!
-    private var router: MockCallQualityRouterProtocol!
-    private var conversation: ZMConversation!
-    private var callConversationProvider: MockCallConversationProvider!
-    private var callQualityViewController: CallQualityViewController!
 
     // MARK: - setUp
 
@@ -195,6 +189,17 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         // THEN
         XCTAssertTrue(router.presentCallFailureDebugAlertMainWindow_Invocations.isEmpty)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: MockCallQualityController!
+    private var router: MockCallQualityRouterProtocol!
+    private var conversation: ZMConversation!
+    private var callConversationProvider: MockCallConversationProvider!
+    private var callQualityViewController: CallQualityViewController!
 }
 
 // MARK: - Helpers

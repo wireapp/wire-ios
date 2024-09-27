@@ -20,9 +20,7 @@ import UIKit
 import WireSyncEngine
 
 final class ConversationPreviewViewController: UIViewController {
-    let conversation: ZMConversation
-    let actionController: ConversationActionController
-    fileprivate var contentViewController: ConversationContentViewController
+    // MARK: Lifecycle
 
     init(
         conversation: ZMConversation,
@@ -53,6 +51,23 @@ final class ConversationPreviewViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let conversation: ZMConversation
+    let actionController: ConversationActionController
+
+    // MARK: Preview Actions
+
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
+    override var previewActionItems: [UIPreviewActionItem] {
+        conversation.listActions.map(makePreviewAction)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         createViews()
@@ -66,6 +81,12 @@ final class ConversationPreviewViewController: UIViewController {
         view.backgroundColor = contentViewController.tableView.backgroundColor
     }
 
+    // MARK: Fileprivate
+
+    fileprivate var contentViewController: ConversationContentViewController
+
+    // MARK: Private
+
     private func createConstraints() {
         guard let conversationView = contentViewController.view else { return }
 
@@ -77,18 +98,6 @@ final class ConversationPreviewViewController: UIViewController {
             conversationView.leftAnchor.constraint(equalTo: view.leftAnchor),
             conversationView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
-    }
-
-    // MARK: Preview Actions
-
-    @available(
-        iOS,
-        introduced: 9.0,
-        deprecated: 13.0,
-        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
-    )
-    override var previewActionItems: [UIPreviewActionItem] {
-        conversation.listActions.map(makePreviewAction)
     }
 
     @available(

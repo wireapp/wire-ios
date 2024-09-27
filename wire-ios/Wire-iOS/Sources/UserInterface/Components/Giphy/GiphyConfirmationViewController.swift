@@ -34,24 +34,7 @@ protocol GiphyConfirmationViewControllerDelegate: AnyObject {
 // MARK: - GiphyConfirmationViewController
 
 final class GiphyConfirmationViewController: UIViewController {
-    typealias Giphy = L10n.Localizable.Giphy
-
-    private let imagePreview = FLAnimatedImageView()
-    private let acceptButton = ZMButton(
-        style: .accentColorTextButtonStyle,
-        cornerRadius: 16,
-        fontSpec: .normalSemiboldFont
-    )
-    private let cancelButton = ZMButton(
-        style: .secondaryTextButtonStyle,
-        cornerRadius: 16,
-        fontSpec: .normalSemiboldFont
-    )
-    private let buttonContainer = UIView()
-    weak var delegate: GiphyConfirmationViewControllerDelegate?
-    private let searchResultController: ZiphySearchResultsController?
-    private let ziph: Ziph?
-    private var imageData: Data?
+    // MARK: Lifecycle
 
     /// init method with optional arguments for remove dependency for testing
     ///
@@ -86,6 +69,12 @@ final class GiphyConfirmationViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    typealias Giphy = L10n.Localizable.Giphy
+
+    weak var delegate: GiphyConfirmationViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -130,6 +119,24 @@ final class GiphyConfirmationViewController: UIViewController {
             self?.acceptButton.isEnabled = true
         }
     }
+
+    // MARK: Private
+
+    private let imagePreview = FLAnimatedImageView()
+    private let acceptButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
+    private let cancelButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
+    private let buttonContainer = UIView()
+    private let searchResultController: ZiphySearchResultsController?
+    private let ziph: Ziph?
+    private var imageData: Data?
 
     @objc
     private func onDismiss() {

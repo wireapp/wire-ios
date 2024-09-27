@@ -21,20 +21,7 @@ import Foundation
 /// Records the passage of time since its creation. It also stores the callstack at creation time.
 @objc(ZMSTimePoint) @objcMembers
 public final class TimePoint: NSObject {
-    private let callstack = [String]()
-
-    /// If not zero, it will call @c warnIfLongerThanInteval with this value on dealloc
-    let warnInterval: TimeInterval
-
-    /// The label associated with this timepoint
-    let label: String
-
-    private(set) var timePoint: Date
-
-    /// Time since creation
-    public var elapsedTime: TimeInterval {
-        -timePoint.timeIntervalSinceNow
-    }
+    // MARK: Lifecycle
 
     /// Creates a time point and records the callstack
     public convenience init(interval: TimeInterval) {
@@ -46,6 +33,13 @@ public final class TimePoint: NSObject {
         self.warnInterval = interval
         self.label = label
         self.timePoint = .now
+    }
+
+    // MARK: Public
+
+    /// Time since creation
+    public var elapsedTime: TimeInterval {
+        -timePoint.timeIntervalSinceNow
     }
 
     /// Resets the creation time, but not the callstack
@@ -61,8 +55,22 @@ public final class TimePoint: NSObject {
         return true
     }
 
+    // MARK: Internal
+
+    /// If not zero, it will call @c warnIfLongerThanInteval with this value on dealloc
+    let warnInterval: TimeInterval
+
+    /// The label associated with this timepoint
+    let label: String
+
+    private(set) var timePoint: Date
+
+    // MARK: Private
+
     private static var isTimePointEnabled: Bool {
         let timePointsCallStack = ProcessInfo.processInfo.environment["ZM_TIMEPOINTS_CALLSTACK"] as? NSString
         return timePointsCallStack?.boolValue ?? false
     }
+
+    private let callstack = [String]()
 }

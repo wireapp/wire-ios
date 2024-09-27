@@ -23,6 +23,8 @@ import XCTest
 // MARK: - PBMessageValidationTests
 
 class PBMessageValidationTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: Generic Message
 
     func testThatItCreatesGenericMessageWithValidFields() {
@@ -323,6 +325,8 @@ class PBMessageValidationTests: XCTestCase {
         ))
     }
 
+    // MARK: Private
+
     // MARK: - Utilities
 
     private func genericMessage(
@@ -373,6 +377,8 @@ class PBMessageValidationTests: XCTestCase {
 // MARK: - ModelValidationTests
 
 class ModelValidationTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: Generic Message
 
     func testThatItCreatesGenericMessageWithValidFields() {
@@ -670,6 +676,8 @@ class ModelValidationTests: XCTestCase {
             preview: false
         ))
     }
+
+    // MARK: Private
 
     // MARK: - Utilities
 

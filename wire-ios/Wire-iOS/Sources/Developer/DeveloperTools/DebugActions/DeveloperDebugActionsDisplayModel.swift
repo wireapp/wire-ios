@@ -20,9 +20,9 @@ import Foundation
 
 enum DeveloperDebugActionsDisplayModel {
     struct ButtonItem: Identifiable {
-        var id: String { title }
-
         let title: String
         let action: () -> Void
+
+        var id: String { title }
     }
 }

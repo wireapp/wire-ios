@@ -29,6 +29,8 @@ public enum TLSVersion {
 
     case v1_3
 
+    // MARK: Internal
+
     var secValue: tls_protocol_version_t {
         switch self {
         case .v1_2:

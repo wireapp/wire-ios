@@ -22,6 +22,8 @@ import XCTest
 // MARK: - AccessoryTextFieldValidationTests
 
 final class AccessoryTextFieldValidationTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: - MockViewController
 
     final class MockViewController: UIViewController, TextFieldValidationDelegate {
@@ -62,98 +64,6 @@ final class AccessoryTextFieldValidationTests: XCTestCase {
         sut = nil
 
         super.tearDown()
-    }
-
-    // MARK: - Helper methods
-
-    private func checkSucceed(
-        textFieldType: ValidatedTextField.Kind,
-        text: String,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        // WHEN
-        sut.kind = textFieldType
-        sut.text = text
-        sut.confirmButton.sendActions(for: .touchUpInside)
-
-        // THEN
-        XCTAssertEqual(
-            mockViewController.errorCounter,
-            0,
-            "Should not have an error",
-            file: file,
-            line: line
-        )
-
-        XCTAssertTrue(
-            mockViewController.successCounter > 0,
-            "Should have been success",
-            file: file,
-            line: line
-        )
-
-        XCTAssertEqual(
-            mockViewController.lastError,
-            .none,
-            "Should not have error",
-            file: file,
-            line: line
-        )
-    }
-
-    private func checkError(
-        textFieldType: ValidatedTextField.Kind,
-        text: String?,
-        expectedError: TextFieldValidator.ValidationError?,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        // WHEN
-        sut.kind = textFieldType
-        sut.text = text
-        sut.confirmButton.sendActions(for: .touchUpInside)
-
-        // THEN
-        if case .none = expectedError {
-            XCTAssertEqual(
-                mockViewController.errorCounter,
-                0,
-                "Should have not have an error",
-                file: file,
-                line: line
-            )
-
-            XCTAssertTrue(
-                mockViewController.successCounter > 1,
-                "Should have been a success",
-                file: file,
-                line: line
-            )
-        } else {
-            XCTAssertTrue(
-                mockViewController.errorCounter > 0,
-                "Should have an error",
-                file: file,
-                line: line
-            )
-
-            XCTAssertEqual(
-                mockViewController.successCounter,
-                0,
-                "Should not have been success",
-                file: file,
-                line: line
-            )
-        }
-
-        XCTAssertEqual(
-            expectedError,
-            mockViewController.lastError,
-            "Error should be \(String(describing: expectedError)), was \(String(describing: mockViewController.lastError))",
-            file: file,
-            line: line
-        )
     }
 
     // MARK: - Unit Tests - Happy cases
@@ -311,5 +221,99 @@ final class AccessoryTextFieldValidationTests: XCTestCase {
 
         // THEN
         XCTAssertTrue(sut.isSecureTextEntry)
+    }
+
+    // MARK: Private
+
+    // MARK: - Helper methods
+
+    private func checkSucceed(
+        textFieldType: ValidatedTextField.Kind,
+        text: String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        // WHEN
+        sut.kind = textFieldType
+        sut.text = text
+        sut.confirmButton.sendActions(for: .touchUpInside)
+
+        // THEN
+        XCTAssertEqual(
+            mockViewController.errorCounter,
+            0,
+            "Should not have an error",
+            file: file,
+            line: line
+        )
+
+        XCTAssertTrue(
+            mockViewController.successCounter > 0,
+            "Should have been success",
+            file: file,
+            line: line
+        )
+
+        XCTAssertEqual(
+            mockViewController.lastError,
+            .none,
+            "Should not have error",
+            file: file,
+            line: line
+        )
+    }
+
+    private func checkError(
+        textFieldType: ValidatedTextField.Kind,
+        text: String?,
+        expectedError: TextFieldValidator.ValidationError?,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        // WHEN
+        sut.kind = textFieldType
+        sut.text = text
+        sut.confirmButton.sendActions(for: .touchUpInside)
+
+        // THEN
+        if case .none = expectedError {
+            XCTAssertEqual(
+                mockViewController.errorCounter,
+                0,
+                "Should have not have an error",
+                file: file,
+                line: line
+            )
+
+            XCTAssertTrue(
+                mockViewController.successCounter > 1,
+                "Should have been a success",
+                file: file,
+                line: line
+            )
+        } else {
+            XCTAssertTrue(
+                mockViewController.errorCounter > 0,
+                "Should have an error",
+                file: file,
+                line: line
+            )
+
+            XCTAssertEqual(
+                mockViewController.successCounter,
+                0,
+                "Should not have been success",
+                file: file,
+                line: line
+            )
+        }
+
+        XCTAssertEqual(
+            expectedError,
+            mockViewController.lastError,
+            "Error should be \(String(describing: expectedError)), was \(String(describing: mockViewController.lastError))",
+            file: file,
+            line: line
+        )
     }
 }

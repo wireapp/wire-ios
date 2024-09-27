@@ -27,6 +27,8 @@ enum CommitError: Error, Equatable {
     case failedToClearCommit
     case noPendingProposals
 
+    // MARK: Internal
+
     enum RecoveryStrategy: Equatable {
         /// Perform a quick sync, then commit pending proposals.
         ///

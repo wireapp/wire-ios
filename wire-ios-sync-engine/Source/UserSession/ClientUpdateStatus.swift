@@ -40,6 +40,8 @@ public enum ClientUpdateError: NSInteger {
     case deviceIsOffline
     case clientToDeleteNotFound
 
+    // MARK: Internal
+
     func errorForType() -> NSError {
         NSError(domain: ClientUpdateErrorDomain, code: rawValue, userInfo: nil)
     }
@@ -49,40 +51,17 @@ public enum ClientUpdateError: NSInteger {
 
 @objcMembers
 open class ClientUpdateStatus: NSObject {
-    var syncManagedObjectContext: NSManagedObjectContext
-
-    fileprivate var isFetchingClients = false
-    fileprivate var isWaitingToDeleteClients = false
-    fileprivate var needsToVerifySelfClient = false
-    fileprivate var isGeneratingPrekeys = false
-    fileprivate var internalCredentials: UserEmailCredentials?
-
-    var prekeys: [IdPrekeyTuple]?
-
-    open var credentials: UserEmailCredentials? {
-        internalCredentials
-    }
+    // MARK: Lifecycle
 
     public init(syncManagedObjectContext: NSManagedObjectContext) {
         self.syncManagedObjectContext = syncManagedObjectContext
         super.init()
     }
 
-    func determineInitialClientStatus() {
-        let hasSelfClient = !ZMClientRegistrationStatus.needsToRegisterClient(in: syncManagedObjectContext)
+    // MARK: Open
 
-        needsToFetchClients(andVerifySelfClient: hasSelfClient)
-
-        // check if we are already trying to delete the client
-        if let selfUser = ZMUser.selfUser(in: syncManagedObjectContext).selfClient(), selfUser.markedToDelete {
-            // This recovers from the bug where we think we should delete the self cient.
-            // See: https://wearezeta.atlassian.net/browse/ZIOS-6646
-            // This code can be removed and possibly moved to a hotfix once all paths that lead to the bug
-            // have been discovered
-            selfUser.markedToDelete = false
-            let userClientMarkedToDeleteKeysSet: Set<AnyHashable> = [ZMUserClientMarkedToDeleteKey]
-            selfUser.resetLocallyModifiedKeys(userClientMarkedToDeleteKeysSet)
-        }
+    open var credentials: UserEmailCredentials? {
+        internalCredentials
     }
 
     open var currentPhase: ClientUpdatePhase {
@@ -100,17 +79,6 @@ open class ClientUpdateStatus: NSObject {
         }
 
         return .done
-    }
-
-    public func needsToFetchClients(andVerifySelfClient verifySelfClient: Bool) {
-        isFetchingClients = true
-
-        // there are three cases in which this method is called
-        // (1) when not registered - we try to register a device but there are too many devices registered
-        // (2) when registered - we want to manage our registered devices from the settings screen
-        // (3) when registered - we want to verify the selfClient on startup
-        // we only want to verify the selfClient when we are already registered
-        needsToVerifySelfClient = verifySelfClient
     }
 
     open func didFetchClients(_ clients: [UserClient]) {
@@ -139,32 +107,28 @@ open class ClientUpdateStatus: NSObject {
         }
     }
 
-    func filterSelfClientIfValid(_ clients: [UserClient]) throws -> [UserClient] {
-        guard let selfClient = ZMUser.selfUser(in: syncManagedObjectContext).selfClient()
-        else {
-            throw ClientUpdateError.errorForType(.selfClientIsInvalid)()
+    open func didDeleteClient() {
+        if isWaitingToDeleteClients {
+            isWaitingToDeleteClients = false
+            internalCredentials = nil
+            ZMClientUpdateNotification.notifyDeletionCompleted(
+                remainingClients: selfUserClientsExcludingSelfClient,
+                context: syncManagedObjectContext
+            )
         }
-        var error: NSError?
-        var excludingSelfClient: [UserClient] = []
+    }
 
-        var didContainSelf = false
-        excludingSelfClient = clients.filter {
-            if $0.remoteIdentifier != selfClient.remoteIdentifier {
-                return true
-            }
-            didContainSelf = true
-            return false
-        }
-        if !didContainSelf {
-            // the selfClient was removed by an other user
-            error = ClientUpdateError.errorForType(.selfClientIsInvalid)()
-            excludingSelfClient = []
-        }
+    // MARK: Public
 
-        if let error {
-            throw error
-        }
-        return excludingSelfClient
+    public func needsToFetchClients(andVerifySelfClient verifySelfClient: Bool) {
+        isFetchingClients = true
+
+        // there are three cases in which this method is called
+        // (1) when not registered - we try to register a device but there are too many devices registered
+        // (2) when registered - we want to manage our registered devices from the settings screen
+        // (3) when registered - we want to verify the selfClient on startup
+        // we only want to verify the selfClient when we are already registered
+        needsToVerifySelfClient = verifySelfClient
     }
 
     public func failedToFetchClients() {
@@ -206,24 +170,6 @@ open class ClientUpdateStatus: NSObject {
         needsToVerifySelfClient = false
     }
 
-    open func didDeleteClient() {
-        if isWaitingToDeleteClients {
-            isWaitingToDeleteClients = false
-            internalCredentials = nil
-            ZMClientUpdateNotification.notifyDeletionCompleted(
-                remainingClients: selfUserClientsExcludingSelfClient,
-                context: syncManagedObjectContext
-            )
-        }
-    }
-
-    var selfUserClientsExcludingSelfClient: [UserClient] {
-        let selfUser = ZMUser.selfUser(in: syncManagedObjectContext)
-        let selfClient = selfUser.selfClient()
-        let remainingClients = selfUser.clients.filter { $0 != selfClient && !$0.isZombieObject }
-        return Array(remainingClients)
-    }
-
     public func willGeneratePrekeys() {
         isGeneratingPrekeys = true
     }
@@ -237,4 +183,70 @@ open class ClientUpdateStatus: NSObject {
     public func didUploadPrekeys() {
         prekeys = nil
     }
+
+    // MARK: Internal
+
+    var syncManagedObjectContext: NSManagedObjectContext
+
+    var prekeys: [IdPrekeyTuple]?
+
+    var selfUserClientsExcludingSelfClient: [UserClient] {
+        let selfUser = ZMUser.selfUser(in: syncManagedObjectContext)
+        let selfClient = selfUser.selfClient()
+        let remainingClients = selfUser.clients.filter { $0 != selfClient && !$0.isZombieObject }
+        return Array(remainingClients)
+    }
+
+    func determineInitialClientStatus() {
+        let hasSelfClient = !ZMClientRegistrationStatus.needsToRegisterClient(in: syncManagedObjectContext)
+
+        needsToFetchClients(andVerifySelfClient: hasSelfClient)
+
+        // check if we are already trying to delete the client
+        if let selfUser = ZMUser.selfUser(in: syncManagedObjectContext).selfClient(), selfUser.markedToDelete {
+            // This recovers from the bug where we think we should delete the self cient.
+            // See: https://wearezeta.atlassian.net/browse/ZIOS-6646
+            // This code can be removed and possibly moved to a hotfix once all paths that lead to the bug
+            // have been discovered
+            selfUser.markedToDelete = false
+            let userClientMarkedToDeleteKeysSet: Set<AnyHashable> = [ZMUserClientMarkedToDeleteKey]
+            selfUser.resetLocallyModifiedKeys(userClientMarkedToDeleteKeysSet)
+        }
+    }
+
+    func filterSelfClientIfValid(_ clients: [UserClient]) throws -> [UserClient] {
+        guard let selfClient = ZMUser.selfUser(in: syncManagedObjectContext).selfClient()
+        else {
+            throw ClientUpdateError.errorForType(.selfClientIsInvalid)()
+        }
+        var error: NSError?
+        var excludingSelfClient: [UserClient] = []
+
+        var didContainSelf = false
+        excludingSelfClient = clients.filter {
+            if $0.remoteIdentifier != selfClient.remoteIdentifier {
+                return true
+            }
+            didContainSelf = true
+            return false
+        }
+        if !didContainSelf {
+            // the selfClient was removed by an other user
+            error = ClientUpdateError.errorForType(.selfClientIsInvalid)()
+            excludingSelfClient = []
+        }
+
+        if let error {
+            throw error
+        }
+        return excludingSelfClient
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var isFetchingClients = false
+    fileprivate var isWaitingToDeleteClients = false
+    fileprivate var needsToVerifySelfClient = false
+    fileprivate var isGeneratingPrekeys = false
+    fileprivate var internalCredentials: UserEmailCredentials?
 }

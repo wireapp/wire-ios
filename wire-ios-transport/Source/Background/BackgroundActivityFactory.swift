@@ -40,6 +40,15 @@ import WireUtilities
 
 @objc
 public final class BackgroundActivityFactory: NSObject {
+    // MARK: Lifecycle
+
+    override public init() {
+        super.init()
+        registerForNotifications()
+    }
+
+    // MARK: Public
+
     /// Get the shared instance.
     @objc(sharedFactory) public static let shared = BackgroundActivityFactory()
 
@@ -48,6 +57,9 @@ public final class BackgroundActivityFactory: NSObject {
     /// The activity manager to use to.
     @objc public weak var activityManager: BackgroundActivityManager?
 
+    /// The upper limit for how long backgrounds tasks are allowed to run
+    public var backgroundTaskTimeout: TimeInterval = 60
+
     // MARK: - State
 
     /// Whether any tasks are active.
@@ -55,26 +67,6 @@ public final class BackgroundActivityFactory: NSObject {
         isolationQueue.sync {
             hasValidCurrentBackgroundTask
         }
-    }
-
-    private var hasValidCurrentBackgroundTask: Bool {
-        currentBackgroundTask != nil && currentBackgroundTask != UIBackgroundTaskIdentifier.invalid
-    }
-
-    @objc var mainQueue: DispatchQueue = .main
-    private let isolationQueue = DispatchQueue(label: "BackgroundActivityFactory.IsolationQueue")
-
-    var currentBackgroundTask: UIBackgroundTaskIdentifier?
-    var activities: Set<BackgroundActivity> = []
-    var allTasksEndedHandlers: [() -> Void] = []
-
-    /// The upper limit for how long backgrounds tasks are allowed to run
-    public var backgroundTaskTimeout: TimeInterval = 60
-    var backgroundTaskTimer: Timer?
-
-    override public init() {
-        super.init()
-        registerForNotifications()
     }
 
     // MARK: - Starting Background Activities
@@ -150,6 +142,45 @@ public final class BackgroundActivityFactory: NSObject {
                 finishBackgroundTask()
             }
         }
+    }
+
+    // MARK: Internal
+
+    @objc var mainQueue: DispatchQueue = .main
+    var currentBackgroundTask: UIBackgroundTaskIdentifier?
+    var activities: Set<BackgroundActivity> = []
+    var allTasksEndedHandlers: [() -> Void] = []
+
+    var backgroundTaskTimer: Timer?
+
+    // MARK: - Change in application state
+
+    /// Register for change in application state: didEnterBackground
+    func registerObserverForDidEnterBackground(_ object: NSObject, selector: Selector) {
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+
+    /// Register for change in application state: willEnterForeground
+    func registerObserverForWillEnterForeground(_ object: NSObject, selector: Selector) {
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+    }
+
+    // MARK: Private
+
+    private let isolationQueue = DispatchQueue(label: "BackgroundActivityFactory.IsolationQueue")
+
+    private var hasValidCurrentBackgroundTask: Bool {
+        currentBackgroundTask != nil && currentBackgroundTask != UIBackgroundTaskIdentifier.invalid
     }
 
     // MARK: - Helpers
@@ -235,28 +266,6 @@ public final class BackgroundActivityFactory: NSObject {
             self.currentBackgroundTask = nil
         }
         stopTimer()
-    }
-
-    // MARK: - Change in application state
-
-    /// Register for change in application state: didEnterBackground
-    func registerObserverForDidEnterBackground(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(
-            object,
-            selector: selector,
-            name: UIApplication.didEnterBackgroundNotification,
-            object: nil
-        )
-    }
-
-    /// Register for change in application state: willEnterForeground
-    func registerObserverForWillEnterForeground(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(
-            object,
-            selector: selector,
-            name: UIApplication.willEnterForegroundNotification,
-            object: nil
-        )
     }
 
     private func registerForNotifications() {

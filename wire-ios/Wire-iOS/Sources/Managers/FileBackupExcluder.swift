@@ -25,10 +25,7 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - FileBackupExcluder
 
 final class FileBackupExcluder: BackupExcluder {
-    private static let filesToExclude: [FileInDirectory] = [
-        (.libraryDirectory, "Preferences/com.apple.EmojiCache.plist"),
-        (.libraryDirectory, "."),
-    ]
+    // MARK: Lifecycle
 
     init() {
         NotificationCenter.default.addObserver(
@@ -51,6 +48,24 @@ final class FileBackupExcluder: BackupExcluder {
         excludeFilesFromBackup()
     }
 
+    // MARK: Internal
+
+    func excludeLibraryFolderInSharedContainer(sharedContainerURL: URL) {
+        do {
+            let libraryURL = sharedContainerURL.appendingPathComponent("Library")
+            try libraryURL.excludeFromBackupIfExists()
+        } catch {
+            zmLog.error("Cannot exclude file from the backup: \(self): \(error)")
+        }
+    }
+
+    // MARK: Private
+
+    private static let filesToExclude: [FileInDirectory] = [
+        (.libraryDirectory, "Preferences/com.apple.EmojiCache.plist"),
+        (.libraryDirectory, "."),
+    ]
+
     @objc
     private func applicationWillEnterForeground(_: AnyObject!) {
         excludeFilesFromBackup()
@@ -64,15 +79,6 @@ final class FileBackupExcluder: BackupExcluder {
     private func excludeFilesFromBackup() {
         do {
             try FileBackupExcluder.exclude(filesToExclude: FileBackupExcluder.filesToExclude)
-        } catch {
-            zmLog.error("Cannot exclude file from the backup: \(self): \(error)")
-        }
-    }
-
-    func excludeLibraryFolderInSharedContainer(sharedContainerURL: URL) {
-        do {
-            let libraryURL = sharedContainerURL.appendingPathComponent("Library")
-            try libraryURL.excludeFromBackupIfExists()
         } catch {
             zmLog.error("Cannot exclude file from the backup: \(self): \(error)")
         }

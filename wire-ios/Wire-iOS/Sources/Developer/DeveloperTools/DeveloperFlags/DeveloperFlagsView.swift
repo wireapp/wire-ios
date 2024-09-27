@@ -22,6 +22,8 @@ import WireUtilities
 // MARK: - DeveloperFlagsView
 
 struct DeveloperFlagsView: View {
+    // MARK: Internal
+
     // MARK: - Properties
 
     @StateObject var viewModel: DeveloperFlagsViewModel
@@ -34,6 +36,8 @@ struct DeveloperFlagsView: View {
                 .padding([.top, .bottom])
         }
     }
+
+    // MARK: Private
 
     private func cell(for flag: DeveloperFlag) -> some View {
         VStack(alignment: .leading, spacing: 10) {

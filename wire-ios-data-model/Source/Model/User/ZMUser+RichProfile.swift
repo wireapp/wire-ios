@@ -28,13 +28,18 @@ public enum ZMUserKeys {
 
 @objc
 public class UserRichProfileField: NSObject, Codable {
-    public var type: String
-    public var value: String
+    // MARK: Lifecycle
+
     @objc
     public init(type: String, value: String) {
         self.type = type
         self.value = value
     }
+
+    // MARK: Public
+
+    public var type: String
+    public var value: String
 
     override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserRichProfileField else { return false }

@@ -25,80 +25,7 @@ private let verifiedShieldImage = WireStyleKit.imageOfShieldverified
 // MARK: - ShareDestinationCell
 
 final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
-    let checkmarkSize: CGFloat = 24
-    let avatarSize: CGFloat = 32
-    let shieldSize: CGFloat = 20
-    let margin: CGFloat = 16
-
-    let stackView = UIStackView(axis: .horizontal)
-    let titleLabel = UILabel()
-    let checkImageView = UIImageView()
-    let avatarViewContainer = UIView()
-    var avatarView: UIView?
-    private let shieldView: UIImageView = {
-        let imageView = UIImageView(image: verifiedShieldImage)
-        imageView.accessibilityIdentifier = "verifiedShield"
-        imageView.isAccessibilityElement = true
-
-        return imageView
-    }()
-
-    private let guestUserIcon: UIImageView = {
-        let guestUserIconColor = SemanticColors.Icon.foregroundDefault
-        let imageView = UIImageView()
-        imageView.setTemplateIcon(.guest, size: .tiny)
-        imageView.tintColor = guestUserIconColor
-        imageView.accessibilityIdentifier = "guestUserIcon"
-        imageView.isAccessibilityElement = true
-
-        return imageView
-    }()
-
-    private let legalHoldIcon: UIImageView = {
-        let legalHoldActiveIconColor = SemanticColors.Icon.backgroundMissedPhoneCall
-        let imageView = UIImageView()
-        imageView.setTemplateIcon(.legalholdactive, size: .tiny)
-        imageView.tintColor = legalHoldActiveIconColor
-        imageView.accessibilityIdentifier = "legalHoldIcon"
-        imageView.isAccessibilityElement = true
-
-        return imageView
-    }()
-
-    var allowsMultipleSelection = true {
-        didSet {
-            checkImageView.isHidden = !allowsMultipleSelection
-        }
-    }
-
-    var destination: D? {
-        didSet {
-            guard let destination else { return }
-
-            titleLabel.text = destination.displayNameWithFallback
-            shieldView.isHidden = destination.securityLevel != .secure
-            guestUserIcon.isHidden = !destination.showsGuestIcon
-            legalHoldIcon.isHidden = !destination.isUnderLegalHold
-
-            if let avatarView = destination.avatarView {
-                avatarView.frame = CGRect(x: 0, y: 0, width: avatarSize, height: avatarSize)
-                avatarViewContainer.addSubview(avatarView)
-                self.avatarView = avatarView
-            }
-        }
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-
-        UIView.performWithoutAnimation {
-            avatarView?.removeFromSuperview()
-            guestUserIcon.isHidden = true
-            legalHoldIcon.isHidden = true
-            shieldView.isHidden = true
-            checkImageView.isHidden = true
-        }
-    }
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -168,6 +95,59 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
         ])
     }
 
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let checkmarkSize: CGFloat = 24
+    let avatarSize: CGFloat = 32
+    let shieldSize: CGFloat = 20
+    let margin: CGFloat = 16
+
+    let stackView = UIStackView(axis: .horizontal)
+    let titleLabel = UILabel()
+    let checkImageView = UIImageView()
+    let avatarViewContainer = UIView()
+    var avatarView: UIView?
+
+    var allowsMultipleSelection = true {
+        didSet {
+            checkImageView.isHidden = !allowsMultipleSelection
+        }
+    }
+
+    var destination: D? {
+        didSet {
+            guard let destination else { return }
+
+            titleLabel.text = destination.displayNameWithFallback
+            shieldView.isHidden = destination.securityLevel != .secure
+            guestUserIcon.isHidden = !destination.showsGuestIcon
+            legalHoldIcon.isHidden = !destination.isUnderLegalHold
+
+            if let avatarView = destination.avatarView {
+                avatarView.frame = CGRect(x: 0, y: 0, width: avatarSize, height: avatarSize)
+                avatarViewContainer.addSubview(avatarView)
+                self.avatarView = avatarView
+            }
+        }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        UIView.performWithoutAnimation {
+            avatarView?.removeFromSuperview()
+            guestUserIcon.isHidden = true
+            legalHoldIcon.isHidden = true
+            shieldView.isHidden = true
+            checkImageView.isHidden = true
+        }
+    }
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
@@ -176,11 +156,6 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
         // are not updating when switching appearance live in the app.
         // That's why we use the traitCollectionDidChange(_:) method.
         checkImageView.layer.borderColor = SemanticColors.Icon.borderCheckMark.cgColor
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -194,4 +169,36 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
         checkImageView.layer.borderColor = selected ? UIColor.clear.cgColor : SemanticColors.Icon.borderCheckMark
             .cgColor
     }
+
+    // MARK: Private
+
+    private let shieldView: UIImageView = {
+        let imageView = UIImageView(image: verifiedShieldImage)
+        imageView.accessibilityIdentifier = "verifiedShield"
+        imageView.isAccessibilityElement = true
+
+        return imageView
+    }()
+
+    private let guestUserIcon: UIImageView = {
+        let guestUserIconColor = SemanticColors.Icon.foregroundDefault
+        let imageView = UIImageView()
+        imageView.setTemplateIcon(.guest, size: .tiny)
+        imageView.tintColor = guestUserIconColor
+        imageView.accessibilityIdentifier = "guestUserIcon"
+        imageView.isAccessibilityElement = true
+
+        return imageView
+    }()
+
+    private let legalHoldIcon: UIImageView = {
+        let legalHoldActiveIconColor = SemanticColors.Icon.backgroundMissedPhoneCall
+        let imageView = UIImageView()
+        imageView.setTemplateIcon(.legalholdactive, size: .tiny)
+        imageView.tintColor = legalHoldActiveIconColor
+        imageView.accessibilityIdentifier = "legalHoldIcon"
+        imageView.isAccessibilityElement = true
+
+        return imageView
+    }()
 }

@@ -23,15 +23,21 @@ private let zmLog = ZMSLog(tag: "AVS")
 // MARK: - AVSLogObserver
 
 final class AVSLogObserver: AVSLogger {
-    private var token: Any!
+    // MARK: Lifecycle
 
     init() {
         self.token = SessionManager.addLogger(self)
     }
+
+    // MARK: Internal
 
     // MARK: - AVSLoggger
 
     func log(message: String) {
         zmLog.safePublic(SanitizedString(stringLiteral: message), level: .public)
     }
+
+    // MARK: Private
+
+    private var token: Any!
 }

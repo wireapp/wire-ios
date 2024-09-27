@@ -20,12 +20,28 @@ import UIKit
 import WireDesign
 
 final class ContactsViewController: UIViewController {
-    let dataSource = ContactsDataSource()
+    // MARK: Lifecycle
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+
+        dataSource.delegate = self
+        tableView.dataSource = dataSource
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
 
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
     typealias ContactsUI  = L10n.Localizable.ContactsUi
     typealias LabelColors = SemanticColors.Label
     typealias ViewColors = SemanticColors.View
+
+    let dataSource = ContactsDataSource()
 
     let bottomContainerView = UIView()
     let bottomContainerSeparatorView = UIView()
@@ -51,20 +67,6 @@ final class ContactsViewController: UIViewController {
     var bottomEdgeConstraint: NSLayoutConstraint?
     var bottomContainerBottomConstraint: NSLayoutConstraint?
 
-    // MARK: - Life Cycle
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
-
-        dataSource.delegate = self
-        tableView.dataSource = dataSource
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -87,6 +89,33 @@ final class ContactsViewController: UIViewController {
         super.viewWillDisappear(animated)
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
     }
+
+    func updateEmptyResults(hasResults: Bool) {
+        let searchQueryExist = !dataSource.searchQuery.isEmpty
+        noContactsLabel.isHidden = hasResults || searchQueryExist
+        setEmptyResultsHidden(hasResults)
+    }
+
+    @objc
+    func keyboardFrameWillChange(_ notification: Notification) {
+        guard
+            let userInfo = notification.userInfo,
+            let beginFrame = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect,
+            let endFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
+        else { return }
+
+        let willAppear = (beginFrame.minY - endFrame.minY) > 0
+        let padding: CGFloat = 12
+
+        UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrame in
+            guard let self else { return }
+            bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
+            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : UIScreen.safeArea.bottom)
+            view.layoutIfNeeded()
+        })
+    }
+
+    // MARK: Private
 
     // MARK: - Setup
 
@@ -159,12 +188,6 @@ final class ContactsViewController: UIViewController {
         }
     }
 
-    func updateEmptyResults(hasResults: Bool) {
-        let searchQueryExist = !dataSource.searchQuery.isEmpty
-        noContactsLabel.isHidden = hasResults || searchQueryExist
-        setEmptyResultsHidden(hasResults)
-    }
-
     private func setEmptyResultsHidden(_ hidden: Bool) {
         let completion: (Bool) -> Void = { _ in
             self.emptyResultsLabel.isHidden = hidden
@@ -193,24 +216,5 @@ final class ContactsViewController: UIViewController {
             name: UIResponder.keyboardWillChangeFrameNotification,
             object: nil
         )
-    }
-
-    @objc
-    func keyboardFrameWillChange(_ notification: Notification) {
-        guard
-            let userInfo = notification.userInfo,
-            let beginFrame = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect,
-            let endFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-        else { return }
-
-        let willAppear = (beginFrame.minY - endFrame.minY) > 0
-        let padding: CGFloat = 12
-
-        UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrame in
-            guard let self else { return }
-            bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
-            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : UIScreen.safeArea.bottom)
-            view.layoutIfNeeded()
-        })
     }
 }

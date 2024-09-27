@@ -38,40 +38,7 @@ protocol GiphySearchViewControllerDelegate: AnyObject {
 // MARK: - GiphySearchViewController
 
 final class GiphySearchViewController: VerticalColumnCollectionViewController {
-    typealias Giphy = L10n.Localizable.Giphy
-
-    weak var delegate: GiphySearchViewControllerDelegate?
-
-    private let searchResultsController: ZiphySearchResultsController
-
-    private lazy var searchController: UISearchController = {
-        let controller = UISearchController(searchResultsController: nil)
-        controller.searchBar.placeholder = Giphy.searchPlaceholder
-        controller.searchBar.isAccessibilityElement = true
-        controller.searchBar.accessibilityLabel = L10n.Accessibility.SearchGifs.SearchBar.accessibilityLabel
-        controller.searchBar.accessibilityIdentifier = "search input"
-        return controller
-    }()
-
-    private let noResultsLabel = DynamicFontLabel(
-        text: Giphy.Error.noResult,
-        style: .body1,
-        color: SemanticColors.Label.textSettingsPasswordPlaceholder
-    )
-
-    private let conversation: ZMConversation
-
-    private var ziphs: [Ziph] = [] {
-        didSet {
-            collectionView?.reloadData()
-            noResultsLabel.isHidden = ziphs.count > 0
-        }
-    }
-
-    private var searchTerm: String
-    private var pendingTimer: Timer?
-    private var pendingSearchtask: CancelableTask?
-    private var pendingFetchTask: CancelableTask?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -130,15 +97,11 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         cleanUpPendingTimer()
     }
 
-    private func cleanUpPendingTask() {
-        pendingSearchtask?.cancel()
-        pendingSearchtask = nil
-    }
+    // MARK: Internal
 
-    private func cleanUpPendingTimer() {
-        pendingTimer?.invalidate()
-        pendingTimer = nil
-    }
+    typealias Giphy = L10n.Localizable.Giphy
+
+    weak var delegate: GiphySearchViewControllerDelegate?
 
     // MARK: - View Lifecycle
 
@@ -157,50 +120,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
         searchController.searchBar.text = searchTerm
-    }
-
-    // MARK: - Setup UI
-
-    private func setupSearchController() {
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
-        definesPresentationContext = true
-    }
-
-    private func setupNoResultLabel() {
-        extendedLayoutIncludesOpaqueBars = true
-        noResultsLabel.isHidden = true
-        noResultsLabel.isAccessibilityElement = true
-        noResultsLabel.accessibilityTraits = .staticText
-        noResultsLabel.accessibilityLabel = L10n.Accessibility.SearchGifs.NorResultsLabel.description
-        view.addSubview(noResultsLabel)
-    }
-
-    private func setupCollectionView() {
-        collectionView?.showsVerticalScrollIndicator = false
-        collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
-        collectionView?.accessibilityIdentifier = "giphyCollectionView"
-        collectionView?.register(
-            GiphyCollectionViewCell.self,
-            forCellWithReuseIdentifier: GiphyCollectionViewCell.CellIdentifier
-        )
-        edgesForExtendedLayout = []
-    }
-
-    private func createConstraints() {
-        noResultsLabel.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            noResultsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            noResultsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
     }
 
     // MARK: - Collection View
@@ -273,6 +192,93 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         }
 
         searchController.searchBar.resignFirstResponder()
+    }
+
+    // MARK: Private
+
+    private let searchResultsController: ZiphySearchResultsController
+
+    private lazy var searchController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        controller.searchBar.placeholder = Giphy.searchPlaceholder
+        controller.searchBar.isAccessibilityElement = true
+        controller.searchBar.accessibilityLabel = L10n.Accessibility.SearchGifs.SearchBar.accessibilityLabel
+        controller.searchBar.accessibilityIdentifier = "search input"
+        return controller
+    }()
+
+    private let noResultsLabel = DynamicFontLabel(
+        text: Giphy.Error.noResult,
+        style: .body1,
+        color: SemanticColors.Label.textSettingsPasswordPlaceholder
+    )
+
+    private let conversation: ZMConversation
+
+    private var searchTerm: String
+    private var pendingTimer: Timer?
+    private var pendingSearchtask: CancelableTask?
+    private var pendingFetchTask: CancelableTask?
+
+    private var ziphs: [Ziph] = [] {
+        didSet {
+            collectionView?.reloadData()
+            noResultsLabel.isHidden = ziphs.count > 0
+        }
+    }
+
+    private func cleanUpPendingTask() {
+        pendingSearchtask?.cancel()
+        pendingSearchtask = nil
+    }
+
+    private func cleanUpPendingTimer() {
+        pendingTimer?.invalidate()
+        pendingTimer = nil
+    }
+
+    // MARK: - Setup UI
+
+    private func setupSearchController() {
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        definesPresentationContext = true
+    }
+
+    private func setupNoResultLabel() {
+        extendedLayoutIncludesOpaqueBars = true
+        noResultsLabel.isHidden = true
+        noResultsLabel.isAccessibilityElement = true
+        noResultsLabel.accessibilityTraits = .staticText
+        noResultsLabel.accessibilityLabel = L10n.Accessibility.SearchGifs.NorResultsLabel.description
+        view.addSubview(noResultsLabel)
+    }
+
+    private func setupCollectionView() {
+        collectionView?.showsVerticalScrollIndicator = false
+        collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
+        collectionView?.accessibilityIdentifier = "giphyCollectionView"
+        collectionView?.register(
+            GiphyCollectionViewCell.self,
+            forCellWithReuseIdentifier: GiphyCollectionViewCell.CellIdentifier
+        )
+        edgesForExtendedLayout = []
+    }
+
+    private func createConstraints() {
+        noResultsLabel.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            noResultsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noResultsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
 }
 

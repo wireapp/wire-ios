@@ -25,6 +25,33 @@ extension ChaCha20Poly1305 {
     /// See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/ietf_chacha20-poly1305_construction
 
     public enum AEADEncryption {
+        // MARK: Public
+
+        public enum EncryptionError: LocalizedError {
+            case failedToInitializeSodium
+            case malformedKey
+            case malformedNonce
+            case malformedCiphertext
+            case failedToDecrypt
+
+            // MARK: Public
+
+            public var errorDescription: String? {
+                switch self {
+                case .failedToInitializeSodium:
+                    "Failed to initialize sodium."
+                case .malformedKey:
+                    "Encountered a malformed key."
+                case .malformedNonce:
+                    "Encountered a malformed nonce."
+                case .malformedCiphertext:
+                    "Encountered a malformed ciphertext."
+                case .failedToDecrypt:
+                    "Failed to decrypt, possible due to incorrect key or malformed ciphertext."
+                }
+            }
+        }
+
         // MARK: - Public Functions
 
         /// Encrypts a message with a key.
@@ -115,28 +142,23 @@ extension ChaCha20Poly1305 {
             return Data(messageBytes)
         }
 
-        public enum EncryptionError: LocalizedError {
-            case failedToInitializeSodium
-            case malformedKey
-            case malformedNonce
-            case malformedCiphertext
-            case failedToDecrypt
+        // MARK: Internal
 
-            public var errorDescription: String? {
-                switch self {
-                case .failedToInitializeSodium:
-                    "Failed to initialize sodium."
-                case .malformedKey:
-                    "Encountered a malformed key."
-                case .malformedNonce:
-                    "Encountered a malformed nonce."
-                case .malformedCiphertext:
-                    "Encountered a malformed ciphertext."
-                case .failedToDecrypt:
-                    "Failed to decrypt, possible due to incorrect key or malformed ciphertext."
-                }
-            }
+        // MARK: - Buffer creation
+
+        static func generateRandomNonceBytes() -> [Byte] {
+            var nonce = createByteArray(length: nonceLength)
+            randombytes_buf(&nonce, nonce.count)
+            return nonce
         }
+
+        // MARK: Private
+
+        // MARK: - Buffer Lengths
+
+        private static let keyLength = Int(crypto_aead_chacha20poly1305_IETF_KEYBYTES)
+        private static let nonceLength = Int(crypto_aead_chacha20poly1305_IETF_NPUBBYTES)
+        private static let authenticationBytesLength = Int(crypto_aead_chacha20poly1305_IETF_ABYTES)
 
         // MARK: - Private Helpers
 
@@ -160,26 +182,12 @@ extension ChaCha20Poly1305 {
             }
         }
 
-        // MARK: - Buffer Lengths
-
-        private static let keyLength = Int(crypto_aead_chacha20poly1305_IETF_KEYBYTES)
-        private static let nonceLength = Int(crypto_aead_chacha20poly1305_IETF_NPUBBYTES)
-        private static let authenticationBytesLength = Int(crypto_aead_chacha20poly1305_IETF_ABYTES)
-
         private static func ciphertextLength(forMessageLength messageLength: Int) -> Int {
             messageLength + authenticationBytesLength
         }
 
         private static func messageLength(forCiphertextLength ciphertextLength: Int) -> Int {
             ciphertextLength - authenticationBytesLength
-        }
-
-        // MARK: - Buffer creation
-
-        static func generateRandomNonceBytes() -> [Byte] {
-            var nonce = createByteArray(length: nonceLength)
-            randombytes_buf(&nonce, nonce.count)
-            return nonce
         }
 
         private static func createByteArray(length: Int) -> [Byte] {

@@ -22,10 +22,7 @@ import XCTest
 @testable import Wire
 
 final class TokenFieldTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: TokenField!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -41,13 +38,6 @@ final class TokenFieldTests: XCTestCase {
         snapshotHelper = nil
         sut = nil
         super.tearDown()
-    }
-
-    private func createTokens() {
-        sut.addToken(forTitle: "Token 1", representedObject: MockUser())
-        sut.addToken(forTitle: "Token 2", representedObject: MockUser())
-        sut.addToken(forTitle: "Token 3", representedObject: MockUser())
-        sut.addToken(forTitle: "Token 4", representedObject: MockUser())
     }
 
     // MARK: - Unit test
@@ -154,5 +144,19 @@ final class TokenFieldTests: XCTestCase {
 
         // THEN
         snapshotHelper.verify(matching: sut)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TokenField!
+
+    private func createTokens() {
+        sut.addToken(forTitle: "Token 1", representedObject: MockUser())
+        sut.addToken(forTitle: "Token 2", representedObject: MockUser())
+        sut.addToken(forTitle: "Token 3", representedObject: MockUser())
+        sut.addToken(forTitle: "Token 4", representedObject: MockUser())
     }
 }

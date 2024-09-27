@@ -22,11 +22,11 @@ import XCTest
 @testable import Wire
 
 final class ConversationCreationControllerSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: - Properties
 
     var sut: ConversationCreationController!
-
-    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
@@ -82,6 +82,10 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - Helper Method
 

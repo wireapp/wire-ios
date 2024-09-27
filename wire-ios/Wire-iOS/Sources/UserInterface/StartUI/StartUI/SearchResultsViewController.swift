@@ -117,11 +117,13 @@ enum SearchResultsViewControllerSection: Int {
 
 extension UIViewController {
     final class ControllerHierarchyIterator: IteratorProtocol {
-        private var current: UIViewController
+        // MARK: Lifecycle
 
         init(controller: UIViewController) {
             self.current = controller
         }
+
+        // MARK: Internal
 
         func next() -> UIViewController? {
             var candidate: UIViewController? = .none
@@ -137,6 +139,10 @@ extension UIViewController {
             }
             return candidate
         }
+
+        // MARK: Private
+
+        private var current: UIViewController
     }
 
     func isContainedInPopover() -> Bool {
@@ -156,61 +162,7 @@ extension UIViewController {
 // MARK: - SearchResultsViewController
 
 final class SearchResultsViewController: UIViewController {
-    lazy var searchResultsView: SearchResultsView = {
-        let view = SearchResultsView()
-        view.parentViewController = self
-
-        return view
-    }()
-
-    private lazy var searchDirectory: SearchDirectory? = {
-        guard let session = userSession as? ZMUserSession else {
-            return nil
-        }
-
-        return SearchDirectory(userSession: session)
-    }()
-
-    let userSelection: UserSelection
-    let userSession: UserSession
-
-    let sectionController = SectionCollectionViewController()
-    let contactsSection = ContactsSectionController()
-    let teamMemberAndContactsSection = ContactsSectionController()
-    let directorySection = DirectorySectionController()
-    let conversationsSection = GroupConversationsSectionController()
-    let federationSection = FederationSectionController()
-
-    lazy var topPeopleSection: TopPeopleSectionController = {
-        let userSession = (userSession as? ZMUserSession)
-        let directory = userSession?.topConversationsDirectory
-
-        return TopPeopleSectionController(topConversationsDirectory: directory)
-    }()
-
-    let servicesSection: SearchServicesSectionController
-    let inviteTeamMemberSection: InviteTeamMemberSection
-    let createGroupSection = CreateGroupSection()
-
-    var pendingSearchTask: SearchTask?
-    var isAddingParticipants: Bool
-    let isFederationEnabled: Bool
-    var searchGroup: SearchGroup = .people {
-        didSet {
-            updateVisibleSections()
-        }
-    }
-
-    var filterConversation: ZMConversation?
-    let shouldIncludeGuests: Bool
-
-    weak var delegate: SearchResultsViewControllerDelegate?
-
-    var mode: SearchResultsViewControllerMode = .search {
-        didSet {
-            updateVisibleSections()
-        }
-    }
+    // MARK: Lifecycle
 
     deinit {
         searchDirectory?.tearDown()
@@ -266,6 +218,62 @@ final class SearchResultsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    lazy var searchResultsView: SearchResultsView = {
+        let view = SearchResultsView()
+        view.parentViewController = self
+
+        return view
+    }()
+
+    let userSelection: UserSelection
+    let userSession: UserSession
+
+    let sectionController = SectionCollectionViewController()
+    let contactsSection = ContactsSectionController()
+    let teamMemberAndContactsSection = ContactsSectionController()
+    let directorySection = DirectorySectionController()
+    let conversationsSection = GroupConversationsSectionController()
+    let federationSection = FederationSectionController()
+
+    lazy var topPeopleSection: TopPeopleSectionController = {
+        let userSession = (userSession as? ZMUserSession)
+        let directory = userSession?.topConversationsDirectory
+
+        return TopPeopleSectionController(topConversationsDirectory: directory)
+    }()
+
+    let servicesSection: SearchServicesSectionController
+    let inviteTeamMemberSection: InviteTeamMemberSection
+    let createGroupSection = CreateGroupSection()
+
+    var pendingSearchTask: SearchTask?
+    var isAddingParticipants: Bool
+    let isFederationEnabled: Bool
+    var filterConversation: ZMConversation?
+    let shouldIncludeGuests: Bool
+
+    weak var delegate: SearchResultsViewControllerDelegate?
+
+    var searchGroup: SearchGroup = .people {
+        didSet {
+            updateVisibleSections()
+        }
+    }
+
+    var mode: SearchResultsViewControllerMode = .search {
+        didSet {
+            updateVisibleSections()
+        }
+    }
+
+    var isResultEmpty = true {
+        didSet {
+            searchResultsView.emptyResultContainer.isHidden = !isResultEmpty
+        }
+    }
+
     override func loadView() {
         view = searchResultsView
     }
@@ -293,31 +301,6 @@ final class SearchResultsViewController: UIViewController {
         pendingSearchTask = nil
     }
 
-    private func performSearch(query: String, options: SearchOptions) {
-        let selfUser = userSession.selfUser
-
-        pendingSearchTask?.cancel()
-        searchResultsView.emptyResultContainer.isHidden = true
-
-        var options = options
-        options.updateForSelfUserTeamRole(selfUser: selfUser)
-
-        let request = SearchRequest(
-            query: query.trim(),
-            searchOptions: options,
-            team: selfUser.membership?.team
-        )
-
-        if let task = searchDirectory?.perform(request) {
-            task.addResultHandler { [weak self] result, isCompleted in
-                self?.handleSearchResult(result: result, isCompleted: isCompleted)
-            }
-            task.start()
-
-            pendingSearchTask = task
-        }
-    }
-
     func searchForUsers(withQuery query: String) {
         var options: SearchOptions = [
             .conversations,
@@ -343,12 +326,6 @@ final class SearchResultsViewController: UIViewController {
 
     func searchContactList() {
         searchForLocalUsers(withQuery: "")
-    }
-
-    var isResultEmpty = true {
-        didSet {
-            searchResultsView.emptyResultContainer.isHidden = !isResultEmpty
-        }
     }
 
     func handleSearchResult(result: SearchResult, isCompleted: Bool) {
@@ -466,6 +443,41 @@ final class SearchResultsViewController: UIViewController {
             .federation
         } else {
             .unknown
+        }
+    }
+
+    // MARK: Private
+
+    private lazy var searchDirectory: SearchDirectory? = {
+        guard let session = userSession as? ZMUserSession else {
+            return nil
+        }
+
+        return SearchDirectory(userSession: session)
+    }()
+
+    private func performSearch(query: String, options: SearchOptions) {
+        let selfUser = userSession.selfUser
+
+        pendingSearchTask?.cancel()
+        searchResultsView.emptyResultContainer.isHidden = true
+
+        var options = options
+        options.updateForSelfUserTeamRole(selfUser: selfUser)
+
+        let request = SearchRequest(
+            query: query.trim(),
+            searchOptions: options,
+            team: selfUser.membership?.team
+        )
+
+        if let task = searchDirectory?.perform(request) {
+            task.addResultHandler { [weak self] result, isCompleted in
+                self?.handleSearchResult(result: result, isCompleted: isCompleted)
+            }
+            task.start()
+
+            pendingSearchTask = task
         }
     }
 }

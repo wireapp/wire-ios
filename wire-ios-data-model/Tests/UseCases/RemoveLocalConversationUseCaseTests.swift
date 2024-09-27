@@ -22,8 +22,7 @@ import XCTest
 @testable import WireDataModel
 
 class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
-    private var sut: RemoveLocalConversationUseCase!
-    private var mockMLSService: MockMLSServiceInterface!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -60,4 +59,9 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
         }
         XCTAssertEqual(mockMLSService.wipeGroup_Invocations, [groupID])
     }
+
+    // MARK: Private
+
+    private var sut: RemoveLocalConversationUseCase!
+    private var mockMLSService: MockMLSServiceInterface!
 }

@@ -23,8 +23,7 @@ import WireRequestStrategy
 
 public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
     ZMDownstreamTranscoder {
-    fileprivate var downstreamRequestSync: ZMDownstreamObjectSyncWithWhitelist!
-    fileprivate var observer: Any!
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -49,24 +48,16 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         )
     }
 
-    private func requestAssetForNotification(note: NotificationInContext) {
-        managedObjectContext.performGroupedBlock {
-            guard let objectID = note.object as? NSManagedObjectID,
-                  let object = self.managedObjectContext.object(with: objectID) as? ZMManagedObject else { return }
-
-            self.downstreamRequestSync.whiteListObject(object)
-            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        }
-    }
-
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        downstreamRequestSync?.nextRequest(for: apiVersion)
-    }
+    // MARK: Public
 
     // MARK: - ZMContextChangeTrackerSource {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [downstreamRequestSync]
+    }
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        downstreamRequestSync?.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMDownstreamTranscoder
@@ -100,5 +91,22 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         guard let team = object as? Team else { return }
 
         team.imageData = response.rawData
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var downstreamRequestSync: ZMDownstreamObjectSyncWithWhitelist!
+    fileprivate var observer: Any!
+
+    // MARK: Private
+
+    private func requestAssetForNotification(note: NotificationInContext) {
+        managedObjectContext.performGroupedBlock {
+            guard let objectID = note.object as? NSManagedObjectID,
+                  let object = self.managedObjectContext.object(with: objectID) as? ZMManagedObject else { return }
+
+            self.downstreamRequestSync.whiteListObject(object)
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        }
     }
 }

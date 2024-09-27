@@ -48,13 +48,14 @@ public protocol UserRepositoryProtocol {
 // MARK: - UserRepository
 
 public final class UserRepository: UserRepositoryProtocol {
-    private let context: NSManagedObjectContext
-    private let usersAPI: any UsersAPI
+    // MARK: Lifecycle
 
     public init(context: NSManagedObjectContext, usersAPI: any UsersAPI) {
         self.context = context
         self.usersAPI = usersAPI
     }
+
+    // MARK: Public
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
@@ -89,6 +90,11 @@ public final class UserRepository: UserRepositoryProtocol {
             throw UserRepositoryError.failedToFetchRemotely(error)
         }
     }
+
+    // MARK: Private
+
+    private let context: NSManagedObjectContext
+    private let usersAPI: any UsersAPI
 
     private func persistUser(from user: WireAPI.User) {
         let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)

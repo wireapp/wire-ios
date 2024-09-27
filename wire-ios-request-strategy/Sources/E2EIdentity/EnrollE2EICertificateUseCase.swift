@@ -30,8 +30,7 @@ public struct OAuthParameters {
 // MARK: - OAuthResponse
 
 public struct OAuthResponse {
-    let idToken: String
-    let refreshToken: String?
+    // MARK: Lifecycle
 
     public init(
         idToken: String,
@@ -40,6 +39,11 @@ public struct OAuthResponse {
         self.idToken = idToken
         self.refreshToken = refreshToken
     }
+
+    // MARK: Internal
+
+    let idToken: String
+    let refreshToken: String?
 }
 
 public typealias OAuthBlock = (OAuthParameters) async throws -> OAuthResponse
@@ -55,23 +59,7 @@ public protocol EnrollE2EICertificateUseCaseProtocol {
 
 /// This class provides an interface to issue an E2EI certificate.
 public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCaseProtocol {
-    // MARK: - Types
-
-    enum Failure: Error {
-        case missingIdentityProvider
-        case missingClientId
-        case missingSelfClientID
-        case failedToDecodeCertificate
-        case failedToEnrollCertificate(_ underlyingError: Error)
-    }
-
-    // MARK: - Properties
-
-    private let logger = WireLogger.e2ei
-    private let e2eiRepository: E2EIRepositoryInterface
-    private let context: NSManagedObjectContext
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         e2eiRepository: E2EIRepositoryInterface,
@@ -80,6 +68,8 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
         self.e2eiRepository = e2eiRepository
         self.context = context
     }
+
+    // MARK: Public
 
     /// Invokes enrollment flow
     /// - Parameter authenticate: Block that performs OAUTH authentication
@@ -203,6 +193,26 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             throw Failure.failedToEnrollCertificate(error)
         }
     }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    enum Failure: Error {
+        case missingIdentityProvider
+        case missingClientId
+        case missingSelfClientID
+        case failedToDecodeCertificate
+        case failedToEnrollCertificate(_ underlyingError: Error)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let logger = WireLogger.e2ei
+    private let e2eiRepository: E2EIRepositoryInterface
+    private let context: NSManagedObjectContext
 
     private func rollingOutCertificate(
         isUpgradingMLSClient: Bool,

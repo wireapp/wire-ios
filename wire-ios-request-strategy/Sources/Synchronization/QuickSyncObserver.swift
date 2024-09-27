@@ -28,10 +28,7 @@ public protocol QuickSyncObserverInterface {
 // MARK: - QuickSyncObserver
 
 public final class QuickSyncObserver: QuickSyncObserverInterface {
-    private let context: NSManagedObjectContext
-    private let applicationStatus: ApplicationStatus
-    private let notificationCenter: NotificationCenter = .default
-    private let notificationContext: NotificationContext
+    // MARK: Lifecycle
 
     public init(
         context: NSManagedObjectContext,
@@ -42,6 +39,8 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
         self.applicationStatus = applicationStatus
         self.notificationContext = notificationContext
     }
+
+    // MARK: Public
 
     public func waitForQuickSyncToFinish() async {
         if await quickSyncHasCompleted() {
@@ -68,6 +67,13 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
             break
         }
     }
+
+    // MARK: Private
+
+    private let context: NSManagedObjectContext
+    private let applicationStatus: ApplicationStatus
+    private let notificationCenter: NotificationCenter = .default
+    private let notificationContext: NotificationContext
 
     private func quickSyncHasCompleted() async -> Bool {
         await context.perform {

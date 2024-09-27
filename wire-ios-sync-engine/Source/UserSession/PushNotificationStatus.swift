@@ -31,16 +31,16 @@ extension UUID {
 
 @objcMembers
 open class PushNotificationStatus: NSObject {
-    private var eventIdRanking = NSMutableOrderedSet()
-    private var completionHandlers: [UUID: () -> Void] = [:]
-    private let managedObjectContext: NSManagedObjectContext
-
-    public var hasEventsToFetch: Bool {
-        !eventIdRanking.isEmpty
-    }
+    // MARK: Lifecycle
 
     public init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
+    }
+
+    // MARK: Public
+
+    public var hasEventsToFetch: Bool {
+        !eventIdRanking.isEmpty
     }
 
     /// Schedule to fetch an event with a given UUID
@@ -102,6 +102,12 @@ open class PushNotificationStatus: NSObject {
         eventIdRanking.removeAllObjects()
         completionHandlers.removeAll()
     }
+
+    // MARK: Private
+
+    private var eventIdRanking = NSMutableOrderedSet()
+    private var completionHandlers: [UUID: () -> Void] = [:]
+    private let managedObjectContext: NSManagedObjectContext
 
     private func lastEventIdIsNewerThan(lastEventId: UUID?, eventId: UUID) -> Bool {
         guard let order = lastEventId?.compare(withType1: eventId) else { return false }

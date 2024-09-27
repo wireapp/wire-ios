@@ -30,11 +30,15 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     typealias RequestBlock = () -> ZMTransportRequest?
 
     final class DummyGenerator: NSObject, ZMRequestGenerator {
-        let requestBlock: RequestBlock
+        // MARK: Lifecycle
 
         init(requestBlock: @escaping RequestBlock) {
             self.requestBlock = requestBlock
         }
+
+        // MARK: Internal
+
+        let requestBlock: RequestBlock
 
         func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
             requestBlock()
@@ -42,15 +46,21 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     }
 
     final class MockRequestStrategy: NSObject, RequestStrategy {
-        let request: ZMTransportRequest
+        // MARK: Lifecycle
 
         init(request: ZMTransportRequest) {
             self.request = request
         }
 
+        // MARK: Public
+
         public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
             request
         }
+
+        // MARK: Internal
+
+        let request: ZMTransportRequest
     }
 
     var mockStrategy: MockStrategy!

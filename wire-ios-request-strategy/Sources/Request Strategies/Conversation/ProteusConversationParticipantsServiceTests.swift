@@ -27,8 +27,6 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
     var conversation: ZMConversation!
     var user: ZMUser!
 
-    // MARK: Life Cycle
-
     override func setUp() {
         conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.domain = "domain.com"

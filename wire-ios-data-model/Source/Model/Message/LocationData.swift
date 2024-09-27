@@ -20,6 +20,18 @@ import WireUtilities
 
 @objc(ZMLocationData) @objcMembers
 public final class LocationData: NSObject {
+    // MARK: Lifecycle
+
+    init(latitude: Float, longitude: Float, name: String?, zoomLevel: Int32) {
+        self.latitude = latitude
+        self.longitude = longitude
+        self.name = name?.removingExtremeCombiningCharacters
+        self.zoomLevel = zoomLevel
+        super.init()
+    }
+
+    // MARK: Public
+
     public let latitude, longitude: Float
     public let name: String?
     public let zoomLevel: Int32
@@ -31,13 +43,5 @@ public final class LocationData: NSObject {
         zoomLevel: Int32
     ) -> LocationData {
         LocationData(latitude: latitude, longitude: longitude, name: name, zoomLevel: zoomLevel)
-    }
-
-    init(latitude: Float, longitude: Float, name: String?, zoomLevel: Int32) {
-        self.latitude = latitude
-        self.longitude = longitude
-        self.name = name?.removingExtremeCombiningCharacters
-        self.zoomLevel = zoomLevel
-        super.init()
     }
 }

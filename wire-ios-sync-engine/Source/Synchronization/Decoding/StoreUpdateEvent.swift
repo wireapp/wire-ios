@@ -21,22 +21,7 @@ import Foundation
 
 @objc(StoredUpdateEvent)
 public final class StoredUpdateEvent: NSManagedObject {
-    static let entityName = "StoredUpdateEvent"
-    static let SortIndexKey = "sortIndex"
-    /// The key under which the event payload is encrypted by the public key.
-    static let encryptedPayloadKey = "encryptedPayload"
-
-    @NSManaged var uuidString: String?
-    @NSManaged var debugInformation: String?
-    @NSManaged var isTransient: Bool
-    @NSManaged var payload: NSDictionary?
-    @NSManaged var isEncrypted: Bool
-    @NSManaged var source: Int16
-    @NSManaged var sortIndex: Int64
-
-    static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
-        NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as? StoredUpdateEvent
-    }
+    // MARK: Public
 
     /// Maps a passed in `ZMUpdateEvent` to a `StoredUpdateEvent` which is persisted in a database
     /// - Parameters:
@@ -62,27 +47,6 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent.isEncrypted = publicKey != nil
 
         return storedEvent
-    }
-
-    /// Encrypts the passed payload if publicKey exists. Otherwise, returns the passed event payload
-    /// - Parameters:
-    ///   - eventPayload: the envent payload
-    ///   - publicKey: publicKey which will be used to encrypt eventPayload
-    /// - Returns: a dictionary which contains encrypted or unencrypted payload
-    private static func encryptIfNeeded(eventPayload: NSDictionary, publicKey: SecKey?) -> NSDictionary? {
-        guard let key = publicKey else {
-            return eventPayload
-        }
-        guard let data = try? JSONSerialization.data(withJSONObject: eventPayload, options: []),
-              let encryptedData = SecKeyCreateEncryptedData(
-                  key,
-                  .eciesEncryptionCofactorX963SHA256AESGCM,
-                  data as CFData,
-                  nil
-              ) else {
-            return nil
-        }
-        return NSDictionary(dictionary: [encryptedPayloadKey: encryptedData])
     }
 
     /// Returns stored events sorted by and up until (including) the defined `stopIndex`
@@ -134,6 +98,48 @@ public final class StoredUpdateEvent: NSManagedObject {
             return decryptedEvent
         }
         return events
+    }
+
+    // MARK: Internal
+
+    static let entityName = "StoredUpdateEvent"
+    static let SortIndexKey = "sortIndex"
+    /// The key under which the event payload is encrypted by the public key.
+    static let encryptedPayloadKey = "encryptedPayload"
+
+    @NSManaged var uuidString: String?
+    @NSManaged var debugInformation: String?
+    @NSManaged var isTransient: Bool
+    @NSManaged var payload: NSDictionary?
+    @NSManaged var isEncrypted: Bool
+    @NSManaged var source: Int16
+    @NSManaged var sortIndex: Int64
+
+    static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
+        NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as? StoredUpdateEvent
+    }
+
+    // MARK: Private
+
+    /// Encrypts the passed payload if publicKey exists. Otherwise, returns the passed event payload
+    /// - Parameters:
+    ///   - eventPayload: the envent payload
+    ///   - publicKey: publicKey which will be used to encrypt eventPayload
+    /// - Returns: a dictionary which contains encrypted or unencrypted payload
+    private static func encryptIfNeeded(eventPayload: NSDictionary, publicKey: SecKey?) -> NSDictionary? {
+        guard let key = publicKey else {
+            return eventPayload
+        }
+        guard let data = try? JSONSerialization.data(withJSONObject: eventPayload, options: []),
+              let encryptedData = SecKeyCreateEncryptedData(
+                  key,
+                  .eciesEncryptionCofactorX963SHA256AESGCM,
+                  data as CFData,
+                  nil
+              ) else {
+            return nil
+        }
+        return NSDictionary(dictionary: [encryptedPayloadKey: encryptedData])
     }
 
     /// Decrypts the passed stored event payload if the isEncrypted property is true.

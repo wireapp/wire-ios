@@ -31,39 +31,48 @@ protocol Message: AnyObject {
 // MARK: - TextMessage
 
 class TextMessage: Message {
-    var content: String
-    let sender: String
-    var numberOfLikes = 0
+    // MARK: Lifecycle
 
     init(content: String, sender: String) {
         self.content = content
         self.sender = sender
     }
+
+    // MARK: Internal
+
+    var content: String
+    let sender: String
+    var numberOfLikes = 0
 }
 
 // MARK: - ImageMessage
 
 class ImageMessage: Message {
-    var content: UIImage
-    let sender: String
-    var numberOfLikes = 0
+    // MARK: Lifecycle
 
     init(content: UIImage, sender: String) {
         self.content = content
         self.sender = sender
     }
+
+    // MARK: Internal
+
+    var content: UIImage
+    let sender: String
+    var numberOfLikes = 0
 }
 
 // MARK: - AnyMessage
 
 class AnyMessage {
-    private let _sender: AnyConstantProperty<String>
-    private let _numberOfLikes: AnyMutableProperty<Int>
+    // MARK: Lifecycle
 
     init(_ message: some Message) {
         self._sender = AnyConstantProperty(message, keyPath: \.sender)
         self._numberOfLikes = AnyMutableProperty(message, keyPath: \.numberOfLikes)
     }
+
+    // MARK: Internal
 
     var sender: String {
         _sender.getter()
@@ -73,6 +82,11 @@ class AnyMessage {
         get { _numberOfLikes.getter() }
         set { _numberOfLikes.setter(newValue) }
     }
+
+    // MARK: Private
+
+    private let _sender: AnyConstantProperty<String>
+    private let _numberOfLikes: AnyMutableProperty<Int>
 }
 
 // MARK: - AnyPropertyTests

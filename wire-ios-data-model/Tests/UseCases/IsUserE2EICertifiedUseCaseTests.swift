@@ -24,17 +24,7 @@ import XCTest
 // MARK: - IsUserE2EICertifiedUseCaseTests
 
 final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
-    private var sut: IsUserE2EICertifiedUseCase!
-    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockSafeCoreCrypto: MockSafeCoreCrypto!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var selfUser: ZMUser!
-    private var otherUser: ZMUser!
-    private var mlsSelfConversation: ZMConversation!
-    private var oneOnOneConversation: ZMConversation!
-    private var clientIDs: [MLSClientID]! // first two have the userID of `selfUser`, last two of `otherUser`
-
-    private var context: NSManagedObjectContext { syncMOC }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -312,6 +302,20 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Then
         XCTAssertTrue(isCertified)
     }
+
+    // MARK: Private
+
+    private var sut: IsUserE2EICertifiedUseCase!
+    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var selfUser: ZMUser!
+    private var otherUser: ZMUser!
+    private var mlsSelfConversation: ZMConversation!
+    private var oneOnOneConversation: ZMConversation!
+    private var clientIDs: [MLSClientID]! // first two have the userID of `selfUser`, last two of `otherUser`
+
+    private var context: NSManagedObjectContext { syncMOC }
 
     // MARK: - Helpers
 

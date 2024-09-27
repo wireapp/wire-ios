@@ -29,8 +29,7 @@ public protocol GetIsE2EIdentityEnabledUseCaseProtocol {
 // MARK: - GetIsE2EIdentityEnabledUseCase
 
 public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCaseProtocol {
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let featureRepository: FeatureRepositoryInterface
+    // MARK: Lifecycle
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
@@ -40,6 +39,8 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
         self.featureRepository = featureRespository
     }
 
+    // MARK: Public
+
     public func invoke() async throws -> Bool {
         let ciphersuite = await UInt16(featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
@@ -47,4 +48,9 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
             try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
         }
     }
+
+    // MARK: Private
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let featureRepository: FeatureRepositoryInterface
 }

@@ -20,11 +20,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
-    private typealias Typing = WireSyncEngine.Typing
-
-    private var oldTimeout: TimeInterval = 0
-    private var notifications: [TypingChange] = []
-    private var token: Any?
+    // MARK: Internal
 
     override func setUp() {
         oldTimeout = Typing.defaultTimeout
@@ -160,4 +156,12 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
         // Then
         XCTAssertEqual(conversation.typingUsers.count, 1)
     }
+
+    // MARK: Private
+
+    private typealias Typing = WireSyncEngine.Typing
+
+    private var oldTimeout: TimeInterval = 0
+    private var notifications: [TypingChange] = []
+    private var token: Any?
 }

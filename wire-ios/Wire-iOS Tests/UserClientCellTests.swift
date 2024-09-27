@@ -21,9 +21,7 @@ import XCTest
 @testable import Wire
 
 final class UserClientCellTests: XCTestCase {
-    private var sut: UserClientCell!
-    private var container: UIView!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -175,4 +173,10 @@ final class UserClientCellTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: container)
     }
+
+    // MARK: Private
+
+    private var sut: UserClientCell!
+    private var container: UIView!
+    private var snapshotHelper: SnapshotHelper!
 }

@@ -20,6 +20,19 @@ import Foundation
 
 @objcMembers
 public class MockTeamConversationEvent: NSObject {
+    // MARK: Lifecycle
+
+    public init(kind: Kind, team: MockTeam, conversation: MockConversation) {
+        self.kind = kind
+        self.teamIdentifier = team.identifier
+        self.conversationIdentifier = conversation.identifier
+        self.data = [
+            "conv": conversation.identifier,
+        ]
+    }
+
+    // MARK: Public
+
     public enum Kind: String {
         case create = "team.conversation-create"
         case delete = "team.conversation-delete"
@@ -30,6 +43,19 @@ public class MockTeamConversationEvent: NSObject {
     public let conversationIdentifier: String
     public let kind: Kind
     public let timestamp = Date()
+
+    public var payload: ZMTransportData {
+        [
+            "team": teamIdentifier,
+            "time": timestamp.transportString(),
+            "type": kind.rawValue,
+            "data": data,
+        ] as ZMTransportData
+    }
+
+    override public var debugDescription: String {
+        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
+    }
 
     public static func createIfNeeded(team: MockTeam, changedValues: [String: Any]) -> [MockTeamConversationEvent] {
         let conversationsKey = #keyPath(MockTeam.conversations)
@@ -48,27 +74,5 @@ public class MockTeamConversationEvent: NSObject {
             .map { MockTeamConversationEvent(kind: .create, team: team, conversation: $0) }
 
         return removedConversationsEvents + addedConversationsEvents
-    }
-
-    public init(kind: Kind, team: MockTeam, conversation: MockConversation) {
-        self.kind = kind
-        self.teamIdentifier = team.identifier
-        self.conversationIdentifier = conversation.identifier
-        self.data = [
-            "conv": conversation.identifier,
-        ]
-    }
-
-    public var payload: ZMTransportData {
-        [
-            "team": teamIdentifier,
-            "time": timestamp.transportString(),
-            "type": kind.rawValue,
-            "data": data,
-        ] as ZMTransportData
-    }
-
-    override public var debugDescription: String {
-        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
     }
 }

@@ -21,9 +21,7 @@ import XCTest
 @testable import Wire
 
 final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: SettingsTextCell!
-    private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -71,4 +69,10 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
         // THEN
         XCTAssertFalse(sut.textInput.isEnabled)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: SettingsTextCell!
+    private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
 }

@@ -21,8 +21,7 @@ import WireDataModel
 
 /// Provides debug actions for UserClientDetails
 struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
-    let userClient: UserClient
-    let logger = WireLogger.system
+    // MARK: Lifecycle
 
     init?(context: DeveloperToolsContext) {
         guard let userClient = context.currentUserClient else {
@@ -30,6 +29,11 @@ struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
         }
         self.userClient = userClient
     }
+
+    // MARK: Internal
+
+    let userClient: UserClient
+    let logger = WireLogger.system
 
     func getActionItems() -> [DeveloperToolsViewModel.Item] {
         typealias ButtonItem = DeveloperToolsViewModel.ButtonItem

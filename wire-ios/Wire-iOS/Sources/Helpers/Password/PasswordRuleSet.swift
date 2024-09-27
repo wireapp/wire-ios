@@ -21,23 +21,7 @@ import Foundation
 /// A set of password rules that can be used to check if a password is valid.
 
 public struct PasswordRuleSet: Decodable, Equatable {
-    /// The minimum length of the password.
-    let minimumLength: UInt
-
-    /// The maximum length of the password.
-    let maximumLength: UInt
-
-    /// The allowed set of characters.
-    let allowedCharacters: [PasswordCharacterClass]
-
-    /// The character set that represents the union of all the characters in `allowedCharacters`.
-    let allowedCharacterSet: CharacterSet
-
-    /// The required classes of characters.
-    let requiredCharacters: [PasswordCharacterClass]
-
-    /// The required set of characters.
-    let requiredCharacterSets: [PasswordCharacterClass: CharacterSet]
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -76,15 +60,6 @@ public struct PasswordRuleSet: Decodable, Equatable {
         self.requiredCharacterSets = requiredCharacterSets
     }
 
-    // MARK: - Codable
-
-    private enum CodingKeys: String, CodingKey {
-        case minimumLength = "new_password_minimum_length"
-        case maximumLength = "new_password_maximum_length"
-        case allowedCharacters = "new_password_allowed_characters"
-        case requiredCharacters = "new_password_required_characters"
-    }
-
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let minimumLength = try container.decode(UInt.self, forKey: .minimumLength)
@@ -98,6 +73,26 @@ public struct PasswordRuleSet: Decodable, Equatable {
             requiredCharacters: requiredCharacters
         )
     }
+
+    // MARK: Internal
+
+    /// The minimum length of the password.
+    let minimumLength: UInt
+
+    /// The maximum length of the password.
+    let maximumLength: UInt
+
+    /// The allowed set of characters.
+    let allowedCharacters: [PasswordCharacterClass]
+
+    /// The character set that represents the union of all the characters in `allowedCharacters`.
+    let allowedCharacterSet: CharacterSet
+
+    /// The required classes of characters.
+    let requiredCharacters: [PasswordCharacterClass]
+
+    /// The required set of characters.
+    let requiredCharacterSets: [PasswordCharacterClass: CharacterSet]
 
     // MARK: - Encoding
 
@@ -154,5 +149,16 @@ public struct PasswordRuleSet: Decodable, Equatable {
         return violations.isEmpty
             ? .valid
             : .invalid(violations: violations)
+    }
+
+    // MARK: Private
+
+    // MARK: - Codable
+
+    private enum CodingKeys: String, CodingKey {
+        case minimumLength = "new_password_minimum_length"
+        case maximumLength = "new_password_maximum_length"
+        case allowedCharacters = "new_password_allowed_characters"
+        case requiredCharacters = "new_password_required_characters"
     }
 }

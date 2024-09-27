@@ -23,6 +23,10 @@ import WireTesting
 class SessionManagerURLActionsTests: IntegrationTest {
     var presentationDelegate: MockPresentationDelegate!
 
+    override var useInMemoryStore: Bool {
+        false
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -35,10 +39,6 @@ class SessionManagerURLActionsTests: IntegrationTest {
     override func tearDown() {
         presentationDelegate = nil
         super.tearDown()
-    }
-
-    override var useInMemoryStore: Bool {
-        false
     }
 
     // MARK: Tests

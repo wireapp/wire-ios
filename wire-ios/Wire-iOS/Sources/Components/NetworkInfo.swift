@@ -22,12 +22,13 @@ import WireSyncEngine
 
 /// An object that provides information of changes to the user’s network conditions.
 struct NetworkInfo {
-    private let cellularNetworkInfo = CTTelephonyNetworkInfo()
-    private let serverConnection: ServerConnection
+    // MARK: Lifecycle
 
     init(serverConnection: ServerConnection) {
         self.serverConnection = serverConnection
     }
+
+    // MARK: Internal
 
     func qualityType() -> NetworkQualityType {
         if serverConnection.isOffline {
@@ -52,6 +53,11 @@ struct NetworkInfo {
             .sorted()
             .last ?? .unknown
     }
+
+    // MARK: Private
+
+    private let cellularNetworkInfo = CTTelephonyNetworkInfo()
+    private let serverConnection: ServerConnection
 
     private func qualityType(from cellularTypeString: String) -> NetworkQualityType {
         switch cellularTypeString {

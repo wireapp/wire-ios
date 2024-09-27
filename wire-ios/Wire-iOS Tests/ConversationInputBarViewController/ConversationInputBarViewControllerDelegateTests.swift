@@ -23,8 +23,9 @@ import XCTest
 // MARK: - ConversationInputBarViewControllerDelegateTests
 
 final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
+    // MARK: Internal
+
     var coreDataFixture: CoreDataFixture!
-    private var mockDelegate: MockDelegate!
     var sut: ConversationInputBarViewController!
     var userSession: UserSessionMock!
 
@@ -73,6 +74,10 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
         XCTAssertEqual(mockDelegate.composedDrafts.count, 1)
         XCTAssertEqual(mockDelegate.composedDrafts[0], DraftMessage(text: "Goo", mentions: [], quote: nil))
     }
+
+    // MARK: Private
+
+    private var mockDelegate: MockDelegate!
 }
 
 // MARK: - MockDelegate

@@ -19,10 +19,7 @@
 import Foundation
 
 final class OperationLoopNewRequestObserver {
-    var token: NSObjectProtocol?
-    var notifications = [Notification]()
-    private var notificationCenter = NotificationCenter.default
-    private var newRequestNotification = "RequestAvailableNotification"
+    // MARK: Lifecycle
 
     init() {
         self.token = notificationCenter.addObserver(
@@ -40,4 +37,14 @@ final class OperationLoopNewRequestObserver {
             notificationCenter.removeObserver(token)
         }
     }
+
+    // MARK: Internal
+
+    var token: NSObjectProtocol?
+    var notifications = [Notification]()
+
+    // MARK: Private
+
+    private var notificationCenter = NotificationCenter.default
+    private var newRequestNotification = "RequestAvailableNotification"
 }

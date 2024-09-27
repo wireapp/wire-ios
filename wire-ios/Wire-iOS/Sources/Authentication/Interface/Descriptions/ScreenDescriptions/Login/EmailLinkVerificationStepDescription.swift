@@ -21,12 +21,7 @@ import UIKit
 // MARK: - EmailLinkVerificationStepDescription
 
 final class EmailLinkVerificationStepDescription: AuthenticationStepDescription {
-    let backButton: BackButtonDescription?
-    let mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription?
+    // MARK: Lifecycle
 
     init(emailAddress: String) {
         self.backButton = BackButtonDescription()
@@ -39,6 +34,15 @@ final class EmailLinkVerificationStepDescription: AuthenticationStepDescription 
         self.secondaryView = nil
         self.footerView = VerifyEmailStepSecondaryView(canResend: false)
     }
+
+    // MARK: Internal
+
+    let backButton: BackButtonDescription?
+    let mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let footerView: AuthenticationFooterViewDescription?
 }
 
 // MARK: - EmailLinkVerificationMainView

@@ -26,7 +26,11 @@ typealias HashBoxUser = HashBox<UserType>
 // MARK: - UserSet
 
 struct UserSet {
+    // MARK: Internal
+
     typealias Storage = Set<HashBoxUser>
+
+    // MARK: Private
 
     private var storage: Storage
 }

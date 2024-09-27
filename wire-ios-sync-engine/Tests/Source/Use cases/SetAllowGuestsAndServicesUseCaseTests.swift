@@ -21,18 +21,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
-    // MARK: - Properties
-
-    private let coreDataStackHelper = CoreDataStackHelper()
-    private var stack: CoreDataStack!
-    private let modelHelper = ModelHelper()
-    private var mockConversation: ZMConversation!
-    private var mockSelfUser: ZMUser!
-    private var sut: SetAllowGuestAndServicesUseCaseProtocol!
-
-    private var syncContext: NSManagedObjectContext {
-        stack.syncContext
-    }
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -56,17 +45,6 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
         mockConversation = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
-    }
-
-    // MARK: - Helper method
-
-    private func setUpRoleAndAction() {
-        let role = Role.insertNewObject(in: syncContext)
-        let action = Action.insertNewObject(in: syncContext)
-        action.name = "modify_conversation_access"
-        role.actions = [action]
-
-        mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
     }
 
     // MARK: Unit Tests
@@ -183,5 +161,31 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
 
             wait(for: [expectation], timeout: 0.4)
         }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let coreDataStackHelper = CoreDataStackHelper()
+    private var stack: CoreDataStack!
+    private let modelHelper = ModelHelper()
+    private var mockConversation: ZMConversation!
+    private var mockSelfUser: ZMUser!
+    private var sut: SetAllowGuestAndServicesUseCaseProtocol!
+
+    private var syncContext: NSManagedObjectContext {
+        stack.syncContext
+    }
+
+    // MARK: - Helper method
+
+    private func setUpRoleAndAction() {
+        let role = Role.insertNewObject(in: syncContext)
+        let action = Action.insertNewObject(in: syncContext)
+        action.name = "modify_conversation_access"
+        role.actions = [action]
+
+        mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
     }
 }

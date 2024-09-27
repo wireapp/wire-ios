@@ -21,11 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
-    @Published var buttons: [DeveloperDebugActionsDisplayModel.ButtonItem] = []
-
-    private var userSession: ZMUserSession? { ZMUserSession.shared() }
-
-    private let selfClient: UserClient?
+    // MARK: Lifecycle
 
     // MARK: - Initialize
 
@@ -34,6 +30,16 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
         setupButtons()
     }
+
+    // MARK: Internal
+
+    @Published var buttons: [DeveloperDebugActionsDisplayModel.ButtonItem] = []
+
+    // MARK: Private
+
+    private let selfClient: UserClient?
+
+    private var userSession: ZMUserSession? { ZMUserSession.shared() }
 
     private func setupButtons() {
         buttons = [

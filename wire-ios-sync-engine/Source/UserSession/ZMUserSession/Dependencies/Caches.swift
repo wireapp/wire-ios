@@ -20,9 +20,7 @@ import WireDataModel
 
 extension UserSessionDependencies {
     final class Caches {
-        var fileAssets: FileAssetCache
-        var userImages: UserImageLocalCache
-        var searchUsers: SearchUsersCache
+        // MARK: Lifecycle
 
         init(
             fileAssets: FileAssetCache,
@@ -33,5 +31,11 @@ extension UserSessionDependencies {
             self.userImages = userImages
             self.searchUsers = searchUsers
         }
+
+        // MARK: Internal
+
+        var fileAssets: FileAssetCache
+        var userImages: UserImageLocalCache
+        var searchUsers: SearchUsersCache
     }
 }

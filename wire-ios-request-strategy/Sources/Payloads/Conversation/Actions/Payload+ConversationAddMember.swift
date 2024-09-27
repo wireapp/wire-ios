@@ -20,6 +20,16 @@ import Foundation
 
 extension Payload {
     struct ConversationAddMember: Codable {
+        // MARK: Lifecycle
+
+        init?(userIDs: [UUID]? = nil, qualifiedUserIDs: [QualifiedID]? = nil) {
+            self.userIDs = userIDs
+            self.qualifiedUserIDs = qualifiedUserIDs
+            self.role = ZMConversation.defaultMemberRoleName
+        }
+
+        // MARK: Internal
+
         enum CodingKeys: String, CodingKey {
             case userIDs = "users"
             case qualifiedUserIDs = "qualified_users"
@@ -29,11 +39,5 @@ extension Payload {
         let userIDs: [UUID]?
         let qualifiedUserIDs: [QualifiedID]?
         let role: String
-
-        init?(userIDs: [UUID]? = nil, qualifiedUserIDs: [QualifiedID]? = nil) {
-            self.userIDs = userIDs
-            self.qualifiedUserIDs = qualifiedUserIDs
-            self.role = ZMConversation.defaultMemberRoleName
-        }
     }
 }

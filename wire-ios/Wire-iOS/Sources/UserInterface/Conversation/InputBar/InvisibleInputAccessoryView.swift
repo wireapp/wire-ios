@@ -33,8 +33,9 @@ protocol InvisibleInputAccessoryViewDelegate: AnyObject {
 // MARK: - InvisibleInputAccessoryView
 
 final class InvisibleInputAccessoryView: UIView {
+    // MARK: Internal
+
     weak var delegate: InvisibleInputAccessoryViewDelegate?
-    private var frameObserver: NSKeyValueObservation?
 
     var overriddenIntrinsicContentSize: CGSize = .zero {
         didSet {
@@ -60,6 +61,10 @@ final class InvisibleInputAccessoryView: UIView {
             frameObserver = nil
         }
     }
+
+    // MARK: Private
+
+    private var frameObserver: NSKeyValueObservation?
 
     private func superviewFrameChanged() {
         delegate?.invisibleInputAccessoryView(self, superviewFrameChanged: superview?.frame)

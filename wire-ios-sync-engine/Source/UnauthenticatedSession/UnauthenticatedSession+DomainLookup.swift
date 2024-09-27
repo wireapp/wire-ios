@@ -31,11 +31,7 @@ public enum DomainLookupError: Error, Equatable {
 // MARK: - DomainInfo
 
 public struct DomainInfo: Codable, Equatable {
-    public let configurationURL: URL
-
-    private enum CodingKeys: String, CodingKey {
-        case configurationURL = "config_json_url"
-    }
+    // MARK: Lifecycle
 
     init(configurationURL: URL) {
         self.configurationURL = configurationURL
@@ -55,6 +51,16 @@ public struct DomainInfo: Codable, Equatable {
         } catch {
             return nil
         }
+    }
+
+    // MARK: Public
+
+    public let configurationURL: URL
+
+    // MARK: Private
+
+    private enum CodingKeys: String, CodingKey {
+        case configurationURL = "config_json_url"
     }
 }
 

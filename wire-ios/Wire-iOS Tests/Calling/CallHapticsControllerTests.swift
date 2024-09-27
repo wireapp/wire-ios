@@ -36,14 +36,7 @@ private final class MockCallHapticsGenerator: CallHapticsGeneratorType {
 // MARK: - CallHapticsControllerTests
 
 final class CallHapticsControllerTests: ZMSnapshotTestCase {
-    private var sut: CallHapticsController!
-    private var generator: MockCallHapticsGenerator!
-    private var firstUser: ZMUser!
-    private var secondUser: ZMUser!
-    private var thirdUser: ZMUser!
-    private var clientId1 = "ClientId1"
-    private var clientId2 = "ClientId2"
-    private var clientId3 = "ClientId3"
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -380,4 +373,15 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
         // then
         XCTAssert(generator.triggeredEvents.isEmpty)
     }
+
+    // MARK: Private
+
+    private var sut: CallHapticsController!
+    private var generator: MockCallHapticsGenerator!
+    private var firstUser: ZMUser!
+    private var secondUser: ZMUser!
+    private var thirdUser: ZMUser!
+    private var clientId1 = "ClientId1"
+    private var clientId2 = "ClientId2"
+    private var clientId3 = "ClientId3"
 }

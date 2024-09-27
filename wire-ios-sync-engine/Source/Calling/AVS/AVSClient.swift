@@ -23,9 +23,7 @@ import Foundation
 /// Used to identify a participant in a call.
 
 public struct AVSClient: Hashable {
-    public let userId: String
-    public let clientId: String
-    public var isMemberOfSubconversation = false
+    // MARK: Lifecycle
 
     init?(userClient: UserClient) {
         guard
@@ -67,6 +65,12 @@ public struct AVSClient: Hashable {
         self.clientId = clientId
         self.isMemberOfSubconversation = isMemberOfSubconversation
     }
+
+    // MARK: Public
+
+    public let userId: String
+    public let clientId: String
+    public var isMemberOfSubconversation = false
 }
 
 // MARK: Codable

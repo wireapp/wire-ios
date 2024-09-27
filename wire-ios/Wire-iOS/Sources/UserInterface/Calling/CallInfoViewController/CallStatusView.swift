@@ -35,16 +35,7 @@ enum CallStatusViewState: Equatable {
 // MARK: - CallStatusView
 
 final class CallStatusView: UIView {
-    private let titleLabel = UILabel()
-    private let subtitleLabel = UILabel()
-    private let bitrateLabel = BitRateLabel(fontSpec: .smallSemiboldFont, color: SemanticColors.Label.textDefaultWhite)
-    private let stackView = UIStackView(axis: .vertical)
-
-    var configuration: CallStatusViewInputType {
-        didSet {
-            updateConfiguration()
-        }
-    }
+    // MARK: Lifecycle
 
     init(configuration: CallStatusViewInputType) {
         self.configuration = configuration
@@ -58,6 +49,21 @@ final class CallStatusView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var configuration: CallStatusViewInputType {
+        didSet {
+            updateConfiguration()
+        }
+    }
+
+    // MARK: Private
+
+    private let titleLabel = UILabel()
+    private let subtitleLabel = UILabel()
+    private let bitrateLabel = BitRateLabel(fontSpec: .smallSemiboldFont, color: SemanticColors.Label.textDefaultWhite)
+    private let stackView = UIStackView(axis: .vertical)
 
     private func setupViews() {
         [stackView, bitrateLabel].forEach(addSubview)

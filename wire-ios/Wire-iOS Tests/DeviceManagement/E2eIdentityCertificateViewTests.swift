@@ -22,11 +22,11 @@ import XCTest
 @testable import Wire
 
 final class E2eIdentityCertificateViewTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: - Properties
 
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!
-    private var snapshotHelper: SnapshotHelper!
-
     lazy var kCertificate: String = .mockCertificate
 
     override func setUp() {
@@ -102,4 +102,8 @@ final class E2eIdentityCertificateViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

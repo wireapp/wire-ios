@@ -25,14 +25,14 @@ import XCTest
 final class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin = CGFloat.NetworkStatusBar.bottomMargin
 
+    var shouldAnimateNetworkStatusView = true
+
     func showInIPad(
         networkStatusViewController: NetworkStatusViewController,
         with orientation: UIInterfaceOrientation
     ) -> Bool {
         true
     }
-
-    var shouldAnimateNetworkStatusView = true
 }
 
 // MARK: - NetworkStatusViewControllerSnapshotTests
@@ -40,12 +40,7 @@ final class MockContainerViewController: UIViewController, NetworkStatusBarDeleg
 /// Snapshot tests for differnt margin and size of NetworkStatusViewController.view for all value of NetworkState with
 /// other UIView at the bottom.
 final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: NetworkStatusViewController!
-    private var mockContainerViewController: MockContainerViewController!
-    private var mockContentView: UIView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -92,6 +87,29 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
+    func testOnlineState() {
+        verify(for: .online)
+    }
+
+    func testOfflineState() {
+        verify(for: .offline)
+    }
+
+    func testOnlineSynchronizing() {
+        verify(for: .onlineSynchronizing)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: NetworkStatusViewController!
+    private var mockContainerViewController: MockContainerViewController!
+    private var mockContentView: UIView!
+
     // MARK: - Helper method
 
     private func verify(
@@ -108,19 +126,5 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
 
         // THEN
         snapshotHelper.verify(matching: mockContainerViewController.view, file: file, testName: testName, line: line)
-    }
-
-    // MARK: - Snapshot Tests
-
-    func testOnlineState() {
-        verify(for: .online)
-    }
-
-    func testOfflineState() {
-        verify(for: .offline)
-    }
-
-    func testOnlineSynchronizing() {
-        verify(for: .onlineSynchronizing)
     }
 }

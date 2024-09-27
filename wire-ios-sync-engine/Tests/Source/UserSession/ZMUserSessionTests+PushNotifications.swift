@@ -24,14 +24,11 @@ import XCTest
 // MARK: - ZMUserSessionTests_PushNotifications
 
 final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
+    // MARK: Internal
+
     typealias Category = WireSyncEngine.PushNotificationCategory
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction
     typealias CallAction = WireSyncEngine.CallNotificationAction
-
-    // The mock in this place is a workaround, because the test funcs call
-    // `func handle(...)` and this calls `sut.didFinishQuickSync()` and this calls `PushSupportedProtocolsAction`.
-    // A proper solution and mocking requires a further refactoring.
-    private var mockPushSupportedProtocolsActionHandler: MockActionHandler<PushSupportedProtocolsAction>!
 
     // MARK: Setup
 
@@ -316,6 +313,13 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.0, sut)
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
     }
+
+    // MARK: Private
+
+    // The mock in this place is a workaround, because the test funcs call
+    // `func handle(...)` and this calls `sut.didFinishQuickSync()` and this calls `PushSupportedProtocolsAction`.
+    // A proper solution and mocking requires a further refactoring.
+    private var mockPushSupportedProtocolsActionHandler: MockActionHandler<PushSupportedProtocolsAction>!
 }
 
 extension ZMUserSessionTests_PushNotifications {

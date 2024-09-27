@@ -47,8 +47,7 @@ extension AssetRequestFactory {
 // MARK: - AssetDeletionRequestStrategy
 
 public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-    private var requestSync: ZMSingleRequestSync!
-    private let identifierProvider: AssetDeletionIdentifierProviderType
+    // MARK: Lifecycle
 
     @objc(initWithManagedObjectContext:applicationStatus:identifierProvider:)
     public required init(
@@ -61,13 +60,7 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
         self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
     }
 
-    private func handle(response: ZMTransportResponse, for identifier: String) {
-        switch response.result {
-        case .success: identifierProvider.didDelete(identifier: identifier)
-        case .permanentError: identifierProvider.didFailToDelete(identifier: identifier)
-        default: break
-        }
-    }
+    // MARK: Public
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         requestSync.readyForNextRequestIfNotBusy()
@@ -86,5 +79,18 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         // no-op
+    }
+
+    // MARK: Private
+
+    private var requestSync: ZMSingleRequestSync!
+    private let identifierProvider: AssetDeletionIdentifierProviderType
+
+    private func handle(response: ZMTransportResponse, for identifier: String) {
+        switch response.result {
+        case .success: identifierProvider.didDelete(identifier: identifier)
+        case .permanentError: identifierProvider.didFailToDelete(identifier: identifier)
+        default: break
+        }
     }
 }

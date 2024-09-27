@@ -22,11 +22,15 @@ import UIKit
 
 /// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
 public struct DeviceWrapper {
-    var device: UIDevice
+    // MARK: Lifecycle
 
     public init(device: UIDevice) {
         self.device = device
     }
+
+    // MARK: Internal
+
+    var device: UIDevice
 }
 
 // MARK: DeviceAbstraction

@@ -44,16 +44,7 @@ public protocol IdentifierObjectSyncDelegate: AnyObject {
 /// Class for syncing objects based on an identifier.
 
 public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: NSObject, ZMRequestGenerator {
-    fileprivate let managedObjectContext: NSManagedObjectContext
-    fileprivate var pending: Set<Transcoder.T> = Set()
-    fileprivate var downloading: Set<Transcoder.T> = Set()
-    fileprivate weak var transcoder: Transcoder?
-
-    weak var delegate: IdentifierObjectSyncDelegate?
-
-    var isSyncing: Bool {
-        !pending.isEmpty || !downloading.isEmpty
-    }
+    // MARK: Lifecycle
 
     /// - parameter managedObjectContext: Managed object context on which the sync will operate
     /// - parameter transcoder: Transcoder which which will create requests & parse responses
@@ -65,6 +56,8 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
 
         super.init()
     }
+
+    // MARK: Public
 
     /// Add identifiers for objects which should be fetched
     ///
@@ -135,4 +128,19 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
 
         return request
     }
+
+    // MARK: Internal
+
+    weak var delegate: IdentifierObjectSyncDelegate?
+
+    var isSyncing: Bool {
+        !pending.isEmpty || !downloading.isEmpty
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let managedObjectContext: NSManagedObjectContext
+    fileprivate var pending: Set<Transcoder.T> = Set()
+    fileprivate var downloading: Set<Transcoder.T> = Set()
+    fileprivate weak var transcoder: Transcoder?
 }

@@ -29,19 +29,28 @@ protocol PasscodeTextFieldDelegate: AnyObject {
 // MARK: - PasscodeTextField
 
 final class PasscodeTextField: AccessoryTextField {
-    // MARK: - Constants
+    // MARK: Lifecycle
 
-    private let revealButtonWidth: CGFloat = 32
+    override init(
+        leftInset: CGFloat,
+        accessoryTrailingInset: CGFloat,
+        textFieldAttributes: Attributes
+    ) {
+        super.init(
+            leftInset: leftInset,
+            accessoryTrailingInset: accessoryTrailingInset,
+            textFieldAttributes: textFieldAttributes
+        )
+
+        setupView()
+        setupTextFieldProperties()
+    }
+
+    // MARK: Internal
 
     // MARK: - Properties
 
     weak var passcodeTextFieldDelegate: PasscodeTextFieldDelegate?
-
-    var revealButtonIcon: StyleKitIcon? {
-        didSet {
-            updateButtonIcon()
-        }
-    }
 
     lazy var revealButton: UIButton = {
         let iconButton = UIButton()
@@ -62,22 +71,22 @@ final class PasscodeTextField: AccessoryTextField {
         return iconButton
     }()
 
-    // MARK: - Life cycle
-
-    override init(
-        leftInset: CGFloat,
-        accessoryTrailingInset: CGFloat,
-        textFieldAttributes: Attributes
-    ) {
-        super.init(
-            leftInset: leftInset,
-            accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes
-        )
-
-        setupView()
-        setupTextFieldProperties()
+    var revealButtonIcon: StyleKitIcon? {
+        didSet {
+            updateButtonIcon()
+        }
     }
+
+    @objc
+    override func textFieldDidChange(textField: UITextField) {
+        passcodeTextFieldDelegate?.textFieldValueChanged(input)
+    }
+
+    // MARK: Private
+
+    // MARK: - Constants
+
+    private let revealButtonWidth: CGFloat = 32
 
     private func setupView() {
         accessoryStack.addArrangedSubview(revealButton)
@@ -95,11 +104,6 @@ final class PasscodeTextField: AccessoryTextField {
         accessibilityIdentifier = "passcode_text_field"
         autocapitalizationType = .none
         textContentType = .password
-    }
-
-    @objc
-    override func textFieldDidChange(textField: UITextField) {
-        passcodeTextFieldDelegate?.textFieldValueChanged(input)
     }
 
     @objc

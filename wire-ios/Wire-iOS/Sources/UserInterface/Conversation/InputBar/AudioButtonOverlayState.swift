@@ -23,6 +23,8 @@ import UIKit
 enum AudioButtonOverlayState {
     case hidden, expanded(CGFloat), `default`
 
+    // MARK: Internal
+
     var width: CGFloat {
         40
     }

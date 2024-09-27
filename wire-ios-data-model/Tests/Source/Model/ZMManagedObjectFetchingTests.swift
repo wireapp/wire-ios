@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 
 class ZMManagedObjectFetchingTests: DatabaseBaseTest {
-    var mocs: CoreDataStack!
+    // MARK: Public
 
     override public func setUp() {
         super.setUp()
@@ -34,6 +34,10 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
         BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
+
+    // MARK: Internal
+
+    var mocs: CoreDataStack!
 
     // MARK: - Fetch using remote identifier and domain
 

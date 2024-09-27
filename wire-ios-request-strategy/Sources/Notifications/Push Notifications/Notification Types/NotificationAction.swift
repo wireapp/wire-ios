@@ -108,6 +108,8 @@ public enum ConversationNotificationAction: String, NotificationAction {
     case like = "messageLikeAction"
     case connect = "acceptConnectAction"
 
+    // MARK: Internal
+
     var titleFormat: String {
         switch self {
         case .open: "message.open"
@@ -156,6 +158,8 @@ public enum CallNotificationAction: String, NotificationAction {
     case accept = "acceptCallAction"
     case callBack = "callbackCallAction"
     case message = "conversationDirectReplyAction"
+
+    // MARK: Internal
 
     var titleFormat: String {
         switch self {

@@ -30,7 +30,7 @@ final class VerificationCodeFieldDescription: NSObject, ValueSubmission {
 // MARK: - ResponderContainer
 
 private final class ResponderContainer<Child: UIView>: UIView {
-    private let responder: Child
+    // MARK: Lifecycle
 
     init(responder: Child) {
         self.responder = responder
@@ -43,6 +43,8 @@ private final class ResponderContainer<Child: UIView>: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     override var canBecomeFirstResponder: Bool {
         responder.canBecomeFirstResponder
     }
@@ -54,6 +56,10 @@ private final class ResponderContainer<Child: UIView>: UIView {
     override func resignFirstResponder() -> Bool {
         responder.resignFirstResponder()
     }
+
+    // MARK: Private
+
+    private let responder: Child
 }
 
 // MARK: TextContainer

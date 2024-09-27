@@ -29,6 +29,12 @@ final class MarkdownTextViewTests: XCTestCase {
     var bar: MarkdownBarView!
     var style: DownStyle!
 
+    // MARK: - Selections
+
+    var wholeTextRange: UITextRange {
+        sut.textRange(from: sut.beginningOfDocument, to: sut.endOfDocument)!
+    }
+
     override func setUp() {
         super.setUp()
         style = DownStyle()
@@ -491,12 +497,6 @@ final class MarkdownTextViewTests: XCTestCase {
         insertText(text)
         // THEN
         checkAttributes(for: [.bold, .italic], inRange: NSRange(location: text.length, length: text.length))
-    }
-
-    // MARK: - Selections
-
-    var wholeTextRange: UITextRange {
-        sut.textRange(from: sut.beginningOfDocument, to: sut.endOfDocument)!
     }
 
     func testThatSelectingMarkdownOnRangeContainingSingleMarkdownUpdatesAttributes() {

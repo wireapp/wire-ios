@@ -19,6 +19,8 @@
 @testable import WireDataModel
 
 final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
+    // MARK: Internal
+
     var token: Any?
 
     override func tearDown() {
@@ -213,6 +215,8 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
             sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool
         )
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

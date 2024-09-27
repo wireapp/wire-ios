@@ -22,9 +22,11 @@ import WireUtilities
 // TODO: [WPB-9200]: remove this file as soon as Sourcery correctly generates existential any for `requestAuthorizationCompletionHandler_Invocations`.
 
 public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstraction {
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init() {}
+
+    // MARK: Public
 
     // MARK: - delegate
 
@@ -35,6 +37,73 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
     public var notificationSettings_Invocations: [Void] = []
     public var notificationSettings_MockMethod: (() async -> UNNotificationSettings)?
     public var notificationSettings_MockValue: UNNotificationSettings?
+
+    // MARK: - getNotificationSettings
+
+    public var getNotificationSettingsCompletionHandler_Invocations: [(UNNotificationSettings) -> Void] = []
+    public var getNotificationSettingsCompletionHandler_MockMethod: (
+        (@escaping (UNNotificationSettings) -> Void)
+            -> Void
+    )?
+
+    // MARK: - setNotificationCategories
+
+    public var setNotificationCategories_Invocations: [Set<UNNotificationCategory>] = []
+    public var setNotificationCategories_MockMethod: ((Set<UNNotificationCategory>) -> Void)?
+
+    // MARK: - requestAuthorization
+
+    public var requestAuthorizationOptions_Invocations: [UNAuthorizationOptions] = []
+    public var requestAuthorizationOptions_MockError: Error?
+    public var requestAuthorizationOptions_MockMethod: ((UNAuthorizationOptions) async throws -> Bool)?
+    public var requestAuthorizationOptions_MockValue: Bool?
+
+    // MARK: - requestAuthorization
+
+    public var requestAuthorization_Invocations: [Void] = []
+    public var requestAuthorization_MockError: Error?
+    public var requestAuthorization_MockMethod: (() async throws -> Bool)?
+    public var requestAuthorization_MockValue: Bool?
+
+    // MARK: - requestAuthorization
+
+    public var requestAuthorizationCompletionHandler_Invocations: [(Bool, (any Error)?) -> Void] = []
+    public var requestAuthorizationCompletionHandler_MockMethod: ((@escaping (Bool, (any Error)?) -> Void) -> Void)?
+
+    // MARK: - requestAuthorization
+
+    public var requestAuthorizationOptionsCompletionHandler_Invocations: [(
+        options: UNAuthorizationOptions,
+        completionHandler: (Bool, (any Error)?) -> Void
+    )] = []
+    public var requestAuthorizationOptionsCompletionHandler_MockMethod: ((
+        UNAuthorizationOptions,
+        @escaping (Bool, (any Error)?) -> Void
+    ) -> Void)?
+
+    // MARK: - add
+
+    public var add_Invocations: [UNNotificationRequest] = []
+    public var add_MockError: Error?
+    public var add_MockMethod: ((UNNotificationRequest) async throws -> Void)?
+
+    // MARK: - add
+
+    public var addWithCompletionHandler_Invocations: [(
+        request: UNNotificationRequest,
+        completionHandler: (((any Error)?) -> Void)?
+    )] = []
+    public var addWithCompletionHandler_MockMethod: ((UNNotificationRequest, (((any Error)?) -> Void)?) -> Void)?
+
+    // MARK: - removePendingNotificationRequests
+
+    public var removePendingNotificationRequestsWithIdentifiers_Invocations: [[String]] = []
+    public var removePendingNotificationRequestsWithIdentifiers_MockMethod: (([String]) -> Void)?
+
+    // MARK: - removeDeliveredNotifications
+
+    public var removeDeliveredNotificationsWithIdentifiers_Invocations: [[String]] = []
+    public var removeDeliveredNotificationsWithIdentifiers_MockMethod: (([String]) -> Void)?
 
     public func notificationSettings() async -> UNNotificationSettings {
         notificationSettings_Invocations.append(())
@@ -48,14 +117,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
         }
     }
 
-    // MARK: - getNotificationSettings
-
-    public var getNotificationSettingsCompletionHandler_Invocations: [(UNNotificationSettings) -> Void] = []
-    public var getNotificationSettingsCompletionHandler_MockMethod: (
-        (@escaping (UNNotificationSettings) -> Void)
-            -> Void
-    )?
-
     @available(*, noasync)
     public func getNotificationSettings(completionHandler: @escaping (UNNotificationSettings) -> Void) {
         getNotificationSettingsCompletionHandler_Invocations.append(completionHandler)
@@ -67,11 +128,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
         mock(completionHandler)
     }
 
-    // MARK: - setNotificationCategories
-
-    public var setNotificationCategories_Invocations: [Set<UNNotificationCategory>] = []
-    public var setNotificationCategories_MockMethod: ((Set<UNNotificationCategory>) -> Void)?
-
     public func setNotificationCategories(_ categories: Set<UNNotificationCategory>) {
         setNotificationCategories_Invocations.append(categories)
 
@@ -81,13 +137,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
 
         mock(categories)
     }
-
-    // MARK: - requestAuthorization
-
-    public var requestAuthorizationOptions_Invocations: [UNAuthorizationOptions] = []
-    public var requestAuthorizationOptions_MockError: Error?
-    public var requestAuthorizationOptions_MockMethod: ((UNAuthorizationOptions) async throws -> Bool)?
-    public var requestAuthorizationOptions_MockValue: Bool?
 
     public func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool {
         requestAuthorizationOptions_Invocations.append(options)
@@ -105,13 +154,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
         }
     }
 
-    // MARK: - requestAuthorization
-
-    public var requestAuthorization_Invocations: [Void] = []
-    public var requestAuthorization_MockError: Error?
-    public var requestAuthorization_MockMethod: (() async throws -> Bool)?
-    public var requestAuthorization_MockValue: Bool?
-
     public func requestAuthorization() async throws -> Bool {
         requestAuthorization_Invocations.append(())
 
@@ -128,11 +170,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
         }
     }
 
-    // MARK: - requestAuthorization
-
-    public var requestAuthorizationCompletionHandler_Invocations: [(Bool, (any Error)?) -> Void] = []
-    public var requestAuthorizationCompletionHandler_MockMethod: ((@escaping (Bool, (any Error)?) -> Void) -> Void)?
-
     @available(*, noasync)
     public func requestAuthorization(completionHandler: @escaping (Bool, (any Error)?) -> Void) {
         requestAuthorizationCompletionHandler_Invocations.append(completionHandler)
@@ -143,17 +180,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
 
         mock(completionHandler)
     }
-
-    // MARK: - requestAuthorization
-
-    public var requestAuthorizationOptionsCompletionHandler_Invocations: [(
-        options: UNAuthorizationOptions,
-        completionHandler: (Bool, (any Error)?) -> Void
-    )] = []
-    public var requestAuthorizationOptionsCompletionHandler_MockMethod: ((
-        UNAuthorizationOptions,
-        @escaping (Bool, (any Error)?) -> Void
-    ) -> Void)?
 
     @available(*, noasync)
     public func requestAuthorization(
@@ -172,12 +198,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
         mock(options, completionHandler)
     }
 
-    // MARK: - add
-
-    public var add_Invocations: [UNNotificationRequest] = []
-    public var add_MockError: Error?
-    public var add_MockMethod: ((UNNotificationRequest) async throws -> Void)?
-
     public func add(_ request: UNNotificationRequest) async throws {
         add_Invocations.append(request)
 
@@ -191,14 +211,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
 
         try await mock(request)
     }
-
-    // MARK: - add
-
-    public var addWithCompletionHandler_Invocations: [(
-        request: UNNotificationRequest,
-        completionHandler: (((any Error)?) -> Void)?
-    )] = []
-    public var addWithCompletionHandler_MockMethod: ((UNNotificationRequest, (((any Error)?) -> Void)?) -> Void)?
 
     @available(*, noasync)
     public func add(
@@ -214,11 +226,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
         mock(request, completionHandler)
     }
 
-    // MARK: - removePendingNotificationRequests
-
-    public var removePendingNotificationRequestsWithIdentifiers_Invocations: [[String]] = []
-    public var removePendingNotificationRequestsWithIdentifiers_MockMethod: (([String]) -> Void)?
-
     public func removePendingNotificationRequests(withIdentifiers identifiers: [String]) {
         removePendingNotificationRequestsWithIdentifiers_Invocations.append(identifiers)
 
@@ -228,11 +235,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
 
         mock(identifiers)
     }
-
-    // MARK: - removeDeliveredNotifications
-
-    public var removeDeliveredNotificationsWithIdentifiers_Invocations: [[String]] = []
-    public var removeDeliveredNotificationsWithIdentifiers_MockMethod: (([String]) -> Void)?
 
     public func removeDeliveredNotifications(withIdentifiers identifiers: [String]) {
         removeDeliveredNotificationsWithIdentifiers_Invocations.append(identifiers)

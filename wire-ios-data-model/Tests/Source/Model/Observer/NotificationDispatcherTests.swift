@@ -51,17 +51,7 @@ extension ObjectChangeInfo {
 
 @objcMembers
 public class NotificationDispatcherTestBase: ZMBaseManagedObjectTest {
-    var dispatcher: NotificationDispatcher! {
-        sut
-    }
-
-    var sut: NotificationDispatcher!
-    var conversationObserver: ConversationObserver!
-    var newUnreadMessageObserver: NewUnreadMessageObserver!
-    var mergeNotifications = [Notification]()
-
-    /// Holds a reference to the observer token, so that we don't release it during the test
-    var token: Any?
+    // MARK: Public
 
     override public func setUp() {
         super.setUp()
@@ -108,13 +98,27 @@ public class NotificationDispatcherTestBase: ZMBaseManagedObjectTest {
         mergeNotifications = []
         return changedObjects
     }
+
+    // MARK: Internal
+
+    var sut: NotificationDispatcher!
+    var conversationObserver: ConversationObserver!
+    var newUnreadMessageObserver: NewUnreadMessageObserver!
+    var mergeNotifications = [Notification]()
+
+    /// Holds a reference to the observer token, so that we don't release it during the test
+    var token: Any?
+
+    var dispatcher: NotificationDispatcher! {
+        sut
+    }
 }
 
 // MARK: - NotificationDispatcherTests
 
 final class NotificationDispatcherTests: NotificationDispatcherTestBase {
     class Wrapper {
-        let dispatcher: NotificationDispatcher
+        // MARK: Lifecycle
 
         init(managedObjectContext: NSManagedObjectContext) {
             self.dispatcher = NotificationDispatcher(managedObjectContext: managedObjectContext)
@@ -122,6 +126,30 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
 
         deinit {
             dispatcher.tearDown()
+        }
+
+        // MARK: Internal
+
+        let dispatcher: NotificationDispatcher
+    }
+
+    // MARK: ChangeInfoConsumer
+
+    class ChangeConsumer: NSObject, ChangeInfoConsumer {
+        var changes: [ClassIdentifier: [ObjectChangeInfo]]?
+        var didCallStopObserving = false
+        var didCallStartObserving = false
+
+        func objectsDidChange(changes: [ClassIdentifier: [ObjectChangeInfo]]) {
+            self.changes = changes
+        }
+
+        func stopObserving() {
+            didCallStopObserving = true
+        }
+
+        func startObserving() {
+            didCallStartObserving = true
         }
     }
 
@@ -447,26 +475,6 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
             if let note = observer.notifications.first {
                 XCTAssertTrue(note.nameChanged)
             }
-        }
-    }
-
-    // MARK: ChangeInfoConsumer
-
-    class ChangeConsumer: NSObject, ChangeInfoConsumer {
-        var changes: [ClassIdentifier: [ObjectChangeInfo]]?
-        var didCallStopObserving = false
-        var didCallStartObserving = false
-
-        func objectsDidChange(changes: [ClassIdentifier: [ObjectChangeInfo]]) {
-            self.changes = changes
-        }
-
-        func stopObserving() {
-            didCallStopObserving = true
-        }
-
-        func startObserving() {
-            didCallStartObserving = true
         }
     }
 

@@ -40,19 +40,7 @@ extension ZMUser {
 
 @objc
 public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
-    fileprivate static let needsToUpdateUserClientsNotificationName = Notification
-        .Name("ZMNeedsToUpdateUserClientsNotification")
-
-    fileprivate var userClientsObserverToken: Any?
-    fileprivate var userClientsByUserID: IdentifierObjectSync<UserClientByUserIDTranscoder>
-    fileprivate var userClientsByUserClientID: IdentifierObjectSync<UserClientByUserClientIDTranscoder>
-    fileprivate var userClientsByQualifiedUserID: IdentifierObjectSync<UserClientByQualifiedUserIDTranscoder>
-
-    var userClientByUserIDTranscoder: UserClientByUserIDTranscoder
-    var userClientByUserClientIDTranscoder: UserClientByUserClientIDTranscoder
-    var userClientByQualifiedUserIDTranscoder: UserClientByQualifiedUserIDTranscoder
-
-    private let entitySync: EntityActionSync
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -134,6 +122,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         }
     }
 
+    // MARK: Public
+
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         // There may exist some clients that need an update, so try to sync any before asking
         // for requests.
@@ -145,6 +135,26 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
             userClientsByQualifiedUserID.nextRequest(for: apiVersion) ??
             entitySync.nextRequest(for: apiVersion)
     }
+
+    // MARK: Internal
+
+    var userClientByUserIDTranscoder: UserClientByUserIDTranscoder
+    var userClientByUserClientIDTranscoder: UserClientByUserClientIDTranscoder
+    var userClientByQualifiedUserIDTranscoder: UserClientByQualifiedUserIDTranscoder
+
+    // MARK: Fileprivate
+
+    fileprivate static let needsToUpdateUserClientsNotificationName = Notification
+        .Name("ZMNeedsToUpdateUserClientsNotification")
+
+    fileprivate var userClientsObserverToken: Any?
+    fileprivate var userClientsByUserID: IdentifierObjectSync<UserClientByUserIDTranscoder>
+    fileprivate var userClientsByUserClientID: IdentifierObjectSync<UserClientByUserClientIDTranscoder>
+    fileprivate var userClientsByQualifiedUserID: IdentifierObjectSync<UserClientByQualifiedUserIDTranscoder>
+
+    // MARK: Private
+
+    private let entitySync: EntityActionSync
 
     private func syncClientsNeedingUpdateIfNeeded() {
         let clients = UserClient.fetchClientsNeedingUpdateFromBackend(in: managedObjectContext)
@@ -237,24 +247,15 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
 // MARK: - UserClientByUserClientIDTranscoder
 
 final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
-    struct UserClientID: Hashable {
-        let userId: UUID
-        let clientId: String
-    }
-
-    public typealias T = UserClientID
-
-    var managedObjectContext: NSManagedObjectContext
-    let decoder: JSONDecoder = .defaultDecoder
-    private let processor = UserClientPayloadProcessor()
+    // MARK: Lifecycle
 
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
     }
 
-    var fetchLimit: Int {
-        1
-    }
+    // MARK: Public
+
+    public typealias T = UserClientID
 
     public func request(for identifiers: Set<UserClientID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let identifier = identifiers.first else { return nil }
@@ -302,35 +303,38 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
             completionHandler()
         }
     }
+
+    // MARK: Internal
+
+    struct UserClientID: Hashable {
+        let userId: UUID
+        let clientId: String
+    }
+
+    var managedObjectContext: NSManagedObjectContext
+    let decoder: JSONDecoder = .defaultDecoder
+
+    var fetchLimit: Int {
+        1
+    }
+
+    // MARK: Private
+
+    private let processor = UserClientPayloadProcessor()
 }
 
 // MARK: - UserClientByQualifiedUserIDTranscoder
 
 final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscoder {
-    public typealias T = QualifiedID
-
-    weak var contextChangedTracker: ZMContextChangeTracker?
-    var managedObjectContext: NSManagedObjectContext
-    let decoder: JSONDecoder = .defaultDecoder
-    let encoder: JSONEncoder = .defaultEncoder
-
-    private let processor = UserClientPayloadProcessor()
+    // MARK: Lifecycle
 
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
     }
 
-    var fetchLimit: Int {
-        100
-    }
+    // MARK: Public
 
-    struct RequestPayload: Codable, Equatable {
-        enum CodingKeys: String, CodingKey {
-            case qualifiedIDs = "qualified_users"
-        }
-
-        let qualifiedIDs: Set<QualifiedID>
-    }
+    public typealias T = QualifiedID
 
     public func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
@@ -345,6 +349,56 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
             return v2Request(for: identifiers, apiVersion: apiVersion)
         }
     }
+
+    public func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<QualifiedID>,
+        completionHandler: @escaping () -> Void
+    ) {
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
+        switch apiVersion {
+        case .v0:
+            completionHandler()
+            return
+
+        case .v1, .v2, .v3, .v4, .v5, .v6:
+            WaitingGroupTask(context: managedObjectContext) { [self] in
+                await commonResponseHandling(response: response, for: identifiers)
+                completionHandler()
+            }
+        }
+    }
+
+    // MARK: Internal
+
+    struct RequestPayload: Codable, Equatable {
+        enum CodingKeys: String, CodingKey {
+            case qualifiedIDs = "qualified_users"
+        }
+
+        let qualifiedIDs: Set<QualifiedID>
+    }
+
+    struct ResponsePayload: Codable {
+        enum CodingKeys: String, CodingKey {
+            case qualifiedUsers = "qualified_user_map"
+        }
+
+        let qualifiedUsers: Payload.UserClientByDomain
+    }
+
+    weak var contextChangedTracker: ZMContextChangeTracker?
+    var managedObjectContext: NSManagedObjectContext
+    let decoder: JSONDecoder = .defaultDecoder
+    let encoder: JSONEncoder = .defaultEncoder
+
+    var fetchLimit: Int {
+        100
+    }
+
+    // MARK: Private
+
+    private let processor = UserClientPayloadProcessor()
 
     private func v1Request(for identifiers: Set<QualifiedID>) -> ZMTransportRequest? {
         guard
@@ -376,33 +430,6 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
             payload: payloadAsString as ZMTransportData?,
             apiVersion: apiVersion.rawValue
         )
-    }
-
-    struct ResponsePayload: Codable {
-        enum CodingKeys: String, CodingKey {
-            case qualifiedUsers = "qualified_user_map"
-        }
-
-        let qualifiedUsers: Payload.UserClientByDomain
-    }
-
-    public func didReceive(
-        response: ZMTransportResponse,
-        for identifiers: Set<QualifiedID>,
-        completionHandler: @escaping () -> Void
-    ) {
-        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
-        switch apiVersion {
-        case .v0:
-            completionHandler()
-            return
-
-        case .v1, .v2, .v3, .v4, .v5, .v6:
-            WaitingGroupTask(context: managedObjectContext) { [self] in
-                await commonResponseHandling(response: response, for: identifiers)
-                completionHandler()
-            }
-        }
     }
 
     private func commonResponseHandling(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) async {
@@ -464,20 +491,15 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
 // MARK: - UserClientByUserIDTranscoder
 
 final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
-    public typealias T = UUID
-
-    var managedObjectContext: NSManagedObjectContext
-    let decoder: JSONDecoder = .defaultDecoder
-
-    private let processor = UserClientPayloadProcessor()
+    // MARK: Lifecycle
 
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
     }
 
-    var fetchLimit: Int {
-        1
-    }
+    // MARK: Public
+
+    public typealias T = UUID
 
     public func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let userId = identifiers.first?.transportString() else { return nil }
@@ -520,4 +542,17 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
             completionHandler()
         }
     }
+
+    // MARK: Internal
+
+    var managedObjectContext: NSManagedObjectContext
+    let decoder: JSONDecoder = .defaultDecoder
+
+    var fetchLimit: Int {
+        1
+    }
+
+    // MARK: Private
+
+    private let processor = UserClientPayloadProcessor()
 }

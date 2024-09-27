@@ -23,21 +23,10 @@ import WireDataModel
 // MARK: - CallParticipantsSnapshotTests
 
 final class CallParticipantsSnapshotTests: MessagingTest {
-    private typealias Sut = WireSyncEngine.CallParticipantsSnapshot
+    // MARK: Internal
 
     var mockWireCallCenterV3: WireCallCenterV3Mock!
     var mockFlowManager: FlowManagerMock!
-
-    private var aliceIphone: AVSClient!
-    private var aliceDesktop: AVSClient!
-    private var bobIphone: AVSClient!
-    private var bobDesktop: AVSClient!
-    private var conversationId = AVSIdentifier.stub
-    private var selfUser: ZMUser!
-    private var user2: ZMUser!
-    private var selfClient: UserClient!
-    private var client1: UserClient!
-    private var client2: UserClient!
 
     override func setUp() {
         super.setUp()
@@ -68,10 +57,6 @@ final class CallParticipantsSnapshotTests: MessagingTest {
         client1 = nil
         client2 = nil
         super.tearDown()
-    }
-
-    private func createSut(members: [AVSCallMember]) -> Sut {
-        Sut(conversationId: conversationId, members: members, callCenter: mockWireCallCenterV3)
     }
 
     // MARK: - Duplicates
@@ -205,6 +190,25 @@ final class CallParticipantsSnapshotTests: MessagingTest {
             videoGridPresentationMode: .allVideoStreams,
             conversationObserverToken: nil
         )
+    }
+
+    // MARK: Private
+
+    private typealias Sut = WireSyncEngine.CallParticipantsSnapshot
+
+    private var aliceIphone: AVSClient!
+    private var aliceDesktop: AVSClient!
+    private var bobIphone: AVSClient!
+    private var bobDesktop: AVSClient!
+    private var conversationId = AVSIdentifier.stub
+    private var selfUser: ZMUser!
+    private var user2: ZMUser!
+    private var selfClient: UserClient!
+    private var client1: UserClient!
+    private var client2: UserClient!
+
+    private func createSut(members: [AVSCallMember]) -> Sut {
+        Sut(conversationId: conversationId, members: members, callCenter: mockWireCallCenterV3)
     }
 
     private func setupUsersAndClients() {

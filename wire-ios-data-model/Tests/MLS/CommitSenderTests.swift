@@ -24,28 +24,7 @@ import XCTest
 @testable import WireDataModelSupport
 
 class CommitSenderTests: ZMBaseManagedObjectTest {
-    // MARK: - Properties
-
-    private var sut: CommitSender!
-    private var mockActionsProvider: MockMLSActionsProviderProtocol!
-    private var mockCoreCrypto: MockCoreCryptoProtocol!
-    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockClearPendingCommitInvocations: [Data]!
-    private var mockClearPendingGroupInvocations: [Data]!
-    private var cancellables: Set<AnyCancellable>!
-
-    private lazy var groupID: MLSGroupID = .random()
-    private lazy var commitBundle = CommitBundle(
-        welcome: nil,
-        commit: .random(),
-        groupInfo: .init(
-            encryptionType: .plaintext,
-            ratchetTreeType: .full,
-            payload: .random()
-        )
-    )
-
-    // MARK: - Life cycle
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -148,35 +127,6 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         )
     }
 
-    private func assertSendCommitBundleThrows(
-        withRecovery recovery: CommitError.RecoveryStrategy,
-        for error: SendCommitBundleAction.Failure,
-        shouldClearPendingCommit: Bool,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) async {
-        // Given
-        // Mock action provider throwing an error
-        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
-            throw error
-        }
-
-        // Then
-        await assertItThrows(error: CommitError.failedToSendCommit(recovery: recovery, cause: error)) {
-            // When
-            _ = try await sut.sendCommitBundle(commitBundle, for: groupID)
-        }
-
-        if shouldClearPendingCommit {
-            // It clears pending commit
-            XCTAssertEqual(mockClearPendingCommitInvocations.count, 1)
-            XCTAssertEqual(mockClearPendingCommitInvocations.first, groupID.data)
-        } else {
-            // It doesn't clear pending commit
-            XCTAssertEqual(mockClearPendingCommitInvocations.count, 0)
-        }
-    }
-
     // MARK: - Send External Commit
 
     func test_SendExternalCommitBundle_Success() async throws {
@@ -227,35 +177,6 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         )
     }
 
-    private func assertSendExternalCommitBundleThrows(
-        withRecovery recovery: ExternalCommitError.RecoveryStrategy,
-        for error: SendCommitBundleAction.Failure,
-        shouldClearPendingGroup: Bool,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) async {
-        // Given
-        // Mock action provider throwing an error
-        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
-            throw error
-        }
-
-        // Then
-        await assertItThrows(error: ExternalCommitError.failedToSendCommit(recovery: recovery, cause: error)) {
-            // When
-            _ = try await sut.sendExternalCommitBundle(commitBundle, for: groupID)
-        }
-
-        if shouldClearPendingGroup {
-            // It clears pending commit
-            XCTAssertEqual(mockClearPendingGroupInvocations.count, 1, file: file, line: line)
-            XCTAssertEqual(mockClearPendingGroupInvocations.first, groupID.data, file: file, line: line)
-        } else {
-            // It doesn't clear pending commit
-            XCTAssertEqual(mockClearPendingGroupInvocations.count, 0, file: file, line: line)
-        }
-    }
-
     // MARK: - Epoch change
 
     func test_OnEpochChanged() async throws {
@@ -284,5 +205,86 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         // Then
         await fulfillment(of: [expectation])
         XCTAssertEqual(receivedGroupIDs, [groupID])
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: CommitSender!
+    private var mockActionsProvider: MockMLSActionsProviderProtocol!
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
+    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var mockClearPendingCommitInvocations: [Data]!
+    private var mockClearPendingGroupInvocations: [Data]!
+    private var cancellables: Set<AnyCancellable>!
+
+    private lazy var groupID: MLSGroupID = .random()
+    private lazy var commitBundle = CommitBundle(
+        welcome: nil,
+        commit: .random(),
+        groupInfo: .init(
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
+            payload: .random()
+        )
+    )
+
+    private func assertSendCommitBundleThrows(
+        withRecovery recovery: CommitError.RecoveryStrategy,
+        for error: SendCommitBundleAction.Failure,
+        shouldClearPendingCommit: Bool,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) async {
+        // Given
+        // Mock action provider throwing an error
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
+            throw error
+        }
+
+        // Then
+        await assertItThrows(error: CommitError.failedToSendCommit(recovery: recovery, cause: error)) {
+            // When
+            _ = try await sut.sendCommitBundle(commitBundle, for: groupID)
+        }
+
+        if shouldClearPendingCommit {
+            // It clears pending commit
+            XCTAssertEqual(mockClearPendingCommitInvocations.count, 1)
+            XCTAssertEqual(mockClearPendingCommitInvocations.first, groupID.data)
+        } else {
+            // It doesn't clear pending commit
+            XCTAssertEqual(mockClearPendingCommitInvocations.count, 0)
+        }
+    }
+
+    private func assertSendExternalCommitBundleThrows(
+        withRecovery recovery: ExternalCommitError.RecoveryStrategy,
+        for error: SendCommitBundleAction.Failure,
+        shouldClearPendingGroup: Bool,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) async {
+        // Given
+        // Mock action provider throwing an error
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
+            throw error
+        }
+
+        // Then
+        await assertItThrows(error: ExternalCommitError.failedToSendCommit(recovery: recovery, cause: error)) {
+            // When
+            _ = try await sut.sendExternalCommitBundle(commitBundle, for: groupID)
+        }
+
+        if shouldClearPendingGroup {
+            // It clears pending commit
+            XCTAssertEqual(mockClearPendingGroupInvocations.count, 1, file: file, line: line)
+            XCTAssertEqual(mockClearPendingGroupInvocations.first, groupID.data, file: file, line: line)
+        } else {
+            // It doesn't clear pending commit
+            XCTAssertEqual(mockClearPendingGroupInvocations.count, 0, file: file, line: line)
+        }
     }
 }

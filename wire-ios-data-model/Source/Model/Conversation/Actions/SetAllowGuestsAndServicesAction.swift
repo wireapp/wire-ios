@@ -17,6 +17,22 @@
 //
 
 public struct SetAllowGuestsAndServicesAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        allowGuests: Bool,
+        allowServices: Bool,
+        conversationID: NSManagedObjectID,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.allowGuests = allowGuests
+        self.allowServices = allowServices
+        self.conversationID = conversationID
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
@@ -31,16 +47,4 @@ public struct SetAllowGuestsAndServicesAction: EntityAction {
     public let conversationID: NSManagedObjectID
 
     public var resultHandler: ResultHandler?
-
-    public init(
-        allowGuests: Bool,
-        allowServices: Bool,
-        conversationID: NSManagedObjectID,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.allowGuests = allowGuests
-        self.allowServices = allowServices
-        self.conversationID = conversationID
-        self.resultHandler = resultHandler
-    }
 }

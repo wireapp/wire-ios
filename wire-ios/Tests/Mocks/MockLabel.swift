@@ -19,11 +19,15 @@
 import Foundation
 
 final class MockLabel: NSObject, LabelType {
+    // MARK: Lifecycle
+
     init(name: String? = nil, remoteIdentifier: UUID = UUID(), kind: Label.Kind = .folder) {
         self.remoteIdentifier = remoteIdentifier
         self.name = name
         self.kind = kind
     }
+
+    // MARK: Internal
 
     var remoteIdentifier: UUID?
 

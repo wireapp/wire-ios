@@ -22,15 +22,7 @@ import WireDataModel
 // MARK: - MessageProtocolSectionController
 
 final class MessageProtocolSectionController: GroupDetailsSectionController {
-    typealias Cell = DetailsCollectionViewCell
-
-    // MARK: - Properties
-
-    private let messageProtocol: MessageProtocol
-    private let ciphersuite: MLSCipherSuite?
-    private let groupID: MLSGroupID?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil, ciphersuite: MLSCipherSuite? = nil) {
         self.messageProtocol = messageProtocol
@@ -38,6 +30,10 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         self.ciphersuite = ciphersuite
         super.init()
     }
+
+    // MARK: Internal
+
+    typealias Cell = DetailsCollectionViewCell
 
     // MARK: - Methods
 
@@ -127,6 +123,14 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {}
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let messageProtocol: MessageProtocol
+    private let ciphersuite: MLSCipherSuite?
+    private let groupID: MLSGroupID?
 }
 
 extension MessageProtocol {

@@ -29,13 +29,7 @@ protocol AccountSelectorViewDelegate: AnyObject {
 // MARK: - AccountSelectorView
 
 final class AccountSelectorView: UIView {
-    weak var delegate: AccountSelectorViewDelegate?
-
-    private let stackView = UIStackView()
-
-    var accounts = [Account]() {
-        didSet { updateStackView() }
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,6 +40,18 @@ final class AccountSelectorView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
+
+    // MARK: Internal
+
+    weak var delegate: AccountSelectorViewDelegate?
+
+    var accounts = [Account]() {
+        didSet { updateStackView() }
+    }
+
+    // MARK: Private
+
+    private let stackView = UIStackView()
 
     private func setupSubviews() {
         stackView.spacing = 6

@@ -22,9 +22,35 @@ import WireDesign
 import WireSyncEngine
 
 final class UserConnectionView: UIView, Copyable {
+    // MARK: Lifecycle
+
     convenience init(instance: UserConnectionView) {
         self.init(user: instance.user)
     }
+
+    init(user: UserType) {
+        self.user = user
+        super.init(frame: .zero)
+        userImageView.userSession = ZMUserSession.shared()
+        setup()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var user: UserType {
+        didSet {
+            updateLabels()
+            userImageView.user = user
+        }
+    }
+
+    // MARK: Private
 
     private static var correlationFormatter = AddressBookCorrelationFormatter(
         lightFont: FontSpec(.small, .light),
@@ -39,24 +65,20 @@ final class UserConnectionView: UIView, Copyable {
     private let guestIndicator = LabelIndicator(context: .guest)
     private let guestWarningView = GuestAccountWarningView()
 
-    var user: UserType {
-        didSet {
-            updateLabels()
-            userImageView.user = user
-        }
+    private var handleLabelText: NSAttributedString? {
+        guard let handle = user.handleDisplayString(withDomain: user.isFederated), !handle.isEmpty else { return nil }
+
+        return handle && [
+            .foregroundColor: SemanticColors.Label.textDefault,
+            .font: UIFont.smallSemiboldFont,
+        ]
     }
 
-    init(user: UserType) {
-        self.user = user
-        super.init(frame: .zero)
-        userImageView.userSession = ZMUserSession.shared()
-        setup()
-        createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private var correlationLabelText: NSAttributedString? {
+        type(of: self).correlationFormatter.correlationText(
+            for: user,
+            addressBookName: (user as? ZMUser)?.addressBookEntry?.cachedName
+        )
     }
 
     private func setup() {
@@ -96,22 +118,6 @@ final class UserConnectionView: UIView, Copyable {
         guard handleLabelText != nil else { return }
         secondLabel.attributedText = correlationLabelText ?? NSAttributedString(string: "")
         secondLabel.accessibilityIdentifier = "correlation"
-    }
-
-    private var handleLabelText: NSAttributedString? {
-        guard let handle = user.handleDisplayString(withDomain: user.isFederated), !handle.isEmpty else { return nil }
-
-        return handle && [
-            .foregroundColor: SemanticColors.Label.textDefault,
-            .font: UIFont.smallSemiboldFont,
-        ]
-    }
-
-    private var correlationLabelText: NSAttributedString? {
-        type(of: self).correlationFormatter.correlationText(
-            for: user,
-            addressBookName: (user as? ZMUser)?.addressBookEntry?.cachedName
-        )
     }
 
     private func createConstraints() {

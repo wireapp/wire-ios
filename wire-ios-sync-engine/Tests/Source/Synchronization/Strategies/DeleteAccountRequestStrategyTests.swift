@@ -21,10 +21,8 @@ import WireSyncEngine
 import WireTransport
 
 class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
-    fileprivate var sut: DeleteAccountRequestStrategy!
-    fileprivate var mockApplicationStatus: MockApplicationStatus!
-    fileprivate let cookieStorage = ZMPersistentCookieStorage()
-    private var accountDeleted = false
+    // MARK: Internal
+
     var observers: [Any] = []
 
     override func setUp() {
@@ -113,4 +111,14 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
     func accountDeleted(accountId: UUID) {
         accountDeleted = true
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var sut: DeleteAccountRequestStrategy!
+    fileprivate var mockApplicationStatus: MockApplicationStatus!
+    fileprivate let cookieStorage = ZMPersistentCookieStorage()
+
+    // MARK: Private
+
+    private var accountDeleted = false
 }

@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ConnectRequestsCellSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: ConnectRequestsCell!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -56,4 +53,11 @@ final class ConnectRequestsCellSnapshotTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConnectRequestsCell!
 }

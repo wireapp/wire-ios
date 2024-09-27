@@ -37,16 +37,14 @@ extension ParticipantRole: ObjectInSnapshot {
 
 @objcMembers
 public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
-    static let ParticipantRoleChangeInfoKey = "participantRoleChanges"
-
-    static func changeInfo(for participantRole: ParticipantRole, changes: Changes) -> ParticipantRoleChangeInfo? {
-        ParticipantRoleChangeInfo(object: participantRole, changes: changes)
-    }
+    // MARK: Lifecycle
 
     public required init(object: NSObject) {
         self.participantRole = object as! ParticipantRole
         super.init(object: object)
     }
+
+    // MARK: Public
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: create ParticipantRoleType
@@ -89,6 +87,14 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
 
             observer.participantRoleDidChange(changeInfo)
         }
+    }
+
+    // MARK: Internal
+
+    static let ParticipantRoleChangeInfoKey = "participantRoleChanges"
+
+    static func changeInfo(for participantRole: ParticipantRole, changes: Changes) -> ParticipantRoleChangeInfo? {
+        ParticipantRoleChangeInfo(object: participantRole, changes: changes)
     }
 }
 

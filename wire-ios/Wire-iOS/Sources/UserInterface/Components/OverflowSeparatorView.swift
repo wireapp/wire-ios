@@ -20,7 +20,7 @@ import UIKit
 import WireDesign
 
 final class OverflowSeparatorView: UIView {
-    var inverse = false
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,10 +32,9 @@ final class OverflowSeparatorView: UIView {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    private func applyStyle() {
-        backgroundColor = SemanticColors.View.backgroundSeparatorCell
-        alpha = 0
-    }
+    // MARK: Internal
+
+    var inverse = false
 
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: .hairline)
@@ -50,5 +49,12 @@ final class OverflowSeparatorView: UIView {
         } else {
             alpha = scrollView.contentOffset.y > 0 ? 1 : 0
         }
+    }
+
+    // MARK: Private
+
+    private func applyStyle() {
+        backgroundColor = SemanticColors.View.backgroundSeparatorCell
+        alpha = 0
     }
 }

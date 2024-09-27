@@ -20,7 +20,7 @@ import XCTest
 @testable import WireAPI
 
 final class ConversationEventDecodingTests: XCTestCase {
-    private var decoder: JSONDecoder!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -287,15 +287,9 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    // MARK: Private
+
     private enum Scaffolding {
-        static func fractionalDate(from string: String) -> Date {
-            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
-        }
-
-        static func date(from string: String) -> Date {
-            ISO8601DateFormatter.internetDateTime.date(from: string)!
-        }
-
         static let conversationID = ConversationID(
             uuid: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
             domain: "example.com"
@@ -499,5 +493,15 @@ final class ConversationEventDecodingTests: XCTestCase {
             senderID: senderID,
             isTyping: true
         )
+
+        static func fractionalDate(from string: String) -> Date {
+            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
+        }
     }
+
+    private var decoder: JSONDecoder!
 }

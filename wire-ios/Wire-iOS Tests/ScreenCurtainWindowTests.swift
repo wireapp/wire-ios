@@ -21,9 +21,10 @@ import XCTest
 @testable import Wire
 
 final class ScreenCurtainWindowTests: XCTestCase {
+    // MARK: Internal
+
     var sut: ScreenCurtainWindow!
     var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -96,4 +97,8 @@ final class ScreenCurtainWindowTests: XCTestCase {
         // Then
         snapshotHelper.verify(matching: sut.rootViewController!)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

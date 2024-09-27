@@ -21,6 +21,22 @@ import Foundation
 /// An item representing a post from Giphy.
 
 public struct Ziph: Codable {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    public init(identifier: String, images: ZiphyAnimatedImageList, title: String) {
+        self.identifier = identifier
+        self.images = images
+        self.title = title
+    }
+
+    // MARK: Public
+
+    public enum CodingKeys: String, CodingKey {
+        case title, images, identifier = "id"
+    }
+
     public let identifier: String
     public let images: ZiphyAnimatedImageList
     public let title: String?
@@ -44,17 +60,5 @@ public struct Ziph: Codable {
         "identifier: \(identifier)\n" +
             "title: \(title ?? "nil")\n" +
             "images:\n\(images)\n"
-    }
-
-    // MARK: - Initialization
-
-    public init(identifier: String, images: ZiphyAnimatedImageList, title: String) {
-        self.identifier = identifier
-        self.images = images
-        self.title = title
-    }
-
-    public enum CodingKeys: String, CodingKey {
-        case title, images, identifier = "id"
     }
 }

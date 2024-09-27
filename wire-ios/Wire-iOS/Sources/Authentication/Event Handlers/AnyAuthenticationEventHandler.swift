@@ -22,11 +22,7 @@ import WireUtilities
 /// A box for authentication event handlers that have the same context type.
 
 final class AnyAuthenticationEventHandler<Context> {
-    /// The name of the handler.
-    private(set) var name: String
-
-    private let _statusProvider: AnyMutableProperty<AuthenticationStatusProvider?>
-    private let handlerBlock: (AuthenticationFlowStep, Context) -> [AuthenticationCoordinatorAction]?
+    // MARK: Lifecycle
 
     /// Creates a type-erased box for the specified event handler.
     /// - parameter handler: The typed handler to wrap in this object.
@@ -36,6 +32,11 @@ final class AnyAuthenticationEventHandler<Context> {
         self.name = String(describing: Handler.self)
         self.handlerBlock = handler.handleEvent
     }
+
+    // MARK: Internal
+
+    /// The name of the handler.
+    private(set) var name: String
 
     /// The current status provider.
     var statusProvider: AuthenticationStatusProvider? {
@@ -47,4 +48,9 @@ final class AnyAuthenticationEventHandler<Context> {
     func handleEvent(currentStep: AuthenticationFlowStep, context: Context) -> [AuthenticationCoordinatorAction]? {
         handlerBlock(currentStep, context)
     }
+
+    // MARK: Private
+
+    private let _statusProvider: AnyMutableProperty<AuthenticationStatusProvider?>
+    private let handlerBlock: (AuthenticationFlowStep, Context) -> [AuthenticationCoordinatorAction]?
 }

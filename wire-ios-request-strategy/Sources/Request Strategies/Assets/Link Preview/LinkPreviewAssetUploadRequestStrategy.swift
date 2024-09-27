@@ -22,7 +22,7 @@ import WireLinkPreview
 // MARK: - LinkPreviewDetectorHelper
 
 public final class LinkPreviewDetectorHelper: NSObject {
-    fileprivate static var _test_debug_linkPreviewDetector: LinkPreviewDetectorType?
+    // MARK: Public
 
     public static func test_debug_linkPreviewDetector() -> LinkPreviewDetectorType? {
         _test_debug_linkPreviewDetector
@@ -35,6 +35,10 @@ public final class LinkPreviewDetectorHelper: NSObject {
     public static func tearDown() {
         _test_debug_linkPreviewDetector = nil
     }
+
+    // MARK: Fileprivate
+
+    fileprivate static var _test_debug_linkPreviewDetector: LinkPreviewDetectorType?
 }
 
 private let zmLog = ZMSLog(tag: "link previews")
@@ -66,14 +70,7 @@ extension ZMImagePreprocessingTracker {
 // MARK: - LinkPreviewAssetUploadRequestStrategy
 
 public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
-    let requestFactory = AssetRequestFactory()
-
-    /// Processors
-    fileprivate let linkPreviewPreprocessor: LinkPreviewPreprocessor
-    fileprivate let previewImagePreprocessor: ZMImagePreprocessingTracker // TODO: replace with AssetPreprocessor
-
-    /// Upstream sync
-    fileprivate var assetUpstreamSync: ZMUpstreamModifiedObjectSync!
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     override public init(
@@ -111,6 +108,20 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         )
     }
 
+    // MARK: Public
+
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        [linkPreviewPreprocessor, previewImagePreprocessor, assetUpstreamSync]
+    }
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        assetUpstreamSync.nextRequest(for: apiVersion)
+    }
+
+    // MARK: Internal
+
+    let requestFactory = AssetRequestFactory()
+
     var predicateForAssetUpload: NSPredicate {
         NSPredicate(format: "%K == %d", ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.processed.rawValue)
     }
@@ -125,13 +136,14 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         }
     }
 
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [linkPreviewPreprocessor, previewImagePreprocessor, assetUpstreamSync]
-    }
+    // MARK: Fileprivate
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        assetUpstreamSync.nextRequest(for: apiVersion)
-    }
+    /// Processors
+    fileprivate let linkPreviewPreprocessor: LinkPreviewPreprocessor
+    fileprivate let previewImagePreprocessor: ZMImagePreprocessingTracker // TODO: replace with AssetPreprocessor
+
+    /// Upstream sync
+    fileprivate var assetUpstreamSync: ZMUpstreamModifiedObjectSync!
 }
 
 // MARK: ZMUpstreamTranscoder

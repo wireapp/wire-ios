@@ -22,9 +22,20 @@ import WireDataModel
 // MARK: - ConversationNewDeviceSystemMessageCell
 
 final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-    static let userClientURL = URL(string: "settings://user-client")!
+    // MARK: Lifecycle
 
-    var linkTarget: LinkTarget?
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setupView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
 
     enum LinkTarget {
         case user(UserType)
@@ -37,16 +48,9 @@ final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, C
         var linkTarget: LinkTarget
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    static let userClientURL = URL(string: "settings://user-client")!
 
-        setupView()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
+    var linkTarget: LinkTarget?
 
     func setupView() {
         lineView.isHidden = false

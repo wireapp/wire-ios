@@ -23,15 +23,7 @@ import WireDesign
 // MARK: - TitleView
 
 class TitleView: UIView, DynamicTypeCapable {
-    // MARK: - Properties
-
-    var titleColor: UIColor?
-    var titleFont: FontSpec?
-    var tapHandler: ((UIButton) -> Void)?
-
-    private let stackView = UIStackView(axis: .vertical)
-    let titleButton = UIButton()
-    private let subtitleLabel = UILabel()
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -49,19 +41,20 @@ class TitleView: UIView, DynamicTypeCapable {
         createConstraints()
     }
 
-    // MARK: - Private methods
-
-    private func createConstraints() {
-        stackView.fitIn(view: self)
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
-    private func createViews() {
-        titleButton.addTarget(self, action: #selector(titleButtonTapped), for: .touchUpInside)
-        stackView.distribution = .fillProportionally
-        stackView.alignment = .center
-        addSubview(stackView)
-        [titleButton, subtitleLabel].forEach(stackView.addArrangedSubview)
-    }
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    var titleColor: UIColor?
+    var titleFont: FontSpec?
+    var tapHandler: ((UIButton) -> Void)?
+
+    let titleButton = UIButton()
 
     // MARK: - Methods
 
@@ -99,13 +92,27 @@ class TitleView: UIView, DynamicTypeCapable {
         subtitleLabel.font = .smallLightFont
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     func redrawFont() {
         titleButton.titleLabel!.font = titleFont?.font
+    }
+
+    // MARK: Private
+
+    private let stackView = UIStackView(axis: .vertical)
+    private let subtitleLabel = UILabel()
+
+    // MARK: - Private methods
+
+    private func createConstraints() {
+        stackView.fitIn(view: self)
+    }
+
+    private func createViews() {
+        titleButton.addTarget(self, action: #selector(titleButtonTapped), for: .touchUpInside)
+        stackView.distribution = .fillProportionally
+        stackView.alignment = .center
+        addSubview(stackView)
+        [titleButton, subtitleLabel].forEach(stackView.addArrangedSubview)
     }
 }
 

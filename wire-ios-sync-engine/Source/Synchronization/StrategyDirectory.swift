@@ -34,12 +34,7 @@ public protocol StrategyDirectoryProtocol {
 
 @objcMembers
 public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
-    let strategies: [Any]
-
-    public let requestStrategies: [RequestStrategy]
-    public let eventConsumers: [ZMEventConsumer]
-    public let eventAsyncConsumers: [ZMEventAsyncConsumer]
-    public let contextChangeTrackers: [ZMContextChangeTracker]
+    // MARK: Lifecycle
 
     init(
         contextProvider: ContextProvider,
@@ -95,6 +90,17 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             }
         }
     }
+
+    // MARK: Public
+
+    public let requestStrategies: [RequestStrategy]
+    public let eventConsumers: [ZMEventConsumer]
+    public let eventAsyncConsumers: [ZMEventAsyncConsumer]
+    public let contextChangeTrackers: [ZMContextChangeTracker]
+
+    // MARK: Internal
+
+    let strategies: [Any]
 
     static func buildStrategies(
         contextProvider: ContextProvider,
@@ -400,6 +406,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
         return strategies
     }
+
+    // MARK: Private
 
     // MARK: Use Cases
 

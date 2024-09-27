@@ -26,7 +26,7 @@ extension Notification.Name {
 // MARK: - ColorSchemeController
 
 final class ColorSchemeController: NSObject {
-    var userObserverToken: Any?
+    // MARK: Lifecycle
 
     init(userSession: UserSession) {
         super.init()
@@ -44,9 +44,15 @@ final class ColorSchemeController: NSObject {
         )
     }
 
+    // MARK: Internal
+
+    var userObserverToken: Any?
+
     func notifyColorSchemeChange() {
         NotificationCenter.default.post(name: .colorSchemeControllerDidApplyColorSchemeChange, object: self)
     }
+
+    // MARK: Private
 
     @objc
     private func settingsColorSchemeDidChange() {

@@ -26,15 +26,19 @@ import XCTest
 // MARK: - ClientMessageRequestFactoryTests
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
-    private var apiVersion: APIVersion! {
-        didSet {
-            BackendInfo.apiVersion = apiVersion
-        }
-    }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
         apiVersion = .v0
+    }
+
+    // MARK: Private
+
+    private var apiVersion: APIVersion! {
+        didSet {
+            BackendInfo.apiVersion = apiVersion
+        }
     }
 }
 

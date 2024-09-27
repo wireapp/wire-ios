@@ -22,11 +22,11 @@ import XCTest
 // MARK: - MockAction
 
 private class MockAction: EntityAction, Equatable {
-    let uuid = UUID()
-    var resultHandler: ResultHandler?
-
     typealias Result = Void
     typealias Failure = Error
+
+    let uuid = UUID()
+    var resultHandler: ResultHandler?
 
     static func == (lhs: MockAction, rhs: MockAction) -> Bool {
         lhs.uuid == rhs.uuid
@@ -37,12 +37,13 @@ private class MockAction: EntityAction, Equatable {
 
 private class TestActionHandler: ActionHandler<MockAction> {
     var calledRequestForAction = false
+    var calledHandleResponse = false
+
     override func request(for action: ActionHandler<MockAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         calledRequestForAction = true
         return ZMTransportRequest(getFromPath: "/mock/request", apiVersion: APIVersion.v0.rawValue)
     }
 
-    var calledHandleResponse = false
     override func handleResponse(_ response: ZMTransportResponse, action: ActionHandler<MockAction>.Action) {
         calledHandleResponse = true
     }
@@ -51,7 +52,7 @@ private class TestActionHandler: ActionHandler<MockAction> {
 // MARK: - ActionHandlerTests
 
 class ActionHandlerTests: MessagingTestBase {
-    private var sut: TestActionHandler!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -144,6 +145,10 @@ class ActionHandlerTests: MessagingTestBase {
         XCTAssertEqual(sut.pendingActions, [action])
         XCTAssertFalse(sut.calledHandleResponse)
     }
+
+    // MARK: Private
+
+    private var sut: TestActionHandler!
 
     private func response(httpStatus: Int, apiVersion: APIVersion) -> ZMTransportResponse {
         ZMTransportResponse(

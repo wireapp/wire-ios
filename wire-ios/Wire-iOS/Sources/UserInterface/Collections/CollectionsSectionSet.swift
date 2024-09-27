@@ -21,7 +21,7 @@ import WireDataModel
 
 /// This option set represents the collection sections.
 struct CollectionsSectionSet: OptionSet, Hashable {
-    let rawValue: UInt
+    // MARK: Lifecycle
 
     init(rawValue: UInt) {
         self.rawValue = rawValue
@@ -30,6 +30,8 @@ struct CollectionsSectionSet: OptionSet, Hashable {
     init?(index: UInt) {
         self = type(of: self).visible[Int(index)]
     }
+
+    // MARK: Internal
 
     static let none = CollectionsSectionSet([])
     static let images = CollectionsSectionSet(rawValue: 1)
@@ -43,4 +45,6 @@ struct CollectionsSectionSet: OptionSet, Hashable {
 
     /// Returns visible sections in the display order
     static let visible: [CollectionsSectionSet] = [images, videos, links, filesAndAudio, loading]
+
+    let rawValue: UInt
 }

@@ -28,10 +28,27 @@ protocol ConversationCreationValuesConfigurable: AnyObject {
 // MARK: - ConversationCreationValues
 
 final class ConversationCreationValues {
-    // MARK: - Properties
+    // MARK: Lifecycle
 
-    private var unfilteredParticipants: UserSet
-    private let selfUser: UserType
+    init(
+        name: String = "",
+        participants: UserSet = UserSet(),
+        allowGuests: Bool = true,
+        allowServices: Bool = true,
+        enableReceipts: Bool = true,
+        encryptionProtocol: Feature.MLS.Config.MessageProtocol,
+        selfUser: UserType
+    ) {
+        self.name = name
+        self.unfilteredParticipants = participants
+        self.allowGuests = allowGuests
+        self.allowServices = allowServices
+        self.enableReceipts = enableReceipts
+        self.encryptionProtocol = encryptionProtocol
+        self.selfUser = selfUser
+    }
+
+    // MARK: Internal
 
     var name: String
     var allowGuests: Bool
@@ -60,23 +77,10 @@ final class ConversationCreationValues {
         }
     }
 
-    // MARK: - Life cycle
+    // MARK: Private
 
-    init(
-        name: String = "",
-        participants: UserSet = UserSet(),
-        allowGuests: Bool = true,
-        allowServices: Bool = true,
-        enableReceipts: Bool = true,
-        encryptionProtocol: Feature.MLS.Config.MessageProtocol,
-        selfUser: UserType
-    ) {
-        self.name = name
-        self.unfilteredParticipants = participants
-        self.allowGuests = allowGuests
-        self.allowServices = allowServices
-        self.enableReceipts = enableReceipts
-        self.encryptionProtocol = encryptionProtocol
-        self.selfUser = selfUser
-    }
+    // MARK: - Properties
+
+    private var unfilteredParticipants: UserSet
+    private let selfUser: UserType
 }

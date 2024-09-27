@@ -20,6 +20,23 @@ import UIKit
 import WireDesign
 
 final class RecordingDotView: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    init() {
+        super.init(frame: CGRect.zero)
+
+        backgroundColor = SemanticColors.Icon.foregroundDefaultRed
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     // MARK: - Properties
 
     var animating = false {
@@ -36,25 +53,21 @@ final class RecordingDotView: UIView {
         }
     }
 
-    // MARK: - Init
-
-    init() {
-        super.init(frame: CGRect.zero)
-
-        backgroundColor = SemanticColors.Icon.foregroundDefaultRed
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     // MARK: - Override Methods
 
     override func layoutSubviews() {
         super.layoutSubviews()
         layer.cornerRadius = bounds.width / 2
     }
+
+    // MARK: Fileprivate
+
+    fileprivate func stopAnimation() {
+        layer.removeAllAnimations()
+        alpha = 1
+    }
+
+    // MARK: Private
 
     // MARK: - Methods
 
@@ -65,10 +78,5 @@ final class RecordingDotView: UIView {
                 self.alpha = 1
             })
         }
-    }
-
-    fileprivate func stopAnimation() {
-        layer.removeAllAnimations()
-        alpha = 1
     }
 }

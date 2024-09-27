@@ -26,12 +26,12 @@ extension Payload {
             case hasMore = "has_more"
         }
 
-        var nextStartReference: String? {
-            pagingState
-        }
-
         let conversations: [QualifiedID]
         let pagingState: String
         let hasMore: Bool
+
+        var nextStartReference: String? {
+            pagingState
+        }
     }
 }

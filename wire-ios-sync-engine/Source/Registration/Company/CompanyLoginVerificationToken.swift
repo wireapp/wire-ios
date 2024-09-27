@@ -23,12 +23,7 @@ import Foundation
 /// A struct containing a token to validate login requests
 /// received via url schemes.
 public struct CompanyLoginVerificationToken: Codable, Equatable {
-    /// The unique identifier of the token.
-    let uuid: UUID
-    /// The creation date of the token.
-    let creationDate: Date
-    /// The amount of seconds the token should be considered valid.
-    let timeToLive: TimeInterval
+    // MARK: Lifecycle
 
     /// Creates a new validation token with an expiration time
     /// of 30 minutes if not specified otherwise.
@@ -37,6 +32,15 @@ public struct CompanyLoginVerificationToken: Codable, Equatable {
         self.creationDate = creationDate
         self.timeToLive = timeToLive
     }
+
+    // MARK: Internal
+
+    /// The unique identifier of the token.
+    let uuid: UUID
+    /// The creation date of the token.
+    let creationDate: Date
+    /// The amount of seconds the token should be considered valid.
+    let timeToLive: TimeInterval
 
     /// Whether the token is no langer valid (older than its time to live).
     var isExpired: Bool {

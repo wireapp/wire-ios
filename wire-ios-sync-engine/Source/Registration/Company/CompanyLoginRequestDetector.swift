@@ -23,6 +23,15 @@ import UIKit
 /// A session request is a string formatted as `wire-[UUID]`.
 
 public final class CompanyLoginRequestDetector: NSObject {
+    // MARK: Lifecycle
+
+    /// Creates a detector that uses the specified pasteboard to detect session requests.
+    public init(pasteboard: Pasteboard) {
+        self.pasteboard = pasteboard
+    }
+
+    // MARK: Public
+
     /// A struct that describes the result of a login code detection operation..
 
     public struct DetectorResult: Equatable {
@@ -41,18 +50,44 @@ public final class CompanyLoginRequestDetector: NSObject {
         case unknown
     }
 
-    private let pasteboard: Pasteboard
-    private let processQueue = DispatchQueue(label: "WireSyncEngine.SharedIdentitySessionRequestDetector")
-    private var previouslyDetectedSSOCode: String?
-
     // MARK: - Initialization
 
     /// Returns the detector that uses the system pasteboard to detect session requests.
     public static let shared = CompanyLoginRequestDetector(pasteboard: UIPasteboard.general)
 
-    /// Creates a detector that uses the specified pasteboard to detect session requests.
-    public init(pasteboard: Pasteboard) {
-        self.pasteboard = pasteboard
+    /// Parses the input and returns its type (.ssoCode, .domain or .unknown)
+    ///
+    /// - Parameter input: to be parsed
+    /// - Returns: type of input with its eventual associated value
+    public static func parse(input: String) -> ParserResult {
+        if let domain = domain(from: input) {
+            .domain(domain)
+        } else if let code = requestCode(in: input) {
+            .ssoCode(code)
+        } else {
+            .unknown
+        }
+    }
+
+    /// Tries to extract the request ID from the contents of the text.
+
+    public static func requestCode(in string: String) -> UUID? {
+        guard let prefixRange = string.range(of: "wire-") else {
+            return nil
+        }
+
+        guard let endIndex = string.index(prefixRange.upperBound, offsetBy: 36, limitedBy: string.endIndex) else {
+            return nil
+        }
+
+        let codeString = string[prefixRange.upperBound ..< endIndex]
+        return UUID(uuidString: String(codeString))
+    }
+
+    /// Validates the session request code from the user input.
+
+    public static func isValidRequestCode(in string: String) -> Bool {
+        requestCode(in: string) != nil
     }
 
     // MARK: - Detection
@@ -80,19 +115,11 @@ public final class CompanyLoginRequestDetector: NSObject {
         }
     }
 
-    /// Parses the input and returns its type (.ssoCode, .domain or .unknown)
-    ///
-    /// - Parameter input: to be parsed
-    /// - Returns: type of input with its eventual associated value
-    public static func parse(input: String) -> ParserResult {
-        if let domain = domain(from: input) {
-            .domain(domain)
-        } else if let code = requestCode(in: input) {
-            .ssoCode(code)
-        } else {
-            .unknown
-        }
-    }
+    // MARK: Private
+
+    private let pasteboard: Pasteboard
+    private let processQueue = DispatchQueue(label: "WireSyncEngine.SharedIdentitySessionRequestDetector")
+    private var previouslyDetectedSSOCode: String?
 
     /// Tries to extract the domain from a given email
     ///
@@ -101,26 +128,5 @@ public final class CompanyLoginRequestDetector: NSObject {
     private static func domain(from email: String) -> String? {
         guard ZMEmailAddressValidator.isValidEmailAddress(email) else { return nil }
         return email.components(separatedBy: "@").last
-    }
-
-    /// Tries to extract the request ID from the contents of the text.
-
-    public static func requestCode(in string: String) -> UUID? {
-        guard let prefixRange = string.range(of: "wire-") else {
-            return nil
-        }
-
-        guard let endIndex = string.index(prefixRange.upperBound, offsetBy: 36, limitedBy: string.endIndex) else {
-            return nil
-        }
-
-        let codeString = string[prefixRange.upperBound ..< endIndex]
-        return UUID(uuidString: String(codeString))
-    }
-
-    /// Validates the session request code from the user input.
-
-    public static func isValidRequestCode(in string: String) -> Bool {
-        requestCode(in: string) != nil
     }
 }

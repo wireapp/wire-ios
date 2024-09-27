@@ -44,28 +44,7 @@ public protocol StaleMLSKeyDetectorProtocol {
 /// It relies on Core Data for storage.
 
 public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
-    // MARK: - Constants
-
-    public static var keyMaterialRefreshIntervalInDays: UInt {
-        // To ensure that a group's key material does not exceed its maximum age,
-        // refresh pre-emptively so that it doesn't go stale while the user is offline.
-        keyMaterialMaximumAgeInDays - backendMessageHoldTimeInDays
-    }
-
-    /// The maximum age of a group's key material before it's considered stale.
-
-    private static let keyMaterialMaximumAgeInDays: UInt = 90
-
-    /// The number of days the backend will hold a message.
-
-    private static let backendMessageHoldTimeInDays: UInt = 28
-
-    // MARK: - Properties
-
-    public var refreshIntervalInDays: UInt
-    let context: NSManagedObjectContext
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         refreshIntervalInDays: UInt = StaleMLSKeyDetector.keyMaterialRefreshIntervalInDays,
@@ -74,6 +53,20 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
         self.refreshIntervalInDays = refreshIntervalInDays
         self.context = context
     }
+
+    // MARK: Public
+
+    // MARK: - Constants
+
+    public static var keyMaterialRefreshIntervalInDays: UInt {
+        // To ensure that a group's key material does not exceed its maximum age,
+        // refresh pre-emptively so that it doesn't go stale while the user is offline.
+        keyMaterialMaximumAgeInDays - backendMessageHoldTimeInDays
+    }
+
+    // MARK: - Properties
+
+    public var refreshIntervalInDays: UInt
 
     public var groupsWithStaleKeyingMaterial: Set<MLSGroupID> {
         var result = Set<MLSGroupID>()
@@ -101,6 +94,20 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
             }
         }
     }
+
+    // MARK: Internal
+
+    let context: NSManagedObjectContext
+
+    // MARK: Private
+
+    /// The maximum age of a group's key material before it's considered stale.
+
+    private static let keyMaterialMaximumAgeInDays: UInt = 90
+
+    /// The number of days the backend will hold a message.
+
+    private static let backendMessageHoldTimeInDays: UInt = 28
 
     // MARK: - Helpers
 

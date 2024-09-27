@@ -26,12 +26,18 @@ import WireDataModel
 // MARK: - MockCallKitProvider
 
 class MockCallKitProvider: CXProvider {
-    public var timesSetDelegateCalled = 0
-    override func setDelegate(_ delegate: CXProviderDelegate?, queue: DispatchQueue?) {
-        timesSetDelegateCalled += 1
-    }
+    // MARK: Public
 
+    public var timesSetDelegateCalled = 0
     public var timesReportNewIncomingCallCalled = 0
+    public var timesReportCallUpdatedCalled = 0
+    public var timesReportCallEndedAtCalled = 0
+    public var lastEndedReason: CXCallEndedReason = .answeredElsewhere
+    public var lastEndedDate: Date?
+    public var timesReportOutgoingCallConnectedAtCalled = 0
+    public var timesReportOutgoingCallStartedConnectingCalled = 0
+    public var isInvalidated = false
+
     override public func reportNewIncomingCall(
         with UUID: UUID,
         update: CXCallUpdate,
@@ -40,31 +46,30 @@ class MockCallKitProvider: CXProvider {
         timesReportNewIncomingCallCalled += 1
     }
 
-    public var timesReportCallUpdatedCalled = 0
     override public func reportCall(with UUID: UUID, updated update: CXCallUpdate) {
         timesReportCallUpdatedCalled += 1
     }
 
-    public var timesReportCallEndedAtCalled = 0
-    public var lastEndedReason: CXCallEndedReason = .answeredElsewhere
-    public var lastEndedDate: Date?
+    // MARK: Internal
+
+    override func setDelegate(_ delegate: CXProviderDelegate?, queue: DispatchQueue?) {
+        timesSetDelegateCalled += 1
+    }
+
     override func reportCall(with UUID: UUID, endedAt dateEnded: Date?, reason endedReason: CXCallEndedReason) {
         timesReportCallEndedAtCalled += 1
         lastEndedReason = endedReason
         lastEndedDate = dateEnded
     }
 
-    public var timesReportOutgoingCallConnectedAtCalled = 0
     override func reportOutgoingCall(with UUID: UUID, connectedAt dateConnected: Date?) {
         timesReportOutgoingCallConnectedAtCalled += 1
     }
 
-    public var timesReportOutgoingCallStartedConnectingCalled = 0
     override func reportOutgoingCall(with UUID: UUID, startedConnectingAt dateStartedConnecting: Date?) {
         timesReportOutgoingCallStartedConnectingCalled += 1
     }
 
-    public var isInvalidated = false
     override func invalidate() {
         isInvalidated = true
     }
@@ -73,7 +78,11 @@ class MockCallKitProvider: CXProvider {
 // MARK: - MockCallObserver
 
 class MockCallObserver: CXCallObserver {
+    // MARK: Public
+
     public var mockCalls: [CXCall] = []
+
+    // MARK: Internal
 
     override var calls: [CXCall] {
         mockCalls
@@ -83,15 +92,15 @@ class MockCallObserver: CXCallObserver {
 // MARK: - MockCallKitCallController
 
 class MockCallKitCallController: CXCallController {
-    override public var callObserver: CXCallObserver {
-        mockCallObserver
-    }
-
     public var mockTransactionErrorCode: CXErrorCodeRequestTransactionError?
     public var mockErrorCount = 0
     public var timesRequestTransactionCalled = 0
     public var requestedTransactions: [CXTransaction] = []
     public let mockCallObserver = MockCallObserver()
+
+    override public var callObserver: CXCallObserver {
+        mockCallObserver
+    }
 
     override public func request(_ transaction: CXTransaction, completion: @escaping (Error?) -> Void) {
         timesRequestTransactionCalled += 1
@@ -153,12 +162,16 @@ class MockEndCallAction: CXEndCallAction {
 // MARK: - MockProvider
 
 class MockProvider: CXProvider {
-    var connectingCalls: Set<UUID> = Set()
-    var connectedCalls: Set<UUID> = Set()
+    // MARK: Lifecycle
 
     convenience init(foo: Bool) {
         self.init(configuration: CXProviderConfiguration())
     }
+
+    // MARK: Internal
+
+    var connectingCalls: Set<UUID> = Set()
+    var connectedCalls: Set<UUID> = Set()
 
     override func reportOutgoingCall(with UUID: UUID, startedConnectingAt dateStartedConnecting: Date?) {
         connectingCalls.insert(UUID)
@@ -173,6 +186,9 @@ class MockProvider: CXProvider {
 
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
     var mockConversations: [WireSyncEngine.CallHandle: ZMConversation] = [:]
+    var lookupConversationAndProcessPendingCallEventsCalls = 0
+    var hasEndedAllCalls = false
+
     func lookupConversation(
         by handle: WireSyncEngine.CallHandle,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
@@ -184,7 +200,6 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         }
     }
 
-    var lookupConversationAndProcessPendingCallEventsCalls = 0
     func lookupConversationAndProcessPendingCallEvents(
         by handle: WireSyncEngine.CallHandle,
         completionHandler: @escaping (
@@ -195,7 +210,6 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         lookupConversation(by: handle, completionHandler: completionHandler)
     }
 
-    var hasEndedAllCalls = false
     func endAllCalls() {
         hasEndedAllCalls = true
     }

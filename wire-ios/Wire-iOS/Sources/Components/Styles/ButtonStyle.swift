@@ -22,10 +22,6 @@ import WireDesign
 struct ButtonStyle {
     typealias ButtonColors = SemanticColors.Button
 
-    private(set) var normalStateColors: (background: UIColor, title: UIColor, border: UIColor?)
-    private(set) var highlightedStateColors: (background: UIColor, title: UIColor, border: UIColor?)
-    private(set) var selectedStateColors: (background: UIColor, title: UIColor, border: UIColor)?
-
     static let secondaryTextButtonStyle = ButtonStyle(
         normalStateColors: (
             background: ButtonColors.backgroundSecondaryEnabled,
@@ -147,4 +143,8 @@ struct ButtonStyle {
             border: nil
         )
     )
+
+    private(set) var normalStateColors: (background: UIColor, title: UIColor, border: UIColor?)
+    private(set) var highlightedStateColors: (background: UIColor, title: UIColor, border: UIColor?)
+    private(set) var selectedStateColors: (background: UIColor, title: UIColor, border: UIColor)?
 }

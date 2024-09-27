@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 
 struct CopyValueView: View {
+    // MARK: Internal
+
     let title: String
     let value: String
     let isCopyEnabled: Bool
@@ -52,6 +54,8 @@ struct CopyValueView: View {
             }
         }
     }
+
+    // MARK: Private
 
     private func copy() {
         performCopy?(value)

@@ -22,7 +22,7 @@ import XCTest
 @testable import WireDataModel
 
 final class BiometricsStateTests: XCTestCase {
-    private var sut: BiometricsState!
+    // MARK: Internal
 
     let state1 = Data([1])
     let state2 = Data([2])
@@ -87,4 +87,8 @@ final class BiometricsStateTests: XCTestCase {
         // Then
         sut.lastPolicyDomainState = state1
     }
+
+    // MARK: Private
+
+    private var sut: BiometricsState!
 }

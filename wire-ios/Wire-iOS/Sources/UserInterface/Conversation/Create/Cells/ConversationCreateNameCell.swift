@@ -19,7 +19,7 @@
 import UIKit
 
 final class ConversationCreateNameCell: UICollectionViewCell {
-    let textField = SimpleTextField()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,6 +30,12 @@ final class ConversationCreateNameCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    let textField = SimpleTextField()
+
+    // MARK: Fileprivate
 
     fileprivate func setup() {
         textField.translatesAutoresizingMaskIntoConstraints = false

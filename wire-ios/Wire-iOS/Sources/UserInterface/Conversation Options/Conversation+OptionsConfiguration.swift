@@ -31,12 +31,7 @@ enum GuestLinkFeatureStatus {
 extension ZMConversation {
     final class OptionsConfigurationContainer: NSObject, ConversationGuestOptionsViewModelConfiguration,
         ConversationServicesOptionsViewModelConfiguration, ZMConversationObserver {
-        private var conversation: ZMConversation
-        private var token: NSObjectProtocol?
-        private let userSession: ZMUserSession
-        var allowGuestsChangedHandler: ((Bool) -> Void)?
-        var allowServicesChangedHandler: ((Bool) -> Void)?
-        var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)?
+        // MARK: Lifecycle
 
         init(conversation: ZMConversation, userSession: ZMUserSession) {
             self.conversation = conversation
@@ -55,6 +50,12 @@ extension ZMConversation {
                 }
             }
         }
+
+        // MARK: Internal
+
+        var allowGuestsChangedHandler: ((Bool) -> Void)?
+        var allowServicesChangedHandler: ((Bool) -> Void)?
+        var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)?
 
         var isConversationFromSelfTeam: Bool {
             let selfUser = ZMUser.selfUser(inUserSession: userSession)
@@ -135,5 +136,11 @@ extension ZMConversation {
         func deleteLink(completion: @escaping (Result<Void, Error>) -> Void) {
             conversation.deleteWirelessLink(in: userSession, completion)
         }
+
+        // MARK: Private
+
+        private var conversation: ZMConversation
+        private var token: NSObjectProtocol?
+        private let userSession: ZMUserSession
     }
 }

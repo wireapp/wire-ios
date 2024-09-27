@@ -22,16 +22,7 @@ import Foundation
 
 // Sign a PDF document
 public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-    // MARK: - Private Property
-
-    private let syncContext: NSManagedObjectContext
-    private var signatureResponse: SignatureResponse?
-    private var retrieveResponse: SignatureRetrieveResponse?
-
-    // MARK: - Public Property
-
-    var requestSync: ZMSingleRequestSync?
-    var retrieveSync: ZMSingleRequestSync?
+    // MARK: Lifecycle
 
     // MARK: - AbstractRequestStrategy
 
@@ -54,6 +45,8 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
             groupQueue: syncContext
         )
     }
+
+    // MARK: Public
 
     @objc
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -150,6 +143,21 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         }
     }
 
+    // MARK: Internal
+
+    // MARK: - Public Property
+
+    var requestSync: ZMSingleRequestSync?
+    var retrieveSync: ZMSingleRequestSync?
+
+    // MARK: Private
+
+    // MARK: - Private Property
+
+    private let syncContext: NSManagedObjectContext
+    private var signatureResponse: SignatureResponse?
+    private var retrieveResponse: SignatureRetrieveResponse?
+
     // MARK: - Helpers
 
     private func makeSignatureRequest(apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -232,12 +240,17 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
 // MARK: - SignaturePayload
 
 private struct SignaturePayload: Codable, Equatable {
+    // MARK: Internal
+
     let documentID: String?
     let fileName: String?
     let hash: String?
+
     var jsonDictionary: [String: String]? {
         makeJSONDictionary()
     }
+
+    // MARK: Private
 
     private enum CodingKeys: String, CodingKey {
         case documentID = "documentId"
@@ -264,13 +277,7 @@ private struct SignaturePayload: Codable, Equatable {
 // MARK: - SignatureResponse
 
 private struct SignatureResponse: Codable, Equatable {
-    let responseID: String?
-    let consentURL: URL?
-
-    private enum CodingKeys: String, CodingKey {
-        case consentURL
-        case responseID = "responseId"
-    }
+    // MARK: Lifecycle
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -285,13 +292,24 @@ private struct SignatureResponse: Codable, Equatable {
 
         self.consentURL = url
     }
+
+    // MARK: Internal
+
+    let responseID: String?
+    let consentURL: URL?
+
+    // MARK: Private
+
+    private enum CodingKeys: String, CodingKey {
+        case consentURL
+        case responseID = "responseId"
+    }
 }
 
 // MARK: - SignatureRetrieveResponse
 
 private struct SignatureRetrieveResponse: Codable, Equatable {
-    let documentId: String?
-    let cms: Data?
+    // MARK: Lifecycle
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -305,4 +323,9 @@ private struct SignatureRetrieveResponse: Codable, Equatable {
         }
         self.cms = cmsEncodedData
     }
+
+    // MARK: Internal
+
+    let documentId: String?
+    let cms: Data?
 }

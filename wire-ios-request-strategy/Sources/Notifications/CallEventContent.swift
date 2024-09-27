@@ -21,31 +21,7 @@ import Foundation
 // MARK: - CallEventContent
 
 public struct CallEventContent: Codable {
-    public enum CodingKeys: String, CodingKey {
-        case type
-        case properties = "props"
-        case callerUserID = "src_userid"
-        case callerClientID = "src_clientid"
-        case resp
-    }
-
-    // MARK: - Properties
-
-    /// Call event type.
-
-    public let type: String
-
-    /// Properties containing info whether the incoming call has video or not.
-
-    let properties: Properties?
-
-    let callerUserID: String?
-
-    public let callerClientID: String
-
-    public let resp: Bool
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         type: String,
@@ -82,6 +58,26 @@ public struct CallEventContent: Codable {
             return nil
         }
     }
+
+    // MARK: Public
+
+    public enum CodingKeys: String, CodingKey {
+        case type
+        case properties = "props"
+        case callerUserID = "src_userid"
+        case callerClientID = "src_clientid"
+        case resp
+    }
+
+    // MARK: - Properties
+
+    /// Call event type.
+
+    public let type: String
+
+    public let callerClientID: String
+
+    public let resp: Bool
 
     // MARK: - Methods
 
@@ -142,17 +138,29 @@ public struct CallEventContent: Codable {
 
         return properties.isVideo
     }
+
+    // MARK: Internal
+
+    /// Properties containing info whether the incoming call has video or not.
+
+    let properties: Properties?
+
+    let callerUserID: String?
 }
 
 // MARK: CallEventContent.Properties
 
 extension CallEventContent {
     struct Properties: Codable {
-        private let videosend: String
+        // MARK: Internal
 
         var isVideo: Bool {
             videosend == "true"
         }
+
+        // MARK: Private
+
+        private let videosend: String
     }
 }
 

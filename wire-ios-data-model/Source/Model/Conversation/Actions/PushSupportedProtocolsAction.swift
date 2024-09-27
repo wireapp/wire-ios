@@ -19,6 +19,18 @@
 import Foundation
 
 public final class PushSupportedProtocolsAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        supportedProtocols: Set<MessageProtocol>,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.supportedProtocols = supportedProtocols
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
@@ -28,12 +40,4 @@ public final class PushSupportedProtocolsAction: EntityAction {
 
     public let supportedProtocols: Set<MessageProtocol>
     public var resultHandler: ResultHandler?
-
-    public init(
-        supportedProtocols: Set<MessageProtocol>,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.supportedProtocols = supportedProtocols
-        self.resultHandler = resultHandler
-    }
 }

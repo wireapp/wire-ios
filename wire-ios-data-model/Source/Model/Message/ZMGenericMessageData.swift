@@ -24,22 +24,20 @@ import WireCryptobox
 @objc(ZMGenericMessageData)
 @objcMembers
 public class ZMGenericMessageData: ZMManagedObject {
+    // MARK: Open
+
     // MARK: - Static
 
     override open class func entityName() -> String {
         "GenericMessageData"
     }
 
+    // MARK: Public
+
     public static let dataKey = "data"
     public static let nonceKey = "nonce"
     public static let messageKey = "message"
     public static let assetKey = "asset"
-
-    // MARK: - Managed Properties
-
-    /// The (possibly encrypted) serialized Profobuf data.
-
-    @NSManaged private var data: Data
 
     /// The nonce used to encrypt `data`, if applicable.
 
@@ -77,16 +75,6 @@ public class ZMGenericMessageData: ZMManagedObject {
         set { /* do nothing */ }
     }
 
-    // MARK: - Methods
-
-    private func getProtobufData() throws -> Data {
-        guard let moc = managedObjectContext else {
-            throw ProcessingError.missingManagedObjectContext
-        }
-
-        return try decryptDataIfNeeded(data: data, in: moc)
-    }
-
     /// Set the generic message.
     ///
     /// This method will attempt to serialize the protobuf object and store its data in this
@@ -107,6 +95,24 @@ public class ZMGenericMessageData: ZMManagedObject {
         let (data, nonce) = try encryptDataIfNeeded(data: protobufData, in: moc)
         self.data = data
         self.nonce = nonce
+    }
+
+    // MARK: Private
+
+    // MARK: - Managed Properties
+
+    /// The (possibly encrypted) serialized Profobuf data.
+
+    @NSManaged private var data: Data
+
+    // MARK: - Methods
+
+    private func getProtobufData() throws -> Data {
+        guard let moc = managedObjectContext else {
+            throw ProcessingError.missingManagedObjectContext
+        }
+
+        return try decryptDataIfNeeded(data: data, in: moc)
     }
 
     private func encryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> (data: Data, nonce: Data?) {
@@ -140,6 +146,8 @@ extension ZMGenericMessageData {
         case failedToSerializeMessage
         case failedToEncrypt(reason: NSManagedObjectContext.EncryptionError)
         case failedToDecrypt(reason: NSManagedObjectContext.EncryptionError)
+
+        // MARK: Internal
 
         var errorDescription: String? {
             switch self {

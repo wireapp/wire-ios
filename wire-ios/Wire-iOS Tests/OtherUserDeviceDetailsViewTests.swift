@@ -23,19 +23,7 @@ import XCTest
 @testable import Wire
 
 final class OtherUserDeviceDetailsViewTests: XCTestCase {
-    private let mockProteusId = "abcdefghijklmnop"
-        .uppercased()
-        .splitStringIntoLines(charactersPerLine: 16)
-
-    private let mockFingerPrint = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
-        .uppercased()
-        .splitStringIntoLines(charactersPerLine: 16)
-
-    private var coreDataFixture: CoreDataFixture!
-    private var sut: DeviceInfoViewController<OtherUserDeviceDetailsView>!
-    private var client: UserClient!
-    private var mockContextProvider: ContextProvider!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -303,4 +291,20 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: setupWrappedInNavigationController(viewModel: viewModel))
     }
+
+    // MARK: Private
+
+    private let mockProteusId = "abcdefghijklmnop"
+        .uppercased()
+        .splitStringIntoLines(charactersPerLine: 16)
+
+    private let mockFingerPrint = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
+        .uppercased()
+        .splitStringIntoLines(charactersPerLine: 16)
+
+    private var coreDataFixture: CoreDataFixture!
+    private var sut: DeviceInfoViewController<OtherUserDeviceDetailsView>!
+    private var client: UserClient!
+    private var mockContextProvider: ContextProvider!
+    private var snapshotHelper: SnapshotHelper!
 }

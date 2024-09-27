@@ -25,13 +25,7 @@ import WireDataModel
 /// This object is expected to be used on the UI context only
 @objcMembers
 public class TopConversationsDirectory: NSObject {
-    fileprivate let uiMOC: NSManagedObjectContext
-    fileprivate let syncMOC: NSManagedObjectContext
-    fileprivate static let topConversationSize = 25
-
-    /// Cached top conversations
-    /// - warning: Might include deleted or blocked conversations
-    fileprivate var topConversationsCache: [ZMConversation] = []
+    // MARK: Lifecycle
 
     public init(managedObjectContext: NSManagedObjectContext) {
         self.uiMOC = managedObjectContext
@@ -39,6 +33,16 @@ public class TopConversationsDirectory: NSObject {
         super.init()
         loadList()
     }
+
+    // MARK: Fileprivate
+
+    fileprivate static let topConversationSize = 25
+
+    fileprivate let uiMOC: NSManagedObjectContext
+    fileprivate let syncMOC: NSManagedObjectContext
+    /// Cached top conversations
+    /// - warning: Might include deleted or blocked conversations
+    fileprivate var topConversationsCache: [ZMConversation] = []
 }
 
 // MARK: - Top conversation

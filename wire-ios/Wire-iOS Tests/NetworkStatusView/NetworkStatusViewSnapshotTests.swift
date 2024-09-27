@@ -20,8 +20,7 @@ import XCTest
 @testable import Wire
 
 final class NetworkStatusViewSnapshotTests: XCTestCase {
-    private var sut: NetworkStatusView!
-    private var mockContainer: MockNetworkStatusViewDelegate!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -58,4 +57,9 @@ final class NetworkStatusViewSnapshotTests: XCTestCase {
         // WHEN && THEN
         verifyInAllPhoneWidths(matching: sut)
     }
+
+    // MARK: Private
+
+    private var sut: NetworkStatusView!
+    private var mockContainer: MockNetworkStatusViewDelegate!
 }

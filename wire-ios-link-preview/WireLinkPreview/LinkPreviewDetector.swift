@@ -27,12 +27,7 @@ public protocol LinkPreviewDetectorType {
 // MARK: - LinkPreviewDetector
 
 public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
-    private let linkDetector: NSDataDetector? = NSDataDetector.linkDetector
-    private let previewDownloader: PreviewDownloaderType
-    private let imageDownloader: ImageDownloaderType
-    private let workerQueue: OperationQueue
-
-    public typealias DetectCompletion = ([LinkMetadata]) -> Void
+    // MARK: Lifecycle
 
     override public convenience init() {
         let workerQueue = OperationQueue()
@@ -49,6 +44,14 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
         self.imageDownloader = imageDownloader
         super.init()
     }
+
+    deinit {
+        previewDownloader.tearDown()
+    }
+
+    // MARK: Public
+
+    public typealias DetectCompletion = ([LinkMetadata]) -> Void
 
     /// Downloads the link preview data, including their images, for links contained in the text.
     /// The preview data is generated from the [Open Graph](http://ogp.me) information contained in the head of the html
@@ -84,7 +87,10 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
         }
     }
 
-    deinit {
-        previewDownloader.tearDown()
-    }
+    // MARK: Private
+
+    private let linkDetector: NSDataDetector? = NSDataDetector.linkDetector
+    private let previewDownloader: PreviewDownloaderType
+    private let imageDownloader: ImageDownloaderType
+    private let workerQueue: OperationQueue
 }

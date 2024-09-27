@@ -19,7 +19,7 @@
 import UIKit
 
 final class AccessoryTextFieldCell: UITableViewCell {
-    let textField = ValidatedTextField(style: .default)
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -34,6 +34,12 @@ final class AccessoryTextFieldCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let textField = ValidatedTextField(style: .default)
+
+    // MARK: Private
 
     private func setupViews() {
         contentView.addSubview(textField)

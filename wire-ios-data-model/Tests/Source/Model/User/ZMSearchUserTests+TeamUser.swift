@@ -20,6 +20,8 @@ import WireDataModel
 import XCTest
 
 final class ZMSearchUserTests_TeamUser: ModelObjectsTests {
+    // MARK: Internal
+
     func testThatSearchUserIsRecognizedAsTeamMember_WhenBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)
@@ -67,6 +69,8 @@ final class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         XCTAssertEqual(searchUser.teamRole, .partner)
         XCTAssertEqual(searchUser.teamCreatedBy, creator)
     }
+
+    // MARK: Private
 
     // MARK: Helpers
 

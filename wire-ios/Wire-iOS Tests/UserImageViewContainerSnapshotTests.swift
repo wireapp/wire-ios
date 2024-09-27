@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class UserImageViewContainerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: UserImageViewContainer!
-    private var mockUser: MockUserType!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -91,4 +87,12 @@ final class UserImageViewContainerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: UserImageViewContainer!
+    private var mockUser: MockUserType!
 }

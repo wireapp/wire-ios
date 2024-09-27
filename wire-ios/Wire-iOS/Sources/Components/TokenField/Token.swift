@@ -19,12 +19,7 @@
 import UIKit
 
 final class Token<T: NSObjectProtocol>: Hashable {
-    let representedObject: HashBox<T>
-
-    let title: String
-
-    // if title render is longer than this length, it is trimmed with "..."
-    var maxTitleWidth: CGFloat = 0
+    // MARK: Lifecycle
 
     init(
         title: String,
@@ -36,11 +31,20 @@ final class Token<T: NSObjectProtocol>: Hashable {
         self.maxTitleWidth = .greatestFiniteMagnitude
     }
 
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(representedObject)
-    }
+    // MARK: Internal
+
+    let representedObject: HashBox<T>
+
+    let title: String
+
+    // if title render is longer than this length, it is trimmed with "..."
+    var maxTitleWidth: CGFloat = 0
 
     static func == (lhs: Token<T>, rhs: Token<T>) -> Bool {
         lhs.hashValue == rhs.hashValue
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(representedObject)
     }
 }

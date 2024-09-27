@@ -23,15 +23,7 @@ import WireDesign
 // MARK: - ServiceDetailView
 
 final class ServiceDetailView: UIView {
-    private let serviceView: ServiceView
-    private let descriptionTextView = UITextView()
-
-    var service: Service {
-        didSet {
-            updateForService()
-            serviceView.service = service
-        }
-    }
+    // MARK: Lifecycle
 
     init(service: Service) {
         self.service = service
@@ -54,6 +46,20 @@ final class ServiceDetailView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var service: Service {
+        didSet {
+            updateForService()
+            serviceView.service = service
+        }
+    }
+
+    // MARK: Private
+
+    private let serviceView: ServiceView
+    private let descriptionTextView = UITextView()
 
     private func createConstraints() {
         for item in [self, serviceView, descriptionTextView] {
@@ -79,15 +85,7 @@ final class ServiceDetailView: UIView {
 // MARK: - ServiceView
 
 final class ServiceView: UIView {
-    private let logoView = UserImageView(size: .normal)
-    private let nameLabel = UILabel()
-    private let providerLabel = UILabel()
-
-    var service: Service {
-        didSet {
-            updateForService()
-        }
-    }
+    // MARK: Lifecycle
 
     init(service: Service) {
         self.service = service
@@ -112,6 +110,20 @@ final class ServiceView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var service: Service {
+        didSet {
+            updateForService()
+        }
+    }
+
+    // MARK: Private
+
+    private let logoView = UserImageView(size: .normal)
+    private let nameLabel = UILabel()
+    private let providerLabel = UILabel()
 
     private func createConstraints() {
         translatesAutoresizingMaskIntoConstraints = false

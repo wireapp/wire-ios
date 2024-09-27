@@ -56,7 +56,32 @@ protocol SplitViewControllerDelegate: AnyObject {
 // MARK: - SplitViewController
 
 final class SplitViewController: UIViewController, SplitLayoutObservable {
+    // MARK: Lifecycle
+
+    // MARK: - init
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     weak var delegate: SplitViewControllerDelegate?
+
+    var rightViewController: UIViewController?
+
+    var leftView = UIView(frame: UIScreen.main.bounds)
+    var rightView: UIView = {
+        let view = PlaceholderConversationView(frame: UIScreen.main.bounds)
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        return view
+    }()
 
     // MARK: - SplitLayoutObservable
 
@@ -83,7 +108,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
     }
 
-    private var internalLeftViewController: UIViewController?
     var leftViewController: UIViewController? {
         get {
             internalLeftViewController
@@ -94,9 +118,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
     }
 
-    var rightViewController: UIViewController?
-
-    private var internalLeftViewControllerRevealed = true
     var isLeftViewControllerRevealed: Bool {
         get {
             internalLeftViewControllerRevealed
@@ -109,34 +130,42 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
     }
 
-    var leftView = UIView(frame: UIScreen.main.bounds)
-    var rightView: UIView = {
-        let view = PlaceholderConversationView(frame: UIScreen.main.bounds)
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        return view
-    }()
-
-    private var leftViewLeadingConstraint: NSLayoutConstraint!
-    private var rightViewLeadingConstraint: NSLayoutConstraint!
-    private var leftViewWidthConstraint: NSLayoutConstraint!
-    private var rightViewWidthConstraint: NSLayoutConstraint!
-    private var sideBySideConstraint: NSLayoutConstraint!
-    private var pinLeftViewOffsetConstraint: NSLayoutConstraint!
-
-    private var horizontalPanner = UIPanGestureRecognizer()
-
-    private var futureTraitCollection: UITraitCollection?
-
-    // MARK: - init
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
+    override var childForStatusBarStyle: UIViewController? {
+        childViewController
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override var childForStatusBarHidden: UIViewController? {
+        childViewController
+    }
+
+    // MARK: - animator
+
+    var animatorForRightView: UIViewControllerAnimatedTransitioning {
+        if layoutSize == .compact, isLeftViewControllerRevealed {
+            // Right view is not visible so we should not animate.
+            return CrossfadeTransition(duration: 0)
+        } else if layoutSize == .regularLandscape {
+            return SwizzleTransition(direction: .horizontal)
+        }
+
+        return CrossfadeTransition()
+    }
+
+    var isConversationViewVisible: Bool {
+        layoutSize == .regularLandscape ||
+            !isLeftViewControllerRevealed
+    }
+
+    // MARK: - update size
+
+    /// return true if right view (mostly conversation screen) is fully visible
+    var isRightViewControllerRevealed: Bool {
+        switch layoutSize {
+        case .compact, .regularPortrait:
+            !isLeftViewControllerRevealed
+        case .regularLandscape:
+            true
+        }
     }
 
     // MARK: - override
@@ -190,33 +219,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }, completion: { _ in
             self.updateLayoutSizeAndLeftViewVisibility()
         })
-    }
-
-    // MARK: - status bar
-
-    private var childViewController: UIViewController? {
-        openPercentage > 0 ? leftViewController : rightViewController
-    }
-
-    override var childForStatusBarStyle: UIViewController? {
-        childViewController
-    }
-
-    override var childForStatusBarHidden: UIViewController? {
-        childViewController
-    }
-
-    // MARK: - animator
-
-    var animatorForRightView: UIViewControllerAnimatedTransitioning {
-        if layoutSize == .compact, isLeftViewControllerRevealed {
-            // Right view is not visible so we should not animate.
-            return CrossfadeTransition(duration: 0)
-        } else if layoutSize == .regularLandscape {
-            return SwizzleTransition(direction: .horizontal)
-        }
-
-        return CrossfadeTransition()
     }
 
     // MARK: - left and right view controllers
@@ -296,9 +298,100 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
     }
 
-    var isConversationViewVisible: Bool {
-        layoutSize == .regularLandscape ||
-            !isLeftViewControllerRevealed
+    // MARK: - gesture
+
+    @objc
+    func onHorizontalPan(_ gestureRecognizer: UIPanGestureRecognizer?) {
+        guard layoutSize != .regularLandscape,
+              delegate?.splitViewControllerShouldMoveLeftViewController(self) == true,
+              isConversationViewVisible,
+              let gestureRecognizer else {
+            return
+        }
+
+        var offset = gestureRecognizer.translation(in: view)
+
+        switch gestureRecognizer.state {
+        case .began:
+            leftViewController?.beginAppearanceTransition(!isLeftViewControllerRevealed, animated: true)
+            rightViewController?.beginAppearanceTransition(isLeftViewControllerRevealed, animated: true)
+            leftView.isHidden = false
+
+        case .changed:
+            if let width = leftViewController?.view.bounds.size.width {
+                if offset.x > 0, view.isRightToLeft {
+                    offset.x = 0
+                } else if offset.x < 0, !view.isRightToLeft {
+                    offset.x = 0
+                } else if abs(offset.x) > width {
+                    offset.x = width
+                }
+                openPercentage = abs(offset.x) / width
+                view.layoutIfNeeded()
+            }
+
+        case .cancelled,
+             .ended:
+            let isRevealing = gestureRecognizer.velocity(in: view).x > 0
+            let didCompleteTransition = isRevealing != isLeftViewControllerRevealed
+
+            setLeftViewControllerRevealed(isRevealing, animated: true) { [weak self] in
+                if didCompleteTransition {
+                    self?.leftViewController?.endAppearanceTransition()
+                    self?.rightViewController?.endAppearanceTransition()
+                }
+            }
+
+        default:
+            break
+        }
+    }
+
+    // MARK: Private
+
+    private var internalLeftViewController: UIViewController?
+    private var internalLeftViewControllerRevealed = true
+    private var leftViewLeadingConstraint: NSLayoutConstraint!
+    private var rightViewLeadingConstraint: NSLayoutConstraint!
+    private var leftViewWidthConstraint: NSLayoutConstraint!
+    private var rightViewWidthConstraint: NSLayoutConstraint!
+    private var sideBySideConstraint: NSLayoutConstraint!
+    private var pinLeftViewOffsetConstraint: NSLayoutConstraint!
+
+    private var horizontalPanner = UIPanGestureRecognizer()
+
+    private var futureTraitCollection: UITraitCollection?
+
+    // MARK: - status bar
+
+    private var childViewController: UIViewController? {
+        openPercentage > 0 ? leftViewController : rightViewController
+    }
+
+    private var isiOSAppOnMac: Bool {
+        ProcessInfo.processInfo.isiOSAppOnMac
+    }
+
+    private var constraintsActiveForCurrentLayout: [NSLayoutConstraint] {
+        var constraints: Set<NSLayoutConstraint> = []
+
+        if layoutSize == .regularLandscape {
+            constraints.formUnion(Set([pinLeftViewOffsetConstraint, sideBySideConstraint]))
+        }
+
+        constraints.formUnion(Set([leftViewWidthConstraint]))
+
+        return Array(constraints)
+    }
+
+    private var constraintsInactiveForCurrentLayout: [NSLayoutConstraint] {
+        guard layoutSize != .regularLandscape else {
+            return []
+        }
+
+        var constraints: Set<NSLayoutConstraint> = []
+        constraints.formUnion(Set([pinLeftViewOffsetConstraint, sideBySideConstraint]))
+        return Array(constraints)
     }
 
     /// update left view UI depends on isLeftViewControllerRevealed
@@ -344,22 +437,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
     }
 
-    // MARK: - update size
-
-    /// return true if right view (mostly conversation screen) is fully visible
-    var isRightViewControllerRevealed: Bool {
-        switch layoutSize {
-        case .compact, .regularPortrait:
-            !isLeftViewControllerRevealed
-        case .regularLandscape:
-            true
-        }
-    }
-
-    private var isiOSAppOnMac: Bool {
-        ProcessInfo.processInfo.isiOSAppOnMac
-    }
-
     /// Update layoutSize for the change of traitCollection and the current orientation
     ///
     /// - Parameters:
@@ -399,28 +476,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         case .regularLandscape:
             leftView.isHidden = false
         }
-    }
-
-    private var constraintsActiveForCurrentLayout: [NSLayoutConstraint] {
-        var constraints: Set<NSLayoutConstraint> = []
-
-        if layoutSize == .regularLandscape {
-            constraints.formUnion(Set([pinLeftViewOffsetConstraint, sideBySideConstraint]))
-        }
-
-        constraints.formUnion(Set([leftViewWidthConstraint]))
-
-        return Array(constraints)
-    }
-
-    private var constraintsInactiveForCurrentLayout: [NSLayoutConstraint] {
-        guard layoutSize != .regularLandscape else {
-            return []
-        }
-
-        var constraints: Set<NSLayoutConstraint> = []
-        constraints.formUnion(Set([pinLeftViewOffsetConstraint, sideBySideConstraint]))
-        return Array(constraints)
     }
 
     private func transition(
@@ -530,55 +585,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         case (.regularPortrait, false):
             leftViewWidthConstraint.constant = leftViewMinWidth(size: size)
             rightViewWidthConstraint.constant = size.width
-        }
-    }
-
-    // MARK: - gesture
-
-    @objc
-    func onHorizontalPan(_ gestureRecognizer: UIPanGestureRecognizer?) {
-        guard layoutSize != .regularLandscape,
-              delegate?.splitViewControllerShouldMoveLeftViewController(self) == true,
-              isConversationViewVisible,
-              let gestureRecognizer else {
-            return
-        }
-
-        var offset = gestureRecognizer.translation(in: view)
-
-        switch gestureRecognizer.state {
-        case .began:
-            leftViewController?.beginAppearanceTransition(!isLeftViewControllerRevealed, animated: true)
-            rightViewController?.beginAppearanceTransition(isLeftViewControllerRevealed, animated: true)
-            leftView.isHidden = false
-
-        case .changed:
-            if let width = leftViewController?.view.bounds.size.width {
-                if offset.x > 0, view.isRightToLeft {
-                    offset.x = 0
-                } else if offset.x < 0, !view.isRightToLeft {
-                    offset.x = 0
-                } else if abs(offset.x) > width {
-                    offset.x = width
-                }
-                openPercentage = abs(offset.x) / width
-                view.layoutIfNeeded()
-            }
-
-        case .cancelled,
-             .ended:
-            let isRevealing = gestureRecognizer.velocity(in: view).x > 0
-            let didCompleteTransition = isRevealing != isLeftViewControllerRevealed
-
-            setLeftViewControllerRevealed(isRevealing, animated: true) { [weak self] in
-                if didCompleteTransition {
-                    self?.leftViewController?.endAppearanceTransition()
-                    self?.rightViewController?.endAppearanceTransition()
-                }
-            }
-
-        default:
-            break
         }
     }
 }

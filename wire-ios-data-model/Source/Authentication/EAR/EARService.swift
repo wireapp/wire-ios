@@ -83,28 +83,7 @@ public protocol EARServiceInterface: AnyObject {
 /// information about how encryption at rest works.
 
 public class EARService: EARServiceInterface {
-    // MARK: - Properties
-
-    /// An object to assist in migrations.
-
-    public weak var delegate: EARServiceDelegate?
-
-    private let accountID: UUID
-    private let keyGenerator = EARKeyGenerator()
-    private let keyEncryptor: EARKeyEncryptorInterface
-    private let keyRepository: EARKeyRepositoryInterface
-    private let databaseContexts: [NSManagedObjectContext]
-
-    private let primaryPublicKeyDescription: PublicEARKeyDescription
-    private let primaryPrivateKeyDescription: PrivateEARKeyDescription
-    private let secondaryPublicKeyDescription: PublicEARKeyDescription
-    private let secondaryPrivateKeyDescription: PrivateEARKeyDescription
-    private let databaseKeyDescription: DatabaseEARKeyDescription
-    private let earStorage: EARStorage
-
-    private let authenticationContext: any AuthenticationContextProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     /// Create a new `EARService`.
     ///
@@ -163,6 +142,14 @@ public class EARService: EARServiceInterface {
         }
     }
 
+    // MARK: Public
+
+    // MARK: - Properties
+
+    /// An object to assist in migrations.
+
+    public weak var delegate: EARServiceDelegate?
+
     // MARK: - Feature Flag
 
     /// Whether encryption at rest is enabled.
@@ -179,26 +166,6 @@ public class EARService: EARServiceInterface {
 
     public func setInitialEARFlagValue(_ enabled: Bool) {
         earStorage.enableEAR(enabled)
-    }
-
-    // MARK: - Migrate keys
-
-    private func migrateKeysIfNeeded() {
-        WireLogger.ear.info("migrating ear keys if needed...", attributes: .safePublic)
-
-        guard
-            isEAREnabled,
-            !existSecondaryKeys
-        else {
-            return
-        }
-
-        do {
-            let secondaryKeys = try generateSecondaryKeys()
-            try storeSecondaryPublicKey(secondaryKeys.publicKey)
-        } catch {
-            WireLogger.ear.error("failed to migrate keys: \(error)")
-        }
     }
 
     // MARK: - Enable / disable
@@ -325,31 +292,90 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    // MARK: - Keys
+    // MARK: - Public keys
 
-    private var existSecondaryKeys: Bool {
-        (try? fetchSecondaryPublicKey()) != nil
+    /// Fetch both the primary and secondary public keys.
+
+    public func fetchPublicKeys() throws -> EARPublicKeys? {
+        guard isEAREnabled else {
+            return nil
+        }
+
+        do {
+            WireLogger.ear.debug("fetch public keys")
+            return try EARPublicKeys(
+                primary: fetchPrimaryPublicKey(),
+                secondary: fetchSecondaryPublicKey()
+            )
+        } catch {
+            WireLogger.ear.error("unable to fetch public keys: \(String(describing: error))")
+            throw error
+        }
     }
+
+    // MARK: - Private keys
+
+    /// Fetch the private keys.
+    ///
+    /// Access to the private keys is restricted. The secondary key is available in the
+    /// background if the device has been unlocked once. The primary key is only available
+    /// when the app is active in the foreground.
+    ///
+    /// - Parameter includingPrimary: Set to `true` to request also the primary private key.
+    /// - Returns: The private key(s) if encryption at rest is enabled and the keys are accessible.
+
+    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys? {
+        guard isEAREnabled else {
+            return nil
+        }
+
+        do {
+            return try EARPrivateKeys(
+                primary: includingPrimary ? try? fetchPrimaryPrivateKey() : nil,
+                secondary: fetchSecondaryPrivateKey()
+            )
+        } catch {
+            WireLogger.ear.error("unable to fetch private keys: \(String(describing: error))")
+            throw error
+        }
+    }
+
+    // MARK: - Lock / unlock database
+
+    /// Lock the database.
+    ///
+    /// After invoking this method, the contents of the database are not accessible
+    /// until the database is unlocked again.
+
+    public func lockDatabase() {
+        WireLogger.ear.info("locking database", attributes: .safePublic)
+        setDatabaseKeyInAllContexts(nil)
+        keyRepository.clearCache()
+    }
+
+    /// Unlock the database.
+    ///
+    /// Invoking this method will allow access to the database. This will only succeed
+    /// the user has authenticated via biometrics.
+
+    public func unlockDatabase() throws {
+        do {
+            WireLogger.ear.info("unlocking database", attributes: .safePublic)
+            let databaseKey = try fetchDecryptedDatabaseKey()
+            setDatabaseKeyInAllContexts(databaseKey)
+        } catch {
+            WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
+            throw error
+        }
+    }
+
+    // MARK: Internal
 
     func deleteExistingKeys() throws {
         WireLogger.ear.debug("deleting existing keys")
         try deletePrimaryKeys()
         try deleteSecondaryKeys()
         try deleteDatabaseKey()
-    }
-
-    private func deletePrimaryKeys() throws {
-        try keyRepository.deletePublicKey(description: primaryPublicKeyDescription)
-        try keyRepository.deletePrivateKey(description: primaryPrivateKeyDescription)
-    }
-
-    private func deleteSecondaryKeys() throws {
-        try keyRepository.deletePublicKey(description: secondaryPublicKeyDescription)
-        try keyRepository.deletePrivateKey(description: secondaryPrivateKeyDescription)
-    }
-
-    private func deleteDatabaseKey() throws {
-        try keyRepository.deleteDatabaseKey(description: databaseKeyDescription)
     }
 
     @discardableResult
@@ -381,6 +407,69 @@ public class EARService: EARServiceInterface {
         }
 
         return VolatileData(from: databaseKey)
+    }
+
+    func setDatabaseKeyInAllContexts(_ key: VolatileData?) {
+        performInAllContexts {
+            $0.databaseKey = key
+        }
+    }
+
+    // MARK: Private
+
+    private let accountID: UUID
+    private let keyGenerator = EARKeyGenerator()
+    private let keyEncryptor: EARKeyEncryptorInterface
+    private let keyRepository: EARKeyRepositoryInterface
+    private let databaseContexts: [NSManagedObjectContext]
+
+    private let primaryPublicKeyDescription: PublicEARKeyDescription
+    private let primaryPrivateKeyDescription: PrivateEARKeyDescription
+    private let secondaryPublicKeyDescription: PublicEARKeyDescription
+    private let secondaryPrivateKeyDescription: PrivateEARKeyDescription
+    private let databaseKeyDescription: DatabaseEARKeyDescription
+    private let earStorage: EARStorage
+
+    private let authenticationContext: any AuthenticationContextProtocol
+
+    // MARK: - Keys
+
+    private var existSecondaryKeys: Bool {
+        (try? fetchSecondaryPublicKey()) != nil
+    }
+
+    // MARK: - Migrate keys
+
+    private func migrateKeysIfNeeded() {
+        WireLogger.ear.info("migrating ear keys if needed...", attributes: .safePublic)
+
+        guard
+            isEAREnabled,
+            !existSecondaryKeys
+        else {
+            return
+        }
+
+        do {
+            let secondaryKeys = try generateSecondaryKeys()
+            try storeSecondaryPublicKey(secondaryKeys.publicKey)
+        } catch {
+            WireLogger.ear.error("failed to migrate keys: \(error)")
+        }
+    }
+
+    private func deletePrimaryKeys() throws {
+        try keyRepository.deletePublicKey(description: primaryPublicKeyDescription)
+        try keyRepository.deletePrivateKey(description: primaryPrivateKeyDescription)
+    }
+
+    private func deleteSecondaryKeys() throws {
+        try keyRepository.deletePublicKey(description: secondaryPublicKeyDescription)
+        try keyRepository.deletePrivateKey(description: secondaryPrivateKeyDescription)
+    }
+
+    private func deleteDatabaseKey() throws {
+        try keyRepository.deleteDatabaseKey(description: databaseKeyDescription)
     }
 
     private func generatePrimaryKeys() throws -> (publicKey: SecKey, privateKey: SecKey) {
@@ -433,60 +522,12 @@ public class EARService: EARServiceInterface {
         )
     }
 
-    // MARK: - Public keys
-
-    /// Fetch both the primary and secondary public keys.
-
-    public func fetchPublicKeys() throws -> EARPublicKeys? {
-        guard isEAREnabled else {
-            return nil
-        }
-
-        do {
-            WireLogger.ear.debug("fetch public keys")
-            return try EARPublicKeys(
-                primary: fetchPrimaryPublicKey(),
-                secondary: fetchSecondaryPublicKey()
-            )
-        } catch {
-            WireLogger.ear.error("unable to fetch public keys: \(String(describing: error))")
-            throw error
-        }
-    }
-
     private func fetchPrimaryPublicKey() throws -> SecKey {
         try keyRepository.fetchPublicKey(description: primaryPublicKeyDescription)
     }
 
     private func fetchSecondaryPublicKey() throws -> SecKey {
         try keyRepository.fetchPublicKey(description: secondaryPublicKeyDescription)
-    }
-
-    // MARK: - Private keys
-
-    /// Fetch the private keys.
-    ///
-    /// Access to the private keys is restricted. The secondary key is available in the
-    /// background if the device has been unlocked once. The primary key is only available
-    /// when the app is active in the foreground.
-    ///
-    /// - Parameter includingPrimary: Set to `true` to request also the primary private key.
-    /// - Returns: The private key(s) if encryption at rest is enabled and the keys are accessible.
-
-    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys? {
-        guard isEAREnabled else {
-            return nil
-        }
-
-        do {
-            return try EARPrivateKeys(
-                primary: includingPrimary ? try? fetchPrimaryPrivateKey() : nil,
-                secondary: fetchSecondaryPrivateKey()
-            )
-        } catch {
-            WireLogger.ear.error("unable to fetch private keys: \(String(describing: error))")
-            throw error
-        }
     }
 
     private func fetchPrimaryPrivateKey() throws -> SecKey {
@@ -521,41 +562,6 @@ public class EARService: EARServiceInterface {
 
     private func fetchEncryptedDatabaseKey() throws -> Data {
         try keyRepository.fetchDatabaseKey(description: databaseKeyDescription)
-    }
-
-    // MARK: - Lock / unlock database
-
-    /// Lock the database.
-    ///
-    /// After invoking this method, the contents of the database are not accessible
-    /// until the database is unlocked again.
-
-    public func lockDatabase() {
-        WireLogger.ear.info("locking database", attributes: .safePublic)
-        setDatabaseKeyInAllContexts(nil)
-        keyRepository.clearCache()
-    }
-
-    /// Unlock the database.
-    ///
-    /// Invoking this method will allow access to the database. This will only succeed
-    /// the user has authenticated via biometrics.
-
-    public func unlockDatabase() throws {
-        do {
-            WireLogger.ear.info("unlocking database", attributes: .safePublic)
-            let databaseKey = try fetchDecryptedDatabaseKey()
-            setDatabaseKeyInAllContexts(databaseKey)
-        } catch {
-            WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
-            throw error
-        }
-    }
-
-    func setDatabaseKeyInAllContexts(_ key: VolatileData?) {
-        performInAllContexts {
-            $0.databaseKey = key
-        }
     }
 
     private func performInAllContexts(_ block: (NSManagedObjectContext) -> Void) {

@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 
 final class SignatureStatusTests: ZMBaseManagedObjectTest {
+    // MARK: Internal
+
     var status: SignatureStatus!
     var asset: WireProtos.Asset?
 
@@ -68,6 +70,8 @@ final class SignatureStatusTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(status.documentID, asset?.uploaded.assetID)
         XCTAssertEqual(status.fileName, asset?.original.name)
     }
+
+    // MARK: Private
 
     private func createAsset() -> WireProtos.Asset {
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())

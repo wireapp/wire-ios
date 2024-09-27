@@ -21,11 +21,7 @@ import Foundation
 /// An object that controls searching for GIFs
 
 public final class ZiphySearchResultsController {
-    public let client: ZiphyClient
-    public let pageSize: Int
-    public let maxImageSize: Int
-
-    var paginationController: ZiphyPaginationController?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -40,6 +36,12 @@ public final class ZiphySearchResultsController {
         self.pageSize = pageSize
         self.maxImageSize = maxImageSize * 1024 * 1024
     }
+
+    // MARK: Public
+
+    public let client: ZiphyClient
+    public let pageSize: Int
+    public let maxImageSize: Int
 
     /// Asks the pagination controller to fetch more results if possible.
     /// The result block returns only the inserted images, not the current ones.
@@ -104,6 +106,12 @@ public final class ZiphySearchResultsController {
 
         client.fetchImageData(at: representation.url, onCompletion: completion)
     }
+
+    // MARK: Internal
+
+    var paginationController: ZiphyPaginationController?
+
+    // MARK: Private
 
     // MARK: - Utilities
 

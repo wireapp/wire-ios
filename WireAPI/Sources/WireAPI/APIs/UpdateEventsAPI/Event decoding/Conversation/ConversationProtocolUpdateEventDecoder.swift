@@ -19,6 +19,8 @@
 import Foundation
 
 struct ConversationProtocolUpdateEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationProtocolUpdateEvent {
@@ -43,6 +45,8 @@ struct ConversationProtocolUpdateEventDecoder {
             newProtocol: payload.protocol
         )
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let `protocol`: ConversationMessageProtocol

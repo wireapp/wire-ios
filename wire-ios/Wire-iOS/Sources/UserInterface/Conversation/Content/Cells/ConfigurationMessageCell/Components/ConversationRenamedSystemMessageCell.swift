@@ -21,14 +21,12 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-    private typealias IconColors = SemanticColors.Icon
+    // MARK: Internal
 
     struct Configuration {
         let attributedText: NSAttributedString
         let newConversationName: NSAttributedString
     }
-
-    private let nameLabel = UILabel()
 
     override func configureSubviews() {
         super.configureSubviews()
@@ -58,4 +56,10 @@ final class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, Con
         nameLabel.attributedText = object.newConversationName
         nameLabel.accessibilityLabel = nameLabel.attributedText?.string
     }
+
+    // MARK: Private
+
+    private typealias IconColors = SemanticColors.Icon
+
+    private let nameLabel = UILabel()
 }

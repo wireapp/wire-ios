@@ -22,19 +22,37 @@ import WireDataModel
 // MARK: - ContactsSectionController
 
 class ContactsSectionController: SearchSectionController {
+    // MARK: Lifecycle
+
+    deinit {
+        selection?.remove(observer: self)
+    }
+
+    // MARK: Internal
+
     var contacts: [UserType] = []
+    var allowsSelection = false
+    weak var delegate: SearchSectionControllerDelegate?
+    weak var collectionView: UICollectionView?
+
+    var title = ""
+
     var selection: UserSelection? {
         didSet {
             selection?.add(observer: self)
         }
     }
 
-    var allowsSelection = false
-    weak var delegate: SearchSectionControllerDelegate?
-    weak var collectionView: UICollectionView?
+    override var isHidden: Bool {
+        contacts.isEmpty
+    }
 
-    deinit {
-        selection?.remove(observer: self)
+    override var sectionTitle: String {
+        title
+    }
+
+    override var sectionAccessibilityIdentifier: String {
+        "label.search.participants"
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -43,20 +61,6 @@ class ContactsSectionController: SearchSectionController {
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.zm_reuseIdentifier)
 
         self.collectionView = collectionView
-    }
-
-    override var isHidden: Bool {
-        contacts.isEmpty
-    }
-
-    var title = ""
-
-    override var sectionTitle: String {
-        title
-    }
-
-    override var sectionAccessibilityIdentifier: String {
-        "label.search.participants"
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

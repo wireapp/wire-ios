@@ -72,20 +72,7 @@ public protocol CommitSending {
 /// In case of failures, it will provide a recovery strategy to handle the failure.
 
 public actor CommitSender: CommitSending {
-    // MARK: - Properties
-
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let notificationContext: NotificationContext
-    private let actionsProvider: MLSActionsProviderProtocol
-    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
-
-    private var coreCrypto: SafeCoreCryptoProtocol {
-        get async throws {
-            try await coreCryptoProvider.coreCrypto()
-        }
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
@@ -107,6 +94,8 @@ public actor CommitSender: CommitSending {
         self.notificationContext = notificationContext
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
     }
+
+    // MARK: Public
 
     // MARK: - Public interface
 
@@ -165,6 +154,21 @@ public actor CommitSender: CommitSending {
     public nonisolated
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         onEpochChangedSubject.eraseToAnyPublisher()
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let notificationContext: NotificationContext
+    private let actionsProvider: MLSActionsProviderProtocol
+    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto()
+        }
     }
 
     // MARK: - Helpers

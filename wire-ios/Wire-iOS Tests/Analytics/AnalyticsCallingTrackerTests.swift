@@ -21,6 +21,8 @@ import XCTest
 @testable import Wire
 
 final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper {
+    // MARK: Internal
+
     var sut: AnalyticsCallingTracker!
     var analytics: Analytics!
     var coreDataFixture: CoreDataFixture!
@@ -155,6 +157,8 @@ final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper 
         // THEN
         XCTAssertEqual(sut.screenSharingStartTimes.count, 0)
     }
+
+    // MARK: Private
 
     private func participantStartScreenSharing(callParticipant: CallParticipant) {
         sut.callParticipantsDidChange(conversation: mockConversation, participants: [callParticipant])

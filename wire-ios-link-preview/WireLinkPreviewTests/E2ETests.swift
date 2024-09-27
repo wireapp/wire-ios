@@ -20,6 +20,19 @@ import XCTest
 @testable import WireLinkPreview
 
 final class E2ETests: XCTestCase {
+    // MARK: Internal
+
+    struct OpenGraphDataExpectation {
+        let numberOfImages: Int
+        let type: String?
+        let siteNameString: String?
+        let userGeneratedImage: Bool
+        let hasDescription: Bool
+        let hasFoursquareMetaData: Bool
+    }
+
+    let uft16ExpectedString = "Apple\u{A0}Music"
+
     func testThatItParsesSampleDataTwitter() {
         let expectation = OpenGraphDataExpectation(
             numberOfImages: 1,
@@ -184,8 +197,6 @@ final class E2ETests: XCTestCase {
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
-    let uft16ExpectedString = "Apple\u{A0}Music"
-
     func disabled_testThatItParsesSampleDataiTunes() {
         let expectation = OpenGraphDataExpectation(
             numberOfImages: 1,
@@ -262,14 +273,7 @@ final class E2ETests: XCTestCase {
         assertThatItCanParseSampleData(mockSite, expected: nil)
     }
 
-    struct OpenGraphDataExpectation {
-        let numberOfImages: Int
-        let type: String?
-        let siteNameString: String?
-        let userGeneratedImage: Bool
-        let hasDescription: Bool
-        let hasFoursquareMetaData: Bool
-    }
+    // MARK: Private
 
     private func assertThatItCanParseSampleData(
         _ mockData: OpenGraphMockData,

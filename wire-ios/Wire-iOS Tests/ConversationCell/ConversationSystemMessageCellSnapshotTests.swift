@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 
 final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnapshotTestCase {
+    // MARK: Internal
+
     // MARK: MLS Verification
 
     func test_mlsConversationVerified() {
@@ -63,6 +65,8 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
         let message = makeMessage(messageType: .mlsMigrationPotentialGap)
         verify(message: message)
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

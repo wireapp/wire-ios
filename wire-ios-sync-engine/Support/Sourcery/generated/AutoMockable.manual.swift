@@ -28,15 +28,23 @@ import Foundation
 // MARK: - MockMessageSenderInterface
 
 public class MockMessageSenderInterface: MessageSenderInterface {
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init() {}
+
+    // MARK: Public
 
     // MARK: - sendMessage
 
     public var sendMessageMessage_Invocations: [any SendableMessage] = []
     public var sendMessageMessage_MockError: Error?
     public var sendMessageMessage_MockMethod: ((any SendableMessage) async throws -> Void)?
+
+    // MARK: - broadcastMessage
+
+    public var broadcastMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastMessageMessage_MockError: Error?
+    public var broadcastMessageMessage_MockMethod: ((any ProteusMessage) async throws -> Void)?
 
     public func sendMessage(message: any SendableMessage) async throws {
         sendMessageMessage_Invocations.append(message)
@@ -51,12 +59,6 @@ public class MockMessageSenderInterface: MessageSenderInterface {
 
         try await mock(message)
     }
-
-    // MARK: - broadcastMessage
-
-    public var broadcastMessageMessage_Invocations: [any ProteusMessage] = []
-    public var broadcastMessageMessage_MockError: Error?
-    public var broadcastMessageMessage_MockMethod: ((any ProteusMessage) async throws -> Void)?
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
         broadcastMessageMessage_Invocations.append(message)
@@ -76,9 +78,11 @@ public class MockMessageSenderInterface: MessageSenderInterface {
 // MARK: - MockSessionEstablisherInterface
 
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init() {}
+
+    // MARK: Public
 
     // MARK: - establishSession
 

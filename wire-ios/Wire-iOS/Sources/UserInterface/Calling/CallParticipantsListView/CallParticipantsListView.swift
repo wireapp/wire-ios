@@ -42,12 +42,7 @@ enum CallParticipantsListCellConfiguration: Hashable {
     )
     case showAll(totalCount: Int)
 
-    var cellType: CallParticipantsListCellConfigurable.Type {
-        switch self {
-        case .callParticipant: UserCell.self
-        case .showAll: ShowAllParticipantsCell.self
-        }
-    }
+    // MARK: Internal
 
     // MARK: - Convenience
 
@@ -56,6 +51,13 @@ enum CallParticipantsListCellConfiguration: Hashable {
             UserCell.self,
             ShowAllParticipantsCell.self,
         ]
+    }
+
+    var cellType: CallParticipantsListCellConfigurable.Type {
+        switch self {
+        case .callParticipant: UserCell.self
+        case .showAll: ShowAllParticipantsCell.self
+        }
     }
 
     static func prepare(_ collectionView: UICollectionView) {
@@ -68,13 +70,7 @@ enum CallParticipantsListCellConfiguration: Hashable {
 // MARK: - CallParticipantsListView
 
 final class CallParticipantsListView: UICollectionView {
-    let selfUser: UserType
-
-    var rows = CallParticipantsList() {
-        didSet {
-            reloadData()
-        }
-    }
+    // MARK: Lifecycle
 
     init(collectionViewLayout: UICollectionViewLayout, selfUser: UserType) {
         self.selfUser = selfUser
@@ -88,6 +84,16 @@ final class CallParticipantsListView: UICollectionView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let selfUser: UserType
+
+    var rows = CallParticipantsList() {
+        didSet {
+            reloadData()
+        }
     }
 }
 

@@ -22,11 +22,7 @@ import WireSyncEngine
 // MARK: - TopPeopleSectionController
 
 final class TopPeopleSectionController: SearchSectionController {
-    private var innerCollectionView: UICollectionView!
-    private let innerCollectionViewController = TopPeopleLineCollectionViewController()
-    private let topConversationsDirectory: TopConversationsDirectory!
-    var token: Any?
-    weak var delegate: SearchSectionControllerDelegate?
+    // MARK: Lifecycle
 
     init(topConversationsDirectory: TopConversationsDirectory!) {
         self.topConversationsDirectory = topConversationsDirectory
@@ -42,6 +38,23 @@ final class TopPeopleSectionController: SearchSectionController {
         }
         innerCollectionViewController.delegate = self
         innerCollectionView.reloadData()
+    }
+
+    // MARK: Internal
+
+    var token: Any?
+    weak var delegate: SearchSectionControllerDelegate?
+
+    override var isHidden: Bool {
+        if let topConversationsDirectory {
+            topConversationsDirectory.topConversations.isEmpty
+        } else {
+            true
+        }
+    }
+
+    override var sectionTitle: String {
+        L10n.Localizable.Peoplepicker.Header.topPeople
     }
 
     func createInnerCollectionView() {
@@ -73,18 +86,6 @@ final class TopPeopleSectionController: SearchSectionController {
         )
     }
 
-    override var isHidden: Bool {
-        if let topConversationsDirectory {
-            topConversationsDirectory.topConversations.isEmpty
-        } else {
-            true
-        }
-    }
-
-    override var sectionTitle: String {
-        L10n.Localizable.Peoplepicker.Header.topPeople
-    }
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         1
     }
@@ -108,6 +109,12 @@ final class TopPeopleSectionController: SearchSectionController {
         cell.collectionView = innerCollectionView
         return cell
     }
+
+    // MARK: Private
+
+    private var innerCollectionView: UICollectionView!
+    private let innerCollectionViewController = TopPeopleLineCollectionViewController()
+    private let topConversationsDirectory: TopConversationsDirectory!
 }
 
 // MARK: TopConversationsDirectoryObserver

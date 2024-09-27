@@ -42,7 +42,7 @@ private let zmLog = ZMSLog(tag: "UserDefaults")
 // MARK: - SuiteCleanUp
 
 private final class SuiteCleanUp {
-    private let suiteName: String
+    // MARK: Lifecycle
 
     init(_ suiteName: String) {
         self.suiteName = suiteName
@@ -68,6 +68,10 @@ private final class SuiteCleanUp {
             zmLog.warn("Could not remove temporary user defaults file: " + String(reflecting: error))
         }
     }
+
+    // MARK: Private
+
+    private let suiteName: String
 }
 
 private nonisolated(unsafe) var SuiteCleanUpHandle = 0

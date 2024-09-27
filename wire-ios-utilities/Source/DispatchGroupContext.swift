@@ -20,8 +20,17 @@ import Foundation
 
 @objcMembers
 public final class DispatchGroupContext: NSObject {
-    private var isolationQueue = DispatchQueue(label: "context.isolation", attributes: [.concurrent])
-    private var _groups: [ZMSDispatchGroup] = []
+    // MARK: Lifecycle
+
+    init(groups: [ZMSDispatchGroup] = []) {
+        super.init()
+
+        isolationQueue.async(flags: .barrier) {
+            self._groups = groups
+        }
+    }
+
+    // MARK: Public
 
     public var groups: [ZMSDispatchGroup] {
         var groups: [ZMSDispatchGroup] = []
@@ -31,13 +40,7 @@ public final class DispatchGroupContext: NSObject {
         return groups
     }
 
-    init(groups: [ZMSDispatchGroup] = []) {
-        super.init()
-
-        isolationQueue.async(flags: .barrier) {
-            self._groups = groups
-        }
-    }
+    // MARK: Internal
 
     @objc(addGroup:)
     func add(_ group: ZMSDispatchGroup) {
@@ -64,4 +67,9 @@ public final class DispatchGroupContext: NSObject {
     func leaveAll() {
         leave(groups)
     }
+
+    // MARK: Private
+
+    private var isolationQueue = DispatchQueue(label: "context.isolation", attributes: [.concurrent])
+    private var _groups: [ZMSDispatchGroup] = []
 }

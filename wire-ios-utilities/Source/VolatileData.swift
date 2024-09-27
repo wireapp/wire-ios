@@ -33,16 +33,7 @@ import Foundation
 /// will only be zeroed-out if the copies are never written to. See: https://en.wikipedia.org/wiki/Copy-on-write
 
 public final class VolatileData {
-    // MARK: - Properties
-
-    /// The underlying storage.
-    ///
-    /// **Important**: assign only to a constant (with the `let` keyword) to ensure that no
-    /// memory resources are duplicated.
-
-    public private(set) var _storage: Data
-
-    // MARK: - Life Cycle
+    // MARK: Lifecycle
 
     /// Initialize the container with the given data.
 
@@ -53,6 +44,17 @@ public final class VolatileData {
     deinit {
         resetBytes()
     }
+
+    // MARK: Public
+
+    // MARK: - Properties
+
+    /// The underlying storage.
+    ///
+    /// **Important**: assign only to a constant (with the `let` keyword) to ensure that no
+    /// memory resources are duplicated.
+
+    public private(set) var _storage: Data
 
     // MARK: - Methods
 

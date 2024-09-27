@@ -34,9 +34,9 @@ extension UIViewControllerContextTransitioning {
 // MARK: - ModalInteractionController
 
 private final class ModalInteractionController: UIPercentDrivenInteractiveTransition {
+    // MARK: Internal
+
     var interactionInProgress = false
-    private var shouldCompleteTransition = false
-    private weak var presentationViewController: ModalPresentationViewController!
 
     func setupWith(viewController: ModalPresentationViewController) {
         presentationViewController = viewController
@@ -44,6 +44,11 @@ private final class ModalInteractionController: UIPercentDrivenInteractiveTransi
         panGestureRecognizer.maximumNumberOfTouches = 1
         viewController.view.addGestureRecognizer(panGestureRecognizer)
     }
+
+    // MARK: Private
+
+    private var shouldCompleteTransition = false
+    private weak var presentationViewController: ModalPresentationViewController!
 
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
@@ -80,11 +85,7 @@ private final class ModalInteractionController: UIPercentDrivenInteractiveTransi
 // MARK: - ModalPresentationViewController
 
 final class ModalPresentationViewController: UIViewController, UIViewControllerTransitioningDelegate {
-    fileprivate unowned let viewController: UIViewController
-    fileprivate let dimView = UIView()
-
-    private let interactionController = ModalInteractionController()
-    private let configuration: ModalPresentationConfiguration
+    // MARK: Lifecycle
 
     init(
         viewController: UIViewController,
@@ -104,6 +105,8 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     override var childForStatusBarStyle: UIViewController? {
         viewController
     }
@@ -111,6 +114,33 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
     override var childForStatusBarHidden: UIViewController? {
         viewController
     }
+
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        nil
+    }
+
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        nil
+    }
+
+    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning)
+        -> UIViewControllerInteractiveTransitioning? {
+        interactionController.interactionInProgress ? interactionController : nil
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate unowned let viewController: UIViewController
+    fileprivate let dimView = UIView()
+
+    // MARK: Private
+
+    private let interactionController = ModalInteractionController()
+    private let configuration: ModalPresentationConfiguration
 
     private func setupViews(with viewController: UIViewController, enableDismissOnPan: Bool) {
         transitioningDelegate = self
@@ -145,22 +175,5 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
     @objc
     private func didTapDimView(_: UITapGestureRecognizer) {
         dismiss(animated: true)
-    }
-
-    func animationController(
-        forPresented presented: UIViewController,
-        presenting: UIViewController,
-        source: UIViewController
-    ) -> UIViewControllerAnimatedTransitioning? {
-        nil
-    }
-
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        nil
-    }
-
-    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning)
-        -> UIViewControllerInteractiveTransitioning? {
-        interactionController.interactionInProgress ? interactionController : nil
     }
 }

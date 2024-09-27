@@ -24,14 +24,7 @@ import WireDesign
 // MARK: - ConversationLegalHoldSystemMessageCell
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-    static let legalHoldURL: URL = WireURLs.shared.legalHoldInfo
-    var conversation: ZMConversation?
-
-    struct Configuration {
-        let attributedText: NSAttributedString?
-        var icon: UIImage?
-        var conversation: ZMConversation?
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,6 +35,18 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    struct Configuration {
+        let attributedText: NSAttributedString?
+        var icon: UIImage?
+        var conversation: ZMConversation?
+    }
+
+    static let legalHoldURL: URL = WireURLs.shared.legalHoldInfo
+
+    var conversation: ZMConversation?
 
     func setupView() {
         lineView.isHidden = true
@@ -57,7 +62,20 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
 // MARK: - ConversationLegalHoldCellDescription
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(systemMessageType: ZMSystemMessageType, conversation: ZMConversation) {
+        self.configuration = ConversationLegalHoldCellDescription.configuration(
+            for: systemMessageType,
+            in: conversation
+        )
+        self.accessibilityLabel = configuration.attributedText?.string
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationLegalHoldSystemMessageCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -74,13 +92,7 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(systemMessageType: ZMSystemMessageType, conversation: ZMConversation) {
-        self.configuration = ConversationLegalHoldCellDescription.configuration(
-            for: systemMessageType,
-            in: conversation
-        )
-        self.accessibilityLabel = configuration.attributedText?.string
-    }
+    // MARK: Private
 
     private static func configuration(
         for systemMessageType: ZMSystemMessageType,

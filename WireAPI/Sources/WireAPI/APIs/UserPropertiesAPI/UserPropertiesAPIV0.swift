@@ -21,11 +21,15 @@ import Foundation
 // MARK: - UserPropertiesAPIV0
 
 class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Internal
+
+    let httpClient: any HTTPClient
 
     var apiVersion: APIVersion {
         .v0
@@ -109,31 +113,39 @@ extension UserPropertiesResponseAPIV0 {
 // MARK: - ReceiptModeResponseV0
 
 struct ReceiptModeResponseV0: UserPropertiesResponseAPIV0 {
-    let value: UserProperty
+    // MARK: Lifecycle
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(Int.self)
         self.value = .areReadReceiptsEnabled(value == 1)
     }
+
+    // MARK: Internal
+
+    let value: UserProperty
 }
 
 // MARK: - TypeIndicatorModeResponseV0
 
 struct TypeIndicatorModeResponseV0: UserPropertiesResponseAPIV0 {
-    let value: UserProperty
+    // MARK: Lifecycle
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(Int.self)
         self.value = .areTypingIndicatorsEnabled(value == 1)
     }
+
+    // MARK: Internal
+
+    let value: UserProperty
 }
 
 // MARK: - LabelsResponseV0
 
 struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
-    let value: UserProperty
+    // MARK: Lifecycle
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -150,17 +162,21 @@ struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
 
         self.value = .conversationLabels(conversationLabels)
     }
+
+    // MARK: Internal
+
+    let value: UserProperty
 }
 
 // MARK: - LabelsPayloadV0
 
 struct LabelsPayloadV0: Decodable {
-    let labels: [Label]
-
     struct Label: Decodable {
         let id: UUID
         let type: Int16
         let name: String?
         let conversations: [UUID]
     }
+
+    let labels: [Label]
 }

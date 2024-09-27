@@ -21,9 +21,7 @@ import XCTest
 @testable import Wire
 
 final class GroupConversationCellTests: XCTestCase {
-    private var sut: GroupConversationCell!
-    private var otherUser: MockUserType!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -39,6 +37,42 @@ final class GroupConversationCellTests: XCTestCase {
 
         super.tearDown()
     }
+
+    func testOneToOneConversation() {
+        // GIVEN & WHEN
+        let otherUserConversation = createOneOnOneConversation()
+
+        // THEN
+        verify(conversation: otherUserConversation)
+    }
+
+    func testGroupConversation() {
+        // GIVEN
+        let groupConversation = createGroupConversation()
+
+        // WHEN
+        groupConversation.displayName = "Anna, Bruno, Claire, Dean"
+
+        // THEN
+        verify(conversation: groupConversation)
+    }
+
+    func testGroupConversationWithVeryLongName() {
+        // GIVEN
+        let groupConversation = createGroupConversation()
+
+        // WHEN
+        groupConversation.displayName = "Loooooooooooooooooooooooooong name"
+
+        // THEN
+        verify(conversation: groupConversation)
+    }
+
+    // MARK: Private
+
+    private var sut: GroupConversationCell!
+    private var otherUser: MockUserType!
+    private var snapshotHelper: SnapshotHelper!
 
     private func createOneOnOneConversation() -> MockStableRandomParticipantsConversation {
         otherUser = MockUserType.createDefaultOtherUser()
@@ -89,35 +123,5 @@ final class GroupConversationCellTests: XCTestCase {
                 testName: testName,
                 line: line
             )
-    }
-
-    func testOneToOneConversation() {
-        // GIVEN & WHEN
-        let otherUserConversation = createOneOnOneConversation()
-
-        // THEN
-        verify(conversation: otherUserConversation)
-    }
-
-    func testGroupConversation() {
-        // GIVEN
-        let groupConversation = createGroupConversation()
-
-        // WHEN
-        groupConversation.displayName = "Anna, Bruno, Claire, Dean"
-
-        // THEN
-        verify(conversation: groupConversation)
-    }
-
-    func testGroupConversationWithVeryLongName() {
-        // GIVEN
-        let groupConversation = createGroupConversation()
-
-        // WHEN
-        groupConversation.displayName = "Loooooooooooooooooooooooooong name"
-
-        // THEN
-        verify(conversation: groupConversation)
     }
 }

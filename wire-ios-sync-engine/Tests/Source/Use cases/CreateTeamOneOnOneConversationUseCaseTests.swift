@@ -23,18 +23,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
-    private let coreDataStackHelper = CoreDataStackHelper()
-    private var stack: CoreDataStack!
-    private let modelHelper = ModelHelper()
-
-    private var sut: CreateTeamOneOnOneConversationUseCase!
-    private var protocolSelector: MockOneOnOneProtocolSelectorInterface!
-    private var migrator: MockOneOnOneMigratorInterface!
-    private var service: MockConversationServiceInterface!
-
-    private var syncContext: NSManagedObjectContext {
-        stack.syncContext
-    }
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -59,19 +48,6 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
-    }
-
-    // MARK: - Helpers
-
-    private func createTeamWithAnotherUser() async throws -> ZMUser {
-        try await syncContext.perform {
-            let (_, _, otherUsers) = self.modelHelper.createSelfTeam(
-                numberOfUsers: 1,
-                in: self.syncContext
-            )
-
-            return try XCTUnwrap(otherUsers.first)
-        }
     }
 
     // MARK: - Tests
@@ -171,5 +147,33 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
 
         // Then
         XCTAssertEqual(result, conversation.objectID)
+    }
+
+    // MARK: Private
+
+    private let coreDataStackHelper = CoreDataStackHelper()
+    private var stack: CoreDataStack!
+    private let modelHelper = ModelHelper()
+
+    private var sut: CreateTeamOneOnOneConversationUseCase!
+    private var protocolSelector: MockOneOnOneProtocolSelectorInterface!
+    private var migrator: MockOneOnOneMigratorInterface!
+    private var service: MockConversationServiceInterface!
+
+    private var syncContext: NSManagedObjectContext {
+        stack.syncContext
+    }
+
+    // MARK: - Helpers
+
+    private func createTeamWithAnotherUser() async throws -> ZMUser {
+        try await syncContext.perform {
+            let (_, _, otherUsers) = self.modelHelper.createSelfTeam(
+                numberOfUsers: 1,
+                in: self.syncContext
+            )
+
+            return try XCTUnwrap(otherUsers.first)
+        }
     }
 }

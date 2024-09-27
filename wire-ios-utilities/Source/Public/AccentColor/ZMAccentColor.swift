@@ -22,6 +22,14 @@ import WireFoundation
 /// A type which only exists because optional `AccentColor?` cannot be represented in Objective C.
 @objc(ZMAccentColor) @objcMembers
 public final class ZMAccentColor: NSObject {
+    // MARK: Lifecycle
+
+    private init(accentColor: AccentColor) {
+        self.accentColor = accentColor
+    }
+
+    // MARK: Public
+
     // MARK: Objective C bridging
 
     public static var blue: ZMAccentColor { .from(accentColor: .blue) }
@@ -37,22 +45,14 @@ public final class ZMAccentColor: NSObject {
     public static var min: ZMAccentColor { .blue }
     public static var max: ZMAccentColor { .purple }
 
-    /// Singleton instances
-    private static let mapping = {
-        var mapping = [AccentColor: ZMAccentColor]()
-        for accentColor in AccentColor.allCases {
-            mapping[accentColor] = .init(accentColor: accentColor)
-        }
-        return mapping
-    }()
-
     // MARK: -
 
     public let accentColor: AccentColor
+
     public var rawValue: ZMAccentColorRawValue { accentColor.rawValue }
 
-    private init(accentColor: AccentColor) {
-        self.accentColor = accentColor
+    override public var debugDescription: String {
+        .init(reflecting: accentColor)
     }
 
     public static func from(rawValue: ZMAccentColorRawValue) -> ZMAccentColor? {
@@ -64,7 +64,14 @@ public final class ZMAccentColor: NSObject {
         mapping[accentColor]!
     }
 
-    override public var debugDescription: String {
-        .init(reflecting: accentColor)
-    }
+    // MARK: Private
+
+    /// Singleton instances
+    private static let mapping = {
+        var mapping = [AccentColor: ZMAccentColor]()
+        for accentColor in AccentColor.allCases {
+            mapping[accentColor] = .init(accentColor: accentColor)
+        }
+        return mapping
+    }()
 }

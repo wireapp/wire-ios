@@ -123,6 +123,8 @@ class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
 // MARK: - ChaCha20StreamEncryptionTests
 
 class ChaCha20StreamEncryptionTests: XCTestCase {
+    // MARK: Internal
+
     var directoryURL: URL!
 
     override func setUp() {
@@ -145,53 +147,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         try? FileManager.default.removeItem(at: directoryURL)
         directoryURL = nil
         super.tearDown()
-    }
-
-    private func createTemporaryURL() -> URL {
-        directoryURL.appendingPathComponent(UUID().uuidString)
-    }
-
-    private func encrypt(_ message: Data, passphrase: Sut.Passphrase) throws -> Data {
-        let inputStream = InputStream(data: message)
-        var outputBuffer = [UInt8](repeating: 0, count: 256)
-        let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
-
-        let bytesWritten = try Sut.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
-
-        return Data(outputBuffer.prefix(bytesWritten))
-    }
-
-    private func decrypt(_ chipherMessage: Data, passphrase: Sut.Passphrase) throws -> Data {
-        var outputBuffer = [UInt8](repeating: 0, count: 256)
-        let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
-        let inputStream = InputStream(data: chipherMessage)
-        let decryptedBytes = try Sut.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
-
-        return Data(outputBuffer.prefix(decryptedBytes))
-    }
-
-    private func encryptToURL(_ message: Data, passphrase: Sut.Passphrase) throws -> URL {
-        let inputURL = createTemporaryURL()
-        let outputURL = createTemporaryURL()
-        try message.write(to: inputURL)
-        let inputStream = InputStream(url: inputURL)!
-        let outputStream = OutputStream(url: outputURL, append: false)!
-        try Sut.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
-        return outputURL
-    }
-
-    private func decryptFromURL(
-        _ url: URL,
-        passphrase: Sut.Passphrase,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) throws -> Data {
-        let outputURL = createTemporaryURL()
-        let outputStream = OutputStream(url: outputURL, append: false)!
-        let inputStream = InputStream(url: url)!
-        let decryptedBytes = try Sut.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
-        XCTAssertGreaterThan(decryptedBytes, 0, file: file, line: line)
-        return try Data(contentsOf: outputURL)
     }
 
     // MARK: - Encryption
@@ -380,5 +335,54 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         } catch {
             XCTFail()
         }
+    }
+
+    // MARK: Private
+
+    private func createTemporaryURL() -> URL {
+        directoryURL.appendingPathComponent(UUID().uuidString)
+    }
+
+    private func encrypt(_ message: Data, passphrase: Sut.Passphrase) throws -> Data {
+        let inputStream = InputStream(data: message)
+        var outputBuffer = [UInt8](repeating: 0, count: 256)
+        let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
+
+        let bytesWritten = try Sut.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+
+        return Data(outputBuffer.prefix(bytesWritten))
+    }
+
+    private func decrypt(_ chipherMessage: Data, passphrase: Sut.Passphrase) throws -> Data {
+        var outputBuffer = [UInt8](repeating: 0, count: 256)
+        let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
+        let inputStream = InputStream(data: chipherMessage)
+        let decryptedBytes = try Sut.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+
+        return Data(outputBuffer.prefix(decryptedBytes))
+    }
+
+    private func encryptToURL(_ message: Data, passphrase: Sut.Passphrase) throws -> URL {
+        let inputURL = createTemporaryURL()
+        let outputURL = createTemporaryURL()
+        try message.write(to: inputURL)
+        let inputStream = InputStream(url: inputURL)!
+        let outputStream = OutputStream(url: outputURL, append: false)!
+        try Sut.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        return outputURL
+    }
+
+    private func decryptFromURL(
+        _ url: URL,
+        passphrase: Sut.Passphrase,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> Data {
+        let outputURL = createTemporaryURL()
+        let outputStream = OutputStream(url: outputURL, append: false)!
+        let inputStream = InputStream(url: url)!
+        let decryptedBytes = try Sut.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        XCTAssertGreaterThan(decryptedBytes, 0, file: file, line: line)
+        return try Data(contentsOf: outputURL)
     }
 }

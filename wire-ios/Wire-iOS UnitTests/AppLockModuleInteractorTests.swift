@@ -21,12 +21,7 @@ import XCTest
 @testable import Wire
 
 final class AppLockModuleInteractorTests: XCTestCase {
-    private var sut: AppLockModule.Interactor!
-    private var presenter: AppLockModule.MockPresenter!
-    private var session: UserSessionMock!
-    private var appLock: AppLockModule.MockAppLockController!
-    private var authenticationType: AppLockModule.MockAuthenticationTypeDetector!
-    private var applicationStateProvider: AppLockModule.MockApplicationStateProvider!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -303,4 +298,13 @@ final class AppLockModuleInteractorTests: XCTestCase {
         // Then
         XCTAssertEqual(session.openApp.count, 1)
     }
+
+    // MARK: Private
+
+    private var sut: AppLockModule.Interactor!
+    private var presenter: AppLockModule.MockPresenter!
+    private var session: UserSessionMock!
+    private var appLock: AppLockModule.MockAppLockController!
+    private var authenticationType: AppLockModule.MockAuthenticationTypeDetector!
+    private var applicationStateProvider: AppLockModule.MockApplicationStateProvider!
 }

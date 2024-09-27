@@ -21,6 +21,16 @@ import WireTransport
 
 extension Payload {
     struct UpdateConversationAccess: CodableEventData {
+        // MARK: Lifecycle
+
+        init(accessMode: ConversationAccessMode, accessRoles: Set<ConversationAccessRoleV2>) {
+            self.access = accessMode.stringValue
+            self.accessRole = ConversationAccessRole.fromAccessRoleV2(accessRoles).rawValue
+            self.accessRoleV2 = accessRoles.map(\.rawValue)
+        }
+
+        // MARK: Internal
+
         enum CodingKeys: String, CodingKey {
             case access
             case accessRole = "access_role"
@@ -34,11 +44,5 @@ extension Payload {
         let access: [String]
         let accessRole: String?
         let accessRoleV2: [String]?
-
-        init(accessMode: ConversationAccessMode, accessRoles: Set<ConversationAccessRoleV2>) {
-            self.access = accessMode.stringValue
-            self.accessRole = ConversationAccessRole.fromAccessRoleV2(accessRoles).rawValue
-            self.accessRoleV2 = accessRoles.map(\.rawValue)
-        }
     }
 }

@@ -20,9 +20,7 @@ import Foundation
 
 @objc(ZMSDispatchGroup) @objcMembers
 public final class ZMSDispatchGroup: NSObject {
-    let label: String
-
-    private let group: DispatchGroup
+    // MARK: Lifecycle
 
     public convenience init(label: String) {
         self.init(dispatchGroup: .init(), label: label)
@@ -32,6 +30,8 @@ public final class ZMSDispatchGroup: NSObject {
         self.group = group
         self.label = label
     }
+
+    // MARK: Public
 
     public func enter() {
         group.enter()
@@ -72,4 +72,12 @@ public final class ZMSDispatchGroup: NSObject {
     public func async(on queue: dispatch_queue_t, block: @escaping () -> Void) {
         queue.async(group: group, execute: block)
     }
+
+    // MARK: Internal
+
+    let label: String
+
+    // MARK: Private
+
+    private let group: DispatchGroup
 }

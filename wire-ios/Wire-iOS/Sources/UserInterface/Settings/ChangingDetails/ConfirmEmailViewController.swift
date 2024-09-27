@@ -59,13 +59,7 @@ extension UITableView {
 // MARK: - ConfirmEmailViewController
 
 final class ConfirmEmailViewController: SettingsBaseTableViewController {
-    // MARK: - Properties
-
-    weak var delegate: ConfirmEmailDelegate?
-    typealias SettingsAccountSectionEmailLocalizable = L10n.Localizable.Self.Settings.AccountSection.Email.Change
-    let newEmail: String
-    let userSession: UserSession
-    fileprivate var observer: NSObjectProtocol?
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -81,6 +75,16 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    typealias SettingsAccountSectionEmailLocalizable = L10n.Localizable.Self.Settings.AccountSection.Email.Change
+
+    // MARK: - Properties
+
+    weak var delegate: ConfirmEmailDelegate?
+    let newEmail: String
+    let userSession: UserSession
 
     // MARK: - Override methods
 
@@ -152,6 +156,10 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         alert.addAction(.init(title: L10n.Localizable.General.ok, style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var observer: NSObjectProtocol?
 }
 
 // MARK: UserObserving

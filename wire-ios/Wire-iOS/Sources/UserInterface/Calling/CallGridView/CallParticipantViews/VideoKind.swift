@@ -24,6 +24,8 @@ enum VideoKind {
     case screenshare
     case none
 
+    // MARK: Lifecycle
+
     init(videoState: VideoState?) {
         guard let state = videoState else {
             self = .none
@@ -38,6 +40,8 @@ enum VideoKind {
             self = .screenshare
         }
     }
+
+    // MARK: Internal
 
     var shouldFill: Bool {
         self == .camera

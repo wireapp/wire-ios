@@ -24,6 +24,8 @@ private let log = ZMSLog(tag: "Calling System Message")
 
 /// Inserts a calling system message for V3 calls.
 final class CallSystemMessageGenerator: NSObject {
+    // MARK: Internal
+
     var startDateByConversation = [ZMConversation: Date]()
     var connectDateByConversation = [ZMConversation: Date]()
 
@@ -59,6 +61,8 @@ final class CallSystemMessageGenerator: NSObject {
         }
         return systemMessage
     }
+
+    // MARK: Private
 
     private func appendCallEndedSystemMessage(
         reason: CallClosedReason,

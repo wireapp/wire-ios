@@ -22,6 +22,14 @@ import WireDataModel
 import WireDesign
 
 final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
+        }
+    }
+
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "cell.groupdetails.timeoutoptions"
@@ -35,13 +43,5 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
     func configure(with conversation: GroupDetailsConversationType) {
         let timeout = MessageDestructionTimeoutValue(rawValue: conversation.syncedMessageDestructionTimeout)
         status = timeout.displayString
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted
-                ? SemanticColors.View.backgroundUserCellHightLighted
-                : SemanticColors.View.backgroundUserCell
-        }
     }
 }

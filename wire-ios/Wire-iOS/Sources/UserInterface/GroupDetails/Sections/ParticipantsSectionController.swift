@@ -26,6 +26,8 @@ enum ParticipantsRowType {
     case user(UserType)
     case showAll(_ totalParticipantsCount: Int)
 
+    // MARK: Internal
+
     var cellType: UICollectionViewCell.Type {
         switch self {
         case .user:
@@ -41,6 +43,8 @@ enum ParticipantsRowType {
 enum ConversationRole {
     case admin, member
 
+    // MARK: Internal
+
     var name: String {
         switch self {
         case .admin:
@@ -54,6 +58,50 @@ enum ConversationRole {
 // MARK: - ParticipantsSectionViewModel
 
 private struct ParticipantsSectionViewModel {
+    // MARK: Lifecycle
+
+    /// init method
+    ///
+    /// - Parameters:
+    ///   - users: list of conversation participants
+    ///   - userStatuses: additional status info like the E2EI certification status.
+    ///   - conversationRole: participants' ConversationRole
+    ///   - totalParticipantsCount: the number of all participants in the conversation
+    ///   - clipSection: enable/disable the display of the “ShowAll” button
+    ///   - maxParticipants: max number of participants we can display
+    ///   - maxDisplayedParticipants: max number of participants we can display, if there are more than maxParticipants
+    /// participants
+    ///   - showSectionCount: current view model - a search result or not
+    init(
+        users: [UserType],
+        userStatuses: [UUID: UserStatus],
+        conversationRole: ConversationRole,
+        totalParticipantsCount: Int,
+        clipSection: Bool = true,
+        maxParticipants: Int,
+        maxDisplayedParticipants: Int,
+        showSectionCount: Bool = true,
+        userSession: UserSession
+    ) {
+        self.participants = users.sortedAscendingPrependingNil(by: \.name)
+        self.userStatuses = userStatuses
+        self.conversationRole = conversationRole
+        self.showSectionCount = showSectionCount
+        self.userSession = userSession
+        self.rows = clipSection
+            ? ParticipantsSectionViewModel.computeRows(
+                participants,
+                totalParticipantsCount: totalParticipantsCount,
+                maxParticipants: maxParticipants,
+                maxDisplayedParticipants: maxDisplayedParticipants
+            )
+            : participants.map { participant in
+                .user(participant)
+            }
+    }
+
+    // MARK: Internal
+
     let rows: [ParticipantsRowType]
     let participants: [UserType]
     let userStatuses: [UUID: UserStatus]
@@ -99,46 +147,6 @@ private struct ParticipantsSectionViewModel {
         conversationRole.name
     }
 
-    /// init method
-    ///
-    /// - Parameters:
-    ///   - users: list of conversation participants
-    ///   - userStatuses: additional status info like the E2EI certification status.
-    ///   - conversationRole: participants' ConversationRole
-    ///   - totalParticipantsCount: the number of all participants in the conversation
-    ///   - clipSection: enable/disable the display of the “ShowAll” button
-    ///   - maxParticipants: max number of participants we can display
-    ///   - maxDisplayedParticipants: max number of participants we can display, if there are more than maxParticipants
-    /// participants
-    ///   - showSectionCount: current view model - a search result or not
-    init(
-        users: [UserType],
-        userStatuses: [UUID: UserStatus],
-        conversationRole: ConversationRole,
-        totalParticipantsCount: Int,
-        clipSection: Bool = true,
-        maxParticipants: Int,
-        maxDisplayedParticipants: Int,
-        showSectionCount: Bool = true,
-        userSession: UserSession
-    ) {
-        self.participants = users.sortedAscendingPrependingNil(by: \.name)
-        self.userStatuses = userStatuses
-        self.conversationRole = conversationRole
-        self.showSectionCount = showSectionCount
-        self.userSession = userSession
-        self.rows = clipSection
-            ? ParticipantsSectionViewModel.computeRows(
-                participants,
-                totalParticipantsCount: totalParticipantsCount,
-                maxParticipants: maxParticipants,
-                maxDisplayedParticipants: maxDisplayedParticipants
-            )
-            : participants.map { participant in
-                .user(participant)
-            }
-    }
-
     static func computeRows(
         _ participants: [UserType],
         totalParticipantsCount: Int,
@@ -180,17 +188,7 @@ extension UserCell {
 // MARK: - ParticipantsSectionController
 
 final class ParticipantsSectionController: GroupDetailsSectionController {
-    fileprivate weak var collectionView: UICollectionView? {
-        didSet {
-            guard let collectionView else { return }
-            SectionFooter.register(collectionView: collectionView)
-        }
-    }
-
-    private weak var delegate: GroupDetailsSectionControllerDelegate?
-    private var viewModel: ParticipantsSectionViewModel
-    private let conversation: GroupDetailsConversationType
-    private var token: NSObjectProtocol?
+    // MARK: Lifecycle
 
     init(
         participants: [UserType],
@@ -223,6 +221,16 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         self.token = userSession.addUserObserver(self)
     }
 
+    // MARK: Internal
+
+    override var sectionTitle: String? {
+        viewModel.sectionTitle
+    }
+
+    override var sectionAccessibilityIdentifier: String {
+        viewModel.sectionAccesibilityIdentifier
+    }
+
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
@@ -231,14 +239,6 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             forCellWithReuseIdentifier: ShowAllParticipantsCell.reuseIdentifier
         )
         self.collectionView = collectionView
-    }
-
-    override var sectionTitle: String? {
-        viewModel.sectionTitle
-    }
-
-    override var sectionAccessibilityIdentifier: String {
-        viewModel.sectionAccesibilityIdentifier
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -345,6 +345,22 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             true
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate weak var collectionView: UICollectionView? {
+        didSet {
+            guard let collectionView else { return }
+            SectionFooter.register(collectionView: collectionView)
+        }
+    }
+
+    // MARK: Private
+
+    private weak var delegate: GroupDetailsSectionControllerDelegate?
+    private var viewModel: ParticipantsSectionViewModel
+    private let conversation: GroupDetailsConversationType
+    private var token: NSObjectProtocol?
 }
 
 // MARK: UserObserving

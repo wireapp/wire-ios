@@ -26,13 +26,18 @@ import WireDesign
 /// displaying
 /// a custom navigation item title view and a debug menu button in the navigation bar.
 final class DeviceInfoViewController<Content>: UIHostingController<Content> where Content: DeviceInfoView {
-    private var viewModel: DeviceInfoViewModel { rootView.viewModel }
-    private var cancellables = Set<AnyCancellable>()
+    // MARK: Internal
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationItemTitleObservation()
     }
+
+    // MARK: Private
+
+    private var cancellables = Set<AnyCancellable>()
+
+    private var viewModel: DeviceInfoViewModel { rootView.viewModel }
 
     private func setupNavigationItemTitleObservation() {
         let certificatePublisher = viewModel.$e2eIdentityCertificate

@@ -27,44 +27,11 @@ private let zmLog = ZMSLog(tag: "StartUIViewController")
 // MARK: - StartUIViewController
 
 final class StartUIViewController: UIViewController {
-    static let InitiallyShowsKeyboardConversationThreshold = 10
-
-    weak var delegate: StartUIDelegate?
-
-    let searchHeaderViewController = SearchHeaderViewController(userSelection: UserSelection())
-
-    let groupSelector = SearchGroupSelector()
-
-    let searchResultsViewController: SearchResultsViewController
-
-    var addressBookHelperType: AddressBookHelperProtocol.Type
-
-    let userSession: UserSession
-
-    let isFederationEnabled: Bool
-
-    let quickActionsBar = StartUIInviteActionBar()
-
-    let profilePresenter: ProfilePresenter
-    private var emptyResultView: EmptySearchResultsView!
-
-    private(set) var activityIndicator: BlockingActivityIndicator!
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
-    }
-
-    let backgroundColor = SemanticColors.View.backgroundDefault
-
-    private var navigationBarTitle: String? {
-        if let title = userSession.selfUser.membership?.team?.name {
-            return title
-        } else if let title = userSession.selfUser.name {
-            return title
-        }
-
-        return nil
     }
 
     /// init method for injecting mock addressBookHelper
@@ -93,12 +60,41 @@ final class StartUIViewController: UIViewController {
         setupViews()
     }
 
+    // MARK: Internal
+
+    static let InitiallyShowsKeyboardConversationThreshold = 10
+
+    weak var delegate: StartUIDelegate?
+
+    let searchHeaderViewController = SearchHeaderViewController(userSelection: UserSelection())
+
+    let groupSelector = SearchGroupSelector()
+
+    let searchResultsViewController: SearchResultsViewController
+
+    var addressBookHelperType: AddressBookHelperProtocol.Type
+
+    let userSession: UserSession
+
+    let isFederationEnabled: Bool
+
+    let quickActionsBar = StartUIInviteActionBar()
+
+    let profilePresenter: ProfilePresenter
+    private(set) var activityIndicator: BlockingActivityIndicator!
+
+    let backgroundColor = SemanticColors.View.backgroundDefault
+
     var searchHeader: SearchHeaderViewController {
         searchHeaderViewController
     }
 
     var searchResults: SearchResultsViewController {
         searchResultsViewController
+    }
+
+    var showsGroupSelector: Bool {
+        SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Life cycle methods
@@ -121,11 +117,6 @@ final class StartUIViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.onDismissPressed()
         }, accessibilityLabel: L10n.Accessibility.ContactsList.CloseButton.description)
-    }
-
-    private func configGroupSelector() {
-        groupSelector.translatesAutoresizingMaskIntoConstraints = false
-        groupSelector.backgroundColor = backgroundColor
     }
 
     func setupViews() {
@@ -179,44 +170,6 @@ final class StartUIViewController: UIViewController {
         view.accessibilityViewIsModal = true
     }
 
-    private func createConstraints() {
-        [searchHeaderViewController.view, groupSelector, searchResultsViewController.view]
-            .forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
-
-        NSLayoutConstraint.activate([
-            searchHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchHeaderViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchHeaderViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-        ])
-
-        if showsGroupSelector {
-            NSLayoutConstraint.activate([
-                groupSelector.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
-                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor),
-            ])
-
-            NSLayoutConstraint.activate([
-                groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            ])
-        } else {
-            NSLayoutConstraint.activate([
-                searchResultsViewController.view.topAnchor
-                    .constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
-            ])
-        }
-
-        NSLayoutConstraint.activate([
-            searchResultsViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchResultsViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchResultsViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-    }
-
-    var showsGroupSelector: Bool {
-        SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
-    }
-
     func showKeyboardIfNeeded() {
         let conversationCount = userSession.conversationList().items.count
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
@@ -232,11 +185,6 @@ final class StartUIViewController: UIViewController {
         }
 
         view.setNeedsLayout()
-    }
-
-    private func onDismissPressed() {
-        _ = searchHeader.tokenField.resignFirstResponder()
-        navigationController?.dismiss(animated: true)
     }
 
     override func accessibilityPerformEscape() -> Bool {
@@ -277,6 +225,64 @@ final class StartUIViewController: UIViewController {
         } else {
             navigationController?.pushViewController(ContactsViewController(), animated: true)
         }
+    }
+
+    // MARK: Private
+
+    private var emptyResultView: EmptySearchResultsView!
+
+    private var navigationBarTitle: String? {
+        if let title = userSession.selfUser.membership?.team?.name {
+            return title
+        } else if let title = userSession.selfUser.name {
+            return title
+        }
+
+        return nil
+    }
+
+    private func configGroupSelector() {
+        groupSelector.translatesAutoresizingMaskIntoConstraints = false
+        groupSelector.backgroundColor = backgroundColor
+    }
+
+    private func createConstraints() {
+        [searchHeaderViewController.view, groupSelector, searchResultsViewController.view]
+            .forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
+
+        NSLayoutConstraint.activate([
+            searchHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchHeaderViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            searchHeaderViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+        ])
+
+        if showsGroupSelector {
+            NSLayoutConstraint.activate([
+                groupSelector.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
+                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor),
+            ])
+
+            NSLayoutConstraint.activate([
+                groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                searchResultsViewController.view.topAnchor
+                    .constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
+            ])
+        }
+
+        NSLayoutConstraint.activate([
+            searchResultsViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchResultsViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            searchResultsViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+
+    private func onDismissPressed() {
+        _ = searchHeader.tokenField.resignFirstResponder()
+        navigationController?.dismiss(animated: true)
     }
 }
 

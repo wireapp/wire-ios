@@ -17,9 +17,13 @@
 //
 
 final class UserSessionDependencies {
-    var caches: Caches
+    // MARK: Lifecycle
 
     init(caches: Caches) {
         self.caches = caches
     }
+
+    // MARK: Internal
+
+    var caches: Caches
 }

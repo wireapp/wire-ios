@@ -28,11 +28,11 @@ protocol GroupDetailsFooterViewDelegate: AnyObject {
 // MARK: - GroupDetailsFooterView
 
 final class GroupDetailsFooterView: ConversationDetailFooterView {
-    weak var delegate: GroupDetailsFooterViewDelegate?
-
     enum Action {
         case more, invite
     }
+
+    weak var delegate: GroupDetailsFooterViewDelegate?
 
     func update(for conversation: GroupDetailsConversationType) {
         guard let user = SelfUser.provider?.providedSelfUser else {

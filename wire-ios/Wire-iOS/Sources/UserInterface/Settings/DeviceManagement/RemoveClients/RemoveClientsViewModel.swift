@@ -21,8 +21,7 @@ import WireSyncEngine
 
 extension RemoveClientsViewController {
     final class ViewModel: NSObject {
-        private let removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
-        private(set) var clients: [UserClient] = []
+        // MARK: Lifecycle
 
         init(clientsList: [UserClient]) {
             self.removeUserClientUseCase = ZMUserSession.shared()?.removeUserClient
@@ -31,19 +30,9 @@ extension RemoveClientsViewController {
             initalizeProperties(clientsList)
         }
 
-        private func initalizeProperties(_ clientsList: [UserClient]) {
-            clients = clientsList
-                .filter { !$0.isSelfClient() }
-                .sorted(by: {
-                    guard
-                        let leftDate = $0.activationDate,
-                        let rightDate = $1.activationDate
-                    else {
-                        return false
-                    }
-                    return leftDate.compare(rightDate) == .orderedDescending
-                })
-        }
+        // MARK: Internal
+
+        private(set) var clients: [UserClient] = []
 
         func removeUserClient(_ userClient: UserClient, password: String) async throws {
             let clientId = await userClient.managedObjectContext?.perform {
@@ -57,6 +46,24 @@ extension RemoveClientsViewController {
                 clientId: clientId,
                 password: password
             )
+        }
+
+        // MARK: Private
+
+        private let removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
+
+        private func initalizeProperties(_ clientsList: [UserClient]) {
+            clients = clientsList
+                .filter { !$0.isSelfClient() }
+                .sorted(by: {
+                    guard
+                        let leftDate = $0.activationDate,
+                        let rightDate = $1.activationDate
+                    else {
+                        return false
+                    }
+                    return leftDate.compare(rightDate) == .orderedDescending
+                })
         }
     }
 }

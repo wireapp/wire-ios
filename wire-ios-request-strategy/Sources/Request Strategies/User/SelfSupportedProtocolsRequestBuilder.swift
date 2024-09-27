@@ -20,12 +20,7 @@ import Foundation
 import WireTransport
 
 public struct SelfSupportedProtocolsRequestBuilder {
-    private enum Constant {
-        static let path = "/self/supported-protocols"
-    }
-
-    var apiVersion: APIVersion
-    var supportedProtocols: Set<MessageProtocol>
+    // MARK: Lifecycle
 
     public init(
         apiVersion: APIVersion,
@@ -35,9 +30,7 @@ public struct SelfSupportedProtocolsRequestBuilder {
         self.supportedProtocols = supportedProtocols
     }
 
-    private var isAPIVersionSupported: Bool {
-        apiVersion >= .v5
-    }
+    // MARK: Public
 
     // MARK: Funcs
 
@@ -64,5 +57,20 @@ public struct SelfSupportedProtocolsRequestBuilder {
             keys: keys,
             transportRequest: transportRequest
         )
+    }
+
+    // MARK: Internal
+
+    var apiVersion: APIVersion
+    var supportedProtocols: Set<MessageProtocol>
+
+    // MARK: Private
+
+    private enum Constant {
+        static let path = "/self/supported-protocols"
+    }
+
+    private var isAPIVersionSupported: Bool {
+        apiVersion >= .v5
     }
 }

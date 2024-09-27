@@ -35,11 +35,7 @@ public protocol PushChannelServiceProtocol {
 /// A service for creating push channel connections to a specific backend.
 
 public final class PushChannelService: NSObject, PushChannelServiceProtocol {
-    private let backendWebSocketURL: URL
-    private let authenticationStorage: any AuthenticationStorage
-    private var urlSession: URLSession!
-
-    private var pushChannelsByTask = [URLSessionWebSocketTask: PushChannel]()
+    // MARK: Lifecycle
 
     public init(
         backendWebSocketURL: URL,
@@ -73,6 +69,8 @@ public final class PushChannelService: NSObject, PushChannelServiceProtocol {
         urlSession.invalidateAndCancel()
     }
 
+    // MARK: Public
+
     public func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol {
         guard let url = request.url else {
             throw PushChannelServiceError.invalidRequest
@@ -96,6 +94,14 @@ public final class PushChannelService: NSObject, PushChannelServiceProtocol {
         pushChannelsByTask[task] = pushChannel
         return pushChannel
     }
+
+    // MARK: Private
+
+    private let backendWebSocketURL: URL
+    private let authenticationStorage: any AuthenticationStorage
+    private var urlSession: URLSession!
+
+    private var pushChannelsByTask = [URLSessionWebSocketTask: PushChannel]()
 }
 
 // MARK: URLSessionWebSocketDelegate

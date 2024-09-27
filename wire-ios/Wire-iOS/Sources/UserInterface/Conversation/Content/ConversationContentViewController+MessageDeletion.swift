@@ -62,7 +62,14 @@ extension CollectionCell: SelectableView {
 // MARK: - DeletionDialogPresenter
 
 final class DeletionDialogPresenter: NSObject {
-    private weak var sourceViewController: UIViewController?
+    // MARK: Lifecycle
+
+    init(sourceViewController: UIViewController) {
+        self.sourceViewController = sourceViewController
+        super.init()
+    }
+
+    // MARK: Internal
 
     func deleteAlert(
         message: ZMConversationMessage,
@@ -103,11 +110,6 @@ final class DeletionDialogPresenter: NSObject {
         return alert
     }
 
-    init(sourceViewController: UIViewController) {
-        self.sourceViewController = sourceViewController
-        super.init()
-    }
-
     /// Presents a `UIAlertController` of type action sheet with the options to delete a message everywhere, locally
     /// or to cancel. An optional completion block can be provided to get notified when an action has been selected.
     /// The delete everywhere option is only shown if this action is allowed for the input message.
@@ -132,17 +134,23 @@ final class DeletionDialogPresenter: NSObject {
         )
         sourceViewController?.present(alert, animated: true)
     }
+
+    // MARK: Private
+
+    private weak var sourceViewController: UIViewController?
 }
 
 // MARK: - AlertAction
 
 private enum AlertAction {
+    case delete(DeletionType), cancel
+
+    // MARK: Internal
+
     enum DeletionType {
         case local
         case everywhere
     }
-
-    case delete(DeletionType), cancel
 }
 
 // MARK: - DeletionConfiguration
@@ -152,6 +160,8 @@ private enum AlertAction {
 // as there is no way to enforce a non-empty option set.
 private enum DeletionConfiguration {
     case hide, delete, hideAndDelete
+
+    // MARK: Internal
 
     var showHide: Bool {
         switch self {

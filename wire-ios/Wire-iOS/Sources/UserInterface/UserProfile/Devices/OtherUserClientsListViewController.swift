@@ -25,21 +25,7 @@ import WireSyncEngine
 final class OtherUserClientsListViewController: UIViewController,
     UICollectionViewDelegateFlowLayout,
     UICollectionViewDataSource {
-    private let headerView: ParticipantDeviceHeaderView
-    private let collectionView = UICollectionView(forGroupedSections: ())
-    private var clients: [UserClientType]
-
-    private var tokens: [Any?] = []
-    private var user: UserType
-
-    private let userSession: UserSession
-    private let contextProvider: ContextProvider?
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
-
-    private let mlsGroupId: MLSGroupID?
+    // MARK: Lifecycle
 
     init(
         user: UserType,
@@ -74,6 +60,12 @@ final class OtherUserClientsListViewController: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -85,49 +77,6 @@ final class OtherUserClientsListViewController: UIViewController,
         super.viewWillAppear(animated)
 
         (user as? ZMUser)?.fetchUserClients()
-    }
-
-    private func setupViews() {
-        headerView.translatesAutoresizingMaskIntoConstraints = false
-        headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.count == 0
-
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
-        UserClientCell.register(in: collectionView)
-        collectionView.register(
-            CollectionViewCellAdapter.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier
-        )
-
-        view.addSubview(collectionView)
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-    }
-
-    private func createConstraints() {
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-    }
-
-    private static func clientsSortedByRelevance(for user: UserType) -> [UserClientType] {
-        user.allClients.sortedByRelevance().filter { !$0.isSelfClient() }
-    }
-
-    private func updateCertificatesForUserClients() {
-        Task {
-            if let mlsGroupId {
-                clients = await clients.updateCertificates(
-                    mlsGroupId: mlsGroupId, userSession: userSession
-                )
-            }
-            refreshView()
-        }
     }
 
     @MainActor
@@ -184,6 +133,63 @@ final class OtherUserClientsListViewController: UIViewController,
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let client = clients[indexPath.row] as? UserClient else { return }
         openDetailsOfClient(client)
+    }
+
+    // MARK: Private
+
+    private let headerView: ParticipantDeviceHeaderView
+    private let collectionView = UICollectionView(forGroupedSections: ())
+    private var clients: [UserClientType]
+
+    private var tokens: [Any?] = []
+    private var user: UserType
+
+    private let userSession: UserSession
+    private let contextProvider: ContextProvider?
+
+    private let mlsGroupId: MLSGroupID?
+
+    private static func clientsSortedByRelevance(for user: UserType) -> [UserClientType] {
+        user.allClients.sortedByRelevance().filter { !$0.isSelfClient() }
+    }
+
+    private func setupViews() {
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.count == 0
+
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
+        UserClientCell.register(in: collectionView)
+        collectionView.register(
+            CollectionViewCellAdapter.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier
+        )
+
+        view.addSubview(collectionView)
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+    }
+
+    private func createConstraints() {
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+
+    private func updateCertificatesForUserClients() {
+        Task {
+            if let mlsGroupId {
+                clients = await clients.updateCertificates(
+                    mlsGroupId: mlsGroupId, userSession: userSession
+                )
+            }
+            refreshView()
+        }
     }
 
     private func openDetailsOfClient(_ client: UserClient) {

@@ -22,12 +22,7 @@ import XCTest
 @testable import Wire
 
 final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: LegalHoldDetailsViewController!
-    private var selfUser: MockUserType!
-    private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -137,4 +132,13 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
                 line: #line
             )
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: LegalHoldDetailsViewController!
+    private var selfUser: MockUserType!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 }

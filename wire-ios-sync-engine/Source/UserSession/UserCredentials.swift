@@ -22,11 +22,7 @@ import Foundation
 
 @objcMembers
 public class UserCredentials: NSObject {
-    public var email: String?
-    public var password: String?
-    public var phoneNumber: String?
-    public var phoneNumberVerificationCode: String?
-    public var emailVerificationCode: String?
+    // MARK: Lifecycle
 
     public init(
         email: String? = nil,
@@ -42,16 +38,13 @@ public class UserCredentials: NSObject {
         self.emailVerificationCode = emailVerificationCode
     }
 
-    override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? UserCredentials else {
-            return false
-        }
-        return email == other.email &&
-            password == other.password &&
-            phoneNumber == other.phoneNumber &&
-            phoneNumberVerificationCode == other.phoneNumberVerificationCode &&
-            emailVerificationCode == other.emailVerificationCode
-    }
+    // MARK: Public
+
+    public var email: String?
+    public var password: String?
+    public var phoneNumber: String?
+    public var phoneNumberVerificationCode: String?
+    public var emailVerificationCode: String?
 
     override public var hash: Int {
         var hasher = Hasher()
@@ -71,6 +64,17 @@ public class UserCredentials: NSObject {
 
     public var credentialWithPhone: Bool {
         phoneNumber != nil
+    }
+
+    override public func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? UserCredentials else {
+            return false
+        }
+        return email == other.email &&
+            password == other.password &&
+            phoneNumber == other.phoneNumber &&
+            phoneNumberVerificationCode == other.phoneNumberVerificationCode &&
+            emailVerificationCode == other.emailVerificationCode
     }
 }
 

@@ -100,14 +100,15 @@ final class SessionManagerAccountDeletionTests: IntegrationTest {
 // MARK: - SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThreshold
 
 class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThreshold: IntegrationTest {
-    private var threshold: Int? = 2
-    override func setUp() {
-        super.setUp()
-        createSelfUserAndConversation()
-    }
+    // MARK: Internal
 
     override var sessionManagerConfiguration: SessionManagerConfiguration {
         SessionManagerConfiguration(failedPasswordThresholdBeforeWipe: threshold)
+    }
+
+    override func setUp() {
+        super.setUp()
+        createSelfUserAndConversation()
     }
 
     func testThatItDeletesAccount_IfLimitIsReached() {
@@ -148,18 +149,22 @@ class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThr
 
         XCTAssertTrue(FileManager.default.fileExists(atPath: accountFolder.path))
     }
+
+    // MARK: Private
+
+    private var threshold: Int? = 2
 }
 
 // MARK: - SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictionFailure
 
 class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictionFailure: IntegrationTest {
+    override var sessionManagerConfiguration: SessionManagerConfiguration {
+        SessionManagerConfiguration(wipeOnCookieInvalid: true)
+    }
+
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()
-    }
-
-    override var sessionManagerConfiguration: SessionManagerConfiguration {
-        SessionManagerConfiguration(wipeOnCookieInvalid: true)
     }
 
     func testThatItDeletesTheAccount_OnLaunchIfAccessTokenHasExpired() {

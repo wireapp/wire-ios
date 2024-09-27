@@ -19,12 +19,14 @@
 import UIKit
 
 final class CrossfadeTransition: NSObject, UIViewControllerAnimatedTransitioning {
-    private let duration: TimeInterval
+    // MARK: Lifecycle
 
     init(duration: TimeInterval = 0.35) {
         self.duration = duration
         super.init()
     }
+
+    // MARK: Internal
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         duration
@@ -56,4 +58,8 @@ final class CrossfadeTransition: NSObject, UIViewControllerAnimatedTransitioning
             transitionContext.completeTransition(true)
         })
     }
+
+    // MARK: Private
+
+    private let duration: TimeInterval
 }

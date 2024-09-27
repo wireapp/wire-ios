@@ -26,13 +26,7 @@ import WireSystem
 
 /// Presents debug alerts
 enum DebugAlert {
-    private struct Action {
-        let text: String
-        let type: UIAlertAction.Style
-        let action: (() -> Void)?
-    }
-
-    private static var isShown = false
+    // MARK: Internal
 
     /// Presents an alert to send logs, if in developer mode, otherwise do nothing
     static func showSendLogsMessage(
@@ -65,6 +59,34 @@ enum DebugAlert {
         )
     }
 
+    static func displayFallbackActivityController(
+        email: String,
+        from controller: UIViewController,
+        popoverPresentationConfiguration: PopoverPresentationControllerConfiguration
+    ) {
+        let alert = UIAlertController(
+            title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
+            message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
+            preferredStyle: .alert
+        )
+        alert.addAction(.cancel())
+        alert.addAction(makeFallbackAlertAction(
+            from: controller,
+            popoverPresentationConfiguration: popoverPresentationConfiguration
+        ))
+        controller.present(alert, animated: true, completion: nil)
+    }
+
+    // MARK: Private
+
+    private struct Action {
+        let text: String
+        let type: UIAlertAction.Style
+        let action: (() -> Void)?
+    }
+
+    private static var isShown = false
+
     /// Presents a debug alert with configurable messages and events.
     /// If not in developer mode, does nothing.
     private static func show(
@@ -96,24 +118,6 @@ enum DebugAlert {
             alert.addAction(cancelAction)
         }
 
-        controller.present(alert, animated: true, completion: nil)
-    }
-
-    static func displayFallbackActivityController(
-        email: String,
-        from controller: UIViewController,
-        popoverPresentationConfiguration: PopoverPresentationControllerConfiguration
-    ) {
-        let alert = UIAlertController(
-            title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
-            message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
-            preferredStyle: .alert
-        )
-        alert.addAction(.cancel())
-        alert.addAction(makeFallbackAlertAction(
-            from: controller,
-            popoverPresentationConfiguration: popoverPresentationConfiguration
-        ))
         controller.present(alert, animated: true, completion: nil)
     }
 
@@ -153,8 +157,7 @@ enum DebugAlert {
 
 /// Sends debug logs by email
 final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
-    private var mailViewController: MFMailComposeViewController?
-    private static var senderInstance: DebugLogSender?
+    // MARK: Internal
 
     /// Sends recorded logs by email
     static func sendLogsByEmail(
@@ -210,4 +213,10 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         controller.dismiss(animated: true)
         type(of: self).senderInstance = nil
     }
+
+    // MARK: Private
+
+    private static var senderInstance: DebugLogSender?
+
+    private var mailViewController: MFMailComposeViewController?
 }

@@ -35,23 +35,7 @@ public protocol LAContextStorable: AnyObject {
 // that we could not afford in this case.
 
 public final class LAContextStorage: LAContextStorable {
-    public var context: LAContext? {
-        get {
-            internalQueue.sync { internalContext }
-        }
-        set {
-            internalQueue.sync { internalContext = newValue }
-        }
-    }
-
-    private let internalQueue = DispatchQueue(
-        label: "LAContextStorage.internal",
-        qos: .userInteractive
-    )
-    private var internalContext: LAContext?
-
-    private let notificationCenter: NotificationCenter
-    private var observerToken: NSObjectProtocol?
+    // MARK: Lifecycle
 
     // MARK: Init
 
@@ -67,6 +51,34 @@ public final class LAContextStorage: LAContextStorable {
         }
     }
 
+    // MARK: Public
+
+    public var context: LAContext? {
+        get {
+            internalQueue.sync { internalContext }
+        }
+        set {
+            internalQueue.sync { internalContext = newValue }
+        }
+    }
+
+    // MARK: Funcs
+
+    public func clear() {
+        context = nil
+    }
+
+    // MARK: Private
+
+    private let internalQueue = DispatchQueue(
+        label: "LAContextStorage.internal",
+        qos: .userInteractive
+    )
+    private var internalContext: LAContext?
+
+    private let notificationCenter: NotificationCenter
+    private var observerToken: NSObjectProtocol?
+
     private func setupObservers() {
         observerToken = notificationCenter.addObserver(
             forName: UIApplication.didEnterBackgroundNotification,
@@ -76,11 +88,5 @@ public final class LAContextStorage: LAContextStorable {
                 self?.clear()
             }
         )
-    }
-
-    // MARK: Funcs
-
-    public func clear() {
-        context = nil
     }
 }

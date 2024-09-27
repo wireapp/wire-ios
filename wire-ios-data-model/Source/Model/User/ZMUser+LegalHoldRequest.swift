@@ -71,41 +71,7 @@ public enum UserLegalHoldStatus: Equatable {
 /// Describes a request to enable legal hold, created from the update event.
 
 public struct LegalHoldRequest: Codable, Hashable {
-    /// Represents a prekey in the legal hold request.
-
-    public struct Prekey: Codable, Hashable {
-        /// The ID of the key.
-        public let id: Int
-
-        /// The body of the key.
-        public let key: Data
-
-        public init(id: Int, key: Data) {
-            self.id = id
-            self.key = key
-        }
-    }
-
-    /// Represent a client in the legal hold request.
-
-    private struct Client: Codable, Hashable {
-        /// The ID of the client
-        let id: String
-    }
-
-    private let client: Client
-
-    /// The ID of the legal hold client.
-    public var clientIdentifier: String {
-        client.id
-    }
-
-    /// The last prekey for the legal hold client.
-    public let lastPrekey: Prekey
-    /// The user id of the user receiving the legal hold request
-    public let target: UUID?
-    /// The user id of the admin that issued the the legal hold request
-    public let requester: UUID?
+    // MARK: Lifecycle
 
     // MARK: Initialization
 
@@ -116,14 +82,40 @@ public struct LegalHoldRequest: Codable, Hashable {
         self.lastPrekey = lastPrekey
     }
 
-    // MARK: Codable
+    // MARK: Public
 
-    private enum CodingKeys: String, CodingKey {
-        case target = "id"
-        case requester
-        case client
-        case lastPrekey = "last_prekey"
+    /// Represents a prekey in the legal hold request.
+
+    public struct Prekey: Codable, Hashable {
+        // MARK: Lifecycle
+
+        public init(id: Int, key: Data) {
+            self.id = id
+            self.key = key
+        }
+
+        // MARK: Public
+
+        /// The ID of the key.
+        public let id: Int
+
+        /// The body of the key.
+        public let key: Data
     }
+
+    /// The last prekey for the legal hold client.
+    public let lastPrekey: Prekey
+    /// The user id of the user receiving the legal hold request
+    public let target: UUID?
+    /// The user id of the admin that issued the the legal hold request
+    public let requester: UUID?
+
+    /// The ID of the legal hold client.
+    public var clientIdentifier: String {
+        client.id
+    }
+
+    // MARK: Internal
 
     static func decode(from data: Data) -> LegalHoldRequest? {
         let decoder = JSONDecoder()
@@ -136,6 +128,26 @@ public struct LegalHoldRequest: Codable, Hashable {
         encoder.dataEncodingStrategy = .base64
         return try? encoder.encode(self)
     }
+
+    // MARK: Private
+
+    /// Represent a client in the legal hold request.
+
+    private struct Client: Codable, Hashable {
+        /// The ID of the client
+        let id: String
+    }
+
+    // MARK: Codable
+
+    private enum CodingKeys: String, CodingKey {
+        case target = "id"
+        case requester
+        case client
+        case lastPrekey = "last_prekey"
+    }
+
+    private let client: Client
 }
 
 extension ZMUserKeys {

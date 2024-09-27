@@ -20,6 +20,15 @@ import Foundation
 import WireDataModel
 
 final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversationGuestLinkAction> {
+    // MARK: - Request handling
+
+    struct ConversationCodeInfo: Decodable {
+        let code: String
+        let has_password: Bool
+        let key: String
+        let uri: String?
+    }
+
     // MARK: - Request generation
 
     override func request(
@@ -50,15 +59,6 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
                 apiVersion: apiVersion.rawValue
             )
         }
-    }
-
-    // MARK: - Request handling
-
-    struct ConversationCodeInfo: Decodable {
-        let code: String
-        let has_password: Bool
-        let key: String
-        let uri: String?
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: CreateConversationGuestLinkAction) {

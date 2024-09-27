@@ -20,53 +20,7 @@ import UIKit
 import WireDesign
 
 final class TeamImageView: UIImageView {
-    enum TeamImageViewStyle {
-        case small
-        case big
-    }
-
-    // TODO: [WPB-6770]: Maybe this type could eventually be merged with `AvatarImageView.Avatar`
-    enum Content {
-        case teamImage(Data)
-        case teamName(String)
-
-        init?(imageData: Data?, name: String?) {
-            if let imageData {
-                self = .teamImage(imageData)
-            } else if let name, !name.isEmpty {
-                self = .teamName(name)
-            } else {
-                return nil
-            }
-        }
-    }
-
-    var content: Content {
-        didSet { updateImage() }
-    }
-
-    private var lastLayoutBounds: CGRect = .zero
-    let initialLabel = UILabel()
-    var style: TeamImageViewStyle = .small {
-        didSet { applyStyle(style: style) }
-    }
-
-    func applyStyle(style: TeamImageViewStyle) {
-        switch style {
-        case .small:
-            initialLabel.font = .smallSemiboldFont
-        case .big:
-            initialLabel.font = .mediumLightLargeTitleFont
-        }
-
-        initialLabel.textColor = SemanticColors.Label.textDefault
-        backgroundColor = SemanticColors.View.backgroundDefaultWhite
-    }
-
-    private func updateRoundCorner() {
-        layer.cornerRadius = 4
-        clipsToBounds = true
-    }
+    // MARK: Lifecycle
 
     init(content: Content, style: TeamImageViewStyle = .small) {
         self.content = content
@@ -97,6 +51,53 @@ final class TeamImageView: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    enum TeamImageViewStyle {
+        case small
+        case big
+    }
+
+    // TODO: [WPB-6770]: Maybe this type could eventually be merged with `AvatarImageView.Avatar`
+    enum Content {
+        case teamImage(Data)
+        case teamName(String)
+
+        // MARK: Lifecycle
+
+        init?(imageData: Data?, name: String?) {
+            if let imageData {
+                self = .teamImage(imageData)
+            } else if let name, !name.isEmpty {
+                self = .teamName(name)
+            } else {
+                return nil
+            }
+        }
+    }
+
+    let initialLabel = UILabel()
+
+    var content: Content {
+        didSet { updateImage() }
+    }
+
+    var style: TeamImageViewStyle = .small {
+        didSet { applyStyle(style: style) }
+    }
+
+    func applyStyle(style: TeamImageViewStyle) {
+        switch style {
+        case .small:
+            initialLabel.font = .smallSemiboldFont
+        case .big:
+            initialLabel.font = .mediumLightLargeTitleFont
+        }
+
+        initialLabel.textColor = SemanticColors.Label.textDefault
+        backgroundColor = SemanticColors.View.backgroundDefaultWhite
+    }
+
     override func layoutSubviews() {
         super.layoutSubviews()
 
@@ -104,6 +105,15 @@ final class TeamImageView: UIImageView {
             lastLayoutBounds = bounds
             updateRoundCorner()
         }
+    }
+
+    // MARK: Private
+
+    private var lastLayoutBounds: CGRect = .zero
+
+    private func updateRoundCorner() {
+        layer.cornerRadius = 4
+        clipsToBounds = true
     }
 
     private func updateImage() {

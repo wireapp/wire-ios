@@ -21,7 +21,7 @@ import Foundation
 /// A builder of `PushChannelAPI`.
 
 public struct PushChannelAPIBuilder {
-    private let pushChannelService: PushChannelService
+    // MARK: Lifecycle
 
     /// Create a new builder.
     ///
@@ -31,6 +31,8 @@ public struct PushChannelAPIBuilder {
         self.pushChannelService = pushChannelService
     }
 
+    // MARK: Public
+
     /// Make a `PushChannelAPI`.
     ///
     /// - Returns: A `PushChannelAPI`.
@@ -38,4 +40,8 @@ public struct PushChannelAPIBuilder {
     public func makeAPI() -> any PushChannelAPI {
         PushChannelAPIImpl(pushChannelService: pushChannelService)
     }
+
+    // MARK: Private
+
+    private let pushChannelService: PushChannelService
 }

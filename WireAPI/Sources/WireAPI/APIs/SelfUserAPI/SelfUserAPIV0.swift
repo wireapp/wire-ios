@@ -21,11 +21,15 @@ import Foundation
 // MARK: - SelfUserAPIV0
 
 class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Internal
+
+    let httpClient: any HTTPClient
 
     var apiVersion: APIVersion {
         .v0
@@ -52,6 +56,19 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
 // MARK: - SelfUserV0
 
 struct SelfUserV0: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case accentID = "accent_id"
+        case assets, deleted, email
+        case expiresAt = "expires_at"
+        case handle, id, locale
+        case managedBy = "managed_by"
+        case name, phone, picture
+        case qualifiedID = "qualified_id"
+        case service
+        case ssoID = "sso_id"
+        case teamID = "team"
+    }
+
     let accentID: Int
     let assets: [UserAsset]?
     let deleted: Bool?
@@ -68,19 +85,6 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let service: ServiceResponseV0?
     let ssoID: SSOIDV0?
     let teamID: UUID?
-
-    enum CodingKeys: String, CodingKey {
-        case accentID = "accent_id"
-        case assets, deleted, email
-        case expiresAt = "expires_at"
-        case handle, id, locale
-        case managedBy = "managed_by"
-        case name, phone, picture
-        case qualifiedID = "qualified_id"
-        case service
-        case ssoID = "sso_id"
-        case teamID = "team"
-    }
 
     func toAPIModel() -> SelfUser {
         SelfUser(
@@ -109,6 +113,8 @@ enum ManagedByV0: String, Decodable, ToAPIModelConvertible {
     case wire
     case scim
 
+    // MARK: Internal
+
     func toAPIModel() -> ManagingSystem {
         switch self {
         case .wire:
@@ -122,14 +128,14 @@ enum ManagedByV0: String, Decodable, ToAPIModelConvertible {
 // MARK: - SSOIDV0
 
 struct SSOIDV0: Decodable, ToAPIModelConvertible {
-    let scimExternalId: String
-    let subject: String
-    let tenant: String
-
     enum CodingKeys: String, CodingKey {
         case scimExternalId = "scim_external_id"
         case subject, tenant
     }
+
+    let scimExternalId: String
+    let subject: String
+    let tenant: String
 
     func toAPIModel() -> SSOID {
         SSOID(

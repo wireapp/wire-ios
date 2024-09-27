@@ -22,7 +22,7 @@ import XCTest
 @testable import Wire
 
 final class BackupViewControllerTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -41,6 +41,10 @@ final class BackupViewControllerTests: XCTestCase {
         // WHEN && THEN
         snapshotHelper.verify(matching: sut.view)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: Helpers
 

@@ -96,10 +96,10 @@ extension ClaimMLSKeyPackageActionHandler {
     // MARK: - Payload
 
     struct ResponsePayload: Codable {
-        let keyPackages: [KeyPackage]
-
         enum CodingKeys: String, CodingKey {
             case keyPackages = "key_packages"
         }
+
+        let keyPackages: [KeyPackage]
     }
 }

@@ -43,6 +43,8 @@ public protocol MessageSenderInterface {
 // MARK: - MessageSender
 
 public final class MessageSender: MessageSenderInterface {
+    // MARK: Lifecycle
+
     public init(
         apiProvider: APIProviderInterface,
         clientRegistrationDelegate: ClientRegistrationDelegate,
@@ -60,15 +62,7 @@ public final class MessageSender: MessageSenderInterface {
         self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
     }
 
-    private let apiProvider: APIProviderInterface
-    private let context: NSManagedObjectContext
-    private let clientRegistrationDelegate: ClientRegistrationDelegate
-    private let sessionEstablisher: SessionEstablisherInterface
-    private let messageDependencyResolver: MessageDependencyResolverInterface
-    private let quickSyncObserver: QuickSyncObserverInterface
-    private let proteusPayloadProcessor = MessageSendingStatusPayloadProcessor()
-    private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
-    private let logAttributesBuilder: MessageLogAttributesBuilder
+    // MARK: Public
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
@@ -111,6 +105,18 @@ public final class MessageSender: MessageSenderInterface {
         // might have been waiting for this message to be sent.
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
+
+    // MARK: Private
+
+    private let apiProvider: APIProviderInterface
+    private let context: NSManagedObjectContext
+    private let clientRegistrationDelegate: ClientRegistrationDelegate
+    private let sessionEstablisher: SessionEstablisherInterface
+    private let messageDependencyResolver: MessageDependencyResolverInterface
+    private let quickSyncObserver: QuickSyncObserverInterface
+    private let proteusPayloadProcessor = MessageSendingStatusPayloadProcessor()
+    private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
+    private let logAttributesBuilder: MessageLogAttributesBuilder
 
     private func attemptToSend(message: any SendableMessage) async throws {
         let messageProtocol = await context.perform { message.conversation?.messageProtocol }

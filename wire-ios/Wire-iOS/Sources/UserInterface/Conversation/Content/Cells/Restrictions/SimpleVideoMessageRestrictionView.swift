@@ -20,7 +20,7 @@ import UIKit
 import WireDesign
 
 final class SimpleVideoMessageRestrictionView: BaseMessageRestrictionView {
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {
         super.init(messageType: .video)
@@ -30,6 +30,8 @@ final class SimpleVideoMessageRestrictionView: BaseMessageRestrictionView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
 
     // MARK: - Helpers
 

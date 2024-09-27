@@ -19,6 +19,18 @@
 import XCTest
 
 final class Date_TransportCodingTests: XCTestCase {
+    var gmt: TimeZone {
+        if #available(iOS 16, *) {
+            .gmt
+        } else {
+            .init(secondsFromGMT: 0)!
+        }
+    }
+
+    var cet: TimeZone {
+        .init(secondsFromGMT: 2 * 3600)!
+    }
+
     func testThatTransportDatesCanBeParsed_0() throws {
         let date = try XCTUnwrap(Date(transportString: "2014-03-14T16:47:37.573Z"))
         let components = Calendar.current.dateComponents(in: gmt, from: date)
@@ -102,17 +114,5 @@ final class Date_TransportCodingTests: XCTestCase {
             Date(timeIntervalSinceReferenceDate: 419_244_304.502).transportString(),
             "2014-04-15T08:45:04.502Z"
         )
-    }
-
-    var gmt: TimeZone {
-        if #available(iOS 16, *) {
-            .gmt
-        } else {
-            .init(secondsFromGMT: 0)!
-        }
-    }
-
-    var cet: TimeZone {
-        .init(secondsFromGMT: 2 * 3600)!
     }
 }

@@ -22,12 +22,7 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class OneOnOneMigratorTests: XCTestCase {
-    private let coreDataStackHelper = CoreDataStackHelper()
-
-    private var coreDataStack: CoreDataStack!
-    private var syncContext: NSManagedObjectContext!
-
-    private var mockMLSService: MockMLSServiceInterface!
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -252,6 +247,35 @@ final class OneOnOneMigratorTests: XCTestCase {
         withExtendedLifetime(handler) {}
     }
 
+    func createProtheusConnection(
+        status: ZMConnectionStatus,
+        to user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> (ZMConnection, ZMConversation) {
+        let connection = ZMConnection.insertNewObject(in: context)
+        connection.to = user
+        connection.status = status
+        connection.message = "Connect to me"
+        connection.lastUpdateDate = .now
+
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .connection
+        conversation.remoteIdentifier = .create()
+        conversation.domain = "local@domain.com"
+        conversation.oneOnOneUser = connection.to
+
+        return (connection, conversation)
+    }
+
+    // MARK: Private
+
+    private let coreDataStackHelper = CoreDataStackHelper()
+
+    private var coreDataStack: CoreDataStack!
+    private var syncContext: NSManagedObjectContext!
+
+    private var mockMLSService: MockMLSServiceInterface!
+
     // MARK: - Core Data Objects
 
     private func createConversations(
@@ -287,26 +311,6 @@ final class OneOnOneMigratorTests: XCTestCase {
                 mlsConversation
             )
         }
-    }
-
-    func createProtheusConnection(
-        status: ZMConnectionStatus,
-        to user: ZMUser,
-        in context: NSManagedObjectContext
-    ) -> (ZMConnection, ZMConversation) {
-        let connection = ZMConnection.insertNewObject(in: context)
-        connection.to = user
-        connection.status = status
-        connection.message = "Connect to me"
-        connection.lastUpdateDate = .now
-
-        let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.conversationType = .connection
-        conversation.remoteIdentifier = .create()
-        conversation.domain = "local@domain.com"
-        conversation.oneOnOneUser = connection.to
-
-        return (connection, conversation)
     }
 
     private func createMLSConversation(

@@ -29,22 +29,7 @@ import WireUtilities
 /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/698908878/Use+case+remove+stale+participants+MLS
 
 class MLSConferenceStaleParticipantsRemover: Subscriber {
-    typealias Input = MLSConferenceParticipantsInfo
-    typealias Failure = Never
-
-    private let timerManager = TimerManager<MLSClientID>()
-    private let logger = WireLogger.mls
-    private let removalTimeout: TimeInterval
-    private let mlsService: MLSServiceInterface
-    private let syncContext: NSManagedObjectContext
-    private var previousInput: MLSConferenceParticipantsInfo?
-    private var subscription: Subscription?
-
-    private static let defaultRemovalTimeout: TimeInterval = 180
-
-    private typealias TimerError = TimerManager<MLSClientID>.TimerError
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         mlsService: MLSServiceInterface,
@@ -59,6 +44,11 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     deinit {
         stopSubscribing()
     }
+
+    // MARK: Internal
+
+    typealias Input = MLSConferenceParticipantsInfo
+    typealias Failure = Never
 
     // MARK: - Subscriber implementation
 
@@ -88,6 +78,20 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     func cancelPendingRemovals() {
         timerManager.cancelAllTimers()
     }
+
+    // MARK: Private
+
+    private typealias TimerError = TimerManager<MLSClientID>.TimerError
+
+    private static let defaultRemovalTimeout: TimeInterval = 180
+
+    private let timerManager = TimerManager<MLSClientID>()
+    private let logger = WireLogger.mls
+    private let removalTimeout: TimeInterval
+    private let mlsService: MLSServiceInterface
+    private let syncContext: NSManagedObjectContext
+    private var previousInput: MLSConferenceParticipantsInfo?
+    private var subscription: Subscription?
 
     // MARK: - Participants change handling
 

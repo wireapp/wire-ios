@@ -23,22 +23,7 @@ import WireDesign
 // MARK: - ConversationFileMessageCell
 
 final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
-    struct Configuration {
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
-    }
-
-    private var containerView = UIView()
-    private let fileTransferView = FileTransferView(frame: .zero)
-    private let obfuscationView = ObfuscationView(icon: .paperclip)
-    private let restrictionView = FileMessageRestrictionView()
-
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
-
-    var isSelected = false
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,6 +35,49 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    struct Configuration {
+        let message: ZMConversationMessage
+
+        var isObfuscated: Bool {
+            message.isObfuscated
+        }
+    }
+
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage?
+
+    var isSelected = false
+
+    override var tintColor: UIColor! {
+        didSet {
+            fileTransferView.tintColor = tintColor
+        }
+    }
+
+    var selectionRect: CGRect {
+        fileTransferView.bounds
+    }
+
+    func configure(with object: Configuration, animated: Bool) {
+        if object.isObfuscated {
+            setup(obfuscationView)
+        } else if !object.message.canBeShared {
+            setup(restrictionView)
+            restrictionView.configure(for: object.message)
+        } else {
+            fileTransferView.configure(for: object.message, isInitial: false)
+        }
+    }
+
+    // MARK: Private
+
+    private var containerView = UIView()
+    private let fileTransferView = FileTransferView(frame: .zero)
+    private let obfuscationView = ObfuscationView(icon: .paperclip)
+    private let restrictionView = FileMessageRestrictionView()
 
     private func configureSubview() {
         shape = .rounded(radius: 12)
@@ -78,17 +106,6 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
         ])
     }
 
-    func configure(with object: Configuration, animated: Bool) {
-        if object.isObfuscated {
-            setup(obfuscationView)
-        } else if !object.message.canBeShared {
-            setup(restrictionView)
-            restrictionView.configure(for: object.message)
-        } else {
-            fileTransferView.configure(for: object.message, isInitial: false)
-        }
-    }
-
     private func setup(_ view: UIView) {
         containerView.removeSubviews()
         containerView.addSubview(view)
@@ -100,16 +117,6 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
             view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
-    }
-
-    override var tintColor: UIColor! {
-        didSet {
-            fileTransferView.tintColor = tintColor
-        }
-    }
-
-    var selectionRect: CGRect {
-        fileTransferView.bounds
     }
 }
 
@@ -126,7 +133,16 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 // MARK: - ConversationFileMessageCellDescription
 
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(message: ZMConversationMessage) {
+        self.configuration = View.Configuration(message: message)
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationFileMessageCell
+
     let configuration: View.Configuration
 
     var topMargin: Float = 8
@@ -140,13 +156,9 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedFileCell" : "FileCell"
-    }
-
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+    var accessibilityIdentifier: String? {
+        configuration.isObfuscated ? "ObfuscatedFileCell" : "FileCell"
     }
 }

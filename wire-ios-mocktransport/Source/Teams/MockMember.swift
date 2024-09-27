@@ -21,11 +21,13 @@ import Foundation
 // MARK: - MockPermissions
 
 public struct MockPermissions: OptionSet {
-    public let rawValue: Int64
+    // MARK: Lifecycle
 
     public init(rawValue: Int64) {
         self.rawValue = rawValue
     }
+
+    // MARK: Public
 
     public static let createConversation       = MockPermissions(rawValue: 0x0001)
     public static let deleteConversation       = MockPermissions(rawValue: 0x0002)
@@ -59,23 +61,29 @@ public struct MockPermissions: OptionSet {
         .setMemberPermissions,
     ]
     public static let owner: MockPermissions  = [.admin, .getBilling, .setBilling, .deleteTeam]
+
+    public let rawValue: Int64
 }
 
 // MARK: - MockMember
 
 @objc
 public final class MockMember: NSManagedObject, EntityNamedProtocol {
+    // MARK: Public
+
+    public static let entityName = "Member"
+
     @NSManaged public var team: MockTeam
     @NSManaged public var user: MockUser
-
-    @NSManaged private var permissionsRawValue: Int64
 
     public var permissions: MockPermissions {
         get { MockPermissions(rawValue: permissionsRawValue) }
         set { permissionsRawValue = newValue.rawValue }
     }
 
-    public static let entityName = "Member"
+    // MARK: Private
+
+    @NSManaged private var permissionsRawValue: Int64
 }
 
 extension MockMember {

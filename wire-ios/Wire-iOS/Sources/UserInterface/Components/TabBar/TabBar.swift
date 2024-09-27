@@ -28,31 +28,7 @@ protocol TabBarDelegate: AnyObject {
 // MARK: - TabBar
 
 final class TabBar: UIView {
-    private let stackView = UIStackView()
-
-    // MARK: - Properties
-
-    weak var delegate: TabBarDelegate?
-    var animatesTransition = true
-    private(set) var items: [UITabBarItem] = []
-    private let tabInset: CGFloat = 16
-
-    private let selectionLineView = UIView()
-    private let lineView = UIView()
-    private(set) var tabs: [Tab] = []
-    private lazy var lineLeadingConstraint: NSLayoutConstraint = selectionLineView.leadingAnchor.constraint(
-        equalTo: leadingAnchor,
-        constant: tabInset
-    )
-    private var didUpdateInitialBarPosition = false
-
-    private(set) var selectedIndex: Int {
-        didSet {
-            updateButtonSelection()
-        }
-    }
-
-    private var titleObservers: [NSKeyValueObservation] = []
+    // MARK: Lifecycle
 
     deinit {
         titleObservers.forEach { $0.invalidate() }
@@ -80,6 +56,85 @@ final class TabBar: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    weak var delegate: TabBarDelegate?
+    var animatesTransition = true
+    private(set) var items: [UITabBarItem] = []
+    private(set) var tabs: [Tab] = []
+
+    private(set) var selectedIndex: Int {
+        didSet {
+            updateButtonSelection()
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if !didUpdateInitialBarPosition, bounds != .zero {
+            didUpdateInitialBarPosition = true
+            updateLinePosition(animated: false)
+        }
+    }
+
+    func setOffsetPercentage(_ percentage: CGFloat) {
+        let offset = percentage * (bounds.width - tabInset * 2)
+        updateLinePosition(offset: offset, animated: false)
+    }
+
+    // MARK: - Actions
+
+    @objc
+    func itemSelected(_ sender: AnyObject) {
+        guard
+            let tab = sender as? Tab,
+            let selectedIndex = tabs.firstIndex(of: tab)
+        else {
+            return
+        }
+
+        delegate?.tabBar(self, didSelectItemAt: selectedIndex)
+        setSelectedIndex(selectedIndex, animated: animatesTransition)
+    }
+
+    func setSelectedIndex(_ index: Int, animated: Bool) {
+        let changes = { [weak self] in
+            self?.selectedIndex = index
+            self?.layoutIfNeeded()
+        }
+
+        if animated {
+            UIView.transition(
+                with: self,
+                duration: 0.3,
+                options: [.transitionCrossDissolve, .allowUserInteraction, .beginFromCurrentState],
+                animations: changes
+            )
+        } else {
+            changes()
+        }
+
+        updateLinePosition(animated: animated)
+    }
+
+    // MARK: Private
+
+    private let stackView = UIStackView()
+
+    private let tabInset: CGFloat = 16
+
+    private let selectionLineView = UIView()
+    private let lineView = UIView()
+    private lazy var lineLeadingConstraint: NSLayoutConstraint = selectionLineView.leadingAnchor.constraint(
+        equalTo: leadingAnchor,
+        constant: tabInset
+    )
+    private var didUpdateInitialBarPosition = false
+
+    private var titleObservers: [NSKeyValueObservation] = []
+
     private func setupViews() {
         tabs = items.enumerated().map(makeButtonForItem)
         tabs.forEach(stackView.addArrangedSubview)
@@ -93,14 +148,6 @@ final class TabBar: UIView {
         addSubview(selectionLineView)
         selectionLineView.backgroundColor = SemanticColors.TabBar.backgroundSeperatorSelected
         lineView.backgroundColor = SemanticColors.TabBar.backgroundSeparator
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if !didUpdateInitialBarPosition, bounds != .zero {
-            didUpdateInitialBarPosition = true
-            updateLinePosition(animated: false)
-        }
     }
 
     private func updateLinePosition(animated: Bool) {
@@ -122,11 +169,6 @@ final class TabBar: UIView {
         } else {
             layoutIfNeeded()
         }
-    }
-
-    func setOffsetPercentage(_ percentage: CGFloat) {
-        let offset = percentage * (bounds.width - tabInset * 2)
-        updateLinePosition(offset: offset, animated: false)
     }
 
     private func createConstraints() {
@@ -177,41 +219,6 @@ final class TabBar: UIView {
 
         tab.addTarget(self, action: #selector(TabBar.itemSelected(_:)), for: .touchUpInside)
         return tab
-    }
-
-    // MARK: - Actions
-
-    @objc
-    func itemSelected(_ sender: AnyObject) {
-        guard
-            let tab = sender as? Tab,
-            let selectedIndex = tabs.firstIndex(of: tab)
-        else {
-            return
-        }
-
-        delegate?.tabBar(self, didSelectItemAt: selectedIndex)
-        setSelectedIndex(selectedIndex, animated: animatesTransition)
-    }
-
-    func setSelectedIndex(_ index: Int, animated: Bool) {
-        let changes = { [weak self] in
-            self?.selectedIndex = index
-            self?.layoutIfNeeded()
-        }
-
-        if animated {
-            UIView.transition(
-                with: self,
-                duration: 0.3,
-                options: [.transitionCrossDissolve, .allowUserInteraction, .beginFromCurrentState],
-                animations: changes
-            )
-        } else {
-            changes()
-        }
-
-        updateLinePosition(animated: animated)
     }
 
     private func updateButtonSelection() {

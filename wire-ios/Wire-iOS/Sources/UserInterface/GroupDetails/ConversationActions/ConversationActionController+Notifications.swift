@@ -25,6 +25,8 @@ import WireSyncEngine
 enum NotificationResult: CaseIterable {
     case everything, mentionsAndReplies, nothing, cancel
 
+    // MARK: Internal
+
     static var title: String {
         L10n.Localizable.Meta.Menu.ConfigureNotification.dialogMessage
     }
@@ -51,13 +53,6 @@ enum NotificationResult: CaseIterable {
         }
     }
 
-    private var style: UIAlertAction.Style {
-        switch self {
-        case .cancel: .cancel
-        default: .default
-        }
-    }
-
     func action(for conversation: ZMConversation, handler: @escaping (NotificationResult) -> Void) -> UIAlertAction {
         let checkmarkText = if let mutedMessageTypes,
                                conversation.mutedMessageTypes == mutedMessageTypes {
@@ -68,6 +63,15 @@ enum NotificationResult: CaseIterable {
 
         let title = title + checkmarkText
         return .init(title: title, style: style, handler: { _ in handler(self) })
+    }
+
+    // MARK: Private
+
+    private var style: UIAlertAction.Style {
+        switch self {
+        case .cancel: .cancel
+        default: .default
+        }
     }
 }
 

@@ -30,12 +30,15 @@ protocol RandomGenerator {
 /// Generates the pseudorandom values from the data given.
 /// @param data the source of random values.
 final class RandomGeneratorFromData: RandomGenerator {
-    let source: Data
-    private var step = 0
+    // MARK: Lifecycle
 
     init(data: Data) {
         self.source = data
     }
+
+    // MARK: Internal
+
+    let source: Data
 
     func rand<ContentType>() -> ContentType {
         let currentStep = step
@@ -47,6 +50,10 @@ final class RandomGeneratorFromData: RandomGenerator {
 
         return result
     }
+
+    // MARK: Private
+
+    private var step = 0
 }
 
 extension RandomGeneratorFromData {
@@ -149,6 +156,25 @@ typealias ConversationAvatarViewConversation = ConversationLike & StableRandomPa
 // MARK: - ConversationAvatarView
 
 final class ConversationAvatarView: UIView {
+    // MARK: Lifecycle
+
+    init() {
+        super.init(frame: .zero)
+        userImageViews.forEach(clippingView.addSubview)
+        updateCornerRadius()
+        autoresizesSubviews = false
+        layer.masksToBounds = true
+        clippingView.clipsToBounds = true
+        addSubview(clippingView)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     enum Context {
         // one or more users requesting connection to self user
         case connect(users: [UserType])
@@ -156,42 +182,21 @@ final class ConversationAvatarView: UIView {
         case conversation(conversation: ConversationAvatarViewConversation)
     }
 
-    func configure(context: Context) {
-        switch context {
-        case let .connect(users):
-            self.users = users
-            mode = Mode(users: users)
+    let clippingView = UIView()
+    let imageViewLeftTop: UserImageView = {
+        let userImageView = BadgeUserImageView()
+        userImageView.initialsFont = .mediumSemiboldFont
 
-        case let .conversation(conversation):
-            self.conversation = conversation
-            mode = Mode(conversationType: conversation.conversationType, users: users)
-        }
-    }
+        return userImageView
+    }()
 
-    private var users: [UserType] = []
+    lazy var imageViewRightTop = UserImageView()
 
-    private var conversation: ConversationAvatarViewConversation? = .none {
-        didSet {
-            guard let conversation else {
-                clippingView.subviews.forEach { $0.isHidden = true }
-                return
-            }
+    lazy var imageViewLeftBottom = UserImageView()
 
-            accessibilityLabel = "Avatar for \(conversation.displayNameWithFallback)"
+    lazy var imageViewRightBottom = UserImageView()
 
-            let usersOnAvatar: [UserType]
-            let stableRandomParticipants = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
-
-            if stableRandomParticipants.isEmpty,
-               let connectedUser = conversation.connectedUserType {
-                usersOnAvatar = [connectedUser]
-            } else {
-                usersOnAvatar = stableRandomParticipants
-            }
-
-            users = usersOnAvatar
-        }
-    }
+    let interAvatarInset: CGFloat = 2
 
     private(set) var mode: Mode = .one(serviceUser: false) {
         didSet {
@@ -230,8 +235,24 @@ final class ConversationAvatarView: UIView {
         }
     }
 
-    private var userImageViews: [UserImageView] {
-        [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
+    override var intrinsicContentSize: CGSize {
+        CGSize(width: CGFloat.ConversationAvatarView.iconSize, height: CGFloat.ConversationAvatarView.iconSize)
+    }
+
+    var containerSize: CGSize {
+        clippingView.bounds.size
+    }
+
+    func configure(context: Context) {
+        switch context {
+        case let .connect(users):
+            self.users = users
+            mode = Mode(users: users)
+
+        case let .conversation(conversation):
+            self.conversation = conversation
+            mode = Mode(conversationType: conversation.conversationType, users: users)
+        }
     }
 
     func userImages() -> [UserImageView] {
@@ -245,44 +266,6 @@ final class ConversationAvatarView: UIView {
         case .four:
             userImageViews
         }
-    }
-
-    override var intrinsicContentSize: CGSize {
-        CGSize(width: CGFloat.ConversationAvatarView.iconSize, height: CGFloat.ConversationAvatarView.iconSize)
-    }
-
-    let clippingView = UIView()
-    let imageViewLeftTop: UserImageView = {
-        let userImageView = BadgeUserImageView()
-        userImageView.initialsFont = .mediumSemiboldFont
-
-        return userImageView
-    }()
-
-    lazy var imageViewRightTop = UserImageView()
-
-    lazy var imageViewLeftBottom = UserImageView()
-
-    lazy var imageViewRightBottom = UserImageView()
-
-    init() {
-        super.init(frame: .zero)
-        userImageViews.forEach(clippingView.addSubview)
-        updateCornerRadius()
-        autoresizesSubviews = false
-        layer.masksToBounds = true
-        clippingView.clipsToBounds = true
-        addSubview(clippingView)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    let interAvatarInset: CGFloat = 2
-    var containerSize: CGSize {
-        clippingView.bounds.size
     }
 
     override func layoutSubviews() {
@@ -310,6 +293,37 @@ final class ConversationAvatarView: UIView {
         }
 
         updateCornerRadius()
+    }
+
+    // MARK: Private
+
+    private var users: [UserType] = []
+
+    private var conversation: ConversationAvatarViewConversation? = .none {
+        didSet {
+            guard let conversation else {
+                clippingView.subviews.forEach { $0.isHidden = true }
+                return
+            }
+
+            accessibilityLabel = "Avatar for \(conversation.displayNameWithFallback)"
+
+            let usersOnAvatar: [UserType]
+            let stableRandomParticipants = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
+
+            if stableRandomParticipants.isEmpty,
+               let connectedUser = conversation.connectedUserType {
+                usersOnAvatar = [connectedUser]
+            } else {
+                usersOnAvatar = stableRandomParticipants
+            }
+
+            users = usersOnAvatar
+        }
+    }
+
+    private var userImageViews: [UserImageView] {
+        [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
     }
 
     private func layoutMultipleAvatars(with size: CGSize) {

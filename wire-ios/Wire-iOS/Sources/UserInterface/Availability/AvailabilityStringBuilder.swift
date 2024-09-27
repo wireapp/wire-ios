@@ -22,6 +22,8 @@ import WireDataModel
 import WireDesign
 
 enum AvailabilityStringBuilder {
+    // MARK: Internal
+
     static func titleForUser(
         name: String,
         availability: Availability,
@@ -122,6 +124,8 @@ enum AvailabilityStringBuilder {
             return IconColors.foregroundAvailabilityAway
         }
     }
+
+    // MARK: Private
 
     private static var e2eiCertifiedShield: NSTextAttachment {
         let textAttachment = NSTextAttachment(imageResource: .certificateValid)

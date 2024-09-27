@@ -21,8 +21,7 @@ import Foundation
 /// Fully qualified identifier in a federated environment.
 
 public struct QualifiedID: Codable, Hashable, Equatable {
-    public let uuid: UUID
-    public let domain: String
+    // MARK: Lifecycle
 
     public init(
         uuid: UUID,
@@ -31,6 +30,13 @@ public struct QualifiedID: Codable, Hashable, Equatable {
         self.uuid = uuid
         self.domain = domain
     }
+
+    // MARK: Public
+
+    public let uuid: UUID
+    public let domain: String
+
+    // MARK: Internal
 
     enum CodingKeys: String, CodingKey {
         case uuid = "id"

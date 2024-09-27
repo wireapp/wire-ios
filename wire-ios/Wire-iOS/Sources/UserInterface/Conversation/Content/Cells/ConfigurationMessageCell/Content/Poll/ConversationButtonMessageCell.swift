@@ -22,6 +22,35 @@ import WireDataModel
 // MARK: - ConversationButtonMessageCell
 
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
+    // MARK: Lifecycle
+
+    convenience init() {
+        self.init(frame: .zero)
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: .zero)
+
+        configureViews()
+        createConstraints()
+
+        button.addTarget(self, action: #selector(buttonTouched(sender:)), for: .touchUpInside)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    struct Configuration {
+        let text: String?
+        let state: ButtonMessageState
+        let buttonAction: Completion
+        let hasError: Bool
+    }
+
     var isSelected = false
 
     weak var message: ZMConversationMessage?
@@ -36,6 +65,12 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
             layoutIfNeeded()
         }
     }
+
+    func configure(with object: Configuration, animated: Bool) {
+        config = object
+    }
+
+    // MARK: Private
 
     private let button = SpinnerButton.alarmButton()
     private var buttonAction: Completion?
@@ -92,38 +127,9 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         errorMessage = config.hasError ? L10n.Localizable.ButtonMessageCell.genericError : nil
     }
 
-    func configure(with object: Configuration, animated: Bool) {
-        config = object
-    }
-
-    struct Configuration {
-        let text: String?
-        let state: ButtonMessageState
-        let buttonAction: Completion
-        let hasError: Bool
-    }
-
-    convenience init() {
-        self.init(frame: .zero)
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: .zero)
-
-        configureViews()
-        createConstraints()
-
-        button.addTarget(self, action: #selector(buttonTouched(sender:)), for: .touchUpInside)
-    }
-
     @objc
     private func buttonTouched(sender: Any) {
         buttonAction?()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     private func configureViews() {
@@ -155,6 +161,24 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 // MARK: - ConversationButtonMessageCellDescription
 
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(
+        text: String?,
+        state: ButtonMessageState,
+        hasError: Bool,
+        buttonAction: @escaping Completion
+    ) {
+        self.configuration = View.Configuration(
+            text: text,
+            state: state,
+            buttonAction: buttonAction,
+            hasError: hasError
+        )
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationButtonMessageCell
 
     var topMargin = Float.ConversationButtonMessageCell.verticalInset
@@ -178,20 +202,6 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
     var accessibilityIdentifier: String? = "PollCell"
 
     var accessibilityLabel: String?
-
-    init(
-        text: String?,
-        state: ButtonMessageState,
-        hasError: Bool,
-        buttonAction: @escaping Completion
-    ) {
-        self.configuration = View.Configuration(
-            text: text,
-            state: state,
-            buttonAction: buttonAction,
-            hasError: hasError
-        )
-    }
 }
 
 // MARK: - ConversationButtonMessageCell.Configuration + Hashable

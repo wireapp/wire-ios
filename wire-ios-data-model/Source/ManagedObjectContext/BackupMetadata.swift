@@ -19,15 +19,7 @@
 // MARK: - BackupMetadata
 
 public struct BackupMetadata: Codable {
-    public enum Platform: String, Codable {
-        case iOS
-    }
-
-    public let platform: Platform
-    public let appVersion, modelVersion: String
-    public let creationTime: Date
-    public let userIdentifier: UUID
-    public let clientIdentifier: String
+    // MARK: Lifecycle
 
     public init(
         appVersion: String,
@@ -57,6 +49,18 @@ public struct BackupMetadata: Codable {
             clientIdentifier: clientIdentifier
         )
     }
+
+    // MARK: Public
+
+    public enum Platform: String, Codable {
+        case iOS
+    }
+
+    public let platform: Platform
+    public let appVersion, modelVersion: String
+    public let creationTime: Date
+    public let userIdentifier: UUID
+    public let clientIdentifier: String
 }
 
 // MARK: Equatable

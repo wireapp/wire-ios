@@ -20,6 +20,37 @@ import Foundation
 
 extension Feature {
     public struct SelfDeletingMessages: Codable {
+        // MARK: Lifecycle
+
+        public init(status: Feature.Status = .enabled, config: Config = .init()) {
+            self.status = status
+            self.config = config
+        }
+
+        // MARK: Public
+
+        // MARK: - Types
+
+        // WARNING: This config is encoded and stored in the database, so any changes
+        // to it will require some migration code.
+
+        public struct Config: Codable, Equatable {
+            // MARK: Lifecycle
+
+            public init(enforcedTimeoutSeconds: UInt = 0) {
+                self.enforcedTimeoutSeconds = enforcedTimeoutSeconds
+            }
+
+            // MARK: Public
+
+            /// The number of seconds after which all enforced self-deleting messages
+            /// will delete.
+            ///
+            /// A value of 0 indicates that the self-deleting messages are not mandatory.
+
+            public let enforcedTimeoutSeconds: UInt
+        }
+
         // MARK: - Properties
 
         /// If `enabled` then the feature is available to the user.
@@ -29,30 +60,5 @@ extension Feature {
         /// The configuration used to control how the feature behaves.
 
         public let config: Config
-
-        // MARK: - Life cycle
-
-        public init(status: Feature.Status = .enabled, config: Config = .init()) {
-            self.status = status
-            self.config = config
-        }
-
-        // MARK: - Types
-
-        // WARNING: This config is encoded and stored in the database, so any changes
-        // to it will require some migration code.
-
-        public struct Config: Codable, Equatable {
-            /// The number of seconds after which all enforced self-deleting messages
-            /// will delete.
-            ///
-            /// A value of 0 indicates that the self-deleting messages are not mandatory.
-
-            public let enforcedTimeoutSeconds: UInt
-
-            public init(enforcedTimeoutSeconds: UInt = 0) {
-                self.enforcedTimeoutSeconds = enforcedTimeoutSeconds
-            }
-        }
     }
 }

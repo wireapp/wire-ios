@@ -22,10 +22,7 @@ import WireDataModel
 // MARK: - MessageReactionsCellDescription
 
 final class MessageReactionsCellDescription: ConversationMessageCellDescription {
-    // MARK: - Properties
-
-    typealias View = MessageReactionsCell
-    let configuration: View.Configuration
+    // MARK: Lifecycle
 
     init(message: ZMConversationMessage) {
         self.message = message
@@ -44,6 +41,14 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
         self.configuration = reactions
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    typealias View = MessageReactionsCell
+
+    let configuration: View.Configuration
 
     var topMargin: Float = 0
 

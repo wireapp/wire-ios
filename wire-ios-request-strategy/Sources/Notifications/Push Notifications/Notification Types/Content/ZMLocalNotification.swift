@@ -24,17 +24,19 @@ import UserNotifications
 /// have associated subtypes.
 ///
 public enum LocalNotificationType {
-    public enum CallState: Equatable {
-        case incomingCall(video: Bool)
-        case missedCall(cancelled: Bool)
-    }
-
     case event(LocalNotificationEventType)
     case calling(CallState)
     case message(LocalNotificationContentType)
     case failedMessage
     case availabilityBehaviourChangeAlert(Availability)
     case bundledMessages
+
+    // MARK: Public
+
+    public enum CallState: Equatable {
+        case incomingCall(video: Bool)
+        case missedCall(cancelled: Bool)
+    }
 }
 
 // MARK: - NotificationBuilder
@@ -58,16 +60,7 @@ public protocol NotificationBuilder {
 /// information regarding the conversation, sender, and team name.
 ///
 public class ZMLocalNotification: NSObject {
-    /// The unique identifier for this notification. Use it to later update
-    /// or remove pending or scheduled notification requests.
-    public let id: UUID
-
-    public let type: LocalNotificationType
-    public var title: String?
-    public var body: String
-    public var category: PushNotificationCategory
-    public var sound: NotificationSound
-    public var userInfo: NotificationUserInfo?
+    // MARK: Lifecycle
 
     public init?(builder: NotificationBuilder, moc: NSManagedObjectContext) {
         guard builder.shouldCreateNotification() else { return nil }
@@ -90,6 +83,19 @@ public class ZMLocalNotification: NSObject {
 
         userInfo?.requestID = id
     }
+
+    // MARK: Public
+
+    /// The unique identifier for this notification. Use it to later update
+    /// or remove pending or scheduled notification requests.
+    public let id: UUID
+
+    public let type: LocalNotificationType
+    public var title: String?
+    public var body: String
+    public var category: PushNotificationCategory
+    public var sound: NotificationSound
+    public var userInfo: NotificationUserInfo?
 
     /// Returns a configured concrete `UNNotificationContent` object.
     public lazy var content: UNNotificationContent = {

@@ -21,6 +21,8 @@ import WireTesting
 @testable import WireSyncEngine
 
 final class SessionManagerMultiUserSessionTests: IntegrationTest {
+    // MARK: Internal
+
     override func setUp() {
         super.setUp()
 
@@ -553,6 +555,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         // THEN
         XCTAssertNotNil(activity)
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

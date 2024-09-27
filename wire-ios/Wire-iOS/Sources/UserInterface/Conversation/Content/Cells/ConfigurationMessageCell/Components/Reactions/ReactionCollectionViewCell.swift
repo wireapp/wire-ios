@@ -21,11 +21,7 @@ import UIKit
 // MARK: - ReactionCollectionViewCell
 
 final class ReactionCollectionViewCell: UICollectionViewCell {
-    // MARK: - Properties
-
-    private var reactionToggleButton = ReactionToggle()
-
-    // MARK: - Lifecycle
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -37,6 +33,8 @@ final class ReactionCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Public
 
     // MARK: - Methods
 
@@ -53,6 +51,12 @@ final class ReactionCollectionViewCell: UICollectionViewCell {
             onToggle: onToggle
         )
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var reactionToggleButton = ReactionToggle()
 
     private func addViews() {
         backgroundColor = .clear

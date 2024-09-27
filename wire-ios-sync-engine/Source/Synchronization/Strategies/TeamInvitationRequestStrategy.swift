@@ -47,7 +47,7 @@ extension InviteResult {
 // MARK: - TeamInvitationRequestStrategy
 
 public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
-    fileprivate weak var teamInvitationStatus: TeamInvitationStatus?
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -58,6 +58,8 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
 
         self.teamInvitationStatus = teamInvitationStatus
     }
+
+    // MARK: Public
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let teamId = ZMUser.selfUser(in: managedObjectContext).team?.remoteIdentifier,
@@ -82,6 +84,8 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
         return request
     }
 
+    // MARK: Internal
+
     func processResponse(_ response: ZMTransportResponse, for email: String) {
         switch response.result {
         case .success, .permanentError:
@@ -92,4 +96,8 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
             teamInvitationStatus?.handle(result: .failure(email: email, error: .cancelled), email: email)
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate weak var teamInvitationStatus: TeamInvitationStatus?
 }

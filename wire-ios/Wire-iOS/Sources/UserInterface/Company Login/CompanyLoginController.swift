@@ -60,24 +60,7 @@ protocol CompanyLoginControllerDelegate: AnyObject {
 /// `SharedIdentitySessionRequestDetector` can be provided.
 ///
 final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
-    weak var delegate: CompanyLoginControllerDelegate?
-
-    var isAutoDetectionEnabled = true
-
-    // Whether the presence of a code should be checked periodically on iPad.
-    // This is in order to work around https://openradar.appspot.com/28771678.
-    private static let fallbackURLScheme = "wire-sso"
-
-    // Whether performing a company login is supported on the current build.
-    static let isCompanyLoginEnabled = true
-
-    private var token: Any?
-    private let detector: CompanyLoginRequestDetector
-    private let requester: CompanyLoginRequester
-    private let flowHandler: CompanyLoginFlowHandler
-    private let networkStatusObservable: any NetworkStatusObservable
-
-    private weak var ssoAlert: UIAlertController?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -96,12 +79,6 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
             detector: .shared,
             requester: requester,
             networkStatusObservable: NetworkStatus.shared
-        )
-    }
-
-    private static func createRequester(with scheme: String?) -> CompanyLoginRequester {
-        CompanyLoginRequester(
-            callbackScheme: scheme ?? CompanyLoginController.fallbackURLScheme
         )
     }
 
@@ -125,6 +102,35 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
 
     deinit {
         token.map(NotificationCenter.default.removeObserver)
+    }
+
+    // MARK: Internal
+
+    // Whether performing a company login is supported on the current build.
+    static let isCompanyLoginEnabled = true
+
+    weak var delegate: CompanyLoginControllerDelegate?
+
+    var isAutoDetectionEnabled = true
+
+    // MARK: Private
+
+    // Whether the presence of a code should be checked periodically on iPad.
+    // This is in order to work around https://openradar.appspot.com/28771678.
+    private static let fallbackURLScheme = "wire-sso"
+
+    private var token: Any?
+    private let detector: CompanyLoginRequestDetector
+    private let requester: CompanyLoginRequester
+    private let flowHandler: CompanyLoginFlowHandler
+    private let networkStatusObservable: any NetworkStatusObservable
+
+    private weak var ssoAlert: UIAlertController?
+
+    private static func createRequester(with scheme: String?) -> CompanyLoginRequester {
+        CompanyLoginRequester(
+            callbackScheme: scheme ?? CompanyLoginController.fallbackURLScheme
+        )
     }
 
     private func setupObservers() {

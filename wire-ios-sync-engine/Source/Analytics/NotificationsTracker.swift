@@ -23,28 +23,13 @@ import WireDataModel
 
 @objcMembers
 public class NotificationsTracker: NSObject {
-    let eventName = "notifications.processing"
+    // MARK: Lifecycle
 
-    enum Attributes: String {
-        case startedProcessing
-        case startedFetchingStream
-        case finishedFetchingStream
-        case finishedProcessing
-        case processingExpired
-        case abortedProcessing
-        case tokenMismatch
-
-        var identifier: String {
-            "notifications_" + rawValue
-        }
-    }
-
-    private let isolationQueue = DispatchQueue(label: "NotificationsProcessing")
-
-    weak var analytics: AnalyticsType?
     public init(analytics: AnalyticsType) {
         self.analytics = analytics
     }
+
+    // MARK: Public
 
     public func registerReceivedPush() {
         increment(attribute: .startedProcessing)
@@ -74,6 +59,41 @@ public class NotificationsTracker: NSObject {
         increment(attribute: .tokenMismatch)
     }
 
+    public func dispatchEvent() {
+        isolationQueue.sync {
+            if let analytics, let attributes = analytics.persistedAttributes(for: eventName), !attributes.isEmpty {
+                analytics.tagEvent(eventName, attributes: attributes)
+                analytics.setPersistedAttributes(nil, for: eventName)
+            }
+        }
+    }
+
+    // MARK: Internal
+
+    enum Attributes: String {
+        case startedProcessing
+        case startedFetchingStream
+        case finishedFetchingStream
+        case finishedProcessing
+        case processingExpired
+        case abortedProcessing
+        case tokenMismatch
+
+        // MARK: Internal
+
+        var identifier: String {
+            "notifications_" + rawValue
+        }
+    }
+
+    let eventName = "notifications.processing"
+
+    weak var analytics: AnalyticsType?
+
+    // MARK: Private
+
+    private let isolationQueue = DispatchQueue(label: "NotificationsProcessing")
+
     private func increment(attribute: Attributes, by amount: Double = 1) {
         isolationQueue.sync {
             var currentAttributes = analytics?.persistedAttributes(for: eventName) ?? [:]
@@ -81,15 +101,6 @@ public class NotificationsTracker: NSObject {
             value += amount
             currentAttributes[attribute.identifier] = value as NSObject
             analytics?.setPersistedAttributes(currentAttributes, for: eventName)
-        }
-    }
-
-    public func dispatchEvent() {
-        isolationQueue.sync {
-            if let analytics, let attributes = analytics.persistedAttributes(for: eventName), !attributes.isEmpty {
-                analytics.tagEvent(eventName, attributes: attributes)
-                analytics.setPersistedAttributes(nil, for: eventName)
-            }
         }
     }
 }

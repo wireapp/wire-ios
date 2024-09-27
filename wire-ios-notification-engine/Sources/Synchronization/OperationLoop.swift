@@ -27,11 +27,7 @@ let contextWasMergedNotification = Notification.Name("zm_contextWasSaved")
 // MARK: - RequestGeneratorStore
 
 public final class RequestGeneratorStore {
-    let requestGenerators: [ZMTransportRequestGenerator]
-    public let changeTrackers: [ZMContextChangeTracker]
-    private var isTornDown = false
-
-    private let strategies: [AnyObject]
+    // MARK: Lifecycle
 
     public init(strategies: [AnyObject]) {
         self.strategies = strategies
@@ -73,6 +69,10 @@ public final class RequestGeneratorStore {
         precondition(isTornDown, "Need to call `tearDown` before deallocating this object")
     }
 
+    // MARK: Public
+
+    public let changeTrackers: [ZMContextChangeTracker]
+
     public func tearDown() {
         for strategy in strategies {
             if strategy.responds(to: #selector(ZMObjectSyncStrategy.tearDown)) {
@@ -92,42 +92,45 @@ public final class RequestGeneratorStore {
 
         return nil
     }
+
+    // MARK: Internal
+
+    let requestGenerators: [ZMTransportRequestGenerator]
+
+    // MARK: Private
+
+    private var isTornDown = false
+
+    private let strategies: [AnyObject]
 }
 
 // MARK: - RequestGeneratorObserver
 
 final class RequestGeneratorObserver {
-    private let context: NSManagedObjectContext
-    public var observedGenerator: ZMTransportRequestGenerator?
+    // MARK: Lifecycle
 
     init(context: NSManagedObjectContext) {
         self.context = context
     }
 
+    // MARK: Public
+
+    public var observedGenerator: ZMTransportRequestGenerator?
+
     public func nextRequest() -> ZMTransportRequest? {
         guard let request = observedGenerator?() else { return nil }
         return request
     }
+
+    // MARK: Private
+
+    private let context: NSManagedObjectContext
 }
 
 // MARK: - OperationLoop
 
 final class OperationLoop: NSObject, RequestAvailableObserver {
-    typealias RequestAvailableClosure = () -> Void
-    typealias ChangeClosure = (_ changed: Set<NSManagedObject>) -> Void
-    typealias SaveClosure = (
-        _ notification: Notification,
-        _ insertedObjects: Set<NSManagedObject>,
-        _ updatedObjects: Set<NSManagedObject>
-    ) -> Void
-
-    private unowned let syncContext: NSManagedObjectContext
-    private unowned let userContext: NSManagedObjectContext
-    private let callBackQueue: OperationQueue
-    private var tokens: [NSObjectProtocol] = []
-
-    public var changeClosure: ChangeClosure?
-    public var requestAvailableClosure: RequestAvailableClosure?
+    // MARK: Lifecycle
 
     init(
         userContext: NSManagedObjectContext,
@@ -154,6 +157,21 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
         RequestAvailableNotification.removeObserver(self)
         tokens.forEach(NotificationCenter.default.removeObserver)
     }
+
+    // MARK: Public
+
+    public var changeClosure: ChangeClosure?
+    public var requestAvailableClosure: RequestAvailableClosure?
+
+    // MARK: Internal
+
+    typealias RequestAvailableClosure = () -> Void
+    typealias ChangeClosure = (_ changed: Set<NSManagedObject>) -> Void
+    typealias SaveClosure = (
+        _ notification: Notification,
+        _ insertedObjects: Set<NSManagedObject>,
+        _ updatedObjects: Set<NSManagedObject>
+    ) -> Void
 
     func setupObserver(for context: NSManagedObjectContext, onSave: @escaping SaveClosure) -> NSObjectProtocol {
         NotificationCenter.default.addObserver(
@@ -218,17 +236,19 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
     func newRequestsAvailable() {
         requestAvailableClosure?()
     }
+
+    // MARK: Private
+
+    private unowned let syncContext: NSManagedObjectContext
+    private unowned let userContext: NSManagedObjectContext
+    private let callBackQueue: OperationQueue
+    private var tokens: [NSObjectProtocol] = []
 }
 
 // MARK: - RequestGeneratingOperationLoop
 
 final class RequestGeneratingOperationLoop {
-    private let operationLoop: OperationLoop!
-    private let callBackQueue: OperationQueue
-
-    private let requestGeneratorStore: RequestGeneratorStore
-    private let requestGeneratorObserver: RequestGeneratorObserver
-    private unowned let transportSession: ZMTransportSession
+    // MARK: Lifecycle
 
     init(
         userContext: NSManagedObjectContext,
@@ -252,17 +272,26 @@ final class RequestGeneratingOperationLoop {
         requestGeneratorObserver.observedGenerator = { [weak self] in self?.requestGeneratorStore.nextRequest() }
     }
 
+    deinit {
+        transportSession.tearDown()
+        requestGeneratorStore.tearDown()
+    }
+
+    // MARK: Private
+
+    private let operationLoop: OperationLoop!
+    private let callBackQueue: OperationQueue
+
+    private let requestGeneratorStore: RequestGeneratorStore
+    private let requestGeneratorObserver: RequestGeneratorObserver
+    private unowned let transportSession: ZMTransportSession
+
     private func objectsDidChange(changes: Set<NSManagedObject>) {
         for changeTracker in requestGeneratorStore.changeTrackers {
             changeTracker.objectsDidChange(changes)
         }
 
         enqueueRequests()
-    }
-
-    deinit {
-        transportSession.tearDown()
-        requestGeneratorStore.tearDown()
     }
 
     private func enqueueRequests() {

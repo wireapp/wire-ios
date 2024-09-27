@@ -19,7 +19,28 @@
 import UIKit
 
 final class Image: Editable {
+    // MARK: Lifecycle
+
+    public init(image: UIImage, at position: CGPoint) {
+        self.image = image
+        self.scale = 1
+        self.rotation = 0
+        self.position = position
+        self.selected = false
+        imageView.image = image
+        imageView.layer.anchorPoint = CGPoint(x: 0.0, y: 0.0)
+        imageView.sizeToFit()
+
+        updateImageTransform()
+    }
+
+    // MARK: Internal
+
     let image: UIImage
+    var selected: Bool
+    var selectable = true
+    var imageView = UIImageView()
+
     var scale: CGFloat {
         didSet {
             updateImageTransform()
@@ -38,10 +59,6 @@ final class Image: Editable {
         }
     }
 
-    var selected: Bool
-    var selectable = true
-    var imageView = UIImageView()
-
     var size: CGSize {
         image.size
     }
@@ -54,28 +71,6 @@ final class Image: Editable {
         imageView
     }
 
-    public init(image: UIImage, at position: CGPoint) {
-        self.image = image
-        self.scale = 1
-        self.rotation = 0
-        self.position = position
-        self.selected = false
-        imageView.image = image
-        imageView.layer.anchorPoint = CGPoint(x: 0.0, y: 0.0)
-        imageView.sizeToFit()
-
-        updateImageTransform()
-    }
-
-    func draw(context: CGContext) {
-        guard !selected else { return }
-
-        context.saveGState()
-        context.concatenate(transform)
-        image.draw(at: CGPoint.zero)
-        context.restoreGState()
-    }
-
     var transform: CGAffineTransform {
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
         let toCenter = CGAffineTransform(translationX: -center.x, y: -center.y)
@@ -86,6 +81,15 @@ final class Image: Editable {
 
         return toCenter.concatenating(scaleTransform).concatenating(rotationTransform).concatenating(restoreCenter)
             .concatenating(translate)
+    }
+
+    func draw(context: CGContext) {
+        guard !selected else { return }
+
+        context.saveGState()
+        context.concatenate(transform)
+        image.draw(at: CGPoint.zero)
+        context.restoreGState()
     }
 
     func sizeToFit(inRect rect: CGRect) {

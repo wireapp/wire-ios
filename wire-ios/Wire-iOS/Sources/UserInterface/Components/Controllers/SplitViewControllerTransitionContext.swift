@@ -19,13 +19,7 @@
 import UIKit
 
 final class SplitViewControllerTransitionContext: NSObject, UIViewControllerContextTransitioning {
-    var completionBlock: ((_ didComplete: Bool) -> Void)?
-    var isAnimated = false
-    var isInteractive = false
-    let containerView: UIView
-    var presentationStyle: UIModalPresentationStyle = .custom
-
-    private var viewControllers: [UITransitionContextViewControllerKey: UIViewController] = [:]
+    // MARK: Lifecycle
 
     init(
         from fromViewController: UIViewController?,
@@ -43,6 +37,24 @@ final class SplitViewControllerTransitionContext: NSObject, UIViewControllerCont
         if toViewController != nil {
             viewControllers[.to] = toViewController
         }
+    }
+
+    // MARK: Internal
+
+    var completionBlock: ((_ didComplete: Bool) -> Void)?
+    var isAnimated = false
+    var isInteractive = false
+    let containerView: UIView
+    var presentationStyle: UIModalPresentationStyle = .custom
+
+    var transitionWasCancelled: Bool {
+        false
+        // Our non-interactive transition can't be cancelled (it could be interrupted, though)
+    }
+
+    // Supress warnings by implementing empty interaction methods for the remainder of the protocol:
+    var targetTransform: CGAffineTransform {
+        .identity
     }
 
     func initialFrame(for viewController: UIViewController) -> CGRect {
@@ -75,16 +87,6 @@ final class SplitViewControllerTransitionContext: NSObject, UIViewControllerCont
         completionBlock?(didComplete)
     }
 
-    var transitionWasCancelled: Bool {
-        false
-        // Our non-interactive transition can't be cancelled (it could be interrupted, though)
-    }
-
-    // Supress warnings by implementing empty interaction methods for the remainder of the protocol:
-    var targetTransform: CGAffineTransform {
-        .identity
-    }
-
     func updateInteractiveTransition(_: CGFloat) {
         // no-op
     }
@@ -100,4 +102,8 @@ final class SplitViewControllerTransitionContext: NSObject, UIViewControllerCont
     func pauseInteractiveTransition() {
         // no-op
     }
+
+    // MARK: Private
+
+    private var viewControllers: [UITransitionContextViewControllerKey: UIViewController] = [:]
 }

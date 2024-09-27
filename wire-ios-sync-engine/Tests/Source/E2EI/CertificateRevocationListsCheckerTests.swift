@@ -24,16 +24,7 @@ import XCTest
 @testable import WireSyncEngineSupport
 
 final class CertificateRevocationListsCheckerTests: XCTestCase {
-    private var coreDataHelper: CoreDataStackHelper!
-
-    private var sut: CertificateRevocationListsChecker!
-    private var mockCoreCrypto: MockCoreCryptoProtocol!
-    private var mockCRLAPI: MockCertificateRevocationListAPIProtocol!
-    private var mockMLSGroupVerification: MockMLSGroupVerificationProtocol!
-    private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
-    private var mockCRLExpirationDatesRepository: MockCRLExpirationDatesRepositoryProtocol!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var mockCoreDataStack: CoreDataStack!
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -238,6 +229,19 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         // It updates conversations verification statuses for dp1
         XCTAssertEqual(mockMLSGroupVerification.updateAllConversations_Invocations.count, 1)
     }
+
+    // MARK: Private
+
+    private var coreDataHelper: CoreDataStackHelper!
+
+    private var sut: CertificateRevocationListsChecker!
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
+    private var mockCRLAPI: MockCertificateRevocationListAPIProtocol!
+    private var mockMLSGroupVerification: MockMLSGroupVerificationProtocol!
+    private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
+    private var mockCRLExpirationDatesRepository: MockCRLExpirationDatesRepositoryProtocol!
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockCoreDataStack: CoreDataStack!
 
     // MARK: - Helpers
 

@@ -23,6 +23,10 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class MLSEncryptionServiceTests: XCTestCase {
+    // MARK: - Message Encryption
+
+    typealias EncryptionError = MLSEncryptionService.MLSMessageEncryptionError
+
     var sut: MLSEncryptionService!
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
@@ -45,10 +49,6 @@ final class MLSEncryptionServiceTests: XCTestCase {
         mockSafeCoreCrypto = nil
         super.tearDown()
     }
-
-    // MARK: - Message Encryption
-
-    typealias EncryptionError = MLSEncryptionService.MLSMessageEncryptionError
 
     func test_Encrypt_IsSuccessful() async throws {
         // Given

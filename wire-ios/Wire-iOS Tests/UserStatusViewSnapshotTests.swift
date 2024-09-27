@@ -22,13 +22,7 @@ import XCTest
 @testable import WireSyncEngineSupport
 
 final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var selfUser: ZMUser!
-    private var otherUser: ZMUser!
-    private var userSession: UserSessionMock!
-    private var sut: UserStatusView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -182,6 +176,16 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
             userInterfaceStyle: .light
         )
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var selfUser: ZMUser!
+    private var otherUser: ZMUser!
+    private var userSession: UserSessionMock!
+    private var sut: UserStatusView!
 
     // MARK: - Common methods
 

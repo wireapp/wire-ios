@@ -20,10 +20,7 @@ import UIKit
 
 @objcMembers
 public final class CookieLabel: NSObject {
-    private static var _label: CookieLabel?
-    public static var _testOverrideLabel: CookieLabel?
-
-    public private(set) var value: String
+    // MARK: Lifecycle
 
     public init(value: String) {
         self.value = value
@@ -34,9 +31,9 @@ public final class CookieLabel: NSObject {
         self.init(value: UUID().uuidString)
     }
 
-    public var length: Int {
-        value.count
-    }
+    // MARK: Public
+
+    public static var _testOverrideLabel: CookieLabel?
 
     public static var current: CookieLabel {
         if let label = _testOverrideLabel {
@@ -50,8 +47,18 @@ public final class CookieLabel: NSObject {
         }
     }
 
+    public private(set) var value: String
+
+    public var length: Int {
+        value.count
+    }
+
     override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? CookieLabel else { return false }
         return value == other.value
     }
+
+    // MARK: Private
+
+    private static var _label: CookieLabel?
 }

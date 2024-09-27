@@ -20,21 +20,7 @@ import UIKit
 import WireDesign
 
 final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
-    let token: Token<NSObjectProtocol>
-
-    typealias ViewColors = SemanticColors.View
-
-    private unowned let tokenField: TokenField
-    private let dotSize: CGFloat = 4
-    private let dotSpacing: CGFloat = 8
-
-    private var dotColor: UIColor? {
-        tokenField.dotColor
-    }
-
-    private var backgroundColor: UIColor? {
-        tokenField.tokenBackgroundColor
-    }
+    // MARK: Lifecycle
 
     init(token: Token<NSObjectProtocol>, tokenField: TokenField) {
         self.token = token
@@ -50,6 +36,12 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    typealias ViewColors = SemanticColors.View
+
+    let token: Token<NSObjectProtocol>
+
     override var accessibilityLabel: String? {
         get {
             // Setting isAccessibilityElement to false does not seem to work for this
@@ -62,8 +54,18 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         }
     }
 
-    private func refreshImage(tintColor: UIColor = ViewColors.backgroundDefaultBlack) {
-        image = imageForCurrentToken?.withTintColor(tintColor)
+    // MARK: Private
+
+    private unowned let tokenField: TokenField
+    private let dotSize: CGFloat = 4
+    private let dotSpacing: CGFloat = 8
+
+    private var dotColor: UIColor? {
+        tokenField.dotColor
+    }
+
+    private var backgroundColor: UIColor? {
+        tokenField.tokenBackgroundColor
     }
 
     private var imageForCurrentToken: UIImage? {
@@ -104,5 +106,9 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         UIGraphicsEndImageContext()
 
         return i
+    }
+
+    private func refreshImage(tintColor: UIColor = ViewColors.backgroundDefaultBlack) {
+        image = imageForCurrentToken?.withTintColor(tintColor)
     }
 }

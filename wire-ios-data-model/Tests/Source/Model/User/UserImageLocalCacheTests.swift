@@ -21,13 +21,7 @@ import WireDataModelSupport
 @testable import WireDataModel
 
 final class UserImageLocalCacheTests: XCTestCase {
-    private let coreDataStackHelper = CoreDataStackHelper()
-
-    private var coreDataStack: CoreDataStack!
-    private var context: NSManagedObjectContext!
-
-    private var testUser: ZMUser!
-    private var sut: UserImageLocalCache!
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -166,4 +160,14 @@ final class UserImageLocalCacheTests: XCTestCase {
         XCTAssertNil(sut.userImage(testUser, size: .complete))
         XCTAssertNil(sut.userImage(testUser, size: .preview))
     }
+
+    // MARK: Private
+
+    private let coreDataStackHelper = CoreDataStackHelper()
+
+    private var coreDataStack: CoreDataStack!
+    private var context: NSManagedObjectContext!
+
+    private var testUser: ZMUser!
+    private var sut: UserImageLocalCache!
 }

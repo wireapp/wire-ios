@@ -20,6 +20,8 @@ import WireDataModel
 import XCTest
 
 final class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
+    // MARK: Internal
+
     func testThatItReturnsPreviewsProfileImageIfItWasPreviouslyUpdated() {
         // given
         let imageData = verySmallJPEGData()
@@ -167,6 +169,8 @@ final class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         }
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

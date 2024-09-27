@@ -21,18 +21,7 @@ import Foundation
 // MARK: - OpenGraphData
 
 public struct OpenGraphData {
-    let title: String
-    let type: String
-    let url: String
-    let resolvedURL: String
-    let imageUrls: [String]
-
-    let siteName: OpenGraphSiteName
-    let siteNameString: String?
-    let content: String?
-    let userGeneratedImage: Bool
-
-    var foursquareMetaData: FoursquareMetaData?
+    // MARK: Lifecycle
 
     init(
         title: String,
@@ -54,6 +43,21 @@ public struct OpenGraphData {
         self.content = description
         self.userGeneratedImage = userGeneratedImage
     }
+
+    // MARK: Internal
+
+    let title: String
+    let type: String
+    let url: String
+    let resolvedURL: String
+    let imageUrls: [String]
+
+    let siteName: OpenGraphSiteName
+    let siteNameString: String?
+    let content: String?
+    let userGeneratedImage: Bool
+
+    var foursquareMetaData: FoursquareMetaData?
 }
 
 // MARK: CustomStringConvertible
@@ -69,8 +73,7 @@ extension OpenGraphData: CustomStringConvertible {
 // MARK: - FoursquareMetaData
 
 public struct FoursquareMetaData {
-    let latitude: Float
-    let longitude: Float
+    // MARK: Lifecycle
 
     init(latitude: Float, longitude: Float) {
         self.latitude = latitude
@@ -82,6 +85,11 @@ public struct FoursquareMetaData {
               let longitude = mapping[.longitudeFSQ].flatMap(Float.init) else { return nil }
         self.init(latitude: latitude, longitude: longitude)
     }
+
+    // MARK: Internal
+
+    let latitude: Float
+    let longitude: Float
 }
 
 extension OpenGraphData {

@@ -34,6 +34,8 @@ public protocol SessionEstablisherInterface {
 // MARK: - SessionEstablisher
 
 public class SessionEstablisher: SessionEstablisherInterface {
+    // MARK: Lifecycle
+
     public init(
         context: NSManagedObjectContext,
         apiProvider: APIProviderInterface,
@@ -44,10 +46,7 @@ public class SessionEstablisher: SessionEstablisherInterface {
         self.context = context
     }
 
-    private let apiProvider: APIProviderInterface
-    private let context: NSManagedObjectContext
-    private let processor: PrekeyPayloadProcessorInterface
-    private let batchSize = 28
+    // MARK: Public
 
     public func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws {
         // Establish sessions in chunks
@@ -55,6 +54,13 @@ public class SessionEstablisher: SessionEstablisherInterface {
             try await internalEstablishSessions(for: Set(chunk), apiVersion: apiVersion)
         }
     }
+
+    // MARK: Private
+
+    private let apiProvider: APIProviderInterface
+    private let context: NSManagedObjectContext
+    private let processor: PrekeyPayloadProcessorInterface
+    private let batchSize = 28
 
     private func internalEstablishSessions(for clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws {
         guard let selfClient = await context.perform({

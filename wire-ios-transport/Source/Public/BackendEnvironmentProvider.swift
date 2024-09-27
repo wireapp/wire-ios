@@ -33,10 +33,15 @@ public protocol BackendTrustProvider: NSObjectProtocol {
 // Wrapper around Swift-only EnvironmentType so that it would be useable in Objective-C
 @objc
 public final class EnvironmentTypeProvider: NSObject {
-    public var value: EnvironmentType
+    // MARK: Lifecycle
+
     public init(environmentType: EnvironmentType) {
         self.value = environmentType
     }
+
+    // MARK: Public
+
+    public var value: EnvironmentType
 }
 
 // MARK: - BackendEndpointsProvider

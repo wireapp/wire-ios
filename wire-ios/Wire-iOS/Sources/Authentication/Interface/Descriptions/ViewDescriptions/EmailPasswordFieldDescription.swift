@@ -21,6 +21,15 @@ import UIKit
 // MARK: - EmailPasswordFieldDescription
 
 final class EmailPasswordFieldDescription: ValueSubmission {
+    // MARK: Lifecycle
+
+    init(forRegistration: Bool, prefilledEmail: String? = nil, usePasswordDeferredValidation: Bool = false) {
+        self.forRegistration = forRegistration
+        self.usePasswordDeferredValidation = usePasswordDeferredValidation
+    }
+
+    // MARK: Internal
+
     let textField = RevisedEmailPasswordTextField()
 
     var forRegistration: Bool
@@ -30,11 +39,6 @@ final class EmailPasswordFieldDescription: ValueSubmission {
 
     var valueSubmitted: ValueSubmitted?
     var valueValidated: ValueValidated?
-
-    init(forRegistration: Bool, prefilledEmail: String? = nil, usePasswordDeferredValidation: Bool = false) {
-        self.forRegistration = forRegistration
-        self.usePasswordDeferredValidation = usePasswordDeferredValidation
-    }
 }
 
 // MARK: ViewDescriptor

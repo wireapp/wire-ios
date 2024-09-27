@@ -34,14 +34,7 @@ protocol IncomingRequestFooterViewDelegate: AnyObject {
 /// A view that lets the user accept a connection request.
 
 class IncomingRequestFooterView: UIView {
-    let titleLabel = UILabel()
-    let acceptButton = LegacyButton(fontSpec: .smallSemiboldFont)
-    let ignoreButton = LegacyButton(fontSpec: .smallSemiboldFont)
-
-    let contentStack = UIStackView()
-
-    /// The delegate of the view, that will be called when the user accepts or denies the request.
-    weak var delegate: IncomingRequestFooterViewDelegate?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -55,6 +48,19 @@ class IncomingRequestFooterView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    let titleLabel = UILabel()
+    let acceptButton = LegacyButton(fontSpec: .smallSemiboldFont)
+    let ignoreButton = LegacyButton(fontSpec: .smallSemiboldFont)
+
+    let contentStack = UIStackView()
+
+    /// The delegate of the view, that will be called when the user accepts or denies the request.
+    weak var delegate: IncomingRequestFooterViewDelegate?
+
+    // MARK: Private
 
     private func configureSubviews() {
         titleLabel.text = L10n.Localizable.connectionRequestPendingTitle.localizedUppercase

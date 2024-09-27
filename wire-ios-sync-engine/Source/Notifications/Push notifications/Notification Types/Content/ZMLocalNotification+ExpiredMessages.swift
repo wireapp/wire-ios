@@ -30,18 +30,19 @@ extension ZMLocalNotification {
     }
 
     private class FailedMessageNotificationBuilder: NotificationBuilder {
-        fileprivate let conversation: ZMConversation
-        fileprivate let managedObjectContext: NSManagedObjectContext
-
-        var notificationType: LocalNotificationType {
-            LocalNotificationType.failedMessage
-        }
+        // MARK: Lifecycle
 
         init?(conversation: ZMConversation?) {
             guard let conversation, let managedObjectContext = conversation.managedObjectContext else { return nil }
 
             self.conversation = conversation
             self.managedObjectContext = managedObjectContext
+        }
+
+        // MARK: Internal
+
+        var notificationType: LocalNotificationType {
+            LocalNotificationType.failedMessage
         }
 
         func shouldCreateNotification() -> Bool {
@@ -73,5 +74,10 @@ extension ZMLocalNotification {
 
             return userInfo
         }
+
+        // MARK: Fileprivate
+
+        fileprivate let conversation: ZMConversation
+        fileprivate let managedObjectContext: NSManagedObjectContext
     }
 }

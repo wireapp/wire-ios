@@ -26,12 +26,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
 @objcMembers
 public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
     ZMContextChangeTrackerSource {
-    private let requestFactory = AssetDownloadRequestFactory()
-
-    fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
-    private var notificationTokens: [Any] = []
-
-    private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -59,6 +54,69 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
         registerForCancellationNotification()
         registerForWhitelistingNotification()
     }
+
+    // MARK: Public
+
+    // MARK: - ZMContextChangeTrackerSource
+
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        [assetDownstreamObjectSync]
+    }
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        assetDownstreamObjectSync.nextRequest(for: apiVersion)
+    }
+
+    // MARK: - ZMDownstreamTranscoder
+
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
+        if let assetClientMessage = object as? ZMAssetClientMessage {
+            let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
+                assetClientMessage.associatedTaskIdentifier = taskIdentifier
+            }
+
+            let completionHandler = ZMCompletionHandler(on: managedObjectContext) { response in
+                self.handleResponse(response, forMessage: assetClientMessage)
+            }
+
+            let progressHandler = ZMTaskProgressHandler(on: managedObjectContext) { progress in
+                assetClientMessage.progress = progress
+                self.managedObjectContext.enqueueDelayedSave()
+            }
+
+            if let asset = assetClientMessage.underlyingMessage?.assetData {
+                let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
+                let domain = asset.uploaded.assetDomain
+                if let request = requestFactory.requestToGetAsset(
+                    withKey: asset.uploaded.assetID,
+                    token: token,
+                    domain: domain,
+                    apiVersion: apiVersion
+                ) {
+                    request.add(taskCreationHandler)
+                    request.add(completionHandler)
+                    request.add(progressHandler)
+                    return request
+                }
+            }
+        }
+
+        fatalError("Cannot generate request for \(String(describing: object))")
+    }
+
+    public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
+        // no-op
+    }
+
+    public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
+        // no-op
+    }
+
+    // MARK: Internal
 
     func registerForCancellationNotification() {
         notificationTokens.append(NotificationInContext.addObserver(
@@ -106,9 +164,9 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
         }
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        assetDownstreamObjectSync.nextRequest(for: apiVersion)
-    }
+    // MARK: Fileprivate
+
+    fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
 
     fileprivate func handleResponse(
         _ response: ZMTransportResponse,
@@ -149,6 +207,14 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             )
         }
     }
+
+    // MARK: Private
+
+    private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
+
+    private let requestFactory = AssetDownloadRequestFactory()
+
+    private var notificationTokens: [Any] = []
 
     private func storeAndDecrypt(data: Data, for message: ZMAssetClientMessage) -> Bool {
         guard
@@ -217,60 +283,5 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
         )
 
         return true
-    }
-
-    // MARK: - ZMContextChangeTrackerSource
-
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [assetDownstreamObjectSync]
-    }
-
-    // MARK: - ZMDownstreamTranscoder
-
-    public func request(
-        forFetching object: ZMManagedObject!,
-        downstreamSync: ZMObjectSync!,
-        apiVersion: APIVersion
-    ) -> ZMTransportRequest! {
-        if let assetClientMessage = object as? ZMAssetClientMessage {
-            let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
-                assetClientMessage.associatedTaskIdentifier = taskIdentifier
-            }
-
-            let completionHandler = ZMCompletionHandler(on: managedObjectContext) { response in
-                self.handleResponse(response, forMessage: assetClientMessage)
-            }
-
-            let progressHandler = ZMTaskProgressHandler(on: managedObjectContext) { progress in
-                assetClientMessage.progress = progress
-                self.managedObjectContext.enqueueDelayedSave()
-            }
-
-            if let asset = assetClientMessage.underlyingMessage?.assetData {
-                let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
-                let domain = asset.uploaded.assetDomain
-                if let request = requestFactory.requestToGetAsset(
-                    withKey: asset.uploaded.assetID,
-                    token: token,
-                    domain: domain,
-                    apiVersion: apiVersion
-                ) {
-                    request.add(taskCreationHandler)
-                    request.add(completionHandler)
-                    request.add(progressHandler)
-                    return request
-                }
-            }
-        }
-
-        fatalError("Cannot generate request for \(String(describing: object))")
-    }
-
-    public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        // no-op
-    }
-
-    public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        // no-op
     }
 }

@@ -22,24 +22,7 @@ import WireSyncEngine
 // MARK: - DotView
 
 final class DotView: UIView {
-    private let circleView = ShapeView()
-    private let centerView = ShapeView()
-    private var userObserver: NSObjectProtocol!
-    private var clientsObserverTokens: [NSObjectProtocol] = []
-    private let user: ZMUser?
-    var hasUnreadMessages = false {
-        didSet { updateIndicator() }
-    }
-
-    var showIndicator: Bool {
-        get {
-            !isHidden
-        }
-
-        set {
-            isHidden = !newValue
-        }
-    }
+    // MARK: Lifecycle
 
     init(user: ZMUser? = nil) {
         self.user = user
@@ -70,6 +53,47 @@ final class DotView: UIView {
         createClientObservers()
     }
 
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var hasUnreadMessages = false {
+        didSet { updateIndicator() }
+    }
+
+    var showIndicator: Bool {
+        get {
+            !isHidden
+        }
+
+        set {
+            isHidden = !newValue
+        }
+    }
+
+    func updateIndicator() {
+        if hasUnreadMessages || user?.readReceiptsEnabledChangedRemotely == true {
+            showIndicator = true
+            return
+        }
+
+        if let count = user?.clientsRequiringUserAttention.count, count > 0 {
+            showIndicator = true
+            return
+        }
+    }
+
+    // MARK: Private
+
+    private let circleView = ShapeView()
+    private let centerView = ShapeView()
+    private var userObserver: NSObjectProtocol!
+    private var clientsObserverTokens: [NSObjectProtocol] = []
+    private let user: ZMUser?
+
     private func createConstraints() {
         [self, circleView, centerView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
@@ -83,26 +107,9 @@ final class DotView: UIView {
         ] + centerViewConstraints)
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     private func createClientObservers() {
         guard let user else { return }
         clientsObserverTokens = user.clients.compactMap { UserClientChangeInfo.add(observer: self, for: $0) }
-    }
-
-    func updateIndicator() {
-        if hasUnreadMessages || user?.readReceiptsEnabledChangedRemotely == true {
-            showIndicator = true
-            return
-        }
-
-        if let count = user?.clientsRequiringUserAttention.count, count > 0 {
-            showIndicator = true
-            return
-        }
     }
 }
 

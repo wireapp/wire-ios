@@ -19,16 +19,7 @@
 import UIKit
 
 final class CollectionViewContainerCell: UICollectionViewCell {
-    var collectionView: UICollectionView? {
-        didSet {
-            guard let collectionView else { return }
-
-            contentView.addSubview(collectionView)
-
-            collectionView.translatesAutoresizingMaskIntoConstraints = false
-            collectionView.fitIn(view: contentView)
-        }
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,5 +29,18 @@ final class CollectionViewContainerCell: UICollectionViewCell {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var collectionView: UICollectionView? {
+        didSet {
+            guard let collectionView else { return }
+
+            contentView.addSubview(collectionView)
+
+            collectionView.translatesAutoresizingMaskIntoConstraints = false
+            collectionView.fitIn(view: contentView)
+        }
     }
 }

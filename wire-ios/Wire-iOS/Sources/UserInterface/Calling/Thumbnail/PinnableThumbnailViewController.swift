@@ -20,23 +20,9 @@ import UIKit
 import WireUtilities
 
 final class PinnableThumbnailViewController: UIViewController {
-    private let thumbnailView = RoundedView()
-    private let thumbnailContainerView = PassthroughTouchesView()
+    // MARK: Internal
+
     private(set) var contentView: OrientableView?
-
-    // MARK: - Dynamics
-
-    private let edgeInsets = CGPoint(x: 16, y: 16)
-    private var originalCenter: CGPoint = .zero
-    private var hasDoneInitialLayout = false
-    private var hasEnabledPinningBehavior = false
-
-    private lazy var pinningBehavior = ThumbnailCornerPinningBehavior(
-        item: self.thumbnailView,
-        edgeInsets: self.edgeInsets
-    )
-
-    private lazy var animator = UIDynamicAnimator(referenceView: self.thumbnailContainerView)
 
     // MARK: - Changing the Previewed Content
 
@@ -108,31 +94,6 @@ final class PinnableThumbnailViewController: UIViewController {
         }
     }
 
-    private func configureViews() {
-        view.addSubview(thumbnailContainerView)
-
-        thumbnailContainerView.addSubview(thumbnailView)
-        thumbnailView.autoresizingMask = []
-        thumbnailView.clipsToBounds = true
-        let cornerRadius = 6.0
-        thumbnailView.shape = .rounded(radius: cornerRadius)
-
-        thumbnailContainerView.layer.shadowRadius = 30
-        thumbnailContainerView.layer.shadowOpacity = 0.32
-        thumbnailContainerView.layer.shadowColor = UIColor.black.cgColor
-        thumbnailContainerView.layer.shadowOffset = CGSize(width: 0, height: 8)
-        thumbnailContainerView.layer.masksToBounds = false
-    }
-
-    private func configureConstraints() {
-        thumbnailContainerView.translatesAutoresizingMaskIntoConstraints = false
-
-        thumbnailContainerView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor).isActive = true
-        thumbnailContainerView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor).isActive = true
-        thumbnailContainerView.topAnchor.constraint(equalTo: safeTopAnchor).isActive = true
-        thumbnailContainerView.bottomAnchor.constraint(equalTo: safeBottomAnchor).isActive = true
-    }
-
     // MARK: - Orientation
 
     @objc
@@ -175,6 +136,50 @@ final class PinnableThumbnailViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateThumbnailAfterLayoutUpdate()
+    }
+
+    // MARK: Private
+
+    private let thumbnailView = RoundedView()
+    private let thumbnailContainerView = PassthroughTouchesView()
+
+    // MARK: - Dynamics
+
+    private let edgeInsets = CGPoint(x: 16, y: 16)
+    private var originalCenter: CGPoint = .zero
+    private var hasDoneInitialLayout = false
+    private var hasEnabledPinningBehavior = false
+
+    private lazy var pinningBehavior = ThumbnailCornerPinningBehavior(
+        item: self.thumbnailView,
+        edgeInsets: self.edgeInsets
+    )
+
+    private lazy var animator = UIDynamicAnimator(referenceView: self.thumbnailContainerView)
+
+    private func configureViews() {
+        view.addSubview(thumbnailContainerView)
+
+        thumbnailContainerView.addSubview(thumbnailView)
+        thumbnailView.autoresizingMask = []
+        thumbnailView.clipsToBounds = true
+        let cornerRadius = 6.0
+        thumbnailView.shape = .rounded(radius: cornerRadius)
+
+        thumbnailContainerView.layer.shadowRadius = 30
+        thumbnailContainerView.layer.shadowOpacity = 0.32
+        thumbnailContainerView.layer.shadowColor = UIColor.black.cgColor
+        thumbnailContainerView.layer.shadowOffset = CGSize(width: 0, height: 8)
+        thumbnailContainerView.layer.masksToBounds = false
+    }
+
+    private func configureConstraints() {
+        thumbnailContainerView.translatesAutoresizingMaskIntoConstraints = false
+
+        thumbnailContainerView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor).isActive = true
+        thumbnailContainerView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor).isActive = true
+        thumbnailContainerView.topAnchor.constraint(equalTo: safeTopAnchor).isActive = true
+        thumbnailContainerView.bottomAnchor.constraint(equalTo: safeBottomAnchor).isActive = true
     }
 
     private func updateThumbnailFrame(animated: Bool, parentSize: CGSize) {

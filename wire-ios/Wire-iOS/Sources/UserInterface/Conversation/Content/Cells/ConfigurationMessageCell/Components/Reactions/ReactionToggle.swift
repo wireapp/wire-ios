@@ -23,30 +23,7 @@ import WireDesign
 // MARK: - ReactionToggle
 
 final class ReactionToggle: UIControl {
-    // MARK: - Properties
-
-    typealias ButtonColors = SemanticColors.Button
-
-    private let emojiLabel = DynamicFontLabel(
-        fontSpec: .mediumRegularFont,
-        color: SemanticColors.Label.textDefault
-    )
-
-    private let counterLabel = DynamicFontLabel(
-        fontSpec: .mediumSemiboldFont,
-        color: SemanticColors.Label.textDefault
-    )
-
-    private var onToggle: (() -> Void)?
-
-    var isToggled: Bool {
-        didSet {
-            guard oldValue != isToggled else { return }
-            updateAppearance()
-        }
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         emoji: Emoji.ID,
@@ -97,12 +74,49 @@ final class ReactionToggle: UIControl {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    typealias ButtonColors = SemanticColors.Button
+
+    var isToggled: Bool {
+        didSet {
+            guard oldValue != isToggled else { return }
+            updateAppearance()
+        }
+    }
+
     // MARK: - Methods
 
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         layer.cornerRadius = rect.height / 2.0
     }
+
+    // MARK: - Accessibility
+
+    func setupAccessibility(
+        value: String,
+        count: UInt
+    ) {
+        isAccessibilityElement = true
+        accessibilityIdentifier = "value: \(value), count: \(count)"
+    }
+
+    // MARK: Private
+
+    private let emojiLabel = DynamicFontLabel(
+        fontSpec: .mediumRegularFont,
+        color: SemanticColors.Label.textDefault
+    )
+
+    private let counterLabel = DynamicFontLabel(
+        fontSpec: .mediumSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
+
+    private var onToggle: (() -> Void)?
 
     private func updateAppearance() {
         if isToggled {
@@ -121,15 +135,5 @@ final class ReactionToggle: UIControl {
     @objc
     private func didToggle() {
         onToggle?()
-    }
-
-    // MARK: - Accessibility
-
-    func setupAccessibility(
-        value: String,
-        count: UInt
-    ) {
-        isAccessibilityElement = true
-        accessibilityIdentifier = "value: \(value), count: \(count)"
     }
 }

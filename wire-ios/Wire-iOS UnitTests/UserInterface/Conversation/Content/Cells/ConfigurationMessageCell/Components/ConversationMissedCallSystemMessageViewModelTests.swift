@@ -23,6 +23,8 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class ConversationMissedCallSystemMessageViewModelTests: XCTestCase {
+    // MARK: Internal
+
     func testAttributedTitle_givenInitialState() {
         // given
         let viewModel = makeViewModel()
@@ -100,6 +102,8 @@ final class ConversationMissedCallSystemMessageViewModelTests: XCTestCase {
         // then
         XCTAssertEqual(title?.string, "Missed calls from John Appleseed (2)")
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 
 final class ConversationSystemMessageMlsSupportSnapshotTests: ConversationMessageSnapshotTestCase {
+    // MARK: Internal
+
     // MARK: - Properties
 
     var mockConversation: SwiftMockConversation!
@@ -54,6 +56,8 @@ final class ConversationSystemMessageMlsSupportSnapshotTests: ConversationMessag
         let message = makeMessage(messageType: .mlsNotSupportedOtherUser)
         verify(message: message)
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

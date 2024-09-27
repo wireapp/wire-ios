@@ -22,10 +22,7 @@ import XCTest
 
 @available(iOS 15.0, *)
 final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
-    private let bundle = Bundle(for: ZMManagedObject.self)
-    private let teamId = UUID()
-    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())DatabaseMigrationTests_TeamUniqueness/")
-    private let helper = DatabaseMigrationHelper()
+    // MARK: Internal
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -72,6 +69,13 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
             for: self
         )
     }
+
+    // MARK: Private
+
+    private let bundle = Bundle(for: ZMManagedObject.self)
+    private let teamId = UUID()
+    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())DatabaseMigrationTests_TeamUniqueness/")
+    private let helper = DatabaseMigrationHelper()
 
     // MARK: - Fetch / Insert Helpers
 

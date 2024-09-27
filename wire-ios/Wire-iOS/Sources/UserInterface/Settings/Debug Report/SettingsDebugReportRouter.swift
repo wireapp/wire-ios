@@ -48,16 +48,11 @@ protocol SettingsDebugReportRouterProtocol {
 // MARK: - SettingsDebugReportRouter
 
 final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
+    // MARK: Internal
+
     // MARK: - Properties
 
     weak var viewController: UIViewController?
-
-    private let mailRecipient = WireEmail.shared.callingSupportEmail
-
-    private lazy var activityIndicator = {
-        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
-        return BlockingActivityIndicator(view: topMostViewController!.view)
-    }()
 
     // MARK: - Interface
 
@@ -109,6 +104,15 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
             popoverPresentationConfiguration: .superviewAndFrame(of: sender, insetBy: (dx: -4, dy: -4))
         )
     }
+
+    // MARK: Private
+
+    private let mailRecipient = WireEmail.shared.callingSupportEmail
+
+    private lazy var activityIndicator = {
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        return BlockingActivityIndicator(view: topMostViewController!.view)
+    }()
 }
 
 // MARK: MFMailComposeViewControllerDelegate

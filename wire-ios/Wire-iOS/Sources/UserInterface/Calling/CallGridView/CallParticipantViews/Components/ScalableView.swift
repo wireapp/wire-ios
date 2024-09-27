@@ -19,8 +19,7 @@
 import UIKit
 
 final class ScalableView: UIView, UIGestureRecognizerDelegate {
-    let pinchGesture = UIPinchGestureRecognizer()
-    let panGesture = UIPanGestureRecognizer()
+    // MARK: Lifecycle
 
     // MARK: - View Life Cycle
 
@@ -35,6 +34,11 @@ final class ScalableView: UIView, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let pinchGesture = UIPinchGestureRecognizer()
+    let panGesture = UIPanGestureRecognizer()
+
     // MARK: Public Interface
 
     var isScalingEnabled: Bool {
@@ -45,28 +49,6 @@ final class ScalableView: UIView, UIGestureRecognizerDelegate {
 
     func resetScale() {
         transform = .identity
-    }
-
-    // MARK: - Setup
-
-    private func setupViews() {
-        pinchGesture.addTarget(self, action: #selector(handlePinchGesture(_:)))
-        pinchGesture.delegate = self
-
-        panGesture.addTarget(self, action: #selector(handlePanGesture(_:)))
-        panGesture.delegate = self
-        panGesture.minimumNumberOfTouches = 2
-        panGesture.maximumNumberOfTouches = 2
-
-        addGestureRecognizer(pinchGesture)
-        addGestureRecognizer(panGesture)
-
-        updateGestureRecognizers()
-    }
-
-    private func updateGestureRecognizers() {
-        panGesture.isEnabled = isScalingEnabled
-        pinchGesture.isEnabled = isScalingEnabled
     }
 
     // MARK: - Pinch To Zoom
@@ -128,5 +110,29 @@ final class ScalableView: UIView, UIGestureRecognizerDelegate {
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
         true
+    }
+
+    // MARK: Private
+
+    // MARK: - Setup
+
+    private func setupViews() {
+        pinchGesture.addTarget(self, action: #selector(handlePinchGesture(_:)))
+        pinchGesture.delegate = self
+
+        panGesture.addTarget(self, action: #selector(handlePanGesture(_:)))
+        panGesture.delegate = self
+        panGesture.minimumNumberOfTouches = 2
+        panGesture.maximumNumberOfTouches = 2
+
+        addGestureRecognizer(pinchGesture)
+        addGestureRecognizer(panGesture)
+
+        updateGestureRecognizers()
+    }
+
+    private func updateGestureRecognizers() {
+        panGesture.isEnabled = isScalingEnabled
+        pinchGesture.isEnabled = isScalingEnabled
     }
 }

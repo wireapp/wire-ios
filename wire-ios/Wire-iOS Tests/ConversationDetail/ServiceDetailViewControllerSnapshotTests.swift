@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
-    private var sut: ServiceDetailViewController!
-    private var serviceUser: MockServiceUserType!
-    private var groupConversation: ZMConversation!
-    private var mockSelfUser: MockUserType!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -71,4 +67,12 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             snapshotHelper.verify(matching: sut)
         }
     }
+
+    // MARK: Private
+
+    private var sut: ServiceDetailViewController!
+    private var serviceUser: MockServiceUserType!
+    private var groupConversation: ZMConversation!
+    private var mockSelfUser: MockUserType!
+    private var snapshotHelper: SnapshotHelper!
 }

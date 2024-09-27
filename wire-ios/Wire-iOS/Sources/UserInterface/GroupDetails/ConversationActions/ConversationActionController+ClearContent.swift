@@ -24,6 +24,12 @@ import WireDataModel
 enum ClearContentResult {
     case delete(leave: Bool), cancel
 
+    // MARK: Internal
+
+    static var title: String {
+        L10n.Localizable.Meta.Menu.DeleteContent.dialogMessage
+    }
+
     var title: String {
         switch self {
         case .cancel: L10n.Localizable.General.cancel
@@ -32,25 +38,23 @@ enum ClearContentResult {
         }
     }
 
-    private var style: UIAlertAction.Style {
-        guard case .cancel = self else { return .destructive }
-        return .cancel
-    }
-
-    func action(_ handler: @escaping (ClearContentResult) -> Void) -> UIAlertAction {
-        .init(title: title, style: style) { _ in handler(self) }
-    }
-
-    static var title: String {
-        L10n.Localizable.Meta.Menu.DeleteContent.dialogMessage
-    }
-
     static func options(for conversation: ZMConversation) -> [ClearContentResult] {
         if conversation.conversationType == .oneOnOne || !conversation.isSelfAnActiveMember {
             [.delete(leave: false), .cancel]
         } else {
             [.delete(leave: true), .delete(leave: false), .cancel]
         }
+    }
+
+    func action(_ handler: @escaping (ClearContentResult) -> Void) -> UIAlertAction {
+        .init(title: title, style: style) { _ in handler(self) }
+    }
+
+    // MARK: Private
+
+    private var style: UIAlertAction.Style {
+        guard case .cancel = self else { return .destructive }
+        return .cancel
     }
 }
 

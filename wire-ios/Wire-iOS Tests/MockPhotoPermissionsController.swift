@@ -21,13 +21,14 @@ import XCTest
 @testable import Wire
 
 final class MockPhotoPermissionsController: PhotoPermissionsController {
-    private var camera = false
-    private var library = false
+    // MARK: Lifecycle
 
     init(camera: Bool, library: Bool) {
         self.camera = camera
         self.library = library
     }
+
+    // MARK: Internal
 
     var isCameraAuthorized: Bool {
         camera
@@ -44,4 +45,9 @@ final class MockPhotoPermissionsController: PhotoPermissionsController {
     var areCameraAndPhotoLibraryAuthorized: Bool {
         camera && library
     }
+
+    // MARK: Private
+
+    private var camera = false
+    private var library = false
 }

@@ -22,21 +22,7 @@ import WireRequestStrategy
 
 @objcMembers
 public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
-    public let userProfileImageUpdateStatus: UserProfileImageUpdateStatus
-    public let userProfileUpdateStatus: UserProfileUpdateStatus
-    public let clientRegistrationStatus: ZMClientRegistrationStatus
-    public let clientUpdateStatus: ClientUpdateStatus
-    public let pushNotificationStatus: PushNotificationStatus
-    public let proxiedRequestStatus: ProxiedRequestsStatus
-    public let syncStatus: SyncStatus
-    public let operationStatus: OperationStatus
-    public let requestCancellation: ZMRequestCancellation
-    public let analytics: AnalyticsType?
-    public let teamInvitationStatus: TeamInvitationStatus
-    public let assetDeletionStatus: AssetDeletionStatus
-    public let callEventStatus: CallEventStatus
-
-    fileprivate var callInProgressObserverToken: Any?
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -88,6 +74,22 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         }
     }
 
+    // MARK: Public
+
+    public let userProfileImageUpdateStatus: UserProfileImageUpdateStatus
+    public let userProfileUpdateStatus: UserProfileUpdateStatus
+    public let clientRegistrationStatus: ZMClientRegistrationStatus
+    public let clientUpdateStatus: ClientUpdateStatus
+    public let pushNotificationStatus: PushNotificationStatus
+    public let proxiedRequestStatus: ProxiedRequestsStatus
+    public let syncStatus: SyncStatus
+    public let operationStatus: OperationStatus
+    public let requestCancellation: ZMRequestCancellation
+    public let analytics: AnalyticsType?
+    public let teamInvitationStatus: TeamInvitationStatus
+    public let assetDeletionStatus: AssetDeletionStatus
+    public let callEventStatus: CallEventStatus
+
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
         clientRegistrationStatus
     }
@@ -122,4 +124,8 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     public func requestQuickSync() {
         syncStatus.forceQuickSync()
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var callInProgressObserverToken: Any?
 }

@@ -18,15 +18,19 @@
 
 @objc
 public class ReactionData: NSObject {
-    public let reactionString: String
-    public let users: [UserType]
-    public let creationDate: Date
+    // MARK: Lifecycle
 
     public init(reactionString: String, users: [UserType], creationDate: Date) {
         self.reactionString = reactionString
         self.users = users
         self.creationDate = creationDate
     }
+
+    // MARK: Public
+
+    public let reactionString: String
+    public let users: [UserType]
+    public let creationDate: Date
 
     override public var hash: Int {
         reactionString.hash

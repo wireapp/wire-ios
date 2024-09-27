@@ -21,9 +21,7 @@ import SwiftUI
 // MARK: - AccountImageViewRepresentable
 
 public struct AccountImageViewRepresentable: UIViewRepresentable {
-    private let accountImage: UIImage
-    private let isTeamAccount: Bool
-    private let availability: Availability?
+    // MARK: Lifecycle
 
     public init(
         accountImage: UIImage,
@@ -35,6 +33,8 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
         self.availability = availability
     }
 
+    // MARK: Public
+
     public func makeUIView(context: Context) -> AccountImageView {
         .init()
     }
@@ -44,6 +44,12 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
         view.isTeamAccount = isTeamAccount
         view.availability = availability
     }
+
+    // MARK: Private
+
+    private let accountImage: UIImage
+    private let isTeamAccount: Bool
+    private let availability: Availability?
 }
 
 extension AccountImageViewRepresentable {

@@ -22,8 +22,7 @@ import Foundation
 
 @objc(ZMVersion)
 public final class Version: NSObject, Comparable {
-    @objc public private(set) var versionString: String
-    @objc public private(set) var arrayRepresentation: [Int]
+    // MARK: Lifecycle
 
     @objc(initWithVersionString:)
     public init(string: String) {
@@ -33,10 +32,17 @@ public final class Version: NSObject, Comparable {
         super.init()
     }
 
-    private static func integerComponents(of string: String) -> [Int] {
-        string.components(separatedBy: ".").map {
-            ($0 as NSString).integerValue
-        }
+    // MARK: Public
+
+    @objc public private(set) var versionString: String
+    @objc public private(set) var arrayRepresentation: [Int]
+
+    override public var description: String {
+        arrayRepresentation.map { "\($0)" }.joined(separator: ".")
+    }
+
+    override public var debugDescription: String {
+        String(format: "<%@ %p> %@", NSStringFromClass(type(of: self)), self, description)
     }
 
     @objc(compareWithVersion:)
@@ -68,12 +74,12 @@ public final class Version: NSObject, Comparable {
         return other == self
     }
 
-    override public var description: String {
-        arrayRepresentation.map { "\($0)" }.joined(separator: ".")
-    }
+    // MARK: Private
 
-    override public var debugDescription: String {
-        String(format: "<%@ %p> %@", NSStringFromClass(type(of: self)), self, description)
+    private static func integerComponents(of string: String) -> [Int] {
+        string.components(separatedBy: ".").map {
+            ($0 as NSString).integerValue
+        }
     }
 }
 

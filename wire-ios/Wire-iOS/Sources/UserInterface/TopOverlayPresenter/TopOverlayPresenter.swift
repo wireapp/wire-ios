@@ -19,7 +19,19 @@
 import UIKit
 
 struct TopOverlayPresenter: TopOverlayPresenting {
+    // MARK: Internal
+
     var mainWindow: UIWindow
+
+    func presentTopOverlay(_ viewController: UIViewController, animated: Bool) {
+        zClientViewController?.setTopOverlay(to: viewController, animated: animated)
+    }
+
+    func dismissTopOverlay(animated: Bool) {
+        zClientViewController?.setTopOverlay(to: nil, animated: animated)
+    }
+
+    // MARK: Private
 
     private var zClientViewController: ZClientViewController? {
         guard let zClientViewController = mainWindow.rootViewController as? ZClientViewController else {
@@ -28,13 +40,5 @@ struct TopOverlayPresenter: TopOverlayPresenting {
         }
 
         return zClientViewController
-    }
-
-    func presentTopOverlay(_ viewController: UIViewController, animated: Bool) {
-        zClientViewController?.setTopOverlay(to: viewController, animated: animated)
-    }
-
-    func dismissTopOverlay(animated: Bool) {
-        zClientViewController?.setTopOverlay(to: nil, animated: animated)
     }
 }

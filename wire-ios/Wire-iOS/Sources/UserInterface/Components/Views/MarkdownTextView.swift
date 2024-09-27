@@ -31,8 +31,48 @@ extension Notification.Name {
 // MARK: - MarkdownTextView
 
 final class MarkdownTextView: NextResponderTextView {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    convenience init() {
+        self.init(with: DownStyle.normal)
+    }
+
+    init(with style: DownStyle) {
+        self.style = style
+        // create the storage stack
+        self.markdownTextStorage = MarkdownTextStorage()
+        let layoutManager = NSLayoutManager()
+        markdownTextStorage.addLayoutManager(layoutManager)
+        let textContainer = NSTextContainer()
+        layoutManager.addTextContainer(textContainer)
+        super.init(frame: .zero, textContainer: textContainer)
+
+        self.currentAttributes = attributes(for: activeMarkdown)
+        typingAttributes = currentAttributes
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textViewDidChange),
+            name: UITextView.textDidChangeNotification,
+            object: nil
+        )
+        setupGestureRecognizer()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     enum ListType {
         case number, bullet
+
+        // MARK: Internal
+
         var prefix: String { self == .number ? "1. " : "- " }
     }
 
@@ -40,9 +80,6 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// The style used to apply attributes.
     var style: DownStyle
-
-    /// The parser used to convert attributed text into markdown syntax.
-    private let parser = AttributedStringParser()
 
     /// The main backing store
     let markdownTextStorage: MarkdownTextStorage
@@ -55,6 +92,23 @@ final class MarkdownTextView: NextResponderTextView {
         let markdownTextWithMentions = replaceMentionAttachmentsWithPlainText(in: markdownText)
 
         return (markdownTextWithMentions as String, mentions)
+    }
+
+    /// The currently active markdown. This determines which attributes
+    /// are applied when typing.
+    private(set) var activeMarkdown = Markdown.none {
+        didSet {
+            if oldValue != activeMarkdown {
+                currentAttributes = attributes(for: activeMarkdown)
+                markdownTextStorage.currentMarkdown = activeMarkdown
+                typingAttributes = currentAttributes
+                NotificationCenter.default.post(name: .MarkdownTextViewDidChangeActiveMarkdown, object: self)
+            }
+        }
+    }
+
+    override var selectedTextRange: UITextRange? {
+        didSet { activeMarkdown = markdownAtSelection() }
     }
 
     @objc
@@ -88,6 +142,90 @@ final class MarkdownTextView: NextResponderTextView {
         }
 
         attributedText = mutable
+    }
+
+    override func cut(_: Any?) {
+        guard let selectedTextRange else { return }
+
+        let copiedAttributedText = attributedText.attributedSubstring(from: selectedRange)
+        let copiedAttributedTextPlainText = replaceMentionAttachmentsWithPlainText(in: copiedAttributedText)
+
+        UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: UTType.plainText.identifier)
+
+        replace(selectedTextRange, withText: "")
+    }
+
+    override func copy(_: Any?) {
+        let copiedAttributedText = attributedText.attributedSubstring(from: selectedRange)
+        let copiedAttributedTextPlainText = replaceMentionAttachmentsWithPlainText(in: copiedAttributedText)
+
+        UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: UTType.plainText.identifier)
+    }
+
+    // MARK: - Public Interface
+
+    /// Updates the color of the text.
+    func updateTextColor(base: UIColor?) {
+        let baseColor = base ?? SemanticColors.Label.textDefault
+        textColor = baseColor
+        style.baseFontColor = baseColor
+    }
+
+    /// Clears active markdown & updates typing attributes.
+    @objc
+    func resetMarkdown() { activeMarkdown = .none }
+
+    /// Call this method before the text view changes to give it a chance
+    /// to perform any work.
+    func respondToChange(_ text: String, inRange range: NSRange) {
+        if text == "\n" || text == "\r" {
+            newlineFlag = true
+            if activeMarkdown.containsHeader {
+                resetMarkdown()
+            }
+        }
+
+        typingAttributes = currentAttributes
+    }
+
+    // MARK: Private
+
+    /// The parser used to convert attributed text into markdown syntax.
+    private let parser = AttributedStringParser()
+
+    /// Set when newline is entered, used for auto list item creation.
+    private var newlineFlag = false
+
+    /// The current attributes to be applied when typing.
+    private var currentAttributes: [NSAttributedString.Key: Any] = [:]
+
+    // MARK: - List Regex
+
+    private lazy var emptyListItemRegex: NSRegularExpression = {
+        let pattern = "^((\\d+\\.)|[•*+-])[\\t ]*$"
+        return try! NSRegularExpression(pattern: pattern, options: .anchorsMatchLines)
+    }()
+
+    private lazy var orderedListItemRegex: NSRegularExpression = // group 1: prefix, group 2: number, group 3: content
+        try! NSRegularExpression(pattern: "^((\\d+)\\.\\ )(.*$)", options: .anchorsMatchLines)
+
+    private lazy var unorderedListItemRegex: NSRegularExpression = // group 1: prefix, group 2: bullet, group 3: content
+        try! NSRegularExpression(pattern: "^(([•*+-])\\ )(.*$)", options: .anchorsMatchLines)
+
+    // MARK: - Range Helpers
+
+    private var currentLineRange: NSRange? {
+        guard selectedRange.location != NSNotFound else { return nil }
+        return (text as NSString).lineRange(for: selectedRange)
+    }
+
+    private var previousLineRange: NSRange? {
+        guard let range = currentLineRange, range.location > 0 else { return nil }
+        return (text as NSString).lineRange(for: NSRange(location: range.location - 1, length: 0))
+    }
+
+    private var previousLineTextRange: UITextRange? {
+        previousLineRange?.textRange(in: self)
     }
 
     private func mentions(from attributedText: NSAttributedString) -> [Mention] {
@@ -127,122 +265,6 @@ final class MarkdownTextView: NextResponderTextView {
             }
         }
         return result
-    }
-
-    /// Set when newline is entered, used for auto list item creation.
-    private var newlineFlag = false
-
-    /// The current attributes to be applied when typing.
-    private var currentAttributes: [NSAttributedString.Key: Any] = [:]
-
-    /// The currently active markdown. This determines which attributes
-    /// are applied when typing.
-    private(set) var activeMarkdown = Markdown.none {
-        didSet {
-            if oldValue != activeMarkdown {
-                currentAttributes = attributes(for: activeMarkdown)
-                markdownTextStorage.currentMarkdown = activeMarkdown
-                typingAttributes = currentAttributes
-                NotificationCenter.default.post(name: .MarkdownTextViewDidChangeActiveMarkdown, object: self)
-            }
-        }
-    }
-
-    override func cut(_: Any?) {
-        guard let selectedTextRange else { return }
-
-        let copiedAttributedText = attributedText.attributedSubstring(from: selectedRange)
-        let copiedAttributedTextPlainText = replaceMentionAttachmentsWithPlainText(in: copiedAttributedText)
-
-        UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: UTType.plainText.identifier)
-
-        replace(selectedTextRange, withText: "")
-    }
-
-    override func copy(_: Any?) {
-        let copiedAttributedText = attributedText.attributedSubstring(from: selectedRange)
-        let copiedAttributedTextPlainText = replaceMentionAttachmentsWithPlainText(in: copiedAttributedText)
-
-        UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: UTType.plainText.identifier)
-    }
-
-    override var selectedTextRange: UITextRange? {
-        didSet { activeMarkdown = markdownAtSelection() }
-    }
-
-    // MARK: - Range Helpers
-
-    private var currentLineRange: NSRange? {
-        guard selectedRange.location != NSNotFound else { return nil }
-        return (text as NSString).lineRange(for: selectedRange)
-    }
-
-    private var previousLineRange: NSRange? {
-        guard let range = currentLineRange, range.location > 0 else { return nil }
-        return (text as NSString).lineRange(for: NSRange(location: range.location - 1, length: 0))
-    }
-
-    private var previousLineTextRange: UITextRange? {
-        previousLineRange?.textRange(in: self)
-    }
-
-    // MARK: - Init
-
-    convenience init() {
-        self.init(with: DownStyle.normal)
-    }
-
-    init(with style: DownStyle) {
-        self.style = style
-        // create the storage stack
-        self.markdownTextStorage = MarkdownTextStorage()
-        let layoutManager = NSLayoutManager()
-        markdownTextStorage.addLayoutManager(layoutManager)
-        let textContainer = NSTextContainer()
-        layoutManager.addTextContainer(textContainer)
-        super.init(frame: .zero, textContainer: textContainer)
-
-        self.currentAttributes = attributes(for: activeMarkdown)
-        typingAttributes = currentAttributes
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(textViewDidChange),
-            name: UITextView.textDidChangeNotification,
-            object: nil
-        )
-        setupGestureRecognizer()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: - Public Interface
-
-    /// Updates the color of the text.
-    func updateTextColor(base: UIColor?) {
-        let baseColor = base ?? SemanticColors.Label.textDefault
-        textColor = baseColor
-        style.baseFontColor = baseColor
-    }
-
-    /// Clears active markdown & updates typing attributes.
-    @objc
-    func resetMarkdown() { activeMarkdown = .none }
-
-    /// Call this method before the text view changes to give it a chance
-    /// to perform any work.
-    func respondToChange(_ text: String, inRange range: NSRange) {
-        if text == "\n" || text == "\r" {
-            newlineFlag = true
-            if activeMarkdown.containsHeader {
-                resetMarkdown()
-            }
-        }
-
-        typingAttributes = currentAttributes
     }
 
     // MARK: - Private Interface
@@ -390,19 +412,6 @@ final class MarkdownTextView: NextResponderTextView {
             markdownTextStorage.addAttributes(updatedAttributes, range: mdRange)
         }
     }
-
-    // MARK: - List Regex
-
-    private lazy var emptyListItemRegex: NSRegularExpression = {
-        let pattern = "^((\\d+\\.)|[•*+-])[\\t ]*$"
-        return try! NSRegularExpression(pattern: pattern, options: .anchorsMatchLines)
-    }()
-
-    private lazy var orderedListItemRegex: NSRegularExpression = // group 1: prefix, group 2: number, group 3: content
-        try! NSRegularExpression(pattern: "^((\\d+)\\.\\ )(.*$)", options: .anchorsMatchLines)
-
-    private lazy var unorderedListItemRegex: NSRegularExpression = // group 1: prefix, group 2: bullet, group 3: content
-        try! NSRegularExpression(pattern: "^(([•*+-])\\ )(.*$)", options: .anchorsMatchLines)
 
     // MARK: - List Methods
 

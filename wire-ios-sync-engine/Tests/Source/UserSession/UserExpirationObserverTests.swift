@@ -48,7 +48,7 @@ extension XCTestCase {
 // MARK: - UserExpirationObserverTests
 
 public class UserExpirationObserverTests: MessagingTest {
-    var sut: UserExpirationObserver!
+    // MARK: Public
 
     override public func setUp() {
         super.setUp()
@@ -59,6 +59,10 @@ public class UserExpirationObserverTests: MessagingTest {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: Internal
+
+    var sut: UserExpirationObserver!
 
     func testThatItIgnoresNonExpiringUsers() {
         // given

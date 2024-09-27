@@ -20,14 +20,18 @@ import Foundation
 
 extension Payload {
     struct ConversationTeamInfo: Codable, Equatable {
-        enum CodingKeys: String, CodingKey {
-            case teamID = "teamid"
-            case managed
-        }
+        // MARK: Lifecycle
 
         init(teamID: UUID, managed: Bool = false) {
             self.teamID = teamID
             self.managed = managed
+        }
+
+        // MARK: Internal
+
+        enum CodingKeys: String, CodingKey {
+            case teamID = "teamid"
+            case managed
         }
 
         let teamID: UUID

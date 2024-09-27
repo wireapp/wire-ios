@@ -246,7 +246,13 @@ extension ZMMessage {
 
 /// Type of content in a message
 public struct MessageCategory: OptionSet {
-    public let rawValue: Int32
+    // MARK: Lifecycle
+
+    public init(rawValue: Int32) {
+        self.rawValue = rawValue
+    }
+
+    // MARK: Public
 
     public static let none = MessageCategory([])
     public static let undefined = MessageCategory(rawValue: 1 << 0)
@@ -264,9 +270,7 @@ public struct MessageCategory: OptionSet {
     public static let excludedFromCollection = MessageCategory(rawValue: 1 << 12)
     public static let linkPreview = MessageCategory(rawValue: 1 << 13)
 
-    public init(rawValue: Int32) {
-        self.rawValue = rawValue
-    }
+    public let rawValue: Int32
 }
 
 // MARK: CustomDebugStringConvertible

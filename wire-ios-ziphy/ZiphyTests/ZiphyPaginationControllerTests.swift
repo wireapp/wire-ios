@@ -20,6 +20,8 @@ import XCTest
 @testable import Ziphy
 
 class ZiphyPaginationControllerTests: XCTestCase {
+    // MARK: Internal
+
     var paginationController: ZiphyPaginationController!
 
     override func setUp() {
@@ -138,6 +140,8 @@ class ZiphyPaginationControllerTests: XCTestCase {
         // THEN
         waitForExpectations(timeout: 1, handler: nil)
     }
+
+    // MARK: Private
 
     // MARK: - Utilities
 

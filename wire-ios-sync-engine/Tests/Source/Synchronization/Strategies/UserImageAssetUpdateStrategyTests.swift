@@ -25,9 +25,15 @@ typealias ProfileImageSize = WireSyncEngine.ProfileImageSize
 // MARK: - MockImageUpdateStatus
 
 class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol {
+    var assetIdsToDelete = Set<String>()
+    var dataToConsume = [ProfileImageSize: Data]()
+    var uploadDoneForSize: ProfileImageSize?
+    var uploadDoneWithAssetId: String?
+    var uploadFailedForSize: ProfileImageSize?
+    var uploadFailedWithError: Error?
+
     var allSizes: [ProfileImageSize] { [.preview, .complete] }
 
-    var assetIdsToDelete = Set<String>()
     func hasAssetToDelete() -> Bool {
         !assetIdsToDelete.isEmpty
     }
@@ -36,7 +42,6 @@ class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol
         assetIdsToDelete.removeFirst()
     }
 
-    var dataToConsume = [ProfileImageSize: Data]()
     func consumeImage(for size: ProfileImageSize) -> Data? {
         dataToConsume[size]
     }
@@ -45,15 +50,11 @@ class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol
         dataToConsume[size] != nil
     }
 
-    var uploadDoneForSize: ProfileImageSize?
-    var uploadDoneWithAssetId: String?
     func uploadingDone(imageSize: ProfileImageSize, assetId: String) {
         uploadDoneForSize = imageSize
         uploadDoneWithAssetId = assetId
     }
 
-    var uploadFailedForSize: ProfileImageSize?
-    var uploadFailedWithError: Error?
     func uploadingFailed(imageSize: ProfileImageSize, error: Error) {
         uploadFailedForSize = imageSize
         uploadFailedWithError = error

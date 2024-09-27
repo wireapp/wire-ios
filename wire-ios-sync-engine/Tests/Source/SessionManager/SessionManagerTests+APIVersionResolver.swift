@@ -96,21 +96,38 @@ final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 // MARK: - MockSessionManagerExpectationDelegate
 
 private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
+    // MARK: Public
+
+    public func sessionManagerAsksToRetryStart() {
+        // no op
+    }
+
+    // MARK: Internal
+
     var didCallDidPerformFederationMigration = false
     var expectation: XCTestExpectation?
+    var didCallWillMigrateAccount = false
+    var didCallDidChangeActiveUserSession = false
+    var session: ZMUserSession?
+
+    var isInAuthenticatedAppState: Bool {
+        true
+    }
+
+    var isInUnathenticatedAppState: Bool {
+        false
+    }
+
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         didCallDidPerformFederationMigration = true
         expectation?.fulfill()
     }
 
-    var didCallWillMigrateAccount = false
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void) {
         didCallWillMigrateAccount = true
         userSessionCanBeTornDown()
     }
 
-    var didCallDidChangeActiveUserSession = false
-    var session: ZMUserSession?
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
         didCallDidChangeActiveUserSession = true
         session = userSession
@@ -160,19 +177,7 @@ private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
         // no op
     }
 
-    public func sessionManagerAsksToRetryStart() {
-        // no op
-    }
-
     func sessionManagerDidCompleteInitialSync(for activeSession: WireSyncEngine.UserSession?) {
         // no op
-    }
-
-    var isInAuthenticatedAppState: Bool {
-        true
-    }
-
-    var isInUnathenticatedAppState: Bool {
-        false
     }
 }

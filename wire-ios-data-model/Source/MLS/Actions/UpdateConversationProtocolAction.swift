@@ -21,13 +21,7 @@ import Foundation
 // MARK: - UpdateConversationProtocolAction
 
 public struct UpdateConversationProtocolAction: EntityAction {
-    // MARK: - Properties
-
-    public var qualifiedID: QualifiedID
-    public var messageProtocol: MessageProtocol
-    public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         qualifiedID: QualifiedID,
@@ -36,6 +30,14 @@ public struct UpdateConversationProtocolAction: EntityAction {
         self.qualifiedID = qualifiedID
         self.messageProtocol = messageProtocol
     }
+
+    // MARK: Public
+
+    // MARK: - Properties
+
+    public var qualifiedID: QualifiedID
+    public var messageProtocol: MessageProtocol
+    public var resultHandler: ResultHandler?
 }
 
 extension UpdateConversationProtocolAction {
@@ -47,6 +49,8 @@ extension UpdateConversationProtocolAction {
         case endpointUnavailable
         case api(APIFailure)
         case unknown
+
+        // MARK: Public
 
         public enum APIFailure: String, CaseIterable, Equatable {
             // 400
@@ -64,6 +68,8 @@ extension UpdateConversationProtocolAction {
             case conversationIdOrDomainNotFound
             case noTeam = "no-team"
             case noConversation = "no-conversation"
+
+            // MARK: Public
 
             public var statusCode: Int {
                 switch self {

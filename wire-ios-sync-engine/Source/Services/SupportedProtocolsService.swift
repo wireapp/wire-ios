@@ -30,13 +30,7 @@ public protocol SupportedProtocolsServiceInterface {
 // MARK: - SupportedProtocolsService
 
 public final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
-    // MARK: - Properties
-
-    private let featureRepository: FeatureRepositoryInterface
-    private let selfUserProvider: SelfUserProviderProtocol
-    private let logger = WireLogger(tag: "supported-protocols")
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public convenience init(context: NSManagedObjectContext) {
         self.init(
@@ -52,6 +46,8 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
         self.featureRepository = featureRepository
         self.selfUserProvider = selfUserProvider
     }
+
+    // MARK: Public
 
     // MARK: - Methods
 
@@ -103,6 +99,14 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 
         return result
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let featureRepository: FeatureRepositoryInterface
+    private let selfUserProvider: SelfUserProviderProtocol
+    private let logger = WireLogger(tag: "supported-protocols")
 
     // MARK: - MLS
 

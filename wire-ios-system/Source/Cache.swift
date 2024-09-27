@@ -18,16 +18,7 @@
 
 /// In memory cache with support for generics.
 public final class Cache<Key: Hashable, Value> {
-    private var cache: [Key: EntryMetadata] = [:]
-    private var cacheBuffer: CircularArray<Key>
-    private let maxCost: Int
-    private let maxElementsCount: Int
-    private var currentCost = 0
-
-    private struct EntryMetadata {
-        let value: Value
-        let cost: Int
-    }
+    // MARK: Lifecycle
 
     /// Create a new cache
     ///
@@ -44,6 +35,8 @@ public final class Cache<Key: Hashable, Value> {
         self.maxElementsCount = maxElementsCount
         self.cacheBuffer = CircularArray<Key>(size: maxElementsCount)
     }
+
+    // MARK: Public
 
     /// Add a value to the cache
     ///
@@ -82,6 +75,19 @@ public final class Cache<Key: Hashable, Value> {
         cacheBuffer.clear()
         currentCost = 0
     }
+
+    // MARK: Private
+
+    private struct EntryMetadata {
+        let value: Value
+        let cost: Int
+    }
+
+    private var cache: [Key: EntryMetadata] = [:]
+    private var cacheBuffer: CircularArray<Key>
+    private let maxCost: Int
+    private let maxElementsCount: Int
+    private var currentCost = 0
 
     private func purgeBasedOnElementsCount(adding key: Key) -> Bool {
         guard let discardedElement = cacheBuffer.add(key) else {

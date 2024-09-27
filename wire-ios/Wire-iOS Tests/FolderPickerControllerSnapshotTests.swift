@@ -22,9 +22,10 @@ import XCTest
 @testable import Wire
 
 final class FolderPickerControllerSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     var directory: MockConversationDirectory!
     var mockConversation: MockConversation!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -78,4 +79,8 @@ final class FolderPickerControllerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

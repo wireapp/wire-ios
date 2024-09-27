@@ -20,12 +20,13 @@ import avs
 import Foundation
 
 final class SoundPreviewPlayer {
-    private var mediaManager: AVSMediaManager
-    private var stopTimer: Timer?
+    // MARK: Lifecycle
 
     init(mediaManager: AVSMediaManager) {
         self.mediaManager = mediaManager
     }
+
+    // MARK: Internal
 
     func playPreview(_ mediaManagerSound: MediaManagerSound, limit: TimeInterval = 3) {
         stopTimer?.fire()
@@ -36,4 +37,9 @@ final class SoundPreviewPlayer {
             self?.stopTimer = nil
         }
     }
+
+    // MARK: Private
+
+    private var mediaManager: AVSMediaManager
+    private var stopTimer: Timer?
 }

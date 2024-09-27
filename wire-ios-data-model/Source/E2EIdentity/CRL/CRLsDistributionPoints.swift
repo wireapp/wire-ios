@@ -19,7 +19,7 @@
 import Foundation
 
 public struct CRLsDistributionPoints: Equatable {
-    public let urls: Set<URL>
+    // MARK: Lifecycle
 
     public init?(from stringArray: [String]?) {
         let urls = stringArray?.compactMap { URL(string: $0) }
@@ -30,4 +30,8 @@ public struct CRLsDistributionPoints: Equatable {
 
         self.urls = Set(urls)
     }
+
+    // MARK: Public
+
+    public let urls: Set<URL>
 }

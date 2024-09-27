@@ -23,13 +23,7 @@ import WireSyncEngine
 // MARK: - Analytics
 
 final class Analytics: NSObject {
-    var provider: AnalyticsProvider?
-
-    private var callingTracker: AnalyticsCallingTracker?
-    private var decryptionFailedObserver: AnalyticsDecryptionFailedObserver?
-    private var userObserverToken: Any?
-
-    static var shared: Analytics!
+    // MARK: Lifecycle
 
     required init(optedOut: Bool) {
         self.provider = optedOut ? nil : AnalyticsProviderFactory.shared.analyticsProvider()
@@ -39,22 +33,11 @@ final class Analytics: NSObject {
         setupObserver()
     }
 
-    private func setupObserver() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(userSessionDidBecomeAvailable(_:)),
-            name: Notification.Name.ZMUserSessionDidBecomeAvailable,
-            object: nil
-        )
-    }
+    // MARK: Internal
 
-    @objc
-    private func userSessionDidBecomeAvailable(_: Notification?) {
-        callingTracker = AnalyticsCallingTracker(analytics: self)
-        selfUser = SelfUser.provider?.providedSelfUser
+    static var shared: Analytics!
 
-        decryptionFailedObserver = AnalyticsDecryptionFailedObserver(analytics: self)
-    }
+    var provider: AnalyticsProvider?
 
     var selfUser: UserType? {
         get {
@@ -96,6 +79,29 @@ final class Analytics: NSObject {
 
         attributes.merge(userInfo) { _, new in new }
         tagEvent("e2ee.failed_message_decryption", attributes: attributes)
+    }
+
+    // MARK: Private
+
+    private var callingTracker: AnalyticsCallingTracker?
+    private var decryptionFailedObserver: AnalyticsDecryptionFailedObserver?
+    private var userObserverToken: Any?
+
+    private func setupObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(userSessionDidBecomeAvailable(_:)),
+            name: Notification.Name.ZMUserSessionDidBecomeAvailable,
+            object: nil
+        )
+    }
+
+    @objc
+    private func userSessionDidBecomeAvailable(_: Notification?) {
+        callingTracker = AnalyticsCallingTracker(analytics: self)
+        selfUser = SelfUser.provider?.providedSelfUser
+
+        decryptionFailedObserver = AnalyticsDecryptionFailedObserver(analytics: self)
     }
 }
 

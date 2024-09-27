@@ -28,19 +28,7 @@ protocol ProteusToMLSMigrationStorageInterface {
 // MARK: - ProteusToMLSMigrationStorage
 
 class ProteusToMLSMigrationStorage: ProteusToMLSMigrationStorageInterface {
-    // MARK: - Properties
-
-    private let storage: PrivateUserDefaults<Key>
-
-    // MARK: - Types
-
-    private enum Key: String, DefaultsKey {
-        case migrationStatus = "com.wire.mls.migration.status"
-    }
-
-    typealias MigrationStatus = ProteusToMLSMigrationCoordinator.MigrationStatus
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         userID: UUID,
@@ -51,6 +39,10 @@ class ProteusToMLSMigrationStorage: ProteusToMLSMigrationStorageInterface {
             storage: userDefaults
         )
     }
+
+    // MARK: Internal
+
+    typealias MigrationStatus = ProteusToMLSMigrationCoordinator.MigrationStatus
 
     // MARK: - Interface
 
@@ -64,4 +56,16 @@ class ProteusToMLSMigrationStorage: ProteusToMLSMigrationStorageInterface {
             storage.set(newValue.rawValue, forKey: Key.migrationStatus)
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Types
+
+    private enum Key: String, DefaultsKey {
+        case migrationStatus = "com.wire.mls.migration.status"
+    }
+
+    // MARK: - Properties
+
+    private let storage: PrivateUserDefaults<Key>
 }

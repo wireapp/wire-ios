@@ -33,6 +33,8 @@ public enum RichAssetFileType: Int, Equatable {
     /// An playable audio.
     case audio = 2
 
+    // MARK: Lifecycle
+
     // MARK: - Helpers
 
     init?(mimeType: String) {

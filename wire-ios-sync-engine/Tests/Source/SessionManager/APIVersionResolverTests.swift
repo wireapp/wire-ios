@@ -23,8 +23,7 @@ import XCTest
 // MARK: - APIVersionResolverTests
 
 final class APIVersionResolverTests: ZMTBaseTest {
-    private var transportSession: MockTransportSession!
-    private var mockDelegate: MockAPIVersionResolverDelegate!
+    // MARK: Internal
 
     override func setUp() {
         BackendInfo.apiVersion = nil
@@ -39,38 +38,6 @@ final class APIVersionResolverTests: ZMTBaseTest {
         transportSession = nil
 
         super.tearDown()
-    }
-
-    private func createSUT(
-        clientProdVersions: Set<APIVersion>,
-        clientDevVersions: Set<APIVersion>,
-        isDeveloperModeEnabled: Bool = false
-    ) -> APIVersionResolver {
-        let sut = APIVersionResolver(
-            clientProdVersions: clientProdVersions,
-            clientDevVersions: clientDevVersions,
-            transportSession: transportSession,
-            isDeveloperModeEnabled: isDeveloperModeEnabled
-        )
-
-        sut.delegate = mockDelegate
-        return sut
-    }
-
-    private func mockBackendInfo(
-        productionVersions: ClosedRange<Int32>,
-        developmentVersions: ClosedRange<Int32>?,
-        domain: String,
-        isFederationEnabled: Bool
-    ) {
-        transportSession.supportedAPIVersions = productionVersions.map(NSNumber.init(value:))
-
-        if let developmentVersions {
-            transportSession.developmentAPIVersions = developmentVersions.map(NSNumber.init(value:))
-        }
-
-        transportSession.domain = domain
-        transportSession.federation = isFederationEnabled
     }
 
     // MARK: - Endpoint unavailable
@@ -397,6 +364,43 @@ final class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertTrue(BackendInfo.isFederationEnabled)
         XCTAssertFalse(mockDelegate.didReportFederationHasBeenEnabled)
     }
+
+    // MARK: Private
+
+    private var transportSession: MockTransportSession!
+    private var mockDelegate: MockAPIVersionResolverDelegate!
+
+    private func createSUT(
+        clientProdVersions: Set<APIVersion>,
+        clientDevVersions: Set<APIVersion>,
+        isDeveloperModeEnabled: Bool = false
+    ) -> APIVersionResolver {
+        let sut = APIVersionResolver(
+            clientProdVersions: clientProdVersions,
+            clientDevVersions: clientDevVersions,
+            transportSession: transportSession,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
+        )
+
+        sut.delegate = mockDelegate
+        return sut
+    }
+
+    private func mockBackendInfo(
+        productionVersions: ClosedRange<Int32>,
+        developmentVersions: ClosedRange<Int32>?,
+        domain: String,
+        isFederationEnabled: Bool
+    ) {
+        transportSession.supportedAPIVersions = productionVersions.map(NSNumber.init(value:))
+
+        if let developmentVersions {
+            transportSession.developmentAPIVersions = developmentVersions.map(NSNumber.init(value:))
+        }
+
+        transportSession.domain = domain
+        transportSession.federation = isFederationEnabled
+    }
 }
 
 // MARK: - MockAPIVersionResolverDelegate
@@ -404,16 +408,17 @@ final class APIVersionResolverTests: ZMTBaseTest {
 private class MockAPIVersionResolverDelegate: APIVersionResolverDelegate {
     var blacklistReason: BlacklistReason?
 
+    var didReportFederationHasBeenEnabled = false
+    var didReportAPIVersionHasBeenResolved = false
+
     func apiVersionResolverFailedToResolveVersion(reason: BlacklistReason) {
         blacklistReason = reason
     }
 
-    var didReportFederationHasBeenEnabled = false
     func apiVersionResolverDetectedFederationHasBeenEnabled() {
         didReportFederationHasBeenEnabled = true
     }
 
-    var didReportAPIVersionHasBeenResolved = false
     func apiVersionResolverDidResolve(apiVersion: APIVersion) {
         didReportAPIVersionHasBeenResolved = true
     }

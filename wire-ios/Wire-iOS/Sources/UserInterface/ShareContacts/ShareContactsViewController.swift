@@ -37,15 +37,68 @@ extension String {
 // MARK: - ShareContactsViewController
 
 final class ShareContactsViewController: UIViewController {
+    // MARK: Internal
+
     // MARK: - Properties
 
     typealias RegistrationShareContacts = L10n.Localizable.Registration.ShareContacts
 
     weak var delegate: ShareContactsViewControllerDelegate?
 
-    private var notNowButtonHidden = false
     private(set) var showingAddressBookAccessDeniedViewController = false
 
+    // MARK: - Override methods
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupViews()
+        createConstraints()
+
+        if AddressBookHelper.sharedHelper.isAddressBookAccessDisabled {
+            displayContactsAccessDeniedMessage(animated: false)
+        }
+    }
+
+    // MARK: - AddressBook Access Denied ViewController
+
+    func displayContactsAccessDeniedMessage(animated: Bool) {
+        view.window?.endEditing(true)
+
+        showingAddressBookAccessDeniedViewController = true
+
+        if animated {
+            UIView.transition(
+                from: shareContactsContainerView,
+                to: addressBookAccessDeniedViewController.view,
+                duration: 0.35,
+                options: [.showHideTransitionViews, .transitionCrossDissolve]
+            )
+        } else {
+            shareContactsContainerView.isHidden = true
+            addressBookAccessDeniedViewController.view.isHidden = false
+        }
+    }
+
+    // MARK: Private
+
+    private static var attributedHeroText: NSAttributedString {
+        let title = RegistrationShareContacts.Hero.title
+        let paragraph = RegistrationShareContacts.Hero.paragraph
+
+        let text = [title, paragraph].joined(separator: "\u{2029}")
+
+        let attributedText = text.withCustomParagraphSpacing()
+
+        attributedText.addAttributes([
+            NSAttributedString.Key.foregroundColor: SemanticColors.Label.textDefault,
+            NSAttributedString.Key.font: FontSpec.largeThinFont.font!,
+        ], range: (text as NSString).range(of: paragraph))
+
+        return attributedText
+    }
+
+    private var notNowButtonHidden = false
     private lazy var notNowButton = {
         let notNowButton = ZMButton(
             style: .secondaryTextButtonStyle,
@@ -80,35 +133,6 @@ final class ShareContactsViewController: UIViewController {
     private let shareContactsContainerView = UIView()
     private let addressBookAccessDeniedViewController = PermissionDeniedViewController
         .addressBookAccessDeniedViewController()
-
-    private static var attributedHeroText: NSAttributedString {
-        let title = RegistrationShareContacts.Hero.title
-        let paragraph = RegistrationShareContacts.Hero.paragraph
-
-        let text = [title, paragraph].joined(separator: "\u{2029}")
-
-        let attributedText = text.withCustomParagraphSpacing()
-
-        attributedText.addAttributes([
-            NSAttributedString.Key.foregroundColor: SemanticColors.Label.textDefault,
-            NSAttributedString.Key.font: FontSpec.largeThinFont.font!,
-        ], range: (text as NSString).range(of: paragraph))
-
-        return attributedText
-    }
-
-    // MARK: - Override methods
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupViews()
-        createConstraints()
-
-        if AddressBookHelper.sharedHelper.isAddressBookAccessDisabled {
-            displayContactsAccessDeniedMessage(animated: false)
-        }
-    }
 
     // MARK: - Setup
 
@@ -188,26 +212,6 @@ final class ShareContactsViewController: UIViewController {
     @objc
     private func shareContactsLater() {
         delegate?.shareContactsViewControllerDidSkip(self)
-    }
-
-    // MARK: - AddressBook Access Denied ViewController
-
-    func displayContactsAccessDeniedMessage(animated: Bool) {
-        view.window?.endEditing(true)
-
-        showingAddressBookAccessDeniedViewController = true
-
-        if animated {
-            UIView.transition(
-                from: shareContactsContainerView,
-                to: addressBookAccessDeniedViewController.view,
-                duration: 0.35,
-                options: [.showHideTransitionViews, .transitionCrossDissolve]
-            )
-        } else {
-            shareContactsContainerView.isHidden = true
-            addressBookAccessDeniedViewController.view.isHidden = false
-        }
     }
 }
 

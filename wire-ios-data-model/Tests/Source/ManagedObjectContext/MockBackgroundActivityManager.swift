@@ -21,19 +21,24 @@ import WireTransport
 
 @objc
 class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
-    var backgroundTimeRemaining: TimeInterval = 10
-
-    var applicationState: UIApplication.State = .active
+    // MARK: Public
 
     // MARK: - BackgroundActivityManager
 
     @objc public var startedTasks = [String]()
+    @objc public var endedTasks = [Int]()
+
+    // MARK: Internal
+
+    var backgroundTimeRemaining: TimeInterval = 10
+
+    var applicationState: UIApplication.State = .active
+
     func beginBackgroundTask(withName name: String?, expirationHandler: (() -> Void)?) -> UIBackgroundTaskIdentifier {
         startedTasks.append(name ?? "NO-NAME")
         return UIBackgroundTaskIdentifier(rawValue: startedTasks.count)
     }
 
-    @objc public var endedTasks = [Int]()
     func endBackgroundTask(_ task: UIBackgroundTaskIdentifier) {
         endedTasks.append(task.rawValue)
     }

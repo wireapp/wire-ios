@@ -19,18 +19,18 @@
 import Foundation
 
 class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
+    // MARK: Internal
+
+    let httpClient: any HTTPClient
+
     var apiVersion: APIVersion {
         .v0
-    }
-
-    private var basePath: String {
-        "/notifications"
     }
 
     // MARK: - Get last update event
@@ -92,5 +92,11 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
                 .failure(code: .notFound, error: UpdateEventsAPIError.notFound)
                 .parse(response)
         }
+    }
+
+    // MARK: Private
+
+    private var basePath: String {
+        "/notifications"
     }
 }

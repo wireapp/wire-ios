@@ -25,6 +25,8 @@ import WireTransportSupport
 @testable import WireTransport
 
 class ZMUserSessionTestsBase: MessagingTest {
+    // MARK: Internal
+
     var mockSessionManager: MockSessionManager!
     var mockPushChannel: MockPushChannel!
     var mockEARService: MockEARServiceInterface!
@@ -167,6 +169,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             cookieStorage.authenticationCookieData = validCookie
         }
     }
+
+    // MARK: Private
 
     private func clearCache() {
         let cachesURL = FileManager.default.cachesURLForAccount(

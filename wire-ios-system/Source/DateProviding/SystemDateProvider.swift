@@ -27,7 +27,11 @@ extension CurrentDateProviding where Self == SystemDateProvider {
 
 /// Provides date values based on the system clock.
 public struct SystemDateProvider: CurrentDateProviding {
-    public var now: Date { .now }
+    // MARK: Lifecycle
 
     public init() {}
+
+    // MARK: Public
+
+    public var now: Date { .now }
 }

@@ -25,13 +25,17 @@ private let tag = "<ANALYTICS>:"
 // MARK: - AnalyticsConsoleProvider
 
 final class AnalyticsConsoleProvider: NSObject {
-    let zmLog = ZMSLog(tag: tag)
-    var optedOut = false
+    // MARK: Lifecycle
 
     override required init() {
         super.init()
         ZMSLog.set(level: .info, tag: tag)
     }
+
+    // MARK: Internal
+
+    let zmLog = ZMSLog(tag: tag)
+    var optedOut = false
 }
 
 // MARK: AnalyticsProvider

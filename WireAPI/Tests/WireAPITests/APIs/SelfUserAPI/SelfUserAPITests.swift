@@ -23,7 +23,7 @@ import XCTest
 // MARK: - SelfUserAPITests
 
 final class SelfUserAPITests: XCTestCase {
-    private var apiSnapshotHelper: APISnapshotHelper<any SelfUserAPI>!
+    // MARK: Internal
 
     // MARK: - Setup
 
@@ -187,6 +187,10 @@ final class SelfUserAPITests: XCTestCase {
             try await sut.pushSupportedProtocols([.mls])
         }
     }
+
+    // MARK: Private
+
+    private var apiSnapshotHelper: APISnapshotHelper<any SelfUserAPI>!
 }
 
 // MARK: SelfUserAPITests.Scaffolding

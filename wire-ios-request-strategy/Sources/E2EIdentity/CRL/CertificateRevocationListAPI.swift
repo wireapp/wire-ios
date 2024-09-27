@@ -29,11 +29,13 @@ public protocol CertificateRevocationListAPIProtocol {
 // MARK: - CertificateRevocationListAPI
 
 public class CertificateRevocationListAPI: CertificateRevocationListAPIProtocol {
-    private let httpClient: HttpClientCustom
+    // MARK: Lifecycle
 
     public init(httpClient: HttpClientCustom = HttpClientE2EI()) {
         self.httpClient = httpClient
     }
+
+    // MARK: Public
 
     public func getRevocationList(from distributionPoint: URL) async throws -> Data {
         var request = URLRequest(url: distributionPoint)
@@ -52,8 +54,14 @@ public class CertificateRevocationListAPI: CertificateRevocationListAPIProtocol 
         }
     }
 
+    // MARK: Internal
+
     enum NetworkError: Error, Equatable {
         case notAnHTTPResponse
         case invalidStatusCode(Int)
     }
+
+    // MARK: Private
+
+    private let httpClient: HttpClientCustom
 }

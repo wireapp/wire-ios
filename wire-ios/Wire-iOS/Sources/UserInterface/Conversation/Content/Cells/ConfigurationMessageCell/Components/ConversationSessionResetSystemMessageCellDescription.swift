@@ -22,6 +22,21 @@ import WireDataModel
 import WireDesign
 
 final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
+        let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)
+        let title = Self.makeAttributedString(sender)
+        self.configuration = View.Configuration(
+            icon: icon,
+            attributedText: title,
+            showLine: true
+        )
+        self.accessibilityLabel = title.string
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationSystemMessageCell
 
     var message: ZMConversationMessage?
@@ -37,17 +52,6 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var accessibilityLabel: String?
 
     var configuration: ConversationSystemMessageCell.Configuration
-
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
-        let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)
-        let title = Self.makeAttributedString(sender)
-        self.configuration = View.Configuration(
-            icon: icon,
-            attributedText: title,
-            showLine: true
-        )
-        self.accessibilityLabel = title.string
-    }
 
     static func makeAttributedString(_ sender: UserType) -> NSAttributedString {
         let string: String = if sender.isSelfUser {

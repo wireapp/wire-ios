@@ -43,6 +43,16 @@ final class RotationAwareNavigationController: UINavigationController {
         }
     }
 
+    // MARK: - status bar
+
+    override var childForStatusBarStyle: UIViewController? {
+        topViewController
+    }
+
+    override var childForStatusBarHidden: UIViewController? {
+        topViewController
+    }
+
     override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
         viewControllers.forEach { $0.hideDefaultButtonTitle() }
 
@@ -53,15 +63,5 @@ final class RotationAwareNavigationController: UINavigationController {
         viewController.hideDefaultButtonTitle()
 
         super.pushViewController(viewController, animated: animated)
-    }
-
-    // MARK: - status bar
-
-    override var childForStatusBarStyle: UIViewController? {
-        topViewController
-    }
-
-    override var childForStatusBarHidden: UIViewController? {
-        topViewController
     }
 }

@@ -19,12 +19,7 @@
 import Foundation
 
 final class ReauthenticateWithCompanyLoginStepDescription: AuthenticationStepDescription {
-    let backButton: BackButtonDescription?
-    let mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription?
+    // MARK: Lifecycle
 
     init() {
         self.backButton = BackButtonDescription()
@@ -38,4 +33,13 @@ final class ReauthenticateWithCompanyLoginStepDescription: AuthenticationStepDes
         self.secondaryView = nil
         self.footerView = nil
     }
+
+    // MARK: Internal
+
+    let backButton: BackButtonDescription?
+    let mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let footerView: AuthenticationFooterViewDescription?
 }

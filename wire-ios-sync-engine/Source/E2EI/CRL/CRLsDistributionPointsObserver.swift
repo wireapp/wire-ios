@@ -31,12 +31,13 @@ public protocol CRLsDistributionPointsObserving {
 // MARK: - CRLsDistributionPointsObserver
 
 public class CRLsDistributionPointsObserver: CRLsDistributionPointsObserving {
-    private var cancellables: Set<AnyCancellable> = []
-    private let cRLsChecker: CertificateRevocationListsChecking
+    // MARK: Lifecycle
 
     public init(cRLsChecker: CertificateRevocationListsChecking) {
         self.cRLsChecker = cRLsChecker
     }
+
+    // MARK: Public
 
     public func startObservingNewCRLsDistributionPoints(
         from publisher: AnyPublisher<CRLsDistributionPoints, Never>
@@ -49,4 +50,9 @@ public class CRLsDistributionPointsObserver: CRLsDistributionPointsObserving {
         }
         .store(in: &cancellables)
     }
+
+    // MARK: Private
+
+    private var cancellables: Set<AnyCancellable> = []
+    private let cRLsChecker: CertificateRevocationListsChecking
 }

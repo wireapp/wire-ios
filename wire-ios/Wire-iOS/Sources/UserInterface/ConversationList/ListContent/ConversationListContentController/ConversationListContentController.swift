@@ -28,21 +28,7 @@ private let CellReuseIdConversation = "CellId"
 // MARK: - ConversationListContentController
 
 final class ConversationListContentController: UICollectionViewController {
-    private let mainCoordinator: MainCoordinating
-
-    private(set) weak var zClientViewController: ZClientViewController?
-
-    weak var contentDelegate: ConversationListContentDelegate?
-    let listViewModel: ConversationListViewModel
-    private var focusOnNextSelection = false
-    private var animateNextSelection = false
-    private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
-    private let layoutCell = ConversationListCell()
-    var startCallController: ConversationCallController?
-    private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
-    private var token: NSObjectProtocol?
-
-    let userSession: UserSession
+    // MARK: Lifecycle
 
     init(
         userSession: UserSession,
@@ -71,6 +57,15 @@ final class ConversationListContentController: UICollectionViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
+
+    // MARK: Internal
+
+    private(set) weak var zClientViewController: ZClientViewController?
+
+    weak var contentDelegate: ConversationListContentDelegate?
+    let listViewModel: ConversationListViewModel
+    var startCallController: ConversationCallController?
+    let userSession: UserSession
 
     override func loadView() {
         super.loadView()
@@ -106,14 +101,6 @@ final class ConversationListContentController: UICollectionViewController {
         }
     }
 
-    private func activeMediaPlayerChanged() {
-        DispatchQueue.main.async {
-            for cell in self.collectionView.visibleCells {
-                (cell as? ConversationListCell)?.updateAppearance()
-            }
-        }
-    }
-
     func reload() {
         collectionView.reloadData()
         ensureCurrentSelection()
@@ -128,20 +115,6 @@ final class ConversationListContentController: UICollectionViewController {
         for cell in collectionView.visibleCells {
             (cell as? ConversationListCell)?.updateAppearance()
         }
-    }
-
-    private func setupViews() {
-        collectionView.register(ConnectRequestsCell.self, forCellWithReuseIdentifier: CellReuseIdConnectionRequests)
-        collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
-
-        collectionView.backgroundColor = SemanticColors.View.backgroundConversationList
-        collectionView.alwaysBounceVertical = true
-        collectionView.allowsSelection = true
-        collectionView.allowsMultipleSelection = false
-        collectionView.contentInset = .zero
-        collectionView.delaysContentTouches = false
-        collectionView.accessibilityIdentifier = "conversation list"
-        clearsSelectionOnViewWillAppear = false
     }
 
     // MARK: - section header
@@ -178,15 +151,6 @@ final class ConversationListContentController: UICollectionViewController {
         default:
             fatal("No supplementary view for \(kind)")
         }
-    }
-
-    private func registerSectionHeader() {
-        collectionView?.register(
-            ConversationListHeaderView.self,
-            forSupplementaryViewOfKind:
-            UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: ConversationListHeaderView.reuseIdentifier
-        )
     }
 
     /// ensures that the list selection state matches that of the model.
@@ -267,14 +231,6 @@ final class ConversationListContentController: UICollectionViewController {
     ) {
         selectionFeedbackGenerator.selectionChanged()
         openConversation(conversationListItem: listViewModel.item(for: indexPath))
-    }
-
-    // MARK: preview
-
-    private func openConversation(conversationListItem: ConversationListItem?) {
-        focusOnNextSelection = true
-        animateNextSelection = true
-        selectModelItem(conversationListItem)
     }
 
     // MARK: context menu
@@ -376,6 +332,56 @@ final class ConversationListContentController: UICollectionViewController {
 
         cell.autoresizingMask = .flexibleWidth
         return cell
+    }
+
+    // MARK: Private
+
+    private let mainCoordinator: MainCoordinating
+
+    private var focusOnNextSelection = false
+    private var animateNextSelection = false
+    private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
+    private let layoutCell = ConversationListCell()
+    private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
+    private var token: NSObjectProtocol?
+
+    private func activeMediaPlayerChanged() {
+        DispatchQueue.main.async {
+            for cell in self.collectionView.visibleCells {
+                (cell as? ConversationListCell)?.updateAppearance()
+            }
+        }
+    }
+
+    private func setupViews() {
+        collectionView.register(ConnectRequestsCell.self, forCellWithReuseIdentifier: CellReuseIdConnectionRequests)
+        collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
+
+        collectionView.backgroundColor = SemanticColors.View.backgroundConversationList
+        collectionView.alwaysBounceVertical = true
+        collectionView.allowsSelection = true
+        collectionView.allowsMultipleSelection = false
+        collectionView.contentInset = .zero
+        collectionView.delaysContentTouches = false
+        collectionView.accessibilityIdentifier = "conversation list"
+        clearsSelectionOnViewWillAppear = false
+    }
+
+    private func registerSectionHeader() {
+        collectionView?.register(
+            ConversationListHeaderView.self,
+            forSupplementaryViewOfKind:
+            UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: ConversationListHeaderView.reuseIdentifier
+        )
+    }
+
+    // MARK: preview
+
+    private func openConversation(conversationListItem: ConversationListItem?) {
+        focusOnNextSelection = true
+        animateNextSelection = true
+        selectModelItem(conversationListItem)
     }
 }
 

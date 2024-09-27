@@ -19,10 +19,7 @@
 import Foundation
 
 struct WireEmail: Codable {
-    let supportEmail: String
-    let callingSupportEmail: String
-
-    static var shared = WireEmail(forResource: "email", withExtension: "json")!
+    // MARK: Lifecycle
 
     private init?(forResource resource: String, withExtension fileExtension: String) {
         do {
@@ -32,4 +29,11 @@ struct WireEmail: Codable {
             return nil
         }
     }
+
+    // MARK: Internal
+
+    static var shared = WireEmail(forResource: "email", withExtension: "json")!
+
+    let supportEmail: String
+    let callingSupportEmail: String
 }

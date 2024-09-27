@@ -20,6 +20,8 @@ import WireTesting
 @testable import WireSyncEngine
 
 final class PermissionsDownloadRequestStrategyTests: MessagingTest {
+    // MARK: Internal
+
     var sut: PermissionsDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
 
@@ -231,6 +233,8 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
         XCTAssertNotNil(membershipPayload)
         XCTAssertEqual(membershipPayload?.userID, userID)
     }
+
+    // MARK: Private
 
     // MARK: - Helper
 

@@ -38,6 +38,14 @@ class TestTeamObserver: NSObject, TeamObserver {
 class TeamObserverTests: NotificationDispatcherTestBase {
     var teamObserver: TestTeamObserver!
 
+    var userInfoKeys: Set<String> {
+        [
+            #keyPath(TeamChangeInfo.membersChanged),
+            #keyPath(TeamChangeInfo.nameChanged),
+            #keyPath(TeamChangeInfo.imageDataChanged),
+        ]
+    }
+
     override func setUp() {
         super.setUp()
         teamObserver = TestTeamObserver()
@@ -46,14 +54,6 @@ class TeamObserverTests: NotificationDispatcherTestBase {
     override func tearDown() {
         teamObserver = nil
         super.tearDown()
-    }
-
-    var userInfoKeys: Set<String> {
-        [
-            #keyPath(TeamChangeInfo.membersChanged),
-            #keyPath(TeamChangeInfo.nameChanged),
-            #keyPath(TeamChangeInfo.imageDataChanged),
-        ]
     }
 
     func checkThatItNotifiesTheObserverOfAChange(

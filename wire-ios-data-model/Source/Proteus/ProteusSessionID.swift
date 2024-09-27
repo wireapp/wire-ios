@@ -21,6 +21,26 @@ import Foundation
 // MARK: - ProteusSessionID
 
 public struct ProteusSessionID: Hashable, Equatable {
+    // MARK: Lifecycle
+
+    public init(
+        domain: String = "",
+        userID: String,
+        clientID: String
+    ) {
+        self.userID = userID
+        self.clientID = clientID
+        self.domain = domain
+    }
+
+    /// Use when migrating from old session identifier to new session identifier.
+
+    init(fromLegacyV1Identifier clientID: String) {
+        self.init(userID: "", clientID: clientID)
+    }
+
+    // MARK: Public
+
     // MARK: - Properties
 
     public let userID: String
@@ -39,30 +59,12 @@ public struct ProteusSessionID: Hashable, Equatable {
         return "\(domain)_\(userID)_\(clientID)"
     }
 
-    // MARK: - Life cycle
-
-    public init(
-        domain: String = "",
-        userID: String,
-        clientID: String
-    ) {
-        self.userID = userID
-        self.clientID = clientID
-        self.domain = domain
-    }
-
-    /// Use when migrating from old session identifier to new session identifier.
-
-    init(fromLegacyV1Identifier clientID: String) {
-        self.init(userID: "", clientID: clientID)
+    public static func == (lhs: ProteusSessionID, rhs: ProteusSessionID) -> Bool {
+        lhs.rawValue == rhs.rawValue
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
-    }
-
-    public static func == (lhs: ProteusSessionID, rhs: ProteusSessionID) -> Bool {
-        lhs.rawValue == rhs.rawValue
     }
 }
 

@@ -19,6 +19,8 @@
 import UIKit
 
 class StylableButton: UIButton, Stylable {
+    // MARK: Internal
+
     var buttonStyle: ButtonStyle?
 
     func applyStyle(_ style: ButtonStyle) {
@@ -30,6 +32,26 @@ class StylableButton: UIButton, Stylable {
 
         applyStyleToNonDynamicProperties(style: style)
     }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        guard let style = buttonStyle else { return }
+        // We need to call this method here because the background,
+        // and the border color of the button when switching from dark to light mode
+        // or vice versa can be updated only inside traitCollectionDidChange.
+        applyStyleToNonDynamicProperties(style: style)
+    }
+
+    func setBackgroundImageColor(_ color: UIColor?, for state: UIControl.State) {
+        if let color {
+            setBackgroundImage(UIImage.singlePixelImage(with: color.resolvedColor(with: traitCollection)), for: state)
+        } else {
+            setBackgroundImage(nil, for: state)
+        }
+    }
+
+    // MARK: Private
 
     private func applyStyleToNonDynamicProperties(style: ButtonStyle) {
         setBackgroundImageColor(style.normalStateColors.background, for: .normal)
@@ -49,23 +71,5 @@ class StylableButton: UIButton, Stylable {
         layer.borderWidth = 1
         layer.borderColor = isHighlighted ? highlightedStateColor : normalStateColor
         layer.borderColor = isSelected ? selectedStateColor : normalStateColor
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        guard let style = buttonStyle else { return }
-        // We need to call this method here because the background,
-        // and the border color of the button when switching from dark to light mode
-        // or vice versa can be updated only inside traitCollectionDidChange.
-        applyStyleToNonDynamicProperties(style: style)
-    }
-
-    func setBackgroundImageColor(_ color: UIColor?, for state: UIControl.State) {
-        if let color {
-            setBackgroundImage(UIImage.singlePixelImage(with: color.resolvedColor(with: traitCollection)), for: state)
-        } else {
-            setBackgroundImage(nil, for: state)
-        }
     }
 }

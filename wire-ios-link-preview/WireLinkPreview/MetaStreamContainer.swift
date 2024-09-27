@@ -19,7 +19,11 @@
 import Foundation
 
 final class MetaStreamContainer {
+    // MARK: Internal
+
     var bytes = Data()
+
+    var reachedEndOfHead = false
 
     var stringContent: String? {
         parseString(from: bytes)
@@ -41,14 +45,14 @@ final class MetaStreamContainer {
         return String(result)
     }
 
-    var reachedEndOfHead = false
-
     @discardableResult
     func addData(_ data: Data) -> Data {
         updateReachedEndOfHead(withData: data)
         bytes.append(data)
         return bytes as Data
     }
+
+    // MARK: Private
 
     private func updateReachedEndOfHead(withData data: Data) {
         guard let string = parseString(from: data)?.lowercased() else { return }

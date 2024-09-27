@@ -22,7 +22,7 @@ import WireSyncEngine
 // MARK: - WireApplication
 
 final class WireApplication: UIApplication {
-    private let presenter = DeveloperToolsPresenter()
+    // MARK: Internal
 
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         guard Bundle.developerModeEnabled else {
@@ -36,6 +36,10 @@ final class WireApplication: UIApplication {
             from: self.topmostViewController(onlyFullScreen: false)
         )
     }
+
+    // MARK: Private
+
+    private let presenter = DeveloperToolsPresenter()
 }
 
 // MARK: NotificationSettingsRegistrable

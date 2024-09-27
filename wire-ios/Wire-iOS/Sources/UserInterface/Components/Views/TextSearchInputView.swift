@@ -31,37 +31,7 @@ protocol TextSearchInputViewDelegate: AnyObject {
 // MARK: - TextSearchInputView
 
 final class TextSearchInputView: UIView {
-    typealias SearchBarColors = SemanticColors.SearchBar
-
-    let iconView = UIImageView()
-    let searchInput = SearchTextView(style: .default)
-    let placeholderLabel = DynamicFontLabel(
-        fontSpec: .body,
-        color: SearchBarColors.textInputViewPlaceholder
-    )
-    let clearButton = IconButton(style: .default)
-
-    private let spinner = ProgressSpinner()
-
-    weak var delegate: TextSearchInputViewDelegate?
-    var query = "" {
-        didSet {
-            updateForSearchQuery()
-            delegate?.searchView(self, didChangeQueryTo: query)
-        }
-    }
-
-    var placeholderString = "" {
-        didSet {
-            placeholderLabel.text = placeholderString
-        }
-    }
-
-    var isLoading = false {
-        didSet {
-            spinner.isAnimating = isLoading
-        }
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -100,6 +70,66 @@ final class TextSearchInputView: UIView {
         createConstraints()
     }
 
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
+    typealias SearchBarColors = SemanticColors.SearchBar
+
+    let iconView = UIImageView()
+    let searchInput = SearchTextView(style: .default)
+    let placeholderLabel = DynamicFontLabel(
+        fontSpec: .body,
+        color: SearchBarColors.textInputViewPlaceholder
+    )
+    let clearButton = IconButton(style: .default)
+
+    weak var delegate: TextSearchInputViewDelegate?
+
+    var query = "" {
+        didSet {
+            updateForSearchQuery()
+            delegate?.searchView(self, didChangeQueryTo: query)
+        }
+    }
+
+    var placeholderString = "" {
+        didSet {
+            placeholderLabel.text = placeholderString
+        }
+    }
+
+    var isLoading = false {
+        didSet {
+            spinner.isAnimating = isLoading
+        }
+    }
+
+    @objc
+    func onCancelButtonTouchUpInside(_: AnyObject!) {
+        query = ""
+        searchInput.text = ""
+        searchInput.resignFirstResponder()
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate func updatePlaceholderLabel() {
+        placeholderLabel.isHidden = !query.isEmpty
+    }
+
+    fileprivate func updateForSearchQuery() {
+        updatePlaceholderLabel()
+        clearButton.isHidden = query.isEmpty
+    }
+
+    // MARK: Private
+
+    private let spinner = ProgressSpinner()
+
     private func createConstraints() {
         for item in [self, iconView, searchInput, placeholderLabel, clearButton, spinner] {
             item.translatesAutoresizingMaskIntoConstraints = false
@@ -130,27 +160,6 @@ final class TextSearchInputView: UIView {
                 spinner.widthAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue),
             ]
         )
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
-    @objc
-    func onCancelButtonTouchUpInside(_: AnyObject!) {
-        query = ""
-        searchInput.text = ""
-        searchInput.resignFirstResponder()
-    }
-
-    fileprivate func updatePlaceholderLabel() {
-        placeholderLabel.isHidden = !query.isEmpty
-    }
-
-    fileprivate func updateForSearchQuery() {
-        updatePlaceholderLabel()
-        clearButton.isHidden = query.isEmpty
     }
 }
 

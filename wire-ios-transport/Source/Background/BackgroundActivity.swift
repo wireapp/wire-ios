@@ -27,13 +27,7 @@ private let activityCounterQueue = DispatchQueue(label: "wire-transport.backgrou
 
 @objc
 public final class BackgroundActivity: NSObject {
-    /// The name of the task, used for debugging purposes.
-    @objc public let name: String
-    /// Globally unique index of background activity
-    public let index: Int
-
-    /// The block of code called from the main thead when the background timer is about to expire.
-    @objc public var expirationHandler: (() -> Void)?
+    // MARK: Lifecycle
 
     init(name: String, expirationHandler: (() -> Void)?) {
         self.name = name
@@ -43,6 +37,26 @@ public final class BackgroundActivity: NSObject {
             activityCounter &+= 1
             return activityCounter
         }
+    }
+
+    // MARK: Public
+
+    /// The name of the task, used for debugging purposes.
+    @objc public let name: String
+    /// Globally unique index of background activity
+    public let index: Int
+
+    /// The block of code called from the main thead when the background timer is about to expire.
+    @objc public var expirationHandler: (() -> Void)?
+
+    // MARK: - Hashable
+
+    override public var hash: Int {
+        ObjectIdentifier(self).hashValue
+    }
+
+    override public var description: String {
+        "<BackgroundActivity [\(index)]: \(name)>"
     }
 
     // MARK: - Execution
@@ -71,21 +85,11 @@ public final class BackgroundActivity: NSObject {
         block(self)
     }
 
-    // MARK: - Hashable
-
-    override public var hash: Int {
-        ObjectIdentifier(self).hashValue
-    }
-
     override public func isEqual(_ object: Any?) -> Bool {
         guard let otherActivity = object as? BackgroundActivity else {
             return false
         }
 
         return ObjectIdentifier(self) == ObjectIdentifier(otherActivity)
-    }
-
-    override public var description: String {
-        "<BackgroundActivity [\(index)]: \(name)>"
     }
 }

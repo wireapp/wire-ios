@@ -79,6 +79,16 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
 // MARK: - LinkAttachmentImageResourceAdaptor
 
 struct LinkAttachmentImageResourceAdaptor: WireImageResource {
+    // MARK: Lifecycle
+
+    init(attachment: LinkAttachment, textMessageData: TextMessageData, urlSession: URLSessionProtocol) {
+        self.attachment = attachment
+        self.textMessageData = textMessageData
+        self.urlSession = urlSession
+    }
+
+    // MARK: Internal
+
     let attachment: LinkAttachment
     let textMessageData: TextMessageData
     let urlSession: URLSessionProtocol
@@ -89,12 +99,6 @@ struct LinkAttachmentImageResourceAdaptor: WireImageResource {
 
     var isAnimatedGIF: Bool {
         false
-    }
-
-    init(attachment: LinkAttachment, textMessageData: TextMessageData, urlSession: URLSessionProtocol) {
-        self.attachment = attachment
-        self.textMessageData = textMessageData
-        self.urlSession = urlSession
     }
 
     func requestImageDownload() {

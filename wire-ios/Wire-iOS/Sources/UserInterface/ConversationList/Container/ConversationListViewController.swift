@@ -34,45 +34,7 @@ enum ConversationListState {
 // MARK: - ConversationListViewController
 
 final class ConversationListViewController: UIViewController {
-    let viewModel: ViewModel
-    let mainCoordinator: MainCoordinating
-    weak var zClientViewController: ZClientViewController?
-
-    /// internal View Model
-    var state: ConversationListState = .conversationList
-
-    /// private
-    private var viewDidAppearCalled = false
-    private static let contentControllerBottomInset: CGFloat = 16
-
-    /// for NetworkStatusViewDelegate
-    var shouldAnimateNetworkStatusView = false
-
-    var startCallToken: Any?
-
-    weak var pushPermissionDeniedViewController: PermissionDeniedViewController?
-
-    private let noConversationLabel = {
-        let label = UILabel()
-        label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
-        label.numberOfLines = 0
-        label.backgroundColor = .clear
-        return label
-    }()
-
-    let contentContainer: UIView = {
-        let view = UIView()
-        view.backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
-        return view
-    }()
-
-    let listContentController: ConversationListContentController
-
-    var userStatusViewController: UserStatusViewController?
-    weak var titleViewLabel: UILabel?
-    let networkStatusViewController = NetworkStatusViewController()
-    let onboardingHint = ConversationListOnboardingHint()
-    let selfProfileViewControllerBuilder: any ViewControllerBuilder
+    // MARK: Lifecycle
 
     convenience init(
         account: Account,
@@ -148,6 +110,40 @@ final class ConversationListViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
+    // MARK: Internal
+
+    let viewModel: ViewModel
+    let mainCoordinator: MainCoordinating
+    weak var zClientViewController: ZClientViewController?
+
+    /// internal View Model
+    var state: ConversationListState = .conversationList
+
+    /// for NetworkStatusViewDelegate
+    var shouldAnimateNetworkStatusView = false
+
+    var startCallToken: Any?
+
+    weak var pushPermissionDeniedViewController: PermissionDeniedViewController?
+
+    let contentContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
+        return view
+    }()
+
+    let listContentController: ConversationListContentController
+
+    var userStatusViewController: UserStatusViewController?
+    weak var titleViewLabel: UILabel?
+    let networkStatusViewController = NetworkStatusViewController()
+    let onboardingHint = ConversationListOnboardingHint()
+    let selfProfileViewControllerBuilder: any ViewControllerBuilder
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        .portrait
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -203,68 +199,6 @@ final class ConversationListViewController: UIViewController {
         })
 
         super.viewWillTransition(to: size, with: coordinator)
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        .portrait
-    }
-
-    // MARK: - setup UI
-
-    private func setupObservers() {
-        viewModel.setupObservers()
-    }
-
-    private func setupListContentController() {
-        listContentController.contentDelegate = viewModel
-        add(listContentController, to: contentContainer)
-    }
-
-    private func setupNoConversationLabel() {
-        contentContainer.addSubview(noConversationLabel)
-    }
-
-    private func setupOnboardingHint() {
-        contentContainer.addSubview(onboardingHint)
-    }
-
-    private func setupNetworkStatusBar() {
-        networkStatusViewController.delegate = self
-        add(networkStatusViewController, to: contentContainer)
-    }
-
-    private func createViewConstraints() {
-        guard let conversationList = listContentController.view else { return }
-
-        contentContainer.translatesAutoresizingMaskIntoConstraints = false
-        conversationList.translatesAutoresizingMaskIntoConstraints = false
-        noConversationLabel.translatesAutoresizingMaskIntoConstraints = false
-        onboardingHint.translatesAutoresizingMaskIntoConstraints = false
-        networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            contentContainer.topAnchor.constraint(equalTo: safeTopAnchor),
-            contentContainer.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            contentContainer.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            contentContainer.bottomAnchor.constraint(equalTo: safeBottomAnchor),
-
-            networkStatusViewController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
-            networkStatusViewController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            networkStatusViewController.view.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-
-            conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
-            conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
-
-            onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
-            onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
-            onboardingHint.rightAnchor.constraint(equalTo: contentContainer.rightAnchor),
-
-            noConversationLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
-            noConversationLabel.widthAnchor.constraint(equalToConstant: 240),
-        ])
     }
 
     func createArchivedListViewController() -> ArchivedListViewController {
@@ -337,6 +271,77 @@ final class ConversationListViewController: UIViewController {
             presentViewController: self,
             completionHandler: completionHandler
         )
+    }
+
+    // MARK: Private
+
+    private static let contentControllerBottomInset: CGFloat = 16
+
+    private var viewDidAppearCalled = false
+    private let noConversationLabel = {
+        let label = UILabel()
+        label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
+        label.numberOfLines = 0
+        label.backgroundColor = .clear
+        return label
+    }()
+
+    // MARK: - setup UI
+
+    private func setupObservers() {
+        viewModel.setupObservers()
+    }
+
+    private func setupListContentController() {
+        listContentController.contentDelegate = viewModel
+        add(listContentController, to: contentContainer)
+    }
+
+    private func setupNoConversationLabel() {
+        contentContainer.addSubview(noConversationLabel)
+    }
+
+    private func setupOnboardingHint() {
+        contentContainer.addSubview(onboardingHint)
+    }
+
+    private func setupNetworkStatusBar() {
+        networkStatusViewController.delegate = self
+        add(networkStatusViewController, to: contentContainer)
+    }
+
+    private func createViewConstraints() {
+        guard let conversationList = listContentController.view else { return }
+
+        contentContainer.translatesAutoresizingMaskIntoConstraints = false
+        conversationList.translatesAutoresizingMaskIntoConstraints = false
+        noConversationLabel.translatesAutoresizingMaskIntoConstraints = false
+        onboardingHint.translatesAutoresizingMaskIntoConstraints = false
+        networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            contentContainer.topAnchor.constraint(equalTo: safeTopAnchor),
+            contentContainer.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
+            contentContainer.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            contentContainer.bottomAnchor.constraint(equalTo: safeBottomAnchor),
+
+            networkStatusViewController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
+            networkStatusViewController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
+            networkStatusViewController.view.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
+
+            conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
+            conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
+            conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
+            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
+
+            onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
+            onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
+            onboardingHint.rightAnchor.constraint(equalTo: contentContainer.rightAnchor),
+
+            noConversationLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
+            noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
+            noConversationLabel.widthAnchor.constraint(equalToConstant: 240),
+        ])
     }
 }
 

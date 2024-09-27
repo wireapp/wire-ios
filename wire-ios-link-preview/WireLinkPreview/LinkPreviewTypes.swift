@@ -22,14 +22,7 @@ import Foundation
 
 @objcMembers
 open class LinkMetadata: NSObject {
-    public let originalURLString: String
-    public let permanentURL: URL?
-    public let resolvedURL: URL?
-    public let characterOffsetInText: Int
-    open var imageURLs = [URL]()
-    open var imageData = [Data]()
-
-    public typealias DownloadCompletion = (_ successful: Bool) -> Void
+    // MARK: Lifecycle
 
     public init(originalURLString: String, permanentURLString: String, resolvedURLString: String, offset: Int) {
         self.originalURLString = originalURLString
@@ -38,6 +31,20 @@ open class LinkMetadata: NSObject {
         self.characterOffsetInText = offset
         super.init()
     }
+
+    // MARK: Open
+
+    open var imageURLs = [URL]()
+    open var imageData = [Data]()
+
+    // MARK: Public
+
+    public typealias DownloadCompletion = (_ successful: Bool) -> Void
+
+    public let originalURLString: String
+    public let permanentURL: URL?
+    public let resolvedURL: URL?
+    public let characterOffsetInText: Int
 
     public var isBlacklisted: Bool {
         if let permanentURL {
@@ -48,6 +55,8 @@ open class LinkMetadata: NSObject {
             false
         }
     }
+
+    // MARK: Internal
 
     func requestAssets(withImageDownloader downloader: ImageDownloaderType, completion: @escaping DownloadCompletion) {
         guard let imageURL = imageURLs.first else { return completion(false) }

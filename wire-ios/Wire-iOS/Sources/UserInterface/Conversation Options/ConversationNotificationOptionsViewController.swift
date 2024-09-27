@@ -24,17 +24,7 @@ import WireSyncEngine
 // MARK: - ConversationNotificationOptionsViewController
 
 final class ConversationNotificationOptionsViewController: UIViewController {
-    private var items: [MutedMessageTypes] = [.none, .regular, .all]
-
-    private let conversation: ZMConversation
-    private let userSession: ZMUserSession
-    private var observerToken: Any! = nil
-
-    weak var dismisser: ViewControllerDismisser?
-
-    private let collectionViewLayout = UICollectionViewFlowLayout()
-
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -50,16 +40,20 @@ final class ConversationNotificationOptionsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    weak var dismisser: ViewControllerDismisser?
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
     // MARK: - View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -69,6 +63,18 @@ final class ConversationNotificationOptionsViewController: UIViewController {
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.NotificationConversationSettings.CloseButton.description)
     }
+
+    // MARK: Private
+
+    private var items: [MutedMessageTypes] = [.none, .regular, .all]
+
+    private let conversation: ZMConversation
+    private let userSession: ZMUserSession
+    private var observerToken: Any! = nil
+
+    private let collectionViewLayout = UICollectionViewFlowLayout()
+
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
 
     private func configureSubviews() {
         collectionView.dataSource = self

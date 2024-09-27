@@ -24,10 +24,7 @@ import Foundation
 
 @objcMembers
 public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
-    private let managedObjectContext: NSManagedObjectContext
-    private let clientRegistrationStatus: ZMClientRegistrationStatus
-    private let clientUpdateStatus: ClientUpdateStatus
-    private let resolveOneOnOneConversations: ResolveOneOnOneConversationsUseCaseProtocol
+    // MARK: Lifecycle
 
     public init(
         managedObjectContext: NSManagedObjectContext,
@@ -43,6 +40,8 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
         super.init()
     }
 
+    // MARK: Public
+
     public func processEvents(_ events: [ZMUpdateEvent]) async {
         for event in events {
             do {
@@ -55,6 +54,13 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
             }
         }
     }
+
+    // MARK: Private
+
+    private let managedObjectContext: NSManagedObjectContext
+    private let clientRegistrationStatus: ZMClientRegistrationStatus
+    private let clientUpdateStatus: ClientUpdateStatus
+    private let resolveOneOnOneConversations: ResolveOneOnOneConversationsUseCaseProtocol
 
     private func processUpdateEvent(_ event: ZMUpdateEvent) async throws {
         switch event.type {

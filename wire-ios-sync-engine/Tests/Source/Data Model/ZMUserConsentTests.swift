@@ -22,6 +22,14 @@ import XCTest
 final class ZMUserConsentTests: DatabaseTest {
     var mockTransportSession: MockTransportSession!
 
+    var selfUser: ZMUser {
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        if selfUser.remoteIdentifier == nil {
+            selfUser.remoteIdentifier = UUID()
+        }
+        return selfUser
+    }
+
     override func setUp() {
         super.setUp()
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
@@ -31,14 +39,6 @@ final class ZMUserConsentTests: DatabaseTest {
         mockTransportSession.cleanUp()
         mockTransportSession = nil
         super.tearDown()
-    }
-
-    var selfUser: ZMUser {
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-        if selfUser.remoteIdentifier == nil {
-            selfUser.remoteIdentifier = UUID()
-        }
-        return selfUser
     }
 
     func testGetRequest() {

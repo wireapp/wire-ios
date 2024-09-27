@@ -33,10 +33,6 @@ class SwiftMockConversation: NSObject, Conversation {
     var sortedOtherParticipants: [UserType] = []
     var sortedServiceUsers: [UserType] = []
 
-    func verifyLegalHoldSubjects() {
-        // no-op
-    }
-
     var sortedActiveParticipantsUserTypes: [UserType] = []
 
     var isSelfAnActiveMember = true
@@ -46,10 +42,6 @@ class SwiftMockConversation: NSObject, Conversation {
     var teamRemoteIdentifier: UUID?
 
     var mockLocalParticipantsContain = false
-    func localParticipantsContain(user: UserType) -> Bool {
-        mockLocalParticipantsContain
-    }
-
     var displayName: String? = ""
 
     var connectedUserType: UserType?
@@ -81,6 +73,14 @@ class SwiftMockConversation: NSObject, Conversation {
     var domain: String?
 
     var ciphersuite: WireDataModel.MLSCipherSuite? = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+
+    func verifyLegalHoldSubjects() {
+        // no-op
+    }
+
+    func localParticipantsContain(user: UserType) -> Bool {
+        mockLocalParticipantsContain
+    }
 }
 
 // MARK: - MockGroupDetailsConversation
@@ -110,10 +110,6 @@ final class MockInputBarConversationType: SwiftMockConversation, InputBarConvers
 
     var draftMessage: DraftMessage?
 
-    func setIsTyping(_: Bool) {
-        // no-op
-    }
-
     var isReadOnly = false
 
     var participants: [UserType] = []
@@ -122,4 +118,8 @@ final class MockInputBarConversationType: SwiftMockConversation, InputBarConvers
     var hasSyncedMessageDestructionTimeout = false
     var isSelfDeletingMessageSendingDisabled = false
     var isSelfDeletingMessageTimeoutForced = false
+
+    func setIsTyping(_: Bool) {
+        // no-op
+    }
 }

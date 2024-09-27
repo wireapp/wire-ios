@@ -55,17 +55,26 @@ protocol AudioTrackPlayerDelegate: AnyObject {
 // MARK: - AudioTrackPlayer
 
 final class AudioTrackPlayer: NSObject, MediaPlayer {
-    private let userSession: UserSession
+    // MARK: Lifecycle
 
-    private var avPlayer: AVPlayer?
-    private var timeObserverToken: Any?
-    private var messageObserverToken: NSObjectProtocol?
-    private var loadAudioTrackCompletionHandler: AudioTrackCompletionHandler?
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init()
+    }
+
+    deinit {
+        setIsRemoteCommandCenterEnabled(false)
+    }
+
+    // MARK: Internal
 
     private(set) var playing = false
 
     weak var audioTrackPlayerDelegate: AudioTrackPlayerDelegate?
     weak var mediaPlayerDelegate: MediaPlayerDelegate?
+
+    var sourceMessage: ZMConversationMessage?
+    private(set) var audioTrack: AudioTrack?
 
     var state: MediaPlayerState? {
         didSet {
@@ -75,19 +84,6 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
             }
         }
     }
-
-    var sourceMessage: ZMConversationMessage?
-    private var nowPlayingInfo: [String: Any]?
-    private var playHandler: Any?
-    private var pauseHandler: Any?
-    private var nextTrackHandler: Any?
-    private var previousTrackHandler: Any?
-
-    private var playerStatusObserver: NSKeyValueObservation?
-    private var playerRateObserver: NSKeyValueObservation?
-    private var playerCurrentItemObserver: NSKeyValueObservation?
-
-    private(set) var audioTrack: AudioTrack?
 
     private(set) var progress: Double = 0 {
         didSet {
@@ -112,6 +108,18 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         return 0
     }
 
+    var isPlaying: Bool {
+        if let avPlayer, avPlayer.rate > 0, avPlayer.error == nil {
+            return true
+        }
+
+        return false
+    }
+
+    var title: String? {
+        audioTrack?.title
+    }
+
     /// Start the currently loaded/paused track.
     func play() {
         if state == .completed {
@@ -124,15 +132,6 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     /// Pause the currently playing track.
     func pause() {
         avPlayer?.pause()
-    }
-
-    init(userSession: UserSession) {
-        self.userSession = userSession
-        super.init()
-    }
-
-    deinit {
-        setIsRemoteCommandCenterEnabled(false)
     }
 
     func load(
@@ -213,6 +212,87 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         )
     }
 
+    func setIsRemoteCommandCenterEnabled(_ enabled: Bool) {
+        let commandCenter = MPRemoteCommandCenter.shared()
+
+        if !enabled {
+            commandCenter.playCommand.removeTarget(playHandler)
+            commandCenter.pauseCommand.removeTarget(pauseHandler)
+            commandCenter.nextTrackCommand.removeTarget(nextTrackHandler)
+            commandCenter.previousTrackCommand.removeTarget(previousTrackHandler)
+            return
+        }
+
+        pauseHandler = commandCenter.pauseCommand.addTarget(handler: { [weak self] _ in
+            if let avPlayer = self?.avPlayer, avPlayer.rate > 0 {
+                self?.pause()
+                return .success
+            } else {
+                return .commandFailed
+            }
+        })
+
+        playHandler = commandCenter.playCommand.addTarget(handler: { [weak self] _ in
+            if self?.audioTrack == nil {
+                return .noSuchContent
+            }
+
+            if self?.avPlayer?.rate == 0 {
+                self?.play()
+                return .success
+            } else {
+                return .commandFailed
+            }
+        })
+    }
+
+    func stop() {
+        avPlayer?.pause()
+        avPlayer?.replaceCurrentItem(with: nil)
+        audioTrack = nil
+        messageObserverToken = nil
+        sourceMessage = nil
+    }
+
+    // MARK: - MPNowPlayingInfoCenter
+
+    func populateNowPlayingState() {
+        let playbackDuration: NSNumber = if let duration: CMTime = avPlayer?.currentItem?.asset.duration {
+            NSNumber(value: CMTimeGetSeconds(duration))
+        } else {
+            0
+        }
+
+        let nowPlayingInfo: [String: Any] = [
+            MPMediaItemPropertyTitle: audioTrack?.title ?? "",
+            MPMediaItemPropertyArtist: audioTrack?.author ?? "",
+            MPNowPlayingInfoPropertyPlaybackRate: NSNumber(value: avPlayer?.rate ?? 0),
+            MPMediaItemPropertyPlaybackDuration: playbackDuration,
+        ]
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        self.nowPlayingInfo = nowPlayingInfo
+    }
+
+    // MARK: Private
+
+    private let userSession: UserSession
+
+    private var avPlayer: AVPlayer?
+    private var timeObserverToken: Any?
+    private var messageObserverToken: NSObjectProtocol?
+    private var loadAudioTrackCompletionHandler: AudioTrackCompletionHandler?
+
+    private var nowPlayingInfo: [String: Any]?
+    private var playHandler: Any?
+    private var pauseHandler: Any?
+    private var nextTrackHandler: Any?
+    private var previousTrackHandler: Any?
+
+    private var playerStatusObserver: NSKeyValueObservation?
+    private var playerRateObserver: NSKeyValueObservation?
+    private var playerCurrentItemObserver: NSKeyValueObservation?
+
     private func playRateChanged() {
         if let avPlayer, avPlayer.rate > 0 {
             state = .playing
@@ -252,60 +332,6 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         }
     }
 
-    func setIsRemoteCommandCenterEnabled(_ enabled: Bool) {
-        let commandCenter = MPRemoteCommandCenter.shared()
-
-        if !enabled {
-            commandCenter.playCommand.removeTarget(playHandler)
-            commandCenter.pauseCommand.removeTarget(pauseHandler)
-            commandCenter.nextTrackCommand.removeTarget(nextTrackHandler)
-            commandCenter.previousTrackCommand.removeTarget(previousTrackHandler)
-            return
-        }
-
-        pauseHandler = commandCenter.pauseCommand.addTarget(handler: { [weak self] _ in
-            if let avPlayer = self?.avPlayer, avPlayer.rate > 0 {
-                self?.pause()
-                return .success
-            } else {
-                return .commandFailed
-            }
-        })
-
-        playHandler = commandCenter.playCommand.addTarget(handler: { [weak self] _ in
-            if self?.audioTrack == nil {
-                return .noSuchContent
-            }
-
-            if self?.avPlayer?.rate == 0 {
-                self?.play()
-                return .success
-            } else {
-                return .commandFailed
-            }
-        })
-    }
-
-    var isPlaying: Bool {
-        if let avPlayer, avPlayer.rate > 0, avPlayer.error == nil {
-            return true
-        }
-
-        return false
-    }
-
-    func stop() {
-        avPlayer?.pause()
-        avPlayer?.replaceCurrentItem(with: nil)
-        audioTrack = nil
-        messageObserverToken = nil
-        sourceMessage = nil
-    }
-
-    var title: String? {
-        audioTrack?.title
-    }
-
     // MARK: - MPNowPlayingInfoCenter
 
     private func clearNowPlayingState() {
@@ -337,26 +363,6 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
             clearNowPlayingState()
             state = .completed
         }
-    }
-
-    // MARK: - MPNowPlayingInfoCenter
-
-    func populateNowPlayingState() {
-        let playbackDuration: NSNumber = if let duration: CMTime = avPlayer?.currentItem?.asset.duration {
-            NSNumber(value: CMTimeGetSeconds(duration))
-        } else {
-            0
-        }
-
-        let nowPlayingInfo: [String: Any] = [
-            MPMediaItemPropertyTitle: audioTrack?.title ?? "",
-            MPMediaItemPropertyArtist: audioTrack?.author ?? "",
-            MPNowPlayingInfoPropertyPlaybackRate: NSNumber(value: avPlayer?.rate ?? 0),
-            MPMediaItemPropertyPlaybackDuration: playbackDuration,
-        ]
-
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
-        self.nowPlayingInfo = nowPlayingInfo
     }
 }
 

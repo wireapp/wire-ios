@@ -34,8 +34,6 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
     var user: ZMUser!
     var addAttempts = 0
 
-    // MARK: - Life cycle
-
     override func setUp() {
         super.setUp()
 

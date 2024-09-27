@@ -42,10 +42,7 @@ protocol InsertedObjectSyncTranscoder: AnyObject {
 /// not yet exist on the backend is determined by the `predicateForObjectsThatNeedToBeInsertedUpstream()` or
 /// by the `insertPredicate` if supplied.
 class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
-    let insertPredicate: NSPredicate
-    var pending: Set<Transcoder.Object> = Set()
-
-    weak var transcoder: Transcoder?
+    // MARK: Lifecycle
 
     /// - Parameters:
     ///   - insertPredicate: Predicate which determine when an object only exists locally. If omitted
@@ -53,6 +50,13 @@ class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZM
     init(insertPredicate: NSPredicate? = nil) {
         self.insertPredicate = insertPredicate ?? Transcoder.Object.predicateForObjectsThatNeedToBeInsertedUpstream()!
     }
+
+    // MARK: Internal
+
+    let insertPredicate: NSPredicate
+    var pending: Set<Transcoder.Object> = Set()
+
+    weak var transcoder: Transcoder?
 
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
         var trackedObjects = objects.compactMap { $0 as? Transcoder.Object }

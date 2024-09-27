@@ -21,31 +21,21 @@ import WireCommonComponents
 import WireDesign
 
 final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurable {
-    private let imageContainer = UIView()
-    private var iconImageView = UIImageView()
-    private let topContainer = UIView()
-    private let titleLabel = UILabel()
-    private let toggle = Switch(style: .default)
-    private let subtitleLabel = UILabel()
-    private var action: ((Bool, UIView) -> Void)?
+    // MARK: Lifecycle
 
-    private lazy var imageContainerWidthConstraint: NSLayoutConstraint = imageContainer.widthAnchor
-        .constraint(equalToConstant: CGFloat.IconCell.IconWidth)
-    private lazy var iconImageViewLeadingConstraint: NSLayoutConstraint = iconImageView.leadingAnchor.constraint(
-        equalTo: topContainer.leadingAnchor,
-        constant: CGFloat.IconCell.IconSpacing
-    )
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupViews()
+        createConstraints()
+        styleViews()
+    }
 
-    private lazy var subtitleTopConstraint: NSLayoutConstraint = subtitleLabel.topAnchor.constraint(
-        equalTo: topContainer.bottomAnchor,
-        constant: subtitleInsets.top
-    )
-    private lazy var subtitleBottomConstraint: NSLayoutConstraint = subtitleLabel.bottomAnchor.constraint(
-        equalTo: contentView.bottomAnchor,
-        constant: -subtitleInsets.bottom
-    )
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
-    private let subtitleInsets = UIEdgeInsets(top: 16, left: 16, bottom: 24, right: 16)
+    // MARK: Internal
 
     override var accessibilityLabel: String? {
         get {
@@ -80,23 +70,87 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
         }
     }
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupViews()
-        createConstraints()
-        styleViews()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func accessibilityActivate() -> Bool {
         toggle.isOn = !toggle.isOn
 
         return true
     }
+
+    func configure(with configuration: CellConfiguration) {
+        guard case let .iconToggle(
+            title,
+            subtitle,
+            identifier,
+            titleIdentifier,
+            icon,
+            _,
+            isEnabled,
+            get,
+            set
+        ) = configuration else { preconditionFailure() }
+
+        let mainColor = SemanticColors.Label.textDefault
+
+        if let icon {
+            tintColor = SemanticColors.Label.textDefault
+            iconImageView.setTemplateIcon(icon, size: .tiny)
+            imageContainerWidthConstraint.constant = CGFloat.IconCell.IconWidth
+            iconImageViewLeadingConstraint.constant = CGFloat.IconCell.IconSpacing
+        } else {
+            imageContainerWidthConstraint.constant = 0
+            iconImageViewLeadingConstraint.constant = 0
+        }
+
+        titleLabel.textColor = mainColor
+
+        titleLabel.text = title
+
+        subtitleLabel.text = subtitle
+
+        if subtitle.isEmpty {
+            subtitleLabel.isHidden = true
+            subtitleTopConstraint.constant = 0
+            subtitleBottomConstraint.constant = 0
+        } else {
+            subtitleLabel.isHidden = false
+            subtitleTopConstraint.constant = subtitleInsets.top
+            subtitleBottomConstraint.constant = -(subtitleInsets.bottom)
+        }
+
+        action = set
+        toggle.accessibilityIdentifier = identifier
+        titleLabel.accessibilityIdentifier = titleIdentifier
+        toggle.isOn = get()
+        toggle.isEnabled = isEnabled
+    }
+
+    // MARK: Private
+
+    private let imageContainer = UIView()
+    private var iconImageView = UIImageView()
+    private let topContainer = UIView()
+    private let titleLabel = UILabel()
+    private let toggle = Switch(style: .default)
+    private let subtitleLabel = UILabel()
+    private var action: ((Bool, UIView) -> Void)?
+
+    private lazy var imageContainerWidthConstraint: NSLayoutConstraint = imageContainer.widthAnchor
+        .constraint(equalToConstant: CGFloat.IconCell.IconWidth)
+    private lazy var iconImageViewLeadingConstraint: NSLayoutConstraint = iconImageView.leadingAnchor.constraint(
+        equalTo: topContainer.leadingAnchor,
+        constant: CGFloat.IconCell.IconSpacing
+    )
+
+    private lazy var subtitleTopConstraint: NSLayoutConstraint = subtitleLabel.topAnchor.constraint(
+        equalTo: topContainer.bottomAnchor,
+        constant: subtitleInsets.top
+    )
+    private lazy var subtitleBottomConstraint: NSLayoutConstraint = subtitleLabel.bottomAnchor.constraint(
+        equalTo: contentView.bottomAnchor,
+        constant: -subtitleInsets.bottom
+    )
+
+    private let subtitleInsets = UIEdgeInsets(top: 16, left: 16, bottom: 24, right: 16)
 
     private func setupViews() {
         [imageContainer, titleLabel, toggle].forEach(topContainer.addSubview)
@@ -164,53 +218,5 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
     @objc
     private func toggleChanged(_ sender: UISwitch) {
         action?(sender.isOn, self)
-    }
-
-    func configure(with configuration: CellConfiguration) {
-        guard case let .iconToggle(
-            title,
-            subtitle,
-            identifier,
-            titleIdentifier,
-            icon,
-            _,
-            isEnabled,
-            get,
-            set
-        ) = configuration else { preconditionFailure() }
-
-        let mainColor = SemanticColors.Label.textDefault
-
-        if let icon {
-            tintColor = SemanticColors.Label.textDefault
-            iconImageView.setTemplateIcon(icon, size: .tiny)
-            imageContainerWidthConstraint.constant = CGFloat.IconCell.IconWidth
-            iconImageViewLeadingConstraint.constant = CGFloat.IconCell.IconSpacing
-        } else {
-            imageContainerWidthConstraint.constant = 0
-            iconImageViewLeadingConstraint.constant = 0
-        }
-
-        titleLabel.textColor = mainColor
-
-        titleLabel.text = title
-
-        subtitleLabel.text = subtitle
-
-        if subtitle.isEmpty {
-            subtitleLabel.isHidden = true
-            subtitleTopConstraint.constant = 0
-            subtitleBottomConstraint.constant = 0
-        } else {
-            subtitleLabel.isHidden = false
-            subtitleTopConstraint.constant = subtitleInsets.top
-            subtitleBottomConstraint.constant = -(subtitleInsets.bottom)
-        }
-
-        action = set
-        toggle.accessibilityIdentifier = identifier
-        titleLabel.accessibilityIdentifier = titleIdentifier
-        toggle.isOn = get()
-        toggle.isEnabled = isEnabled
     }
 }

@@ -23,7 +23,13 @@ import WireDataModel
 
 @objcMembers
 public class NotificationsTracker: NSObject {
-    public let eventName = "notifications.processing"
+    // MARK: Lifecycle
+
+    public init(analytics: AnalyticsType) {
+        self.analytics = analytics
+    }
+
+    // MARK: Public
 
     public enum Attributes: String {
         case startedProcessing
@@ -34,17 +40,14 @@ public class NotificationsTracker: NSObject {
         case abortedProcessing
         case tokenMismatch
 
+        // MARK: Public
+
         public var identifier: String {
             "notifications_" + rawValue
         }
     }
 
-    private let isolationQueue = DispatchQueue(label: "NotificationsProcessing")
-
-    weak var analytics: AnalyticsType?
-    public init(analytics: AnalyticsType) {
-        self.analytics = analytics
-    }
+    public let eventName = "notifications.processing"
 
     public func registerReceivedPush() {
         increment(attribute: .startedProcessing)
@@ -74,6 +77,23 @@ public class NotificationsTracker: NSObject {
         increment(attribute: .tokenMismatch)
     }
 
+    public func dispatchEvent() {
+        isolationQueue.sync {
+            if let analytics, let attributes = analytics.persistedAttributes(for: eventName), !attributes.isEmpty {
+                analytics.tagEvent(eventName, attributes: attributes)
+                analytics.setPersistedAttributes(nil, for: eventName)
+            }
+        }
+    }
+
+    // MARK: Internal
+
+    weak var analytics: AnalyticsType?
+
+    // MARK: Private
+
+    private let isolationQueue = DispatchQueue(label: "NotificationsProcessing")
+
     private func increment(attribute: Attributes, by amount: Double = 1) {
         isolationQueue.sync {
             var currentAttributes = analytics?.persistedAttributes(for: eventName) ?? [:]
@@ -81,15 +101,6 @@ public class NotificationsTracker: NSObject {
             value += amount
             currentAttributes[attribute.identifier] = value as NSObject
             analytics?.setPersistedAttributes(currentAttributes, for: eventName)
-        }
-    }
-
-    public func dispatchEvent() {
-        isolationQueue.sync {
-            if let analytics, let attributes = analytics.persistedAttributes(for: eventName), !attributes.isEmpty {
-                analytics.tagEvent(eventName, attributes: attributes)
-                analytics.setPersistedAttributes(nil, for: eventName)
-            }
         }
     }
 }

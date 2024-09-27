@@ -41,18 +41,50 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
 /// or delegate call from one of the abstracted components.
 
 final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    /// Creates a new authentication coordinator with the required supporting objects.
+    init(
+        presenter: UINavigationController,
+        sessionManager: ObservableSessionManager,
+        featureProvider: AuthenticationFeatureProvider,
+        statusProvider: AuthenticationStatusProvider
+    ) {
+        self.presenter = presenter
+        self.sessionManager = sessionManager
+        self.statusProvider = statusProvider
+        self.featureProvider = featureProvider
+        self.stateController = AuthenticationStateController()
+        self.interfaceBuilder = AuthenticationInterfaceBuilder(featureProvider: featureProvider)
+        self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
+        self.backupRestoreController = BackupRestoreController(target: presenter)
+        super.init()
+        updateLoginObservers()
+        self.unauthenticatedSessionObserver = sessionManager
+            .addUnauthenticatedSessionManagerCreatedSessionObserver(self)
+        companyLoginController?.delegate = self
+        backupRestoreController.delegate = self
+        presenter.delegate = self
+        stateController.delegate = self
+        eventResponderChain.configure(delegate: self)
+        addBackendSwitchObserver()
+    }
+
+    deinit {
+        if !isTornDown {
+            assertionFailure("AuthenticationCoordinator was not torn down.")
+        }
+    }
+
+    // MARK: Internal
+
     /// The handle to the OS log for authentication events.
     let log = ZMSLog(tag: "Authentication")
 
-    /// The navigation controller that presents the authentication interface.
-    weak var presenter: UINavigationController? {
-        didSet { activityIndicator = presenter.map { .init(view: $0.view) } }
-    }
-
     /// The object receiving updates from the authentication state and providing state.
     weak var delegate: AuthenticationCoordinatorDelegate?
-
-    private var activityIndicator: BlockingActivityIndicator?
 
     // MARK: - Event Handling Properties
 
@@ -92,58 +124,16 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     /// The object to use to restore backups.
     let backupRestoreController: BackupRestoreController
 
-    // MARK: - Internal State
-
-    private var loginObservers: [Any] = []
-    private var unauthenticatedSessionObserver: Any?
-    private var postLoginObservers: [Any] = []
-    private var pendingAlert: AuthenticationCoordinatorAlert?
-    private var registrationStatus: RegistrationStatus {
-        unauthenticatedSession.registrationStatus
-    }
-
-    private var isTornDown = false
-
     var pendingModal: UIViewController?
+
+    /// The navigation controller that presents the authentication interface.
+    weak var presenter: UINavigationController? {
+        didSet { activityIndicator = presenter.map { .init(view: $0.view) } }
+    }
 
     /// The user session to use before authentication has finished.
     var unauthenticatedSession: UnauthenticatedSession {
         sessionManager.activeUnauthenticatedSession
-    }
-
-    // MARK: - Initialization
-
-    /// Creates a new authentication coordinator with the required supporting objects.
-    init(
-        presenter: UINavigationController,
-        sessionManager: ObservableSessionManager,
-        featureProvider: AuthenticationFeatureProvider,
-        statusProvider: AuthenticationStatusProvider
-    ) {
-        self.presenter = presenter
-        self.sessionManager = sessionManager
-        self.statusProvider = statusProvider
-        self.featureProvider = featureProvider
-        self.stateController = AuthenticationStateController()
-        self.interfaceBuilder = AuthenticationInterfaceBuilder(featureProvider: featureProvider)
-        self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
-        self.backupRestoreController = BackupRestoreController(target: presenter)
-        super.init()
-        updateLoginObservers()
-        self.unauthenticatedSessionObserver = sessionManager
-            .addUnauthenticatedSessionManagerCreatedSessionObserver(self)
-        companyLoginController?.delegate = self
-        backupRestoreController.delegate = self
-        presenter.delegate = self
-        stateController.delegate = self
-        eventResponderChain.configure(delegate: self)
-        addBackendSwitchObserver()
-    }
-
-    deinit {
-        if !isTornDown {
-            assertionFailure("AuthenticationCoordinator was not torn down.")
-        }
     }
 
     func tearDown() {
@@ -165,6 +155,22 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         Task { @MainActor in
             activityIndicator?.stop()
         }
+    }
+
+    // MARK: Private
+
+    private var activityIndicator: BlockingActivityIndicator?
+
+    // MARK: - Internal State
+
+    private var loginObservers: [Any] = []
+    private var unauthenticatedSessionObserver: Any?
+    private var postLoginObservers: [Any] = []
+    private var pendingAlert: AuthenticationCoordinatorAlert?
+    private var isTornDown = false
+
+    private var registrationStatus: RegistrationStatus {
+        unauthenticatedSession.registrationStatus
     }
 }
 

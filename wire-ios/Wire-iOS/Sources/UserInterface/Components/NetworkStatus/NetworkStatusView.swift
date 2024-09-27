@@ -72,35 +72,7 @@ extension NetworkStatusViewDelegate where Self: UIViewController {
 // MARK: - NetworkStatusView
 
 final class NetworkStatusView: UIView {
-    let connectingView: BreathLoadingBar
-    private let offlineView: OfflineBar
-    private var _state: NetworkStatusViewState = .online
-
-    private lazy var topMargin: CGFloat = if UIScreen.hasNotch {
-        0
-    } else {
-        CGFloat.NetworkStatusBar.topMargin
-    }
-
-    weak var delegate: NetworkStatusViewDelegate?
-
-    private lazy var offlineViewTopMargin: NSLayoutConstraint = offlineView.topAnchor.constraint(equalTo: topAnchor)
-    private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor
-        .constraint(equalTo: bottomAnchor)
-    private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor
-        .constraint(equalTo: bottomAnchor)
-
-    var state: NetworkStatusViewState {
-        get { _state }
-        set { update(state: newValue, animated: false) }
-    }
-
-    func update(state: NetworkStatusViewState, animated: Bool) {
-        _state = state
-        // if this is called before the frame is set then the offline
-        // bar zooms into view (which we don't want).
-        updateViewState(animated: (frame == .zero) ? false : animated)
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         self.connectingView = BreathLoadingBar.withDefaultAnimationDuration()
@@ -126,55 +98,21 @@ final class NetworkStatusView: UIView {
         fatalError("init(coder:) is not supported")
     }
 
-    private func createConstraints() {
-        [offlineView, connectingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-        NSLayoutConstraint.activate([
-            offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
-            offlineView.rightAnchor.constraint(
-                equalTo: rightAnchor,
-                constant: -CGFloat.NetworkStatusBar.horizontalMargin
-            ),
-            offlineViewTopMargin,
-            offlineViewBottomMargin,
+    // MARK: Internal
 
-            connectingView.leftAnchor.constraint(equalTo: offlineView.leftAnchor),
-            connectingView.rightAnchor.constraint(equalTo: offlineView.rightAnchor),
-            connectingView.topAnchor.constraint(equalTo: offlineView.topAnchor),
-            connectingViewBottomMargin,
-        ])
+    let connectingView: BreathLoadingBar
+    weak var delegate: NetworkStatusViewDelegate?
+
+    var state: NetworkStatusViewState {
+        get { _state }
+        set { update(state: newValue, animated: false) }
     }
 
-    private func updateViewState(animated: Bool) {
-        let offlineViewHidden = state != .offlineExpanded
-
-        let updateUIBlock: () -> Void = {
-            self.updateUI(animated: animated)
-        }
-
-        let completionBlock: (Bool) -> Void = { _ in
-            self.updateUICompletion(offlineViewHidden: offlineViewHidden)
-            self.connectingView.animating = self.state == .onlineSynchronizing
-        }
-
-        if animated {
-            connectingView.animating = false
-            if state == .offlineExpanded {
-                offlineView.isHidden = false
-            }
-
-            UIView.animate(
-                withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime,
-                delay: 0,
-                options: [.curveEaseInOut, .beginFromCurrentState],
-                animations: updateUIBlock,
-                completion: completionBlock
-            )
-        } else {
-            updateUIBlock()
-            completionBlock(true)
-        }
-
-        delegate?.didChangeHeight(self, animated: animated, state: state)
+    func update(state: NetworkStatusViewState, animated: Bool) {
+        _state = state
+        // if this is called before the frame is set then the offline
+        // bar zooms into view (which we don't want).
+        updateViewState(animated: (frame == .zero) ? false : animated)
     }
 
     func updateConstraints(networkStatusViewState: NetworkStatusViewState) {
@@ -250,6 +188,74 @@ final class NetworkStatusView: UIView {
         } catch {
             WireLogger.network.error("NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)")
         }
+    }
+
+    // MARK: Private
+
+    private let offlineView: OfflineBar
+    private var _state: NetworkStatusViewState = .online
+
+    private lazy var offlineViewTopMargin: NSLayoutConstraint = offlineView.topAnchor.constraint(equalTo: topAnchor)
+    private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor
+        .constraint(equalTo: bottomAnchor)
+    private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor
+        .constraint(equalTo: bottomAnchor)
+
+    private lazy var topMargin: CGFloat = if UIScreen.hasNotch {
+        0
+    } else {
+        CGFloat.NetworkStatusBar.topMargin
+    }
+
+    private func createConstraints() {
+        [offlineView, connectingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        NSLayoutConstraint.activate([
+            offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
+            offlineView.rightAnchor.constraint(
+                equalTo: rightAnchor,
+                constant: -CGFloat.NetworkStatusBar.horizontalMargin
+            ),
+            offlineViewTopMargin,
+            offlineViewBottomMargin,
+
+            connectingView.leftAnchor.constraint(equalTo: offlineView.leftAnchor),
+            connectingView.rightAnchor.constraint(equalTo: offlineView.rightAnchor),
+            connectingView.topAnchor.constraint(equalTo: offlineView.topAnchor),
+            connectingViewBottomMargin,
+        ])
+    }
+
+    private func updateViewState(animated: Bool) {
+        let offlineViewHidden = state != .offlineExpanded
+
+        let updateUIBlock: () -> Void = {
+            self.updateUI(animated: animated)
+        }
+
+        let completionBlock: (Bool) -> Void = { _ in
+            self.updateUICompletion(offlineViewHidden: offlineViewHidden)
+            self.connectingView.animating = self.state == .onlineSynchronizing
+        }
+
+        if animated {
+            connectingView.animating = false
+            if state == .offlineExpanded {
+                offlineView.isHidden = false
+            }
+
+            UIView.animate(
+                withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime,
+                delay: 0,
+                options: [.curveEaseInOut, .beginFromCurrentState],
+                animations: updateUIBlock,
+                completion: completionBlock
+            )
+        } else {
+            updateUIBlock()
+            completionBlock(true)
+        }
+
+        delegate?.didChangeHeight(self, animated: animated, state: state)
     }
 }
 

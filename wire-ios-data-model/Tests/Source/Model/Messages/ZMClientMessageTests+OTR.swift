@@ -27,6 +27,8 @@ import XCTest
 // + mockProteusService setup
 // as a cleanup we should remove the duplication and refactor this - WPB-5980
 final class ClientMessageTests_OTR: BaseZMClientMessageTests {
+    // MARK: Internal
+
     enum FakeCCError: Error {
         case randomError
     }
@@ -40,24 +42,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
         // Mock
         setupMockProteusService()
-    }
-
-    private func setupMockProteusService() {
-        mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in
-            // No op
-        }
-
-        mockProteusService.remoteFingerprintForSession_MockMethod = { sessionID in
-            sessionID.rawValue + "remote_fingerprint"
-        }
-
-        mockProteusService.encryptDataForSession_MockMethod = { plaintext, _ in
-            plaintext
-        }
-
-        syncMOC.performGroupedAndWait {
-            self.syncMOC.proteusService = self.mockProteusService
-        }
     }
 
     override func tearDown() {
@@ -604,6 +588,8 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         )
     }
 
+    // MARK: Fileprivate
+
     // MARK: - Helper
 
     /// Returns a string large enough to have to be encoded in an external message
@@ -633,6 +619,26 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             string += string
         }
         return string
+    }
+
+    // MARK: Private
+
+    private func setupMockProteusService() {
+        mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in
+            // No op
+        }
+
+        mockProteusService.remoteFingerprintForSession_MockMethod = { sessionID in
+            sessionID.rawValue + "remote_fingerprint"
+        }
+
+        mockProteusService.encryptDataForSession_MockMethod = { plaintext, _ in
+            plaintext
+        }
+
+        syncMOC.performGroupedAndWait {
+            self.syncMOC.proteusService = self.mockProteusService
+        }
     }
 }
 

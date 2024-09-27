@@ -29,22 +29,7 @@ protocol CallAccessoryViewControllerDelegate: AnyObject {
 // MARK: - CallAccessoryViewController
 
 final class CallAccessoryViewController: UIViewController, CallParticipantsListViewControllerDelegate {
-    weak var delegate: CallAccessoryViewControllerDelegate?
-    private let participantsViewController: CallParticipantsListViewController
-
-    private let avatarView: UserImageViewContainer
-    private let videoPlaceholderStatusLabel = UILabel(
-        key: "video_call.camera_access.denied",
-        size: .normal,
-        weight: .semibold,
-        color: .white
-    )
-
-    var configuration: CallInfoViewControllerInput {
-        didSet {
-            updateState()
-        }
-    }
+    // MARK: Lifecycle
 
     init(
         configuration: CallInfoViewControllerInput,
@@ -75,6 +60,16 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    weak var delegate: CallAccessoryViewControllerDelegate?
+
+    var configuration: CallInfoViewControllerInput {
+        didSet {
+            updateState()
+        }
+    }
+
     override func loadView() {
         view = PassthroughTouchesView()
     }
@@ -85,6 +80,22 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
         createConstraints()
         updateState()
     }
+
+    func callParticipantsListViewControllerDidSelectShowMore(viewController: CallParticipantsListViewController) {
+        delegate?.callAccessoryViewControllerDidSelectShowMore(viewController: self)
+    }
+
+    // MARK: Private
+
+    private let participantsViewController: CallParticipantsListViewController
+
+    private let avatarView: UserImageViewContainer
+    private let videoPlaceholderStatusLabel = UILabel(
+        key: "video_call.camera_access.denied",
+        size: .normal,
+        weight: .semibold,
+        color: .white
+    )
 
     private func setupViews() {
         addToSelf(participantsViewController)
@@ -120,9 +131,5 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
         avatarView.isHidden = !configuration.accessoryType.showAvatar
         participantsViewController.view.isHidden = !configuration.accessoryType.showParticipantList
         videoPlaceholderStatusLabel.isHidden = configuration.videoPlaceholderState != .statusTextDisplayed
-    }
-
-    func callParticipantsListViewControllerDidSelectShowMore(viewController: CallParticipantsListViewController) {
-        delegate?.callAccessoryViewControllerDidSelectShowMore(viewController: self)
     }
 }

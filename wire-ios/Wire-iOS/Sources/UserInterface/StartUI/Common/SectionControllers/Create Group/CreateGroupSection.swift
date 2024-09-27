@@ -19,14 +19,11 @@
 import UIKit
 
 final class CreateGroupSection: NSObject, CollectionViewSectionController {
+    // MARK: Internal
+
     enum Row {
         case createGroup
         case createGuestRoom
-    }
-
-    private var data: [Row] {
-        let user = SelfUser.provider?.providedSelfUser
-        return user?.isTeamMember == true ? [Row.createGroup, Row.createGuestRoom] : [Row.createGroup]
     }
 
     weak var delegate: SearchSectionControllerDelegate?
@@ -90,5 +87,12 @@ final class CreateGroupSection: NSObject, CollectionViewSectionController {
         case .createGuestRoom:
             delegate?.searchSectionController(self, didSelectRow: .createGuestRoom, at: indexPath)
         }
+    }
+
+    // MARK: Private
+
+    private var data: [Row] {
+        let user = SelfUser.provider?.providedSelfUser
+        return user?.isTeamMember == true ? [Row.createGroup, Row.createGuestRoom] : [Row.createGroup]
     }
 }

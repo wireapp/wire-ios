@@ -31,10 +31,22 @@ protocol SketchColorPickerControllerDelegate: AnyObject {
 /// The color picker for the sketching
 
 final class SketchColorPickerController: UIViewController {
-    /// Used only as fallback in case no brush width is set
-    private let SketchColorPickerDefaultBrushWidth: CGFloat = 6
+    // MARK: Lifecycle
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
 
     weak var delegate: SketchColorPickerControllerDelegate?
+    lazy var colorsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorsCollectionViewLayout)
+
     var sketchColors: [SketchColor] = [] {
         didSet {
             if sketchColors == oldValue {
@@ -55,16 +67,6 @@ final class SketchColorPickerController: UIViewController {
         }
     }
 
-    private var brushWidths: [CGFloat] = [6, 12, 18] {
-        didSet {
-            if brushWidths == oldValue {
-                return
-            }
-
-            resetColorToBrushWidthMapper()
-        }
-    }
-
     var selectedColorIndex = 0 {
         didSet {
             guard canSelectColor(atIndex: selectedColorIndex) else { return }
@@ -79,38 +81,6 @@ final class SketchColorPickerController: UIViewController {
         }
     }
 
-    private func canSelectColor(atIndex index: Int) -> Bool {
-        colorsCollectionView.cellForItem(at: IndexPath(row: index, section: 0)) != nil
-    }
-
-    /// Read only: Use the selectedColorIndex to change the selected color
-    private var selectedColor: SketchColor {
-        assert(sketchColors.indices.contains(selectedColorIndex), "Colors out of bounds")
-
-        return sketchColors[selectedColorIndex]
-    }
-
-    private var colorToBrushWidthMapper: [UIColor: CGFloat]?
-    lazy var colorsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorsCollectionViewLayout)
-
-    private var colorsCollectionViewLayout: UICollectionViewFlowLayout {
-        let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.itemSize = CGSize(width: 54, height: 42)
-        flowLayout.scrollDirection = .horizontal
-        flowLayout.minimumInteritemSpacing = 0
-        flowLayout.minimumLineSpacing = 0
-        return flowLayout
-    }
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -120,18 +90,6 @@ final class SketchColorPickerController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         colorsCollectionViewLayout.invalidateLayout()
-    }
-
-    private func resetColorToBrushWidthMapper() {
-        let brushWidth = brushWidths.first ?? SketchColorPickerDefaultBrushWidth
-
-        var colorToBrushWidthMapper: [UIColor: CGFloat] = [:]
-        for brush in sketchColors {
-            colorToBrushWidthMapper[brush.color] = brushWidth
-        }
-
-        self.colorToBrushWidthMapper = colorToBrushWidthMapper
-        selectedColorIndex = 0
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -145,6 +103,55 @@ final class SketchColorPickerController: UIViewController {
     /// Returns the current brush width for the given color
     func brushWidth(for color: UIColor) -> CGFloat {
         colorToBrushWidthMapper?[color] ?? SketchColorPickerDefaultBrushWidth
+    }
+
+    // MARK: Private
+
+    /// Used only as fallback in case no brush width is set
+    private let SketchColorPickerDefaultBrushWidth: CGFloat = 6
+
+    private var colorToBrushWidthMapper: [UIColor: CGFloat]?
+
+    private var brushWidths: [CGFloat] = [6, 12, 18] {
+        didSet {
+            if brushWidths == oldValue {
+                return
+            }
+
+            resetColorToBrushWidthMapper()
+        }
+    }
+
+    /// Read only: Use the selectedColorIndex to change the selected color
+    private var selectedColor: SketchColor {
+        assert(sketchColors.indices.contains(selectedColorIndex), "Colors out of bounds")
+
+        return sketchColors[selectedColorIndex]
+    }
+
+    private var colorsCollectionViewLayout: UICollectionViewFlowLayout {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.itemSize = CGSize(width: 54, height: 42)
+        flowLayout.scrollDirection = .horizontal
+        flowLayout.minimumInteritemSpacing = 0
+        flowLayout.minimumLineSpacing = 0
+        return flowLayout
+    }
+
+    private func canSelectColor(atIndex index: Int) -> Bool {
+        colorsCollectionView.cellForItem(at: IndexPath(row: index, section: 0)) != nil
+    }
+
+    private func resetColorToBrushWidthMapper() {
+        let brushWidth = brushWidths.first ?? SketchColorPickerDefaultBrushWidth
+
+        var colorToBrushWidthMapper: [UIColor: CGFloat] = [:]
+        for brush in sketchColors {
+            colorToBrushWidthMapper[brush.color] = brushWidth
+        }
+
+        self.colorToBrushWidthMapper = colorToBrushWidthMapper
+        selectedColorIndex = 0
     }
 
     private func bumpBrushWidth(for color: UIColor) -> CGFloat {

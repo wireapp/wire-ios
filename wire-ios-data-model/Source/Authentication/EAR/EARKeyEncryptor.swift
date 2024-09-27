@@ -36,9 +36,7 @@ protocol EARKeyEncryptorInterface {
 // MARK: - EARKeyEncryptor
 
 struct EARKeyEncryptor: EARKeyEncryptorInterface {
-    private var databaseKeyAlgorithm: SecKeyAlgorithm {
-        .eciesEncryptionCofactorX963SHA256AESGCM
-    }
+    // MARK: Internal
 
     func encryptDatabaseKey(
         _ databaseKey: Data,
@@ -74,5 +72,11 @@ struct EARKeyEncryptor: EARKeyEncryptorInterface {
         }
 
         return databaseKey as Data
+    }
+
+    // MARK: Private
+
+    private var databaseKeyAlgorithm: SecKeyAlgorithm {
+        .eciesEncryptionCofactorX963SHA256AESGCM
     }
 }

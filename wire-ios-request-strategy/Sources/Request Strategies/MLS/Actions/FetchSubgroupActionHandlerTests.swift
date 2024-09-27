@@ -21,6 +21,8 @@ import WireDataModel
 @testable import WireRequestStrategy
 
 class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction, FetchSubgroupActionHandler> {
+    // MARK: Internal
+
     let domain = "example.com"
     let conversationId = UUID()
     let type = SubgroupType.conference
@@ -78,10 +80,6 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
             expectedError: .endpointUnavailable
         )
     }
-
-    // MARK: - Response handling
-
-    private typealias ResponsePayload = FetchSubgroupActionHandler.Subgroup
 
     func test_itHandlesSuccess() {
         // Given
@@ -150,4 +148,10 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo"),
         ])
     }
+
+    // MARK: Private
+
+    // MARK: - Response handling
+
+    private typealias ResponsePayload = FetchSubgroupActionHandler.Subgroup
 }

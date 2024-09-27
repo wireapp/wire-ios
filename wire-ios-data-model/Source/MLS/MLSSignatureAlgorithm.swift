@@ -25,6 +25,8 @@ public enum MLSSignatureAlgorithm: String, CustomStringConvertible {
     case p384
     case p521
 
+    // MARK: Public
+
     public var description: String {
         rawValue
     }

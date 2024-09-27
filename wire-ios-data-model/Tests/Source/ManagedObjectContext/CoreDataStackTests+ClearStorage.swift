@@ -29,6 +29,22 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             .appendingPathComponent("CoreDataStackTests")
     }
 
+    /// Previous storage locations for the persistent store or key store
+    var previousStorageLocations: [URL] {
+        let accountID = account.userIdentifier.uuidString
+        let bundleID = Bundle.main.bundleIdentifier!
+
+        return [
+            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!,
+            FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!,
+            applicationContainer,
+            applicationContainer.appendingPathComponent(bundleID),
+            applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID),
+            applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID)
+                .appendingPathComponent("store"),
+        ]
+    }
+
     func testThatPersistentStoreIsCleared_WhenUpgradingFromLegacyInstallation() {
         // given
         let existingFiles = createStoreFilesInLegacyLocations()
@@ -177,21 +193,5 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             )
             return sessionDirectory
         }
-    }
-
-    /// Previous storage locations for the persistent store or key store
-    var previousStorageLocations: [URL] {
-        let accountID = account.userIdentifier.uuidString
-        let bundleID = Bundle.main.bundleIdentifier!
-
-        return [
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!,
-            FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!,
-            applicationContainer,
-            applicationContainer.appendingPathComponent(bundleID),
-            applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID),
-            applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID)
-                .appendingPathComponent("store"),
-        ]
     }
 }

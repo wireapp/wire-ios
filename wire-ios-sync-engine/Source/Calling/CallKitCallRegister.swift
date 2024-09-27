@@ -19,11 +19,7 @@
 import Foundation
 
 class CallKitCallRegister {
-    // MARK: - Properties
-
-    private var storage = [UUID: CallKitCall]()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {
         persistStorage()
@@ -33,10 +29,12 @@ class CallKitCallRegister {
         persistStorage()
     }
 
-    // MARK: - Persistence
+    // MARK: Internal
 
-    private func persistStorage() {
-        VoIPPushHelper.knownCallHandles = storage.values.map(\.handle.encodedString)
+    // MARK: - Lookup
+
+    var allCalls: [CallKitCall] {
+        Array(storage.values)
     }
 
     // MARK: - Registration
@@ -58,12 +56,6 @@ class CallKitCallRegister {
         storage.removeAll()
     }
 
-    // MARK: - Lookup
-
-    var allCalls: [CallKitCall] {
-        Array(storage.values)
-    }
-
     func callExists(for id: UUID) -> Bool {
         lookupCall(by: id) != nil
     }
@@ -82,5 +74,17 @@ class CallKitCallRegister {
 
     func lookupCalls(by handle: CallHandle) -> [CallKitCall] {
         storage.values.filter { $0.handle == handle }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var storage = [UUID: CallKitCall]()
+
+    // MARK: - Persistence
+
+    private func persistStorage() {
+        VoIPPushHelper.knownCallHandles = storage.values.map(\.handle.encodedString)
     }
 }

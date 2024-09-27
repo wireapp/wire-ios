@@ -21,9 +21,18 @@ import UIKit
 // MARK: - CollectionViewCellAdapter
 
 final class CollectionViewCellAdapter: UICollectionViewCell {
+    // MARK: Lifecycle
+
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
 
     var wrappedView: UIView? {
         didSet {
@@ -44,17 +53,12 @@ final class CollectionViewCellAdapter: UICollectionViewCell {
             ])
         }
     }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
 // MARK: - SingleViewSectionController
 
 final class SingleViewSectionController: NSObject, CollectionViewSectionController {
-    fileprivate var view: UIView
+    // MARK: Lifecycle
 
     init(view: UIView) {
         self.view = view
@@ -62,15 +66,17 @@ final class SingleViewSectionController: NSObject, CollectionViewSectionControll
         super.init()
     }
 
+    // MARK: Internal
+
+    var isHidden: Bool {
+        false
+    }
+
     func prepareForUse(in collectionView: UICollectionView?) {
         collectionView?.register(
             CollectionViewCellAdapter.self,
             forCellWithReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier
         )
-    }
-
-    var isHidden: Bool {
-        false
     }
 
     func collectionView(
@@ -97,4 +103,8 @@ final class SingleViewSectionController: NSObject, CollectionViewSectionControll
 
         return cell
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var view: UIView
 }

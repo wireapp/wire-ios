@@ -19,13 +19,7 @@
 import Foundation
 
 struct Changes: Mergeable {
-    // MARK: - Properties
-
-    let changedKeys: Set<String>
-    let originalChanges: [String: NSObject?]
-    let mayHaveUnknownChanges: Bool
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         changedKeys: Set<String> = [],
@@ -36,6 +30,14 @@ struct Changes: Mergeable {
         self.originalChanges = originalChanges
         self.mayHaveUnknownChanges = mayHaveUnknownChanges
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let changedKeys: Set<String>
+    let originalChanges: [String: NSObject?]
+    let mayHaveUnknownChanges: Bool
 
     // MARK: - Methods
 

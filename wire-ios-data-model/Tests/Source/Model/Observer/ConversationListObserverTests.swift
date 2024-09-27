@@ -19,6 +19,8 @@
 @testable import WireDataModel
 
 class ConversationListObserverTests: NotificationDispatcherTestBase {
+    // MARK: Internal
+
     class TestObserver: NSObject, ZMConversationListObserver {
         var changes: [ConversationListChangeInfo] = []
 
@@ -26,8 +28,6 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
             changes.append(changeInfo)
         }
     }
-
-    var testObserver: TestObserver!
 
     class TestConversationListReloadObserver: NSObject, ZMConversationListReloadObserver {
         var conversationListsReloadCount = 0
@@ -37,8 +37,6 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         }
     }
 
-    var testConversationListReloadObserver: TestConversationListReloadObserver!
-
     class TestConversationListFolderObserver: NSObject, ZMConversationListFolderObserver {
         var conversationListsFolderChangeCount = 0
 
@@ -46,6 +44,10 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
             conversationListsFolderChangeCount += 1
         }
     }
+
+    var testObserver: TestObserver!
+
+    var testConversationListReloadObserver: TestConversationListReloadObserver!
 
     var testConversationListFolderObserver: TestConversationListFolderObserver!
 
@@ -61,12 +63,6 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         testConversationListReloadObserver = nil
         testConversationListFolderObserver = nil
         super.tearDown()
-    }
-
-    fileprivate func movedIndexes(_ changeSet: ConversationListChangeInfo) -> [MovedIndex] {
-        var array: [MovedIndex] = []
-        changeSet.enumerateMovedIndexes { (x: Int, y: Int) in array.append(MovedIndex(from: x, to: y)) }
-        return array
     }
 
     func testThatItDeallocates() {
@@ -1341,5 +1337,13 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         // then
         assertThatTheListIsReorderedWhenAConversationChangesTheLastModifiedTime(team: team)
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate func movedIndexes(_ changeSet: ConversationListChangeInfo) -> [MovedIndex] {
+        var array: [MovedIndex] = []
+        changeSet.enumerateMovedIndexes { (x: Int, y: Int) in array.append(MovedIndex(from: x, to: y)) }
+        return array
     }
 }

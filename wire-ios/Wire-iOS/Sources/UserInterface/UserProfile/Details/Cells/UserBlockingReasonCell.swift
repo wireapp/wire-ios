@@ -24,11 +24,7 @@ import WireDesign
 // MARK: - UserBlockingReasonCell
 
 final class UserBlockingReasonCell: UITableViewCell {
-    // MARK: - Properties
-
-    private let titleLabel = WebLinkTextView()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -41,6 +37,12 @@ final class UserBlockingReasonCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let titleLabel = WebLinkTextView()
 
     // MARK: - Helpers
 

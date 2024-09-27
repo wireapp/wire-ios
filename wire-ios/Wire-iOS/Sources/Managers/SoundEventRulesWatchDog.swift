@@ -19,14 +19,18 @@
 import Foundation
 
 final class SoundEventRulesWatchDog {
-    var startIgnoreDate: Date?
-    var ignoreTime: TimeInterval
-    /// Enables/disables any sound playback.
-    var isMuted = false
+    // MARK: Lifecycle
 
     init(ignoreTime: TimeInterval = 0) {
         self.ignoreTime = ignoreTime
     }
+
+    // MARK: Internal
+
+    var startIgnoreDate: Date?
+    var ignoreTime: TimeInterval
+    /// Enables/disables any sound playback.
+    var isMuted = false
 
     var outputAllowed: Bool {
         // Check this property when it is allowed to playback any sounds

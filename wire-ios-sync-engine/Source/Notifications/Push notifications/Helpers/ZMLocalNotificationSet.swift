@@ -31,6 +31,18 @@ public protocol ZMSynchonizableKeyValueStore: KeyValueStore {
 
 @objc
 final class ZMLocalNotificationSet: NSObject {
+    // MARK: Lifecycle
+
+    init(archivingKey: String, keyValueStore: ZMSynchonizableKeyValueStore) {
+        self.archivingKey = archivingKey
+        self.keyValueStore = keyValueStore
+        super.init()
+
+        unarchiveOldNotifications()
+    }
+
+    // MARK: Internal
+
     let archivingKey: String
     let keyValueStore: ZMSynchonizableKeyValueStore
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
@@ -40,18 +52,6 @@ final class ZMLocalNotificationSet: NSObject {
     }
 
     private(set) var oldNotifications = [NotificationUserInfo]()
-
-    private var allNotifications: [NotificationUserInfo] {
-        notifications.compactMap(\.userInfo) + oldNotifications
-    }
-
-    init(archivingKey: String, keyValueStore: ZMSynchonizableKeyValueStore) {
-        self.archivingKey = archivingKey
-        self.keyValueStore = keyValueStore
-        super.init()
-
-        unarchiveOldNotifications()
-    }
 
     /// Unarchives all previously created notifications that haven't been cancelled yet
     func unarchiveOldNotifications() {
@@ -125,6 +125,12 @@ final class ZMLocalNotificationSet: NSObject {
         let toRemove = notifications.filter { $0.messageNonce == messageNonce }
         notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map(\.id.uuidString))
         notifications.subtract(toRemove)
+    }
+
+    // MARK: Private
+
+    private var allNotifications: [NotificationUserInfo] {
+        notifications.compactMap(\.userInfo) + oldNotifications
     }
 }
 

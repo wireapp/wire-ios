@@ -28,56 +28,7 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - AudioRecordKeyboardViewController
 
 final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBaseViewController {
-    enum State {
-        case ready, recording, effects
-    }
-
-    // MARK: - Properties
-
-    private(set) var state: State = .ready {
-        didSet { if oldValue != state { updateRecordingState(state) }}
-    }
-
-    var isRecording: Bool {
-        switch recorder.state {
-        case .recording:
-            true
-        default:
-            false
-        }
-    }
-
-    let recorder: AudioRecorderType
-    weak var delegate: AudioRecordViewControllerDelegate?
-
-    let recordButton = IconButton()
-    let stopRecordButton = IconButton()
-    let confirmButton = IconButton()
-    let redoButton = IconButton()
-    let cancelButton = IconButton()
-
-    private let topContainer = UIView()
-    private let topSeparator = UIView()
-    private let bottomToolbar = UIView()
-
-    private let tipLabel = UILabel()
-    private let timeLabel = UILabel()
-    private let audioPreviewView = WaveFormView()
-    private var recordTapGestureRecognizer: UITapGestureRecognizer!
-
-    private var accentColorChangeHandler: AccentColorChangeHandler?
-    private var effectPickerViewController: AudioEffectsPickerViewController?
-
-    private var currentEffect: AVSAudioEffectType = .none
-    private var currentEffectFilePath: String?
-
-    private let userSession: UserSession
-
-    private var isAppLockActive: Bool {
-        userSession.isAppLockActive
-    }
-
-    // MARK: - Life Cycle
+    // MARK: Lifecycle
 
     convenience init(userSession: UserSession) {
         self.init(
@@ -106,6 +57,36 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    enum State {
+        case ready, recording, effects
+    }
+
+    let recorder: AudioRecorderType
+    weak var delegate: AudioRecordViewControllerDelegate?
+
+    let recordButton = IconButton()
+    let stopRecordButton = IconButton()
+    let confirmButton = IconButton()
+    let redoButton = IconButton()
+    let cancelButton = IconButton()
+
+    // MARK: - Properties
+
+    private(set) var state: State = .ready {
+        didSet { if oldValue != state { updateRecordingState(state) }}
+    }
+
+    var isRecording: Bool {
+        switch recorder.state {
+        case .recording:
+            true
+        default:
+            false
+        }
     }
 
     override func viewDidLoad() {
@@ -162,6 +143,129 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
         [bottomToolbar, topContainer, topSeparator].forEach(view.addSubview)
         updateRecordingState(state)
+    }
+
+    // MARK: - View Updates
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        confirmButton.layer.cornerRadius = confirmButton.bounds.size.width / 2
+        recordButton.layer.cornerRadius = recordButton.bounds.size.width / 2
+        stopRecordButton.layer.cornerRadius = stopRecordButton.bounds.size.width / 2
+    }
+
+    func updateTimeLabel(_ durationInSeconds: TimeInterval) {
+        let duration = Int(floor(durationInSeconds))
+        let (seconds, minutes) = (duration % 60, duration / 60)
+        timeLabel.text = String(format: "%d:%02d", minutes, seconds)
+        timeLabel.accessibilityValue = timeLabel.text
+    }
+
+    // MARK: - Recording
+
+    func configureAudioRecorder() {
+        recorder.recordTimerCallback = { [weak self] time in
+            guard let self else { return }
+            updateTimeLabel(time)
+        }
+
+        recorder.recordEndedCallback = { [weak self] result in
+            guard let self else { return }
+
+            state = .effects
+
+            if case let .failure(error) = result, let error = error as? RecordingError,
+               let alert = recorder.alertForRecording(error: error) {
+                present(alert, animated: true, completion: .none)
+            }
+        }
+
+        recorder.recordLevelCallBack = { [weak self] level in
+            guard let self else { return }
+            audioPreviewView.updateWithLevel(level)
+        }
+    }
+
+    // MARK: - Button Actions
+
+    @objc
+    func recordButtonPressed(_: AnyObject!) {
+        recorder.startRecording { _ in
+            self.state = .recording
+            self.delegate?.audioRecordViewControllerDidStartRecording(self)
+            AppDelegate.shared.mediaPlaybackManager?.audioTrackPlayer.stop()
+        }
+    }
+
+    @objc
+    func stopRecordButtonPressed(_: UIButton?) {
+        recorder.stopRecording()
+    }
+
+    @objc
+    func confirmButtonPressed(_ button: UIButton?) {
+        guard let audioPath = currentEffectFilePath else {
+            zmLog.error("No file to send")
+            return
+        }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
+        button?.isEnabled = false
+
+        let effectName = currentEffect == .none ? "Original" : currentEffect.description
+
+        let filename = String.filename(for: selfUser, suffix: "-" + effectName).appendingPathExtension("m4a")!
+        let convertedPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(filename)
+        convertedPath.deleteFileAtPath()
+
+        AVAsset.convertAudioToUploadFormat(audioPath, outPath: convertedPath) { success in
+            if success {
+                audioPath.deleteFileAtPath()
+                self.delegate?.audioRecordViewControllerWantsToSendAudio(
+                    self,
+                    recordingURL: URL(fileURLWithPath: convertedPath),
+                    duration: self.recorder.currentDuration,
+                    filter: self.currentEffect
+                )
+            }
+        }
+    }
+
+    @objc
+    func redoButtonPressed(_: UIButton?) {
+        recorder.deleteRecording()
+        state = .ready
+    }
+
+    @objc
+    func cancelButtonPressed(_: UIButton?) {
+        delegate?.audioRecordViewControllerDidCancel(self)
+    }
+
+    // MARK: Private
+
+    private let topContainer = UIView()
+    private let topSeparator = UIView()
+    private let bottomToolbar = UIView()
+
+    private let tipLabel = UILabel()
+    private let timeLabel = UILabel()
+    private let audioPreviewView = WaveFormView()
+    private var recordTapGestureRecognizer: UITapGestureRecognizer!
+
+    private var accentColorChangeHandler: AccentColorChangeHandler?
+    private var effectPickerViewController: AudioEffectsPickerViewController?
+
+    private var currentEffect: AVSAudioEffectType = .none
+    private var currentEffectFilePath: String?
+
+    private let userSession: UserSession
+
+    private var isAppLockActive: Bool {
+        userSession.isAppLockActive
     }
 
     private func createTipLabel() {
@@ -313,22 +417,6 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         ])
     }
 
-    // MARK: - View Updates
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        confirmButton.layer.cornerRadius = confirmButton.bounds.size.width / 2
-        recordButton.layer.cornerRadius = recordButton.bounds.size.width / 2
-        stopRecordButton.layer.cornerRadius = stopRecordButton.bounds.size.width / 2
-    }
-
-    func updateTimeLabel(_ durationInSeconds: TimeInterval) {
-        let duration = Int(floor(durationInSeconds))
-        let (seconds, minutes) = (duration % 60, duration / 60)
-        timeLabel.text = String(format: "%d:%02d", minutes, seconds)
-        timeLabel.accessibilityValue = timeLabel.text
-    }
-
     private func visibleViews(forState: State) -> [UIView] {
         var result = [topSeparator, topContainer, bottomToolbar]
         switch state {
@@ -341,31 +429,6 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
 
         return result
-    }
-
-    // MARK: - Recording
-
-    func configureAudioRecorder() {
-        recorder.recordTimerCallback = { [weak self] time in
-            guard let self else { return }
-            updateTimeLabel(time)
-        }
-
-        recorder.recordEndedCallback = { [weak self] result in
-            guard let self else { return }
-
-            state = .effects
-
-            if case let .failure(error) = result, let error = error as? RecordingError,
-               let alert = recorder.alertForRecording(error: error) {
-                present(alert, animated: true, completion: .none)
-            }
-        }
-
-        recorder.recordLevelCallBack = { [weak self] level in
-            guard let self else { return }
-            audioPreviewView.updateWithLevel(level)
-        }
     }
 
     private func updateRecordingState(_ state: State) {
@@ -440,65 +503,6 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             picker.removeFromParent()
             effectPickerViewController = .none
         }
-    }
-
-    // MARK: - Button Actions
-
-    @objc
-    func recordButtonPressed(_: AnyObject!) {
-        recorder.startRecording { _ in
-            self.state = .recording
-            self.delegate?.audioRecordViewControllerDidStartRecording(self)
-            AppDelegate.shared.mediaPlaybackManager?.audioTrackPlayer.stop()
-        }
-    }
-
-    @objc
-    func stopRecordButtonPressed(_: UIButton?) {
-        recorder.stopRecording()
-    }
-
-    @objc
-    func confirmButtonPressed(_ button: UIButton?) {
-        guard let audioPath = currentEffectFilePath else {
-            zmLog.error("No file to send")
-            return
-        }
-        guard let selfUser = ZMUser.selfUser() else {
-            assertionFailure("ZMUser.selfUser() is nil")
-            return
-        }
-
-        button?.isEnabled = false
-
-        let effectName = currentEffect == .none ? "Original" : currentEffect.description
-
-        let filename = String.filename(for: selfUser, suffix: "-" + effectName).appendingPathExtension("m4a")!
-        let convertedPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(filename)
-        convertedPath.deleteFileAtPath()
-
-        AVAsset.convertAudioToUploadFormat(audioPath, outPath: convertedPath) { success in
-            if success {
-                audioPath.deleteFileAtPath()
-                self.delegate?.audioRecordViewControllerWantsToSendAudio(
-                    self,
-                    recordingURL: URL(fileURLWithPath: convertedPath),
-                    duration: self.recorder.currentDuration,
-                    filter: self.currentEffect
-                )
-            }
-        }
-    }
-
-    @objc
-    func redoButtonPressed(_: UIButton?) {
-        recorder.deleteRecording()
-        state = .ready
-    }
-
-    @objc
-    func cancelButtonPressed(_: UIButton?) {
-        delegate?.audioRecordViewControllerDidCancel(self)
     }
 }
 

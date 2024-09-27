@@ -24,17 +24,21 @@ import WireCommonComponents
 /// A view that displays a solid button.
 
 final class SolidButtonDescription: ValueSubmission {
+    // MARK: Lifecycle
+
+    init(title: String, accessibilityIdentifier: String) {
+        self.title = title
+        self.accessibilityIdentifier = accessibilityIdentifier
+    }
+
+    // MARK: Internal
+
     let title: String
     let accessibilityIdentifier: String
 
     var valueSubmitted: ValueSubmitted?
     var valueValidated: ValueValidated?
     var acceptsInput = true
-
-    init(title: String, accessibilityIdentifier: String) {
-        self.title = title
-        self.accessibilityIdentifier = accessibilityIdentifier
-    }
 }
 
 // MARK: ViewDescriptor

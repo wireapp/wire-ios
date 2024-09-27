@@ -21,44 +21,7 @@ import WireSyncEngine
 import WireTransport
 
 final class PreferredAPIVersionViewModel: ObservableObject {
-    // MARK: - Models
-
-    struct Section: Identifiable {
-        let id = UUID()
-        let header: String
-        let items: [Item]
-    }
-
-    struct Item: Identifiable {
-        let id = UUID()
-        let title: String
-        let value: Value
-    }
-
-    enum Value: Equatable {
-        case noPreference
-        case apiVersion(APIVersion)
-
-        init(apiVersion: APIVersion?) {
-            if let apiVersion {
-                self = .apiVersion(apiVersion)
-            } else {
-                self = .noPreference
-            }
-        }
-    }
-
-    enum Event {
-        case itemTapped(Item)
-    }
-
-    // MARK: - State
-
-    let sections: [Section]
-
-    @Published var selectedItemID: Item.ID
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {
         self.sections = [
@@ -78,6 +41,47 @@ final class PreferredAPIVersionViewModel: ObservableObject {
 
         self.selectedItemID = selectedItem.id
     }
+
+    // MARK: Internal
+
+    // MARK: - Models
+
+    struct Section: Identifiable {
+        let id = UUID()
+        let header: String
+        let items: [Item]
+    }
+
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let value: Value
+    }
+
+    enum Value: Equatable {
+        case noPreference
+        case apiVersion(APIVersion)
+
+        // MARK: Lifecycle
+
+        init(apiVersion: APIVersion?) {
+            if let apiVersion {
+                self = .apiVersion(apiVersion)
+            } else {
+                self = .noPreference
+            }
+        }
+    }
+
+    enum Event {
+        case itemTapped(Item)
+    }
+
+    // MARK: - State
+
+    let sections: [Section]
+
+    @Published var selectedItemID: Item.ID
 
     // MARK: - Events
 

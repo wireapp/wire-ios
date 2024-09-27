@@ -27,28 +27,13 @@ protocol IconActionCellDelegate: AnyObject {
 // MARK: - SettingsCopyButtonCellDescriptor
 
 final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
-    static let cellType: SettingsTableCellProtocol.Type = IconActionCell.self
-
-    weak var delegate: IconActionCellDelegate?
-
-    var copyInProgress = false {
-        didSet {
-            delegate?.updateLayout()
-        }
-    }
-
-    // MARK: - Configuration
-
-    func featureCell(_ cell: SettingsCellType) {
-        if let iconActionCell = cell as? IconActionCell {
-            delegate = iconActionCell
-            iconActionCell.configure(with: copyInProgress ? copiedLink : copyLink)
-        }
-    }
-
     // MARK: - Helpers
 
     typealias Actions = L10n.Localizable.Self.Settings.AccountSection.ProfileLink.Actions
+
+    static let cellType: SettingsTableCellProtocol.Type = IconActionCell.self
+
+    weak var delegate: IconActionCellDelegate?
 
     let copiedLink: CellConfiguration = .iconAction(
         title: Actions.copiedLink,
@@ -64,6 +49,16 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
         action: { _ in }
     )
 
+    var identifier: String?
+    weak var group: SettingsGroupCellDescriptorType?
+    var previewGenerator: PreviewGeneratorType?
+
+    var copyInProgress = false {
+        didSet {
+            delegate?.updateLayout()
+        }
+    }
+
     // MARK: - SettingsCellDescriptorType
 
     var visible: Bool {
@@ -74,9 +69,14 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
         URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
     }
 
-    var identifier: String?
-    weak var group: SettingsGroupCellDescriptorType?
-    var previewGenerator: PreviewGeneratorType?
+    // MARK: - Configuration
+
+    func featureCell(_ cell: SettingsCellType) {
+        if let iconActionCell = cell as? IconActionCell {
+            delegate = iconActionCell
+            iconActionCell.configure(with: copyInProgress ? copiedLink : copyLink)
+        }
+    }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
         UIPasteboard.general.string = title

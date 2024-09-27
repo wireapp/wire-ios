@@ -33,13 +33,17 @@ typealias Callback<T> = (T) -> Void
 // MARK: - CallbackObject
 
 private final class CallbackObject<T: Interactable>: NSObject {
-    let callback: Callback<T>
+    // MARK: Lifecycle
 
     init(callback: @escaping Callback<T>, interactable: T, for event: UIControl.Event) {
         self.callback = callback
         super.init()
         interactable.addTarget(self, action: #selector(CallbackObject.onEvent(_:)), for: event)
     }
+
+    // MARK: Internal
+
+    let callback: Callback<T>
 
     @objc
     func onEvent(_ sender: Any!) {

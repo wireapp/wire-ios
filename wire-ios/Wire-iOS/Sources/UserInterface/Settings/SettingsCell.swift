@@ -44,12 +44,19 @@ typealias SettingsTableCellProtocol = SettingsCellType & UITableViewCell
 // MARK: - SettingsTableCell
 
 class SettingsTableCell: SettingsTableCellProtocol {
-    private let iconImageView: UIImageView = {
-        let iconImageView = UIImageView()
-        iconImageView.contentMode = .center
-        iconImageView.tintColor = SemanticColors.Label.textDefault
-        return iconImageView
-    }()
+    // MARK: Lifecycle
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
 
     let cellNameLabel: UILabel = {
         let label = DynamicFontLabel(
@@ -84,29 +91,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
         return badge
     }()
 
-    private let badgeLabel: UILabel = {
-        let badgeLabel = DynamicFontLabel(
-            fontSpec: .smallMediumFont,
-            color: SemanticColors.Label.textDefaultWhite
-        )
-        badgeLabel.textAlignment = .center
-        return badgeLabel
-    }()
-
-    private let imagePreview: UIImageView = {
-        let imagePreview = UIImageView()
-        imagePreview.clipsToBounds = true
-        imagePreview.layer.cornerRadius = 12
-        imagePreview.contentMode = .scaleAspectFill
-        imagePreview.accessibilityIdentifier = "imagePreview"
-
-        return imagePreview
-    }()
-
-    private lazy var cellNameLabelToIconInset: NSLayoutConstraint = cellNameLabel.leadingAnchor.constraint(
-        equalTo: iconImageView.trailingAnchor,
-        constant: 24
-    )
+    var descriptor: SettingsCellDescriptorType?
 
     var titleText = "" {
         didSet {
@@ -183,18 +168,6 @@ class SettingsTableCell: SettingsTableCellProtocol {
         updateBackgroundColor()
     }
 
-    var descriptor: SettingsCellDescriptorType?
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
     override func prepareForReuse() {
         super.prepareForReuse()
         preview = .none
@@ -214,6 +187,57 @@ class SettingsTableCell: SettingsTableCellProtocol {
         addBorder(for: .bottom)
         setupAccessibility()
     }
+
+    func setupAccessibility() {
+        isAccessibilityElement = true
+        accessibilityTraits = .button
+        accessibilityValue = valueLabel.text
+        let badgeValue = badgeLabel.text ?? ""
+        accessibilityHint = badgeValue.isEmpty ? "" : L10n.Accessibility.Settings.DeviceCount.hint("\(badgeValue)")
+    }
+
+    func updateBackgroundColor() {
+        backgroundColor = SemanticColors.View.backgroundUserCell
+
+        if isHighlighted, selectionStyle != .none {
+            backgroundColor = SemanticColors.View.backgroundUserCellHightLighted
+            badge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
+            badgeLabel.textColor = SemanticColors.Label.textDefaultWhite
+        }
+    }
+
+    // MARK: Private
+
+    private let iconImageView: UIImageView = {
+        let iconImageView = UIImageView()
+        iconImageView.contentMode = .center
+        iconImageView.tintColor = SemanticColors.Label.textDefault
+        return iconImageView
+    }()
+
+    private let badgeLabel: UILabel = {
+        let badgeLabel = DynamicFontLabel(
+            fontSpec: .smallMediumFont,
+            color: SemanticColors.Label.textDefaultWhite
+        )
+        badgeLabel.textAlignment = .center
+        return badgeLabel
+    }()
+
+    private let imagePreview: UIImageView = {
+        let imagePreview = UIImageView()
+        imagePreview.clipsToBounds = true
+        imagePreview.layer.cornerRadius = 12
+        imagePreview.contentMode = .scaleAspectFill
+        imagePreview.accessibilityIdentifier = "imagePreview"
+
+        return imagePreview
+    }()
+
+    private lazy var cellNameLabelToIconInset: NSLayoutConstraint = cellNameLabel.leadingAnchor.constraint(
+        equalTo: iconImageView.trailingAnchor,
+        constant: 24
+    )
 
     private func createConstraints() {
         let leadingConstraint = cellNameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
@@ -259,24 +283,6 @@ class SettingsTableCell: SettingsTableCellProtocol {
 
             contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 56),
         ])
-    }
-
-    func setupAccessibility() {
-        isAccessibilityElement = true
-        accessibilityTraits = .button
-        accessibilityValue = valueLabel.text
-        let badgeValue = badgeLabel.text ?? ""
-        accessibilityHint = badgeValue.isEmpty ? "" : L10n.Accessibility.Settings.DeviceCount.hint("\(badgeValue)")
-    }
-
-    func updateBackgroundColor() {
-        backgroundColor = SemanticColors.View.backgroundUserCell
-
-        if isHighlighted, selectionStyle != .none {
-            backgroundColor = SemanticColors.View.backgroundUserCellHightLighted
-            badge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
-            badgeLabel.textColor = SemanticColors.Label.textDefaultWhite
-        }
     }
 }
 
@@ -353,6 +359,8 @@ final class SettingsValueCell: SettingsTableCell {
 
 final class SettingsTextCell: SettingsTableCell,
     UITextFieldDelegate {
+    // MARK: Internal
+
     var textInput: UITextField = TailEditingTextField(frame: CGRect.zero)
 
     override func setup() {
@@ -371,28 +379,6 @@ final class SettingsTextCell: SettingsTableCell,
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(onCellSelected(_:)))
         contentView.addGestureRecognizer(tapGestureRecognizer)
-    }
-
-    private func createConstraints() {
-        let textInputSpacing: CGFloat = 16
-
-        let trailingBoundaryView = accessoryView ?? contentView
-
-        textInput.translatesAutoresizingMaskIntoConstraints = false
-        if trailingBoundaryView != contentView {
-            trailingBoundaryView.translatesAutoresizingMaskIntoConstraints = false
-        }
-
-        NSLayoutConstraint.activate([
-            textInput.topAnchor.constraint(equalTo: contentView.topAnchor, constant: -8),
-            textInput.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8),
-            textInput.trailingAnchor.constraint(
-                equalTo: trailingBoundaryView.trailingAnchor,
-                constant: -textInputSpacing
-            ),
-
-            cellNameLabel.trailingAnchor.constraint(equalTo: textInput.leadingAnchor, constant: -textInputSpacing),
-        ])
     }
 
     override func setupAccessibility() {
@@ -435,6 +421,30 @@ final class SettingsTextCell: SettingsTableCell,
             descriptor?.select(SettingsPropertyValue.string(value: text), sender: textField)
         }
     }
+
+    // MARK: Private
+
+    private func createConstraints() {
+        let textInputSpacing: CGFloat = 16
+
+        let trailingBoundaryView = accessoryView ?? contentView
+
+        textInput.translatesAutoresizingMaskIntoConstraints = false
+        if trailingBoundaryView != contentView {
+            trailingBoundaryView.translatesAutoresizingMaskIntoConstraints = false
+        }
+
+        NSLayoutConstraint.activate([
+            textInput.topAnchor.constraint(equalTo: contentView.topAnchor, constant: -8),
+            textInput.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8),
+            textInput.trailingAnchor.constraint(
+                equalTo: trailingBoundaryView.trailingAnchor,
+                constant: -textInputSpacing
+            ),
+
+            cellNameLabel.trailingAnchor.constraint(equalTo: textInput.leadingAnchor, constant: -textInputSpacing),
+        ])
+    }
 }
 
 // MARK: - SettingsStaticTextTableCell
@@ -451,6 +461,8 @@ final class SettingsStaticTextTableCell: SettingsTableCell {
 // MARK: - SettingsProfileLinkCell
 
 final class SettingsProfileLinkCell: SettingsTableCell {
+    // MARK: Internal
+
     // MARK: - Properties
 
     var label = CopyableLabel()
@@ -461,6 +473,8 @@ final class SettingsProfileLinkCell: SettingsTableCell {
         setupViews()
         createConstraints()
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

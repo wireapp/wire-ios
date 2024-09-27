@@ -20,10 +20,7 @@ import XCTest
 @testable import WireLinkPreview
 
 class PreviewDownloaderTests: XCTestCase {
-    private let url = URL(string: "https://twitter.com/ericasadun/status/743868311843151872")!
-    private var mockSession: MockURLSession! = nil
-    private var mockDataTask: MockURLSessionDataTask! = nil
-    private var sut: PreviewDownloader! = nil
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -315,4 +312,11 @@ class PreviewDownloaderTests: XCTestCase {
             XCTAssertNotNil(sut.containerByTaskID[mockDataTask.taskIdentifier], line: line)
         }
     }
+
+    // MARK: Private
+
+    private let url = URL(string: "https://twitter.com/ericasadun/status/743868311843151872")!
+    private var mockSession: MockURLSession! = nil
+    private var mockDataTask: MockURLSessionDataTask! = nil
+    private var sut: PreviewDownloader! = nil
 }

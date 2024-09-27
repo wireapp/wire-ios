@@ -24,6 +24,12 @@ import WireDataModel
 enum CancelConnectionRequestResult {
     case cancelRequest, cancel
 
+    // MARK: Internal
+
+    static var all: [CancelConnectionRequestResult] {
+        [.cancelRequest, .cancel]
+    }
+
     var title: String {
         switch self {
         case .cancel: L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonCancel
@@ -31,21 +37,8 @@ enum CancelConnectionRequestResult {
         }
     }
 
-    private var style: UIAlertAction.Style {
-        guard case .cancel = self else { return .cancel }
-        return .default
-    }
-
-    func action(_ handler: @escaping (CancelConnectionRequestResult) -> Void) -> UIAlertAction {
-        .init(title: title, style: style) { _ in handler(self) }
-    }
-
     static func message(for user: UserType) -> String {
         L10n.Localizable.Profile.CancelConnectionRequestDialog.message(user.name ?? "")
-    }
-
-    static var all: [CancelConnectionRequestResult] {
-        [.cancelRequest, .cancel]
     }
 
     static func controller(
@@ -56,6 +49,17 @@ enum CancelConnectionRequestResult {
         let controller = UIAlertController(title: title, message: message(for: user), preferredStyle: .alert)
         all.map { $0.action(handler) }.forEach(controller.addAction)
         return controller
+    }
+
+    func action(_ handler: @escaping (CancelConnectionRequestResult) -> Void) -> UIAlertAction {
+        .init(title: title, style: style) { _ in handler(self) }
+    }
+
+    // MARK: Private
+
+    private var style: UIAlertAction.Style {
+        guard case .cancel = self else { return .cancel }
+        return .default
     }
 }
 

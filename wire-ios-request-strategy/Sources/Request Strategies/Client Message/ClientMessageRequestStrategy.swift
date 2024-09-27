@@ -21,23 +21,7 @@ import Foundation
 // MARK: - ClientMessageRequestStrategy
 
 public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-    static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
-        let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
-        let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
-        let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, fromSelf])
-    }
-
-    // MARK: - Properties
-
-    let context: NSManagedObjectContext
-    let insertedObjectSync: InsertedObjectSync<ClientMessageRequestStrategy>
-    let messageSender: MessageSenderInterface
-    let messageExpirationTimer: MessageExpirationTimer
-    let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
-    let localNotificationDispatcher: PushMessageHandler
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         context: NSManagedObjectContext,
@@ -73,6 +57,8 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         self.messageExpirationTimer.tearDown()
     }
 
+    // MARK: Public
+
     // MARK: - Methods
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
@@ -81,6 +67,24 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
             messageExpirationTimer,
             linkAttachmentsPreprocessor,
         ]
+    }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let context: NSManagedObjectContext
+    let insertedObjectSync: InsertedObjectSync<ClientMessageRequestStrategy>
+    let messageSender: MessageSenderInterface
+    let messageExpirationTimer: MessageExpirationTimer
+    let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
+    let localNotificationDispatcher: PushMessageHandler
+
+    static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
+        let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
+        let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
+        let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, fromSelf])
     }
 }
 

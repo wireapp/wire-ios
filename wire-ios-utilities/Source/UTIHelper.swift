@@ -27,13 +27,7 @@ import UniformTypeIdentifiers
 
 @objc
 public final class UTIHelper: NSObject {
-    private static func conformsTo(uti: String, type: UTType) -> Bool {
-        guard let utType = UTType(uti) else {
-            return false
-        }
-
-        return utType.conforms(to: type)
-    }
+    // MARK: Public
 
     // MARK: - UTI conformation
 
@@ -126,10 +120,6 @@ public final class UTIHelper: NSObject {
         return mime(from: utType)
     }
 
-    private static func mime(from utType: UTType) -> String? {
-        utType.preferredMIMEType
-    }
-
     @objc
     public static func convertToMime(uti: String) -> String? {
         guard let utType = UTType(uti) else {
@@ -137,5 +127,19 @@ public final class UTIHelper: NSObject {
         }
 
         return mime(from: utType)
+    }
+
+    // MARK: Private
+
+    private static func conformsTo(uti: String, type: UTType) -> Bool {
+        guard let utType = UTType(uti) else {
+            return false
+        }
+
+        return utType.conforms(to: type)
+    }
+
+    private static func mime(from utType: UTType) -> String? {
+        utType.preferredMIMEType
     }
 }

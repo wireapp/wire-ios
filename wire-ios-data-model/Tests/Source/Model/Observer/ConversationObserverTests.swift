@@ -22,25 +22,6 @@ import Foundation
 // MARK: - ConversationObserverTests
 
 final class ConversationObserverTests: NotificationDispatcherTestBase {
-    func checkThatItNotifiesTheObserverOfAChange(
-        _ conversation: ZMConversation,
-        modifier: (ZMConversation, ConversationObserver) -> Void,
-        expectedChangedField: String?,
-        expectedChangedKeys: Set<String>,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        checkThatItNotifiesTheObserverOfAChange(
-            conversation,
-            modifier: modifier,
-            expectedChangedFields: expectedChangedField != nil ?
-                [expectedChangedField!] : [],
-            expectedChangedKeys: expectedChangedKeys,
-            file: file,
-            line: line
-        )
-    }
-
     var conversationInfoKeys: Set<String> {
         [
             "messagesChanged",
@@ -64,6 +45,25 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             "legalHoldStatusChanged",
             "oneOnOneUserChanged",
         ]
+    }
+
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ conversation: ZMConversation,
+        modifier: (ZMConversation, ConversationObserver) -> Void,
+        expectedChangedField: String?,
+        expectedChangedKeys: Set<String>,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: modifier,
+            expectedChangedFields: expectedChangedField != nil ?
+                [expectedChangedField!] : [],
+            expectedChangedKeys: expectedChangedKeys,
+            file: file,
+            line: line
+        )
     }
 
     func checkThatItNotifiesTheObserverOfAChange(

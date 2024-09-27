@@ -77,12 +77,12 @@ struct UserPropertiesSetEventDecoder {
 // MARK: - LabelsPayload
 
 struct LabelsPayload: Decodable {
-    let labels: [Label]
-
     struct Label: Decodable {
         let id: UUID
         let type: Int16
         let name: String?
         let conversations: [UUID]
     }
+
+    let labels: [Label]
 }

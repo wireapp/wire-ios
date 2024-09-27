@@ -23,6 +23,8 @@ import WireDesign
 // MARK: - CallingActionButton
 
 class CallingActionButton: IconLabelButton {
+    // MARK: Lifecycle
+
     override init(input: IconLabelButtonInput, iconSize: StyleKitIcon.Size = .tiny) {
         super.init(input: input)
 
@@ -33,6 +35,8 @@ class CallingActionButton: IconLabelButton {
         iconButton.setIcon(input.icon(forState: .normal), size: iconSize, for: .normal)
         iconButton.setIcon(input.icon(forState: .selected), size: iconSize, for: .selected)
     }
+
+    // MARK: Internal
 
     override func apply(_: CallActionAppearance) {
         iconButton.borderWidth = 1

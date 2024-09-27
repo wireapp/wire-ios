@@ -26,10 +26,7 @@ private let cellReuseIdentifier = "AccountCell"
 // MARK: - AccountSelectionViewController
 
 final class AccountSelectionViewController: UITableViewController {
-    private var accounts: [Account]
-    private var current: Account?
-
-    var selectionHandler: ((_ account: Account) -> Void)?
+    // MARK: Lifecycle
 
     init(accounts: [Account], current: Account?) {
         self.accounts = accounts
@@ -47,6 +44,10 @@ final class AccountSelectionViewController: UITableViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var selectionHandler: ((_ account: Account) -> Void)?
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         1
@@ -74,4 +75,9 @@ final class AccountSelectionViewController: UITableViewController {
             selectionHandler(accounts[indexPath.row])
         }
     }
+
+    // MARK: Private
+
+    private var accounts: [Account]
+    private var current: Account?
 }

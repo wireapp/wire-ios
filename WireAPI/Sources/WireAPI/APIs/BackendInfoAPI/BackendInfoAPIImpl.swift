@@ -21,11 +21,15 @@ import Foundation
 // MARK: - BackendInfoAPIImpl
 
 class BackendInfoAPIImpl: BackendInfoAPI {
-    let apiService: any APIServiceProtocol
+    // MARK: Lifecycle
 
     init(apiService: any APIServiceProtocol) {
         self.apiService = apiService
     }
+
+    // MARK: Internal
+
+    let apiService: any APIServiceProtocol
 
     func getBackendInfo() async throws -> BackendInfo {
         let request = try URLRequestBuilder(path: "/api-version")

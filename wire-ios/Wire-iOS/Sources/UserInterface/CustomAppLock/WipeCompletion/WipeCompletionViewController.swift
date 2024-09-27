@@ -20,17 +20,7 @@ import UIKit
 import WireDesign
 
 final class WipeCompletionViewController: UIViewController {
-    let wireLogoInfoView = WireLogoInfoView(
-        title: L10n.Localizable.WipeDatabaseCompletion.title,
-        subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle
-    )
-
-    private lazy var loginButton = {
-        let button = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
-        button.setTitle(L10n.Localizable.Signin.confirm, for: .normal)
-        button.addTarget(self, action: #selector(onLoginCodeButtonPressed(sender:)), for: .touchUpInside)
-        return button
-    }()
+    // MARK: Lifecycle
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -45,6 +35,22 @@ final class WipeCompletionViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let wireLogoInfoView = WireLogoInfoView(
+        title: L10n.Localizable.WipeDatabaseCompletion.title,
+        subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle
+    )
+
+    // MARK: Private
+
+    private lazy var loginButton = {
+        let button = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
+        button.setTitle(L10n.Localizable.Signin.confirm, for: .normal)
+        button.addTarget(self, action: #selector(onLoginCodeButtonPressed(sender:)), for: .touchUpInside)
+        return button
+    }()
 
     private func configureSubviews() {
         view.addSubview(wireLogoInfoView)

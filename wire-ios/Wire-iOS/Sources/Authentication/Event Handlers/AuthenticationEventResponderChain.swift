@@ -46,6 +46,14 @@ protocol AuthenticationEventResponderChainDelegate: AnyObject {
 /// state and who will be responsible from
 
 final class AuthenticationEventResponderChain {
+    // MARK: Lifecycle
+
+    init(featureProvider: AuthenticationFeatureProvider) {
+        self.featureProvider = featureProvider
+    }
+
+    // MARK: Internal
+
     /// The supported event types.
 
     enum EventType {
@@ -62,21 +70,12 @@ final class AuthenticationEventResponderChain {
         case deviceConfigurationComplete
     }
 
-    // MARK: - Properties
-
-    /// The handle to the OS log for authentication events.
-    private let log = ZMSLog(tag: "Authentication")
-
     /// The object assisting the responder chain.
     weak var delegate: AuthenticationEventResponderChainDelegate?
 
     // MARK: - Initialization
 
     let featureProvider: AuthenticationFeatureProvider
-
-    init(featureProvider: AuthenticationFeatureProvider) {
-        self.featureProvider = featureProvider
-    }
 
     // MARK: - Configuration
 
@@ -99,6 +98,47 @@ final class AuthenticationEventResponderChain {
         self.delegate = delegate
         registerDefaultEventHandlers()
     }
+
+    // MARK: - Event Handling
+
+    /// Call this method to notify the responder chain that a supported event occured.
+    /// - parameter eventType: The type of event that occured, and any required context.
+
+    func handleEvent(ofType eventType: EventType) {
+        log.info("Event handling manager received event: \(eventType)")
+
+        switch eventType {
+        case let .flowStart(error, numberOfAccounts):
+            handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
+        case let .backupReady(existingAccount):
+            handleEvent(with: backupEventHandlers, context: existingAccount)
+        case let .clientRegistrationError(error, accountID):
+            handleEvent(with: clientRegistrationErrorHandlers, context: (error, accountID))
+        case .clientRegistrationSuccess:
+            handleEvent(with: clientRegistrationSuccessHandlers, context: ())
+        case let .authenticationFailure(error):
+            handleEvent(with: loginErrorHandlers, context: error)
+        case .loginCodeAvailable:
+            handleEvent(with: loginCodeHandlers, context: ())
+        case let .registrationError(error):
+            handleEvent(with: registrationErrorHandlers, context: error)
+        case .registrationStepSuccess:
+            handleEvent(with: registrationSuccessHandlers, context: ())
+        case let .userProfileChange(changeInfo):
+            handleEvent(with: userProfileChangeObservers, context: changeInfo)
+        case let .userInput(value):
+            handleEvent(with: userInputObservers, context: value)
+        case .deviceConfigurationComplete:
+            handleEvent(with: deviceConfigurationHandlers, context: ())
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    /// The handle to the OS log for authentication events.
+    private let log = ZMSLog(tag: "Authentication")
 
     /// Creates and registers the default error handlers.
     private func registerDefaultEventHandlers() {
@@ -173,40 +213,6 @@ final class AuthenticationEventResponderChain {
     ) {
         let box = AnyAuthenticationEventHandler(handler)
         handlerList.append(box)
-    }
-
-    // MARK: - Event Handling
-
-    /// Call this method to notify the responder chain that a supported event occured.
-    /// - parameter eventType: The type of event that occured, and any required context.
-
-    func handleEvent(ofType eventType: EventType) {
-        log.info("Event handling manager received event: \(eventType)")
-
-        switch eventType {
-        case let .flowStart(error, numberOfAccounts):
-            handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
-        case let .backupReady(existingAccount):
-            handleEvent(with: backupEventHandlers, context: existingAccount)
-        case let .clientRegistrationError(error, accountID):
-            handleEvent(with: clientRegistrationErrorHandlers, context: (error, accountID))
-        case .clientRegistrationSuccess:
-            handleEvent(with: clientRegistrationSuccessHandlers, context: ())
-        case let .authenticationFailure(error):
-            handleEvent(with: loginErrorHandlers, context: error)
-        case .loginCodeAvailable:
-            handleEvent(with: loginCodeHandlers, context: ())
-        case let .registrationError(error):
-            handleEvent(with: registrationErrorHandlers, context: error)
-        case .registrationStepSuccess:
-            handleEvent(with: registrationSuccessHandlers, context: ())
-        case let .userProfileChange(changeInfo):
-            handleEvent(with: userProfileChangeObservers, context: changeInfo)
-        case let .userInput(value):
-            handleEvent(with: userInputObservers, context: value)
-        case .deviceConfigurationComplete:
-            handleEvent(with: deviceConfigurationHandlers, context: ())
-        }
     }
 
     /// Start handling the event with the specified context, using the given handlers and delegate.

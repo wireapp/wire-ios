@@ -77,22 +77,28 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
 // MARK: - MockArticleViewDelegate
 
 final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
+    // MARK: Lifecycle
+
+    init() {
+        self.delegate = mockConversationMessageCellDelegate
+        self.message = MockMessage()
+    }
+
+    // MARK: Internal
+
     var url: URL?
 
     weak var delegate: ConversationMessageCellDelegate?
     var message: ZMConversationMessage?
 
     let mockConversationMessageCellDelegate = MockConversationMessageCellDelegate()
-
-    init() {
-        self.delegate = mockConversationMessageCellDelegate
-        self.message = MockMessage()
-    }
 }
 
 // MARK: - ArticleViewTests
 
 final class ArticleViewTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: - Properties
 
     var sut: ArticleView!
@@ -130,28 +136,6 @@ final class ArticleViewTests: XCTestCase {
 
         let textMessageData = MockTextMessageData()
         textMessageData.backingLinkPreview = article
-        return textMessageData
-    }
-
-    private func articleWithPicture(imageNamed: String = "unsplash_matterhorn.jpg") -> MockTextMessageData {
-        let article = ArticleMetadata(
-            originalURLString: "https://www.example.com/article/1",
-            permanentURLString: "https://www.example.com/article/1",
-            resolvedURLString: "https://www.example.com/article/1",
-            offset: 0
-        )
-
-        article.title = "Title with some words in it"
-        article
-            .summary =
-            "Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary"
-
-        let textMessageData = MockTextMessageData()
-        textMessageData.backingLinkPreview = article
-        textMessageData.linkPreviewImageCacheKey = "image-id-\(imageNamed)"
-        textMessageData.imageData = image(inTestBundleNamed: imageNamed).jpegData(compressionQuality: 0.9)
-        textMessageData.linkPreviewHasImage = true
-
         return textMessageData
     }
 
@@ -335,5 +319,29 @@ final class ArticleViewTests: XCTestCase {
             testName: testName,
             line: line
         )
+    }
+
+    // MARK: Private
+
+    private func articleWithPicture(imageNamed: String = "unsplash_matterhorn.jpg") -> MockTextMessageData {
+        let article = ArticleMetadata(
+            originalURLString: "https://www.example.com/article/1",
+            permanentURLString: "https://www.example.com/article/1",
+            resolvedURLString: "https://www.example.com/article/1",
+            offset: 0
+        )
+
+        article.title = "Title with some words in it"
+        article
+            .summary =
+            "Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary"
+
+        let textMessageData = MockTextMessageData()
+        textMessageData.backingLinkPreview = article
+        textMessageData.linkPreviewImageCacheKey = "image-id-\(imageNamed)"
+        textMessageData.imageData = image(inTestBundleNamed: imageNamed).jpegData(compressionQuality: 0.9)
+        textMessageData.linkPreviewHasImage = true
+
+        return textMessageData
     }
 }

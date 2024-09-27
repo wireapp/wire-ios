@@ -24,13 +24,17 @@ private let zmLog = ZMSLog(tag: "Services")
 // MARK: - ServiceUserData
 
 public struct ServiceUserData: Equatable {
-    let provider: UUID
-    let service: UUID
+    // MARK: Lifecycle
 
     public init(provider: UUID, service: UUID) {
         self.provider = provider
         self.service = service
     }
+
+    // MARK: Internal
+
+    let provider: UUID
+    let service: UUID
 }
 
 extension ServiceUser {
@@ -53,12 +57,7 @@ extension ServiceUser {
 // MARK: - ServiceProvider
 
 public final class ServiceProvider: NSObject {
-    public let identifier: String
-
-    public let name: String
-    public let email: String
-    public let url: String
-    public let providerDescription: String
+    // MARK: Lifecycle
 
     init?(payload: [AnyHashable: Any]) {
         guard let identifier  = payload["id"] as? String,
@@ -77,18 +76,21 @@ public final class ServiceProvider: NSObject {
 
         super.init()
     }
+
+    // MARK: Public
+
+    public let identifier: String
+
+    public let name: String
+    public let email: String
+    public let url: String
+    public let providerDescription: String
 }
 
 // MARK: - ServiceDetails
 
 public final class ServiceDetails: NSObject {
-    public let serviceIdentifier: String
-    public let providerIdentifier: String
-
-    public let name: String
-    public let serviceDescription: String
-    public let assets: [[String: Any]]
-    public let tags: [String]
+    // MARK: Lifecycle
 
     init?(payload: [AnyHashable: Any]) {
         guard let serviceIdentifier   = payload["id"] as? String,
@@ -110,6 +112,16 @@ public final class ServiceDetails: NSObject {
 
         super.init()
     }
+
+    // MARK: Public
+
+    public let serviceIdentifier: String
+    public let providerIdentifier: String
+
+    public let name: String
+    public let serviceDescription: String
+    public let assets: [[String: Any]]
+    public let tags: [String]
 }
 
 extension ServiceUserData {

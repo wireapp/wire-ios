@@ -27,14 +27,17 @@ public protocol AccountDeletedObserver: AnyObject {
 // MARK: - AccountDeletedNotification
 
 public struct AccountDeletedNotification {
-    public static let notificationName = Notification.Name("AccountDeletedNotification")
-    public static var userInfoKey: String { notificationName.rawValue }
-
-    weak var context: NSManagedObjectContext?
+    // MARK: Lifecycle
 
     public init(context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: Public
+
+    public static let notificationName = Notification.Name("AccountDeletedNotification")
+
+    public static var userInfoKey: String { notificationName.rawValue }
 
     public func post(in context: NotificationContext, object: AnyObject? = nil) {
         NotificationInContext(
@@ -44,6 +47,10 @@ public struct AccountDeletedNotification {
             userInfo: [type(of: self).userInfoKey: self]
         ).post()
     }
+
+    // MARK: Internal
+
+    weak var context: NSManagedObjectContext?
 }
 
 extension AccountDeletedNotification {

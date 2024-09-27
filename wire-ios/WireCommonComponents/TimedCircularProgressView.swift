@@ -21,9 +21,12 @@ import UIKit
 // MARK: - TimedCircularProgressView
 
 public final class TimedCircularProgressView: CircularProgressView {
+    // MARK: Public
+
     public typealias Completion = () -> Void
+
     public var duration: CFTimeInterval = 5
-    private var completion: Completion?
+
     public func animate(with completion: @escaping Completion) {
         self.completion = completion
 
@@ -36,6 +39,10 @@ public final class TimedCircularProgressView: CircularProgressView {
         stroke.delegate = self
         shapeLayer.add(stroke, forKey: nil)
     }
+
+    // MARK: Private
+
+    private var completion: Completion?
 }
 
 // MARK: CAAnimationDelegate

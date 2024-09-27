@@ -31,22 +31,7 @@ protocol NetworkSessionProtocol: AnyObject {
 // MARK: - NetworkSession
 
 final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDelegate, Loggable {
-    // MARK: - Types
-
-    enum NetworkError: Error {
-        case invalidResponse
-        case invalidRequestURL
-    }
-
-    // MARK: - Properties
-
-    var accessToken: AccessToken?
-
-    private let urlSession: URLRequestable
-    private let cookieProvider: CookieProvider
-    private let environment: BackendEnvironmentProvider
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         userID: UUID,
@@ -72,6 +57,19 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
 
         super.init()
     }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    enum NetworkError: Error {
+        case invalidResponse
+        case invalidRequestURL
+    }
+
+    // MARK: - Properties
+
+    var accessToken: AccessToken?
 
     // MARK: - Methods
 
@@ -138,6 +136,12 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
             return .success(successResponse)
         }
     }
+
+    // MARK: Private
+
+    private let urlSession: URLRequestable
+    private let cookieProvider: CookieProvider
+    private let environment: BackendEnvironmentProvider
 }
 
 extension AccessToken {

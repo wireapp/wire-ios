@@ -24,15 +24,15 @@ import XCTest
 // MARK: - DummyServiceUser
 
 final class DummyServiceUser: NSObject, ServiceUser {
-    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {}
+    // MARK: Lifecycle
 
-    func connect(completion: @escaping (Error?) -> Void) {}
+    init(serviceIdentifier: String, providerIdentifier: String) {
+        self.serviceIdentifier = serviceIdentifier
+        self.providerIdentifier = providerIdentifier
+        super.init()
+    }
 
-    func block(completion: @escaping (Error?) -> Void) {}
-
-    func accept(completion: @escaping (Error?) -> Void) {}
-
-    func ignore(completion: @escaping (Error?) -> Void) {}
+    // MARK: Internal
 
     var remoteIdentifier: UUID?
 
@@ -78,15 +78,98 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var richProfile: [UserRichProfileField] = []
 
+    var canCreateService = false
+
+    var canManageTeam = false
+
+    var domain: String?
+
+    var previewImageData: Data?
+
+    var completeImageData: Data?
+
+    var name: String? = "Service user"
+
+    var displayName = "Service"
+
+    var initials: String? = "S"
+
+    var handle: String? = "service"
+
+    var emailAddress: String? = "dummy@email.com"
+
+    var phoneNumber: String?
+
+    var isSelfUser = false
+
+    var smallProfileImageCacheKey: String? = ""
+
+    var mediumProfileImageCacheKey: String? = ""
+
+    var isConnected = false
+
+    var oneToOneConversation: ZMConversation?
+
+    var accentColorValue: ZMAccentColorRawValue = AccentColor.amber.rawValue
+
+    var imageMediumData: Data! = Data()
+
+    var imageSmallProfileData: Data! = Data()
+
+    var imageSmallProfileIdentifier: String! = ""
+
+    var imageMediumIdentifier: String! = ""
+
+    var isTeamMember = false
+
+    var hasDigitalSignatureEnabled = false
+
+    var teamRole: TeamRole = .member
+
+    var canBeConnected = false
+
+    var isServiceUser = true
+
+    var isFederated = false
+
+    var usesCompanyLogin = false
+
+    var isAccountDeleted = false
+
+    var managedByWire = true
+
+    var extendedMetadata: [[String: String]]?
+
+    var activeConversations: Set<ZMConversation> = Set()
+
+    var canCreateMLSGroups = false
+
+    var connectionRequestMessage: String? = ""
+
+    var totalCommonConnections: UInt = 0
+
+    var serviceIdentifier: String?
+    var providerIdentifier: String?
+
+    var zmAccentColor: ZMAccentColor? {
+        .from(rawValue: accentColorValue)
+    }
+
+    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {}
+
+    func connect(completion: @escaping (Error?) -> Void) {}
+
+    func block(completion: @escaping (Error?) -> Void) {}
+
+    func accept(completion: @escaping (Error?) -> Void) {}
+
+    func ignore(completion: @escaping (Error?) -> Void) {}
+
     /// Whether the user can create conversations.
     @objc
     func canCreateConversation(type: ZMConversationType) -> Bool {
         true
     }
-
-    var canCreateService = false
-
-    var canManageTeam = false
 
     func canAccessCompanyInformation(of user: UserType) -> Bool {
         false
@@ -144,70 +227,6 @@ final class DummyServiceUser: NSObject, ServiceUser {
         false
     }
 
-    var domain: String?
-
-    var previewImageData: Data?
-
-    var completeImageData: Data?
-
-    var name: String? = "Service user"
-
-    var displayName = "Service"
-
-    var initials: String? = "S"
-
-    var handle: String? = "service"
-
-    var emailAddress: String? = "dummy@email.com"
-
-    var phoneNumber: String?
-
-    var isSelfUser = false
-
-    var smallProfileImageCacheKey: String? = ""
-
-    var mediumProfileImageCacheKey: String? = ""
-
-    var isConnected = false
-
-    var oneToOneConversation: ZMConversation?
-
-    var accentColorValue: ZMAccentColorRawValue = AccentColor.amber.rawValue
-
-    var zmAccentColor: ZMAccentColor? {
-        .from(rawValue: accentColorValue)
-    }
-
-    var imageMediumData: Data! = Data()
-
-    var imageSmallProfileData: Data! = Data()
-
-    var imageSmallProfileIdentifier: String! = ""
-
-    var imageMediumIdentifier: String! = ""
-
-    var isTeamMember = false
-
-    var hasDigitalSignatureEnabled = false
-
-    var teamRole: TeamRole = .member
-
-    var canBeConnected = false
-
-    var isServiceUser = true
-
-    var isFederated = false
-
-    var usesCompanyLogin = false
-
-    var isAccountDeleted = false
-
-    var managedByWire = true
-
-    var extendedMetadata: [[String: String]]?
-
-    var activeConversations: Set<ZMConversation> = Set()
-
     func requestPreviewProfileImage() {}
 
     func requestCompleteProfileImage() {}
@@ -231,26 +250,13 @@ final class DummyServiceUser: NSObject, ServiceUser {
     func isGuest(in conversation: ConversationLike) -> Bool {
         false
     }
-
-    var canCreateMLSGroups = false
-
-    var connectionRequestMessage: String? = ""
-
-    var totalCommonConnections: UInt = 0
-
-    var serviceIdentifier: String?
-    var providerIdentifier: String?
-
-    init(serviceIdentifier: String, providerIdentifier: String) {
-        self.serviceIdentifier = serviceIdentifier
-        self.providerIdentifier = providerIdentifier
-        super.init()
-    }
 }
 
 // MARK: - ServiceUserTests
 
 final class ServiceUserTests: IntegrationTest {
+    // MARK: Public
+
     override public func setUp() {
         super.setUp()
         createSelfUserAndConversation()
@@ -259,6 +265,8 @@ final class ServiceUserTests: IntegrationTest {
         XCTAssertTrue(login())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
+
+    // MARK: Internal
 
     func createService() -> ServiceUser {
         var mockServiceId: String!

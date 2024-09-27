@@ -23,7 +23,7 @@ import XCTest
 // MARK: - FeatureConfigsAPITests
 
 final class FeatureConfigsAPITests: XCTestCase {
-    private var apiSnapshotHelper: APISnapshotHelper<any FeatureConfigsAPI>!
+    // MARK: Internal
 
     // MARK: - Setup
 
@@ -196,20 +196,16 @@ final class FeatureConfigsAPITests: XCTestCase {
             }
         }
     }
+
+    // MARK: Private
+
+    private var apiSnapshotHelper: APISnapshotHelper<any FeatureConfigsAPI>!
 }
 
 // MARK: FeatureConfigsAPITests.Scaffolding
 
 extension FeatureConfigsAPITests {
     enum Scaffolding {
-        static func dateV4(from string: String) -> Date {
-            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
-        }
-
-        static func dateV6(from string: String) -> Date {
-            ISO8601DateFormatter.internetDateTime.date(from: string)!
-        }
-
         static let featureConfigsV0: [FeatureConfig] = [
             .appLock(.init(
                 status: .enabled,
@@ -375,6 +371,14 @@ extension FeatureConfigsAPITests {
                 useProxyOnMobile: true
             )),
         ]
+
+        static func dateV4(from string: String) -> Date {
+            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
+        static func dateV6(from string: String) -> Date {
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
+        }
     }
 }
 

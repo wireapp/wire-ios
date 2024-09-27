@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class DecodeImageOperationTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var operationQueue: OperationQueue!
-    private var sut: UIImageView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -92,6 +88,14 @@ final class DecodeImageOperationTests: XCTestCase {
         // THEN
         XCTAssertNil(image)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var operationQueue: OperationQueue!
+    private var sut: UIImageView!
 
     // MARK: - Utilities
 

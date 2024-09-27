@@ -19,10 +19,7 @@
 import Foundation
 
 final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
-    var transportSession: TransportSessionType
-    var eventProcessor: ConversationEventProcessorProtocol
-    var contextProvider: ContextProvider
-    var searchUsersCache: SearchUsersCache?
+    // MARK: Lifecycle
 
     init(
         contextprovider: ContextProvider,
@@ -34,6 +31,13 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
     }
+
+    // MARK: Internal
+
+    var transportSession: TransportSessionType
+    var eventProcessor: ConversationEventProcessorProtocol
+    var contextProvider: ContextProvider
+    var searchUsersCache: SearchUsersCache?
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         guard case let .connectBot(serviceUserData) = urlAction else { return }

@@ -23,12 +23,7 @@ import WireSyncEngine
 ///
 /// The observer is active as long as the `MessageKeyPathObserver` instance is retained.
 final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
-    typealias ChangedBlock = (_ message: ZMConversationMessage) -> Void
-
-    private let keypath: KeyPath<MessageChangeInfo, Bool>
-    private var token: Any?
-
-    var onChanged: ChangedBlock?
+    // MARK: Lifecycle
 
     init?(message: ZMConversationMessage, keypath: KeyPath<MessageChangeInfo, Bool>, _ changed: ChangedBlock? = nil) {
         guard let session = ZMUserSession.shared() else { return nil }
@@ -41,9 +36,20 @@ final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
         self.token = MessageChangeInfo.add(observer: self, for: message, userSession: session)
     }
 
+    // MARK: Internal
+
+    typealias ChangedBlock = (_ message: ZMConversationMessage) -> Void
+
+    var onChanged: ChangedBlock?
+
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         guard changeInfo[keyPath: keypath] else { return }
 
         onChanged?(changeInfo.message)
     }
+
+    // MARK: Private
+
+    private let keypath: KeyPath<MessageChangeInfo, Bool>
+    private var token: Any?
 }

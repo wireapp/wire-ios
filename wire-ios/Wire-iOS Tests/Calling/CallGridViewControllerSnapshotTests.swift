@@ -377,36 +377,20 @@ extension CallGridViewControllerSnapshotTests {
             case maximizationChanged(state: MaximizationState)
             case viewDidLoad
 
-            var event: Wire.CallGridEvent {
-                switch self {
-                case let .maximizationChanged(state: state):
-                    .maximizationChanged(stream: state.stream, maximized: state.isMaximized)
-                case .configurationChanged:
-                    .configurationChanged
-                default:
-                    .viewDidLoad
-                }
-            }
+            // MARK: Internal
 
             enum Participants: Equatable {
                 case two(videoState: VideoState)
                 case moreThanTwo
 
-                var isTwo: Bool { self != .moreThanTwo }
-
-                var stream: Wire.Stream? {
-                    switch self {
-                    case let .two(videoState: videoState):
-                        videoState.stream
-                    case .moreThanTwo:
-                        nil
-                    }
-                }
+                // MARK: Internal
 
                 enum VideoState: Equatable {
                     case screenSharing
                     case sharing(isMaximized: Bool)
                     case notSharing
+
+                    // MARK: Internal
 
                     var isMaximized: Bool {
                         switch self {
@@ -421,6 +405,8 @@ extension CallGridViewControllerSnapshotTests {
                         StreamStubProvider().stream(videoState: videoState)
                     }
 
+                    // MARK: Private
+
                     private var videoState: WireSyncEngine.VideoState {
                         switch self {
                         case .notSharing:
@@ -432,11 +418,24 @@ extension CallGridViewControllerSnapshotTests {
                         }
                     }
                 }
+
+                var isTwo: Bool { self != .moreThanTwo }
+
+                var stream: Wire.Stream? {
+                    switch self {
+                    case let .two(videoState: videoState):
+                        videoState.stream
+                    case .moreThanTwo:
+                        nil
+                    }
+                }
             }
 
             enum MaximizationState: Equatable {
                 case notMaximized
                 case maximized(isSharingVideo: Bool)
+
+                // MARK: Internal
 
                 var stream: Wire.Stream {
                     let stubProvider = StreamStubProvider()
@@ -451,12 +450,25 @@ extension CallGridViewControllerSnapshotTests {
 
                 var isMaximized: Bool { self != .notMaximized }
             }
+
+            var event: Wire.CallGridEvent {
+                switch self {
+                case let .maximizationChanged(state: state):
+                    .maximizationChanged(stream: state.stream, maximized: state.isMaximized)
+                case .configurationChanged:
+                    .configurationChanged
+                default:
+                    .viewDidLoad
+                }
+            }
         }
 
         enum Output {
             case show(hint: CallGridHintKind)
             case showNothing
             case hideHintAndStopTimer
+
+            // MARK: Internal
 
             func assert(
                 mockHintView: MockCallGridHintNotificationLabel,

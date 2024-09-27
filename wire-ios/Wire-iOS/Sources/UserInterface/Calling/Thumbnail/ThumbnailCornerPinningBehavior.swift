@@ -19,18 +19,7 @@
 import UIKit
 
 final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
-    enum Corner: Int {
-        case topLeft, topRight, bottomLeft, bottomRight
-    }
-
-    // MARK: - Properties
-
-    private let item: UIDynamicItem
-    private let edgeInsets: CGPoint
-
-    private let collisionBehavior: UICollisionBehavior
-    private let itemTransformBehavior: UIDynamicItemBehavior
-    private var fieldBehaviors: [UIFieldBehavior] = []
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -67,6 +56,12 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
             fieldBehaviors.append(fieldBehavior)
             addChildBehavior(fieldBehavior)
         }
+    }
+
+    // MARK: Internal
+
+    enum Corner: Int {
+        case topLeft, topRight, bottomLeft, bottomRight
     }
 
     // MARK: - Behavior
@@ -170,4 +165,15 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
     func positionForCurrentCorner() -> CGPoint? {
         currentCorner.flatMap(position)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let item: UIDynamicItem
+    private let edgeInsets: CGPoint
+
+    private let collisionBehavior: UICollisionBehavior
+    private let itemTransformBehavior: UIDynamicItemBehavior
+    private var fieldBehaviors: [UIFieldBehavior] = []
 }

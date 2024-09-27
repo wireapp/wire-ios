@@ -22,28 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class FileTransferView: UIView, TransferView {
-    var fileMessage: ZMConversationMessage?
-
-    weak var delegate: TransferViewDelegate?
-
-    private let progressView = CircularProgressView()
-    private let topLabel = UILabel()
-    private let bottomLabel = UILabel()
-    private let fileTypeIconView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.tintColor = SemanticColors.Icon.backgroundDefault
-        return imageView
-    }()
-
-    private let loadingView = ThreeDotsLoadingView()
-    private let actionButton = IconButton()
-
-    private let labelTextColor: UIColor = SemanticColors.Label.textDefault
-    private let labelTextBlendedColor: UIColor = SemanticColors.Label.textCollectionSecondary
-    private let labelFont: UIFont = .smallLightFont
-    private let labelBoldFont: UIFont = .smallSemiboldFont
-
-    private var allViews: [UIView] = []
+    // MARK: Lifecycle
 
     override required init(frame: CGRect) {
         super.init(frame: frame)
@@ -75,57 +54,25 @@ final class FileTransferView: UIView, TransferView {
         setupAccessibility()
     }
 
-    private func setupAccessibility() {
-        isAccessibilityElement = true
-        accessibilityTraits = .button
-        accessibilityHint = L10n.Accessibility.ConversationSearch.Item.hint
-    }
-
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var fileMessage: ZMConversationMessage?
+
+    weak var delegate: TransferViewDelegate?
+
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: 56)
     }
 
-    private func createConstraints() {
-        [
-            topLabel,
-            actionButton,
-            fileTypeIconView,
-            progressView,
-            bottomLabel,
-            loadingView,
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        NSLayoutConstraint.activate([
-            topLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            topLabel.leftAnchor.constraint(equalTo: actionButton.rightAnchor, constant: 12),
-            topLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -12),
-
-            actionButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-            actionButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
-            actionButton.heightAnchor.constraint(equalToConstant: 32),
-            actionButton.widthAnchor.constraint(equalToConstant: 32),
-
-            fileTypeIconView.widthAnchor.constraint(equalToConstant: 32),
-            fileTypeIconView.heightAnchor.constraint(equalToConstant: 32),
-            fileTypeIconView.centerXAnchor.constraint(equalTo: actionButton.centerXAnchor),
-            fileTypeIconView.centerYAnchor.constraint(equalTo: actionButton.centerYAnchor),
-
-            progressView.centerXAnchor.constraint(equalTo: actionButton.centerXAnchor),
-            progressView.centerYAnchor.constraint(equalTo: actionButton.centerYAnchor),
-            progressView.widthAnchor.constraint(equalTo: actionButton.widthAnchor, constant: -2),
-            progressView.heightAnchor.constraint(equalTo: actionButton.heightAnchor, constant: -2),
-
-            bottomLabel.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 2),
-            bottomLabel.leftAnchor.constraint(equalTo: topLabel.leftAnchor),
-            bottomLabel.rightAnchor.constraint(equalTo: topLabel.rightAnchor),
-            loadingView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            loadingView.centerYAnchor.constraint(equalTo: centerYAnchor),
-        ])
+    override var tintColor: UIColor! {
+        didSet {
+            progressView.tintColor = tintColor
+        }
     }
 
     func configure(for message: ZMConversationMessage, isInitial: Bool) {
@@ -210,44 +157,6 @@ final class FileTransferView: UIView, TransferView {
         accessibilityLabel = "\(L10n.Accessibility.ConversationSearch.FileName.description): \(fileName), \(details)"
     }
 
-    fileprivate func configureVisibleViews(with message: ZMConversationMessage, isInitial: Bool) {
-        guard let state = FileMessageViewState.fromConversationMessage(message) else { return }
-
-        var visibleViews: [UIView] = [topLabel, bottomLabel]
-
-        switch state {
-        case .obfuscated:
-            visibleViews = []
-
-        case .unavailable:
-            visibleViews = [loadingView]
-
-        case .uploading, .downloading:
-            visibleViews.append(progressView)
-            progressView.setProgress(message.fileMessageData!.progress, animated: !isInitial)
-
-        case .uploaded, .downloaded:
-            visibleViews.append(contentsOf: [fileTypeIconView])
-
-        default:
-            break
-        }
-
-        if let viewsState = state.viewsStateForFile() {
-            visibleViews.append(actionButton)
-            actionButton.setIcon(viewsState.playButtonIcon, size: .tiny, for: .normal)
-            actionButton.backgroundColor = viewsState.playButtonBackgroundColor
-        }
-
-        updateVisibleViews(allViews, visibleViews: visibleViews, animated: !loadingView.isHidden)
-    }
-
-    override var tintColor: UIColor! {
-        didSet {
-            progressView.tintColor = tintColor
-        }
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
         actionButton.layer.cornerRadius = actionButton.bounds.size.width / 2.0
@@ -280,5 +189,104 @@ final class FileTransferView: UIView, TransferView {
                 delegate?.transferView(self, didSelect: .present)
             }
         }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate func configureVisibleViews(with message: ZMConversationMessage, isInitial: Bool) {
+        guard let state = FileMessageViewState.fromConversationMessage(message) else { return }
+
+        var visibleViews: [UIView] = [topLabel, bottomLabel]
+
+        switch state {
+        case .obfuscated:
+            visibleViews = []
+
+        case .unavailable:
+            visibleViews = [loadingView]
+
+        case .uploading, .downloading:
+            visibleViews.append(progressView)
+            progressView.setProgress(message.fileMessageData!.progress, animated: !isInitial)
+
+        case .uploaded, .downloaded:
+            visibleViews.append(contentsOf: [fileTypeIconView])
+
+        default:
+            break
+        }
+
+        if let viewsState = state.viewsStateForFile() {
+            visibleViews.append(actionButton)
+            actionButton.setIcon(viewsState.playButtonIcon, size: .tiny, for: .normal)
+            actionButton.backgroundColor = viewsState.playButtonBackgroundColor
+        }
+
+        updateVisibleViews(allViews, visibleViews: visibleViews, animated: !loadingView.isHidden)
+    }
+
+    // MARK: Private
+
+    private let progressView = CircularProgressView()
+    private let topLabel = UILabel()
+    private let bottomLabel = UILabel()
+    private let fileTypeIconView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.tintColor = SemanticColors.Icon.backgroundDefault
+        return imageView
+    }()
+
+    private let loadingView = ThreeDotsLoadingView()
+    private let actionButton = IconButton()
+
+    private let labelTextColor: UIColor = SemanticColors.Label.textDefault
+    private let labelTextBlendedColor: UIColor = SemanticColors.Label.textCollectionSecondary
+    private let labelFont: UIFont = .smallLightFont
+    private let labelBoldFont: UIFont = .smallSemiboldFont
+
+    private var allViews: [UIView] = []
+
+    private func setupAccessibility() {
+        isAccessibilityElement = true
+        accessibilityTraits = .button
+        accessibilityHint = L10n.Accessibility.ConversationSearch.Item.hint
+    }
+
+    private func createConstraints() {
+        [
+            topLabel,
+            actionButton,
+            fileTypeIconView,
+            progressView,
+            bottomLabel,
+            loadingView,
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        NSLayoutConstraint.activate([
+            topLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            topLabel.leftAnchor.constraint(equalTo: actionButton.rightAnchor, constant: 12),
+            topLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -12),
+
+            actionButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+            actionButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
+            actionButton.heightAnchor.constraint(equalToConstant: 32),
+            actionButton.widthAnchor.constraint(equalToConstant: 32),
+
+            fileTypeIconView.widthAnchor.constraint(equalToConstant: 32),
+            fileTypeIconView.heightAnchor.constraint(equalToConstant: 32),
+            fileTypeIconView.centerXAnchor.constraint(equalTo: actionButton.centerXAnchor),
+            fileTypeIconView.centerYAnchor.constraint(equalTo: actionButton.centerYAnchor),
+
+            progressView.centerXAnchor.constraint(equalTo: actionButton.centerXAnchor),
+            progressView.centerYAnchor.constraint(equalTo: actionButton.centerYAnchor),
+            progressView.widthAnchor.constraint(equalTo: actionButton.widthAnchor, constant: -2),
+            progressView.heightAnchor.constraint(equalTo: actionButton.heightAnchor, constant: -2),
+
+            bottomLabel.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 2),
+            bottomLabel.leftAnchor.constraint(equalTo: topLabel.leftAnchor),
+            bottomLabel.rightAnchor.constraint(equalTo: topLabel.rightAnchor),
+            loadingView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            loadingView.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ])
     }
 }

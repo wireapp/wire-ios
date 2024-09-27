@@ -19,14 +19,16 @@
 import Foundation
 
 final class BundledMessagesNotificationBuilder: NotificationBuilder {
-    var notificationType: LocalNotificationType {
-        .bundledMessages
-    }
-
-    private let messageCount: Int
+    // MARK: Lifecycle
 
     init(messageCount: Int) {
         self.messageCount = messageCount
+    }
+
+    // MARK: Internal
+
+    var notificationType: LocalNotificationType {
+        .bundledMessages
     }
 
     func shouldCreateNotification() -> Bool {
@@ -44,4 +46,8 @@ final class BundledMessagesNotificationBuilder: NotificationBuilder {
     func userInfo() -> NotificationUserInfo? {
         nil
     }
+
+    // MARK: Private
+
+    private let messageCount: Int
 }

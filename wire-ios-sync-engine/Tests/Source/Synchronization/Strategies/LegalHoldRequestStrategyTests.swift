@@ -23,33 +23,6 @@ class LegalHoldRequestStrategyTests: MessagingTest {
     var mockSyncStatus: MockSyncStatus!
     var mockApplicationStatus: MockApplicationStatus!
 
-    override func setUp() {
-        super.setUp()
-        mockSyncStatus = MockSyncStatus(
-            managedObjectContext: syncMOC,
-            lastEventIDRepository: lastEventIDRepository
-        )
-        mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        sut = LegalHoldRequestStrategy(
-            withManagedObjectContext: syncMOC,
-            applicationStatus: mockApplicationStatus,
-            syncStatus: mockSyncStatus
-        )
-
-        syncMOC.performGroupedAndWait {
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.remoteIdentifier = UUID()
-        }
-    }
-
-    override func tearDown() {
-        sut = nil
-        mockSyncStatus = nil
-        mockApplicationStatus = nil
-        super.tearDown()
-    }
-
     static func legalHoldRequest(for user: ZMUser) -> LegalHoldRequest {
         LegalHoldRequest(
             target: user.remoteIdentifier!,
@@ -104,6 +77,33 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         }
 
         return payload as ZMTransportData
+    }
+
+    override func setUp() {
+        super.setUp()
+        mockSyncStatus = MockSyncStatus(
+            managedObjectContext: syncMOC,
+            lastEventIDRepository: lastEventIDRepository
+        )
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .slowSyncing
+        sut = LegalHoldRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncStatus: mockSyncStatus
+        )
+
+        syncMOC.performGroupedAndWait {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+        }
+    }
+
+    override func tearDown() {
+        sut = nil
+        mockSyncStatus = nil
+        mockApplicationStatus = nil
+        super.tearDown()
     }
 
     // MARK: - Slow Sync

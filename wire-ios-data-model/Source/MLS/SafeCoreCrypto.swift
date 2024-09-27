@@ -30,13 +30,7 @@ public protocol SafeCoreCryptoProtocol {
 // MARK: - SafeCoreCrypto
 
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
-    public enum CoreCryptoSetupFailure: Error, Equatable {
-        case failedToGetClientIDBytes
-    }
-
-    private let coreCrypto: CoreCryptoProtocol
-    private let safeContext: SafeFileContext
-    private let databasePath: String
+    // MARK: Lifecycle
 
     public convenience init(path: String, key: String) async throws {
         let coreCrypto = try await coreCryptoDeferredInit(
@@ -54,6 +48,12 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         self.databasePath = databasePath
         let directoryPathUrl = URL(fileURLWithPath: databasePath).deletingLastPathComponent()
         self.safeContext = SafeFileContext(fileURL: directoryPathUrl)
+    }
+
+    // MARK: Public
+
+    public enum CoreCryptoSetupFailure: Error, Equatable {
+        case failedToGetClientIDBytes
     }
 
     public func tearDown() throws {
@@ -74,6 +74,12 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
         try block(coreCrypto)
     }
+
+    // MARK: Private
+
+    private let coreCrypto: CoreCryptoProtocol
+    private let safeContext: SafeFileContext
+    private let databasePath: String
 
     private func restoreFromDisk() async {
         do {

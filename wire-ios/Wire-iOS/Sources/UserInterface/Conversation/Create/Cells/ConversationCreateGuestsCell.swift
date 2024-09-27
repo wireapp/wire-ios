@@ -23,6 +23,8 @@ import WireDesign
 // MARK: - ConversationCreateGuestsCell
 
 final class ConversationCreateGuestsCell: IconToggleCell {
+    // MARK: Internal
+
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "toggle.newgroup.allowguests"
@@ -30,6 +32,8 @@ final class ConversationCreateGuestsCell: IconToggleCell {
         setupIconForCell()
         showSeparator = false
     }
+
+    // MARK: Private
 
     private func setupIconForCell() {
         icon = .init(resource: .guest).withRenderingMode(.alwaysTemplate)

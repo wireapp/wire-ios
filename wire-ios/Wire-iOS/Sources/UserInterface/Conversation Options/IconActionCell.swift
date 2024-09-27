@@ -23,15 +23,29 @@ import WireDesign
 // MARK: - IconActionCell
 
 final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
-    private let imageContainer = UIView()
-    private let iconImageView = UIImageView()
-    private let label = UILabel()
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
         createConstraints()
     }
+
+    // MARK: Internal
+
+    func configure(with configuration: CellConfiguration) {
+        guard case let .iconAction(title, icon, _, _) = configuration else { preconditionFailure() }
+        iconImageView.setTemplateIcon(icon, size: .tiny)
+        iconImageView.tintColor = SemanticColors.Icon.foregroundDefault
+        label.textColor = SemanticColors.Label.textDefault
+        label.text = title
+    }
+
+    // MARK: Private
+
+    private let imageContainer = UIView()
+    private let iconImageView = UIImageView()
+    private let label = UILabel()
 
     private func setupViews() {
         imageContainer.addSubview(iconImageView)
@@ -60,14 +74,6 @@ final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             label.heightAnchor.constraint(equalToConstant: 56),
         ])
-    }
-
-    func configure(with configuration: CellConfiguration) {
-        guard case let .iconAction(title, icon, _, _) = configuration else { preconditionFailure() }
-        iconImageView.setTemplateIcon(icon, size: .tiny)
-        iconImageView.tintColor = SemanticColors.Icon.foregroundDefault
-        label.textColor = SemanticColors.Label.textDefault
-        label.text = title
     }
 }
 

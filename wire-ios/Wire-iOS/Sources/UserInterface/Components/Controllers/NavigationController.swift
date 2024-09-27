@@ -23,10 +23,7 @@ import WireUtilities
 // MARK: - NavigationController
 
 final class NavigationController: UINavigationController {
-    private lazy var pushTransition = NavigationTransition(operation: .push)
-    private lazy var popTransition = NavigationTransition(operation: .pop)
-
-    private var dismissGestureRecognizer: UIScreenEdgePanGestureRecognizer!
+    // MARK: Lifecycle
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -43,15 +40,22 @@ final class NavigationController: UINavigationController {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    private func setup() {
-        delegate = self
-        transitioningDelegate = self
-    }
+    // MARK: Internal
 
     var useDefaultPopGesture = false {
         didSet {
             interactivePopGestureRecognizer?.isEnabled = useDefaultPopGesture
         }
+    }
+
+    // MARK: - status bar
+
+    override var childForStatusBarStyle: UIViewController? {
+        topViewController
+    }
+
+    override var childForStatusBarHidden: UIViewController? {
+        topViewController
     }
 
     override func viewDidLoad() {
@@ -102,6 +106,18 @@ final class NavigationController: UINavigationController {
         }
     }
 
+    // MARK: Private
+
+    private lazy var pushTransition = NavigationTransition(operation: .push)
+    private lazy var popTransition = NavigationTransition(operation: .pop)
+
+    private var dismissGestureRecognizer: UIScreenEdgePanGestureRecognizer!
+
+    private func setup() {
+        delegate = self
+        transitioningDelegate = self
+    }
+
     private func updateGesture(for viewController: UIViewController) {
         let translucentBackground = if let alpha = viewController.view.backgroundColor?.alpha, alpha < 1.0 {
             true
@@ -110,16 +126,6 @@ final class NavigationController: UINavigationController {
         }
 
         useDefaultPopGesture = !translucentBackground
-    }
-
-    // MARK: - status bar
-
-    override var childForStatusBarStyle: UIViewController? {
-        topViewController
-    }
-
-    override var childForStatusBarHidden: UIViewController? {
-        topViewController
     }
 }
 

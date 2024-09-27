@@ -21,7 +21,7 @@ import XCTest
 @testable import Wire
 
 final class BackupPasswordViewControllerTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -92,6 +92,10 @@ final class BackupPasswordViewControllerTests: XCTestCase {
             replacementString: "\n"
         ))
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - Helpers
 

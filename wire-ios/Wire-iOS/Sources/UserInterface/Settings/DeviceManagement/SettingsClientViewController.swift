@@ -39,27 +39,7 @@ final class SettingsClientViewController: UIViewController,
     UITableViewDataSource,
     UserClientObserver,
     ClientColorVariantProtocol {
-    private static let deleteCellReuseIdentifier = "DeleteCellReuseIdentifier"
-    private static let resetCellReuseIdentifier = "ResetCellReuseIdentifier"
-    private static let verifiedCellReuseIdentifier = "VerifiedCellReuseIdentifier"
-
-    let userSession: UserSession
-    let viewModel: ProfileClientViewModel
-    var userClient: UserClient {
-        viewModel.userClient
-    }
-
-    var userClientToken: NSObjectProtocol!
-    var credentials: UserEmailCredentials?
-
-    var tableView: UITableView!
-    let topSeparator = OverflowSeparatorView()
-
-    var fromConversation = false
-
-    var removalObserver: ClientRemovalObserver?
-
-    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+    // MARK: Lifecycle
 
     convenience init(
         userClient: UserClient,
@@ -92,6 +72,33 @@ final class SettingsClientViewController: UIViewController,
         self.credentials = credentials
     }
 
+    override required init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        fatalError("init(nibNameOrNil:nibBundleOrNil:) has not been implemented")
+    }
+
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let userSession: UserSession
+    let viewModel: ProfileClientViewModel
+    var userClientToken: NSObjectProtocol!
+    var credentials: UserEmailCredentials?
+
+    var tableView: UITableView!
+    let topSeparator = OverflowSeparatorView()
+
+    var fromConversation = false
+
+    var removalObserver: ClientRemovalObserver?
+
+    var userClient: UserClient {
+        viewModel.userClient
+    }
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         [.portrait]
     }
@@ -112,11 +119,6 @@ final class SettingsClientViewController: UIViewController,
 
     func setupFromConversationStyle() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
-    }
-
-    private func setupNavigationTitle() {
-        guard let deviceClass = userClient.deviceClass?.localizedDescription else { return }
-        setupNavigationBarTitle(deviceClass.capitalized)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -140,49 +142,6 @@ final class SettingsClientViewController: UIViewController,
                 navController.navigationBar.barTintColor = barColor
             }
         }
-    }
-
-    private func createTableView() {
-        let tableView = UITableView(frame: CGRect.zero, style: .grouped)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 80
-        tableView.backgroundColor = SemanticColors.View.backgroundDefault
-        tableView.separatorStyle = .none
-        tableView.register(ClientTableViewCell.self, forCellReuseIdentifier: ClientTableViewCell.zm_reuseIdentifier)
-        tableView.register(
-            FingerprintTableViewCell.self,
-            forCellReuseIdentifier: FingerprintTableViewCell.zm_reuseIdentifier
-        )
-        tableView.register(SettingsTableCell.self, forCellReuseIdentifier: type(of: self).deleteCellReuseIdentifier)
-        tableView.register(SettingsTableCell.self, forCellReuseIdentifier: type(of: self).resetCellReuseIdentifier)
-        tableView.register(SettingsToggleCell.self, forCellReuseIdentifier: type(of: self).verifiedCellReuseIdentifier)
-        self.tableView = tableView
-        view.addSubview(tableView)
-    }
-
-    private func createConstraints() {
-        [tableView, topSeparator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-
-            topSeparator.leftAnchor.constraint(equalTo: tableView.leftAnchor),
-            topSeparator.rightAnchor.constraint(equalTo: tableView.rightAnchor),
-            topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor),
-        ])
-    }
-
-    override required init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        fatalError("init(nibNameOrNil:nibBundleOrNil:) has not been implemented")
-    }
-
-    @available(*, unavailable)
-    required init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     @objc
@@ -424,6 +383,53 @@ final class SettingsClientViewController: UIViewController,
             alert.addAction(okAction)
             present(alert, animated: true, completion: .none)
         }
+    }
+
+    // MARK: Private
+
+    private static let deleteCellReuseIdentifier = "DeleteCellReuseIdentifier"
+    private static let resetCellReuseIdentifier = "ResetCellReuseIdentifier"
+    private static let verifiedCellReuseIdentifier = "VerifiedCellReuseIdentifier"
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
+    private func setupNavigationTitle() {
+        guard let deviceClass = userClient.deviceClass?.localizedDescription else { return }
+        setupNavigationBarTitle(deviceClass.capitalized)
+    }
+
+    private func createTableView() {
+        let tableView = UITableView(frame: CGRect.zero, style: .grouped)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 80
+        tableView.backgroundColor = SemanticColors.View.backgroundDefault
+        tableView.separatorStyle = .none
+        tableView.register(ClientTableViewCell.self, forCellReuseIdentifier: ClientTableViewCell.zm_reuseIdentifier)
+        tableView.register(
+            FingerprintTableViewCell.self,
+            forCellReuseIdentifier: FingerprintTableViewCell.zm_reuseIdentifier
+        )
+        tableView.register(SettingsTableCell.self, forCellReuseIdentifier: type(of: self).deleteCellReuseIdentifier)
+        tableView.register(SettingsTableCell.self, forCellReuseIdentifier: type(of: self).resetCellReuseIdentifier)
+        tableView.register(SettingsToggleCell.self, forCellReuseIdentifier: type(of: self).verifiedCellReuseIdentifier)
+        self.tableView = tableView
+        view.addSubview(tableView)
+    }
+
+    private func createConstraints() {
+        [tableView, topSeparator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+
+            topSeparator.leftAnchor.constraint(equalTo: tableView.leftAnchor),
+            topSeparator.rightAnchor.constraint(equalTo: tableView.rightAnchor),
+            topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor),
+        ])
     }
 }
 

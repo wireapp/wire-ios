@@ -159,8 +159,12 @@ extension ContactsViewController {
         case canNotSend(MessageType)
         case noContactInformation
 
+        // MARK: Internal
+
         enum MessageType {
             case email, sms, any
+
+            // MARK: Internal
 
             var messageKey: String {
                 switch self {

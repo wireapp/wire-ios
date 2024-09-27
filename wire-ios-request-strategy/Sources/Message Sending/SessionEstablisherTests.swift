@@ -20,6 +20,55 @@ import WireRequestStrategySupport
 import XCTest
 
 final class SessionEstablisherTests: MessagingTestBase {
+    struct Arrangement {
+        // MARK: Lifecycle
+
+        init(coreDataStack: CoreDataStack) {
+            self.coreDataStack = coreDataStack
+
+            apiProvider.prekeyAPIApiVersion_MockValue = prekeyApi
+        }
+
+        // MARK: Internal
+
+        enum Scaffolding {
+            static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
+            static let prekey = Payload.Prekey(key: "prekey123", id: nil)
+            static let prekeyByQualifiedUserID =
+                [clientID.domain: [clientID.userID.transportString(): [clientID.clientID: prekey]]]
+        }
+
+        let selfUserId = UUID()
+        let apiProvider = MockAPIProviderInterface()
+        let prekeyApi = MockPrekeyAPI()
+        let processor = MockPrekeyPayloadProcessorInterface()
+        let coreDataStack: CoreDataStack
+
+        func withFetchPrekeyAPI(returning result: Result<Payload.PrekeyByQualifiedUserID, NetworkError>)
+            -> Arrangement {
+            switch result {
+            case let .success(payload):
+                prekeyApi.fetchPrekeysFor_MockValue = payload
+            case let .failure(error):
+                prekeyApi.fetchPrekeysFor_MockError = error
+            }
+            return self
+        }
+
+        func withEstablishSessionsSucceeding() -> Arrangement {
+            processor.establishSessionsFromWithContext_MockMethod = { _, _, _ in }
+            return self
+        }
+
+        func arrange() -> (Arrangement, SessionEstablisher) {
+            (self, SessionEstablisher(
+                context: coreDataStack.syncContext,
+                apiProvider: apiProvider,
+                processor: processor
+            ))
+        }
+    }
+
     func testThatNetworkErrorsArePropagated_whenEstablishingSession() async throws {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 500, transportSessionError: nil, apiVersion: 0)
@@ -97,50 +146,5 @@ final class SessionEstablisherTests: MessagingTestBase {
 
         // then
         XCTAssertEqual(1, arrangement.processor.establishSessionsFromWithContext_Invocations.count)
-    }
-
-    struct Arrangement {
-        enum Scaffolding {
-            static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
-            static let prekey = Payload.Prekey(key: "prekey123", id: nil)
-            static let prekeyByQualifiedUserID =
-                [clientID.domain: [clientID.userID.transportString(): [clientID.clientID: prekey]]]
-        }
-
-        let selfUserId = UUID()
-        let apiProvider = MockAPIProviderInterface()
-        let prekeyApi = MockPrekeyAPI()
-        let processor = MockPrekeyPayloadProcessorInterface()
-        let coreDataStack: CoreDataStack
-
-        init(coreDataStack: CoreDataStack) {
-            self.coreDataStack = coreDataStack
-
-            apiProvider.prekeyAPIApiVersion_MockValue = prekeyApi
-        }
-
-        func withFetchPrekeyAPI(returning result: Result<Payload.PrekeyByQualifiedUserID, NetworkError>)
-            -> Arrangement {
-            switch result {
-            case let .success(payload):
-                prekeyApi.fetchPrekeysFor_MockValue = payload
-            case let .failure(error):
-                prekeyApi.fetchPrekeysFor_MockError = error
-            }
-            return self
-        }
-
-        func withEstablishSessionsSucceeding() -> Arrangement {
-            processor.establishSessionsFromWithContext_MockMethod = { _, _, _ in }
-            return self
-        }
-
-        func arrange() -> (Arrangement, SessionEstablisher) {
-            (self, SessionEstablisher(
-                context: coreDataStack.syncContext,
-                apiProvider: apiProvider,
-                processor: processor
-            ))
-        }
     }
 }

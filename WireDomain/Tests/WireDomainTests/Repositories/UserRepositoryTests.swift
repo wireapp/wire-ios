@@ -25,6 +25,8 @@ import XCTest
 @testable import WireDomain
 
 class UserRepositoryTests: XCTestCase {
+    // MARK: Internal
+
     var sut: UserRepository!
     var usersAPI: MockUsersAPI!
 
@@ -135,6 +137,8 @@ class UserRepositoryTests: XCTestCase {
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
         }
     }
+
+    // MARK: Private
 
     private enum Scaffolding {
         static let user1 = User(

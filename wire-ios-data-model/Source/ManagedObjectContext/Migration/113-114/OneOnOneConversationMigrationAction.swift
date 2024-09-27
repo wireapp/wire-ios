@@ -22,6 +22,8 @@ import Foundation
 // conversation via the `connection` relationship, ie `user.connection.conversation`
 // and inversely `conversation.connection.to`.
 final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
+    // MARK: Internal
+
     let batchSize = 200
 
     override func execute(in context: NSManagedObjectContext) throws {
@@ -41,6 +43,8 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
             }
         }
     }
+
+    // MARK: Private
 
     private func migrateConnectionOneOnOne(user: NSManagedObject, connection: NSManagedObject) {
         guard

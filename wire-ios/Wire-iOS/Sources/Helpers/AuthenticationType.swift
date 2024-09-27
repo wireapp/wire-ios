@@ -24,6 +24,8 @@ import WireSystem
 enum AuthenticationType: CaseIterable {
     case faceID, touchID, passcode, unavailable
 
+    // MARK: Internal
+
     static var current: AuthenticationType {
         AuthenticationTypeDetector().current
     }

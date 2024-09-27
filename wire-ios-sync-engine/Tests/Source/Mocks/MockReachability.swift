@@ -25,6 +25,7 @@ final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
     var oldIsMobileConnection = true
 
     var tearDownCalled = false
+
     func tearDown() {
         tearDownCalled = true
     }

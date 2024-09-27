@@ -35,19 +35,24 @@ protocol AudioEffectsPickerDelegate: AnyObject {
 // MARK: - AudioEffectsPickerViewController
 
 final class AudioEffectsPickerViewController: UIViewController {
-    let recordingPath: String
-    private let duration: TimeInterval
-    private let fileMetadataGenerator = FileMetaDataGenerator()
-    weak var delegate: AudioEffectsPickerDelegate?
+    // MARK: Lifecycle
 
-    private var audioPlayerController: AudioPlayerController? {
-        didSet {
-            if audioPlayerController == .none {
-                let selector = #selector(AudioEffectsPickerViewController.updatePlayProgressTime)
-                NSObject.cancelPreviousPerformRequests(withTarget: self, selector: selector, object: .none)
-            }
-        }
+    deinit {
+        tearDown()
     }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatal("init?(coder) is not implemented")
+    }
+
+    init(recordingPath: String, duration: TimeInterval) {
+        self.duration = duration
+        self.recordingPath = recordingPath
+        super.init(nibName: .none, bundle: .none)
+    }
+
+    // MARK: Internal
 
     enum State {
         case none
@@ -56,11 +61,13 @@ final class AudioEffectsPickerViewController: UIViewController {
         case playing
     }
 
+    let recordingPath: String
+    weak var delegate: AudioEffectsPickerDelegate?
+
     var state: State = .none
 
-    private let effects: [AVSAudioEffectType] = AVSAudioEffectType.displayedEffects
     var normalizedLoudness: [Float] = []
-    private var lastLayoutSize = CGSize.zero
+    let progressView = WaveformProgressView()
 
     var selectedAudioEffect: AVSAudioEffectType = .none {
         didSet {
@@ -103,35 +110,11 @@ final class AudioEffectsPickerViewController: UIViewController {
         }
     }
 
-    private static let effectRows = 2
-    private static let effectColumns = 4
-
-    deinit {
-        tearDown()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatal("init?(coder) is not implemented")
-    }
-
-    init(recordingPath: String, duration: TimeInterval) {
-        self.duration = duration
-        self.recordingPath = recordingPath
-        super.init(nibName: .none, bundle: .none)
-    }
-
     func tearDown() {
         audioPlayerController?.stop()
         audioPlayerController?.tearDown()
         audioPlayerController = .none
     }
-
-    private let collectionViewLayout = UICollectionViewFlowLayout()
-    private var collectionView: UICollectionView!
-    private let statusBoxView = UIView()
-    let progressView = WaveformProgressView()
-    private let subtitleLabel = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -179,33 +162,6 @@ final class AudioEffectsPickerViewController: UIViewController {
         }
 
         setState(.time, animated: false)
-    }
-
-    private func createCollectionView() {
-        collectionViewLayout.scrollDirection = .vertical
-        collectionViewLayout.minimumLineSpacing = 0
-        collectionViewLayout.minimumInteritemSpacing = 0
-        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
-        collectionView.register(AudioEffectCell.self, forCellWithReuseIdentifier: AudioEffectCell.reuseIdentifier)
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.allowsMultipleSelection = false
-        collectionView.allowsSelection = true
-        collectionView.backgroundColor = UIColor.clear
-    }
-
-    private func loadLevels() {
-        let url = URL(fileURLWithPath: recordingPath)
-        fileMetadataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { metadata in
-            DispatchQueue.main.async {
-                if let audioMetadata = metadata as? ZMAudioMetadata {
-                    self.normalizedLoudness = audioMetadata.normalizedLoudness
-                    self.progressView.samples = audioMetadata.normalizedLoudness
-                }
-            }
-        }
     }
 
     override func removeFromParent() {
@@ -285,6 +241,57 @@ final class AudioEffectsPickerViewController: UIViewController {
             )
         } else {
             change()
+        }
+    }
+
+    // MARK: Private
+
+    private static let effectRows = 2
+    private static let effectColumns = 4
+
+    private let duration: TimeInterval
+    private let fileMetadataGenerator = FileMetaDataGenerator()
+    private let effects: [AVSAudioEffectType] = AVSAudioEffectType.displayedEffects
+    private var lastLayoutSize = CGSize.zero
+
+    private let collectionViewLayout = UICollectionViewFlowLayout()
+    private var collectionView: UICollectionView!
+    private let statusBoxView = UIView()
+    private let subtitleLabel = UILabel()
+
+    private var audioPlayerController: AudioPlayerController? {
+        didSet {
+            if audioPlayerController == .none {
+                let selector = #selector(AudioEffectsPickerViewController.updatePlayProgressTime)
+                NSObject.cancelPreviousPerformRequests(withTarget: self, selector: selector, object: .none)
+            }
+        }
+    }
+
+    private func createCollectionView() {
+        collectionViewLayout.scrollDirection = .vertical
+        collectionViewLayout.minimumLineSpacing = 0
+        collectionViewLayout.minimumInteritemSpacing = 0
+        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
+        collectionView.register(AudioEffectCell.self, forCellWithReuseIdentifier: AudioEffectCell.reuseIdentifier)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.allowsMultipleSelection = false
+        collectionView.allowsSelection = true
+        collectionView.backgroundColor = UIColor.clear
+    }
+
+    private func loadLevels() {
+        let url = URL(fileURLWithPath: recordingPath)
+        fileMetadataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { metadata in
+            DispatchQueue.main.async {
+                if let audioMetadata = metadata as? ZMAudioMetadata {
+                    self.normalizedLoudness = audioMetadata.normalizedLoudness
+                    self.progressView.samples = audioMetadata.normalizedLoudness
+                }
+            }
         }
     }
 
@@ -384,9 +391,7 @@ private protocol AudioPlayerControllerDelegate: AnyObject {
 // MARK: - AudioPlayerController
 
 private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
-    let player: AVAudioPlayer
-    weak var delegate: AudioPlayerControllerDelegate?
-    weak var mediaManager: MediaPlayerDelegate? = AppDelegate.shared.mediaPlaybackManager
+    // MARK: Lifecycle
 
     init(contentOf URL: URL) throws {
         self.player = try AVAudioPlayer(contentsOf: URL)
@@ -400,10 +405,11 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
         tearDown()
     }
 
-    func tearDown() {
-        mediaManager?.mediaPlayer(self, didChangeTo: .completed)
-        player.delegate = nil
-    }
+    // MARK: Internal
+
+    let player: AVAudioPlayer
+    weak var delegate: AudioPlayerControllerDelegate?
+    weak var mediaManager: MediaPlayerDelegate? = AppDelegate.shared.mediaPlaybackManager
 
     var state: MediaPlayerState? {
         player.isPlaying ? .playing : .completed
@@ -415,6 +421,11 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
 
     var sourceMessage: ZMConversationMessage? {
         nil
+    }
+
+    func tearDown() {
+        mediaManager?.mediaPlayer(self, didChangeTo: .completed)
+        player.delegate = nil
     }
 
     func play() {

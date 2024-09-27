@@ -20,16 +20,7 @@ import UIKit
 import WireDesign
 
 final class BackupActionCell: UITableViewCell {
-    let actionTitleLabel: DynamicFontLabel = {
-        let text = L10n.Localizable.Self.Settings.HistoryBackup.action
-        let label = DynamicFontLabel(
-            text: text,
-            fontSpec: .normalRegularFont,
-            color: SemanticColors.Label.textDefault
-        )
-        label.textAlignment = .left
-        return label
-    }()
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -54,4 +45,17 @@ final class BackupActionCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let actionTitleLabel: DynamicFontLabel = {
+        let text = L10n.Localizable.Self.Settings.HistoryBackup.action
+        let label = DynamicFontLabel(
+            text: text,
+            fontSpec: .normalRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
+        label.textAlignment = .left
+        return label
+    }()
 }

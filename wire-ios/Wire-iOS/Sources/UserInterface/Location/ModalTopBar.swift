@@ -29,9 +29,24 @@ protocol ModalTopBarDelegate: AnyObject {
 // MARK: - ModalTopBar
 
 final class ModalTopBar: UIView {
-    let dismissButton = IconButton()
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureViews()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     typealias ViewColors = SemanticColors.View
 
+    let dismissButton = IconButton()
     let titleLabel: DynamicFontLabel = {
         let textColor = SemanticColors.Label.textDefault
         let label = DynamicFontLabel(
@@ -72,7 +87,30 @@ final class ModalTopBar: UIView {
     }()
 
     weak var delegate: ModalTopBarDelegate?
+
+    var needsSeparator = true {
+        didSet {
+            sepeatorHeight.constant = needsSeparator ? 1 : 0
+        }
+    }
+
+    func configure(title: String, subtitle: String?, topAnchor: NSLayoutYAxisAnchor) {
+        if let topConstraint = contentTopConstraint {
+            contentStackView.removeConstraint(topConstraint)
+        }
+
+        contentTopConstraint = contentStackView.topAnchor.constraint(equalTo: topAnchor, constant: 4)
+        contentTopConstraint?.isActive = true
+
+        self.title = title
+        self.subtitle = subtitle
+    }
+
+    // MARK: Private
+
     private var contentTopConstraint: NSLayoutConstraint?
+
+    private var sepeatorHeight: NSLayoutConstraint!
 
     private var title: String? {
         didSet {
@@ -91,37 +129,6 @@ final class ModalTopBar: UIView {
             subtitleLabel.accessibilityLabel = subtitle
             subtitleLabel.accessibilityValue = subtitle
         }
-    }
-
-    private var sepeatorHeight: NSLayoutConstraint!
-
-    var needsSeparator = true {
-        didSet {
-            sepeatorHeight.constant = needsSeparator ? 1 : 0
-        }
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureViews()
-        createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func configure(title: String, subtitle: String?, topAnchor: NSLayoutYAxisAnchor) {
-        if let topConstraint = contentTopConstraint {
-            contentStackView.removeConstraint(topConstraint)
-        }
-
-        contentTopConstraint = contentStackView.topAnchor.constraint(equalTo: topAnchor, constant: 4)
-        contentTopConstraint?.isActive = true
-
-        self.title = title
-        self.subtitle = subtitle
     }
 
     private func configureViews() {

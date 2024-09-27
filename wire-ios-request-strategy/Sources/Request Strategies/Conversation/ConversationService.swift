@@ -66,13 +66,7 @@ public enum ConversationCreationFailure: Error {
 // MARK: - ConversationService
 
 public final class ConversationService: ConversationServiceInterface {
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-    private let createGroupFlow = Flow.createGroup
-    private let participantsServiceBuilder: (NSManagedObjectContext) -> ConversationParticipantsServiceInterface
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         context: NSManagedObjectContext,
@@ -84,6 +78,8 @@ public final class ConversationService: ConversationServiceInterface {
             ConversationParticipantsService(context: syncContext)
         }
     }
+
+    // MARK: Public
 
     // MARK: - Create conversation
 
@@ -155,6 +151,47 @@ public final class ConversationService: ConversationServiceInterface {
             }
         }
     }
+
+    // MARK: - Sync conversation
+
+    public func syncConversation(
+        qualifiedID: QualifiedID,
+        completion: @escaping () -> Void = {}
+    ) {
+        var action = SyncConversationAction(qualifiedID: qualifiedID)
+        action.perform(in: context.notificationContext) { _ in
+            completion()
+        }
+    }
+
+    public func syncConversationIfMissing(
+        qualifiedID: QualifiedID
+    ) async {
+        guard await context.perform({
+            ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.context)
+        }) == nil else {
+            return
+        }
+        await syncConversation(qualifiedID: qualifiedID)
+    }
+
+    public func syncConversation(
+        qualifiedID: QualifiedID
+    ) async {
+        await withCheckedContinuation { continuation in
+            syncConversation(qualifiedID: qualifiedID) {
+                continuation.resume()
+            }
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+    private let createGroupFlow = Flow.createGroup
+    private let participantsServiceBuilder: (NSManagedObjectContext) -> ConversationParticipantsServiceInterface
 
     private func internalCreateTeamGroupConversation(
         teamID: UUID,
@@ -401,39 +438,6 @@ public final class ConversationService: ConversationServiceInterface {
         let participantsService = participantsServiceBuilder(syncContext)
         createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
         try await participantsService.addParticipants(syncParticipants, to: syncConversation)
-    }
-
-    // MARK: - Sync conversation
-
-    public func syncConversation(
-        qualifiedID: QualifiedID,
-        completion: @escaping () -> Void = {}
-    ) {
-        var action = SyncConversationAction(qualifiedID: qualifiedID)
-        action.perform(in: context.notificationContext) { _ in
-            completion()
-        }
-    }
-
-    public func syncConversationIfMissing(
-        qualifiedID: QualifiedID
-    ) async {
-        guard await context.perform({
-            ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.context)
-        }) == nil else {
-            return
-        }
-        await syncConversation(qualifiedID: qualifiedID)
-    }
-
-    public func syncConversation(
-        qualifiedID: QualifiedID
-    ) async {
-        await withCheckedContinuation { continuation in
-            syncConversation(qualifiedID: qualifiedID) {
-                continuation.resume()
-            }
-        }
     }
 }
 

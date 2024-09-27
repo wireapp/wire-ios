@@ -47,8 +47,7 @@ extension ZMUpdateEvent {
 
 @objcMembers
 public final class DeliveryReceiptRequestStrategy: NSObject {
-    private let messageSender: MessageSenderInterface
-    private let managedObjectContext: NSManagedObjectContext
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -59,6 +58,11 @@ public final class DeliveryReceiptRequestStrategy: NSObject {
         self.managedObjectContext = managedObjectContext
         self.messageSender = messageSender
     }
+
+    // MARK: Private
+
+    private let messageSender: MessageSenderInterface
+    private let managedObjectContext: NSManagedObjectContext
 }
 
 // MARK: ZMEventConsumer

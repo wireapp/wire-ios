@@ -24,9 +24,10 @@ import XCTest
 // MARK: - EphemeralKeyboardViewControllerTests
 
 final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
+    // MARK: Internal
+
     var sut: EphemeralKeyboardViewController!
     var conversation: ZMConversation!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -52,6 +53,10 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut.prepareForSnapshots())
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }
 
 extension UIViewController {

@@ -21,8 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class TextCell: UITableViewCell, CellConfigurationConfigurable {
-    private let container = UIView()
-    private let label = CopyableLabel()
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -50,6 +49,8 @@ final class TextCell: UITableViewCell, CellConfigurationConfigurable {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     func configure(with configuration: CellConfiguration) {
         guard case let .text(text) = configuration else { preconditionFailure() }
         label.attributedText = text && .lineSpacing(8)
@@ -58,4 +59,9 @@ final class TextCell: UITableViewCell, CellConfigurationConfigurable {
         container.backgroundColor = SemanticColors.View.backgroundDefault
         backgroundColor = SemanticColors.View.backgroundDefault
     }
+
+    // MARK: Private
+
+    private let container = UIView()
+    private let label = CopyableLabel()
 }

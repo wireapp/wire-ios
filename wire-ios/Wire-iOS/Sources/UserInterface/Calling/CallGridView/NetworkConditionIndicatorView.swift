@@ -21,11 +21,7 @@ import WireDesign
 import WireSyncEngine
 
 final class NetworkConditionIndicatorView: UIView {
-    private let label = UILabel()
-
-    override var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: 32)
-    }
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero)
@@ -50,6 +46,12 @@ final class NetworkConditionIndicatorView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    override var intrinsicContentSize: CGSize {
+        CGSize(width: UIView.noIntrinsicMetric, height: 32)
+    }
+
     var networkQuality: NetworkQuality = .normal {
         didSet {
             label.attributedText = networkQuality.attributedString(color: SemanticColors.Label.textWhite)
@@ -57,4 +59,8 @@ final class NetworkConditionIndicatorView: UIView {
             layoutIfNeeded()
         }
     }
+
+    // MARK: Private
+
+    private let label = UILabel()
 }

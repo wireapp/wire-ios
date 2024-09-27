@@ -30,11 +30,12 @@ class AccessTokenRenewerMock: AccessTokenRenewing {
 
     var calls = Calls()
 
+    var shoudFail = false
+
     func setAccessTokenRenewalObserver(_ observer: AccessTokenRenewalObserver) {
         calls.setAccessTokenRenewalObserver.append(observer)
     }
 
-    var shoudFail = false
     func renewAccessToken(with clientID: String) {
         calls.renewAccessToken.append(clientID)
 

@@ -22,16 +22,7 @@ import Foundation
 
 @objcMembers
 public class SearchDirectory: NSObject {
-    let searchContext: NSManagedObjectContext
-    let contextProvider: ContextProvider
-    let transportSession: TransportSessionType
-
-    var isTornDown = false
-
-    private let refreshUsersMissingMetadataAction: RecurringAction
-    private let refreshConversationsMissingMetadataAction: RecurringAction
-
-    private let searchUsersCache: SearchUsersCache?
+    // MARK: Lifecycle
 
     deinit {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
@@ -64,6 +55,8 @@ public class SearchDirectory: NSObject {
         self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
         self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
     }
+
+    // MARK: Public
 
     /// Perform a search request.
     ///
@@ -104,16 +97,31 @@ public class SearchDirectory: NSObject {
         return task
     }
 
+    public func updateIncompleteMetadataIfNeeded() {
+        refreshUsersMissingMetadataAction()
+        refreshConversationsMissingMetadataAction()
+    }
+
+    // MARK: Internal
+
+    let searchContext: NSManagedObjectContext
+    let contextProvider: ContextProvider
+    let transportSession: TransportSessionType
+
+    var isTornDown = false
+
     func observeSearchUsers(_ result: SearchResult) {
         let searchUserObserverCenter = contextProvider.viewContext.searchUserObserverCenter
         result.directory.forEach(searchUserObserverCenter.addSearchUser)
         result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
     }
 
-    public func updateIncompleteMetadataIfNeeded() {
-        refreshUsersMissingMetadataAction()
-        refreshConversationsMissingMetadataAction()
-    }
+    // MARK: Private
+
+    private let refreshUsersMissingMetadataAction: RecurringAction
+    private let refreshConversationsMissingMetadataAction: RecurringAction
+
+    private let searchUsersCache: SearchUsersCache?
 }
 
 // MARK: TearDownCapable

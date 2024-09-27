@@ -25,16 +25,7 @@ import XCTest
 // MARK: - MLSConferenceStaleParticipantsRemoverTests
 
 class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
-    private let domain = "example.domain.com"
-    private let groupID = MLSGroupID.random()
-    private let connectedState = CallParticipantState.connected(
-        videoState: .stopped,
-        microphoneState: .muted
-    )
-
-    private var mlsService: MockMLSServiceInterface!
-    private var sut: MLSConferenceStaleParticipantsRemover!
-    private var selfUserID: AVSIdentifier!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -209,6 +200,19 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         wait(for: [expectation], timeout: 0.5)
     }
 
+    // MARK: Private
+
+    private let domain = "example.domain.com"
+    private let groupID = MLSGroupID.random()
+    private let connectedState = CallParticipantState.connected(
+        videoState: .stopped,
+        microphoneState: .muted
+    )
+
+    private var mlsService: MockMLSServiceInterface!
+    private var sut: MLSConferenceStaleParticipantsRemover!
+    private var selfUserID: AVSIdentifier!
+
     // MARK: - Helpers
 
     private func expectations(
@@ -258,13 +262,17 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
 // MARK: - MLSParticipant
 
 private class MLSParticipant {
-    var callParticipant: CallParticipant
-    var mlsClientID: MLSClientID
+    // MARK: Lifecycle
 
     init(callParticipant: CallParticipant, mlsClientID: MLSClientID) {
         self.callParticipant = callParticipant
         self.mlsClientID = mlsClientID
     }
+
+    // MARK: Internal
+
+    var callParticipant: CallParticipant
+    var mlsClientID: MLSClientID
 
     func updateState(_ state: CallParticipantState) {
         callParticipant = CallParticipant(

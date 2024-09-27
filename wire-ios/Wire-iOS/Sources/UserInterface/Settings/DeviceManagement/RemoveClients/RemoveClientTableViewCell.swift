@@ -21,7 +21,37 @@ import WireCommonComponents
 import WireDesign
 
 final class RemoveClientTableViewCell: UITableViewCell {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+
+        createConstraints()
+        setupStyle()
+    }
+
+    @available(*, unavailable)
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     typealias LabelColors = SemanticColors.Label
+
+    var viewModel: ClientTableViewCellModel? {
+        didSet {
+            deviceNameLabel.text = viewModel?.title
+            if let date = viewModel?.activationDate?.formattedDate {
+                activationDateLabel.text = L10n.Localizable.Registration.Devices.activated(date)
+            }
+            proteusIdLabel.text = viewModel?.proteusLabelText
+        }
+    }
+
+    // MARK: Private
 
     // MARK: - Properties
 
@@ -39,30 +69,6 @@ final class RemoveClientTableViewCell: UITableViewCell {
         style: .subline1,
         color: LabelColors.textCellSubtitle
     )
-
-    var viewModel: ClientTableViewCellModel? {
-        didSet {
-            deviceNameLabel.text = viewModel?.title
-            if let date = viewModel?.activationDate?.formattedDate {
-                activationDateLabel.text = L10n.Localizable.Registration.Devices.activated(date)
-            }
-            proteusIdLabel.text = viewModel?.proteusLabelText
-        }
-    }
-
-    // MARK: - Initialization
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        createConstraints()
-        setupStyle()
-    }
-
-    @available(*, unavailable)
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     // MARK: - Methods
 

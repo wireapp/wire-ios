@@ -23,6 +23,8 @@ enum CallInfoViewControllerAccessoryType: Equatable {
     case avatar(HashBoxUser)
     case participantsList(CallParticipantsList)
 
+    // MARK: Internal
+
     var showParticipantList: Bool {
         if case .participantsList = self {
             true

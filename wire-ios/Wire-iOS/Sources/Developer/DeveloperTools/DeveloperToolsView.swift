@@ -21,6 +21,8 @@ import SwiftUI
 // MARK: - DeveloperToolsView
 
 struct DeveloperToolsView: View {
+    // MARK: Internal
+
     // MARK: - Properties
 
     @StateObject var viewModel: DeveloperToolsViewModel
@@ -37,6 +39,15 @@ struct DeveloperToolsView: View {
                     message: Text(viewModel.alertBody ?? "")
                 )
             }
+    }
+
+    // MARK: Private
+
+    private var dismissButton: some View {
+        Button(
+            action: { viewModel.handleEvent(.dismissButtonTapped) },
+            label: { Text("Close") }
+        )
     }
 
     private func sectionView(for section: DeveloperToolsViewModel.Section) -> some View {
@@ -74,13 +85,6 @@ struct DeveloperToolsView: View {
         case let .destination(destinationItem):
             NavigationLink(destinationItem.title, destination: destinationItem.makeView)
         }
-    }
-
-    private var dismissButton: some View {
-        Button(
-            action: { viewModel.handleEvent(.dismissButtonTapped) },
-            label: { Text("Close") }
-        )
     }
 }
 

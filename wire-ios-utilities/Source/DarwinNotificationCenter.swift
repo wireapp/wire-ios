@@ -23,13 +23,15 @@ import Foundation
 /// A wrapper class to simplify observation of Darwin Notifications.
 ///
 public final class DarwinNotificationCenter {
-    public static var shared = DarwinNotificationCenter()
+    // MARK: Lifecycle
+
+    private init() {}
+
+    // MARK: Public
 
     public typealias Handler = () -> Void
 
-    private var handlers = [DarwinNotification: [Handler]]()
-
-    private init() {}
+    public static var shared = DarwinNotificationCenter()
 
     /// Invokes the given handler when the given notification is fired.
     public func observe(notification: DarwinNotification, using handler: @escaping Handler) {
@@ -44,12 +46,18 @@ public final class DarwinNotificationCenter {
         }
     }
 
+    // MARK: Internal
+
     /// `CFNotificationCallback`s can't capture the environment, so instead we
     /// forward the fired notification name and then invoke the relevant handlers.
     func forward(notification name: String) {
         guard let notification = DarwinNotification(rawValue: name) else { return }
         handlers[notification]?.forEach { $0() }
     }
+
+    // MARK: Private
+
+    private var handlers = [DarwinNotification: [Handler]]()
 }
 
 // MARK: - DarwinNotification
@@ -61,6 +69,23 @@ public final class DarwinNotificationCenter {
 ///
 public enum DarwinNotification: String {
     case shareExtDidSaveNote = "darwin-notification.share-ext-did-save-note"
+
+    // MARK: Public
+
+    public func post() {
+        // The use of Darwin Notification Center means some arguments will
+        // be ignored.
+        let nc = CFNotificationCenterGetDarwinNotifyCenter()
+        CFNotificationCenterPostNotification(
+            nc,                                 // notification center
+            name,                               // notification name
+            nil,                                // object (ignored)
+            nil,                                // user info (ignored)
+            true                                // deliver immediately (ignored)
+        )
+    }
+
+    // MARK: Internal
 
     var name: CFNotificationName {
         CFNotificationName(rawValue: rawValue as CFString)
@@ -77,19 +102,6 @@ public enum DarwinNotification: String {
             name.rawValue,                      // notification name
             nil,                                // object (ignored)
             .deliverImmediately                 // suspension behaviour (ignored)
-        )
-    }
-
-    public func post() {
-        // The use of Darwin Notification Center means some arguments will
-        // be ignored.
-        let nc = CFNotificationCenterGetDarwinNotifyCenter()
-        CFNotificationCenterPostNotification(
-            nc,                                 // notification center
-            name,                               // notification name
-            nil,                                // object (ignored)
-            nil,                                // user info (ignored)
-            true                                // deliver immediately (ignored)
         )
     }
 }

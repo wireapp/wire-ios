@@ -24,12 +24,7 @@ import XCTest
 @testable import Wire
 
 final class AccentColorPickerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: AccentColorPickerController!
-    private var selfUser: MockUserType!
-    private var userSession: UserSessionMock!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -63,4 +58,13 @@ final class AccentColorPickerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut.view)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: AccentColorPickerController!
+    private var selfUser: MockUserType!
+    private var userSession: UserSessionMock!
 }

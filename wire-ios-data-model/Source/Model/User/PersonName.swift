@@ -18,22 +18,71 @@
 
 @objcMembers
 public class PersonName: NSObject {
+    // MARK: Lifecycle
+
+    public init(name: String, schemeTagger: NSLinguisticTagger) {
+        // We're using -precomposedStringWithCanonicalMapping (Unicode Normalization Form C)
+        // since this allows us to use faster string comparison later.
+        self.rawFullName = name
+        self.fullName = name.precomposedStringWithCanonicalMapping
+        self.nameOrder = type(of: self).script(of: name, schemeTagger: schemeTagger)
+        self.components = type(of: self).splitNameComponents(fullName: fullName)
+    }
+
+    // MARK: Public
+
+    public lazy var initials: String = {
+        guard let firstComponent = self.components.first else { return "" }
+
+        var _initials = String()
+        switch self.nameOrder {
+        case .givenNameLast:
+            _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
+            _initials += (firstComponent.zmSecondComposedCharacter() ?? "")
+
+        case .arabicGivenName, .givenNameFirst:
+            _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
+            guard self.components.count > 1, let lastComponent = self.components.last else { break }
+            _initials += (lastComponent.zmFirstComposedCharacter() ?? "")
+        }
+        return _initials
+    }()
+
+    override public var hash: Int {
+        var hash = 0
+        components.forEach { hash ^= $0.hash }
+        return hash
+    }
+
+    public static func person(withName name: String, schemeTagger: NSLinguisticTagger?) -> PersonName {
+        if let cachedPersonName = stringsToPersonNames.object(forKey: name as NSString) {
+            return cachedPersonName
+        }
+
+        let tagger = schemeTagger ?? tagger
+        let cachedPersonName = PersonName(name: name, schemeTagger: tagger)
+        stringsToPersonNames.setObject(cachedPersonName, forKey: name as NSString)
+        return cachedPersonName
+    }
+
     override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? PersonName else { return false }
         return components == other.components
     }
 
+    // MARK: Internal
+
     enum NameOrder {
         case givenNameFirst, givenNameLast, arabicGivenName
     }
+
+    static let stringsToPersonNames = NSCache<NSString, PersonName>()
+    static let tagger = NSLinguisticTagger(tagSchemes: [NSLinguisticTagScheme.script], options: 0)
 
     let components: [String]
     let fullName: String
     let rawFullName: String
     let nameOrder: NameOrder
-    static let stringsToPersonNames = NSCache<NSString, PersonName>()
-    static let tagger = NSLinguisticTagger(tagSchemes: [NSLinguisticTagScheme.script], options: 0)
-
     lazy var secondNameComponents: [String] = {
         guard self.components.count < 2  else { return [] }
 
@@ -76,43 +125,6 @@ public class PersonName: NSObject {
         }
         return name
     }()
-
-    public lazy var initials: String = {
-        guard let firstComponent = self.components.first else { return "" }
-
-        var _initials = String()
-        switch self.nameOrder {
-        case .givenNameLast:
-            _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
-            _initials += (firstComponent.zmSecondComposedCharacter() ?? "")
-
-        case .arabicGivenName, .givenNameFirst:
-            _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
-            guard self.components.count > 1, let lastComponent = self.components.last else { break }
-            _initials += (lastComponent.zmFirstComposedCharacter() ?? "")
-        }
-        return _initials
-    }()
-
-    public static func person(withName name: String, schemeTagger: NSLinguisticTagger?) -> PersonName {
-        if let cachedPersonName = stringsToPersonNames.object(forKey: name as NSString) {
-            return cachedPersonName
-        }
-
-        let tagger = schemeTagger ?? tagger
-        let cachedPersonName = PersonName(name: name, schemeTagger: tagger)
-        stringsToPersonNames.setObject(cachedPersonName, forKey: name as NSString)
-        return cachedPersonName
-    }
-
-    public init(name: String, schemeTagger: NSLinguisticTagger) {
-        // We're using -precomposedStringWithCanonicalMapping (Unicode Normalization Form C)
-        // since this allows us to use faster string comparison later.
-        self.rawFullName = name
-        self.fullName = name.precomposedStringWithCanonicalMapping
-        self.nameOrder = type(of: self).script(of: name, schemeTagger: schemeTagger)
-        self.components = type(of: self).splitNameComponents(fullName: fullName)
-    }
 
     static func script(of string: String, schemeTagger: NSLinguisticTagger) -> NameOrder {
         // We are checking the linguistic scheme in order to distinguisch between differences in the order of given and
@@ -174,12 +186,6 @@ public class PersonName: NSObject {
             components.append(aComponent)
         }
         return components
-    }
-
-    override public var hash: Int {
-        var hash = 0
-        components.forEach { hash ^= $0.hash }
-        return hash
     }
 
     func stringStarts(withUppercaseString string: String) -> Bool {

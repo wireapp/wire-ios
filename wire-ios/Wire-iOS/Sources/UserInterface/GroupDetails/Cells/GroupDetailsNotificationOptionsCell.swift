@@ -22,6 +22,14 @@ import WireDataModel
 import WireDesign
 
 final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCell {
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
+        }
+    }
+
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "cell.groupdetails.notificationsoptions"
@@ -38,13 +46,5 @@ final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCe
         }
 
         status = key
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted
-                ? SemanticColors.View.backgroundUserCellHightLighted
-                : SemanticColors.View.backgroundUserCell
-        }
     }
 }

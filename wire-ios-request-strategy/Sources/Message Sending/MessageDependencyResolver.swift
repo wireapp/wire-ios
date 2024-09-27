@@ -35,11 +35,13 @@ public enum MessageDependencyResolverError: Error, Equatable {
 // MARK: - MessageDependencyResolver
 
 public class MessageDependencyResolver: MessageDependencyResolverInterface {
+    // MARK: Lifecycle
+
     public init(context: NSManagedObjectContext) {
         self.context = context
     }
 
-    let context: NSManagedObjectContext
+    // MARK: Public
 
     public func waitForDependenciesToResolve(for message: any SendableMessage) async throws {
         func dependenciesAreResolved() async throws -> Bool {
@@ -90,4 +92,8 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
         }
         // swiftlint:enable for_where
     }
+
+    // MARK: Internal
+
+    let context: NSManagedObjectContext
 }

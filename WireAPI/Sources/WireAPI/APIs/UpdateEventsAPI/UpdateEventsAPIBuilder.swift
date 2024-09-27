@@ -21,7 +21,7 @@ import Foundation
 /// A builder of `UpdateEventsAPI`.
 
 public struct UpdateEventsAPIBuilder {
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     /// Create a new builder.
     ///
@@ -30,6 +30,8 @@ public struct UpdateEventsAPIBuilder {
     public init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Public
 
     /// Make a versioned `UpdateEventsAPI`.
     ///
@@ -54,4 +56,8 @@ public struct UpdateEventsAPIBuilder {
             UpdateEventsAPIV6(httpClient: httpClient)
         }
     }
+
+    // MARK: Internal
+
+    let httpClient: any HTTPClient
 }

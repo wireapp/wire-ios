@@ -21,6 +21,8 @@ import Foundation
 // MARK: - AssetRequestFactory
 
 public final class AssetRequestFactory: NSObject {
+    // MARK: Public
+
     public enum Retention: String {
         /// The asset will be automatically removed from the backend
         /// storage after a short-ish amount of time.
@@ -37,20 +39,6 @@ public final class AssetRequestFactory: NSObject {
         /// The same as eternal, however this is cost-optimized
         /// on the backend for infrequent access. Used for team conversations.
         case eternalInfrequentAccess = "eternal-infrequent_access"
-    }
-
-    private enum Constant {
-        static let md5 = "Content-MD5"
-        static let accessLevel = "public"
-        static let retention = "retention"
-        static let boundary = "frontier"
-        static let domain = "domain"
-
-        enum ContentType {
-            static let json = "application/json"
-            static let octetStream = "application/octet-stream"
-            static let multipart = "multipart/mixed; boundary=frontier"
-        }
     }
 
     public func backgroundUpstreamRequestForAsset(
@@ -124,6 +112,8 @@ public final class AssetRequestFactory: NSObject {
         )
     }
 
+    // MARK: Internal
+
     func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention: Retention) throws -> Data {
         let fileDataHeader = [Constant.md5: data.zmMD5Digest().base64String()]
         let jsonObject: [String: Any] = [
@@ -137,6 +127,22 @@ public final class AssetRequestFactory: NSObject {
             ZMMultipartBodyItem(data: metaData, contentType: Constant.ContentType.json, headers: nil),
             ZMMultipartBodyItem(data: data, contentType: Constant.ContentType.octetStream, headers: fileDataHeader),
         ], boundary: Constant.boundary)
+    }
+
+    // MARK: Private
+
+    private enum Constant {
+        enum ContentType {
+            static let json = "application/json"
+            static let octetStream = "application/octet-stream"
+            static let multipart = "multipart/mixed; boundary=frontier"
+        }
+
+        static let md5 = "Content-MD5"
+        static let accessLevel = "public"
+        static let retention = "retention"
+        static let boundary = "frontier"
+        static let domain = "domain"
     }
 
     private func uploadURL(

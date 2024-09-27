@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 
 final class UserPropertyNormalizerTests: XCTestCase {
+    // MARK: Internal
+
     var sut: UserPropertyNormalizer!
 
     override func setUp() {
@@ -119,6 +121,8 @@ final class UserPropertyNormalizerTests: XCTestCase {
         // THEN
         assertNormalizationValue(normalizedEmail, "john.doe@gmail.com")
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

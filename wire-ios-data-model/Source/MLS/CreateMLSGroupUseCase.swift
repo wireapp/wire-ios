@@ -19,14 +19,7 @@
 import WireCoreCrypto
 
 struct CreateMLSGroupUseCase {
-    private let logger = WireLogger.mls
-
-    private let parentGroupID: MLSGroupID?
-    private let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite
-    private let coreCrypto: any SafeCoreCryptoProtocol
-    private let staleKeyMaterialDetector: any StaleMLSKeyDetectorProtocol
-    private let actionsProvider: any MLSActionsProviderProtocol
-    private let notificationContext: NotificationContext
+    // MARK: Lifecycle
 
     init(
         parentGroupID: MLSGroupID?,
@@ -44,6 +37,8 @@ struct CreateMLSGroupUseCase {
         self.actionsProvider = actionsProvider
         self.notificationContext = notificationContext
     }
+
+    // MARK: Internal
 
     func invoke(groupID: MLSGroupID) async throws -> MLSCipherSuite {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
@@ -92,6 +87,17 @@ struct CreateMLSGroupUseCase {
 
         return ciphersuite
     }
+
+    // MARK: Private
+
+    private let logger = WireLogger.mls
+
+    private let parentGroupID: MLSGroupID?
+    private let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite
+    private let coreCrypto: any SafeCoreCryptoProtocol
+    private let staleKeyMaterialDetector: any StaleMLSKeyDetectorProtocol
+    private let actionsProvider: any MLSActionsProviderProtocol
+    private let notificationContext: NotificationContext
 
     private func fetchBackendPublicKeys() async -> BackendMLSPublicKeys? {
         logger.info("fetching backend public keys")

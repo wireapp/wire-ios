@@ -23,10 +23,10 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
     CountSelfMLSKeyPackagesAction,
     CountSelfMLSKeyPackagesActionHandler
 > {
+    typealias Payload = CountSelfMLSKeyPackagesActionHandler.ResponsePayload
+
     let clientID = "clientID"
     let requestPath = "/v5/mls/key-packages/self/clientID/count"
-
-    typealias Payload = CountSelfMLSKeyPackagesActionHandler.ResponsePayload
 
     override func setUp() {
         super.setUp()

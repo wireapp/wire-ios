@@ -20,13 +20,7 @@ import UIKit
 import WireDesign
 
 final class FeedbackOverlayView: UIView {
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .smallSemiboldFont
-        label.textColor = SemanticColors.Label.textDefault
-
-        return label
-    }()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,15 +37,15 @@ final class FeedbackOverlayView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    fileprivate func constrainViews() {
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            titleLabel.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 24),
-            titleLabel.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -24),
-        ])
-    }
+    // MARK: Internal
+
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .smallSemiboldFont
+        label.textColor = SemanticColors.Label.textDefault
+
+        return label
+    }()
 
     func show(text: String) {
         titleLabel.text = text
@@ -65,5 +59,17 @@ final class FeedbackOverlayView: UIView {
                 self.alpha = 0.0
             }
         }, completion: nil)
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate func constrainViews() {
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            titleLabel.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 24),
+            titleLabel.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -24),
+        ])
     }
 }

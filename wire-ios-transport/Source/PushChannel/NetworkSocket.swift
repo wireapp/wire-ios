@@ -38,20 +38,18 @@ public protocol NetworkSocketDelegate {
 
 @objcMembers
 public final class DataBuffer: NSObject {
-    fileprivate var data = DispatchData.empty
+    // MARK: Public
 
     public var objcData: __DispatchData {
         data as __DispatchData
-    }
-
-    fileprivate func append(data: DispatchData) {
-        self.data.append(data)
     }
 
     @objc(appendData:)
     public func append(data: __DispatchData) {
         self.data.append(data as DispatchData)
     }
+
+    // MARK: Internal
 
     func clear(until offset: Int) {
         let dataOffset = data.index(data.startIndex, offsetBy: offset)
@@ -62,23 +60,21 @@ public final class DataBuffer: NSObject {
     func isEmpty() -> Bool {
         data.isEmpty
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var data = DispatchData.empty
+
+    fileprivate func append(data: DispatchData) {
+        self.data.append(data)
+    }
 }
 
 // MARK: - NetworkSocket
 
 @objcMembers
 public final class NetworkSocket: NSObject {
-    // MARK: - Public API
-
-    public let url: URL
-    public let trustProvider: BackendTrustProvider
-    public let queue: DispatchQueue
-    public let callbackQueue: DispatchQueue
-    public let group: ZMSDispatchGroup
-
-    public weak var delegate: NetworkSocketDelegate?
-
-    private let queueMarkerKey = DispatchSpecificKey<Void>()
+    // MARK: Lifecycle
 
     public init(
         url: URL,
@@ -114,6 +110,18 @@ public final class NetworkSocket: NSObject {
             }
         }
     }
+
+    // MARK: Public
+
+    // MARK: - Public API
+
+    public let url: URL
+    public let trustProvider: BackendTrustProvider
+    public let queue: DispatchQueue
+    public let callbackQueue: DispatchQueue
+    public let group: ZMSDispatchGroup
+
+    public weak var delegate: NetworkSocketDelegate?
 
     public func open() {
         preconditionQueue()
@@ -164,27 +172,31 @@ public final class NetworkSocket: NSObject {
         close(syncDelegate: false)
     }
 
-    private func close(syncDelegate: Bool) {
-        preconditionQueue()
-
-        guard state != .stopped else {
-            return
+    @objc(writeData:)
+    public func write(data dataToWrite: Data) {
+        dataToWrite.withUnsafeBytes { (unsafeBufferPointer: UnsafeRawBufferPointer) in
+            self.write(dispatchData: DispatchData(bytes: unsafeBufferPointer))
         }
-
-        state = .stopped
-
-        inputStream?.delegate = nil
-        inputStream?.close()
-
-        outputStream?.delegate = nil
-        outputStream?.close()
-
-        withDelegate({ delegate in
-            delegate.didClose(socket: self)
-        }, sync: syncDelegate)
-
-        delegate = nil
     }
+
+    // MARK: Fileprivate
+
+    fileprivate enum State {
+        case readyToConnect
+        case connecting
+        case connected
+        case stopped
+    }
+
+    fileprivate var state: State = .readyToConnect
+
+    fileprivate var didCheckTrust = false
+    fileprivate var trusted = false
+
+    fileprivate var inputStream: InputStream?
+    fileprivate var outputStream: OutputStream?
+
+    fileprivate let dataBuffer = DataBuffer()
 
     fileprivate func withDelegate(_ perform: @escaping (NetworkSocketDelegate) -> Void, sync: Bool = false) {
         guard let delegate else {
@@ -197,13 +209,6 @@ public final class NetworkSocket: NSObject {
             group.async(on: callbackQueue) {
                 perform(delegate)
             }
-        }
-    }
-
-    @objc(writeData:)
-    public func write(data dataToWrite: Data) {
-        dataToWrite.withUnsafeBytes { (unsafeBufferPointer: UnsafeRawBufferPointer) in
-            self.write(dispatchData: DispatchData(bytes: unsafeBufferPointer))
         }
     }
 
@@ -223,25 +228,6 @@ public final class NetworkSocket: NSObject {
 
         writeDataIfPossible()
     }
-
-    // MARK: - Internals
-
-    fileprivate enum State {
-        case readyToConnect
-        case connecting
-        case connected
-        case stopped
-    }
-
-    fileprivate var state: State = .readyToConnect
-
-    fileprivate var didCheckTrust = false
-    fileprivate var trusted = false
-
-    fileprivate var inputStream: InputStream?
-    fileprivate var outputStream: OutputStream?
-
-    fileprivate let dataBuffer = DataBuffer()
 
     @inline(__always)
     fileprivate func preconditionQueue() {
@@ -351,6 +337,32 @@ public final class NetworkSocket: NSObject {
         if bytesWritten > 0 {
             dataBuffer.clear(until: bytesWritten)
         }
+    }
+
+    // MARK: Private
+
+    private let queueMarkerKey = DispatchSpecificKey<Void>()
+
+    private func close(syncDelegate: Bool) {
+        preconditionQueue()
+
+        guard state != .stopped else {
+            return
+        }
+
+        state = .stopped
+
+        inputStream?.delegate = nil
+        inputStream?.close()
+
+        outputStream?.delegate = nil
+        outputStream?.close()
+
+        withDelegate({ delegate in
+            delegate.didClose(socket: self)
+        }, sync: syncDelegate)
+
+        delegate = nil
     }
 }
 

@@ -21,7 +21,7 @@ import XCTest
 @testable import WireAPI
 
 final class TeamsAPITests: XCTestCase {
-    private var apiSnapshotHelper: APISnapshotHelper<any TeamsAPI>!
+    // MARK: Internal
 
     // MARK: - Setup
 
@@ -417,4 +417,8 @@ final class TeamsAPITests: XCTestCase {
             )
         }
     }
+
+    // MARK: Private
+
+    private var apiSnapshotHelper: APISnapshotHelper<any TeamsAPI>!
 }

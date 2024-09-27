@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class MediaBarSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: MediaBar!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -60,4 +57,11 @@ final class MediaBarSnapshotTests: XCTestCase {
     func testForInitState() {
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: MediaBar!
+    private var snapshotHelper: SnapshotHelper!
 }

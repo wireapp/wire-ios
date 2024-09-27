@@ -51,12 +51,7 @@ enum CallParticipantsListHelper {
 // MARK: - CallParticipantsListViewControllerTests
 
 final class CallParticipantsListViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: CallParticipantsListViewController!
-    private var mockParticipants: CallParticipantsList!
-    private var selfUser: UserType!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -180,4 +175,13 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut.view)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: CallParticipantsListViewController!
+    private var mockParticipants: CallParticipantsList!
+    private var selfUser: UserType!
 }

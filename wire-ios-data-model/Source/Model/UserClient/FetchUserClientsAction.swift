@@ -21,15 +21,19 @@ import Foundation
 // MARK: - QualifiedClientID
 
 public struct QualifiedClientID: Hashable {
-    public let userID: UUID
-    public let domain: String
-    public let clientID: String
+    // MARK: Lifecycle
 
     public init(userID: UUID, domain: String, clientID: String) {
         self.userID = userID
         self.domain = domain
         self.clientID = clientID
     }
+
+    // MARK: Public
+
+    public let userID: UUID
+    public let domain: String
+    public let clientID: String
 }
 
 // MARK: - FetchUserClientsAction
@@ -38,6 +42,18 @@ public struct QualifiedClientID: Hashable {
 /// user IDs.
 
 public final class FetchUserClientsAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        userIDs: Set<QualifiedID>,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.userIDs = userIDs
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = Set<QualifiedClientID>
@@ -55,14 +71,4 @@ public final class FetchUserClientsAction: EntityAction {
 
     public let userIDs: Set<QualifiedID>
     public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(
-        userIDs: Set<QualifiedID>,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.userIDs = userIDs
-        self.resultHandler = resultHandler
-    }
 }

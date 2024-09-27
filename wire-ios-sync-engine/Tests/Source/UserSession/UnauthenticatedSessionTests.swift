@@ -23,10 +23,16 @@ import XCTest
 // MARK: - TestUnauthenticatedTransportSession
 
 final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
+    // MARK: Public
+
     public var cookieStorage = ZMPersistentCookieStorage()
+
+    // MARK: Internal
 
     var nextEnqueueResult: EnqueueResult = .nilRequest
     var lastEnqueuedRequest: ZMTransportRequest?
+
+    let environment: BackendEnvironmentProvider = MockEnvironment()
 
     func enqueueOneTime(_ request: ZMTransportRequest) {
         lastEnqueuedRequest = request
@@ -37,17 +43,20 @@ final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransp
     }
 
     func tearDown() {}
-    let environment: BackendEnvironmentProvider = MockEnvironment()
 }
 
 // MARK: - MockAuthenticationStatusDelegate
 
 @objcMembers
 final class MockAuthenticationStatusDelegate: NSObject, ZMAuthenticationStatusDelegate {
+    // MARK: Public
+
     public var authenticationDidSucceedEvents = 0
     public var authenticationDidFailEvents: [Error] = []
     public var authenticationWasRequestedEvents = 0
     public var receivedSSOCode: UUID?
+
+    // MARK: Internal
 
     func authenticationDidFail(_ error: Error!) {
         authenticationDidFailEvents.append(error)
@@ -83,15 +92,15 @@ final class MockAuthenticationStatusDelegate: NSObject, ZMAuthenticationStatusDe
 final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSessionDelegate {
     var existingAccounts = [Account]()
     var existingAccountsCalled = 0
-    func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool {
-        existingAccountsCalled += 1
-        return existingAccounts.contains(account)
-    }
-
     var createdAccounts = [Account]()
     var didUpdateCredentials = false
     var willAcceptUpdatedCredentials = false
     var isAllowedToCreatingNewAccounts = true
+
+    func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool {
+        existingAccountsCalled += 1
+        return existingAccounts.contains(account)
+    }
 
     func session(session: UnauthenticatedSession, createdAccount account: Account) {
         createdAccounts.append(account)
@@ -114,11 +123,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
 // MARK: - UnauthenticatedSessionTests
 
 public final class UnauthenticatedSessionTests: ZMTBaseTest {
-    var transportSession: TestUnauthenticatedTransportSession!
-    var sut: UnauthenticatedSession!
-    var mockDelegate: MockUnauthenticatedSessionDelegate!
-    var reachability: MockReachability!
-    var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!
+    // MARK: Public
 
     override public func setUp() {
         super.setUp()
@@ -144,6 +149,14 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         reachability = nil
         super.tearDown()
     }
+
+    // MARK: Internal
+
+    var transportSession: TestUnauthenticatedTransportSession!
+    var sut: UnauthenticatedSession!
+    var mockDelegate: MockUnauthenticatedSessionDelegate!
+    var reachability: MockReachability!
+    var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!
 
     func testThatTriesToUpdateCredentials() {
         // given
@@ -251,6 +264,8 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
             XCTAssertNil(try? self.parseAccount(cookie: cookie, userIdKey: "user"))
         }
     }
+
+    // MARK: Private
 
     private func createResponse(
         cookie: String,

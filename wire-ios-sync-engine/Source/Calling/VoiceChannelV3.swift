@@ -23,6 +23,8 @@ import Foundation
 public enum VoiceChannelV3Error: LocalizedError {
     case switchToVideoNotAllowed
 
+    // MARK: Public
+
     public var errorDescription: String? {
         switch self {
         case .switchToVideoNotAllowed:
@@ -34,6 +36,17 @@ public enum VoiceChannelV3Error: LocalizedError {
 // MARK: - VoiceChannelV3
 
 public class VoiceChannelV3: NSObject, VoiceChannel {
+    // MARK: Lifecycle
+
+    public required init(conversation: ZMConversation) {
+        self.conversation = conversation
+        super.init()
+    }
+
+    // MARK: Public
+
+    public weak var conversation: ZMConversation?
+
     public var callCenter: WireCallCenterV3? {
         conversation?.managedObjectContext?.zm_callCenter
     }
@@ -43,27 +56,8 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         callCenter?.establishedDate
     }
 
-    public weak var conversation: ZMConversation?
-
-    public required init(conversation: ZMConversation) {
-        self.conversation = conversation
-        super.init()
-    }
-
     public var participants: [CallParticipant] {
         participants(ofKind: .all, activeSpeakersLimit: nil)
-    }
-
-    public func participants(
-        ofKind kind: CallParticipantsListKind,
-        activeSpeakersLimit limit: Int?
-    ) -> [CallParticipant] {
-        guard
-            let callCenter,
-            let conversationId = conversation?.avsIdentifier
-        else { return [] }
-
-        return callCenter.callParticipants(conversationId: conversationId, kind: kind, activeSpeakersLimit: limit)
     }
 
     public var state: CallState {
@@ -128,14 +122,6 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         }
     }
 
-    public func setVideoCaptureDevice(_ device: CaptureDevice) throws {
-        guard let conversationId = conversation?.avsIdentifier else {
-            throw VoiceChannelV3Error.switchToVideoNotAllowed
-        }
-
-        callCenter?.setVideoCaptureDevice(device, for: conversationId)
-    }
-
     public var muted: Bool {
         get { callCenter?.isMuted ?? false }
         set { callCenter?.isMuted = newValue }
@@ -177,6 +163,26 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
             guard let conversationId = conversation?.avsIdentifier else { return }
             callCenter?.setVideoGridPresentationMode(newValue, for: conversationId)
         }
+    }
+
+    public func participants(
+        ofKind kind: CallParticipantsListKind,
+        activeSpeakersLimit limit: Int?
+    ) -> [CallParticipant] {
+        guard
+            let callCenter,
+            let conversationId = conversation?.avsIdentifier
+        else { return [] }
+
+        return callCenter.callParticipants(conversationId: conversationId, kind: kind, activeSpeakersLimit: limit)
+    }
+
+    public func setVideoCaptureDevice(_ device: CaptureDevice) throws {
+        guard let conversationId = conversation?.avsIdentifier else {
+            throw VoiceChannelV3Error.switchToVideoNotAllowed
+        }
+
+        callCenter?.setVideoCaptureDevice(device, for: conversationId)
     }
 }
 

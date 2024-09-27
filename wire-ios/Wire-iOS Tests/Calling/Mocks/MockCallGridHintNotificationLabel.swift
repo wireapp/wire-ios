@@ -20,11 +20,12 @@
 
 final class MockCallGridHintNotificationLabel: CallGridHintNotificationLabel {
     var hint: CallGridHintKind?
+    var didCallHideAndStopTimer = false
+
     override func show(hint: CallGridHintKind) {
         self.hint = hint
     }
 
-    var didCallHideAndStopTimer = false
     override func hideAndStopTimer() {
         didCallHideAndStopTimer = true
     }

@@ -24,6 +24,14 @@ extension ZMConversation {
     /// Represents the possible state of external participants in a conversation.
 
     public struct ExternalParticipantsState: OptionSet {
+        // MARK: Lifecycle
+
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+
+        // MARK: Public
+
         /// The conversation contains guests that we should warn the self user about.
         public static let visibleGuests = ExternalParticipantsState(rawValue: 1 << 0)
 
@@ -37,10 +45,6 @@ extension ZMConversation {
         public static let visibleRemotes = ExternalParticipantsState(rawValue: 1 << 3)
 
         public let rawValue: Int
-
-        public init(rawValue: Int) {
-            self.rawValue = rawValue
-        }
     }
 
     @objc

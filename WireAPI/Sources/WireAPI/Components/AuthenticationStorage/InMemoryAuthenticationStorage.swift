@@ -19,8 +19,7 @@
 import Foundation
 
 final class InMemoryAuthenticationStorage: AuthenticationStorage {
-    private var accessToken: AccessToken?
-    private var cookieData: Data?
+    // MARK: Internal
 
     func storeAccessToken(_ accessToken: AccessToken) {
         self.accessToken = accessToken
@@ -37,4 +36,9 @@ final class InMemoryAuthenticationStorage: AuthenticationStorage {
     func fetchCookieData() -> Data? {
         cookieData
     }
+
+    // MARK: Private
+
+    private var accessToken: AccessToken?
+    private var cookieData: Data?
 }

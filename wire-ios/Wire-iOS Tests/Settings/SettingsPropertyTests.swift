@@ -29,12 +29,12 @@ final class MockZMEditableUser: MockUser, EditableUserType {
     var enableReadReceipts = false
     var originalProfileImageData: Data!
 
-    func deleteProfileImage() {
-        // no-op
-    }
-
     static func validate(name: inout String?) throws -> Bool {
         false
+    }
+
+    func deleteProfileImage() {
+        // no-op
     }
 }
 
@@ -59,6 +59,8 @@ final class ZMMockTracking: TrackingInterface {
 // MARK: - SettingsPropertyTests
 
 final class SettingsPropertyTests: XCTestCase {
+    // MARK: Internal
+
     var userDefaults: UserDefaults!
     var userSession: UserSessionMock!
 
@@ -143,20 +145,6 @@ final class SettingsPropertyTests: XCTestCase {
         let property = factory.property(SettingsPropertyName.profileName)
         // when & then
         try! saveAndCheck(property, value: "Test")
-    }
-
-    private var settingsPropertyFactory: SettingsPropertyFactory {
-        let selfUser = MockZMEditableUser()
-        let mediaManager = ZMMockAVSMediaManager()
-        let tracking = ZMMockTracking()
-
-        return SettingsPropertyFactory(
-            userDefaults: userDefaults,
-            tracking: tracking,
-            mediaManager: mediaManager,
-            userSession: userSession,
-            selfUser: selfUser
-        )
     }
 
     func testThatDarkThemePropertySetsValue() {
@@ -256,5 +244,21 @@ final class SettingsPropertyTests: XCTestCase {
         let settingVal: Int? = settings[key]
         XCTAssertNil(settingVal)
         XCTAssertEqual(result, value)
+    }
+
+    // MARK: Private
+
+    private var settingsPropertyFactory: SettingsPropertyFactory {
+        let selfUser = MockZMEditableUser()
+        let mediaManager = ZMMockAVSMediaManager()
+        let tracking = ZMMockTracking()
+
+        return SettingsPropertyFactory(
+            userDefaults: userDefaults,
+            tracking: tracking,
+            mediaManager: mediaManager,
+            userSession: userSession,
+            selfUser: selfUser
+        )
     }
 }

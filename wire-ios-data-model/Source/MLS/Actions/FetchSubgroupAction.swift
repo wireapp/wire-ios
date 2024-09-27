@@ -27,6 +27,19 @@ public enum SubgroupType: String, Hashable, Equatable, Codable {
 // MARK: - FetchSubgroupAction
 
 public class FetchSubgroupAction: EntityAction {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    public init(domain: String, conversationId: UUID, type: SubgroupType, resultHandler: ResultHandler? = nil) {
+        self.domain = domain
+        self.conversationId = conversationId
+        self.type = type
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = MLSSubgroup
 
     public enum Failure: Error, Equatable {
@@ -47,13 +60,4 @@ public class FetchSubgroupAction: EntityAction {
     public let conversationId: UUID
     public let type: SubgroupType
     public var resultHandler: ResultHandler?
-
-    // MARK: - Init
-
-    public init(domain: String, conversationId: UUID, type: SubgroupType, resultHandler: ResultHandler? = nil) {
-        self.domain = domain
-        self.conversationId = conversationId
-        self.type = type
-        self.resultHandler = resultHandler
-    }
 }

@@ -21,6 +21,15 @@ import Foundation
 // MARK: - CompositeMessageItemContent
 
 class CompositeMessageItemContent: NSObject {
+    // MARK: Lifecycle
+
+    init(with item: Composite.Item, message: ZMClientMessage) {
+        self.item = item
+        self.parentMessage = message
+    }
+
+    // MARK: Private
+
     private let parentMessage: ZMClientMessage
     private let item: Composite.Item
 
@@ -32,11 +41,6 @@ class CompositeMessageItemContent: NSObject {
     private var button: Button? {
         guard case .some(.button) = item.content else { return nil }
         return item.button
-    }
-
-    init(with item: Composite.Item, message: ZMClientMessage) {
-        self.item = item
-        self.parentMessage = message
     }
 }
 

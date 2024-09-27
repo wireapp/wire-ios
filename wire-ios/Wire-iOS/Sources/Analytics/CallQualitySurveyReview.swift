@@ -30,6 +30,8 @@ enum CallQualitySurveyReview {
     /// The survey was dismissed.
     case dismissed(duration: Int)
 
+    // MARK: Internal
+
     enum IgnoreReason: String {
         case callTooShort = "call-too-short"
         case muted

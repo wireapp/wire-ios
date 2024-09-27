@@ -25,10 +25,7 @@ import XCTest
 // MARK: - IncomingConnectionViewTests
 
 final class IncomingConnectionViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private let sutBackgroundColor = SemanticColors.View.backgroundDefault
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -105,6 +102,13 @@ final class IncomingConnectionViewTests: XCTestCase {
         sut.backgroundColor = sutBackgroundColor
         snapshotHelper.verify(matching: sut.layoutForTest())
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let sutBackgroundColor = SemanticColors.View.backgroundDefault
+    private var snapshotHelper: SnapshotHelper!
 }
 
 // MARK: - UIView extension

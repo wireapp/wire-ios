@@ -32,7 +32,11 @@ public protocol FetchUserClientsUseCaseProtocol {
 // MARK: - FetchUserClientsUseCase
 
 public class FetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
+    // MARK: Lifecycle
+
     public init() {}
+
+    // MARK: Public
 
     public func fetchUserClients(
         userIDs: Set<QualifiedID>,

@@ -30,20 +30,28 @@ private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).
 // MARK: - MockTaskCancellationProvider
 
 public class MockTaskCancellationProvider: NSObject, ZMRequestCancellation {
-    var cancelledIdentifiers = [ZMTaskIdentifier]()
+    // MARK: Lifecycle
+
+    deinit {
+        cancelledIdentifiers.removeAll()
+    }
+
+    // MARK: Public
 
     public func cancelTask(with identifier: ZMTaskIdentifier) {
         cancelledIdentifiers.append(identifier)
     }
 
-    deinit {
-        cancelledIdentifiers.removeAll()
-    }
+    // MARK: Internal
+
+    var cancelledIdentifiers = [ZMTaskIdentifier]()
 }
 
 // MARK: - AssetV3DownloadRequestStrategyTests
 
 final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
+    // MARK: Internal
+
     var mockApplicationStatus: MockApplicationStatus!
     var sut: AssetV3DownloadRequestStrategy!
     var conversation: ZMConversation!
@@ -79,42 +87,6 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         user = nil
         conversation = nil
         super.tearDown()
-    }
-
-    fileprivate func createFileMessageWithAssetId(
-        in conversation: ZMConversation,
-        otrKey: Data = Data.randomEncryptionKey(),
-        sha: Data = Data.randomEncryptionKey()
-    ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, domain: String?)? {
-        let isFederationEnabled = apiVersion > .v0
-        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
-        let messageDomain = isFederationEnabled ? UUID.create().transportString() : nil
-        let (assetId, token, domain) = (UUID.create().transportString(), UUID.create().transportString(), messageDomain)
-        let content = WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha)
-        var uploaded = GenericMessage(
-            content: content,
-            nonce: message.nonce!,
-            expiresAfter: conversation.activeMessageDestructionTimeoutValue
-        )
-
-        uploaded.updateUploaded(assetId: assetId, token: token, domain: domain)
-        message.updateTransferState(.uploaded, synchronize: false)
-
-        do {
-            try message.setUnderlyingMessage(uploaded)
-        } catch {
-            XCTFail("Could not set generic message")
-        }
-
-        deleteDownloadedFileFor(message: message)
-        XCTAssertEqual(message.version, 3)
-        syncMOC.saveOrRollback()
-        return (message, assetId, token, domain)
-    }
-
-    fileprivate func deleteDownloadedFileFor(message: ZMAssetClientMessage) {
-        coreDataStack.viewContext.zm_fileAssetCache.deleteAssetData(message)
-        coreDataStack.syncContext.zm_fileAssetCache.deleteAssetData(message)
     }
 
     func testThatItMarksMessageAsDownloading_WhenRequestingFileDownload() {
@@ -332,6 +304,44 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             // THEN
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate func createFileMessageWithAssetId(
+        in conversation: ZMConversation,
+        otrKey: Data = Data.randomEncryptionKey(),
+        sha: Data = Data.randomEncryptionKey()
+    ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, domain: String?)? {
+        let isFederationEnabled = apiVersion > .v0
+        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+        let messageDomain = isFederationEnabled ? UUID.create().transportString() : nil
+        let (assetId, token, domain) = (UUID.create().transportString(), UUID.create().transportString(), messageDomain)
+        let content = WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha)
+        var uploaded = GenericMessage(
+            content: content,
+            nonce: message.nonce!,
+            expiresAfter: conversation.activeMessageDestructionTimeoutValue
+        )
+
+        uploaded.updateUploaded(assetId: assetId, token: token, domain: domain)
+        message.updateTransferState(.uploaded, synchronize: false)
+
+        do {
+            try message.setUnderlyingMessage(uploaded)
+        } catch {
+            XCTFail("Could not set generic message")
+        }
+
+        deleteDownloadedFileFor(message: message)
+        XCTAssertEqual(message.version, 3)
+        syncMOC.saveOrRollback()
+        return (message, assetId, token, domain)
+    }
+
+    fileprivate func deleteDownloadedFileFor(message: ZMAssetClientMessage) {
+        coreDataStack.viewContext.zm_fileAssetCache.deleteAssetData(message)
+        coreDataStack.syncContext.zm_fileAssetCache.deleteAssetData(message)
     }
 }
 

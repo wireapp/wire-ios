@@ -41,11 +41,7 @@ protocol ModifiedKeyObjectSyncTranscoder: AnyObject {
 ///
 /// This only works for core data entities which inherit from `ZMManagedObject`.
 class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
-    let trackedKey: String
-    let modifiedPredicate: NSPredicate?
-    var pending: Set<Transcoder.Object> = Set()
-
-    weak var transcoder: Transcoder?
+    // MARK: Lifecycle
 
     /// - Parameters:
     ///   - trackedKey: Key / property which should synchchronized when modified.
@@ -58,6 +54,14 @@ class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObje
         self.trackedKey = trackedKey
         self.modifiedPredicate = modifiedPredicate
     }
+
+    // MARK: Internal
+
+    let trackedKey: String
+    let modifiedPredicate: NSPredicate?
+    var pending: Set<Transcoder.Object> = Set()
+
+    weak var transcoder: Transcoder?
 
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
         let trackedObjects = objects.compactMap { $0 as? Transcoder.Object }

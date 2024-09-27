@@ -21,12 +21,7 @@ import XCTest
 @testable import Wire
 
 final class CharacterInputFieldSnapshotTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: CharacterInputField! = nil
-
-    private var rootViewController: UIViewController! {
-        (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController
-    }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -86,5 +81,14 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
 
         // then
         snapshotHelper.verify(matching: sut)
+    }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: CharacterInputField! = nil
+
+    private var rootViewController: UIViewController! {
+        (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController
     }
 }

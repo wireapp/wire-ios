@@ -25,10 +25,7 @@ import WireDataModel
 /// For playing videos in conversation
 /// Controls and observe the state of a AVPlayer instance for integration with the AVSMediaManager
 final class MediaPlayerController: NSObject {
-    let message: ZMConversationMessage
-    private let player: AVPlayer
-    weak var delegate: MediaPlayerDelegate?
-    private var playerRateObserver: NSKeyValueObservation!
+    // MARK: Lifecycle
 
     init(
         player: AVPlayer,
@@ -50,9 +47,19 @@ final class MediaPlayerController: NSObject {
         playerRateObserver.invalidate()
     }
 
+    // MARK: Internal
+
+    let message: ZMConversationMessage
+    weak var delegate: MediaPlayerDelegate?
+
     func tearDown() {
         delegate?.mediaPlayer(self, didChangeTo: .completed)
     }
+
+    // MARK: Private
+
+    private let player: AVPlayer
+    private var playerRateObserver: NSKeyValueObservation!
 
     private func playerRateChanged() {
         if player.rate > 0 {

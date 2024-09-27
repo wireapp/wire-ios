@@ -26,15 +26,15 @@ import Foundation
 /// NOTE that we are not receiving encrypted events since we are not
 /// interested in measuring decryption performance here.
 class EventProcessingPerformanceTests: IntegrationTest {
+    var users: [MockUser]!
+    var conversations: [MockConversation]!
+
     override func setUp() {
         super.setUp()
 
         createSelfUserAndConversation()
         createTeamAndConversations()
     }
-
-    var users: [MockUser]!
-    var conversations: [MockConversation]!
 
     func testTextEventProcessingPerformance_InLargeGroups() {
         // given

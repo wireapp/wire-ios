@@ -20,7 +20,7 @@ import XCTest
 @testable import WireAPI
 
 final class FederationEventDecodingTests: XCTestCase {
-    private var decoder: JSONDecoder!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -66,6 +66,8 @@ final class FederationEventDecodingTests: XCTestCase {
         )
     }
 
+    // MARK: Private
+
     private enum Scaffolding {
         static let connectionRemovedEvent = FederationConnectionRemovedEvent(
             domains: [
@@ -76,4 +78,6 @@ final class FederationEventDecodingTests: XCTestCase {
 
         static let deleteEvent = FederationDeleteEvent(domain: "foo.com")
     }
+
+    private var decoder: JSONDecoder!
 }

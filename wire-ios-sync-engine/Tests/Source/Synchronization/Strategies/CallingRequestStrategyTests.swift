@@ -26,6 +26,8 @@ import WireTransport
 // MARK: - CallingRequestStrategyTests
 
 class CallingRequestStrategyTests: MessagingTest {
+    // MARK: Internal
+
     var sut: CallingRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockRegistrationDelegate: ClientRegistrationDelegate!
@@ -659,35 +661,6 @@ class CallingRequestStrategyTests: MessagingTest {
         }
     }
 
-    @discardableResult
-    private func createClient(for user: ZMUser, connectedTo userClient: UserClient) -> UserClient {
-        let client = UserClient.insertNewObject(in: syncMOC)
-        client.remoteIdentifier = .randomRemoteIdentifier()
-        client.user = user
-
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: [John] use flag here
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
-            try! session.createClientSession(
-                client.sessionIdentifier!,
-                base64PreKeyString: syncMOC.zm_cryptKeyStore.lastPreKey()
-            )
-        }
-
-        return client
-    }
-
-    private func callMessage(withType type: String) -> Data {
-        let json = [
-            "src_userid": UUID.create().uuidString,
-            "src_clientid": "clientID",
-            "resp": false,
-            "type": type,
-        ] as [String: Any]
-
-        return try! JSONSerialization.data(withJSONObject: json, options: [])
-    }
-
     // MARK: - Event processing
 
     func testThatItAsksCallCenterToMute_WhenReceivingRemoteMuteEvent() {
@@ -789,6 +762,37 @@ class CallingRequestStrategyTests: MessagingTest {
             XCTAssertEqual(ZMConversationType.`self`, sentMessage?.conversation?.conversationType)
             XCTAssertEqual(.mls, sentMessage?.conversation?.messageProtocol)
         }
+    }
+
+    // MARK: Private
+
+    @discardableResult
+    private func createClient(for user: ZMUser, connectedTo userClient: UserClient) -> UserClient {
+        let client = UserClient.insertNewObject(in: syncMOC)
+        client.remoteIdentifier = .randomRemoteIdentifier()
+        client.user = user
+
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: [John] use flag here
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
+            try! session.createClientSession(
+                client.sessionIdentifier!,
+                base64PreKeyString: syncMOC.zm_cryptKeyStore.lastPreKey()
+            )
+        }
+
+        return client
+    }
+
+    private func callMessage(withType type: String) -> Data {
+        let json = [
+            "src_userid": UUID.create().uuidString,
+            "src_clientid": "clientID",
+            "resp": false,
+            "type": type,
+        ] as [String: Any]
+
+        return try! JSONSerialization.data(withJSONObject: json, options: [])
     }
 
     private func setupMockMessageSyncForMLSSuccessfully() {

@@ -20,8 +20,7 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
-    // the api version is required to build and should not influence the tests
-    private let minimumAPIVersion: APIVersion = .v5
+    // MARK: Internal
 
     // MARK: Transport Request
 
@@ -151,6 +150,11 @@ final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
         // then
         XCTAssert(request?.userInfo.isEmpty == true)
     }
+
+    // MARK: Private
+
+    // the api version is required to build and should not influence the tests
+    private let minimumAPIVersion: APIVersion = .v5
 
     // MARK: Helpers
 

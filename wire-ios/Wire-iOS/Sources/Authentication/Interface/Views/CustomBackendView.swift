@@ -20,6 +20,20 @@ import UIKit
 import WireDesign
 
 final class CustomBackendView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupViews()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupViews()
+    }
+
+    // MARK: Internal
+
     lazy var backendLabel: UILabel = {
         let label = DynamicFontLabel(
             text: nil,
@@ -31,15 +45,13 @@ final class CustomBackendView: UIView {
         return label
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupViews()
+    func setBackendUrl(_ url: URL) {
+        if let domain = NSURLComponents(url: url, resolvingAgainstBaseURL: false)?.host {
+            backendLabel.text = domain
+        }
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupViews()
-    }
+    // MARK: Private
 
     private func setupViews() {
         let imageSize: CGFloat = 16
@@ -63,11 +75,5 @@ final class CustomBackendView: UIView {
         // Vertical
         imageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         backendLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-    }
-
-    func setBackendUrl(_ url: URL) {
-        if let domain = NSURLComponents(url: url, resolvingAgainstBaseURL: false)?.host {
-            backendLabel.text = domain
-        }
     }
 }

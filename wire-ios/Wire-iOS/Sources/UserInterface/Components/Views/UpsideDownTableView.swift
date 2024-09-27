@@ -19,8 +19,7 @@
 import UIKit
 
 final class UpsideDownTableView: UITableView {
-    /// The view that allow pan gesture to scroll the tableview
-    weak var pannableView: UIView?
+    // MARK: Lifecycle
 
     override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
@@ -34,6 +33,13 @@ final class UpsideDownTableView: UITableView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    /// The view that allow pan gesture to scroll the tableview
+    weak var pannableView: UIView?
+
+    var lockContentOffset = false
 
     var correctedContentInset: UIEdgeInsets {
         get {
@@ -50,8 +56,6 @@ final class UpsideDownTableView: UITableView {
             )
         }
     }
-
-    var lockContentOffset = false
 
     override var contentOffset: CGPoint {
         get {

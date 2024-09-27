@@ -23,11 +23,13 @@ import XCTest
 @testable import Wire
 
 final class SketchColorPickerControllerSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: - Properties
 
     typealias SketchColors = SemanticColors.DrawingColors
+
     var sut: SketchColorPickerController!
-    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
@@ -68,4 +70,8 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

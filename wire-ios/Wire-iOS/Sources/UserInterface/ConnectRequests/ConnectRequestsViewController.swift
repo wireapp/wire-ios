@@ -26,15 +26,7 @@ import WireSyncEngine
 final class ConnectRequestsViewController: UIViewController,
     UITableViewDataSource,
     UITableViewDelegate {
-    var connectionRequests: [ConversationLike] = []
-
-    private var userObserverToken: Any?
-    private var pendingConnectionsListObserverToken: Any?
-    private let tableView = UITableView(frame: .zero)
-    private var lastLayoutBounds = CGRect.zero
-    private var isAccepting = false
-    private var isIgnoring = false
-    let userSession: UserSession
+    // MARK: Lifecycle
 
     init(userSession: UserSession) {
         self.userSession = userSession
@@ -44,6 +36,16 @@ final class ConnectRequestsViewController: UIViewController,
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var connectionRequests: [ConversationLike] = []
+
+    let userSession: UserSession
+
+    override var prefersStatusBarHidden: Bool {
+        true
     }
 
     override func loadView() {
@@ -82,10 +84,6 @@ final class ConnectRequestsViewController: UIViewController,
         setupNavigationBar()
     }
 
-    override var prefersStatusBarHidden: Bool {
-        true
-    }
-
     override func viewDidLayoutSubviews() {
         if !lastLayoutBounds.size.equalTo(view.bounds.size) {
             lastLayoutBounds = view.bounds
@@ -101,13 +99,6 @@ final class ConnectRequestsViewController: UIViewController,
         }, completion: nil)
 
         super.viewWillTransition(to: size, with: coordinator)
-    }
-
-    private func setupNavigationBar() {
-        setupNavigationBarTitle(L10n.Localizable.Inbox.title.capitalized)
-        let button = AuthenticationNavigationBar.makeBackButton()
-        button.addTarget(self, action: #selector(onBackButtonPressed), for: .touchUpInside)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
     }
 
     // MARK: - UITableViewDataSource
@@ -138,6 +129,35 @@ final class ConnectRequestsViewController: UIViewController,
     @objc
     func onBackButtonPressed() {
         ZClientViewController.shared?.showConversationList()
+    }
+
+    func reload(animated: Bool = true) {
+        if !ProcessInfo.processInfo.isRunningTests {
+            let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
+            connectionRequests = pendingConnectionsList.items
+        }
+
+        tableView.reloadData()
+
+        if !isAccepting, !isIgnoring {
+            hideRequestsOrShowNextRequest()
+        }
+    }
+
+    // MARK: Private
+
+    private var userObserverToken: Any?
+    private var pendingConnectionsListObserverToken: Any?
+    private let tableView = UITableView(frame: .zero)
+    private var lastLayoutBounds = CGRect.zero
+    private var isAccepting = false
+    private var isIgnoring = false
+
+    private func setupNavigationBar() {
+        setupNavigationBarTitle(L10n.Localizable.Inbox.title.capitalized)
+        let button = AuthenticationNavigationBar.makeBackButton()
+        button.addTarget(self, action: #selector(onBackButtonPressed), for: .touchUpInside)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
     }
 
     private func configureCell(_ cell: ConnectRequestCell, for indexPath: IndexPath) {
@@ -201,19 +221,6 @@ final class ConnectRequestsViewController: UIViewController,
             // scroll to bottom to show the next request
             let indexPath = IndexPath(row: connectionRequests.count - 1, section: 0)
             tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-        }
-    }
-
-    func reload(animated: Bool = true) {
-        if !ProcessInfo.processInfo.isRunningTests {
-            let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
-            connectionRequests = pendingConnectionsList.items
-        }
-
-        tableView.reloadData()
-
-        if !isAccepting, !isIgnoring {
-            hideRequestsOrShowNextRequest()
         }
     }
 }

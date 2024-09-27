@@ -28,6 +28,8 @@ enum PreviewDisplayMode {
     case placeholder
     indirect case mixed(Int, PreviewDisplayMode?)
 
+    // MARK: Internal
+
     /// The size of the preview, in points.
     static var size: CGSize {
         CGSize(width: 70, height: 70)
@@ -45,9 +47,7 @@ enum PreviewDisplayMode {
 /// An image view used to preview the content of a post.
 
 final class PreviewImageView: UIImageView {
-    private let detailsContainer = UIView()
-    private let videoBadgeImageView = UIImageView()
-    private let countLabel = UILabel()
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -61,6 +61,30 @@ final class PreviewImageView: UIImageView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Display Mode
+
+    /// How the content should be displayed.
+    var displayMode: PreviewDisplayMode? {
+        didSet {
+            invalidateIntrinsicContentSize()
+            updateContentMode(for: displayMode)
+            updateBorders(for: displayMode)
+            updateDetailsBadge(for: displayMode)
+        }
+    }
+
+    override var intrinsicContentSize: CGSize {
+        PreviewDisplayMode.size
+    }
+
+    // MARK: Private
+
+    private let detailsContainer = UIView()
+    private let videoBadgeImageView = UIImageView()
+    private let countLabel = UILabel()
 
     private func configureSubviews() {
         displayMode = nil
@@ -100,18 +124,6 @@ final class PreviewImageView: UIImageView {
         ]
 
         NSLayoutConstraint.activate(constraints)
-    }
-
-    // MARK: - Display Mode
-
-    /// How the content should be displayed.
-    var displayMode: PreviewDisplayMode? {
-        didSet {
-            invalidateIntrinsicContentSize()
-            updateContentMode(for: displayMode)
-            updateBorders(for: displayMode)
-            updateDetailsBadge(for: displayMode)
-        }
     }
 
     private func updateContentMode(for displayMode: PreviewDisplayMode?) {
@@ -160,9 +172,5 @@ final class PreviewImageView: UIImageView {
             videoBadgeImageView.isHidden = true
             countLabel.isHidden = true
         }
-    }
-
-    override var intrinsicContentSize: CGSize {
-        PreviewDisplayMode.size
     }
 }

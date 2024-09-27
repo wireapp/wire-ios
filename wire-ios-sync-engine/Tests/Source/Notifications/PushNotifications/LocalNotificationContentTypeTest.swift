@@ -20,7 +20,7 @@ import XCTest
 @testable import WireSyncEngine
 
 class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
-    private typealias Sut = LocalNotificationContentType
+    // MARK: Internal
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheLocationMessage() {
         // given
@@ -153,6 +153,10 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
         // then
         XCTAssertEqual(contentType, .messageTimerUpdate("1 year"))
     }
+
+    // MARK: Private
+
+    private typealias Sut = LocalNotificationContentType
 
     private func createFileMetadata(filename: String? = nil) -> ZMFileMetadata {
         let fileURL: URL = if let fileName = filename {

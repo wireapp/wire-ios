@@ -199,6 +199,15 @@ final class CompanyLoginRequesterTests: XCTestCase {
 // MARK: - MockSession
 
 private final class MockSession: NSObject, URLSessionProtocol {
+    // MARK: Lifecycle
+
+    init(handler: @escaping RequestHandler) {
+        self.handler = handler
+        super.init()
+    }
+
+    // MARK: Internal
+
     class MockURLSessionDataTask: URLSessionDataTask {
         override func resume() {
             // no-op
@@ -206,12 +215,8 @@ private final class MockSession: NSObject, URLSessionProtocol {
     }
 
     typealias RequestHandler = (URLRequest) -> (Data?, URLResponse?, Error?)
-    let handler: RequestHandler
 
-    init(handler: @escaping RequestHandler) {
-        self.handler = handler
-        super.init()
-    }
+    let handler: RequestHandler
 
     func dataTask(
         with request: URLRequest,

@@ -23,9 +23,10 @@ import WireTransport
 // MARK: - AcmeAPITests
 
 final class AcmeAPITests: ZMTBaseTest {
+    // MARK: Internal
+
     var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
-    private let encoder: JSONEncoder = .defaultEncoder
 
     override func setUp() {
         super.setUp()
@@ -289,6 +290,10 @@ final class AcmeAPITests: ZMTBaseTest {
         XCTAssertEqual(request.httpMethod, "GET")
         XCTAssertEqual(certificates, mockCertificates)
     }
+
+    // MARK: Private
+
+    private let encoder: JSONEncoder = .defaultEncoder
 }
 
 // MARK: - MockHttpClient

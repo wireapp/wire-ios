@@ -101,24 +101,7 @@ extension BufferedDecryptedMessage: DecryptedMessageBundle {}
 /// when the epoch changes or new CRL distribution points are found.
 
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {
-    // MARK: - Properties
-
-    private let mlsActionExecutor: MLSActionExecutorProtocol
-    private weak var context: NSManagedObjectContext?
-    private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
-
-    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
-    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
-
-    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        onEpochChangedSubject.eraseToAnyPublisher()
-    }
-
-    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         context: NSManagedObjectContext,
@@ -130,6 +113,8 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         self.subconverationGroupIDRepository = subconversationGroupIDRepository
     }
 
+    // MARK: Public
+
     // MARK: - Message decryption
 
     public enum MLSMessageDecryptionError: Error {
@@ -137,6 +122,14 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         case failedToDecryptMessage
         case failedToDecodeSenderClientID
         case wrongEpoch
+    }
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        onEpochChangedSubject.eraseToAnyPublisher()
+    }
+
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
@@ -232,6 +225,17 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             throw MLSMessageDecryptionError.failedToDecryptMessage
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let mlsActionExecutor: MLSActionExecutorProtocol
+    private weak var context: NSManagedObjectContext?
+    private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
+
+    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
+    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
     private func decryptResult(from messageBundle: some DecryptedMessageBundle) throws -> MLSDecryptResult? {
         if let commitDelay = messageBundle.commitDelay {

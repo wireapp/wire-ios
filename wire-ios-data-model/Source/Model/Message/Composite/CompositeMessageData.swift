@@ -30,6 +30,8 @@ public enum CompositeMessageItem {
     case text(TextMessageData)
     case button(ButtonMessageData)
 
+    // MARK: Lifecycle
+
     init?(with protoItem: Composite.Item, message: ZMClientMessage) {
         guard let content = protoItem.content else { return nil }
         let itemContent = CompositeMessageItemContent(with: protoItem, message: message)
@@ -64,6 +66,8 @@ public enum ButtonMessageState {
     case unselected
     case selected
     case confirmed
+
+    // MARK: Lifecycle
 
     init(from state: ButtonState.State?) {
         guard let state else {

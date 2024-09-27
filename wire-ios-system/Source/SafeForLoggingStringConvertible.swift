@@ -28,10 +28,15 @@ public protocol SafeForLoggingStringConvertible {
 // MARK: - SafeValueForLogging
 
 public struct SafeValueForLogging<T: CustomStringConvertible>: SafeForLoggingStringConvertible {
-    public let value: T
+    // MARK: Lifecycle
+
     public init(_ value: T) {
         self.value = value
     }
+
+    // MARK: Public
+
+    public let value: T
 
     public var safeForLoggingDescription: String {
         value.description

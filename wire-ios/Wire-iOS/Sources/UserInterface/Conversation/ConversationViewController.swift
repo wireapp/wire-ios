@@ -24,99 +24,7 @@ import WireSyncEngine
 // MARK: - ConversationViewController
 
 final class ConversationViewController: UIViewController {
-    let mainCoordinator: MainCoordinating
-    private let visibleMessage: ZMConversationMessage?
-
-    typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
-
-    override var keyCommands: [UIKeyCommand]? {
-        [
-            UIKeyCommand(
-                action: #selector(gotoBottom(_:)),
-                input: UIKeyCommand.inputDownArrow,
-                modifierFlags: [.command, .alternate],
-                discoverabilityTitle: keyboardShortcut.scrollToBottom
-            ),
-            UIKeyCommand(
-                action: #selector(onCollectionButtonPressed(_:)),
-                input: "f",
-                modifierFlags: [.command],
-                discoverabilityTitle: keyboardShortcut.searchInConversation
-            ),
-            UIKeyCommand(
-                action: #selector(titleViewTapped),
-                input: "i",
-                modifierFlags: [.command],
-                discoverabilityTitle: keyboardShortcut.conversationDetail
-            ),
-        ]
-    }
-
-    @objc
-    func gotoBottom(_: Any?) {
-        contentViewController.tableView.scrollToBottom(animated: true)
-    }
-
-    var conversation: ZMConversation {
-        didSet {
-            if oldValue == conversation {
-                return
-            }
-
-            update(conversation: conversation)
-        }
-    }
-
-    var isFocused = false
-
-    private(set) var startCallController: ConversationCallController!
-
-    let contentViewController: ConversationContentViewController
-    let inputBarController: ConversationInputBarViewController
-
-    var collectionController: CollectionsViewController?
-    var outgoingConnectionViewController: OutgoingConnectionViewController!
-    let conversationBarController = BarController()
-    let guestsBarController = GuestsBarController()
-    let invisibleInputAccessoryView = InvisibleInputAccessoryView()
-    let mediaBarViewController: MediaBarViewController
-    private let titleView: ConversationTitleView
-
-    let userSession: UserSession
-
-    var inputBarBottomMargin: NSLayoutConstraint?
-    var inputBarZeroHeight: NSLayoutConstraint?
-
-    var isAppearing = false
-    private var voiceChannelStateObserverToken: Any?
-    private var conversationObserverToken: Any?
-    private var conversationListObserverToken: Any?
-    var updateLeftNavigationBarItemsTask: Task<Void, Never>?
-
-    var participantsController: UIViewController? {
-        var viewController: UIViewController?
-
-        switch conversation.conversationType {
-        case .group:
-            viewController = GroupDetailsViewController(
-                conversation: conversation,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator,
-                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-            )
-
-        case .`self`, .oneOnOne, .connection:
-            viewController = createUserDetailViewController()
-
-        case .invalid:
-            fatal("Trying to open invalid conversation")
-
-        default:
-            break
-        }
-
-        return viewController?.wrapInNavigationController()
-    }
+    // MARK: Lifecycle
 
     required init(
         conversation: ZMConversation,
@@ -169,15 +77,107 @@ final class ConversationViewController: UIViewController {
         contentViewController.delegate = nil
     }
 
-    private var observationToken: SelfUnregisteringNotificationCenterToken?
+    // MARK: Internal
 
-    private func update(conversation: ZMConversation) {
-        setupNavigatiomItem()
-        updateOutgoingConnectionVisibility()
+    typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
-        voiceChannelStateObserverToken = addCallStateObserver()
-        conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
-        startCallController = ConversationCallController(conversation: conversation, target: self)
+    let mainCoordinator: MainCoordinating
+    var isFocused = false
+
+    private(set) var startCallController: ConversationCallController!
+
+    let contentViewController: ConversationContentViewController
+    let inputBarController: ConversationInputBarViewController
+
+    var collectionController: CollectionsViewController?
+    var outgoingConnectionViewController: OutgoingConnectionViewController!
+    let conversationBarController = BarController()
+    let guestsBarController = GuestsBarController()
+    let invisibleInputAccessoryView = InvisibleInputAccessoryView()
+    let mediaBarViewController: MediaBarViewController
+    let userSession: UserSession
+
+    var inputBarBottomMargin: NSLayoutConstraint?
+    var inputBarZeroHeight: NSLayoutConstraint?
+
+    var isAppearing = false
+    var updateLeftNavigationBarItemsTask: Task<Void, Never>?
+
+    override var keyCommands: [UIKeyCommand]? {
+        [
+            UIKeyCommand(
+                action: #selector(gotoBottom(_:)),
+                input: UIKeyCommand.inputDownArrow,
+                modifierFlags: [.command, .alternate],
+                discoverabilityTitle: keyboardShortcut.scrollToBottom
+            ),
+            UIKeyCommand(
+                action: #selector(onCollectionButtonPressed(_:)),
+                input: "f",
+                modifierFlags: [.command],
+                discoverabilityTitle: keyboardShortcut.searchInConversation
+            ),
+            UIKeyCommand(
+                action: #selector(titleViewTapped),
+                input: "i",
+                modifierFlags: [.command],
+                discoverabilityTitle: keyboardShortcut.conversationDetail
+            ),
+        ]
+    }
+
+    var conversation: ZMConversation {
+        didSet {
+            if oldValue == conversation {
+                return
+            }
+
+            update(conversation: conversation)
+        }
+    }
+
+    var participantsController: UIViewController? {
+        var viewController: UIViewController?
+
+        switch conversation.conversationType {
+        case .group:
+            viewController = GroupDetailsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator,
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            )
+
+        case .`self`, .oneOnOne, .connection:
+            viewController = createUserDetailViewController()
+
+        case .invalid:
+            fatal("Trying to open invalid conversation")
+
+        default:
+            break
+        }
+
+        return viewController?.wrapInNavigationController()
+    }
+
+    // MARK: - Device orientation
+
+    override var shouldAutorotate: Bool {
+        true
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            .portrait
+        } else {
+            .all
+        }
+    }
+
+    @objc
+    func gotoBottom(_: Any?) {
+        contentViewController.tableView.scrollToBottom(animated: true)
     }
 
     override func viewDidLoad() {
@@ -281,20 +281,6 @@ final class ConversationViewController: UIViewController {
         contentViewController.scroll(to: message, completion: nil)
     }
 
-    // MARK: - Device orientation
-
-    override var shouldAutorotate: Bool {
-        true
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            .portrait
-        } else {
-            .all
-        }
-    }
-
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         coordinator.animate(alongsideTransition: nil) { _ in
             self.updateLeftNavigationBarItems()
@@ -337,6 +323,34 @@ final class ConversationViewController: UIViewController {
         openConversationList()
     }
 
+    @objc
+    func didTapMediaBar(_: UITapGestureRecognizer?) {
+        if let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage,
+           conversation === mediaPlayingMessage.conversationLike {
+            contentViewController.scroll(to: mediaPlayingMessage, completion: nil)
+        }
+    }
+
+    // MARK: Private
+
+    private let visibleMessage: ZMConversationMessage?
+
+    private let titleView: ConversationTitleView
+
+    private var voiceChannelStateObserverToken: Any?
+    private var conversationObserverToken: Any?
+    private var conversationListObserverToken: Any?
+    private var observationToken: SelfUnregisteringNotificationCenterToken?
+
+    private func update(conversation: ZMConversation) {
+        setupNavigatiomItem()
+        updateOutgoingConnectionVisibility()
+
+        voiceChannelStateObserverToken = addCallStateObserver()
+        conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
+        startCallController = ConversationCallController(conversation: conversation, target: self)
+    }
+
     private func setupContentViewController() {
         contentViewController.delegate = self
         contentViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -350,14 +364,6 @@ final class ConversationViewController: UIViewController {
             target: self,
             action: #selector(didTapMediaBar(_:))
         ))
-    }
-
-    @objc
-    func didTapMediaBar(_: UITapGestureRecognizer?) {
-        if let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage,
-           conversation === mediaPlayingMessage.conversationLike {
-            contentViewController.scroll(to: mediaPlayingMessage, completion: nil)
-        }
     }
 
     private func setupInputBarController() {

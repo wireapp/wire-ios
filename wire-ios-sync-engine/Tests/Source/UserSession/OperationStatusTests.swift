@@ -20,7 +20,7 @@ import Foundation
 @testable import WireSyncEngine
 
 final class OperationStatusTests: MessagingTest {
-    fileprivate var sut: OperationStatus!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -181,4 +181,8 @@ final class OperationStatusTests: MessagingTest {
         // then
         XCTAssertEqual(sut.operationState, .background)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var sut: OperationStatus!
 }

@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 
 final class ConversationRenamedCellTests: ConversationMessageSnapshotTestCase {
+    // MARK: Internal
+
     override func setUp() {
         super.setUp()
 
@@ -46,6 +48,8 @@ final class ConversationRenamedCellTests: ConversationMessageSnapshotTestCase {
 
         verify(message: message)
     }
+
+    // MARK: Private
 
     // MARK: – Helpers
 

@@ -28,7 +28,7 @@ public protocol JailbreakDetectorProtocol {
 // MARK: - JailbreakDetector
 
 public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
-    private let fm = FileManager.default
+    // MARK: Public
 
     public func isJailbroken() -> Bool {
         #if targetEnvironment(simulator)
@@ -41,6 +41,10 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
                 canOpenJailbrokenStores
         #endif
     }
+
+    // MARK: Private
+
+    private let fm = FileManager.default
 
     private var hasJailbrokenFiles: Bool {
         let paths: [String] = [
@@ -146,12 +150,16 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
 
 @objcMembers
 public class MockJailbreakDetector: NSObject, JailbreakDetectorProtocol {
-    public var jailbroken = false
+    // MARK: Lifecycle
 
     @objc(initAsJailbroken:)
     public init(jailbroken: Bool = false) {
         self.jailbroken = jailbroken
     }
+
+    // MARK: Public
+
+    public var jailbroken = false
 
     public func isJailbroken() -> Bool {
         jailbroken

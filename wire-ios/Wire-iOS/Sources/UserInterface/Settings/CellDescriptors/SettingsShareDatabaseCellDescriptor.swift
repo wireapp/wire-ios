@@ -31,7 +31,7 @@ final class DocumentDelegate: NSObject, UIDocumentInteractionControllerDelegate 
 // MARK: - SettingsShareDatabaseCellDescriptor
 
 final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
-    let documentDelegate: DocumentDelegate
+    // MARK: Lifecycle
 
     init() {
         let documentDelegate = DocumentDelegate()
@@ -49,12 +49,16 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
             shareDatabaseDocumentController.presentPreview(animated: true)
         }
     }
+
+    // MARK: Internal
+
+    let documentDelegate: DocumentDelegate
 }
 
 // MARK: - SettingsShareCryptoboxCellDescriptor
 
 final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
-    let documentDelegate: DocumentDelegate
+    // MARK: Lifecycle
 
     init() {
         let documentDelegate = DocumentDelegate()
@@ -73,4 +77,8 @@ final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
             shareDatabaseDocumentController.presentPreview(animated: true)
         }
     }
+
+    // MARK: Internal
+
+    let documentDelegate: DocumentDelegate
 }

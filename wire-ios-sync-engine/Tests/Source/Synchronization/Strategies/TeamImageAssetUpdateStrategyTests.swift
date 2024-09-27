@@ -21,6 +21,8 @@ import XCTest
 @testable import WireSyncEngine
 
 final class TeamImageAssetUpdateStrategyTests: MessagingTest {
+    // MARK: Internal
+
     var sut: TeamImageAssetUpdateStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     let pictureAssetId = "blah"
@@ -39,15 +41,6 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
         sut = nil
 
         super.tearDown()
-    }
-
-    private func createTeamWithImage() -> Team {
-        let team = Team(context: uiMOC)
-        team.pictureAssetId = pictureAssetId
-        team.remoteIdentifier = UUID()
-        uiMOC.saveOrRollback()
-
-        return team
     }
 
     func testThatItDoesNotCreateRequestForTeamImageAsset_BeforeRequestingImage() {
@@ -115,5 +108,16 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
 
         // THEN
         XCTAssertNil(team.pictureAssetId)
+    }
+
+    // MARK: Private
+
+    private func createTeamWithImage() -> Team {
+        let team = Team(context: uiMOC)
+        team.pictureAssetId = pictureAssetId
+        team.remoteIdentifier = UUID()
+        uiMOC.saveOrRollback()
+
+        return team
     }
 }

@@ -21,8 +21,7 @@ import XCTest
 @testable import Wire
 
 final class MediaPreviewViewSnapshotTests: XCTestCase {
-    private var sut: MediaPreviewView!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -44,4 +43,9 @@ final class MediaPreviewViewSnapshotTests: XCTestCase {
     func testForInitState() {
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var sut: MediaPreviewView!
+    private var snapshotHelper: SnapshotHelper!
 }

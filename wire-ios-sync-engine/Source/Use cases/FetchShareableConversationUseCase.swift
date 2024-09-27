@@ -34,15 +34,21 @@ public protocol FetchShareableConversationsUseCaseProtocol {
 // MARK: - FetchShareableConversationsUseCase
 
 public class FetchShareableConversationsUseCase: FetchShareableConversationsUseCaseProtocol {
-    private let contextProvider: ContextProvider
+    // MARK: Lifecycle
 
     public init(contextProvider: ContextProvider) {
         self.contextProvider = contextProvider
     }
+
+    // MARK: Public
 
     public func invoke() -> [ZMConversation] {
         ConversationList.conversationsIncludingArchived(
             inUserSession: contextProvider
         ).shareableConversations()
     }
+
+    // MARK: Private
+
+    private let contextProvider: ContextProvider
 }

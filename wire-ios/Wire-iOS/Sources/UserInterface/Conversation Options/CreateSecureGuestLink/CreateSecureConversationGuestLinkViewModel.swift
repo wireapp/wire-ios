@@ -37,6 +37,20 @@ protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
 // MARK: - CreateSecureConversationGuestLinkViewModel
 
 final class CreateSecureConversationGuestLinkViewModel {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    init(
+        delegate: CreatePasswordSecuredLinkViewModelDelegate?,
+        conversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
+    ) {
+        self.delegate = delegate
+        self.conversationGuestLinkUseCase = conversationGuestLinkUseCase
+    }
+
+    // MARK: Internal
+
     enum UserInfoKeys {
         static let link = "link"
     }
@@ -48,17 +62,6 @@ final class CreateSecureConversationGuestLinkViewModel {
     // MARK: - Properties
 
     weak var delegate: CreatePasswordSecuredLinkViewModelDelegate?
-    private let conversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
-
-    // MARK: - Init
-
-    init(
-        delegate: CreatePasswordSecuredLinkViewModelDelegate?,
-        conversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
-    ) {
-        self.delegate = delegate
-        self.conversationGuestLinkUseCase = conversationGuestLinkUseCase
-    }
 
     // MARK: - Methods
 
@@ -143,4 +146,8 @@ final class CreateSecureConversationGuestLinkViewModel {
 
         return String(characters.shuffled())
     }
+
+    // MARK: Private
+
+    private let conversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 }

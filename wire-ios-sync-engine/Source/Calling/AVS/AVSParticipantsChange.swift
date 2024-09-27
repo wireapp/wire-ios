@@ -19,8 +19,7 @@
 import Foundation
 
 public struct AVSParticipantsChange: Codable {
-    let convid: String
-    let members: [Member]
+    // MARK: Public
 
     public struct Member: Codable {
         let userid: String
@@ -29,4 +28,9 @@ public struct AVSParticipantsChange: Codable {
         let vrecv: VideoState
         let muted: MicrophoneState
     }
+
+    // MARK: Internal
+
+    let convid: String
+    let members: [Member]
 }

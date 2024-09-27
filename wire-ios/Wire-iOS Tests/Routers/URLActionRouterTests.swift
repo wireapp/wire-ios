@@ -137,11 +137,12 @@ final class URLActionRouterTests: XCTestCase {
 // MARK: - MockAuthenticatedRouter
 
 final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
+    var didNavigateToDestination: NavigationDestination?
+
     func updateActiveCallPresentationState() {}
 
     func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?) {}
 
-    var didNavigateToDestination: NavigationDestination?
     func navigate(to destination: NavigationDestination) {
         didNavigateToDestination = destination
     }
@@ -151,11 +152,12 @@ final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
 
 final class MockURLActionRouterDelegate: URLActionRouterDelegate {
     var didCallWillShowCompanyLoginError = false
+    var canDisplayAlerts = true
+
     func urlActionRouterWillShowCompanyLoginError() {
         didCallWillShowCompanyLoginError = true
     }
 
-    var canDisplayAlerts = true
     func urlActionRouterCanDisplayAlerts() -> Bool {
         canDisplayAlerts
     }
@@ -165,6 +167,7 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
 
 final class TestableURLActionRouter: URLActionRouter {
     var presentedAlert: UIAlertController?
+
     override func internalPresentAlert(_ alert: UIAlertController) {
         presentedAlert = alert
     }

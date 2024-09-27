@@ -27,25 +27,25 @@ typealias ContactsCellActionButtonHandler = (UserType, ContactsCell.Action) -> V
 
 /// A UITableViewCell version of UserCell, with simpler functionality for contact Screen with table view index bar
 final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
-    var user: UserType? {
-        didSet {
-            avatar.user = user
-            updateTitleLabel()
+    // MARK: Lifecycle
 
-            if let subtitle = subtitle(forRegularUser: user), subtitle.length > 0 {
-                subtitleLabel.isHidden = false
-                subtitleLabel.attributedText = subtitle
-            } else {
-                subtitleLabel.isHidden = true
-            }
-        }
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        configureSubviews()
     }
 
-    static let boldFont: FontSpec = .smallRegularFont
-    static let lightFont: FontSpec = .smallLightFont
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
 
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
+
+    static let boldFont: FontSpec = .smallRegularFont
+    static let lightFont: FontSpec = .smallLightFont
 
     let avatar: BadgeUserImageView = {
         let badgeUserImageView = BadgeUserImageView()
@@ -78,12 +78,6 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         return label
     }()
 
-    var action: Action? {
-        didSet {
-            actionButton.setTitle(action?.localizedDescription, for: .normal)
-        }
-    }
-
     let actionButton = ZMButton(
         style: .accentColorTextButtonStyle,
         cornerRadius: 4,
@@ -92,42 +86,37 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
 
     var actionButtonHandler: ContactsCellActionButtonHandler?
 
-    private lazy var actionButtonWidth: CGFloat = {
-        guard let font = actionButton.titleLabel?.font else { return 0 }
-
-        let transform = actionButton.textTransform
-        let insets = actionButton.contentEdgeInsets
-
-        let titleWidths: [CGFloat] = [Action.open, .invite].map {
-            let title = $0.localizedDescription
-            let transformedTitle = title.applying(transform: transform)
-            return transformedTitle.size(withAttributes: [.font: font]).width
-        }
-
-        let maxWidth = titleWidths.max()!
-        return CGFloat(ceilf(Float(insets.left + maxWidth + insets.right)))
-    }()
-
     var titleStackView: UIStackView!
     var contentStackView: UIStackView!
 
     // SeparatorCollectionViewCell
     let separator = UIView()
     var separatorInsetConstraint: NSLayoutConstraint!
+
+    var user: UserType? {
+        didSet {
+            avatar.user = user
+            updateTitleLabel()
+
+            if let subtitle = subtitle(forRegularUser: user), subtitle.length > 0 {
+                subtitleLabel.isHidden = false
+                subtitleLabel.attributedText = subtitle
+            } else {
+                subtitleLabel.isHidden = true
+            }
+        }
+    }
+
+    var action: Action? {
+        didSet {
+            actionButton.setTitle(action?.localizedDescription, for: .normal)
+        }
+    }
+
     var separatorLeadingInset: CGFloat = 64 {
         didSet {
             separatorInsetConstraint?.constant = separatorLeadingInset
         }
-    }
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        configureSubviews()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     func setUp() {
@@ -155,6 +144,31 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
 
         actionButton.addTarget(self, action: #selector(ContactsCell.actionButtonPressed(sender:)), for: .touchUpInside)
     }
+
+    @objc
+    func actionButtonPressed(sender: Any?) {
+        if let user, let action {
+            actionButtonHandler?(user, action)
+        }
+    }
+
+    // MARK: Private
+
+    private lazy var actionButtonWidth: CGFloat = {
+        guard let font = actionButton.titleLabel?.font else { return 0 }
+
+        let transform = actionButton.textTransform
+        let insets = actionButton.contentEdgeInsets
+
+        let titleWidths: [CGFloat] = [Action.open, .invite].map {
+            let title = $0.localizedDescription
+            let transformedTitle = title.applying(transform: transform)
+            return transformedTitle.size(withAttributes: [.font: font]).width
+        }
+
+        let maxWidth = titleWidths.max()!
+        return CGFloat(ceilf(Float(insets.left + maxWidth + insets.right)))
+    }()
 
     private func configureSubviews() {
         setUp()
@@ -214,13 +228,6 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             appendYouSuffix: false
         )
     }
-
-    @objc
-    func actionButtonPressed(sender: Any?) {
-        if let user, let action {
-            actionButtonHandler?(user, action)
-        }
-    }
 }
 
 // MARK: UserCellSubtitleProtocol
@@ -233,6 +240,8 @@ extension ContactsCell {
     enum Action {
         case open
         case invite
+
+        // MARK: Internal
 
         var localizedDescription: String {
             switch self {

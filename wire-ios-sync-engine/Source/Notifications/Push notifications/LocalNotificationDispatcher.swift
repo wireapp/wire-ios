@@ -24,18 +24,7 @@ import UserNotifications
 /// Creates and cancels local notifications
 @objcMembers
 public class LocalNotificationDispatcher: NSObject {
-    public static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
-
-    let eventNotifications: ZMLocalNotificationSet
-    let callingNotifications: ZMLocalNotificationSet
-    let failedMessageNotifications: ZMLocalNotificationSet
-
-    var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
-
-    let syncMOC: NSManagedObjectContext
-    fileprivate var observers: [Any] = []
-
-    var localNotificationBuffer = [ZMLocalNotification]()
+    // MARK: Lifecycle
 
     @objc(initWithManagedObjectContext:)
     public init(in managedObjectContext: NSManagedObjectContext) {
@@ -64,6 +53,29 @@ public class LocalNotificationDispatcher: NSObject {
         )
     }
 
+    // MARK: Public
+
+    public static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
+
+    // MARK: Internal
+
+    let eventNotifications: ZMLocalNotificationSet
+    let callingNotifications: ZMLocalNotificationSet
+    let failedMessageNotifications: ZMLocalNotificationSet
+
+    var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
+
+    let syncMOC: NSManagedObjectContext
+    var localNotificationBuffer = [ZMLocalNotification]()
+
+    /// Determines if the notification content should be hidden as reflected in the store
+    /// metatdata for the given managed object context.
+    ///
+    static func shouldHideNotificationContent(moc: NSManagedObjectContext?) -> Bool {
+        let value = moc?.persistentStoreMetadata(forKey: ZMShouldHideNotificationContentKey) as? NSNumber
+        return value?.boolValue ?? false
+    }
+
     func scheduleLocalNotification(_ note: ZMLocalNotification) {
         Logging.push.safePublic("Scheduling local notification with id=\(note.id)")
 
@@ -77,13 +89,9 @@ public class LocalNotificationDispatcher: NSObject {
         }
     }
 
-    /// Determines if the notification content should be hidden as reflected in the store
-    /// metatdata for the given managed object context.
-    ///
-    static func shouldHideNotificationContent(moc: NSManagedObjectContext?) -> Bool {
-        let value = moc?.persistentStoreMetadata(forKey: ZMShouldHideNotificationContentKey) as? NSNumber
-        return value?.boolValue ?? false
-    }
+    // MARK: Fileprivate
+
+    fileprivate var observers: [Any] = []
 }
 
 // MARK: ZMEventConsumer

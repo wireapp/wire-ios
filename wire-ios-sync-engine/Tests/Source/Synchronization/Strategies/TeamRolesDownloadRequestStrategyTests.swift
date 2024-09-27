@@ -20,9 +20,29 @@ import WireTesting
 @testable import WireSyncEngine
 
 class TeamRolesDownloadRequestStrategyTests: MessagingTest {
+    // MARK: Internal
+
     var sut: TeamRolesDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
+
+    let sampleResponse: [String: Any] = [
+        "conversation_roles": [
+            [
+                "actions": [
+                    "leave_conversation",
+                    "delete_conversation",
+                ],
+                "conversation_role": "superuser",
+            ],
+            [
+                "actions": [
+                    "leave_conversation",
+                ],
+                "conversation_role": "weakling",
+            ],
+        ],
+    ]
 
     override func setUp() {
         super.setUp()
@@ -48,32 +68,6 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         mockSyncStatus = nil
         sut = nil
         super.tearDown()
-    }
-
-    let sampleResponse: [String: Any] = [
-        "conversation_roles": [
-            [
-                "actions": [
-                    "leave_conversation",
-                    "delete_conversation",
-                ],
-                "conversation_role": "superuser",
-            ],
-            [
-                "actions": [
-                    "leave_conversation",
-                ],
-                "conversation_role": "weakling",
-            ],
-        ],
-    ]
-
-    // MARK: - Helper
-
-    fileprivate func boostrapChangeTrackers(with objects: ZMManagedObject...) {
-        for contextChangeTracker in sut.contextChangeTrackers {
-            contextChangeTracker.objectsDidChange(Set(objects))
-        }
     }
 
     func testThatPredicateIsCorrect() {
@@ -303,6 +297,16 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedAndWait {
             // then
             XCTAssertNotNil(Team.fetch(with: teamId, in: self.syncMOC))
+        }
+    }
+
+    // MARK: Fileprivate
+
+    // MARK: - Helper
+
+    fileprivate func boostrapChangeTrackers(with objects: ZMManagedObject...) {
+        for contextChangeTracker in sut.contextChangeTrackers {
+            contextChangeTracker.objectsDidChange(Set(objects))
         }
     }
 }

@@ -20,7 +20,7 @@ import Foundation
 import protocol WireDataModel.FeatureRepositoryInterface
 
 struct FeatureConfigsPayloadProcessor {
-    private let decoder = JSONDecoder.defaultDecoder
+    // MARK: Internal
 
     func processActionPayload(data: Data, repository: FeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
@@ -265,4 +265,8 @@ struct FeatureConfigsPayloadProcessor {
             repository.storeE2EI(.init(status: response.status, config: response.config))
         }
     }
+
+    // MARK: Private
+
+    private let decoder = JSONDecoder.defaultDecoder
 }

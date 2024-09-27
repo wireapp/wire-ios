@@ -37,14 +37,7 @@ enum HeaderKey: String {
 // MARK: - PreviewDownloader
 
 final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownloaderType {
-    typealias DownloadCompletion = (OpenGraphData?) -> Void
-
-    var containerByTaskID = [Int: MetaStreamContainer]()
-    var completionByURL = [URL: DownloadCompletion]()
-    var cancelledTaskIDs = Set<Int>()
-    var session: URLSessionType! = nil
-    let resultsQueue: OperationQueue
-    let parsingQueue: OperationQueue
+    // MARK: Lifecycle
 
     init(resultsQueue: OperationQueue, parsingQueue: OperationQueue? = nil, urlSession: URLSessionType? = nil) {
         self.resultsQueue = resultsQueue
@@ -62,6 +55,17 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
             delegateQueue: parsingQueue
         )
     }
+
+    // MARK: Internal
+
+    typealias DownloadCompletion = (OpenGraphData?) -> Void
+
+    var containerByTaskID = [Int: MetaStreamContainer]()
+    var completionByURL = [URL: DownloadCompletion]()
+    var cancelledTaskIDs = Set<Int>()
+    var session: URLSessionType! = nil
+    let resultsQueue: OperationQueue
+    let parsingQueue: OperationQueue
 
     func requestOpenGraphData(fromURL url: URL, completion: @escaping DownloadCompletion) {
         completionByURL[url] = completion

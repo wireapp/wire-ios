@@ -72,6 +72,14 @@ extension ZMConversation: ObjectInSnapshot {
 
 @objcMembers
 public final class ConversationChangeInfo: ObjectChangeInfo {
+    // MARK: Lifecycle
+
+    public required init(object: NSObject) {
+        super.init(object: object)
+    }
+
+    // MARK: Public
+
     public var isDeletedChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMConversation.isDeletedRemotely))
     }
@@ -224,9 +232,7 @@ public final class ConversationChangeInfo: ObjectChangeInfo {
         ].joined(separator: ", ")
     }
 
-    public required init(object: NSObject) {
-        super.init(object: object)
-    }
+    // MARK: Internal
 
     static func changeInfo(for conversation: ZMConversation, changes: Changes) -> ConversationChangeInfo? {
         ConversationChangeInfo(object: conversation, changes: changes)

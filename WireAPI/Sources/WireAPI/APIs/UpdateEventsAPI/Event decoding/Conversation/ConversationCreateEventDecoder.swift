@@ -19,6 +19,55 @@
 import Foundation
 
 struct ConversationCreateEventDecoder {
+    // MARK: Internal
+
+    struct Member: Decodable, ToAPIModelConvertible {
+        enum CodingKeys: String, CodingKey {
+            case qualifiedID = "qualified_id"
+            case id
+            case qualifiedTarget = "qualified_target"
+            case target
+            case conversationRole = "conversation_role"
+            case service
+            case archived = "otr_archived"
+            case archivedReference = "otr_archived_ref"
+            case hidden = "otr_hidden"
+            case hiddenReference = "otr_hidden_ref"
+            case mutedStatus = "otr_muted_status"
+            case mutedReference = "otr_muted_ref"
+        }
+
+        let qualifiedID: QualifiedID?
+        let id: UUID?
+        let qualifiedTarget: QualifiedID?
+        let target: UUID?
+        let conversationRole: String?
+        let service: Service?
+        let archived: Bool?
+        let archivedReference: UTCTimeMillis?
+        let hidden: Bool?
+        let hiddenReference: String?
+        let mutedStatus: Int?
+        let mutedReference: UTCTimeMillis?
+
+        func toAPIModel() -> Conversation.Member {
+            Conversation.Member(
+                qualifiedID: qualifiedID,
+                id: id,
+                qualifiedTarget: qualifiedTarget,
+                target: target,
+                conversationRole: conversationRole,
+                service: service,
+                archived: archived,
+                archivedReference: archivedReference?.date,
+                hidden: hidden,
+                hiddenReference: hiddenReference,
+                mutedStatus: mutedStatus,
+                mutedReference: mutedReference?.date
+            )
+        }
+    }
+
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationCreateEvent {
@@ -70,27 +119,9 @@ struct ConversationCreateEventDecoder {
         )
     }
 
-    private struct Payload: Decodable {
-        let id: UUID?
-        let qualifiedID: ConversationID?
-        let teamID: UUID?
-        let type: ConversationType?
-        let messageProtocol: ConversationMessageProtocol?
-        let mlsGroupID: String?
-        let cipherSuite: MLSCipherSuite?
-        let epoch: UInt?
-        let epochTimestamp: UTCTime?
-        let creator: UUID?
-        let members: Members?
-        let name: String?
-        let messageTimer: TimeInterval?
-        let readReceiptMode: Int?
-        let access: Set<ConversationAccessMode>?
-        let accessRoles: Set<ConversationAccessRole>?
-        let legacyAccessRole: ConversationAccessRoleLegacy?
-        let lastEvent: String?
-        let lastEventTime: UTCTimeMillis?
+    // MARK: Private
 
+    private struct Payload: Decodable {
         enum CodingKeys: String, CodingKey {
             case id
             case qualifiedID = "qualified_id"
@@ -112,68 +143,41 @@ struct ConversationCreateEventDecoder {
             case lastEvent = "last_event"
             case lastEventTime = "last_event_time"
         }
+
+        let id: UUID?
+        let qualifiedID: ConversationID?
+        let teamID: UUID?
+        let type: ConversationType?
+        let messageProtocol: ConversationMessageProtocol?
+        let mlsGroupID: String?
+        let cipherSuite: MLSCipherSuite?
+        let epoch: UInt?
+        let epochTimestamp: UTCTime?
+        let creator: UUID?
+        let members: Members?
+        let name: String?
+        let messageTimer: TimeInterval?
+        let readReceiptMode: Int?
+        let access: Set<ConversationAccessMode>?
+        let accessRoles: Set<ConversationAccessRole>?
+        let legacyAccessRole: ConversationAccessRoleLegacy?
+        let lastEvent: String?
+        let lastEventTime: UTCTimeMillis?
     }
 
     private struct Members: Decodable, ToAPIModelConvertible {
-        let others: [Member]
-        let selfMember: Member
-
         enum CodingKeys: String, CodingKey {
             case others
             case selfMember = "self"
         }
 
+        let others: [Member]
+        let selfMember: Member
+
         func toAPIModel() -> Conversation.Members {
             Conversation.Members(
                 others: others.map { $0.toAPIModel() },
                 selfMember: selfMember.toAPIModel()
-            )
-        }
-    }
-
-    struct Member: Decodable, ToAPIModelConvertible {
-        let qualifiedID: QualifiedID?
-        let id: UUID?
-        let qualifiedTarget: QualifiedID?
-        let target: UUID?
-        let conversationRole: String?
-        let service: Service?
-        let archived: Bool?
-        let archivedReference: UTCTimeMillis?
-        let hidden: Bool?
-        let hiddenReference: String?
-        let mutedStatus: Int?
-        let mutedReference: UTCTimeMillis?
-
-        enum CodingKeys: String, CodingKey {
-            case qualifiedID = "qualified_id"
-            case id
-            case qualifiedTarget = "qualified_target"
-            case target
-            case conversationRole = "conversation_role"
-            case service
-            case archived = "otr_archived"
-            case archivedReference = "otr_archived_ref"
-            case hidden = "otr_hidden"
-            case hiddenReference = "otr_hidden_ref"
-            case mutedStatus = "otr_muted_status"
-            case mutedReference = "otr_muted_ref"
-        }
-
-        func toAPIModel() -> Conversation.Member {
-            Conversation.Member(
-                qualifiedID: qualifiedID,
-                id: id,
-                qualifiedTarget: qualifiedTarget,
-                target: target,
-                conversationRole: conversationRole,
-                service: service,
-                archived: archived,
-                archivedReference: archivedReference?.date,
-                hidden: hidden,
-                hiddenReference: hiddenReference,
-                mutedStatus: mutedStatus,
-                mutedReference: mutedReference?.date
             )
         }
     }

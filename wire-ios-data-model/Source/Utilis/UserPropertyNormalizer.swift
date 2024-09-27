@@ -17,7 +17,7 @@
 //
 
 public struct UserPropertyNormalizer: UserPropertyNormalization {
-    public var userPropertyValidator: UserPropertyValidating
+    // MARK: Lifecycle
 
     public init(userPropertyValidator: UserPropertyValidating) {
         self.userPropertyValidator = userPropertyValidator
@@ -26,6 +26,10 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
     public init() {
         self.init(userPropertyValidator: UserPropertyValidator())
     }
+
+    // MARK: Public
+
+    public var userPropertyValidator: UserPropertyValidating
 
     public func normalizeName(_ name: String) -> UserPropertyNormalizationResult<String> {
         var name: String? = name

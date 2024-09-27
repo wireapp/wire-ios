@@ -20,11 +20,7 @@ import Foundation
 import WireFoundation
 
 final class PushChannel: PushChannelProtocol {
-    typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
-
-    private let request: URLRequest
-    private let webSocket: any WebSocketProtocol
-    private let decoder = JSONDecoder()
+    // MARK: Lifecycle
 
     init(
         request: URLRequest,
@@ -33,6 +29,10 @@ final class PushChannel: PushChannelProtocol {
         self.request = request
         self.webSocket = webSocket
     }
+
+    // MARK: Internal
+
+    typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
     func open() throws -> Stream {
         print("opening new push channel")
@@ -64,4 +64,10 @@ final class PushChannel: PushChannelProtocol {
         print("closing push channel")
         webSocket.close()
     }
+
+    // MARK: Private
+
+    private let request: URLRequest
+    private let webSocket: any WebSocketProtocol
+    private let decoder = JSONDecoder()
 }

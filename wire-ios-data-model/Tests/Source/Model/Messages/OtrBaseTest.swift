@@ -20,6 +20,34 @@ import Foundation
 import XCTest
 
 class OtrBaseTest: XCTestCase {
+    static var sharedContainerURL: URL {
+        try! FileManager.default.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
+    }
+
+    static var legacyOtrDirectory: URL {
+        FileManager.keyStoreURL(accountDirectory: sharedContainerURL, createParentIfNeeded: true)
+    }
+
+    static func otrDirectoryURL(accountIdentifier: UUID) -> URL {
+        let accountDirectory = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: sharedContainerURL
+        )
+        return FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
+    }
+
+    static func legacyAccountOtrDirectory(accountIdentifier: UUID) -> URL {
+        FileManager.keyStoreURL(
+            accountDirectory: sharedContainerURL.appendingPathComponent(accountIdentifier.uuidString),
+            createParentIfNeeded: true
+        )
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -31,33 +59,5 @@ class OtrBaseTest: XCTestCase {
         )) {
             items.forEach { try? FileManager.default.removeItem(at: $0) }
         }
-    }
-
-    static var sharedContainerURL: URL {
-        try! FileManager.default.url(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: true
-        )
-    }
-
-    static func otrDirectoryURL(accountIdentifier: UUID) -> URL {
-        let accountDirectory = CoreDataStack.accountDataFolder(
-            accountIdentifier: accountIdentifier,
-            applicationContainer: sharedContainerURL
-        )
-        return FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
-    }
-
-    static var legacyOtrDirectory: URL {
-        FileManager.keyStoreURL(accountDirectory: sharedContainerURL, createParentIfNeeded: true)
-    }
-
-    static func legacyAccountOtrDirectory(accountIdentifier: UUID) -> URL {
-        FileManager.keyStoreURL(
-            accountDirectory: sharedContainerURL.appendingPathComponent(accountIdentifier.uuidString),
-            createParentIfNeeded: true
-        )
     }
 }

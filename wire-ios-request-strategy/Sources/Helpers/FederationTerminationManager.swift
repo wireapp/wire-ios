@@ -29,11 +29,13 @@ public protocol FederationTerminationManagerInterface {
 // MARK: - FederationTerminationManager
 
 public final class FederationTerminationManager: FederationTerminationManagerInterface {
-    private var context: NSManagedObjectContext
+    // MARK: Lifecycle
 
     public init(with context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: Public
 
     /// **Changes will be performed:**
     /// - for all conversations owned by self domain, remove all users that belong to `domain` from those conversations;
@@ -68,6 +70,10 @@ public final class FederationTerminationManager: FederationTerminationManagerInt
         removeUsers(with: domain, fromConversationsOwnedBy: otherDomain)
         removeUsers(with: otherDomain, fromConversationsOwnedBy: domain)
     }
+
+    // MARK: Private
+
+    private var context: NSManagedObjectContext
 }
 
 extension FederationTerminationManager {

@@ -64,6 +64,8 @@ public enum SyncEngineOperationState: UInt, CustomStringConvertible {
 
     case foreground
 
+    // MARK: Public
+
     public var description: String {
         switch self {
         case .background:
@@ -88,22 +90,9 @@ public enum SyncEngineOperationState: UInt, CustomStringConvertible {
 
 @objcMembers
 public class OperationStatus: NSObject {
+    // MARK: Public
+
     public weak var delegate: OperationStatusDelegate?
-
-    private var backgroundFetchTimer: Timer?
-    private var backgroundTaskTimer: Timer?
-
-    private var backgroundFetchHandler: BackgroundFetchHandler? {
-        didSet {
-            updateOperationState()
-        }
-    }
-
-    private var backgroundTaskHandler: BackgroundTaskHandler? {
-        didSet {
-            updateOperationState()
-        }
-    }
 
     public var isInBackground = true {
         didSet {
@@ -168,14 +157,6 @@ public class OperationStatus: NSObject {
         )
     }
 
-    func backgroundFetchTimeout() {
-        finishBackgroundFetch(withFetchResult: .failed)
-    }
-
-    func backgroundTaskTimeout() {
-        finishBackgroundTask(withTaskResult: .failed)
-    }
-
     public func finishBackgroundFetch(withFetchResult result: UIBackgroundFetchResult) {
         backgroundFetchTimer?.invalidate()
         backgroundFetchTimer = nil
@@ -195,15 +176,17 @@ public class OperationStatus: NSObject {
         }
     }
 
-    fileprivate func updateOperationState() {
-        let oldOperationState = operationState
-        let newOperationState = calculatedOperationState
+    // MARK: Internal
 
-        if newOperationState != oldOperationState {
-            zmLog.debug("operation state changed from \(oldOperationState) to \(newOperationState)")
-            operationState = newOperationState
-        }
+    func backgroundFetchTimeout() {
+        finishBackgroundFetch(withFetchResult: .failed)
     }
+
+    func backgroundTaskTimeout() {
+        finishBackgroundTask(withTaskResult: .failed)
+    }
+
+    // MARK: Fileprivate
 
     fileprivate var calculatedOperationState: SyncEngineOperationState {
         if isInBackground {
@@ -222,6 +205,33 @@ public class OperationStatus: NSObject {
             return .background
         } else {
             return .foreground
+        }
+    }
+
+    fileprivate func updateOperationState() {
+        let oldOperationState = operationState
+        let newOperationState = calculatedOperationState
+
+        if newOperationState != oldOperationState {
+            zmLog.debug("operation state changed from \(oldOperationState) to \(newOperationState)")
+            operationState = newOperationState
+        }
+    }
+
+    // MARK: Private
+
+    private var backgroundFetchTimer: Timer?
+    private var backgroundTaskTimer: Timer?
+
+    private var backgroundFetchHandler: BackgroundFetchHandler? {
+        didSet {
+            updateOperationState()
+        }
+    }
+
+    private var backgroundTaskHandler: BackgroundTaskHandler? {
+        didSet {
+            updateOperationState()
         }
     }
 }

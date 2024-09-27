@@ -28,6 +28,8 @@ final class MockPreviewDownloader: PreviewDownloaderType {
     var requestOpenGraphDataURLs = [URL]()
     var requestOpenGraphDataCompletions = [Completion]()
 
+    var tornDown = false
+
     func requestOpenGraphData(fromURL url: URL, completion: @escaping Completion) {
         requestOpenGraphDataCallCount += 1
         requestOpenGraphDataURLs.append(url)
@@ -35,7 +37,6 @@ final class MockPreviewDownloader: PreviewDownloaderType {
         completion(mockOpenGraphData)
     }
 
-    var tornDown = false
     func tearDown() {
         tornDown = true
     }
@@ -45,12 +46,13 @@ final class MockPreviewDownloader: PreviewDownloaderType {
 
 final class MockImageDownloader: ImageDownloaderType {
     typealias ImageCompletion = (Data?) -> Void
+    typealias ImagesCompletion = ([URL: Data]) -> Void
+
     var mockImageData: Data?
     var downloadImageURLs = [URL]()
     var downloadImageCallCount = 0
     var downloadImageCompletion = [ImageCompletion]()
 
-    typealias ImagesCompletion = ([URL: Data]) -> Void
     var mockImageDataByUrl = [URL: Data]()
     var downloadImagesCallCount = 0
     var downloadImagesURLs = [URL]()

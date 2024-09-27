@@ -23,16 +23,17 @@ import XCTest
 
 final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelegate {
     var shouldAccept = true
+    var didChangeText: [String] = []
+    var didFillInput = 0
+
     func shouldAcceptChanges(_: CharacterInputField) -> Bool {
         shouldAccept
     }
 
-    var didChangeText: [String] = []
     func didChangeText(_ inputField: CharacterInputField, to: String) {
         didChangeText.append(to)
     }
 
-    var didFillInput = 0
     func didFillInput(inputField: CharacterInputField, text: String) {
         didFillInput += 1
     }
@@ -41,12 +42,7 @@ final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelega
 // MARK: - CharacterInputFieldTests
 
 final class CharacterInputFieldTests: XCTestCase {
-    private var sut: CharacterInputField! = nil
-    private var delegate: TestCharacterInputFieldDelegate! = nil
-
-    private var rootViewController: UIViewController! {
-        (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController
-    }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -213,5 +209,14 @@ final class CharacterInputFieldTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeText, ["HELLOWORLD"])
         XCTAssertEqual(sut.text, "HELLOWORLD")
         XCTAssertEqual(delegate.didFillInput, 0)
+    }
+
+    // MARK: Private
+
+    private var sut: CharacterInputField! = nil
+    private var delegate: TestCharacterInputFieldDelegate! = nil
+
+    private var rootViewController: UIViewController! {
+        (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController
     }
 }

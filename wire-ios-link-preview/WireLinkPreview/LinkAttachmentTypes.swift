@@ -35,22 +35,7 @@ public enum LinkAttachmentType: Int {
 
 @objc(ZMLinkAttachment)
 public final class LinkAttachment: NSObject, NSSecureCoding {
-    public static var supportsSecureCoding = true
-
-    /// The type of the attached media.
-    @objc public let type: LinkAttachmentType
-
-    /// The title of the media.
-    @objc public let title: String
-
-    /// The permalink to the media on the provider's website.
-    @objc public let permalink: URL
-
-    /// The list of the video thumbnails.
-    @objc public let thumbnails: [URL]
-
-    /// The range of the attachment in the text.
-    @objc public let originalRange: NSRange
+    // MARK: Lifecycle
 
     // MARK: Initialization
 
@@ -96,6 +81,25 @@ public final class LinkAttachment: NSObject, NSSecureCoding {
         self.thumbnails = thumbnails
         self.originalRange = originalRange
     }
+
+    // MARK: Public
+
+    public static var supportsSecureCoding = true
+
+    /// The type of the attached media.
+    @objc public let type: LinkAttachmentType
+
+    /// The title of the media.
+    @objc public let title: String
+
+    /// The permalink to the media on the provider's website.
+    @objc public let permalink: URL
+
+    /// The list of the video thumbnails.
+    @objc public let thumbnails: [URL]
+
+    /// The range of the attachment in the text.
+    @objc public let originalRange: NSRange
 
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(type.rawValue, forKey: #keyPath(type))

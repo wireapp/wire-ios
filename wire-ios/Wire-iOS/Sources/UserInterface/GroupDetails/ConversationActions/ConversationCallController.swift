@@ -21,15 +21,15 @@ import WireDataModel
 import WireSyncEngine
 
 final class ConversationCallController: NSObject {
-    private unowned let target: UIViewController
-    private let conversation: ZMConversation
-    private let confirmGroupCallParticipantsLimit = 4
+    // MARK: Lifecycle
 
     init(conversation: ZMConversation, target: UIViewController) {
         self.conversation = conversation
         self.target = target
         super.init()
     }
+
+    // MARK: Internal
 
     func startAudioCall(started: Completion?) {
         let startCall = { [weak self] in
@@ -96,6 +96,12 @@ final class ConversationCallController: NSObject {
         )
         checker.performAction()
     }
+
+    // MARK: Private
+
+    private unowned let target: UIViewController
+    private let conversation: ZMConversation
+    private let confirmGroupCallParticipantsLimit = 4
 
     // MARK: - Helper
 

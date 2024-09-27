@@ -36,23 +36,7 @@ protocol GridViewDelegate: AnyObject {
 /// orientation, columns and rows are swapped.
 
 final class GridView: UICollectionView {
-    // MARK: - Properties
-
-    var layoutDirection: UICollectionView.ScrollDirection = .vertical {
-        didSet {
-            layout.invalidateLayout()
-        }
-    }
-
-    weak var gridViewDelegate: GridViewDelegate?
-
-    let maxItemsPerPage: Int
-    private(set) var currentPage = 0
-    private var firstVisibleIndexPath: IndexPath?
-
-    // MARK: - Private Properties
-
-    private let layout = UICollectionViewFlowLayout()
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -71,17 +55,19 @@ final class GridView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Private Methods
+    // MARK: Internal
 
-    private func setupViews() {
-        delegate = self
-        register(GridCell.self, forCellWithReuseIdentifier: GridCell.reuseIdentifier)
-        showsVerticalScrollIndicator = false
-        showsHorizontalScrollIndicator = false
-        isPagingEnabled = true
+    weak var gridViewDelegate: GridViewDelegate?
 
-        contentInsetAdjustmentBehavior = .never
-        backgroundColor = .clear
+    let maxItemsPerPage: Int
+    private(set) var currentPage = 0
+
+    // MARK: - Properties
+
+    var layoutDirection: UICollectionView.ScrollDirection = .vertical {
+        didSet {
+            layout.invalidateLayout()
+        }
     }
 
     // MARK: - Public Interface
@@ -98,6 +84,27 @@ final class GridView: UICollectionView {
         let destinationY = bounds.height * CGFloat(page)
         guard contentSize.height > destinationY else { return }
         setContentOffset(CGPoint(x: 0.0, y: destinationY), animated: animated)
+    }
+
+    // MARK: Private
+
+    private var firstVisibleIndexPath: IndexPath?
+
+    // MARK: - Private Properties
+
+    private let layout = UICollectionViewFlowLayout()
+
+    // MARK: - Private Methods
+
+    private func setupViews() {
+        delegate = self
+        register(GridCell.self, forCellWithReuseIdentifier: GridCell.reuseIdentifier)
+        showsVerticalScrollIndicator = false
+        showsHorizontalScrollIndicator = false
+        isPagingEnabled = true
+
+        contentInsetAdjustmentBehavior = .never
+        backgroundColor = .clear
     }
 }
 
@@ -122,6 +129,8 @@ extension GridView {
         case moreThanTwo
         case twoOrLess
 
+        // MARK: Lifecycle
+
         init(_ amount: Int) {
             self = amount > 2 ? .moreThanTwo : .twoOrLess
         }
@@ -130,6 +139,8 @@ extension GridView {
     fileprivate enum SplitType {
         case middleSplit
         case proportionalSplit
+
+        // MARK: Lifecycle
 
         init(_ layoutDirection: UICollectionView.ScrollDirection, _ segmentType: SegmentType) {
             switch (layoutDirection, segmentType) {

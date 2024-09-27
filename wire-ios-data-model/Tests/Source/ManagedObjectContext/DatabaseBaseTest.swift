@@ -21,7 +21,7 @@ import WireTesting
 @testable import WireDataModel
 
 class DatabaseBaseTest: ZMTBaseTest {
-    var accountID = UUID.create()
+    // MARK: Public
 
     public static var applicationContainer: URL {
         FileManager.default
@@ -50,6 +50,10 @@ class DatabaseBaseTest: ZMTBaseTest {
         let url = Self.applicationContainer
         try? FileManager.default.removeItem(at: url)
     }
+
+    // MARK: Internal
+
+    var accountID = UUID.create()
 
     // MARK: - CoreData Stack
 

@@ -21,11 +21,46 @@ import XCTest
 @testable import WireAPI
 
 final class UpdateEventsAPITests: XCTestCase {
-    private func createSnapshotter() -> APISnapshotHelper<any UpdateEventsAPI> {
-        APISnapshotHelper { httpClient, apiVersion in
-            UpdateEventsAPIBuilder(httpClient: httpClient)
-                .makeAPI(for: apiVersion)
-        }
+    // MARK: Internal
+
+    // MARK: - Helpers
+
+    enum Scaffolding {
+        static let selfClientID = "abcd1234"
+        static let eventID = UUID(uuidString: "d7f7f946-c4da-4300-998d-5aeba8affeee")!
+        static let lastUpdateEventID = UUID(uuidString: "d7f7f946-c4da-4300-998d-5aeba8affeee")!
+
+        static let updateEventEnvelope = UpdateEventEnvelope(
+            id: eventID,
+            events: [.user(.pushRemove)],
+            isTransient: false
+        )
+
+        static let updateEventPage1 = [
+            UpdateEventEnvelope(
+                id: UUID(uuidString: "2eeeb5e4-df85-4aef-9eb2-289981f086ab")!,
+                events: [.unknown(eventType: "some event")],
+                isTransient: false
+            ),
+            UpdateEventEnvelope(
+                id: UUID(uuidString: "688ad9fc-6906-4dd6-9ccc-db8d849c41ad")!,
+                events: [.unknown(eventType: "some transient event")],
+                isTransient: true
+            ),
+        ]
+
+        static let updateEventPage2 = [
+            UpdateEventEnvelope(
+                id: UUID(uuidString: "0b08693f-4f67-46e1-9e5e-f7c15f3e8157")!,
+                events: [.unknown(eventType: "some transient event")],
+                isTransient: true
+            ),
+            UpdateEventEnvelope(
+                id: UUID(uuidString: "7ed84e3d-108c-4d50-904e-78a4e6908956")!,
+                events: [.unknown(eventType: "some event")],
+                isTransient: false
+            ),
+        ]
     }
 
     // MARK: - Request generation
@@ -235,43 +270,12 @@ final class UpdateEventsAPITests: XCTestCase {
         }
     }
 
-    // MARK: - Helpers
+    // MARK: Private
 
-    enum Scaffolding {
-        static let selfClientID = "abcd1234"
-        static let eventID = UUID(uuidString: "d7f7f946-c4da-4300-998d-5aeba8affeee")!
-        static let lastUpdateEventID = UUID(uuidString: "d7f7f946-c4da-4300-998d-5aeba8affeee")!
-
-        static let updateEventEnvelope = UpdateEventEnvelope(
-            id: eventID,
-            events: [.user(.pushRemove)],
-            isTransient: false
-        )
-
-        static let updateEventPage1 = [
-            UpdateEventEnvelope(
-                id: UUID(uuidString: "2eeeb5e4-df85-4aef-9eb2-289981f086ab")!,
-                events: [.unknown(eventType: "some event")],
-                isTransient: false
-            ),
-            UpdateEventEnvelope(
-                id: UUID(uuidString: "688ad9fc-6906-4dd6-9ccc-db8d849c41ad")!,
-                events: [.unknown(eventType: "some transient event")],
-                isTransient: true
-            ),
-        ]
-
-        static let updateEventPage2 = [
-            UpdateEventEnvelope(
-                id: UUID(uuidString: "0b08693f-4f67-46e1-9e5e-f7c15f3e8157")!,
-                events: [.unknown(eventType: "some transient event")],
-                isTransient: true
-            ),
-            UpdateEventEnvelope(
-                id: UUID(uuidString: "7ed84e3d-108c-4d50-904e-78a4e6908956")!,
-                events: [.unknown(eventType: "some event")],
-                isTransient: false
-            ),
-        ]
+    private func createSnapshotter() -> APISnapshotHelper<any UpdateEventsAPI> {
+        APISnapshotHelper { httpClient, apiVersion in
+            UpdateEventsAPIBuilder(httpClient: httpClient)
+                .makeAPI(for: apiVersion)
+        }
     }
 }

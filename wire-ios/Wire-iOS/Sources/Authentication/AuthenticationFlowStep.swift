@@ -69,6 +69,8 @@ indirect enum AuthenticationFlowStep: Equatable {
     // Configuration
     case configureDevice
 
+    // MARK: Internal
+
     // MARK: - Properties
 
     /// Whether the authentication steps generates a user interface.
@@ -113,6 +115,8 @@ indirect enum AuthenticationFlowStep: Equatable {
 /// Intermediate steps required for user registration.
 enum IntermediateRegistrationStep: Equatable {
     case start, provideMarketingConsent, setName, setPassword
+
+    // MARK: Internal
 
     var needsInterface: Bool {
         switch self {

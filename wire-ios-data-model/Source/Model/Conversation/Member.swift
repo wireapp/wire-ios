@@ -22,12 +22,13 @@ public typealias TeamMembership = Member
 
 @objcMembers
 public class Member: ZMManagedObject {
+    // MARK: Public
+
     @NSManaged public var team: Team?
     @NSManaged public var user: ZMUser?
     @NSManaged public var createdBy: ZMUser?
     @NSManaged public var createdAt: Date?
     @NSManaged public var remoteIdentifier_data: Data?
-    @NSManaged private var permissionsRawValue: Int64
 
     public var permissions: Permissions {
         get {
@@ -35,6 +36,16 @@ public class Member: ZMManagedObject {
         }
         set {
             permissionsRawValue = newValue.rawValue
+        }
+    }
+
+    public var remoteIdentifier: UUID? {
+        get {
+            guard let data = remoteIdentifier_data else { return nil }
+            return UUID(data: data)
+        }
+        set {
+            remoteIdentifier_data = newValue?.uuidData
         }
     }
 
@@ -48,16 +59,6 @@ public class Member: ZMManagedObject {
 
     override public static func defaultSortDescriptors() -> [NSSortDescriptor] {
         []
-    }
-
-    public var remoteIdentifier: UUID? {
-        get {
-            guard let data = remoteIdentifier_data else { return nil }
-            return UUID(data: data)
-        }
-        set {
-            remoteIdentifier_data = newValue?.uuidData
-        }
     }
 
     @objc(getOrUpdateMemberForUser:inTeam:context:)
@@ -80,12 +81,18 @@ public class Member: ZMManagedObject {
 
         return member
     }
+
+    // MARK: Private
+
+    @NSManaged private var permissionsRawValue: Int64
 }
 
 // MARK: - ResponseKey
 
 private enum ResponseKey: String {
     case user, permissions, createdBy = "created_by", createdAt = "created_at"
+
+    // MARK: Internal
 
     enum Permissions: String {
         case `self`, copy

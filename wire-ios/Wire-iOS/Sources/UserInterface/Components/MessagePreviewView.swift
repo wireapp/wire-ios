@@ -63,15 +63,7 @@ extension UITextView {
 // MARK: - MessageThumbnailPreviewView
 
 final class MessageThumbnailPreviewView: UIView {
-    private let senderLabel = UILabel()
-    private var leftEditIconInset: CGFloat = 10
-    private let contentTextView = UITextView.previewTextView()
-    private let imagePreview = ImageResourceView()
-    private var observerToken: Any?
-    private let displaySender: Bool
-    private let iconColor = SemanticColors.Icon.foregroundDefault
-
-    let message: ZMConversationMessage
+    // MARK: Lifecycle
 
     init(message: ZMConversationMessage, displaySender: Bool = true) {
         require(message.canBeQuoted || !displaySender)
@@ -85,6 +77,33 @@ final class MessageThumbnailPreviewView: UIView {
         updateForMessage()
     }
 
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let message: ZMConversationMessage
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        updateForMessage()
+    }
+
+    // MARK: Private
+
+    private static let thumbnailSize: CGFloat = 42
+
+    private let senderLabel = UILabel()
+    private var leftEditIconInset: CGFloat = 10
+    private let contentTextView = UITextView.previewTextView()
+    private let imagePreview = ImageResourceView()
+    private var observerToken: Any?
+    private let displaySender: Bool
+    private let iconColor = SemanticColors.Icon.foregroundDefault
+
     private func setupMessageObserver() {
         if let userSession = ZMUserSession.shared() {
             observerToken = MessageChangeInfo.add(
@@ -94,8 +113,6 @@ final class MessageThumbnailPreviewView: UIView {
             )
         }
     }
-
-    private static let thumbnailSize: CGFloat = 42
 
     private func setupSubviews() {
         var allViews: [UIView] = [contentTextView, imagePreview]
@@ -202,17 +219,6 @@ final class MessageThumbnailPreviewView: UIView {
             fatal("Unknown message for preview: \(message)")
         }
     }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        updateForMessage()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
 // MARK: ZMMessageObserver
@@ -230,14 +236,7 @@ extension MessageThumbnailPreviewView: ZMMessageObserver {
 // MARK: - MessagePreviewView
 
 final class MessagePreviewView: UIView {
-    private let senderLabel = UILabel()
-    private var leftEditIconInset: CGFloat = 10
-    private let contentTextView = UITextView.previewTextView()
-    private var observerToken: Any?
-    private let displaySender: Bool
-    private let iconColor = SemanticColors.Icon.foregroundDefault
-
-    let message: ZMConversationMessage
+    // MARK: Lifecycle
 
     init(message: ZMConversationMessage, displaySender: Bool = true) {
         require(message.canBeQuoted || !displaySender)
@@ -250,6 +249,30 @@ final class MessagePreviewView: UIView {
         setupMessageObserver()
         updateForMessage()
     }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let message: ZMConversationMessage
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        updateForMessage()
+    }
+
+    // MARK: Private
+
+    private let senderLabel = UILabel()
+    private var leftEditIconInset: CGFloat = 10
+    private let contentTextView = UITextView.previewTextView()
+    private var observerToken: Any?
+    private let displaySender: Bool
+    private let iconColor = SemanticColors.Icon.foregroundDefault
 
     private func setupMessageObserver() {
         if let userSession = ZMUserSession.shared() {
@@ -347,17 +370,6 @@ final class MessagePreviewView: UIView {
                 (fileData.filename ?? L10n.Localizable.Conversation.InputBar.MessagePreview.file).localizedUppercase
             contentTextView.attributedText = initialString && attributes
         }
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        updateForMessage()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

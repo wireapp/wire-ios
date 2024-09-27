@@ -40,13 +40,7 @@ private enum NotificationUserInfoKey: String {
 /// of user notifications.
 
 public class NotificationUserInfo: NSObject, NSCoding {
-    /// The key under which the storage property is encoded.
-    private static let storageKey = "storageKey"
-
-    /// The raw values of the user info. These must contain property list
-    /// data types only, otherwise scheduled UNNotificationRequest objects
-    /// using this user info within its content will fail.
-    public private(set) var storage: [AnyHashable: Any]
+    // MARK: Lifecycle
 
     /// Creates the user info from its raw value.
     public init(storage: [AnyHashable: Any]) {
@@ -67,16 +61,12 @@ public class NotificationUserInfo: NSObject, NSCoding {
         self.init(storage: data)
     }
 
-    public func encode(with aCoder: NSCoder) {
-        aCoder.encode(storage, forKey: type(of: self).storageKey)
-    }
+    // MARK: Public
 
-    // MARK: - Properties
-
-    private func uuid(for key: NotificationUserInfoKey) -> UUID? {
-        guard let uuidString = self[key] as? String else { return nil }
-        return UUID(uuidString: uuidString)
-    }
+    /// The raw values of the user info. These must contain property list
+    /// data types only, otherwise scheduled UNNotificationRequest objects
+    /// using this user info within its content will fail.
+    public private(set) var storage: [AnyHashable: Any]
 
     public var requestID: UUID? {
         get { uuid(for: .requestID) }
@@ -119,6 +109,22 @@ public class NotificationUserInfo: NSObject, NSCoding {
     public var selfUserID: UUID? {
         get { uuid(for: .selfUserID) }
         set { self[.selfUserID] = newValue?.uuidString }
+    }
+
+    public func encode(with aCoder: NSCoder) {
+        aCoder.encode(storage, forKey: type(of: self).storageKey)
+    }
+
+    // MARK: Private
+
+    /// The key under which the storage property is encoded.
+    private static let storageKey = "storageKey"
+
+    // MARK: - Properties
+
+    private func uuid(for key: NotificationUserInfoKey) -> UUID? {
+        guard let uuidString = self[key] as? String else { return nil }
+        return UUID(uuidString: uuidString)
     }
 }
 

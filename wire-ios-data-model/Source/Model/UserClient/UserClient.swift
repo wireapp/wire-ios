@@ -44,6 +44,8 @@ private let zmLog = ZMSLog(tag: "UserClient")
 
 @objcMembers
 public class UserClient: ZMManagedObject, UserClientType {
+    // MARK: Public
+
     @NSManaged public var type: DeviceType
     @NSManaged public var label: String?
     @NSManaged public var markedToDelete: Bool
@@ -69,50 +71,6 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
 
-    private enum Keys {
-        static let PushToken = "pushToken"
-        static let DeviceClass = "deviceClass"
-    }
-
-    // DO NOT USE THIS PROPERTY.
-    //
-    // Storing the push token on the self user client is now deprecated.
-    // From now on, we store the push token in the user defaults and is
-    // no longer the responsibility of the data model project. We keep
-    // it here so that it can still be fetched when migrating the token
-    // to user defaults, it can be deleted after some time.
-
-    @NSManaged private var primitivePushToken: Data?
-    private var pushToken: PushToken? {
-        get {
-            willAccessValue(forKey: Keys.PushToken)
-            let token: PushToken? = if let data = primitivePushToken {
-                try? JSONDecoder().decode(PushToken.self, from: data)
-            } else {
-                nil
-            }
-            didAccessValue(forKey: Keys.PushToken)
-            return token
-        }
-        set {
-            if newValue != pushToken {
-                willChangeValue(forKey: Keys.PushToken)
-                primitivePushToken = try? JSONEncoder().encode(newValue)
-                didChangeValue(forKey: Keys.PushToken)
-            }
-        }
-    }
-
-    /// Fetches and removes the old push token from the self client.
-    ///
-    /// - returns: the legacy push token if it exists.
-
-    public func retrieveLegacyPushToken() -> PushToken? {
-        guard let token = pushToken else { return nil }
-        pushToken = nil
-        return token
-    }
-
     /// Clients that are trusted by self client.
     @NSManaged public var trustedClients: Set<UserClient>
 
@@ -125,13 +83,13 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
+    public var mlsThumbPrint: String?
+
     public var e2eIdentityCertificate: E2eIdentityCertificate? {
         didSet {
             NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
         }
     }
-
-    public var mlsThumbPrint: String?
 
     public var isLegalHoldDevice: Bool {
         deviceClass == .legalHold || type == .legalHold
@@ -145,19 +103,41 @@ public class UserClient: ZMManagedObject, UserClientType {
         return selfClient.remoteIdentifier == remoteIdentifier || selfClient.trustedClients.contains(self)
     }
 
-    override public static func entityName() -> String {
-        "UserClient"
+    /// Checks if there is an existing session with the self client.
+    ///
+    /// Note: only access this property only from the sync context.
+
+    public var hasSessionWithSelfClient: Bool {
+        get async {
+            guard
+                let sessionID = await managedObjectContext?.perform({ self.proteusSessionID }),
+                let proteusProvider = await managedObjectContext?
+                .perform({ self.managedObjectContext?.proteusProvider })
+            else {
+                return false
+            }
+
+            var hasSession = false
+
+            await proteusProvider.performAsync(
+                withProteusService: { proteusService in
+                    hasSession = await proteusService.sessionExists(id: sessionID)
+                },
+                withKeyStore: { keyStore in
+                    managedObjectContext?.performAndWait {
+                        keyStore.encryptionContext.perform { sessionsDirectory in
+                            hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
+                        }
+                    }
+                }
+            )
+
+            return hasSession
+        }
     }
 
-    override public func keysTrackedForLocalModifications() -> Set<String> {
-        [
-            ZMUserClientMarkedToDeleteKey,
-            ZMUserClientNumberOfKeysRemainingKey,
-            ZMUserClientMissingKey,
-            ZMUserClientNeedsToUpdateSignalingKeysKey,
-            ZMUserClientNeedsToUpdateCapabilitiesKey,
-            UserClient.needsToUploadMLSPublicKeysKey,
-        ]
+    override public static func entityName() -> String {
+        "UserClient"
     }
 
     override public static func sortKey() -> String {
@@ -258,6 +238,27 @@ public class UserClient: ZMManagedObject, UserClientType {
         return nil
     }
 
+    /// Fetches and removes the old push token from the self client.
+    ///
+    /// - returns: the legacy push token if it exists.
+
+    public func retrieveLegacyPushToken() -> PushToken? {
+        guard let token = pushToken else { return nil }
+        pushToken = nil
+        return token
+    }
+
+    override public func keysTrackedForLocalModifications() -> Set<String> {
+        [
+            ZMUserClientMarkedToDeleteKey,
+            ZMUserClientNumberOfKeysRemainingKey,
+            ZMUserClientMissingKey,
+            ZMUserClientNeedsToUpdateSignalingKeysKey,
+            ZMUserClientNeedsToUpdateCapabilitiesKey,
+            UserClient.needsToUploadMLSPublicKeysKey,
+        ]
+    }
+
     /// Update a user client with a backend payload
     ///
     /// If called on a client belonging to the self user this method does nothing.
@@ -278,72 +279,6 @@ public class UserClient: ZMManagedObject, UserClientType {
             WireLogger.userClient.error("error deleting session: \(String(reflecting: error))")
         }
         await managedObjectContext?.perform { self.deleteClient() }
-    }
-
-    private func deleteClient() {
-        guard let managedObjectContext else { return }
-
-        assert(managedObjectContext.zm_isSyncContext, "clients can only be deleted on syncContext")
-        // hold on to the conversations that are affected by removing this client
-        let conversations = activeConversationsForUserOfClients([self])
-        let user = user
-
-        failedToEstablishSession = false
-
-        // reset the relationship
-        self.user = nil
-
-        if let previousUser = user {
-            // increase securityLevel of affected conversations
-            if isLegalHoldDevice, previousUser.isSelfUser {
-                previousUser.needsToAcknowledgeLegalHoldStatus = true
-            }
-
-            conversations.forEach { $0.increaseSecurityLevelIfNeededAfterRemoving(clients: [previousUser: [self]]) }
-
-            // if they have no clients left, it's possible they left the team
-            let userMayHaveLeftTeam = previousUser.isTeamMember && previousUser.clients.isEmpty
-
-            if userMayHaveLeftTeam {
-                previousUser.needsToBeUpdatedFromBackend = true
-            }
-        }
-
-        // delete the object
-        managedObjectContext.delete(self)
-    }
-
-    /// Checks if there is an existing session with the self client.
-    ///
-    /// Note: only access this property only from the sync context.
-
-    public var hasSessionWithSelfClient: Bool {
-        get async {
-            guard
-                let sessionID = await managedObjectContext?.perform({ self.proteusSessionID }),
-                let proteusProvider = await managedObjectContext?
-                .perform({ self.managedObjectContext?.proteusProvider })
-            else {
-                return false
-            }
-
-            var hasSession = false
-
-            await proteusProvider.performAsync(
-                withProteusService: { proteusService in
-                    hasSession = await proteusService.sessionExists(id: sessionID)
-                },
-                withKeyStore: { keyStore in
-                    managedObjectContext?.performAndWait {
-                        keyStore.encryptionContext.perform { sessionsDirectory in
-                            hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
-                        }
-                    }
-                }
-            )
-
-            return hasSession
-        }
     }
 
     /// Resets the session between the client and the selfClient
@@ -391,6 +326,76 @@ public class UserClient: ZMManagedObject, UserClientType {
             .propertiesToUpdate = [ZMMessageSystemMessageTypeKey: ZMSystemMessageType.decryptionFailedResolved.rawValue]
         request.resultType = .updatedObjectIDsResultType
         managedObjectContext?.executeBatchUpdateRequestOrAssert(request)
+    }
+
+    // MARK: Private
+
+    private enum Keys {
+        static let PushToken = "pushToken"
+        static let DeviceClass = "deviceClass"
+    }
+
+    // DO NOT USE THIS PROPERTY.
+    //
+    // Storing the push token on the self user client is now deprecated.
+    // From now on, we store the push token in the user defaults and is
+    // no longer the responsibility of the data model project. We keep
+    // it here so that it can still be fetched when migrating the token
+    // to user defaults, it can be deleted after some time.
+
+    @NSManaged private var primitivePushToken: Data?
+
+    private var pushToken: PushToken? {
+        get {
+            willAccessValue(forKey: Keys.PushToken)
+            let token: PushToken? = if let data = primitivePushToken {
+                try? JSONDecoder().decode(PushToken.self, from: data)
+            } else {
+                nil
+            }
+            didAccessValue(forKey: Keys.PushToken)
+            return token
+        }
+        set {
+            if newValue != pushToken {
+                willChangeValue(forKey: Keys.PushToken)
+                primitivePushToken = try? JSONEncoder().encode(newValue)
+                didChangeValue(forKey: Keys.PushToken)
+            }
+        }
+    }
+
+    private func deleteClient() {
+        guard let managedObjectContext else { return }
+
+        assert(managedObjectContext.zm_isSyncContext, "clients can only be deleted on syncContext")
+        // hold on to the conversations that are affected by removing this client
+        let conversations = activeConversationsForUserOfClients([self])
+        let user = user
+
+        failedToEstablishSession = false
+
+        // reset the relationship
+        self.user = nil
+
+        if let previousUser = user {
+            // increase securityLevel of affected conversations
+            if isLegalHoldDevice, previousUser.isSelfUser {
+                previousUser.needsToAcknowledgeLegalHoldStatus = true
+            }
+
+            conversations.forEach { $0.increaseSecurityLevelIfNeededAfterRemoving(clients: [previousUser: [self]]) }
+
+            // if they have no clients left, it's possible they left the team
+            let userMayHaveLeftTeam = previousUser.isTeamMember && previousUser.clients.isEmpty
+
+            if userMayHaveLeftTeam {
+                previousUser.needsToBeUpdatedFromBackend = true
+            }
+        }
+
+        // delete the object
+        managedObjectContext.delete(self)
     }
 
     private func conversation(for user: ZMUser) -> ZMConversation? {
@@ -743,6 +748,8 @@ enum SecurityChangeType {
     case clientDiscovered // a client was discovered, either by receiving a missing response, a message, or fetching all
     // clients
     case clientIgnored // a client was ignored by the user on this device
+
+    // MARK: Internal
 
     func changeSecurityLevel(_ conversation: ZMConversation, clients: Set<UserClient>, causedBy: ZMOTRMessage?) {
         switch self {

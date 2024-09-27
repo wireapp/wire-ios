@@ -21,14 +21,13 @@ import WireSyncEngine
 // MARK: - CallHapticsController
 
 final class CallHapticsController {
-    private var lastCallState: CallState?
-    private var participants = Set<CallParticipant>()
-    private var videoStates = [CallParticipant: Bool]()
-    private let hapticGenerator: CallHapticsGeneratorType
+    // MARK: Lifecycle
 
     init(hapticGenerator: CallHapticsGeneratorType = CallHapticsGenerator()) {
         self.hapticGenerator = hapticGenerator
     }
+
+    // MARK: Internal
 
     func updateParticipants(_ newParticipants: [CallParticipant]) {
         updateParticipantsList(newParticipants)
@@ -49,7 +48,12 @@ final class CallHapticsController {
         }
     }
 
-    // MARK: - Private
+    // MARK: Private
+
+    private var lastCallState: CallState?
+    private var participants = Set<CallParticipant>()
+    private var videoStates = [CallParticipant: Bool]()
+    private let hapticGenerator: CallHapticsGeneratorType
 
     private func shouldUpdateParticipantsList(_ newParticipants: [CallParticipant]) -> Bool {
         !(

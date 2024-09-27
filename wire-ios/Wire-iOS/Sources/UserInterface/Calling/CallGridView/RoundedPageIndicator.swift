@@ -23,9 +23,34 @@ import WireUtilities
 // MARK: - RoundedPageIndicator
 
 class RoundedPageIndicator: RoundedBlurView {
-    private let selectedPageIndicator = UIImage.circle(filled: true)
-    private let defaultPageIndicator = UIImage.circle(filled: false)
+    // MARK: Internal
+
     let pageControl = UIPageControl()
+
+    var numberOfPages = 0 {
+        didSet {
+            pageControl.numberOfPages = numberOfPages
+            isHidden = numberOfPages <= 1
+            currentPage = 0
+        }
+    }
+
+    var currentPage = 0 {
+        didSet {
+            pageControl.currentPage = currentPage
+            guard numberOfPages > 0 else { return }
+            let lastPageIndex = numberOfPages - 1
+            for index in 0 ... lastPageIndex {
+                pageControl.setIndicatorImage(defaultPageIndicator, forPage: index)
+            }
+            pageControl.setIndicatorImage(selectedPageIndicator, forPage: currentPage)
+        }
+    }
+
+    override var accessibilityIdentifier: String? {
+        get { "\(String(describing: self)).\(currentPage)" }
+        set {}
+    }
 
     override func setupViews() {
         super.setupViews()
@@ -55,30 +80,10 @@ class RoundedPageIndicator: RoundedBlurView {
         ])
     }
 
-    var numberOfPages = 0 {
-        didSet {
-            pageControl.numberOfPages = numberOfPages
-            isHidden = numberOfPages <= 1
-            currentPage = 0
-        }
-    }
+    // MARK: Private
 
-    var currentPage = 0 {
-        didSet {
-            pageControl.currentPage = currentPage
-            guard numberOfPages > 0 else { return }
-            let lastPageIndex = numberOfPages - 1
-            for index in 0 ... lastPageIndex {
-                pageControl.setIndicatorImage(defaultPageIndicator, forPage: index)
-            }
-            pageControl.setIndicatorImage(selectedPageIndicator, forPage: currentPage)
-        }
-    }
-
-    override var accessibilityIdentifier: String? {
-        get { "\(String(describing: self)).\(currentPage)" }
-        set {}
-    }
+    private let selectedPageIndicator = UIImage.circle(filled: true)
+    private let defaultPageIndicator = UIImage.circle(filled: false)
 }
 
 extension CGFloat {

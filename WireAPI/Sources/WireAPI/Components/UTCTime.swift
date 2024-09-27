@@ -25,7 +25,7 @@ import Foundation
 /// is required.
 
 struct UTCTime: Codable {
-    let date: Date
+    // MARK: Lifecycle
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -40,6 +40,10 @@ struct UTCTime: Codable {
             )
         }
     }
+
+    // MARK: Internal
+
+    let date: Date
 
     func encode(to encoder: any Encoder) throws {
         var container = encoder.unkeyedContainer()

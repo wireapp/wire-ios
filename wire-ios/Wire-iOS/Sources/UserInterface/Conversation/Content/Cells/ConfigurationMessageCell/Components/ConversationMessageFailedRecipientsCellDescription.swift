@@ -23,6 +23,22 @@ import WireDataModel
 // MARK: - ConversationMessageFailedRecipientsCellDescription
 
 final class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
+        self.configuration = View
+            .Configuration(
+                title: ConversationMessageFailedRecipientsCellDescription.configureTitle(for: failedUsers),
+                content: ConversationMessageFailedRecipientsCellDescription
+                    .configureContent(for: failedUsers),
+                isCollapsed: isCollapsed,
+                icon: nil,
+                buttonAction: buttonAction
+            )
+    }
+
+    // MARK: Internal
+
     typealias SystemContent = L10n.Localizable.Content.System
     typealias View = FailedUsersSystemMessageCell
 
@@ -42,17 +58,7 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
 
-    init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
-        self.configuration = View
-            .Configuration(
-                title: ConversationMessageFailedRecipientsCellDescription.configureTitle(for: failedUsers),
-                content: ConversationMessageFailedRecipientsCellDescription
-                    .configureContent(for: failedUsers),
-                isCollapsed: isCollapsed,
-                icon: nil,
-                buttonAction: buttonAction
-            )
-    }
+    // MARK: Private
 
     private static func configureTitle(for failedUsers: [UserType]) -> NSAttributedString? {
         guard failedUsers.count > 1 else {

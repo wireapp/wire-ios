@@ -36,14 +36,7 @@ extension ZMLocalNotification {
     }
 
     private class CallNotificationBuilder: NotificationBuilder {
-        let callState: LocalNotificationType.CallState
-        let caller: ZMUser
-        let conversation: ZMConversation
-        let managedObjectContext: NSManagedObjectContext
-
-        var notificationType: LocalNotificationType {
-            .calling(callState)
-        }
+        // MARK: Lifecycle
 
         init?(callState: LocalNotificationType.CallState, caller: ZMUser, conversation: ZMConversation) {
             guard
@@ -63,6 +56,17 @@ extension ZMLocalNotification {
             self.caller = caller
             self.conversation = conversation
             self.managedObjectContext = managedObjectContext
+        }
+
+        // MARK: Internal
+
+        let callState: LocalNotificationType.CallState
+        let caller: ZMUser
+        let conversation: ZMConversation
+        let managedObjectContext: NSManagedObjectContext
+
+        var notificationType: LocalNotificationType {
+            .calling(callState)
         }
 
         func shouldCreateNotification() -> Bool {

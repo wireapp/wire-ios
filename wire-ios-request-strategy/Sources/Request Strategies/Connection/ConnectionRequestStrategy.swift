@@ -22,25 +22,7 @@ import Foundation
 
 public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource,
     ZMContextChangeTrackerSource {
-    let eventsToProcess: [ZMUpdateEventType] = [
-        .userConnection,
-    ]
-
-    var isFetchingAllConnections = false
-    let syncProgress: SyncProgress
-    let connectionByIDSync: IdentifierObjectSync<ConnectionByIDTranscoder>
-    let connectionByIDTranscoder: ConnectionByIDTranscoder
-    let connectionByQualifiedIDSync: IdentifierObjectSync<ConnectionByQualifiedIDTranscoder>
-    let connectionByQualifiedIDTranscoder: ConnectionByQualifiedIDTranscoder
-    let localConnectionListSync: PaginatedSync<Payload.PaginatedLocalConnectionList>
-    let connectionListSync: PaginatedSync<Payload.PaginatedConnectionList>
-    let updateSync: KeyPathObjectSync<ConnectionRequestStrategy>
-    let connectToUserActionHandler: ConnectToUserActionHandler
-    let updateConnectionActionHandler: UpdateConnectionActionHandler
-    let actionSync: EntityActionSync
-    let oneOnOneResolver: OneOnOneResolverInterface
-
-    var oneOnOneResolutionDelay: TimeInterval = 3
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -96,6 +78,27 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         updateSync.transcoder = self
     }
 
+    // MARK: Public
+
+    public var requestGenerators: [ZMRequestGenerator] {
+        if syncProgress.currentSyncPhase == .fetchingConnections {
+            [
+                connectionListSync,
+                localConnectionListSync,
+            ]
+        } else {
+            [
+                connectionByIDSync,
+                connectionByQualifiedIDSync,
+                actionSync,
+            ]
+        }
+    }
+
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        [updateSync]
+    }
+
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if syncProgress.currentSyncPhase == .fetchingConnections {
             fetchAllConnections(for: apiVersion)
@@ -103,6 +106,28 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         return requestGenerators.nextRequest(for: apiVersion)
     }
+
+    // MARK: Internal
+
+    let eventsToProcess: [ZMUpdateEventType] = [
+        .userConnection,
+    ]
+
+    var isFetchingAllConnections = false
+    let syncProgress: SyncProgress
+    let connectionByIDSync: IdentifierObjectSync<ConnectionByIDTranscoder>
+    let connectionByIDTranscoder: ConnectionByIDTranscoder
+    let connectionByQualifiedIDSync: IdentifierObjectSync<ConnectionByQualifiedIDTranscoder>
+    let connectionByQualifiedIDTranscoder: ConnectionByQualifiedIDTranscoder
+    let localConnectionListSync: PaginatedSync<Payload.PaginatedLocalConnectionList>
+    let connectionListSync: PaginatedSync<Payload.PaginatedConnectionList>
+    let updateSync: KeyPathObjectSync<ConnectionRequestStrategy>
+    let connectToUserActionHandler: ConnectToUserActionHandler
+    let updateConnectionActionHandler: UpdateConnectionActionHandler
+    let actionSync: EntityActionSync
+    let oneOnOneResolver: OneOnOneResolverInterface
+
+    var oneOnOneResolutionDelay: TimeInterval = 3
 
     func fetchAllConnections(for apiVersion: APIVersion) {
         guard !isFetchingAllConnections else { return }
@@ -140,6 +165,8 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         }
     }
 
+    // MARK: Private
+
     private func createConnectionsAndFinishSyncPhase(_ connections: [Payload.Connection], hasMore: Bool) {
         let processor = ConnectionPayloadProcessor()
 
@@ -158,25 +185,6 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
     private func failSyncPhase() {
         syncProgress.failCurrentSyncPhase(phase: .fetchingConnections)
-    }
-
-    public var requestGenerators: [ZMRequestGenerator] {
-        if syncProgress.currentSyncPhase == .fetchingConnections {
-            [
-                connectionListSync,
-                localConnectionListSync,
-            ]
-        } else {
-            [
-                connectionByIDSync,
-                connectionByQualifiedIDSync,
-                actionSync,
-            ]
-        }
-    }
-
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [updateSync]
     }
 }
 
@@ -276,19 +284,23 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
 // MARK: - ConnectionByIDTranscoder
 
 class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
+    // MARK: Lifecycle
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    // MARK: Public
+
     public typealias T = UUID
+
+    // MARK: Internal
 
     var fetchLimit = 1
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
-
-    private let processor = ConnectionPayloadProcessor()
-
-    init(context: NSManagedObjectContext) {
-        self.context = context
-    }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let userID = identifiers.first.map({ $0.transportString() }) else { return nil }
@@ -330,24 +342,32 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
             in: context
         )
     }
+
+    // MARK: Private
+
+    private let processor = ConnectionPayloadProcessor()
 }
 
 // MARK: - ConnectionByQualifiedIDTranscoder
 
 class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
+    // MARK: Lifecycle
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    // MARK: Public
+
     public typealias T = QualifiedID
+
+    // MARK: Internal
 
     var fetchLimit = 1
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
-
-    private let processor = ConnectionPayloadProcessor()
-
-    init(context: NSManagedObjectContext) {
-        self.context = context
-    }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
@@ -397,4 +417,8 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             in: context
         )
     }
+
+    // MARK: Private
+
+    private let processor = ConnectionPayloadProcessor()
 }

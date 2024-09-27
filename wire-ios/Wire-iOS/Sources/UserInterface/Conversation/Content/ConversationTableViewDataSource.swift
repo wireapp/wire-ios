@@ -58,10 +58,29 @@ extension ZMConversationMessage {
 // MARK: - ConversationTableViewDataSource
 
 final class ConversationTableViewDataSource: NSObject {
-    static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
+    // MARK: Lifecycle
 
-    private var fetchController: NSFetchedResultsController<ZMMessage>?
-    private var lastFetchedObjectCount = 0
+    init(
+        conversation: ZMConversation,
+        tableView: UpsideDownTableView,
+        actionResponder: MessageActionResponder,
+        cellDelegate: ConversationMessageCellDelegate,
+        userSession: UserSession
+    ) {
+        self.messageActionResponder = actionResponder
+        self.conversationCellDelegate = cellDelegate
+        self.conversation = conversation
+        self.tableView = tableView
+        self.userSession = userSession
+
+        super.init()
+
+        tableView.dataSource = self
+    }
+
+    // MARK: Internal
+
+    static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
 
     var registeredCells: [AnyClass] = []
     var sectionControllers: [String: ConversationMessageSectionController] = [:]
@@ -70,11 +89,6 @@ final class ConversationTableViewDataSource: NSObject {
     private(set) var hasNewerMessagesToLoad = false
 
     let userSession: UserSession
-
-    func resetSectionControllers() {
-        sectionControllers = [:]
-        calculateSections()
-    }
 
     var actionControllers: [String: ConversationMessageActionController] = [:]
 
@@ -87,6 +101,9 @@ final class ConversationTableViewDataSource: NSObject {
 
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
+
+    var previousSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
+    var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
 
     var searchQueries: [String] = [] {
         didSet {
@@ -108,8 +125,10 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    var previousSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
-    var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
+    func resetSectionControllers() {
+        sectionControllers = [:]
+        calculateSections()
+    }
 
     /// calculate cell sections
     ///
@@ -171,24 +190,6 @@ final class ConversationTableViewDataSource: NSObject {
         )
 
         return updatedSections
-    }
-
-    init(
-        conversation: ZMConversation,
-        tableView: UpsideDownTableView,
-        actionResponder: MessageActionResponder,
-        cellDelegate: ConversationMessageCellDelegate,
-        userSession: UserSession
-    ) {
-        self.messageActionResponder = actionResponder
-        self.conversationCellDelegate = cellDelegate
-        self.conversation = conversation
-        self.tableView = tableView
-        self.userSession = userSession
-
-        super.init()
-
-        tableView.dataSource = self
     }
 
     func section(for message: ZMConversationMessage) -> Int? {
@@ -310,15 +311,6 @@ final class ConversationTableViewDataSource: NSObject {
         tableView.reloadData()
     }
 
-    private func loadOlderMessages() {
-        guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
-              let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
-
-        let newLimit = currentLimit + ConversationTableViewDataSource.defaultBatchSize
-
-        loadMessages(offset: currentOffset, limit: newLimit)
-    }
-
     func loadNewerMessages() {
         guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
               let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
@@ -389,6 +381,20 @@ final class ConversationTableViewDataSource: NSObject {
             // message
             scrollView.contentOffset = CGPoint(x: 0, y: indexPathRect.minY - 16)
         }
+    }
+
+    // MARK: Private
+
+    private var fetchController: NSFetchedResultsController<ZMMessage>?
+    private var lastFetchedObjectCount = 0
+
+    private func loadOlderMessages() {
+        guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
+              let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
+
+        let newLimit = currentLimit + ConversationTableViewDataSource.defaultBatchSize
+
+        loadMessages(offset: currentOffset, limit: newLimit)
     }
 
     private func fetchRequest() -> NSFetchRequest<ZMMessage> {

@@ -22,7 +22,7 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class CoreDataStackTests_Backup: DatabaseBaseTest {
-    private var migrator: MockCoreDataMessagingMigratorProtocol!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -379,4 +379,8 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
         XCTAssertEqual(migrator.migrateStoreAtToVersion_Invocations.count, 1)
     }
+
+    // MARK: Private
+
+    private var migrator: MockCoreDataMessagingMigratorProtocol!
 }

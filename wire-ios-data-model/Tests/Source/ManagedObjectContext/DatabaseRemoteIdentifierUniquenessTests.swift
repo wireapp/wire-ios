@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 
 final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
+    // MARK: Internal
+
     var helper: DatabaseMigrationHelper!
 
     override func setUpWithError() throws {
@@ -59,6 +61,8 @@ final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
             entity: UserClient.self
         )
     }
+
+    // MARK: Private
 
     private func internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier<T: ZMManagedObject>(
         sourceVersion: String,

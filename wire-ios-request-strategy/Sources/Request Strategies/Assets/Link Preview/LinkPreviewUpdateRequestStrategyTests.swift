@@ -22,15 +22,7 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
-    private var sut: LinkPreviewUpdateRequestStrategy!
-    private var mockMessageSender: MockMessageSenderInterface!
-    private var applicationStatus: MockApplicationStatus!
-
-    private var apiVersion: APIVersion! {
-        didSet {
-            BackendInfo.apiVersion = apiVersion
-        }
-    }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -164,6 +156,18 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func process(_ message: ZMClientMessage) {
         for contextChangeTracker in sut.contextChangeTrackers {
             contextChangeTracker.objectsDidChange([message])
+        }
+    }
+
+    // MARK: Private
+
+    private var sut: LinkPreviewUpdateRequestStrategy!
+    private var mockMessageSender: MockMessageSenderInterface!
+    private var applicationStatus: MockApplicationStatus!
+
+    private var apiVersion: APIVersion! {
+        didSet {
+            BackendInfo.apiVersion = apiVersion
         }
     }
 }

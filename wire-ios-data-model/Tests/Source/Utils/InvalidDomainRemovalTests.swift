@@ -21,7 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 final class InvalidDomainRemovalTests: DiskDatabaseTest {
-    private var context: NSManagedObjectContext { coreDataStack.syncContext }
+    // MARK: Internal
 
     func testAllUsersWithInvalidDomainIsRemoved() throws {
         context.performGroupedAndWait {
@@ -74,4 +74,8 @@ final class InvalidDomainRemovalTests: DiskDatabaseTest {
             XCTAssertTrue(conversation2.isDeleted)
         }
     }
+
+    // MARK: Private
+
+    private var context: NSManagedObjectContext { coreDataStack.syncContext }
 }

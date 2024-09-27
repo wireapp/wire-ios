@@ -21,15 +21,19 @@ import Foundation
 
 @objcMembers
 public class FlowManagerMock: NSObject, FlowManagerType {
+    // MARK: Lifecycle
+
+    override init() {
+        super.init()
+    }
+
+    // MARK: Public
+
     public var callConfigContext: UnsafeRawPointer?
     public var callConfigHttpStatus = 0
     public var callConfig: Data?
     public var didReportCallConfig = false
     public var didSetVideoCaptureDevice = false
-
-    override init() {
-        super.init()
-    }
 
     public func appendLog(for conversationId: UUID, message: String) {}
 

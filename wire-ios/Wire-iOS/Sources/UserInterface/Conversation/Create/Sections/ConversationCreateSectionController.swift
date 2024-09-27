@@ -21,6 +21,14 @@ import UIKit
 // MARK: - ConversationCreateSectionController
 
 class ConversationCreateSectionController: NSObject, CollectionViewSectionController {
+    // MARK: Lifecycle
+
+    init(values: ConversationCreationValues) {
+        self.values = values
+    }
+
+    // MARK: Internal
+
     typealias CreationCell = (DetailsCollectionViewCell & ConversationCreationValuesConfigurable)
 
     var values: ConversationCreationValues
@@ -33,10 +41,6 @@ class ConversationCreateSectionController: NSObject, CollectionViewSectionContro
 
     var footer = SectionFooter(frame: .zero)
     var footerText = ""
-
-    init(values: ConversationCreationValues) {
-        self.values = values
-    }
 
     func prepareForUse(in collectionView: UICollectionView?) {
         collectionView?.register(

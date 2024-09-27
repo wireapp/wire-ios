@@ -19,10 +19,7 @@
 import Foundation
 
 class CallObserver: WireCallCenterCallStateObserver {
-    typealias VoidHandler = () -> Void
-    typealias Handler<T> = (T) -> Void
-
-    private var token: Any?
+    // MARK: Public
 
     public var onIncoming: VoidHandler?
     public var onAnswered: VoidHandler?
@@ -68,4 +65,13 @@ class CallObserver: WireCallCenterCallStateObserver {
             break
         }
     }
+
+    // MARK: Internal
+
+    typealias VoidHandler = () -> Void
+    typealias Handler<T> = (T) -> Void
+
+    // MARK: Private
+
+    private var token: Any?
 }

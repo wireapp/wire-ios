@@ -19,6 +19,17 @@
 import Foundation
 
 final class OpenGraphScanner: NSObject {
+    // MARK: Lifecycle
+
+    init(_ xmlString: String, url: URL, completion: @escaping ParserCompletion) {
+        self.xmlString = xmlString
+        self.completion = completion
+        self.originalURL = url
+        super.init()
+    }
+
+    // MARK: Internal
+
     typealias ParserCompletion = (OpenGraphData?) -> Void
 
     let xmlString: String
@@ -27,13 +38,6 @@ final class OpenGraphScanner: NSObject {
     var pageTitle: String?
     var completion: ParserCompletion
     var originalURL: URL
-
-    init(_ xmlString: String, url: URL, completion: @escaping ParserCompletion) {
-        self.xmlString = xmlString
-        self.completion = completion
-        self.originalURL = url
-        super.init()
-    }
 
     func parse() {
         // 1. Parse the document
@@ -55,6 +59,8 @@ final class OpenGraphScanner: NSObject {
         // 4. Finish parsing
         createObjectAndComplete()
     }
+
+    // MARK: Private
 
     // MARK: - Parsing
 

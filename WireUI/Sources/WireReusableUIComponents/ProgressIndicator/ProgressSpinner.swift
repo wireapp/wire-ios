@@ -22,8 +22,19 @@ import WireDesign
 // MARK: - ProgressSpinner
 
 public final class ProgressSpinner: UIView {
-    private var didBecomeActiveNotificationToken: (any NSObjectProtocol)?
-    private var didEnterBackgroundNotificationToken: (any NSObjectProtocol)?
+    // MARK: Lifecycle
+
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Public
 
     public var color: UIColor = .white {
         didSet { updateSpinnerIcon() }
@@ -57,22 +68,46 @@ public final class ProgressSpinner: UIView {
         }
     }
 
+    override public var intrinsicContentSize: CGSize {
+        spinner.image?.size ?? super.intrinsicContentSize
+    }
+
+    override public func layoutSubviews() {
+        super.layoutSubviews()
+
+        let frame = spinner.layer.frame
+        spinner.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        spinner.layer.frame = frame
+    }
+
+    override public func didMoveToWindow() {
+        if window == nil {
+            // CABasicAnimation delegate is strong so we stop all animations when the view is removed.
+            stopAnimationInternal()
+        } else if isAnimating {
+            startAnimationInternal()
+        }
+    }
+
+    public func startAnimation() {
+        isAnimating = true
+    }
+
+    public func stopAnimation() {
+        isAnimating = false
+    }
+
+    // MARK: Private
+
+    private var didBecomeActiveNotificationToken: (any NSObjectProtocol)?
+    private var didEnterBackgroundNotificationToken: (any NSObjectProtocol)?
+
     private let stackView = UIStackView()
     private let spinner = UIImageView()
     private let label = UILabel()
 
     private var isAnimationRunning: Bool {
         spinner.layer.animation(forKey: "rotateAnimation") != nil
-    }
-
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     private func setup() {
@@ -116,27 +151,6 @@ public final class ProgressSpinner: UIView {
         }
     }
 
-    override public func layoutSubviews() {
-        super.layoutSubviews()
-
-        let frame = spinner.layer.frame
-        spinner.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        spinner.layer.frame = frame
-    }
-
-    override public func didMoveToWindow() {
-        if window == nil {
-            // CABasicAnimation delegate is strong so we stop all animations when the view is removed.
-            stopAnimationInternal()
-        } else if isAnimating {
-            startAnimationInternal()
-        }
-    }
-
-    override public var intrinsicContentSize: CGSize {
-        spinner.image?.size ?? super.intrinsicContentSize
-    }
-
     private func startAnimationInternal() {
         isHidden = false
         stopAnimationInternal()
@@ -153,14 +167,6 @@ public final class ProgressSpinner: UIView {
 
     private func updateSpinnerIcon() {
         spinner.image = UIImage.imageForIcon(.spinner, size: iconSize, color: color)
-    }
-
-    public func startAnimation() {
-        isAnimating = true
-    }
-
-    public func stopAnimation() {
-        isAnimating = false
     }
 
     private func applicationDidBecomeActive() {

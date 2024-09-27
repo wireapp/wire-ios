@@ -21,14 +21,7 @@ import Foundation
 /// A base description of a key used for encryption at rest.
 
 open class BaseEARKeyDescription {
-    // MARK: - Properties
-
-    let id: String
-    let tag: Data
-    let accountID: String
-    let label: String
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         accountID: UUID,
@@ -39,4 +32,13 @@ open class BaseEARKeyDescription {
         self.id = "com.wire.ear.\(self.label).\(self.accountID)"
         self.tag = id.data(using: .utf8)!
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let id: String
+    let tag: Data
+    let accountID: String
+    let label: String
 }

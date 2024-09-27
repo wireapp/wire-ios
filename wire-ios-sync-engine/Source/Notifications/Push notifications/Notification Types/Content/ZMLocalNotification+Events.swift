@@ -68,14 +68,7 @@ extension ZMLocalNotification {
 // event type, and override the components specific for that type.
 ///
 private class EventNotificationBuilder: NotificationBuilder {
-    let event: ZMUpdateEvent
-    let moc: NSManagedObjectContext
-    var sender: ZMUser?
-    var conversation: ZMConversation?
-
-    var notificationType: LocalNotificationType {
-        fatal("You must override this property in a subclass")
-    }
+    // MARK: Lifecycle
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         self.event = event
@@ -85,6 +78,17 @@ private class EventNotificationBuilder: NotificationBuilder {
         if let senderID = event.senderUUID {
             self.sender = ZMUser.fetch(with: senderID, domain: event.senderDomain, in: moc)
         }
+    }
+
+    // MARK: Internal
+
+    let event: ZMUpdateEvent
+    let moc: NSManagedObjectContext
+    var sender: ZMUser?
+    var conversation: ZMConversation?
+
+    var notificationType: LocalNotificationType {
+        fatal("You must override this property in a subclass")
     }
 
     func shouldCreateNotification() -> Bool {
@@ -134,17 +138,7 @@ private class EventNotificationBuilder: NotificationBuilder {
 // MARK: - ReactionEventNotificationBuilder
 
 private class ReactionEventNotificationBuilder: EventNotificationBuilder {
-    private let emoji: String
-    private let nonce: UUID
-    private let message: GenericMessage
-
-    override var notificationType: LocalNotificationType {
-        if LocalNotificationDispatcher.shouldHideNotificationContent(moc: moc) {
-            LocalNotificationType.message(.hidden)
-        } else {
-            LocalNotificationType.message(.reaction(emoji: emoji))
-        }
-    }
+    // MARK: Lifecycle
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         guard
@@ -159,6 +153,16 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
         self.nonce = nonce
 
         super.init(event: event, conversation: conversation, managedObjectContext: managedObjectContext)
+    }
+
+    // MARK: Internal
+
+    override var notificationType: LocalNotificationType {
+        if LocalNotificationDispatcher.shouldHideNotificationContent(moc: moc) {
+            LocalNotificationType.message(.hidden)
+        } else {
+            LocalNotificationType.message(.reaction(emoji: emoji))
+        }
     }
 
     override func shouldCreateNotification() -> Bool {
@@ -185,6 +189,12 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
         info?.messageNonce = nonce
         return info
     }
+
+    // MARK: Private
+
+    private let emoji: String
+    private let nonce: UUID
+    private let message: GenericMessage
 }
 
 // MARK: - ConversationCreateEventNotificationBuilder
@@ -214,12 +224,7 @@ private class ConversationDeleteEventNotificationBuilder: EventNotificationBuild
 // MARK: - UserConnectionEventNotificationBuilder
 
 private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
-    var eventType: LocalNotificationEventType
-    var senderName: String?
-
-    override var notificationType: LocalNotificationType {
-        LocalNotificationType.event(eventType)
-    }
+    // MARK: Lifecycle
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         if let status = (event.payload["connection"] as? [String: AnyObject])?["status"] as? String {
@@ -237,6 +242,15 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
         super.init(event: event, conversation: conversation, managedObjectContext: managedObjectContext)
 
         self.senderName = sender?.name ?? (event.payload["user"] as? [String: Any])?["name"] as? String
+    }
+
+    // MARK: Internal
+
+    var eventType: LocalNotificationEventType
+    var senderName: String?
+
+    override var notificationType: LocalNotificationType {
+        LocalNotificationType.event(eventType)
     }
 
     override func titleText() -> String? {
@@ -268,8 +282,7 @@ private class NewUserEventNotificationBuilder: EventNotificationBuilder {
 // MARK: - NewMessageNotificationBuilder
 
 private class NewMessageNotificationBuilder: EventNotificationBuilder {
-    private let message: GenericMessage
-    private let contentType: LocalNotificationContentType
+    // MARK: Lifecycle
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         guard
@@ -288,14 +301,7 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
         super.init(event: event, conversation: conversation, managedObjectContext: managedObjectContext)
     }
 
-    override func titleText() -> String? {
-        notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
-    }
-
-    override func bodyText() -> String {
-        notificationType.messageBodyText(sender: sender, conversation: conversation)
-            .trimmingCharacters(in: .whitespaces)
-    }
+    // MARK: Internal
 
     override var notificationType: LocalNotificationType {
         shouldHideNotificationContent
@@ -303,13 +309,13 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
             : .message(contentType)
     }
 
-    private var shouldHideNotificationContent: Bool {
-        switch contentType {
-        case .ephemeral:
-            false
-        default:
-            LocalNotificationDispatcher.shouldHideNotificationContent(moc: moc)
-        }
+    override func titleText() -> String? {
+        notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
+    }
+
+    override func bodyText() -> String {
+        notificationType.messageBodyText(sender: sender, conversation: conversation)
+            .trimmingCharacters(in: .whitespaces)
     }
 
     override func shouldCreateNotification() -> Bool {
@@ -332,12 +338,26 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
         }
         return true
     }
+
+    // MARK: Private
+
+    private let message: GenericMessage
+    private let contentType: LocalNotificationContentType
+
+    private var shouldHideNotificationContent: Bool {
+        switch contentType {
+        case .ephemeral:
+            false
+        default:
+            LocalNotificationDispatcher.shouldHideNotificationContent(moc: moc)
+        }
+    }
 }
 
 // MARK: - NewSystemMessageNotificationBuilder
 
 private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
-    let contentType: LocalNotificationContentType
+    // MARK: Lifecycle
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         guard let contentType = LocalNotificationContentType(
@@ -352,6 +372,14 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
         super.init(event: event, conversation: conversation, managedObjectContext: managedObjectContext)
     }
 
+    // MARK: Internal
+
+    let contentType: LocalNotificationContentType
+
+    override var notificationType: LocalNotificationType {
+        LocalNotificationType.message(contentType)
+    }
+
     override func titleText() -> String? {
         notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
     }
@@ -359,10 +387,6 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
     override func bodyText() -> String {
         notificationType.messageBodyText(sender: sender, conversation: conversation)
             .trimmingCharacters(in: .whitespaces)
-    }
-
-    override var notificationType: LocalNotificationType {
-        LocalNotificationType.message(contentType)
     }
 
     override func shouldCreateNotification() -> Bool {

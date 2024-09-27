@@ -20,15 +20,7 @@ import Foundation
 @testable import WireDataModel
 
 class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
-    private func createMLSSelfConversation() -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = UUID.create()
-        conversation.mlsGroupID = .random()
-        conversation.messageProtocol = .mls
-        conversation.mlsStatus = .ready
-        conversation.conversationType = .`self`
-        return conversation
-    }
+    // MARK: Internal
 
     // MARK: - Post last read
 
@@ -178,5 +170,17 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
 
         // THEN
         XCTAssertEqual(conversation.clearedTimeStamp, Date(timeIntervalSince1970: Double(timeinterval) / 1000))
+    }
+
+    // MARK: Private
+
+    private func createMLSSelfConversation() -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        conversation.mlsGroupID = .random()
+        conversation.messageProtocol = .mls
+        conversation.mlsStatus = .ready
+        conversation.conversationType = .`self`
+        return conversation
     }
 }

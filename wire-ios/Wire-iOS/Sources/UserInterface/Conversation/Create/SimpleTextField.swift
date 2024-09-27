@@ -32,35 +32,7 @@ protocol SimpleTextFieldDelegate: AnyObject {
 // MARK: - SimpleTextField
 
 final class SimpleTextField: UITextField, DynamicTypeCapable {
-    // MARK: - Properties
-
-    var attribute: [NSAttributedString.Key: Any] = [
-        .foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
-        .font: FontSpec.smallRegularFont.font!,
-    ]
-    enum Value {
-        case valid(String)
-        case error(SimpleTextFieldValidator.ValidationError)
-    }
-
-    fileprivate let textFieldValidator = SimpleTextFieldValidator()
-
-    weak var textFieldDelegate: SimpleTextFieldDelegate?
-
-    var value: Value? {
-        let validator = SimpleTextFieldValidator()
-        guard let text else { return nil }
-        return if let error = validator.validate(text: text) {
-            .error(error)
-        } else {
-            .valid(text)
-        }
-    }
-
-    // MARK: - UI constants
-
-    var textInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 8)
-    var placeholderInsets: UIEdgeInsets
+    // MARK: Lifecycle
 
     // MARK: Initialization
 
@@ -85,21 +57,60 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Private methods
+    // MARK: Internal
 
-    private func setupTextFieldProperties() {
-        returnKeyType = .next
-        autocapitalizationType = .words
-        accessibilityIdentifier = "NameField"
-        autocorrectionType = .no
-        contentVerticalAlignment = .center
-        font = ValidatedTextField.enteredTextFont.font
-        delegate = textFieldValidator
-        textFieldValidator.delegate = self
+    enum Value {
+        case valid(String)
+        case error(SimpleTextFieldValidator.ValidationError)
+    }
 
-        keyboardAppearance = .default
-        textColor = SemanticColors.SearchBar.textInputView
-        backgroundColor = SemanticColors.SearchBar.backgroundInputView
+    // MARK: - Properties
+
+    var attribute: [NSAttributedString.Key: Any] = [
+        .foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
+        .font: FontSpec.smallRegularFont.font!,
+    ]
+    weak var textFieldDelegate: SimpleTextFieldDelegate?
+
+    // MARK: - UI constants
+
+    var textInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 8)
+    var placeholderInsets: UIEdgeInsets
+
+    var value: Value? {
+        let validator = SimpleTextFieldValidator()
+        guard let text else { return nil }
+        return if let error = validator.validate(text: text) {
+            .error(error)
+        } else {
+            .valid(text)
+        }
+    }
+
+    override var placeholder: String? {
+        get {
+            super.placeholder
+        }
+
+        set {
+            if let newValue {
+                attributedPlaceholder = attributedPlaceholderString(placeholder: newValue)
+            }
+        }
+    }
+
+    override var accessibilityValue: String? {
+        get {
+            guard let text,
+                  !text.isEmpty else {
+                return super.accessibilityValue ?? placeholder
+            }
+            return text
+        }
+
+        set {
+            super.accessibilityValue = newValue
+        }
     }
 
     // MARK: - Methods
@@ -132,34 +143,31 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
         attributedPlaceholder = NSAttributedString(string: placeholder ?? "", attributes: attributes)
     }
 
-    override var placeholder: String? {
-        get {
-            super.placeholder
-        }
-
-        set {
-            if let newValue {
-                attributedPlaceholder = attributedPlaceholderString(placeholder: newValue)
-            }
-        }
-    }
-
-    override var accessibilityValue: String? {
-        get {
-            guard let text,
-                  !text.isEmpty else {
-                return super.accessibilityValue ?? placeholder
-            }
-            return text
-        }
-
-        set {
-            super.accessibilityValue = newValue
-        }
-    }
-
     override func drawPlaceholder(in rect: CGRect) {
         super.drawPlaceholder(in: rect.inset(by: placeholderInsets))
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let textFieldValidator = SimpleTextFieldValidator()
+
+    // MARK: Private
+
+    // MARK: - Private methods
+
+    private func setupTextFieldProperties() {
+        returnKeyType = .next
+        autocapitalizationType = .words
+        accessibilityIdentifier = "NameField"
+        autocorrectionType = .no
+        contentVerticalAlignment = .center
+        font = ValidatedTextField.enteredTextFont.font
+        delegate = textFieldValidator
+        textFieldValidator.delegate = self
+
+        keyboardAppearance = .default
+        textColor = SemanticColors.SearchBar.textInputView
+        backgroundColor = SemanticColors.SearchBar.backgroundInputView
     }
 }
 

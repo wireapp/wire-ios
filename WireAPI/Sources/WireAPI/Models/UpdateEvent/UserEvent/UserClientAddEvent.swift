@@ -21,9 +21,7 @@ import Foundation
 /// An event where a new self user client was added.
 
 public struct UserClientAddEvent: Equatable, Codable {
-    /// The new user client.
-
-    public let client: UserClient
+    // MARK: Lifecycle
 
     /// Create a new `UserClientAddEvent`.
     ///
@@ -32,4 +30,10 @@ public struct UserClientAddEvent: Equatable, Codable {
     public init(client: UserClient) {
         self.client = client
     }
+
+    // MARK: Public
+
+    /// The new user client.
+
+    public let client: UserClient
 }

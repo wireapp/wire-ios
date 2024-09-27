@@ -24,22 +24,7 @@ import WireDesign
 /// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController: UITabBarController {
-    public enum Tab: Int, CaseIterable {
-        case contacts, conversations, folders, archive
-    }
-
-    // MARK: - Tab Subscript and Index
-
-    public subscript(tab tab: Tab) -> UINavigationController {
-        viewControllers![tab.rawValue] as! UINavigationController
-    }
-
-    public var selectedTab: Tab {
-        get { Tab(rawValue: selectedIndex) ?? .conversations }
-        set { selectedIndex = newValue.rawValue }
-    }
-
-    // MARK: - Life Cycle
+    // MARK: Lifecycle
 
     public required init() {
         super.init(nibName: nil, bundle: nil)
@@ -50,6 +35,25 @@ public final class MainTabBarController: UITabBarController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
+
+    // MARK: Public
+
+    public enum Tab: Int, CaseIterable {
+        case contacts, conversations, folders, archive
+    }
+
+    public var selectedTab: Tab {
+        get { Tab(rawValue: selectedIndex) ?? .conversations }
+        set { selectedIndex = newValue.rawValue }
+    }
+
+    // MARK: - Tab Subscript and Index
+
+    public subscript(tab tab: Tab) -> UINavigationController {
+        viewControllers![tab.rawValue] as! UINavigationController
+    }
+
+    // MARK: Private
 
     private func setupTabs() {
         viewControllers = Tab.allCases.map { _ in UINavigationController() }

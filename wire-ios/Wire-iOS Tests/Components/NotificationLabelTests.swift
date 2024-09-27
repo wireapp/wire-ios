@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class NotificationLabelTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: NotificationLabel!
-    private let message = "Double Tap on a tile for fullscreen"
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -132,4 +128,12 @@ final class NotificationLabelTests: XCTestCase {
         XCTAssertEqual(sut.alpha, 0)
         XCTAssertTrue(sut.isHidden)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: NotificationLabel!
+    private let message = "Double Tap on a tile for fullscreen"
 }

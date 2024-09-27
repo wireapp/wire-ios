@@ -27,14 +27,17 @@ protocol VerticalTransitionDataSource: NSObject {
 // MARK: - VerticalTransition
 
 final class VerticalTransition: NSObject, UIViewControllerAnimatedTransitioning {
-    private let offset: CGFloat
-    weak var dataSource: VerticalTransitionDataSource?
+    // MARK: Lifecycle
 
     init(offset: CGFloat) {
         self.offset = offset
 
         super.init()
     }
+
+    // MARK: Internal
+
+    weak var dataSource: VerticalTransitionDataSource?
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         0.55
@@ -89,4 +92,8 @@ final class VerticalTransition: NSObject, UIViewControllerAnimatedTransitioning 
             }
         )
     }
+
+    // MARK: Private
+
+    private let offset: CGFloat
 }

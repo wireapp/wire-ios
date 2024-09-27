@@ -20,9 +20,7 @@ import Foundation
 import WireTransport
 
 final class TestTrustVerificator: NSObject, URLSessionDelegate {
-    var session: URLSession!
-    var trustProvider: BackendTrustProvider!
-    private let callback: (Bool) -> Void
+    // MARK: Lifecycle
 
     init(trustProvider: BackendTrustProvider = MockCertificateTrust(), callback: @escaping (Bool) -> Void) {
         self.callback = callback
@@ -30,6 +28,11 @@ final class TestTrustVerificator: NSObject, URLSessionDelegate {
         self.session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         self.trustProvider = trustProvider
     }
+
+    // MARK: Internal
+
+    var session: URLSession!
+    var trustProvider: BackendTrustProvider!
 
     func urlSession(
         _ session: URLSession,
@@ -46,4 +49,8 @@ final class TestTrustVerificator: NSObject, URLSessionDelegate {
     func verify(url: URL) {
         session.dataTask(with: url).resume()
     }
+
+    // MARK: Private
+
+    private let callback: (Bool) -> Void
 }

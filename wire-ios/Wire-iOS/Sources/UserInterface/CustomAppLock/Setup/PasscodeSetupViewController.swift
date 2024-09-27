@@ -31,9 +31,42 @@ protocol PasscodeSetupUserInterface: AnyObject {
 // MARK: - PasscodeSetupViewController
 
 final class PasscodeSetupViewController: UIViewController {
+    // MARK: Lifecycle
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    /// init with parameters
+    /// - Parameters:
+    ///   - useCompactLayout: Set this to true for reduce font size and spacing for iPhone 4 inch screen. Set to nil to
+    /// follow current window's height
+    ///   - context: context  for this screen. Depending on the context, there are a different title and info message.
+    ///   - callback: callback for storing passcode result.
+    required init(
+        useCompactLayout: Bool? = nil,
+        context: Context,
+        callback: ResultHandler?
+    ) {
+        self.callback = callback
+        self.context = context
+
+        self.useCompactLayout = useCompactLayout ??
+            (AppDelegate.shared.mainWindow.frame.height <= CGFloat.iPhone4Inch.height)
+
+        super.init(nibName: nil, bundle: nil)
+
+        setupViews()
+    }
+
+    // MARK: Internal
+
     enum Context {
         case forcedForTeam
         case createPasscode
+
+        // MARK: Internal
 
         var infoLabelString: String {
             switch self {
@@ -48,6 +81,61 @@ final class PasscodeSetupViewController: UIViewController {
     }
 
     weak var passcodeSetupViewControllerDelegate: PasscodeSetupViewControllerDelegate?
+
+    lazy var passcodeTextField: ValidatedTextField = {
+        let textField = ValidatedTextField.createPasscodeTextField(
+            kind: .passcode(.applockPasscode, isNew: true),
+            delegate: self,
+            setNewColors: true
+        )
+        textField.placeholder = L10n.Localizable.CreatePasscode.Textfield.placeholder
+        textField.delegate = self
+
+        textField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
+
+        return textField
+    }()
+
+    // MARK: - close button
+
+    lazy var closeItem: UIBarButtonItem = {
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+            self?.appLockSetupViewControllerDismissed()
+        }, accessibilityLabel: L10n.Localizable.General.close)
+
+        return closeItem
+    }()
+
+    // MARK: - keyboard avoiding
+
+    static func createKeyboardAvoidingFullScreenView(
+        context: Context,
+        delegate: PasscodeSetupViewControllerDelegate? = nil
+    )
+        -> KeyboardAvoidingAuthenticationCoordinatedViewController {
+        let passcodeSetupViewController = PasscodeSetupViewController(
+            context: context,
+            callback: nil
+        )
+
+        passcodeSetupViewController.passcodeSetupViewControllerDelegate = delegate
+
+        let keyboardAvoidingViewController =
+            KeyboardAvoidingAuthenticationCoordinatedViewController(viewController: passcodeSetupViewController)
+
+        keyboardAvoidingViewController.modalPresentationStyle = .fullScreen
+
+        return keyboardAvoidingViewController
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        passcodeTextField.becomeFirstResponder()
+    }
+
+    // MARK: Private
 
     private lazy var presenter = PasscodeSetupPresenter(userInterface: self)
 
@@ -65,20 +153,6 @@ final class PasscodeSetupViewController: UIViewController {
         button.addTarget(self, action: #selector(onCreateCodeButtonPressed(sender:)), for: .touchUpInside)
 
         return button
-    }()
-
-    lazy var passcodeTextField: ValidatedTextField = {
-        let textField = ValidatedTextField.createPasscodeTextField(
-            kind: .passcode(.applockPasscode, isNew: true),
-            delegate: self,
-            setNewColors: true
-        )
-        textField.placeholder = L10n.Localizable.CreatePasscode.Textfield.placeholder
-        textField.delegate = self
-
-        textField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
-
-        return textField
     }()
 
     private lazy var titleLabel: UILabel = {
@@ -115,33 +189,6 @@ final class PasscodeSetupViewController: UIViewController {
     private var callback: ResultHandler?
     private let context: Context
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    /// init with parameters
-    /// - Parameters:
-    ///   - useCompactLayout: Set this to true for reduce font size and spacing for iPhone 4 inch screen. Set to nil to
-    /// follow current window's height
-    ///   - context: context  for this screen. Depending on the context, there are a different title and info message.
-    ///   - callback: callback for storing passcode result.
-    required init(
-        useCompactLayout: Bool? = nil,
-        context: Context,
-        callback: ResultHandler?
-    ) {
-        self.callback = callback
-        self.context = context
-
-        self.useCompactLayout = useCompactLayout ??
-            (AppDelegate.shared.mainWindow.frame.height <= CGFloat.iPhone4Inch.height)
-
-        super.init(nibName: nil, bundle: nil)
-
-        setupViews()
-    }
-
     private func setupViews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
@@ -177,12 +224,6 @@ final class PasscodeSetupViewController: UIViewController {
         stackView.addArrangedSubview(createButton)
 
         createConstraints()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        passcodeTextField.becomeFirstResponder()
     }
 
     private func createConstraints() {
@@ -236,39 +277,6 @@ final class PasscodeSetupViewController: UIViewController {
     private func onCreateCodeButtonPressed(sender: AnyObject?) {
         storePasscode()
     }
-
-    // MARK: - keyboard avoiding
-
-    static func createKeyboardAvoidingFullScreenView(
-        context: Context,
-        delegate: PasscodeSetupViewControllerDelegate? = nil
-    )
-        -> KeyboardAvoidingAuthenticationCoordinatedViewController {
-        let passcodeSetupViewController = PasscodeSetupViewController(
-            context: context,
-            callback: nil
-        )
-
-        passcodeSetupViewController.passcodeSetupViewControllerDelegate = delegate
-
-        let keyboardAvoidingViewController =
-            KeyboardAvoidingAuthenticationCoordinatedViewController(viewController: passcodeSetupViewController)
-
-        keyboardAvoidingViewController.modalPresentationStyle = .fullScreen
-
-        return keyboardAvoidingViewController
-    }
-
-    // MARK: - close button
-
-    lazy var closeItem: UIBarButtonItem = {
-        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true)
-            self?.appLockSetupViewControllerDismissed()
-        }, accessibilityLabel: L10n.Localizable.General.close)
-
-        return closeItem
-    }()
 
     private func appLockSetupViewControllerDismissed() {
         callback?(false)

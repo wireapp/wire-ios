@@ -21,17 +21,9 @@ import WireCommonComponents
 import WireDesign
 
 class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable {
-    // MARK: - Properties
+    // MARK: Internal
 
-    private let leftIconView = UIImageView()
-    private let titleLabel = UILabel()
-    private let statusLabel = UILabel()
-
-    private var titleStackView: UIStackView!
     var contentStackView: UIStackView!
-    private var leftIconContainer: UIView!
-    private var contentLeadingConstraint: NSLayoutConstraint!
-
     /// The leading offset of the content when `icon` is nil.
     var contentLeadingOffset: CGFloat = 24
 
@@ -139,6 +131,24 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         setupAccessibility()
     }
 
+    func redrawFont() {
+        statusLabel.font = FontSpec.smallRegularFont.font
+
+        titleLabel.font = titleBolded ? FontSpec.normalSemiboldFont.font : FontSpec.normalLightFont.font
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let leftIconView = UIImageView()
+    private let titleLabel = UILabel()
+    private let statusLabel = UILabel()
+
+    private var titleStackView: UIStackView!
+    private var leftIconContainer: UIView!
+    private var contentLeadingConstraint: NSLayoutConstraint!
+
     // MARK: - Layout
 
     private func updateIcon(_ newValue: UIImage?) {
@@ -179,11 +189,5 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
     private func setupAccessibility() {
         isAccessibilityElement = true
         accessibilityTraits = .button
-    }
-
-    func redrawFont() {
-        statusLabel.font = FontSpec.smallRegularFont.font
-
-        titleLabel.font = titleBolded ? FontSpec.normalSemiboldFont.font : FontSpec.normalLightFont.font
     }
 }

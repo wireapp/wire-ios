@@ -29,18 +29,16 @@ protocol PreBackendSwitchViewControllerDelegate: AnyObject {
 // MARK: - PreBackendSwitchViewController
 
 final class PreBackendSwitchViewController: AuthenticationStepViewController {
-    var authenticationCoordinator: AuthenticationCoordinator?
-    var backendURL: URL?
+    // MARK: Internal
 
     typealias Login = L10n.Localizable.Login.Sso.BackendSwitch
-
-    var delegate: PreBackendSwitchViewControllerDelegate? {
-        authenticationCoordinator
-    }
 
     // MARK: - UI Styles
 
     static let informationBlue = UIColor(red: 35 / 255, green: 145 / 255, blue: 211 / 255, alpha: 1)
+
+    var authenticationCoordinator: AuthenticationCoordinator?
+    var backendURL: URL?
 
     // MARK: - UI Elements
 
@@ -68,7 +66,9 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
         return label
     }()
 
-    // MARK: - Lifecycle
+    var delegate: PreBackendSwitchViewControllerDelegate? {
+        authenticationCoordinator
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,6 +88,16 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
             delegate?.preBackendSwitchViewControllerDidComplete(url)
         }
     }
+
+    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {
+        // NO OP
+    }
+
+    func displayError(_: Error) {
+        // NO OP
+    }
+
+    // MARK: Private
 
     private func configureSubviews() {
         view.addSubview(wireLogoInfoView)
@@ -121,13 +131,5 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
             informationLabel.leadingAnchor.constraint(equalTo: wireLogoInfoView.contentView.leadingAnchor),
             informationLabel.trailingAnchor.constraint(equalTo: wireLogoInfoView.contentView.trailingAnchor),
         ])
-    }
-
-    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {
-        // NO OP
-    }
-
-    func displayError(_: Error) {
-        // NO OP
     }
 }

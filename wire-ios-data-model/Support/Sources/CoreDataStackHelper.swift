@@ -20,7 +20,13 @@ import Foundation
 import WireDataModel
 
 public struct CoreDataStackHelper {
-    private let fileManager = FileManager.default
+    // MARK: Lifecycle
+
+    public init() {
+        self.uniquePath = UUID().uuidString
+    }
+
+    // MARK: Public
 
     public var storageDirectory: URL {
         var path = fileManager.temporaryDirectory
@@ -30,12 +36,6 @@ public struct CoreDataStackHelper {
             path.appendPathComponent(uniquePath, isDirectory: true)
         }
         return path
-    }
-
-    var uniquePath: String
-
-    public init() {
-        self.uniquePath = UUID().uuidString
     }
 
     public func createStack(inMemoryStore: Bool = true) async throws -> CoreDataStack {
@@ -79,4 +79,12 @@ public struct CoreDataStackHelper {
 
         try fileManager.removeItem(atPath: storageDirectory.path)
     }
+
+    // MARK: Internal
+
+    var uniquePath: String
+
+    // MARK: Private
+
+    private let fileManager = FileManager.default
 }

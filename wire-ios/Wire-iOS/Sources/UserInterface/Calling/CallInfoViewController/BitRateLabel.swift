@@ -25,6 +25,14 @@ enum BitRateStatus: String {
     case constant
     case variable
 
+    // MARK: Lifecycle
+
+    init(_ isConstantBitRate: Bool) {
+        self = isConstantBitRate ? .constant : .variable
+    }
+
+    // MARK: Fileprivate
+
     fileprivate var localizedText: String {
         switch self {
         case .constant:
@@ -39,20 +47,20 @@ enum BitRateStatus: String {
     fileprivate var accessibilityValue: String {
         rawValue
     }
-
-    init(_ isConstantBitRate: Bool) {
-        self = isConstantBitRate ? .constant : .variable
-    }
 }
 
 // MARK: - BitRateLabel
 
 final class BitRateLabel: DynamicFontLabel {
+    // MARK: Internal
+
     var bitRateStatus: BitRateStatus? {
         didSet {
             updateLabel()
         }
     }
+
+    // MARK: Private
 
     private func updateLabel() {
         text = bitRateStatus?.localizedText

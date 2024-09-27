@@ -21,9 +21,8 @@ import XCTest
 @testable import Wire
 
 final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
-    // MARK: - Properties
+    // MARK: Internal
 
-    private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
 
     override func setUp() {
@@ -60,6 +59,12 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
         let missedCell = missedCallCell(fromSelf: false, inGroup: true)
         snapshotHelper.verify(matching: missedCell)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - Helper
 

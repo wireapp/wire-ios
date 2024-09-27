@@ -27,6 +27,8 @@ import UIKit
 // in the future here as well
 
 final class WebLinkTextView: UITextView {
+    // MARK: Lifecycle
+
     init() {
         super.init(frame: .zero, textContainer: nil)
 
@@ -40,14 +42,7 @@ final class WebLinkTextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setup() {
-        isScrollEnabled = false
-        bounces = false
-        backgroundColor = UIColor.clear
-        textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        textContainer.lineFragmentPadding = 0
-        accessibilityTraits = .link
-    }
+    // MARK: Internal
 
     /// non-selectable textview
     override var selectedTextRange: UITextRange? {
@@ -67,6 +62,17 @@ final class WebLinkTextView: UITextView {
         }
 
         super.addGestureRecognizer(gestureRecognizer)
+    }
+
+    // MARK: Private
+
+    private func setup() {
+        isScrollEnabled = false
+        bounces = false
+        backgroundColor = UIColor.clear
+        textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        textContainer.lineFragmentPadding = 0
+        accessibilityTraits = .link
     }
 }
 

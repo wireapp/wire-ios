@@ -19,6 +19,14 @@
 import Foundation
 
 public class BaseFetchMLSGroupInfoAction: EntityAction {
+    // MARK: Lifecycle
+
+    init(resultHandler: ResultHandler? = nil) {
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = Data
 
     public enum Failure: Error, Equatable {
@@ -31,6 +39,8 @@ public class BaseFetchMLSGroupInfoAction: EntityAction {
         case invalidParameters
         case mlsNotEnabled
         case unknown(status: Int, label: String, message: String)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -57,8 +67,4 @@ public class BaseFetchMLSGroupInfoAction: EntityAction {
     }
 
     public var resultHandler: ResultHandler?
-
-    init(resultHandler: ResultHandler? = nil) {
-        self.resultHandler = resultHandler
-    }
 }

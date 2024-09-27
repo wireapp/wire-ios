@@ -24,9 +24,7 @@ import WireDesign
 // MARK: - CollectionVideoCell
 
 final class CollectionVideoCell: CollectionCell {
-    private var containerView = UIView()
-    private let videoMessageView = VideoMessageView()
-    private let restrictionView = SimpleVideoMessageRestrictionView()
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -38,6 +36,12 @@ final class CollectionVideoCell: CollectionCell {
 
         loadView()
         setupAccessibility()
+    }
+
+    // MARK: Internal
+
+    override var obfuscationIcon: StyleKitIcon {
+        .movie
     }
 
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
@@ -72,9 +76,11 @@ final class CollectionVideoCell: CollectionCell {
         ])
     }
 
-    override var obfuscationIcon: StyleKitIcon {
-        .movie
-    }
+    // MARK: Private
+
+    private var containerView = UIView()
+    private let videoMessageView = VideoMessageView()
+    private let restrictionView = SimpleVideoMessageRestrictionView()
 
     private func setup(_ view: UIView) {
         view.clipsToBounds = true

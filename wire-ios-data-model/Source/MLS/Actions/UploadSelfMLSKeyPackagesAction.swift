@@ -19,6 +19,16 @@
 import Foundation
 
 public class UploadSelfMLSKeyPackagesAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(clientID: String, keyPackages: [String], resultHandler: ResultHandler? = nil) {
+        self.clientID = clientID
+        self.keyPackages = keyPackages
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = Void
@@ -31,6 +41,8 @@ public class UploadSelfMLSKeyPackagesAction: EntityAction {
         case identityMismatch
         case clientNotFound
         case unknown(status: Int)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -57,10 +69,4 @@ public class UploadSelfMLSKeyPackagesAction: EntityAction {
     public let clientID: String
     public let keyPackages: [String]
     public var resultHandler: ResultHandler?
-
-    public init(clientID: String, keyPackages: [String], resultHandler: ResultHandler? = nil) {
-        self.clientID = clientID
-        self.keyPackages = keyPackages
-        self.resultHandler = resultHandler
-    }
 }

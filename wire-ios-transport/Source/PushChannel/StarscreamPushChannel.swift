@@ -23,6 +23,27 @@ import Starscream
 
 @objcMembers
 final class StarscreamPushChannel: NSObject, PushChannelType {
+    // MARK: Lifecycle
+
+    required init(
+        scheduler: ZMTransportRequestScheduler,
+        userAgentString: String,
+        environment: BackendEnvironmentProvider,
+        proxyUsername: String?,
+        proxyPassword: String?,
+        minTLSVersion: String?,
+        queue: OperationQueue
+    ) {
+        self.environment = environment
+        self.scheduler = scheduler
+        self.proxyUsername = proxyUsername
+        self.proxyPassword = proxyPassword
+        self.workQueue = queue
+        self.minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
+    }
+
+    // MARK: Internal
+
     var webSocket: WebSocket?
     var workQueue: OperationQueue
     let environment: BackendEnvironmentProvider
@@ -30,7 +51,6 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     weak var consumer: ZMPushChannelConsumer?
     var consumerQueue: GroupQueue?
     var pingTimer: ZMTimer?
-    private let minTLSVersion: TLSVersion
 
     var clientID: String? {
         didSet {
@@ -67,23 +87,6 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         urlComponents?.queryItems = [URLQueryItem(name: "client", value: clientID)]
 
         return urlComponents?.url
-    }
-
-    required init(
-        scheduler: ZMTransportRequestScheduler,
-        userAgentString: String,
-        environment: BackendEnvironmentProvider,
-        proxyUsername: String?,
-        proxyPassword: String?,
-        minTLSVersion: String?,
-        queue: OperationQueue
-    ) {
-        self.environment = environment
-        self.scheduler = scheduler
-        self.proxyUsername = proxyUsername
-        self.proxyPassword = proxyPassword
-        self.workQueue = queue
-        self.minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
@@ -178,19 +181,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         }
     }
 
-    // MARK: - Private
-
-    private let proxyUsername: String?
-    private let proxyPassword: String?
-
-    private func scheduleOpenInternal() {
-        guard canOpenConnection else {
-            WireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
-            return
-        }
-        WireLogger.pushChannel.debug("Schedule opening..")
-        scheduler.add(ZMOpenPushChannelRequest())
-    }
+    // MARK: Fileprivate
 
     fileprivate func onClose() {
         webSocket = nil
@@ -213,11 +204,6 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         }
     }
 
-    private func stopPingTimer() {
-        pingTimer?.cancel()
-        pingTimer = nil
-    }
-
     fileprivate func schedulePingTimer() {
         stopPingTimer()
         startPingTimer()
@@ -227,6 +213,27 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         let timer = ZMTimer(target: self, operationQueue: workQueue)
         timer?.fire(afterTimeInterval: 30)
         pingTimer = timer
+    }
+
+    // MARK: Private
+
+    private let minTLSVersion: TLSVersion
+
+    private let proxyUsername: String?
+    private let proxyPassword: String?
+
+    private func scheduleOpenInternal() {
+        guard canOpenConnection else {
+            WireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
+            return
+        }
+        WireLogger.pushChannel.debug("Schedule opening..")
+        scheduler.add(ZMOpenPushChannelRequest())
+    }
+
+    private func stopPingTimer() {
+        pingTimer?.cancel()
+        pingTimer = nil
     }
 }
 
@@ -289,11 +296,15 @@ extension StarscreamPushChannel: WebSocketDelegate {
 // MARK: - StarscreamCertificatePinning
 
 final class StarscreamCertificatePinning: CertificatePinning {
-    let environment: BackendEnvironmentProvider
+    // MARK: Lifecycle
 
     init(environment: BackendEnvironmentProvider) {
         self.environment = environment
     }
+
+    // MARK: Internal
+
+    let environment: BackendEnvironmentProvider
 
     func evaluateTrust(trust: SecTrust, domain: String?, completion: (PinningState) -> Void) {
         if environment.verifyServerTrust(trust: trust, host: domain) {

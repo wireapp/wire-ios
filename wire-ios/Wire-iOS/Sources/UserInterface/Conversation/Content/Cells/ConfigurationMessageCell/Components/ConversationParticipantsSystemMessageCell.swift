@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationParticipantsSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-    private typealias LabelColors = SemanticColors.Label
+    // MARK: Internal
 
     struct Configuration: Equatable {
         let icon: UIImage?
@@ -29,8 +29,6 @@ final class ConversationParticipantsSystemMessageCell: ConversationIconBasedCell
         let showLine: Bool
         let warning: String?
     }
-
-    private let warningLabel = UILabel()
 
     override func configureSubviews() {
         super.configureSubviews()
@@ -55,4 +53,10 @@ final class ConversationParticipantsSystemMessageCell: ConversationIconBasedCell
         attributedText = object.attributedText
         warningLabel.text = object.warning
     }
+
+    // MARK: Private
+
+    private typealias LabelColors = SemanticColors.Label
+
+    private let warningLabel = UILabel()
 }

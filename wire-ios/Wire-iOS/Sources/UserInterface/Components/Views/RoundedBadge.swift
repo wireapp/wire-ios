@@ -21,11 +21,7 @@ import UIKit
 // MARK: - RoundedBadge
 
 class RoundedBadge: UIButton {
-    let containedView: UIView
-    private var trailingConstraint: NSLayoutConstraint!
-    private var leadingConstraint: NSLayoutConstraint!
-    var widthGreaterThanHeightConstraint: NSLayoutConstraint!
-    private let contentInset: UIEdgeInsets
+    // MARK: Lifecycle
 
     init(view: UIView, contentInset: UIEdgeInsets = UIEdgeInsets(top: 2, left: 4, bottom: 2, right: 4)) {
         self.contentInset = contentInset
@@ -41,6 +37,43 @@ class RoundedBadge: UIButton {
         layer.masksToBounds = true
         updateCornerRadius()
     }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let containedView: UIView
+    var widthGreaterThanHeightConstraint: NSLayoutConstraint!
+
+    func updateCollapseConstraints(isCollapsed: Bool) {
+        if isCollapsed {
+            widthGreaterThanHeightConstraint.isActive = false
+            trailingConstraint.constant = 0
+            leadingConstraint.constant = 0
+        } else {
+            widthGreaterThanHeightConstraint.isActive = true
+            trailingConstraint.constant = -contentInset.right
+            leadingConstraint.constant = contentInset.left
+        }
+    }
+
+    func updateCornerRadius() {
+        layer.cornerRadius = ceil(bounds.height / 2.0)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateCornerRadius()
+    }
+
+    // MARK: Private
+
+    private var trailingConstraint: NSLayoutConstraint!
+    private var leadingConstraint: NSLayoutConstraint!
+    private let contentInset: UIEdgeInsets
 
     private func createConstraints() {
         containedView.translatesAutoresizingMaskIntoConstraints = false
@@ -63,38 +96,12 @@ class RoundedBadge: UIButton {
 
         ])
     }
-
-    func updateCollapseConstraints(isCollapsed: Bool) {
-        if isCollapsed {
-            widthGreaterThanHeightConstraint.isActive = false
-            trailingConstraint.constant = 0
-            leadingConstraint.constant = 0
-        } else {
-            widthGreaterThanHeightConstraint.isActive = true
-            trailingConstraint.constant = -contentInset.right
-            leadingConstraint.constant = contentInset.left
-        }
-    }
-
-    func updateCornerRadius() {
-        layer.cornerRadius = ceil(bounds.height / 2.0)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateCornerRadius()
-    }
 }
 
 // MARK: - RoundedTextBadge
 
 final class RoundedTextBadge: RoundedBadge {
-    var textLabel = UILabel()
+    // MARK: Lifecycle
 
     init(
         contentInset: UIEdgeInsets = UIEdgeInsets(top: 2, left: 4, bottom: 2, right: 4),
@@ -112,4 +119,8 @@ final class RoundedTextBadge: RoundedBadge {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var textLabel = UILabel()
 }

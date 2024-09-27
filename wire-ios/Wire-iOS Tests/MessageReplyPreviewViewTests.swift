@@ -37,7 +37,7 @@ extension UIView {
 // MARK: - MessageReplyPreviewViewTests
 
 final class MessageReplyPreviewViewTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -319,6 +319,10 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             message.replyPreview()!
         }
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - Helper method
 

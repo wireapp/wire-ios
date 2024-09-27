@@ -19,8 +19,7 @@
 import Foundation
 
 public final class FetchMLSConversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
-    public var conversationId: UUID
-    public var domain: String
+    // MARK: Lifecycle
 
     public init(
         conversationId: UUID,
@@ -31,4 +30,9 @@ public final class FetchMLSConversationGroupInfoAction: BaseFetchMLSGroupInfoAct
         self.domain = domain
         super.init(resultHandler: resultHandler)
     }
+
+    // MARK: Public
+
+    public var conversationId: UUID
+    public var domain: String
 }

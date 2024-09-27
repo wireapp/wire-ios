@@ -29,6 +29,13 @@ protocol KeychainItemProtocol {
 // MARK: - KeychainManager
 
 public enum KeychainManager {
+    // MARK: Internal
+
+    enum AccessLevel {
+        case moreRestrictive
+        case lessRestrictive
+    }
+
     // MARK: - Keychain access
 
     static func storeItem(_ item: KeychainItemProtocol, value: some Any) throws {
@@ -75,11 +82,6 @@ public enum KeychainManager {
         }
 
         return Data(key)
-    }
-
-    enum AccessLevel {
-        case moreRestrictive
-        case lessRestrictive
     }
 
     static func generatePublicPrivateKeyPair(
@@ -145,6 +147,8 @@ public enum KeychainManager {
         return (privateKey, publicKey)
     }
 
+    // MARK: Private
+
     private static var isRunningOnSimulator: Bool {
         #if targetEnvironment(simulator)
             return true
@@ -164,6 +168,8 @@ extension KeychainManager {
         case failedToGenerateKey(OSStatus)
         case failedToGeneratePublicPrivateKey(underlyingError: Swift.Error?)
         case failedToCopyPublicKey
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {

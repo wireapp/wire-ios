@@ -29,37 +29,7 @@ protocol BreathLoadingBarDelegate: AnyObject {
 // MARK: - BreathLoadingBar
 
 final class BreathLoadingBar: UIView {
-    weak var delegate: BreathLoadingBarDelegate?
-
-    private(set) lazy var heightConstraint = heightAnchor.constraint(equalToConstant: 0)
-
-    var animating = false {
-        didSet {
-            guard animating != oldValue else { return }
-
-            if animating {
-                startAnimation()
-            } else {
-                stopAnimation()
-            }
-        }
-    }
-
-    var state: NetworkStatusViewState = .online {
-        didSet {
-            if oldValue != state {
-                updateView()
-            }
-        }
-    }
-
-    private let BreathLoadingAnimationKey = "breathLoadingAnimation"
-
-    var animationDuration: TimeInterval = 0.0
-
-    var isAnimationRunning: Bool {
-        layer.animation(forKey: BreathLoadingAnimationKey) != nil
-    }
+    // MARK: Lifecycle
 
     init(animationDuration duration: TimeInterval) {
         self.animating = false
@@ -93,34 +63,40 @@ final class BreathLoadingBar: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func updateView() {
-        switch state {
-        case .online:
-            heightConstraint.constant = 0
-            alpha = 0
-            layer.cornerRadius = 0
+    // MARK: Internal
 
-        case .onlineSynchronizing:
-            heightConstraint.constant = CGFloat.SyncBar.height
-            alpha = 1
-            layer.cornerRadius = CGFloat.SyncBar.cornerRadius
+    weak var delegate: BreathLoadingBarDelegate?
 
-            backgroundColor = UIColor.accent()
+    private(set) lazy var heightConstraint = heightAnchor.constraint(equalToConstant: 0)
 
-        case .offlineExpanded:
-            heightConstraint.constant = CGFloat.OfflineBar.expandedHeight
-            alpha = 0
-            layer.cornerRadius = CGFloat.OfflineBar.cornerRadius
+    var animationDuration: TimeInterval = 0.0
+
+    var animating = false {
+        didSet {
+            guard animating != oldValue else { return }
+
+            if animating {
+                startAnimation()
+            } else {
+                stopAnimation()
+            }
         }
-
-        layoutIfNeeded()
     }
 
-    private func createConstraints() {
-        translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            heightConstraint,
-        ])
+    var state: NetworkStatusViewState = .online {
+        didSet {
+            if oldValue != state {
+                updateView()
+            }
+        }
+    }
+
+    var isAnimationRunning: Bool {
+        layer.animation(forKey: BreathLoadingAnimationKey) != nil
+    }
+
+    static func withDefaultAnimationDuration() -> BreathLoadingBar {
+        BreathLoadingBar(animationDuration: TimeInterval.SyncBar.defaultAnimationDuration)
     }
 
     override func layoutSubviews() {
@@ -166,7 +142,37 @@ final class BreathLoadingBar: UIView {
         layer.removeAnimation(forKey: BreathLoadingAnimationKey)
     }
 
-    static func withDefaultAnimationDuration() -> BreathLoadingBar {
-        BreathLoadingBar(animationDuration: TimeInterval.SyncBar.defaultAnimationDuration)
+    // MARK: Private
+
+    private let BreathLoadingAnimationKey = "breathLoadingAnimation"
+
+    private func updateView() {
+        switch state {
+        case .online:
+            heightConstraint.constant = 0
+            alpha = 0
+            layer.cornerRadius = 0
+
+        case .onlineSynchronizing:
+            heightConstraint.constant = CGFloat.SyncBar.height
+            alpha = 1
+            layer.cornerRadius = CGFloat.SyncBar.cornerRadius
+
+            backgroundColor = UIColor.accent()
+
+        case .offlineExpanded:
+            heightConstraint.constant = CGFloat.OfflineBar.expandedHeight
+            alpha = 0
+            layer.cornerRadius = CGFloat.OfflineBar.cornerRadius
+        }
+
+        layoutIfNeeded()
+    }
+
+    private func createConstraints() {
+        translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            heightConstraint,
+        ])
     }
 }

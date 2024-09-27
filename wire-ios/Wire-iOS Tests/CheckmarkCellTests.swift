@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class CheckmarkCellTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: CheckmarkCell!
-    private var conversation: SwiftMockConversation!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -92,4 +88,12 @@ final class CheckmarkCellTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: CheckmarkCell!
+    private var conversation: SwiftMockConversation!
+    private var snapshotHelper: SnapshotHelper!
 }

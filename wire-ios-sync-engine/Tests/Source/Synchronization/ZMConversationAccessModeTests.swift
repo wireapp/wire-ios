@@ -22,6 +22,8 @@ import XCTest
 @testable import WireSyncEngine
 
 public class ZMConversationAccessModeTests: MessagingTest {
+    // MARK: Public
+
     override public func setUp() {
         super.setUp()
 
@@ -45,6 +47,27 @@ public class ZMConversationAccessModeTests: MessagingTest {
         teamB = nil
         super.tearDown()
     }
+
+    // MARK: Internal
+
+    enum ConversationOptionsTeam {
+        case none
+        case teamA
+        case teamB
+    }
+
+    struct ConversationOptions {
+        let hasRemoteId: Bool
+        let team: ConversationOptionsTeam
+        let isGroup: Bool
+    }
+
+    struct SelfUserOptions {
+        let team: ConversationOptionsTeam
+    }
+
+    var teamA: Team!
+    var teamB: Team!
 
     func testThatItGeneratesCorrectSetAccessModeRequestForApiVersionV0() {
         internaltestThatItGeneratesCorrectSetAccessModeRequestForPreviousApiVersions(apiVersion: .v0)
@@ -256,21 +279,6 @@ public class ZMConversationAccessModeTests: MessagingTest {
         XCTAssertEqual(error, .guestLinksDisabled)
     }
 
-    enum ConversationOptionsTeam {
-        case none
-        case teamA
-        case teamB
-    }
-
-    struct ConversationOptions {
-        let hasRemoteId: Bool
-        let team: ConversationOptionsTeam
-        let isGroup: Bool
-    }
-
-    var teamA: Team!
-    var teamB: Team!
-
     @discardableResult
     func createMembership(user: ZMUser, team: Team) -> Member {
         let member = Member.insertNewObject(in: uiMOC)
@@ -310,10 +318,6 @@ public class ZMConversationAccessModeTests: MessagingTest {
         }
 
         return conversation
-    }
-
-    struct SelfUserOptions {
-        let team: ConversationOptionsTeam
     }
 
     @discardableResult

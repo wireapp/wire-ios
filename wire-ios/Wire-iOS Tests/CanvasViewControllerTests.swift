@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class CanvasViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: CanvasViewController!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -53,4 +50,11 @@ final class CanvasViewControllerTests: XCTestCase {
         sut.emojiButton.sendActions(for: .touchUpInside)
         snapshotHelper.verify(matching: sut.view)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: CanvasViewController!
+    private var snapshotHelper: SnapshotHelper!
 }

@@ -47,29 +47,7 @@ extension Service {
 // MARK: - ServiceDetailViewController
 
 final class ServiceDetailViewController: UIViewController {
-    typealias Completion = (AddBotResult?) -> Void
-
-    enum ActionType {
-        case addService(ZMConversation), removeService(ZMConversation), openConversation
-    }
-
-    var service: Service {
-        didSet {
-            detailView.service = service
-        }
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
-
-    let completion: Completion?
-    weak var viewControllerDismisser: ViewControllerDismisser?
-
-    private let detailView: ServiceDetailView
-    private let actionButton: ZMButton
-    private let actionType: ActionType
-    private let userSession: UserSession
+    // MARK: Lifecycle
 
     /// init method with ServiceUser, destination conversation and customized UI.
     ///
@@ -119,6 +97,27 @@ final class ServiceDetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    typealias Completion = (AddBotResult?) -> Void
+
+    enum ActionType {
+        case addService(ZMConversation), removeService(ZMConversation), openConversation
+    }
+
+    let completion: Completion?
+    weak var viewControllerDismisser: ViewControllerDismisser?
+
+    var service: Service {
+        didSet {
+            detailView.service = service
+        }
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -134,53 +133,6 @@ final class ServiceDetailViewController: UIViewController {
         navigationItem.rightBarButtonItem?.accessibilityIdentifier = "close"
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceDetails.CloseButton
             .description
-    }
-
-    private func setupViews() {
-        actionButton.addCallback(
-            for: .primaryActionTriggered,
-            callback: callback(
-                for: actionType,
-                sender: actionButton,
-                completion: completion
-            )
-        )
-
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        [detailView, actionButton].forEach(view.addSubview)
-
-        createConstraints()
-
-        guard let userSession = userSession as? ZMUserSession else {
-            return
-        }
-
-        service.serviceUser.fetchProvider(in: userSession) { [weak self] provider in
-            self?.detailView.service.provider = provider
-        }
-
-        service.serviceUser.fetchDetails(in: userSession) { [weak self] details in
-            self?.detailView.service.serviceUserDetails = details
-        }
-    }
-
-    private func createConstraints() {
-        [detailView, actionButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        NSLayoutConstraint.activate([
-            detailView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            detailView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            actionButton.bottomAnchor.constraint(
-                equalTo: view.bottomAnchor,
-                constant: -(16 + UIScreen.safeArea.bottom)
-            ),
-            detailView.topAnchor.constraint(equalTo: safeTopAnchor, constant: 16),
-            actionButton.topAnchor.constraint(equalTo: detailView.bottomAnchor, constant: 16),
-            actionButton.heightAnchor.constraint(equalToConstant: 48),
-        ])
     }
 
     @objc
@@ -258,6 +210,60 @@ final class ServiceDetailViewController: UIViewController {
                 }
             }
         }
+    }
+
+    // MARK: Private
+
+    private let detailView: ServiceDetailView
+    private let actionButton: ZMButton
+    private let actionType: ActionType
+    private let userSession: UserSession
+
+    private func setupViews() {
+        actionButton.addCallback(
+            for: .primaryActionTriggered,
+            callback: callback(
+                for: actionType,
+                sender: actionButton,
+                completion: completion
+            )
+        )
+
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        [detailView, actionButton].forEach(view.addSubview)
+
+        createConstraints()
+
+        guard let userSession = userSession as? ZMUserSession else {
+            return
+        }
+
+        service.serviceUser.fetchProvider(in: userSession) { [weak self] provider in
+            self?.detailView.service.provider = provider
+        }
+
+        service.serviceUser.fetchDetails(in: userSession) { [weak self] details in
+            self?.detailView.service.serviceUserDetails = details
+        }
+    }
+
+    private func createConstraints() {
+        [detailView, actionButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        NSLayoutConstraint.activate([
+            detailView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            detailView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            actionButton.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -(16 + UIScreen.safeArea.bottom)
+            ),
+            detailView.topAnchor.constraint(equalTo: safeTopAnchor, constant: 16),
+            actionButton.topAnchor.constraint(equalTo: detailView.bottomAnchor, constant: 16),
+            actionButton.heightAnchor.constraint(equalToConstant: 48),
+        ])
     }
 }
 

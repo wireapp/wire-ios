@@ -23,9 +23,7 @@ import XCTest
 @testable import Wire
 
 final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
-    private var mockDateProvider: MockCurrentDateProviding!
-    private var userDefaults: UserDefaults!
-    private var sut: DidPresentNotificationPermissionHintUseCase<MockCurrentDateProviding>!
+    // MARK: Internal
 
     override func setUp() {
         mockDateProvider = .init()
@@ -49,4 +47,10 @@ final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         let date = try XCTUnwrap(userDefaults.value(for: .lastTimeNotificationPermissionHintWasShown))
         XCTAssertEqual(date, mockDateProvider.now)
     }
+
+    // MARK: Private
+
+    private var mockDateProvider: MockCurrentDateProviding!
+    private var userDefaults: UserDefaults!
+    private var sut: DidPresentNotificationPermissionHintUseCase<MockCurrentDateProviding>!
 }

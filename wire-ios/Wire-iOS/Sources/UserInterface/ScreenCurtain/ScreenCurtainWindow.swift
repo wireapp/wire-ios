@@ -21,11 +21,7 @@ import WireSyncEngine
 
 /// A window used to obfuscate the main content window when the app is inactive.
 final class ScreenCurtainWindow: UIWindow {
-    // MARK: - Properties
-
-    weak var userSession: UserSession?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override init(frame: CGRect = UIScreen.main.bounds) {
         super.init(frame: frame)
@@ -56,6 +52,12 @@ final class ScreenCurtainWindow: UIWindow {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    weak var userSession: UserSession?
 
     // MARK: - Events
 

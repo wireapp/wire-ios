@@ -21,10 +21,7 @@
 // MARK: - MockAssetCollectionDelegate
 
 final class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
-    var messagesByFilter = [[CategoryMatch: [ZMMessage]]]()
-    var didCallDelegate = false
-    var result: AssetFetchResult?
-    var finished: [CategoryMatch] = []
+    // MARK: Public
 
     public func assetCollectionDidFinishFetching(collection: ZMCollection, result: AssetFetchResult) {
         self.result = result
@@ -49,6 +46,13 @@ final class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
         }
     }
 
+    // MARK: Internal
+
+    var messagesByFilter = [[CategoryMatch: [ZMMessage]]]()
+    var didCallDelegate = false
+    var result: AssetFetchResult?
+    var finished: [CategoryMatch] = []
+
     func allMessages(for categoryMatch: CategoryMatch) -> [ZMMessage] {
         messagesByFilter.reduce(into: []) { partialResult, value in
             if let match = value[categoryMatch] {
@@ -64,6 +68,10 @@ final class AssetColletionTests: ModelObjectsTests {
     var sut: AssetCollection!
     var delegate: MockAssetCollectionDelegate!
     var conversation: ZMConversation!
+
+    var defaultMatchPair: CategoryMatch {
+        CategoryMatch(including: .image, excluding: .none)
+    }
 
     override func setUp() {
         super.setUp()
@@ -81,10 +89,6 @@ final class AssetColletionTests: ModelObjectsTests {
         sut = nil
         conversation = nil
         super.tearDown()
-    }
-
-    var defaultMatchPair: CategoryMatch {
-        CategoryMatch(including: .image, excluding: .none)
     }
 
     @discardableResult

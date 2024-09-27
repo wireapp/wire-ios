@@ -21,20 +21,7 @@ import Foundation
 /// A container for update events.
 
 public struct UpdateEventEnvelope: Equatable, Codable {
-    /// The id of the event envelope.
-
-    public let id: UUID
-
-    /// The event payloads.
-
-    public var events: [UpdateEvent]
-
-    /// Whether this event envelope is transient.
-    ///
-    /// If `true`, then the event is not stored on the backend and is
-    /// only sent through the push channel as it occurs.
-
-    public let isTransient: Bool
+    // MARK: Lifecycle
 
     /// Create a new `UpdateEventEnvelope`.
     ///
@@ -52,4 +39,21 @@ public struct UpdateEventEnvelope: Equatable, Codable {
         self.events = events
         self.isTransient = isTransient
     }
+
+    // MARK: Public
+
+    /// The id of the event envelope.
+
+    public let id: UUID
+
+    /// The event payloads.
+
+    public var events: [UpdateEvent]
+
+    /// Whether this event envelope is transient.
+    ///
+    /// If `true`, then the event is not stored on the backend and is
+    /// only sent through the push channel as it occurs.
+
+    public let isTransient: Bool
 }

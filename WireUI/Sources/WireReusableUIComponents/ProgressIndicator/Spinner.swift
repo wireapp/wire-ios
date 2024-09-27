@@ -20,6 +20,20 @@ import SwiftUI
 import WireDesign
 
 public final class Spinner: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    // MARK: Public
+
     public var color: UIColor = .white {
         didSet { updateSpinnerIcon() }
     }
@@ -40,24 +54,8 @@ public final class Spinner: UIView {
         }
     }
 
-    private let spinner = UIImageView()
-
-    private var isAnimationRunning: Bool {
-        spinner.layer.animation(forKey: "rotateAnimation") != nil
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
-    private func setup() {
-        createSpinner()
+    override public var intrinsicContentSize: CGSize {
+        spinner.image?.size ?? super.intrinsicContentSize
     }
 
     override public func layoutSubviews() {
@@ -66,6 +64,24 @@ public final class Spinner: UIView {
         let frame = spinner.layer.frame
         spinner.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         spinner.layer.frame = frame
+    }
+
+    // MARK: Internal
+
+    func updateSpinnerIcon() {
+        spinner.image = UIImage.imageForIcon(.spinner, size: iconSize, color: color)
+    }
+
+    // MARK: Private
+
+    private let spinner = UIImageView()
+
+    private var isAnimationRunning: Bool {
+        spinner.layer.animation(forKey: "rotateAnimation") != nil
+    }
+
+    private func setup() {
+        createSpinner()
     }
 
     private func createSpinner() {
@@ -80,10 +96,6 @@ public final class Spinner: UIView {
         spinner.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
-    override public var intrinsicContentSize: CGSize {
-        spinner.image?.size ?? super.intrinsicContentSize
-    }
-
     private func startAnimationInternal() {
         isHidden = false
         stopAnimationInternal()
@@ -96,10 +108,6 @@ public final class Spinner: UIView {
 
     private func stopAnimationInternal() {
         spinner.layer.removeAllAnimations()
-    }
-
-    func updateSpinnerIcon() {
-        spinner.image = UIImage.imageForIcon(.spinner, size: iconSize, color: color)
     }
 }
 

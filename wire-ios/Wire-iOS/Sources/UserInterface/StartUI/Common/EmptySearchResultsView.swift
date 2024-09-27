@@ -57,7 +57,69 @@ protocol EmptySearchResultsViewDelegate: AnyObject {
 // MARK: - EmptySearchResultsView
 
 final class EmptySearchResultsView: UIView {
+    // MARK: Lifecycle
+
+    // MARK: Init
+
+    init(
+        isSelfUserAdmin: Bool,
+        isFederationEnabled: Bool
+    ) {
+        self.isSelfUserAdmin = isSelfUserAdmin
+        self.isFederationEnabled = isFederationEnabled
+
+        super.init(frame: .zero)
+
+        [iconView, statusLabel, actionButton].forEach(stackView.addArrangedSubview)
+
+        addSubview(scrollView)
+        scrollView.addSubview(stackView)
+
+        setupConstraints()
+
+        setUpStackView()
+
+        setupStatusLabel()
+
+        actionButton.accessibilityIdentifier = "button.searchui.open-services-no-results"
+
+        actionButton.addCallback(for: .touchUpInside) { [unowned self] _ in
+            guard let action = buttonAction else {
+                return
+            }
+            delegate?.execute(action: action, from: self)
+        }
+
+        updateUIForCurrentEmptySearchResultState()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     typealias LabelColors = SemanticColors.Label
+
+    weak var delegate: EmptySearchResultsViewDelegate?
+
+    // MARK: - Public Interface
+
+    func updateStatus(searchingForServices: Bool, hasFilter: Bool) {
+        switch (searchingForServices, hasFilter) {
+        case (true, false):
+            state = .noServicesEnabled
+        case (true, true):
+            state = .noServices
+        case (false, true):
+            state = .noUsers
+        case (false, false):
+            state = .initialSearch
+        }
+    }
+
+    // MARK: Fileprivate
 
     // MARK: - Computed Properties
 
@@ -66,6 +128,24 @@ final class EmptySearchResultsView: UIView {
             updateUIForCurrentEmptySearchResultState()
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let isSelfUserAdmin: Bool
+    private let isFederationEnabled: Bool
+
+    /// Contains the `stackView`.
+    private let scrollView = UIScrollView()
+    private let stackView = UIStackView()
+    private let iconView = UIImageView()
+    private let statusLabel = DynamicFontLabel(
+        fontSpec: .normalRegularFont,
+        color: LabelColors.textSettingsPasswordPlaceholder
+    )
+    private let actionButton = LinkButton(fontSpec: .normalRegularFont)
+    private let iconColor = LabelColors.textSettingsPasswordPlaceholder
 
     private var text: String {
         typealias Message = L10n.Localizable.Peoplepicker.NoMatchingResults.Message
@@ -119,78 +199,6 @@ final class EmptySearchResultsView: UIView {
             .openSearchSupportPage
         default:
             nil
-        }
-    }
-
-    // MARK: - Properties
-
-    private let isSelfUserAdmin: Bool
-    private let isFederationEnabled: Bool
-
-    /// Contains the `stackView`.
-    private let scrollView = UIScrollView()
-    private let stackView = UIStackView()
-    private let iconView = UIImageView()
-    private let statusLabel = DynamicFontLabel(
-        fontSpec: .normalRegularFont,
-        color: LabelColors.textSettingsPasswordPlaceholder
-    )
-    private let actionButton = LinkButton(fontSpec: .normalRegularFont)
-    private let iconColor = LabelColors.textSettingsPasswordPlaceholder
-
-    weak var delegate: EmptySearchResultsViewDelegate?
-
-    // MARK: Init
-
-    init(
-        isSelfUserAdmin: Bool,
-        isFederationEnabled: Bool
-    ) {
-        self.isSelfUserAdmin = isSelfUserAdmin
-        self.isFederationEnabled = isFederationEnabled
-
-        super.init(frame: .zero)
-
-        [iconView, statusLabel, actionButton].forEach(stackView.addArrangedSubview)
-
-        addSubview(scrollView)
-        scrollView.addSubview(stackView)
-
-        setupConstraints()
-
-        setUpStackView()
-
-        setupStatusLabel()
-
-        actionButton.accessibilityIdentifier = "button.searchui.open-services-no-results"
-
-        actionButton.addCallback(for: .touchUpInside) { [unowned self] _ in
-            guard let action = buttonAction else {
-                return
-            }
-            delegate?.execute(action: action, from: self)
-        }
-
-        updateUIForCurrentEmptySearchResultState()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: - Public Interface
-
-    func updateStatus(searchingForServices: Bool, hasFilter: Bool) {
-        switch (searchingForServices, hasFilter) {
-        case (true, false):
-            state = .noServicesEnabled
-        case (true, true):
-            state = .noServices
-        case (false, true):
-            state = .noUsers
-        case (false, false):
-            state = .initialSearch
         }
     }
 

@@ -44,13 +44,7 @@ enum MLSConversationParticipantsError: Error, Equatable {
 // MARK: - MLSConversationParticipantsService
 
 struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInterface {
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-    private let clientIDsProvider: MLSClientIDsProviding
-    private let mlsService: MLSServiceInterface
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init?(context: NSManagedObjectContext) {
         guard let syncContext = context.performAndWait({ context.zm_sync }) else {
@@ -77,6 +71,8 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         self.mlsService = mlsService
         self.clientIDsProvider = clientIDsProvider
     }
+
+    // MARK: Internal
 
     // MARK: - Interface
 
@@ -160,4 +156,12 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             throw error
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+    private let clientIDsProvider: MLSClientIDsProviding
+    private let mlsService: MLSServiceInterface
 }

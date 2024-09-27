@@ -27,6 +27,8 @@ enum SettingsPropertyValue: Equatable {
     case string(value: String)
     case none
 
+    // MARK: Lifecycle
+
     init(_ bool: Bool) {
         self = .number(value: NSNumber(value: bool))
     }
@@ -46,6 +48,8 @@ enum SettingsPropertyValue: Equatable {
     init(_ int: UInt32) {
         self = .number(value: NSNumber(value: int))
     }
+
+    // MARK: Internal
 
     static func propertyValue(_ object: Any?) -> SettingsPropertyValue {
         switch object {
@@ -122,7 +126,22 @@ func << (value: inout Any?, property: SettingsProperty) {
 
 /// Generic user defaults property
 final class SettingsUserDefaultsProperty: SettingsProperty {
+    // MARK: Lifecycle
+
+    init(propertyName: SettingsPropertyName, userDefaultsKey: String, userDefaults: UserDefaults) {
+        self.propertyName = propertyName
+        self.userDefaultsKey = userDefaultsKey
+        self.userDefaults = userDefaults
+    }
+
+    // MARK: Internal
+
     var enabled = true
+
+    let propertyName: SettingsPropertyName
+    let userDefaults: UserDefaults
+
+    let userDefaultsKey: String
 
     func set(newValue: SettingsPropertyValue) throws {
         userDefaults.set(newValue.value(), forKey: userDefaultsKey)
@@ -147,17 +166,6 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
     func trackNewValue() {
         Analytics.shared.tagSettingsChanged(for: propertyName, to: value())
     }
-
-    let propertyName: SettingsPropertyName
-    let userDefaults: UserDefaults
-
-    let userDefaultsKey: String
-
-    init(propertyName: SettingsPropertyName, userDefaultsKey: String, userDefaults: UserDefaults) {
-        self.propertyName = propertyName
-        self.userDefaultsKey = userDefaultsKey
-        self.userDefaults = userDefaults
-    }
 }
 
 typealias GetAction = (SettingsBlockProperty) -> SettingsPropertyValue
@@ -167,9 +175,20 @@ typealias SetAction = (SettingsBlockProperty, SettingsPropertyValue) throws -> V
 
 /// Genetic block property
 final class SettingsBlockProperty: SettingsProperty {
+    // MARK: Lifecycle
+
+    init(propertyName: SettingsPropertyName, getAction: @escaping GetAction, setAction: @escaping SetAction) {
+        self.propertyName = propertyName
+        self.getAction = getAction
+        self.setAction = setAction
+    }
+
+    // MARK: Internal
+
     var enabled = true
 
     let propertyName: SettingsPropertyName
+
     func value() -> SettingsPropertyValue {
         getAction(self)
     }
@@ -187,12 +206,8 @@ final class SettingsBlockProperty: SettingsProperty {
         Analytics.shared.tagSettingsChanged(for: propertyName, to: value())
     }
 
+    // MARK: Private
+
     private let getAction: GetAction
     private let setAction: SetAction
-
-    init(propertyName: SettingsPropertyName, getAction: @escaping GetAction, setAction: @escaping SetAction) {
-        self.propertyName = propertyName
-        self.getAction = getAction
-        self.setAction = setAction
-    }
 }

@@ -22,16 +22,7 @@ import WireSyncEngine
 // MARK: - CallGridConfiguration
 
 struct CallGridConfiguration: CallGridViewControllerInput, Equatable {
-    fileprivate static let maxActiveSpeakers = 4
-
-    let floatingStream: Stream?
-    let streams: [Stream]
-    let videoState: VideoState
-    let shouldShowActiveSpeakerFrame: Bool
-    let presentationMode: VideoGridPresentationMode
-    let callHasTwoParticipants: Bool
-    let isConnected: Bool
-    let isGroupCall: Bool
+    // MARK: Lifecycle
 
     init(voiceChannel: VoiceChannel) {
         let videoStreamArrangment = voiceChannel.createStreamArrangment()
@@ -45,6 +36,21 @@ struct CallGridConfiguration: CallGridViewControllerInput, Equatable {
         self.isConnected = voiceChannel.state.isConnected
         self.isGroupCall = voiceChannel.isGroupCall
     }
+
+    // MARK: Internal
+
+    let floatingStream: Stream?
+    let streams: [Stream]
+    let videoState: VideoState
+    let shouldShowActiveSpeakerFrame: Bool
+    let presentationMode: VideoGridPresentationMode
+    let callHasTwoParticipants: Bool
+    let isConnected: Bool
+    let isGroupCall: Bool
+
+    // MARK: Fileprivate
+
+    fileprivate static let maxActiveSpeakers = 4
 }
 
 extension CallParticipant {

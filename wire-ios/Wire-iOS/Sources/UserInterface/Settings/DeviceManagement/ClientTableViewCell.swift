@@ -24,6 +24,25 @@ import WireDataModel
 import WireDesign
 
 final class ClientTableViewCell: UITableViewCell {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        self.wr_editable = true
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+
+        createConstraints()
+        setupStyle()
+    }
+
+    @available(*, unavailable)
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Properties
@@ -45,6 +64,8 @@ final class ClientTableViewCell: UITableViewCell {
 
     let statusStackView = UIStackView()
 
+    var wr_editable: Bool
+
     var viewModel: ClientTableViewCellModel? {
         didSet {
             nameLabel.text = viewModel?.title
@@ -58,25 +79,6 @@ final class ClientTableViewCell: UITableViewCell {
                 statusStackView.addArrangedSubview(UIImageView(image: verifiedImage))
             }
         }
-    }
-
-    var wr_editable: Bool
-
-    private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
-
-    // MARK: - Initialization
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        self.wr_editable = true
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        createConstraints()
-        setupStyle()
-    }
-
-    @available(*, unavailable)
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: - Override method
@@ -99,6 +101,15 @@ final class ClientTableViewCell: UITableViewCell {
 
         addBorder(for: .bottom)
     }
+
+    override func prepareForReuse() {
+        viewModel = nil
+        super.prepareForReuse()
+    }
+
+    // MARK: Private
+
+    private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
 
     private func createConstraints() {
         [
@@ -131,10 +142,5 @@ final class ClientTableViewCell: UITableViewCell {
         ])
         statusStackView.axis = .horizontal
         statusStackView.spacing = 4
-    }
-
-    override func prepareForReuse() {
-        viewModel = nil
-        super.prepareForReuse()
     }
 }

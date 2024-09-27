@@ -24,6 +24,8 @@ private let zmLog = ZMSLog(tag: "Feature")
 
 @objcMembers
 public class Feature: ZMManagedObject {
+    // MARK: Public
+
     // MARK: - Types
 
     // IMPORTANT
@@ -49,13 +51,7 @@ public class Feature: ZMManagedObject {
         case disabled
     }
 
-    // MARK: - Properties
-
-    @NSManaged private var nameValue: String
-    @NSManaged private var statusValue: String
-    @NSManaged private var configData: Data?
     @NSManaged public var needsToNotifyUser: Bool
-    @NSManaged var hasInitialDefault: Bool
 
     public var config: Data? {
         get {
@@ -99,11 +95,6 @@ public class Feature: ZMManagedObject {
             }
             statusValue = newValue.rawValue
         }
-    }
-
-    /// Whether the feature has been updated from backend
-    private var hasBeenUpdatedFromBackend: Bool {
-        !statusValue.isEmpty && !hasInitialDefault
     }
 
     // MARK: - Methods
@@ -168,6 +159,23 @@ public class Feature: ZMManagedObject {
 
             context.saveOrRollback()
         }
+    }
+
+    // MARK: Internal
+
+    @NSManaged var hasInitialDefault: Bool
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    @NSManaged private var nameValue: String
+    @NSManaged private var statusValue: String
+    @NSManaged private var configData: Data?
+
+    /// Whether the feature has been updated from backend
+    private var hasBeenUpdatedFromBackend: Bool {
+        !statusValue.isEmpty && !hasInitialDefault
     }
 
     private func updateNeedsToNotifyUser(oldStatus: Status, newStatus: Status) {

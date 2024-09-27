@@ -46,18 +46,7 @@ public protocol CoreCryptoProviderProtocol {
 // MARK: - CoreCryptoProvider
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
-    private let selfUserID: UUID
-    private let sharedContainerURL: URL
-    private let accountDirectory: URL
-    private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
-    private let featureRespository: FeatureRepositoryInterface
-    private let syncContext: NSManagedObjectContext
-    private let allowCreation: Bool
-    private var coreCrypto: SafeCoreCrypto?
-    private var loadingCoreCrypto = false
-    private var initialisatingMLS = false
-    private var hasInitialisedMLS = false
-    private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
+    // MARK: Lifecycle
 
     public init(
         selfUserID: UUID,
@@ -75,6 +64,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.featureRespository = FeatureRepository(context: syncContext)
     }
+
+    // MARK: Public
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
         try await getCoreCrypto()
@@ -108,6 +99,46 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
     }
+
+    // MARK: Internal
+
+    func createCoreCrypto() async throws -> SafeCoreCrypto {
+        let provider = CoreCryptoConfigProvider()
+
+        let configuration = try provider.createInitialConfiguration(
+            sharedContainerURL: sharedContainerURL,
+            userID: selfUserID,
+            createKeyIfNeeded: allowCreation
+        )
+
+        let coreCrypto = try await SafeCoreCrypto(
+            path: configuration.path,
+            key: configuration.key
+        )
+
+        updateKeychainItemAccess()
+        await migrateCryptoboxSessionsIfNeeded(with: coreCrypto)
+
+        try await configureProteusClient(coreCrypto: coreCrypto)
+        try await configureMLSClient(coreCrypto: coreCrypto)
+
+        return coreCrypto
+    }
+
+    // MARK: Private
+
+    private let selfUserID: UUID
+    private let sharedContainerURL: URL
+    private let accountDirectory: URL
+    private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
+    private let featureRespository: FeatureRepositoryInterface
+    private let syncContext: NSManagedObjectContext
+    private let allowCreation: Bool
+    private var coreCrypto: SafeCoreCrypto?
+    private var loadingCoreCrypto = false
+    private var initialisatingMLS = false
+    private var hasInitialisedMLS = false
+    private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
 
     // Create an CoreCrypto instance with guranteees that only one task is performing
     // the operation while others wait for it to complete.
@@ -146,29 +177,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             continuation.resume(with: result)
         }
         coreCryptoContinuations = []
-    }
-
-    func createCoreCrypto() async throws -> SafeCoreCrypto {
-        let provider = CoreCryptoConfigProvider()
-
-        let configuration = try provider.createInitialConfiguration(
-            sharedContainerURL: sharedContainerURL,
-            userID: selfUserID,
-            createKeyIfNeeded: allowCreation
-        )
-
-        let coreCrypto = try await SafeCoreCrypto(
-            path: configuration.path,
-            key: configuration.key
-        )
-
-        updateKeychainItemAccess()
-        await migrateCryptoboxSessionsIfNeeded(with: coreCrypto)
-
-        try await configureProteusClient(coreCrypto: coreCrypto)
-        try await configureMLSClient(coreCrypto: coreCrypto)
-
-        return coreCrypto
     }
 
     private func configureProteusClient(coreCrypto: SafeCoreCrypto) async throws {

@@ -20,14 +20,16 @@ import Foundation
 
 extension Feature {
     public struct ConversationGuestLinks: Codable {
-        // MARK: - Properties
-
-        public let status: Status
-
-        // MARK: - Life cycle
+        // MARK: Lifecycle
 
         public init(status: Feature.Status = .enabled) {
             self.status = status
         }
+
+        // MARK: Public
+
+        // MARK: - Properties
+
+        public let status: Status
     }
 }

@@ -23,13 +23,9 @@ import XCTest
 @testable import Wire
 
 final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
-    // MARK: - Properties
+    // MARK: Internal
 
-    private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
-    private var sut: SelfProfileViewController!
-    private var selfUser: MockUserType!
-    private var userSession: UserSessionMock!
 
     // MARK: - setUp
 
@@ -142,6 +138,15 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
         XCTAssertEqual(alertController.title, expectedTitle)
         XCTAssertEqual(actualMessage, expectedMessage)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: SelfProfileViewController!
+    private var selfUser: MockUserType!
+    private var userSession: UserSessionMock!
 
     // MARK: Helper Method
 

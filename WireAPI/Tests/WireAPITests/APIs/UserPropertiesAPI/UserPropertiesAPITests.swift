@@ -21,7 +21,7 @@ import XCTest
 @testable import WireAPI
 
 final class UserPropertiesAPITests: XCTestCase {
-    private var apiSnapshotHelper: APISnapshotHelper<any UserPropertiesAPI>!
+    // MARK: Internal
 
     // MARK: - Setup
 
@@ -167,4 +167,8 @@ final class UserPropertiesAPITests: XCTestCase {
             try await sut.getLabels()
         }
     }
+
+    // MARK: Private
+
+    private var apiSnapshotHelper: APISnapshotHelper<any UserPropertiesAPI>!
 }

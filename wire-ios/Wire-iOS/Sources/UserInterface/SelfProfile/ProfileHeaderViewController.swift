@@ -24,85 +24,7 @@ import WireSyncEngine
 // MARK: - ProfileHeaderViewController
 
 final class ProfileHeaderViewController: UIViewController {
-    /// The options to customize the appearance and behavior of the view.
-    private let options: Options
-
-    /// Associated conversation, if displayed in the context of a conversation
-    private let conversation: ZMConversation?
-
-    /// The user that is displayed.
-    private let user: UserType
-
-    private var userStatus: UserStatus {
-        didSet { applyUserStatus() }
-    }
-
-    private let userSession: UserSession
-    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
-    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
-
-    /// The user who is viewing this view
-    private let viewer: UserType
-
-    /// The current group admin status.
-    var isAdminRole: Bool {
-        didSet { groupRoleIndicator.isHidden = !isAdminRole }
-    }
-
-    private var stackView: CustomSpacingStackView!
-
-    typealias AccountPageStrings = L10n.Accessibility.AccountPage
-    typealias LabelColors = SemanticColors.Label
-
-    private let nameLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .accountName, color: LabelColors.textDefault)
-        label.accessibilityLabel = AccountPageStrings.Name.description
-        label.accessibilityIdentifier = "name"
-
-        label.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
-        label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-
-        label.accessibilityTraits.insert(.header)
-        label.lineBreakMode = .byTruncatingTail
-        label.numberOfLines = 3
-        label.textAlignment = .center
-
-        return label
-    }()
-
-    private let e2eiCertifiedImageView = {
-        let imageView = UIImageView(image: .init(resource: .certificateValid))
-        imageView.contentMode = .center
-        imageView.isHidden = true
-        return imageView
-    }()
-
-    private let proteusVerifiedImageView = {
-        let imageView = UIImageView(image: .init(resource: .verifiedShield))
-        imageView.contentMode = .center
-        imageView.isHidden = true
-        return imageView
-    }()
-
-    private let handleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: LabelColors.textDefault)
-    private let teamNameLabel = DynamicFontLabel(fontSpec: .accountTeam, color: LabelColors.textDefault)
-    private let remainingTimeLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont, color: LabelColors.textDefault)
-    let imageView = UserImageView(size: .big)
-    private let userStatusViewController: UserStatusViewController
-
-    private let guestIndicatorStack = UIStackView()
-    private let groupRoleIndicator = LabelIndicator(context: .groupRole)
-
-    private let guestIndicator = LabelIndicator(context: .guest)
-    private let externalIndicator = LabelIndicator(context: .external)
-    private let federatedIndicator = LabelIndicator(context: .federated)
-    private let warningView = WarningLabelView()
-
-    private var userObserver: NSObjectProtocol?
-    private var teamObserver: NSObjectProtocol?
+    // MARK: Lifecycle
 
     /// Creates a profile view for the specified user and options.
     /// - parameter user: The user to display the profile of.
@@ -142,6 +64,37 @@ final class ProfileHeaderViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
+    }
+
+    // MARK: Internal
+
+    typealias AccountPageStrings = L10n.Accessibility.AccountPage
+    typealias LabelColors = SemanticColors.Label
+
+    // MARK: -
+
+    /// The options to customize the appearance and behavior of the view.
+    struct Options: OptionSet {
+        /// Whether to hide the availability status of the user.
+        static let hideAvailability = Options(rawValue: 1 << 2)
+
+        /// Whether to hide the team name of the user.
+        static let hideTeamName = Options(rawValue: 1 << 3)
+
+        /// Whether to allow the user to change their availability.
+        static let allowEditingAvailability = Options(rawValue: 1 << 4)
+
+        /// Whether to allow the user to change their availability.
+        static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
+
+        let rawValue: Int
+    }
+
+    let imageView = UserImageView(size: .big)
+
+    /// The current group admin status.
+    var isAdminRole: Bool {
+        didSet { groupRoleIndicator.isHidden = !isAdminRole }
     }
 
     override func viewDidLoad() {
@@ -246,6 +199,79 @@ final class ProfileHeaderViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateE2EICertifiedStatus()
+    }
+
+    // MARK: Private
+
+    /// The options to customize the appearance and behavior of the view.
+    private let options: Options
+
+    /// Associated conversation, if displayed in the context of a conversation
+    private let conversation: ZMConversation?
+
+    /// The user that is displayed.
+    private let user: UserType
+
+    private let userSession: UserSession
+    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+    private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+
+    /// The user who is viewing this view
+    private let viewer: UserType
+
+    private var stackView: CustomSpacingStackView!
+
+    private let nameLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(fontSpec: .accountName, color: LabelColors.textDefault)
+        label.accessibilityLabel = AccountPageStrings.Name.description
+        label.accessibilityIdentifier = "name"
+
+        label.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
+        label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        label.accessibilityTraits.insert(.header)
+        label.lineBreakMode = .byTruncatingTail
+        label.numberOfLines = 3
+        label.textAlignment = .center
+
+        return label
+    }()
+
+    private let e2eiCertifiedImageView = {
+        let imageView = UIImageView(image: .init(resource: .certificateValid))
+        imageView.contentMode = .center
+        imageView.isHidden = true
+        return imageView
+    }()
+
+    private let proteusVerifiedImageView = {
+        let imageView = UIImageView(image: .init(resource: .verifiedShield))
+        imageView.contentMode = .center
+        imageView.isHidden = true
+        return imageView
+    }()
+
+    private let handleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: LabelColors.textDefault)
+    private let teamNameLabel = DynamicFontLabel(fontSpec: .accountTeam, color: LabelColors.textDefault)
+    private let remainingTimeLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont, color: LabelColors.textDefault)
+    private let userStatusViewController: UserStatusViewController
+
+    private let guestIndicatorStack = UIStackView()
+    private let groupRoleIndicator = LabelIndicator(context: .groupRole)
+
+    private let guestIndicator = LabelIndicator(context: .guest)
+    private let externalIndicator = LabelIndicator(context: .external)
+    private let federatedIndicator = LabelIndicator(context: .federated)
+    private let warningView = WarningLabelView()
+
+    private var userObserver: NSObjectProtocol?
+    private var teamObserver: NSObjectProtocol?
+
+    private var userStatus: UserStatus {
+        didSet { applyUserStatus() }
     }
 
     private func configureConstraints() {
@@ -360,25 +386,6 @@ final class ProfileHeaderViewController: UIViewController {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }
         }
-    }
-
-    // MARK: -
-
-    /// The options to customize the appearance and behavior of the view.
-    struct Options: OptionSet {
-        let rawValue: Int
-
-        /// Whether to hide the availability status of the user.
-        static let hideAvailability = Options(rawValue: 1 << 2)
-
-        /// Whether to hide the team name of the user.
-        static let hideTeamName = Options(rawValue: 1 << 3)
-
-        /// Whether to allow the user to change their availability.
-        static let allowEditingAvailability = Options(rawValue: 1 << 4)
-
-        /// Whether to allow the user to change their availability.
-        static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
     }
 }
 

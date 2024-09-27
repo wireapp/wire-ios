@@ -57,6 +57,8 @@ enum AuthenticationCoordinatorAction {
     case startE2EIEnrollment
     case completeE2EIEnrollment
 
+    // MARK: Internal
+
     var retainsModal: Bool {
         switch self {
         case .openURL:
@@ -80,15 +82,19 @@ struct AuthenticationCoordinatorAlert {
 
 /// An action that is part of an authentication coordinator alert.
 struct AuthenticationCoordinatorAlertAction {
-    let title: String
-    let coordinatorActions: [AuthenticationCoordinatorAction]
-    let style: UIAlertAction.Style
+    // MARK: Lifecycle
 
     init(title: String, coordinatorActions: [AuthenticationCoordinatorAction], style: UIAlertAction.Style = .default) {
         self.title = title
         self.coordinatorActions = coordinatorActions
         self.style = style
     }
+
+    // MARK: Internal
+
+    let title: String
+    let coordinatorActions: [AuthenticationCoordinatorAction]
+    let style: UIAlertAction.Style
 }
 
 extension AuthenticationCoordinatorAlertAction {

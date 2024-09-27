@@ -19,10 +19,7 @@
 import Foundation
 
 public struct ConversationCreationOptions {
-    var participants: [ZMUser] = []
-    var name: String?
-    var team: Team?
-    var allowGuests = true
+    // MARK: Lifecycle
 
     public init(participants: [ZMUser] = [], name: String? = nil, team: Team? = nil, allowGuests: Bool = true) {
         self.participants = participants
@@ -30,4 +27,11 @@ public struct ConversationCreationOptions {
         self.team = team
         self.allowGuests = allowGuests
     }
+
+    // MARK: Internal
+
+    var participants: [ZMUser] = []
+    var name: String?
+    var team: Team?
+    var allowGuests = true
 }

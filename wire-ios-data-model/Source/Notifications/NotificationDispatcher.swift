@@ -30,81 +30,7 @@ import Foundation
 
 @objcMembers
 public class NotificationDispatcher: NSObject, TearDownCapable {
-    static var log = ZMSLog(tag: "notifications")
-
-    // MARK: - Public properties
-
-    /// Whether the dispatcher is enabled.
-    ///
-    /// If set to `false`, all pending changes are discarded and no new notifications are posted.
-
-    public var isEnabled = true {
-        didSet {
-            guard oldValue != isEnabled else { return }
-
-            if isEnabled {
-                startObserving()
-            } else {
-                stopObserving()
-            }
-        }
-    }
-
-    /// Determines how detailed and frequent change notifications are fired.
-
-    public var operationMode: OperationMode {
-        didSet {
-            guard operationMode != oldValue else { return }
-
-            let observerCenter = managedObjectContext.performAndWait {
-                managedObjectContext.conversationListObserverCenter
-            }
-
-            if operationMode == .economical {
-                observerCenter.stopObserving()
-            }
-
-            if oldValue == .economical {
-                fireAllNotifications()
-                observerCenter.startObserving()
-            }
-
-            changeDetector = changeDetectorBuilder(operationMode)
-        }
-    }
-
-    // MARK: - Private properties
-
-    private unowned var managedObjectContext: NSManagedObjectContext
-
-    private var notificationCenterTokens = [Any]()
-
-    private var isTornDown = false
-
-    private var changeInfoConsumers = [UnownedNSObject]()
-
-    private var allChangeInfoConsumers: [ChangeInfoConsumer] {
-        let observerCenter = managedObjectContext.performAndWait {
-            managedObjectContext.conversationListObserverCenter
-        }
-
-        var consumers = changeInfoConsumers.compactMap { $0.unbox as? ChangeInfoConsumer }
-        consumers.append(searchUserObserverCenter)
-        consumers.append(observerCenter)
-        return consumers
-    }
-
-    private var searchUserObserverCenter: SearchUserObserverCenter {
-        managedObjectContext.searchUserObserverCenter
-    }
-
-    private var changeDetector: ChangeDetector
-
-    private let changeDetectorBuilder: (OperationMode) -> ChangeDetector
-
-    private var unreadMessages = UnreadMessages()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(managedObjectContext: NSManagedObjectContext) {
         assert(
@@ -172,6 +98,72 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
         notificationCenterTokens.append(token)
     }
 
+    deinit {
+        assert(isTornDown)
+    }
+
+    // MARK: Public
+
+    // MARK: - Public properties
+
+    /// Whether the dispatcher is enabled.
+    ///
+    /// If set to `false`, all pending changes are discarded and no new notifications are posted.
+
+    public var isEnabled = true {
+        didSet {
+            guard oldValue != isEnabled else { return }
+
+            if isEnabled {
+                startObserving()
+            } else {
+                stopObserving()
+            }
+        }
+    }
+
+    /// Determines how detailed and frequent change notifications are fired.
+
+    public var operationMode: OperationMode {
+        didSet {
+            guard operationMode != oldValue else { return }
+
+            let observerCenter = managedObjectContext.performAndWait {
+                managedObjectContext.conversationListObserverCenter
+            }
+
+            if operationMode == .economical {
+                observerCenter.stopObserving()
+            }
+
+            if oldValue == .economical {
+                fireAllNotifications()
+                observerCenter.startObserving()
+            }
+
+            changeDetector = changeDetectorBuilder(operationMode)
+        }
+    }
+
+    /// This can safely be called from any thread as it will switch to uiContext internally.
+
+    public static func notifyNonCoreDataChanges(
+        objectID: NSManagedObjectID,
+        changedKeys: [String],
+        uiContext: NSManagedObjectContext
+    ) {
+        uiContext.performGroupedBlock {
+            guard let uiMessage = try? uiContext.existingObject(with: objectID) else { return }
+
+            NotificationInContext(
+                name: .NonCoreDataChangeInManagedObject,
+                context: uiContext.notificationContext,
+                object: uiMessage,
+                changedKeys: changedKeys
+            ).post()
+        }
+    }
+
     public func tearDown() {
         NotificationCenter.default.removeObserver(self)
         notificationCenterTokens.forEach(NotificationCenter.default.removeObserver)
@@ -184,9 +176,32 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
         isTornDown = true
     }
 
-    deinit {
-        assert(isTornDown)
+    // MARK: - Methods
+
+    /// Add the given consumer to receive forwarded `ChangeInfo`s.
+
+    public func addChangeInfoConsumer(_ consumer: ChangeInfoConsumer) {
+        let boxed = UnownedNSObject(consumer as! NSObject)
+        changeInfoConsumers.append(boxed)
     }
+
+    /// Call this AFTER merging the changes from syncMOC into uiMOC.
+
+    public func didMergeChanges(_ changedObjectIDs: Set<NSManagedObjectID>) {
+        guard isEnabled else { return }
+
+        let changedObjects = changedObjectIDs.compactMap {
+            try? managedObjectContext.existingObject(with: $0) as? ZMManagedObject
+        }
+
+        changeDetector.detectChanges(for: ModifiedObjects(updated: Set(changedObjects)))
+
+        fireAllNotificationsIfAllowed()
+    }
+
+    // MARK: Internal
+
+    static var log = ZMSLog(tag: "notifications")
 
     // MARK: - Callbacks
 
@@ -238,46 +253,41 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
         }
     }
 
-    // MARK: - Methods
+    // MARK: Private
 
-    /// Add the given consumer to receive forwarded `ChangeInfo`s.
+    // MARK: - Private properties
 
-    public func addChangeInfoConsumer(_ consumer: ChangeInfoConsumer) {
-        let boxed = UnownedNSObject(consumer as! NSObject)
-        changeInfoConsumers.append(boxed)
-    }
+    private unowned var managedObjectContext: NSManagedObjectContext
 
-    /// Call this AFTER merging the changes from syncMOC into uiMOC.
+    private var notificationCenterTokens = [Any]()
 
-    public func didMergeChanges(_ changedObjectIDs: Set<NSManagedObjectID>) {
-        guard isEnabled else { return }
+    private var isTornDown = false
 
-        let changedObjects = changedObjectIDs.compactMap {
-            try? managedObjectContext.existingObject(with: $0) as? ZMManagedObject
+    private var changeInfoConsumers = [UnownedNSObject]()
+
+    private var changeDetector: ChangeDetector
+
+    private let changeDetectorBuilder: (OperationMode) -> ChangeDetector
+
+    private var unreadMessages = UnreadMessages()
+
+    private var allChangeInfoConsumers: [ChangeInfoConsumer] {
+        let observerCenter = managedObjectContext.performAndWait {
+            managedObjectContext.conversationListObserverCenter
         }
 
-        changeDetector.detectChanges(for: ModifiedObjects(updated: Set(changedObjects)))
-
-        fireAllNotificationsIfAllowed()
+        var consumers = changeInfoConsumers.compactMap { $0.unbox as? ChangeInfoConsumer }
+        consumers.append(searchUserObserverCenter)
+        consumers.append(observerCenter)
+        return consumers
     }
 
-    /// This can safely be called from any thread as it will switch to uiContext internally.
+    private var searchUserObserverCenter: SearchUserObserverCenter {
+        managedObjectContext.searchUserObserverCenter
+    }
 
-    public static func notifyNonCoreDataChanges(
-        objectID: NSManagedObjectID,
-        changedKeys: [String],
-        uiContext: NSManagedObjectContext
-    ) {
-        uiContext.performGroupedBlock {
-            guard let uiMessage = try? uiContext.existingObject(with: objectID) else { return }
-
-            NotificationInContext(
-                name: .NonCoreDataChangeInManagedObject,
-                context: uiContext.notificationContext,
-                object: uiMessage,
-                changedKeys: changedKeys
-            ).post()
-        }
+    private var shouldFireNotifications: Bool {
+        operationMode != .economical
     }
 
     private func stopObserving() {
@@ -348,10 +358,6 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
     private func fireAllNotificationsIfAllowed() {
         guard shouldFireNotifications else { return }
         fireAllNotifications()
-    }
-
-    private var shouldFireNotifications: Bool {
-        operationMode != .economical
     }
 
     private func fireAllNotifications() {

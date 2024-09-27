@@ -28,6 +28,8 @@ public protocol FileLoggerDestination {
 // MARK: - SystemLogger
 
 struct SystemLogger: LoggerProtocol {
+    // MARK: Internal
+
     let persistQueue = DispatchQueue(label: "persistQueue")
 
     var logFiles: [URL] {
@@ -72,6 +74,8 @@ struct SystemLogger: LoggerProtocol {
     func addTag(_ key: LogAttributesKey, value: String?) {
         // do nothing, as it's only available on datadog
     }
+
+    // MARK: Private
 
     private func log(_ message: LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
         var mergedAttributes: LogAttributes = [:]

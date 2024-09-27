@@ -19,6 +19,22 @@
 import Foundation
 
 public final class LeaveSubconversationAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        conversationID: UUID,
+        domain: String,
+        subconversationType: SubgroupType,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.conversationID = conversationID
+        self.domain = domain
+        self.subconversationType = subconversationType
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
@@ -38,18 +54,4 @@ public final class LeaveSubconversationAction: EntityAction {
     public let domain: String
     public let subconversationType: SubgroupType
     public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(
-        conversationID: UUID,
-        domain: String,
-        subconversationType: SubgroupType,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.conversationID = conversationID
-        self.domain = domain
-        self.subconversationType = subconversationType
-        self.resultHandler = resultHandler
-    }
 }

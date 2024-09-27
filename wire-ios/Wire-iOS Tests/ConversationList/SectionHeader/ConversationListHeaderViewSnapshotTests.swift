@@ -21,8 +21,9 @@ import XCTest
 @testable import Wire
 
 final class ConversationListHeaderViewSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     var sut: ConversationListHeaderView!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -54,6 +55,10 @@ final class ConversationListHeaderViewSnapshotTests: XCTestCase {
         sut = setupConversationListHeaderView(folderBadge: 10)
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 
     private func setupConversationListHeaderView(
         folderBadge: Int = 0,

@@ -23,11 +23,7 @@ import WireDesign
 // MARK: - MediaBarViewController
 
 final class MediaBarViewController: UIViewController {
-    private var mediaPlaybackManager: MediaPlaybackManager?
-
-    private var mediaBarView: MediaBar? {
-        view as? MediaBar
-    }
+    // MARK: Lifecycle
 
     required init(mediaPlaybackManager: MediaPlaybackManager?) {
         super.init(nibName: nil, bundle: nil)
@@ -40,6 +36,8 @@ final class MediaBarViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
 
     override func loadView() {
         view = MediaBar()
@@ -68,6 +66,14 @@ final class MediaBarViewController: UIViewController {
 
         mediaBarView?.playPauseButton.setIcon(playPauseIcon, size: .tiny, for: UIControl.State.normal)
         mediaBarView?.playPauseButton.accessibilityIdentifier = accessibilityIdentifier
+    }
+
+    // MARK: Private
+
+    private var mediaPlaybackManager: MediaPlaybackManager?
+
+    private var mediaBarView: MediaBar? {
+        view as? MediaBar
     }
 
     // MARK: - Actions

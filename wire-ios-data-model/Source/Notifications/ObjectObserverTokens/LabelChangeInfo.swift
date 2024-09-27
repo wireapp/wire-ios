@@ -36,16 +36,16 @@ extension Label: ObjectInSnapshot {
 
 @objcMembers
 public class LabelChangeInfo: ObjectChangeInfo {
-    public let label: LabelType
-
-    static func changeInfo(for label: Label, changes: Changes) -> LabelChangeInfo? {
-        LabelChangeInfo(object: label, changes: changes)
-    }
+    // MARK: Lifecycle
 
     public required init(object: NSObject) {
         self.label = object as! Label
         super.init(object: object)
     }
+
+    // MARK: Public
+
+    public let label: LabelType
 
     public var nameChanged: Bool {
         changedKeys.contains(#keyPath(Label.name))
@@ -57,6 +57,12 @@ public class LabelChangeInfo: ObjectChangeInfo {
 
     public var conversationsChanged: Bool {
         changedKeys.contains(#keyPath(Label.conversations))
+    }
+
+    // MARK: Internal
+
+    static func changeInfo(for label: Label, changes: Changes) -> LabelChangeInfo? {
+        LabelChangeInfo(object: label, changes: changes)
     }
 }
 

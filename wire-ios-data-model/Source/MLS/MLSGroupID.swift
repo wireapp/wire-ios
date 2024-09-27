@@ -23,11 +23,7 @@ import Foundation
 /// Represents the identifer for an MLS group.
 
 public struct MLSGroupID: Equatable, Hashable {
-    // MARK: - Properties
-
-    public let data: Data
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init?(base64Encoded string: String) {
         guard !string.isEmpty, let data = Data(base64Encoded: string) else { return nil }
@@ -37,6 +33,12 @@ public struct MLSGroupID: Equatable, Hashable {
     public init(_ data: Data) {
         self.data = data
     }
+
+    // MARK: Public
+
+    // MARK: - Properties
+
+    public let data: Data
 }
 
 // MARK: CustomStringConvertible

@@ -19,7 +19,7 @@
 import UIKit
 
 final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitioning {
-    private let operation: UINavigationController.Operation
+    // MARK: Lifecycle
 
     init?(operation: UINavigationController.Operation) {
         guard operation == .push || operation == .pop else { return nil }
@@ -27,6 +27,8 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
 
         super.init()
     }
+
+    // MARK: Internal
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         0.55
@@ -86,6 +88,10 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
             }
         )
     }
+
+    // MARK: Private
+
+    private let operation: UINavigationController.Operation
 
     private var rightToLeft: Bool {
         UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft

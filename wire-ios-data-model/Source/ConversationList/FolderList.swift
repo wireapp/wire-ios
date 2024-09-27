@@ -19,30 +19,14 @@
 import Foundation
 
 @objcMembers
-public class FolderList: NSObject { // TODO: jacob turn into struct and make generic
-    var backingList: [Label]
+public class FolderList: NSObject {
+    // MARK: Lifecycle
 
     public init(labels: [Label]) {
         self.backingList = labels.sorted(by: FolderList.comparator)
     }
 
-    private static var comparator: (Label, Label) -> Bool {
-        guard let sortDescriptors = Label.defaultSortDescriptors(), !sortDescriptors.isEmpty else {
-            fatal("Missing sort descriptors")
-        }
-
-        return { (lhs: Any, rhs: Any) -> Bool in
-            for sortDesriptor in sortDescriptors {
-                let result = sortDesriptor.compare(lhs, to: rhs)
-
-                if result != .orderedSame {
-                    return result == .orderedAscending
-                }
-            }
-
-            return true
-        }
-    }
+    // MARK: Public
 
     @objc(insertLabel:)
     public func insert(label: Label) {
@@ -64,5 +48,30 @@ public class FolderList: NSObject { // TODO: jacob turn into struct and make gen
     @objc(removeLabel:)
     public func remove(label: Label) {
         backingList.removeAll(where: { $0 == label })
+    }
+
+    // MARK: Internal
+
+    // TODO: jacob turn into struct and make generic
+    var backingList: [Label]
+
+    // MARK: Private
+
+    private static var comparator: (Label, Label) -> Bool {
+        guard let sortDescriptors = Label.defaultSortDescriptors(), !sortDescriptors.isEmpty else {
+            fatal("Missing sort descriptors")
+        }
+
+        return { (lhs: Any, rhs: Any) -> Bool in
+            for sortDesriptor in sortDescriptors {
+                let result = sortDesriptor.compare(lhs, to: rhs)
+
+                if result != .orderedSame {
+                    return result == .orderedAscending
+                }
+            }
+
+            return true
+        }
     }
 }

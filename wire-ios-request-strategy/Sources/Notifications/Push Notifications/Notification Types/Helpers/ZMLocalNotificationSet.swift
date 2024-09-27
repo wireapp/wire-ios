@@ -25,19 +25,7 @@ import WireUtilities
 
 @objc
 public class ZMLocalNotificationSet: NSObject {
-    let archivingKey: String
-    let keyValueStore: ZMSynchonizableKeyValueStore
-    public var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
-
-    public var notifications = Set<ZMLocalNotification>() {
-        didSet { try? updateArchive() }
-    }
-
-    public var oldNotifications = [NotificationUserInfo]()
-
-    private var allNotifications: [NotificationUserInfo] {
-        notifications.compactMap(\.userInfo) + oldNotifications
-    }
+    // MARK: Lifecycle
 
     public init(archivingKey: String, keyValueStore: ZMSynchonizableKeyValueStore) {
         self.archivingKey = archivingKey
@@ -46,6 +34,55 @@ public class ZMLocalNotificationSet: NSObject {
 
         unarchiveOldNotifications()
     }
+
+    // MARK: Public
+
+    public var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
+
+    public var notifications = Set<ZMLocalNotification>() {
+        didSet { try? updateArchive() }
+    }
+
+    public var oldNotifications = [NotificationUserInfo]()
+
+    @discardableResult
+    public func remove(_ notification: ZMLocalNotification) -> ZMLocalNotification? {
+        notifications.remove(notification)
+    }
+
+    public func addObject(_ notification: ZMLocalNotification) {
+        notifications.insert(notification)
+    }
+
+    /// Cancels all notifications
+    public func cancelAllNotifications() {
+        let ids = allNotifications.compactMap { $0.requestID?.uuidString }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
+        notifications = Set()
+        oldNotifications = []
+    }
+
+    /// This cancels all notifications of a specific conversation
+    public func cancelNotifications(_ conversation: ZMConversation) {
+        cancelOldNotifications(conversation)
+        cancelCurrentNotifications(conversation)
+    }
+
+    /// Cancal all notifications with the given message nonce
+    public func cancelCurrentNotifications(messageNonce: UUID) {
+        guard !notifications.isEmpty else { return }
+        let toRemove = notifications.filter { $0.messageNonce == messageNonce }
+        let ids = toRemove.map(\.id.uuidString)
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
+        notifications.subtract(toRemove)
+    }
+
+    // MARK: Internal
+
+    let archivingKey: String
+    let keyValueStore: ZMSynchonizableKeyValueStore
 
     /// Unarchives all previously created notifications that haven't been cancelled yet
     func unarchiveOldNotifications() {
@@ -75,33 +112,9 @@ public class ZMLocalNotificationSet: NSObject {
         keyValueStore.enqueueDelayedSave() // we need to save otherwise changes might not be stored
     }
 
-    @discardableResult
-    public func remove(_ notification: ZMLocalNotification) -> ZMLocalNotification? {
-        notifications.remove(notification)
-    }
-
-    public func addObject(_ notification: ZMLocalNotification) {
-        notifications.insert(notification)
-    }
-
     func replaceObject(_ toReplace: ZMLocalNotification, newObject: ZMLocalNotification) {
         notifications.remove(toReplace)
         notifications.insert(newObject)
-    }
-
-    /// Cancels all notifications
-    public func cancelAllNotifications() {
-        let ids = allNotifications.compactMap { $0.requestID?.uuidString }
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
-        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
-        notifications = Set()
-        oldNotifications = []
-    }
-
-    /// This cancels all notifications of a specific conversation
-    public func cancelNotifications(_ conversation: ZMConversation) {
-        cancelOldNotifications(conversation)
-        cancelCurrentNotifications(conversation)
     }
 
     /// Cancel all notifications created in this run
@@ -130,14 +143,10 @@ public class ZMLocalNotificationSet: NSObject {
         }
     }
 
-    /// Cancal all notifications with the given message nonce
-    public func cancelCurrentNotifications(messageNonce: UUID) {
-        guard !notifications.isEmpty else { return }
-        let toRemove = notifications.filter { $0.messageNonce == messageNonce }
-        let ids = toRemove.map(\.id.uuidString)
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
-        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
-        notifications.subtract(toRemove)
+    // MARK: Private
+
+    private var allNotifications: [NotificationUserInfo] {
+        notifications.compactMap(\.userInfo) + oldNotifications
     }
 }
 

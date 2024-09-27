@@ -24,14 +24,7 @@ final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<
     PushSupportedProtocolsAction,
     PushSupportedProtocolsActionHandler
 > {
-    // MARK: - Properties
-
-    private var stack: CoreDataStack!
-    private let coreDataStackHelper = CoreDataStackHelper()
-
-    private var syncContext: NSManagedObjectContext {
-        stack.syncContext
-    }
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -71,5 +64,16 @@ final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<
 
         // WHEN, THEN
         XCTAssertNotNil(result)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var stack: CoreDataStack!
+    private let coreDataStackHelper = CoreDataStackHelper()
+
+    private var syncContext: NSManagedObjectContext {
+        stack.syncContext
     }
 }

@@ -23,6 +23,8 @@ import WireDesign
 // MARK: - ConversationCreateReceiptsCell
 
 final class ConversationCreateReceiptsCell: IconToggleCell {
+    // MARK: Internal
+
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "toggle.newgroup.allowreceipts"
@@ -30,6 +32,8 @@ final class ConversationCreateReceiptsCell: IconToggleCell {
         setupIconForCell()
         showSeparator = false
     }
+
+    // MARK: Private
 
     private func setupIconForCell() {
         icon = .init(resource: .readReceipts).withRenderingMode(.alwaysTemplate)

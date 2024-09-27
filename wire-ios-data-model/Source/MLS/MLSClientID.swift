@@ -23,21 +23,7 @@ import WireTransport
 
 /// An ID representing a identifying a single user client.
 public struct MLSClientID: Equatable, Hashable {
-    // MARK: - Properties
-
-    public var userID: String
-    public var clientID: String
-    public var domain: String
-
-    public var rawValue: String {
-        "\(userID):\(clientID)@\(domain)"
-    }
-
-    public var data: Data? {
-        rawValue.data(using: .utf8)
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init?(user: ZMUser) {
         guard let selfClient = user.selfClient() else { return nil }
@@ -103,6 +89,22 @@ public struct MLSClientID: Equatable, Hashable {
         self.userID = userID.lowercased()
         self.clientID = clientID.lowercased()
         self.domain = domain.lowercased()
+    }
+
+    // MARK: Public
+
+    // MARK: - Properties
+
+    public var userID: String
+    public var clientID: String
+    public var domain: String
+
+    public var rawValue: String {
+        "\(userID):\(clientID)@\(domain)"
+    }
+
+    public var data: Data? {
+        rawValue.data(using: .utf8)
     }
 }
 

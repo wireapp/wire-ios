@@ -26,6 +26,8 @@ enum UpdateEventType {
     case team(TeamEventType)
     case unknown(String)
 
+    // MARK: Lifecycle
+
     init(_ string: String) {
         if let eventType = ConversationEventType(rawValue: string) {
             self = .conversation(eventType)

@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class TypingIndicatorViewSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: TypingIndicatorView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -95,4 +92,11 @@ final class TypingIndicatorViewSnapshotTests: XCTestCase {
         XCTAssertEqual(sut.container.alpha, 1)
         waitForExpectations(timeout: 0.5, handler: nil)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TypingIndicatorView!
 }

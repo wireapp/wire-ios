@@ -22,22 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationNewDeviceSystemMessageCell
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer = false
-    var topMargin: Float = 0
-
-    let isFullWidth = true
-    let supportsActions = false
-    let containsHighlightableContent = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
+    // MARK: Lifecycle
 
     init(
         message: ZMConversationMessage,
@@ -58,6 +43,28 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
         self.accessibilityLabel = configuration.attributedText?.string
         self.actionController = nil
     }
+
+    // MARK: Internal
+
+    typealias View = ConversationNewDeviceSystemMessageCell
+
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer = false
+    var topMargin: Float = 0
+
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String?
+
+    // MARK: Private
 
     private static func makeAttributedString(
         systemMessage: ZMSystemMessageData,

@@ -26,12 +26,7 @@ import WireSyncEngine
 
 /// A title view subclass that displays the availability of the user.
 final class UserStatusView: TitleView {
-    // MARK: - Properties
-
-    private let options: Options
-    var userStatus = UserStatus() {
-        didSet { updateConfiguration() }
-    }
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -48,6 +43,12 @@ final class UserStatusView: TitleView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var userStatus = UserStatus() {
+        didSet { updateConfiguration() }
+    }
+
     // MARK: - Configuration
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -57,6 +58,12 @@ final class UserStatusView: TitleView {
             updateConfiguration()
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let options: Options
 
     /// Refreshes the content and appearance of the view.
     private func updateConfiguration() {
@@ -137,8 +144,6 @@ final class UserStatusView: TitleView {
 extension UserStatusView {
     /// The available options for this view.
     struct Options: OptionSet {
-        let rawValue: Int
-
         /// Whether we allow the user to update the status by tapping this view.
         static let allowSettingStatus = Options(rawValue: 1 << 0)
 
@@ -153,6 +158,8 @@ extension UserStatusView {
 
         /// The default options for using the view in a title bar.
         static var header: Options = [.allowSettingStatus, .hideActionHint, .displayUserName, .useLargeFont]
+
+        let rawValue: Int
     }
 }
 

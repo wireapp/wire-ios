@@ -25,70 +25,7 @@ typealias DismissAction = (_ completion: Completion?) -> Void
 // MARK: - ConversationImagesViewController
 
 final class ConversationImagesViewController: UIViewController {
-    typealias ButtonColors = SemanticColors.Button
-
-    let collection: AssetCollectionWrapper
-
-    var pageViewController = UIPageViewController(
-        transitionStyle: .scroll,
-        navigationOrientation: .horizontal,
-        options: [:]
-    )
-    var buttonsBar: InputBarButtonsView!
-    lazy var deleteButton = iconButton(messageAction: .delete)
-    let overlay = FeedbackOverlayView()
-    let separator: UIView = {
-        let view = UIView()
-        view.backgroundColor = SemanticColors.View.backgroundSeparatorCell
-        return view
-    }()
-
-    let inverse: Bool
-
-    var currentActionController: ConversationMessageActionController?
-
-    weak var messageActionDelegate: MessageActionResponder? = .none {
-        didSet {
-            updateActionControllerForMessage()
-        }
-    }
-
-    var snapshotBackgroundView: UIView? = .none
-
-    private var imageMessages: [ZMConversationMessage] = []
-
-    var currentMessage: ZMConversationMessage {
-        didSet {
-            updateButtonsForMessage()
-            createNavigationTitle()
-            updateActionControllerForMessage()
-        }
-    }
-
-    var isPreviewing = false {
-        didSet {
-            updateBarsForPreview()
-        }
-    }
-
-    var swipeToDismiss = false {
-        didSet {
-            if let currentController {
-                currentController.swipeToDismiss = swipeToDismiss
-            }
-        }
-    }
-
-    let userSession: UserSession
-    let mainCoordinator: MainCoordinating
-
-    var dismissAction: DismissAction? = .none {
-        didSet {
-            if let currentController {
-                currentController.dismissAction = dismissAction
-            }
-        }
-    }
+    // MARK: Lifecycle
 
     init(
         collection: AssetCollectionWrapper,
@@ -123,13 +60,68 @@ final class ConversationImagesViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.PictureView.CloseButton.description
+    // MARK: Internal
 
-        if let navigationBar = navigationController?.navigationBar {
-            navigationBar.isTranslucent = true
-            navigationBar.barTintColor = SemanticColors.View.backgroundDefault
+    typealias ButtonColors = SemanticColors.Button
+
+    let collection: AssetCollectionWrapper
+
+    var pageViewController = UIPageViewController(
+        transitionStyle: .scroll,
+        navigationOrientation: .horizontal,
+        options: [:]
+    )
+    var buttonsBar: InputBarButtonsView!
+    lazy var deleteButton = iconButton(messageAction: .delete)
+    let overlay = FeedbackOverlayView()
+    let separator: UIView = {
+        let view = UIView()
+        view.backgroundColor = SemanticColors.View.backgroundSeparatorCell
+        return view
+    }()
+
+    let inverse: Bool
+
+    var currentActionController: ConversationMessageActionController?
+
+    var snapshotBackgroundView: UIView? = .none
+
+    let userSession: UserSession
+    let mainCoordinator: MainCoordinating
+
+    weak var messageActionDelegate: MessageActionResponder? = .none {
+        didSet {
+            updateActionControllerForMessage()
+        }
+    }
+
+    var currentMessage: ZMConversationMessage {
+        didSet {
+            updateButtonsForMessage()
+            createNavigationTitle()
+            updateActionControllerForMessage()
+        }
+    }
+
+    var isPreviewing = false {
+        didSet {
+            updateBarsForPreview()
+        }
+    }
+
+    var swipeToDismiss = false {
+        didSet {
+            if let currentController {
+                currentController.swipeToDismiss = swipeToDismiss
+            }
+        }
+    }
+
+    var dismissAction: DismissAction? = .none {
+        didSet {
+            if let currentController {
+                currentController.dismissAction = dismissAction
+            }
         }
     }
 
@@ -139,6 +131,25 @@ final class ConversationImagesViewController: UIViewController {
 
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         .fade
+    }
+
+    var currentController: FullscreenImageViewController? {
+        guard let imageController = pageViewController.viewControllers?.first as? FullscreenImageViewController
+        else {
+            return .none
+        }
+
+        return imageController
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.PictureView.CloseButton.description
+
+        if let navigationBar = navigationController?.navigationBar {
+            navigationBar.isTranslucent = true
+            navigationBar.barTintColor = SemanticColors.View.backgroundDefault
+        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -162,6 +173,28 @@ final class ConversationImagesViewController: UIViewController {
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
+
+    @objc
+    func saveCurrent(_ sender: UIButton!) {
+        if let sender {
+            currentController?.performSaveImageAnimation(from: sender)
+        }
+        perform(action: .save, sender: sender)
+    }
+
+    @objc
+    func deleteCurrent(_ sender: AnyObject!) {
+        perform(action: .delete, sender: sender)
+    }
+
+    @objc
+    func revealCurrent(_ sender: AnyObject!) {
+        perform(action: .showInConversation, sender: sender)
+    }
+
+    // MARK: Private
+
+    private var imageMessages: [ZMConversationMessage] = []
 
     private func createConstraints() {
         [
@@ -399,15 +432,6 @@ final class ConversationImagesViewController: UIViewController {
         )
     }
 
-    var currentController: FullscreenImageViewController? {
-        guard let imageController = pageViewController.viewControllers?.first as? FullscreenImageViewController
-        else {
-            return .none
-        }
-
-        return imageController
-    }
-
     private func perform(
         action: MessageAction,
         for message: ZMConversationMessage? = nil,
@@ -427,24 +451,6 @@ final class ConversationImagesViewController: UIViewController {
         let text = L10n.Localizable.Collections.ImageViewer.Copied.title.capitalized
         overlay.show(text: text)
         perform(action: .copy, sender: sender)
-    }
-
-    @objc
-    func saveCurrent(_ sender: UIButton!) {
-        if let sender {
-            currentController?.performSaveImageAnimation(from: sender)
-        }
-        perform(action: .save, sender: sender)
-    }
-
-    @objc
-    func deleteCurrent(_ sender: AnyObject!) {
-        perform(action: .delete, sender: sender)
-    }
-
-    @objc
-    func revealCurrent(_ sender: AnyObject!) {
-        perform(action: .showInConversation, sender: sender)
     }
 
     @objc

@@ -37,10 +37,16 @@ extension Notification {
 /// notifications in order to merge them into the main app contexts.
 @objcMembers
 public class ContextDidSaveNotificationPersistence: NSObject {
-    private let objectStore: SharedObjectStore<[AnyHashable: AnyObject]>
+    // MARK: Lifecycle
 
     public required init(accountContainer url: URL) {
         self.objectStore = SharedObjectStore(accountContainer: url, fileName: "ContextDidChangeNotifications")
+    }
+
+    // MARK: Public
+
+    public var storedNotifications: [[AnyHashable: AnyObject]] {
+        objectStore.load()
     }
 
     @discardableResult
@@ -52,20 +58,16 @@ public class ContextDidSaveNotificationPersistence: NSObject {
         objectStore.clear()
     }
 
-    public var storedNotifications: [[AnyHashable: AnyObject]] {
-        objectStore.load()
-    }
+    // MARK: Private
+
+    private let objectStore: SharedObjectStore<[AnyHashable: AnyObject]>
 }
 
 // MARK: - StorableTrackingEvent
 
 @objcMembers
 public class StorableTrackingEvent: NSObject {
-    private static let eventNameKey = "eventName"
-    private static let eventAttributesKey = "eventAttributes"
-
-    public let name: String
-    public let attributes: [String: Any]
+    // MARK: Lifecycle
 
     public init(name: String, attributes: [String: Any]) {
         self.name = name
@@ -79,22 +81,38 @@ public class StorableTrackingEvent: NSObject {
         self.init(name: name, attributes: attributes)
     }
 
+    // MARK: Public
+
+    public let name: String
+    public let attributes: [String: Any]
+
     public func dictionaryRepresentation() -> [String: Any] {
         [
             StorableTrackingEvent.eventNameKey: name,
             StorableTrackingEvent.eventAttributesKey: attributes,
         ]
     }
+
+    // MARK: Private
+
+    private static let eventNameKey = "eventName"
+    private static let eventAttributesKey = "eventAttributes"
 }
 
 // MARK: - ShareExtensionAnalyticsPersistence
 
 @objcMembers
 public class ShareExtensionAnalyticsPersistence: NSObject {
-    private let objectStore: SharedObjectStore<[String: Any]>
+    // MARK: Lifecycle
 
     public required init(accountContainer url: URL) {
         self.objectStore = SharedObjectStore(accountContainer: url, fileName: "ShareExtensionAnalytics")
+    }
+
+    // MARK: Public
+
+    public var storedTrackingEvents: [StorableTrackingEvent] {
+        objectStore.load().compactMap(StorableTrackingEvent.init)
     }
 
     @discardableResult
@@ -106,9 +124,9 @@ public class ShareExtensionAnalyticsPersistence: NSObject {
         objectStore.clear()
     }
 
-    public var storedTrackingEvents: [StorableTrackingEvent] {
-        objectStore.load().compactMap(StorableTrackingEvent.init)
-    }
+    // MARK: Private
+
+    private let objectStore: SharedObjectStore<[String: Any]>
 }
 
 private let zmLog = ZMSLog(tag: "shared object store")
@@ -118,20 +136,25 @@ private let zmLog = ZMSLog(tag: "shared object store")
 // This class is needed to test unarchiving data saved before project rename
 // It has to be added to WireDataModel module because it won't be resolved otherwise
 class SharedObjectTestClass: NSObject, NSCoding {
-    var flag: Bool
+    // MARK: Lifecycle
+
     override init() { self.flag = false }
-    public func encode(with aCoder: NSCoder) { aCoder.encode(flag, forKey: "flag") }
     public required init?(coder aDecoder: NSCoder) { self.flag = aDecoder.decodeBool(forKey: "flag") }
+
+    // MARK: Public
+
+    public func encode(with aCoder: NSCoder) { aCoder.encode(flag, forKey: "flag") }
+
+    // MARK: Internal
+
+    var flag: Bool
 }
 
 // MARK: - SharedObjectStore
 
 /// This class is used to persist objects in a shared directory
 public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
-    private let directory: URL
-    private let url: URL
-    private let fileManager = FileManager.default
-    private let directoryName = "sharedObjectStore"
+    // MARK: Lifecycle
 
     public required init(accountContainer: URL, fileName: String) {
         self.directory = accountContainer.appendingPathComponent(directoryName)
@@ -139,6 +162,8 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         super.init()
         try! FileManager.default.createAndProtectDirectory(at: directory)
     }
+
+    // MARK: Public
 
     @discardableResult
     public func store(_ object: T) -> Bool {
@@ -197,4 +222,11 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
             zmLog.error("Failed to remove item at url: \(url), error: \(error)")
         }
     }
+
+    // MARK: Private
+
+    private let directory: URL
+    private let url: URL
+    private let fileManager = FileManager.default
+    private let directoryName = "sharedObjectStore"
 }

@@ -22,9 +22,13 @@ import WireDataModel
 // MARK: - TopPeopleLineCollectionViewController
 
 final class TopPeopleLineCollectionViewController: NSObject {
+    // MARK: Internal
+
     var topPeople = [ZMConversation]()
 
     weak var delegate: TopPeopleLineCollectionViewControllerDelegate?
+
+    // MARK: Private
 
     private func conversation(at indexPath: IndexPath) -> ZMConversation {
         topPeople[indexPath.item % topPeople.count]

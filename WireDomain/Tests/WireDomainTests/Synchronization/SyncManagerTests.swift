@@ -26,9 +26,7 @@ import XCTest
 // MARK: - SyncManagerTests
 
 final class SyncManagerTests: XCTestCase {
-    private var sut: SyncManager!
-    private var updateEventsRepository: MockUpdateEventsRepositoryProtocol!
-    private var updateEventProcessor: MockUpdateEventProcessorProtocol!
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -282,6 +280,12 @@ final class SyncManagerTests: XCTestCase {
 
         XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 0)
     }
+
+    // MARK: Private
+
+    private var sut: SyncManager!
+    private var updateEventsRepository: MockUpdateEventsRepositoryProtocol!
+    private var updateEventProcessor: MockUpdateEventProcessorProtocol!
 }
 
 // MARK: - Scaffolding

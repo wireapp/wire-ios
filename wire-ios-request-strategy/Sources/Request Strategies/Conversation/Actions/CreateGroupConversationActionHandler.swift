@@ -22,6 +22,36 @@ import WireDataModel
 // MARK: - CreateGroupConversationAction
 
 public final class CreateGroupConversationAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        messageProtocol: MessageProtocol,
+        creatorClientID: String,
+        qualifiedUserIDs: [QualifiedID] = [],
+        unqualifiedUserIDs: [UUID] = [],
+        name: String? = nil,
+        accessMode: ConversationAccessMode,
+        accessRoles: Set<ConversationAccessRoleV2>,
+        legacyAccessRole: ConversationAccessRole? = nil,
+        teamID: UUID? = nil,
+        isReadReceiptsEnabled: Bool,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.messageProtocol = messageProtocol
+        self.creatorClientID = creatorClientID
+        self.qualifiedUserIDs = qualifiedUserIDs
+        self.unqualifiedUserIDs = unqualifiedUserIDs
+        self.name = name
+        self.accessMode = accessMode
+        self.accessRoles = accessRoles
+        self.legacyAccessRole = legacyAccessRole
+        self.teamID = teamID
+        self.isReadReceiptsEnabled = isReadReceiptsEnabled
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = NSManagedObjectID
 
     public enum Failure: Error, Equatable {
@@ -52,45 +82,12 @@ public final class CreateGroupConversationAction: EntityAction {
     public var isReadReceiptsEnabled: Bool
 
     public var resultHandler: ResultHandler?
-
-    public init(
-        messageProtocol: MessageProtocol,
-        creatorClientID: String,
-        qualifiedUserIDs: [QualifiedID] = [],
-        unqualifiedUserIDs: [UUID] = [],
-        name: String? = nil,
-        accessMode: ConversationAccessMode,
-        accessRoles: Set<ConversationAccessRoleV2>,
-        legacyAccessRole: ConversationAccessRole? = nil,
-        teamID: UUID? = nil,
-        isReadReceiptsEnabled: Bool,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.messageProtocol = messageProtocol
-        self.creatorClientID = creatorClientID
-        self.qualifiedUserIDs = qualifiedUserIDs
-        self.unqualifiedUserIDs = unqualifiedUserIDs
-        self.name = name
-        self.accessMode = accessMode
-        self.accessRoles = accessRoles
-        self.legacyAccessRole = legacyAccessRole
-        self.teamID = teamID
-        self.isReadReceiptsEnabled = isReadReceiptsEnabled
-        self.resultHandler = resultHandler
-    }
 }
 
 // MARK: - CreateGroupConversationActionHandler
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: removeLocalConversationUseCase
-    )
-
-    // This is only needed for the processor to be created but processor needs it only for
-    // Conversation deletion
-    private let removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
+    // MARK: Lifecycle
 
     required init(
         context: NSManagedObjectContext,
@@ -99,6 +96,8 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         self.removeLocalConversationUseCase = removeLocalConversationUseCase
         super.init(context: context)
     }
+
+    // MARK: Internal
 
     // MARK: - Request generation
 
@@ -201,6 +200,17 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             ))
         }
     }
+
+    // MARK: Private
+
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: MLSEventProcessor(context: context),
+        removeLocalConversation: removeLocalConversationUseCase
+    )
+
+    // This is only needed for the processor to be created but processor needs it only for
+    // Conversation deletion
+    private let removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
 
     private func handleSuccessResponse(
         _ response: ZMTransportResponse,

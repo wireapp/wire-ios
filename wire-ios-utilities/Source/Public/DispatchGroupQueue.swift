@@ -20,13 +20,14 @@ import Foundation
 
 @objcMembers
 public final class DispatchGroupQueue: NSObject, GroupQueue {
-    let queue: DispatchQueue
-    let dispatchGroupContext: DispatchGroupContext
+    // MARK: Lifecycle
 
     public init(queue: DispatchQueue) {
         self.queue = queue
         self.dispatchGroupContext = DispatchGroupContext(groups: [])
     }
+
+    // MARK: Public
 
     public var dispatchGroup: ZMSDispatchGroup? {
         dispatchGroupContext.groups.first
@@ -43,4 +44,9 @@ public final class DispatchGroupQueue: NSObject, GroupQueue {
             self.dispatchGroupContext.leave(groups)
         }
     }
+
+    // MARK: Internal
+
+    let queue: DispatchQueue
+    let dispatchGroupContext: DispatchGroupContext
 }

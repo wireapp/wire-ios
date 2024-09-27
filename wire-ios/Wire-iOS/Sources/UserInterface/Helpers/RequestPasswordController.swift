@@ -19,23 +19,7 @@
 import UIKit
 
 final class RequestPasswordController {
-    typealias Callback = (_ password: String?) -> Void
-
-    enum RequestPasswordContext {
-        case removeDevice
-        case logout
-        case unlock(message: String)
-        case wiping
-    }
-
-    var alertController: UIAlertController
-
-    typealias InputValidation = (String?) -> Bool
-
-    private let callback: Callback
-    private let inputValidation: InputValidation?
-    private weak var okAction: UIAlertAction?
-    weak var passwordTextField: UITextField?
+    // MARK: Lifecycle
 
     init(
         context: RequestPasswordContext,
@@ -127,6 +111,23 @@ final class RequestPasswordController {
         self.okAction = okAction
     }
 
+    // MARK: Internal
+
+    typealias Callback = (_ password: String?) -> Void
+
+    enum RequestPasswordContext {
+        case removeDevice
+        case logout
+        case unlock(message: String)
+        case wiping
+    }
+
+    typealias InputValidation = (String?) -> Bool
+
+    var alertController: UIAlertController
+
+    weak var passwordTextField: UITextField?
+
     @objc
     func passwordTextFieldChanged(_: UITextField) {
         guard let passwordField = alertController.textFields?[0] else { return }
@@ -137,4 +138,10 @@ final class RequestPasswordController {
             okAction?.isEnabled = inputValidation(passwordField.text)
         }
     }
+
+    // MARK: Private
+
+    private let callback: Callback
+    private let inputValidation: InputValidation?
+    private weak var okAction: UIAlertAction?
 }

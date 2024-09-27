@@ -33,9 +33,7 @@ private let log = WireLogger(tag: "Accounts")
 ///         - 0F5771BB-2103-4E45-9ED2-E7E6B9D46C0F
 /// ```
 public final class AccountStore: NSObject {
-    private static let directoryName = "Accounts"
-    private let fileManager = FileManager.default
-    private let directory: URL // The url to the directory in which accounts are stored in
+    // MARK: Lifecycle
 
     /// Creates a new `AccountStore`.
     /// `Account` objects will be stored in a subdirectory of the passed in url.
@@ -44,6 +42,22 @@ public final class AccountStore: NSObject {
         self.directory = root.appendingPathComponent(AccountStore.directoryName)
         super.init()
         try! fileManager.createAndProtectDirectory(at: directory)
+    }
+
+    // MARK: Internal
+
+    /// Deletes the persistence layer of an `AccountStore` from the file system.
+    /// Mostly useful for cleaning up after tests or for complete account resets.
+    /// - parameter root: The root url of the store that should be deleted.
+    @discardableResult
+    static func delete(at root: URL) -> Bool {
+        do {
+            try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
+            return true
+        } catch {
+            log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
+            return false
+        }
     }
 
     // MARK: - Storing and Retrieving
@@ -93,19 +107,12 @@ public final class AccountStore: NSObject {
         }
     }
 
-    /// Deletes the persistence layer of an `AccountStore` from the file system.
-    /// Mostly useful for cleaning up after tests or for complete account resets.
-    /// - parameter root: The root url of the store that should be deleted.
-    @discardableResult
-    static func delete(at root: URL) -> Bool {
-        do {
-            try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
-            return true
-        } catch {
-            log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
-            return false
-        }
-    }
+    // MARK: Private
+
+    private static let directoryName = "Accounts"
+
+    private let fileManager = FileManager.default
+    private let directory: URL // The url to the directory in which accounts are stored in
 
     // MARK: - Private Helper
 

@@ -21,22 +21,7 @@ import Foundation
 /// Represents the information about an MLS conference.
 
 public struct MLSConferenceInfo: Equatable {
-    public struct Member: Equatable {
-        public let id: MLSClientID
-        public let isInSubconversation: Bool
-
-        public init(
-            id: MLSClientID,
-            isInSubconversation: Bool
-        ) {
-            self.id = id
-            self.isInSubconversation = isInSubconversation
-        }
-    }
-
-    public let epoch: UInt64
-    public let keyData: Data
-    public let members: [Member]
+    // MARK: Lifecycle
 
     public init(
         epoch: UInt64,
@@ -47,4 +32,27 @@ public struct MLSConferenceInfo: Equatable {
         self.keyData = keyData
         self.members = members
     }
+
+    // MARK: Public
+
+    public struct Member: Equatable {
+        // MARK: Lifecycle
+
+        public init(
+            id: MLSClientID,
+            isInSubconversation: Bool
+        ) {
+            self.id = id
+            self.isInSubconversation = isInSubconversation
+        }
+
+        // MARK: Public
+
+        public let id: MLSClientID
+        public let isInSubconversation: Bool
+    }
+
+    public let epoch: UInt64
+    public let keyData: Data
+    public let members: [Member]
 }

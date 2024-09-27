@@ -21,9 +21,7 @@ import Foundation
 // MARK: - RequestLog
 
 struct RequestLog: Codable {
-    var method: String
-    var endpoint: String
-    var headers: [String: String]
+    // MARK: Lifecycle
 
     init?(_ request: NSURLRequest) {
         guard let method = request.httpMethod, let url = request.url else { return nil }
@@ -40,6 +38,8 @@ struct RequestLog: Codable {
         self.headers = filteredHeaders
         self.method = method
     }
+
+    // MARK: Internal
 
     static let notLoggedValues = Set([
         "Sec-WebSocket-key",
@@ -76,6 +76,10 @@ struct RequestLog: Codable {
         "Sec-WebSocket-key",
         "sec-websocket-accept",
     ].map { $0.lowercased() })
+
+    var method: String
+    var endpoint: String
+    var headers: [String: String]
 }
 
 extension URL {

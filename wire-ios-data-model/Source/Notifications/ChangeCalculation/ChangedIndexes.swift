@@ -36,8 +36,7 @@ extension Array where Element: Hashable {
 // MARK: - OrderedSetState
 
 public struct OrderedSetState<T: Hashable>: Equatable {
-    public private(set) var array: [T]
-    public private(set) var order: [T: Int]
+    // MARK: Lifecycle
 
     public init(array: [T]) {
         guard array.count == Set(array).count else {
@@ -52,6 +51,15 @@ public struct OrderedSetState<T: Hashable>: Equatable {
         self.order = order
     }
 
+    // MARK: Public
+
+    public private(set) var array: [T]
+    public private(set) var order: [T: Int]
+
+    public static func == (lhs: OrderedSetState<T>, rhs: OrderedSetState<T>) -> Bool {
+        lhs.array as [T] == rhs.array as [T]
+    }
+
     @discardableResult
     public mutating func move(item: T, to: Int) -> Int? {
         guard let oldIndex = order[item] else { return nil }
@@ -62,10 +70,6 @@ public struct OrderedSetState<T: Hashable>: Equatable {
             order[array[i]] = i
         }
         return oldIndex
-    }
-
-    public static func == (lhs: OrderedSetState<T>, rhs: OrderedSetState<T>) -> Bool {
-        lhs.array as [T] == rhs.array as [T]
     }
 
     public func map<U>(_ transform: (T) throws -> U) rethrows -> [U] {
@@ -93,28 +97,7 @@ public struct MovedIndex: Equatable {
 // MARK: - ChangedIndexes
 
 public struct ChangedIndexes<T: Hashable> {
-    public let startState: OrderedSetState<T>
-    public let endState: OrderedSetState<T>
-    public let updatedObjects: Set<T>
-
-    /// deletedIndexes refer to the indexes in the startSet
-    public let deletedIndexes: IndexSet
-
-    /// insertedIndexes refer to the indexes after deleting deletedIndexes
-    public let insertedIndexes: IndexSet
-
-    /// updatedIndexes refer to the position of the item after the move
-    /// Reloads using these indexes must be performed AFTER inserts / deletes and moves have COMPLETED
-    public let updatedIndexes: IndexSet
-
-    /// Depending on the moveType, the `from` index either refers to the position of the item in the original set
-    /// (uiCollectionView) or to the position in the intermediate set as moves are iteratively applied (uiTableView)
-    public let movedIndexes: [MovedIndex]
-
-    public let moveType: SetChangeMoveType
-
-    public let deletedObjects: Set<T>
-    public let insertedObjects: Set<T>
+    // MARK: Lifecycle
 
     /// Calculates the inserts, deletes, moves and updates comparing two sets of ordered, distinct objects
     /// @param startState: State before the updates
@@ -148,6 +131,39 @@ public struct ChangedIndexes<T: Hashable> {
         self.deletedObjects = Set(result.deletedObjects.keys)
         self.insertedObjects = Set(result.insertedObjects.keys)
     }
+
+    // MARK: Public
+
+    public let startState: OrderedSetState<T>
+    public let endState: OrderedSetState<T>
+    public let updatedObjects: Set<T>
+
+    /// deletedIndexes refer to the indexes in the startSet
+    public let deletedIndexes: IndexSet
+
+    /// insertedIndexes refer to the indexes after deleting deletedIndexes
+    public let insertedIndexes: IndexSet
+
+    /// updatedIndexes refer to the position of the item after the move
+    /// Reloads using these indexes must be performed AFTER inserts / deletes and moves have COMPLETED
+    public let updatedIndexes: IndexSet
+
+    /// Depending on the moveType, the `from` index either refers to the position of the item in the original set
+    /// (uiCollectionView) or to the position in the intermediate set as moves are iteratively applied (uiTableView)
+    public let movedIndexes: [MovedIndex]
+
+    public let moveType: SetChangeMoveType
+
+    public let deletedObjects: Set<T>
+    public let insertedObjects: Set<T>
+
+    public func enumerateMovedIndexes(block: (_ from: Int, _ to: Int) -> Void) {
+        for pair in movedIndexes {
+            block(Int(pair.from), Int(pair.to))
+        }
+    }
+
+    // MARK: Internal
 
     static func calculateDeletesInsertsUpdates(start: OrderedSetState<T>, end: OrderedSetState<T>, updated: Set<T>)
         -> (insertedObjects: [T: Int], deletedObjects: [T: Int], updatedIndexes: IndexSet, intermediateState: [T]) {
@@ -230,11 +246,5 @@ public struct ChangedIndexes<T: Hashable> {
             fatalError("Unknown moveType \(moveType)")
         }
         return movedIndexes
-    }
-
-    public func enumerateMovedIndexes(block: (_ from: Int, _ to: Int) -> Void) {
-        for pair in movedIndexes {
-            block(Int(pair.from), Int(pair.to))
-        }
     }
 }

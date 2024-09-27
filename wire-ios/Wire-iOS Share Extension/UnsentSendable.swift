@@ -85,25 +85,28 @@ extension UnsentSendable {
 // MARK: - UnsentSendableBase
 
 class UnsentSendableBase {
+    // MARK: Lifecycle
+
+    init(conversation: WireShareEngine.Conversation, sharingSession: SharingSession) {
+        self.conversation = conversation
+        self.sharingSession = sharingSession
+    }
+
+    // MARK: Internal
+
     let conversation: WireShareEngine.Conversation
     let sharingSession: SharingSession
 
     var needsPreparation = false
 
     var error: UnsentSendableError?
-
-    init(conversation: WireShareEngine.Conversation, sharingSession: SharingSession) {
-        self.conversation = conversation
-        self.sharingSession = sharingSession
-    }
 }
 
 // MARK: - UnsentTextSendable
 
 /// `UnsentSendable` implementation to send text messages
 final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
-    private var text: String
-    private let attachment: NSItemProvider?
+    // MARK: Lifecycle
 
     init(
         conversation: WireShareEngine.Conversation,
@@ -118,6 +121,8 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
             needsPreparation = true
         }
     }
+
+    // MARK: Internal
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
@@ -140,14 +145,18 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
             completion()
         }
     }
+
+    // MARK: Private
+
+    private var text: String
+    private let attachment: NSItemProvider?
 }
 
 // MARK: - UnsentImageSendable
 
 /// `UnsentSendable` implementation to send image messages
 final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
-    private let attachment: NSItemProvider
-    private var imageData: Data?
+    // MARK: Lifecycle
 
     init?(conversation: WireShareEngine.Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
         guard attachment.hasItemConformingToTypeIdentifier(UTType.image.identifier) else { return nil }
@@ -155,6 +164,8 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
         super.init(conversation: conversation, sharingSession: sharingSession)
         needsPreparation = true
     }
+
+    // MARK: Internal
 
     func prepare(completion: @escaping () -> Void) {
         precondition(needsPreparation, "Ensure this objects needs preparation, c.f. `needsPreparation`")
@@ -221,21 +232,18 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
             completion(imageData.flatMap(conversation.appendImage))
         }
     }
+
+    // MARK: Private
+
+    private let attachment: NSItemProvider
+    private var imageData: Data?
 }
 
 // MARK: - UnsentFileSendable
 
 /// `UnsentSendable` implementation to send file messages
 class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
-    static let passkitUTI = "com.apple.pkpass"
-    private let attachment: NSItemProvider
-    private var metadata: ZMFileMetadata?
-
-    private let typeURL: Bool
-    private let typeData: Bool
-    private let typePass: Bool
-
-    private let fileMetaDataGenerator = FileMetaDataGenerator()
+    // MARK: Lifecycle
 
     init?(conversation: WireShareEngine.Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
         self.typeURL = attachment.hasItemConformingToTypeIdentifier(UTType.url.identifier)
@@ -246,6 +254,12 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
         guard typeURL || typeData || typePass else { return nil }
         needsPreparation = true
     }
+
+    // MARK: Internal
+
+    typealias SendingCompletion = (URL?, Error?) -> Void
+
+    static let passkitUTI = "com.apple.pkpass"
 
     func prepare(completion: @escaping () -> Void) {
         precondition(needsPreparation, "Ensure this objects needs preparation, c.f. `needsPreparation`")
@@ -274,6 +288,17 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
             completion(metadata.flatMap(conversation.appendFile))
         }
     }
+
+    // MARK: Private
+
+    private let attachment: NSItemProvider
+    private var metadata: ZMFileMetadata?
+
+    private let typeURL: Bool
+    private let typeData: Bool
+    private let typePass: Bool
+
+    private let fileMetaDataGenerator = FileMetaDataGenerator()
 
     private func prepareAsFileData(name: String?, completion: @escaping () -> Void) {
         prepareAsFile(name: name, typeIdentifier: UTType.data.identifier, completion: completion)
@@ -344,8 +369,6 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
             }
         }
     }
-
-    typealias SendingCompletion = (URL?, Error?) -> Void
 
     private func convertVideoIfNeeded(
         UTI: String,

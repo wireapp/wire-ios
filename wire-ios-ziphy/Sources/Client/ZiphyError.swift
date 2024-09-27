@@ -31,6 +31,8 @@ public enum ZiphyError: Error {
     case unknownError(Error)
     case requestRejected(Error)
 
+    // MARK: Lifecycle
+
     init(_ error: Error) {
         self = (error as? ZiphyError) ?? .unknownError(error)
     }

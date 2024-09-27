@@ -23,6 +23,10 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
     var delegate: MockAssetCollectionDelegate!
     var conversation: ZMConversation!
 
+    var defaultMatchPair: CategoryMatch {
+        CategoryMatch(including: .image, excluding: .none)
+    }
+
     override func setUp() {
         super.setUp()
         delegate = MockAssetCollectionDelegate()
@@ -39,10 +43,6 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         sut = nil
         conversation = nil
         super.tearDown()
-    }
-
-    var defaultMatchPair: CategoryMatch {
-        CategoryMatch(including: .image, excluding: .none)
     }
 
     @discardableResult

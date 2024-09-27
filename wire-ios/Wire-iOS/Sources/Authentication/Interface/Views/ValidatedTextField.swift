@@ -40,92 +40,7 @@ protocol ValidatedTextFieldDelegate: AnyObject {
 // MARK: - ValidatedTextField
 
 final class ValidatedTextField: AccessoryTextField, TextContainer {
-    enum Kind: Equatable {
-        case email
-        case name(isTeam: Bool)
-        case password(PasswordRuleSet, isNew: Bool)
-        case passcode(PasswordRuleSet, isNew: Bool)
-        case username
-        case unknown
-    }
-
-    let textFieldValidator: TextFieldValidator
-    weak var textFieldValidationDelegate: TextFieldValidationDelegate?
-    weak var validatedTextFieldDelegate: ValidatedTextFieldDelegate?
-
-    override var text: String? {
-        didSet {
-            validateInput()
-        }
-    }
-
-    // MARK: - UI constants
-
-    static let enteredTextFont = FontSpec(.normal, .regular, .inputText)
-    static let placeholderFont = FontSpec(.small, .regular)
-    static let ConfirmButtonWidth: CGFloat = 32
-
-    typealias TextFieldColors = SemanticColors.SearchBar
-
-    private var style: TextFieldStyle?
-
-    private var isEditingTextField = false {
-        didSet {
-            guard let style else {
-                return
-            }
-            layer.borderColor = isEditingTextField
-                ? style.borderColorSelected.resolvedColor(with: traitCollection).cgColor
-                : style.borderColorNotSelected.cgColor
-        }
-    }
-
-    var isLoading = false {
-        didSet {
-            updateLoadingState()
-        }
-    }
-
-    var kind: Kind {
-        didSet {
-            setupTextFieldProperties()
-        }
-    }
-
-    var overrideButtonIcon: StyleKitIcon? {
-        didSet {
-            updateButtonIcon()
-        }
-    }
-
-    /// Whether to display the confirm button.
-    var showConfirmButton = true {
-        didSet {
-            confirmButton.isHidden = !showConfirmButton
-        }
-    }
-
-    var enableConfirmButton: (() -> Bool)?
-
-    lazy var confirmButton: IconButton = {
-        let iconButton: IconButton
-        switch kind {
-        case .passcode, .password:
-            iconButton = IconButton(style: .default, variant: .light)
-            iconButton.accessibilityIdentifier = "RevealButton"
-            iconButton.accessibilityLabel = "Reveal passcode"
-            iconButton.isEnabled = true
-
-        default:
-            iconButton = IconButton(style: .circular, variant: .dark)
-            iconButton.accessibilityIdentifier = "ConfirmButton"
-            iconButton.accessibilityLabel = L10n.Localizable.General.next
-            iconButton.isEnabled = false
-        }
-        return iconButton
-    }()
-
-    let accessoryContainer = UIView()
+    // MARK: Lifecycle
 
     /// Init with kind for keyboard style and validator type. Default is .unknown
     /// - Parameters:
@@ -178,6 +93,149 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         configureObservers()
     }
 
+    // MARK: Internal
+
+    enum Kind: Equatable {
+        case email
+        case name(isTeam: Bool)
+        case password(PasswordRuleSet, isNew: Bool)
+        case passcode(PasswordRuleSet, isNew: Bool)
+        case username
+        case unknown
+    }
+
+    typealias TextFieldColors = SemanticColors.SearchBar
+
+    // MARK: - UI constants
+
+    static let enteredTextFont = FontSpec(.normal, .regular, .inputText)
+    static let placeholderFont = FontSpec(.small, .regular)
+    static let ConfirmButtonWidth: CGFloat = 32
+
+    let textFieldValidator: TextFieldValidator
+    weak var textFieldValidationDelegate: TextFieldValidationDelegate?
+    weak var validatedTextFieldDelegate: ValidatedTextFieldDelegate?
+
+    var enableConfirmButton: (() -> Bool)?
+
+    lazy var confirmButton: IconButton = {
+        let iconButton: IconButton
+        switch kind {
+        case .passcode, .password:
+            iconButton = IconButton(style: .default, variant: .light)
+            iconButton.accessibilityIdentifier = "RevealButton"
+            iconButton.accessibilityLabel = "Reveal passcode"
+            iconButton.isEnabled = true
+
+        default:
+            iconButton = IconButton(style: .circular, variant: .dark)
+            iconButton.accessibilityIdentifier = "ConfirmButton"
+            iconButton.accessibilityLabel = L10n.Localizable.General.next
+            iconButton.isEnabled = false
+        }
+        return iconButton
+    }()
+
+    let accessoryContainer = UIView()
+
+    override var text: String? {
+        didSet {
+            validateInput()
+        }
+    }
+
+    var isLoading = false {
+        didSet {
+            updateLoadingState()
+        }
+    }
+
+    var kind: Kind {
+        didSet {
+            setupTextFieldProperties()
+        }
+    }
+
+    var overrideButtonIcon: StyleKitIcon? {
+        didSet {
+            updateButtonIcon()
+        }
+    }
+
+    /// Whether to display the confirm button.
+    var showConfirmButton = true {
+        didSet {
+            confirmButton.isHidden = !showConfirmButton
+        }
+    }
+
+    /// Whether the input is valid.
+    var isInputValid: Bool {
+        enableConfirmButton?() ?? !input.isEmpty
+    }
+
+    var isValid: Bool {
+        textFieldValidator.validate(text: text, kind: kind) == nil
+    }
+
+    @objc
+    func textViewDidBeginEditing(_: Notification?) {
+        isEditingTextField = true
+    }
+
+    @objc
+    func textViewDidEndEditing(_: Notification?) {
+        isEditingTextField = false
+    }
+
+    @objc
+    override func textFieldDidChange(textField: UITextField) {
+        updateText(input)
+    }
+
+    func updateText(_ text: String) {
+        self.text = text
+    }
+
+    func validateInput() {
+        let error = textFieldValidator.validate(
+            text: text,
+            kind: kind
+        )
+
+        textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
+        updateConfirmButton()
+    }
+
+    func validateText(text: String) -> TextFieldValidator.ValidationError? {
+        textFieldValidator.validate(text: text, kind: kind)
+    }
+
+    // MARK: Private
+
+    private var style: TextFieldStyle?
+
+    private var isEditingTextField = false {
+        didSet {
+            guard let style else {
+                return
+            }
+            layer.borderColor = isEditingTextField
+                ? style.borderColorSelected.resolvedColor(with: traitCollection).cgColor
+                : style.borderColorNotSelected.cgColor
+        }
+    }
+
+    private var buttonIcon: StyleKitIcon {
+        isLoading
+            ? .spinner
+            : overrideButtonIcon ?? (UIApplication.isLeftToRightLayout ? .forwardArrow : .backArrow)
+    }
+
+    private var iconSize: StyleKitIcon.Size {
+        isLoading ? .medium : .tiny
+    }
+
     private func configureObservers() {
         NotificationCenter.default.addObserver(
             self,
@@ -191,16 +249,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             name: UITextField.textDidEndEditingNotification,
             object: self
         )
-    }
-
-    @objc
-    func textViewDidBeginEditing(_: Notification?) {
-        isEditingTextField = true
-    }
-
-    @objc
-    func textViewDidEndEditing(_: Notification?) {
-        isEditingTextField = false
     }
 
     private func setupTextFieldProperties() {
@@ -258,16 +306,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         }
     }
 
-    private var buttonIcon: StyleKitIcon {
-        isLoading
-            ? .spinner
-            : overrideButtonIcon ?? (UIApplication.isLeftToRightLayout ? .forwardArrow : .backArrow)
-    }
-
-    private var iconSize: StyleKitIcon.Size {
-        isLoading ? .medium : .tiny
-    }
-
     private func updateButtonIcon() {
         confirmButton.setIcon(buttonIcon, size: iconSize, for: .normal)
 
@@ -306,24 +344,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         ])
     }
 
-    @objc
-    override func textFieldDidChange(textField: UITextField) {
-        updateText(input)
-    }
-
-    /// Whether the input is valid.
-    var isInputValid: Bool {
-        enableConfirmButton?() ?? !input.isEmpty
-    }
-
-    var isValid: Bool {
-        textFieldValidator.validate(text: text, kind: kind) == nil
-    }
-
-    func updateText(_ text: String) {
-        self.text = text
-    }
-
     private func updateConfirmButton() {
         confirmButton.isEnabled = isInputValid
     }
@@ -334,19 +354,5 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     private func confirmButtonTapped(button: UIButton) {
         validatedTextFieldDelegate?.buttonPressed(button)
         validateInput()
-    }
-
-    func validateInput() {
-        let error = textFieldValidator.validate(
-            text: text,
-            kind: kind
-        )
-
-        textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
-        updateConfirmButton()
-    }
-
-    func validateText(text: String) -> TextFieldValidator.ValidationError? {
-        textFieldValidator.validate(text: text, kind: kind)
     }
 }

@@ -22,7 +22,7 @@ import XCTest
 @testable import WireReusableUIComponents
 
 final class AccountImageViewSnapshotTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         snapshotHelper = .init()
@@ -61,4 +61,8 @@ final class AccountImageViewSnapshotTests: XCTestCase {
             }
         }
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

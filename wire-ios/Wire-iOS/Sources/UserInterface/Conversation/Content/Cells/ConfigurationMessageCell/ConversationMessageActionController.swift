@@ -21,14 +21,7 @@ import WireCommonComponents
 import WireDataModel
 
 final class ConversationMessageActionController {
-    enum Context: Int {
-        case content, collection
-    }
-
-    let message: ZMConversationMessage
-    let context: Context
-    weak var responder: MessageActionResponder?
-    weak var view: UIView!
+    // MARK: Lifecycle
 
     init(
         responder: MessageActionResponder?,
@@ -42,11 +35,63 @@ final class ConversationMessageActionController {
         self.view = view
     }
 
-    // MARK: - List of Actions
+    // MARK: Internal
 
-    private var allPerformableMessageAction: [MessageAction] {
-        MessageAction.allCases
-            .filter(canPerformAction)
+    enum Context: Int {
+        case content, collection
+    }
+
+    // MARK: - UI menu
+
+    static var allMessageActions: [UIMenuItem] {
+        MessageAction.allCases.compactMap {
+            guard let selector = $0.selector,
+                  let title = $0.title else { return nil }
+            return UIMenuItem(title: title, action: selector)
+        }
+    }
+
+    let message: ZMConversationMessage
+    let context: Context
+    weak var responder: MessageActionResponder?
+    weak var view: UIView!
+
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
+    var previewActionItems: [UIPreviewAction] {
+        allPerformableMessageAction.compactMap { messageAction in
+            guard let title = messageAction.title else { return nil }
+
+            return UIPreviewAction(
+                title: title,
+                style: .default
+            ) { [weak self] _, _ in
+                self?.perform(action: messageAction)
+            }
+        }
+    }
+
+    var singleTapAction: MessageAction? {
+        if message.isImage, message.imageMessageData?.isDownloaded == true {
+            return .present
+        } else if message.isFile, !message.isAudio, let transferState = message.fileMessageData?.transferState {
+            switch transferState {
+            case .uploaded:
+                return .present
+            default:
+                return nil
+            }
+        }
+
+        return nil
+    }
+
+    var doubleTapAction: MessageAction? {
+        message.canAddReaction ? .react("❤️") : nil
     }
 
     func allMessageMenuElements() -> [UIAction] {
@@ -70,16 +115,6 @@ final class ConversationMessageActionController {
                 image: messageAction.systemIcon(),
                 handler: handler
             )
-        }
-    }
-
-    // MARK: - UI menu
-
-    static var allMessageActions: [UIMenuItem] {
-        MessageAction.allCases.compactMap {
-            guard let selector = $0.selector,
-                  let title = $0.title else { return nil }
-            return UIMenuItem(title: title, action: selector)
         }
     }
 
@@ -137,25 +172,6 @@ final class ConversationMessageActionController {
             }
     }
 
-    @available(
-        iOS,
-        introduced: 9.0,
-        deprecated: 13.0,
-        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
-    )
-    var previewActionItems: [UIPreviewAction] {
-        allPerformableMessageAction.compactMap { messageAction in
-            guard let title = messageAction.title else { return nil }
-
-            return UIPreviewAction(
-                title: title,
-                style: .default
-            ) { [weak self] _, _ in
-                self?.perform(action: messageAction)
-            }
-        }
-    }
-
     // MARK: - Single Tap Action
 
     func performSingleTapAction() {
@@ -164,30 +180,11 @@ final class ConversationMessageActionController {
         perform(action: singleTapAction)
     }
 
-    var singleTapAction: MessageAction? {
-        if message.isImage, message.imageMessageData?.isDownloaded == true {
-            return .present
-        } else if message.isFile, !message.isAudio, let transferState = message.fileMessageData?.transferState {
-            switch transferState {
-            case .uploaded:
-                return .present
-            default:
-                return nil
-            }
-        }
-
-        return nil
-    }
-
     // MARK: - Double Tap Action
 
     func performDoubleTapAction() {
         guard let doubleTapAction else { return }
         perform(action: doubleTapAction)
-    }
-
-    var doubleTapAction: MessageAction? {
-        message.canAddReaction ? .react("❤️") : nil
     }
 
     // MARK: - Handler
@@ -263,5 +260,14 @@ final class ConversationMessageActionController {
     @objc
     func visitLink() {
         perform(action: .visitLink)
+    }
+
+    // MARK: Private
+
+    // MARK: - List of Actions
+
+    private var allPerformableMessageAction: [MessageAction] {
+        MessageAction.allCases
+            .filter(canPerformAction)
     }
 }

@@ -23,6 +23,8 @@ import XCTest
 // MARK: - CompositeMessageCellTests
 
 final class CompositeMessageCellTests: ConversationMessageSnapshotTestCase {
+    // MARK: Internal
+
     typealias CellConfiguration = (MockMessage) -> Void
 
     var mockSelfUser: MockUserType!
@@ -83,6 +85,11 @@ final class CompositeMessageCellTests: ConversationMessageSnapshotTestCase {
         verify(message: message, allWidths: false)
     }
 
+    // MARK: Private
+
+    private lazy var mockTextMessage = MockMessageFactory
+        .textMessage(withText: "# Question:\nWho is/are your most favourite musician(s)  ?")
+
     // MARK: - Helpers
 
     private func createItem(title: String, state: ButtonMessageState, isExpired: Bool = false) -> CompositeMessageItem {
@@ -94,9 +101,6 @@ final class CompositeMessageCellTests: ConversationMessageSnapshotTestCase {
 
         return buttonItem
     }
-
-    private lazy var mockTextMessage = MockMessageFactory
-        .textMessage(withText: "# Question:\nWho is/are your most favourite musician(s)  ?")
 
     private func makeMessage(
         sender: UserType? = nil,
@@ -151,9 +155,9 @@ final class MockButtonMessageData: ButtonMessageData {
 
     var state: ButtonMessageState = .unselected
 
+    var isExpired = false
+
     func touchAction() {
         // no-op
     }
-
-    var isExpired = false
 }

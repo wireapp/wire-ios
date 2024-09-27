@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class TokenSeparatorAttachmentSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: TokenSeparatorAttachment!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -50,4 +47,11 @@ final class TokenSeparatorAttachmentSnapshotTests: XCTestCase {
     func testTokenAttachmentImage() {
         snapshotHelper.verify(matching: sut.image!)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TokenSeparatorAttachment!
 }

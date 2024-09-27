@@ -38,34 +38,7 @@ protocol ClientRemovalObserverDelegate: AnyObject {
 // MARK: - ClientRemovalObserver
 
 final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
-    var userClientToDelete: UserClient
-    private weak var delegate: ClientRemovalObserverDelegate?
-    private let completion: ((Error?) -> Void)?
-    private var credentials: UserEmailCredentials?
-    private lazy var requestPasswordController = RequestPasswordController(
-        context: .removeDevice,
-        callback: { [weak self] password in
-            guard let password,
-                  !password.isEmpty else {
-                self?
-                    .endRemoval(
-                        result: ClientRemovalUIError
-                            .noPasswordProvided
-                    )
-                return
-            }
-
-            self?.credentials = UserEmailCredentials(
-                email: "",
-                password: password
-            )
-            self?.startRemoval()
-            self?.passwordIsNecessaryForDelete = true
-        }
-    )
-
-    private var passwordIsNecessaryForDelete = false
-    private var observerToken: Any?
+    // MARK: Lifecycle
 
     init(
         userClientToDelete: UserClient,
@@ -83,16 +56,13 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
         self.observerToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
     }
 
+    // MARK: Internal
+
+    var userClientToDelete: UserClient
+
     func startRemoval() {
         delegate?.setIsLoadingViewVisible(self, isVisible: true)
         ZMUserSession.shared()?.deleteClient(userClientToDelete, credentials: credentials)
-    }
-
-    private func endRemoval(result: Error?) {
-        completion?(result)
-
-        // Allow password input alert can be show next time
-        passwordIsNecessaryForDelete = false
     }
 
     func finishedFetching(_: [UserClient]) {
@@ -127,5 +97,42 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
         } else {
             delegate?.present(self, viewControllerToPresent: requestPasswordController.alertController)
         }
+    }
+
+    // MARK: Private
+
+    private weak var delegate: ClientRemovalObserverDelegate?
+    private let completion: ((Error?) -> Void)?
+    private var credentials: UserEmailCredentials?
+    private lazy var requestPasswordController = RequestPasswordController(
+        context: .removeDevice,
+        callback: { [weak self] password in
+            guard let password,
+                  !password.isEmpty else {
+                self?
+                    .endRemoval(
+                        result: ClientRemovalUIError
+                            .noPasswordProvided
+                    )
+                return
+            }
+
+            self?.credentials = UserEmailCredentials(
+                email: "",
+                password: password
+            )
+            self?.startRemoval()
+            self?.passwordIsNecessaryForDelete = true
+        }
+    )
+
+    private var passwordIsNecessaryForDelete = false
+    private var observerToken: Any?
+
+    private func endRemoval(result: Error?) {
+        completion?(result)
+
+        // Allow password input alert can be show next time
+        passwordIsNecessaryForDelete = false
     }
 }

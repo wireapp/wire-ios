@@ -21,13 +21,15 @@ import WireDataModel
 
 /// Provides log attributes for messages of supported message types.
 struct MessageLogAttributesBuilder {
-    private let context: NSManagedObjectContext
+    // MARK: Lifecycle
 
     // MARK: - Initialize
 
     init(context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: Internal
 
     // MARK: - ZMClientMessage
 
@@ -39,14 +41,6 @@ struct MessageLogAttributesBuilder {
     func syncLogAttributes(_ message: ZMClientMessage) -> LogAttributes {
         let attributes = context.performAndWait { clientMessageLogAttributes(message) }
         return makeAttributesPublic(attributes)
-    }
-
-    private func clientMessageLogAttributes(_ message: ZMClientMessage) -> LogAttributes {
-        [
-            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
-            .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
-        ]
     }
 
     // MARK: - ZMAssetClientMessage
@@ -61,14 +55,6 @@ struct MessageLogAttributesBuilder {
         return makeAttributesPublic(attributes)
     }
 
-    private func assetClientMessageLogAttributes(_ message: ZMAssetClientMessage) -> LogAttributes {
-        [
-            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
-            .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
-        ]
-    }
-
     // MARK: - GenericMessageEntity
 
     func logAttributes(_ message: GenericMessageEntity) async -> LogAttributes {
@@ -81,14 +67,6 @@ struct MessageLogAttributesBuilder {
         return makeAttributesPublic(attributes)
     }
 
-    private func genericMessageLogAttributes(_ message: GenericMessageEntity) -> LogAttributes {
-        [
-            .nonce: message.message.safeIdForLoggingDescription,
-            .messageType: message.message.safeTypeForLoggingDescription,
-            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
-        ]
-    }
-
     // MARK: - Protocol async
 
     /// Tries to call `logAttributes` on a supported type. Asserts if type is not supported.
@@ -99,23 +77,6 @@ struct MessageLogAttributesBuilder {
     /// Tries to call `logAttributes` on a supported type. Asserts if type is not supported.
     func logAttributes(_ message: any ProteusMessage) async -> LogAttributes {
         await logAttributesFromAny(message)
-    }
-
-    private func logAttributesFromAny(_ message: Any) async -> LogAttributes {
-        if let clientMessage = message as? ZMClientMessage {
-            return await logAttributes(clientMessage)
-        }
-
-        if let assetClientMessage = message as? ZMAssetClientMessage {
-            return await logAttributes(assetClientMessage)
-        }
-
-        if let genericMessage = message as? GenericMessageEntity {
-            return await logAttributes(genericMessage)
-        }
-
-        assertionFailure("cannot find a supported type of message '\(type(of: message))'")
-        return [:]
     }
 
     // MARK: - Protocol sync
@@ -132,6 +93,51 @@ struct MessageLogAttributesBuilder {
 
         if let genericMessage = message as? GenericMessageEntity {
             return syncLogAttributes(genericMessage)
+        }
+
+        assertionFailure("cannot find a supported type of message '\(type(of: message))'")
+        return [:]
+    }
+
+    // MARK: Private
+
+    private let context: NSManagedObjectContext
+
+    private func clientMessageLogAttributes(_ message: ZMClientMessage) -> LogAttributes {
+        [
+            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
+        ]
+    }
+
+    private func assetClientMessageLogAttributes(_ message: ZMAssetClientMessage) -> LogAttributes {
+        [
+            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
+        ]
+    }
+
+    private func genericMessageLogAttributes(_ message: GenericMessageEntity) -> LogAttributes {
+        [
+            .nonce: message.message.safeIdForLoggingDescription,
+            .messageType: message.message.safeTypeForLoggingDescription,
+            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
+        ]
+    }
+
+    private func logAttributesFromAny(_ message: Any) async -> LogAttributes {
+        if let clientMessage = message as? ZMClientMessage {
+            return await logAttributes(clientMessage)
+        }
+
+        if let assetClientMessage = message as? ZMAssetClientMessage {
+            return await logAttributes(assetClientMessage)
+        }
+
+        if let genericMessage = message as? GenericMessageEntity {
+            return await logAttributes(genericMessage)
         }
 
         assertionFailure("cannot find a supported type of message '\(type(of: message))'")

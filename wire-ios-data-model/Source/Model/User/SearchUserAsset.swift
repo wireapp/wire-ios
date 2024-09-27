@@ -22,6 +22,8 @@ public enum SearchUserAsset: ExpressibleByNilLiteral, Hashable {
     case none
     case assetKey(String)
 
+    // MARK: Lifecycle
+
     public init(nilLiteral: ()) {
         self = .none
     }

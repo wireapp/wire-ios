@@ -50,13 +50,13 @@ protocol Editable: Renderable {
 // MARK: - Orientation
 
 struct Orientation {
-    var scale: CGFloat
-    var position: CGPoint
-    var rotation: CGFloat
-
     static var standard: Orientation {
         Orientation(scale: 1, position: CGPoint.zero, rotation: 0)
     }
+
+    var scale: CGFloat
+    var position: CGPoint
+    var rotation: CGFloat
 }
 
 // MARK: - CanvasDelegate
@@ -68,8 +68,23 @@ public protocol CanvasDelegate: AnyObject {
 // MARK: - Canvas
 
 public final class Canvas: UIView {
-    fileprivate let minimumScale: CGFloat = 0.5
-    fileprivate let maximumScale: CGFloat = 10.0
+    // MARK: Lifecycle
+
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+
+        configureGestureRecognizers()
+    }
+
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+
+        layer.drawsAsynchronously = true
+
+        configureGestureRecognizers()
+    }
+
+    // MARK: Public
 
     public weak var delegate: CanvasDelegate?
 
@@ -105,186 +120,6 @@ public final class Canvas: UIView {
     /// hasChanges is true if the canvas has changes which can be un done. See undo()
     public var hasChanges: Bool {
         !sceneExcludingReferenceObject.isEmpty
-    }
-
-    private var scene: [Renderable] = []
-    private var bufferImage: UIImage?
-    private var selectionView: UIView?
-    private var stroke: Stroke?
-    private var referenceObject: Image?
-    private var flattenIndex = 0
-
-    fileprivate var sceneExcludingReferenceObject: [Renderable] {
-        scene.filter { $0 !== referenceObject }
-    }
-
-    fileprivate var selection: Editable? {
-        didSet {
-            guard selection !== oldValue else { return }
-
-            selectionView?.removeFromSuperview()
-            selectionView = selection?.selectedView
-
-            if let selectedView = selectionView {
-                addSubview(selectedView)
-            }
-
-            oldValue?.selected = false
-            selection?.selected = true
-
-            if let oldSelection = oldValue {
-                setNeedsDisplay(oldSelection.bounds)
-            }
-
-            if let newSelection = selection {
-                setNeedsDisplay(newSelection.bounds)
-            }
-        }
-    }
-
-    fileprivate var initialOrienation = Orientation.standard
-
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-
-        configureGestureRecognizers()
-    }
-
-    public required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-
-        layer.drawsAsynchronously = true
-
-        configureGestureRecognizers()
-    }
-
-    override public func layoutSubviews() {
-        super.layoutSubviews()
-
-        if let referenceObject {
-            referenceObject.sizeToFit(inRect: bounds)
-        }
-    }
-
-    override public func draw(_: CGRect) {
-        guard let context = UIGraphicsGetCurrentContext() else { return }
-
-        if flattenIndex == 0, referenceObject != nil {
-            flatten(upTo: 1)
-        }
-
-        if let bufferImage {
-            bufferImage.draw(at: CGPoint.zero)
-        }
-
-        for renderable in scene.suffix(from: flattenIndex) {
-            renderable.draw(context: context)
-        }
-    }
-
-    public func insert(image: UIImage, at position: CGPoint) {
-        let image = Image(image: image, at: position)
-
-        scene.append(image)
-        selection = image
-        setNeedsDisplay()
-        delegate?.canvasDidChange(self)
-    }
-
-    func insert(brush: Brush, at position: CGPoint) -> Stroke {
-        let stroke = Stroke(at: position, brush: brush)
-        scene.append(stroke)
-        delegate?.canvasDidChange(self)
-        return stroke
-    }
-
-    @objc
-    public func undo() {
-        guard !sceneExcludingReferenceObject.isEmpty else { return }
-
-        if flattenIndex == scene.count {
-            unflatten()
-        }
-
-        if selection === scene.removeLast() {
-            selection = nil
-        }
-
-        setNeedsDisplay()
-        delegate?.canvasDidChange(self)
-    }
-
-    @discardableResult
-    fileprivate func selectObject(at position: CGPoint) -> Editable? {
-        let previousSelection = selection
-
-        selection = pickObject(at: position)
-
-        guard let newSelection = selection, selection !== previousSelection else {
-            return selection
-        }
-
-        // move object to top
-        if let index = scene.firstIndex(where: { $0 === newSelection }) {
-            scene.remove(at: index)
-            scene.append(newSelection)
-            unflatten()
-        }
-
-        return selection
-    }
-
-    private func pickObject(at position: CGPoint) -> Editable? {
-        let editables = scene.compactMap { $0 as? Editable }
-        return editables.reversed().first(where: { editable in
-            guard editable.selectable else { return false }
-            let bounds = CGRect(origin: CGPoint.zero, size: editable.size)
-            let position = position.applying(editable.transform.inverted())
-            return bounds.contains(position)
-        })
-    }
-
-    private func unflatten() {
-        flattenIndex = 0
-        bufferImage = nil
-    }
-
-    private func flatten() {
-        flatten(upTo: scene.count)
-    }
-
-    private func flatten(upTo: Int) {
-        let renderables = scene.prefix(upTo: upTo).suffix(from: flattenIndex)
-
-        guard !renderables.isEmpty else { return }
-
-        selection?.selected = false
-        defer {
-            selection?.selected = true
-        }
-
-        UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
-        bufferImage?.draw(at: CGPoint.zero)
-
-        if let context = UIGraphicsGetCurrentContext() {
-            for renderable in renderables {
-                renderable.draw(context: context)
-            }
-        }
-
-        bufferImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        flattenIndex = upTo
-    }
-
-    private var drawBounds: CGRect {
-        var bounds = scene.first?.bounds ?? CGRect.zero
-
-        for renderable in scene.suffix(from: 1) {
-            bounds = bounds.union(renderable.bounds)
-        }
-
-        return bounds
     }
 
     /// Return an image of the canvas content.
@@ -348,6 +183,55 @@ public final class Canvas: UIView {
         return image
     }
 
+    override public func layoutSubviews() {
+        super.layoutSubviews()
+
+        if let referenceObject {
+            referenceObject.sizeToFit(inRect: bounds)
+        }
+    }
+
+    override public func draw(_: CGRect) {
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+
+        if flattenIndex == 0, referenceObject != nil {
+            flatten(upTo: 1)
+        }
+
+        if let bufferImage {
+            bufferImage.draw(at: CGPoint.zero)
+        }
+
+        for renderable in scene.suffix(from: flattenIndex) {
+            renderable.draw(context: context)
+        }
+    }
+
+    public func insert(image: UIImage, at position: CGPoint) {
+        let image = Image(image: image, at: position)
+
+        scene.append(image)
+        selection = image
+        setNeedsDisplay()
+        delegate?.canvasDidChange(self)
+    }
+
+    @objc
+    public func undo() {
+        guard !sceneExcludingReferenceObject.isEmpty else { return }
+
+        if flattenIndex == scene.count {
+            unflatten()
+        }
+
+        if selection === scene.removeLast() {
+            selection = nil
+        }
+
+        setNeedsDisplay()
+        delegate?.canvasDidChange(self)
+    }
+
     override public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         gestureRecognizers?.contains(gestureRecognizer) ?? false
     }
@@ -384,6 +268,132 @@ public final class Canvas: UIView {
         stroke?.end()
         flatten()
         setNeedsDisplay()
+    }
+
+    // MARK: Internal
+
+    func insert(brush: Brush, at position: CGPoint) -> Stroke {
+        let stroke = Stroke(at: position, brush: brush)
+        scene.append(stroke)
+        delegate?.canvasDidChange(self)
+        return stroke
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let minimumScale: CGFloat = 0.5
+    fileprivate let maximumScale: CGFloat = 10.0
+
+    fileprivate var initialOrienation = Orientation.standard
+
+    fileprivate var sceneExcludingReferenceObject: [Renderable] {
+        scene.filter { $0 !== referenceObject }
+    }
+
+    fileprivate var selection: Editable? {
+        didSet {
+            guard selection !== oldValue else { return }
+
+            selectionView?.removeFromSuperview()
+            selectionView = selection?.selectedView
+
+            if let selectedView = selectionView {
+                addSubview(selectedView)
+            }
+
+            oldValue?.selected = false
+            selection?.selected = true
+
+            if let oldSelection = oldValue {
+                setNeedsDisplay(oldSelection.bounds)
+            }
+
+            if let newSelection = selection {
+                setNeedsDisplay(newSelection.bounds)
+            }
+        }
+    }
+
+    @discardableResult
+    fileprivate func selectObject(at position: CGPoint) -> Editable? {
+        let previousSelection = selection
+
+        selection = pickObject(at: position)
+
+        guard let newSelection = selection, selection !== previousSelection else {
+            return selection
+        }
+
+        // move object to top
+        if let index = scene.firstIndex(where: { $0 === newSelection }) {
+            scene.remove(at: index)
+            scene.append(newSelection)
+            unflatten()
+        }
+
+        return selection
+    }
+
+    // MARK: Private
+
+    private var scene: [Renderable] = []
+    private var bufferImage: UIImage?
+    private var selectionView: UIView?
+    private var stroke: Stroke?
+    private var referenceObject: Image?
+    private var flattenIndex = 0
+
+    private var drawBounds: CGRect {
+        var bounds = scene.first?.bounds ?? CGRect.zero
+
+        for renderable in scene.suffix(from: 1) {
+            bounds = bounds.union(renderable.bounds)
+        }
+
+        return bounds
+    }
+
+    private func pickObject(at position: CGPoint) -> Editable? {
+        let editables = scene.compactMap { $0 as? Editable }
+        return editables.reversed().first(where: { editable in
+            guard editable.selectable else { return false }
+            let bounds = CGRect(origin: CGPoint.zero, size: editable.size)
+            let position = position.applying(editable.transform.inverted())
+            return bounds.contains(position)
+        })
+    }
+
+    private func unflatten() {
+        flattenIndex = 0
+        bufferImage = nil
+    }
+
+    private func flatten() {
+        flatten(upTo: scene.count)
+    }
+
+    private func flatten(upTo: Int) {
+        let renderables = scene.prefix(upTo: upTo).suffix(from: flattenIndex)
+
+        guard !renderables.isEmpty else { return }
+
+        selection?.selected = false
+        defer {
+            selection?.selected = true
+        }
+
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
+        bufferImage?.draw(at: CGPoint.zero)
+
+        if let context = UIGraphicsGetCurrentContext() {
+            for renderable in renderables {
+                renderable.draw(context: context)
+            }
+        }
+
+        bufferImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        flattenIndex = upTo
     }
 }
 

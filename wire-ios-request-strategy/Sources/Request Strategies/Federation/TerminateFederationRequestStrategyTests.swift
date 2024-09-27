@@ -28,8 +28,6 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var manager: MockFederationTerminationManager!
 
-    // MARK: - Life cycle
-
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()

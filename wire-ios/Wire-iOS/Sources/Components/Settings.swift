@@ -80,6 +80,55 @@ enum SettingKey: String, CaseIterable {
 
 /// Model object for locally stored (not in SE or AVS) user app settings
 class Settings {
+    // MARK: Lifecycle
+
+    init() {
+        ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled
+        restoreLastUsedAVSSettings()
+
+        startLogging()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground(_:)),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+
+    // MARK: Internal
+
+    static var shared = Settings()
+
+    static var disableLinkPreviews: Bool {
+        get {
+            !SecurityFlags.generateLinkPreviews.isEnabled
+                ? true
+                : ExtensionSettings.shared.disableLinkPreviews
+        }
+        set {
+            ExtensionSettings.shared.disableLinkPreviews = newValue
+        }
+    }
+
+    static var isClipboardEnabled: Bool {
+        SecurityFlags.clipboard.isEnabled
+    }
+
+    // These settings are not actually persisted, just kept in memory
+    // Max audio recording duration in seconds
+    var maxRecordingDurationDebug: TimeInterval = 0.0
+
+    var blacklistDownloadInterval: TimeInterval {
+        let HOURS_6 = 6 * 60 * 60
+        let settingValue = defaults.integer(forKey: SettingKey.blackListDownloadInterval.rawValue)
+        return TimeInterval(settingValue > 0 ? settingValue : HOURS_6)
+    }
+
+    var defaults: UserDefaults {
+        .standard
+    }
+
     // MARK: - subscript
 
     subscript<T>(index: SettingKey) -> T? {
@@ -136,61 +185,6 @@ class Settings {
         }
     }
 
-    var blacklistDownloadInterval: TimeInterval {
-        let HOURS_6 = 6 * 60 * 60
-        let settingValue = defaults.integer(forKey: SettingKey.blackListDownloadInterval.rawValue)
-        return TimeInterval(settingValue > 0 ? settingValue : HOURS_6)
-    }
-
-    var defaults: UserDefaults {
-        .standard
-    }
-
-    // These settings are not actually persisted, just kept in memory
-    // Max audio recording duration in seconds
-    var maxRecordingDurationDebug: TimeInterval = 0.0
-
-    static var shared = Settings()
-
-    init() {
-        ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled
-        restoreLastUsedAVSSettings()
-
-        startLogging()
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(applicationDidEnterBackground(_:)),
-            name: UIApplication.didEnterBackgroundNotification,
-            object: nil
-        )
-    }
-
-    // Persist all the settings
-    private func synchronize() {
-        storeCurrentIntensityLevelAsLastUsed()
-    }
-
-    @objc
-    private func applicationDidEnterBackground(_: UIApplication) {
-        synchronize()
-    }
-
-    static var disableLinkPreviews: Bool {
-        get {
-            !SecurityFlags.generateLinkPreviews.isEnabled
-                ? true
-                : ExtensionSettings.shared.disableLinkPreviews
-        }
-        set {
-            ExtensionSettings.shared.disableLinkPreviews = newValue
-        }
-    }
-
-    static var isClipboardEnabled: Bool {
-        SecurityFlags.clipboard.isEnabled
-    }
-
     // MARK: - MediaManager
 
     func restoreLastUsedAVSSettings() {
@@ -208,6 +202,18 @@ class Settings {
         if level >= AVSIntensityLevel.none.rawValue, level <= AVSIntensityLevel.full.rawValue {
             defaults.setValue(NSNumber(value: level), forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue)
         }
+    }
+
+    // MARK: Private
+
+    // Persist all the settings
+    private func synchronize() {
+        storeCurrentIntensityLevelAsLastUsed()
+    }
+
+    @objc
+    private func applicationDidEnterBackground(_: UIApplication) {
+        synchronize()
     }
 
     // MARK: - Debug

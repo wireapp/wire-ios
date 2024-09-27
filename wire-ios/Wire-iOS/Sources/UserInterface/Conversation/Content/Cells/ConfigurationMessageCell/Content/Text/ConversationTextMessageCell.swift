@@ -24,33 +24,25 @@ import WireSyncEngine
 final class ConversationTextMessageCell: UIView,
     ConversationMessageCell,
     TextViewInteractionDelegate {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+        setupAccessibility()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
         let isObfuscated: Bool
     }
-
-    private lazy var messageTextView: LinkInteractionTextView = {
-        let view = LinkInteractionTextView()
-
-        view.isEditable = false
-        view.isSelectable = true
-        view.backgroundColor = .clear
-        view.isScrollEnabled = false
-        view.textContainerInset = UIEdgeInsets.zero
-        view.textContainer.lineFragmentPadding = 0
-        view.isUserInteractionEnabled = true
-        view.accessibilityIdentifier = "Message"
-        view.accessibilityElementsHidden = false
-        view.dataDetectorTypes = [.link, .address, .phoneNumber, .flightNumber, .calendarEvent, .shipmentTrackingNumber]
-        view.linkTextAttributes = [.foregroundColor: UIColor.accent()]
-        view.setContentHuggingPriority(.required, for: .vertical)
-        view.setContentCompressionResistancePriority(.required, for: .vertical)
-        view.interactionDelegate = self
-
-        view.textDragInteraction?.isEnabled = false
-
-        return view
-    }()
 
     var isSelected = false
 
@@ -72,27 +64,6 @@ final class ConversationTextMessageCell: UIView,
 
     var selectionRect: CGRect {
         messageTextView.layoutManager.usedRect(for: messageTextView.textContainer)
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-        setupAccessibility()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setup() {
-        addSubview(messageTextView)
-        configureConstraints()
-    }
-
-    private func configureConstraints() {
-        messageTextView.translatesAutoresizingMaskIntoConstraints = false
-        messageTextView.fitIn(view: self)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -141,6 +112,41 @@ final class ConversationTextMessageCell: UIView,
         }
     }
 
+    // MARK: Private
+
+    private lazy var messageTextView: LinkInteractionTextView = {
+        let view = LinkInteractionTextView()
+
+        view.isEditable = false
+        view.isSelectable = true
+        view.backgroundColor = .clear
+        view.isScrollEnabled = false
+        view.textContainerInset = UIEdgeInsets.zero
+        view.textContainer.lineFragmentPadding = 0
+        view.isUserInteractionEnabled = true
+        view.accessibilityIdentifier = "Message"
+        view.accessibilityElementsHidden = false
+        view.dataDetectorTypes = [.link, .address, .phoneNumber, .flightNumber, .calendarEvent, .shipmentTrackingNumber]
+        view.linkTextAttributes = [.foregroundColor: UIColor.accent()]
+        view.setContentHuggingPriority(.required, for: .vertical)
+        view.setContentCompressionResistancePriority(.required, for: .vertical)
+        view.interactionDelegate = self
+
+        view.textDragInteraction?.isEnabled = false
+
+        return view
+    }()
+
+    private func setup() {
+        addSubview(messageTextView)
+        configureConstraints()
+    }
+
+    private func configureConstraints() {
+        messageTextView.translatesAutoresizingMaskIntoConstraints = false
+        messageTextView.fitIn(view: self)
+    }
+
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
         isAccessibilityElement = true
@@ -151,7 +157,16 @@ final class ConversationTextMessageCell: UIView,
 // MARK: - ConversationTextMessageCellDescription
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(attributedString: NSAttributedString, isObfuscated: Bool) {
+        self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationTextMessageCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -167,10 +182,6 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
-
-    init(attributedString: NSAttributedString, isObfuscated: Bool) {
-        self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
-    }
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueConversationCell(with: self, for: indexPath)

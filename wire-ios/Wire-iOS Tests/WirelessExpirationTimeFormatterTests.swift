@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 
 class WirelessExpirationTimeFormatterTests: XCTestCase {
+    // MARK: Internal
+
     func testExpirationTimeFormatting_LargerThan2Hours() {
         assert(remainingTime: 12000, expected: "4h left")
     }
@@ -103,6 +105,8 @@ class WirelessExpirationTimeFormatterTests: XCTestCase {
     func testExpirationTimeFormatting_NegativeValue() {
         assert(remainingTime: -10, expected: nil)
     }
+
+    // MARK: Private
 
     // MARK: - Helper
 

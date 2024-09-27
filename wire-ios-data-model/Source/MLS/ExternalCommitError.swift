@@ -25,6 +25,8 @@ enum ExternalCommitError: Error, Equatable {
     case failedToMergePendingGroup
     case failedToClearPendingGroup
 
+    // MARK: Internal
+
     enum RecoveryStrategy {
         /// Retry the action from the beginning
         case retry

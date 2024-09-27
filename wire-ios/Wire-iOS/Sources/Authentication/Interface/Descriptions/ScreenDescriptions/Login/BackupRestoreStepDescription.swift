@@ -24,10 +24,7 @@ import WireCommonComponents
 /// The view that displays the restore from backup button.
 
 final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
-    let views: [ViewDescriptor]
-    weak var actioner: AuthenticationActioner?
-
-    typealias NoHistory = L10n.Localizable.Registration.NoHistory
+    // MARK: Lifecycle
 
     init() {
         let restoreButton = SecondaryButtonDescription(
@@ -40,6 +37,13 @@ final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDesc
             self?.actioner?.executeAction(.startBackupFlow)
         }
     }
+
+    // MARK: Internal
+
+    typealias NoHistory = L10n.Localizable.Registration.NoHistory
+
+    let views: [ViewDescriptor]
+    weak var actioner: AuthenticationActioner?
 }
 
 // MARK: - BackupRestoreStepDescription
@@ -47,12 +51,7 @@ final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDesc
 /// The step that displays information about the history.
 
 final class BackupRestoreStepDescription: AuthenticationStepDescription {
-    let backButton: BackButtonDescription?
-    let mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription?
+    // MARK: Lifecycle
 
     init(context: NoHistoryContext) {
         self.backButton = BackButtonDescription()
@@ -78,4 +77,13 @@ final class BackupRestoreStepDescription: AuthenticationStepDescription {
 
         self.footerView = BackupRestoreStepDescriptionFooterView()
     }
+
+    // MARK: Internal
+
+    let backButton: BackButtonDescription?
+    let mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let footerView: AuthenticationFooterViewDescription?
 }

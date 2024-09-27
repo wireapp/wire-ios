@@ -30,6 +30,23 @@ protocol CallQualityViewControllerDelegate: AnyObject {
 // MARK: - CallQualityViewController
 
 final class CallQualityViewController: UIViewController, UIGestureRecognizerDelegate {
+    // MARK: Lifecycle
+
+    // MARK: Initialization
+
+    init(questionLabelText: String, callDuration: Int) {
+        self.questionLabelText = questionLabelText
+        self.callDuration = callDuration
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     let questionLabelText: String
     let callDuration: Int
 
@@ -48,39 +65,12 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     var scoreSelectorView: QualityScoreSelectorView!
     var dismissTapGestureRecognizer: UITapGestureRecognizer!
 
-    // MARK: Contraints
-
-    private var ipad_centerXConstraint: NSLayoutConstraint!
-    private var ipad_centerYConstraint: NSLayoutConstraint!
-    private var iphone_leadingConstraint: NSLayoutConstraint!
-    private var iphone_trailingConstraint: NSLayoutConstraint!
-    private var iphone_bottomConstraint: NSLayoutConstraint!
-    private var iphone_paddingLeftConstraint: NSLayoutConstraint!
-    private var iphone_paddingRightConstraint: NSLayoutConstraint!
-    private var ipad_paddingLeftConstraint: NSLayoutConstraint!
-    private var ipad_paddingRightConstraint: NSLayoutConstraint!
-
-    // MARK: Initialization
-
-    init(questionLabelText: String, callDuration: Int) {
-        self.questionLabelText = questionLabelText
-        self.callDuration = callDuration
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         createViews()
         createConstraints()
         updateLayout(for: traitCollection)
     }
-
-    // MARK: Interface
 
     func createViews() {
         typealias QualitySurvey = L10n.Localizable.Calling.QualitySurvey
@@ -139,6 +129,67 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
         contentView.addSubview(callQualityStackView)
     }
 
+    // MARK: Dismiss Events
+
+    @objc
+    func onCloseButtonTapped() {
+        delegate?.callQualityControllerDidFinishWithoutScore(self)
+    }
+
+    @objc
+    func onTapToDismiss() {
+        delegate?.callQualityControllerDidFinishWithoutScore(self)
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        touch.view?.isDescendant(of: contentView) == false
+    }
+
+    override func accessibilityPerformMagicTap() -> Bool {
+        onTapToDismiss()
+        return true
+    }
+
+    // MARK: Adaptive Layout
+
+    override func willTransition(
+        to newCollection: UITraitCollection,
+        with coordinator: UIViewControllerTransitionCoordinator
+    ) {
+        super.willTransition(to: newCollection, with: coordinator)
+        coordinator.animate(alongsideTransition: { _ in self.updateLayout(for: newCollection) })
+    }
+
+    func updateLayout(isRegular: Bool) {
+        ipad_centerYConstraint.isActive = isRegular
+        ipad_centerXConstraint.isActive = isRegular
+        iphone_leadingConstraint.isActive = !isRegular
+        iphone_trailingConstraint.isActive = !isRegular
+        iphone_bottomConstraint.isActive = !isRegular
+        iphone_paddingLeftConstraint.isActive = !isRegular
+        iphone_paddingRightConstraint.isActive = !isRegular
+        ipad_paddingLeftConstraint.isActive = isRegular
+        ipad_paddingRightConstraint.isActive = isRegular
+    }
+
+    func updateLayout(for traitCollection: UITraitCollection) {
+        updateLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
+    }
+
+    // MARK: Private
+
+    // MARK: Contraints
+
+    private var ipad_centerXConstraint: NSLayoutConstraint!
+    private var ipad_centerYConstraint: NSLayoutConstraint!
+    private var iphone_leadingConstraint: NSLayoutConstraint!
+    private var iphone_trailingConstraint: NSLayoutConstraint!
+    private var iphone_bottomConstraint: NSLayoutConstraint!
+    private var iphone_paddingLeftConstraint: NSLayoutConstraint!
+    private var iphone_paddingRightConstraint: NSLayoutConstraint!
+    private var ipad_paddingLeftConstraint: NSLayoutConstraint!
+    private var ipad_paddingRightConstraint: NSLayoutConstraint!
+
     private func createConstraints() {
         dimmingView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -193,66 +244,12 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
                 constant: -44
             )
     }
-
-    // MARK: Dismiss Events
-
-    @objc
-    func onCloseButtonTapped() {
-        delegate?.callQualityControllerDidFinishWithoutScore(self)
-    }
-
-    @objc
-    func onTapToDismiss() {
-        delegate?.callQualityControllerDidFinishWithoutScore(self)
-    }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        touch.view?.isDescendant(of: contentView) == false
-    }
-
-    override func accessibilityPerformMagicTap() -> Bool {
-        onTapToDismiss()
-        return true
-    }
-
-    // MARK: Adaptive Layout
-
-    override func willTransition(
-        to newCollection: UITraitCollection,
-        with coordinator: UIViewControllerTransitionCoordinator
-    ) {
-        super.willTransition(to: newCollection, with: coordinator)
-        coordinator.animate(alongsideTransition: { _ in self.updateLayout(for: newCollection) })
-    }
-
-    func updateLayout(isRegular: Bool) {
-        ipad_centerYConstraint.isActive = isRegular
-        ipad_centerXConstraint.isActive = isRegular
-        iphone_leadingConstraint.isActive = !isRegular
-        iphone_trailingConstraint.isActive = !isRegular
-        iphone_bottomConstraint.isActive = !isRegular
-        iphone_paddingLeftConstraint.isActive = !isRegular
-        iphone_paddingRightConstraint.isActive = !isRegular
-        ipad_paddingLeftConstraint.isActive = isRegular
-        ipad_paddingRightConstraint.isActive = isRegular
-    }
-
-    func updateLayout(for traitCollection: UITraitCollection) {
-        updateLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
-    }
 }
 
 // MARK: - CallQualityView
 
 final class CallQualityView: UIStackView {
-    let scoreLabel = DynamicFontLabel(
-        fontSpec: FontSpec.mediumRegularFont,
-        color: SemanticColors.Label.textDefault
-    )
-    let scoreButton = ZMButton()
-    let callback: (Int) -> Void
-    let labelText: String
-    let buttonScore: Int
+    // MARK: Lifecycle
 
     init(labelText: String, buttonScore: Int, callback: @escaping (Int) -> Void) {
         self.callback = callback
@@ -271,6 +268,22 @@ final class CallQualityView: UIStackView {
         createConstraints()
     }
 
+    @available(*, unavailable)
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let scoreLabel = DynamicFontLabel(
+        fontSpec: FontSpec.mediumRegularFont,
+        color: SemanticColors.Label.textDefault
+    )
+    let scoreButton = ZMButton()
+    let callback: (Int) -> Void
+    let labelText: String
+    let buttonScore: Int
+
     func setupSubviews() {
         scoreLabel.text = [1, 3, 5].contains(buttonScore) ? labelText : ""
         scoreLabel.textAlignment = .center
@@ -287,6 +300,13 @@ final class CallQualityView: UIStackView {
         scoreButton.accessibilityLabel = labelText
     }
 
+    @objc
+    func onClick(_: UIButton) {
+        callback(buttonScore)
+    }
+
+    // MARK: Private
+
     private func createConstraints() {
         scoreButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -294,26 +314,12 @@ final class CallQualityView: UIStackView {
             scoreButton.heightAnchor.constraint(equalTo: scoreButton.widthAnchor),
         ])
     }
-
-    @available(*, unavailable)
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    @objc
-    func onClick(_: UIButton) {
-        callback(buttonScore)
-    }
 }
 
 // MARK: - QualityScoreSelectorView
 
 final class QualityScoreSelectorView: UIView {
-    private let scoreStackView = UIStackView()
-
-    weak var delegate: CallQualityViewControllerDelegate?
-
-    let onScoreSet: (Int) -> Void
+    // MARK: Lifecycle
 
     init(onScoreSet: @escaping (Int) -> Void) {
         self.onScoreSet = onScoreSet
@@ -338,6 +344,17 @@ final class QualityScoreSelectorView: UIView {
         ])
     }
 
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    weak var delegate: CallQualityViewControllerDelegate?
+
+    let onScoreSet: (Int) -> Void
+
     override func layoutSubviews() {
         if traitCollection.horizontalSizeClass == .regular {
             scoreStackView.spacing = 24
@@ -352,10 +369,9 @@ final class QualityScoreSelectorView: UIView {
         NSLocalizedString("calling.quality_survey.answer.\(score)", comment: "")
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // MARK: Private
+
+    private let scoreStackView = UIStackView()
 }
 
 // MARK: - CallQualityAnimator

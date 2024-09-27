@@ -22,6 +22,8 @@ import XCTest
 // MARK: - StartedConversationCellTests
 
 final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
+    // MARK: Internal
+
     var mockSelfUser: MockUserType!
     var mockOtherUser: MockUserType!
 
@@ -181,6 +183,8 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
         let message = cell(for: .newConversation, text: "Italy Trip", allowGuests: true, numberOfGuests: 1)
         verify(message: message)
     }
+
+    // MARK: Private
 
     // MARK: - Helper
 

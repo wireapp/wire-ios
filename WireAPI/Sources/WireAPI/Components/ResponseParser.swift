@@ -24,19 +24,18 @@ import Foundation
 /// success and failure results.
 
 struct ResponseParser<Success> {
-    enum ParsingError: Error {
-        case noParseBlocksDefined
-        case noParseResult
-    }
-
-    private typealias ParseBlock = (Int, Data?) throws -> Success?
-
-    private let decoder: JSONDecoder
-    private var parseBlocks: [ParseBlock]
+    // MARK: Lifecycle
 
     init(decoder: JSONDecoder = .init()) {
         self.decoder = decoder
         self.parseBlocks = []
+    }
+
+    // MARK: Internal
+
+    enum ParsingError: Error {
+        case noParseBlocksDefined
+        case noParseResult
     }
 
     /// Success with output data
@@ -112,4 +111,11 @@ struct ResponseParser<Success> {
             throw ParsingError.noParseResult
         }
     }
+
+    // MARK: Private
+
+    private typealias ParseBlock = (Int, Data?) throws -> Success?
+
+    private let decoder: JSONDecoder
+    private var parseBlocks: [ParseBlock]
 }

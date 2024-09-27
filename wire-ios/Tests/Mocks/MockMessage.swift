@@ -37,6 +37,10 @@ final class MockTextMessageData: NSObject, TextMessageData {
     var linkPreviewImageCacheKey: String?
     var mentions = [Mention]()
 
+    var quoteMessage: ZMConversationMessage?
+    var isQuotingSelf = false
+    var hasQuote = false
+
     var quote: ZMMessage? {
         get {
             XCTFail("This property should not be used in tests")
@@ -47,10 +51,6 @@ final class MockTextMessageData: NSObject, TextMessageData {
             XCTFail("This property should not be used in tests")
         }
     }
-
-    var quoteMessage: ZMConversationMessage?
-    var isQuotingSelf = false
-    var hasQuote = false
 
     var linkPreview: LinkMetadata? {
         guard let linkPreview = backingLinkPreview, !linkPreview.isBlacklisted else { return nil }
@@ -73,44 +73,21 @@ final class MockTextMessageData: NSObject, TextMessageData {
 // MARK: - MockSystemMessageData
 
 final class MockSystemMessageData: NSObject, ZMSystemMessageData {
+    // MARK: Lifecycle
+
+    init(systemMessageType: ZMSystemMessageType, reason: ZMParticipantsRemovedReason, domains: [String]? = nil) {
+        self.systemMessageType = systemMessageType
+        self.participantsRemovedReason = reason
+        self.domains = domains
+    }
+
+    // MARK: Internal
+
     var messageTimer: NSNumber?
     var systemMessageType: ZMSystemMessageType = .invalid
-    var users: Set<ZMUser> {
-        get {
-            XCTFail("This property should not be used in tests")
-            return Set()
-        }
-
-        set {
-            XCTFail("This property should not be used in tests")
-        }
-    }
-
     var userTypes: Set<AnyHashable> = Set()
     var clients: Set<AnyHashable> = Set()
-    var addedUsers: Set<ZMUser> {
-        get {
-            XCTFail("This property should not be used in tests")
-            return Set()
-        }
-
-        set {
-            XCTFail("This property should not be used in tests")
-        }
-    }
-
     var addedUserTypes: Set<AnyHashable> = Set()
-    var removedUsers: Set<ZMUser> {
-        get {
-            XCTFail("This property should not be used in tests")
-            return Set()
-        }
-
-        set {
-            XCTFail("This property should not be used in tests")
-        }
-    }
-
     var removedUserTypes: Set<AnyHashable> = Set()
     var text: String? = ""
     var needsUpdatingUsers = false
@@ -125,10 +102,37 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
     var participantsRemovedReason: ZMParticipantsRemovedReason
     var domains: [String]?
 
-    init(systemMessageType: ZMSystemMessageType, reason: ZMParticipantsRemovedReason, domains: [String]? = nil) {
-        self.systemMessageType = systemMessageType
-        self.participantsRemovedReason = reason
-        self.domains = domains
+    var users: Set<ZMUser> {
+        get {
+            XCTFail("This property should not be used in tests")
+            return Set()
+        }
+
+        set {
+            XCTFail("This property should not be used in tests")
+        }
+    }
+
+    var addedUsers: Set<ZMUser> {
+        get {
+            XCTFail("This property should not be used in tests")
+            return Set()
+        }
+
+        set {
+            XCTFail("This property should not be used in tests")
+        }
+    }
+
+    var removedUsers: Set<ZMUser> {
+        get {
+            XCTFail("This property should not be used in tests")
+            return Set()
+        }
+
+        set {
+            XCTFail("This property should not be used in tests")
+        }
     }
 }
 
@@ -163,6 +167,13 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
     var downloadState: AssetDownloadState = .remote
     var filename: String? = "ticket.pkpass"
     var progress: Float = 0
+    var thumbnailAssetID: String? = ""
+    var imagePreviewDataIdentifier: String? = "preview-identifier-123"
+    var durationMilliseconds: UInt64 = 0
+    var videoDimensions = CGSize.zero
+    var normalizedLoudness: [Float]? = []
+    var previewData: Data?
+
     var fileURL: URL? {
         get {
             let path = Bundle(for: type(of: self)).path(forResource: "sample", ofType: "pkpass")!
@@ -171,13 +182,6 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
 
         set {}
     }
-
-    var thumbnailAssetID: String? = ""
-    var imagePreviewDataIdentifier: String? = "preview-identifier-123"
-    var durationMilliseconds: UInt64 = 0
-    var videoDimensions = CGSize.zero
-    var normalizedLoudness: [Float]? = []
-    var previewData: Data?
 
     var isPass: Bool {
         mimeType == "application/vnd.apple.pkpass"
@@ -346,37 +350,23 @@ final class MockLocationMessageData: NSObject, LocationMessageData {
 // MARK: - MockMessage
 
 class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage, SwiftConversationMessage {
+    // MARK: Lifecycle
+
+    override required init() {}
+
+    // MARK: Internal
+
+    typealias UsersByReaction = [String: [UserType]]
+
     // MARK: - ConversationCompositeMessage
 
     var compositeMessageData: CompositeMessageData?
-
-    typealias UsersByReaction = [String: [UserType]]
 
     // MARK: - ZMConversationMessage
 
     var nonce: UUID? = UUID()
     var isEncrypted = false
     var isPlainText = true
-    var sender: ZMUser? {
-        get {
-            XCTFail("This property should not be used in tests")
-
-            return nil
-        }
-
-        set {
-            XCTFail("This property should not be used in tests")
-        }
-    }
-
-    var senderUser: UserType? {
-        didSet {
-            if senderUser is ZMUser {
-                XCTFail("ZMUser should not created for tests")
-            }
-        }
-    }
-
     var serverTimestamp: Date? = .none
     var updatedAt: Date? = .none
 
@@ -397,6 +387,50 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var needsLinkAttachmentsUpdate = false
     var isSilenced = false
     var backingIsRestricted = false
+    var replies: Set<ZMMessage> = Set()
+
+    var backingUsersReaction: UsersByReaction = [:]
+    var backingSortedReactions: [ReactionData] = []
+    var backingReactionData: Set<ReactionData> = []
+    var backingTextMessageData: MockTextMessageData! = .none
+    var backingFileMessageData: MockFileMessageDataType! = .none
+    var backingLocationMessageData: MockLocationMessageData! = .none
+    var backingSystemMessageData: MockSystemMessageData! = .none
+
+    var isEphemeral = false
+    var isObfuscated = false
+
+    var deletionTimeout: TimeInterval = -1
+    var destructionDate: Date?
+
+    var readReceipts: [ReadReceipt] = []
+
+    var canBeMarkedUnread = true
+
+    var hasBeenDeleted = false
+
+    var systemMessageType = ZMSystemMessageType.invalid
+
+    var sender: ZMUser? {
+        get {
+            XCTFail("This property should not be used in tests")
+
+            return nil
+        }
+
+        set {
+            XCTFail("This property should not be used in tests")
+        }
+    }
+
+    var senderUser: UserType? {
+        didSet {
+            if senderUser is ZMUser {
+                XCTFail("ZMUser should not created for tests")
+            }
+        }
+    }
+
     var isRestricted: Bool {
         backingIsRestricted
     }
@@ -426,33 +460,21 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
         backingSystemMessageData
     }
 
-    var replies: Set<ZMMessage> = Set()
-
     var usersReaction: [String: [UserType]] {
         backingUsersReaction
-    }
-
-    func reactionsSortedByCreationDate() -> [ReactionData] {
-        backingSortedReactions
     }
 
     var reactionData: Set<ReactionData> {
         backingReactionData
     }
 
-    var backingUsersReaction: UsersByReaction = [:]
-    var backingSortedReactions: [ReactionData] = []
-    var backingReactionData: Set<ReactionData> = []
-    var backingTextMessageData: MockTextMessageData! = .none
-    var backingFileMessageData: MockFileMessageDataType! = .none
-    var backingLocationMessageData: MockLocationMessageData! = .none
-    var backingSystemMessageData: MockSystemMessageData! = .none
+    var canBeDeleted: Bool {
+        systemMessageData == nil
+    }
 
-    var isEphemeral = false
-    var isObfuscated = false
-
-    var deletionTimeout: TimeInterval = -1
-    var destructionDate: Date?
+    func reactionsSortedByCreationDate() -> [ReactionData] {
+        backingSortedReactions
+    }
 
     func startSelfDestructionIfNeeded() -> Bool {
         true
@@ -462,21 +484,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
         // no-op
     }
 
-    var canBeDeleted: Bool {
-        systemMessageData == nil
-    }
-
     func markAsUnread() {
         // no-op
     }
-
-    var readReceipts: [ReadReceipt] = []
-
-    var canBeMarkedUnread = true
-
-    var hasBeenDeleted = false
-
-    var systemMessageType = ZMSystemMessageType.invalid
-
-    override required init() {}
 }

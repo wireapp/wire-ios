@@ -23,9 +23,7 @@ import WireRequestStrategySupport
 import XCTest
 
 final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
-    fileprivate var mockMessageSender: MockMessageSenderInterface!
-    fileprivate var sut: AssetClientMessageRequestStrategy!
-    fileprivate var imageData = mediumJPEGData()
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -299,4 +297,10 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(message.deliveryState, .sent)
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var mockMessageSender: MockMessageSenderInterface!
+    fileprivate var sut: AssetClientMessageRequestStrategy!
+    fileprivate var imageData = mediumJPEGData()
 }

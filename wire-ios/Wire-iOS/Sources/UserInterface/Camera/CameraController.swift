@@ -25,11 +25,150 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - CameraController
 
 final class CameraController {
+    // MARK: Lifecycle
+
+    init?(camera: SettingsCamera) {
+        guard !UIDevice.isSimulator else { return nil }
+        self.currentCamera = camera
+        setupSession()
+        self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
+    }
+
+    // MARK: Internal
+
+    // MARK: - Image Capture
+
+    typealias PhotoResult = (data: Data?, error: Error?)
+
     private(set) var currentCamera: SettingsCamera
 
     var previewLayer: AVCaptureVideoPreviewLayer!
 
+    func startRunning() {
+        sessionQueue.async { self.session.startRunning() }
+    }
+
+    func stopRunning() {
+        sessionQueue.async { self.session.stopRunning() }
+    }
+
+    /// Disconnects the current camera and connects the given camera, but only
+    /// if both camera inputs are available. The completion callback is passed
+    /// a boolean value indicating whether the change was successful.
+    func switchCamera(completion: @escaping (_ currentCamera: SettingsCamera) -> Void) {
+        let newCamera = currentCamera == .front ? SettingsCamera.back : .front
+
+        guard
+            !isSwitching, canSwitchInputs,
+            let toRemove = input(for: currentCamera),
+            let toAdd = input(for: newCamera)
+        else { return completion(currentCamera) }
+
+        isSwitching = true
+
+        sessionQueue.async {
+            self.session.beginConfiguration()
+            self.session.removeInput(toRemove)
+            self.session.addInput(toAdd)
+            self.currentCamera = newCamera
+            self.session.commitConfiguration()
+            DispatchQueue.main.async {
+                completion(newCamera)
+                self.isSwitching = false
+            }
+        }
+    }
+
+    /// Updates the orientation of the video preview layer to best fit the
+    /// device/ui orientation.
+    func updatePreviewOrientation() {
+        guard
+            let connection = previewLayer.connection,
+            connection.isVideoOrientationSupported
+        else { return }
+
+        connection.videoOrientation = AVCaptureVideoOrientation.current
+    }
+
+    /// Asynchronously attempts to capture a photo within the currently
+    /// configured session. The result is passed into the given handler
+    /// callback.
+    func capturePhoto(_ handler: @escaping (PhotoResult) -> Void) {
+        // For iPad split/slide over mode, the session is not running.
+        guard session.isRunning else { return }
+        let currentOrientation = AVCaptureVideoOrientation.current
+
+        sessionQueue.async {
+            guard let connection = self.photoOutput.connection(with: .video) else { return }
+            connection.videoOrientation = currentOrientation
+            connection.automaticallyAdjustsVideoMirroring = false
+            connection.isVideoMirrored = false
+
+            let jpegType = AVVideoCodecType.jpeg
+
+            let settings = AVCapturePhotoSettings(format: [
+                AVVideoCodecKey: jpegType,
+                AVVideoCompressionPropertiesKey: [AVVideoQualityKey: 0.9],
+            ])
+
+            let delegate = PhotoCaptureDelegate(settings: settings, handler: handler) {
+                self.sessionQueue.async { self.captureDelegates[settings.uniqueID] = nil }
+            }
+
+            self.captureDelegates[settings.uniqueID] = delegate
+            self.photoOutput.capturePhoto(with: settings, delegate: delegate)
+        }
+    }
+
+    // MARK: Private
+
     private enum SetupResult { case success, notAuthorized, failed }
+    /// A PhotoCaptureDelegate is responsible for processing the photo buffers
+    /// returned from `AVCapturePhotoOutput`. For each photo captured, there is
+    /// one unique delegate object responsible.
+    private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate {
+        // MARK: Lifecycle
+
+        init(
+            settings: AVCapturePhotoSettings,
+            handler: @escaping (PhotoResult) -> Void,
+            completion: @escaping () -> Void
+        ) {
+            self.settings = settings
+            self.handler = handler
+            self.completion = completion
+        }
+
+        // MARK: Internal
+
+        func photoOutput(
+            _ output: AVCapturePhotoOutput,
+            didFinishProcessingPhoto photo: AVCapturePhoto,
+            error: Error?
+        ) {
+            defer { completion() }
+
+            if let error {
+                zmLog
+                    .error(
+                        "PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)"
+                    )
+                handler(PhotoResult(nil, error))
+                return
+            }
+
+            let imageData = photo.fileDataRepresentation()
+
+            handler(PhotoResult(imageData, nil))
+        }
+
+        // MARK: Private
+
+        private let settings: AVCapturePhotoSettings
+        private let handler: (PhotoResult) -> Void
+        private let completion: () -> Void
+    }
+
     private var setupResult: SetupResult = .success
 
     private var session = AVCaptureSession()
@@ -43,13 +182,6 @@ final class CameraController {
 
     private let photoOutput = AVCapturePhotoOutput()
     private var captureDelegates = [Int64: PhotoCaptureDelegate]()
-
-    init?(camera: SettingsCamera) {
-        guard !UIDevice.isSimulator else { return nil }
-        self.currentCamera = camera
-        setupSession()
-        self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
-    }
 
     // MARK: - Session Management
 
@@ -122,14 +254,6 @@ final class CameraController {
         session.addOutput(photoOutput)
     }
 
-    func startRunning() {
-        sessionQueue.async { self.session.startRunning() }
-    }
-
-    func stopRunning() {
-        sessionQueue.async { self.session.stopRunning() }
-    }
-
     // MARK: - Device Management
 
     /// The capture device for the given camera position, if available.
@@ -157,118 +281,6 @@ final class CameraController {
             self.session.addInput(input)
             self.currentCamera = camera
             self.session.commitConfiguration()
-        }
-    }
-
-    /// Disconnects the current camera and connects the given camera, but only
-    /// if both camera inputs are available. The completion callback is passed
-    /// a boolean value indicating whether the change was successful.
-    func switchCamera(completion: @escaping (_ currentCamera: SettingsCamera) -> Void) {
-        let newCamera = currentCamera == .front ? SettingsCamera.back : .front
-
-        guard
-            !isSwitching, canSwitchInputs,
-            let toRemove = input(for: currentCamera),
-            let toAdd = input(for: newCamera)
-        else { return completion(currentCamera) }
-
-        isSwitching = true
-
-        sessionQueue.async {
-            self.session.beginConfiguration()
-            self.session.removeInput(toRemove)
-            self.session.addInput(toAdd)
-            self.currentCamera = newCamera
-            self.session.commitConfiguration()
-            DispatchQueue.main.async {
-                completion(newCamera)
-                self.isSwitching = false
-            }
-        }
-    }
-
-    /// Updates the orientation of the video preview layer to best fit the
-    /// device/ui orientation.
-    func updatePreviewOrientation() {
-        guard
-            let connection = previewLayer.connection,
-            connection.isVideoOrientationSupported
-        else { return }
-
-        connection.videoOrientation = AVCaptureVideoOrientation.current
-    }
-
-    // MARK: - Image Capture
-
-    typealias PhotoResult = (data: Data?, error: Error?)
-
-    /// Asynchronously attempts to capture a photo within the currently
-    /// configured session. The result is passed into the given handler
-    /// callback.
-    func capturePhoto(_ handler: @escaping (PhotoResult) -> Void) {
-        // For iPad split/slide over mode, the session is not running.
-        guard session.isRunning else { return }
-        let currentOrientation = AVCaptureVideoOrientation.current
-
-        sessionQueue.async {
-            guard let connection = self.photoOutput.connection(with: .video) else { return }
-            connection.videoOrientation = currentOrientation
-            connection.automaticallyAdjustsVideoMirroring = false
-            connection.isVideoMirrored = false
-
-            let jpegType = AVVideoCodecType.jpeg
-
-            let settings = AVCapturePhotoSettings(format: [
-                AVVideoCodecKey: jpegType,
-                AVVideoCompressionPropertiesKey: [AVVideoQualityKey: 0.9],
-            ])
-
-            let delegate = PhotoCaptureDelegate(settings: settings, handler: handler) {
-                self.sessionQueue.async { self.captureDelegates[settings.uniqueID] = nil }
-            }
-
-            self.captureDelegates[settings.uniqueID] = delegate
-            self.photoOutput.capturePhoto(with: settings, delegate: delegate)
-        }
-    }
-
-    /// A PhotoCaptureDelegate is responsible for processing the photo buffers
-    /// returned from `AVCapturePhotoOutput`. For each photo captured, there is
-    /// one unique delegate object responsible.
-    private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate {
-        private let settings: AVCapturePhotoSettings
-        private let handler: (PhotoResult) -> Void
-        private let completion: () -> Void
-
-        init(
-            settings: AVCapturePhotoSettings,
-            handler: @escaping (PhotoResult) -> Void,
-            completion: @escaping () -> Void
-        ) {
-            self.settings = settings
-            self.handler = handler
-            self.completion = completion
-        }
-
-        func photoOutput(
-            _ output: AVCapturePhotoOutput,
-            didFinishProcessingPhoto photo: AVCapturePhoto,
-            error: Error?
-        ) {
-            defer { completion() }
-
-            if let error {
-                zmLog
-                    .error(
-                        "PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)"
-                    )
-                handler(PhotoResult(nil, error))
-                return
-            }
-
-            let imageData = photo.fileDataRepresentation()
-
-            handler(PhotoResult(imageData, nil))
         }
     }
 }

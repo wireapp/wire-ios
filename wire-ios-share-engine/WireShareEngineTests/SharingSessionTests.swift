@@ -22,6 +22,12 @@ import XCTest
 @testable import WireShareEngine
 
 final class SharingSessionTests: BaseSharingSessionTests {
+    var activeConversation1: ZMConversation!
+    var activeConversation2: ZMConversation!
+    var activeConnection: ZMConversation!
+    var archivedConversation: ZMConversation!
+    var archivedConnection: ZMConversation!
+
     func createConversation(type: ZMConversationType, archived: Bool) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: moc), role: nil)
@@ -29,12 +35,6 @@ final class SharingSessionTests: BaseSharingSessionTests {
         conversation.isArchived = archived
         return conversation
     }
-
-    var activeConversation1: ZMConversation!
-    var activeConversation2: ZMConversation!
-    var activeConnection: ZMConversation!
-    var archivedConversation: ZMConversation!
-    var archivedConnection: ZMConversation!
 
     override func setUp() {
         super.setUp()

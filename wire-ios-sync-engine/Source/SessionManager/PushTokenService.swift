@@ -22,19 +22,21 @@ import WireDataModel
 // MARK: - PushTokenService
 
 public final class PushTokenService: PushTokenServiceInterface {
-    // MARK: - Properties
+    // MARK: Lifecycle
 
-    public var localToken: PushToken? {
-        PushTokenStorage.pushToken
-    }
+    public init() {}
+
+    // MARK: Public
 
     public var onTokenChange: ((PushToken?) -> Void)?
     public var onRegistrationComplete: (() -> Void)?
     public var onUnregistrationComplete: (() -> Void)?
 
-    // MARK: - Life cycle
+    // MARK: - Properties
 
-    public init() {}
+    public var localToken: PushToken? {
+        PushTokenStorage.pushToken
+    }
 
     // MARK: - Methods
 

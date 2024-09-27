@@ -28,6 +28,8 @@ public enum BackendConversationType: Int {
     case oneOnOne = 2
     case connection = 3
 
+    // MARK: Public
+
     public static func clientConversationType(rawValue: Int) -> ZMConversationType {
         guard let backendType = BackendConversationType(rawValue: rawValue) else {
             return .invalid
@@ -66,7 +68,11 @@ extension ZMConversationType: CustomDebugStringConvertible {
 
 extension ZMConversation {
     public struct PayloadKeys {
+        // MARK: Lifecycle
+
         private init() {}
+
+        // MARK: Public
 
         public static let nameKey = "name"
         public static let typeKey = "type"

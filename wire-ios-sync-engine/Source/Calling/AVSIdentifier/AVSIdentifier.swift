@@ -21,13 +21,17 @@ import Foundation
 // MARK: - AVSIdentifier
 
 public struct AVSIdentifier: Hashable, Equatable {
-    public let identifier: UUID
-    public let domain: String?
+    // MARK: Lifecycle
 
     public init(identifier: UUID, domain: String?) {
         self.identifier = identifier
         self.domain = BackendInfo.isFederationEnabled ? domain : nil
     }
+
+    // MARK: Public
+
+    public let identifier: UUID
+    public let domain: String?
 }
 
 extension AVSIdentifier {

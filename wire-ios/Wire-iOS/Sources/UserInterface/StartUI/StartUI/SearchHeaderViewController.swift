@@ -33,17 +33,7 @@ protocol SearchHeaderViewControllerDelegate: AnyObject {
 // MARK: - SearchHeaderViewController
 
 final class SearchHeaderViewController: UIViewController {
-    let tokenFieldContainer = UIView()
-    let tokenField = TokenField()
-    let searchIcon = UIImageView()
-    let clearButton: IconButton
-    let userSelection: UserSelection
-    var allowsMultipleSelection = true
-
-    weak var delegate: SearchHeaderViewControllerDelegate?
-    var query: String {
-        tokenField.filterText
-    }
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -58,6 +48,21 @@ final class SearchHeaderViewController: UIViewController {
 
         userSelection.add(observer: self)
         tokenField.tokenTitleColor = SemanticColors.SearchBar.textInputView.resolvedColor(with: traitCollection)
+    }
+
+    // MARK: Internal
+
+    let tokenFieldContainer = UIView()
+    let tokenField = TokenField()
+    let searchIcon = UIImageView()
+    let clearButton: IconButton
+    let userSelection: UserSelection
+    var allowsMultipleSelection = true
+
+    weak var delegate: SearchHeaderViewControllerDelegate?
+
+    var query: String {
+        tokenField.filterText
     }
 
     override func viewDidLoad() {
@@ -88,6 +93,19 @@ final class SearchHeaderViewController: UIViewController {
 
         createConstraints()
     }
+
+    func clearInput() {
+        tokenField.removeAllTokens()
+        tokenField.clearFilterText()
+        userSelection.replace([])
+    }
+
+    func resetQuery() {
+        tokenField.filterUnwantedAttachments()
+        delegate?.searchHeaderViewController(self, updatedSearchQuery: tokenField.filterText)
+    }
+
+    // MARK: Private
 
     private func createConstraints() {
         for item in [tokenFieldContainer, tokenField, searchIcon, clearButton, tokenFieldContainer] {
@@ -126,17 +144,6 @@ final class SearchHeaderViewController: UIViewController {
         tokenField.removeAllTokens()
         resetQuery()
         updateClearIndicator(for: tokenField)
-    }
-
-    func clearInput() {
-        tokenField.removeAllTokens()
-        tokenField.clearFilterText()
-        userSelection.replace([])
-    }
-
-    func resetQuery() {
-        tokenField.filterUnwantedAttachments()
-        delegate?.searchHeaderViewController(self, updatedSearchQuery: tokenField.filterText)
     }
 
     private func updateClearIndicator(for tokenField: TokenField) {

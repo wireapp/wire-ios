@@ -21,22 +21,12 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-    private typealias LabelColors = SemanticColors.Label
-    private typealias IconColors = SemanticColors.Icon
+    // MARK: Internal
 
     struct Configuration {
         let topText: String
         let bottomText: String
     }
-
-    private let encryptionLabel = DynamicFontLabel(
-        fontSpec: .mediumRegularFont,
-        color: LabelColors.textDefault
-    )
-    private let sensitiveInfoLabel = DynamicFontLabel(
-        fontSpec: .mediumRegularFont,
-        color: LabelColors.textDefault
-    )
 
     func configure(with object: Configuration, animated: Bool) {
         encryptionLabel.text = object.topText
@@ -66,4 +56,18 @@ final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Con
             imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required),
         ])
     }
+
+    // MARK: Private
+
+    private typealias LabelColors = SemanticColors.Label
+    private typealias IconColors = SemanticColors.Icon
+
+    private let encryptionLabel = DynamicFontLabel(
+        fontSpec: .mediumRegularFont,
+        color: LabelColors.textDefault
+    )
+    private let sensitiveInfoLabel = DynamicFontLabel(
+        fontSpec: .mediumRegularFont,
+        color: LabelColors.textDefault
+    )
 }

@@ -21,12 +21,7 @@ import Foundation
 /// Contains metadata about a subgroup. Used when fetching information about subgroup from the backend.
 
 public struct MLSSubgroup: Equatable {
-    public let cipherSuite: Int
-    public let epoch: Int
-    public let epochTimestamp: Date?
-    public let groupID: MLSGroupID
-    public let members: [MLSClientID]
-    public let parentQualifiedID: QualifiedID
+    // MARK: Lifecycle
 
     public init(
         cipherSuite: Int,
@@ -43,4 +38,13 @@ public struct MLSSubgroup: Equatable {
         self.members = members
         self.parentQualifiedID = parentQualifiedID
     }
+
+    // MARK: Public
+
+    public let cipherSuite: Int
+    public let epoch: Int
+    public let epochTimestamp: Date?
+    public let groupID: MLSGroupID
+    public let members: [MLSClientID]
+    public let parentQualifiedID: QualifiedID
 }

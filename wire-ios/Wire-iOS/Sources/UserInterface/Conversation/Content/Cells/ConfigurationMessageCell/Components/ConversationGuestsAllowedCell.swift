@@ -24,9 +24,25 @@ import WireDesign
 // MARK: - GuestsAllowedCellDescription
 
 final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    // MARK: initialization
+
+    init() {
+        self.configuration = View.Configuration()
+        self.actionController = nil
+    }
+
+    init(configuration: View.Configuration) {
+        self.configuration = configuration
+    }
+
+    // MARK: Internal
+
     // MARK: Properties
 
     typealias View = GuestsAllowedCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -42,35 +58,12 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
-
-    // MARK: initialization
-
-    init() {
-        self.configuration = View.Configuration()
-        self.actionController = nil
-    }
-
-    init(configuration: View.Configuration) {
-        self.configuration = configuration
-    }
 }
 
 // MARK: - GuestsAllowedCell
 
 final class GuestsAllowedCell: UIView, ConversationMessageCell {
-    // MARK: Properties
-
-    struct GuestsAllowedCellConfiguration {}
-
-    typealias Configuration = GuestsAllowedCellConfiguration
-
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
-
-    private let stackView = UIStackView()
-    private let titleLabel = UILabel()
-    let inviteButton = SecondaryTextButton()
-    var isSelected = false
+    // MARK: Lifecycle
 
     // MARK: initialization
 
@@ -84,6 +77,29 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: Properties
+
+    struct GuestsAllowedCellConfiguration {}
+
+    typealias Configuration = GuestsAllowedCellConfiguration
+
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage?
+
+    let inviteButton = SecondaryTextButton()
+    var isSelected = false
+
+    // MARK: Configuration and actions
+
+    func configure(with object: GuestsAllowedCellConfiguration, animated: Bool) {}
+
+    // MARK: Private
+
+    private let stackView = UIStackView()
+    private let titleLabel = UILabel()
 
     // MARK: Setup UI
 
@@ -111,10 +127,6 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
-
-    // MARK: Configuration and actions
-
-    func configure(with object: GuestsAllowedCellConfiguration, animated: Bool) {}
 
     @objc
     private func inviteButtonTapped(_: UIButton) {

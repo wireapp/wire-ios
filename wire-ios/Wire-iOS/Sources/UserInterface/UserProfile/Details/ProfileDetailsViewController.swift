@@ -26,33 +26,7 @@ import WireSyncEngine
 /// A view controller that displays the details for a user.
 
 final class ProfileDetailsViewController: UIViewController {
-    /// The user whose profile is displayed.
-    let user: UserType
-
-    /// The user that views the profile.
-    let viewer: UserType
-
-    /// The conversation where the profile is displayed.
-    let conversation: ZMConversation?
-
-    let context: ProfileViewControllerContext
-
-    /// The current group admin status.
-    var isAdminRole: Bool {
-        didSet { profileHeaderViewController.isAdminRole = isAdminRole }
-    }
-
-    /// The object that calculates and controls the content to display in the user
-    /// details screen. It is also responsible for reacting to user profile updates
-    /// that impact the details.
-    /// - note: It should be the delegate and data source of the table view.
-
-    let contentController: ProfileDetailsContentController
-
-    // MARK: - UI Properties
-
-    private let profileHeaderViewController: ProfileHeaderViewController
-    private let tableView = UITableView(frame: .zero, style: .grouped)
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -107,6 +81,37 @@ final class ProfileDetailsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    /// The user whose profile is displayed.
+    let user: UserType
+
+    /// The user that views the profile.
+    let viewer: UserType
+
+    /// The conversation where the profile is displayed.
+    let conversation: ZMConversation?
+
+    let context: ProfileViewControllerContext
+
+    /// The object that calculates and controls the content to display in the user
+    /// details screen. It is also responsible for reacting to user profile updates
+    /// that impact the details.
+    /// - note: It should be the delegate and data source of the table view.
+
+    let contentController: ProfileDetailsContentController
+
+    /// The current group admin status.
+    var isAdminRole: Bool {
+        didSet { profileHeaderViewController.isAdminRole = isAdminRole }
+    }
+
+    // MARK: - Layout
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        [.portrait]
+    }
+
     // MARK: - View Lifecycle
 
     override func viewDidLoad() {
@@ -114,6 +119,31 @@ final class ProfileDetailsViewController: UIViewController {
         configureSubviews()
         configureConstraints()
     }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        // Update the header by recalculating its frame
+        guard let headerView = tableView.tableHeaderView else {
+            return
+        }
+
+        let size = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+
+        if headerView.frame.size.height != size.height {
+            headerView.frame.size.height = size.height
+            // We need to reassign the header view on iOS 10 to resize the header properly.
+            tableView.tableHeaderView = headerView
+            tableView.layoutIfNeeded()
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - UI Properties
+
+    private let profileHeaderViewController: ProfileHeaderViewController
+    private let tableView = UITableView(frame: .zero, style: .grouped)
 
     private func configureSubviews() {
         tableView.dataSource = contentController
@@ -146,30 +176,6 @@ final class ProfileDetailsViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
-    }
-
-    // MARK: - Layout
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        [.portrait]
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        // Update the header by recalculating its frame
-        guard let headerView = tableView.tableHeaderView else {
-            return
-        }
-
-        let size = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-
-        if headerView.frame.size.height != size.height {
-            headerView.frame.size.height = size.height
-            // We need to reassign the header view on iOS 10 to resize the header properly.
-            tableView.tableHeaderView = headerView
-            tableView.layoutIfNeeded()
-        }
     }
 }
 

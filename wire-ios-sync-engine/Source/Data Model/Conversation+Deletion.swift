@@ -25,6 +25,8 @@ import WireSystem
 public enum ConversationDeletionError: Error {
     case unknown, invalidOperation, conversationNotFound
 
+    // MARK: Lifecycle
+
     init?(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "invalid-op"?): self = .invalidOperation

@@ -33,8 +33,7 @@ public protocol GetE2eIdentityCertificatesUseCaseProtocol {
 // MARK: - GetE2eIdentityCertificatesUseCase
 
 public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol {
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let syncContext: NSManagedObjectContext
+    // MARK: Lifecycle
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
@@ -43,6 +42,8 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
         self.coreCryptoProvider = coreCryptoProvider
         self.syncContext = syncContext
     }
+
+    // MARK: Public
 
     public func invoke(
         mlsGroupId: MLSGroupID,
@@ -81,6 +82,11 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
             }
         }
     }
+
+    // MARK: Private
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let syncContext: NSManagedObjectContext
 
     // Core Crypto can't validate the user name and handle because it doesn't know the actual
     // values so we perform additional validation.

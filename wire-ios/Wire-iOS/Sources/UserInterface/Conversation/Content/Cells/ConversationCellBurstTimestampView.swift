@@ -22,7 +22,46 @@ import WireDesign
 import WireSyncEngine
 
 final class ConversationCellBurstTimestampView: UIView {
+    // MARK: Lifecycle
+
+    init() {
+        super.init(frame: .zero)
+        setupViews()
+        createConstraints()
+        setupStyle()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     let unreadDot = UIView()
+
+    func setupStyle() {
+        label.applyStyle(.dateInConversationLabel)
+    }
+
+    func configure(with timestamp: Date, includeDayOfWeek: Bool, showUnreadDot: Bool, accentColor: UIColor) {
+        if includeDayOfWeek {
+            isSeparatorHidden = false
+            label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp).localized
+        } else {
+            isSeparatorHidden = false
+            label.text = timestamp.formattedDate.localized
+        }
+
+        label.font = burstBoldFont
+        leftSeparator.backgroundColor = color
+        rightSeparator.backgroundColor = color
+        isShowingUnreadDot = showUnreadDot
+        unreadDot.backgroundColor = accentColor
+    }
+
+    // MARK: Private
+
     private let label = UILabel()
 
     private let unreadDotContainer = UIView()
@@ -55,18 +94,6 @@ final class ConversationCellBurstTimestampView: UIView {
                 heightConstraint.constant = separatorHeight
             }
         }
-    }
-
-    init() {
-        super.init(frame: .zero)
-        setupViews()
-        createConstraints()
-        setupStyle()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupViews() {
@@ -118,25 +145,5 @@ final class ConversationCellBurstTimestampView: UIView {
             unreadDot.heightAnchor.constraint(equalToConstant: unreadDotHeight),
             unreadDot.widthAnchor.constraint(equalToConstant: unreadDotHeight),
         ])
-    }
-
-    func setupStyle() {
-        label.applyStyle(.dateInConversationLabel)
-    }
-
-    func configure(with timestamp: Date, includeDayOfWeek: Bool, showUnreadDot: Bool, accentColor: UIColor) {
-        if includeDayOfWeek {
-            isSeparatorHidden = false
-            label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp).localized
-        } else {
-            isSeparatorHidden = false
-            label.text = timestamp.formattedDate.localized
-        }
-
-        label.font = burstBoldFont
-        leftSeparator.backgroundColor = color
-        rightSeparator.backgroundColor = color
-        isShowingUnreadDot = showUnreadDot
-        unreadDot.backgroundColor = accentColor
     }
 }

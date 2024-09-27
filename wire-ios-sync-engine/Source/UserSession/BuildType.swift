@@ -27,6 +27,8 @@ enum BuildType: Equatable {
     case releaseCandidate
     case custom(bundleID: String)
 
+    // MARK: Lifecycle
+
     init(bundleID: String) {
         switch bundleID {
         case BuildType.production.bundleID:
@@ -51,6 +53,8 @@ enum BuildType: Equatable {
             self = .custom(bundleID: bundleID)
         }
     }
+
+    // MARK: Internal
 
     var certificateName: String {
         switch self {

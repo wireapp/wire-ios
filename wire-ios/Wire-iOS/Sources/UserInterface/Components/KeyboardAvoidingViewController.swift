@@ -19,12 +19,7 @@
 import UIKit
 
 class KeyboardAvoidingViewController: UIViewController {
-    let viewController: UIViewController
-    var disabledWhenInsidePopover = false
-
-    private var animator: UIViewPropertyAnimator?
-    private var bottomEdgeConstraint: NSLayoutConstraint?
-    private var topEdgeConstraint: NSLayoutConstraint?
+    // MARK: Lifecycle
 
     required init(viewController: UIViewController) {
         self.viewController = viewController
@@ -43,6 +38,11 @@ class KeyboardAvoidingViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let viewController: UIViewController
+    var disabledWhenInsidePopover = false
 
     override var shouldAutorotate: Bool {
         viewController.shouldAutorotate
@@ -85,6 +85,12 @@ class KeyboardAvoidingViewController: UIViewController {
 
         createInitialConstraints()
     }
+
+    // MARK: Private
+
+    private var animator: UIViewPropertyAnimator?
+    private var bottomEdgeConstraint: NSLayoutConstraint?
+    private var topEdgeConstraint: NSLayoutConstraint?
 
     private func createInitialConstraints() {
         NSLayoutConstraint.activate([

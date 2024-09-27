@@ -24,8 +24,7 @@ import XCTest
 // MARK: - IconLabelButtonTests
 
 final class IconLabelButtonTests: XCTestCase {
-    private var button: IconLabelButton!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -56,12 +55,22 @@ final class IconLabelButtonTests: XCTestCase {
         let name = "testIconLabelButton_\(appearance.description)"
         snapshotHelper.verify(matching: button, file: file, testName: name, line: line)
     }
+
+    // MARK: Private
+
+    private var button: IconLabelButton!
+    private var snapshotHelper: SnapshotHelper!
 }
 
 // MARK: - IconLabelButtonTestCase
 
 struct IconLabelButtonTestCase {
     enum Appearance: CaseIterable {
+        case dark(BlurState, SelectionState, InteractionState)
+        case light(SelectionState, InteractionState)
+
+        // MARK: Internal
+
         typealias AllCases = [Appearance]
 
         static var allCases: AllCases {
@@ -78,9 +87,6 @@ struct IconLabelButtonTestCase {
 
             return cases
         }
-
-        case dark(BlurState, SelectionState, InteractionState)
-        case light(SelectionState, InteractionState)
 
         var callActionAppearance: CallActionAppearance {
             switch self {
@@ -106,6 +112,8 @@ struct IconLabelButtonTestCase {
             }
         }
 
+        // MARK: Private
+
         private var selectionState: SelectionState {
             switch self {
             case let .dark(_, selectionState, _), let .light(selectionState, _): selectionState
@@ -122,6 +130,8 @@ struct IconLabelButtonTestCase {
     enum BlurState: String, CaseIterable {
         case blurred, notBlurred
 
+        // MARK: Internal
+
         var isBlurred: Bool {
             if case .blurred = self { return true }
             return false
@@ -131,6 +141,8 @@ struct IconLabelButtonTestCase {
     enum SelectionState: String, CaseIterable {
         case selected, unselected
 
+        // MARK: Internal
+
         var isSelected: Bool {
             if case .selected = self { return true }
             return false
@@ -139,6 +151,8 @@ struct IconLabelButtonTestCase {
 
     enum InteractionState: String, CaseIterable {
         case enabled, disabled
+
+        // MARK: Internal
 
         var isEnabled: Bool {
             if case .enabled = self { return true }

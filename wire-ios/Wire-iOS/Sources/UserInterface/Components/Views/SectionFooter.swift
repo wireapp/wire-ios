@@ -21,7 +21,7 @@ import UIKit
 // MARK: - SectionFooterView
 
 final class SectionFooterView: UIView {
-    let titleLabel = UILabel()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,6 +33,12 @@ final class SectionFooterView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let titleLabel = UILabel()
+
+    // MARK: Private
 
     private func setupViews() {
         titleLabel.font = .preferredFont(forTextStyle: .footnote)
@@ -55,11 +61,7 @@ final class SectionFooterView: UIView {
 // MARK: - SectionFooter
 
 final class SectionFooter: UICollectionReusableView {
-    let footerView = SectionFooterView()
-
-    var titleLabel: UILabel {
-        footerView.titleLabel
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -71,6 +73,14 @@ final class SectionFooter: UICollectionReusableView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
+    let footerView = SectionFooterView()
+
+    var titleLabel: UILabel {
+        footerView.titleLabel
     }
 
     static func register(collectionView: UICollectionView) {
@@ -85,11 +95,7 @@ final class SectionFooter: UICollectionReusableView {
 // MARK: - SectionTableFooter
 
 final class SectionTableFooter: UITableViewHeaderFooterView {
-    let footerView = SectionFooterView()
-
-    var titleLabel: UILabel {
-        footerView.titleLabel
-    }
+    // MARK: Lifecycle
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -101,5 +107,13 @@ final class SectionTableFooter: UITableViewHeaderFooterView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
+    let footerView = SectionFooterView()
+
+    var titleLabel: UILabel {
+        footerView.titleLabel
     }
 }

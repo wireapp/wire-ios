@@ -745,6 +745,8 @@ extension EncryptionSessionsDirectoryTests {
         case Alice
         case Bob
 
+        // MARK: Internal
+
         var identifier: EncryptionSessionIdentifier {
             switch self {
             case .Alice:

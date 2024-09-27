@@ -23,13 +23,17 @@ import PushKit
 // MARK: - PushPayloadMock
 
 final class PushPayloadMock: PKPushPayload {
-    let mockDictionaryPayload: [AnyHashable: Any]
+    // MARK: Lifecycle
 
     init(dictionaryPayload: [AnyHashable: Any]) {
         self.mockDictionaryPayload = dictionaryPayload
 
         super.init()
     }
+
+    // MARK: Internal
+
+    let mockDictionaryPayload: [AnyHashable: Any]
 
     override var dictionaryPayload: [AnyHashable: Any] {
         mockDictionaryPayload
@@ -39,8 +43,7 @@ final class PushPayloadMock: PKPushPayload {
 // MARK: - PushCredentialsMock
 
 final class PushCredentialsMock: PKPushCredentials {
-    let mockToken: Data
-    let mockType: PKPushType
+    // MARK: Lifecycle
 
     init(token: Data, type: PKPushType) {
         self.mockToken = token
@@ -48,6 +51,11 @@ final class PushCredentialsMock: PKPushCredentials {
 
         super.init()
     }
+
+    // MARK: Internal
+
+    let mockToken: Data
+    let mockType: PKPushType
 
     override var token: Data {
         mockToken

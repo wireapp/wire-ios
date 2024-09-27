@@ -19,6 +19,8 @@
 import Foundation
 
 struct AppLockFeatureConfigDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> AppLockFeatureConfig {
@@ -33,6 +35,8 @@ struct AppLockFeatureConfigDecoder {
             inactivityTimeoutInSeconds: payload.config.inactivityTimeoutSecs
         )
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let enforceAppLock: Bool

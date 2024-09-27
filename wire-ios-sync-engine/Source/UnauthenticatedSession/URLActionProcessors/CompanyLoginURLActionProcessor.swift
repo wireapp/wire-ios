@@ -27,13 +27,14 @@ protocol UnauthenticatedSessionStatusDelegate: AnyObject {
 // MARK: - CompanyLoginURLActionProcessor
 
 class CompanyLoginURLActionProcessor: URLActionProcessor {
-    private weak var delegate: UnauthenticatedSessionStatusDelegate?
-    private var authenticationStatus: ZMAuthenticationStatus
+    // MARK: Lifecycle
 
     init(delegate: UnauthenticatedSessionStatusDelegate, authenticationStatus: ZMAuthenticationStatus) {
         self.delegate = delegate
         self.authenticationStatus = authenticationStatus
     }
+
+    // MARK: Internal
 
     func process(urlAction: URLAction, delegate presentationDelegate: PresentationDelegate?) {
         switch urlAction {
@@ -59,4 +60,9 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
 
         presentationDelegate?.completedURLAction(urlAction)
     }
+
+    // MARK: Private
+
+    private weak var delegate: UnauthenticatedSessionStatusDelegate?
+    private var authenticationStatus: ZMAuthenticationStatus
 }

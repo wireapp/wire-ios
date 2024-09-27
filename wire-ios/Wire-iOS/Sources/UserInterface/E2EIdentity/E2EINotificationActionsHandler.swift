@@ -31,35 +31,7 @@ protocol E2EINotificationActions {
 // MARK: - E2EINotificationActionsHandler
 
 final class E2EINotificationActionsHandler: E2EINotificationActions {
-    enum Failure: Error {
-        case getCertificateError
-    }
-
-    // MARK: - Properties
-
-    private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
-    private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
-    private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
-    private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
-    private let e2eiFeature: Feature.E2EI
-    private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
-    private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
-    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private var isUpdateMode = false
-
-    private let targetVC: () -> UIViewController
-    private var observer: NSObjectProtocol?
-
-    private weak var alertForE2EIChange: UIAlertController?
-
-    private let durationFormatter: DateComponentsFormatter = {
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.day, .hour, .minute]
-        formatter.unitsStyle = .abbreviated
-        return formatter
-    }()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
@@ -96,6 +68,12 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     deinit {
         guard let observer else { return }
         NotificationCenter.default.removeObserver(observer)
+    }
+
+    // MARK: Internal
+
+    enum Failure: Error {
+        case getCertificateError
     }
 
     func getCertificate() async {
@@ -155,6 +133,41 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             }
         }
         await presentScreen(viewController: alert)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
+    private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
+    private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
+    private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
+    private let e2eiFeature: Feature.E2EI
+    private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
+    private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
+    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
+    private var isUpdateMode = false
+
+    private let targetVC: () -> UIViewController
+    private var observer: NSObjectProtocol?
+
+    private weak var alertForE2EIChange: UIAlertController?
+
+    private let durationFormatter: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.day, .hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter
+    }()
+
+    private var gracePeriodEndDate: Date? {
+        guard let e2eiActivatedAt = e2eiActivationDateRepository.e2eiActivatedAt else {
+            return nil
+        }
+
+        let gracePeriod = TimeInterval(e2eiFeature.config.verificationExpiration)
+        return e2eiActivatedAt.addingTimeInterval(gracePeriod)
     }
 
     // MARK: - Helpers
@@ -225,15 +238,6 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
 
         presentScreen(viewController: alert)
-    }
-
-    private var gracePeriodEndDate: Date? {
-        guard let e2eiActivatedAt = e2eiActivationDateRepository.e2eiActivatedAt else {
-            return nil
-        }
-
-        let gracePeriod = TimeInterval(e2eiFeature.config.verificationExpiration)
-        return e2eiActivatedAt.addingTimeInterval(gracePeriod)
     }
 }
 

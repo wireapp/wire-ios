@@ -52,9 +52,18 @@ protocol AppLocationManagerProtocol: AnyObject {
 /// providing an interface for requesting location authorization, updating locations, and managing location
 /// authorization status.
 final class AppLocationManager: NSObject, AppLocationManagerProtocol {
-    // MARK: - Properties
+    // MARK: Lifecycle
 
-    private let locationManager: CLLocationManager
+    // MARK: - Init
+
+    override init() {
+        self.locationManager = CLLocationManager()
+        super.init()
+        locationManager.delegate = self
+    }
+
+    // MARK: Internal
+
     weak var delegate: AppLocationManagerDelegate?
 
     var authorizationStatus: CLAuthorizationStatus {
@@ -64,14 +73,6 @@ final class AppLocationManager: NSObject, AppLocationManagerProtocol {
     var userLocationAuthorized: Bool {
         let status = authorizationStatus
         return status == .authorizedAlways || status == .authorizedWhenInUse
-    }
-
-    // MARK: - Init
-
-    override init() {
-        self.locationManager = CLLocationManager()
-        super.init()
-        locationManager.delegate = self
     }
 
     // MARK: - Methods
@@ -87,6 +88,12 @@ final class AppLocationManager: NSObject, AppLocationManagerProtocol {
     func stopUpdatingLocation() {
         locationManager.stopUpdatingLocation()
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let locationManager: CLLocationManager
 }
 
 // MARK: CLLocationManagerDelegate

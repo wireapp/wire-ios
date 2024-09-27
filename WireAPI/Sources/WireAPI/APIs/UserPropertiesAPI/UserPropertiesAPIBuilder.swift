@@ -21,7 +21,7 @@ import Foundation
 /// A builder of `UserPropertiesAPI`.
 
 public struct UserPropertiesBuilder {
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     /// Create a new builder.
     ///
@@ -30,6 +30,8 @@ public struct UserPropertiesBuilder {
     public init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Public
 
     /// Make a versioned `UserPropertiesAPI`.
     ///
@@ -54,4 +56,8 @@ public struct UserPropertiesBuilder {
             UserPropertiesAPIV6(httpClient: httpClient)
         }
     }
+
+    // MARK: Internal
+
+    let httpClient: any HTTPClient
 }

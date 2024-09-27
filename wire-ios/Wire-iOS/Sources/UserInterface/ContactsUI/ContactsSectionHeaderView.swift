@@ -19,15 +19,7 @@
 import UIKit
 
 final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
-    let label: UILabel = {
-        let label = UILabel()
-        label.font = .smallSemiboldFont
-        label.textColor = .from(scheme: .textForeground, variant: .dark)
-
-        return label
-    }()
-
-    static let height: CGFloat = 20
+    // MARK: Lifecycle
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -49,12 +41,30 @@ final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupSubviews() {
-        contentView.addSubview(label)
+    // MARK: Internal
+
+    static let height: CGFloat = 20
+
+    let label: UILabel = {
+        let label = UILabel()
+        label.font = .smallSemiboldFont
+        label.textColor = .from(scheme: .textForeground, variant: .dark)
+
+        return label
+    }()
+
+    override var intrinsicContentSize: CGSize {
+        CGSize(width: UIView.noIntrinsicMetric, height: ContactsSectionHeaderView.height)
     }
 
     func setupStyle() {
         textLabel?.isHidden = true
+    }
+
+    // MARK: Private
+
+    private func setupSubviews() {
+        contentView.addSubview(label)
     }
 
     private func setupConstraints() {
@@ -63,9 +73,5 @@ final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
         ])
-    }
-
-    override var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: ContactsSectionHeaderView.height)
     }
 }

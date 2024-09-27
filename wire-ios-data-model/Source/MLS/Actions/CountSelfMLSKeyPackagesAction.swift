@@ -19,6 +19,18 @@
 import Foundation
 
 public final class CountSelfMLSKeyPackagesAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        clientID: String,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.clientID = clientID
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = Int
@@ -29,6 +41,8 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
         case invalidClientID
         case endpointUnavailable
         case unknown(status: Int)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -50,14 +64,4 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
 
     public var resultHandler: ResultHandler?
     public var clientID: String
-
-    // MARK: - Life cycle
-
-    public init(
-        clientID: String,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.clientID = clientID
-        self.resultHandler = resultHandler
-    }
 }

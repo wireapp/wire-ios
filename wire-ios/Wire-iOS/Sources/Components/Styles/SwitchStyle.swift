@@ -22,35 +22,24 @@ import WireDesign
 // MARK: - SwitchStyle
 
 struct SwitchStyle {
-    private(set) var enabledOnStateColor: UIColor
-    private(set) var enabledOffStateColor: UIColor
-    private(set) var enabledOnStateBorderColor: UIColor
-    private(set) var enabledOffStateBorderColor: UIColor
-    private(set) var borderWidth: CGFloat = 1
-
     static let `default` = SwitchStyle(
         enabledOnStateColor: SemanticColors.Switch.backgroundOnStateEnabled,
         enabledOffStateColor: SemanticColors.Switch.backgroundOffStateEnabled,
         enabledOnStateBorderColor: SemanticColors.Switch.borderOnStateEnabled,
         enabledOffStateBorderColor: SemanticColors.Switch.borderOffStateEnabled
     )
+
+    private(set) var enabledOnStateColor: UIColor
+    private(set) var enabledOffStateColor: UIColor
+    private(set) var enabledOnStateBorderColor: UIColor
+    private(set) var enabledOffStateBorderColor: UIColor
+    private(set) var borderWidth: CGFloat = 1
 }
 
 // MARK: - Switch
 
 final class Switch: UISwitch, Stylable {
-    // MARK: - Properties
-
-    let switchStyle: SwitchStyle
-
-    override var isOn: Bool {
-        didSet {
-            guard isOn != oldValue else { return }
-            valueDidChange()
-        }
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(style: SwitchStyle = .default) {
         self.switchStyle = style
@@ -65,11 +54,17 @@ final class Switch: UISwitch, Stylable {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Methods
+    // MARK: Internal
 
-    @objc
-    private func valueDidChange() {
-        applyStyle(switchStyle)
+    // MARK: - Properties
+
+    let switchStyle: SwitchStyle
+
+    override var isOn: Bool {
+        didSet {
+            guard isOn != oldValue else { return }
+            valueDidChange()
+        }
     }
 
     func applyStyle(_ style: SwitchStyle) {
@@ -80,5 +75,14 @@ final class Switch: UISwitch, Stylable {
         layer.borderColor = isOn ? style.enabledOnStateBorderColor.cgColor : style.enabledOffStateBorderColor.cgColor
         layer.borderWidth = style.borderWidth
         clipsToBounds = true
+    }
+
+    // MARK: Private
+
+    // MARK: - Methods
+
+    @objc
+    private func valueDidChange() {
+        applyStyle(switchStyle)
     }
 }

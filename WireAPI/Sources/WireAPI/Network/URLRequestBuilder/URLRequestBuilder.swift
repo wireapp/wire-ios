@@ -21,7 +21,7 @@ import Foundation
 // MARK: - URLRequestBuilder
 
 struct URLRequestBuilder {
-    private var request: URLRequest
+    // MARK: Lifecycle
 
     init(path: String) throws {
         guard let url = URL(string: path) else {
@@ -34,6 +34,8 @@ struct URLRequestBuilder {
     init(url: URL) {
         self.request = URLRequest(url: url)
     }
+
+    // MARK: Internal
 
     func build() -> URLRequest {
         request
@@ -66,6 +68,10 @@ struct URLRequestBuilder {
             )
         }
     }
+
+    // MARK: Private
+
+    private var request: URLRequest
 
     private func withCopy(_ mutation: (inout Self) -> Void) -> Self {
         var copy = self

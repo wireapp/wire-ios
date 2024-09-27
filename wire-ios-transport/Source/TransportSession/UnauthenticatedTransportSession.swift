@@ -39,13 +39,17 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 
 @objcMembers
 public final class UserInfo: NSObject {
-    public let identifier: UUID
-    public let cookieData: Data
+    // MARK: Lifecycle
 
     public init(identifier: UUID, cookieData: Data) {
         self.identifier = identifier
         self.cookieData = cookieData
     }
+
+    // MARK: Public
+
+    public let identifier: UUID
+    public let cookieData: Data
 
     override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserInfo else { return false }
@@ -61,16 +65,7 @@ public final class UserInfo: NSObject {
 /// When cookie data became available it should be used to create a `ZMPersistentCookieStorage` and
 /// to create a regular transport session with it.
 public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
-    private let maximumNumberOfRequests = 3
-    private var numberOfRunningRequests = ZMAtomicInteger(integer: 0)
-    private let baseURL: URL
-    private var session: SessionProtocol!
-    private let userAgent: ZMUserAgent
-    public var environment: BackendEnvironmentProvider
-    fileprivate let reachability: ReachabilityProvider
-
-    /// Property to accept requests
-    public let readyForRequests: Bool
+    // MARK: Lifecycle
 
     public init(
         environment: BackendEnvironmentProvider,
@@ -105,6 +100,12 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         self.session = urlSession ?? URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
 
+    // MARK: Public
+
+    public var environment: BackendEnvironmentProvider
+    /// Property to accept requests
+    public let readyForRequests: Bool
+
     /// Enqueues a single request on the internal `URLSession`.
     ///
     /// - parameter request: Request which should be enqueued.
@@ -137,6 +138,26 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
         return .success
     }
+
+    public func tearDown() {
+        // From NSURLSession documentation at https://developer.apple.com/documentation/foundation/urlsession:
+        // "The session object keeps a strong reference to the delegate until your app
+        // exits or explicitly invalidates the session.
+        // If you do not invalidate the session, your app leaks memory until it exits."
+        session = nil
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let reachability: ReachabilityProvider
+
+    // MARK: Private
+
+    private let maximumNumberOfRequests = 3
+    private var numberOfRunningRequests = ZMAtomicInteger(integer: 0)
+    private let baseURL: URL
+    private var session: SessionProtocol!
+    private let userAgent: ZMUserAgent
 
     private func enqueueRequest(_ request: ZMTransportRequest) {
         guard readyForRequests else {
@@ -192,14 +213,6 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// - returns: The value after the increment.
     private func increment() -> Int {
         numberOfRunningRequests.increment()
-    }
-
-    public func tearDown() {
-        // From NSURLSession documentation at https://developer.apple.com/documentation/foundation/urlsession:
-        // "The session object keeps a strong reference to the delegate until your app
-        // exits or explicitly invalidates the session.
-        // If you do not invalidate the session, your app leaks memory until it exits."
-        session = nil
     }
 }
 

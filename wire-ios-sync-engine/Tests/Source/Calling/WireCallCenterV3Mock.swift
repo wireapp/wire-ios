@@ -23,6 +23,14 @@ import Foundation
 
 @objcMembers
 public class MockAVSWrapper: AVSWrapperType {
+    // MARK: Lifecycle
+
+    public required init(userId: AVSIdentifier, clientId: String, observer: UnsafeMutableRawPointer?) {
+        // do nothing
+    }
+
+    // MARK: Public
+
     public var isMuted = false
 
     public var startCallArguments: (
@@ -43,12 +51,6 @@ public class MockAVSWrapper: AVSWrapperType {
     public var callError: CallError?
     public var hasOngoingCall = false
     public var mockMembers: [AVSCallMember] = []
-
-    var receivedCallEvents: [(CallEvent, AVSConversationType)] = []
-
-    public required init(userId: AVSIdentifier, clientId: String, observer: UnsafeMutableRawPointer?) {
-        // do nothing
-    }
 
     public func startCall(
         conversationId: AVSIdentifier,
@@ -106,8 +108,6 @@ public class MockAVSWrapper: AVSWrapperType {
         // do nothing
     }
 
-    var mockSetMLSConferenceInfo: ((AVSIdentifier, MLSConferenceInfo) -> Void)?
-
     public func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo) {
         guard let mock = mockSetMLSConferenceInfo else {
             fatalError("not implemented")
@@ -115,12 +115,18 @@ public class MockAVSWrapper: AVSWrapperType {
 
         mock(conversationId, info)
     }
+
+    // MARK: Internal
+
+    var receivedCallEvents: [(CallEvent, AVSConversationType)] = []
+
+    var mockSetMLSConferenceInfo: ((AVSIdentifier, MLSConferenceInfo) -> Void)?
 }
 
 // MARK: - WireCallCenterV3IntegrationMock
 
 final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
-    public let mockAVSWrapper: MockAVSWrapper
+    // MARK: Lifecycle
 
     public required init(
         userId: AVSIdentifier,
@@ -141,22 +147,17 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
             transport: transport
         )
     }
+
+    // MARK: Public
+
+    public let mockAVSWrapper: MockAVSWrapper
 }
 
 // MARK: - WireCallCenterV3Mock
 
 @objcMembers
 public class WireCallCenterV3Mock: WireCallCenterV3 {
-    public let mockAVSWrapper: MockAVSWrapper
-
-    var mockMembers: [AVSCallMember] {
-        get {
-            mockAVSWrapper.mockMembers
-        }
-        set {
-            mockAVSWrapper.mockMembers = newValue
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: Initialization
 
@@ -179,6 +180,10 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
             transport: transport
         )
     }
+
+    // MARK: Public
+
+    public let mockAVSWrapper: MockAVSWrapper
 
     // MARK: AVS Integration
 
@@ -204,6 +209,17 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     public var didCallRejectCall: Bool {
         (avsWrapper as! MockAVSWrapper).didCallRejectCall
+    }
+
+    // MARK: Internal
+
+    var mockMembers: [AVSCallMember] {
+        get {
+            mockAVSWrapper.mockMembers
+        }
+        set {
+            mockAVSWrapper.mockMembers = newValue
+        }
     }
 
     // MARK: Mock Call State

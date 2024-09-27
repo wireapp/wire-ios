@@ -22,9 +22,7 @@ import Foundation
 
 @objcMembers
 public class UserExpirationObserver: NSObject {
-    private(set) var expiringUsers: Set<ZMUser> = Set()
-    private var timerForUser: [ZMTimer: ZMUser] = [:]
-    private let managedObjectContext: NSManagedObjectContext
+    // MARK: Lifecycle
 
     public init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
@@ -34,9 +32,15 @@ public class UserExpirationObserver: NSObject {
         timerForUser.forEach { $0.key.cancel() }
     }
 
+    // MARK: Public
+
     public func check(usersIn conversation: ZMConversation) {
         check(users: conversation.localParticipants)
     }
+
+    // MARK: Internal
+
+    private(set) var expiringUsers: Set<ZMUser> = Set()
 
     func check(users: Set<ZMUser>) {
         let allWireless = Set(users.filter(\.isWirelessUser)).subtracting(expiringUsers)
@@ -57,6 +61,11 @@ public class UserExpirationObserver: NSObject {
 
         expiringUsers.formUnion(notExpired)
     }
+
+    // MARK: Private
+
+    private var timerForUser: [ZMTimer: ZMUser] = [:]
+    private let managedObjectContext: NSManagedObjectContext
 }
 
 // MARK: ZMTimerClient

@@ -21,13 +21,7 @@ import XCTest
 @testable import Wire
 
 final class MessageDetailsViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var conversation: SwiftMockConversation!
-    private var mockSelfUser: MockUserType!
-    private var otherUser: MockUserType!
-    private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp method
 
@@ -417,6 +411,16 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             return detailsViewController
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var conversation: SwiftMockConversation!
+    private var mockSelfUser: MockUserType!
+    private var otherUser: MockUserType!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - Helpers
 

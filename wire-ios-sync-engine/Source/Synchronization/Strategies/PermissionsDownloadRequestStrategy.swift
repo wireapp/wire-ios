@@ -29,15 +29,28 @@ struct MembershipListPayload: Decodable {
 // MARK: - MembershipPayload
 
 struct MembershipPayload: Decodable {
+    // MARK: Internal
+
     struct PermissionsPayload: Decodable {
+        // MARK: Internal
+
+        let copyPermissions: Int64
+        let selfPermissions: Int64
+
+        // MARK: Private
+
         private enum CodingKeys: String, CodingKey {
             case copyPermissions = "copy"
             case selfPermissions = "self"
         }
-
-        let copyPermissions: Int64
-        let selfPermissions: Int64
     }
+
+    let userID: UUID
+    let createdBy: UUID?
+    let createdAt: Date?
+    let permissions: PermissionsPayload?
+
+    // MARK: Private
 
     private enum CodingKeys: String, CodingKey {
         case userID = "user"
@@ -45,11 +58,6 @@ struct MembershipPayload: Decodable {
         case createdAt = "created_at"
         case permissions
     }
-
-    let userID: UUID
-    let createdBy: UUID?
-    let createdAt: Date?
-    let permissions: PermissionsPayload?
 }
 
 extension MembershipPayload {
@@ -81,7 +89,7 @@ extension Member {
 
 public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
     ZMRequestGeneratorSource, ZMDownstreamTranscoder {
-    fileprivate var sync: ZMDownstreamObjectSync!
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -98,9 +106,7 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
         )
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        sync.nextRequest(for: apiVersion)
-    }
+    // MARK: Public
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [sync]
@@ -108,6 +114,10 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
 
     public var requestGenerators: [ZMRequestGenerator] {
         [sync]
+    }
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        sync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMDownstreamTranscoder
@@ -141,4 +151,8 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
         guard downstreamSync as? ZMDownstreamObjectSync == sync, let member = object as? Member else { return }
         managedObjectContext.delete(member)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var sync: ZMDownstreamObjectSync!
 }

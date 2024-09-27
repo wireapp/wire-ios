@@ -22,18 +22,7 @@ import WireTransport
 // MARK: - APIVersionResolver
 
 final class APIVersionResolver {
-    // MARK: - Properties
-
-    weak var delegate: APIVersionResolverDelegate?
-
-    let clientProdVersions: Set<APIVersion>
-    let clientDevVersions: Set<APIVersion>
-    let isDeveloperModeEnabled: Bool
-
-    private let queue: GroupQueue = DispatchGroupQueue(queue: .main)
-    private let transportSession: UnauthenticatedTransportSessionProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         clientProdVersions: Set<APIVersion> = APIVersion.productionVersions,
@@ -47,6 +36,16 @@ final class APIVersionResolver {
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    weak var delegate: APIVersionResolverDelegate?
+
+    let clientProdVersions: Set<APIVersion>
+    let clientDevVersions: Set<APIVersion>
+    let isDeveloperModeEnabled: Bool
+
     // MARK: - Methods
 
     func resolveAPIVersion(completion: @escaping (Error?) -> Void = { _ in }) {
@@ -54,6 +53,18 @@ final class APIVersionResolver {
         // TODO: check if it's been 24hours and proceed or not
         sendRequest(completion: completion)
     }
+
+    // MARK: Private
+
+    private struct APIVersionResponsePayload: Decodable {
+        let supported: [Int32]
+        let development: [Int32]?
+        let federation: Bool
+        let domain: String
+    }
+
+    private let queue: GroupQueue = DispatchGroupQueue(queue: .main)
+    private let transportSession: UnauthenticatedTransportSessionProtocol
 
     private func sendRequest(completion: @escaping (Error?) -> Void = { _ in }) {
         // This is endpoint isn't versioned, so it always version 0.
@@ -143,13 +154,6 @@ final class APIVersionResolver {
 
     private func blacklistApp(reason: BlacklistReason) {
         delegate?.apiVersionResolverFailedToResolveVersion(reason: reason)
-    }
-
-    private struct APIVersionResponsePayload: Decodable {
-        let supported: [Int32]
-        let development: [Int32]?
-        let federation: Bool
-        let domain: String
     }
 }
 

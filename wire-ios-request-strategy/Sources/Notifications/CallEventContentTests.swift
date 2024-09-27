@@ -21,46 +21,7 @@ import XCTest
 @testable import WireRequestStrategy
 
 class CallEventContentTests: XCTestCase {
-    private let decoder = JSONDecoder()
-    private let remoteMute = "REMOTEMUTE"
-
-    // MARK: - Helpers
-
-    private func eventData(
-        type: String,
-        callerID: UUID? = .create(),
-        isVideo: Bool = false,
-        resp: Bool = false
-    ) -> Data {
-        var json: [String: Any] = [
-            "type": type,
-            "src_clientid": "clientid",
-            "resp": resp,
-            "props": ["videosend": "\(isVideo)"],
-        ]
-
-        if let callerID = callerID?.uuidString {
-            json["src_userid"] = callerID
-        }
-
-        return try! JSONSerialization.data(withJSONObject: json, options: [])
-    }
-
-    private func given(
-        type: String,
-        isVideo: Bool = false,
-        resp: Bool = false,
-        then assertion: (CallEventContent) -> Void
-    ) throws {
-        let callerID = UUID.create()
-        let data = eventData(type: type, callerID: callerID, isVideo: isVideo, resp: resp)
-
-        // When
-        let sut = try XCTUnwrap(CallEventContent(from: data, with: decoder))
-
-        // Then
-        assertion(sut)
-    }
+    // MARK: Internal
 
     // MARK: - Tests
 
@@ -145,5 +106,48 @@ class CallEventContentTests: XCTestCase {
         try given(type: "REMOTEMUTE") { sut in
             XCTAssertNil(sut.callState)
         }
+    }
+
+    // MARK: Private
+
+    private let decoder = JSONDecoder()
+    private let remoteMute = "REMOTEMUTE"
+
+    // MARK: - Helpers
+
+    private func eventData(
+        type: String,
+        callerID: UUID? = .create(),
+        isVideo: Bool = false,
+        resp: Bool = false
+    ) -> Data {
+        var json: [String: Any] = [
+            "type": type,
+            "src_clientid": "clientid",
+            "resp": resp,
+            "props": ["videosend": "\(isVideo)"],
+        ]
+
+        if let callerID = callerID?.uuidString {
+            json["src_userid"] = callerID
+        }
+
+        return try! JSONSerialization.data(withJSONObject: json, options: [])
+    }
+
+    private func given(
+        type: String,
+        isVideo: Bool = false,
+        resp: Bool = false,
+        then assertion: (CallEventContent) -> Void
+    ) throws {
+        let callerID = UUID.create()
+        let data = eventData(type: type, callerID: callerID, isVideo: isVideo, resp: resp)
+
+        // When
+        let sut = try XCTUnwrap(CallEventContent(from: data, with: decoder))
+
+        // Then
+        assertion(sut)
     }
 }

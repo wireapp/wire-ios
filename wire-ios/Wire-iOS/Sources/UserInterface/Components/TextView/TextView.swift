@@ -34,7 +34,23 @@ protocol InformalTextViewDelegate: AnyObject {
 // Inspired by https://github.com/samsoffes/sstoolkit/blob/master/SSToolkit/SSTextView.m
 // and by http://derpturkey.com/placeholder-in-uitextview/
 class TextView: UITextView {
+    // MARK: Lifecycle
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    override init(frame: CGRect, textContainer: NSTextContainer?) {
+        super.init(frame: frame, textContainer: textContainer)
+        setup()
+    }
+
+    // MARK: Internal
+
     weak var informalTextViewDelegate: InformalTextViewDelegate?
+
+    var language: String?
 
     var placeholder: String? {
         didSet {
@@ -86,12 +102,6 @@ class TextView: UITextView {
         }
     }
 
-    var language: String?
-
-    private let placeholderLabel = TransformLabel()
-    private var placeholderLabelLeftConstraint: NSLayoutConstraint?
-    private var placeholderLabelRightConstraint: NSLayoutConstraint?
-
     override var accessibilityValue: String? {
         get {
             text.isEmpty ? placeholderLabel.accessibilityValue : super.accessibilityValue
@@ -114,32 +124,18 @@ class TextView: UITextView {
         }
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    // MARK: Language
+
+    override var textInputMode: UITextInputMode? {
+        overriddenTextInputMode
     }
 
-    override init(frame: CGRect, textContainer: NSTextContainer?) {
-        super.init(frame: frame, textContainer: textContainer)
-        setup()
-    }
-
-    // MARK: Setup
-
-    private func setup() {
-        placeholderTextContainerInset = textContainerInset
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(textChanged(_:)),
-            name: UITextView.textDidChangeNotification,
-            object: self
-        )
-
-        setupPlaceholderLabel()
-
-        if AutomationHelper.sharedHelper.disableAutocorrection {
-            autocorrectionType = .no
+    /// custom inset for placeholder, only left and right inset value is applied (The placeholder is align center
+    /// vertically)
+    var placeholderTextContainerInset: UIEdgeInsets = .zero {
+        didSet {
+            placeholderLabelLeftConstraint?.constant = placeholderTextContainerInset.left
+            placeholderLabelRightConstraint?.constant = placeholderTextContainerInset.right
         }
     }
 
@@ -191,18 +187,28 @@ class TextView: UITextView {
         return resigned
     }
 
-    // MARK: Language
+    // MARK: Private
 
-    override var textInputMode: UITextInputMode? {
-        overriddenTextInputMode
-    }
+    private let placeholderLabel = TransformLabel()
+    private var placeholderLabelLeftConstraint: NSLayoutConstraint?
+    private var placeholderLabelRightConstraint: NSLayoutConstraint?
 
-    /// custom inset for placeholder, only left and right inset value is applied (The placeholder is align center
-    /// vertically)
-    var placeholderTextContainerInset: UIEdgeInsets = .zero {
-        didSet {
-            placeholderLabelLeftConstraint?.constant = placeholderTextContainerInset.left
-            placeholderLabelRightConstraint?.constant = placeholderTextContainerInset.right
+    // MARK: Setup
+
+    private func setup() {
+        placeholderTextContainerInset = textContainerInset
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textChanged(_:)),
+            name: UITextView.textDidChangeNotification,
+            object: self
+        )
+
+        setupPlaceholderLabel()
+
+        if AutomationHelper.sharedHelper.disableAutocorrection {
+            autocorrectionType = .no
         }
     }
 

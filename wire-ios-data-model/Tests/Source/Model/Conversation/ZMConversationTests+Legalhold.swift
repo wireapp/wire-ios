@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 
 class ZMConversationTests_Legalhold: ZMConversationTestsBase {
+    // MARK: Internal
+
     // MARK: - Update legal hold on client changes
 
     func testThatLegalholdIsActivatedForUser_WhenLegalholdClientIsDiscovered() {
@@ -752,6 +754,8 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             }
         )
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

@@ -36,10 +36,14 @@ extension ZMOperationLoop {
 
 @objc
 public class APIVersionWrapper: NSObject {
-    @objc public var value: APIVersion
+    // MARK: Lifecycle
 
     init(value: APIVersion) {
         self.value = value
         super.init()
     }
+
+    // MARK: Public
+
+    @objc public var value: APIVersion
 }

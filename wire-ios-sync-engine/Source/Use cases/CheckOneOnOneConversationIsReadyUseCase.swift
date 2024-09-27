@@ -41,12 +41,7 @@ public enum CheckOneOnOneConversationIsReadyError: Error, Equatable {
 // MARK: - CheckOneOnOneConversationIsReadyUseCase
 
 struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReadyUseCaseProtocol {
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         context: NSManagedObjectContext,
@@ -55,6 +50,8 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
         self.context = context
         self.coreCryptoProvider = coreCryptoProvider
     }
+
+    // MARK: Public
 
     // MARK: - Public interface
 
@@ -89,6 +86,13 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
             return false
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     // MARK: - Helpers
 

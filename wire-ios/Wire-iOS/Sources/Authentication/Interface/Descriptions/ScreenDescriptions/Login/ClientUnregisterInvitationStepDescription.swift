@@ -21,14 +21,7 @@ import Foundation
 /// The view that displays the message to inform the user that they have too many devices.
 
 final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescription {
-    let backButton: BackButtonDescription?
-    let mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription?
-
-    typealias TooManyDevices = L10n.Localizable.Registration.Signin.TooManyDevices
+    // MARK: Lifecycle
 
     init() {
         self.backButton = BackButtonDescription()
@@ -42,4 +35,15 @@ final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescrip
         self.secondaryView = nil
         self.footerView = nil
     }
+
+    // MARK: Internal
+
+    typealias TooManyDevices = L10n.Localizable.Registration.Signin.TooManyDevices
+
+    let backButton: BackButtonDescription?
+    let mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let footerView: AuthenticationFooterViewDescription?
 }

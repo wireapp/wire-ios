@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ValidatedTextFieldTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: ValidatedTextField!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -101,4 +98,11 @@ final class ValidatedTextFieldTests: XCTestCase {
         // Then
         waitForExpectations(timeout: 0.5)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ValidatedTextField!
 }

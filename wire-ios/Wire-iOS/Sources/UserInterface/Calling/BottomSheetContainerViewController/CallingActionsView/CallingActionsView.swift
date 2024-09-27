@@ -39,7 +39,31 @@ protocol BottomSheetScrollingDelegate: AnyObject {
 // A view showing multiple buttons depending on the given `CallActionsView.Input`.
 // Button touches result in `CallActionsView.Action` cases to be sent to the objects delegate.
 final class CallingActionsView: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Setup
+
+    init() {
+        super.init(frame: .zero)
+
+        self.videoButtonDisabledTapRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(performButtonAction)
+        )
+        setupViews()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     weak var delegate: CallingActionsViewDelegate?
+    let verticalStackView = UIStackView(axis: .vertical)
+
     weak var bottomSheetScrollingDelegate: BottomSheetScrollingDelegate? {
         didSet {
             handleView.isAccessibilityElement = true
@@ -47,36 +71,6 @@ final class CallingActionsView: UIView {
             updateHandleViewAccessibilityLabel()
         }
     }
-
-    let verticalStackView = UIStackView(axis: .vertical)
-    private let topStackView = UIStackView(axis: .horizontal)
-    private let bottomStackView = UIStackView(axis: .horizontal)
-    private var input: CallActionsViewInputType?
-    private var videoButtonDisabledTapRecognizer: UITapGestureRecognizer?
-
-    // Buttons
-    private let microphoneButton = CallingActionButton.microphoneButton()
-    private let cameraButton = CallingActionButton.cameraButton()
-    private let speakerButton = CallingActionButton.speakerButton()
-    private let flipCameraButton = CallingActionButton.flipCameraButton()
-    private let endCallButton = EndCallButton.endCallButton()
-    private let handleView = AccessibilityActionView()
-    private let handleContainerView = UIView()
-    private let largePickUpButton = PickUpButton.bigPickUpButton()
-    private let largeHangUpButton = EndCallButton.bigEndCallButton()
-
-    private var establishedCallButtons: [IconLabelButton] {
-        [
-            microphoneButton,
-            cameraButton,
-            speakerButton,
-            flipCameraButton,
-            endCallButton,
-        ]
-    }
-
-    private var largeButtonsPortraitConstraints: [NSLayoutConstraint] = []
-    private var largeButtonsLandscapeConstraints: [NSLayoutConstraint] = []
 
     var isIncomingCall = false {
         didSet {
@@ -102,22 +96,75 @@ final class CallingActionsView: UIView {
         }
     }
 
-    // MARK: - Setup
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        establishedCallButtons.forEach { $0.updateState() }
 
-    init() {
-        super.init(frame: .zero)
-
-        self.videoButtonDisabledTapRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(performButtonAction)
-        )
-        setupViews()
-        createConstraints()
+        [
+            largePickUpButton,
+            largeHangUpButton,
+        ].forEach { $0.updateState() }
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    // MARK: - State Input
+
+    // Single entry point for all state changes.
+    // All side effects should be started from this method.
+    func update(with input: CallActionsViewInputType) {
+        self.input = input
+        microphoneButton.isSelected = !input.isMuted
+        microphoneButton.isEnabled = canToggleMuteButton(input)
+        videoButtonDisabledTapRecognizer?.isEnabled = !input.canToggleMediaType
+        cameraButton.isEnabled = input.canToggleMediaType
+        cameraButton.isSelected = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
+        flipCameraButton.isEnabled = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
+        speakerButton.isSelected = input.mediaState.isSpeakerEnabled
+        speakerButton.isEnabled = canToggleSpeakerButton(input)
+        updateAccessibilityElements(with: input)
+        setNeedsLayout()
+        layoutIfNeeded()
+    }
+
+    func viewWillRotate(toPortrait portrait: Bool) {
+        guard isIncomingCall else { return }
+        if portrait {
+            NSLayoutConstraint.activate(largeButtonsPortraitConstraints)
+            NSLayoutConstraint.deactivate(largeButtonsLandscapeConstraints)
+        } else {
+            NSLayoutConstraint.activate(largeButtonsLandscapeConstraints)
+            NSLayoutConstraint.deactivate(largeButtonsPortraitConstraints)
+        }
+    }
+
+    // MARK: Private
+
+    private let topStackView = UIStackView(axis: .horizontal)
+    private let bottomStackView = UIStackView(axis: .horizontal)
+    private var input: CallActionsViewInputType?
+    private var videoButtonDisabledTapRecognizer: UITapGestureRecognizer?
+
+    // Buttons
+    private let microphoneButton = CallingActionButton.microphoneButton()
+    private let cameraButton = CallingActionButton.cameraButton()
+    private let speakerButton = CallingActionButton.speakerButton()
+    private let flipCameraButton = CallingActionButton.flipCameraButton()
+    private let endCallButton = EndCallButton.endCallButton()
+    private let handleView = AccessibilityActionView()
+    private let handleContainerView = UIView()
+    private let largePickUpButton = PickUpButton.bigPickUpButton()
+    private let largeHangUpButton = EndCallButton.bigEndCallButton()
+
+    private var largeButtonsPortraitConstraints: [NSLayoutConstraint] = []
+    private var largeButtonsLandscapeConstraints: [NSLayoutConstraint] = []
+
+    private var establishedCallButtons: [IconLabelButton] {
+        [
+            microphoneButton,
+            cameraButton,
+            speakerButton,
+            flipCameraButton,
+            endCallButton,
+        ]
     }
 
     private func setupViews() {
@@ -178,16 +225,6 @@ final class CallingActionsView: UIView {
         addInteraction(interaction)
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        establishedCallButtons.forEach { $0.updateState() }
-
-        [
-            largePickUpButton,
-            largeHangUpButton,
-        ].forEach { $0.updateState() }
-    }
-
     private func addIncomingCallControllButtons() {
         [
             largeHangUpButton,
@@ -228,25 +265,6 @@ final class CallingActionsView: UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.removeFromSuperview()
         }
-    }
-
-    // MARK: - State Input
-
-    // Single entry point for all state changes.
-    // All side effects should be started from this method.
-    func update(with input: CallActionsViewInputType) {
-        self.input = input
-        microphoneButton.isSelected = !input.isMuted
-        microphoneButton.isEnabled = canToggleMuteButton(input)
-        videoButtonDisabledTapRecognizer?.isEnabled = !input.canToggleMediaType
-        cameraButton.isEnabled = input.canToggleMediaType
-        cameraButton.isSelected = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
-        flipCameraButton.isEnabled = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
-        speakerButton.isSelected = input.mediaState.isSpeakerEnabled
-        speakerButton.isEnabled = canToggleSpeakerButton(input)
-        updateAccessibilityElements(with: input)
-        setNeedsLayout()
-        layoutIfNeeded()
     }
 
     private func canToggleMuteButton(_ input: CallActionsViewInputType) -> Bool {
@@ -308,17 +326,6 @@ final class CallingActionsView: UIView {
     private func handleViewAccessibilityAction() {
         bottomSheetScrollingDelegate?.toggleBottomSheetVisibility()
         updateHandleViewAccessibilityLabel()
-    }
-
-    func viewWillRotate(toPortrait portrait: Bool) {
-        guard isIncomingCall else { return }
-        if portrait {
-            NSLayoutConstraint.activate(largeButtonsPortraitConstraints)
-            NSLayoutConstraint.deactivate(largeButtonsLandscapeConstraints)
-        } else {
-            NSLayoutConstraint.activate(largeButtonsLandscapeConstraints)
-            NSLayoutConstraint.deactivate(largeButtonsPortraitConstraints)
-        }
     }
 }
 

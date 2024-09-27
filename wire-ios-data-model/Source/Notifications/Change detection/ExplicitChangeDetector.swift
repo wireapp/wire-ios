@@ -21,23 +21,15 @@ import Foundation
 // MARK: - ExplicitChangeDetector
 
 final class ExplicitChangeDetector: ChangeDetector {
-    private typealias ObservableChangesByObject = [ZMManagedObject: Changes]
-
-    // MARK: - Properties
-
-    private unowned let context: NSManagedObjectContext
-
-    private var accumulatedChanges = ObservableChangesByObject()
-    private let snapshotCenter: SnapshotCenter
-    private let dependencyKeyStore: DependencyKeyStore
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(classIdentifiers: [ClassIdentifier], managedObjectContext: NSManagedObjectContext) {
         self.context = managedObjectContext
         self.snapshotCenter = SnapshotCenter(managedObjectContext: context)
         self.dependencyKeyStore = DependencyKeyStore(classIdentifiers: classIdentifiers)
     }
+
+    // MARK: Internal
 
     // MARK: - Methods
 
@@ -70,6 +62,18 @@ final class ExplicitChangeDetector: ChangeDetector {
             observableChangesCausedByInsertionOrDeletion(for: objects.deleted)
         )
     }
+
+    // MARK: Private
+
+    private typealias ObservableChangesByObject = [ZMManagedObject: Changes]
+
+    // MARK: - Properties
+
+    private unowned let context: NSManagedObjectContext
+
+    private var accumulatedChanges = ObservableChangesByObject()
+    private let snapshotCenter: SnapshotCenter
+    private let dependencyKeyStore: DependencyKeyStore
 
     // MARK: - Private methods
 

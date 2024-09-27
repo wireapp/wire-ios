@@ -20,11 +20,15 @@ import Foundation
 
 @objcMembers
 public class TypingChange: NSObject {
-    let conversation: ZMConversation
-    let typingUsers: Set<ZMUser>
+    // MARK: Lifecycle
 
     init(conversation: ZMConversation, typingUsers: Set<ZMUser>) {
         self.conversation = conversation
         self.typingUsers = typingUsers
     }
+
+    // MARK: Internal
+
+    let conversation: ZMConversation
+    let typingUsers: Set<ZMUser>
 }

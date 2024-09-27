@@ -19,6 +19,18 @@
 import Foundation
 
 public final class FetchSupportedProtocolsAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        userID: QualifiedID,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.userID = userID
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = Set<MessageProtocol>
 
     public enum Failure: Error, Equatable {
@@ -32,14 +44,4 @@ public final class FetchSupportedProtocolsAction: EntityAction {
 
     public let userID: QualifiedID
     public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(
-        userID: QualifiedID,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.userID = userID
-        self.resultHandler = resultHandler
-    }
 }

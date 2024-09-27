@@ -19,6 +19,8 @@
 import Foundation
 
 struct ConversationCodeUpdateEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationCodeUpdateEvent {
@@ -47,17 +49,19 @@ struct ConversationCodeUpdateEventDecoder {
         )
     }
 
-    private struct Payload: Decodable {
-        let uri: String?
-        let key: String
-        let code: String
-        let hasPassword: Bool?
+    // MARK: Private
 
+    private struct Payload: Decodable {
         enum CodingKeys: String, CodingKey {
             case uri
             case key
             case code
             case hasPassword = "has_password"
         }
+
+        let uri: String?
+        let key: String
+        let code: String
+        let hasPassword: Bool?
     }
 }

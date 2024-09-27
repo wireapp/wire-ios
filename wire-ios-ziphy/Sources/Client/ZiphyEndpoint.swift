@@ -26,6 +26,12 @@ enum ZiphyEndpoint: String {
     case trending
     case gifs
 
+    // MARK: Internal
+
+    static var version: String {
+        "v1"
+    }
+
     var resourcePath: String {
         switch self {
         case .gifs:
@@ -35,11 +41,9 @@ enum ZiphyEndpoint: String {
         }
     }
 
+    // MARK: Private
+
     private var gifsEndpoint: String {
         "/gifs"
-    }
-
-    static var version: String {
-        "v1"
     }
 }

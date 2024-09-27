@@ -21,7 +21,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class GetMLSFeatureUseCaseTests: XCTestCase {
-    private var mockRepository: MockFeatureRepositoryInterface!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -51,6 +51,10 @@ final class GetMLSFeatureUseCaseTests: XCTestCase {
         // then
         XCTAssertEqual(feature.status, .enabled)
     }
+
+    // MARK: Private
+
+    private var mockRepository: MockFeatureRepositoryInterface!
 
     // MARK: Helper
 

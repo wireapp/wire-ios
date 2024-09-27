@@ -39,6 +39,20 @@ extension NSManagedObjectContext {
 // MARK: - SearchUserSnapshot
 
 public class SearchUserSnapshot {
+    // MARK: Lifecycle
+
+    public init(searchUser: ZMSearchUser, managedObjectContext: NSManagedObjectContext) {
+        self.searchUser = searchUser
+        self.snapshotValues = SearchUserSnapshot.createSnapshots(searchUser: searchUser)
+        self.managedObjectContext = managedObjectContext
+    }
+
+    // MARK: Public
+
+    public private(set) var snapshotValues: [String: NSObject?]
+
+    // MARK: Internal
+
     /// Keys that we want to be notified for
     static let observableKeys: [String] = [
         #keyPath(ZMSearchUser.name),
@@ -50,16 +64,8 @@ public class SearchUserSnapshot {
     ]
 
     weak var searchUser: ZMSearchUser?
-    public private(set) var snapshotValues: [String: NSObject?]
-
     /// The managed object context used for notifications
     weak var managedObjectContext: NSManagedObjectContext?
-
-    public init(searchUser: ZMSearchUser, managedObjectContext: NSManagedObjectContext) {
-        self.searchUser = searchUser
-        self.snapshotValues = SearchUserSnapshot.createSnapshots(searchUser: searchUser)
-        self.managedObjectContext = managedObjectContext
-    }
 
     /// Creates a snapshot values for the observableKeys keys and stores them
     static func createSnapshots(searchUser: ZMSearchUser) -> [String: NSObject?] {
@@ -108,14 +114,13 @@ public class SearchUserSnapshot {
 
 @objcMembers
 public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
-    /// Map of searchUser remoteID to snapshot
-    var snapshots: [UUID: SearchUserSnapshot] = [:]
-
-    weak var managedObjectContext: NSManagedObjectContext?
+    // MARK: Lifecycle
 
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
     }
+
+    // MARK: Public
 
     /// Adds a snapshots for the specified searchUser if not already present
     public func addSearchUser(_ searchUser: ZMSearchUser) {
@@ -159,6 +164,30 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
         userChanges.forEach { usersDidChange(info: $0) }
     }
 
+    /// Updates the snapshot of the given searchUser
+    public func notifyUpdatedSearchUser(_ searchUser: ZMSearchUser) {
+        guard let remoteID = searchUser.remoteIdentifier,
+              let snapshot = snapshots[remoteID]
+        else { return }
+
+        snapshot.updateAndNotify()
+    }
+
+    public func stopObserving() {
+        // do nothing
+    }
+
+    public func startObserving() {
+        // do nothing
+    }
+
+    // MARK: Internal
+
+    /// Map of searchUser remoteID to snapshot
+    var snapshots: [UUID: SearchUserSnapshot] = [:]
+
+    weak var managedObjectContext: NSManagedObjectContext?
+
     /// Matches the userChangeInfo with the searchUser snapshots and updates those if needed
     func usersDidChange(info: UserChangeInfo) {
         guard !snapshots.isEmpty else { return }
@@ -186,22 +215,5 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
             return
         }
         snapshot.updateAndNotify()
-    }
-
-    /// Updates the snapshot of the given searchUser
-    public func notifyUpdatedSearchUser(_ searchUser: ZMSearchUser) {
-        guard let remoteID = searchUser.remoteIdentifier,
-              let snapshot = snapshots[remoteID]
-        else { return }
-
-        snapshot.updateAndNotify()
-    }
-
-    public func stopObserving() {
-        // do nothing
-    }
-
-    public func startObserving() {
-        // do nothing
     }
 }

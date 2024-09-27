@@ -26,16 +26,14 @@ import XCTest
 // MARK: - ConversationLabelsRepositoryTests
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
+    // MARK: Internal
+
     var sut: ConversationLabelsRepository!
     var userPropertiesAPI: MockUserPropertiesAPI!
 
     var stack: CoreDataStack!
     var coreDataStackHelper: CoreDataStackHelper!
     let modelHelper = ModelHelper()
-
-    private var conversation1: ZMConversation!
-    private var conversation2: ZMConversation!
-    private var conversation3: ZMConversation!
 
     var context: NSManagedObjectContext {
         stack.syncContext
@@ -266,6 +264,12 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             expected.forEach { XCTAssert(labelNames.contains($0)) }
         }
     }
+
+    // MARK: Private
+
+    private var conversation1: ZMConversation!
+    private var conversation2: ZMConversation!
+    private var conversation3: ZMConversation!
 }
 
 extension ConversationLabelsRepositoryTests {

@@ -20,6 +20,8 @@ import SwiftUI
 import WireUtilities
 
 struct DeveloperE2eiView: View {
+    // MARK: Internal
+
     @StateObject var viewModel: DeveloperE2eiViewModel
 
     var body: some View {
@@ -83,6 +85,8 @@ struct DeveloperE2eiView: View {
             }
         }
     }
+
+    // MARK: Private
 
     private func toggleRow(
         title: String,

@@ -20,6 +20,8 @@ import XCTest
 @testable import WireSyncEngine
 
 class SignatureRequestStrategyTests: MessagingTest {
+    // MARK: Internal
+
     var sut: SignatureRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var asset: WireProtos.Asset?
@@ -184,6 +186,8 @@ class SignatureRequestStrategyTests: MessagingTest {
             XCTAssertEqual(syncMOC.signatureStatus?.state, .signatureInvalid)
         }
     }
+
+    // MARK: Private
 
     private func randomAsset() -> WireProtos.Asset? {
         let imageMetaData = WireProtos.Asset.ImageMetaData(width: 30, height: 40)

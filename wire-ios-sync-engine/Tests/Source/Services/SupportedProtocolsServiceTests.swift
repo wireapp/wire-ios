@@ -25,17 +25,7 @@ import XCTest
 // MARK: - SupportedProtocolsServiceTests
 
 final class SupportedProtocolsServiceTests: XCTestCase {
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var mockCoreDataStack: CoreDataStack!
-
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var mockSelfUserProvider: MockSelfUserProviderProtocol!
-
-    private var sut: SupportedProtocolsService!
-
-    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
-
-    // MARK: - Life cycle
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -62,109 +52,6 @@ final class SupportedProtocolsServiceTests: XCTestCase {
         coreDataStackHelper = nil
 
         try await super.tearDown()
-    }
-
-    // MARK: - Mock
-
-    private func mock(allActiveMLSClients: Bool) throws {
-        let selfUser = createSelfUser(in: syncContext)
-        mockSelfUserProvider.fetchSelfUser_MockValue = selfUser
-
-        let selfClient = createSelfClient(in: syncContext)
-        selfClient.lastActiveDate = Date(timeIntervalSinceNow: -.oneDay)
-        selfClient.mlsPublicKeys = randomMLSPublicKeys()
-
-        let otherClient = createClient(for: selfUser, in: syncContext)
-        let validLastActiveDate = Date(timeIntervalSinceNow: -.oneHour)
-        let invalidLastActiveDate = Date(timeIntervalSinceNow: -.fourWeeks - .oneHour)
-        let validMLSPublicKeys = randomMLSPublicKeys()
-        let invalidMLSPublicKeys = UserClient.MLSPublicKeys(ed25519: nil)
-
-        if allActiveMLSClients {
-            otherClient.lastActiveDate = validLastActiveDate
-            otherClient.mlsPublicKeys = validMLSPublicKeys
-        } else {
-            // Randomize the fields that make a client not an active mls client.
-            otherClient.lastActiveDate = Bool.random() ? validLastActiveDate : invalidLastActiveDate
-            otherClient.mlsPublicKeys = Bool.random() ? validMLSPublicKeys : invalidMLSPublicKeys
-
-            // But make sure we do have an invalid client.
-            if otherClient.lastActiveDate == validLastActiveDate, otherClient.mlsPublicKeys == validMLSPublicKeys {
-                otherClient.lastActiveDate = invalidLastActiveDate
-            }
-        }
-    }
-
-    private func randomMLSPublicKeys() -> UserClient.MLSPublicKeys {
-        UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
-    }
-
-    private func mock(remoteSupportedProtocols: Set<Feature.MLS.Config.MessageProtocol>) {
-        mockFeatureRepository.fetchMLS_MockValue = .init(
-            status: .enabled,
-            config: Feature.MLS.Config(supportedProtocols: remoteSupportedProtocols)
-        )
-    }
-
-    private func mock(migrationState: MigrationState) {
-        switch migrationState {
-        case .disabled:
-            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
-                status: .disabled,
-                config: .init()
-            )
-
-        case .notStarted:
-            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
-                status: .enabled,
-                config: .init(
-                    startTime: Date(timeIntervalSinceNow: .oneDay),
-                    finaliseRegardlessAfter: Date(timeIntervalSinceNow: .fourWeeks)
-                )
-            )
-
-        case .ongoing:
-            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
-                status: .enabled,
-                config: .init(
-                    startTime: Date(timeIntervalSinceNow: -.oneDay),
-                    finaliseRegardlessAfter: Date(timeIntervalSinceNow: .fourWeeks)
-                )
-            )
-
-        case .finalised:
-            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
-                status: .enabled,
-                config: .init(
-                    startTime: Date(timeIntervalSinceNow: -.fourWeeks),
-                    finaliseRegardlessAfter: Date(timeIntervalSinceNow: -.oneDay)
-                )
-            )
-        }
-    }
-
-    private func createSelfUser(in context: NSManagedObjectContext) -> ZMUser {
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = UUID()
-
-        return selfUser
-    }
-
-    private func createClient(for user: ZMUser, in context: NSManagedObjectContext) -> UserClient {
-        let client = UserClient.insertNewObject(in: context)
-        client.user = user
-        client.remoteIdentifier = UUID().uuidString
-
-        return client
-    }
-
-    private func createSelfClient(in context: NSManagedObjectContext) -> UserClient {
-        let selfUser = createSelfUser(in: context)
-        let client = createClient(for: selfUser, in: context)
-
-        context.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
-
-        return client
     }
 
     // MARK: - Tests
@@ -293,6 +180,121 @@ final class SupportedProtocolsServiceTests: XCTestCase {
             mock(migrationState: .finalised)
             XCTAssertEqual(sut.calculateSupportedProtocols(), [.mls])
         }
+    }
+
+    // MARK: Private
+
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var mockCoreDataStack: CoreDataStack!
+
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockSelfUserProvider: MockSelfUserProviderProtocol!
+
+    private var sut: SupportedProtocolsService!
+
+    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
+
+    // MARK: - Mock
+
+    private func mock(allActiveMLSClients: Bool) throws {
+        let selfUser = createSelfUser(in: syncContext)
+        mockSelfUserProvider.fetchSelfUser_MockValue = selfUser
+
+        let selfClient = createSelfClient(in: syncContext)
+        selfClient.lastActiveDate = Date(timeIntervalSinceNow: -.oneDay)
+        selfClient.mlsPublicKeys = randomMLSPublicKeys()
+
+        let otherClient = createClient(for: selfUser, in: syncContext)
+        let validLastActiveDate = Date(timeIntervalSinceNow: -.oneHour)
+        let invalidLastActiveDate = Date(timeIntervalSinceNow: -.fourWeeks - .oneHour)
+        let validMLSPublicKeys = randomMLSPublicKeys()
+        let invalidMLSPublicKeys = UserClient.MLSPublicKeys(ed25519: nil)
+
+        if allActiveMLSClients {
+            otherClient.lastActiveDate = validLastActiveDate
+            otherClient.mlsPublicKeys = validMLSPublicKeys
+        } else {
+            // Randomize the fields that make a client not an active mls client.
+            otherClient.lastActiveDate = Bool.random() ? validLastActiveDate : invalidLastActiveDate
+            otherClient.mlsPublicKeys = Bool.random() ? validMLSPublicKeys : invalidMLSPublicKeys
+
+            // But make sure we do have an invalid client.
+            if otherClient.lastActiveDate == validLastActiveDate, otherClient.mlsPublicKeys == validMLSPublicKeys {
+                otherClient.lastActiveDate = invalidLastActiveDate
+            }
+        }
+    }
+
+    private func randomMLSPublicKeys() -> UserClient.MLSPublicKeys {
+        UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
+    }
+
+    private func mock(remoteSupportedProtocols: Set<Feature.MLS.Config.MessageProtocol>) {
+        mockFeatureRepository.fetchMLS_MockValue = .init(
+            status: .enabled,
+            config: Feature.MLS.Config(supportedProtocols: remoteSupportedProtocols)
+        )
+    }
+
+    private func mock(migrationState: MigrationState) {
+        switch migrationState {
+        case .disabled:
+            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+                status: .disabled,
+                config: .init()
+            )
+
+        case .notStarted:
+            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+                status: .enabled,
+                config: .init(
+                    startTime: Date(timeIntervalSinceNow: .oneDay),
+                    finaliseRegardlessAfter: Date(timeIntervalSinceNow: .fourWeeks)
+                )
+            )
+
+        case .ongoing:
+            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+                status: .enabled,
+                config: .init(
+                    startTime: Date(timeIntervalSinceNow: -.oneDay),
+                    finaliseRegardlessAfter: Date(timeIntervalSinceNow: .fourWeeks)
+                )
+            )
+
+        case .finalised:
+            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+                status: .enabled,
+                config: .init(
+                    startTime: Date(timeIntervalSinceNow: -.fourWeeks),
+                    finaliseRegardlessAfter: Date(timeIntervalSinceNow: -.oneDay)
+                )
+            )
+        }
+    }
+
+    private func createSelfUser(in context: NSManagedObjectContext) -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = UUID()
+
+        return selfUser
+    }
+
+    private func createClient(for user: ZMUser, in context: NSManagedObjectContext) -> UserClient {
+        let client = UserClient.insertNewObject(in: context)
+        client.user = user
+        client.remoteIdentifier = UUID().uuidString
+
+        return client
+    }
+
+    private func createSelfClient(in context: NSManagedObjectContext) -> UserClient {
+        let selfUser = createSelfUser(in: context)
+        let client = createClient(for: selfUser, in: context)
+
+        context.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
+
+        return client
     }
 }
 

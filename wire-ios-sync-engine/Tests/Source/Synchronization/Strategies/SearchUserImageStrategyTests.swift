@@ -20,12 +20,7 @@ import WireDataModel
 @testable import WireSyncEngine
 
 final class SearchUserImageStrategyTests: MessagingTest {
-    private let userRequestURL = "/users?ids="
-
-    private var sut: SearchUserImageStrategy!
-
-    private var mockApplicationStatus: MockApplicationStatus!
-    private var mockCache: SearchUsersCache!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -536,4 +531,13 @@ final class SearchUserImageStrategyTests: MessagingTest {
         XCTAssertTrue(note.imageMediumDataChanged)
         XCTAssertEqual(note.user as? ZMSearchUser, searchUser1)
     }
+
+    // MARK: Private
+
+    private let userRequestURL = "/users?ids="
+
+    private var sut: SearchUserImageStrategy!
+
+    private var mockApplicationStatus: MockApplicationStatus!
+    private var mockCache: SearchUsersCache!
 }

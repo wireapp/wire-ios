@@ -20,7 +20,7 @@ import UIKit
 import WireDesign
 
 final class DescriptionHeaderView: UIView {
-    let descriptionLabel = UILabel()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -47,4 +47,8 @@ final class DescriptionHeaderView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let descriptionLabel = UILabel()
 }

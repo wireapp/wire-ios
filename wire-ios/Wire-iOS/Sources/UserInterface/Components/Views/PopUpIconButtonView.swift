@@ -21,19 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 class PopUpIconButtonView: UIView {
-    var selectedIndex = 0
-
-    private let button: PopUpIconButton
-
-    // corner radii
-    private let smallRadius: CGFloat = 4.0
-    private let largeRadius: CGFloat = 10.0
-
-    private let lowerRect: CGRect
-    private let upperRect: CGRect
-    private let itemWidth: CGFloat
-
-    private let expandDirection: PopUpIconButtonExpandDirection
+    // MARK: Lifecycle
 
     init(withButton button: PopUpIconButton) {
         self.button = button
@@ -76,11 +64,9 @@ class PopUpIconButtonView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupView() {
-        // this makes the popup view the only interactable view
-        isUserInteractionEnabled = true
-        backgroundColor = UIColor.clear
-    }
+    // MARK: Internal
+
+    var selectedIndex = 0
 
     override func draw(_: CGRect) {
         guard let path = pathForOverlay(), let context = UIGraphicsGetCurrentContext() else { return }
@@ -126,6 +112,46 @@ class PopUpIconButtonView: UIView {
                 image.draw(in: imageRect)
             }
         }
+    }
+
+    func updateSelectionForPoint(_ point: CGPoint) {
+        switch expandDirection {
+        case .left:
+            let selection = button.itemIcons.enumerated()
+                .filter { _, icon in point.x < rectForItem(icon)!.maxX }
+                .map { index, _ in index }
+                .last ?? 0
+            selectedIndex = selection
+
+        case .right:
+            let selection = button.itemIcons.enumerated()
+                .filter { _, icon in point.x > rectForItem(icon)!.origin.x }
+                .map { index, _ in index }
+                .last ?? 0
+            selectedIndex = selection
+        }
+
+        setNeedsDisplay()
+    }
+
+    // MARK: Private
+
+    private let button: PopUpIconButton
+
+    // corner radii
+    private let smallRadius: CGFloat = 4.0
+    private let largeRadius: CGFloat = 10.0
+
+    private let lowerRect: CGRect
+    private let upperRect: CGRect
+    private let itemWidth: CGFloat
+
+    private let expandDirection: PopUpIconButtonExpandDirection
+
+    private func setupView() {
+        // this makes the popup view the only interactable view
+        isUserInteractionEnabled = true
+        backgroundColor = UIColor.clear
     }
 
     private func pathForOverlay() -> UIBezierPath? {
@@ -344,25 +370,5 @@ class PopUpIconButtonView: UIView {
         // offset origin for item number
         rect.origin.x += CGFloat(index) * itemWidth
         return rect
-    }
-
-    func updateSelectionForPoint(_ point: CGPoint) {
-        switch expandDirection {
-        case .left:
-            let selection = button.itemIcons.enumerated()
-                .filter { _, icon in point.x < rectForItem(icon)!.maxX }
-                .map { index, _ in index }
-                .last ?? 0
-            selectedIndex = selection
-
-        case .right:
-            let selection = button.itemIcons.enumerated()
-                .filter { _, icon in point.x > rectForItem(icon)!.origin.x }
-                .map { index, _ in index }
-                .last ?? 0
-            selectedIndex = selection
-        }
-
-        setNeedsDisplay()
     }
 }

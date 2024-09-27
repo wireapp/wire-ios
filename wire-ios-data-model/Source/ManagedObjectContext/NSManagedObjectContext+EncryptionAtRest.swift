@@ -63,6 +63,8 @@ extension NSManagedObjectContext {
         case missingDatabaseKey
         case failedToMigrateInstances(type: ZMManagedObject.Type, reason: String)
 
+        // MARK: Internal
+
         var errorDescription: String? {
             switch self {
             case .missingDatabaseKey:
@@ -195,6 +197,8 @@ extension NSManagedObjectContext {
         case missingDatabaseKey
         case missingContextData
         case cryptobox(error: ChaCha20Poly1305.AEADEncryption.EncryptionError)
+
+        // MARK: Internal
 
         var errorDescription: String? {
             switch self {

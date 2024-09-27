@@ -19,8 +19,12 @@
 // MARK: - TeamListPayload
 
 struct TeamListPayload: Decodable {
+    // MARK: Internal
+
     let hasMore: Bool
     let teams: [TeamPayload]
+
+    // MARK: Private
 
     private enum CodingKeys: String, CodingKey {
         case hasMore = "has_more"
@@ -31,12 +35,16 @@ struct TeamListPayload: Decodable {
 // MARK: - TeamPayload
 
 struct TeamPayload: Decodable {
+    // MARK: Internal
+
     let identifier: UUID
     let name: String
     let creator: UUID
     let binding: Bool
     let icon: String
     let iconKey: String?
+
+    // MARK: Private
 
     private enum CodingKeys: String, CodingKey {
         case identifier = "id"
@@ -90,10 +98,7 @@ extension Team {
 
 public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMEventConsumer,
     ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
-    private(set) var downstreamSync: ZMDownstreamObjectSync!
-    private(set) var slowSync: ZMSingleRequestSync!
-
-    fileprivate unowned var syncStatus: SyncStatus
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -116,6 +121,12 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         )
     }
 
+    // MARK: Public
+
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        [downstreamSync]
+    }
+
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if isSyncing {
             slowSync.readyForNextRequestIfNotBusy()
@@ -125,79 +136,10 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         }
     }
 
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [downstreamSync]
-    }
-
-    fileprivate var expectedSyncPhase: SyncPhase {
-        .fetchingTeams
-    }
-
-    fileprivate var isSyncing: Bool {
-        syncStatus.currentSyncPhase == expectedSyncPhase
-    }
-
     // MARK: - ZMEventConsumer
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         events.forEach(process)
-    }
-
-    private func process(_ event: ZMUpdateEvent) {
-        switch event.type {
-        case .teamCreate: createTeam(with: event)
-        case .teamDelete: deleteTeam(with: event)
-        case .teamMemberLeave: processRemovedMember(with: event)
-        case .teamMemberUpdate: processUpdatedMember(with: event)
-        default: break
-        }
-    }
-
-    private func createTeam(with event: ZMUpdateEvent) {
-        // With the new multi-account model this event should not be sent anymore,
-        // and if it is we should not act on it.
-        // An account will either have a team since registration or not,
-        // currently there is no way to get added to a team after registering.
-    }
-
-    private func deleteTeam(with event: ZMUpdateEvent) {
-        deleteAccount()
-    }
-
-    private func processRemovedMember(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let team = Team.fetch(with: identifier, in: managedObjectContext) else { return }
-        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String)
-            .flatMap(UUID.init(transportString:)) else { return }
-        guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else { return }
-        if let member = user.membership {
-            if user.isSelfUser {
-                deleteAccount()
-            } else {
-                user.markAccountAsDeleted(at: event.timestamp ?? Date())
-            }
-            managedObjectContext.delete(member)
-        } else {
-            log.error("Trying to delete non existent membership of \(user) in \(team)")
-        }
-    }
-
-    private func processUpdatedMember(with event: ZMUpdateEvent) {
-        guard event.teamId != nil, let data = event.dataPayload else { return }
-        guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:))
-        else { return }
-        guard let member = Member.fetch(with: userId, in: managedObjectContext) else { return }
-        member.needsToBeUpdatedFromBackend = true
-    }
-
-    private func deleteTeamAndConversations(_ team: Team) {
-        team.conversations.forEach(managedObjectContext.delete)
-        managedObjectContext.delete(team)
-    }
-
-    private func deleteAccount() {
-        let notification = AccountDeletedNotification(context: managedObjectContext)
-        notification.post(in: managedObjectContext.notificationContext)
     }
 
     // MARK: - ZMSingleRequestTranscoder
@@ -278,6 +220,82 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
         managedObjectContext.delete(team)
     }
+
+    // MARK: Internal
+
+    private(set) var downstreamSync: ZMDownstreamObjectSync!
+    private(set) var slowSync: ZMSingleRequestSync!
+
+    // MARK: Fileprivate
+
+    fileprivate unowned var syncStatus: SyncStatus
+
+    fileprivate var expectedSyncPhase: SyncPhase {
+        .fetchingTeams
+    }
+
+    fileprivate var isSyncing: Bool {
+        syncStatus.currentSyncPhase == expectedSyncPhase
+    }
+
+    // MARK: Private
+
+    private func process(_ event: ZMUpdateEvent) {
+        switch event.type {
+        case .teamCreate: createTeam(with: event)
+        case .teamDelete: deleteTeam(with: event)
+        case .teamMemberLeave: processRemovedMember(with: event)
+        case .teamMemberUpdate: processUpdatedMember(with: event)
+        default: break
+        }
+    }
+
+    private func createTeam(with event: ZMUpdateEvent) {
+        // With the new multi-account model this event should not be sent anymore,
+        // and if it is we should not act on it.
+        // An account will either have a team since registration or not,
+        // currently there is no way to get added to a team after registering.
+    }
+
+    private func deleteTeam(with event: ZMUpdateEvent) {
+        deleteAccount()
+    }
+
+    private func processRemovedMember(with event: ZMUpdateEvent) {
+        guard let identifier = event.teamId, let data = event.dataPayload else { return }
+        guard let team = Team.fetch(with: identifier, in: managedObjectContext) else { return }
+        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String)
+            .flatMap(UUID.init(transportString:)) else { return }
+        guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else { return }
+        if let member = user.membership {
+            if user.isSelfUser {
+                deleteAccount()
+            } else {
+                user.markAccountAsDeleted(at: event.timestamp ?? Date())
+            }
+            managedObjectContext.delete(member)
+        } else {
+            log.error("Trying to delete non existent membership of \(user) in \(team)")
+        }
+    }
+
+    private func processUpdatedMember(with event: ZMUpdateEvent) {
+        guard event.teamId != nil, let data = event.dataPayload else { return }
+        guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:))
+        else { return }
+        guard let member = Member.fetch(with: userId, in: managedObjectContext) else { return }
+        member.needsToBeUpdatedFromBackend = true
+    }
+
+    private func deleteTeamAndConversations(_ team: Team) {
+        team.conversations.forEach(managedObjectContext.delete)
+        managedObjectContext.delete(team)
+    }
+
+    private func deleteAccount() {
+        let notification = AccountDeletedNotification(context: managedObjectContext)
+        notification.post(in: managedObjectContext.notificationContext)
+    }
 }
 
 // MARK: - Event
@@ -304,9 +322,13 @@ private  enum TeamEventPayloadKey: String {
 // MARK: - TeamUpdateEventPayload
 
 struct TeamUpdateEventPayload: Decodable {
+    // MARK: Internal
+
     let name: String?
     let icon: String?
     let iconKey: String?
+
+    // MARK: Private
 
     private enum CodingKeys: String, CodingKey {
         case name

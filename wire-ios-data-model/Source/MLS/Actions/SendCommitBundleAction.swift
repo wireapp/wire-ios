@@ -19,11 +19,7 @@
 import Foundation
 
 public final class SendCommitBundleAction: EntityAction {
-    public typealias Result = [ZMUpdateEvent]
-    public typealias Failure = SendMLSMessageAction.Failure
-
-    public var resultHandler: ResultHandler?
-    public var commitBundle: Data
+    // MARK: Lifecycle
 
     public init(
         commitBundle: Data,
@@ -32,4 +28,12 @@ public final class SendCommitBundleAction: EntityAction {
         self.commitBundle = commitBundle
         self.resultHandler = resultHandler
     }
+
+    // MARK: Public
+
+    public typealias Result = [ZMUpdateEvent]
+    public typealias Failure = SendMLSMessageAction.Failure
+
+    public var resultHandler: ResultHandler?
+    public var commitBundle: Data
 }

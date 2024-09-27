@@ -22,6 +22,26 @@ import WireDataModel
 import WireDesign
 
 final class ConversationDegradedSystemMessageSectionDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init() {
+        let title = NSAttributedString(
+            string: L10n.Localizable.Content.System.Mls.conversationIsDegraded,
+            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
+        )
+
+        self.configuration = View.Configuration(
+            icon: .init(resource: .certificateExpired),
+            attributedText: title,
+            showLine: true
+        )
+
+        self.accessibilityLabel = title.string
+        self.actionController = nil
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationSystemMessageCell
     typealias LabelColors = SemanticColors.Label
 
@@ -40,20 +60,4 @@ final class ConversationDegradedSystemMessageSectionDescription: ConversationMes
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
-
-    init() {
-        let title = NSAttributedString(
-            string: L10n.Localizable.Content.System.Mls.conversationIsDegraded,
-            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
-        )
-
-        self.configuration = View.Configuration(
-            icon: .init(resource: .certificateExpired),
-            attributedText: title,
-            showLine: true
-        )
-
-        self.accessibilityLabel = title.string
-        self.actionController = nil
-    }
 }

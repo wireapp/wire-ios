@@ -20,8 +20,7 @@ import Foundation
 
 @objcMembers
 public class Blacklist: NSObject {
-    public let minVersion: String
-    public let excludedVersions: [String]
+    // MARK: Lifecycle
 
     public init?(json: [AnyHashable: Any]) {
         guard let minVersion = json["min_version"] as? String,
@@ -31,4 +30,9 @@ public class Blacklist: NSObject {
         self.minVersion = minVersion
         self.excludedVersions = excludedVersions
     }
+
+    // MARK: Public
+
+    public let minVersion: String
+    public let excludedVersions: [String]
 }

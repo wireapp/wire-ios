@@ -42,6 +42,8 @@ enum ProfileAction: Equatable {
     case duplicateUser
     case duplicateTeam
 
+    // MARK: Internal
+
     /// The text of the button for this action.
     var buttonText: String {
         switch self {
@@ -117,22 +119,7 @@ protocol ProfileActionsFactoryProtocol {
 /// of a conversation.
 
 final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
-    // MARK: - Environmemt
-
-    /// The user that is displayed in the profile details.
-    let user: UserType
-
-    /// The user that wants to perform the actions.
-    let viewer: UserType
-
-    /// The conversation that the user wants to perform the actions in.
-    let conversation: ZMConversation?
-
-    /// The context of the Profile VC
-    let context: ProfileViewControllerContext
-
-    /// The user session, providing use cases
-    let userSession: UserSession
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -156,6 +143,25 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         self.userSession = userSession
     }
 
+    // MARK: Internal
+
+    // MARK: - Environmemt
+
+    /// The user that is displayed in the profile details.
+    let user: UserType
+
+    /// The user that wants to perform the actions.
+    let viewer: UserType
+
+    /// The conversation that the user wants to perform the actions in.
+    let conversation: ZMConversation?
+
+    /// The context of the Profile VC
+    let context: ProfileViewControllerContext
+
+    /// The user session, providing use cases
+    let userSession: UserSession
+
     // MARK: - Calculating the Actions
 
     /// Calculates the list of actions to display to the user.
@@ -175,6 +181,8 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
             }
         }
     }
+
+    // MARK: Private
 
     private func isOneOnOneReady(userID: QualifiedID) async -> Bool {
         do {

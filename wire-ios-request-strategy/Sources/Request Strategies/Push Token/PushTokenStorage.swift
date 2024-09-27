@@ -19,11 +19,7 @@
 import Foundation
 
 public enum PushTokenStorage {
-    private enum Keys: String {
-        case pushToken = "PushToken"
-    }
-
-    static var storage: UserDefaults = .standard
+    // MARK: Public
 
     public static var pushToken: PushToken? {
         get {
@@ -40,5 +36,15 @@ public enum PushTokenStorage {
             }
             storage.set(data, forKey: Keys.pushToken.rawValue)
         }
+    }
+
+    // MARK: Internal
+
+    static var storage: UserDefaults = .standard
+
+    // MARK: Private
+
+    private enum Keys: String {
+        case pushToken = "PushToken"
     }
 }

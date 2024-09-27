@@ -22,19 +22,7 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class ProfileViewControllerViewModelTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: ProfileViewControllerViewModel!
-    private var mockProfileActionsFactory: MockProfileActionsFactoryProtocol!
-    private var mockViewModelDelegate: MockProfileViewControllerViewModelDelegate!
-    private var mockUserSession: UserSessionMock!
-    private var mockCoreDataStack: CoreDataStack!
-    private var user: MockUserType!
-    private var oneToOneConversation: ZMConversation!
-
-    private var viewContext: NSManagedObjectContext {
-        mockCoreDataStack.viewContext
-    }
+    // MARK: Internal
 
     // MARK: - Setup & teardown
 
@@ -187,5 +175,21 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         // Then
         await fulfillment(of: [expectation], timeout: 0.5)
         XCTAssertEqual(mockViewModelDelegate.updateFooterActionsViews_Invocations.first, [.openOneToOne])
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ProfileViewControllerViewModel!
+    private var mockProfileActionsFactory: MockProfileActionsFactoryProtocol!
+    private var mockViewModelDelegate: MockProfileViewControllerViewModelDelegate!
+    private var mockUserSession: UserSessionMock!
+    private var mockCoreDataStack: CoreDataStack!
+    private var user: MockUserType!
+    private var oneToOneConversation: ZMConversation!
+
+    private var viewContext: NSManagedObjectContext {
+        mockCoreDataStack.viewContext
     }
 }

@@ -28,11 +28,7 @@ enum IncomingConnectionAction: UInt {
 // MARK: - IncomingConnectionViewController
 
 final class IncomingConnectionViewController: UIViewController {
-    fileprivate var connectionView: IncomingConnectionView!
-
-    let userSession: ZMUserSession?
-    let user: UserType
-    var onAction: ((IncomingConnectionAction) -> Void)?
+    // MARK: Lifecycle
 
     init(userSession: ZMUserSession?, user: UserType) {
         self.userSession = userSession
@@ -48,6 +44,12 @@ final class IncomingConnectionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let userSession: ZMUserSession?
+    let user: UserType
+    var onAction: ((IncomingConnectionAction) -> Void)?
+
     override func loadView() {
         connectionView = IncomingConnectionView(user: user)
         connectionView.onAccept = { [weak self] _ in
@@ -61,15 +63,16 @@ final class IncomingConnectionViewController: UIViewController {
 
         view = connectionView
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var connectionView: IncomingConnectionView!
 }
 
 // MARK: - UserConnectionViewController
 
 final class UserConnectionViewController: UIViewController {
-    fileprivate var userConnectionView: UserConnectionView!
-
-    let userSession: ZMUserSession
-    let user: ZMUser
+    // MARK: Lifecycle
 
     init(userSession: ZMUserSession, user: ZMUser) {
         self.userSession = userSession
@@ -85,8 +88,17 @@ final class UserConnectionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let userSession: ZMUserSession
+    let user: ZMUser
+
     override func loadView() {
         userConnectionView = UserConnectionView(user: user)
         view = userConnectionView
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var userConnectionView: UserConnectionView!
 }

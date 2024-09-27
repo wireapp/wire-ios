@@ -44,33 +44,41 @@ public enum UpdateConnectionError: Error {
 // MARK: - ConnectToUserAction
 
 public struct ConnectToUserAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(userID: UUID, domain: String?) {
+        self.userID = userID
+        self.domain = domain
+    }
+
+    // MARK: Public
+
     public typealias Result = Void
     public typealias Failure = ConnectToUserError
 
     public var resultHandler: ResultHandler?
     public let userID: UUID
     public let domain: String?
-
-    public init(userID: UUID, domain: String?) {
-        self.userID = userID
-        self.domain = domain
-    }
 }
 
 // MARK: - UpdateConnectionAction
 
 public struct UpdateConnectionAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(connection: ZMConnection, newStatus: ZMConnectionStatus) {
+        self.connectionID = connection.objectID
+        self.newStatus = newStatus
+    }
+
+    // MARK: Public
+
     public typealias Result = Void
     public typealias Failure = UpdateConnectionError
 
     public var resultHandler: ResultHandler?
     public let connectionID: NSManagedObjectID
     public let newStatus: ZMConnectionStatus
-
-    public init(connection: ZMConnection, newStatus: ZMConnectionStatus) {
-        self.connectionID = connection.objectID
-        self.newStatus = newStatus
-    }
 }
 
 extension ZMUser {

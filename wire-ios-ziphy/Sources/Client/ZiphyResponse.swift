@@ -40,11 +40,11 @@ struct ZiphyPaginatedResponse<Object>: Codable where Object: Codable {
 /// Pagination information for a JSON response.
 
 struct ZiphyPagination: Codable {
-    let count: Int
-    let totalCount: Int
-    let offset: Int
-
     enum CodingKeys: String, CodingKey {
         case count, offset, totalCount = "total_count"
     }
+
+    let count: Int
+    let totalCount: Int
+    let offset: Int
 }

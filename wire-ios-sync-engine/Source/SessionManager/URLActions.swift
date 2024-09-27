@@ -45,6 +45,8 @@ public enum URLAction: Equatable {
     /// Switch to a custom backend
     case accessBackend(configurationURL: URL)
 
+    // MARK: Public
+
     public var causesLogout: Bool {
         switch self {
         case .startCompanyLogin: true

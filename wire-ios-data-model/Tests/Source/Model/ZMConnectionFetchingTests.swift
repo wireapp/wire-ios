@@ -19,7 +19,7 @@
 import XCTest
 
 class ZMConnectionFetchingTests: DatabaseBaseTest {
-    var mocs: CoreDataStack!
+    // MARK: Public
 
     override public func setUp() {
         super.setUp()
@@ -31,6 +31,10 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
         mocs = nil
         super.tearDown()
     }
+
+    // MARK: Internal
+
+    var mocs: CoreDataStack!
 
     // MARK: - Fetch using remote identifier
 

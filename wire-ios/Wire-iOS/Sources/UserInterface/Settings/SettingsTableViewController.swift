@@ -23,23 +23,7 @@ import WireSyncEngine
 // MARK: - SettingsBaseTableViewController
 
 class SettingsBaseTableViewController: UIViewController {
-    var tableView: UITableView
-    let topSeparator = OverflowSeparatorView()
-    let footerSeparator = OverflowSeparatorView()
-    private let footerContainer = UIView()
-
-    fileprivate final class IntrinsicSizeTableView: UITableView {
-        override var contentSize: CGSize {
-            didSet {
-                invalidateIntrinsicContentSize()
-            }
-        }
-
-        override var intrinsicContentSize: CGSize {
-            layoutIfNeeded()
-            return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
-        }
-    }
+    // MARK: Lifecycle
 
     init(style: UITableView.Style) {
         self.tableView = IntrinsicSizeTableView(frame: .zero, style: style)
@@ -56,6 +40,12 @@ class SettingsBaseTableViewController: UIViewController {
         fatalError()
     }
 
+    // MARK: Internal
+
+    var tableView: UITableView
+    let topSeparator = OverflowSeparatorView()
+    let footerSeparator = OverflowSeparatorView()
+
     override func viewDidLoad() {
         createTableView()
         view.addSubview(topSeparator)
@@ -68,6 +58,25 @@ class SettingsBaseTableViewController: UIViewController {
         super.viewDidAppear(animated)
         tableView.reloadData()
     }
+
+    // MARK: Fileprivate
+
+    fileprivate final class IntrinsicSizeTableView: UITableView {
+        override var contentSize: CGSize {
+            didSet {
+                invalidateIntrinsicContentSize()
+            }
+        }
+
+        override var intrinsicContentSize: CGSize {
+            layoutIfNeeded()
+            return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
+        }
+    }
+
+    // MARK: Private
+
+    private let footerContainer = UIView()
 
     private func createTableView() {
         tableView.delegate = self
@@ -140,15 +149,7 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
 // MARK: - SettingsTableViewController
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
-    let group: SettingsInternalGroupCellDescriptorType
-    fileprivate var sections: [SettingsSectionDescriptorType]
-    fileprivate var selfUserObserver: NSObjectProtocol!
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupNavigationBarTitle(group.title)
-        setupNavigationBar()
-    }
+    // MARK: Lifecycle
 
     required init(group: SettingsInternalGroupCellDescriptorType) {
         self.group = group
@@ -186,39 +187,19 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         fatalError()
     }
 
+    // MARK: Internal
+
+    let group: SettingsInternalGroupCellDescriptorType
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(group.title)
+        setupNavigationBar()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
-    }
-
-    private func setupTableView() {
-        let allCellTypes: [SettingsTableCellProtocol.Type] = [
-            SettingsTableCell.self,
-            SettingsButtonCell.self,
-            SettingsToggleCell.self,
-            SettingsValueCell.self,
-            SettingsTextCell.self,
-            SettingsStaticTextTableCell.self,
-            SettingsLinkTableCell.self,
-            IconActionCell.self,
-            SettingsProfileLinkCell.self,
-            SettingsAppearanceCell.self,
-        ]
-
-        for aClass in allCellTypes {
-            tableView.register(aClass, forCellReuseIdentifier: aClass.reuseIdentifier)
-        }
-    }
-
-    private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Accessibility.Settings.CloseButton.description)
-        setupAccessibility()
-    }
-
-    private func setupAccessibility() {
-        navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 
     func refreshData() {
@@ -312,6 +293,43 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         if let headerFooterView = view as? UITableViewHeaderFooterView {
             headerFooterView.textLabel?.textColor = SemanticColors.Label.textSectionFooter
         }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var sections: [SettingsSectionDescriptorType]
+    fileprivate var selfUserObserver: NSObjectProtocol!
+
+    // MARK: Private
+
+    private func setupTableView() {
+        let allCellTypes: [SettingsTableCellProtocol.Type] = [
+            SettingsTableCell.self,
+            SettingsButtonCell.self,
+            SettingsToggleCell.self,
+            SettingsValueCell.self,
+            SettingsTextCell.self,
+            SettingsStaticTextTableCell.self,
+            SettingsLinkTableCell.self,
+            IconActionCell.self,
+            SettingsProfileLinkCell.self,
+            SettingsAppearanceCell.self,
+        ]
+
+        for aClass in allCellTypes {
+            tableView.register(aClass, forCellReuseIdentifier: aClass.reuseIdentifier)
+        }
+    }
+
+    private func setupNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.Settings.CloseButton.description)
+        setupAccessibility()
+    }
+
+    private func setupAccessibility() {
+        navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 }
 

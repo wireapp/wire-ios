@@ -38,11 +38,12 @@ enum CanvasViewControllerEditMode: UInt {
 // MARK: - CanvasViewController
 
 final class CanvasViewController: UIViewController, UINavigationControllerDelegate {
+    // MARK: Internal
+
     // MARK: - Properties
 
     weak var delegate: CanvasViewControllerDelegate?
     var canvas = Canvas()
-    private lazy var toolbar = SketchToolbar(buttons: [photoButton, drawButton, emojiButton, sendButton])
     let drawButton = NonLegacyIconButton()
     let emojiButton = NonLegacyIconButton()
     let sendButton = IconButton.sendButton()
@@ -51,6 +52,9 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     let hintLabel = UILabel()
     let hintImageView = UIImageView()
     var isEmojiKeyboardInTransition = false
+    let emojiKeyboardViewController = EmojiKeyboardViewController()
+    let colorPickerController = SketchColorPickerController()
+
     var sketchImage: UIImage? {
         didSet {
             if let image = sketchImage {
@@ -58,9 +62,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             }
         }
     }
-
-    let emojiKeyboardViewController = EmojiKeyboardViewController()
-    let colorPickerController = SketchColorPickerController()
 
     // MARK: - Override methods
 
@@ -183,48 +184,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         addChild(colorPickerController)
     }
 
-    // MARK: - Configure Constraints
-
-    private func createConstraints() {
-        guard let colorPicker = colorPickerController.view else { return }
-
-        [
-            canvas,
-            colorPicker,
-            toolbar,
-            separatorLine,
-            hintImageView,
-            hintLabel,
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        NSLayoutConstraint.activate([
-            colorPicker.topAnchor.constraint(equalTo: view.topAnchor),
-            colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor),
-            colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor),
-            colorPicker.heightAnchor.constraint(equalToConstant: 60),
-
-            separatorLine.topAnchor.constraint(equalTo: colorPicker.bottomAnchor),
-            separatorLine.leftAnchor.constraint(equalTo: colorPicker.leftAnchor),
-            separatorLine.rightAnchor.constraint(equalTo: colorPicker.rightAnchor),
-            separatorLine.heightAnchor.constraint(equalToConstant: .hairline),
-
-            canvas.topAnchor.constraint(equalTo: colorPicker.bottomAnchor),
-            canvas.leftAnchor.constraint(equalTo: view.leftAnchor),
-            canvas.rightAnchor.constraint(equalTo: view.rightAnchor),
-
-            toolbar.topAnchor.constraint(equalTo: canvas.bottomAnchor),
-            toolbar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            toolbar.leftAnchor.constraint(equalTo: view.leftAnchor),
-            toolbar.rightAnchor.constraint(equalTo: view.rightAnchor),
-
-            hintImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            hintImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            hintLabel.topAnchor.constraint(equalTo: colorPicker.bottomAnchor, constant: 16),
-            hintLabel.layoutMarginsGuide.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
-            hintLabel.layoutMarginsGuide.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-        ])
-    }
-
     func updateButtonSelection() {
         drawButton.isSelected = canvas.mode == .draw
         colorPickerController.view.isHidden = canvas.mode != .draw
@@ -278,6 +237,52 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             updateButtonSelection()
             showEmojiKeyboard(animated: animated)
         }
+    }
+
+    // MARK: Private
+
+    private lazy var toolbar = SketchToolbar(buttons: [photoButton, drawButton, emojiButton, sendButton])
+
+    // MARK: - Configure Constraints
+
+    private func createConstraints() {
+        guard let colorPicker = colorPickerController.view else { return }
+
+        [
+            canvas,
+            colorPicker,
+            toolbar,
+            separatorLine,
+            hintImageView,
+            hintLabel,
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        NSLayoutConstraint.activate([
+            colorPicker.topAnchor.constraint(equalTo: view.topAnchor),
+            colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor),
+            colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor),
+            colorPicker.heightAnchor.constraint(equalToConstant: 60),
+
+            separatorLine.topAnchor.constraint(equalTo: colorPicker.bottomAnchor),
+            separatorLine.leftAnchor.constraint(equalTo: colorPicker.leftAnchor),
+            separatorLine.rightAnchor.constraint(equalTo: colorPicker.rightAnchor),
+            separatorLine.heightAnchor.constraint(equalToConstant: .hairline),
+
+            canvas.topAnchor.constraint(equalTo: colorPicker.bottomAnchor),
+            canvas.leftAnchor.constraint(equalTo: view.leftAnchor),
+            canvas.rightAnchor.constraint(equalTo: view.rightAnchor),
+
+            toolbar.topAnchor.constraint(equalTo: canvas.bottomAnchor),
+            toolbar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            toolbar.leftAnchor.constraint(equalTo: view.leftAnchor),
+            toolbar.rightAnchor.constraint(equalTo: view.rightAnchor),
+
+            hintImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            hintImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            hintLabel.topAnchor.constraint(equalTo: colorPicker.bottomAnchor, constant: 16),
+            hintLabel.layoutMarginsGuide.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            hintLabel.layoutMarginsGuide.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
+        ])
     }
 }
 

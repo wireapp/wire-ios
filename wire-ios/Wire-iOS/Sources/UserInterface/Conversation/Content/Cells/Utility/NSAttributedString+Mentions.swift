@@ -24,15 +24,19 @@ private let log = ZMSLog(tag: "Mentions")
 // MARK: - TextMarker
 
 struct TextMarker<A> {
-    let replacementText: String
-    let token: String
-    let value: A
+    // MARK: Lifecycle
 
     init(_ value: A, replacementText: String) {
         self.value = value
         self.replacementText = replacementText
         self.token = UUID().transportString()
     }
+
+    // MARK: Internal
+
+    let replacementText: String
+    let token: String
+    let value: A
 }
 
 extension TextMarker {

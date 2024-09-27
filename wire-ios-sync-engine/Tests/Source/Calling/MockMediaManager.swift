@@ -20,21 +20,22 @@ import Foundation
 
 @objc
 class MockMediaManager: NSObject, MediaManagerType {
+    var didStartAudio = false
+    var didSetupAudioDevice = false
+    var didResetAudioDevice = false
+
     func setUiStartsAudio(_: Bool) {
         // no-op
     }
 
-    var didStartAudio = false
     func startAudio() {
         didStartAudio = true
     }
 
-    var didSetupAudioDevice = false
     func setupAudioDevice() {
         didSetupAudioDevice = true
     }
 
-    var didResetAudioDevice = false
     func resetAudioDevice() {
         didResetAudioDevice = true
     }

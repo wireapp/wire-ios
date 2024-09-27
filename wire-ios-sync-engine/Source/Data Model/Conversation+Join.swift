@@ -23,6 +23,8 @@ import Foundation
 public enum ConversationJoinError: Error {
     case unknown, tooManyMembers, invalidCode, noConversation, guestLinksDisabled, invalidConversationPassword
 
+    // MARK: Lifecycle
+
     init(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "too-many-members"?): self = .tooManyMembers
@@ -39,6 +41,8 @@ public enum ConversationJoinError: Error {
 
 public enum ConversationFetchError: Error {
     case unknown, noTeamMember, accessDenied, invalidCode, noConversation, guestLinksDisabled
+
+    // MARK: Lifecycle
 
     init(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {

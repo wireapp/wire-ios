@@ -46,9 +46,14 @@ public protocol NetworkQualityObserver: AnyObject {
 // MARK: - WireCallCenterNetworkQualityNotification
 
 struct WireCallCenterNetworkQualityNotification: SelfPostingNotification {
-    static let notificationName = Notification.Name("WireCallCenterNetworkQualityNotification")
+    // MARK: Public
+
     public let conversationId: AVSIdentifier
     public let networkQuality: NetworkQuality
+
+    // MARK: Internal
+
+    static let notificationName = Notification.Name("WireCallCenterNetworkQualityNotification")
 }
 
 // MARK: - ConstantBitRateAudioObserver
@@ -60,9 +65,13 @@ public protocol ConstantBitRateAudioObserver: AnyObject {
 // MARK: - WireCallCenterCBRNotification
 
 struct WireCallCenterCBRNotification: SelfPostingNotification {
-    static let notificationName = Notification.Name("WireCallCenterCBRNotification")
+    // MARK: Public
 
     public let enabled: Bool
+
+    // MARK: Internal
+
+    static let notificationName = Notification.Name("WireCallCenterCBRNotification")
 }
 
 // MARK: - MuteStateObserver
@@ -74,9 +83,13 @@ public protocol MuteStateObserver: AnyObject {
 // MARK: - WireCallCenterMutedNotification
 
 struct WireCallCenterMutedNotification: SelfPostingNotification {
-    static let notificationName = Notification.Name("WireCallCenterMutedNotification")
+    // MARK: Public
 
     public let muted: Bool
+
+    // MARK: Internal
+
+    static let notificationName = Notification.Name("WireCallCenterMutedNotification")
 }
 
 // MARK: - ConferenceCallingUnavailableObserver
@@ -197,18 +210,22 @@ public protocol VoiceGainObserver: AnyObject {
 // MARK: - VoiceGainNotification
 
 public class VoiceGainNotification: SelfPostingNotification {
-    static let notificationName = Notification.Name("VoiceGainNotification")
-    static let userInfoKey = notificationName.rawValue
-
-    let volume: Float
-    let userId: AVSIdentifier
-    let conversationId: AVSIdentifier
+    // MARK: Lifecycle
 
     init(volume: Float, conversationId: AVSIdentifier, userId: AVSIdentifier) {
         self.volume = volume
         self.conversationId = conversationId
         self.userId = userId
     }
+
+    // MARK: Internal
+
+    static let notificationName = Notification.Name("VoiceGainNotification")
+    static let userInfoKey = notificationName.rawValue
+
+    let volume: Float
+    let userId: AVSIdentifier
+    let conversationId: AVSIdentifier
 }
 
 extension WireCallCenterV3 {

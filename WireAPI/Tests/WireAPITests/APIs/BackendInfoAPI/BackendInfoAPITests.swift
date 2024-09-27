@@ -22,7 +22,7 @@ import XCTest
 @testable import WireAPISupport
 
 final class BackendInfoAPITests: XCTestCase {
-    private let snapshotter = HTTPRequestSnapshotHelper()
+    // MARK: Internal
 
     // MARK: - Request generation
 
@@ -101,4 +101,8 @@ final class BackendInfoAPITests: XCTestCase {
             )
         )
     }
+
+    // MARK: Private
+
+    private let snapshotter = HTTPRequestSnapshotHelper()
 }

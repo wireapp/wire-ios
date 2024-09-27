@@ -19,16 +19,7 @@
 import UIKit
 
 final class CallStatusViewController: UIViewController {
-    var configuration: CallStatusViewInputType {
-        didSet {
-            updateState()
-        }
-    }
-
-    private let stackView = UIStackView()
-    private let statusView: CallStatusView
-    private let securityLevelView = SecurityLevelView()
-    private weak var callDurationTimer: Timer?
+    // MARK: Lifecycle
 
     init(configuration: CallStatusViewInputType) {
         self.configuration = configuration
@@ -39,6 +30,18 @@ final class CallStatusViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        stopCallDurationTimer()
+    }
+
+    // MARK: Internal
+
+    var configuration: CallStatusViewInputType {
+        didSet {
+            updateState()
+        }
     }
 
     override func viewDidLoad() {
@@ -52,9 +55,12 @@ final class CallStatusViewController: UIViewController {
         updateState()
     }
 
-    deinit {
-        stopCallDurationTimer()
-    }
+    // MARK: Private
+
+    private let stackView = UIStackView()
+    private let statusView: CallStatusView
+    private let securityLevelView = SecurityLevelView()
+    private weak var callDurationTimer: Timer?
 
     private func setupViews() {
         [stackView, statusView, securityLevelView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }

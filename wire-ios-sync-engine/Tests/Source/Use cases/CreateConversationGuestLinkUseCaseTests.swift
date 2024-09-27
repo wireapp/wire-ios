@@ -22,19 +22,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
-    // MARK: - Properties
-
-    private let coreDataStackHelper = CoreDataStackHelper()
-    private var stack: CoreDataStack!
-    private let modelHelper = ModelHelper()
-    private var mockConversation: ZMConversation!
-    private var mockSelfUser: ZMUser!
-    private var sut: CreateConversationGuestLinkUseCaseProtocol!
-    private var setAllowGuestAndServicesUseCase: MockSetAllowGuestAndServicesUseCaseProtocol!
-
-    private var syncContext: NSManagedObjectContext {
-        stack.syncContext
-    }
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -64,21 +52,6 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         setAllowGuestAndServicesUseCase = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
-    }
-
-    // MARK: - Helper Method
-
-    private func configureRoleAndAccessForConversation(legacyAccessMode: Bool = false) {
-        let role = Role.insertNewObject(in: syncContext)
-        let action = Action.insertNewObject(in: syncContext)
-        action.name = "modify_conversation_access"
-        role.actions = [action]
-
-        if legacyAccessMode {
-            mockConversation.accessMode = [.invite]
-        }
-
-        mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
     }
 
     // MARK: - Unit Tests
@@ -164,5 +137,36 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
 
             wait(for: [expectation], timeout: 0.5)
         }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let coreDataStackHelper = CoreDataStackHelper()
+    private var stack: CoreDataStack!
+    private let modelHelper = ModelHelper()
+    private var mockConversation: ZMConversation!
+    private var mockSelfUser: ZMUser!
+    private var sut: CreateConversationGuestLinkUseCaseProtocol!
+    private var setAllowGuestAndServicesUseCase: MockSetAllowGuestAndServicesUseCaseProtocol!
+
+    private var syncContext: NSManagedObjectContext {
+        stack.syncContext
+    }
+
+    // MARK: - Helper Method
+
+    private func configureRoleAndAccessForConversation(legacyAccessMode: Bool = false) {
+        let role = Role.insertNewObject(in: syncContext)
+        let action = Action.insertNewObject(in: syncContext)
+        action.name = "modify_conversation_access"
+        role.actions = [action]
+
+        if legacyAccessMode {
+            mockConversation.accessMode = [.invite]
+        }
+
+        mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
     }
 }

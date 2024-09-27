@@ -31,6 +31,17 @@ extension ZMConversation {
 // MARK: - ServiceAddedEvent
 
 struct ServiceAddedEvent: Event {
+    // MARK: Lifecycle
+
+    init(service: ServiceUser, conversation: ZMConversation, context: Context) {
+        self.serviceIdentifier = service.serviceIdentifier ?? ""
+        self.conversationSize = conversation.otherNonServiceParticipants.count // Without service users
+        self.servicesSize = conversation.localParticipants.count - conversationSize
+        self.context = context
+    }
+
+    // MARK: Internal
+
     enum Keys {
         static let serviceID = "service_id"
         static let conversationSize = "conversation_size"
@@ -41,17 +52,6 @@ struct ServiceAddedEvent: Event {
     enum Context: String {
         case startUI = "start_ui"
         case conversationDetails = "conversation_details"
-    }
-
-    private let conversationSize, servicesSize: Int
-    private let serviceIdentifier: String
-    private let context: Context
-
-    init(service: ServiceUser, conversation: ZMConversation, context: Context) {
-        self.serviceIdentifier = service.serviceIdentifier ?? ""
-        self.conversationSize = conversation.otherNonServiceParticipants.count // Without service users
-        self.servicesSize = conversation.localParticipants.count - conversationSize
-        self.context = context
     }
 
     var name: String {
@@ -66,19 +66,27 @@ struct ServiceAddedEvent: Event {
             Keys.methods: context.rawValue,
         ]
     }
+
+    // MARK: Private
+
+    private let conversationSize, servicesSize: Int
+    private let serviceIdentifier: String
+    private let context: Context
 }
 
 // MARK: - ServiceRemovedEvent
 
 struct ServiceRemovedEvent: Event {
-    enum Keys {
-        static let serviceID = "service_id"
-    }
-
-    private let serviceIdentifier: String
+    // MARK: Lifecycle
 
     init(service: ServiceUser) {
         self.serviceIdentifier = service.serviceIdentifier ?? ""
+    }
+
+    // MARK: Internal
+
+    enum Keys {
+        static let serviceID = "service_id"
     }
 
     var name: String {
@@ -88,6 +96,10 @@ struct ServiceRemovedEvent: Event {
     var attributes: [AnyHashable: Any]? {
         [Keys.serviceID: serviceIdentifier]
     }
+
+    // MARK: Private
+
+    private let serviceIdentifier: String
 }
 
 extension Analytics {

@@ -20,21 +20,7 @@ import Foundation
 
 @objcMembers
 public class MockPushEvent: NSObject {
-    public let payload: ZMTransportData
-    public let uuid: UUID
-    public let timestamp = NSDate()
-    public let isTransient: Bool
-    public let isSilent: Bool
-
-    @objc(eventWithPayload:uuid:isTransient:isSilent:)
-    public static func event(
-        with payload: ZMTransportData,
-        uuid: UUID,
-        isTransient: Bool,
-        isSilent: Bool
-    ) -> MockPushEvent {
-        MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient, isSilent: isSilent)
-    }
+    // MARK: Lifecycle
 
     public init(with payload: ZMTransportData, uuid: UUID, isTransient: Bool = false, isSilent: Bool = false) {
         self.payload = payload
@@ -42,6 +28,14 @@ public class MockPushEvent: NSObject {
         self.isTransient = isTransient
         self.isSilent = isSilent
     }
+
+    // MARK: Public
+
+    public let payload: ZMTransportData
+    public let uuid: UUID
+    public let timestamp = NSDate()
+    public let isTransient: Bool
+    public let isSilent: Bool
 
     public var transportData: ZMTransportData {
         [
@@ -57,5 +51,15 @@ public class MockPushEvent: NSObject {
 
     override public var debugDescription: String {
         "<\(type(of: self))> [\(uuid.transportString())] payload = \(payload)"
+    }
+
+    @objc(eventWithPayload:uuid:isTransient:isSilent:)
+    public static func event(
+        with payload: ZMTransportData,
+        uuid: UUID,
+        isTransient: Bool,
+        isSilent: Bool
+    ) -> MockPushEvent {
+        MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient, isSilent: isSilent)
     }
 }

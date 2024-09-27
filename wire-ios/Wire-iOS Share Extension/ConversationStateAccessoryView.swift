@@ -22,9 +22,7 @@ import WireDesign
 import WireShareEngine
 
 final class ConversationStateAccessoryView: UIView {
-    private let contentStack = UIStackView()
-    private let legalHoldImageView = UIImageView()
-    private let verifiedImageView = UIImageView()
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -38,6 +36,34 @@ final class ConversationStateAccessoryView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Configuration
+
+    func prepareForReuse() {
+        legalHoldImageView.isHidden = true
+        verifiedImageView.isHidden = true
+        verifiedImageView.image = nil
+    }
+
+    func configure(for conversation: Conversation) {
+        legalHoldImageView.isHidden = !conversation.legalHoldStatus.denotesEnabledComplianceDevice
+
+        if let verificationImage = iconForVerificationLevel(in: conversation) {
+            verifiedImageView.image = verificationImage
+            verifiedImageView.isHidden = false
+        } else {
+            verifiedImageView.isHidden = true
+            verifiedImageView.image = nil
+        }
+    }
+
+    // MARK: Private
+
+    private let contentStack = UIStackView()
+    private let legalHoldImageView = UIImageView()
+    private let verifiedImageView = UIImageView()
 
     private func configureSubviews() {
         contentStack.axis = .horizontal
@@ -67,26 +93,6 @@ final class ConversationStateAccessoryView: UIView {
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
-    }
-
-    // MARK: - Configuration
-
-    func prepareForReuse() {
-        legalHoldImageView.isHidden = true
-        verifiedImageView.isHidden = true
-        verifiedImageView.image = nil
-    }
-
-    func configure(for conversation: Conversation) {
-        legalHoldImageView.isHidden = !conversation.legalHoldStatus.denotesEnabledComplianceDevice
-
-        if let verificationImage = iconForVerificationLevel(in: conversation) {
-            verifiedImageView.image = verificationImage
-            verifiedImageView.isHidden = false
-        } else {
-            verifiedImageView.isHidden = true
-            verifiedImageView.image = nil
-        }
     }
 
     private func iconForVerificationLevel(in conversation: Conversation) -> UIImage? {

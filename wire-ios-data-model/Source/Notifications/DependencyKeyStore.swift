@@ -23,10 +23,18 @@ private var zmLog = ZMSLog(tag: "DependencyKeyStore")
 // MARK: - Observable
 
 struct Observable {
-    private let affectingKeyStore: DependencyKeyStore
+    // MARK: Lifecycle
+
+    init(classIdentifier: String, affectingKeyStore: DependencyKeyStore) {
+        self.classIdentifier = classIdentifier
+        self.affectingKeyStore = affectingKeyStore
+        self.affectingKeys = affectingKeyStore.affectingKeys[classIdentifier] ?? [:]
+        self.affectedKeys = affectingKeyStore.effectedKeys[classIdentifier] ?? [:]
+    }
+
+    // MARK: Internal
+
     let classIdentifier: String
-    private let affectingKeys: [String: Set<String>]
-    private let affectedKeys: [String: Set<String>]
 
     /// Keys that we want to report changes for
     var observableKeys: Set<String> {
@@ -36,13 +44,6 @@ struct Observable {
     /// Union of observable keys and their affecting keys
     var allKeys: Set<String> {
         affectingKeyStore.allKeys[classIdentifier] ?? Set()
-    }
-
-    init(classIdentifier: String, affectingKeyStore: DependencyKeyStore) {
-        self.classIdentifier = classIdentifier
-        self.affectingKeyStore = affectingKeyStore
-        self.affectingKeys = affectingKeyStore.affectingKeys[classIdentifier] ?? [:]
-        self.affectedKeys = affectingKeyStore.effectedKeys[classIdentifier] ?? [:]
     }
 
     func keyPathsForValuesAffectingValue(for key: String) -> Set<String> {
@@ -56,6 +57,12 @@ struct Observable {
         }
         return keys
     }
+
+    // MARK: Private
+
+    private let affectingKeyStore: DependencyKeyStore
+    private let affectingKeys: [String: Set<String>]
+    private let affectedKeys: [String: Set<String>]
 }
 
 // MARK: - DependencyKeyStore
@@ -63,17 +70,7 @@ struct Observable {
 /// Maps the observable keys to affectedKeys and vice versa
 /// You should create this only once
 class DependencyKeyStore {
-    /// Keys that are needed to create a changeInfo
-    let observableKeys: [String: Set<String>]
-
-    /// All keys that will create a changeInfo
-    let allKeys: [String: Set<String>]
-
-    /// Maps observable keys to keys whose values affect them
-    let affectingKeys: [String: [String: Set<String>]]
-
-    /// Maps keys that affect the observables to their respective observables
-    let effectedKeys: [String: [String: Set<String>]]
+    // MARK: Lifecycle
 
     /// Returns a store mapping observable keys and their affecting keys
     /// @param classIdentifier: Identifiers for each class, e.g. entityName
@@ -95,6 +92,52 @@ class DependencyKeyStore {
         self.affectingKeys = affecting
         self.allKeys = all
     }
+
+    // MARK: Internal
+
+    /// Keys that are needed to create a changeInfo
+    let observableKeys: [String: Set<String>]
+
+    /// All keys that will create a changeInfo
+    let allKeys: [String: Set<String>]
+
+    /// Maps observable keys to keys whose values affect them
+    let affectingKeys: [String: [String: Set<String>]]
+
+    /// Maps keys that affect the observables to their respective observables
+    let effectedKeys: [String: [String: Set<String>]]
+
+    /// Returns keyPathsForValuesAffectingValueForKey for specified `key`
+    func keyPathsForValuesAffectingValue(_ classIdentifier: String, key: String) -> Set<String> {
+        affectingKeys[classIdentifier]?[key] ?? Set()
+    }
+
+    /// Returns the inverse of keyPathsForValuesAffectingValueForKey, all observable keys that are affected by `key`
+    ///
+    /// - Parameters:
+    ///   - classIdentifier: the class's id, e.g. "Conversation"
+    ///   - key: the key, e.g. "participantRoles.role"
+    /// - Returns: the inverse of keyPathsForValuesAffectingValueForKey, all observable keys that are affected by `key`
+    func observableKeysAffectedByValue(_ classIdentifier: String, key: String) -> Set<String> {
+        var keys = effectedKeys[classIdentifier]?[key] ?? Set()
+        if let otherKeys = observableKeys[classIdentifier], otherKeys.contains(key) {
+            keys.insert(key)
+        }
+        return keys
+    }
+
+    /// Returns a set of keys that need to be present in the changesValues of the object so that the object changes will
+    /// be included in the changeInfo of the specified classIdentifier
+    func requiredKeysForIncludingRawChanges(classIdentifier: String, for object: ZMManagedObject) -> Set<String> {
+        switch (classIdentifier, object) {
+        case (ZMUser.entityName(), is UserClient):
+            Set([ZMUserClientTrustedKey, ZMUserClientTrusted_ByKey])
+        default:
+            Set()
+        }
+    }
+
+    // MARK: Private
 
     /// When adding objects that are to be observed, add keys that are supposed to be reported on in here
     private static func setupObservableKeys(classIdentifier: String) -> Set<String> {
@@ -198,35 +241,5 @@ class DependencyKeyStore {
             }
         }
         return allEffectedKeys
-    }
-
-    /// Returns keyPathsForValuesAffectingValueForKey for specified `key`
-    func keyPathsForValuesAffectingValue(_ classIdentifier: String, key: String) -> Set<String> {
-        affectingKeys[classIdentifier]?[key] ?? Set()
-    }
-
-    /// Returns the inverse of keyPathsForValuesAffectingValueForKey, all observable keys that are affected by `key`
-    ///
-    /// - Parameters:
-    ///   - classIdentifier: the class's id, e.g. "Conversation"
-    ///   - key: the key, e.g. "participantRoles.role"
-    /// - Returns: the inverse of keyPathsForValuesAffectingValueForKey, all observable keys that are affected by `key`
-    func observableKeysAffectedByValue(_ classIdentifier: String, key: String) -> Set<String> {
-        var keys = effectedKeys[classIdentifier]?[key] ?? Set()
-        if let otherKeys = observableKeys[classIdentifier], otherKeys.contains(key) {
-            keys.insert(key)
-        }
-        return keys
-    }
-
-    /// Returns a set of keys that need to be present in the changesValues of the object so that the object changes will
-    /// be included in the changeInfo of the specified classIdentifier
-    func requiredKeysForIncludingRawChanges(classIdentifier: String, for object: ZMManagedObject) -> Set<String> {
-        switch (classIdentifier, object) {
-        case (ZMUser.entityName(), is UserClient):
-            Set([ZMUserClientTrustedKey, ZMUserClientTrusted_ByKey])
-        default:
-            Set()
-        }
     }
 }

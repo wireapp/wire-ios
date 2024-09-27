@@ -37,14 +37,7 @@ protocol ArchivedListViewModelDelegate: AnyObject {
 // MARK: - ArchivedListViewModel
 
 final class ArchivedListViewModel: NSObject {
-    weak var delegate: ArchivedListViewModelDelegate?
-    private(set) var archivedConversationListObserverToken: NSObjectProtocol?
-    private(set) var archivedConversations = [ZMConversation]()
-    private let userSession: UserSession
-
-    var isEmptyArchivePlaceholderVisible: Bool {
-        archivedConversations.isEmpty
-    }
+    // MARK: Lifecycle
 
     init(userSession: UserSession) {
         self.userSession = userSession
@@ -55,6 +48,16 @@ final class ArchivedListViewModel: NSObject {
         self.archivedConversations = list.items
     }
 
+    // MARK: Internal
+
+    weak var delegate: ArchivedListViewModelDelegate?
+    private(set) var archivedConversationListObserverToken: NSObjectProtocol?
+    private(set) var archivedConversations = [ZMConversation]()
+
+    var isEmptyArchivePlaceholderVisible: Bool {
+        archivedConversations.isEmpty
+    }
+
     var count: Int {
         archivedConversations.count
     }
@@ -62,6 +65,10 @@ final class ArchivedListViewModel: NSObject {
     subscript(key: Int) -> ZMConversation? {
         archivedConversations[key]
     }
+
+    // MARK: Private
+
+    private let userSession: UserSession
 }
 
 // MARK: ZMConversationListObserver

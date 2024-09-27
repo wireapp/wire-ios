@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ConfirmEmailViewControllerTests: XCTestCase {
-    // MARK: Properties
-
-    private var sut: ConfirmEmailViewController!
-    private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: setUp
 
@@ -53,4 +49,12 @@ final class ConfirmEmailViewControllerTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut.view)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private var sut: ConfirmEmailViewController!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 }

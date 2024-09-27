@@ -20,9 +20,30 @@ import Foundation
 @testable import WireDataModel
 
 actor MockActorOneOnOneMigrator: OneOnOneMigratorInterface {
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {}
+
+    // MARK: Public
+
+    @discardableResult
+    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
+        migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
+
+        if let error = migrateToMLSUserIDIn_MockError {
+            throw error
+        }
+
+        if let mock = migrateToMLSUserIDIn_MockMethod {
+            return try await mock(userID, context)
+        } else if let mock = migrateToMLSUserIDIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `migrateToMLSUserIDIn`")
+        }
+    }
+
+    // MARK: Internal
 
     var migrateToMLSUserIDIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
     var migrateToMLSUserIDIn_MockError: Error?
@@ -42,22 +63,5 @@ actor MockActorOneOnOneMigrator: OneOnOneMigratorInterface {
 
     func setMigrateToMLSUserIDIn_MockValue(_ value: MLSGroupID?) {
         migrateToMLSUserIDIn_MockValue = value
-    }
-
-    @discardableResult
-    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
-        migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
-
-        if let error = migrateToMLSUserIDIn_MockError {
-            throw error
-        }
-
-        if let mock = migrateToMLSUserIDIn_MockMethod {
-            return try await mock(userID, context)
-        } else if let mock = migrateToMLSUserIDIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `migrateToMLSUserIDIn`")
-        }
     }
 }

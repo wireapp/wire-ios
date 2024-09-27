@@ -23,26 +23,7 @@ import WireSyncEngine
 import WireTransport
 
 final class Job: NSObject, Loggable {
-    // MARK: - Types
-
-    enum InitializationError: Error {
-        case invalidEnvironment
-    }
-
-    typealias PushPayload = (userID: UUID, eventID: UUID)
-
-    // MARK: - Properties
-
-    private let request: UNNotificationRequest
-    private let userID: UUID
-    private let eventID: UUID
-
-    private let environment: BackendEnvironmentProvider = BackendEnvironment.shared
-    private let networkSession: NetworkSessionProtocol
-    private let accessAPIClient: AccessAPIClientProtocol
-    private let notificationsAPIClient: NotificationsAPIClientProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         request: UNNotificationRequest,
@@ -61,6 +42,16 @@ final class Job: NSObject, Loggable {
         self.notificationsAPIClient = notificationsAPIClient ?? NotificationsAPIClient(networkSession: session)
         super.init()
     }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    enum InitializationError: Error {
+        case invalidEnvironment
+    }
+
+    typealias PushPayload = (userID: UUID, eventID: UUID)
 
     // MARK: - Methods
 
@@ -95,6 +86,23 @@ final class Job: NSObject, Loggable {
         }
     }
 
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let request: UNNotificationRequest
+    private let userID: UUID
+    private let eventID: UUID
+
+    private let environment: BackendEnvironmentProvider = BackendEnvironment.shared
+    private let networkSession: NetworkSessionProtocol
+    private let accessAPIClient: AccessAPIClientProtocol
+    private let notificationsAPIClient: NotificationsAPIClientProtocol
+
+    private var isUserAuthenticated: Bool {
+        networkSession.isAuthenticated
+    }
+
     private static func pushPayload(from request: UNNotificationRequest) throws -> PushPayload {
         guard
             let notificationData = request.content.userInfo["data"] as? [String: Any],
@@ -108,10 +116,6 @@ final class Job: NSObject, Loggable {
         }
 
         return (userID, eventID)
-    }
-
-    private var isUserAuthenticated: Bool {
-        networkSession.isAuthenticated
     }
 
     private func fetchAccessToken() async throws -> AccessToken {

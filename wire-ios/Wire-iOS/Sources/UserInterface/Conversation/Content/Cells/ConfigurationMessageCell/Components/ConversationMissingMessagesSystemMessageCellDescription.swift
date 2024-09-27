@@ -22,6 +22,26 @@ import WireDataModel
 import WireDesign
 
 final class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(message: ZMConversationMessage, data: ZMSystemMessageData) {
+        let title = ConversationMissingMessagesSystemMessageCellDescription
+            .makeAttributedString(systemMessageData: data)
+        self.configuration = View.Configuration(
+            icon: StyleKitIcon.exclamationMark.makeImage(
+                size: .tiny,
+                color: IconColors
+                    .foregroundExclamationMarkInSystemMessage
+            ),
+            attributedText: title,
+            showLine: true
+        )
+        self.accessibilityLabel = title.string
+        self.actionController = nil
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationSystemMessageCell
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
@@ -42,21 +62,7 @@ final class ConversationMissingMessagesSystemMessageCellDescription: Conversatio
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: ZMSystemMessageData) {
-        let title = ConversationMissingMessagesSystemMessageCellDescription
-            .makeAttributedString(systemMessageData: data)
-        self.configuration = View.Configuration(
-            icon: StyleKitIcon.exclamationMark.makeImage(
-                size: .tiny,
-                color: IconColors
-                    .foregroundExclamationMarkInSystemMessage
-            ),
-            attributedText: title,
-            showLine: true
-        )
-        self.accessibilityLabel = title.string
-        self.actionController = nil
-    }
+    // MARK: Private
 
     private static func makeAttributedString(systemMessageData: ZMSystemMessageData) -> NSAttributedString {
         let string = localizedString(systemMessageData: systemMessageData)

@@ -33,6 +33,8 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
 
     case custom(TimeInterval)
 
+    // MARK: Lifecycle
+
     public init(rawValue: TimeInterval) {
         switch rawValue {
         case .zero:
@@ -60,6 +62,8 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
             self = .custom(rawValue)
         }
     }
+
+    // MARK: Public
 
     public var rawValue: TimeInterval {
         switch self {

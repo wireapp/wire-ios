@@ -26,9 +26,10 @@ import XCTest
 final class MockCookieStorage: CookieProvider {
     var isAuthenticated = true
 
+    var didCallDeleteKeychainItems = false
+
     func setRequestHeaderFieldsOn(_: NSMutableURLRequest) {}
 
-    var didCallDeleteKeychainItems = false
     func deleteKeychainItems() {
         didCallDeleteKeychainItems = true
     }
@@ -37,10 +38,7 @@ final class MockCookieStorage: CookieProvider {
 // MARK: - ZMClientRegistrationStatusTests
 
 final class ZMClientRegistrationStatusTests: MessagingTest {
-    private var sut: ZMClientRegistrationStatus!
-    private var mockCookieStorage: MockCookieStorage!
-    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockClientRegistationDelegate: MockClientRegistrationStatusDelegate!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -767,6 +765,13 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             XCTAssertEqual(self.sut.currentPhase, .registered)
         }
     }
+
+    // MARK: Private
+
+    private var sut: ZMClientRegistrationStatus!
+    private var mockCookieStorage: MockCookieStorage!
+    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var mockClientRegistationDelegate: MockClientRegistrationStatusDelegate!
 
     // MARK: - Helpers
 

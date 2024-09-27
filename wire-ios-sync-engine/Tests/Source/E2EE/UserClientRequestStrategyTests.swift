@@ -30,24 +30,25 @@ import XCTest
 @objcMembers
 public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
     public var didCallRegisterMLSClient = false
+    public var currentError: Error?
+
+    public var didCallRegisterSelfUserClient = false
+    public var didCallFailRegisterSelfUserClient = false
+    public var didCallDeleteSelfUserClient = false
+
     public func didRegisterMLSClient(_: WireDataModel.UserClient) {
         didCallRegisterMLSClient = true
     }
 
-    public var currentError: Error?
-
-    public var didCallRegisterSelfUserClient = false
     public func didRegisterSelfUserClient(_: UserClient) {
         didCallRegisterSelfUserClient = true
     }
 
-    public var didCallFailRegisterSelfUserClient = false
     public func didFailToRegisterSelfUserClient(error: Error) {
         currentError = error
         didCallFailRegisterSelfUserClient = true
     }
 
-    public var didCallDeleteSelfUserClient = false
     public func didDeleteSelfUserClient(error: Error) {
         currentError = error
         didCallDeleteSelfUserClient = true

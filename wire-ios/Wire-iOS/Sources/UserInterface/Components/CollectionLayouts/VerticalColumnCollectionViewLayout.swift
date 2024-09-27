@@ -29,6 +29,8 @@ protocol VerticalColumnCollectionViewLayoutDelegate: AnyObject {
 /// A collection view layout that displays its contents within multiple columns.
 
 class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
+    // MARK: Internal
+
     // MARK: - Configuration
 
     /// The object providing size information to the layout.
@@ -49,46 +51,8 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
         didSet { invalidateLayout() }
     }
 
-    // MARK: - Size
-
-    /// The width of the collection container.
-    private var contentWidth: CGFloat {
-        guard let collectionView else {
-            return 0
-        }
-
-        let insets = collectionView.contentInset
-        return collectionView.bounds.width - (insets.left + insets.right)
-    }
-
-    /// The height of the collection container.
-    private var contentHeight: CGFloat {
-        guard let collectionView else {
-            return 0
-        }
-
-        let baseHeight = positioning?.contentHeight ?? 0
-        let insets = collectionView.contentInset
-        return baseHeight - (insets.top + insets.bottom)
-    }
-
     override var collectionViewContentSize: CGSize {
         CGSize(width: contentWidth, height: contentHeight)
-    }
-
-    // MARK: - Layout
-
-    /// The current positioning of the items.
-    private var positioning: VerticalColumnPositioning?
-
-    /// The current positioning context.
-    private var positioningContext: VerticalColumnPositioningContext {
-        VerticalColumnPositioningContext(
-            contentWidth: contentWidth,
-            numberOfColumns: numberOfColumns,
-            interItemSpacing: interItemSpacing,
-            interColumnSpacing: interColumnSpacing
-        )
     }
 
     override func prepare() {
@@ -128,5 +92,45 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     override func invalidateLayout() {
         positioning = nil
         super.invalidateLayout()
+    }
+
+    // MARK: Private
+
+    // MARK: - Layout
+
+    /// The current positioning of the items.
+    private var positioning: VerticalColumnPositioning?
+
+    // MARK: - Size
+
+    /// The width of the collection container.
+    private var contentWidth: CGFloat {
+        guard let collectionView else {
+            return 0
+        }
+
+        let insets = collectionView.contentInset
+        return collectionView.bounds.width - (insets.left + insets.right)
+    }
+
+    /// The height of the collection container.
+    private var contentHeight: CGFloat {
+        guard let collectionView else {
+            return 0
+        }
+
+        let baseHeight = positioning?.contentHeight ?? 0
+        let insets = collectionView.contentInset
+        return baseHeight - (insets.top + insets.bottom)
+    }
+
+    /// The current positioning context.
+    private var positioningContext: VerticalColumnPositioningContext {
+        VerticalColumnPositioningContext(
+            contentWidth: contentWidth,
+            numberOfColumns: numberOfColumns,
+            interItemSpacing: interItemSpacing,
+            interColumnSpacing: interColumnSpacing
+        )
     }
 }

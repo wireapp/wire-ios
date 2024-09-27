@@ -19,12 +19,7 @@
 import Foundation
 
 public enum BackendInfo {
-    private enum Key: String {
-        case selectedAPIVersion = "SelectedAPIVersion"
-        case preferredAPIVersion = "PreferredAPIVersion"
-        case domain = "Domain"
-        case isFederationEnabled = "IsFederationEnabled"
-    }
+    // MARK: Public
 
     /// The `UserDefaults` used to store backend configuration info.
     ///
@@ -61,6 +56,15 @@ public enum BackendInfo {
     public static var isFederationEnabled: Bool {
         get { storage.bool(forKey: Key.isFederationEnabled.rawValue) }
         set { storage.set(newValue, forKey: Key.isFederationEnabled.rawValue) }
+    }
+
+    // MARK: Private
+
+    private enum Key: String {
+        case selectedAPIVersion = "SelectedAPIVersion"
+        case preferredAPIVersion = "PreferredAPIVersion"
+        case domain = "Domain"
+        case isFederationEnabled = "IsFederationEnabled"
     }
 
     private static func apiVersion(for key: Key) -> APIVersion? {

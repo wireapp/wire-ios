@@ -52,6 +52,8 @@ final class MockURLSession: URLSessionType {
     var mockDataTask: MockURLSessionDataTask?
     var dataTaskGenerator: ((URL, DataTaskCompletion) -> URLSessionDataTaskType)?
 
+    var invalidated = false
+
     func dataTask(with request: URLRequest) -> URLSessionDataTaskType {
         dataTaskWithURLCallCount += 1
         dataTaskWithURLParameters.append(request)
@@ -69,7 +71,6 @@ final class MockURLSession: URLSessionType {
         }
     }
 
-    var invalidated = false
     func invalidateAndCancel() {
         invalidated = true
     }

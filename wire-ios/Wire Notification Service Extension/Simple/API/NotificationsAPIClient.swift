@@ -28,15 +28,13 @@ protocol NotificationsAPIClientProtocol {
 // MARK: - NotificationsAPIClient
 
 final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
-    // MARK: - Properties
-
-    private let networkSession: NetworkSessionProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(networkSession: NetworkSessionProtocol) {
         self.networkSession = networkSession
     }
+
+    // MARK: Internal
 
     // MARK: - Methods
 
@@ -51,6 +49,12 @@ final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
             throw error
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let networkSession: NetworkSessionProtocol
 }
 
 // MARK: - NotificationByIDEndpoint

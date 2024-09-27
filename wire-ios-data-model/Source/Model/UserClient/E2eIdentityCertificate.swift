@@ -39,16 +39,7 @@ public enum E2eIdentityCertificateConstants {
 
 @objc
 public class E2eIdentityCertificate: NSObject {
-    public var clientId: String
-    public var details: String
-    public var mlsThumbprint: String
-    public var notValidBefore: Date
-    public var expiryDate: Date
-    public var status: E2EIdentityCertificateStatus
-    public var serialNumber: String
-    public var comparedDate: CurrentDateProviding
-    public var serverStoragePeriod: TimeInterval
-    public var randomPeriod: TimeInterval
+    // MARK: Lifecycle
 
     public init(
         clientId: String,
@@ -74,13 +65,30 @@ public class E2eIdentityCertificate: NSObject {
         self.randomPeriod = randomPeriod
     }
 
+    // MARK: Public
+
     public struct DateProvider: CurrentDateProviding {
-        public let now: Date
+        // MARK: Lifecycle
 
         public init(now: Date) {
             self.now = now
         }
+
+        // MARK: Public
+
+        public let now: Date
     }
+
+    public var clientId: String
+    public var details: String
+    public var mlsThumbprint: String
+    public var notValidBefore: Date
+    public var expiryDate: Date
+    public var status: E2EIdentityCertificateStatus
+    public var serialNumber: String
+    public var comparedDate: CurrentDateProviding
+    public var serverStoragePeriod: TimeInterval
+    public var randomPeriod: TimeInterval
 }
 
 extension E2eIdentityCertificate {

@@ -22,8 +22,7 @@ import XCTest
 @testable import Wire
 
 final class AppStateCalculatorTests: XCTestCase {
-    private var sut: AppStateCalculator!
-    private var delegate: MockAppStateCalculatorDelegate!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -315,4 +314,9 @@ final class AppStateCalculatorTests: XCTestCase {
         // THEN
         XCTAssertEqual(sut.appState, blacklistState)
     }
+
+    // MARK: Private
+
+    private var sut: AppStateCalculator!
+    private var delegate: MockAppStateCalculatorDelegate!
 }

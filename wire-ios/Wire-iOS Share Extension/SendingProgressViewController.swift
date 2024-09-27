@@ -23,18 +23,26 @@ import WireShareEngine
 import WireSystem
 
 final class SendingProgressViewController: UIViewController {
+    // MARK: Lifecycle
+
+    init(networkStatusObservable: any NetworkStatusObservable) {
+        self.networkStatusObservable = networkStatusObservable
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     enum ProgressMode {
         case preparing, sending
     }
 
     var cancelHandler: (() -> Void)?
-
-    private var circularShadow = CircularProgressView()
-    private var circularProgress = CircularProgressView()
-    private var connectionStatusLabel = UILabel()
-    private let minimumProgress: Float = 0.125
-
-    private let networkStatusObservable: any NetworkStatusObservable
 
     var progress: Float = 0 {
         didSet {
@@ -61,17 +69,6 @@ final class SendingProgressViewController: UIViewController {
             circularProgress.setProgress(minimumProgress, animated: false)
             title = L10n.ShareExtension.Preparing.title
         }
-    }
-
-    init(networkStatusObservable: any NetworkStatusObservable) {
-        self.networkStatusObservable = networkStatusObservable
-
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
@@ -118,6 +115,24 @@ final class SendingProgressViewController: UIViewController {
         setReachability(from: reachability)
     }
 
+    func setReachability(from reachability: ServerReachability) {
+        switch reachability {
+        case .ok:
+            connectionStatusLabel.isHidden = true
+        case .unreachable:
+            connectionStatusLabel.isHidden = false
+        }
+    }
+
+    // MARK: Private
+
+    private var circularShadow = CircularProgressView()
+    private var circularProgress = CircularProgressView()
+    private var connectionStatusLabel = UILabel()
+    private let minimumProgress: Float = 0.125
+
+    private let networkStatusObservable: any NetworkStatusObservable
+
     private func createConstraints() {
         [
             circularShadow,
@@ -152,15 +167,6 @@ final class SendingProgressViewController: UIViewController {
     private func networkStatusDidChange(_ notification: Notification) {
         if let status = notification.object as? NetworkStatus {
             setReachability(from: status.reachability)
-        }
-    }
-
-    func setReachability(from reachability: ServerReachability) {
-        switch reachability {
-        case .ok:
-            connectionStatusLabel.isHidden = true
-        case .unreachable:
-            connectionStatusLabel.isHidden = false
         }
     }
 }

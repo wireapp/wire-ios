@@ -26,6 +26,8 @@ public enum ReadReceiptModeError: Error {
     case noConversation
     case unknown
 
+    // MARK: Lifecycle
+
     init?(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "access-denied"): self = .accessDenied

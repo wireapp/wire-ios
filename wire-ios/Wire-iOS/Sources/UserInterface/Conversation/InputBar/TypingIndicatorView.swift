@@ -23,16 +23,7 @@ import WireDesign
 // MARK: - AnimatedPenView
 
 final class AnimatedPenView: UIView {
-    private let WritingAnimationKey = "writing"
-    private let dots = UIImageView()
-    private let pen = UIImageView()
-
-    var isAnimating = false {
-        didSet {
-            pen.layer.speed = isAnimating ? 1 : 0
-            pen.layer.beginTime = pen.layer.convertTime(CACurrentMediaTime(), from: nil)
-        }
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -67,11 +58,44 @@ final class AnimatedPenView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var isAnimating = false {
+        didSet {
+            pen.layer.speed = isAnimating ? 1 : 0
+            pen.layer.beginTime = pen.layer.convertTime(CACurrentMediaTime(), from: nil)
+        }
+    }
+
     override func didMoveToWindow() {
         super.didMoveToWindow()
 
         startWritingAnimation()
     }
+
+    func startWritingAnimation() {
+        let p1 = 7
+        let p2 = 10
+        let p3 = 13
+        let moveX = CAKeyframeAnimation(keyPath: "position.x")
+        moveX.values = [p1, p2, p2, p3, p3, p1]
+        moveX.keyTimes = [0, 0.25, 0.35, 0.50, 0.75, 0.85]
+        moveX.duration = 2
+        moveX.repeatCount = Float.infinity
+
+        pen.layer.add(moveX, forKey: WritingAnimationKey)
+    }
+
+    @objc
+    func applicationDidBecomeActive(_: Notification) {
+        startWritingAnimation()
+    }
+
+    // MARK: Private
+
+    private let WritingAnimationKey = "writing"
+    private let dots = UIImageView()
+    private let pen = UIImageView()
 
     private func setupConstraints() {
         [dots, pen].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
@@ -93,29 +117,31 @@ final class AnimatedPenView: UIView {
             pen.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
-
-    func startWritingAnimation() {
-        let p1 = 7
-        let p2 = 10
-        let p3 = 13
-        let moveX = CAKeyframeAnimation(keyPath: "position.x")
-        moveX.values = [p1, p2, p2, p3, p3, p1]
-        moveX.keyTimes = [0, 0.25, 0.35, 0.50, 0.75, 0.85]
-        moveX.duration = 2
-        moveX.repeatCount = Float.infinity
-
-        pen.layer.add(moveX, forKey: WritingAnimationKey)
-    }
-
-    @objc
-    func applicationDidBecomeActive(_: Notification) {
-        startWritingAnimation()
-    }
 }
 
 // MARK: - TypingIndicatorView
 
 final class TypingIndicatorView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        addSubview(expandingLine)
+        addSubview(container)
+        container.addSubview(nameLabel)
+        container.addSubview(animatedPen)
+
+        setupConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .smallLightFont
@@ -139,72 +165,16 @@ final class TypingIndicatorView: UIView {
         return view
     }()
 
-    private lazy var expandingLineWidth: NSLayoutConstraint = expandingLine.widthAnchor.constraint(equalToConstant: 0)
-
     var typingUsers: [UserType] = [] {
         didSet {
             updateNameLabel()
         }
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        addSubview(expandingLine)
-        addSubview(container)
-        container.addSubview(nameLabel)
-        container.addSubview(animatedPen)
-
-        setupConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
 
         container.layer.cornerRadius = container.bounds.size.height / 2
-    }
-
-    private func setupConstraints() {
-        [
-            nameLabel,
-            container,
-            animatedPen,
-            expandingLine,
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        // Lower the priority to prevent this breaks when container's height = 0
-        let nameLabelBottomConstraint = container.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4)
-
-        nameLabelBottomConstraint.priority = .defaultHigh
-
-        let distributeConstraint = nameLabel.leftAnchor.constraint(equalTo: animatedPen.rightAnchor, constant: 4)
-
-        distributeConstraint.priority = .defaultHigh
-
-        NSLayoutConstraint.activate([
-            container.topAnchor.constraint(equalTo: topAnchor),
-            container.bottomAnchor.constraint(equalTo: bottomAnchor),
-            container.leftAnchor.constraint(equalTo: leftAnchor),
-            container.rightAnchor.constraint(equalTo: rightAnchor),
-
-            distributeConstraint,
-            animatedPen.leftAnchor.constraint(equalTo: container.leftAnchor, constant: 8),
-            animatedPen.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-
-            nameLabel.topAnchor.constraint(equalTo: container.topAnchor, constant: 4),
-            nameLabelBottomConstraint,
-            nameLabel.rightAnchor.constraint(equalTo: container.rightAnchor, constant: -8),
-
-            expandingLine.centerXAnchor.constraint(equalTo: centerXAnchor),
-            expandingLine.centerYAnchor.constraint(equalTo: centerYAnchor),
-            expandingLine.heightAnchor.constraint(equalToConstant: 1),
-            expandingLineWidth,
-        ])
     }
 
     func updateNameLabel() {
@@ -262,5 +232,47 @@ final class TypingIndicatorView: UIView {
             }
             completion?()
         }
+    }
+
+    // MARK: Private
+
+    private lazy var expandingLineWidth: NSLayoutConstraint = expandingLine.widthAnchor.constraint(equalToConstant: 0)
+
+    private func setupConstraints() {
+        [
+            nameLabel,
+            container,
+            animatedPen,
+            expandingLine,
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        // Lower the priority to prevent this breaks when container's height = 0
+        let nameLabelBottomConstraint = container.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4)
+
+        nameLabelBottomConstraint.priority = .defaultHigh
+
+        let distributeConstraint = nameLabel.leftAnchor.constraint(equalTo: animatedPen.rightAnchor, constant: 4)
+
+        distributeConstraint.priority = .defaultHigh
+
+        NSLayoutConstraint.activate([
+            container.topAnchor.constraint(equalTo: topAnchor),
+            container.bottomAnchor.constraint(equalTo: bottomAnchor),
+            container.leftAnchor.constraint(equalTo: leftAnchor),
+            container.rightAnchor.constraint(equalTo: rightAnchor),
+
+            distributeConstraint,
+            animatedPen.leftAnchor.constraint(equalTo: container.leftAnchor, constant: 8),
+            animatedPen.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+
+            nameLabel.topAnchor.constraint(equalTo: container.topAnchor, constant: 4),
+            nameLabelBottomConstraint,
+            nameLabel.rightAnchor.constraint(equalTo: container.rightAnchor, constant: -8),
+
+            expandingLine.centerXAnchor.constraint(equalTo: centerXAnchor),
+            expandingLine.centerYAnchor.constraint(equalTo: centerYAnchor),
+            expandingLine.heightAnchor.constraint(equalToConstant: 1),
+            expandingLineWidth,
+        ])
     }
 }

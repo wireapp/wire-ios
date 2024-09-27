@@ -19,6 +19,8 @@
 import Foundation
 
 struct UserClientRemoveEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserClientRemoveEvent {
@@ -29,6 +31,8 @@ struct UserClientRemoveEventDecoder {
 
         return UserClientRemoveEvent(clientID: payload.id)
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let id: String

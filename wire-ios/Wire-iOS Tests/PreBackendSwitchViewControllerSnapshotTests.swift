@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class PreBackendSwitchViewControllerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: PreBackendSwitchViewController!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -52,4 +49,11 @@ final class PreBackendSwitchViewControllerSnapshotTests: XCTestCase {
         navigationController.viewControllers = [sut]
         snapshotHelper.verifyInAllIPhoneSizes(matching: navigationController)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: PreBackendSwitchViewController!
+    private var snapshotHelper: SnapshotHelper!
 }

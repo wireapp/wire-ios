@@ -24,18 +24,7 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - SettingsPropertySelectValueCellDescriptor
 
 final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescriptorType {
-    static let cellType: SettingsTableCellProtocol.Type = SettingsValueCell.self
-    let value: SettingsPropertyValue
-    let title: String
-    let identifier: String?
-
-    typealias SelectActionType = (SettingsPropertySelectValueCellDescriptor) -> Void
-    let selectAction: SelectActionType?
-    let backgroundColor: UIColor?
-    var visible = true
-
-    weak var group: SettingsGroupCellDescriptorType?
-    var settingsProperty: SettingsProperty
+    // MARK: Lifecycle
 
     init(
         settingsProperty: SettingsProperty,
@@ -52,6 +41,23 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
         self.selectAction = selectAction
         self.backgroundColor = backgroundColor
     }
+
+    // MARK: Internal
+
+    typealias SelectActionType = (SettingsPropertySelectValueCellDescriptor) -> Void
+
+    static let cellType: SettingsTableCellProtocol.Type = SettingsValueCell.self
+
+    let value: SettingsPropertyValue
+    let title: String
+    let identifier: String?
+
+    let selectAction: SelectActionType?
+    let backgroundColor: UIColor?
+    var visible = true
+
+    weak var group: SettingsGroupCellDescriptorType?
+    var settingsProperty: SettingsProperty
 
     func featureCell(_ cell: SettingsCellType) {
         cell.titleText = title

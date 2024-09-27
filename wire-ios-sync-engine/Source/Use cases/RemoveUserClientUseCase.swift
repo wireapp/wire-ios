@@ -28,12 +28,7 @@ public protocol RemoveUserClientUseCaseProtocol {
 // MARK: - RemoveUserClientUseCase
 
 class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
-    // MARK: - Properties
-
-    private let userClientAPI: UserClientAPI
-    private let syncContext: NSManagedObjectContext
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         userClientAPI: UserClientAPI,
@@ -42,6 +37,8 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
         self.userClientAPI = userClientAPI
         self.syncContext = syncContext
     }
+
+    // MARK: Internal
 
     // MARK: - Public interface
 
@@ -62,15 +59,12 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
         }
     }
 
-    // MARK: - Helpers
+    // MARK: Private
 
-    private func didDeleteClient(_ userClient: UserClient) async {
-        await userClient.deleteClientAndEndSession()
-        await ZMClientUpdateNotification.notifyDeletionCompleted(
-            remainingClients: selfUserClientsExcludingSelfClient,
-            context: syncContext
-        )
-    }
+    // MARK: - Properties
+
+    private let userClientAPI: UserClientAPI
+    private let syncContext: NSManagedObjectContext
 
     private var selfUserClientsExcludingSelfClient: [UserClient] {
         get async {
@@ -81,6 +75,16 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
                 return Array(remainingClients)
             }
         }
+    }
+
+    // MARK: - Helpers
+
+    private func didDeleteClient(_ userClient: UserClient) async {
+        await userClient.deleteClientAndEndSession()
+        await ZMClientUpdateNotification.notifyDeletionCompleted(
+            remainingClients: selfUserClientsExcludingSelfClient,
+            context: syncContext
+        )
     }
 
     private func handleFailure(_ failure: NetworkError, userClient: UserClient) async throws {

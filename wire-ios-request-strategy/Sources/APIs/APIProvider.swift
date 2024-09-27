@@ -31,11 +31,13 @@ public protocol APIProviderInterface {
 // MARK: - APIProvider
 
 public struct APIProvider: APIProviderInterface {
-    let httpClient: HttpClient
+    // MARK: Lifecycle
 
     public init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Public
 
     public func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI {
         switch apiVersion {
@@ -80,4 +82,8 @@ public struct APIProvider: APIProviderInterface {
         case .v6: UserClientAPIV6(httpClient: httpClient)
         }
     }
+
+    // MARK: Internal
+
+    let httpClient: HttpClient
 }

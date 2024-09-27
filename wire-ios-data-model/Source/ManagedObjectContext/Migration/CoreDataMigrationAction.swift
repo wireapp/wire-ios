@@ -20,20 +20,10 @@ import Foundation
 
 /// Action to perform on a given persistentContainer
 class CoreDataMigrationAction {
+    // MARK: Internal
+
     var dataModelName: String {
         "zmessaging"
-    }
-
-    private func loadStore(for persistentContainer: NSPersistentContainer) throws {
-        persistentContainer.persistentStoreDescriptions.first?.shouldAddStoreAsynchronously = false
-
-        var loadError: Error?
-        persistentContainer.loadPersistentStores { _, error in
-            loadError = error
-        }
-        if let loadError {
-            throw loadError
-        }
     }
 
     func perform(on storeURL: URL, with model: NSManagedObjectModel) throws {
@@ -69,6 +59,20 @@ class CoreDataMigrationAction {
 
     func execute(in context: NSManagedObjectContext) throws {
         // to be overriden by subclasses
+    }
+
+    // MARK: Private
+
+    private func loadStore(for persistentContainer: NSPersistentContainer) throws {
+        persistentContainer.persistentStoreDescriptions.first?.shouldAddStoreAsynchronously = false
+
+        var loadError: Error?
+        persistentContainer.loadPersistentStores { _, error in
+            loadError = error
+        }
+        if let loadError {
+            throw loadError
+        }
     }
 
     private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {

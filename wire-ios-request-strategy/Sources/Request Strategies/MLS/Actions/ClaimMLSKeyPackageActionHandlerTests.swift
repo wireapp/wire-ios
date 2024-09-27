@@ -24,7 +24,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<
     ClaimMLSKeyPackageAction,
     ClaimMLSKeyPackageActionHandler
 > {
-    private typealias Payload = ClaimMLSKeyPackageActionHandler.ResponsePayload
+    // MARK: Internal
 
     let domain = "example.com"
     let userId = UUID()
@@ -137,4 +137,8 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<
             .failure(status: 999, error: .unknown(status: 999)),
         ])
     }
+
+    // MARK: Private
+
+    private typealias Payload = ClaimMLSKeyPackageActionHandler.ResponsePayload
 }

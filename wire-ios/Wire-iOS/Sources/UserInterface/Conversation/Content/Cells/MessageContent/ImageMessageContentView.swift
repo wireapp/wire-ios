@@ -19,13 +19,7 @@
 import UIKit
 
 final class ImageContentView: UIView {
-    var imageView = ImageResourceView()
-    var imageAspectConstraint: NSLayoutConstraint?
-    var imageWidthConstraint: NSLayoutConstraint
-
-    var mediaAsset: MediaAsset? {
-        imageView.mediaAsset
-    }
+    // MARK: Lifecycle
 
     init() {
         self.imageWidthConstraint = imageView.widthAnchor.constraint(equalToConstant: 140)
@@ -52,10 +46,22 @@ final class ImageContentView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var imageView = ImageResourceView()
+    var imageAspectConstraint: NSLayoutConstraint?
+    var imageWidthConstraint: NSLayoutConstraint
+
+    var mediaAsset: MediaAsset? {
+        imageView.mediaAsset
+    }
+
     func configure(with resource: PreviewableImageResource, completionHandler: (() -> Void)? = nil) {
         updateAspectRatio(for: resource)
         imageView.setImageResource(resource, completion: completionHandler)
     }
+
+    // MARK: Private
 
     private func updateAspectRatio(for resource: PreviewableImageResource) {
         let contentSize = resource.contentSize

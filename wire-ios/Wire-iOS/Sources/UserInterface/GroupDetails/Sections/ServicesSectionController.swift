@@ -20,9 +20,7 @@ import UIKit
 import WireDataModel
 
 final class ServicesSectionController: GroupDetailsSectionController {
-    private weak var delegate: GroupDetailsSectionControllerDelegate?
-    private let serviceUsers: [UserType]
-    private let conversation: GroupDetailsConversationType
+    // MARK: Lifecycle
 
     init(
         serviceUsers: [UserType],
@@ -34,11 +32,7 @@ final class ServicesSectionController: GroupDetailsSectionController {
         self.delegate = delegate
     }
 
-    override func prepareForUse(in collectionView: UICollectionView?) {
-        super.prepareForUse(in: collectionView)
-
-        collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.zm_reuseIdentifier)
-    }
+    // MARK: Internal
 
     override var sectionTitle: String {
         L10n.Localizable.Participants.Section.services(serviceUsers.count).localizedUppercase
@@ -46,6 +40,12 @@ final class ServicesSectionController: GroupDetailsSectionController {
 
     override var sectionAccessibilityIdentifier: String {
         "label.groupdetails.services"
+    }
+
+    override func prepareForUse(in collectionView: UICollectionView?) {
+        super.prepareForUse(in: collectionView)
+
+        collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.zm_reuseIdentifier)
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -76,4 +76,10 @@ final class ServicesSectionController: GroupDetailsSectionController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.presentDetails(for: serviceUsers[indexPath.row])
     }
+
+    // MARK: Private
+
+    private weak var delegate: GroupDetailsSectionControllerDelegate?
+    private let serviceUsers: [UserType]
+    private let conversation: GroupDetailsConversationType
 }

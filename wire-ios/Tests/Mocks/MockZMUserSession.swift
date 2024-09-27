@@ -20,6 +20,19 @@ import Foundation
 @testable import Wire
 
 final class MockZMUserSession: NSObject, UserSessionInterface {
+    var mockConversationDirectory = MockConversationDirectory()
+    var isNotificationContentHidden = false
+
+    var encryptMessagesAtRest = false
+
+    var appLockController: AppLockType = AppLockModule.MockAppLockController()
+
+    var lock: SessionLock?
+
+    var conversationDirectory: ConversationDirectoryType {
+        mockConversationDirectory
+    }
+
     func perform(_ changes: @escaping () -> Void) {
         changes()
     }
@@ -32,17 +45,4 @@ final class MockZMUserSession: NSObject, UserSessionInterface {
         changes()
         completionHandler?()
     }
-
-    var mockConversationDirectory = MockConversationDirectory()
-    var conversationDirectory: ConversationDirectoryType {
-        mockConversationDirectory
-    }
-
-    var isNotificationContentHidden = false
-
-    var encryptMessagesAtRest = false
-
-    var appLockController: AppLockType = AppLockModule.MockAppLockController()
-
-    var lock: SessionLock?
 }

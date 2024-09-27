@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 
 final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
+    // MARK: Internal
+
     typealias CellConfiguration = (MockMessage) -> Void
 
     var mockSelfUser: MockUserType!
@@ -60,6 +62,8 @@ final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
             $0.isObfuscated = true
         })
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

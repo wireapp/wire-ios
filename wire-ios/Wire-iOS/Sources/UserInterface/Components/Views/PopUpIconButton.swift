@@ -35,17 +35,24 @@ protocol PopUpIconButtonDelegate: AnyObject {
 // MARK: - PopUpIconButton
 
 final class PopUpIconButton: IconButton {
+    // MARK: Internal
+
     weak var delegate: PopUpIconButtonDelegate?
     var itemIcons: [StyleKitIcon] = []
-
-    private var buttonView: PopUpIconButtonView?
-    fileprivate let longPressGR = UILongPressGestureRecognizer()
 
     func setupView() {
         longPressGR.minimumPressDuration = 0.15
         longPressGR.addTarget(self, action: #selector(longPressHandler(gestureRecognizer:)))
         addGestureRecognizer(longPressGR)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate let longPressGR = UILongPressGestureRecognizer()
+
+    // MARK: Private
+
+    private var buttonView: PopUpIconButtonView?
 
     @objc
     private func longPressHandler(gestureRecognizer: UILongPressGestureRecognizer) {

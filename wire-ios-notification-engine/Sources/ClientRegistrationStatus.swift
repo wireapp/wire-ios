@@ -21,15 +21,17 @@ import WireDataModel
 import WireRequestStrategy
 
 final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-    // MARK: - Properties
-
-    let context: NSManagedObjectContext
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let context: NSManagedObjectContext
 
     // MARK: - Methods
 

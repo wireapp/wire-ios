@@ -21,29 +21,7 @@ import Foundation
 /// Represents a team to which members can belong to.
 
 public struct Team: Identifiable, Equatable {
-    /// The unique id of the team.
-
-    public var id: UUID
-
-    /// The team name.
-
-    public let name: String
-
-    /// The user id of the team's creator.
-
-    public let creatorID: UUID
-
-    /// The asset id of the team logo.
-
-    public let logoID: String
-
-    /// The asset decryption key of the team logo.
-
-    public let logoKey: String?
-
-    /// The asset id of the team's splash screen.
-
-    public let splashScreenID: String?
+    // MARK: Lifecycle
 
     /// Create a new `Team`.
     ///
@@ -70,4 +48,30 @@ public struct Team: Identifiable, Equatable {
         self.logoKey = logoKey
         self.splashScreenID = splashScreenID
     }
+
+    // MARK: Public
+
+    /// The unique id of the team.
+
+    public var id: UUID
+
+    /// The team name.
+
+    public let name: String
+
+    /// The user id of the team's creator.
+
+    public let creatorID: UUID
+
+    /// The asset id of the team logo.
+
+    public let logoID: String
+
+    /// The asset decryption key of the team logo.
+
+    public let logoKey: String?
+
+    /// The asset id of the team's splash screen.
+
+    public let splashScreenID: String?
 }

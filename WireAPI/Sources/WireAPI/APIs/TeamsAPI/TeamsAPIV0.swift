@@ -21,11 +21,15 @@ import Foundation
 // MARK: - TeamsAPIV0
 
 class TeamsAPIV0: TeamsAPI, VersionedAPI {
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Internal
+
+    let httpClient: any HTTPClient
 
     var apiVersion: APIVersion {
         .v0
@@ -121,13 +125,6 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 // MARK: - TeamResponseV0
 
 struct TeamResponseV0: Decodable, ToAPIModelConvertible {
-    let id: UUID
-    let name: String
-    let creator: UUID
-    let icon: String
-    let iconKey: String?
-    let binding: Bool?
-
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -136,6 +133,13 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
         case iconKey = "icon_key"
         case binding
     }
+
+    let id: UUID
+    let name: String
+    let creator: UUID
+    let icon: String
+    let iconKey: String?
+    let binding: Bool?
 
     func toAPIModel() -> Team {
         Team(
@@ -152,11 +156,11 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
 // MARK: - ConversationRolesListResponseV0
 
 struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
-    let conversationRoles: [ConversationRoleResponseV0]
-
     enum CodingKeys: String, CodingKey {
         case conversationRoles = "conversation_roles"
     }
+
+    let conversationRoles: [ConversationRoleResponseV0]
 
     func toAPIModel() -> [ConversationRole] {
         conversationRoles.map { $0.toAPIModel() }
@@ -166,13 +170,13 @@ struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
 // MARK: - ConversationRoleResponseV0
 
 struct ConversationRoleResponseV0: Decodable {
-    let conversationRole: String?
-    let actions: [ConversationActionResponseV0]
-
     enum CodingKeys: String, CodingKey {
         case conversationRole = "conversation_role"
         case actions
     }
+
+    let conversationRole: String?
+    let actions: [ConversationActionResponseV0]
 
     func toAPIModel() -> ConversationRole {
         ConversationRole(
@@ -196,6 +200,8 @@ enum ConversationActionResponseV0: String, Decodable {
     case modifyOtherConversationMember = "modify_other_conversation_member"
     case leaveConversation = "leave_conversation"
     case deleteConversation = "delete_conversation"
+
+    // MARK: Internal
 
     func toAPIModel() -> ConversationAction {
         switch self {
@@ -237,12 +243,6 @@ struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
 // MARK: - TeamMemberResponseV0
 
 struct TeamMemberResponseV0: Decodable {
-    let user: UUID
-    let permissions: PermissionsResponseV0?
-    let createdBy: UUID?
-    let createdAt: UTCTimeMillis?
-    let legalholdStatus: LegalholdStatusV0?
-
     enum CodingKeys: String, CodingKey {
         case user
         case permissions
@@ -250,6 +250,12 @@ struct TeamMemberResponseV0: Decodable {
         case createdAt = "created_at"
         case legalholdStatus = "legalhold_status"
     }
+
+    let user: UUID
+    let permissions: PermissionsResponseV0?
+    let createdBy: UUID?
+    let createdAt: UTCTimeMillis?
+    let legalholdStatus: LegalholdStatusV0?
 
     func toAPIModel() -> TeamMember {
         TeamMember(
@@ -283,6 +289,8 @@ enum LegalholdStatusV0: String, Decodable {
     case pending
     case disabled
     case noConsent = "no_consent"
+
+    // MARK: Internal
 
     func toAPIModel() -> LegalholdStatus {
         switch self {

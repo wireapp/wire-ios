@@ -25,6 +25,21 @@ import WireDataModel
 /// - note: This class needs to be NSCopying to be used in an ordered set for diffing.
 
 final class MessageDetailsCellDescription: NSObject {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    /// Creates a new cell description.
+    init(user: UserType, subtitle: String?, accessibleSubtitleLabel: String?, accessibleSubtitleValue: String?) {
+        self.user = user
+        self.subtitle = subtitle
+        self.attributedSubtitle = subtitle.map { $0 && UserCell.boldFont.font! }
+        self.accessibleSubtitleLabel = accessibleSubtitleLabel
+        self.accessibleSubtitleValue = accessibleSubtitleValue
+    }
+
+    // MARK: Internal
+
     /// The user to display.
     let user: UserType
 
@@ -39,17 +54,6 @@ final class MessageDetailsCellDescription: NSObject {
 
     /// The value of the subtitle.
     let accessibleSubtitleValue: String?
-
-    // MARK: - Initialization
-
-    /// Creates a new cell description.
-    init(user: UserType, subtitle: String?, accessibleSubtitleLabel: String?, accessibleSubtitleValue: String?) {
-        self.user = user
-        self.subtitle = subtitle
-        self.attributedSubtitle = subtitle.map { $0 && UserCell.boldFont.font! }
-        self.accessibleSubtitleLabel = accessibleSubtitleLabel
-        self.accessibleSubtitleValue = accessibleSubtitleValue
-    }
 }
 
 // MARK: - Helpers

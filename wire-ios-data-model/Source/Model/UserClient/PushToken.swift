@@ -21,11 +21,29 @@ import Foundation
 // MARK: - PushToken
 
 public struct PushToken: Equatable {
+    // MARK: Lifecycle
+
+    public init(
+        deviceToken: Data,
+        appIdentifier: String,
+        transportType: String,
+        tokenType: TokenType
+    ) {
+        self.deviceToken = deviceToken
+        self.appIdentifier = appIdentifier
+        self.transportType = transportType
+        self.tokenType = tokenType
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public enum TokenType: Int, Codable {
         case standard
         case voip
+
+        // MARK: Public
 
         public var transportType: String {
             switch self {
@@ -41,20 +59,6 @@ public struct PushToken: Equatable {
     public let appIdentifier: String
     public let transportType: String
     public let tokenType: TokenType
-
-    // MARK: - Life cycle
-
-    public init(
-        deviceToken: Data,
-        appIdentifier: String,
-        transportType: String,
-        tokenType: TokenType
-    ) {
-        self.deviceToken = deviceToken
-        self.appIdentifier = appIdentifier
-        self.transportType = transportType
-        self.tokenType = tokenType
-    }
 
     // MARK: - Methods
 

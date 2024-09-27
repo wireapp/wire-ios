@@ -22,6 +22,8 @@ import WireFoundation
 @testable import Wire
 
 class MockUserType: NSObject, UserType, Decodable, EditableUserType {
+    // MARK: Lifecycle
+
     // MARK: - Decodable
 
     required convenience init(from decoder: Decoder) throws {
@@ -39,6 +41,35 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
             self.zmAccentColor = zmAccentColor
         }
     }
+
+    // MARK: Internal
+
+    // MARK: - dummy user names
+
+    static let usernames = [
+        "Anna",
+        "Claire",
+        "Dean",
+        "Erik",
+        "Frank",
+        "Gregor",
+        "Hanna",
+        "Inge",
+        "James",
+        "Laura",
+        "Klaus",
+        "Lena",
+        "Linea",
+        "Lara",
+        "Elliot",
+        "Francois",
+        "Felix",
+        "Brian",
+        "Brett",
+        "Hannah",
+        "Ana",
+        "Paula",
+    ]
 
     // MARK: - MockHelpers
 
@@ -86,11 +117,6 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var accentColorValue: ZMAccentColorRawValue = AccentColor.blue.rawValue
 
-    var zmAccentColor: ZMAccentColor? {
-        get { .from(rawValue: accentColorValue) }
-        set { accentColorValue = newValue?.rawValue ?? 0 }
-    }
-
     var availability: Availability = .none
 
     var allClients: [UserClientType] = []
@@ -120,19 +146,11 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var isSelfUser = false
 
     var mockedIsServiceUser = false
-    var isServiceUser: Bool {
-        mockedIsServiceUser
-    }
-
     var isVerified = false
 
     // MARK: - Team
 
     var membership: Member?
-
-    var isTeamMember: Bool {
-        teamIdentifier != nil
-    }
 
     var hasTeam = false
 
@@ -157,18 +175,6 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var isPendingApprovalBySelfUser = false
 
     var isPendingApprovalByOtherUser = false
-
-    func accept(completion: @escaping (Error?) -> Void) {
-        isBlocked = false
-    }
-
-    func block(completion: @escaping (Error?) -> Void) {
-        isBlocked = true
-    }
-
-    func ignore(completion: @escaping (Error?) -> Void) {}
-
-    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {}
 
     // MARK: - Wireless
 
@@ -195,6 +201,40 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var canCreateService = false
 
     var canManageTeam = false
+
+    var canCreateMLSGroups = false
+
+    // MARK: - Refresh requests
+
+    var refreshDataCount = 0
+    var refreshRichProfileCount = 0
+    var refreshMembershipCount = 0
+    var refreshTeamDataCount = 0
+
+    var zmAccentColor: ZMAccentColor? {
+        get { .from(rawValue: accentColorValue) }
+        set { accentColorValue = newValue?.rawValue ?? 0 }
+    }
+
+    var isServiceUser: Bool {
+        mockedIsServiceUser
+    }
+
+    var isTeamMember: Bool {
+        teamIdentifier != nil
+    }
+
+    func accept(completion: @escaping (Error?) -> Void) {
+        isBlocked = false
+    }
+
+    func block(completion: @escaping (Error?) -> Void) {
+        isBlocked = true
+    }
+
+    func ignore(completion: @escaping (Error?) -> Void) {}
+
+    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {}
 
     func canLeave(_: ZMConversation) -> Bool {
         canLeaveConversation
@@ -262,8 +302,6 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         isGroupAdminInConversation
     }
 
-    var canCreateMLSGroups = false
-
     // MARK: - Methods
 
     func connect(completion: @escaping (Error?) -> Void) {
@@ -300,13 +338,6 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         }
     }
 
-    // MARK: - Refresh requests
-
-    var refreshDataCount = 0
-    var refreshRichProfileCount = 0
-    var refreshMembershipCount = 0
-    var refreshTeamDataCount = 0
-
     func refreshData() {
         refreshDataCount += 1
     }
@@ -322,31 +353,4 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     func refreshTeamData() {
         refreshTeamDataCount += 1
     }
-
-    // MARK: - dummy user names
-
-    static let usernames = [
-        "Anna",
-        "Claire",
-        "Dean",
-        "Erik",
-        "Frank",
-        "Gregor",
-        "Hanna",
-        "Inge",
-        "James",
-        "Laura",
-        "Klaus",
-        "Lena",
-        "Linea",
-        "Lara",
-        "Elliot",
-        "Francois",
-        "Felix",
-        "Brian",
-        "Brett",
-        "Hannah",
-        "Ana",
-        "Paula",
-    ]
 }

@@ -33,6 +33,35 @@ protocol CallGridViewControllerDelegate: AnyObject {
 // MARK: - CallGridViewController
 
 final class CallGridViewController: UIViewController {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    init(
+        voiceChannel: VoiceChannel,
+        configuration: CallGridViewControllerInput,
+        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()
+    ) {
+        self.configuration = configuration
+        self.mediaManager = mediaManager
+        self.voiceChannel = voiceChannel
+        self.networkQuality = voiceChannel.networkQuality
+
+        super.init(nibName: nil, bundle: nil)
+
+        setupViews()
+        createConstraints()
+        updateState()
+        setupObservers()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     // MARK: - Statics
 
     static let isCoveredKey = "isCovered"
@@ -44,38 +73,13 @@ final class CallGridViewController: UIViewController {
         }
     }
 
-    // MARK: - Private Properties
-
-    private var streams: [Stream] {
-        if let stream = configuration.streams.first(where: { isMaximized(stream: $0) }) {
-            return [stream]
-        }
-        return configuration.streams
-    }
-
-    private var pinchToZoomRule: PinchToZoomRule {
-        PinchToZoomRule(isOneToOneCall: configuration.callHasTwoParticipants)
-    }
-
-    private var visibleClientsSharingVideo: [AVSClient] = []
-    private var dataSource: [Stream] = []
-    private let gridView = GridView(maxItemsPerPage: maxItemsPerPage)
-    private let thumbnailViewController = PinnableThumbnailViewController()
-    private let networkConditionView = NetworkConditionIndicatorView()
-    private let pageIndicator = RoundedPageIndicator()
-    private let topStack = UIStackView(axis: .vertical)
-    private var viewCache = [AVSClient: OrientableView]()
-    private var networkQualityObserverToken: Any?
-    private var networkQuality: NetworkQuality
-
-    private let mediaManager: AVSMediaManagerInterface
-    private let voiceChannel: VoiceChannel
-
     // MARK: - Public Properties
 
     // These two views are public for testing purposes
     var maximizedView: BaseCallParticipantView?
     var hintView = CallGridHintNotificationLabel()
+
+    weak var delegate: CallGridViewControllerDelegate?
 
     var configuration: CallGridViewControllerInput {
         didSet {
@@ -103,41 +107,148 @@ final class CallGridViewController: UIViewController {
         }
     }
 
-    private var activityIndicator: BlockingActivityIndicator!
-
-    weak var delegate: CallGridViewControllerDelegate?
-
-    // MARK: - Initialization
-
-    init(
-        voiceChannel: VoiceChannel,
-        configuration: CallGridViewControllerInput,
-        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()
-    ) {
-        self.configuration = configuration
-        self.mediaManager = mediaManager
-        self.voiceChannel = voiceChannel
-        self.networkQuality = voiceChannel.networkQuality
-
-        super.init(nibName: nil, bundle: nil)
-
-        setupViews()
-        createConstraints()
-        updateState()
-        setupObservers()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         activityIndicator = .init(view: view)
         updateHint(for: .viewDidLoad)
         displayNetworkConditionViewIfNeeded(for: networkQuality)
+    }
+
+    func releadGridData() {
+        gridView.reloadData()
+    }
+
+    @objc
+    func didChangePage(sender: UIPageControl) {
+        let newCurrentPage = sender.currentPage
+        pageIndicator.currentPage = newCurrentPage
+        gridView.scrollToPage(page: newCurrentPage, animated: true)
+    }
+
+    // MARK: - Public Interface
+
+    func handleDoubleTap(gesture: UIGestureRecognizer) {
+        let location = gesture.location(in: gridView)
+        toggleMaximized(view: streamView(at: location))
+    }
+
+    // MARK: - Hint
+
+    func updateHint(for event: CallGridEvent) {
+        switch event {
+        case .viewDidLoad:
+            break
+
+        case .connectionEstablished:
+            hintView.show(hint: .fullscreen)
+
+        case .configurationChanged where configuration.callHasTwoParticipants:
+            guard
+                let stream = configuration.streams.first,
+                stream.isSharingVideo
+            else { return }
+
+            if stream.isScreenSharing {
+                hintView.show(hint: .zoom)
+            } else if isMaximized(stream: stream) {
+                hintView.show(hint: .goBackOrZoom)
+            }
+
+        case let .maximizationChanged(stream: stream, maximized: maximized):
+            if maximized {
+                hintView.show(hint: stream.isSharingVideo ? .goBackOrZoom : .goBack)
+            } else {
+                hintView.hideAndStopTimer()
+            }
+
+        default: break
+        }
+    }
+
+    func requestVideoStreamsIfNeeded(forPage page: Int) {
+        let startIndex = page * gridView.maxItemsPerPage
+        var endIndex = startIndex + gridView.maxItemsPerPage
+        endIndex = min(endIndex, dataSource.count)
+
+        guard dataSource.indices.contains(startIndex),
+              endIndex > startIndex
+        else { return }
+
+        let clients = dataSource[startIndex ..< endIndex]
+            .filter(\.isSharingVideo)
+            .map(\.streamId)
+
+        guard Set(clients) != Set(visibleClientsSharingVideo) else { return }
+
+        delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clients))
+        visibleClientsSharingVideo = clients
+    }
+
+    // MARK: - Grid View Axis
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else { return }
+        thumbnailViewController.updateThumbnailContentSize(.previewSize(for: traitCollection), animated: false)
+        updateGridViewAxis()
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: { [updateGridViewAxis] _ in updateGridViewAxis() })
+    }
+
+    // MARK: Private
+
+    private var visibleClientsSharingVideo: [AVSClient] = []
+    private var dataSource: [Stream] = []
+    private let gridView = GridView(maxItemsPerPage: maxItemsPerPage)
+    private let thumbnailViewController = PinnableThumbnailViewController()
+    private let networkConditionView = NetworkConditionIndicatorView()
+    private let pageIndicator = RoundedPageIndicator()
+    private let topStack = UIStackView(axis: .vertical)
+    private var viewCache = [AVSClient: OrientableView]()
+    private var networkQualityObserverToken: Any?
+    private var networkQuality: NetworkQuality
+
+    private let mediaManager: AVSMediaManagerInterface
+    private let voiceChannel: VoiceChannel
+
+    private var activityIndicator: BlockingActivityIndicator!
+
+    // MARK: - Private Properties
+
+    private var streams: [Stream] {
+        if let stream = configuration.streams.first(where: { isMaximized(stream: $0) }) {
+            return [stream]
+        }
+        return configuration.streams
+    }
+
+    private var pinchToZoomRule: PinchToZoomRule {
+        PinchToZoomRule(isOneToOneCall: configuration.callHasTwoParticipants)
+    }
+
+    // MARK: - Helpers
+
+    private var shouldShowBorderWhenVideoIsStopped: Bool {
+        !gridHasOnlyOneTile && !gridIsOneToOneWithFloatingTile
+    }
+
+    private var gridHasOnlyOneTile: Bool {
+        configuration.streams.count == 1
+    }
+
+    private var gridIsOneToOneWithFloatingTile: Bool {
+        gridHasOnlyOneTile && configuration.floatingStream != nil
+    }
+
+    private var selfCallParticipantView: SelfCallParticipantView? {
+        guard let selfStreamId = ZMUser.selfUser()?.selfStreamId else {
+            return nil
+        }
+        return viewCache[selfStreamId] as? SelfCallParticipantView
     }
 
     // MARK: - Setup
@@ -158,10 +269,6 @@ final class CallGridViewController: UIViewController {
         view.addSubview(pageIndicator)
         pageIndicator.pageControl.addTarget(self, action: #selector(didChangePage), for: .valueChanged)
         networkConditionView.accessibilityIdentifier = "network-conditions-indicator"
-    }
-
-    func releadGridData() {
-        gridView.reloadData()
     }
 
     private func createConstraints() {
@@ -192,22 +299,8 @@ final class CallGridViewController: UIViewController {
         pageIndicator.transform = pageIndicator.transform.rotated(by: .pi / 2)
     }
 
-    @objc
-    func didChangePage(sender: UIPageControl) {
-        let newCurrentPage = sender.currentPage
-        pageIndicator.currentPage = newCurrentPage
-        gridView.scrollToPage(page: newCurrentPage, animated: true)
-    }
-
     private func setupObservers() {
         networkQualityObserverToken = voiceChannel.addNetworkQualityObserver(self)
-    }
-
-    // MARK: - Public Interface
-
-    func handleDoubleTap(gesture: UIGestureRecognizer) {
-        let location = gesture.location(in: gridView)
-        toggleMaximized(view: streamView(at: location))
     }
 
     // MARK: - View maximization
@@ -244,39 +337,6 @@ final class CallGridViewController: UIViewController {
         guard oldPresentationMode != configuration.presentationMode else { return }
         maximizedView?.isMaximized = false
         maximizedView = nil
-    }
-
-    // MARK: - Hint
-
-    func updateHint(for event: CallGridEvent) {
-        switch event {
-        case .viewDidLoad:
-            break
-
-        case .connectionEstablished:
-            hintView.show(hint: .fullscreen)
-
-        case .configurationChanged where configuration.callHasTwoParticipants:
-            guard
-                let stream = configuration.streams.first,
-                stream.isSharingVideo
-            else { return }
-
-            if stream.isScreenSharing {
-                hintView.show(hint: .zoom)
-            } else if isMaximized(stream: stream) {
-                hintView.show(hint: .goBackOrZoom)
-            }
-
-        case let .maximizationChanged(stream: stream, maximized: maximized):
-            if maximized {
-                hintView.show(hint: stream.isSharingVideo ? .goBackOrZoom : .goBack)
-            } else {
-                hintView.hideAndStopTimer()
-            }
-
-        default: break
-        }
     }
 
     // MARK: - UI Update
@@ -414,39 +474,6 @@ final class CallGridViewController: UIViewController {
         }
     }
 
-    func requestVideoStreamsIfNeeded(forPage page: Int) {
-        let startIndex = page * gridView.maxItemsPerPage
-        var endIndex = startIndex + gridView.maxItemsPerPage
-        endIndex = min(endIndex, dataSource.count)
-
-        guard dataSource.indices.contains(startIndex),
-              endIndex > startIndex
-        else { return }
-
-        let clients = dataSource[startIndex ..< endIndex]
-            .filter(\.isSharingVideo)
-            .map(\.streamId)
-
-        guard Set(clients) != Set(visibleClientsSharingVideo) else { return }
-
-        delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clients))
-        visibleClientsSharingVideo = clients
-    }
-
-    // MARK: - Grid View Axis
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else { return }
-        thumbnailViewController.updateThumbnailContentSize(.previewSize(for: traitCollection), animated: false)
-        updateGridViewAxis()
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        coordinator.animate(alongsideTransition: { [updateGridViewAxis] _ in updateGridViewAxis() })
-    }
-
     private func updateGridViewAxis() {
         let newAxis = gridAxis(for: traitCollection)
         guard newAxis != gridView.layoutDirection else { return }
@@ -461,20 +488,6 @@ final class CallGridViewController: UIViewController {
         default:
             return .vertical
         }
-    }
-
-    // MARK: - Helpers
-
-    private var shouldShowBorderWhenVideoIsStopped: Bool {
-        !gridHasOnlyOneTile && !gridIsOneToOneWithFloatingTile
-    }
-
-    private var gridHasOnlyOneTile: Bool {
-        configuration.streams.count == 1
-    }
-
-    private var gridIsOneToOneWithFloatingTile: Bool {
-        gridHasOnlyOneTile && configuration.floatingStream != nil
     }
 
     private func cachedStreamView(for stream: Stream) -> OrientableView? {
@@ -496,13 +509,6 @@ final class CallGridViewController: UIViewController {
         }
 
         return stream
-    }
-
-    private var selfCallParticipantView: SelfCallParticipantView? {
-        guard let selfStreamId = ZMUser.selfUser()?.selfStreamId else {
-            return nil
-        }
-        return viewCache[selfStreamId] as? SelfCallParticipantView
     }
 }
 

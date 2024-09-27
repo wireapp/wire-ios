@@ -21,6 +21,44 @@ import WireDataModel
 import WireDesign
 
 class ShareableDebugReportView: UIView {
+    // MARK: Lifecycle
+
+    convenience init() {
+        self.init(frame: .zero)
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupViews()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    // MARK: - Interface
+
+    func configure(with fileMetadata: ZMFileMetadata) {
+        let ext = (fileMetadata.filename as NSString).pathExtension
+        let dot = String.MessageToolbox.middleDot
+        let fileSize = ByteCountFormatter.string(
+            fromByteCount: Int64(fileMetadata.size),
+            countStyle: .binary
+        )
+
+        topLabel.text = fileMetadata.filename.uppercased()
+        bottomLabel.text = "\(fileSize) \(dot) \(ext)".uppercased()
+
+        topLabel.accessibilityValue = topLabel.text ?? ""
+        bottomLabel.accessibilityValue = bottomLabel.text ?? ""
+    }
+
+    // MARK: Private
+
     // MARK: - Constants
 
     private enum LayoutConstants {
@@ -62,23 +100,6 @@ class ShareableDebugReportView: UIView {
         return documentIconView
     }()
 
-    // MARK: - Life cycle
-
-    convenience init() {
-        self.init(frame: .zero)
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupViews()
-        createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     // MARK: - Setup
 
     private func setupViews() {
@@ -118,22 +139,5 @@ class ShareableDebugReportView: UIView {
             documentIconView.centerYAnchor.constraint(equalTo: centerYAnchor),
             documentIconView.leftAnchor.constraint(equalTo: leftAnchor, constant: LayoutConstants.padding),
         ])
-    }
-
-    // MARK: - Interface
-
-    func configure(with fileMetadata: ZMFileMetadata) {
-        let ext = (fileMetadata.filename as NSString).pathExtension
-        let dot = String.MessageToolbox.middleDot
-        let fileSize = ByteCountFormatter.string(
-            fromByteCount: Int64(fileMetadata.size),
-            countStyle: .binary
-        )
-
-        topLabel.text = fileMetadata.filename.uppercased()
-        bottomLabel.text = "\(fileSize) \(dot) \(ext)".uppercased()
-
-        topLabel.accessibilityValue = topLabel.text ?? ""
-        bottomLabel.accessibilityValue = bottomLabel.text ?? ""
     }
 }

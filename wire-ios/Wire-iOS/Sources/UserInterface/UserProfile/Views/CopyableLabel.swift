@@ -20,8 +20,7 @@ import UIKit
 
 /// This class is a drop-in replacement for UILabel which can be copied.
 final class CopyableLabel: UILabel {
-    private let dimmedAlpha: CGFloat = 0.4
-    private let dimmAnimationDuration: TimeInterval = 0.33
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,6 +33,8 @@ final class CopyableLabel: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     override var canBecomeFirstResponder: Bool {
         true
     }
@@ -45,6 +46,11 @@ final class CopyableLabel: UILabel {
     override func copy(_: Any?) {
         UIPasteboard.general.string = text
     }
+
+    // MARK: Private
+
+    private let dimmedAlpha: CGFloat = 0.4
+    private let dimmAnimationDuration: TimeInterval = 0.33
 
     @objc
     private func longPressed(_ recognizer: UILongPressGestureRecognizer) {

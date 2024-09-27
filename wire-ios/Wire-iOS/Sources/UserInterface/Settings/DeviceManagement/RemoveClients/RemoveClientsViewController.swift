@@ -35,18 +35,7 @@ final class RemoveClientsViewController: UIViewController,
     UITableViewDelegate,
     UITableViewDataSource,
     ClientColorVariantProtocol {
-    // MARK: - Properties
-
-    private let clientsTableView = UITableView(frame: CGRect.zero, style: .grouped)
-
-    private var requestPasswordController: RequestPasswordController?
-
-    weak var delegate: RemoveClientsViewControllerDelegate?
-    private var viewModel: RemoveClientsViewController.ViewModel
-
-    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     required init(clientsList: [UserClient]) {
         self.viewModel = RemoveClientsViewController.ViewModel(
@@ -66,6 +55,10 @@ final class RemoveClientsViewController: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    weak var delegate: RemoveClientsViewControllerDelegate?
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         [.portrait]
     }
@@ -75,35 +68,6 @@ final class RemoveClientsViewController: UIViewController,
 
         createTableView()
         createConstraints()
-    }
-
-    // MARK: - Helpers
-
-    private func createTableView() {
-        clientsTableView.translatesAutoresizingMaskIntoConstraints = false
-        clientsTableView.delegate = self
-        clientsTableView.dataSource = self
-        clientsTableView.rowHeight = UITableView.automaticDimension
-        clientsTableView.estimatedRowHeight = 80
-        clientsTableView.register(
-            RemoveClientTableViewCell.self,
-            forCellReuseIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier
-        )
-        clientsTableView.isEditing = true
-        clientsTableView.backgroundColor = SemanticColors.View.backgroundDefault
-        clientsTableView.separatorStyle = .none
-        view.addSubview(clientsTableView)
-    }
-
-    private func createConstraints() {
-        clientsTableView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            clientsTableView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            clientsTableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            clientsTableView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            clientsTableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
-        ])
     }
 
     // MARK: - Actions
@@ -117,36 +81,6 @@ final class RemoveClientsViewController: UIViewController,
         if let password = await presentRequestPasswordController() {
             await removeUserClient(userClient, password: password)
         }
-    }
-
-    // MARK: - Helpers
-
-    private func presentRequestPasswordController() async -> String? {
-        await withCheckedContinuation { continuation in
-            requestPasswordController = RequestPasswordController(
-                context: .removeDevice,
-                callback: { password in
-                    continuation.resume(returning: password)
-                }
-            )
-            guard let alertController = requestPasswordController?.alertController else {
-                continuation.resume(returning: nil)
-                return
-            }
-
-            self.present(alertController, animated: true, completion: nil)
-        }
-    }
-
-    private func removeUserClient(_ userClient: UserClient, password: String) async {
-        activityIndicator.start()
-        do {
-            try await viewModel.removeUserClient(userClient, password: password)
-            delegate?.finishedDeleting(self)
-        } catch {
-            delegate?.failedToDeleteClients(error)
-        }
-        activityIndicator.stop()
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
@@ -213,6 +147,77 @@ final class RemoveClientsViewController: UIViewController,
         cell.separatorInset = UIEdgeInsets.zero
         cell.layoutMargins = UIEdgeInsets.zero
         cell.preservesSuperviewLayoutMargins = false
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let clientsTableView = UITableView(frame: CGRect.zero, style: .grouped)
+
+    private var requestPasswordController: RequestPasswordController?
+
+    private var viewModel: RemoveClientsViewController.ViewModel
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
+    // MARK: - Helpers
+
+    private func createTableView() {
+        clientsTableView.translatesAutoresizingMaskIntoConstraints = false
+        clientsTableView.delegate = self
+        clientsTableView.dataSource = self
+        clientsTableView.rowHeight = UITableView.automaticDimension
+        clientsTableView.estimatedRowHeight = 80
+        clientsTableView.register(
+            RemoveClientTableViewCell.self,
+            forCellReuseIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier
+        )
+        clientsTableView.isEditing = true
+        clientsTableView.backgroundColor = SemanticColors.View.backgroundDefault
+        clientsTableView.separatorStyle = .none
+        view.addSubview(clientsTableView)
+    }
+
+    private func createConstraints() {
+        clientsTableView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            clientsTableView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
+            clientsTableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
+            clientsTableView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            clientsTableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
+        ])
+    }
+
+    // MARK: - Helpers
+
+    private func presentRequestPasswordController() async -> String? {
+        await withCheckedContinuation { continuation in
+            requestPasswordController = RequestPasswordController(
+                context: .removeDevice,
+                callback: { password in
+                    continuation.resume(returning: password)
+                }
+            )
+            guard let alertController = requestPasswordController?.alertController else {
+                continuation.resume(returning: nil)
+                return
+            }
+
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    private func removeUserClient(_ userClient: UserClient, password: String) async {
+        activityIndicator.start()
+        do {
+            try await viewModel.removeUserClient(userClient, password: password)
+            delegate?.finishedDeleting(self)
+        } catch {
+            delegate?.failedToDeleteClients(error)
+        }
+        activityIndicator.stop()
     }
 }
 

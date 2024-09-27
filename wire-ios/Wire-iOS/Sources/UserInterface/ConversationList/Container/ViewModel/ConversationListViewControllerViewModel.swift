@@ -67,41 +67,7 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
 extension ConversationListViewController {
     final class ViewModel: NSObject {
-        weak var viewController: ConversationListContainerViewModelDelegate? {
-            didSet {
-                guard viewController != nil else { return }
-
-                updateNoConversationVisibility(animated: false)
-                showPushPermissionDeniedDialogIfNeeded()
-            }
-        }
-
-        let account: Account
-
-        private(set) var selfUserStatus: UserStatus {
-            didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
-        }
-
-        let selfUserLegalHoldSubject: any SelfUserLegalHoldable
-        let userSession: UserSession
-        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
-        private let notificationCenter: NotificationCenter
-
-        var selectedConversation: ZMConversation?
-
-        private var didBecomeActiveNotificationToken: NSObjectProtocol?
-        private var e2eiCertificateChangedToken: NSObjectProtocol?
-        private var initialSyncObserverToken: (any NSObjectProtocol)?
-        private var userObservationToken: NSObjectProtocol?
-        /// observer tokens which are assigned when viewDidLoad
-        var allConversationsObserverToken: NSObjectProtocol?
-        var connectionRequestsObserverToken: NSObjectProtocol?
-
-        var actionsController: ConversationActionController?
-        let mainCoordinator: MainCoordinating
-
-        let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
-        let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
+        // MARK: Lifecycle
 
         init(
             account: Account,
@@ -134,6 +100,47 @@ extension ConversationListViewController {
                 notificationCenter.removeObserver(e2eiCertificateChangedToken)
             }
         }
+
+        // MARK: Internal
+
+        let account: Account
+
+        let selfUserLegalHoldSubject: any SelfUserLegalHoldable
+        let userSession: UserSession
+        var selectedConversation: ZMConversation?
+
+        /// observer tokens which are assigned when viewDidLoad
+        var allConversationsObserverToken: NSObjectProtocol?
+        var connectionRequestsObserverToken: NSObjectProtocol?
+
+        var actionsController: ConversationActionController?
+        let mainCoordinator: MainCoordinating
+
+        let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
+        let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
+
+        weak var viewController: ConversationListContainerViewModelDelegate? {
+            didSet {
+                guard viewController != nil else { return }
+
+                updateNoConversationVisibility(animated: false)
+                showPushPermissionDeniedDialogIfNeeded()
+            }
+        }
+
+        private(set) var selfUserStatus: UserStatus {
+            didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
+        }
+
+        // MARK: Private
+
+        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        private let notificationCenter: NotificationCenter
+
+        private var didBecomeActiveNotificationToken: NSObjectProtocol?
+        private var e2eiCertificateChangedToken: NSObjectProtocol?
+        private var initialSyncObserverToken: (any NSObjectProtocol)?
+        private var userObservationToken: NSObjectProtocol?
     }
 }
 

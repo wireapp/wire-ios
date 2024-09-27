@@ -39,11 +39,11 @@ protocol EARKeyRepositoryInterface {
 
 /// Caches keys for reuse and avoid prompting the user to authenticate for each key access.
 final class EARKeyRepository: EARKeyRepositoryInterface {
-    private var keyCache = [String: SecKey]()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {}
+
+    // MARK: Internal
 
     // MARK: - Public keys
 
@@ -126,4 +126,8 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
         WireLogger.ear.info("clear key cache", attributes: .safePublic)
         keyCache.removeAll()
     }
+
+    // MARK: Private
+
+    private var keyCache = [String: SecKey]()
 }

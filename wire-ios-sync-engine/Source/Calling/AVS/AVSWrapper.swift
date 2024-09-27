@@ -58,22 +58,7 @@ public protocol AVSWrapperType {
 
 /// An object that provides an interface to the AVS APIs.
 public final class AVSWrapper: AVSWrapperType {
-    /// The wrapped `wcall` instance.
-    private let handle: UInt32
-    private let encoder = JSONEncoder()
-
-    // MARK: - Initialization
-
-    /// Initializes avs.
-    private static var initialize: () -> Void = {
-        let resultValue = wcall_init(WCALL_ENV_DEFAULT)
-        if resultValue != 0 {
-            fatal("Failed to initialise AVS (error code: \(resultValue))")
-        }
-        return {}
-    }()
-
-    private static let logger = Logger(subsystem: "VoIP Push", category: "AVSWrapper")
+    // MARK: Lifecycle
 
     /// Creates the wrapper around `wcall`.
     /// - parameter userId: The identifier of the user that owns the calling center.
@@ -115,6 +100,8 @@ public final class AVSWrapper: AVSWrapperType {
         wcall_set_active_speaker_handler(handle, activeSpeakersHandler)
         wcall_set_req_new_epoch_handler(handle, requestNewEpochHandler)
     }
+
+    // MARK: Public
 
     // MARK: - Convenience Methods
 
@@ -267,6 +254,25 @@ public final class AVSWrapper: AVSWrapperType {
             info.keyData.base64EncodedString()
         )
     }
+
+    // MARK: Private
+
+    // MARK: - Initialization
+
+    /// Initializes avs.
+    private static var initialize: () -> Void = {
+        let resultValue = wcall_init(WCALL_ENV_DEFAULT)
+        if resultValue != 0 {
+            fatal("Failed to initialise AVS (error code: \(resultValue))")
+        }
+        return {}
+    }()
+
+    private static let logger = Logger(subsystem: "VoIP Push", category: "AVSWrapper")
+
+    /// The wrapped `wcall` instance.
+    private let handle: UInt32
+    private let encoder = JSONEncoder()
 
     // MARK: - C Callback Handlers
 

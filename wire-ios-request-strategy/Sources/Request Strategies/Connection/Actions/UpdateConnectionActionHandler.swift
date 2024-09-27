@@ -19,10 +19,10 @@
 import Foundation
 
 class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
+    // MARK: Internal
+
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
-
-    private let processor = ConnectionPayloadProcessor()
 
     override func request(for action: UpdateConnectionAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
@@ -33,6 +33,48 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
             v1Request(for: action)
         }
     }
+
+    override func handleResponse(_ response: ZMTransportResponse, action: UpdateConnectionAction) {
+        var action = action
+
+        guard response.result == .success else {
+            guard let failure = Payload.ResponseFailure(response, decoder: decoder) else {
+                action.notifyResult(.failure(.unknown))
+                return
+            }
+
+            switch (failure.code, failure.label) {
+            case (403, .noIdentity):
+                action.notifyResult(.failure(.noIdentity))
+            case (403, .missingLegalholdConsent):
+                action.notifyResult(.failure(.missingLegalholdConsent))
+            case (403, .notConnected):
+                action.notifyResult(.failure(.notConnected))
+            case (403, .connectionLimit):
+                action.notifyResult(.failure(.connectionLimitReached))
+            case (422, .federationDenied):
+                action.notifyResult(.failure(.federationDenied))
+            default:
+                action.notifyResult(.failure(.unknown))
+            }
+
+            return
+        }
+
+        if let connection = Payload.Connection(response, decoder: decoder) {
+            processor.updateOrCreateConnection(
+                from: connection,
+                in: context
+            )
+            context.saveOrRollback()
+        }
+
+        action.notifyResult(.success(()))
+    }
+
+    // MARK: Private
+
+    private let processor = ConnectionPayloadProcessor()
 
     private func v0Request(for action: UpdateConnectionAction) -> ZMTransportRequest? {
         guard
@@ -89,43 +131,5 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
         }
 
         return payloadAsString as ZMTransportData
-    }
-
-    override func handleResponse(_ response: ZMTransportResponse, action: UpdateConnectionAction) {
-        var action = action
-
-        guard response.result == .success else {
-            guard let failure = Payload.ResponseFailure(response, decoder: decoder) else {
-                action.notifyResult(.failure(.unknown))
-                return
-            }
-
-            switch (failure.code, failure.label) {
-            case (403, .noIdentity):
-                action.notifyResult(.failure(.noIdentity))
-            case (403, .missingLegalholdConsent):
-                action.notifyResult(.failure(.missingLegalholdConsent))
-            case (403, .notConnected):
-                action.notifyResult(.failure(.notConnected))
-            case (403, .connectionLimit):
-                action.notifyResult(.failure(.connectionLimitReached))
-            case (422, .federationDenied):
-                action.notifyResult(.failure(.federationDenied))
-            default:
-                action.notifyResult(.failure(.unknown))
-            }
-
-            return
-        }
-
-        if let connection = Payload.Connection(response, decoder: decoder) {
-            processor.updateOrCreateConnection(
-                from: connection,
-                in: context
-            )
-            context.saveOrRollback()
-        }
-
-        action.notifyResult(.success(()))
     }
 }

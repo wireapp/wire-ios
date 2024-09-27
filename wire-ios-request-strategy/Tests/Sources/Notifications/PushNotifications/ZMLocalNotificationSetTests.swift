@@ -24,7 +24,7 @@ import WireUtilitiesSupport
 // MARK: - MockKVStore
 
 public final class MockKVStore: NSObject, ZMSynchonizableKeyValueStore {
-    var keysAndValues = [String: Any]()
+    // MARK: Public
 
     public func store(value: PersistableInMetadata?, key: String) {
         keysAndValues[key] = value
@@ -37,6 +37,10 @@ public final class MockKVStore: NSObject, ZMSynchonizableKeyValueStore {
     public func enqueueDelayedSave() {
         // no op
     }
+
+    // MARK: Internal
+
+    var keysAndValues = [String: Any]()
 }
 
 // MARK: - ZMLocalNotificationSetTests

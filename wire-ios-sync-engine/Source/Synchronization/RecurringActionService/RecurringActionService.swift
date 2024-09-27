@@ -21,11 +21,7 @@ import WireSystem
 import WireUtilities
 
 final class RecurringActionService: RecurringActionServiceInterface {
-    // MARK: - Properties
-
-    private(set) var actionsByID = [String: RecurringAction]()
-    private let storage: UserDefaults
-    private let dateProvider: CurrentDateProviding
+    // MARK: Lifecycle
 
     public init(
         storage: UserDefaults,
@@ -34,6 +30,8 @@ final class RecurringActionService: RecurringActionServiceInterface {
         self.storage = storage
         self.dateProvider = dateProvider
     }
+
+    // MARK: Public
 
     // MARK: - Methods
 
@@ -64,6 +62,21 @@ final class RecurringActionService: RecurringActionServiceInterface {
         actionsByID.removeValue(forKey: id)
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    private(set) var actionsByID = [String: RecurringAction]()
+
+    func persistLastCheckDate(for actionID: String) {
+        storage.set(dateProvider.now, forKey: key(for: actionID))
+    }
+
+    // MARK: Private
+
+    private let storage: UserDefaults
+    private let dateProvider: CurrentDateProviding
+
     // MARK: - Helpers
 
     private func key(for actionID: String) -> String {
@@ -72,9 +85,5 @@ final class RecurringActionService: RecurringActionServiceInterface {
 
     private func lastCheckDate(for actionID: String) -> Date? {
         storage.object(forKey: key(for: actionID)) as? Date
-    }
-
-    func persistLastCheckDate(for actionID: String) {
-        storage.set(dateProvider.now, forKey: key(for: actionID))
     }
 }

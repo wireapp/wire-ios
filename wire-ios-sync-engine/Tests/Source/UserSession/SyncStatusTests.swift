@@ -20,6 +20,8 @@ import XCTest
 @testable import WireSyncEngine
 
 final class SyncStatusTests: MessagingTest {
+    // MARK: Internal
+
     var sut: SyncStatus!
     var mockSyncDelegate: MockSyncStateDelegate!
 
@@ -33,15 +35,6 @@ final class SyncStatusTests: MessagingTest {
         mockSyncDelegate = nil
         sut = nil
         super.tearDown()
-    }
-
-    private func createSut() -> SyncStatus {
-        let sut = SyncStatus(
-            managedObjectContext: uiMOC,
-            lastEventIDRepository: lastEventIDRepository
-        )
-        sut.syncStateDelegate = mockSyncDelegate
-        return sut
     }
 
     func testThatWhenIntializingWithoutLastEventIDItStartsInStateFetchingLastUpdateEventID() {
@@ -522,5 +515,16 @@ final class SyncStatusTests: MessagingTest {
         // then
         XCTAssertEqual(lastEventIDRepository.fetchLastEventID(), newID)
         XCTAssertNotEqual(lastEventIDRepository.fetchLastEventID(), oldID)
+    }
+
+    // MARK: Private
+
+    private func createSut() -> SyncStatus {
+        let sut = SyncStatus(
+            managedObjectContext: uiMOC,
+            lastEventIDRepository: lastEventIDRepository
+        )
+        sut.syncStateDelegate = mockSyncDelegate
+        return sut
     }
 }

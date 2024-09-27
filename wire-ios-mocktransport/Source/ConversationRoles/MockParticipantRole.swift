@@ -23,11 +23,11 @@ import Foundation
 
 @objc
 public final class MockParticipantRole: NSManagedObject, EntityNamedProtocol {
+    public static var entityName = "ParticipantRole"
+
     @NSManaged public var conversation: MockConversation
     @NSManaged public var user: MockUser
     @NSManaged public var role: MockRole?
-
-    public static var entityName = "ParticipantRole"
 }
 
 extension MockParticipantRole {

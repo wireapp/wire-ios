@@ -19,33 +19,13 @@
 import Foundation
 
 class ConversationMessageTimerTests: IntegrationTest {
+    // MARK: Internal
+
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()
         createExtraUsersAndConversations()
         createTeamAndConversations()
-    }
-
-    private func responsePayload(
-        for conversation: ZMConversation,
-        timeout: MessageDestructionTimeoutValue
-    ) -> ZMTransportData {
-        var payload: [String: Any] = [
-            "from": user1.identifier,
-            "conversation": conversation.remoteIdentifier!.transportString(),
-            "time": Date().transportString(),
-            "type": "conversation.message-timer-update",
-        ]
-
-        switch timeout {
-        case .none:
-            payload["data"] = ["message_timer": NSNull()]
-        default:
-            let timeoutInMiliseconds = timeout.rawValue * 1000
-            payload["data"] = ["message_timer": Int(timeoutInMiliseconds)]
-        }
-
-        return payload as ZMTransportData
     }
 
     func testThatItUpdatesTheDestructionTimerOneDay() {
@@ -112,6 +92,30 @@ class ConversationMessageTimerTests: IntegrationTest {
         // then
         XCTAssertEqual(sut.activeMessageDestructionTimeoutValue, .oneDay)
         XCTAssertEqual(sut.activeMessageDestructionTimeoutType, .selfUser)
+    }
+
+    // MARK: Private
+
+    private func responsePayload(
+        for conversation: ZMConversation,
+        timeout: MessageDestructionTimeoutValue
+    ) -> ZMTransportData {
+        var payload: [String: Any] = [
+            "from": user1.identifier,
+            "conversation": conversation.remoteIdentifier!.transportString(),
+            "time": Date().transportString(),
+            "type": "conversation.message-timer-update",
+        ]
+
+        switch timeout {
+        case .none:
+            payload["data"] = ["message_timer": NSNull()]
+        default:
+            let timeoutInMiliseconds = timeout.rawValue * 1000
+            payload["data"] = ["message_timer": Int(timeoutInMiliseconds)]
+        }
+
+        return payload as ZMTransportData
     }
 
     // MARK: - Helper

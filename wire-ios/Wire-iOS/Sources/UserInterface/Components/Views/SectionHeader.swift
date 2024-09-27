@@ -23,10 +23,7 @@ import WireDesign
 // MARK: - SectionHeaderView
 
 final class SectionHeaderView: UIView {
-    let titleLabel = DynamicFontLabel(
-        fontSpec: .smallSemiboldFont,
-        color: SemanticColors.Label.textSectionHeader
-    )
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,6 +35,15 @@ final class SectionHeaderView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let titleLabel = DynamicFontLabel(
+        fontSpec: .smallSemiboldFont,
+        color: SemanticColors.Label.textSectionHeader
+    )
+
+    // MARK: Private
 
     private func setupViews() {
         backgroundColor = SemanticColors.View.backgroundDefault
@@ -60,11 +66,7 @@ final class SectionHeaderView: UIView {
 // MARK: - SectionHeader
 
 final class SectionHeader: UICollectionReusableView {
-    let headerView = SectionHeaderView()
-
-    var titleLabel: UILabel {
-        headerView.titleLabel
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -77,16 +79,20 @@ final class SectionHeader: UICollectionReusableView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
-}
 
-// MARK: - SectionTableHeader
+    // MARK: Internal
 
-final class SectionTableHeader: UITableViewHeaderFooterView {
     let headerView = SectionHeaderView()
 
     var titleLabel: UILabel {
         headerView.titleLabel
     }
+}
+
+// MARK: - SectionTableHeader
+
+final class SectionTableHeader: UITableViewHeaderFooterView {
+    // MARK: Lifecycle
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -98,6 +104,16 @@ final class SectionTableHeader: UITableViewHeaderFooterView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    let headerView = SectionHeaderView()
+
+    var titleLabel: UILabel {
+        headerView.titleLabel
+    }
+
+    // MARK: Private
 
     private func createConstraints() {
         headerView.translatesAutoresizingMaskIntoConstraints = false

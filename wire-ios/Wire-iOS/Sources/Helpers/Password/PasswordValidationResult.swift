@@ -27,6 +27,8 @@ enum PasswordValidationResult: Equatable {
     /// The password is invalid due to the violations.
     case invalid(violations: [Violation])
 
+    // MARK: Internal
+
     enum Violation: Equatable {
         /// The password is too short.
         case tooShort

@@ -20,31 +20,7 @@ import UIKit
 
 @objc
 public final class ZMEmailAddressValidator: NSObject, ZMPropertyValidator {
-    static func normalizeEmailAddress(_ emailAddress: inout NSString?) -> Bool {
-        var normalizedAddress = emailAddress?.lowercased as NSString?
-        var charactersToTrim = CharacterSet.whitespaces
-        charactersToTrim.formUnion(CharacterSet.controlCharacters)
-        normalizedAddress?.trimmingCharacters(in: charactersToTrim)
-
-        let bracketsScanner = Scanner(string: normalizedAddress as String? ?? "")
-        bracketsScanner.charactersToBeSkipped = CharacterSet()
-        bracketsScanner.locale = Locale(identifier: "en_US_POSIX")
-
-        if bracketsScanner.scanUpToString("<") != nil, bracketsScanner.scanString("<") != nil {
-            normalizedAddress = bracketsScanner.scanUpToString(">") as NSString?
-            if bracketsScanner.scanString(">") == nil {
-                // if there is no > than it's not valid email, we do not need to change input value
-                normalizedAddress = nil
-            }
-        }
-
-        if let normalizedAddress, normalizedAddress != emailAddress {
-            emailAddress = normalizedAddress
-            return true
-        }
-
-        return false
-    }
+    // MARK: Public
 
     @objc(validateValue:error:)
     public static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws {
@@ -172,5 +148,33 @@ public final class ZMEmailAddressValidator: NSObject, ZMPropertyValidator {
         } catch {
             return false
         }
+    }
+
+    // MARK: Internal
+
+    static func normalizeEmailAddress(_ emailAddress: inout NSString?) -> Bool {
+        var normalizedAddress = emailAddress?.lowercased as NSString?
+        var charactersToTrim = CharacterSet.whitespaces
+        charactersToTrim.formUnion(CharacterSet.controlCharacters)
+        normalizedAddress?.trimmingCharacters(in: charactersToTrim)
+
+        let bracketsScanner = Scanner(string: normalizedAddress as String? ?? "")
+        bracketsScanner.charactersToBeSkipped = CharacterSet()
+        bracketsScanner.locale = Locale(identifier: "en_US_POSIX")
+
+        if bracketsScanner.scanUpToString("<") != nil, bracketsScanner.scanString("<") != nil {
+            normalizedAddress = bracketsScanner.scanUpToString(">") as NSString?
+            if bracketsScanner.scanString(">") == nil {
+                // if there is no > than it's not valid email, we do not need to change input value
+                normalizedAddress = nil
+            }
+        }
+
+        if let normalizedAddress, normalizedAddress != emailAddress {
+            emailAddress = normalizedAddress
+            return true
+        }
+
+        return false
     }
 }

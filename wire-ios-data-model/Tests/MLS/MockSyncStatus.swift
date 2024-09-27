@@ -20,6 +20,8 @@ import Foundation
 
 class MockSyncStatus: SyncStatusProtocol {
     var mockForceSlowSync: (() -> Void)?
+    var mockPerformQuickSync: (() async -> Void)?
+
     func forceSlowSync() {
         guard let mock = mockForceSlowSync else {
             fatalError("no mock for `forceSlowSync`")
@@ -28,7 +30,6 @@ class MockSyncStatus: SyncStatusProtocol {
         mock()
     }
 
-    var mockPerformQuickSync: (() async -> Void)?
     func performQuickSync() async {
         guard let mock = mockPerformQuickSync else {
             fatalError("no mock for `performQuickSync`")

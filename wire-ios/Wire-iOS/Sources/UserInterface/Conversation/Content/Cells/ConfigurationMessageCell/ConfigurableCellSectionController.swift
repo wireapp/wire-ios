@@ -20,11 +20,15 @@ import Foundation
 
 @objc
 final class ConversationMessageSectionController: NSObject {
-    let sectionDescription: CellSectionDescription
+    // MARK: Lifecycle
 
     init(sectionDescription: CellSectionDescription) {
         self.sectionDescription = sectionDescription
     }
+
+    // MARK: Internal
+
+    let sectionDescription: CellSectionDescription
 
     var numberOfCells: Int {
         sectionDescription.numberOfCells

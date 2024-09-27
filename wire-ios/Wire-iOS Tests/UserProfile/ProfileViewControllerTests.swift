@@ -22,13 +22,7 @@ import XCTest
 @testable import WireSyncEngineSupport
 
 final class ProfileViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: ProfileViewController!
-    private var mockUser: MockUser!
-    private var selfUser: MockUser!
-    private var mockViewModel: MockProfileViewControllerViewModeling!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -263,4 +257,14 @@ final class ProfileViewControllerTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockUser.refreshMembershipCount, 0)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ProfileViewController!
+    private var mockUser: MockUser!
+    private var selfUser: MockUser!
+    private var mockViewModel: MockProfileViewControllerViewModeling!
+    private var snapshotHelper: SnapshotHelper!
 }

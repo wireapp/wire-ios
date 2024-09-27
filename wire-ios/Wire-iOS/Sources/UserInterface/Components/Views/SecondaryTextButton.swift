@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 
 final class SecondaryTextButton: IconButton {
+    // MARK: Lifecycle
+
     init() {
         super.init()
 
@@ -37,6 +39,8 @@ final class SecondaryTextButton: IconButton {
         titleLabel?.font = fontSpec.font
         self.contentEdgeInsets = insets
     }
+
+    // MARK: Internal
 
     override var isHighlighted: Bool {
         didSet {

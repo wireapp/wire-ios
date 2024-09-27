@@ -19,14 +19,16 @@
 import Foundation
 
 public final class TimerManager<Identifier: Hashable> {
+    // MARK: Lifecycle
+
+    public init() {}
+
+    // MARK: Public
+
     public enum TimerError: Error {
         case timerAlreadyExists
         case timerNotFound
     }
-
-    private var timers: [Identifier: Timer] = [:]
-
-    public init() {}
 
     public func startTimer(
         for identifier: Identifier,
@@ -60,6 +62,10 @@ public final class TimerManager<Identifier: Hashable> {
 
         timers.removeAll()
     }
+
+    // MARK: Private
+
+    private var timers: [Identifier: Timer] = [:]
 
     private func timerExpired(
         for identifier: Identifier,

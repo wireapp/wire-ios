@@ -22,12 +22,7 @@ import Foundation
 /// as strings.
 
 public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
-    /// The integer value wrapped by the object
-    public let rawValue: Int
-
-    public var description: String {
-        rawValue.description
-    }
+    // MARK: Lifecycle
 
     public init(rawValue: Int) {
         self.rawValue = rawValue
@@ -53,6 +48,15 @@ public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
         }
 
         self.rawValue = rawValue
+    }
+
+    // MARK: Public
+
+    /// The integer value wrapped by the object
+    public let rawValue: Int
+
+    public var description: String {
+        rawValue.description
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -19,9 +19,7 @@
 import Foundation
 
 class CallKitCall {
-    let id: UUID
-    let handle: CallHandle
-    let observer = CallObserver()
+    // MARK: Lifecycle
 
     init(
         id: UUID,
@@ -30,4 +28,10 @@ class CallKitCall {
         self.id = id
         self.handle = handle
     }
+
+    // MARK: Internal
+
+    let id: UUID
+    let handle: CallHandle
+    let observer = CallObserver()
 }

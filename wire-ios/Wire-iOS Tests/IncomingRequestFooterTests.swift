@@ -23,9 +23,7 @@ import XCTest
 // MARK: - IncomingRequestFooterTests
 
 final class IncomingRequestFooterTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -60,6 +58,12 @@ final class IncomingRequestFooterTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
 }
 
 extension IncomingRequestFooterView {

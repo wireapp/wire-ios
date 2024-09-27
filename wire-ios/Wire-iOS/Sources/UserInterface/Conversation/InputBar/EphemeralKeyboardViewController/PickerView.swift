@@ -25,11 +25,7 @@ import UIKit
 /// views, which means that the behaviour could break in future iOS updates.
 
 final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
-    // MARK: - Properties
-
-    var selectorColor: UIColor?
-    var tapRecognizer: UIGestureRecognizer! = nil
-    var didTapViewClosure: (() -> Void)?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -44,6 +40,14 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    var selectorColor: UIColor?
+    var tapRecognizer: UIGestureRecognizer! = nil
+    var didTapViewClosure: (() -> Void)?
 
     // MARK: - Override methods
 
@@ -60,18 +64,6 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
     func didTapView(sender: UIGestureRecognizer) {
         guard recognizerInSelectedRow(sender) else { return }
         didTapViewClosure?()
-    }
-
-    /// Used to determine if the recognizers touches are in the area
-    /// of the selected row of the `UIPickerView`, this is done by asking the
-    /// delegate for the rowHeight and using it to calculate the rect
-    /// of the center (selected) row.
-    private func recognizerInSelectedRow(_ recognizer: UIGestureRecognizer) -> Bool {
-        guard selectedRow(inComponent: 0) != -1 else { return false }
-        guard let height = delegate?.pickerView?(self, rowHeightForComponent: 0) else { return false }
-        let rect = bounds.insetBy(dx: 0, dy: bounds.midY - height / 2)
-        let location = recognizer.location(in: self)
-        return rect.contains(location)
     }
 
     // MARK: - UIGestureRecognizerDelegate
@@ -99,5 +91,19 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
         shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
         otherGestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
+    }
+
+    // MARK: Private
+
+    /// Used to determine if the recognizers touches are in the area
+    /// of the selected row of the `UIPickerView`, this is done by asking the
+    /// delegate for the rowHeight and using it to calculate the rect
+    /// of the center (selected) row.
+    private func recognizerInSelectedRow(_ recognizer: UIGestureRecognizer) -> Bool {
+        guard selectedRow(inComponent: 0) != -1 else { return false }
+        guard let height = delegate?.pickerView?(self, rowHeightForComponent: 0) else { return false }
+        let rect = bounds.insetBy(dx: 0, dy: bounds.midY - height / 2)
+        let location = recognizer.location(in: self)
+        return rect.contains(location)
     }
 }

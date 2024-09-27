@@ -42,41 +42,7 @@ protocol Shareable {
 
 final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController,
     UITableViewDelegate, UITableViewDataSource {
-    let destinations: [D]
-    let shareable: S
-    private(set) var selectedDestinations: Set<D> = Set() {
-        didSet {
-            sendButton.isEnabled = selectedDestinations.count > 0
-        }
-    }
-
-    var tokenFieldTopConstraint: NSLayoutConstraint?
-    var tokenFieldShareablePreviewSpacingConstraint: NSLayoutConstraint?
-    var shareablePreviewTopConstraint: NSLayoutConstraint?
-
-    var showPreview: Bool {
-        didSet {
-            shareablePreviewWrapper?.isHidden = !showPreview
-
-            updateShareablePreviewConstraint()
-        }
-    }
-
-    func updateShareablePreviewConstraint() {
-        if showPreview {
-            tokenFieldTopConstraint?.isActive = false
-            shareablePreviewTopConstraint?.isActive = true
-            tokenFieldShareablePreviewSpacingConstraint?.isActive = true
-        } else {
-            shareablePreviewTopConstraint?.isActive = false
-            tokenFieldShareablePreviewSpacingConstraint?.isActive = false
-            tokenFieldTopConstraint?.isActive = true
-        }
-    }
-
-    let allowsMultipleSelection: Bool
-    var onDismiss: ((ShareViewController, Bool) -> Void)?
-    var bottomConstraint: NSLayoutConstraint?
+    // MARK: Lifecycle
 
     init(shareable: S, destinations: [D], showPreview: Bool = true, allowsMultipleSelection: Bool = true) {
         self.destinations = destinations
@@ -101,6 +67,18 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let destinations: [D]
+    let shareable: S
+    var tokenFieldTopConstraint: NSLayoutConstraint?
+    var tokenFieldShareablePreviewSpacingConstraint: NSLayoutConstraint?
+    var shareablePreviewTopConstraint: NSLayoutConstraint?
+
+    let allowsMultipleSelection: Bool
+    var onDismiss: ((ShareViewController, Bool) -> Void)?
+    var bottomConstraint: NSLayoutConstraint?
+
     let containerView = UIView()
     var shareablePreviewView: UIView?
     var shareablePreviewWrapper: UIView?
@@ -118,22 +96,29 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         return view
     }()
 
-    // MARK: - Search
-
-    private var filteredDestinations: [D] = []
-
-    private var filterString: String? = .none {
+    private(set) var selectedDestinations: Set<D> = Set() {
         didSet {
-            if let filterString, !filterString.isEmpty {
-                filteredDestinations = destinations.filter {
-                    let name = $0.displayNameWithFallback
-                    return name.range(of: filterString, options: .caseInsensitive) != nil
-                }
-            } else {
-                filteredDestinations = destinations
-            }
+            sendButton.isEnabled = selectedDestinations.count > 0
+        }
+    }
 
-            destinationsTableView.reloadData()
+    var showPreview: Bool {
+        didSet {
+            shareablePreviewWrapper?.isHidden = !showPreview
+
+            updateShareablePreviewConstraint()
+        }
+    }
+
+    func updateShareablePreviewConstraint() {
+        if showPreview {
+            tokenFieldTopConstraint?.isActive = false
+            shareablePreviewTopConstraint?.isActive = true
+            tokenFieldShareablePreviewSpacingConstraint?.isActive = true
+        } else {
+            shareablePreviewTopConstraint?.isActive = false
+            tokenFieldShareablePreviewSpacingConstraint?.isActive = false
+            tokenFieldTopConstraint?.isActive = true
         }
     }
 
@@ -208,6 +193,27 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         topSeparatorView.scrollViewDidScroll(scrollView: scrollView)
+    }
+
+    // MARK: Private
+
+    // MARK: - Search
+
+    private var filteredDestinations: [D] = []
+
+    private var filterString: String? = .none {
+        didSet {
+            if let filterString, !filterString.isEmpty {
+                filteredDestinations = destinations.filter {
+                    let name = $0.displayNameWithFallback
+                    return name.range(of: filterString, options: .caseInsensitive) != nil
+                }
+            } else {
+                filteredDestinations = destinations
+            }
+
+            destinationsTableView.reloadData()
+        }
     }
 
     @objc

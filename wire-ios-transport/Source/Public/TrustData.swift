@@ -21,23 +21,7 @@ import Foundation
 // MARK: - TrustData
 
 struct TrustData: Decodable {
-    struct Host: Decodable {
-        enum Rule: String, Decodable {
-            case endsWith = "ends_with"
-            case equals
-        }
-
-        let rule: Rule
-        let value: String
-    }
-
-    let certificateKey: SecKey
-    let hosts: [Host]
-
-    enum CodingKeys: String, CodingKey {
-        case certificateKey
-        case hosts
-    }
+    // MARK: Lifecycle
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -61,6 +45,26 @@ struct TrustData: Decodable {
         self.certificateKey = certificateKey
         self.hosts = try container.decode([TrustData.Host].self, forKey: .hosts)
     }
+
+    // MARK: Internal
+
+    struct Host: Decodable {
+        enum Rule: String, Decodable {
+            case endsWith = "ends_with"
+            case equals
+        }
+
+        let rule: Rule
+        let value: String
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case certificateKey
+        case hosts
+    }
+
+    let certificateKey: SecKey
+    let hosts: [Host]
 }
 
 extension TrustData {

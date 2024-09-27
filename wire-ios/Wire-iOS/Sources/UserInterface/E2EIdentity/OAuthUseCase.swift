@@ -31,13 +31,13 @@ protocol OAuthUseCaseInterface {
 // MARK: - OAuthUseCase
 
 class OAuthUseCase: OAuthUseCaseInterface {
-    private let logger = WireLogger.e2ei
-    private var currentAuthorizationFlow: OIDExternalUserAgentSession?
-    private var targetViewController: () -> UIViewController
+    // MARK: Lifecycle
 
     init(targetViewController: @escaping () -> UIViewController) {
         self.targetViewController = targetViewController
     }
+
+    // MARK: Internal
 
     func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
         logger.info("invoke authentication flow")
@@ -77,6 +77,12 @@ class OAuthUseCase: OAuthUseCaseInterface {
 
         return try await execute(authorizationRequest: request)
     }
+
+    // MARK: Private
+
+    private let logger = WireLogger.e2ei
+    private var currentAuthorizationFlow: OIDExternalUserAgentSession?
+    private var targetViewController: () -> UIViewController
 
     private func createAdditionalParameters(with keyauth: String, acmeAudience: String) -> [String: String]? {
         enum CodingKeys: String {

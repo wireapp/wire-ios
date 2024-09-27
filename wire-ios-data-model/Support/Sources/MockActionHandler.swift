@@ -20,18 +20,7 @@ import Foundation
 import WireDataModel
 
 public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
-    public typealias Action = T
-
-    private var results: [Result<Action.Result, Action.Failure>]
-    private var token: NSObjectProtocol?
-
-    private let lock = NSRecursiveLock()
-
-    public var didPerformAction: Bool {
-        results.isEmpty
-    }
-
-    public var performedActions: [Action] = []
+    // MARK: Lifecycle
 
     public convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
         self.init(results: [result], context: context)
@@ -40,6 +29,16 @@ public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
     public init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
         self.results = results
         self.token = Action.registerHandler(self, context: context)
+    }
+
+    // MARK: Public
+
+    public typealias Action = T
+
+    public var performedActions: [Action] = []
+
+    public var didPerformAction: Bool {
+        results.isEmpty
     }
 
     public func performAction(_ action: Action) {
@@ -56,4 +55,11 @@ public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
             assertionFailure("no expected result set")
         }
     }
+
+    // MARK: Private
+
+    private var results: [Result<Action.Result, Action.Failure>]
+    private var token: NSObjectProtocol?
+
+    private let lock = NSRecursiveLock()
 }

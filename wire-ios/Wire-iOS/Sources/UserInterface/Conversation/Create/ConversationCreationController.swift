@@ -34,20 +34,108 @@ protocol ConversationCreationControllerDelegate: AnyObject {
 // MARK: - ConversationCreationController
 
 final class ConversationCreationController: UIViewController {
+    // MARK: Lifecycle
+
+    init(
+        preSelectedParticipants: UserSet?,
+        userSession: UserSession
+    ) {
+        self.preSelectedParticipants = preSelectedParticipants
+        self.userSession = userSession
+
+        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
+        self.values = ConversationCreationValues(
+            encryptionProtocol: mlsFeature.config.defaultProtocol,
+            selfUser: userSession.selfUser
+        )
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    // MARK: Internal
+
     // MARK: - Properties
 
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
+
+    weak var delegate: ConversationCreationControllerDelegate?
+
+    // MARK: - Methods
+
+    override var prefersStatusBarHidden: Bool {
+        false
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        setupViews()
+
+        // try to overtake the first responder from the other view
+        if UIResponder.currentFirst != nil {
+            nameSection.becomeFirstResponder()
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        nameSection.becomeFirstResponder()
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        coordinator.animate(alongsideTransition: { _ in
+            self.collectionViewController.collectionView?.collectionViewLayout.invalidateLayout()
+        })
+    }
+
+    func proceedWith(value: SimpleTextField.Value) {
+        switch value {
+        case let .error(error):
+            errorSection.displayError(error)
+
+        case let .valid(name):
+            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            nameSection.resignFirstResponder()
+            values.name = trimmed
+
+            if let parts = preSelectedParticipants {
+                values.participants = parts
+            }
+
+            let participantsController = AddParticipantsViewController(
+                context: .create(values),
+                userSession: userSession
+            )
+
+            participantsController.conversationCreationDelegate = self
+            navigationController?.pushViewController(participantsController, animated: true)
+        }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var navBarBackgroundView = UIView()
+
+    // MARK: Private
 
     private let userSession: UserSession
 
     private let collectionViewController = SectionCollectionViewController()
 
-    fileprivate var navBarBackgroundView = UIView()
-
     private var preSelectedParticipants: UserSet?
     private var values: ConversationCreationValues
-
-    weak var delegate: ConversationCreationControllerDelegate?
 
     // MARK: - Sections
 
@@ -69,18 +157,6 @@ final class ConversationCreationController: UIViewController {
         receiptsSection,
         shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
     ].compactMap { $0 }
-
-    private var shouldIncludeEncryptionProtocolSection: Bool {
-        if DeveloperFlag.showCreateMLSGroupToggle.isOn {
-            return true
-        }
-
-        if AutomationHelper.sharedHelper.allowMLSGroupCreation == true {
-            return true
-        }
-
-        return userSession.selfUser.canCreateMLSGroups
-    }
 
     private lazy var guestsSection: ConversationCreateGuestsSectionController = {
         let section = ConversationCreateGuestsSectionController(values: values)
@@ -129,62 +205,16 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    // MARK: - Life cycle
-
-    init(
-        preSelectedParticipants: UserSet?,
-        userSession: UserSession
-    ) {
-        self.preSelectedParticipants = preSelectedParticipants
-        self.userSession = userSession
-
-        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
-        self.values = ConversationCreationValues(
-            encryptionProtocol: mlsFeature.config.defaultProtocol,
-            selfUser: userSession.selfUser
-        )
-
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        setupViews()
-
-        // try to overtake the first responder from the other view
-        if UIResponder.currentFirst != nil {
-            nameSection.becomeFirstResponder()
+    private var shouldIncludeEncryptionProtocolSection: Bool {
+        if DeveloperFlag.showCreateMLSGroupToggle.isOn {
+            return true
         }
-    }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupNavigationBar()
-    }
+        if AutomationHelper.sharedHelper.allowMLSGroupCreation == true {
+            return true
+        }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        nameSection.becomeFirstResponder()
-    }
-
-    // MARK: - Methods
-
-    override var prefersStatusBarHidden: Bool {
-        false
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        coordinator.animate(alongsideTransition: { _ in
-            self.collectionViewController.collectionView?.collectionViewLayout.invalidateLayout()
-        })
+        return userSession.selfUser.canCreateMLSGroups
     }
 
     private func setupViews() {
@@ -242,30 +272,6 @@ final class ConversationCreationController: UIViewController {
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
         navigationItem.rightBarButtonItem = nextButtonItem
-    }
-
-    func proceedWith(value: SimpleTextField.Value) {
-        switch value {
-        case let .error(error):
-            errorSection.displayError(error)
-
-        case let .valid(name):
-            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            nameSection.resignFirstResponder()
-            values.name = trimmed
-
-            if let parts = preSelectedParticipants {
-                values.participants = parts
-            }
-
-            let participantsController = AddParticipantsViewController(
-                context: .create(values),
-                userSession: userSession
-            )
-
-            participantsController.conversationCreationDelegate = self
-            navigationController?.pushViewController(participantsController, animated: true)
-        }
     }
 
     private func tryToProceed() {

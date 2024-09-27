@@ -21,15 +21,15 @@ import Foundation
 // MARK: - ConnectionsAPIV0
 
 class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
-    private enum Constants {
-        static let batchSize = 500
-    }
-
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Internal
+
+    let httpClient: any HTTPClient
 
     var apiVersion: APIVersion {
         .v0
@@ -61,6 +61,12 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 
         return pager
     }
+
+    // MARK: Private
+
+    private enum Constants {
+        static let batchSize = 500
+    }
 }
 
 // MARK: - PaginatedConnectionListV0
@@ -72,13 +78,13 @@ private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
         case hasMore = "has_more"
     }
 
-    var nextStartReference: String? {
-        pagingState
-    }
-
     let connections: [ConnectionResponseV0]
     let pagingState: String
     let hasMore: Bool
+
+    var nextStartReference: String? {
+        pagingState
+    }
 
     func toAPIModel() -> PayloadPager<Connection>.Page {
         PayloadPager<Connection>.Page(

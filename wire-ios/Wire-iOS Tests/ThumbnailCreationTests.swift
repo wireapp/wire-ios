@@ -23,15 +23,7 @@ import XCTest
 // MARK: - ThumbnailCreationTests
 
 final class ThumbnailCreationTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var squareImage: UIImage!
-    private var verticalPanoramaImage: UIImage!
-    private var horizontalPanoramaImage: UIImage!
-    private var squareImageData: Data!
-    private var verticalPanoramaImageData: Data!
-    private var horizontalPanoramaImageData: Data!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -128,6 +120,18 @@ final class ThumbnailCreationTests: XCTestCase {
         // THEN
         XCTAssertNil(thumbnail)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var squareImage: UIImage!
+    private var verticalPanoramaImage: UIImage!
+    private var horizontalPanoramaImage: UIImage!
+    private var squareImageData: Data!
+    private var verticalPanoramaImageData: Data!
+    private var horizontalPanoramaImageData: Data!
 }
 
 // MARK: - Helper

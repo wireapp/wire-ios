@@ -21,6 +21,42 @@ import WireCommonComponents
 import WireDesign
 
 final class SettingsLinkTableCell: SettingsTableCellProtocol {
+    // MARK: Lifecycle
+
+    // MARK: - Logic
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
+    var preview: SettingsCellPreview = .none
+
+    var icon: StyleKitIcon?
+
+    var descriptor: SettingsCellDescriptorType?
+
+    var titleText = "" {
+        didSet {
+            cellNameLabel.text = titleText
+        }
+    }
+
+    var linkText: NSAttributedString? {
+        didSet {
+            cellLinkLabel.attributedText = linkText
+        }
+    }
+
+    // MARK: Private
+
     // MARK: - Properties
 
     private let cellLinkLabel = CopyableLabel()
@@ -38,36 +74,6 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
 
         return label
     }()
-
-    var titleText = "" {
-        didSet {
-            cellNameLabel.text = titleText
-        }
-    }
-
-    var linkText: NSAttributedString? {
-        didSet {
-            cellLinkLabel.attributedText = linkText
-        }
-    }
-
-    var preview: SettingsCellPreview = .none
-
-    var icon: StyleKitIcon?
-
-    var descriptor: SettingsCellDescriptorType?
-
-    // MARK: - Logic
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
 
     private func setup() {
         backgroundView = UIView()

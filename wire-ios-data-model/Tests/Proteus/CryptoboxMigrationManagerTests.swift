@@ -28,6 +28,14 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
     var proteusViaCoreCryptoFlag: DeveloperFlag!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
 
+    lazy var cryptoboxDirectory = accountDirectory.appendingPathComponent("otr")
+
+    var accountDirectory: URL {
+        FileManager.default
+            .temporaryDirectory
+            .appendingPathComponent("CryptoBoxMigrationManagerTests")
+    }
+
     override func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
@@ -54,14 +62,6 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
         super.tearDown()
     }
-
-    var accountDirectory: URL {
-        FileManager.default
-            .temporaryDirectory
-            .appendingPathComponent("CryptoBoxMigrationManagerTests")
-    }
-
-    lazy var cryptoboxDirectory = accountDirectory.appendingPathComponent("otr")
 
     // MARK: - Verifying if migration is needed
 

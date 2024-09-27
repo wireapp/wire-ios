@@ -20,6 +20,8 @@ import Foundation
 @testable import WireDataModel
 
 final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
+    // MARK: Internal
+
     var dispatcher: NotificationDispatcher!
     var team: Team!
     var otherTeam: Team!
@@ -350,14 +352,6 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     // MARK: - Helper
 
-    private func createTeam() -> Team {
-        let team = Team.insertNewObject(in: uiMOC)
-        team.remoteIdentifier = .create()
-        return team
-    }
-
-    // MARK: - Helper
-
     @discardableResult
     func createGroupConversation(in team: Team?, archived: Bool = false) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -368,5 +362,15 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         conversation.isArchived = archived
         conversation.conversationType = .group
         return conversation
+    }
+
+    // MARK: Private
+
+    // MARK: - Helper
+
+    private func createTeam() -> Team {
+        let team = Team.insertNewObject(in: uiMOC)
+        team.remoteIdentifier = .create()
+        return team
     }
 }

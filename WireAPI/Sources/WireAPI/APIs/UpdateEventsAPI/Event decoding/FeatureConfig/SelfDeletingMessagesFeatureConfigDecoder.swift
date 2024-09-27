@@ -19,6 +19,8 @@
 import Foundation
 
 struct SelfDeletingMessagesFeatureConfigDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> SelfDeletingMessagesFeatureConfig {
@@ -32,6 +34,8 @@ struct SelfDeletingMessagesFeatureConfigDecoder {
             enforcedTimeoutSeconds: payload.config.enforcedTimeoutSeconds
         )
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let enforcedTimeoutSeconds: UInt

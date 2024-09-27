@@ -22,8 +22,9 @@ import XCTest
 @testable import Wire
 
 final class WipeCompletionViewControllerTests: XCTestCase {
+    // MARK: Internal
+
     var sut: WipeCompletionViewController!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         snapshotHelper = SnapshotHelper()
@@ -38,4 +39,8 @@ final class WipeCompletionViewControllerTests: XCTestCase {
     func testForInitState() {
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

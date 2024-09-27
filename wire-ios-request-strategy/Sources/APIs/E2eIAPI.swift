@@ -30,15 +30,21 @@ public protocol E2eIAPI {
 // MARK: - E2eIAPIV5
 
 class E2eIAPIV5: E2eIAPI {
-    let httpClient: HttpClient
+    // MARK: Lifecycle
+
+    init(httpClient: HttpClient) {
+        self.httpClient = httpClient
+    }
+
+    // MARK: Open
 
     open var apiVersion: APIVersion {
         .v5
     }
 
-    init(httpClient: HttpClient) {
-        self.httpClient = httpClient
-    }
+    // MARK: Internal
+
+    let httpClient: HttpClient
 
     func getWireNonce(clientId: String) async throws -> String {
         let request = ZMTransportRequest(

@@ -34,56 +34,7 @@ struct MessageDetailsSectionDescription {
 /// Displays the list of users for a specified message detail content type.
 
 final class MessageDetailsContentViewController: UIViewController {
-    typealias MessageDetails = L10n.Localizable.MessageDetails
-
-    /// The type of the displayed content.
-    enum ContentType {
-        case reactions, receipts(enabled: Bool)
-    }
-
-    // MARK: - Configuration
-
-    /// The conversation that is being accessed.
-    let conversation: ZMConversation
-
-    /// The type of the displayed content.
-    let contentType: ContentType
-
-    /// The subtitle displaying message details.
-    var subtitle: String? {
-        get {
-            subtitleLabel.text
-        }
-        set {
-            subtitleLabel.text = newValue
-            collectionView.map(updateFooterPosition)
-        }
-    }
-
-    /// The subtitle displaying message details in Voice Over.
-    var accessibleSubtitle: String? {
-        get {
-            subtitleLabel.accessibilityValue
-        }
-        set {
-            subtitleLabel.accessibilityValue = newValue
-        }
-    }
-
-    private let sectionHeaderIdentifier = "SectionHeader"
-
-    let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
-
-    /// The displayed sections.
-    private(set) var sections = [MessageDetailsSectionDescription]()
-
-    // MARK: - UI Elements
-
-    fileprivate let noResultsView = NoResultsView()
-    fileprivate var collectionView: UICollectionView!
-    fileprivate var subtitleLabel = UILabel()
-    fileprivate var subtitleBottom: NSLayoutConstraint?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -110,6 +61,48 @@ final class MessageDetailsContentViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    typealias MessageDetails = L10n.Localizable.MessageDetails
+
+    /// The type of the displayed content.
+    enum ContentType {
+        case reactions, receipts(enabled: Bool)
+    }
+
+    // MARK: - Configuration
+
+    /// The conversation that is being accessed.
+    let conversation: ZMConversation
+
+    /// The type of the displayed content.
+    let contentType: ContentType
+
+    let userSession: UserSession
+    /// The displayed sections.
+    private(set) var sections = [MessageDetailsSectionDescription]()
+
+    /// The subtitle displaying message details.
+    var subtitle: String? {
+        get {
+            subtitleLabel.text
+        }
+        set {
+            subtitleLabel.text = newValue
+            collectionView.map(updateFooterPosition)
+        }
+    }
+
+    /// The subtitle displaying message details in Voice Over.
+    var accessibleSubtitle: String? {
+        get {
+            subtitleLabel.accessibilityValue
+        }
+        set {
+            subtitleLabel.accessibilityValue = newValue
+        }
+    }
+
     // MARK: - Override Methods
 
     override func viewDidLoad() {
@@ -130,6 +123,39 @@ final class MessageDetailsContentViewController: UIViewController {
             self.collectionView.collectionViewLayout.invalidateLayout()
         })
     }
+
+    // MARK: - Updating the Data
+
+    /// Updates the list of users for the details.
+    /// - parameter sections: The new list of sections to display.
+
+    func updateData(_ sections: [MessageDetailsSectionDescription]) {
+        noResultsView.isHidden = !sections.isEmpty
+        self.sections = sections
+        updateTitle()
+
+        guard let collectionView else {
+            return
+        }
+
+        collectionView.reloadData()
+        updateFooterPosition(for: collectionView)
+    }
+
+    // MARK: Fileprivate
+
+    // MARK: - UI Elements
+
+    fileprivate let noResultsView = NoResultsView()
+    fileprivate var collectionView: UICollectionView!
+    fileprivate var subtitleLabel = UILabel()
+    fileprivate var subtitleBottom: NSLayoutConstraint?
+
+    // MARK: Private
+
+    private let sectionHeaderIdentifier = "SectionHeader"
+
+    private let mainCoordinator: MainCoordinating
 
     // MARK: - Configure Views and set constraints
 
@@ -263,24 +289,6 @@ final class MessageDetailsContentViewController: UIViewController {
             noResultsView.placeholderText = MessageDetails.readReceiptsDisabled
             noResultsView.icon = .eye
         }
-    }
-
-    // MARK: - Updating the Data
-
-    /// Updates the list of users for the details.
-    /// - parameter sections: The new list of sections to display.
-
-    func updateData(_ sections: [MessageDetailsSectionDescription]) {
-        noResultsView.isHidden = !sections.isEmpty
-        self.sections = sections
-        updateTitle()
-
-        guard let collectionView else {
-            return
-        }
-
-        collectionView.reloadData()
-        updateFooterPosition(for: collectionView)
     }
 }
 

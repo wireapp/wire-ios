@@ -31,21 +31,15 @@ protocol EmojiRepositoryInterface {
 // MARK: - EmojiRepository
 
 final class EmojiRepository: EmojiRepositoryInterface {
-    // MARK: - Properties
-
-    private let allEmojiData: [Emoji]
-    private lazy var emojisByCategory = allEmojiData.partition(by: \.category)
-    private lazy var emojisByValue = allEmojiData.partition(by: \.value).compactMapValues(\.first)
-
-    private static let logger = WireLogger(tag: "EmojiRepository")
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {
         self.allEmojiData = Self.loadAllFromDisk()
             .filter { Self.isEmojiAvailable($0) }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
+
+    // MARK: Internal
 
     // MARK: - Fetch
 
@@ -82,6 +76,24 @@ final class EmojiRepository: EmojiRepositoryInterface {
         return emojiValues.compactMap(emoji(for:))
     }
 
+    // MARK: Private
+
+    private static let logger = WireLogger(tag: "EmojiRepository")
+
+    private static let supportedEmojiVersion = if #available(iOS 16.4, *) {
+        15.0
+    } else if #available(iOS 15.4, *) {
+        14.0
+    } else {
+        13.1
+    }
+
+    // MARK: - Properties
+
+    private let allEmojiData: [Emoji]
+    private lazy var emojisByCategory = allEmojiData.partition(by: \.category)
+    private lazy var emojisByValue = allEmojiData.partition(by: \.value).compactMapValues(\.first)
+
     private lazy var emojiDirectory = URL.directoryURL("emoji")
     private lazy var recentlyUsedEmojisURL = emojiDirectory?.appendingPathComponent("recently_used.plist")
 
@@ -91,14 +103,6 @@ final class EmojiRepository: EmojiRepositoryInterface {
         guard let emojiVersion = Double(emoji.addedIn) else { return false }
         let emojiVersionTruncated = (emojiVersion * 100.0).rounded() / 100.0
         return emojiVersionTruncated <= supportedEmojiVersion
-    }
-
-    private static let supportedEmojiVersion = if #available(iOS 16.4, *) {
-        15.0
-    } else if #available(iOS 15.4, *) {
-        14.0
-    } else {
-        13.1
     }
 }
 

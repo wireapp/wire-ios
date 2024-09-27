@@ -21,8 +21,7 @@ import WireDataModel
 
 @objc
 public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextChangeTracker {
-    let lastReadKey = "lastReadServerTimeStamp"
-    let clearedKey = "clearedTimeStamp"
+    // MARK: Public
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
         var didUpdateConversation = false
@@ -74,4 +73,9 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
         objectsDidChange(objects)
     }
+
+    // MARK: Internal
+
+    let lastReadKey = "lastReadServerTimeStamp"
+    let clearedKey = "clearedTimeStamp"
 }

@@ -22,10 +22,7 @@ import XCTest
 @testable import WireSyncEngineSupport
 
 class SelfClientCertificateProviderTests: MessagingTest {
-    private var sut: SelfClientCertificateProvider!
-    private var mockGetE2eIdentityCertificatesUseCase: MockGetE2eIdentityCertificatesUseCaseProtocol!
-
-    private var context: NSManagedObjectContext { syncMOC }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -103,6 +100,13 @@ class SelfClientCertificateProviderTests: MessagingTest {
         // Then
         XCTAssertNotNil(certificate)
     }
+
+    // MARK: Private
+
+    private var sut: SelfClientCertificateProvider!
+    private var mockGetE2eIdentityCertificatesUseCase: MockGetE2eIdentityCertificatesUseCaseProtocol!
+
+    private var context: NSManagedObjectContext { syncMOC }
 
     // MARK: - Helpers
 

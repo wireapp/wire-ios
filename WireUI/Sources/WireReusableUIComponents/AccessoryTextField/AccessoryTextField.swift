@@ -22,65 +22,7 @@ import WireDesign
 // MARK: - AccessoryTextField
 
 open class AccessoryTextField: UITextField, DynamicTypeCapable {
-    public func redrawFont() {
-        font = textFieldAttributes.textFont.font
-    }
-
-    public struct Attributes {
-        var textFont: FontSpec
-        let textColor: UIColor
-        let placeholderFont: FontSpec
-        let placeholderColor: UIColor
-        let backgroundColor: UIColor
-        let cornerRadius: CGFloat
-
-        public init(
-            textFont: FontSpec,
-            textColor: UIColor,
-            placeholderFont: FontSpec,
-            placeholderColor: UIColor,
-            backgroundColor: UIColor,
-            cornerRadius: CGFloat = 0
-        ) {
-            self.textFont = textFont
-            self.textColor = textColor
-            self.placeholderFont = placeholderFont
-            self.placeholderColor = placeholderColor
-            self.backgroundColor = backgroundColor
-            self.cornerRadius = cornerRadius
-        }
-    }
-
-    // MARK: - Constants
-
-    private let horizonalInset: CGFloat = 16
-
-    // MARK: - Properties
-
-    public var input: String {
-        text ?? ""
-    }
-
-    override public var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: 56)
-    }
-
-    public let accessoryStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 16
-        stack.alignment = .center
-        stack.distribution = .fill
-        return stack
-    }()
-
-    let accessoryContainer = UIView()
-    public var textInsets: UIEdgeInsets
-    let placeholderInsets: UIEdgeInsets
-    let accessoryTrailingInset: CGFloat
-    let textFieldAttributes: Attributes
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     /// - Parameters:
     ///   - leftInset: placeholder left inset
@@ -105,6 +47,75 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Public
+
+    public struct Attributes {
+        // MARK: Lifecycle
+
+        public init(
+            textFont: FontSpec,
+            textColor: UIColor,
+            placeholderFont: FontSpec,
+            placeholderColor: UIColor,
+            backgroundColor: UIColor,
+            cornerRadius: CGFloat = 0
+        ) {
+            self.textFont = textFont
+            self.textColor = textColor
+            self.placeholderFont = placeholderFont
+            self.placeholderColor = placeholderColor
+            self.backgroundColor = backgroundColor
+            self.cornerRadius = cornerRadius
+        }
+
+        // MARK: Internal
+
+        var textFont: FontSpec
+        let textColor: UIColor
+        let placeholderFont: FontSpec
+        let placeholderColor: UIColor
+        let backgroundColor: UIColor
+        let cornerRadius: CGFloat
+    }
+
+    public let accessoryStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 16
+        stack.alignment = .center
+        stack.distribution = .fill
+        return stack
+    }()
+
+    public var textInsets: UIEdgeInsets
+
+    // MARK: - Properties
+
+    public var input: String {
+        text ?? ""
+    }
+
+    override public var intrinsicContentSize: CGSize {
+        CGSize(width: UIView.noIntrinsicMetric, height: 56)
+    }
+
+    public func redrawFont() {
+        font = textFieldAttributes.textFont.font
+    }
+
+    // MARK: Internal
+
+    let accessoryContainer = UIView()
+    let placeholderInsets: UIEdgeInsets
+    let accessoryTrailingInset: CGFloat
+    let textFieldAttributes: Attributes
+
+    // MARK: Private
+
+    // MARK: - Constants
+
+    private let horizonalInset: CGFloat = 16
 }
 
 // MARK: - View creation

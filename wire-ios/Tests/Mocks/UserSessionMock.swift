@@ -28,23 +28,48 @@ import WireSyncEngineSupport
 // MARK: - UserSessionMock
 
 final class UserSessionMock: UserSession {
+    // MARK: Lifecycle
+
+    convenience init(mockUser: MockZMEditableUser) {
+        self.init(
+            selfUser: mockUser,
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
+        )
+    }
+
+    convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
+        self.init(
+            selfUser: mockUser,
+            selfUserLegalHoldSubject: mockUser,
+            editableSelfUser: mockUser
+        )
+    }
+
+    init(
+        selfUser: any UserType,
+        selfUserLegalHoldSubject: any SelfUserLegalHoldable,
+        editableSelfUser: any EditableUserType & UserType
+    ) {
+        self.selfUser = selfUser
+        self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
+        self.editableSelfUser = editableSelfUser
+
+        self.searchUsersCache = .init()
+        self.userProfile = MockUserProfile()
+    }
+
+    // MARK: Internal
+
+    typealias Preference = AppLockPasscodePreference
+    typealias Callback = (AppLockModule.AuthenticationResult) -> Void
+
     var userProfile: UserProfile
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
-    func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
-        MLSGroupID(Data())
-    }
-
-    func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
-        MockE2EIdentityCertificateUpdateStatusUseCaseProtocol()
-    }
-
     var isE2eIdentityEnabled = false
     var certificate = E2eIdentityCertificate.mockNotActivated
-    typealias Preference = AppLockPasscodePreference
-    typealias Callback = (AppLockModule.AuthenticationResult) -> Void
-
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
         mock.invokeUserClient_MockMethod = { _ in
@@ -84,41 +109,6 @@ final class UserSessionMock: UserSession {
 
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
-    func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
-        let mock = MockGetMLSFeatureUseCaseProtocol()
-        mock.invoke_MockValue = .init(status: .disabled, config: .init())
-        return mock
-    }
-
-    convenience init(mockUser: MockZMEditableUser) {
-        self.init(
-            selfUser: mockUser,
-            selfUserLegalHoldSubject: mockUser,
-            editableSelfUser: mockUser
-        )
-    }
-
-    convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
-        self.init(
-            selfUser: mockUser,
-            selfUserLegalHoldSubject: mockUser,
-            editableSelfUser: mockUser
-        )
-    }
-
-    init(
-        selfUser: any UserType,
-        selfUserLegalHoldSubject: any SelfUserLegalHoldable,
-        editableSelfUser: any EditableUserType & UserType
-    ) {
-        self.selfUser = selfUser
-        self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
-        self.editableSelfUser = editableSelfUser
-
-        self.searchUsersCache = .init()
-        self.userProfile = MockUserProfile()
-    }
-
     var lock: SessionLock? = .screen
 
     var isLocked = false
@@ -130,6 +120,102 @@ final class UserSessionMock: UserSession {
     var requireCustomAppLockPasscode = false
     var isCustomAppLockPasscodeSet = false
     var needsToNotifyUserOfAppLockConfiguration = false
+
+    var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
+    var maxUploadFileSize: UInt64 = 26_214_400 // 25 megabytes (25 * 1024 * 1024)
+    var maxVideoLength: TimeInterval = 240 // 4 minutes (4.0 * 60.0)
+
+    var shouldNotifyUserOfDisabledAppLock = false
+    var isNotificationContentHidden = false
+    var encryptMessagesAtRest = false
+    var ringingCallConversation: ZMConversation?
+
+    var deleteAppLockPasscodeCalls = 0
+    lazy var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol = {
+        let mock = MockIsUserE2EICertifiedUseCaseProtocol()
+        mock.invokeConversationUser_MockValue = false
+        return mock
+    }()
+
+    lazy var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol = {
+        let mock = MockIsSelfUserE2EICertifiedUseCaseProtocol()
+        mock.invoke_MockValue = false
+        return mock
+    }()
+
+    var e2eiFeature = Feature.E2EI(status: .enabled)
+
+    var mlsFeature = Feature.MLS(
+        status: .enabled,
+        config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+    )
+
+    var createTeamOneOnOneWithCompletion_Invocations: [(
+        user: UserType,
+        completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    )] = []
+    var createTeamOneOnOneWithCompletion_MockMethod: ((
+        UserType,
+        @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) -> Void)?
+
+    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
+
+    // MARK: - Context Provider
+
+    var coreDataStack: CoreDataStack?
+
+    var conversationDirectory: ConversationDirectoryType {
+        mockConversationDirectory
+    }
+
+    var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
+        mockGetUserClientFingerprintUseCaseProtocol
+    }
+
+    var selfUserClient: UserClient? {
+        nil
+    }
+
+    var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol {
+        MockEnrollE2EICertificateUseCaseProtocol()
+    }
+
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol {
+        MockGetIsE2EIdentityEnabledUseCaseProtocol()
+    }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol {
+        MockGetE2eIdentityCertificatesUseCaseProtocol()
+    }
+
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+
+    // MARK: - Notifications
+
+    var notificationContext: any NotificationContext {
+        viewContext.notificationContext
+    }
+
+    var contextProvider: any ContextProvider {
+        coreDataStack ?? MockContextProvider()
+    }
+
+    func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
+        MLSGroupID(Data())
+    }
+
+    func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
+        MockE2EIdentityCertificateUpdateStatusUseCaseProtocol()
+    }
+
+    func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
+        let mock = MockGetMLSFeatureUseCaseProtocol()
+        mock.invoke_MockValue = .init(status: .disabled, config: .init())
+        return mock
+    }
 
     func openAppLock() throws {
         openApp.append(())
@@ -153,22 +239,8 @@ final class UserSessionMock: UserSession {
         unlockDatabase_MockInvocations.append(())
     }
 
-    var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
-    var maxUploadFileSize: UInt64 = 26_214_400 // 25 megabytes (25 * 1024 * 1024)
-    var maxVideoLength: TimeInterval = 240 // 4 minutes (4.0 * 60.0)
-
-    var shouldNotifyUserOfDisabledAppLock = false
-    var isNotificationContentHidden = false
-    var encryptMessagesAtRest = false
-    var ringingCallConversation: ZMConversation?
-
-    var deleteAppLockPasscodeCalls = 0
     func deleteAppLockPasscode() throws {
         deleteAppLockPasscodeCalls += 1
-    }
-
-    var conversationDirectory: ConversationDirectoryType {
-        mockConversationDirectory
     }
 
     func perform(_ changes: @escaping () -> Void) {
@@ -276,38 +348,6 @@ final class UserSessionMock: UserSession {
 
     func cancelProxiedRequest(_: WireSyncEngine.ProxyRequest) {}
 
-    var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
-        mockGetUserClientFingerprintUseCaseProtocol
-    }
-
-    lazy var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol = {
-        let mock = MockIsUserE2EICertifiedUseCaseProtocol()
-        mock.invokeConversationUser_MockValue = false
-        return mock
-    }()
-
-    lazy var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol = {
-        let mock = MockIsSelfUserE2EICertifiedUseCaseProtocol()
-        mock.invoke_MockValue = false
-        return mock
-    }()
-
-    var selfUserClient: UserClient? {
-        nil
-    }
-
-    var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol {
-        MockEnrollE2EICertificateUseCaseProtocol()
-    }
-
-    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol {
-        MockGetIsE2EIdentityEnabledUseCaseProtocol()
-    }
-
-    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol {
-        MockGetE2eIdentityCertificatesUseCaseProtocol()
-    }
-
     func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
         MockCreateConversationGuestLinkUseCaseProtocol()
     }
@@ -316,23 +356,7 @@ final class UserSessionMock: UserSession {
         MockSetAllowGuestAndServicesUseCaseProtocol()
     }
 
-    var e2eiFeature = Feature.E2EI(status: .enabled)
-
-    var mlsFeature = Feature.MLS(
-        status: .enabled,
-        config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
-    )
-
     func fetchAllClients() {}
-
-    var createTeamOneOnOneWithCompletion_Invocations: [(
-        user: UserType,
-        completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
-    )] = []
-    var createTeamOneOnOneWithCompletion_MockMethod: ((
-        UserType,
-        @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
-    ) -> Void)?
 
     func createTeamOneOnOne(
         with user: UserType,
@@ -345,25 +369,6 @@ final class UserSessionMock: UserSession {
         }
 
         mock(user, completion)
-    }
-
-    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
-    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
-        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
-    }
-
-    // MARK: - Notifications
-
-    var notificationContext: any NotificationContext {
-        viewContext.notificationContext
-    }
-
-    // MARK: - Context Provider
-
-    var coreDataStack: CoreDataStack?
-
-    var contextProvider: any ContextProvider {
-        coreDataStack ?? MockContextProvider()
     }
 }
 

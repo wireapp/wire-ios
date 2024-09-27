@@ -23,8 +23,7 @@ import XCTest
 // MARK: - BlockingActivityIndicatorTests
 
 final class BlockingActivityIndicatorTests: XCTestCase {
-    private typealias SUT = BlockingActivityIndicator
-    private var sut: SUT!
+    // MARK: Internal
 
     @MainActor
     func testBlockingSubviewIsAddedOnStart() throws {
@@ -178,6 +177,12 @@ final class BlockingActivityIndicatorTests: XCTestCase {
         // Then
         wait(forConditionToBeTrue: targetView.subviews.isEmpty, timeout: 5)
     }
+
+    // MARK: Private
+
+    private typealias SUT = BlockingActivityIndicator
+
+    private var sut: SUT!
 }
 
 extension BlockingActivityIndicator {

@@ -20,7 +20,7 @@ import Foundation
 @testable import WireSyncEngine
 
 final class SessionManagerAppLockTests: IntegrationTest {
-    private var appLock: MockAppLock!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -84,4 +84,8 @@ final class SessionManagerAppLockTests: IntegrationTest {
         // Then
         XCTAssertEqual(appLock.methodCalls.beginTimer.count, 1)
     }
+
+    // MARK: Private
+
+    private var appLock: MockAppLock!
 }

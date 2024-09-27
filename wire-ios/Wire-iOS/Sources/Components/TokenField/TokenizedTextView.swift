@@ -33,22 +33,16 @@ protocol TokenizedTextViewDelegate: AnyObject {
 // TODO: as a inner class of TokenField
 
 class TokenizedTextView: TextView {
-    weak var tokenizedTextViewDelegate: TokenizedTextViewDelegate?
-
-    private lazy var tapSelectionGestureRecognizer = UITapGestureRecognizer(
-        target: self,
-        action: #selector(didTapText(_:))
-    )
+    // MARK: Lifecycle
 
     convenience init() {
         self.init(frame: .zero)
         setupGestureRecognizer()
     }
 
-    private func setupGestureRecognizer() {
-        tapSelectionGestureRecognizer.delegate = self
-        addGestureRecognizer(tapSelectionGestureRecognizer)
-    }
+    // MARK: Internal
+
+    weak var tokenizedTextViewDelegate: TokenizedTextViewDelegate?
 
     // MARK: - Actions
 
@@ -71,6 +65,40 @@ class TokenizedTextView: TextView {
         didSet {
             tokenizedTextViewDelegate?.tokenizedTextView(self, textContainerInsetChanged: textContainerInset)
         }
+    }
+
+    override func copy(_ sender: Any?) {
+        let stringToCopy = pasteboardString(from: selectedRange)
+        super.copy(sender)
+        UIPasteboard.general.string = stringToCopy
+    }
+
+    override func cut(_ sender: Any?) {
+        let stringToCopy = pasteboardString(from: selectedRange)
+        super.cut(sender)
+        UIPasteboard.general.string = stringToCopy
+
+        // To fix the iOS bug
+        delegate?.textViewDidChange?(self)
+    }
+
+    override func paste(_ sender: Any?) {
+        super.paste(sender)
+
+        // To fix the iOS bug
+        delegate?.textViewDidChange?(self)
+    }
+
+    // MARK: Private
+
+    private lazy var tapSelectionGestureRecognizer = UITapGestureRecognizer(
+        target: self,
+        action: #selector(didTapText(_:))
+    )
+
+    private func setupGestureRecognizer() {
+        tapSelectionGestureRecognizer.delegate = self
+        addGestureRecognizer(tapSelectionGestureRecognizer)
     }
 
     @objc
@@ -96,28 +124,6 @@ class TokenizedTextView: TextView {
             didTapTextRange: NSRange(location: characterIndex, length: 1),
             fraction: fraction
         )
-    }
-
-    override func copy(_ sender: Any?) {
-        let stringToCopy = pasteboardString(from: selectedRange)
-        super.copy(sender)
-        UIPasteboard.general.string = stringToCopy
-    }
-
-    override func cut(_ sender: Any?) {
-        let stringToCopy = pasteboardString(from: selectedRange)
-        super.cut(sender)
-        UIPasteboard.general.string = stringToCopy
-
-        // To fix the iOS bug
-        delegate?.textViewDidChange?(self)
-    }
-
-    override func paste(_ sender: Any?) {
-        super.paste(sender)
-
-        // To fix the iOS bug
-        delegate?.textViewDidChange?(self)
     }
 
     // MARK: - Utils

@@ -43,21 +43,13 @@ enum MediaShareRestrictionLevel {
 // MARK: - MediaShareRestrictionManager
 
 class MediaShareRestrictionManager {
-    // MARK: - Private Properties
-
-    private let sessionRestriction: SessionFileRestrictionsProtocol?
-    private let securityFlagRestrictedTypes: [ShareableMediaSource] = [
-        .photoLibrary,
-        .gif,
-        .shareExtension,
-        .clipboard,
-    ]
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(sessionRestriction: SessionFileRestrictionsProtocol?) {
         self.sessionRestriction = sessionRestriction
     }
+
+    // MARK: Internal
 
     var isFileSharingFlagEnabled: Bool {
         SecurityFlags.fileSharing.isEnabled
@@ -74,17 +66,6 @@ class MediaShareRestrictionManager {
             return .APIFlag
         }
         return isFileSharingFlagEnabled ? .none : .securityFlag
-    }
-
-    func canUploadMedia(from source: ShareableMediaSource) -> Bool {
-        switch level {
-        case .none:
-            true
-        case .securityFlag:
-            !securityFlagRestrictedTypes.contains(source)
-        case .APIFlag:
-            false
-        }
     }
 
     var canDownloadMedia: Bool {
@@ -116,4 +97,27 @@ class MediaShareRestrictionManager {
             false
         }
     }
+
+    func canUploadMedia(from source: ShareableMediaSource) -> Bool {
+        switch level {
+        case .none:
+            true
+        case .securityFlag:
+            !securityFlagRestrictedTypes.contains(source)
+        case .APIFlag:
+            false
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Private Properties
+
+    private let sessionRestriction: SessionFileRestrictionsProtocol?
+    private let securityFlagRestrictedTypes: [ShareableMediaSource] = [
+        .photoLibrary,
+        .gif,
+        .shareExtension,
+        .clipboard,
+    ]
 }

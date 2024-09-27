@@ -20,11 +20,13 @@
 
 /// An optionSet indicates a user's permissions
 public struct Permissions: OptionSet {
-    public let rawValue: Int64
+    // MARK: Lifecycle
 
     public init(rawValue: Int64) {
         self.rawValue = rawValue
     }
+
+    // MARK: Public
 
     // MARK: - Base Values
 
@@ -66,6 +68,8 @@ public struct Permissions: OptionSet {
         .setMemberPermissions,
     ]
     public static let owner: Permissions = [.admin, .getBilling, .setBilling, .deleteTeam]
+
+    public let rawValue: Int64
 }
 
 // MARK: CustomDebugStringConvertible
@@ -111,6 +115,8 @@ extension Permissions: Hashable {
 public enum TeamRole: Int {
     case none, partner, member, admin, owner
 
+    // MARK: Lifecycle
+
     public init(rawPermissions: Int64) {
         switch rawPermissions {
         case Permissions.partner.rawValue:
@@ -125,6 +131,8 @@ public enum TeamRole: Int {
             self = .none
         }
     }
+
+    // MARK: Public
 
     /// The permissions granted to this role.
     public var permissions: Permissions {

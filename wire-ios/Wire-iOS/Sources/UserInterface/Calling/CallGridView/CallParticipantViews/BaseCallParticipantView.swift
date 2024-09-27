@@ -25,64 +25,7 @@ import WireSyncEngine
 // MARK: - BaseCallParticipantView
 
 class BaseCallParticipantView: OrientableView {
-    // MARK: - Public Properties
-
-    var stream: Stream {
-        didSet {
-            updateUserDetails()
-            updateBorderStyle()
-            updateVideoKind()
-            hideVideoViewsIfNeeded()
-            setupAccessibility()
-        }
-    }
-
-    var shouldShowActiveSpeakerFrame: Bool {
-        didSet {
-            updateBorderStyle()
-        }
-    }
-
-    var shouldShowBorderWhenVideoIsStopped: Bool {
-        didSet {
-            updateBorderStyle()
-        }
-    }
-
-    /// indicates wether or not the view is shown in full in the grid
-    var isMaximized = false {
-        didSet {
-            updateBorderStyle()
-            updateFillMode()
-            updateScalableView()
-            setupAccessibility()
-        }
-    }
-
-    var shouldFill: Bool {
-        isMaximized ? false : videoKind.shouldFill
-    }
-
-    let userDetailsView = CallParticipantDetailsView()
-    var scalableView: ScalableView?
-    var avatarView = UserImageView(size: .normal)
-    var userSession = ZMUserSession.shared()
-
-    private var borderLayer = CALayer()
-
-    // MARK: - Private Properties
-
-    private var delta = OrientationDelta()
-    private var detailsConstraints: UserDetailsConstraints?
-    private var isCovered: Bool
-
-    private var adjustedInsets: UIEdgeInsets {
-        safeAreaInsetsOrFallback.adjusted(for: delta)
-    }
-
-    private var userDetailsAlpha: CGFloat {
-        isCovered ? 0 : 1
-    }
+    // MARK: Lifecycle
 
     // MARK: - View Life Cycle
 
@@ -122,6 +65,82 @@ class BaseCallParticipantView: OrientableView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let userDetailsView = CallParticipantDetailsView()
+    var scalableView: ScalableView?
+    var avatarView = UserImageView(size: .normal)
+    var userSession = ZMUserSession.shared()
+
+    // MARK: - Public Properties
+
+    var stream: Stream {
+        didSet {
+            updateUserDetails()
+            updateBorderStyle()
+            updateVideoKind()
+            hideVideoViewsIfNeeded()
+            setupAccessibility()
+        }
+    }
+
+    var shouldShowActiveSpeakerFrame: Bool {
+        didSet {
+            updateBorderStyle()
+        }
+    }
+
+    var shouldShowBorderWhenVideoIsStopped: Bool {
+        didSet {
+            updateBorderStyle()
+        }
+    }
+
+    /// indicates wether or not the view is shown in full in the grid
+    var isMaximized = false {
+        didSet {
+            updateBorderStyle()
+            updateFillMode()
+            updateScalableView()
+            setupAccessibility()
+        }
+    }
+
+    var shouldFill: Bool {
+        isMaximized ? false : videoKind.shouldFill
+    }
+
+    // MARK: - Pinch To Zoom
+
+    var pinchToZoomRule: PinchToZoomRule {
+        didSet {
+            guard oldValue != pinchToZoomRule else { return }
+            updateScalableView()
+        }
+    }
+
+    var shouldEnableScaling: Bool {
+        switch pinchToZoomRule {
+        case .enableWhenFitted:
+            !shouldFill
+        case .enableWhenMaximized:
+            isMaximized
+        }
+    }
+
+    // MARK: - Accessibility for automation
+
+    override var accessibilityIdentifier: String? {
+        get {
+            let name = stream.user?.name ?? ""
+            let maximizationState = isMaximized ? "maximized" : "minimized"
+            let activityState = stream.isParticipantUnmutedAndActive ? "active" : "inactive"
+            let viewKind = stream.isSharingVideo ? "videoView" : "audioView"
+            return "\(viewKind).\(name).\(maximizationState).\(activityState)"
+        }
+        set {}
+    }
+
     // MARK: - Setup
 
     func updateUserDetails() {
@@ -132,24 +151,6 @@ class BaseCallParticipantView: OrientableView {
         )
         userDetailsView.callState = stream.callParticipantState
         userDetailsView.alpha = userDetailsAlpha
-    }
-
-    private func setupAccessibility() {
-        typealias Calling = L10n.Accessibility.Calling
-
-        guard let userName = userDetailsView.name else {
-            return
-        }
-
-        isAccessibilityElement = true
-        accessibilityTraits = .button
-        let microphoneState = userDetailsView.microphoneIconStyle.accessibilityLabel
-        let cameraState = (stream.isSharingVideo && !stream.isScreenSharing) ? Calling.CameraOn.description : Calling
-            .CameraOff.description
-        let activeSpeaker = stream.isParticipantUnmutedAndSpeakingNow ? Calling.ActiveSpeaker.description : ""
-        let screenSharing = stream.isScreenSharing ? Calling.SharesScreen.description : ""
-        accessibilityLabel = "\(userName), \(microphoneState), \(cameraState), \(activeSpeaker), \(screenSharing)"
-        accessibilityHint = isMaximized ? Calling.UserCellMinimize.hint : Calling.UserCellFullscreen.hint
     }
 
     func setupViews() {
@@ -194,64 +195,12 @@ class BaseCallParticipantView: OrientableView {
         borderLayer.borderColor = SemanticColors.View.backgroundDefaultWhite.cgColor
     }
 
-    private func hideVideoViewsIfNeeded() {
-        scalableView?.isHidden = !stream.isSharingVideo
-    }
-
-    // MARK: - Pinch To Zoom
-
-    var pinchToZoomRule: PinchToZoomRule {
-        didSet {
-            guard oldValue != pinchToZoomRule else { return }
-            updateScalableView()
-        }
-    }
-
     func updateScalableView() {
         scalableView?.isScalingEnabled = shouldEnableScaling
     }
 
-    var shouldEnableScaling: Bool {
-        switch pinchToZoomRule {
-        case .enableWhenFitted:
-            !shouldFill
-        case .enableWhenMaximized:
-            isMaximized
-        }
-    }
-
-    // MARK: - Fill Mode
-
-    private var videoKind: VideoKind = .none {
-        didSet {
-            guard oldValue != videoKind else { return }
-            updateFillMode()
-            updateScalableView()
-        }
-    }
-
-    private func updateVideoKind() {
-        videoKind = VideoKind(videoState: stream.videoState)
-    }
-
-    private func updateFillMode() {
-        // Reset scale if the view was zoomed in
-        scalableView?.resetScale()
-        updateVideoShouldFill(shouldFill)
-    }
-
     func updateVideoShouldFill(_: Bool) {
         // overide in subclasses
-    }
-
-    // MARK: - Border Style
-
-    private func updateBorderStyle() {
-        let showBorderForActiveSpeaker = shouldShowActiveSpeakerFrame && stream.isParticipantUnmutedAndSpeakingNow
-
-        layer.borderWidth = showBorderForActiveSpeaker ? 2 : 0
-        layer.borderColor = showBorderForActiveSpeaker ? UIColor.accent().cgColor : UIColor.clear.cgColor
-        borderLayer.isHidden = !showBorderForActiveSpeaker
     }
 
     // MARK: - Orientation & Layout
@@ -276,6 +225,76 @@ class BaseCallParticipantView: OrientableView {
         layoutSubviews()
     }
 
+    // MARK: Private
+
+    private var borderLayer = CALayer()
+
+    // MARK: - Private Properties
+
+    private var delta = OrientationDelta()
+    private var detailsConstraints: UserDetailsConstraints?
+    private var isCovered: Bool
+
+    private var adjustedInsets: UIEdgeInsets {
+        safeAreaInsetsOrFallback.adjusted(for: delta)
+    }
+
+    private var userDetailsAlpha: CGFloat {
+        isCovered ? 0 : 1
+    }
+
+    // MARK: - Fill Mode
+
+    private var videoKind: VideoKind = .none {
+        didSet {
+            guard oldValue != videoKind else { return }
+            updateFillMode()
+            updateScalableView()
+        }
+    }
+
+    private func setupAccessibility() {
+        typealias Calling = L10n.Accessibility.Calling
+
+        guard let userName = userDetailsView.name else {
+            return
+        }
+
+        isAccessibilityElement = true
+        accessibilityTraits = .button
+        let microphoneState = userDetailsView.microphoneIconStyle.accessibilityLabel
+        let cameraState = (stream.isSharingVideo && !stream.isScreenSharing) ? Calling.CameraOn.description : Calling
+            .CameraOff.description
+        let activeSpeaker = stream.isParticipantUnmutedAndSpeakingNow ? Calling.ActiveSpeaker.description : ""
+        let screenSharing = stream.isScreenSharing ? Calling.SharesScreen.description : ""
+        accessibilityLabel = "\(userName), \(microphoneState), \(cameraState), \(activeSpeaker), \(screenSharing)"
+        accessibilityHint = isMaximized ? Calling.UserCellMinimize.hint : Calling.UserCellFullscreen.hint
+    }
+
+    private func hideVideoViewsIfNeeded() {
+        scalableView?.isHidden = !stream.isSharingVideo
+    }
+
+    private func updateVideoKind() {
+        videoKind = VideoKind(videoState: stream.videoState)
+    }
+
+    private func updateFillMode() {
+        // Reset scale if the view was zoomed in
+        scalableView?.resetScale()
+        updateVideoShouldFill(shouldFill)
+    }
+
+    // MARK: - Border Style
+
+    private func updateBorderStyle() {
+        let showBorderForActiveSpeaker = shouldShowActiveSpeakerFrame && stream.isParticipantUnmutedAndSpeakingNow
+
+        layer.borderWidth = showBorderForActiveSpeaker ? 2 : 0
+        layer.borderColor = showBorderForActiveSpeaker ? UIColor.accent().cgColor : UIColor.clear.cgColor
+        borderLayer.isHidden = !showBorderForActiveSpeaker
+    }
+
     // MARK: - Visibility
 
     @objc
@@ -293,29 +312,12 @@ class BaseCallParticipantView: OrientableView {
             }
         )
     }
-
-    // MARK: - Accessibility for automation
-
-    override var accessibilityIdentifier: String? {
-        get {
-            let name = stream.user?.name ?? ""
-            let maximizationState = isMaximized ? "maximized" : "minimized"
-            let activityState = stream.isParticipantUnmutedAndActive ? "active" : "inactive"
-            let viewKind = stream.isSharingVideo ? "videoView" : "audioView"
-            return "\(viewKind).\(name).\(maximizationState).\(activityState)"
-        }
-        set {}
-    }
 }
 
 // MARK: - UserDetailsConstraints
 
 private struct UserDetailsConstraints {
-    private let bottom: NSLayoutConstraint
-    private let leading: NSLayoutConstraint
-    private let trailing: NSLayoutConstraint
-
-    private let margin: CGFloat = 8
+    // MARK: Lifecycle
 
     init(view: UIView, superview: UIView, safeAreaInsets insets: UIEdgeInsets) {
         self.bottom = view.bottomAnchor.constraint(equalTo: superview.bottomAnchor)
@@ -325,9 +327,19 @@ private struct UserDetailsConstraints {
         NSLayoutConstraint.activate([bottom, leading, trailing])
     }
 
+    // MARK: Internal
+
     func updateEdges(with insets: UIEdgeInsets) {
         leading.constant = margin + insets.left
         trailing.constant = -(margin + insets.right)
         bottom.constant = -(margin + insets.bottom)
     }
+
+    // MARK: Private
+
+    private let bottom: NSLayoutConstraint
+    private let leading: NSLayoutConstraint
+    private let trailing: NSLayoutConstraint
+
+    private let margin: CGFloat = 8
 }

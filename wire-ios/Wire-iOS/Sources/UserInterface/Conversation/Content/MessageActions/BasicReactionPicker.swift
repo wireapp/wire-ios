@@ -32,17 +32,7 @@ protocol ReactionPickerDelegate: AnyObject {
 // MARK: - BasicReactionPicker
 
 final class BasicReactionPicker: UIView {
-    private let titleLabel = DynamicFontLabel(
-        fontSpec: .normalRegularFont,
-        color: SemanticColors.Label.textUserPropertyCellName
-    )
-    private let horizontalStackView = UIStackView(axis: .horizontal)
-    private let selectedReactions: Set<Emoji.ID>
-    private var buttons = [UIButton]()
-    weak var delegate: ReactionPickerDelegate?
-    private let emojiRepository: EmojiRepositoryInterface
-
-    private let emojis: [Emoji]
+    // MARK: Lifecycle
 
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -69,6 +59,23 @@ final class BasicReactionPicker: UIView {
             object: nil
         )
     }
+
+    // MARK: Internal
+
+    weak var delegate: ReactionPickerDelegate?
+
+    // MARK: Private
+
+    private let titleLabel = DynamicFontLabel(
+        fontSpec: .normalRegularFont,
+        color: SemanticColors.Label.textUserPropertyCellName
+    )
+    private let horizontalStackView = UIStackView(axis: .horizontal)
+    private let selectedReactions: Set<Emoji.ID>
+    private var buttons = [UIButton]()
+    private let emojiRepository: EmojiRepositoryInterface
+
+    private let emojis: [Emoji]
 }
 
 extension BasicReactionPicker {

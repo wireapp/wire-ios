@@ -25,12 +25,7 @@ import WireCryptobox
 /// by the user but was put into the input field.
 @objcMembers
 public final class DraftMessage: NSObject {
-    /// The text of the message.
-    public let text: String
-    /// The mentiones contained in the text.
-    public let mentions: [Mention]
-    /// The quoted message, if available.
-    public let quote: ZMMessage?
+    // MARK: Lifecycle
 
     public init(text: String, mentions: [Mention], quote: ZMMessage?) {
         self.text = text
@@ -38,6 +33,15 @@ public final class DraftMessage: NSObject {
         self.quote = quote
         super.init()
     }
+
+    // MARK: Public
+
+    /// The text of the message.
+    public let text: String
+    /// The mentiones contained in the text.
+    public let mentions: [Mention]
+    /// The quoted message, if available.
+    public let quote: ZMMessage?
 
     override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? DraftMessage else { return false }
@@ -50,12 +54,7 @@ public final class DraftMessage: NSObject {
 /// A serializable version of `DraftMessage` that conforms to `Codable` and
 /// holds on to a `StorableMention` values instead `Mention`.
 private final class StorableDraftMessage: NSObject, Codable {
-    /// The text of the message to be stored.
-    let text: String
-    /// The mentiones contained in the text.
-    let mentions: [StorableMention]
-    /// The quoted message, if available.
-    let quote: StorableQuote?
+    // MARK: Lifecycle
 
     init(text: String, mentions: [StorableMention], quote: StorableQuote?) {
         self.text = text
@@ -63,6 +62,17 @@ private final class StorableDraftMessage: NSObject, Codable {
         self.quote = quote
         super.init()
     }
+
+    // MARK: Internal
+
+    /// The text of the message to be stored.
+    let text: String
+    /// The mentiones contained in the text.
+    let mentions: [StorableMention]
+    /// The quoted message, if available.
+    let quote: StorableQuote?
+
+    // MARK: Fileprivate
 
     /// Converts this storable version into a regular `DraftMessage`.
     /// The passed in `context` is needed to fetch the user objects.

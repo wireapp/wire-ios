@@ -21,27 +21,7 @@ import UIKit
 import WireSyncEngine
 
 final class CallParticipantView: BaseCallParticipantView {
-    // MARK: - Public Properties
-
-    var isPaused = false {
-        didSet {
-            guard oldValue != isPaused else { return }
-            updateState(animated: true)
-        }
-    }
-
-    // MARK: - Private Properties
-
-    private weak var videoContainerView: AVSVideoContainerView?
-    private weak var videoView: AVSVideoView?
-    private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-    private let pausedLabel = UILabel(
-        key: "call.video.paused",
-        size: .normal,
-        weight: .semibold,
-        color: .white
-    )
-    private var snapshotView: UIView?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -63,6 +43,17 @@ final class CallParticipantView: BaseCallParticipantView {
         updateState()
     }
 
+    // MARK: Internal
+
+    // MARK: - Public Properties
+
+    var isPaused = false {
+        didSet {
+            guard oldValue != isPaused else { return }
+            updateState(animated: true)
+        }
+    }
+
     // MARK: - Setup
 
     override func setupViews() {
@@ -81,6 +72,27 @@ final class CallParticipantView: BaseCallParticipantView {
         pausedLabel.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         pausedLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
+
+    // MARK: Override Base
+
+    override func updateVideoShouldFill(_ shouldFill: Bool) {
+        videoView?.shouldFill = shouldFill
+    }
+
+    // MARK: Private
+
+    // MARK: - Private Properties
+
+    private weak var videoContainerView: AVSVideoContainerView?
+    private weak var videoView: AVSVideoView?
+    private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+    private let pausedLabel = UILabel(
+        key: "call.video.paused",
+        size: .normal,
+        weight: .semibold,
+        color: .white
+    )
+    private var snapshotView: UIView?
 
     // MARK: - Paused state update
 
@@ -163,12 +175,6 @@ final class CallParticipantView: BaseCallParticipantView {
             animationBlock()
             completionBlock(true)
         }
-    }
-
-    // MARK: Override Base
-
-    override func updateVideoShouldFill(_ shouldFill: Bool) {
-        videoView?.shouldFill = shouldFill
     }
 
     private func makeVideoView() -> AVSVideoView {

@@ -25,6 +25,63 @@ import UIKit
 
 @objcMembers
 public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    public init(
+        wipeOnCookieInvalid: Bool = false,
+        blacklistDownloadInterval: TimeInterval = 6 * 60 * 60,
+        blockOnJailbreakOrRoot: Bool = false,
+        wipeOnJailbreakOrRoot: Bool = false,
+        messageRetentionInterval: TimeInterval? = nil,
+        authenticateAfterReboot: Bool = false,
+        failedPasswordThresholdBeforeWipe: Int? = nil,
+        encryptionAtRestIsEnabledByDefault: Bool = false,
+        legacyAppLockConfig: AppLockController.LegacyConfig? = nil
+    ) {
+        self.wipeOnCookieInvalid = wipeOnCookieInvalid
+        self.blacklistDownloadInterval = blacklistDownloadInterval
+        self.blockOnJailbreakOrRoot = blockOnJailbreakOrRoot
+        self.wipeOnJailbreakOrRoot = wipeOnJailbreakOrRoot
+        self.messageRetentionInterval = messageRetentionInterval
+        self.authenticateAfterReboot = authenticateAfterReboot
+        self.failedPasswordThresholdBeforeWipe = failedPasswordThresholdBeforeWipe
+        self.encryptionAtRestEnabledByDefault = encryptionAtRestIsEnabledByDefault
+        self.legacyAppLockConfig = legacyAppLockConfig
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.wipeOnCookieInvalid = try container.decode(Bool.self, forKey: .wipeOnCookieInvalid)
+        self.blacklistDownloadInterval = try container.decode(TimeInterval.self, forKey: .blacklistDownloadInterval)
+        self.blockOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .blockOnJailbreakOrRoot)
+        self.wipeOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .wipeOnJailbreakOrRoot)
+        self.messageRetentionInterval = try container.decodeIfPresent(
+            TimeInterval.self,
+            forKey: .messageRetentionInterval
+        )
+        self.authenticateAfterReboot = try container.decode(Bool.self, forKey: .authenticateAfterReboot)
+        self.failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(
+            Int.self,
+            forKey: .failedPasswordThresholdBeforeWipe
+        )
+        self.encryptionAtRestEnabledByDefault = try container.decode(
+            Bool.self,
+            forKey: .encryptionAtRestEnabledByDefault
+        )
+        self.legacyAppLockConfig = try container.decodeIfPresent(
+            AppLockController.LegacyConfig.self,
+            forKey: .legacyAppLockConfig
+        )
+    }
+
+    // MARK: Public
+
+    public static var defaultConfiguration: SessionManagerConfiguration {
+        SessionManagerConfiguration()
+    }
+
     // MARK: - Properties
 
     /// If set to true then the session manager will delete account data instead of just asking the user to
@@ -78,53 +135,12 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
 
     public var legacyAppLockConfig: AppLockController.LegacyConfig?
 
-    // MARK: - Init
+    public static func load(from URL: URL) -> SessionManagerConfiguration? {
+        guard let data = try? Data(contentsOf: URL) else { return nil }
 
-    public init(
-        wipeOnCookieInvalid: Bool = false,
-        blacklistDownloadInterval: TimeInterval = 6 * 60 * 60,
-        blockOnJailbreakOrRoot: Bool = false,
-        wipeOnJailbreakOrRoot: Bool = false,
-        messageRetentionInterval: TimeInterval? = nil,
-        authenticateAfterReboot: Bool = false,
-        failedPasswordThresholdBeforeWipe: Int? = nil,
-        encryptionAtRestIsEnabledByDefault: Bool = false,
-        legacyAppLockConfig: AppLockController.LegacyConfig? = nil
-    ) {
-        self.wipeOnCookieInvalid = wipeOnCookieInvalid
-        self.blacklistDownloadInterval = blacklistDownloadInterval
-        self.blockOnJailbreakOrRoot = blockOnJailbreakOrRoot
-        self.wipeOnJailbreakOrRoot = wipeOnJailbreakOrRoot
-        self.messageRetentionInterval = messageRetentionInterval
-        self.authenticateAfterReboot = authenticateAfterReboot
-        self.failedPasswordThresholdBeforeWipe = failedPasswordThresholdBeforeWipe
-        self.encryptionAtRestEnabledByDefault = encryptionAtRestIsEnabledByDefault
-        self.legacyAppLockConfig = legacyAppLockConfig
-    }
+        let decoder = JSONDecoder()
 
-    public required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.wipeOnCookieInvalid = try container.decode(Bool.self, forKey: .wipeOnCookieInvalid)
-        self.blacklistDownloadInterval = try container.decode(TimeInterval.self, forKey: .blacklistDownloadInterval)
-        self.blockOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .blockOnJailbreakOrRoot)
-        self.wipeOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .wipeOnJailbreakOrRoot)
-        self.messageRetentionInterval = try container.decodeIfPresent(
-            TimeInterval.self,
-            forKey: .messageRetentionInterval
-        )
-        self.authenticateAfterReboot = try container.decode(Bool.self, forKey: .authenticateAfterReboot)
-        self.failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(
-            Int.self,
-            forKey: .failedPasswordThresholdBeforeWipe
-        )
-        self.encryptionAtRestEnabledByDefault = try container.decode(
-            Bool.self,
-            forKey: .encryptionAtRestEnabledByDefault
-        )
-        self.legacyAppLockConfig = try container.decodeIfPresent(
-            AppLockController.LegacyConfig.self,
-            forKey: .legacyAppLockConfig
-        )
+        return  try? decoder.decode(SessionManagerConfiguration.self, from: data)
     }
 
     // MARK: - Methods
@@ -143,18 +159,6 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
         )
 
         return copy
-    }
-
-    public static var defaultConfiguration: SessionManagerConfiguration {
-        SessionManagerConfiguration()
-    }
-
-    public static func load(from URL: URL) -> SessionManagerConfiguration? {
-        guard let data = try? Data(contentsOf: URL) else { return nil }
-
-        let decoder = JSONDecoder()
-
-        return  try? decoder.decode(SessionManagerConfiguration.self, from: data)
     }
 }
 

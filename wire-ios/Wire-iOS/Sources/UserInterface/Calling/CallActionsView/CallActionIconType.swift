@@ -29,12 +29,7 @@ enum CallActionIconType: IconLabelButtonInput {
     case endCall
     case pickUp
 
-    func icon(forState state: UIControl.State) -> StyleKitIcon {
-        switch state {
-        case .selected: selectedIcon
-        default: normalIcon
-        }
-    }
+    // MARK: Internal
 
     var label: String {
         typealias Voice = L10n.Localizable.Voice
@@ -59,6 +54,15 @@ enum CallActionIconType: IconLabelButtonInput {
         case .pickUp: "PickUpButton"
         }
     }
+
+    func icon(forState state: UIControl.State) -> StyleKitIcon {
+        switch state {
+        case .selected: selectedIcon
+        default: normalIcon
+        }
+    }
+
+    // MARK: Private
 
     private var normalIcon: StyleKitIcon {
         switch self {

@@ -31,6 +31,8 @@ public protocol LabelType: NSObjectProtocol {
 
 @objcMembers
 public class Label: ZMManagedObject, LabelType {
+    // MARK: Public
+
     @objc
     public enum Kind: Int16 {
         case folder, favorite
@@ -40,7 +42,6 @@ public class Label: ZMManagedObject, LabelType {
     @NSManaged public var conversations: Set<ZMConversation>
     @NSManaged public private(set) var markedForDeletion: Bool
 
-    @NSManaged private var remoteIdentifier_data: Data?
     @NSManaged public private(set) var type: Int16
 
     override public var ignoredKeys: Set<AnyHashable>? {
@@ -70,10 +71,6 @@ public class Label: ZMManagedObject, LabelType {
         }
     }
 
-    public func markForDeletion() {
-        markedForDeletion = true
-    }
-
     override public static func entityName() -> String {
         "Label"
     }
@@ -99,6 +96,31 @@ public class Label: ZMManagedObject, LabelType {
     public static func fetchFavoriteLabel(in context: NSManagedObjectContext) -> Label {
         fetchOrCreateFavoriteLabel(in: context, create: false)
     }
+
+    public static func fetchOrCreate(
+        remoteIdentifier: UUID,
+        create: Bool,
+        in context: NSManagedObjectContext,
+        created: inout Bool
+    ) -> Label? {
+        if let existing = fetch(with: remoteIdentifier, in: context) {
+            created = false
+            return existing
+        } else if create {
+            let label = Label.insertNewObject(in: context)
+            label.remoteIdentifier = remoteIdentifier
+            created = true
+            return label
+        }
+
+        return nil
+    }
+
+    public func markForDeletion() {
+        markedForDeletion = true
+    }
+
+    // MARK: Internal
 
     @discardableResult
     static func fetchOrCreateFavoriteLabel(in context: NSManagedObjectContext, create: Bool) -> Label {
@@ -146,22 +168,7 @@ public class Label: ZMManagedObject, LabelType {
         }
     }
 
-    public static func fetchOrCreate(
-        remoteIdentifier: UUID,
-        create: Bool,
-        in context: NSManagedObjectContext,
-        created: inout Bool
-    ) -> Label? {
-        if let existing = fetch(with: remoteIdentifier, in: context) {
-            created = false
-            return existing
-        } else if create {
-            let label = Label.insertNewObject(in: context)
-            label.remoteIdentifier = remoteIdentifier
-            created = true
-            return label
-        }
+    // MARK: Private
 
-        return nil
-    }
+    @NSManaged private var remoteIdentifier_data: Data?
 }

@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ProfileFooterViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: ProfileFooterView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -103,4 +100,11 @@ final class ProfileFooterViewTests: XCTestCase {
 
         return view
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ProfileFooterView!
 }

@@ -21,20 +21,7 @@ import XCTest
 /// This class provides a `NSManagedObjectContext` in order to test views with real data instead
 /// of mock objects.
 class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
-    var selfUserInTeam = false
-    var selfUser: ZMUser!
-    var otherUser: ZMUser!
-    var otherUserConversation: ZMConversation!
-    var team: Team?
-    var teamMember: Member?
-
-    let usernames = MockUserType.usernames
-
-    // The provider to use when configuring `SelfUser.provider`, needed only when tested code
-    // invokes `SelfUser.current`. As we slowly migrate to `UserType`, we will use this more
-    // and the `var selfUser: ZMUser!` less.
-    //
-    var selfUserProvider: SelfUserProvider!
+    // MARK: Open
 
     override open func setUp() {
         super.setUp()
@@ -58,56 +45,22 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    // MARK: – Setup
+    // MARK: Internal
 
-    private func setupMember() {
-        let selfUser = ZMUser.selfUser(in: uiMOC)
+    var selfUserInTeam = false
+    var selfUser: ZMUser!
+    var otherUser: ZMUser!
+    var otherUserConversation: ZMConversation!
+    var team: Team?
+    var teamMember: Member?
 
-        team = Team.insertNewObject(in: uiMOC)
-        team!.remoteIdentifier = UUID()
+    let usernames = MockUserType.usernames
 
-        teamMember = Member.insertNewObject(in: uiMOC)
-        teamMember!.user = selfUser
-        teamMember!.team = team
-        teamMember!.setTeamRole(.member)
-    }
-
-    private func setupTestObjects() {
-        selfUser = ZMUser.insertNewObject(in: uiMOC)
-        selfUser.remoteIdentifier = UUID()
-        selfUser.name = "selfUser"
-        selfUser.accentColor = .red
-        selfUser.emailAddress = "test@email.com"
-        selfUser.phoneNumber = "+123456789"
-
-        ZMUser.boxSelfUser(selfUser, inContextUserInfo: uiMOC)
-        if selfUserInTeam {
-            setupMember()
-        }
-
-        otherUser = ZMUser.insertNewObject(in: uiMOC)
-        otherUser.remoteIdentifier = UUID()
-        otherUser.name = "Bruno"
-        otherUser.handle = "bruno"
-        otherUser.accentColor = .amber
-
-        otherUserConversation = ZMConversation.createOtherUserConversation(moc: uiMOC, otherUser: otherUser)
-
-        uiMOC.saveOrRollback()
-    }
-
-    private func updateTeamStatus(wasInTeam: Bool) {
-        guard wasInTeam != selfUserInTeam else {
-            return
-        }
-
-        if selfUserInTeam {
-            setupMember()
-        } else {
-            teamMember = nil
-            team = nil
-        }
-    }
+    // The provider to use when configuring `SelfUser.provider`, needed only when tested code
+    // invokes `SelfUser.current`. As we slowly migrate to `UserType`, we will use this more
+    // and the `var selfUser: ZMUser!` less.
+    //
+    var selfUserProvider: SelfUserProvider!
 
     func createUser(name: String) -> ZMUser {
         let user = ZMUser.insertNewObject(in: uiMOC)
@@ -169,5 +122,58 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         uiMOC.saveOrRollback()
 
         return serviceUser
+    }
+
+    // MARK: Private
+
+    // MARK: – Setup
+
+    private func setupMember() {
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+
+        team = Team.insertNewObject(in: uiMOC)
+        team!.remoteIdentifier = UUID()
+
+        teamMember = Member.insertNewObject(in: uiMOC)
+        teamMember!.user = selfUser
+        teamMember!.team = team
+        teamMember!.setTeamRole(.member)
+    }
+
+    private func setupTestObjects() {
+        selfUser = ZMUser.insertNewObject(in: uiMOC)
+        selfUser.remoteIdentifier = UUID()
+        selfUser.name = "selfUser"
+        selfUser.accentColor = .red
+        selfUser.emailAddress = "test@email.com"
+        selfUser.phoneNumber = "+123456789"
+
+        ZMUser.boxSelfUser(selfUser, inContextUserInfo: uiMOC)
+        if selfUserInTeam {
+            setupMember()
+        }
+
+        otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = UUID()
+        otherUser.name = "Bruno"
+        otherUser.handle = "bruno"
+        otherUser.accentColor = .amber
+
+        otherUserConversation = ZMConversation.createOtherUserConversation(moc: uiMOC, otherUser: otherUser)
+
+        uiMOC.saveOrRollback()
+    }
+
+    private func updateTeamStatus(wasInTeam: Bool) {
+        guard wasInTeam != selfUserInTeam else {
+            return
+        }
+
+        if selfUserInTeam {
+            setupMember()
+        } else {
+            teamMember = nil
+            team = nil
+        }
     }
 }

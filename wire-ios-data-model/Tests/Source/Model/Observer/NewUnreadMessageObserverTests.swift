@@ -22,12 +22,16 @@ import Foundation
 
 @objc
 class UnreadMessageTestObserver: NSObject, ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObserver {
-    var unreadMessageNotes: [NewUnreadMessagesChangeInfo] = []
-    var unreadKnockNotes: [NewUnreadKnockMessagesChangeInfo] = []
+    // MARK: Lifecycle
 
     override init() {
         super.init()
     }
+
+    // MARK: Internal
+
+    var unreadMessageNotes: [NewUnreadMessagesChangeInfo] = []
+    var unreadKnockNotes: [NewUnreadKnockMessagesChangeInfo] = []
 
     @objc
     func didReceiveNewUnreadKnockMessages(_ changeInfo: NewUnreadKnockMessagesChangeInfo) {
@@ -48,14 +52,14 @@ class UnreadMessageTestObserver: NSObject, ZMNewUnreadMessagesObserver, ZMNewUnr
 // MARK: - NewUnreadMessageObserverTests
 
 class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
+    var testObserver: UnreadMessageTestObserver!
+    var newMessageToken: NSObjectProtocol!
+    var newKnocksToken: NSObjectProtocol!
+
     func processPendingChangesAndClearNotifications() {
         uiMOC.saveOrRollback()
         testObserver?.clearNotifications()
     }
-
-    var testObserver: UnreadMessageTestObserver!
-    var newMessageToken: NSObjectProtocol!
-    var newKnocksToken: NSObjectProtocol!
 
     override func setUp() {
         super.setUp()

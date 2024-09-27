@@ -21,6 +21,8 @@ import XCTest
 @testable import Wire
 
 final class ReadReceiptViewModelTests: XCTestCase {
+    // MARK: Internal
+
     var sut: ReadReceiptViewModel!
     var mockMessage: MockMessage!
 
@@ -29,19 +31,6 @@ final class ReadReceiptViewModelTests: XCTestCase {
         mockMessage = nil
 
         super.tearDown()
-    }
-
-    private func createMockMessage(type: ZMSystemMessageType) {
-        mockMessage = MockMessageFactory.systemMessage(with: type)!
-    }
-
-    private func createSut(type: ZMSystemMessageType) {
-        sut = ReadReceiptViewModel(
-            icon: .eye,
-            iconColor: SemanticColors.Label.textSettingsPasswordPlaceholder,
-            systemMessageType: type,
-            sender: mockMessage.senderUser!
-        )
     }
 
     func testThatSelfUserSwitchOffReceiptOption() {
@@ -104,5 +93,20 @@ final class ReadReceiptViewModelTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.attributedTitle()?.string, "Read receipts are on")
+    }
+
+    // MARK: Private
+
+    private func createMockMessage(type: ZMSystemMessageType) {
+        mockMessage = MockMessageFactory.systemMessage(with: type)!
+    }
+
+    private func createSut(type: ZMSystemMessageType) {
+        sut = ReadReceiptViewModel(
+            icon: .eye,
+            iconColor: SemanticColors.Label.textSettingsPasswordPlaceholder,
+            systemMessageType: type,
+            sender: mockMessage.senderUser!
+        )
     }
 }

@@ -20,9 +20,7 @@ import Foundation
 
 @objc
 class TypingUsers: NSObject {
-    // MARK: - Properties
-
-    private var conversationIdToUserIds = [NSManagedObjectID: [NSManagedObjectID]]()
+    // MARK: Internal
 
     // MARK: - Internal Methods
 
@@ -56,4 +54,10 @@ class TypingUsers: NSObject {
         let users = userIds.compactMap { moc.object(with: $0) as? ZMUser }
         return Set(users)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var conversationIdToUserIds = [NSManagedObjectID: [NSManagedObjectID]]()
 }

@@ -19,7 +19,7 @@
 @testable import WireSyncEngine
 
 class ZMConversation_TypingUsersTests: MessagingTest {
-    private var token: Any?
+    // MARK: Internal
 
     func testThatItCreatesANotificationWhenCallingSetTyping() {
         // Given
@@ -48,4 +48,8 @@ class ZMConversation_TypingUsersTests: MessagingTest {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         token = nil
     }
+
+    // MARK: Private
+
+    private var token: Any?
 }

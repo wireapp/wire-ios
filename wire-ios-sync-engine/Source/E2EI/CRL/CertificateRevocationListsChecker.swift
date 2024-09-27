@@ -29,24 +29,7 @@ public protocol CertificateRevocationListsChecking {
 // MARK: - CertificateRevocationListsChecker
 
 public class CertificateRevocationListsChecker: CertificateRevocationListsChecking {
-    // MARK: - Properties
-
-    private let crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol
-    private let crlAPI: CertificateRevocationListAPIProtocol
-    private let mlsGroupVerification: any MLSGroupVerificationProtocol
-    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
-    private let context: NSManagedObjectContext
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
-        get async throws {
-            try await coreCryptoProvider.coreCrypto()
-        }
-    }
-
-    private let logger = WireLogger.e2ei
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public convenience init(
         userID: UUID,
@@ -86,6 +69,8 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         self.context = context
     }
 
+    // MARK: Public
+
     // MARK: - Public interface
 
     public func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async {
@@ -109,6 +94,25 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             .keys
 
         await checkCertificateRevocationLists(from: Set(distributionPointsOfExpiringCRLs))
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol
+    private let crlAPI: CertificateRevocationListAPIProtocol
+    private let mlsGroupVerification: any MLSGroupVerificationProtocol
+    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
+    private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
+    private let context: NSManagedObjectContext
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let logger = WireLogger.e2ei
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto()
+        }
     }
 
     // MARK: - Private methods

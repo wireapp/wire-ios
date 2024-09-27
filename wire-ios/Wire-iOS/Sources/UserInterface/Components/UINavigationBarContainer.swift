@@ -20,12 +20,7 @@ import UIKit
 import WireDesign
 
 final class UINavigationBarContainer: UIViewController {
-    let landscapeNavbarHeight: CGFloat = 30.0
-    let portraitNavbarHeight: CGFloat = 44.0
-
-    var navigationBar: UINavigationBar
-    lazy var navHeight: NSLayoutConstraint = navigationBar.heightAnchor
-        .constraint(equalToConstant: portraitNavbarHeight)
+    // MARK: Lifecycle
 
     init(_ navigationBar: UINavigationBar) {
         self.navigationBar = navigationBar
@@ -40,17 +35,14 @@ final class UINavigationBarContainer: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func createConstraints() {
-        [navigationBar, view].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-        NSLayoutConstraint.activate([
-            navHeight,
-            navigationBar.leftAnchor.constraint(equalTo: view.leftAnchor),
-            navigationBar.rightAnchor.constraint(equalTo: view.rightAnchor),
-            view.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor),
-        ])
+    // MARK: Internal
 
-        navigationBar.topAnchor.constraint(equalTo: safeTopAnchor).isActive = true
-    }
+    let landscapeNavbarHeight: CGFloat = 30.0
+    let portraitNavbarHeight: CGFloat = 44.0
+
+    var navigationBar: UINavigationBar
+    lazy var navHeight: NSLayoutConstraint = navigationBar.heightAnchor
+        .constraint(equalToConstant: portraitNavbarHeight)
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -63,5 +55,19 @@ final class UINavigationBarContainer: UIViewController {
         } else {
             navHeight.constant = portraitNavbarHeight
         }
+    }
+
+    // MARK: Private
+
+    private func createConstraints() {
+        [navigationBar, view].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        NSLayoutConstraint.activate([
+            navHeight,
+            navigationBar.leftAnchor.constraint(equalTo: view.leftAnchor),
+            navigationBar.rightAnchor.constraint(equalTo: view.rightAnchor),
+            view.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor),
+        ])
+
+        navigationBar.topAnchor.constraint(equalTo: safeTopAnchor).isActive = true
     }
 }

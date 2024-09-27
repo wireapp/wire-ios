@@ -22,10 +22,7 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class AuthenticationContextTests: XCTestCase {
-    // Executing `evaluatePolicy` triggers authentication prompt to the user
-    // so we do not test the behavior in this unit test.
-
-    private var mockStorage: MockLAContextStorable!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -82,6 +79,13 @@ final class AuthenticationContextTests: XCTestCase {
         XCTAssertTrue(success)
         XCTAssertNil(expectedError)
     }
+
+    // MARK: Private
+
+    // Executing `evaluatePolicy` triggers authentication prompt to the user
+    // so we do not test the behavior in this unit test.
+
+    private var mockStorage: MockLAContextStorable!
 
     // MARK: - Helpers
 

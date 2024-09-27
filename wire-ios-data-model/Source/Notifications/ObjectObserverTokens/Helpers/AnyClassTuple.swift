@@ -21,13 +21,17 @@ import Foundation
 // MARK: - AnyClassTuple
 
 public struct AnyClassTuple<T: Hashable>: Hashable {
-    public let classOfObject: AnyClass
-    public let secondElement: T
+    // MARK: Lifecycle
 
     public init(classOfObject: AnyClass, secondElement: T) {
         self.classOfObject = classOfObject
         self.secondElement = secondElement
     }
+
+    // MARK: Public
+
+    public let classOfObject: AnyClass
+    public let secondElement: T
 
     public func hash(into hasher: inout Hasher) {
         let classHash = "\(classOfObject)".hashValue

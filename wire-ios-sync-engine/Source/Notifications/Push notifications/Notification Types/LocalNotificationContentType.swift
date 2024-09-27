@@ -42,6 +42,8 @@ public enum LocalNotificationContentType: Equatable {
     case participantsAdded
     case messageTimerUpdate(String?)
 
+    // MARK: Lifecycle
+
     init?(event: ZMUpdateEvent, conversation: ZMConversation?, in moc: NSManagedObjectContext) {
         switch event.type {
         case .conversationMemberJoin:

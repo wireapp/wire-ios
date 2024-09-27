@@ -19,9 +19,7 @@
 import UIKit
 
 final class MockPinchGestureRecognizer: UIPinchGestureRecognizer {
-    let mockState: UIGestureRecognizer.State
-    var mockLocation: CGPoint?
-    var mockView: UIView?
+    // MARK: Lifecycle
 
     init(location: CGPoint?, view: UIView?, state: UIGestureRecognizer.State, scale: CGFloat) {
         self.mockLocation = location
@@ -32,9 +30,11 @@ final class MockPinchGestureRecognizer: UIPinchGestureRecognizer {
         self.scale = scale
     }
 
-    override func location(in view: UIView?) -> CGPoint {
-        mockLocation ?? super.location(in: view)
-    }
+    // MARK: Internal
+
+    let mockState: UIGestureRecognizer.State
+    var mockLocation: CGPoint?
+    var mockView: UIView?
 
     override var view: UIView? {
         mockView ?? super.view
@@ -43,5 +43,9 @@ final class MockPinchGestureRecognizer: UIPinchGestureRecognizer {
     override var state: UIGestureRecognizer.State {
         get { mockState }
         set {}
+    }
+
+    override func location(in view: UIView?) -> CGPoint {
+        mockLocation ?? super.location(in: view)
     }
 }

@@ -28,6 +28,18 @@ public class SpyUserClientKeyStore: UserClientKeysStore {
     public var lastGeneratedKeys: [(id: UInt16, prekey: String)] = []
     public var lastGeneratedLastPrekey: String?
 
+    public var accessEncryptionContextCount = 0
+
+    override public var encryptionContext: EncryptionContext {
+        get {
+            accessEncryptionContextCount += 1
+            return super.encryptionContext
+        }
+        set {
+            super.encryptionContext = newValue
+        }
+    }
+
     override public func generateMoreKeys(_ count: UInt16, start: UInt16) throws -> [(id: UInt16, prekey: String)] {
         if failToGeneratePreKeys {
             let error = NSError(
@@ -54,18 +66,6 @@ public class SpyUserClientKeyStore: UserClientKeysStore {
         } else {
             lastGeneratedLastPrekey = try! super.lastPreKey()
             return lastGeneratedLastPrekey!
-        }
-    }
-
-    public var accessEncryptionContextCount = 0
-
-    override public var encryptionContext: EncryptionContext {
-        get {
-            accessEncryptionContextCount += 1
-            return super.encryptionContext
-        }
-        set {
-            super.encryptionContext = newValue
         }
     }
 }

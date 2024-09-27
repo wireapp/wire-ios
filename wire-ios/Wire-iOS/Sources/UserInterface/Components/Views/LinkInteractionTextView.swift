@@ -29,15 +29,7 @@ protocol TextViewInteractionDelegate: AnyObject {
 // MARK: - LinkInteractionTextView
 
 final class LinkInteractionTextView: UITextView {
-    weak var interactionDelegate: TextViewInteractionDelegate?
-
-    override var selectedTextRange: UITextRange? {
-        get { nil }
-        set { /* no-op */ }
-    }
-
-    // URLs with these schemes should be handled by the os.
-    fileprivate let dataDetectedURLSchemes = ["x-apple-data-detectors", "tel", "mailto"]
+    // MARK: Lifecycle
 
     override init(
         frame: CGRect,
@@ -54,6 +46,15 @@ final class LinkInteractionTextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    weak var interactionDelegate: TextViewInteractionDelegate?
+
+    override var selectedTextRange: UITextRange? {
+        get { nil }
+        set { /* no-op */ }
+    }
+
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let isInside = super.point(inside: point, with: event)
         guard !UIMenuController.shared.isMenuVisible else { return false }
@@ -61,6 +62,25 @@ final class LinkInteractionTextView: UITextView {
         let index = offset(from: beginningOfDocument, to: position.start)
         return urlAttribute(at: index)
     }
+
+    // MARK: Fileprivate
+
+    // URLs with these schemes should be handled by the os.
+    fileprivate let dataDetectedURLSchemes = ["x-apple-data-detectors", "tel", "mailto"]
+
+    /// An alert is shown (asking the user if they wish to open the url) if the
+    /// link in the specified range is a markdown link.
+    fileprivate func showAlertIfNeeded(for url: URL, in range: NSRange) -> Bool {
+        // only show alert if the link is a markdown link
+        guard isMarkdownLink(in: range) else {
+            return false
+        }
+
+        ZClientViewController.shared?.present(confirmationAlert(for: url), animated: true)
+        return true
+    }
+
+    // MARK: Private
 
     private func urlAttribute(at index: Int) -> Bool {
         guard attributedText.length > 0 else { return false }
@@ -87,18 +107,6 @@ final class LinkInteractionTextView: UITextView {
 
     private func isMarkdownLink(in range: NSRange) -> Bool {
         attributedText.ranges(containing: .link, inRange: range) == [range]
-    }
-
-    /// An alert is shown (asking the user if they wish to open the url) if the
-    /// link in the specified range is a markdown link.
-    fileprivate func showAlertIfNeeded(for url: URL, in range: NSRange) -> Bool {
-        // only show alert if the link is a markdown link
-        guard isMarkdownLink(in: range) else {
-            return false
-        }
-
-        ZClientViewController.shared?.present(confirmationAlert(for: url), animated: true)
-        return true
     }
 }
 

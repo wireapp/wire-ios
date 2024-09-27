@@ -26,20 +26,7 @@ private let zmLog = ZMSLog(tag: "calling")
 // MARK: - ProximityMonitorManager
 
 final class ProximityMonitorManager: NSObject {
-    typealias RaisedToEarHandler = (_ raisedToEar: Bool) -> Void
-
-    var callStateObserverToken: Any?
-
-    fileprivate(set) var raisedToEar = false {
-        didSet {
-            if oldValue != raisedToEar {
-                stateChanged?(raisedToEar)
-            }
-        }
-    }
-
-    var stateChanged: RaisedToEarHandler?
-    var listening = false
+    // MARK: Lifecycle
 
     deinit {
         AVSMediaManagerClientChangeNotification.remove(self)
@@ -59,6 +46,23 @@ final class ProximityMonitorManager: NSObject {
         AVSMediaManagerClientChangeNotification.add(self)
 
         updateProximityMonitorState()
+    }
+
+    // MARK: Internal
+
+    typealias RaisedToEarHandler = (_ raisedToEar: Bool) -> Void
+
+    var callStateObserverToken: Any?
+
+    var stateChanged: RaisedToEarHandler?
+    var listening = false
+
+    fileprivate(set) var raisedToEar = false {
+        didSet {
+            if oldValue != raisedToEar {
+                stateChanged?(raisedToEar)
+            }
+        }
     }
 
     func updateProximityMonitorState() {

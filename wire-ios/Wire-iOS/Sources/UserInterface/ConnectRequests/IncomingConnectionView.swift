@@ -21,40 +21,7 @@ import WireCommonComponents
 import WireSyncEngine
 
 final class IncomingConnectionView: UIView {
-    // MARK: - Properties
-
-    typealias UserAction = (UserType) -> Void
-    typealias ConnectionRequest = L10n.Localizable.Inbox.ConnectionRequest
-
-    private let usernameLabel = UILabel()
-    private let userDetailView = UserNameDetailView()
-    private let securityLevelView = SecurityLevelView()
-    private let verticalStackView = UIStackView(axis: .vertical)
-    private let userImageView = UserImageView()
-    private let federatedIndicator = LabelIndicator(context: .federated)
-    private let incomingConnectionFooter = UIView()
-    private let warningView = WarningLabelView()
-    private let acceptButton = ZMButton(
-        style: .accentColorTextButtonStyle,
-        cornerRadius: 16,
-        fontSpec: .normalSemiboldFont
-    )
-    private let ignoreButton = ZMButton(
-        style: .secondaryTextButtonStyle,
-        cornerRadius: 16,
-        fontSpec: .normalSemiboldFont
-    )
-    private let classificationProvider: SecurityClassificationProviding?
-
-    var user: UserType {
-        didSet {
-            setupLabelText()
-            userImageView.user = user
-        }
-    }
-
-    var onAccept: UserAction?
-    var onIgnore: UserAction?
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -77,6 +44,45 @@ final class IncomingConnectionView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    typealias UserAction = (UserType) -> Void
+    typealias ConnectionRequest = L10n.Localizable.Inbox.ConnectionRequest
+
+    var onAccept: UserAction?
+    var onIgnore: UserAction?
+
+    var user: UserType {
+        didSet {
+            setupLabelText()
+            userImageView.user = user
+        }
+    }
+
+    // MARK: Private
+
+    private let usernameLabel = UILabel()
+    private let userDetailView = UserNameDetailView()
+    private let securityLevelView = SecurityLevelView()
+    private let verticalStackView = UIStackView(axis: .vertical)
+    private let userImageView = UserImageView()
+    private let federatedIndicator = LabelIndicator(context: .federated)
+    private let incomingConnectionFooter = UIView()
+    private let warningView = WarningLabelView()
+    private let acceptButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
+    private let ignoreButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
+    private let classificationProvider: SecurityClassificationProviding?
 
     // MARK: - Setup views and layout
 

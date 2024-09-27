@@ -25,6 +25,8 @@ import Foundation
 public enum MessageConfirmationType: Int16 {
     case delivered, read
 
+    // MARK: Internal
+
     static func convert(_ zmConfirmationType: Confirmation.TypeEnum) -> MessageConfirmationType {
         switch zmConfirmationType {
         case .delivered:
@@ -39,18 +41,32 @@ public enum MessageConfirmationType: Int16 {
 
 @objc(ZMMessageConfirmation) @objcMembers
 open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
+    // MARK: Lifecycle
+
+    convenience init(
+        type: MessageConfirmationType,
+        message: ZMMessage,
+        sender: ZMUser,
+        serverTimestamp: Date,
+        managedObjectContext: NSManagedObjectContext
+    ) {
+        let entityDescription = NSEntityDescription.entity(
+            forEntityName: ZMMessageConfirmation.entityName(),
+            in: managedObjectContext
+        )!
+        self.init(entity: entityDescription, insertInto: managedObjectContext)
+        self.message = message
+        self.user = sender
+        self.type = type
+        self.serverTimestamp = serverTimestamp
+    }
+
+    // MARK: Open
+
     @NSManaged open var type: MessageConfirmationType
     @NSManaged open var serverTimestamp: Date?
     @NSManaged open var message: ZMMessage
     @NSManaged open var user: ZMUser
-
-    public var userType: UserType {
-        user
-    }
-
-    override open class func entityName() -> String {
-        "MessageConfirmation"
-    }
 
     override open var modifiedKeys: Set<AnyHashable>? {
         get {
@@ -58,6 +74,16 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
         } set {
             // do nothing
         }
+    }
+
+    override open class func entityName() -> String {
+        "MessageConfirmation"
+    }
+
+    // MARK: Public
+
+    public var userType: UserType {
+        user
     }
 
     /// Creates a ZMMessageConfirmation objects that holds a reference to a message that was confirmed and the user who
@@ -99,23 +125,5 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
                 managedObjectContext: managedObjectContext
             )
         }
-    }
-
-    convenience init(
-        type: MessageConfirmationType,
-        message: ZMMessage,
-        sender: ZMUser,
-        serverTimestamp: Date,
-        managedObjectContext: NSManagedObjectContext
-    ) {
-        let entityDescription = NSEntityDescription.entity(
-            forEntityName: ZMMessageConfirmation.entityName(),
-            in: managedObjectContext
-        )!
-        self.init(entity: entityDescription, insertInto: managedObjectContext)
-        self.message = message
-        self.user = sender
-        self.type = type
-        self.serverTimestamp = serverTimestamp
     }
 }

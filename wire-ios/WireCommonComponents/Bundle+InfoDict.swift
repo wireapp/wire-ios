@@ -45,8 +45,7 @@ extension Bundle {
     }
 
     public struct Info: SafeForLoggingStringConvertible {
-        var version: String
-        var build: String
+        // MARK: Public
 
         public var safeForLoggingDescription: String {
             "Wire-ios version \(version) (\(build)))"
@@ -55,5 +54,10 @@ extension Bundle {
         public var fullVersion: String {
             "\(version) (\(build))"
         }
+
+        // MARK: Internal
+
+        var version: String
+        var build: String
     }
 }

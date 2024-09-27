@@ -19,6 +19,16 @@
 import Foundation
 
 enum PreviewBlacklist {
+    // MARK: Internal
+
+    static func isBlacklisted(_ url: URL) -> Bool {
+        blacklistedHosts.contains { blacklisted in
+            url.absoluteString.lowercased().contains(blacklisted)
+        }
+    }
+
+    // MARK: Private
+
     private static let blacklistedHosts = [
         "soundcloud",
         "youtube",
@@ -27,10 +37,4 @@ enum PreviewBlacklist {
         "spotify",
         "giphy",
     ]
-
-    static func isBlacklisted(_ url: URL) -> Bool {
-        blacklistedHosts.contains { blacklisted in
-            url.absoluteString.lowercased().contains(blacklisted)
-        }
-    }
 }

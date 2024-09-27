@@ -22,7 +22,7 @@ import WireDataModel
 // MARK: - MulticastDelegate
 
 class MulticastDelegate<T: Any>: NSObject {
-    private let delegates = NSHashTable<AnyObject>(options: .weakMemory, capacity: 0)
+    // MARK: Internal
 
     func add(_ delegate: T) {
         delegates.add(delegate as AnyObject)
@@ -37,6 +37,10 @@ class MulticastDelegate<T: Any>: NSObject {
             function(object as! T)
         }
     }
+
+    // MARK: Private
+
+    private let delegates = NSHashTable<AnyObject>(options: .weakMemory, capacity: 0)
 }
 
 // MARK: - AssetCollectionMulticastDelegate
@@ -66,10 +70,7 @@ extension AssetCollectionMulticastDelegate: AssetCollectionDelegate {
 // MARK: - AssetCollectionWrapper
 
 final class AssetCollectionWrapper: NSObject {
-    let conversation: GroupDetailsConversationType
-    let assetCollection: ZMCollection
-    let assetCollectionDelegate: AssetCollectionMulticastDelegate
-    let matchingCategories: [CategoryMatch]
+    // MARK: Lifecycle
 
     init(
         conversation: GroupDetailsConversationType,
@@ -115,4 +116,11 @@ final class AssetCollectionWrapper: NSObject {
     deinit {
         assetCollection.tearDown()
     }
+
+    // MARK: Internal
+
+    let conversation: GroupDetailsConversationType
+    let assetCollection: ZMCollection
+    let assetCollectionDelegate: AssetCollectionMulticastDelegate
+    let matchingCategories: [CategoryMatch]
 }

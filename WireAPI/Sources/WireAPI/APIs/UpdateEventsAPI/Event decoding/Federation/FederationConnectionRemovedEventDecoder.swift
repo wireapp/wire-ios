@@ -19,6 +19,8 @@
 import Foundation
 
 struct FederationConnectionRemovedEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<FederationEventCodingKeys>
     ) throws -> FederationConnectionRemovedEvent {
@@ -29,6 +31,8 @@ struct FederationConnectionRemovedEventDecoder {
 
         return FederationConnectionRemovedEvent(domains: payload.domains)
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let domains: Set<String>

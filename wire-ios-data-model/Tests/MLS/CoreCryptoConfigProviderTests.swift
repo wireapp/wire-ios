@@ -41,8 +41,7 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 // MARK: - CoreCryptoConfigProviderTests
 
 class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
-    private var mockCoreCryptoKeyProvider: MockCoreCryptoKeyProvider!
-    private var sut: CoreCryptoConfigProvider!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -187,6 +186,11 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
             }
         }
     }
+
+    // MARK: Private
+
+    private var mockCoreCryptoKeyProvider: MockCoreCryptoKeyProvider!
+    private var sut: CoreCryptoConfigProvider!
 
     // MARK: - Helpers
 

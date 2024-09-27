@@ -24,7 +24,11 @@ typealias ConversationId = Data
 // MARK: - CoreCryptoCallbacksImpl
 
 class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
+    // MARK: Lifecycle
+
     init() {}
+
+    // MARK: Internal
 
     func authorize(conversationId: ConversationId, clientId: ClientId) -> Bool {
         // This check is performed by the backend.

@@ -42,6 +42,20 @@ class SelfUserAPIV4: SelfUserAPIV3 {
 // MARK: - SelfUserV4
 
 struct SelfUserV4: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case accentID = "accent_id"
+        case assets, deleted, email
+        case expiresAt = "expires_at"
+        case handle, id, locale
+        case managedBy = "managed_by"
+        case name, phone, picture
+        case qualifiedID = "qualified_id"
+        case service
+        case ssoID = "sso_id"
+        case teamID = "team"
+        case supportedProtocols = "supported_protocols"
+    }
+
     let accentID: Int
     let assets: [UserAsset]?
     let deleted: Bool?
@@ -59,20 +73,6 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
     let ssoID: SSOIDV0?
     let supportedProtocols: Set<MessageProtocol>?
     let teamID: UUID?
-
-    enum CodingKeys: String, CodingKey {
-        case accentID = "accent_id"
-        case assets, deleted, email
-        case expiresAt = "expires_at"
-        case handle, id, locale
-        case managedBy = "managed_by"
-        case name, phone, picture
-        case qualifiedID = "qualified_id"
-        case service
-        case ssoID = "sso_id"
-        case teamID = "team"
-        case supportedProtocols = "supported_protocols"
-    }
 
     func toAPIModel() -> SelfUser {
         SelfUser(

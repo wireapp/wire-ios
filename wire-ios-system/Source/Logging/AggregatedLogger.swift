@@ -17,20 +17,22 @@
 //
 
 final class AggregatedLogger: LoggerProtocol {
-    private var loggers: [any LoggerProtocol]
+    // MARK: Lifecycle
 
     init(loggers: [any LoggerProtocol]) {
         self.loggers = loggers
     }
 
-    func addLogger(_ logger: any LoggerProtocol) {
-        loggers.append(logger)
-    }
+    // MARK: Internal
 
     // MARK: - LoggerProtocol
 
     var logFiles: [URL] {
         loggers.reduce(into: []) { $0 += $1.logFiles }
+    }
+
+    func addLogger(_ logger: any LoggerProtocol) {
+        loggers.append(logger)
     }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
@@ -80,4 +82,8 @@ final class AggregatedLogger: LoggerProtocol {
             logger.addTag(key, value: value)
         }
     }
+
+    // MARK: Private
+
+    private var loggers: [any LoggerProtocol]
 }

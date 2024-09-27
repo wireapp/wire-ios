@@ -25,16 +25,17 @@ import XCTest
 
 final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
     var didCancelHitCount = 0
+    var didStartRecordingHitCount = 0
+    var wantsToSendAudioHitCount = 0
+
     func audioRecordViewControllerDidCancel(_: AudioRecordBaseViewController) {
         didCancelHitCount += 1
     }
 
-    var didStartRecordingHitCount = 0
     func audioRecordViewControllerDidStartRecording(_: AudioRecordBaseViewController) {
         didStartRecordingHitCount += 1
     }
 
-    var wantsToSendAudioHitCount = 0
     func audioRecordViewControllerWantsToSendAudio(
         _ audioRecordViewController: AudioRecordBaseViewController,
         recordingURL: URL,
@@ -61,13 +62,17 @@ final class MockAudioRecorder: AudioRecorderType {
     var recordEndedCallback: ((Result<Void, Error>) -> Void)?
 
     var startRecordingHitCount = 0
+    var stopRecordingHitCount = 0
+    var deleteRecordingHitCount = 0
+    var playRecordingHitCount = 0
+    var stopPlayingHitCount = 0
+
     func startRecording(_ completion: @escaping (Bool) -> Void) {
         state = .recording(start: 0)
         startRecordingHitCount += 1
         completion(true)
     }
 
-    var stopRecordingHitCount = 0
     @discardableResult
     func stopRecording() -> Bool {
         state = .stopped
@@ -75,17 +80,14 @@ final class MockAudioRecorder: AudioRecorderType {
         return true
     }
 
-    var deleteRecordingHitCount = 0
     func deleteRecording() {
         deleteRecordingHitCount += 1
     }
 
-    var playRecordingHitCount = 0
     func playRecording() {
         playRecordingHitCount += 1
     }
 
-    var stopPlayingHitCount = 0
     func stopPlaying() {
         stopPlayingHitCount += 1
     }

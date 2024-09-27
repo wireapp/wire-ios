@@ -26,60 +26,7 @@ import WireSyncEngine
 /// A view controller wrapping the message details.
 
 final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate {
-    /// The collection of view controllers displaying the content.
-
-    enum ViewControllers {
-        /// We are displaying the combined view.
-        case combinedView(
-            readReceipts: MessageDetailsContentViewController,
-            reactions: MessageDetailsContentViewController
-        )
-
-        /// We are displaying the single view.
-        case singleView(MessageDetailsContentViewController)
-
-        /// The read receipts view controller.
-        var readReceipts: MessageDetailsContentViewController {
-            switch self {
-            case let .combinedView(readReceipts, _): readReceipts
-            case let .singleView(viewController): viewController
-            }
-        }
-
-        /// The reactions view controller.
-        var reactions: MessageDetailsContentViewController {
-            switch self {
-            case let .combinedView(_, reactions): reactions
-            case let .singleView(viewController): viewController
-            }
-        }
-
-        /// All the view controllers.
-        var all: [MessageDetailsContentViewController] {
-            switch self {
-            case let .combinedView(readReceipts, reactions):
-                [readReceipts, reactions]
-            case let .singleView(viewController):
-                [viewController]
-            }
-        }
-    }
-
-    // MARK: - Properties
-
-    /// The displayed message.
-    let message: ZMConversationMessage
-
-    /// The data source for the message details.
-    let dataSource: MessageDetailsDataSource
-
-    // MARK: - UI Elements
-
-    let container: TabBarController
-    let topBar = ModalTopBar()
-    let viewControllers: ViewControllers
-
-    let userSession: UserSession
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -169,6 +116,73 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    /// The collection of view controllers displaying the content.
+
+    enum ViewControllers {
+        /// We are displaying the combined view.
+        case combinedView(
+            readReceipts: MessageDetailsContentViewController,
+            reactions: MessageDetailsContentViewController
+        )
+
+        /// We are displaying the single view.
+        case singleView(MessageDetailsContentViewController)
+
+        // MARK: Internal
+
+        /// The read receipts view controller.
+        var readReceipts: MessageDetailsContentViewController {
+            switch self {
+            case let .combinedView(readReceipts, _): readReceipts
+            case let .singleView(viewController): viewController
+            }
+        }
+
+        /// The reactions view controller.
+        var reactions: MessageDetailsContentViewController {
+            switch self {
+            case let .combinedView(_, reactions): reactions
+            case let .singleView(viewController): viewController
+            }
+        }
+
+        /// All the view controllers.
+        var all: [MessageDetailsContentViewController] {
+            switch self {
+            case let .combinedView(readReceipts, reactions):
+                [readReceipts, reactions]
+            case let .singleView(viewController):
+                [viewController]
+            }
+        }
+    }
+
+    // MARK: - Properties
+
+    /// The displayed message.
+    let message: ZMConversationMessage
+
+    /// The data source for the message details.
+    let dataSource: MessageDetailsDataSource
+
+    // MARK: - UI Elements
+
+    let container: TabBarController
+    let topBar = ModalTopBar()
+    let viewControllers: ViewControllers
+
+    let userSession: UserSession
+
+    override var shouldAutorotate: Bool {
+        false
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
     // MARK: - Configuration
 
     override func viewDidLoad() {
@@ -203,6 +217,35 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         UIAccessibility.post(notification: .layoutChanged, argument: topBar)
     }
 
+    // MARK: - Data
+
+    func reloadData() {
+        switch dataSource.displayMode {
+        case .combined:
+            viewControllers.reactions.updateData(dataSource.reactions)
+            viewControllers.readReceipts.updateData(dataSource.readReceipts)
+
+        case .reactions:
+            viewControllers.reactions.updateData(dataSource.reactions)
+
+        case .receipts:
+            viewControllers.readReceipts.updateData(dataSource.readReceipts)
+        }
+    }
+
+    // MARK: - Top Bar
+
+    override func accessibilityPerformEscape() -> Bool {
+        dismiss(animated: true)
+        return true
+    }
+
+    func modelTopBarWantsToBeDismissed(_: ModalTopBar) {
+        dismiss(animated: true)
+    }
+
+    // MARK: Private
+
     private func configureConstraints() {
         topBar.translatesAutoresizingMaskIntoConstraints = false
         container.view.translatesAutoresizingMaskIntoConstraints = false
@@ -221,46 +264,11 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         ])
     }
 
-    // MARK: - Data
-
-    func reloadData() {
-        switch dataSource.displayMode {
-        case .combined:
-            viewControllers.reactions.updateData(dataSource.reactions)
-            viewControllers.readReceipts.updateData(dataSource.readReceipts)
-
-        case .reactions:
-            viewControllers.reactions.updateData(dataSource.reactions)
-
-        case .receipts:
-            viewControllers.readReceipts.updateData(dataSource.readReceipts)
-        }
-    }
-
     private func reloadFooters() {
         for item in viewControllers.all {
             item.subtitle = dataSource.subtitle
             item.accessibleSubtitle = dataSource.accessibilitySubtitle
         }
-    }
-
-    // MARK: - Top Bar
-
-    override func accessibilityPerformEscape() -> Bool {
-        dismiss(animated: true)
-        return true
-    }
-
-    func modelTopBarWantsToBeDismissed(_: ModalTopBar) {
-        dismiss(animated: true)
-    }
-
-    override var shouldAutorotate: Bool {
-        false
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
     }
 }
 

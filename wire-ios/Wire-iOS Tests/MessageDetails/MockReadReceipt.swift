@@ -19,13 +19,17 @@
 import Wire
 
 final class MockReadReceipt: ReadReceipt {
-    var user: ZMUser
-    var userType: UserType
-    var serverTimestamp: Date?
+    // MARK: Lifecycle
 
     init(user: ZMUser) {
         self.user = user
         self.userType = user
         self.serverTimestamp = Date(timeIntervalSince1970: 0)
     }
+
+    // MARK: Internal
+
+    var user: ZMUser
+    var userType: UserType
+    var serverTimestamp: Date?
 }

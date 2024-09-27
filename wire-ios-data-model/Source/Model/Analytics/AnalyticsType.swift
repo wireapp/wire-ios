@@ -36,6 +36,8 @@ public protocol AnalyticsType: NSObjectProtocol {
 // Used for debugging only
 @objc
 public final class DebugAnalytics: NSObject, AnalyticsType {
+    // MARK: Public
+
     public func tagEvent(_ event: String) {
         print(Date(), "[ANALYTICS]", #function, event)
     }
@@ -43,8 +45,6 @@ public final class DebugAnalytics: NSObject, AnalyticsType {
     public func tagEvent(_ event: String, attributes: [String: NSObject]) {
         print(Date(), "[ANALYTICS]", #function, event, attributes)
     }
-
-    var eventAttributes = [String: [String: NSObject]]()
 
     public func setPersistedAttributes(_ attributes: [String: NSObject]?, for event: String) {
         if let attributes {
@@ -60,4 +60,8 @@ public final class DebugAnalytics: NSObject, AnalyticsType {
         print(Date(), "[ANALYTICS]", #function, event, value)
         return value
     }
+
+    // MARK: Internal
+
+    var eventAttributes = [String: [String: NSObject]]()
 }

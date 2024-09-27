@@ -24,11 +24,34 @@ import WireDesign
 // MARK: - UnlockViewController
 
 final class UnlockViewController: UIViewController {
+    // MARK: Lifecycle
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+
+        setupViews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     typealias Callback = (_ passcode: String?) -> Void
 
     // MARK: - Properties
 
     var callback: Callback?
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        setupInitialStates()
+    }
+
+    // MARK: Private
 
     private let contentView = UIView()
     private let stackView = UIStackView.verticalStackView()
@@ -107,25 +130,6 @@ final class UnlockViewController: UIViewController {
 
         return label
     }()
-
-    // MARK: - Life cycle
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
-
-        setupViews()
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        setupInitialStates()
-    }
 }
 
 // MARK: - View creation

@@ -19,14 +19,7 @@
 @testable import WireSyncEngine
 
 class TypingUsersTests: MessagingTest {
-    private typealias TypingUsers = WireSyncEngine.TypingUsers
-
-    private var sut: TypingUsers!
-    private var user1: ZMUser!
-    private var user2: ZMUser!
-    private var selfUser: ZMUser!
-    private var conversation1: ZMConversation!
-    private var conversation2: ZMConversation!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -123,4 +116,15 @@ class TypingUsersTests: MessagingTest {
         syncMOC.performGroupedAndWait { XCTAssertNil(self.syncMOC.typingUsers) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
+
+    // MARK: Private
+
+    private typealias TypingUsers = WireSyncEngine.TypingUsers
+
+    private var sut: TypingUsers!
+    private var user1: ZMUser!
+    private var user2: ZMUser!
+    private var selfUser: ZMUser!
+    private var conversation1: ZMConversation!
+    private var conversation2: ZMConversation!
 }

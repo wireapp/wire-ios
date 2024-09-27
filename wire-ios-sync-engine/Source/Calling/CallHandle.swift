@@ -20,14 +20,7 @@ import CallKit
 import Foundation
 
 struct CallHandle: Hashable {
-    // MARK: - Properties
-
-    let accountID: UUID
-    let conversationID: UUID
-
-    private static let separator: Character = "+"
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         accountID: UUID,
@@ -51,6 +44,13 @@ struct CallHandle: Hashable {
         self.conversationID = identifiers[1]
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let accountID: UUID
+    let conversationID: UUID
+
     // MARK: - Methods
 
     var cxHandle: CXHandle {
@@ -60,4 +60,8 @@ struct CallHandle: Hashable {
     var encodedString: String {
         "\(accountID.transportString())\(Self.separator)\(conversationID.transportString())"
     }
+
+    // MARK: Private
+
+    private static let separator: Character = "+"
 }

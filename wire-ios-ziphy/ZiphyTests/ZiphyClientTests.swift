@@ -20,6 +20,8 @@ import XCTest
 @testable import Ziphy
 
 class ZiphyClientTests: XCTestCase {
+    // MARK: Internal
+
     var requester: MockZiphyRequester!
     var client: ZiphyClient!
 
@@ -132,6 +134,8 @@ class ZiphyClientTests: XCTestCase {
             return
         }
     }
+
+    // MARK: Private
 
     // MARK: - Utilities
 

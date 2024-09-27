@@ -25,6 +25,8 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
     CreateGroupConversationAction,
     CreateGroupConversationActionHandler
 > {
+    // MARK: Internal
+
     typealias RequestPayload = Payload.NewConversation
     typealias ResponsePayload = Payload.Conversation
     typealias ErrorResponse = CreateGroupConversationActionHandler.ErrorResponse
@@ -120,36 +122,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
         successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
         super.tearDown()
-    }
-
-    private func createAction(messageProtocol: MessageProtocol = .proteus) -> CreateGroupConversationAction {
-        CreateGroupConversationAction(
-            messageProtocol: messageProtocol,
-            creatorClientID: "creatorClientID",
-            qualifiedUserIDs: [user1ID, user2ID],
-            unqualifiedUserIDs: [],
-            name: "foo bar",
-            accessMode: .allowGuests,
-            accessRoles: [.guest, .service, .nonTeamMember, .teamMember],
-            legacyAccessRole: nil,
-            teamID: teamID,
-            isReadReceiptsEnabled: true
-        )
-    }
-
-    private func assertEqual(actualPayload: RequestPayload, expectedPayload: RequestPayload) {
-        XCTAssertEqual(actualPayload.users, [])
-        XCTAssertEqual(actualPayload.qualifiedUsers, expectedPayload.qualifiedUsers)
-        XCTAssertEqual(actualPayload.access.map(Set.init), expectedPayload.access.map(Set.init))
-        XCTAssertEqual(actualPayload.legacyAccessRole, expectedPayload.legacyAccessRole)
-        XCTAssertEqual(actualPayload.accessRoles.map(Set.init), expectedPayload.accessRoles.map(Set.init))
-        XCTAssertEqual(actualPayload.name, expectedPayload.name)
-        XCTAssertEqual(actualPayload.team, expectedPayload.team)
-        XCTAssertEqual(actualPayload.messageTimer, expectedPayload.messageTimer)
-        XCTAssertEqual(actualPayload.readReceiptMode, expectedPayload.readReceiptMode)
-        XCTAssertEqual(actualPayload.conversationRole, expectedPayload.conversationRole)
-        XCTAssertEqual(actualPayload.creatorClient, expectedPayload.creatorClient)
-        XCTAssertEqual(actualPayload.messageProtocol, expectedPayload.messageProtocol)
     }
 
     // MARK: - Request generation
@@ -305,18 +277,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
         }
     }
 
-    private func assertConversationHasCorrectValues(_ conversation: ZMConversation) {
-        XCTAssertEqual(conversation.qualifiedID, conversationID)
-        XCTAssertEqual(conversation.remoteIdentifier, conversationID.uuid)
-        XCTAssertEqual(conversation.teamRemoteIdentifier, teamID)
-        XCTAssertEqual(conversation.conversationType, .group)
-        XCTAssertEqual(conversation.userDefinedName, "foo bar")
-        XCTAssertEqual(conversation.localParticipants.count, 2)
-        XCTAssertTrue(conversation.allowGuests)
-        XCTAssertTrue(conversation.allowServices)
-        XCTAssertTrue(conversation.hasReadReceiptsEnabled)
-    }
-
     func test_ItUpdatesMLSConversation() throws {
         // Given
         let apiVersion = APIVersion.v5
@@ -466,5 +426,49 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
             // Then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
+    }
+
+    // MARK: Private
+
+    private func createAction(messageProtocol: MessageProtocol = .proteus) -> CreateGroupConversationAction {
+        CreateGroupConversationAction(
+            messageProtocol: messageProtocol,
+            creatorClientID: "creatorClientID",
+            qualifiedUserIDs: [user1ID, user2ID],
+            unqualifiedUserIDs: [],
+            name: "foo bar",
+            accessMode: .allowGuests,
+            accessRoles: [.guest, .service, .nonTeamMember, .teamMember],
+            legacyAccessRole: nil,
+            teamID: teamID,
+            isReadReceiptsEnabled: true
+        )
+    }
+
+    private func assertEqual(actualPayload: RequestPayload, expectedPayload: RequestPayload) {
+        XCTAssertEqual(actualPayload.users, [])
+        XCTAssertEqual(actualPayload.qualifiedUsers, expectedPayload.qualifiedUsers)
+        XCTAssertEqual(actualPayload.access.map(Set.init), expectedPayload.access.map(Set.init))
+        XCTAssertEqual(actualPayload.legacyAccessRole, expectedPayload.legacyAccessRole)
+        XCTAssertEqual(actualPayload.accessRoles.map(Set.init), expectedPayload.accessRoles.map(Set.init))
+        XCTAssertEqual(actualPayload.name, expectedPayload.name)
+        XCTAssertEqual(actualPayload.team, expectedPayload.team)
+        XCTAssertEqual(actualPayload.messageTimer, expectedPayload.messageTimer)
+        XCTAssertEqual(actualPayload.readReceiptMode, expectedPayload.readReceiptMode)
+        XCTAssertEqual(actualPayload.conversationRole, expectedPayload.conversationRole)
+        XCTAssertEqual(actualPayload.creatorClient, expectedPayload.creatorClient)
+        XCTAssertEqual(actualPayload.messageProtocol, expectedPayload.messageProtocol)
+    }
+
+    private func assertConversationHasCorrectValues(_ conversation: ZMConversation) {
+        XCTAssertEqual(conversation.qualifiedID, conversationID)
+        XCTAssertEqual(conversation.remoteIdentifier, conversationID.uuid)
+        XCTAssertEqual(conversation.teamRemoteIdentifier, teamID)
+        XCTAssertEqual(conversation.conversationType, .group)
+        XCTAssertEqual(conversation.userDefinedName, "foo bar")
+        XCTAssertEqual(conversation.localParticipants.count, 2)
+        XCTAssertTrue(conversation.allowGuests)
+        XCTAssertTrue(conversation.allowServices)
+        XCTAssertTrue(conversation.hasReadReceiptsEnabled)
     }
 }

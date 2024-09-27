@@ -38,16 +38,7 @@ extension UserDefaults {
 
 /// Class used to safely access and change stored accounts and the current selected account.
 public final class AccountManager: NSObject {
-    private let defaults = UserDefaults.shared()
-    public private(set) var accounts = [Account]()
-    public private(set) var selectedAccount: Account? // The currently selected account or `nil` in case there is none
-
-    private var store: AccountStore
-
-    /// Returns the sum of unread conversations in all accounts.
-    public var totalUnreadCount: Int {
-        accounts.reduce(0) { $0 + $1.unreadConversationCount }
-    }
+    // MARK: Lifecycle
 
     /// Creates a new `AccountManager`.
     /// - parameter sharedDirectory: The directory of the shared container.
@@ -55,6 +46,16 @@ public final class AccountManager: NSObject {
         self.store = AccountStore(root: sharedDirectory)
         super.init()
         updateAccounts()
+    }
+
+    // MARK: Public
+
+    public private(set) var accounts = [Account]()
+    public private(set) var selectedAccount: Account? // The currently selected account or `nil` in case there is none
+
+    /// Returns the sum of unread conversations in all accounts.
+    public var totalUnreadCount: Int {
+        accounts.reduce(0) { $0 + $1.unreadConversationCount }
     }
 
     /// Deletes all content stored by an `AccountManager` on disk at the given URL, including the selected account.
@@ -96,6 +97,15 @@ public final class AccountManager: NSObject {
         updateAccounts()
     }
 
+    public func account(with id: UUID) -> Account? {
+        accounts.first(where: { $0.userIdentifier == id })
+    }
+
+    // MARK: Private
+
+    private let defaults = UserDefaults.shared()
+    private var store: AccountStore
+
     // MARK: - Private Helper
 
     /// Updates the local accounts array and the selected account.
@@ -129,10 +139,6 @@ public final class AccountManager: NSObject {
         }
 
         NotificationCenter.default.post(name: AccountManagerDidUpdateAccountsNotificationName, object: self)
-    }
-
-    public func account(with id: UUID) -> Account? {
-        accounts.first(where: { $0.userIdentifier == id })
     }
 
     /// Loads and computes the locally selected account if any

@@ -46,11 +46,7 @@ public enum CreateTeamOneOnOneConversationError: Error {
 /// on the currently supported protocols of the self and other users.
 
 struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseCaseProtocol {
-    private typealias Error = CreateTeamOneOnOneConversationError
-
-    private let protocolSelector: OneOnOneProtocolSelectorInterface
-    private let migrator: OneOnOneMigratorInterface?
-    private let service: ConversationServiceInterface
+    // MARK: Lifecycle
 
     init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
@@ -61,6 +57,8 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
         self.migrator = migrator
         self.service = service
     }
+
+    // MARK: Internal
 
     func invoke(
         with user: ZMUser,
@@ -104,6 +102,14 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             throw Error.noCommonProtocols
         }
     }
+
+    // MARK: Private
+
+    private typealias Error = CreateTeamOneOnOneConversationError
+
+    private let protocolSelector: OneOnOneProtocolSelectorInterface
+    private let migrator: OneOnOneMigratorInterface?
+    private let service: ConversationServiceInterface
 
     // MARK: MLS
 

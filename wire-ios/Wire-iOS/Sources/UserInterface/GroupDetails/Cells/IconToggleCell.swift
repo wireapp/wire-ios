@@ -19,6 +19,9 @@
 import UIKit
 
 class IconToggleCell: DetailsCollectionViewCell {
+    let toggle = Switch(style: .default)
+    var action: ((Bool) -> Void)?
+
     // MARK: - Properties
 
     var isOn: Bool {
@@ -30,9 +33,6 @@ class IconToggleCell: DetailsCollectionViewCell {
             toggle.isOn = newValue
         }
     }
-
-    let toggle = Switch(style: .default)
-    var action: ((Bool) -> Void)?
 
     // MARK: - Override accessibility properties
 

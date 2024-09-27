@@ -36,23 +36,7 @@ private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 // MARK: - AvailabilityIndicatorView
 
 final class AvailabilityIndicatorView: UIView {
-    // MARK: - Properties
-
-    var availability: Availability? {
-        didSet { setNeedsLayout() }
-    }
-
-    // MARK: - Private Properties
-
-    /// A view which serves as background and outer border.
-    private let backgroundView = UIView()
-
-    /// The container is needed, so that a layer's `mask` property can be set.
-    /// Setting the `mask` layer of the root view (self) would result in the background being masked too.
-    private let shapeContainerView = UIView()
-    private let shapeView = UIView()
-
-    // MARK: - Life Cycle
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -64,18 +48,12 @@ final class AvailabilityIndicatorView: UIView {
         fatalError("init(coder:) is not supported")
     }
 
-    // MARK: - Methods
+    // MARK: Internal
 
-    private func setupSubviews() {
-        backgroundView.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
-        addSubview(backgroundView)
+    // MARK: - Properties
 
-        shapeContainerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        shapeContainerView.addSubview(shapeView)
-        shapeContainerView.frame = bounds
-        addSubview(shapeContainerView)
-
-        setNeedsLayout()
+    var availability: Availability? {
+        didSet { setNeedsLayout() }
     }
 
     override func layoutSubviews() {
@@ -143,6 +121,32 @@ final class AvailabilityIndicatorView: UIView {
         backgroundView.isHidden = false
         backgroundView.frame = shapeView.frame.insetBy(dx: -backgroundBorderWidth, dy: -backgroundBorderWidth)
         backgroundView.layer.cornerRadius = backgroundView.frame.width / 2
+    }
+
+    // MARK: Private
+
+    // MARK: - Private Properties
+
+    /// A view which serves as background and outer border.
+    private let backgroundView = UIView()
+
+    /// The container is needed, so that a layer's `mask` property can be set.
+    /// Setting the `mask` layer of the root view (self) would result in the background being masked too.
+    private let shapeContainerView = UIView()
+    private let shapeView = UIView()
+
+    // MARK: - Methods
+
+    private func setupSubviews() {
+        backgroundView.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+        addSubview(backgroundView)
+
+        shapeContainerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        shapeContainerView.addSubview(shapeView)
+        shapeContainerView.frame = bounds
+        addSubview(shapeContainerView)
+
+        setNeedsLayout()
     }
 }
 

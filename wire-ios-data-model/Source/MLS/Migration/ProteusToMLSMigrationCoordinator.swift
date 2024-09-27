@@ -36,39 +36,7 @@ public protocol ProteusToMLSMigrationCoordinating {
 /// See <doc:MLS-Migration> for more information.
 
 public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating {
-    // MARK: - Types
-
-    enum MigrationStatus: Int {
-        case notStarted
-        case started
-        case finalising
-        case finalised
-    }
-
-    enum MigrationStartStatus: Equatable {
-        case canStart
-        case cannotStart(reason: CannotStartMigrationReason)
-
-        enum CannotStartMigrationReason {
-            case unsupportedAPIVersion
-            case mlsProtocolIsNotSupported
-            case clientDoesntSupportMLS
-            case backendDoesntSupportMLS
-            case mlsMigrationIsNotEnabled
-            case startTimeHasNotBeenReached
-        }
-    }
-
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-    private let featureRepository: FeatureRepositoryInterface
-    private let actionsProvider: MLSActionsProviderProtocol
-    private var storage: ProteusToMLSMigrationStorageInterface
-
-    private let logger = WireLogger.mls
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public convenience init(
         context: NSManagedObjectContext,
@@ -95,6 +63,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
     }
 
+    // MARK: Public
+
     // MARK: - Public Interface
 
     public func updateMigrationStatus() async throws {
@@ -107,6 +77,48 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             break
         }
     }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    enum MigrationStatus: Int {
+        case notStarted
+        case started
+        case finalising
+        case finalised
+    }
+
+    enum MigrationStartStatus: Equatable {
+        case canStart
+        case cannotStart(reason: CannotStartMigrationReason)
+
+        // MARK: Internal
+
+        enum CannotStartMigrationReason {
+            case unsupportedAPIVersion
+            case mlsProtocolIsNotSupported
+            case clientDoesntSupportMLS
+            case backendDoesntSupportMLS
+            case mlsMigrationIsNotEnabled
+            case startTimeHasNotBeenReached
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Helpers (migration finalisation)
+
+    private typealias GroupIDConversationTuple = (groupID: MLSGroupID, conversation: ZMConversation)
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+    private let featureRepository: FeatureRepositoryInterface
+    private let actionsProvider: MLSActionsProviderProtocol
+    private var storage: ProteusToMLSMigrationStorageInterface
+
+    private let logger = WireLogger.mls
 
     // MARK: - Migration Start
 
@@ -219,10 +231,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return false
         }
     }
-
-    // MARK: - Helpers (migration finalisation)
-
-    private typealias GroupIDConversationTuple = (groupID: MLSGroupID, conversation: ZMConversation)
 
     private func fetchMixedConversations() async throws -> [GroupIDConversationTuple] {
         try await context.perform { [self] in

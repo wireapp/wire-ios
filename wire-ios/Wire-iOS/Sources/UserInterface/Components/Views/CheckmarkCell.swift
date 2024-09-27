@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 
 final class CheckmarkCell: RightIconDetailsCell {
+    // MARK: Internal
+
     // MARK: - Properties
 
     typealias BackgroundColors = SemanticColors.View
@@ -41,50 +43,12 @@ final class CheckmarkCell: RightIconDetailsCell {
         }
     }
 
-    override func setUp() {
-        super.setUp()
-        icon = nil
-        status = nil
-
-        isAccessibilityElement = true
-        shouldGroupAccessibilityChildren = true
-        accessibilityTraits = .button
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        updateCheckmark()
-    }
-
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
                 ? BackgroundColors.backgroundUserCellHightLighted
                 : BackgroundColors.backgroundUserCell
         }
-    }
-
-    // MARK: - Setup Checkmark
-
-    /// Updates the color of the checkmark based on the state of the cell
-    private func updateCheckmark() {
-        guard showCheckmark else {
-            accessory = nil
-            return
-        }
-
-        let color: UIColor = if disabled {
-            SemanticColors.Icon.foregroundPlaceholder
-        } else {
-            SemanticColors.Icon.foregroundPlainCheckMark
-        }
-
-        accessory = StyleKitIcon.checkmark.makeImage(
-            size: .tiny,
-            color: color
-        ).withRenderingMode(.alwaysTemplate)
-        accessoryColor = color
     }
 
     // MARK: - accessibility
@@ -107,5 +71,45 @@ final class CheckmarkCell: RightIconDetailsCell {
         set {
             super.accessibilityValue = newValue
         }
+    }
+
+    override func setUp() {
+        super.setUp()
+        icon = nil
+        status = nil
+
+        isAccessibilityElement = true
+        shouldGroupAccessibilityChildren = true
+        accessibilityTraits = .button
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        updateCheckmark()
+    }
+
+    // MARK: Private
+
+    // MARK: - Setup Checkmark
+
+    /// Updates the color of the checkmark based on the state of the cell
+    private func updateCheckmark() {
+        guard showCheckmark else {
+            accessory = nil
+            return
+        }
+
+        let color: UIColor = if disabled {
+            SemanticColors.Icon.foregroundPlaceholder
+        } else {
+            SemanticColors.Icon.foregroundPlainCheckMark
+        }
+
+        accessory = StyleKitIcon.checkmark.makeImage(
+            size: .tiny,
+            color: color
+        ).withRenderingMode(.alwaysTemplate)
+        accessoryColor = color
     }
 }

@@ -22,9 +22,10 @@ import XCTest
 @testable import Wire
 
 final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
+    // MARK: Internal
+
     var coreDataFixture: CoreDataFixture!
     var sut: RemoveClientStepViewController!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -60,4 +61,8 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
         // THEN
         snapshotHelper.verify(matching: navigationController)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

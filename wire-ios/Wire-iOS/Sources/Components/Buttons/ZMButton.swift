@@ -23,7 +23,7 @@ import WireDesign
 // MARK: - ZMButton
 
 final class ZMButton: LegacyButton {
-    var style: ButtonStyle?
+    // MARK: Lifecycle
 
     convenience init(
         style: ButtonStyle,
@@ -51,6 +51,10 @@ final class ZMButton: LegacyButton {
         applyStyle(style)
     }
 
+    // MARK: Internal
+
+    var style: ButtonStyle?
+
     override var isHighlighted: Bool {
         didSet {
             guard let style else { return }
@@ -73,7 +77,39 @@ enum LegacyButtonStyle: Int {
 // MARK: - LegacyButton
 
 class LegacyButton: ButtonWithLargerHitArea {
-    private var previousState: UIControl.State?
+    // MARK: Lifecycle
+
+    override init(fontSpec: FontSpec = .normalRegularFont) {
+        super.init(fontSpec: fontSpec)
+
+        clipsToBounds = true
+    }
+
+    convenience init(
+        legacyStyle: LegacyButtonStyle,
+        variant: ColorSchemeVariant = ColorScheme.default.variant,
+        cornerRadius: CGFloat = 4,
+        fontSpec: FontSpec = .smallLightFont
+    ) {
+        self.init(fontSpec: fontSpec)
+
+        self.legacyStyle = legacyStyle
+        self.variant = variant
+        self.textTransform = .upper
+        layer.cornerRadius = cornerRadius
+        contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
+
+        updateStyle(variant: variant)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    private(set) var variant: ColorSchemeVariant = ColorScheme.default.variant
 
     var circular = false {
         didSet {
@@ -101,81 +137,6 @@ class LegacyButton: ButtonWithLargerHitArea {
         }
     }
 
-    private(set) var variant: ColorSchemeVariant = ColorScheme.default.variant
-
-    private var originalTitles: [UIControl.State.RawValue: String] = [:]
-
-    private var borderColorByState: [UIControl.State.RawValue: UIColor] = [:]
-
-    override init(fontSpec: FontSpec = .normalRegularFont) {
-        super.init(fontSpec: fontSpec)
-
-        clipsToBounds = true
-    }
-
-    convenience init(
-        legacyStyle: LegacyButtonStyle,
-        variant: ColorSchemeVariant = ColorScheme.default.variant,
-        cornerRadius: CGFloat = 4,
-        fontSpec: FontSpec = .smallLightFont
-    ) {
-        self.init(fontSpec: fontSpec)
-
-        self.legacyStyle = legacyStyle
-        self.variant = variant
-        self.textTransform = .upper
-        layer.cornerRadius = cornerRadius
-        contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
-
-        updateStyle(variant: variant)
-    }
-
-    private func updateStyle(variant: ColorSchemeVariant) {
-        guard let style = legacyStyle else { return }
-
-        switch style {
-        case .full:
-            updateFullStyle()
-
-        case .fullMonochrome:
-            setBackgroundImageColor(UIColor.white, for: .normal)
-            setTitleColor(UIColor.from(scheme: .textForeground, variant: .light), for: .normal)
-            setTitleColor(UIColor.from(scheme: .textDimmed, variant: .light), for: .highlighted)
-
-        case .empty:
-            updateEmptyStyle()
-
-        case .emptyMonochrome:
-            setBackgroundImageColor(UIColor.clear, for: .normal)
-            setTitleColor(UIColor.white, for: .normal)
-            setTitleColor(UIColor.from(scheme: .textDimmed, variant: .light), for: .highlighted)
-            setBorderColor(UIColor(white: 1.0, alpha: 0.32), for: .normal)
-            setBorderColor(UIColor(white: 1.0, alpha: 0.16), for: .highlighted)
-        }
-    }
-
-    func updateFullStyle() {
-        setBackgroundImageColor(.accent(), for: .normal)
-        setTitleColor(UIColor.white, for: .normal)
-        setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .highlighted)
-    }
-
-    func updateEmptyStyle() {
-        setBackgroundImageColor(nil, for: .normal)
-        layer.borderWidth = 1
-        setTitleColor(UIColor.buttonEmptyText(variant: variant), for: .normal)
-        setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .highlighted)
-        setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .disabled)
-        setBorderColor(UIColor.accent(), for: .normal)
-        setBorderColor(UIColor.accentDarken, for: .highlighted)
-        setBorderColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .disabled)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override var intrinsicContentSize: CGSize {
         let s = super.intrinsicContentSize
 
@@ -188,20 +149,6 @@ class LegacyButton: ButtonWithLargerHitArea {
     override var bounds: CGRect {
         didSet {
             updateCornerRadius()
-        }
-    }
-
-    func borderColor(for state: UIControl.State) -> UIColor? {
-        borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
-    }
-
-    private func updateBorderColor() {
-        layer.borderColor = borderColor(for: state)?.cgColor
-    }
-
-    private func updateCornerRadius() {
-        if circular {
-            layer.cornerRadius = bounds.size.height / 2
         }
     }
 
@@ -226,15 +173,25 @@ class LegacyButton: ButtonWithLargerHitArea {
         }
     }
 
-    private func updateAppearance(with previousState: UIControl.State?) {
-        guard state != previousState else {
-            return
-        }
+    func updateFullStyle() {
+        setBackgroundImageColor(.accent(), for: .normal)
+        setTitleColor(UIColor.white, for: .normal)
+        setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .highlighted)
+    }
 
-        // Update for new state (selected, highlighted, disabled) here if needed
-        updateBorderColor()
+    func updateEmptyStyle() {
+        setBackgroundImageColor(nil, for: .normal)
+        layer.borderWidth = 1
+        setTitleColor(UIColor.buttonEmptyText(variant: variant), for: .normal)
+        setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .highlighted)
+        setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .disabled)
+        setBorderColor(UIColor.accent(), for: .normal)
+        setBorderColor(UIColor.accentDarken, for: .highlighted)
+        setBorderColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .disabled)
+    }
 
-        self.previousState = state
+    func borderColor(for state: UIControl.State) -> UIColor? {
+        borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
     override func setTitle(_ title: String?, for state: UIControl.State) {
@@ -262,5 +219,58 @@ class LegacyButton: ButtonWithLargerHitArea {
         }
 
         updateBorderColor()
+    }
+
+    // MARK: Private
+
+    private var previousState: UIControl.State?
+
+    private var originalTitles: [UIControl.State.RawValue: String] = [:]
+
+    private var borderColorByState: [UIControl.State.RawValue: UIColor] = [:]
+
+    private func updateStyle(variant: ColorSchemeVariant) {
+        guard let style = legacyStyle else { return }
+
+        switch style {
+        case .full:
+            updateFullStyle()
+
+        case .fullMonochrome:
+            setBackgroundImageColor(UIColor.white, for: .normal)
+            setTitleColor(UIColor.from(scheme: .textForeground, variant: .light), for: .normal)
+            setTitleColor(UIColor.from(scheme: .textDimmed, variant: .light), for: .highlighted)
+
+        case .empty:
+            updateEmptyStyle()
+
+        case .emptyMonochrome:
+            setBackgroundImageColor(UIColor.clear, for: .normal)
+            setTitleColor(UIColor.white, for: .normal)
+            setTitleColor(UIColor.from(scheme: .textDimmed, variant: .light), for: .highlighted)
+            setBorderColor(UIColor(white: 1.0, alpha: 0.32), for: .normal)
+            setBorderColor(UIColor(white: 1.0, alpha: 0.16), for: .highlighted)
+        }
+    }
+
+    private func updateBorderColor() {
+        layer.borderColor = borderColor(for: state)?.cgColor
+    }
+
+    private func updateCornerRadius() {
+        if circular {
+            layer.cornerRadius = bounds.size.height / 2
+        }
+    }
+
+    private func updateAppearance(with previousState: UIControl.State?) {
+        guard state != previousState else {
+            return
+        }
+
+        // Update for new state (selected, highlighted, disabled) here if needed
+        updateBorderColor()
+
+        self.previousState = state
     }
 }

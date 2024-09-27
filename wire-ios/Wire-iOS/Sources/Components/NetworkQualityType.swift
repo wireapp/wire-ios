@@ -23,6 +23,8 @@ enum NetworkQualityType: Int, Comparable {
     case type4G
     case typeWifi
 
+    // MARK: Internal
+
     static func < (lhs: NetworkQualityType, rhs: NetworkQualityType) -> Bool {
         lhs.rawValue < rhs.rawValue
     }

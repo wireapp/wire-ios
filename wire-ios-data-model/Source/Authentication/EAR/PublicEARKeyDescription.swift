@@ -24,16 +24,7 @@ import Foundation
 /// with the corresponding private EAR key.
 
 public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
-    private enum Constant {
-        static let labelPublicPrimary = "public"
-        static let labelPublicSecondary = "secondary-public"
-    }
-
-    // MARK: - Properties
-
-    private var baseQuery = [CFString: Any]()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override init(
         accountID: UUID,
@@ -50,18 +41,13 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
         ]
     }
 
+    // MARK: Internal
+
     // MARK: - Keychain item
 
     var getQuery: [CFString: Any] {
         var query = baseQuery
         query[kSecReturnRef] = true
-        return query
-    }
-
-    func setQuery(value: some Any) -> [CFString: Any] {
-        var query = baseQuery
-        query[kSecValueRef] = value
-        query[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
         return query
     }
 
@@ -80,4 +66,22 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
             label: Constant.labelPublicSecondary
         )
     }
+
+    func setQuery(value: some Any) -> [CFString: Any] {
+        var query = baseQuery
+        query[kSecValueRef] = value
+        query[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
+        return query
+    }
+
+    // MARK: Private
+
+    private enum Constant {
+        static let labelPublicPrimary = "public"
+        static let labelPublicSecondary = "secondary-public"
+    }
+
+    // MARK: - Properties
+
+    private var baseQuery = [CFString: Any]()
 }

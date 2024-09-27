@@ -30,27 +30,7 @@ public protocol CRLExpirationDatesRepositoryProtocol {
 // MARK: - CRLExpirationDatesRepository
 
 public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol {
-    // MARK: - Types
-
-    enum Key: DefaultsKey {
-        case expirationDate(dp: String)
-        case distributionPoints
-
-        var rawValue: String {
-            switch self {
-            case let .expirationDate(distributionPoint):
-                "CRL_expirationDate_\(distributionPoint)"
-            case .distributionPoints:
-                "CRL_distributionPoints"
-            }
-        }
-    }
-
-    // MARK: - Properties
-
-    private let storage: PrivateUserDefaults<Key>
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public convenience init(userID: UUID) {
         self.init(storage: .init(userID: userID))
@@ -59,6 +39,8 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
     init(storage: PrivateUserDefaults<Key>) {
         self.storage = storage
     }
+
+    // MARK: Public
 
     // MARK: - Interface
 
@@ -114,6 +96,32 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
             storage.removeObject(forKey: .expirationDate(dp: knownDistributionPoint))
         }
     }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    enum Key: DefaultsKey {
+        case expirationDate(dp: String)
+        case distributionPoints
+
+        // MARK: Internal
+
+        var rawValue: String {
+            switch self {
+            case let .expirationDate(distributionPoint):
+                "CRL_expirationDate_\(distributionPoint)"
+            case .distributionPoints:
+                "CRL_distributionPoints"
+            }
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let storage: PrivateUserDefaults<Key>
 
     // MARK: - Helpers
 

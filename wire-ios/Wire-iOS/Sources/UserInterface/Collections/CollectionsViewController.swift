@@ -32,58 +32,7 @@ protocol CollectionsViewControllerDelegate: AnyObject {
 // MARK: - CollectionsViewController
 
 final class CollectionsViewController: UIViewController {
-    var onDismiss: ((CollectionsViewController) -> Void)?
-    let sections: CollectionsSectionSet
-    weak var delegate: CollectionsViewControllerDelegate?
-    var isShowingSearchResults: Bool {
-        !textSearchController.resultsView.isHidden
-    }
-
-    var shouldTrackOnNextOpen = false
-
-    var currentTextSearchQuery: [String] {
-        textSearchController.searchQuery?.components(separatedBy: .whitespacesAndNewlines) ?? []
-    }
-
-    private var contentView: CollectionsView! {
-        view as? CollectionsView
-    }
-
-    private let messagePresenter = MessagePresenter()
-    private weak var selectedMessage: ZMConversationMessage? = .none
-
-    private var imageMessages: [ZMConversationMessage] = []
-    private var videoMessages: [ZMConversationMessage] = []
-    private var linkMessages: [ZMConversationMessage] = []
-    private var fileAndAudioMessages: [ZMConversationMessage] = []
-
-    private var collection: AssetCollectionWrapper!
-
-    private var lastLayoutSize: CGSize = .zero
-    private var deletionDialogPresenter: DeletionDialogPresenter?
-
-    let userSession: UserSession
-    let mainCoordinator: MainCoordinating
-
-    private var fetchingDone = false {
-        didSet {
-            if isViewLoaded {
-                updateNoElementsState()
-                contentView.collectionView.reloadData()
-            }
-
-            trackOpeningIfNeeded()
-        }
-    }
-
-    private var inOverviewMode: Bool {
-        sections == .all
-    }
-
-    private lazy var textSearchController = TextSearchViewController(
-        conversation: collection.conversation,
-        userSession: userSession
-    )
+    // MARK: Lifecycle
 
     convenience init(
         conversation: ZMConversation,
@@ -142,6 +91,48 @@ final class CollectionsViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var onDismiss: ((CollectionsViewController) -> Void)?
+    let sections: CollectionsSectionSet
+    weak var delegate: CollectionsViewControllerDelegate?
+    var shouldTrackOnNextOpen = false
+
+    let userSession: UserSession
+    let mainCoordinator: MainCoordinating
+
+    var isShowingSearchResults: Bool {
+        !textSearchController.resultsView.isHidden
+    }
+
+    var currentTextSearchQuery: [String] {
+        textSearchController.searchQuery?.components(separatedBy: .whitespacesAndNewlines) ?? []
+    }
+
+    // MARK: - device orientation
+
+    /// Notice: for iPad with iOS9 in landscape mode, horizontalSizeClass is .unspecified (.regular in iOS11).
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
+    override var shouldAutorotate: Bool {
+        switch traitCollection.horizontalSizeClass {
+        case .compact:
+            false
+        default:
+            true
+        }
+    }
+
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        .portrait
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        false
     }
 
     func refetchCollection() {
@@ -211,24 +202,72 @@ final class CollectionsViewController: UIViewController {
         textSearchController.teardown()
     }
 
-    // MARK: - device orientation
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if lastLayoutSize != view.bounds.size {
+            lastLayoutSize = view.bounds.size
 
-    /// Notice: for iPad with iOS9 in landscape mode, horizontalSizeClass is .unspecified (.regular in iOS11).
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
-
-    override var shouldAutorotate: Bool {
-        switch traitCollection.horizontalSizeClass {
-        case .compact:
-            false
-        default:
-            true
+            DispatchQueue.main.async {
+                self.flushLayout()
+                self.reloadData()
+            }
         }
     }
 
-    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        .portrait
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        trackOpeningIfNeeded()
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        guard view.window != nil else {
+            return
+        }
+
+        coordinator.animate(alongsideTransition: { _ in
+            self.flushLayout()
+        }, completion: { _ in
+            self.reloadData()
+        })
+    }
+
+    // MARK: Private
+
+    private let messagePresenter = MessagePresenter()
+    private weak var selectedMessage: ZMConversationMessage? = .none
+
+    private var imageMessages: [ZMConversationMessage] = []
+    private var videoMessages: [ZMConversationMessage] = []
+    private var linkMessages: [ZMConversationMessage] = []
+    private var fileAndAudioMessages: [ZMConversationMessage] = []
+
+    private var collection: AssetCollectionWrapper!
+
+    private var lastLayoutSize: CGSize = .zero
+    private var deletionDialogPresenter: DeletionDialogPresenter?
+
+    private lazy var textSearchController = TextSearchViewController(
+        conversation: collection.conversation,
+        userSession: userSession
+    )
+
+    private var contentView: CollectionsView! {
+        view as? CollectionsView
+    }
+
+    private var fetchingDone = false {
+        didSet {
+            if isViewLoaded {
+                updateNoElementsState()
+                contentView.collectionView.reloadData()
+            }
+
+            trackOpeningIfNeeded()
+        }
+    }
+
+    private var inOverviewMode: Bool {
+        sections == .all
     }
 
     private func flushLayout() {
@@ -263,39 +302,6 @@ final class CollectionsViewController: UIViewController {
                 self.contentView.collectionView.reloadData()
             })
         }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        if lastLayoutSize != view.bounds.size {
-            lastLayoutSize = view.bounds.size
-
-            DispatchQueue.main.async {
-                self.flushLayout()
-                self.reloadData()
-            }
-        }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        trackOpeningIfNeeded()
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        guard view.window != nil else {
-            return
-        }
-
-        coordinator.animate(alongsideTransition: { _ in
-            self.flushLayout()
-        }, completion: { _ in
-            self.reloadData()
-        })
-    }
-
-    override var prefersStatusBarHidden: Bool {
-        false
     }
 
     private func updateNoElementsState() {

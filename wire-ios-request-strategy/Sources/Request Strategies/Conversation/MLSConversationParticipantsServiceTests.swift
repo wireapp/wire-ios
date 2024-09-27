@@ -23,6 +23,12 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 final class MLSConversationParticipantsServiceTests: MessagingTestBase {
+    // MARK: - Helpers
+
+    enum ParticipantsError: Error {
+        case genericError
+    }
+
     // MARK: - Properties
 
     var sut: MLSConversationParticipantsService!
@@ -31,8 +37,6 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     var groupID: MLSGroupID = .random()
     var conversation: ZMConversation!
     var user: ZMUser!
-
-    // MARK: - Life cycle
 
     override func setUp() {
         super.setUp()
@@ -233,11 +237,5 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
             // WHEN
             try await sut.removeParticipant(user, from: conversation)
         }
-    }
-
-    // MARK: - Helpers
-
-    enum ParticipantsError: Error {
-        case genericError
     }
 }

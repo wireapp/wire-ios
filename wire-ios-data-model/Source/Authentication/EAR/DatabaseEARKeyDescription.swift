@@ -24,11 +24,7 @@ import Foundation
 /// content in the database.
 
 public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
-    // MARK: - Properties
-
-    private var baseQuery = [CFString: Any]()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override init(
         accountID: UUID,
@@ -45,17 +41,13 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
         ]
     }
 
+    // MARK: Internal
+
     // MARK: - Keychain item
 
     var getQuery: [CFString: Any] {
         var query = baseQuery
         query[kSecReturnData] = true
-        return query
-    }
-
-    func setQuery(value: some Any) -> [CFString: Any] {
-        var query = baseQuery
-        query[kSecValueData] = value
         return query
     }
 
@@ -67,4 +59,16 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
             label: "database"
         )
     }
+
+    func setQuery(value: some Any) -> [CFString: Any] {
+        var query = baseQuery
+        query[kSecValueData] = value
+        return query
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var baseQuery = [CFString: Any]()
 }

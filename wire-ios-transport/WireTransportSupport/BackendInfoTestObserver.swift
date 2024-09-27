@@ -36,12 +36,7 @@ public func makeBackendInfoTestObserver(
 // MARK: - BackendInfoTestObserver
 
 final class BackendInfoTestObserver: NSObject, XCTestObservation {
-    private let suiteName = UUID().uuidString
-    private let defaults: UserDefaults
-    private let apiVersion: APIVersion?
-    private let preferredAPIVersion: APIVersion?
-    private let domain: String?
-    private let isFederationEnabled: Bool
+    // MARK: Lifecycle
 
     init(apiVersion: APIVersion?, preferredAPIVersion: APIVersion?, domain: String?, isFederationEnabled: Bool) {
         self.defaults = UserDefaults(suiteName: suiteName)!
@@ -50,6 +45,8 @@ final class BackendInfoTestObserver: NSObject, XCTestObservation {
         self.domain = domain
         self.isFederationEnabled = isFederationEnabled
     }
+
+    // MARK: Internal
 
     func testCaseWillStart(_: XCTestCase) {
         BackendInfo.storage = defaults
@@ -62,4 +59,13 @@ final class BackendInfoTestObserver: NSObject, XCTestObservation {
     func testCaseDidFinish(_: XCTestCase) {
         defaults.removePersistentDomain(forName: suiteName)
     }
+
+    // MARK: Private
+
+    private let suiteName = UUID().uuidString
+    private let defaults: UserDefaults
+    private let apiVersion: APIVersion?
+    private let preferredAPIVersion: APIVersion?
+    private let domain: String?
+    private let isFederationEnabled: Bool
 }

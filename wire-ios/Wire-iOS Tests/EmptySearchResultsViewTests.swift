@@ -22,10 +22,7 @@ import XCTest
 @testable import Wire
 
 final class EmptySearchResultsViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: EmptySearchResultsView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -149,4 +146,11 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: EmptySearchResultsView!
 }

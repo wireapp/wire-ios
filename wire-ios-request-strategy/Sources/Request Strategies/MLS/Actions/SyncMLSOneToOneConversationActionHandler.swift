@@ -22,10 +22,7 @@ import WireDataModel
 // MARK: - SyncMLSOneToOneConversationActionHandler
 
 final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneToOneConversationAction> {
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
+    // MARK: Internal
 
     // MARK: - Request
 
@@ -115,6 +112,13 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             action.fail(with: .unknown(status: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
         }
     }
+
+    // MARK: Private
+
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: MLSEventProcessor(context: context),
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
 }
 
 extension Payload.Conversation {

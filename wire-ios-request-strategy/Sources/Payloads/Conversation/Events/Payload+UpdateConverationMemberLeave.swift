@@ -21,12 +21,6 @@ import WireTransport
 
 extension Payload {
     struct UpdateConverationMemberLeave: CodableEventData {
-        static var eventType: ZMUpdateEventType { .conversationMemberLeave }
-
-        let userIDs: [UUID]?
-        let qualifiedUserIDs: [QualifiedID]?
-        let reason: Reason?
-
         enum Reason: String, Codable {
             /// The user has been removed from the team and therefore removed from all conversations.
             case userDeleted = "user-deleted"
@@ -39,5 +33,11 @@ extension Payload {
             case qualifiedUserIDs = "qualified_user_ids"
             case reason
         }
+
+        static var eventType: ZMUpdateEventType { .conversationMemberLeave }
+
+        let userIDs: [UUID]?
+        let qualifiedUserIDs: [QualifiedID]?
+        let reason: Reason?
     }
 }

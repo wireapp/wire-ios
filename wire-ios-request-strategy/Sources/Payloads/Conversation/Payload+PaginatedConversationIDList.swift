@@ -25,11 +25,11 @@ extension Payload {
             case hasMore = "has_more"
         }
 
+        let conversations: [UUID]
+        let hasMore: Bool
+
         var nextStartReference: String? {
             conversations.last?.transportString()
         }
-
-        let conversations: [UUID]
-        let hasMore: Bool
     }
 }

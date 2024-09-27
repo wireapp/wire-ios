@@ -57,6 +57,8 @@ public func require(_ condition: Bool, _ message: String = "", file: StaticStrin
 public enum AppBuild: UInt8 {
     case appStore, debug, develop, unknown
 
+    // MARK: Internal
+
     static var current: AppBuild {
         guard let identifier = Bundle.main.bundleIdentifier else { return .unknown }
         switch identifier {

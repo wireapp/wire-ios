@@ -23,8 +23,7 @@ import WireSystem
 
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
-    let fileURL: URL
-    fileprivate var fileDescriptor: CInt!
+    // MARK: Lifecycle
 
     public init(fileURL: URL) {
         self.fileURL = fileURL
@@ -42,6 +41,14 @@ public final class SafeFileContext: NSObject {
         // close
         close(self.fileDescriptor)
     }
+
+    // MARK: Internal
+
+    let fileURL: URL
+
+    // MARK: Fileprivate
+
+    fileprivate var fileDescriptor: CInt!
 }
 
 extension SafeFileContext {

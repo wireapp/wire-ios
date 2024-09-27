@@ -23,6 +23,8 @@ extension ZMMessage {
         case missingManagedObjectContext
         case failedToProcessMessageData(reason: String)
 
+        // MARK: Public
+
         public var errorDescription: String? {
             switch self {
             case .missingManagedObjectContext:

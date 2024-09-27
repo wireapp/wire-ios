@@ -23,22 +23,7 @@ import WireDesign
 // MARK: - ConversationVideoMessageCell
 
 final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
-    struct Configuration {
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
-    }
-
-    private var containerView = UIView()
-    private let transferView = VideoMessageView(frame: .zero)
-    private let obfuscationView = ObfuscationView(icon: .videoMessage)
-    private let restrictionView = VideoMessageRestrictionView()
-
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
-
-    var isSelected = false
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,6 +35,49 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    struct Configuration {
+        let message: ZMConversationMessage
+
+        var isObfuscated: Bool {
+            message.isObfuscated
+        }
+    }
+
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage?
+
+    var isSelected = false
+
+    override var tintColor: UIColor! {
+        didSet {
+            transferView.tintColor = tintColor
+        }
+    }
+
+    var selectionRect: CGRect {
+        transferView.bounds
+    }
+
+    func configure(with object: Configuration, animated: Bool) {
+        if object.isObfuscated {
+            setup(obfuscationView)
+        } else if !object.message.canBeShared {
+            setup(restrictionView, heightMultiplier: 9 / 16)
+            restrictionView.configure()
+        } else {
+            transferView.configure(for: object.message, isInitial: false)
+        }
+    }
+
+    // MARK: Private
+
+    private var containerView = UIView()
+    private let transferView = VideoMessageView(frame: .zero)
+    private let obfuscationView = ObfuscationView(icon: .videoMessage)
+    private let restrictionView = VideoMessageRestrictionView()
 
     private func configureSubview() {
         shape = .rounded(radius: 12)
@@ -75,17 +103,6 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
-    }
-
-    func configure(with object: Configuration, animated: Bool) {
-        if object.isObfuscated {
-            setup(obfuscationView)
-        } else if !object.message.canBeShared {
-            setup(restrictionView, heightMultiplier: 9 / 16)
-            restrictionView.configure()
-        } else {
-            transferView.configure(for: object.message, isInitial: false)
-        }
     }
 
     private func setup(_ view: UIView) {
@@ -115,16 +132,6 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
             view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
     }
-
-    override var tintColor: UIColor! {
-        didSet {
-            transferView.tintColor = tintColor
-        }
-    }
-
-    var selectionRect: CGRect {
-        transferView.bounds
-    }
 }
 
 // MARK: TransferViewDelegate
@@ -140,7 +147,17 @@ extension ConversationVideoMessageCell: TransferViewDelegate {
 // MARK: - ConversationVideoMessageCellDescription
 
 final class ConversationVideoMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(message: ZMConversationMessage) {
+        self.configuration = View.Configuration(message: message)
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.VideoMessage.description
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationVideoMessageCell
+
     let configuration: View.Configuration
 
     var topMargin: Float = 8
@@ -154,14 +171,9 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedVideoCell" : "VideoCell"
-    }
-
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
-        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.VideoMessage.description
+    var accessibilityIdentifier: String? {
+        configuration.isObfuscated ? "ObfuscatedVideoCell" : "VideoCell"
     }
 }

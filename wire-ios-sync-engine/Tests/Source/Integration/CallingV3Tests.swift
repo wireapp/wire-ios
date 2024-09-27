@@ -68,8 +68,24 @@ final class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
 // MARK: - CallingV3Tests
 
 final class CallingV3Tests: IntegrationTest {
+    // MARK: Internal
+
     var stateObserver: CallStateTestObserver!
     var participantObserver: CallParticipantTestObserver!
+
+    var useGroupConversation = false
+
+    var mockConversationUnderTest: MockConversation {
+        useGroupConversation ? groupConversation : selfToUser2Conversation
+    }
+
+    var conversationUnderTest: ZMConversation {
+        conversation(for: mockConversationUnderTest)!
+    }
+
+    var localSelfUser: ZMUser {
+        user(for: selfUser)!
+    }
 
     override func setUp() {
         super.setUp()
@@ -128,14 +144,6 @@ final class CallingV3Tests: IntegrationTest {
         }
     }
 
-    private var wireCallCenterRef: UnsafeMutableRawPointer? {
-        Unmanaged<WireCallCenterV3>.passUnretained(userSession!.managedObjectContext.zm_callCenter!).toOpaque()
-    }
-
-    private var conversationIdRef: [CChar]? {
-        conversationUnderTest.remoteIdentifier!.transportString().cString(using: .utf8)
-    }
-
     func establishedFlow(user: ZMUser) {
         let userIdRef = user.remoteIdentifier!.transportString().cString(using: .utf8)
         WireSyncEngine.establishedCallHandler(
@@ -182,19 +190,6 @@ final class CallingV3Tests: IntegrationTest {
             contextRef: wireCallCenterRef
         )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
-    var useGroupConversation = false
-    var mockConversationUnderTest: MockConversation {
-        useGroupConversation ? groupConversation : selfToUser2Conversation
-    }
-
-    var conversationUnderTest: ZMConversation {
-        conversation(for: mockConversationUnderTest)!
-    }
-
-    var localSelfUser: ZMUser {
-        user(for: selfUser)!
     }
 
     func testJoiningAndLeavingAnEmptyVoiceChannel_OneOnOne() {
@@ -695,6 +690,16 @@ final class CallingV3Tests: IntegrationTest {
 
         // then
         XCTAssertEqual(conversationUnderTest.voiceChannel?.state, .terminating(reason: .securityDegraded))
+    }
+
+    // MARK: Private
+
+    private var wireCallCenterRef: UnsafeMutableRawPointer? {
+        Unmanaged<WireCallCenterV3>.passUnretained(userSession!.managedObjectContext.zm_callCenter!).toOpaque()
+    }
+
+    private var conversationIdRef: [CChar]? {
+        conversationUnderTest.remoteIdentifier!.transportString().cString(using: .utf8)
     }
 }
 

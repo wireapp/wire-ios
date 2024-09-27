@@ -21,11 +21,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
-    var transportSession: TestUnauthenticatedTransportSession!
-    var sut: UnauthenticatedSession!
-    var mockDelegate: MockUnauthenticatedSessionDelegate!
-    var reachability: MockReachability!
-    var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!
+    // MARK: Public
 
     override public func setUp() {
         super.setUp()
@@ -52,6 +48,14 @@ final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
         super.tearDown()
     }
+
+    // MARK: Internal
+
+    var transportSession: TestUnauthenticatedTransportSession!
+    var sut: UnauthenticatedSession!
+    var mockDelegate: MockUnauthenticatedSessionDelegate!
+    var reachability: MockReachability!
+    var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!
 
     // MARK: Request generation
 

@@ -19,6 +19,8 @@
 import Foundation
 
 struct UserUpdateEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserUpdateEvent {
@@ -39,16 +41,9 @@ struct UserUpdateEventDecoder {
         )
     }
 
-    private struct Payload: Decodable {
-        let userID: UUID
-        let accentColorID: Int?
-        let name: String?
-        let handle: String?
-        let email: String?
-        let isSSOIDDeleted: Bool?
-        let assets: [UserAsset]?
-        let supportedProtocols: Set<MessageProtocol>?
+    // MARK: Private
 
+    private struct Payload: Decodable {
         enum CodingKeys: String, CodingKey {
             case userID = "id"
             case accentColorID = "accent_id"
@@ -59,5 +54,14 @@ struct UserUpdateEventDecoder {
             case assets
             case supportedProtocols = "supported_protocols"
         }
+
+        let userID: UUID
+        let accentColorID: Int?
+        let name: String?
+        let handle: String?
+        let email: String?
+        let isSSOIDDeleted: Bool?
+        let assets: [UserAsset]?
+        let supportedProtocols: Set<MessageProtocol>?
     }
 }

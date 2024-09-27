@@ -25,41 +25,7 @@ import WireSyncEngine
 // MARK: - AppRootRouter
 
 final class AppRootRouter {
-    // MARK: - Private Property
-
-    private let appStateCalculator: AppStateCalculator
-    private let urlActionRouter: URLActionRouter
-
-    private var authenticationCoordinator: AuthenticationCoordinator?
-    private let switchingAccountRouter: SwitchingAccountRouter
-    private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
-    private let foregroundNotificationFilter: ForegroundNotificationFilter
-    private let quickActionsManager: QuickActionsManager
-    private var authenticatedRouter: AuthenticatedRouter? {
-        didSet { setupAnalyticsSharing() }
-    }
-
-    private var observerTokens: [NSObjectProtocol] = []
-    private var authenticatedBlocks: [() -> Void] = []
-    private let teamMetadataRefresher = TeamMetadataRefresher(selfUserProvider: SelfUser.provider)
-
-    // MARK: - Private Set Property
-
-    let sessionManager: SessionManager
-
-    private let mainWindow: UIWindow
-    private let screenCurtainWindow = ScreenCurtainWindow()
-
-    private var lastLaunchOptions: LaunchOptions?
-
-    private var rootViewController: UIViewController {
-        mainWindow.rootViewController!
-    }
-
-    @available(*, deprecated, message: "Please don't access this property")
-    var zClientViewController: ZClientViewController? {
-        mainWindow.rootViewController as? ZClientViewController
-    }
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -98,6 +64,17 @@ final class AppRootRouter {
         setCallingSettings()
     }
 
+    // MARK: Internal
+
+    // MARK: - Private Set Property
+
+    let sessionManager: SessionManager
+
+    @available(*, deprecated, message: "Please don't access this property")
+    var zClientViewController: ZClientViewController? {
+        mainWindow.rootViewController as? ZClientViewController
+    }
+
     // MARK: - Public implementation
 
     func start(launchOptions: LaunchOptions) {
@@ -115,6 +92,45 @@ final class AppRootRouter {
         completionHandler: ((Bool) -> Void)?
     ) {
         quickActionsManager.performAction(for: shortcutItem, completionHandler: completionHandler)
+    }
+
+    // MARK: Private
+
+    // MARK: - Private Property
+
+    private let appStateCalculator: AppStateCalculator
+    private let urlActionRouter: URLActionRouter
+
+    private var authenticationCoordinator: AuthenticationCoordinator?
+    private let switchingAccountRouter: SwitchingAccountRouter
+    private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
+    private let foregroundNotificationFilter: ForegroundNotificationFilter
+    private let quickActionsManager: QuickActionsManager
+    private var observerTokens: [NSObjectProtocol] = []
+    private var authenticatedBlocks: [() -> Void] = []
+    private let teamMetadataRefresher = TeamMetadataRefresher(selfUserProvider: SelfUser.provider)
+
+    private let mainWindow: UIWindow
+    private let screenCurtainWindow = ScreenCurtainWindow()
+
+    private var lastLaunchOptions: LaunchOptions?
+
+    // MARK: - Transition
+
+    /// A queue on which we dispatch app state transitions.
+
+    private let appStateTransitionQueue = DispatchQueue(label: "AppRootRouter.appStateTransitionQueue")
+
+    /// A group to encapsulate the entire transition to a new app state.
+
+    private let appStateTransitionGroup = DispatchGroup()
+
+    private var authenticatedRouter: AuthenticatedRouter? {
+        didSet { setupAnalyticsSharing() }
+    }
+
+    private var rootViewController: UIViewController {
+        mainWindow.rootViewController!
     }
 
     // MARK: - Private implementation
@@ -159,16 +175,6 @@ final class AppRootRouter {
             .shared[.callingConstantBitRate] ?? false
         sessionManager.useConstantBitRateAudio = useCBR
     }
-
-    // MARK: - Transition
-
-    /// A queue on which we dispatch app state transitions.
-
-    private let appStateTransitionQueue = DispatchQueue(label: "AppRootRouter.appStateTransitionQueue")
-
-    /// A group to encapsulate the entire transition to a new app state.
-
-    private let appStateTransitionGroup = DispatchGroup()
 
     /// Synchronously enqueues a transition to a new app state.
     ///

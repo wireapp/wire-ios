@@ -20,17 +20,7 @@ import UIKit
 import WireDesign
 
 final class BackupStatusCell: UITableViewCell {
-    let descriptionLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(
-            fontSpec: .normalRegularFont,
-            color: SemanticColors.Label.textDefault
-        )
-        label.textAlignment = .left
-        label.numberOfLines = 0
-        return label
-    }()
-
-    let iconView = UIImageView()
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -67,4 +57,18 @@ final class BackupStatusCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let descriptionLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(
+            fontSpec: .normalRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        return label
+    }()
+
+    let iconView = UIImageView()
 }

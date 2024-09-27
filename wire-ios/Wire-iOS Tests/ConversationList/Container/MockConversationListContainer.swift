@@ -20,7 +20,7 @@ import XCTest
 @testable import Wire
 
 final class MockConversationListContainer: UIViewController, ConversationListContainerViewModelDelegate {
-    var isSelectedOnListContentController = false
+    // MARK: Lifecycle
 
     init(viewModel: ConversationListViewController.ViewModel) {
         super.init(nibName: nil, bundle: nil)
@@ -30,6 +30,10 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var isSelectedOnListContentController = false
 
     var hasUsernameTakeoverViewController: Bool {
         // no-op

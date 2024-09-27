@@ -22,24 +22,117 @@ import WireCoreCrypto
 @testable import WireDataModel
 
 final class MockMLSActionExecutor: MLSActionExecutorProtocol {
-    // Using a serial dispatch queue for thread safe access to the properties.
-    // With `MLSActionExecutorProtocol.onEpochChanged` being declared async the
-    // `MockMLSActionExecutor` could be declared as actor.
-    private let serialQueue = DispatchQueue(label: "MockMLSActionExecutor")
+    // MARK: Internal
 
     // MARK: - Process welcome message
 
     typealias ProcessWelcomeMessageMock = (Data) async throws -> MLSGroupID
-    private var mockProcessWelcomeMessage_: ProcessWelcomeMessageMock?
+
+    // MARK: - Add members
+
+    typealias AddMembersMock = ([KeyPackage], MLSGroupID) async throws -> [ZMUpdateEvent]
+
+    // MARK: - Remove clients
+
+    typealias RemoveClientsMock = ([ClientId], MLSGroupID) async throws -> [ZMUpdateEvent]
+
+    // MARK: - Update key material
+
+    typealias UpdateKeyMaterialMock = (MLSGroupID) async throws -> [ZMUpdateEvent]
+
+    // MARK: - Commit pending proposals
+
+    typealias CommitPendingProposalsMock = (MLSGroupID) async throws -> [ZMUpdateEvent]
+
+    // MARK: - Join group
+
+    typealias JoinGroupMock = (MLSGroupID, Data) async throws -> [ZMUpdateEvent]
+
+    // MARK: - Decrypt
+
+    typealias DecryptMessage = (Data, MLSGroupID) async throws -> DecryptedMessage
+
+    // MARK: - On epoch changed
+
+    typealias OnEpochChangedMock = () -> AnyPublisher<MLSGroupID, Never>
+
+    // MARK: - On new CRLs distribution points
+
+    typealias OnNewCRLsDistributionPointsMock = () -> AnyPublisher<CRLsDistributionPoints, Never>
+
     var mockProcessWelcomeMessage: ProcessWelcomeMessageMock? {
         get { serialQueue.sync { mockProcessWelcomeMessage_ } }
         set { serialQueue.sync { mockProcessWelcomeMessage_ = newValue } }
     }
 
-    private var processWelcomeMessageCount_ = 0
     var processWelcomeMessageCount: Int {
         get { serialQueue.sync { processWelcomeMessageCount_ } }
         set { serialQueue.sync { processWelcomeMessageCount_ = newValue } }
+    }
+
+    var mockAddMembers: AddMembersMock? {
+        get { serialQueue.sync { _mockAddMembers } }
+        set { serialQueue.sync { _mockAddMembers = newValue } }
+    }
+
+    var mockRemoveClients: RemoveClientsMock? {
+        get { serialQueue.sync { mockRemoveClients_ } }
+        set { serialQueue.sync { mockRemoveClients_ = newValue } }
+    }
+
+    var mockUpdateKeyMaterial: UpdateKeyMaterialMock? {
+        get { serialQueue.sync { mockUpdateKeyMaterial_ } }
+        set { serialQueue.sync { mockUpdateKeyMaterial_ = newValue } }
+    }
+
+    var updateKeyMaterialCount: Int {
+        get { serialQueue.sync { updateKeyMaterialCount_ } }
+        set { serialQueue.sync { updateKeyMaterialCount_ = newValue } }
+    }
+
+    var mockCommitPendingProposals: CommitPendingProposalsMock? {
+        get { serialQueue.sync { mockCommitPendingProposals_ } }
+        set { serialQueue.sync { mockCommitPendingProposals_ = newValue } }
+    }
+
+    var commitPendingProposalsCount: Int {
+        get { serialQueue.sync { commitPendingProposalsCount_ } }
+        set { serialQueue.sync { commitPendingProposalsCount_ = newValue } }
+    }
+
+    var mockJoinGroup: JoinGroupMock? {
+        get { serialQueue.sync { mockJoinGroup_ } }
+        set { serialQueue.sync { mockJoinGroup_ = newValue } }
+    }
+
+    var mockJoinGroupCount: Int {
+        get { serialQueue.sync { mockJoinGroupCount_ } }
+        set { serialQueue.sync { mockJoinGroupCount_ = newValue } }
+    }
+
+    var mockDecryptMessage: DecryptMessage? {
+        get { serialQueue.sync { mockDecryptMessage_ } }
+        set { serialQueue.sync { mockDecryptMessage_ = newValue } }
+    }
+
+    var mockDecryptMessageCount: Int {
+        get { serialQueue.sync { mockDecryptMessageCount_ } }
+        set { serialQueue.sync { mockDecryptMessageCount_ = newValue } }
+    }
+
+    var mockOnEpochChanged: OnEpochChangedMock? {
+        get { serialQueue.sync { mockOnEpochChanged_ } }
+        set { serialQueue.sync { mockOnEpochChanged_ = newValue } }
+    }
+
+    var mockOnEpochChangedCount: Int {
+        get { serialQueue.sync { mockOnEpochChangedCount_ } }
+        set { serialQueue.sync { mockOnEpochChangedCount_ = newValue } }
+    }
+
+    var mockOnNewCRLsDistributionPoints: OnNewCRLsDistributionPointsMock? {
+        get { serialQueue.sync { mockOnNewCRLsDistributionPoints_ } }
+        set { serialQueue.sync { mockOnNewCRLsDistributionPoints_ = newValue } }
     }
 
     func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID {
@@ -51,15 +144,6 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         return try await mock(message)
     }
 
-    // MARK: - Add members
-
-    typealias AddMembersMock = ([KeyPackage], MLSGroupID) async throws -> [ZMUpdateEvent]
-    private var _mockAddMembers: AddMembersMock?
-    var mockAddMembers: AddMembersMock? {
-        get { serialQueue.sync { _mockAddMembers } }
-        set { serialQueue.sync { _mockAddMembers = newValue } }
-    }
-
     func addMembers(_ keyPackages: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockAddMembers else {
             fatalError("no mock for `addMembers`")
@@ -68,36 +152,12 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         return try await mock(keyPackages, groupID)
     }
 
-    // MARK: - Remove clients
-
-    typealias RemoveClientsMock = ([ClientId], MLSGroupID) async throws -> [ZMUpdateEvent]
-    private var mockRemoveClients_: RemoveClientsMock?
-    var mockRemoveClients: RemoveClientsMock? {
-        get { serialQueue.sync { mockRemoveClients_ } }
-        set { serialQueue.sync { mockRemoveClients_ = newValue } }
-    }
-
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockRemoveClients else {
             fatalError("no mock for `removeClients`")
         }
 
         return try await mock(clients, groupID)
-    }
-
-    // MARK: - Update key material
-
-    typealias UpdateKeyMaterialMock = (MLSGroupID) async throws -> [ZMUpdateEvent]
-    private var mockUpdateKeyMaterial_: UpdateKeyMaterialMock?
-    var mockUpdateKeyMaterial: UpdateKeyMaterialMock? {
-        get { serialQueue.sync { mockUpdateKeyMaterial_ } }
-        set { serialQueue.sync { mockUpdateKeyMaterial_ = newValue } }
-    }
-
-    private var updateKeyMaterialCount_ = 0
-    var updateKeyMaterialCount: Int {
-        get { serialQueue.sync { updateKeyMaterialCount_ } }
-        set { serialQueue.sync { updateKeyMaterialCount_ = newValue } }
     }
 
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
@@ -109,21 +169,6 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         return try await mock(groupID)
     }
 
-    // MARK: - Commit pending proposals
-
-    typealias CommitPendingProposalsMock = (MLSGroupID) async throws -> [ZMUpdateEvent]
-    private var mockCommitPendingProposals_: CommitPendingProposalsMock?
-    var mockCommitPendingProposals: CommitPendingProposalsMock? {
-        get { serialQueue.sync { mockCommitPendingProposals_ } }
-        set { serialQueue.sync { mockCommitPendingProposals_ = newValue } }
-    }
-
-    private var commitPendingProposalsCount_ = 0
-    var commitPendingProposalsCount: Int {
-        get { serialQueue.sync { commitPendingProposalsCount_ } }
-        set { serialQueue.sync { commitPendingProposalsCount_ = newValue } }
-    }
-
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockCommitPendingProposals else {
             fatalError("no mock for `commitPendingProposals`")
@@ -133,21 +178,6 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         return try await mock(groupID)
     }
 
-    // MARK: - Join group
-
-    typealias JoinGroupMock = (MLSGroupID, Data) async throws -> [ZMUpdateEvent]
-    private var mockJoinGroup_: JoinGroupMock?
-    var mockJoinGroup: JoinGroupMock? {
-        get { serialQueue.sync { mockJoinGroup_ } }
-        set { serialQueue.sync { mockJoinGroup_ = newValue } }
-    }
-
-    private var mockJoinGroupCount_ = 0
-    var mockJoinGroupCount: Int {
-        get { serialQueue.sync { mockJoinGroupCount_ } }
-        set { serialQueue.sync { mockJoinGroupCount_ = newValue } }
-    }
-
     func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
         guard let mock = mockJoinGroup else {
             fatalError("no mock for `joinGroup`")
@@ -155,21 +185,6 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
         mockJoinGroupCount += 1
         return try await mock(groupID, groupInfo)
-    }
-
-    // MARK: - Decrypt
-
-    typealias DecryptMessage = (Data, MLSGroupID) async throws -> DecryptedMessage
-    private var mockDecryptMessage_: DecryptMessage?
-    var mockDecryptMessage: DecryptMessage? {
-        get { serialQueue.sync { mockDecryptMessage_ } }
-        set { serialQueue.sync { mockDecryptMessage_ = newValue } }
-    }
-
-    private var mockDecryptMessageCount_ = 0
-    var mockDecryptMessageCount: Int {
-        get { serialQueue.sync { mockDecryptMessageCount_ } }
-        set { serialQueue.sync { mockDecryptMessageCount_ = newValue } }
     }
 
     func decryptMessage(_ message: Data, in groupID: WireDataModel.MLSGroupID) async throws -> WireCoreCrypto
@@ -182,21 +197,6 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         return try await mock(message, groupID)
     }
 
-    // MARK: - On epoch changed
-
-    typealias OnEpochChangedMock = () -> AnyPublisher<MLSGroupID, Never>
-    private var mockOnEpochChanged_: OnEpochChangedMock?
-    var mockOnEpochChanged: OnEpochChangedMock? {
-        get { serialQueue.sync { mockOnEpochChanged_ } }
-        set { serialQueue.sync { mockOnEpochChanged_ = newValue } }
-    }
-
-    private var mockOnEpochChangedCount_ = 0
-    var mockOnEpochChangedCount: Int {
-        get { serialQueue.sync { mockOnEpochChangedCount_ } }
-        set { serialQueue.sync { mockOnEpochChangedCount_ = newValue } }
-    }
-
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         guard let mock = mockOnEpochChanged else {
             fatalError("no mock for `onEpochChanged`")
@@ -206,15 +206,6 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         return mock()
     }
 
-    // MARK: - On new CRLs distribution points
-
-    typealias OnNewCRLsDistributionPointsMock = () -> AnyPublisher<CRLsDistributionPoints, Never>
-    private var mockOnNewCRLsDistributionPoints_: OnNewCRLsDistributionPointsMock?
-    var mockOnNewCRLsDistributionPoints: OnNewCRLsDistributionPointsMock? {
-        get { serialQueue.sync { mockOnNewCRLsDistributionPoints_ } }
-        set { serialQueue.sync { mockOnNewCRLsDistributionPoints_ = newValue } }
-    }
-
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
         guard let mock = mockOnNewCRLsDistributionPoints else {
             fatalError("no mock for `onNewCRLsDistributionPoints`")
@@ -222,4 +213,27 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
         return mock()
     }
+
+    // MARK: Private
+
+    // Using a serial dispatch queue for thread safe access to the properties.
+    // With `MLSActionExecutorProtocol.onEpochChanged` being declared async the
+    // `MockMLSActionExecutor` could be declared as actor.
+    private let serialQueue = DispatchQueue(label: "MockMLSActionExecutor")
+
+    private var mockProcessWelcomeMessage_: ProcessWelcomeMessageMock?
+    private var processWelcomeMessageCount_ = 0
+    private var _mockAddMembers: AddMembersMock?
+    private var mockRemoveClients_: RemoveClientsMock?
+    private var mockUpdateKeyMaterial_: UpdateKeyMaterialMock?
+    private var updateKeyMaterialCount_ = 0
+    private var mockCommitPendingProposals_: CommitPendingProposalsMock?
+    private var commitPendingProposalsCount_ = 0
+    private var mockJoinGroup_: JoinGroupMock?
+    private var mockJoinGroupCount_ = 0
+    private var mockDecryptMessage_: DecryptMessage?
+    private var mockDecryptMessageCount_ = 0
+    private var mockOnEpochChanged_: OnEpochChangedMock?
+    private var mockOnEpochChangedCount_ = 0
+    private var mockOnNewCRLsDistributionPoints_: OnNewCRLsDistributionPointsMock?
 }

@@ -20,7 +20,7 @@ import CoreData
 @testable import WireDataModel
 
 final class ZMConversationTests_Knock: ZMConversationTestsBase {
-    private var context: NSManagedObjectContext { syncMOC }
+    // MARK: Internal
 
     func testThatItCanInsertAKnock() throws {
         try context.performGroupedAndWait {
@@ -38,6 +38,10 @@ final class ZMConversationTests_Knock: ZMConversationTestsBase {
             XCTAssert(knock.isUserSender(selfUser))
         }
     }
+
+    // MARK: Private
+
+    private var context: NSManagedObjectContext { syncMOC }
 
     private func createConversationWithMessages(context: NSManagedObjectContext) -> ZMConversation? {
         let conversation = ZMConversation.insertNewObject(in: context)

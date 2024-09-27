@@ -32,11 +32,7 @@ public enum ZMClientUpdateNotificationType: Int {
 
 @objc
 public class ZMClientUpdateNotification: NSObject {
-    private static let name = Notification.Name(rawValue: "ZMClientUpdateNotification")
-
-    private static let clientObjectIDsKey = "clientObjectIDs"
-    private static let typeKey = "notificationType"
-    private static let errorKey = "error"
+    // MARK: Public
 
     @objc
     public static func addObserver(
@@ -52,19 +48,6 @@ public class ZMClientUpdateNotification: NSObject {
             let error = note.userInfo[self.errorKey] as? NSError
             block(type, clientObjectIDs, error)
         }
-    }
-
-    static func notify(
-        type: ZMClientUpdateNotificationType,
-        context: NSManagedObjectContext,
-        clients: [UserClient] = [],
-        error: NSError? = nil
-    ) {
-        NotificationInContext(name: name, context: context.notificationContext, userInfo: [
-            errorKey: error as Any,
-            clientObjectIDsKey: clients.map(\.objectID).filter { !$0.isTemporaryID },
-            typeKey: type,
-        ]).post()
     }
 
     @objc
@@ -86,4 +69,27 @@ public class ZMClientUpdateNotification: NSObject {
     public static func notifyDeletionFailed(error: NSError, context: NSManagedObjectContext) {
         notify(type: .deletionFailed, context: context, error: error)
     }
+
+    // MARK: Internal
+
+    static func notify(
+        type: ZMClientUpdateNotificationType,
+        context: NSManagedObjectContext,
+        clients: [UserClient] = [],
+        error: NSError? = nil
+    ) {
+        NotificationInContext(name: name, context: context.notificationContext, userInfo: [
+            errorKey: error as Any,
+            clientObjectIDsKey: clients.map(\.objectID).filter { !$0.isTemporaryID },
+            typeKey: type,
+        ]).post()
+    }
+
+    // MARK: Private
+
+    private static let name = Notification.Name(rawValue: "ZMClientUpdateNotification")
+
+    private static let clientObjectIDsKey = "clientObjectIDs"
+    private static let typeKey = "notificationType"
+    private static let errorKey = "error"
 }

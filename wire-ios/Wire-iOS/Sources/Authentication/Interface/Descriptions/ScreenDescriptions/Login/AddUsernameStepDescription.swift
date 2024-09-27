@@ -24,13 +24,7 @@ private typealias Username = L10n.Localizable.Registration.Signin.Username
 // MARK: - AddUsernameStepDescription
 
 final class AddUsernameStepDescription: DefaultValidatingStepDescription {
-    let backButton: BackButtonDescription?
-    var mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription? = nil
-    let initialValidation: ValueValidation
-    let footerView: AuthenticationFooterViewDescription? = nil
+    // MARK: Lifecycle
 
     init() {
         let textField = TextFieldDescription(
@@ -46,4 +40,14 @@ final class AddUsernameStepDescription: DefaultValidatingStepDescription {
         self.subtext = .markdown(from: Username.message, style: .login)
         self.initialValidation = .info(HandleChange.footer)
     }
+
+    // MARK: Internal
+
+    let backButton: BackButtonDescription?
+    var mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription? = nil
+    let initialValidation: ValueValidation
+    let footerView: AuthenticationFooterViewDescription? = nil
 }

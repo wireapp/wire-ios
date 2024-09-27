@@ -20,25 +20,7 @@ import UIKit
 import WireSyncEngine
 
 final class ReceiptOptionsSectionController: GroupDetailsSectionController {
-    private let emptySectionHeaderHeight: CGFloat = 24
-
-    let cellReuseIdentifier: String = GroupDetailsReceiptOptionsCell.zm_reuseIdentifier
-
-    // MARK: - Properties
-
-    private let conversation: GroupDetailsConversationType
-    private let syncCompleted: Bool
-
-    private var footerView = SectionFooter(frame: .zero)
-    private weak var presentingViewController: UIViewController?
-
-    override var isHidden: Bool {
-        guard let user = SelfUser.provider?.providedSelfUser else {
-            assertionFailure("expected available 'user'!")
-            return true
-        }
-        return !user.canModifyReadReceiptSettings(in: conversation)
-    }
+    // MARK: Lifecycle
 
     init(
         conversation: GroupDetailsConversationType,
@@ -51,6 +33,18 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
         self.presentingViewController = presentingViewController
 
         SectionFooter.register(collectionView: collectionView)
+    }
+
+    // MARK: Internal
+
+    let cellReuseIdentifier: String = GroupDetailsReceiptOptionsCell.zm_reuseIdentifier
+
+    override var isHidden: Bool {
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return true
+        }
+        return !user.canModifyReadReceiptSettings(in: conversation)
     }
 
     // MARK: - Collection View
@@ -161,4 +155,16 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
         (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.GroupDetails.ReceiptOptionsCell.description
         return view
     }
+
+    // MARK: Private
+
+    private let emptySectionHeaderHeight: CGFloat = 24
+
+    // MARK: - Properties
+
+    private let conversation: GroupDetailsConversationType
+    private let syncCompleted: Bool
+
+    private var footerView = SectionFooter(frame: .zero)
+    private weak var presentingViewController: UIViewController?
 }

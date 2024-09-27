@@ -20,6 +20,14 @@ import Foundation
 import WireDataModel
 
 public final class GetFeatureConfigsAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(resultHandler: ResultHandler? = nil) {
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = Void
@@ -37,10 +45,4 @@ public final class GetFeatureConfigsAction: EntityAction {
     // MARK: - Properties
 
     public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(resultHandler: ResultHandler? = nil) {
-        self.resultHandler = resultHandler
-    }
 }

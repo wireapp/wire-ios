@@ -21,8 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationListOnboardingHint: UIView {
-    let messageLabel: UILabel = DynamicFontLabel(fontSpec: .largeLightFont, color: SemanticColors.Label.textDefault)
-    let arrowView = UIImageView()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,6 +42,13 @@ final class ConversationListOnboardingHint: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let messageLabel: UILabel = DynamicFontLabel(fontSpec: .largeLightFont, color: SemanticColors.Label.textDefault)
+    let arrowView = UIImageView()
+
+    // MARK: Private
 
     private func createConstraints() {
         [arrowView, messageLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }

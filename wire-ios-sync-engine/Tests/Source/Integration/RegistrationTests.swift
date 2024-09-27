@@ -21,14 +21,14 @@ import Foundation
 
 class RegistrationTests: IntegrationTest {
     var delegate: TestRegistrationStatusDelegate!
-    var registrationStatus: WireSyncEngine.RegistrationStatus? {
-        sessionManager?.unauthenticatedSession?.registrationStatus
-    }
-
     var teamToRegister: UnregisteredTeam!
     var user: UnregisteredUser!
     var email: String!
     let environment = BackendEnvironment(type: .wire(.staging))
+
+    var registrationStatus: WireSyncEngine.RegistrationStatus? {
+        sessionManager?.unauthenticatedSession?.registrationStatus
+    }
 
     override func setUp() {
         super.setUp()

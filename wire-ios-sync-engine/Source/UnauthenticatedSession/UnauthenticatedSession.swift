@@ -46,19 +46,7 @@ private let log = ZMSLog(tag: "UnauthenticatedSession")
 
 @objcMembers
 public class UnauthenticatedSession: NSObject {
-    /// **accountId** will be set if the unauthenticated session is associated with an existing account
-    public internal(set) var accountId: UUID?
-    public let groupQueue: DispatchGroupQueue
-    public private(set) var authenticationStatus: ZMAuthenticationStatus!
-    public let registrationStatus: RegistrationStatus
-    let reachability: ReachabilityProvider
-    private(set) var operationLoop: UnauthenticatedOperationLoop!
-    private let transportSession: UnauthenticatedTransportSessionProtocol
-    fileprivate var urlActionProcessors: [URLActionProcessor] = []
-    fileprivate var tornDown = false
-    let userPropertyValidator: UserPropertyValidating
-
-    weak var delegate: UnauthenticatedSessionDelegate?
+    // MARK: Lifecycle
 
     init(
         transportSession: UnauthenticatedTransportSessionProtocol,
@@ -106,6 +94,22 @@ public class UnauthenticatedSession: NSObject {
         precondition(tornDown, "Need to call tearDown before deinit")
     }
 
+    // MARK: Public
+
+    /// **accountId** will be set if the unauthenticated session is associated with an existing account
+    public internal(set) var accountId: UUID?
+    public let groupQueue: DispatchGroupQueue
+    public private(set) var authenticationStatus: ZMAuthenticationStatus!
+    public let registrationStatus: RegistrationStatus
+
+    // MARK: Internal
+
+    let reachability: ReachabilityProvider
+    private(set) var operationLoop: UnauthenticatedOperationLoop!
+    let userPropertyValidator: UserPropertyValidating
+
+    weak var delegate: UnauthenticatedSessionDelegate?
+
     func authenticationErrorIfNotReachable(_ block: () -> Void) {
         if reachability.mayBeReachable {
             block()
@@ -114,6 +118,15 @@ public class UnauthenticatedSession: NSObject {
             authenticationStatus.notifyAuthenticationDidFail(error)
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var urlActionProcessors: [URLActionProcessor] = []
+    fileprivate var tornDown = false
+
+    // MARK: Private
+
+    private let transportSession: UnauthenticatedTransportSessionProtocol
 }
 
 // MARK: UnauthenticatedSessionStatusDelegate

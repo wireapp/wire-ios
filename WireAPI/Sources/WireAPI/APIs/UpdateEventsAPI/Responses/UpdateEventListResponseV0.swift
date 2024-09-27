@@ -19,15 +19,15 @@
 import Foundation
 
 struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
-    let notifications: [UpdateEventEnvelopeV0]
-    let time: UTCTime?
-    let hasMore: Bool?
-
     enum CodingKeys: String, CodingKey {
         case notifications
         case time
         case hasMore = "has_more"
     }
+
+    let notifications: [UpdateEventEnvelopeV0]
+    let time: UTCTime?
+    let hasMore: Bool?
 
     func toAPIModel() -> PayloadPager<UpdateEventEnvelope>.Page {
         let eventEnvelopes = notifications.map {

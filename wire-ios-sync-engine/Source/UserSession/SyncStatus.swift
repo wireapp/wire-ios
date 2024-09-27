@@ -29,49 +29,7 @@ extension Notification.Name {
 
 @objcMembers
 public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
-    private static let logger = Logger(subsystem: "VoIP Push", category: "SyncStatus")
-
-    public internal(set) var currentSyncPhase: SyncPhase = .done {
-        didSet {
-            if currentSyncPhase != oldValue {
-                log()
-                zmLog.debug("did change sync phase: \(currentSyncPhase)")
-                notifySyncPhaseDidStart()
-            }
-        }
-    }
-
-    weak var syncStateDelegate: ZMSyncStateDelegate?
-
-    private let lastEventIDRepository: LastEventIDRepositoryInterface
-    fileprivate var lastUpdateEventID: UUID?
-    fileprivate unowned var managedObjectContext: NSManagedObjectContext
-    fileprivate var resyncResourcesToken: Any?
-
-    public internal(set) var isFetchingNotificationStream = false
-    public internal(set) var isInBackground = false
-    public internal(set) var needsToRestartQuickSync = false
-    public internal(set) var pushChannelEstablishedDate: Date?
-
-    var quickSyncContinuation: CheckedContinuation<Void, Never>?
-
-    public var isSlowSyncing: Bool {
-        !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
-    }
-
-    private var isForceQuickSync = false
-
-    public var isSyncing: Bool {
-        currentSyncPhase.isSyncing || !isPushChannelOpen
-    }
-
-    public var isSyncingInBackground: Bool {
-        currentSyncPhase.isSyncing
-    }
-
-    public var isPushChannelOpen: Bool {
-        pushChannelEstablishedDate != nil
-    }
+    // MARK: Lifecycle
 
     public init(
         managedObjectContext: NSManagedObjectContext,
@@ -98,15 +56,37 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         }
     }
 
-    fileprivate func notifySyncPhaseDidStart() {
-        switch currentSyncPhase {
-        case .fetchingMissedEvents:
-            syncStateDelegate?.didStartQuickSync()
-        case .fetchingLastUpdateEventID:
-            syncStateDelegate?.didStartSlowSync()
-        default:
-            break
+    // MARK: Public
+
+    public internal(set) var isFetchingNotificationStream = false
+    public internal(set) var isInBackground = false
+    public internal(set) var needsToRestartQuickSync = false
+    public internal(set) var pushChannelEstablishedDate: Date?
+
+    public internal(set) var currentSyncPhase: SyncPhase = .done {
+        didSet {
+            if currentSyncPhase != oldValue {
+                log()
+                zmLog.debug("did change sync phase: \(currentSyncPhase)")
+                notifySyncPhaseDidStart()
+            }
         }
+    }
+
+    public var isSlowSyncing: Bool {
+        !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
+    }
+
+    public var isSyncing: Bool {
+        currentSyncPhase.isSyncing || !isPushChannelOpen
+    }
+
+    public var isSyncingInBackground: Bool {
+        currentSyncPhase.isSyncing
+    }
+
+    public var isPushChannelOpen: Bool {
+        pushChannelEstablishedDate != nil
     }
 
     public func determineInitialSyncPhase() {
@@ -120,16 +100,6 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         // Reset the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
         log("slow sync")
-        syncStateDelegate?.didStartSlowSync()
-    }
-
-    /// Sync the resources: Teams, Users, Conversations...
-    func resyncResources() {
-        // Refetch user settings.
-        ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-        // Set the status.
-        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
-        log("resyncResources")
         syncStateDelegate?.didStartSlowSync()
     }
 
@@ -147,18 +117,58 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         }
     }
 
-    func notifyQuickSyncDidFinish() {
-        syncStateDelegate?.didFinishQuickSync()
-        quickSyncContinuation?.resume()
-        quickSyncContinuation = nil
-    }
-
     public func forceQuickSync() {
         isForceQuickSync = true
         currentSyncPhase = .fetchingMissedEvents
         log("quick sync")
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
+
+    // MARK: Internal
+
+    weak var syncStateDelegate: ZMSyncStateDelegate?
+
+    var quickSyncContinuation: CheckedContinuation<Void, Never>?
+
+    /// Sync the resources: Teams, Users, Conversations...
+    func resyncResources() {
+        // Refetch user settings.
+        ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
+        // Set the status.
+        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
+        log("resyncResources")
+        syncStateDelegate?.didStartSlowSync()
+    }
+
+    func notifyQuickSyncDidFinish() {
+        syncStateDelegate?.didFinishQuickSync()
+        quickSyncContinuation?.resume()
+        quickSyncContinuation = nil
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var lastUpdateEventID: UUID?
+    fileprivate unowned var managedObjectContext: NSManagedObjectContext
+    fileprivate var resyncResourcesToken: Any?
+
+    fileprivate func notifySyncPhaseDidStart() {
+        switch currentSyncPhase {
+        case .fetchingMissedEvents:
+            syncStateDelegate?.didStartQuickSync()
+        case .fetchingLastUpdateEventID:
+            syncStateDelegate?.didStartSlowSync()
+        default:
+            break
+        }
+    }
+
+    // MARK: Private
+
+    private static let logger = Logger(subsystem: "VoIP Push", category: "SyncStatus")
+
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
+    private var isForceQuickSync = false
 }
 
 // MARK: Slow Sync

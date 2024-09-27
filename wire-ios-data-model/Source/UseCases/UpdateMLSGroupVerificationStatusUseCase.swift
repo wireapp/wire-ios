@@ -28,13 +28,7 @@ public protocol UpdateMLSGroupVerificationStatusUseCaseProtocol {
 // MARK: - UpdateMLSGroupVerificationStatusUseCase
 
 public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol {
-    // MARK: - Properties
-
-    private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
-    private let context: NSManagedObjectContext
-    private let featureRepository: FeatureRepositoryInterface
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
@@ -46,6 +40,8 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
         self.featureRepository = featureRepository
     }
 
+    // MARK: Public
+
     // MARK: - Public interface
 
     public func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
@@ -56,6 +52,14 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
         try await updateStatus(for: conversation, groupID: groupID)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
+    private let context: NSManagedObjectContext
+    private let featureRepository: FeatureRepositoryInterface
 
     // MARK: - Helpers
 

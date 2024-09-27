@@ -22,6 +22,18 @@ import Foundation
 /// in the database.
 
 public final class SyncConversationAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        qualifiedID: QualifiedID,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.qualifiedID = qualifiedID
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
@@ -36,14 +48,4 @@ public final class SyncConversationAction: EntityAction {
 
     public let qualifiedID: QualifiedID
     public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(
-        qualifiedID: QualifiedID,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.qualifiedID = qualifiedID
-        self.resultHandler = resultHandler
-    }
 }

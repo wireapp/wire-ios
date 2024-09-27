@@ -32,7 +32,11 @@ public protocol PrekeyPayloadProcessorInterface {
 // MARK: - PrekeyPayloadProcessor
 
 public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
+    // MARK: Lifecycle
+
     public init() {}
+
+    // MARK: Public
 
     /// Establish new sessions using the prekeys retreived for each client.
     ///
@@ -55,6 +59,8 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
             )
         }
     }
+
+    // MARK: Internal
 
     /// Establish new sessions using the prekeys retreived for each client.
     ///

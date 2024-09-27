@@ -22,6 +22,30 @@ import WireDataModel
 /// The purpose of this subclass of NSTextAttachment is to render a mention in the input bar.
 /// It also keeps a reference to the `UserType` describing the User being mentioned.
 final class MentionTextAttachment: NSTextAttachment {
+    // MARK: Lifecycle
+
+    init(user: UserType, color: UIColor = .accent()) {
+        self.font = .normalLightFont
+        self.color = color
+        self.user = user
+        self.attributedText = type(of: self).attributedMentionString(user: user, font: font, color: color)
+
+        super.init(data: nil, ofType: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    static var paragraphStyle: NSParagraphStyle = {
+        let paragraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+        return paragraphStyle
+    }()
+
     // Color used for the mention
     let color: UIColor
 
@@ -37,24 +61,31 @@ final class MentionTextAttachment: NSTextAttachment {
     /// The user being mentioned.
     let user: UserType
 
-    static var paragraphStyle: NSParagraphStyle = {
-        let paragraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
-        paragraphStyle.lineBreakMode = .byTruncatingTail
-        return paragraphStyle
-    }()
+    override func attachmentBounds(
+        for textContainer: NSTextContainer?,
+        proposedLineFragment lineFrag: CGRect,
+        glyphPosition position: CGPoint,
+        characterIndex charIndex: Int
+    ) -> CGRect {
+        updateImageIfNeeded(for: textContainer, characterIndex: charIndex)
 
-    init(user: UserType, color: UIColor = .accent()) {
-        self.font = .normalLightFont
-        self.color = color
-        self.user = user
-        self.attributedText = type(of: self).attributedMentionString(user: user, font: font, color: color)
-
-        super.init(data: nil, ofType: nil)
+        return super.attachmentBounds(
+            for: textContainer,
+            proposedLineFragment: lineFrag,
+            glyphPosition: position,
+            characterIndex: charIndex
+        )
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    // MARK: Private
+
+    private static func attributedMentionString(user: UserType, font: UIFont, color: UIColor) -> NSAttributedString {
+        // Replace all spaces with non-breaking space to avoid wrapping when displaying mention
+        let nameWithNonBreakingSpaces = user.name?.replacingOccurrences(
+            of: String.breakingSpace,
+            with: String.nonBreakingSpace
+        )
+        return "@" + (nameWithNonBreakingSpaces ?? "") && font && color && [.paragraphStyle: paragraphStyle]
     }
 
     private func updateImageIfNeeded(for textContainer: NSTextContainer?, characterIndex charIndex: Int) {
@@ -82,30 +113,5 @@ final class MentionTextAttachment: NSTextAttachment {
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return image
-    }
-
-    private static func attributedMentionString(user: UserType, font: UIFont, color: UIColor) -> NSAttributedString {
-        // Replace all spaces with non-breaking space to avoid wrapping when displaying mention
-        let nameWithNonBreakingSpaces = user.name?.replacingOccurrences(
-            of: String.breakingSpace,
-            with: String.nonBreakingSpace
-        )
-        return "@" + (nameWithNonBreakingSpaces ?? "") && font && color && [.paragraphStyle: paragraphStyle]
-    }
-
-    override func attachmentBounds(
-        for textContainer: NSTextContainer?,
-        proposedLineFragment lineFrag: CGRect,
-        glyphPosition position: CGPoint,
-        characterIndex charIndex: Int
-    ) -> CGRect {
-        updateImageIfNeeded(for: textContainer, characterIndex: charIndex)
-
-        return super.attachmentBounds(
-            for: textContainer,
-            proposedLineFragment: lineFrag,
-            glyphPosition: position,
-            characterIndex: charIndex
-        )
     }
 }

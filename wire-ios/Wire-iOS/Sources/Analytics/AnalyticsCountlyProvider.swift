@@ -38,38 +38,33 @@ extension Countly: CountlyInstance {}
 // MARK: - AnalyticsCountlyProvider
 
 final class AnalyticsCountlyProvider: AnalyticsProvider {
+    // MARK: Lifecycle
+
+    init?(
+        countlyInstanceType: CountlyInstance.Type = Countly.self,
+        countlyAppKey: String,
+        serverURL: URL
+    ) {
+        guard !countlyAppKey.isEmpty else { return nil }
+
+        self.countlyInstanceType = countlyInstanceType
+        self.appKey = countlyAppKey
+        self.serverURL = serverURL
+        self.isOptedOut = false
+        setupApplicationNotifications()
+    }
+
+    deinit {
+        zmLog.info("AnalyticsCountlyProvider \(self) deallocated")
+    }
+
+    // MARK: Internal
+
     typealias PendingEvent = (event: String, attribtues: [String: Any])
 
     // MARK: - Properties
 
     var countlyInstanceType: CountlyInstance.Type
-
-    /// The Countly application to which events will be sent.
-
-    private let appKey: String
-
-    /// The url of the server hosting the Countly application.
-
-    private let serverURL: URL
-
-    /// Whether a recording session is in progress.
-
-    private var isRecording = false {
-        didSet {
-            guard isRecording != oldValue else { return }
-
-            if isRecording {
-                updateTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in self.updateSession() }
-            } else {
-                updateTimer?.invalidate()
-                updateTimer = nil
-            }
-        }
-    }
-
-    /// Whether the Countly instance has been configured and started.
-
-    private var didInitializeCountly = false
 
     /// Events that have been tracked before Countly has begun.
 
@@ -93,26 +88,89 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
         }
     }
 
-    private var updateTimer: Timer?
+    // MARK: - Tag events
 
-    // MARK: - Life cycle
-
-    init?(
-        countlyInstanceType: CountlyInstance.Type = Countly.self,
-        countlyAppKey: String,
-        serverURL: URL
+    func tagEvent(
+        _ event: String,
+        attributes: [String: Any]
     ) {
-        guard !countlyAppKey.isEmpty else { return nil }
+        // store the event before self user is assigned, send it later when self user is ready.
+        guard selfUser != nil else {
+            pendingEvents.append(PendingEvent(event, attributes))
+            return
+        }
 
-        self.countlyInstanceType = countlyInstanceType
-        self.appKey = countlyAppKey
-        self.serverURL = serverURL
-        self.isOptedOut = false
-        setupApplicationNotifications()
+        guard shouldTracksEvent else {
+            return
+        }
+
+        var convertedAttributes = attributes.countlyStringValueDictionary
+
+        convertedAttributes["app_name"] = "ios"
+        convertedAttributes["app_version"] = Bundle.main.shortVersionString
+
+        countlyInstanceType.sharedInstance().recordEvent(event, segmentation: convertedAttributes)
     }
 
-    deinit {
-        zmLog.info("AnalyticsCountlyProvider \(self) deallocated")
+    func setSuperProperty(_ name: String, value: Any?) {
+        // TODO:
+    }
+
+    func flush(completion: Completion?) {
+        completion?()
+    }
+
+    // MARK: Private
+
+    /// The Countly application to which events will be sent.
+
+    private let appKey: String
+
+    /// The url of the server hosting the Countly application.
+
+    private let serverURL: URL
+
+    /// Whether the Countly instance has been configured and started.
+
+    private var didInitializeCountly = false
+
+    private var updateTimer: Timer?
+
+    private var observerTokens = [Any]()
+
+    /// Whether a recording session is in progress.
+
+    private var isRecording = false {
+        didSet {
+            guard isRecording != oldValue else { return }
+
+            if isRecording {
+                updateTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in self.updateSession() }
+            } else {
+                updateTimer?.invalidate()
+                updateTimer = nil
+            }
+        }
+    }
+
+    private var sessionConfiguration: URLSessionConfiguration {
+        guard let proxy = BackendEnvironment.shared.proxy else {
+            return URLSessionConfiguration.ephemeral
+        }
+
+        let credentials = ProxyCredentials.retrieve(for: proxy)
+        let settings = BackendEnvironment.shared.proxy?.socks5Settings(
+            proxyUsername: credentials?.username,
+            proxyPassword: credentials?.password
+        )
+
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.connectionProxyDictionary = settings
+        return configuration
+    }
+
+    private var shouldTracksEvent: Bool {
+        selfUser?.isTeamMember == true
     }
 
     // MARK: - Session management
@@ -149,22 +207,6 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
 
         beginSession()
         tagPendingEvents()
-    }
-
-    private var sessionConfiguration: URLSessionConfiguration {
-        guard let proxy = BackendEnvironment.shared.proxy else {
-            return URLSessionConfiguration.ephemeral
-        }
-
-        let credentials = ProxyCredentials.retrieve(for: proxy)
-        let settings = BackendEnvironment.shared.proxy?.socks5Settings(
-            proxyUsername: credentials?.username,
-            proxyPassword: credentials?.password
-        )
-
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.connectionProxyDictionary = settings
-        return configuration
     }
 
     private func endCountly() {
@@ -228,34 +270,6 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
         Countly.user().save()
     }
 
-    private var shouldTracksEvent: Bool {
-        selfUser?.isTeamMember == true
-    }
-
-    // MARK: - Tag events
-
-    func tagEvent(
-        _ event: String,
-        attributes: [String: Any]
-    ) {
-        // store the event before self user is assigned, send it later when self user is ready.
-        guard selfUser != nil else {
-            pendingEvents.append(PendingEvent(event, attributes))
-            return
-        }
-
-        guard shouldTracksEvent else {
-            return
-        }
-
-        var convertedAttributes = attributes.countlyStringValueDictionary
-
-        convertedAttributes["app_name"] = "ios"
-        convertedAttributes["app_version"] = Bundle.main.shortVersionString
-
-        countlyInstanceType.sharedInstance().recordEvent(event, segmentation: convertedAttributes)
-    }
-
     private func tagPendingEvents() {
         for (event, attributes) in pendingEvents {
             tagEvent(event, attributes: attributes)
@@ -263,16 +277,6 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
 
         pendingEvents.removeAll()
     }
-
-    func setSuperProperty(_ name: String, value: Any?) {
-        // TODO:
-    }
-
-    func flush(completion: Completion?) {
-        completion?()
-    }
-
-    private var observerTokens = [Any]()
 }
 
 // MARK: ApplicationStateObserving

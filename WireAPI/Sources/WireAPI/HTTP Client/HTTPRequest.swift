@@ -21,17 +21,7 @@ import Foundation
 /// A http request to be sent to a server.
 
 public struct HTTPRequest: Equatable {
-    /// The path of the endpoint.
-
-    public var path: String
-
-    /// The http method.
-
-    public var method: Method
-
-    /// The request payload data.
-
-    public var body: Data?
+    // MARK: Lifecycle
 
     /// Create a new request.
 
@@ -45,6 +35,8 @@ public struct HTTPRequest: Equatable {
         self.body = body
     }
 
+    // MARK: Public
+
     /// A type of http request.
 
     public enum Method {
@@ -54,4 +46,16 @@ public struct HTTPRequest: Equatable {
         case post
         case put
     }
+
+    /// The path of the endpoint.
+
+    public var path: String
+
+    /// The http method.
+
+    public var method: Method
+
+    /// The request payload data.
+
+    public var body: Data?
 }

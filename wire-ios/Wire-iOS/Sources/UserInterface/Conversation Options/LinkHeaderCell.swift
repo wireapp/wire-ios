@@ -21,9 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class LinkHeaderCell: UITableViewCell, CellConfigurationConfigurable {
-    private let topSeparator = UIView()
-    private let titleLabel = UILabel()
-    private let subtitleLabel = UILabel()
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -35,6 +33,18 @@ final class LinkHeaderCell: UITableViewCell, CellConfigurationConfigurable {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    func configure(with configuration: CellConfiguration) {
+        styleViews()
+    }
+
+    // MARK: Private
+
+    private let topSeparator = UIView()
+    private let titleLabel = UILabel()
+    private let subtitleLabel = UILabel()
 
     private func setupViews() {
         [topSeparator, titleLabel, subtitleLabel].forEach(contentView.addSubview)
@@ -69,9 +79,5 @@ final class LinkHeaderCell: UITableViewCell, CellConfigurationConfigurable {
         titleLabel.textColor = SemanticColors.Label.textLinkHeaderCellTitle
         subtitleLabel.textColor = SemanticColors.Label.textSectionFooter
         backgroundColor = .clear
-    }
-
-    func configure(with configuration: CellConfiguration) {
-        styleViews()
     }
 }

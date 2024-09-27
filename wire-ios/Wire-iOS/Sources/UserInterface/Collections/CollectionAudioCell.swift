@@ -24,10 +24,7 @@ import WireDesign
 // MARK: - CollectionAudioCell
 
 final class CollectionAudioCell: CollectionCell {
-    private var containerView = UIView()
-    private let audioMessageView = AudioMessageView()
-    private let restrictionView = AudioMessageRestrictionView()
-    private let headerView = CollectionCellHeader()
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -38,6 +35,12 @@ final class CollectionAudioCell: CollectionCell {
         super.init(frame: frame)
         loadView()
         setupAccessibility()
+    }
+
+    // MARK: Internal
+
+    override var obfuscationIcon: StyleKitIcon {
+        .microphone
     }
 
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
@@ -84,9 +87,12 @@ final class CollectionAudioCell: CollectionCell {
         ])
     }
 
-    override var obfuscationIcon: StyleKitIcon {
-        .microphone
-    }
+    // MARK: Private
+
+    private var containerView = UIView()
+    private let audioMessageView = AudioMessageView()
+    private let restrictionView = AudioMessageRestrictionView()
+    private let headerView = CollectionCellHeader()
 
     private func setup(_ view: UIView) {
         containerView.removeSubviews()

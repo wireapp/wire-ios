@@ -34,6 +34,11 @@ class TestUserClientObserver: NSObject, UserClientObserver {
 class UserClientObserverTests: NotificationDispatcherTestBase {
     var clientObserver: TestUserClientObserver!
 
+    let userInfoKeys: Set<String> = [
+        UserClientChangeInfoKey.TrustedByClientsChanged.rawValue,
+        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
+    ]
+
     override func setUp() {
         super.setUp()
         clientObserver = TestUserClientObserver()
@@ -43,11 +48,6 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         clientObserver = nil
         super.tearDown()
     }
-
-    let userInfoKeys: Set<String> = [
-        UserClientChangeInfoKey.TrustedByClientsChanged.rawValue,
-        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
-    ]
 
     func checkThatItNotifiesTheObserverOfAChange(
         _ userClient: UserClient,

@@ -25,11 +25,26 @@ import WireDesign
 // MARK: - ConversationReplyContentView
 
 final class ConversationReplyContentView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
     typealias MessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
-    let numberOfLinesLimit = 4
-
     struct Configuration {
+        // MARK: Internal
+
         enum Content {
             case text(NSAttributedString)
             case imagePreview(thumbnail: PreviewableImageResource, isVideo: Bool)
@@ -100,6 +115,8 @@ final class ConversationReplyContentView: UIView {
             return "quote.type.\(message.typeString)"
         }
 
+        // MARK: Private
+
         private func setupContent() -> Content {
             typealias LabelColors = SemanticColors.Label
             let attributes: [NSAttributedString.Key: Any] = [
@@ -163,6 +180,8 @@ final class ConversationReplyContentView: UIView {
         }
     }
 
+    let numberOfLinesLimit = 4
+
     let senderComponent = SenderNameCellComponent()
     let contentTextView = UITextView()
     let timestampLabel = UILabel()
@@ -171,16 +190,45 @@ final class ConversationReplyContentView: UIView {
 
     let stackView = UIStackView()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
+    func configure(with object: Configuration) {
+        senderComponent.isHidden = !object.showDetails
+        timestampLabel.isHidden = !object.showDetails
+        restrictionLabel.isHidden = !object.showRestriction
+
+        senderComponent.senderName = object.senderName
+        senderComponent.indicatorIcon = object.isEdited ? StyleKitIcon.pencil.makeImage(
+            size: 8,
+            color: SemanticColors.Icon
+                .foregroundDefault
+        ) : nil
+        senderComponent.indicatorLabel = object.isEdited ? L10n.Localizable.Content.Message.Reply.editedMessage : nil
+        timestampLabel.text = object.timestamp
+        restrictionLabel.text = object.restrictionDescription?.localizedUppercase
+
+        switch object.content {
+        case let .text(attributedContent):
+            let mutableAttributedContent = NSMutableAttributedString(attributedString: attributedContent)
+            // Trim the string to first four lines to prevent last line narrower spacing issue
+            mutableAttributedContent.paragraphTailTruncated()
+            contentTextView.attributedText = mutableAttributedContent
+                .trimmedToNumberOfLines(numberOfLinesLimit: numberOfLinesLimit)
+            contentTextView.isHidden = false
+            contentTextView.accessibilityIdentifier = object.contentType
+            contentTextView.isAccessibilityElement = true
+            assetThumbnail.isHidden = true
+            assetThumbnail.isAccessibilityElement = false
+
+        case let .imagePreview(resource, isVideo):
+            assetThumbnail.setResource(resource, isVideoPreview: isVideo)
+            assetThumbnail.isHidden = false
+            assetThumbnail.accessibilityIdentifier = object.contentType
+            assetThumbnail.isAccessibilityElement = true
+            contentTextView.isHidden = true
+            contentTextView.isAccessibilityElement = false
+        }
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
+    // MARK: Private
 
     private func configureSubviews() {
         shouldGroupAccessibilityChildren = false
@@ -239,57 +287,12 @@ final class ConversationReplyContentView: UIView {
             contentTextView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
     }
-
-    func configure(with object: Configuration) {
-        senderComponent.isHidden = !object.showDetails
-        timestampLabel.isHidden = !object.showDetails
-        restrictionLabel.isHidden = !object.showRestriction
-
-        senderComponent.senderName = object.senderName
-        senderComponent.indicatorIcon = object.isEdited ? StyleKitIcon.pencil.makeImage(
-            size: 8,
-            color: SemanticColors.Icon
-                .foregroundDefault
-        ) : nil
-        senderComponent.indicatorLabel = object.isEdited ? L10n.Localizable.Content.Message.Reply.editedMessage : nil
-        timestampLabel.text = object.timestamp
-        restrictionLabel.text = object.restrictionDescription?.localizedUppercase
-
-        switch object.content {
-        case let .text(attributedContent):
-            let mutableAttributedContent = NSMutableAttributedString(attributedString: attributedContent)
-            // Trim the string to first four lines to prevent last line narrower spacing issue
-            mutableAttributedContent.paragraphTailTruncated()
-            contentTextView.attributedText = mutableAttributedContent
-                .trimmedToNumberOfLines(numberOfLinesLimit: numberOfLinesLimit)
-            contentTextView.isHidden = false
-            contentTextView.accessibilityIdentifier = object.contentType
-            contentTextView.isAccessibilityElement = true
-            assetThumbnail.isHidden = true
-            assetThumbnail.isAccessibilityElement = false
-
-        case let .imagePreview(resource, isVideo):
-            assetThumbnail.setResource(resource, isVideoPreview: isVideo)
-            assetThumbnail.isHidden = false
-            assetThumbnail.accessibilityIdentifier = object.contentType
-            assetThumbnail.isAccessibilityElement = true
-            contentTextView.isHidden = true
-            contentTextView.isAccessibilityElement = false
-        }
-    }
 }
 
 // MARK: - ConversationReplyCell
 
 final class ConversationReplyCell: UIView, ConversationMessageCell {
-    typealias Configuration = ConversationReplyContentView.Configuration
-    var isSelected = false
-
-    let contentView: ConversationReplyContentView
-    var container: ReplyRoundCornersView
-
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         self.contentView = ConversationReplyContentView()
@@ -304,15 +307,17 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func configureSubviews() {
-        container.addTarget(self, action: #selector(onTap), for: .touchUpInside)
-        addSubview(container)
-    }
+    // MARK: Internal
 
-    private func configureConstraints() {
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.fitIn(view: self)
-    }
+    typealias Configuration = ConversationReplyContentView.Configuration
+
+    var isSelected = false
+
+    let contentView: ConversationReplyContentView
+    var container: ReplyRoundCornersView
+
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage?
 
     func configure(with object: Configuration, animated: Bool) {
         contentView.configure(with: object)
@@ -322,12 +327,33 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     func onTap() {
         delegate?.perform(action: .openQuote, for: message!, view: self)
     }
+
+    // MARK: Private
+
+    private func configureSubviews() {
+        container.addTarget(self, action: #selector(onTap), for: .touchUpInside)
+        addSubview(container)
+    }
+
+    private func configureConstraints() {
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.fitIn(view: self)
+    }
 }
 
 // MARK: - ConversationReplyCellDescription
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(quotedMessage: ZMConversationMessage?) {
+        self.configuration = View.Configuration(quotedMessage: quotedMessage)
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationReplyCell
+
     let configuration: View.Configuration
 
     var showEphemeralTimer = false
@@ -342,10 +368,6 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
 
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
     let accessibilityIdentifier: String? = "ReplyCell"
-
-    init(quotedMessage: ZMConversationMessage?) {
-        self.configuration = View.Configuration(quotedMessage: quotedMessage)
-    }
 }
 
 extension ZMConversationMessage {

@@ -21,6 +21,8 @@ import XCTest
 @testable import WireSyncEngine
 
 class CallParticipantsKindTests: XCTestCase {
+    // MARK: Internal
+
     var client: AVSClient!
 
     override func setUp() {
@@ -28,24 +30,6 @@ class CallParticipantsKindTests: XCTestCase {
         client = AVSClient(
             userId: AVSIdentifier.stub,
             clientId: UUID().transportString()
-        )
-    }
-
-    private var realTimeActiveSpeaker: AVSActiveSpeakersChange.ActiveSpeaker {
-        AVSActiveSpeakersChange.ActiveSpeaker(
-            userId: client.userId,
-            clientId: client.clientId,
-            audioLevel: 0,
-            audioLevelNow: 100
-        )
-    }
-
-    private var smoothedActiveSpeaker: AVSActiveSpeakersChange.ActiveSpeaker {
-        AVSActiveSpeakersChange.ActiveSpeaker(
-            userId: client.userId,
-            clientId: client.clientId,
-            audioLevel: 100,
-            audioLevelNow: 0
         )
     }
 
@@ -74,6 +58,26 @@ class CallParticipantsKindTests: XCTestCase {
         XCTAssertEqual(
             CallParticipantsListKind.smoothedActiveSpeakers.state(ofActiveSpeaker: smoothedActiveSpeaker),
             ActiveSpeakerState.active(audioLevelNow: 0)
+        )
+    }
+
+    // MARK: Private
+
+    private var realTimeActiveSpeaker: AVSActiveSpeakersChange.ActiveSpeaker {
+        AVSActiveSpeakersChange.ActiveSpeaker(
+            userId: client.userId,
+            clientId: client.clientId,
+            audioLevel: 0,
+            audioLevelNow: 100
+        )
+    }
+
+    private var smoothedActiveSpeaker: AVSActiveSpeakersChange.ActiveSpeaker {
+        AVSActiveSpeakersChange.ActiveSpeaker(
+            userId: client.userId,
+            clientId: client.clientId,
+            audioLevel: 100,
+            audioLevelNow: 0
         )
     }
 }

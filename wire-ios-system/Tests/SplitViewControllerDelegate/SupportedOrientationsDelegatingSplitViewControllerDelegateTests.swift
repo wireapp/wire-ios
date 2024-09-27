@@ -23,7 +23,7 @@ import XCTest
 // MARK: - SupportedOrientationsDelegatingSplitViewControllerDelegateTests
 
 final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCTestCase {
-    private var sut: SupportedOrientationsDelegatingSplitViewControllerDelegate!
+    // MARK: Internal
 
     override func setUp() async throws {
         sut = await MainActor.run { .init() }
@@ -104,13 +104,16 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
             XCTAssertNotNil(weakSut)
         }
     }
+
+    // MARK: Private
+
+    private var sut: SupportedOrientationsDelegatingSplitViewControllerDelegate!
 }
 
 // MARK: - ViewController
 
 private final class ViewController: UIViewController {
-    private let interfaceOrientations: UIInterfaceOrientationMask
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { interfaceOrientations }
+    // MARK: Lifecycle
 
     init(_ interfaceOrientations: UIInterfaceOrientationMask = .all) {
         self.interfaceOrientations = interfaceOrientations
@@ -121,6 +124,14 @@ private final class ViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
+
+    // MARK: Internal
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { interfaceOrientations }
+
+    // MARK: Private
+
+    private let interfaceOrientations: UIInterfaceOrientationMask
 }
 
 // MARK: - SupportedOrientationsDelegatingSplitViewControllerDelegate + Sendable

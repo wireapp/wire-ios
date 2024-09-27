@@ -23,12 +23,9 @@ import XCTest
 // MARK: - AvailabilityIndicatorViewSnapshotTests
 
 final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
-    typealias SUT = AvailabilityIndicatorView
+    // MARK: Internal
 
-    /// A container is needed because the availability indicator view has a border beyond its frame.
-    private var container: UIView!
-    private var sut: SUT!
-    private var snapshotHelper: SnapshotHelper!
+    typealias SUT = AvailabilityIndicatorView
 
     override func setUp() async throws {
         (sut, container) = await MainActor.run {
@@ -62,6 +59,13 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
                 .verify(matching: container, named: "dark", testName: testName)
         }
     }
+
+    // MARK: Private
+
+    /// A container is needed because the availability indicator view has a border beyond its frame.
+    private var container: UIView!
+    private var sut: SUT!
+    private var snapshotHelper: SnapshotHelper!
 }
 
 // MARK: - AvailabilityIndicatorView + Sendable

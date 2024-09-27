@@ -30,6 +30,8 @@ final class MockSplitViewControllerDelegate: NSObject, SplitViewControllerDelega
 // MARK: - SplitViewControllerTests
 
 final class SplitViewControllerTests: XCTestCase {
+    // MARK: Internal
+
     var sut: SplitViewController!
     var mockParentViewController: UIViewController!
     var mockSplitViewControllerDelegate: MockSplitViewControllerDelegate!
@@ -86,29 +88,6 @@ final class SplitViewControllerTests: XCTestCase {
         // THEN
         XCTAssertEqual(sut.leftView.frame.width, compactWidth)
         XCTAssertEqual(sut.rightView.frame.width, compactWidth)
-    }
-
-    private func setupLeftView(
-        isLeftViewControllerRevealed: Bool,
-        animated: Bool = true,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        sut.leftViewController = UIViewController()
-        sut.rightViewController = UIViewController()
-
-        let compactTraitCollection = UITraitCollection(horizontalSizeClass: .compact)
-        mockParentViewController.setOverrideTraitCollection(compactTraitCollection, forChild: sut)
-
-        sut.isLeftViewControllerRevealed = isLeftViewControllerRevealed
-        sut.setLeftViewControllerRevealed(isLeftViewControllerRevealed, animated: animated)
-
-        XCTAssertEqual(
-            sut.rightView.frame.origin.x,
-            isLeftViewControllerRevealed ? sut.leftView.frame.size.width : 0,
-            file: file,
-            line: line
-        )
     }
 
     func testThatPanRightViewToLessThanHalfWouldBounceBack() {
@@ -179,5 +158,30 @@ final class SplitViewControllerTests: XCTestCase {
 
         // THEN
         XCTAssert(sut.leftView.isHidden)
+    }
+
+    // MARK: Private
+
+    private func setupLeftView(
+        isLeftViewControllerRevealed: Bool,
+        animated: Bool = true,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        sut.leftViewController = UIViewController()
+        sut.rightViewController = UIViewController()
+
+        let compactTraitCollection = UITraitCollection(horizontalSizeClass: .compact)
+        mockParentViewController.setOverrideTraitCollection(compactTraitCollection, forChild: sut)
+
+        sut.isLeftViewControllerRevealed = isLeftViewControllerRevealed
+        sut.setLeftViewControllerRevealed(isLeftViewControllerRevealed, animated: animated)
+
+        XCTAssertEqual(
+            sut.rightView.frame.origin.x,
+            isLeftViewControllerRevealed ? sut.leftView.frame.size.width : 0,
+            file: file,
+            line: line
+        )
     }
 }

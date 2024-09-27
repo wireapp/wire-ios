@@ -19,9 +19,25 @@
 import UIKit
 
 final class SenderNameCellComponent: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     let label = UILabel()
     let indicatorView = UIImageView()
-    private var indicatorImageViewTrailing: NSLayoutConstraint!
 
     var senderName: String? {
         get { label.text }
@@ -43,18 +59,14 @@ final class SenderNameCellComponent: UIView {
         }
     }
 
-    // MARK: - Initialization
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        indicatorImageViewTrailing.constant = -conversationHorizontalMargins.right
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
+    // MARK: Private
+
+    private var indicatorImageViewTrailing: NSLayoutConstraint!
 
     private func configureSubviews() {
         label.accessibilityIdentifier = "author.name"
@@ -84,10 +96,5 @@ final class SenderNameCellComponent: UIView {
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
             label.trailingAnchor.constraint(equalTo: indicatorView.leadingAnchor, constant: -8),
         ])
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        indicatorImageViewTrailing.constant = -conversationHorizontalMargins.right
     }
 }

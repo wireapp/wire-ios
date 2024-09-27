@@ -27,9 +27,13 @@ import Foundation
 //////////////////////////
 
 public final class NewUnreadMessagesChangeInfo: ObjectChangeInfo {
+    // MARK: Lifecycle
+
     public convenience init(messages: [ZMConversationMessage]) {
         self.init(object: messages as NSObject)
     }
+
+    // MARK: Public
 
     public var messages: [ZMConversationMessage] {
         object as? [ZMConversationMessage] ?? []
@@ -73,9 +77,13 @@ extension NewUnreadMessagesChangeInfo {
 
 @objc
 public final class NewUnreadKnockMessagesChangeInfo: ObjectChangeInfo {
+    // MARK: Lifecycle
+
     public convenience init(messages: [ZMConversationMessage]) {
         self.init(object: messages as NSObject)
     }
+
+    // MARK: Public
 
     public var messages: [ZMConversationMessage] {
         object as? [ZMConversationMessage] ?? []
@@ -119,9 +127,13 @@ extension NewUnreadKnockMessagesChangeInfo {
 
 @objc
 public final class NewUnreadUnsentMessageChangeInfo: ObjectChangeInfo {
+    // MARK: Lifecycle
+
     public required convenience init(messages: [ZMConversationMessage]) {
         self.init(object: messages as NSObject)
     }
+
+    // MARK: Public
 
     public var messages: [ZMConversationMessage] {
         object as? [ZMConversationMessage] ?? []

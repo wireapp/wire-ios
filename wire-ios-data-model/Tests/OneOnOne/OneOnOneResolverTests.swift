@@ -23,15 +23,7 @@ import XCTest
 // MARK: - OneOnOneResolverTests
 
 final class OneOnOneResolverTests: XCTestCase {
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var modelHelper: ModelHelper!
-
-    private var mockCoreDataStack: CoreDataStack!
-    private var mockMigrator: MockActorOneOnOneMigrator!
-    private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
-
-    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
-    private var oldDeveloperFlagStorage: UserDefaults!
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -306,6 +298,19 @@ final class OneOnOneResolverTests: XCTestCase {
             XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, .mlsNotSupportedSelfUser)
         }
     }
+
+    // MARK: Private
+
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
+
+    private var mockCoreDataStack: CoreDataStack!
+    private var mockMigrator: MockActorOneOnOneMigrator!
+    private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
+
+    private var oldDeveloperFlagStorage: UserDefaults!
+
+    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
     // MARK: Helpers
 

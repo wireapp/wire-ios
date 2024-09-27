@@ -23,17 +23,7 @@ import WireDesign
 // MARK: - CompleteReactionPickerViewController
 
 final class CompleteReactionPickerViewController: UIViewController {
-    // MARK: - Properties
-
-    weak var delegate: EmojiPickerViewControllerDelegate?
-    private var emojiDataSource: EmojiDataSource!
-    private let collectionView = ReactionsCollectionView()
-    private lazy var sectionViewController = ReactionSectionViewController(types: emojiDataSource.sectionTypes)
-    private let topBar = ModalTopBar()
-    private let searchBar = UISearchBar()
-    private let selectedReactions: Set<Emoji.ID>
-
-    private var deleting = false
+    // MARK: Lifecycle
 
     init(
         selectedReactions: Set<Emoji.ID>,
@@ -66,6 +56,12 @@ final class CompleteReactionPickerViewController: UIViewController {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    weak var delegate: EmojiPickerViewControllerDelegate?
 
     // MARK: - Override methods
 
@@ -105,6 +101,43 @@ final class CompleteReactionPickerViewController: UIViewController {
         setupAccessibility()
     }
 
+    // MARK: - Collection View
+
+    func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! EmojiCollectionViewCell
+        cell.titleLabel.text = emoji.value
+        cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        cell.isCurrent = selectedReactions.contains(emoji.value)
+        return cell
+    }
+
+    func updateSectionSelection() {
+        let minSection = Set(collectionView.indexPathsForVisibleItems.map(\.section)).min()
+        guard let section = minSection  else { return }
+        sectionViewController.didSelectSection(emojiDataSource[section].id)
+    }
+
+    // MARK: - Dynamic Type
+
+    @objc
+    func preferredContentSizeChanged(_: Notification) {
+        collectionView.reloadData()
+    }
+
+    // MARK: Private
+
+    private var emojiDataSource: EmojiDataSource!
+    private let collectionView = ReactionsCollectionView()
+    private lazy var sectionViewController = ReactionSectionViewController(types: emojiDataSource.sectionTypes)
+    private let topBar = ModalTopBar()
+    private let searchBar = UISearchBar()
+    private let selectedReactions: Set<Emoji.ID>
+
+    private var deleting = false
+
     private func createConstraints() {
         guard let sectionViewControllerView = sectionViewController.view else { return }
 
@@ -133,25 +166,6 @@ final class CompleteReactionPickerViewController: UIViewController {
         ])
     }
 
-    // MARK: - Collection View
-
-    func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier,
-            for: indexPath
-        ) as! EmojiCollectionViewCell
-        cell.titleLabel.text = emoji.value
-        cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        cell.isCurrent = selectedReactions.contains(emoji.value)
-        return cell
-    }
-
-    func updateSectionSelection() {
-        let minSection = Set(collectionView.indexPathsForVisibleItems.map(\.section)).min()
-        guard let section = minSection  else { return }
-        sectionViewController.didSelectSection(emojiDataSource[section].id)
-    }
-
     // MARK: - Accessibility
 
     private func setupAccessibility() {
@@ -163,13 +177,6 @@ final class CompleteReactionPickerViewController: UIViewController {
         if searchBar.placeholder != nil {
             searchBar.accessibilityValue = ReactionPickerAccessibility.SearchFieldPlaceholder.description
         }
-    }
-
-    // MARK: - Dynamic Type
-
-    @objc
-    func preferredContentSizeChanged(_: Notification) {
-        collectionView.reloadData()
     }
 }
 

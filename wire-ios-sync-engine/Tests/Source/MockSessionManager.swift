@@ -22,6 +22,12 @@ import Foundation
 // MARK: - MockSessionManager
 
 class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
+    // MARK: Public
+
+    @objc public var updatePushTokenCalled = false
+
+    // MARK: Internal
+
     static let accountManagerURL = URL(fileURLWithPath: NSTemporaryDirectory())
         .appendingPathComponent("MockSessionManager.accounts")
 
@@ -62,7 +68,6 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
         lastRequestToShowConnectionRequest = userId
     }
 
-    @objc public var updatePushTokenCalled = false
     func configurePushToken(session: ZMUserSession) {
         updatePushTokenCalled = true
     }

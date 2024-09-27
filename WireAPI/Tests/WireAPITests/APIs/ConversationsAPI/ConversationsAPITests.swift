@@ -20,8 +20,7 @@ import XCTest
 @testable import WireAPI
 
 final class ConversationsAPITests: XCTestCase {
-    private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
-    private var apiSnapshotHelper: APISnapshotHelper<any ConversationsAPI>!
+    // MARK: Internal
 
     // MARK: - Setup
 
@@ -475,4 +474,9 @@ final class ConversationsAPITests: XCTestCase {
             XCTFail("expected error 'FailureResponse'")
         }
     }
+
+    // MARK: Private
+
+    private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
+    private var apiSnapshotHelper: APISnapshotHelper<any ConversationsAPI>!
 }

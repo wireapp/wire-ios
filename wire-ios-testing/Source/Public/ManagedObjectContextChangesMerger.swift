@@ -19,7 +19,7 @@
 import Foundation
 
 public final class ManagedObjectContextChangesMerger: NSObject {
-    public let managedObjectContexts: Set<NSManagedObjectContext>
+    // MARK: Lifecycle
 
     public init(managedObjectContexts: Set<NSManagedObjectContext>) {
         self.managedObjectContexts = managedObjectContexts
@@ -36,6 +36,12 @@ public final class ManagedObjectContextChangesMerger: NSObject {
             )
         }
     }
+
+    // MARK: Public
+
+    public let managedObjectContexts: Set<NSManagedObjectContext>
+
+    // MARK: Internal
 
     @objc
     func contextDidSave(_ notification: Notification) {

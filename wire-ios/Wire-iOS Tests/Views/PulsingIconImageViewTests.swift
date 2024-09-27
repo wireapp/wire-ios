@@ -25,11 +25,12 @@ import XCTest
 
 private class MockPulsingIconImageView: PulsingIconImageView {
     var didStartPulsing = false
+    var didStopPulsing = false
+
     override func startPulsing() {
         didStartPulsing = true
     }
 
-    var didStopPulsing = false
     override func stopPulsing() {
         didStopPulsing = true
     }
@@ -39,6 +40,7 @@ private class MockPulsingIconImageView: PulsingIconImageView {
 
 private class MockPulsingIconImageStyle: PulsingIconImageStyle, IconImageStyle {
     var _shouldPulse = false
+
     var shouldPulse: Bool {
         _shouldPulse
     }
@@ -51,8 +53,7 @@ private class MockPulsingIconImageStyle: PulsingIconImageStyle, IconImageStyle {
 // MARK: - PulsingIconImageViewTests
 
 class PulsingIconImageViewTests: XCTestCase {
-    private var sut: MockPulsingIconImageView!
-    private var style: MockPulsingIconImageStyle!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -81,4 +82,9 @@ class PulsingIconImageViewTests: XCTestCase {
         // THEN
         XCTAssertTrue(sut.didStartPulsing)
     }
+
+    // MARK: Private
+
+    private var sut: MockPulsingIconImageView!
+    private var style: MockPulsingIconImageStyle!
 }

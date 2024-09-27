@@ -26,6 +26,16 @@ private enum ExtensionSettingsKey: String, CaseIterable {
     case disableAnalyticsSharing
     case disableLinkPreviews
 
+    // MARK: Internal
+
+    static var defaultValueDictionary: [String: Any] {
+        allCases.reduce(into: [:]) { partialResult, current in
+            partialResult[current.rawValue] = current.defaultValue
+        }
+    }
+
+    // MARK: Private
+
     private var defaultValue: Any? {
         switch self {
         // Always disable analytics by default.
@@ -37,20 +47,12 @@ private enum ExtensionSettingsKey: String, CaseIterable {
             false
         }
     }
-
-    static var defaultValueDictionary: [String: Any] {
-        allCases.reduce(into: [:]) { partialResult, current in
-            partialResult[current.rawValue] = current.defaultValue
-        }
-    }
 }
 
 // MARK: - ExtensionSettings
 
 public final class ExtensionSettings: NSObject {
-    public static let shared = ExtensionSettings(defaults: .shared()!)
-
-    private let defaults: UserDefaults
+    // MARK: Lifecycle
 
     public init(defaults: UserDefaults) {
         self.defaults = defaults
@@ -58,15 +60,9 @@ public final class ExtensionSettings: NSObject {
         setupDefaultValues()
     }
 
-    private func setupDefaultValues() {
-        defaults.register(defaults: ExtensionSettingsKey.defaultValueDictionary)
-    }
+    // MARK: Public
 
-    func reset() {
-        for item in ExtensionSettingsKey.allCases {
-            defaults.removeObject(forKey: item.rawValue)
-        }
-    }
+    public static let shared = ExtensionSettings(defaults: .shared()!)
 
     public var disableAnalyticsSharing: Bool {
         get { defaults.bool(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
@@ -81,5 +77,21 @@ public final class ExtensionSettings: NSObject {
     public var disableLinkPreviews: Bool {
         get { defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
+    }
+
+    // MARK: Internal
+
+    func reset() {
+        for item in ExtensionSettingsKey.allCases {
+            defaults.removeObject(forKey: item.rawValue)
+        }
+    }
+
+    // MARK: Private
+
+    private let defaults: UserDefaults
+
+    private func setupDefaultValues() {
+        defaults.register(defaults: ExtensionSettingsKey.defaultValueDictionary)
     }
 }

@@ -145,12 +145,12 @@ extension ZMUser {
 enum ConsentRequestFactory {
     static let consentPath = "/self/consent"
 
-    static func fetchConsentRequest(apiVersion: APIVersion) -> ZMTransportRequest {
-        .init(getFromPath: consentPath, apiVersion: apiVersion.rawValue)
-    }
-
     static var sourceString: String {
         "iOS " + Bundle.main.version
+    }
+
+    static func fetchConsentRequest(apiVersion: APIVersion) -> ZMTransportRequest {
+        .init(getFromPath: consentPath, apiVersion: apiVersion.rawValue)
     }
 
     static func setConsentRequest(

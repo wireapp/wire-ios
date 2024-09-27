@@ -19,8 +19,7 @@
 import UIKit
 
 final class MockTapGestureRecognizer: UITapGestureRecognizer {
-    let mockState: UIGestureRecognizer.State
-    var mockLocation: CGPoint?
+    // MARK: Lifecycle
 
     init(location: CGPoint?, state: UIGestureRecognizer.State) {
         self.mockLocation = location
@@ -29,18 +28,23 @@ final class MockTapGestureRecognizer: UITapGestureRecognizer {
         super.init(target: nil, action: nil)
     }
 
-    override func location(in view: UIView?) -> CGPoint {
-        mockLocation ?? super.location(in: view)
-    }
+    // MARK: Internal
 
-    override func location(ofTouch touchIndex: Int, in view: UIView?) -> CGPoint {
-        mockLocation ?? super.location(ofTouch: touchIndex, in: view)
-    }
+    let mockState: UIGestureRecognizer.State
+    var mockLocation: CGPoint?
 
     override var state: UIGestureRecognizer.State {
         get {
             mockState
         }
         set {}
+    }
+
+    override func location(in view: UIView?) -> CGPoint {
+        mockLocation ?? super.location(in: view)
+    }
+
+    override func location(ofTouch touchIndex: Int, in view: UIView?) -> CGPoint {
+        mockLocation ?? super.location(ofTouch: touchIndex, in: view)
     }
 }

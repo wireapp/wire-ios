@@ -55,6 +55,44 @@ extension CallStatusViewState {
 // MARK: - EstablishingCallStatusView
 
 final class EstablishingCallStatusView: UIView {
+    // MARK: Lifecycle
+
+    init() {
+        super.init(frame: .zero)
+        setupViews()
+        setupConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        profileImageView.layer.cornerRadius = profileImageView.bounds.width / 2.0
+    }
+
+    func setTitle(title: String) {
+        titleLabel.text = title
+    }
+
+    func setProfileImage(image: UIImage?) {
+        profileImageView.image = image
+    }
+
+    func updateState(state: CallStatusViewState) {
+        callStateLabel.text = state.displayString
+    }
+
+    func setProfileImage(hidden: Bool) {
+        profileImageView.isHidden = hidden
+    }
+
+    // MARK: Private
+
     private let titleLabel = DynamicFontLabel(
         text: "",
         fontSpec: .largeSemiboldFont,
@@ -71,17 +109,6 @@ final class EstablishingCallStatusView: UIView {
     private let profileImageView = UIImageView()
     private let stackView = UIStackView(axis: .vertical)
 
-    init() {
-        super.init(frame: .zero)
-        setupViews()
-        setupConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     private func setupViews() {
         [stackView, profileImageView, spaceView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         stackView.alignment = .center
@@ -91,11 +118,6 @@ final class EstablishingCallStatusView: UIView {
         profileImageView.layer.cornerRadius = 64.0
         profileImageView.layer.masksToBounds = true
         profileImageView.contentMode = .scaleAspectFill
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        profileImageView.layer.cornerRadius = profileImageView.bounds.width / 2.0
     }
 
     private func setupConstraints() {
@@ -116,22 +138,6 @@ final class EstablishingCallStatusView: UIView {
                 .withPriority(.required),
             spaceView.heightAnchor.constraint(equalToConstant: spacerHeight),
         ])
-    }
-
-    func setTitle(title: String) {
-        titleLabel.text = title
-    }
-
-    func setProfileImage(image: UIImage?) {
-        profileImageView.image = image
-    }
-
-    func updateState(state: CallStatusViewState) {
-        callStateLabel.text = state.displayString
-    }
-
-    func setProfileImage(hidden: Bool) {
-        profileImageView.isHidden = hidden
     }
 }
 

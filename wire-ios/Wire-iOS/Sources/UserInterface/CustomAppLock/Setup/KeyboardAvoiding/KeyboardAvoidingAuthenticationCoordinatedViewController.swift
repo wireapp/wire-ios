@@ -20,6 +20,8 @@ import UIKit
 
 final class KeyboardAvoidingAuthenticationCoordinatedViewController: KeyboardAvoidingViewController,
     AuthenticationCoordinatedViewController {
+    // MARK: Internal
+
     weak var authenticationCoordinator: AuthenticationCoordinator? {
         get {
             childAuthenticationCoordinatedViewController?.authenticationCoordinator
@@ -37,6 +39,8 @@ final class KeyboardAvoidingAuthenticationCoordinatedViewController: KeyboardAvo
     func displayError(_ error: Error) {
         childAuthenticationCoordinatedViewController?.displayError(error)
     }
+
+    // MARK: Private
 
     private var childAuthenticationCoordinatedViewController: AuthenticationCoordinatedViewController? {
         viewController as? AuthenticationCoordinatedViewController

@@ -28,6 +28,8 @@ public enum MockConversationAccessRole: String {
     /// Any user can join.
     case nonActivated = "non_activated"
 
+    // MARK: Public
+
     public static func value(forAllowGuests allowGuests: Bool) -> MockConversationAccessRole {
         allowGuests ? .nonActivated : .team
     }
@@ -44,6 +46,8 @@ public enum MockConversationAccessRoleV2: String {
     case guest
     /// A service pseudo-user, aka a non-human bot.
     case service
+
+    // MARK: Public
 
     public static func value(forAllowGuests allowGuests: Bool, forAllowServices allowServices: Bool) -> [String] {
         switch (allowGuests, allowServices) {
@@ -62,11 +66,13 @@ public enum MockConversationAccessRoleV2: String {
 // MARK: - MockConversationAccessMode
 
 public struct MockConversationAccessMode: OptionSet {
-    public let rawValue: Int
+    // MARK: Lifecycle
 
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
+
+    // MARK: Public
 
     /// Allowed user can be added by an existing conv member.
     public static let invite    = MockConversationAccessMode(rawValue: 1 << 0)
@@ -81,12 +87,7 @@ public struct MockConversationAccessMode: OptionSet {
     public static let teamOnly  = MockConversationAccessMode()
     public static let allowGuests: MockConversationAccessMode = [.invite, .code]
 
-    static let stringValues: [MockConversationAccessMode: String] = [
-        .invite: "invite",
-        .code: "code",
-        .link: "link",
-        .private: "private",
-    ]
+    public let rawValue: Int
 
     public var stringValue: [String] {
         MockConversationAccessMode.stringValues.compactMap { contains($0) ? $1 : nil }
@@ -95,6 +96,15 @@ public struct MockConversationAccessMode: OptionSet {
     public static func value(forAllowGuests allowGuests: Bool) -> MockConversationAccessMode {
         allowGuests ? .allowGuests : .teamOnly
     }
+
+    // MARK: Internal
+
+    static let stringValues: [MockConversationAccessMode: String] = [
+        .invite: "invite",
+        .code: "code",
+        .link: "link",
+        .private: "private",
+    ]
 }
 
 // MARK: Hashable

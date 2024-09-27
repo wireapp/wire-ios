@@ -48,8 +48,7 @@ public final class TeamRolesDownloadRequestStrategy:
     ZMRequestGeneratorSource,
     ZMRequestGenerator,
     ZMDownstreamTranscoder {
-    private(set) var downstreamSync: ZMDownstreamObjectSync!
-    private unowned var syncStatus: SyncStatus
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -67,13 +66,7 @@ public final class TeamRolesDownloadRequestStrategy:
         )
     }
 
-    override public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        let request = downstreamSync.nextRequest(for: apiVersion)
-        if request == nil {
-            completeSyncPhaseIfNoTeam()
-        }
-        return request
-    }
+    // MARK: Public
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [downstreamSync]
@@ -83,16 +76,12 @@ public final class TeamRolesDownloadRequestStrategy:
         [self]
     }
 
-    fileprivate let expectedSyncPhase = SyncPhase.fetchingTeamRoles
-
-    fileprivate var isSyncing: Bool {
-        syncStatus.currentSyncPhase == expectedSyncPhase
-    }
-
-    private func completeSyncPhaseIfNoTeam() {
-        if syncStatus.currentSyncPhase == expectedSyncPhase, !downstreamSync.hasOutstandingItems {
-            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
+    override public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        let request = downstreamSync.nextRequest(for: apiVersion)
+        if request == nil {
+            completeSyncPhaseIfNoTeam()
         }
+        return request
     }
 
     // MARK: - ZMDownstreamTranscoder
@@ -122,5 +111,27 @@ public final class TeamRolesDownloadRequestStrategy:
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         // pass
+    }
+
+    // MARK: Internal
+
+    private(set) var downstreamSync: ZMDownstreamObjectSync!
+
+    // MARK: Fileprivate
+
+    fileprivate let expectedSyncPhase = SyncPhase.fetchingTeamRoles
+
+    fileprivate var isSyncing: Bool {
+        syncStatus.currentSyncPhase == expectedSyncPhase
+    }
+
+    // MARK: Private
+
+    private unowned var syncStatus: SyncStatus
+
+    private func completeSyncPhaseIfNoTeam() {
+        if syncStatus.currentSyncPhase == expectedSyncPhase, !downstreamSync.hasOutstandingItems {
+            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
+        }
     }
 }

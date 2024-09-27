@@ -23,23 +23,7 @@ import UIKit
 /// if needed.
 
 final class GridLayoutView: UIView {
-    // MARK: - Properties
-
-    var verticalSpacing: CGFloat = 4
-    var horizontalSpacing: CGFloat = 4
-
-    private(set) var views = [UIView]()
-
-    private lazy var stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = verticalSpacing
-        stackView.alignment = .leading
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -51,10 +35,16 @@ final class GridLayoutView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setUpViews() {
-        addSubview(stackView)
-        stackView.fitIn(view: self)
-    }
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    var verticalSpacing: CGFloat = 4
+    var horizontalSpacing: CGFloat = 4
+
+    private(set) var views = [UIView]()
+
+    var widthForCalculations: CGFloat = 0
 
     // MARK: - Layout
 
@@ -69,8 +59,6 @@ final class GridLayoutView: UIView {
         setNeedsLayout()
         layoutIfNeeded()
     }
-
-    var widthForCalculations: CGFloat = 0
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -96,6 +84,22 @@ final class GridLayoutView: UIView {
             currentLineStackView.addArrangedSubview(view)
             lineWidth += viewSize.width + horizontalSpacing
         }
+    }
+
+    // MARK: Private
+
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = verticalSpacing
+        stackView.alignment = .leading
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+
+    private func setUpViews() {
+        addSubview(stackView)
+        stackView.fitIn(view: self)
     }
 
     private func createNewRow() -> UIStackView {

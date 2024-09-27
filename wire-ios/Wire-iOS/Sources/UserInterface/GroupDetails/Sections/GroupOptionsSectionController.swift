@@ -31,41 +31,7 @@ protocol GroupOptionsSectionControllerDelegate: AnyObject {
 // MARK: - GroupOptionsSectionController
 
 final class GroupOptionsSectionController: GroupDetailsSectionController {
-    private enum Option: Int, CaseIterable {
-        case notifications = 0, guests, services, timeout
-
-        func accessible(
-            in conversation: GroupDetailsConversationType,
-            by user: UserType
-        ) -> Bool {
-            switch self {
-            case .notifications: user.canModifyNotificationSettings(in: conversation)
-            case .guests:        user.canModifyAccessControlSettings(in: conversation)
-            case .services:      user.canModifyAccessControlSettings(in: conversation)
-            case .timeout:       user.canModifyEphemeralSettings(in: conversation)
-            }
-        }
-
-        var cellReuseIdentifier: String {
-            switch self {
-            case .guests: GroupDetailsGuestOptionsCell.zm_reuseIdentifier
-            case .services: GroupDetailsServicesCell.zm_reuseIdentifier
-            case .timeout: GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
-            case .notifications: GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
-            }
-        }
-    }
-
-    // MARK: - Properties
-
-    private weak var delegate: GroupOptionsSectionControllerDelegate?
-    private let conversation: GroupDetailsConversationType
-    private let syncCompleted: Bool
-    private let options: [Option]
-
-    var hasOptions: Bool {
-        !options.isEmpty
-    }
+    // MARK: Lifecycle
 
     init(
         conversation: GroupDetailsConversationType,
@@ -77,6 +43,12 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         self.conversation = conversation
         self.syncCompleted = syncCompleted
         self.options = Option.allCases.filter { $0.accessible(in: conversation, by: user) }
+    }
+
+    // MARK: Internal
+
+    var hasOptions: Bool {
+        !options.isEmpty
     }
 
     // MARK: - Collection View
@@ -134,4 +106,40 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             delegate?.presentNotificationsOptions(animated: true)
         }
     }
+
+    // MARK: Private
+
+    private enum Option: Int, CaseIterable {
+        case notifications = 0, guests, services, timeout
+
+        // MARK: Internal
+
+        var cellReuseIdentifier: String {
+            switch self {
+            case .guests: GroupDetailsGuestOptionsCell.zm_reuseIdentifier
+            case .services: GroupDetailsServicesCell.zm_reuseIdentifier
+            case .timeout: GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
+            case .notifications: GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
+            }
+        }
+
+        func accessible(
+            in conversation: GroupDetailsConversationType,
+            by user: UserType
+        ) -> Bool {
+            switch self {
+            case .notifications: user.canModifyNotificationSettings(in: conversation)
+            case .guests:        user.canModifyAccessControlSettings(in: conversation)
+            case .services:      user.canModifyAccessControlSettings(in: conversation)
+            case .timeout:       user.canModifyEphemeralSettings(in: conversation)
+            }
+        }
+    }
+
+    // MARK: - Properties
+
+    private weak var delegate: GroupOptionsSectionControllerDelegate?
+    private let conversation: GroupDetailsConversationType
+    private let syncCompleted: Bool
+    private let options: [Option]
 }

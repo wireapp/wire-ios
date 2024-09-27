@@ -48,9 +48,7 @@ extension IconImageStyle {
 // MARK: - IconImageView
 
 class IconImageView: UIImageView {
-    private(set) var size: StyleKitIcon.Size = .tiny
-    private(set) var color: UIColor = SemanticColors.Icon.foregroundDefault
-    private(set) var style: IconImageStyle?
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -65,6 +63,12 @@ class IconImageView: UIImageView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    private(set) var size: StyleKitIcon.Size = .tiny
+    private(set) var color: UIColor = SemanticColors.Icon.foregroundDefault
+    private(set) var style: IconImageStyle?
 
     override var accessibilityIdentifier: String? {
         get {
@@ -105,6 +109,8 @@ class IconImageView: UIImageView {
         setTemplateIcon(icon, size: self.size)
         self.style = style
     }
+
+    // MARK: Private
 
     private func set(size: StyleKitIcon.Size?, color: UIColor?) {
         guard let size, let color else {

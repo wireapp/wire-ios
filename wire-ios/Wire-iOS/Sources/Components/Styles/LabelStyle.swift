@@ -22,9 +22,6 @@ import WireDesign
 // MARK: - LabelStyle
 
 struct LabelStyle {
-    var backgroundColor: UIColor
-    var textColor: UIColor
-
     static let footerLabel: Self = LabelStyle(
         backgroundColor: .clear,
         textColor: SemanticColors.Label.textSectionFooter
@@ -49,6 +46,9 @@ struct LabelStyle {
         backgroundColor: .clear,
         textColor: SemanticColors.SearchBar.textInputViewPlaceholder
     )
+
+    var backgroundColor: UIColor
+    var textColor: UIColor
 }
 
 // MARK: - UILabel + Stylable

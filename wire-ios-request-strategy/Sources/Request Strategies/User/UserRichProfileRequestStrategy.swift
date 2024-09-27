@@ -24,7 +24,7 @@ private let zmLog = ZMSLog(tag: "rich-profile")
 // MARK: - UserRichProfileRequestStrategy
 
 public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
-    var modifiedSync: ZMDownstreamObjectSync!
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -41,9 +41,15 @@ public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
         )
     }
 
+    // MARK: Public
+
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         modifiedSync.nextRequest(for: apiVersion)
     }
+
+    // MARK: Internal
+
+    var modifiedSync: ZMDownstreamObjectSync!
 }
 
 // MARK: ZMDownstreamTranscoder

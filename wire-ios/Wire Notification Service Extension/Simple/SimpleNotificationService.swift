@@ -22,22 +22,18 @@ import WireCommonComponents
 import WireTransport
 
 final class SimpleNotificationService: UNNotificationServiceExtension, Loggable {
-    // MARK: - Types
-
-    typealias ContentHandler = (UNNotificationContent) -> Void
-
-    // MARK: - Properties
-
-    private let environment: BackendEnvironmentProvider = BackendEnvironment.shared
-    private var currentTasks: [String: Task<Void, Never>] = [:]
-    private var latestContentHandler: ContentHandler?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override init() {
         WireLogger.notifications.info("initializing new simple notification service")
         super.init()
     }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    typealias ContentHandler = (UNNotificationContent) -> Void
 
     // MARK: - Methods
 
@@ -71,6 +67,14 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
         currentTasks = [:]
         finishWithoutShowingNotification()
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let environment: BackendEnvironmentProvider = BackendEnvironment.shared
+    private var currentTasks: [String: Task<Void, Never>] = [:]
+    private var latestContentHandler: ContentHandler?
 
     private func finishWithoutShowingNotification() {
         WireLogger.notifications.info("finishing without showing notification")

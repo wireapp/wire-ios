@@ -64,13 +64,7 @@ extension Error {
 // MARK: - ConversationParticipantsService
 
 public class ConversationParticipantsService: ConversationParticipantsServiceInterface {
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-    private let proteusParticipantsService: ProteusConversationParticipantsServiceInterface
-    private let mlsParticipantsService: MLSConversationParticipantsServiceInterface?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public convenience init(context: NSManagedObjectContext) {
         self.init(
@@ -89,6 +83,8 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         self.proteusParticipantsService = proteusParticipantsService
         self.mlsParticipantsService = mlsParticipantsService
     }
+
+    // MARK: Public
 
     // MARK: - Adding Participants
 
@@ -121,6 +117,39 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             )
         }
     }
+
+    // MARK: - Removing Participant
+
+    public func removeParticipant(
+        _ user: ZMUser,
+        from conversation: ZMConversation
+    ) async throws {
+        guard await context.perform({ conversation.conversationType == .group }) else {
+            throw ConversationParticipantsError.invalidOperation
+        }
+
+        let (messageProtocol, isSelfUser) = await context.perform {
+            (conversation.messageProtocol, user.isSelfUser)
+        }
+
+        switch (messageProtocol, isSelfUser) {
+        case (.proteus, _), (.mixed, _), (.mls, true):
+            try await proteusParticipantsService.removeParticipant(user, from: conversation)
+        case (.mls, false):
+            guard let mlsParticipantsService else {
+                throw ConversationParticipantsError.missingMLSParticipantsService
+            }
+            try await mlsParticipantsService.removeParticipant(user, from: conversation)
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+    private let proteusParticipantsService: ProteusConversationParticipantsServiceInterface
+    private let mlsParticipantsService: MLSConversationParticipantsServiceInterface?
 
     private func internalAddParticipants(
         _ users: [ZMUser],
@@ -262,31 +291,6 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 at: conversation.lastServerTimeStamp ?? Date()
             )
             self.context.enqueueDelayedSave()
-        }
-    }
-
-    // MARK: - Removing Participant
-
-    public func removeParticipant(
-        _ user: ZMUser,
-        from conversation: ZMConversation
-    ) async throws {
-        guard await context.perform({ conversation.conversationType == .group }) else {
-            throw ConversationParticipantsError.invalidOperation
-        }
-
-        let (messageProtocol, isSelfUser) = await context.perform {
-            (conversation.messageProtocol, user.isSelfUser)
-        }
-
-        switch (messageProtocol, isSelfUser) {
-        case (.proteus, _), (.mixed, _), (.mls, true):
-            try await proteusParticipantsService.removeParticipant(user, from: conversation)
-        case (.mls, false):
-            guard let mlsParticipantsService else {
-                throw ConversationParticipantsError.missingMLSParticipantsService
-            }
-            try await mlsParticipantsService.removeParticipant(user, from: conversation)
         }
     }
 }

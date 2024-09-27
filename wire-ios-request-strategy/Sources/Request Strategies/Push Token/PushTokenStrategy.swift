@@ -20,14 +20,7 @@ import Foundation
 import WireDataModel
 
 public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
-    // MARK: - Properties
-
-    private let registerPushTokenActionHandler: RegisterPushTokenActionHandler
-    private let removePushTokenActionHandler: RemovePushTokenActionHandler
-    private let getPushTokensActionHandler: GetPushTokensActionHandler
-    private let actionSync: EntityActionSync
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     @objc
     override public init(
@@ -47,6 +40,8 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
     }
 
+    // MARK: Public
+
     // MARK: - Requests
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -64,6 +59,8 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
         events.forEach(process(updateEvent:))
     }
 
+    // MARK: Internal
+
     func process(updateEvent event: ZMUpdateEvent) {
         guard event.type == .userPushRemove else { return }
 
@@ -79,4 +76,13 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
         // We ignore the payload and remove the local push token
         PushTokenStorage.pushToken = nil
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let registerPushTokenActionHandler: RegisterPushTokenActionHandler
+    private let removePushTokenActionHandler: RemovePushTokenActionHandler
+    private let getPushTokensActionHandler: GetPushTokensActionHandler
+    private let actionSync: EntityActionSync
 }

@@ -114,9 +114,7 @@ extension UIFont {
 // MARK: - FontSpec
 
 public struct FontSpec: Hashable {
-    let size: FontSize
-    let weight: FontWeight?
-    let fontTextStyle: FontTextStyle?
+    // MARK: Lifecycle
 
     /// init method of FontSpec
     ///
@@ -130,6 +128,8 @@ public struct FontSpec: Hashable {
         self.fontTextStyle = fontTextStyle
     }
 
+    // MARK: Public
+
     public var font: UIFont? {
         FontScheme.shared.font(for: self)
     }
@@ -137,6 +137,12 @@ public struct FontSpec: Hashable {
     public var swiftUIFont: Font {
         Font(font! as CTFont)
     }
+
+    // MARK: Internal
+
+    let size: FontSize
+    let weight: FontWeight?
+    let fontTextStyle: FontTextStyle?
 }
 
 // MARK: CustomStringConvertible
@@ -160,17 +166,17 @@ extension FontSpec: CustomStringConvertible {
 // MARK: - FontScheme
 
 public final class FontScheme {
+    // MARK: Lifecycle
+
+    private init() {}
+
+    // MARK: Public
+
     public static let shared: FontScheme = {
         let fontScheme = FontScheme()
         fontScheme.configure(with: .large)
         return fontScheme
     }()
-
-    private typealias FontSizeAndPoint = (size: FontSize, point: CGFloat)
-
-    private var fontsByFontSpec: [FontSpec: UIFont] = [:]
-
-    private init() {}
 
     // MARK: - Configuration
 
@@ -398,6 +404,25 @@ public final class FontScheme {
         )
     }
 
+    // MARK: Fileprivate
+
+    // MARK: - Access
+
+    fileprivate func font(for fontType: FontSpec) -> UIFont? {
+        guard let font = fontsByFontSpec[fontType] else {
+            assertionFailure("missing uifont for fontspec: \(fontType)")
+            return nil
+        }
+
+        return font
+    }
+
+    // MARK: Private
+
+    private typealias FontSizeAndPoint = (size: FontSize, point: CGFloat)
+
+    private var fontsByFontSpec: [FontSpec: UIFont] = [:]
+
     private func mapFontTextStyleAndFontSizeAndPoint(
         fontSizeTuples allFontSizes: [FontSizeAndPoint],
         mapping: inout [FontSpec: UIFont],
@@ -422,16 +447,5 @@ public final class FontScheme {
                 )
             }
         }
-    }
-
-    // MARK: - Access
-
-    fileprivate func font(for fontType: FontSpec) -> UIFont? {
-        guard let font = fontsByFontSpec[fontType] else {
-            assertionFailure("missing uifont for fontspec: \(fontType)")
-            return nil
-        }
-
-        return font
     }
 }

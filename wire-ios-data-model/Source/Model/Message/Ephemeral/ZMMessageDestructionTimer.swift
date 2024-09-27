@@ -89,16 +89,18 @@ extension NSManagedObjectContext {
 // MARK: - MessageDestructionType
 
 enum MessageDestructionType: String {
-    static let UserInfoKey = "destructionType"
-
     case obfuscation, deletion
+
+    // MARK: Internal
+
+    static let UserInfoKey = "destructionType"
 }
 
 // MARK: - ZMMessageDestructionTimer
 
 @objcMembers
 public class ZMMessageDestructionTimer: ZMMessageTimer {
-    var isTesting = false
+    // MARK: Lifecycle
 
     override init(managedObjectContext: NSManagedObjectContext!) {
         super.init(managedObjectContext: managedObjectContext)
@@ -111,22 +113,7 @@ public class ZMMessageDestructionTimer: ZMMessageTimer {
         }
     }
 
-    func messageTimerDidFire(message: ZMMessage, userInfo: [AnyHashable: Any]?) {
-        guard let userInfo = userInfo as? [String: Any],
-              let type = userInfo[MessageDestructionType.UserInfoKey] as? String
-        else { return }
-
-        log.debug("message timer did fire for \(message.nonce?.transportString() ?? ""), \(type)")
-        switch MessageDestructionType(rawValue: type) {
-        case .some(.obfuscation):
-            message.obfuscate()
-        case .some(.deletion):
-            message.deleteEphemeral()
-        default:
-            return
-        }
-        moc.saveOrRollback()
-    }
+    // MARK: Public
 
     public func startObfuscationTimer(message: ZMMessage, timeout: TimeInterval) {
         let fireDate = Date().addingTimeInterval(timeout)
@@ -158,5 +145,26 @@ public class ZMMessageDestructionTimer: ZMMessageTimer {
         }
 
         return timeout
+    }
+
+    // MARK: Internal
+
+    var isTesting = false
+
+    func messageTimerDidFire(message: ZMMessage, userInfo: [AnyHashable: Any]?) {
+        guard let userInfo = userInfo as? [String: Any],
+              let type = userInfo[MessageDestructionType.UserInfoKey] as? String
+        else { return }
+
+        log.debug("message timer did fire for \(message.nonce?.transportString() ?? ""), \(type)")
+        switch MessageDestructionType(rawValue: type) {
+        case .some(.obfuscation):
+            message.obfuscate()
+        case .some(.deletion):
+            message.deleteEphemeral()
+        default:
+            return
+        }
+        moc.saveOrRollback()
     }
 }

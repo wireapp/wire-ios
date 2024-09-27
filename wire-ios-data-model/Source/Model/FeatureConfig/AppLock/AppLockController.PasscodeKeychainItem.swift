@@ -20,15 +20,7 @@ import Foundation
 
 extension AppLockController {
     struct PasscodeKeychainItem: KeychainItem {
-        private enum Constant {
-            static let legacyIdentifier = "com.wire.passcode"
-        }
-
-        // MARK: - Properties
-
-        private let itemIdentifier: String
-
-        // MARK: - Life cycle
+        // MARK: Lifecycle
 
         init(userId: UUID) {
             self.init(itemIdentifier: "\(Constant.legacyIdentifier)-\(userId.uuidString)")
@@ -37,6 +29,8 @@ extension AppLockController {
         private init(itemIdentifier: String) {
             self.itemIdentifier = itemIdentifier
         }
+
+        // MARK: Internal
 
         // MARK: - Methods
 
@@ -48,6 +42,12 @@ extension AppLockController {
             ]
         }
 
+        // MARK: Legacy
+
+        static func makeLegacyItem() -> PasscodeKeychainItem {
+            PasscodeKeychainItem(itemIdentifier: Constant.legacyIdentifier)
+        }
+
         func queryForSetting(value: Data) -> [CFString: Any] {
             [
                 kSecClass: kSecClassGenericPassword,
@@ -56,10 +56,14 @@ extension AppLockController {
             ]
         }
 
-        // MARK: Legacy
+        // MARK: Private
 
-        static func makeLegacyItem() -> PasscodeKeychainItem {
-            PasscodeKeychainItem(itemIdentifier: Constant.legacyIdentifier)
+        private enum Constant {
+            static let legacyIdentifier = "com.wire.passcode"
         }
+
+        // MARK: - Properties
+
+        private let itemIdentifier: String
     }
 }

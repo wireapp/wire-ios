@@ -21,8 +21,7 @@ import Foundation
 /// Downloads all team members during the slow sync.
 
 public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-    let syncStatus: SyncStatus
-    var sync: ZMSingleRequestSync!
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -39,6 +38,8 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         configuration = [.allowsRequestsDuringSlowSync]
         self.sync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
+
+    // MARK: Public
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard syncStatus.currentSyncPhase == .fetchingTeamMembers else { return nil }
@@ -83,6 +84,11 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
 
         completeSyncPhase()
     }
+
+    // MARK: Internal
+
+    let syncStatus: SyncStatus
+    var sync: ZMSingleRequestSync!
 
     func failSyncPhase() {
         syncStatus.failCurrentSyncPhase(phase: .fetchingTeamMembers)

@@ -19,9 +19,7 @@
 import Foundation
 
 class PrefillPrimaryKeyAction: CoreDataMigrationAction {
-    private enum Keys: String {
-        case primaryKey
-    }
+    // MARK: Internal
 
     let batchSize = 200
     let entityNames = [ZMUser.entityName(), ZMConversation.entityName()]
@@ -30,6 +28,12 @@ class PrefillPrimaryKeyAction: CoreDataMigrationAction {
         for entityName in entityNames {
             fillPrimaryKeys(for: entityName, context: context)
         }
+    }
+
+    // MARK: Private
+
+    private enum Keys: String {
+        case primaryKey
     }
 
     private func fillPrimaryKeys(for entityName: String, context: NSManagedObjectContext) {

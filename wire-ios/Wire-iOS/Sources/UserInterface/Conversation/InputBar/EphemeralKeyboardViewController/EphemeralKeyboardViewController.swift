@@ -35,23 +35,7 @@ protocol EphemeralKeyboardViewControllerDelegate: AnyObject {
 // MARK: - EphemeralKeyboardViewController
 
 final class EphemeralKeyboardViewController: UIViewController {
-    // MARK: - Properties
-
-    weak var delegate: EphemeralKeyboardViewControllerDelegate?
-
-    fileprivate let timeouts: [MessageDestructionTimeoutValue?]
-
-    let titleLabel = DynamicFontLabel(
-        text: L10n.Localizable.Input.Ephemeral.title,
-        fontSpec: .mediumSemiboldFont,
-        color: SemanticColors.Label.textDefault
-    )
-    var pickerFont: UIFont? = .normalSemiboldFont
-    var pickerColor: UIColor? = SemanticColors.Label.textDefault
-    var separatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
-
-    private let conversation: ZMConversation!
-    private let picker = PickerView()
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -73,6 +57,21 @@ final class EphemeralKeyboardViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    weak var delegate: EphemeralKeyboardViewControllerDelegate?
+
+    let titleLabel = DynamicFontLabel(
+        text: L10n.Localizable.Input.Ephemeral.title,
+        fontSpec: .mediumSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
+    var pickerFont: UIFont? = .normalSemiboldFont
+    var pickerColor: UIColor? = SemanticColors.Label.textDefault
+    var separatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
+
     // MARK: - Override methods
 
     override func viewDidLoad() {
@@ -91,6 +90,43 @@ final class EphemeralKeyboardViewController: UIViewController {
         guard let index = timeouts.firstIndex(of: currentTimeout) else { return }
         picker.selectRow(index, inComponent: 0, animated: false)
     }
+
+    // MARK: - Methods
+
+    func dismissKeyboardIfNeeded() {
+        delegate?.ephemeralKeyboardWantsToBeDismissed(self)
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let timeouts: [MessageDestructionTimeoutValue?]
+
+    fileprivate func displayCustomPicker() {
+        delegate?.ephemeralKeyboardWantsToBeDismissed(self)
+
+        UIAlertController
+            .requestCustomTimeInterval(
+                over: UIApplication.shared
+                    .topmostViewController(onlyFullScreen: true)!
+            ) { [weak self] result in
+
+                guard let self else {
+                    return
+                }
+
+                switch result {
+                case let .success(value):
+                    delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: value)
+                default:
+                    break
+                }
+            }
+    }
+
+    // MARK: Private
+
+    private let conversation: ZMConversation!
+    private let picker = PickerView()
 
     // MARK: - Setup views and constraints
 
@@ -118,34 +154,6 @@ final class EphemeralKeyboardViewController: UIViewController {
             picker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
             picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
         ])
-    }
-
-    // MARK: - Methods
-
-    func dismissKeyboardIfNeeded() {
-        delegate?.ephemeralKeyboardWantsToBeDismissed(self)
-    }
-
-    fileprivate func displayCustomPicker() {
-        delegate?.ephemeralKeyboardWantsToBeDismissed(self)
-
-        UIAlertController
-            .requestCustomTimeInterval(
-                over: UIApplication.shared
-                    .topmostViewController(onlyFullScreen: true)!
-            ) { [weak self] result in
-
-                guard let self else {
-                    return
-                }
-
-                switch result {
-                case let .success(value):
-                    delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: value)
-                default:
-                    break
-                }
-            }
     }
 }
 

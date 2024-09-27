@@ -21,6 +21,8 @@ import WireDataModel
 import WireSyncEngine
 
 final class ConversationInputBarButtonState {
+    // MARK: Internal
+
     var sendButtonEnabled: Bool {
         let disableSendButton: Bool? = Settings.shared[.sendButtonDisabled]
         return hasText || (disableSendButton == false && !markingDown)
@@ -38,23 +40,10 @@ final class ConversationInputBarButtonState {
         !ephemeralIndicatorButtonHidden && !syncedMessageDestructionTimeout && !isEphemeralTimeoutForced
     }
 
-    private var hasText: Bool {
-        textLength != 0
-    }
-
     var ephemeral: Bool {
         guard let timeout = destructionTimeout else { return false }
         return timeout != .none
     }
-
-    private var textLength = 0
-    private var editing = false
-    private var markingDown = false
-    private var destructionTimeout: MessageDestructionTimeoutValue?
-    private var mode = ConversationInputBarViewControllerMode.textInput
-    private var syncedMessageDestructionTimeout = false
-    private var isEphemeralSendingDisabled = false
-    private var isEphemeralTimeoutForced = false
 
     func update(
         textLength: Int,
@@ -74,5 +63,20 @@ final class ConversationInputBarButtonState {
         self.syncedMessageDestructionTimeout = syncedMessageDestructionTimeout
         self.isEphemeralSendingDisabled = isEphemeralSendingDisabled
         self.isEphemeralTimeoutForced = isEphemeralTimeoutForced
+    }
+
+    // MARK: Private
+
+    private var textLength = 0
+    private var editing = false
+    private var markingDown = false
+    private var destructionTimeout: MessageDestructionTimeoutValue?
+    private var mode = ConversationInputBarViewControllerMode.textInput
+    private var syncedMessageDestructionTimeout = false
+    private var isEphemeralSendingDisabled = false
+    private var isEphemeralTimeoutForced = false
+
+    private var hasText: Bool {
+        textLength != 0
     }
 }

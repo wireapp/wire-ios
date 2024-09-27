@@ -32,13 +32,7 @@ public enum CreateConversationGuestLinkError: Error, Equatable {
 // MARK: - CreateConversationGuestLinkAction
 
 public struct CreateConversationGuestLinkAction: EntityAction {
-    public typealias Result = String?
-    public typealias Failure = CreateConversationGuestLinkError
-
-    public let password: String?
-    public let conversationID: UUID
-
-    public var resultHandler: ResultHandler?
+    // MARK: Lifecycle
 
     public init(
         password: String?,
@@ -49,4 +43,14 @@ public struct CreateConversationGuestLinkAction: EntityAction {
         self.conversationID = conversationID
         self.resultHandler = resultHandler
     }
+
+    // MARK: Public
+
+    public typealias Result = String?
+    public typealias Failure = CreateConversationGuestLinkError
+
+    public let password: String?
+    public let conversationID: UUID
+
+    public var resultHandler: ResultHandler?
 }

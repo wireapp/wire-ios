@@ -20,13 +20,11 @@ import Foundation
 import WireSystem
 
 public enum LogFileDestination: CaseIterable, FileLoggerDestination {
-    private static var cachesDirectory: URL? {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
-    }
-
     case nse
     case main
     case shareExtension
+
+    // MARK: Public
 
     public var filename: String {
         switch self {
@@ -59,5 +57,11 @@ public enum LogFileDestination: CaseIterable, FileLoggerDestination {
                 try? FileManager.default.removeItem(at: logURL)
             }
         }
+    }
+
+    // MARK: Private
+
+    private static var cachesDirectory: URL? {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     }
 }

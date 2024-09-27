@@ -20,8 +20,22 @@ import Foundation
 import WireSyncEngine
 
 final class DeepLinksViewModel: ObservableObject {
+    // MARK: Lifecycle
+
+    init(
+        router: AppRootRouter? = nil,
+        onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
+    ) {
+        self.router = router
+        self.onDismiss = onDismiss
+    }
+
+    // MARK: Internal
+
     enum Error: LocalizedError {
         case invalidLink
+
+        // MARK: Internal
 
         var errorDescription: String? {
             switch self {
@@ -37,16 +51,6 @@ final class DeepLinksViewModel: ObservableObject {
     @Published var isShowingAlert = false
 
     @Published var error: Error?
-
-    // MARK: - Life cycle
-
-    init(
-        router: AppRootRouter? = nil,
-        onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
-    ) {
-        self.router = router
-        self.onDismiss = onDismiss
-    }
 
     // MARK: - Actions
 

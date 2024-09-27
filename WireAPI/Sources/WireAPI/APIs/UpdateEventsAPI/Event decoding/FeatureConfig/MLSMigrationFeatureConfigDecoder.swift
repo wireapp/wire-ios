@@ -19,6 +19,8 @@
 import Foundation
 
 struct MLSMigrationFeatureConfigDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> MLSMigrationFeatureConfig {
@@ -33,6 +35,8 @@ struct MLSMigrationFeatureConfigDecoder {
             finaliseRegardlessAfter: payload.config.finaliseRegardlessAfter?.date
         )
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let startTime: UTCTime?

@@ -22,8 +22,9 @@ import XCTest
 @testable import Wire
 
 final class GiphyConfirmationViewControllerSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     var sut: GiphyConfirmationViewController!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -44,4 +45,8 @@ final class GiphyConfirmationViewControllerSnapshotTests: XCTestCase {
     func testForInitState() {
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

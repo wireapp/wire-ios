@@ -24,15 +24,7 @@ import UIKit
 /// add the attributes for the new items, in the order of the collection.
 
 struct VerticalColumnPositioning {
-    /// The height of the content displayed in the container.
-    private(set) var contentHeight: CGFloat
-
-    /// The attributes for the rows, in the order of their index path.
-    private(set) var rows: [UICollectionViewLayoutAttributes]
-
-    private var currentColumn: Int
-    private var columnHeights: [CGFloat]
-    private let context: VerticalColumnPositioningContext
+    // MARK: Lifecycle
 
     // MARK: - Calculating the position
 
@@ -48,6 +40,14 @@ struct VerticalColumnPositioning {
         self.currentColumn = 0
         self.columnHeights = Array(repeating: 0, count: context.numberOfColumns)
     }
+
+    // MARK: Internal
+
+    /// The height of the content displayed in the container.
+    private(set) var contentHeight: CGFloat
+
+    /// The attributes for the rows, in the order of their index path.
+    private(set) var rows: [UICollectionViewLayoutAttributes]
 
     /// Add an item to the columns. It must be the item immediately succeding the current item.
     ///
@@ -85,6 +85,12 @@ struct VerticalColumnPositioning {
         columnHeights[currentColumn] = frame.maxY
         currentColumn = nextColumn
     }
+
+    // MARK: Private
+
+    private var currentColumn: Int
+    private var columnHeights: [CGFloat]
+    private let context: VerticalColumnPositioningContext
 
     private var nextColumn: Int {
         var smallestColumn = 0

@@ -32,8 +32,19 @@ protocol UserSelectionObserver: AnyObject {
 // MARK: - UserSelection
 
 final class UserSelection: NSObject {
+    // MARK: Internal
+
     private(set) var users = UserSet()
-    private var observers: [UnownedObject<UserSelectionObserver>] = []
+
+    // MARK: - Limit
+
+    private(set) var limit: Int?
+
+    var hasReachedLimit: Bool {
+        guard let limit, users.count >= limit else { return false }
+        limitReachedHandler?()
+        return true
+    }
 
     func replace(_ users: [UserType]) {
         self.users = UserSet(users)
@@ -62,19 +73,14 @@ final class UserSelection: NSObject {
         observers.remove(at: index)
     }
 
-    // MARK: - Limit
-
-    private(set) var limit: Int?
-    private var limitReachedHandler: (() -> Void)?
-
-    var hasReachedLimit: Bool {
-        guard let limit, users.count >= limit else { return false }
-        limitReachedHandler?()
-        return true
-    }
-
     func setLimit(_ limit: Int, handler: @escaping () -> Void) {
         self.limit = limit
         limitReachedHandler = handler
     }
+
+    // MARK: Private
+
+    private var observers: [UnownedObject<UserSelectionObserver>] = []
+
+    private var limitReachedHandler: (() -> Void)?
 }

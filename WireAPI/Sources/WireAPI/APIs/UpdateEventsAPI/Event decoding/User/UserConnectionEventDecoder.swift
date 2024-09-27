@@ -19,6 +19,8 @@
 import Foundation
 
 struct UserConnectionEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserConnectionEvent {
@@ -46,19 +48,13 @@ struct UserConnectionEventDecoder {
         )
     }
 
+    // MARK: Private
+
     private struct UserPayload: Decodable {
         let name: String
     }
 
     private struct ConnectionPayload: Decodable {
-        let from: UUID?
-        let to: UUID?
-        let qualifiedTo: QualifiedID?
-        let conversationID: UUID?
-        let qualifiedConversationID: QualifiedID?
-        let lastUpdate: UTCTime
-        let status: ConnectionStatus
-
         enum CodingKeys: String, CodingKey {
             case from
             case to
@@ -68,5 +64,13 @@ struct UserConnectionEventDecoder {
             case lastUpdate = "last_update"
             case status
         }
+
+        let from: UUID?
+        let to: UUID?
+        let qualifiedTo: QualifiedID?
+        let conversationID: UUID?
+        let qualifiedConversationID: QualifiedID?
+        let lastUpdate: UTCTime
+        let status: ConnectionStatus
     }
 }

@@ -20,6 +20,52 @@ import UIKit
 
 /// A view that displays the avatar of a user, either as text initials or as an image.
 class AvatarImageView: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    // MARK: Internal
+
+    // MARK: -
+
+    /// The different, mutually-exclusive forms of avatars.
+    enum Avatar: Equatable {
+        case image(UIImage)
+        case text(String)
+
+        // MARK: Lifecycle
+
+        init() {
+            self = .image(resource: .unavailableUser)
+        }
+
+        // MARK: Internal
+
+        static func image(resource: ImageResource) -> Self {
+            .image(.init(resource: resource))
+        }
+    }
+
+    /// The different shapes of avatars.
+    enum Shape {
+        case rectangle, circle, relative
+    }
+
+    /// The view that contains the avatar.
+    var container = RoundedView()
+
     // MARK: - Properties
 
     /// The avatar to display.
@@ -53,25 +99,20 @@ class AvatarImageView: UIView {
         didSet { imageView.contentMode = contentMode }
     }
 
-    /// The view that contains the avatar.
-    var container = RoundedView()
+    /// Updates the image constraints hugging and resistance priorities.
+    /// - parameter resistance: The compression resistance priority.
+    /// - parameter hugging: The content hugging priority.
+    func setImageConstraint(resistance: Float, hugging: Float) {
+        imageView.setContentHuggingPriority(UILayoutPriority(rawValue: hugging), for: .vertical)
+        imageView.setContentHuggingPriority(UILayoutPriority(rawValue: hugging), for: .horizontal)
+        imageView.setContentCompressionResistancePriority(UILayoutPriority(rawValue: resistance), for: .vertical)
+        imageView.setContentCompressionResistancePriority(UILayoutPriority(rawValue: resistance), for: .horizontal)
+    }
+
+    // MARK: Private
 
     private let imageView = UIImageView()
     private let initialsLabel = UILabel()
-
-    // MARK: - Initialization
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        configureSubviews()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
 
     private func configureSubviews() {
         imageView.contentMode = .scaleAspectFill
@@ -122,16 +163,6 @@ class AvatarImageView: UIView {
         ])
     }
 
-    /// Updates the image constraints hugging and resistance priorities.
-    /// - parameter resistance: The compression resistance priority.
-    /// - parameter hugging: The content hugging priority.
-    func setImageConstraint(resistance: Float, hugging: Float) {
-        imageView.setContentHuggingPriority(UILayoutPriority(rawValue: hugging), for: .vertical)
-        imageView.setContentHuggingPriority(UILayoutPriority(rawValue: hugging), for: .horizontal)
-        imageView.setContentCompressionResistancePriority(UILayoutPriority(rawValue: resistance), for: .vertical)
-        imageView.setContentCompressionResistancePriority(UILayoutPriority(rawValue: resistance), for: .horizontal)
-    }
-
     // MARK: - Content
 
     /// Updates the displayed avatar.
@@ -167,26 +198,5 @@ class AvatarImageView: UIView {
         case .relative:
             container.shape = .relative(multiplier: 1 / 6, dimension: .height)
         }
-    }
-
-    // MARK: -
-
-    /// The different, mutually-exclusive forms of avatars.
-    enum Avatar: Equatable {
-        case image(UIImage)
-        case text(String)
-
-        init() {
-            self = .image(resource: .unavailableUser)
-        }
-
-        static func image(resource: ImageResource) -> Self {
-            .image(.init(resource: resource))
-        }
-    }
-
-    /// The different shapes of avatars.
-    enum Shape {
-        case rectangle, circle, relative
     }
 }

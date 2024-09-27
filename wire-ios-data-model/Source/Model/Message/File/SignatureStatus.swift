@@ -45,23 +45,7 @@ private let log = ZMSLog(tag: "Conversations")
 
 @objc
 public final class SignatureStatus: NSObject {
-    @objc
-    public enum ErrorYpe: Int {
-        case noConsentURL
-        case retrieveFailed
-    }
-
-    // MARK: - Private Property
-
-    private(set) var asset: WireProtos.Asset?
-    private(set) var managedObjectContext: NSManagedObjectContext
-
-    // MARK: - Public Property
-
-    public var state: PDFSigningState = .initial
-    public var documentID: String?
-    public var fileName: String?
-    public var encodedHash: String?
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -80,6 +64,21 @@ public final class SignatureStatus: NSObject {
             .zmSHA256Digest()
             .base64String()
     }
+
+    // MARK: Public
+
+    @objc
+    public enum ErrorYpe: Int {
+        case noConsentURL
+        case retrieveFailed
+    }
+
+    // MARK: - Public Property
+
+    public var state: PDFSigningState = .initial
+    public var documentID: String?
+    public var fileName: String?
+    public var encodedHash: String?
 
     // MARK: - Public Method
 
@@ -141,6 +140,15 @@ public final class SignatureStatus: NSObject {
         managedObjectContext.signatureStatus = self
     }
 
+    // MARK: Internal
+
+    // MARK: - Private Property
+
+    private(set) var asset: WireProtos.Asset?
+    private(set) var managedObjectContext: NSManagedObjectContext
+
+    // MARK: Private
+
     // MARK: - Private Method
 
     private func writeCMSSignatureFile(for data: Data) -> CMSFileMetadataInfo? {
@@ -196,6 +204,17 @@ extension SignatureStatus {
 // MARK: - DigitalSignatureNotification
 
 public class DigitalSignatureNotification: NSObject {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    public init(state: State) {
+        self.state = state
+        super.init()
+    }
+
+    // MARK: Public
+
     // MARK: - State
 
     public enum State {
@@ -212,13 +231,6 @@ public class DigitalSignatureNotification: NSObject {
 
     public let state: State
 
-    // MARK: - Init
-
-    public init(state: State) {
-        self.state = state
-        super.init()
-    }
-
     // MARK: - Public Method
 
     public func post(in context: NotificationContext) {
@@ -233,13 +245,17 @@ public class DigitalSignatureNotification: NSObject {
 // MARK: - CMSFileMetadataInfo
 
 private struct CMSFileMetadataInfo {
-    let url: URL
-    let fileName: String
+    // MARK: Lifecycle
 
     public init(url: URL, fileName: String) {
         self.url = url
         self.fileName = fileName
     }
+
+    // MARK: Internal
+
+    let url: URL
+    let fileName: String
 }
 
 // MARK: - NSManagedObjectContext

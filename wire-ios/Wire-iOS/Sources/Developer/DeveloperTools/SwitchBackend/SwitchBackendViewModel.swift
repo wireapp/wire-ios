@@ -20,33 +20,7 @@ import Foundation
 import WireTransport
 
 final class SwitchBackendViewModel: ObservableObject {
-    // MARK: - Models
-
-    struct Item: Identifiable {
-        let id = UUID()
-        let title: String
-        let value: EnvironmentType
-    }
-
-    enum Event {
-        case itemTapped(Item)
-    }
-
-    // MARK: - State
-
-    let items: [Item]
-
-    @Published var selectedItemID: Item.ID
-
-    @Published var alertItem: AlertItem?
-
-    struct AlertItem: Identifiable {
-        let id = UUID()
-        let message: String
-        let action: (() -> Void)?
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {
         var items = [
@@ -74,6 +48,34 @@ final class SwitchBackendViewModel: ObservableObject {
         self.items = items
         self.selectedItemID = selectedItem!.id
     }
+
+    // MARK: Internal
+
+    // MARK: - Models
+
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let value: EnvironmentType
+    }
+
+    enum Event {
+        case itemTapped(Item)
+    }
+
+    struct AlertItem: Identifiable {
+        let id = UUID()
+        let message: String
+        let action: (() -> Void)?
+    }
+
+    // MARK: - State
+
+    let items: [Item]
+
+    @Published var selectedItemID: Item.ID
+
+    @Published var alertItem: AlertItem?
 
     // MARK: - Events
 

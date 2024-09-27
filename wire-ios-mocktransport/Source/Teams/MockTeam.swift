@@ -23,6 +23,8 @@ import Foundation
 
 @objc
 public final class MockTeam: NSManagedObject, EntityNamedProtocol {
+    public static var entityName = "Team"
+
     @NSManaged public var conversations: Set<MockConversation>?
     @NSManaged public var members: Set<MockMember>
     @NSManaged public var roles: Set<MockRole>
@@ -34,8 +36,6 @@ public final class MockTeam: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var createdAt: Date
     @NSManaged public var isBound: Bool
     @NSManaged public var hasLegalHoldService: Bool
-
-    public static var entityName = "Team"
 
     override public func awakeFromInsert() {
         super.awakeFromInsert()

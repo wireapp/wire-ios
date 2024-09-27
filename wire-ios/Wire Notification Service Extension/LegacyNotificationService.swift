@@ -48,33 +48,18 @@ final class CallEventHandler: CallEventHandlerProtocol {
 // MARK: - LegacyNotificationService
 
 final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
-    // MARK: - Properties
-
-    var callEventHandler: CallEventHandlerProtocol = CallEventHandler()
-
-    private var session: NotificationSession?
-    private var contentHandler: ((UNNotificationContent) -> Void)?
-
-    private lazy var accountManager: AccountManager = {
-        let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
-        let account = AccountManager(sharedDirectory: sharedContainerURL)
-        return account
-    }()
-
-    private var appGroupID: String {
-        guard let groupID = Bundle.main.applicationGroupIdentifier else {
-            fatalError("cannot get app group identifier")
-        }
-
-        return groupID
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override init() {
         WireLogger.notifications.info("initializing new legacy notification service")
         super.init()
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    var callEventHandler: CallEventHandlerProtocol = CallEventHandler()
 
     // MARK: - Methods
 
@@ -105,12 +90,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     override func serviceExtensionTimeWillExpire() {
         WireLogger.notifications.warn("legacy service extension will expire")
         finishWithoutShowingNotification()
-    }
-
-    private func finishWithoutShowingNotification() {
-        WireLogger.notifications.info("finishing without showing notification")
-        contentHandler?(.empty)
-        tearDown()
     }
 
     func notificationSessionDidGenerateNotification(
@@ -146,19 +125,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         contentHandler(content)
     }
 
-    private func removeNotification(withSameMessageId messageNonce: UUID?) {
-        guard let messageNonce else { return }
-
-        let notificationCenter = UNUserNotificationCenter.current()
-
-        notificationCenter.getDeliveredNotifications { notifications in
-            let matched = notifications.first(where: { $0.userInfo.messageNonce == messageNonce })
-            if let id = matched?.request.identifier {
-                notificationCenter.removeDeliveredNotifications(withIdentifiers: [id])
-            }
-        }
-    }
-
     func reportCallEvent(
         _ callEvent: CallEventPayload,
         currentTimestamp: TimeInterval
@@ -181,6 +147,44 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         }
 
         finishWithoutShowingNotification()
+    }
+
+    // MARK: Private
+
+    private var session: NotificationSession?
+    private var contentHandler: ((UNNotificationContent) -> Void)?
+
+    private lazy var accountManager: AccountManager = {
+        let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
+        let account = AccountManager(sharedDirectory: sharedContainerURL)
+        return account
+    }()
+
+    private var appGroupID: String {
+        guard let groupID = Bundle.main.applicationGroupIdentifier else {
+            fatalError("cannot get app group identifier")
+        }
+
+        return groupID
+    }
+
+    private func finishWithoutShowingNotification() {
+        WireLogger.notifications.info("finishing without showing notification")
+        contentHandler?(.empty)
+        tearDown()
+    }
+
+    private func removeNotification(withSameMessageId messageNonce: UUID?) {
+        guard let messageNonce else { return }
+
+        let notificationCenter = UNUserNotificationCenter.current()
+
+        notificationCenter.getDeliveredNotifications { notifications in
+            let matched = notifications.first(where: { $0.userInfo.messageNonce == messageNonce })
+            if let id = matched?.request.identifier {
+                notificationCenter.removeDeliveredNotifications(withIdentifiers: [id])
+            }
+        }
     }
 
     // MARK: - Helpers

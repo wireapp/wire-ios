@@ -21,6 +21,50 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationListAccessoryView: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    init(mediaPlaybackManager: MediaPlaybackManager? = nil) {
+        self.mediaPlaybackManager = mediaPlaybackManager
+        super.init(frame: .zero)
+
+        badgeView.accessibilityIdentifier = "action_button"
+        badgeView.isAccessibilityElement = false
+
+        textLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        textLabel.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .vertical)
+        textLabel.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
+        textLabel.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .vertical)
+        textLabel.textAlignment = .center
+        textLabel.font = FontSpec.mediumSemiboldFont.font!
+        textLabel.textColor = LabelColors.textDefault
+        textLabel.isAccessibilityElement = false
+        transparentIconView.contentMode = .center
+        transparentIconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
+        transparentIconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .vertical)
+        transparentIconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .horizontal)
+        transparentIconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .vertical)
+
+        iconView.contentMode = .center
+        iconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
+        iconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .vertical)
+        iconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .horizontal)
+        iconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .vertical)
+
+        [badgeView, transparentIconView].forEach(addSubview)
+
+        createConstraints()
+        updateForIcon()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     // MARK: - Properties
 
     typealias ViewColors = SemanticColors.View
@@ -61,41 +105,6 @@ final class ConversationListAccessoryView: UIView {
         return mediaManager?.activeMediaPlayer
     }
 
-    // MARK: - Init
-
-    init(mediaPlaybackManager: MediaPlaybackManager? = nil) {
-        self.mediaPlaybackManager = mediaPlaybackManager
-        super.init(frame: .zero)
-
-        badgeView.accessibilityIdentifier = "action_button"
-        badgeView.isAccessibilityElement = false
-
-        textLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-        textLabel.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .vertical)
-        textLabel.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
-        textLabel.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .vertical)
-        textLabel.textAlignment = .center
-        textLabel.font = FontSpec.mediumSemiboldFont.font!
-        textLabel.textColor = LabelColors.textDefault
-        textLabel.isAccessibilityElement = false
-        transparentIconView.contentMode = .center
-        transparentIconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
-        transparentIconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .vertical)
-        transparentIconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .horizontal)
-        transparentIconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .vertical)
-
-        iconView.contentMode = .center
-        iconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
-        iconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .vertical)
-        iconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .horizontal)
-        iconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .vertical)
-
-        [badgeView, transparentIconView].forEach(addSubview)
-
-        createConstraints()
-        updateForIcon()
-    }
-
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
@@ -105,42 +114,86 @@ final class ConversationListAccessoryView: UIView {
         updateForIcon()
     }
 
-    // MARK: - Setup Constraints
-
-    private func createConstraints() {
-        transparentIconView.translatesAutoresizingMaskIntoConstraints = false
-        translatesAutoresizingMaskIntoConstraints = false
-
-        let transparentIconViewLeading = transparentIconView.leadingAnchor.constraint(equalTo: leadingAnchor)
-        transparentIconViewLeading.priority = UILayoutPriority(999.0)
-
-        let transparentIconViewTrailing = transparentIconView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        transparentIconViewTrailing.priority = UILayoutPriority(999.0)
-
-        expandTransparentIconViewWidthConstraint = transparentIconView.widthAnchor
-            .constraint(greaterThanOrEqualToConstant: defaultViewWidth)
-
-        expandWidthConstraint = widthAnchor.constraint(greaterThanOrEqualToConstant: defaultViewWidth)
-
-        // collapseWidthConstraint is inactive when init, it is toggled in updateCollapseConstraints()
-        collapseWidthConstraint = widthAnchor.constraint(equalToConstant: 0)
-
-        NSLayoutConstraint.activate([
-            badgeView.heightAnchor.constraint(equalToConstant: 20),
-            transparentIconViewLeading,
-            transparentIconViewTrailing,
-            expandTransparentIconViewWidthConstraint,
-            expandWidthConstraint,
-            transparentIconView.topAnchor.constraint(equalTo: topAnchor),
-            transparentIconView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
-        badgeView.fitIn(view: self)
+    func updateCollapseConstraints(isCollapsed: Bool) {
+        if isCollapsed {
+            badgeView.updateCollapseConstraints(isCollapsed: isCollapsed)
+            expandWidthConstraint.isActive = false
+            expandTransparentIconViewWidthConstraint.isActive = false
+            collapseWidthConstraint.isActive = true
+        } else {
+            collapseWidthConstraint.isActive = false
+            expandWidthConstraint.isActive = true
+            expandTransparentIconViewWidthConstraint.isActive = true
+            badgeView.updateCollapseConstraints(isCollapsed: isCollapsed)
+        }
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func updateForIcon() {
+        badgeView.containedView.subviews.forEach { $0.removeFromSuperview() }
+
+        badgeView.isHidden = false
+        transparentIconView.isHidden = true
+
+        expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
+        expandWidthConstraint.constant = defaultViewWidth
+
+        guard let icon else {
+            badgeView.isHidden = true
+            transparentIconView.isHidden = true
+
+            updateCollapseConstraints(isCollapsed: true)
+            return
+        }
+
+        switch icon {
+        case .activeCall(false):
+            badgeView.isHidden = true
+            transparentIconView.isHidden = false
+            transparentIconView.setTemplateIcon(.phone, size: iconSize)
+            transparentIconView.tintColor = IconColors.foregroundDefaultBlack
+
+            expandTransparentIconViewWidthConstraint.constant = activeCallWidth
+            expandWidthConstraint.constant = activeCallWidth
+
+        case .activeCall(true): // "Join" button
+            badgeView.backgroundColor = IconColors.backgroundJoinCall
+
+        case .typing:
+            badgeView.isHidden = true
+            transparentIconView.isHidden = false
+            transparentIconView.setTemplateIcon(.pencil, size: iconSize)
+            transparentIconView.tintColor = IconColors.foregroundDefaultBlack
+
+        case .unreadMessages, .mention:
+            textLabel.textColor = textLabelColor
+            badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
+
+        case .unreadPing, .reply, .missedCall:
+            badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
+
+        default:
+            transparentIconView.image = .none
+        }
+
+        updateCollapseConstraints(isCollapsed: false)
+
+        if let view = viewForState {
+            badgeView.containedView.addSubview(view)
+
+            let parentView = badgeView.containedView
+            view.translatesAutoresizingMaskIntoConstraints = false
+            parentView.translatesAutoresizingMaskIntoConstraints = false
+
+            NSLayoutConstraint.activate([
+                view.topAnchor.constraint(equalTo: parentView.topAnchor),
+                view.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
+                view.leadingAnchor.constraint(equalTo: parentView.leadingAnchor, constant: 6),
+                view.trailingAnchor.constraint(equalTo: parentView.trailingAnchor, constant: -6),
+            ])
+        }
     }
+
+    // MARK: Private
 
     // MARK: - Set up the view based on the state
 
@@ -222,83 +275,36 @@ final class ConversationListAccessoryView: UIView {
         }
     }
 
-    func updateCollapseConstraints(isCollapsed: Bool) {
-        if isCollapsed {
-            badgeView.updateCollapseConstraints(isCollapsed: isCollapsed)
-            expandWidthConstraint.isActive = false
-            expandTransparentIconViewWidthConstraint.isActive = false
-            collapseWidthConstraint.isActive = true
-        } else {
-            collapseWidthConstraint.isActive = false
-            expandWidthConstraint.isActive = true
-            expandTransparentIconViewWidthConstraint.isActive = true
-            badgeView.updateCollapseConstraints(isCollapsed: isCollapsed)
-        }
-    }
+    // MARK: - Setup Constraints
 
-    func updateForIcon() {
-        badgeView.containedView.subviews.forEach { $0.removeFromSuperview() }
+    private func createConstraints() {
+        transparentIconView.translatesAutoresizingMaskIntoConstraints = false
+        translatesAutoresizingMaskIntoConstraints = false
 
-        badgeView.isHidden = false
-        transparentIconView.isHidden = true
+        let transparentIconViewLeading = transparentIconView.leadingAnchor.constraint(equalTo: leadingAnchor)
+        transparentIconViewLeading.priority = UILayoutPriority(999.0)
 
-        expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
-        expandWidthConstraint.constant = defaultViewWidth
+        let transparentIconViewTrailing = transparentIconView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        transparentIconViewTrailing.priority = UILayoutPriority(999.0)
 
-        guard let icon else {
-            badgeView.isHidden = true
-            transparentIconView.isHidden = true
+        expandTransparentIconViewWidthConstraint = transparentIconView.widthAnchor
+            .constraint(greaterThanOrEqualToConstant: defaultViewWidth)
 
-            updateCollapseConstraints(isCollapsed: true)
-            return
-        }
+        expandWidthConstraint = widthAnchor.constraint(greaterThanOrEqualToConstant: defaultViewWidth)
 
-        switch icon {
-        case .activeCall(false):
-            badgeView.isHidden = true
-            transparentIconView.isHidden = false
-            transparentIconView.setTemplateIcon(.phone, size: iconSize)
-            transparentIconView.tintColor = IconColors.foregroundDefaultBlack
+        // collapseWidthConstraint is inactive when init, it is toggled in updateCollapseConstraints()
+        collapseWidthConstraint = widthAnchor.constraint(equalToConstant: 0)
 
-            expandTransparentIconViewWidthConstraint.constant = activeCallWidth
-            expandWidthConstraint.constant = activeCallWidth
-
-        case .activeCall(true): // "Join" button
-            badgeView.backgroundColor = IconColors.backgroundJoinCall
-
-        case .typing:
-            badgeView.isHidden = true
-            transparentIconView.isHidden = false
-            transparentIconView.setTemplateIcon(.pencil, size: iconSize)
-            transparentIconView.tintColor = IconColors.foregroundDefaultBlack
-
-        case .unreadMessages, .mention:
-            textLabel.textColor = textLabelColor
-            badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
-
-        case .unreadPing, .reply, .missedCall:
-            badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
-
-        default:
-            transparentIconView.image = .none
-        }
-
-        updateCollapseConstraints(isCollapsed: false)
-
-        if let view = viewForState {
-            badgeView.containedView.addSubview(view)
-
-            let parentView = badgeView.containedView
-            view.translatesAutoresizingMaskIntoConstraints = false
-            parentView.translatesAutoresizingMaskIntoConstraints = false
-
-            NSLayoutConstraint.activate([
-                view.topAnchor.constraint(equalTo: parentView.topAnchor),
-                view.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
-                view.leadingAnchor.constraint(equalTo: parentView.leadingAnchor, constant: 6),
-                view.trailingAnchor.constraint(equalTo: parentView.trailingAnchor, constant: -6),
-            ])
-        }
+        NSLayoutConstraint.activate([
+            badgeView.heightAnchor.constraint(equalToConstant: 20),
+            transparentIconViewLeading,
+            transparentIconViewTrailing,
+            expandTransparentIconViewWidthConstraint,
+            expandWidthConstraint,
+            transparentIconView.topAnchor.constraint(equalTo: topAnchor),
+            transparentIconView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+        badgeView.fitIn(view: self)
     }
 
     private func configureSilencedNotificationsIcon() {

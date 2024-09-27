@@ -37,11 +37,7 @@ protocol LandingViewControllerDelegate: AnyObject {
 
 /// Landing screen for choosing how to authenticate.
 final class LandingViewController: AuthenticationStepViewController {
-    var backendEnvironmentProvider: () -> BackendEnvironmentProvider
-
-    var backendEnvironment: BackendEnvironmentProvider {
-        backendEnvironmentProvider()
-    }
+    // MARK: Lifecycle
 
     init(backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }) {
         self.backendEnvironmentProvider = backendEnvironmentProvider
@@ -53,15 +49,150 @@ final class LandingViewController: AuthenticationStepViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    typealias Landing = L10n.Localizable.Landing
+
+    var backendEnvironmentProvider: () -> BackendEnvironmentProvider
+
     // MARK: - State
 
     weak var authenticationCoordinator: AuthenticationCoordinator?
 
-    typealias Landing = L10n.Localizable.Landing
+    lazy var customBackendView: CustomBackendView = {
+        let view = CustomBackendView()
+        let tap = UITapGestureRecognizer(target: self, action: #selector(customBackendInfoViewTapped(_:)))
+        view.addGestureRecognizer(tap)
+        view.accessibilityIdentifier = "Custom backend information"
+        return view
+    }()
+
+    // MARK: - Constraints
+
+    var topStackTopConstraint = NSLayoutConstraint()
+    var contentViewWidthConstraint = NSLayoutConstraint()
+    var contentViewLeadingConstraint = NSLayoutConstraint()
+    var contentViewTrailingConstraint = NSLayoutConstraint()
+
+    var messageLabelLeadingConstraint = NSLayoutConstraint()
+    var messageLabelTrailingConstraint = NSLayoutConstraint()
+    var subMessageLabelLeadingConstraint = NSLayoutConstraint()
+    var subMessageLabelTrailingConstraint = NSLayoutConstraint()
+    var createAccountInfoLabelTopConstraint = NSLayoutConstraint()
+    var createAccountButtomBottomConstraint = NSLayoutConstraint()
+
+    var backendEnvironment: BackendEnvironmentProvider {
+        backendEnvironmentProvider()
+    }
 
     var delegate: LandingViewControllerDelegate? {
         authenticationCoordinator
     }
+
+    var topStackTopConstraintConstant: CGFloat {
+        traitCollection.horizontalSizeClass == .compact ? 42.0 : 200.0
+    }
+
+    var messageLabelLabelConstraintsConstant: CGFloat {
+        traitCollection.horizontalSizeClass == .compact ? 0.0 : 72.0
+    }
+
+    var subMessageLabelConstraintsConstant: CGFloat {
+        traitCollection.horizontalSizeClass == .compact ? 0.0 : 24.0
+    }
+
+    // MARK: - Adaptivity Events
+
+    var isCustomBackend: Bool {
+        switch backendEnvironment.environmentType.value {
+        case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:
+            false
+        case .custom:
+            true
+        }
+    }
+
+    @objc
+    func customBackendInfoViewTapped(_: UIGestureRecognizer) {
+        delegate?.landingViewControllerDidChooseInfoBackend()
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        configureSubviews()
+        configureConstraints()
+
+        configureAccessibilityElements()
+
+        updateBarButtonItem()
+        updateCustomBackendLabels()
+
+        NotificationCenter.default.addObserver(
+            forName: AccountManagerDidUpdateAccountsNotificationName,
+            object: SessionManager.shared?.accountManager,
+            queue: .main
+        ) { _ in
+            self.updateBarButtonItem()
+        }
+
+        NotificationCenter.default.addObserver(
+            forName: BackendEnvironment.backendSwitchNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateCustomBackendLabels()
+        }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        UIAccessibility.post(notification: .screenChanged, argument: logoView)
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        activateRightConstraint()
+        setConstraintsConstants()
+    }
+
+    func configure(with featureProvider: AuthenticationFeatureProvider) {
+        enterpriseLoginButton.isHidden = !featureProvider.allowDirectCompanyLogin
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if isIPadRegular() || isCustomBackend {
+            topStack.spacing = 32
+        } else if view.frame.height <= 640 {
+            topStack.spacing = view.frame.height / 8
+        } else {
+            topStack.spacing = view.frame.height / 6
+        }
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        guard SessionManager.shared?.firstAuthenticatedAccount != nil else {
+            return false
+        }
+
+        cancelButtonTapped()
+        return true
+    }
+
+    // MARK: - AuthenticationCoordinatedViewController
+
+    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {
+        // no-op
+    }
+
+    func displayError(_: Error) {
+        // no-op
+    }
+
+    // MARK: Private
 
     // MARK: - UI Elements
 
@@ -221,89 +352,11 @@ final class LandingViewController: AuthenticationStepViewController {
         return stackView
     }()
 
-    lazy var customBackendView: CustomBackendView = {
-        let view = CustomBackendView()
-        let tap = UITapGestureRecognizer(target: self, action: #selector(customBackendInfoViewTapped(_:)))
-        view.addGestureRecognizer(tap)
-        view.accessibilityIdentifier = "Custom backend information"
-        return view
-    }()
-
-    @objc
-    func customBackendInfoViewTapped(_: UIGestureRecognizer) {
-        delegate?.landingViewControllerDidChooseInfoBackend()
-    }
-
-    // MARK: - Constraints
-
-    var topStackTopConstraint = NSLayoutConstraint()
-    var topStackTopConstraintConstant: CGFloat {
-        traitCollection.horizontalSizeClass == .compact ? 42.0 : 200.0
-    }
-
-    var contentViewWidthConstraint = NSLayoutConstraint()
-    var contentViewLeadingConstraint = NSLayoutConstraint()
-    var contentViewTrailingConstraint = NSLayoutConstraint()
-
-    var messageLabelLeadingConstraint = NSLayoutConstraint()
-    var messageLabelTrailingConstraint = NSLayoutConstraint()
-    var messageLabelLabelConstraintsConstant: CGFloat {
-        traitCollection.horizontalSizeClass == .compact ? 0.0 : 72.0
-    }
-
-    var subMessageLabelLeadingConstraint = NSLayoutConstraint()
-    var subMessageLabelTrailingConstraint = NSLayoutConstraint()
-    var subMessageLabelConstraintsConstant: CGFloat {
-        traitCollection.horizontalSizeClass == .compact ? 0.0 : 24.0
-    }
-
-    var createAccountInfoLabelTopConstraint = NSLayoutConstraint()
-    var createAccountButtomBottomConstraint = NSLayoutConstraint()
-
-    // MARK: - Lifecycle
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        configureSubviews()
-        configureConstraints()
-
-        configureAccessibilityElements()
-
-        updateBarButtonItem()
-        updateCustomBackendLabels()
-
-        NotificationCenter.default.addObserver(
-            forName: AccountManagerDidUpdateAccountsNotificationName,
-            object: SessionManager.shared?.accountManager,
-            queue: .main
-        ) { _ in
-            self.updateBarButtonItem()
+    private var productName: String {
+        guard let name = Bundle.appMainBundle.infoForKey("CFBundleDisplayName") else {
+            fatal("unable to access CFBundleDisplayName")
         }
-
-        NotificationCenter.default.addObserver(
-            forName: BackendEnvironment.backendSwitchNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.updateCustomBackendLabels()
-        }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        UIAccessibility.post(notification: .screenChanged, argument: logoView)
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        activateRightConstraint()
-        setConstraintsConstants()
-    }
-
-    func configure(with featureProvider: AuthenticationFeatureProvider) {
-        enterpriseLoginButton.isHidden = !featureProvider.allowDirectCompanyLogin
+        return name
     }
 
     private func configureSubviews() {
@@ -462,29 +515,6 @@ final class LandingViewController: AuthenticationStepViewController {
         ])
     }
 
-    // MARK: - Adaptivity Events
-
-    var isCustomBackend: Bool {
-        switch backendEnvironment.environmentType.value {
-        case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:
-            false
-        case .custom:
-            true
-        }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        if isIPadRegular() || isCustomBackend {
-            topStack.spacing = 32
-        } else if view.frame.height <= 640 {
-            topStack.spacing = view.frame.height / 8
-        } else {
-            topStack.spacing = view.frame.height / 6
-        }
-    }
-
     private func updateBarButtonItem() {
         navigationItem.backButtonDisplayMode = .minimal
         if SessionManager.shared?.firstAuthenticatedAccount == nil {
@@ -494,13 +524,6 @@ final class LandingViewController: AuthenticationStepViewController {
                 self?.cancelButtonTapped()
             }, accessibilityLabel: L10n.Localizable.General.cancel)
         }
-    }
-
-    private var productName: String {
-        guard let name = Bundle.appMainBundle.infoForKey("CFBundleDisplayName") else {
-            fatal("unable to access CFBundleDisplayName")
-        }
-        return name
     }
 
     private func updateCustomBackendLabels() {
@@ -528,15 +551,6 @@ final class LandingViewController: AuthenticationStepViewController {
         logoView.accessibilityTraits.insert(.header)
     }
 
-    override func accessibilityPerformEscape() -> Bool {
-        guard SessionManager.shared?.firstAuthenticatedAccount != nil else {
-            return false
-        }
-
-        cancelButtonTapped()
-        return true
-    }
-
     // MARK: - Button tapped target
 
     @objc
@@ -557,15 +571,5 @@ final class LandingViewController: AuthenticationStepViewController {
     private func cancelButtonTapped() {
         guard let account = SessionManager.shared?.firstAuthenticatedAccount else { return }
         SessionManager.shared!.select(account)
-    }
-
-    // MARK: - AuthenticationCoordinatedViewController
-
-    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {
-        // no-op
-    }
-
-    func displayError(_: Error) {
-        // no-op
     }
 }

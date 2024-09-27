@@ -22,22 +22,7 @@ import WireSyncEngine
 // MARK: - CallController
 
 final class CallController: NSObject {
-    // MARK: - Public Implentation
-
-    weak var router: ActiveCallRouterProtocol?
-    var callConversationProvider: CallConversationProvider?
-
-    // MARK: - Private Implentation
-
-    private var observerTokens: [Any] = []
-    private var minimizedCall: ZMConversation?
-
-    private var priorityCallConversation: ZMConversation? {
-        callConversationProvider?.priorityCallConversation
-    }
-
-    private var dateOfLastErrorAlertByConversationId = [AVSIdentifier: Date]()
-    private var alertDebounceInterval: TimeInterval { 15 * .oneMinute  }
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -50,6 +35,13 @@ final class CallController: NSObject {
         observerTokens.removeAll()
     }
 
+    // MARK: Internal
+
+    // MARK: - Public Implentation
+
+    weak var router: ActiveCallRouterProtocol?
+    var callConversationProvider: CallConversationProvider?
+
     // MARK: - Public Implementation
 
     func updateActiveCallPresentationState() {
@@ -60,6 +52,21 @@ final class CallController: NSObject {
         showCallTopOverlay(for: priorityCallConversation)
         presentOrMinimizeActiveCall(for: priorityCallConversation)
     }
+
+    // MARK: Private
+
+    // MARK: - Private Implentation
+
+    private var observerTokens: [Any] = []
+    private var minimizedCall: ZMConversation?
+
+    private var dateOfLastErrorAlertByConversationId = [AVSIdentifier: Date]()
+
+    private var priorityCallConversation: ZMConversation? {
+        callConversationProvider?.priorityCallConversation
+    }
+
+    private var alertDebounceInterval: TimeInterval { 15 * .oneMinute  }
 
     // MARK: - Private Implementation
 

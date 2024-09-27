@@ -19,11 +19,13 @@
 import Foundation
 
 final class ServerCertificateTrust: NSObject, BackendTrustProvider {
-    let trustData: [TrustData]
+    // MARK: Lifecycle
 
     init(trustData: [TrustData]) {
         self.trustData = trustData
     }
+
+    // MARK: Public
 
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
         guard let host else { return false }
@@ -37,6 +39,12 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
 
         return verifyServerTrustWithPinnedKeys(trust, pinnedKeys)
     }
+
+    // MARK: Internal
+
+    let trustData: [TrustData]
+
+    // MARK: Private
 
     /// Returns the public key of the leaf certificate associated with the trust object
     ///

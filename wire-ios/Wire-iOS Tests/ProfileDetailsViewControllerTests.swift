@@ -22,11 +22,12 @@ import XCTest
 @testable import Wire
 
 final class ProfileDetailsViewControllerTests: XCTestCase {
+    // MARK: Internal
+
     var selfUserTeam: UUID!
     var selfUser: MockUserType!
     var defaultRichProfile: [UserRichProfileField]!
     var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -1164,6 +1165,10 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: guest, viewer: selfUser, conversation: nil, context: .profileViewer)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - Helpers
 

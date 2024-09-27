@@ -25,16 +25,14 @@ private let zmLog = ZMSLog(tag: "Patches")
 /// Patches to apply to migrate some persisted data from a previous
 /// version of the app - database fixes, local files clean up, etc.
 public final class LegacyPersistedDataPatch {
-    /// Max version for which the patch needs to be applied
-    let version: FrameworkVersion
-
-    /// The patch code
-    let block: (NSManagedObjectContext) -> Void
+    // MARK: Lifecycle
 
     init(version: String, block: @escaping (NSManagedObjectContext) -> Void) {
         self.version = FrameworkVersion(version)!
         self.block = block
     }
+
+    // MARK: Public
 
     /// Apply all patches to the MOC
     public static func applyAll(
@@ -63,6 +61,14 @@ public final class LegacyPersistedDataPatch {
             $0.block(moc)
         }
     }
+
+    // MARK: Internal
+
+    /// Max version for which the patch needs to be applied
+    let version: FrameworkVersion
+
+    /// The patch code
+    let block: (NSManagedObjectContext) -> Void
 }
 
 /// Persistent store key for last data model version
@@ -72,26 +78,7 @@ let lastDataModelPatchedVersionKey = "zm_lastDataModelVersionKeyThatWasPatched"
 
 /// A framework version (major, minor, patch)
 public struct FrameworkVersion: Comparable, Equatable {
-    /// Version component (10, 3, 4 -> 10.3.4)
-    fileprivate let components: [Int]
-
-    /// Major component, *10*.3.4
-    public var major: Int {
-        components[0]
-    }
-
-    /// Minor component, 10.*3*.4
-    public var minor: Int {
-        components[1]
-    }
-
-    /// Patch component, 10.3.*4*
-    public var patch: Int {
-        components[2]
-    }
-
-    /// Version in string form
-    public let version: String
+    // MARK: Lifecycle
 
     public init?(_ version: String) {
         self.version = version
@@ -110,6 +97,26 @@ public struct FrameworkVersion: Comparable, Equatable {
         self.components = components
     }
 
+    // MARK: Public
+
+    /// Version in string form
+    public let version: String
+
+    /// Major component, *10*.3.4
+    public var major: Int {
+        components[0]
+    }
+
+    /// Minor component, 10.*3*.4
+    public var minor: Int {
+        components[1]
+    }
+
+    /// Patch component, 10.3.*4*
+    public var patch: Int {
+        components[2]
+    }
+
     public static func < (lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {
         for comp in zip(lhs.components, rhs.components) {
             if comp.0 < comp.1 {
@@ -120,6 +127,11 @@ public struct FrameworkVersion: Comparable, Equatable {
         }
         return false
     }
+
+    // MARK: Fileprivate
+
+    /// Version component (10, 3, 4 -> 10.3.4)
+    fileprivate let components: [Int]
 }
 
 public func == (lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {

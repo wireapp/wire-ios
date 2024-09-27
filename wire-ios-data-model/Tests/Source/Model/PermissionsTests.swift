@@ -20,6 +20,8 @@ import WireTesting
 @testable import WireDataModel
 
 class PermissionsTests: BaseZMClientMessageTests {
+    // MARK: Internal
+
     override class func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
@@ -31,22 +33,6 @@ class PermissionsTests: BaseZMClientMessageTests {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-
-    private let allPermissions: Permissions = [
-        .createConversation,
-        .deleteConversation,
-        .addTeamMember,
-        .removeTeamMember,
-        .addRemoveConversationMember,
-        .modifyConversationMetaData,
-        .getMemberPermissions,
-        .getTeamConversations,
-        .getBilling,
-        .setBilling,
-        .setTeamData,
-        .deleteTeam,
-        .setMemberPermissions,
-    ]
 
     func testThatDefaultValueDoesNotHaveAnyPermissions() {
         // given
@@ -181,4 +167,22 @@ class PermissionsTests: BaseZMClientMessageTests {
         XCTAssert(TeamRole.owner.isA(role: .admin))
         XCTAssert(TeamRole.owner.isA(role: .owner))
     }
+
+    // MARK: Private
+
+    private let allPermissions: Permissions = [
+        .createConversation,
+        .deleteConversation,
+        .addTeamMember,
+        .removeTeamMember,
+        .addRemoveConversationMember,
+        .modifyConversationMetaData,
+        .getMemberPermissions,
+        .getTeamConversations,
+        .getBilling,
+        .setBilling,
+        .setTeamData,
+        .deleteTeam,
+        .setMemberPermissions,
+    ]
 }

@@ -20,13 +20,7 @@ import UIKit
 import WireCommonComponents
 
 final class MediaPreviewView: RoundedView {
-    let playButton = IconButton()
-    let titleLabel = UILabel()
-    let providerImageView = UIImageView()
-    let previewImageView = ImageResourceView()
-    let overlayView = UIView()
-
-    weak var delegate: ContextMenuLinkViewDelegate?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -40,6 +34,18 @@ final class MediaPreviewView: RoundedView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let playButton = IconButton()
+    let titleLabel = UILabel()
+    let providerImageView = UIImageView()
+    let previewImageView = ImageResourceView()
+    let overlayView = UIView()
+
+    weak var delegate: ContextMenuLinkViewDelegate?
+
+    // MARK: Private
 
     private func setupSubviews() {
         shape = .rounded(radius: 4)

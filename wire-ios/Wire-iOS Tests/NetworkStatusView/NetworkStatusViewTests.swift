@@ -22,8 +22,7 @@ import XCTest
 // MARK: - NetworkStatusViewTests
 
 final class NetworkStatusViewTests: XCTestCase {
-    private var sut: NetworkStatusView!
-    private var mockContainer: MockNetworkStatusViewDelegate!
+    // MARK: Internal
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -77,6 +76,11 @@ final class NetworkStatusViewTests: XCTestCase {
         // THEN
         XCTAssertEqual(sut.connectingView.heightConstraint.constant, 0, "NetworkStatusView should be zero height")
     }
+
+    // MARK: Private
+
+    private var sut: NetworkStatusView!
+    private var mockContainer: MockNetworkStatusViewDelegate!
 }
 
 // MARK: - Method Swizzling

@@ -41,14 +41,23 @@ extension Notification.Name {
 
 /// This object is an interface for AVS to control conversation media playback
 final class MediaPlaybackManager: NSObject, AVSMedia {
-    private let userSession: UserSession
-    var audioTrackPlayer: AudioTrackPlayer
+    // MARK: Lifecycle
 
-    private(set) weak var activeMediaPlayer: MediaPlayer? {
-        didSet {
-            NotificationCenter.default.post(name: .activeMediaPlayerChanged, object: activeMediaPlayer)
-        }
+    init(
+        name: String?,
+        userSession: UserSession
+    ) {
+        self.userSession = userSession
+        self.audioTrackPlayer = AudioTrackPlayer(userSession: userSession)
+        super.init()
+
+        self.name = name
+        audioTrackPlayer.mediaPlayerDelegate = self
     }
+
+    // MARK: Internal
+
+    var audioTrackPlayer: AudioTrackPlayer
 
     weak var changeObserver: MediaPlaybackManagerChangeObserver?
     var name: String!
@@ -56,6 +65,14 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
     weak var delegate: AVSMediaDelegate?
 
     var volume: Float = 0
+
+    var recordingMuted = false
+
+    private(set) weak var activeMediaPlayer: MediaPlayer? {
+        didSet {
+            NotificationCenter.default.post(name: .activeMediaPlayerChanged, object: activeMediaPlayer)
+        }
+    }
 
     var looping: Bool {
         get {
@@ -75,20 +92,6 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
         set {
             /// no-op
         }
-    }
-
-    var recordingMuted = false
-
-    init(
-        name: String?,
-        userSession: UserSession
-    ) {
-        self.userSession = userSession
-        self.audioTrackPlayer = AudioTrackPlayer(userSession: userSession)
-        super.init()
-
-        self.name = name
-        audioTrackPlayer.mediaPlayerDelegate = self
     }
 
     // MARK: - AVSMedia
@@ -124,6 +127,10 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
         audioTrackPlayer = AudioTrackPlayer(userSession: userSession)
         audioTrackPlayer.mediaPlayerDelegate = self
     }
+
+    // MARK: Private
+
+    private let userSession: UserSession
 }
 
 // MARK: MediaPlayerDelegate

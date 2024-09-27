@@ -104,28 +104,7 @@ extension NSURL {
 
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
-    public let account: Account
-
-    public var viewContext: NSManagedObjectContext {
-        messagesContainer.viewContext
-    }
-
-    public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
-
-    public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
-
-    public lazy var eventContext: NSManagedObjectContext = eventsContainer.newBackgroundContext()
-
-    public let accountContainer: URL
-    public let applicationContainer: URL
-
-    let messagesContainer: PersistentContainer
-    let eventsContainer: PersistentContainer
-    let dispatchGroup: ZMSDispatchGroup?
-
-    private let messagesMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>
-    private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
-    private var hasBeenClosed = false
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -199,6 +178,65 @@ public class CoreDataStack: NSObject, ContextProvider {
         close()
     }
 
+    // MARK: Public
+
+    public let account: Account
+
+    public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+
+    public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+
+    public lazy var eventContext: NSManagedObjectContext = eventsContainer.newBackgroundContext()
+
+    public let accountContainer: URL
+    public let applicationContainer: URL
+
+    public var viewContext: NSManagedObjectContext {
+        messagesContainer.viewContext
+    }
+
+    public var needsMigration: Bool {
+        needsMessagingStoreMigration() || eventsContainer.needsMigration
+    }
+
+    public var storesExists: Bool {
+        messagesContainer.storeExists && eventsContainer.storeExists
+    }
+
+    // MARK: - Static Helpers
+
+    public static func accountDataFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
+        applicationContainer
+            .appendingPathComponent("AccountData")
+            .appendingPathComponent(accountIdentifier.uuidString)
+    }
+
+    public static func loadMessagingModel() -> NSManagedObjectModel {
+        let modelBundle = Bundle(for: ZMManagedObject.self)
+
+        guard let result = NSManagedObjectModel(
+            contentsOf: modelBundle.bundleURL
+                .appendingPathComponent("zmessaging.momd")
+        ) else {
+            fatal("Can't load data model for messaging bundle")
+        }
+
+        return result
+    }
+
+    public static func loadEventsModel() -> NSManagedObjectModel {
+        let modelBundle = WireDataModelBundle.bundle
+
+        guard let result = NSManagedObjectModel(
+            contentsOf: modelBundle.bundleURL
+                .appendingPathComponent("ZMEventModel.momd")
+        ) else {
+            fatal("Can't load data model for events bundle")
+        }
+
+        return result
+    }
+
     public func close() {
         guard !hasBeenClosed  else {
             return
@@ -211,22 +249,6 @@ public class CoreDataStack: NSObject, ContextProvider {
         searchContext.tearDown()
         eventContext.tearDown()
         closeStores()
-    }
-
-    func closeStores() {
-        WireLogger.localStorage.info("Closing core data stores")
-        do {
-            try closeStores(in: messagesContainer)
-            try closeStores(in: eventsContainer)
-        } catch {
-            WireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
-        }
-    }
-
-    func closeStores(in container: PersistentContainer) throws {
-        try container.persistentStoreCoordinator.persistentStores.forEach {
-            try container.persistentStoreCoordinator.remove($0)
-        }
     }
 
     public func setup(
@@ -347,6 +369,67 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
     }
 
+    public func linkContexts() {
+        syncContext.performGroupedAndWait {
+            self.syncContext.zm_userInterface = self.viewContext
+        }
+        viewContext.zm_sync = syncContext
+    }
+
+    // MARK: - Migration
+
+    public func needsMessagingStoreMigration() -> Bool {
+        guard let storeURL = messagesContainer.storeURL else {
+            return false
+        }
+        return messagesMigrator.requiresMigration(at: storeURL, toVersion: .current)
+    }
+
+    public func migrateMessagingStore() throws {
+        guard let storeURL = messagesContainer.storeURL else {
+            throw CoreDataMigratorError.missingStoreURL
+        }
+
+        try messagesMigrator.migrateStore(at: storeURL, toVersion: .current)
+    }
+
+    public func needsEventStoreMigration() -> Bool {
+        guard let storeURL = eventsContainer.storeURL else {
+            return false
+        }
+        return eventsMigrator.requiresMigration(at: storeURL, toVersion: .current)
+    }
+
+    public func migrateEventStore() throws {
+        guard let storeURL = eventsContainer.storeURL else {
+            throw CoreDataMigratorError.missingStoreURL
+        }
+
+        try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
+    }
+
+    // MARK: Internal
+
+    let messagesContainer: PersistentContainer
+    let eventsContainer: PersistentContainer
+    let dispatchGroup: ZMSDispatchGroup?
+
+    func closeStores() {
+        WireLogger.localStorage.info("Closing core data stores")
+        do {
+            try closeStores(in: messagesContainer)
+            try closeStores(in: eventsContainer)
+        } catch {
+            WireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
+        }
+    }
+
+    func closeStores(in container: PersistentContainer) throws {
+        try container.persistentStoreCoordinator.persistentStores.forEach {
+            try container.persistentStoreCoordinator.remove($0)
+        }
+    }
+
     func loadMessagesStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: messagesContainer)
@@ -401,14 +484,6 @@ public class CoreDataStack: NSObject, ContextProvider {
                 attributes: nil
             )
         }
-    }
-
-    public var needsMigration: Bool {
-        needsMessagingStoreMigration() || eventsContainer.needsMigration
-    }
-
-    public var storesExists: Bool {
-        messagesContainer.storeExists && eventsContainer.storeExists
     }
 
     // MARK: - Configure Contexts
@@ -480,78 +555,11 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
     }
 
-    public func linkContexts() {
-        syncContext.performGroupedAndWait {
-            self.syncContext.zm_userInterface = self.viewContext
-        }
-        viewContext.zm_sync = syncContext
-    }
+    // MARK: Private
 
-    // MARK: - Static Helpers
-
-    public static func accountDataFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
-        applicationContainer
-            .appendingPathComponent("AccountData")
-            .appendingPathComponent(accountIdentifier.uuidString)
-    }
-
-    public static func loadMessagingModel() -> NSManagedObjectModel {
-        let modelBundle = Bundle(for: ZMManagedObject.self)
-
-        guard let result = NSManagedObjectModel(
-            contentsOf: modelBundle.bundleURL
-                .appendingPathComponent("zmessaging.momd")
-        ) else {
-            fatal("Can't load data model for messaging bundle")
-        }
-
-        return result
-    }
-
-    public static func loadEventsModel() -> NSManagedObjectModel {
-        let modelBundle = WireDataModelBundle.bundle
-
-        guard let result = NSManagedObjectModel(
-            contentsOf: modelBundle.bundleURL
-                .appendingPathComponent("ZMEventModel.momd")
-        ) else {
-            fatal("Can't load data model for events bundle")
-        }
-
-        return result
-    }
-
-    // MARK: - Migration
-
-    public func needsMessagingStoreMigration() -> Bool {
-        guard let storeURL = messagesContainer.storeURL else {
-            return false
-        }
-        return messagesMigrator.requiresMigration(at: storeURL, toVersion: .current)
-    }
-
-    public func migrateMessagingStore() throws {
-        guard let storeURL = messagesContainer.storeURL else {
-            throw CoreDataMigratorError.missingStoreURL
-        }
-
-        try messagesMigrator.migrateStore(at: storeURL, toVersion: .current)
-    }
-
-    public func needsEventStoreMigration() -> Bool {
-        guard let storeURL = eventsContainer.storeURL else {
-            return false
-        }
-        return eventsMigrator.requiresMigration(at: storeURL, toVersion: .current)
-    }
-
-    public func migrateEventStore() throws {
-        guard let storeURL = eventsContainer.storeURL else {
-            throw CoreDataMigratorError.missingStoreURL
-        }
-
-        try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
-    }
+    private let messagesMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>
+    private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
+    private var hasBeenClosed = false
 }
 
 // MARK: - PersistentContainer

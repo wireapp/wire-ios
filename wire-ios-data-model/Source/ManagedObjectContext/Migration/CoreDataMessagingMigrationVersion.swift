@@ -19,12 +19,6 @@
 import Foundation
 
 enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
-    private enum Constant {
-        static let dataModelPrefix = "zmessaging"
-        static let modelDirectory = "zmessaging.momd"
-        static let resourceExtension = "mom"
-    }
-
     // MARK: -
 
     // Note: add new versions here in first position!
@@ -67,6 +61,23 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
     case v82 = "zmessaging2.82.0"
     case v81 = "zmessaging2.81.0"
     case v80 = "zmessaging2.80.0"
+
+    // MARK: Internal
+
+    // MARK: Current
+
+    static let current: Self = {
+        guard let current = allCases.first else {
+            fatalError("no model versions found")
+        }
+        return current
+    }()
+
+    static var allFixtureVersions: [String] {
+        allCases.map {
+            $0.dataModelVersion.replacingOccurrences(of: ".", with: "-")
+        }
+    }
 
     var nextVersion: Self? {
         switch self {
@@ -124,15 +135,6 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
         rawValue.replacingOccurrences(of: Constant.dataModelPrefix, with: "")
     }
 
-    // MARK: Current
-
-    static let current: Self = {
-        guard let current = allCases.first else {
-            fatalError("no model versions found")
-        }
-        return current
-    }()
-
     // MARK: Store URL
 
     func managedObjectModelURL() -> URL? {
@@ -143,9 +145,11 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
         )
     }
 
-    static var allFixtureVersions: [String] {
-        allCases.map {
-            $0.dataModelVersion.replacingOccurrences(of: ".", with: "-")
-        }
+    // MARK: Private
+
+    private enum Constant {
+        static let dataModelPrefix = "zmessaging"
+        static let modelDirectory = "zmessaging.momd"
+        static let resourceExtension = "mom"
     }
 }

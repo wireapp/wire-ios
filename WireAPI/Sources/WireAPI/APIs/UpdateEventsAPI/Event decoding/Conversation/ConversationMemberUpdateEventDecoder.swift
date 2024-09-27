@@ -19,6 +19,8 @@
 import Foundation
 
 struct ConversationMemberUpdateEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMemberUpdateEvent {
@@ -57,14 +59,9 @@ struct ConversationMemberUpdateEventDecoder {
         )
     }
 
-    private struct Payload: Decodable {
-        let userID: UserID
-        let role: String?
-        let muteStatus: Int?
-        let muteStatusReference: UTCTimeMillis?
-        let archivedStatus: Bool?
-        let archivedStatusReference: UTCTimeMillis?
+    // MARK: Private
 
+    private struct Payload: Decodable {
         enum CodingKeys: String, CodingKey {
             case userID = "qualified_target"
             case role = "conversation_role"
@@ -73,5 +70,12 @@ struct ConversationMemberUpdateEventDecoder {
             case archivedStatus = "otr_archived"
             case archivedStatusReference = "otr_archived_ref"
         }
+
+        let userID: UserID
+        let role: String?
+        let muteStatus: Int?
+        let muteStatusReference: UTCTimeMillis?
+        let archivedStatus: Bool?
+        let archivedStatusReference: UTCTimeMillis?
     }
 }

@@ -150,16 +150,20 @@ extension AddressBookAccessor {
 
 /// Common base class between iOS 8 (AddressBook framework) and iOS 9+ (Contacts framework)
 class AddressBook {
-    /// normalizer for phone numbers
-    let phoneNumberNormalizer: AddressBook.Normalizer
+    // MARK: Lifecycle
 
     init() {
         let libPhoneNumber = NBPhoneNumberUtil.sharedInstance()
         self.phoneNumberNormalizer = { libPhoneNumber?.normalize(phoneNumber: $0)?.validatedPhoneNumber }
     }
 
+    // MARK: Internal
+
     typealias Normalizer = (String) -> (String?)
     typealias AccessCheck = () -> (Bool)
+
+    /// normalizer for phone numbers
+    let phoneNumberNormalizer: AddressBook.Normalizer
 
     /// Will return an instance of the address book accessor best suited for the
     /// current OS version. Will return `nil` if the user did not grant access to the AB

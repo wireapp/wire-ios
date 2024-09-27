@@ -22,19 +22,7 @@ import XCTest
 @testable import Wire
 
 class ZMSnapshotTestCase: XCTestCase {
-    var uiMOC: NSManagedObjectContext!
-    var coreDataStack: CoreDataStack!
-
-    /// The color of the container view in which the view to
-    /// be snapshot will be placed, defaults to UIColor.lightGrayColor
-    var snapshotBackgroundColor: UIColor?
-
-    /// If YES the uiMOC will have image and file caches. Defaults to NO.
-    var needsCaches: Bool {
-        false
-    }
-
-    var documentsDirectory: URL?
+    // MARK: Open
 
     override open func setUp() {
         super.setUp()
@@ -67,21 +55,6 @@ class ZMSnapshotTestCase: XCTestCase {
         }
     }
 
-    func setupCoreDataStack() {
-        let account = Account(userName: "", userIdentifier: UUID())
-        let coreDataStack = CoreDataStack(
-            account: account,
-            applicationContainer: documentsDirectory!,
-            inMemoryStore: true
-        )
-
-        coreDataStack.loadStores(completionHandler: { error in
-            XCTAssertNil(error)
-        })
-        self.coreDataStack = coreDataStack
-        uiMOC = coreDataStack.viewContext
-    }
-
     override open func tearDown() {
         if needsCaches {
             wipeCaches()
@@ -95,6 +68,37 @@ class ZMSnapshotTestCase: XCTestCase {
         UIColor.setAccentOverride(nil)
         UIView.setAnimationsEnabled(true)
         super.tearDown()
+    }
+
+    // MARK: Internal
+
+    var uiMOC: NSManagedObjectContext!
+    var coreDataStack: CoreDataStack!
+
+    /// The color of the container view in which the view to
+    /// be snapshot will be placed, defaults to UIColor.lightGrayColor
+    var snapshotBackgroundColor: UIColor?
+
+    var documentsDirectory: URL?
+
+    /// If YES the uiMOC will have image and file caches. Defaults to NO.
+    var needsCaches: Bool {
+        false
+    }
+
+    func setupCoreDataStack() {
+        let account = Account(userName: "", userIdentifier: UUID())
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: documentsDirectory!,
+            inMemoryStore: true
+        )
+
+        coreDataStack.loadStores(completionHandler: { error in
+            XCTAssertNil(error)
+        })
+        self.coreDataStack = coreDataStack
+        uiMOC = coreDataStack.viewContext
     }
 
     func removeContentsOfDocumentsDirectory() {

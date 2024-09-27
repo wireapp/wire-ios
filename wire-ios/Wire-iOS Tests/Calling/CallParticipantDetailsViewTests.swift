@@ -21,8 +21,7 @@ import XCTest
 @testable import Wire
 
 class CallParticipantDetailsViewTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: CallParticipantDetailsView!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -63,4 +62,9 @@ class CallParticipantDetailsViewTests: XCTestCase {
         sut.frame = CGRect(x: 0, y: 0, width: 195, height: 24)
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: CallParticipantDetailsView!
 }

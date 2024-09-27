@@ -21,11 +21,15 @@ import Foundation
 // MARK: - UsersAPIV0
 
 class UsersAPIV0: UsersAPI, VersionedAPI {
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Internal
+
+    let httpClient: any HTTPClient
 
     var apiVersion: APIVersion {
         .v0
@@ -66,18 +70,6 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
 // MARK: - UserResponseV0
 
 struct UserResponseV0: Decodable, ToAPIModelConvertible {
-    let id: UserID
-    let name: String
-    let handle: String?
-    let teamID: UUID?
-    let accentID: Int
-    let assets: [UserAsset]
-    let deleted: Bool?
-    let email: String?
-    let expiresAt: UTCTimeMillis?
-    let service: ServiceResponseV0?
-    let legalholdStatus: LegalholdStatusV0
-
     enum CodingKeys: String, CodingKey {
         case id = "qualified_id"
         case name
@@ -91,6 +83,18 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
         case service
         case legalholdStatus = "legalhold_status"
     }
+
+    let id: UserID
+    let name: String
+    let handle: String?
+    let teamID: UUID?
+    let accentID: Int
+    let assets: [UserAsset]
+    let deleted: Bool?
+    let email: String?
+    let expiresAt: UTCTimeMillis?
+    let service: ServiceResponseV0?
+    let legalholdStatus: LegalholdStatusV0
 
     func toAPIModel() -> User {
         User(
@@ -113,11 +117,11 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
 // MARK: - ListUsersRequestV0
 
 struct ListUsersRequestV0: Encodable {
-    let qualifiedIDs: [QualifiedID]
-
     enum CodingKeys: String, CodingKey {
         case qualifiedIDs = "qualified_ids"
     }
+
+    let qualifiedIDs: [QualifiedID]
 }
 
 typealias ListUsersResponseV0 = [UserResponseV0]

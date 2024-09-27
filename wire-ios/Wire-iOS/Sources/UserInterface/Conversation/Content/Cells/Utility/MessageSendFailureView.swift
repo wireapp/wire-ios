@@ -24,23 +24,7 @@ import WireDesign
 // MARK: - MessageSendFailureView
 
 final class MessageSendFailureView: UIView {
-    // MARK: - Properties
-
-    override var isHidden: Bool {
-        didSet {
-            titleLabel.isHidden = isHidden
-            retryButton.isHidden = isHidden
-        }
-    }
-
-    var tapHandler: ((UIButton) -> Void)?
-
-    private let stackView = UIStackView(axis: .vertical)
-    private let titleLabel = WebLinkTextView()
-    private let retryButton = SecondaryTextButton(
-        fontSpec: FontSpec.buttonSmallSemibold,
-        insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-    )
+    // MARK: Lifecycle
 
     // MARK: - initialization
 
@@ -55,11 +39,40 @@ final class MessageSendFailureView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var tapHandler: ((UIButton) -> Void)?
+
+    // MARK: - Properties
+
+    override var isHidden: Bool {
+        didSet {
+            titleLabel.isHidden = isHidden
+            retryButton.isHidden = isHidden
+        }
+    }
+
     // MARK: - Setup UI
 
     func setTitle(_ errorMessage: String) {
         titleLabel.attributedText = .markdown(from: errorMessage, style: .errorLabelStyle)
     }
+
+    // MARK: - Methods
+
+    @objc
+    func retryButtonTapped(_ sender: UIButton) {
+        tapHandler?(sender)
+    }
+
+    // MARK: Private
+
+    private let stackView = UIStackView(axis: .vertical)
+    private let titleLabel = WebLinkTextView()
+    private let retryButton = SecondaryTextButton(
+        fontSpec: FontSpec.buttonSmallSemibold,
+        insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    )
 
     private func setupViews() {
         addSubview(stackView)
@@ -87,13 +100,6 @@ final class MessageSendFailureView: UIView {
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
-    }
-
-    // MARK: - Methods
-
-    @objc
-    func retryButtonTapped(_ sender: UIButton) {
-        tapHandler?(sender)
     }
 }
 

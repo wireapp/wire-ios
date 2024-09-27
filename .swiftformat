@@ -93,6 +93,7 @@
     isEmpty, \ # Rare false positives in situations where a type provides a `count` but not a `isEmpty` property.
     markTypes, \
     noExplicitOwnership, \
+    organizeDeclarations, \
 
 # Options
 

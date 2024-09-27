@@ -20,15 +20,7 @@ import UIKit
 import WireDesign
 
 final class TokenTextAttachment: NSTextAttachment, TokenContainer {
-    let token: Token<NSObjectProtocol>
-
-    private unowned let tokenField: TokenField
-
-    var isSelected = false {
-        didSet {
-            refreshImage()
-        }
-    }
+    // MARK: Lifecycle
 
     init(token: Token<NSObjectProtocol>, tokenField: TokenField) {
         self.token = token
@@ -44,9 +36,100 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    // MARK: - String shortening
+
+    static let appendixString = "…"
+
+    let token: Token<NSObjectProtocol>
+
+    var isSelected = false {
+        didSet {
+            refreshImage()
+        }
+    }
+
+    // MARK: - Description
+
+    override var description: String {
+        String(format: "<\(type(of: self)): \(self), name \(token.title)>")
+    }
+
     func refreshImage(tintColor: UIColor = SemanticColors.Label.textDefault) {
         image = imageForCurrentToken?.withTintColor(tintColor)
     }
+
+    func shortenedText(
+        forText text: String,
+        withAttributes attributes: [NSAttributedString.Key: Any]?,
+        toFitMaxWidth maxWidth: CGFloat
+    ) -> String {
+        if size(for: text, attributes: attributes).width < maxWidth {
+            return text
+        }
+
+        return searchForShortenedText(
+            forText: text,
+            withAttributes: attributes,
+            toFitMaxWidth: maxWidth,
+            in: NSRange(location: 0, length: text.count)
+        )
+    }
+
+    // Search for longest substring, which render width is less than maxWidth
+
+    func searchForShortenedText(
+        forText text: String,
+        withAttributes attributes: [NSAttributedString.Key: Any]?,
+        toFitMaxWidth maxWidth: CGFloat,
+        in range: NSRange
+    ) -> String {
+        // In other words, search for such number l, that
+        // [title substringToIndex:l].width <= maxWidth,
+        // and [title substringToIndex:l+1].width > maxWidth;
+
+        // the longer substring is, the longer its width, so
+        // we can use binary search here.
+
+        let nsString: NSString = text as NSString
+
+        let shortedTextLength = range.location + range.length / 2
+        let shortedText = (nsString.substring(to: shortedTextLength)) + TokenTextAttachment.appendixString
+        let shortedText1 = (nsString.substring(to: shortedTextLength + 1)) + TokenTextAttachment.appendixString
+
+        let shortedTextSize = size(for: shortedText, attributes: attributes)
+        let shortedText1Size = size(for: shortedText1, attributes: attributes)
+        if shortedTextSize.width <= maxWidth, shortedText1Size.width > maxWidth {
+            return shortedText
+        } else if shortedText1Size.width <= maxWidth {
+            // Search in right range
+            return searchForShortenedText(
+                forText: text,
+                withAttributes: attributes,
+                toFitMaxWidth: maxWidth,
+                in: NSRange(location: shortedTextLength, length: NSMaxRange(range) - shortedTextLength)
+            )
+        } else if shortedTextSize.width > maxWidth {
+            // Search in left range
+            return searchForShortenedText(
+                forText: text,
+                withAttributes: attributes,
+                toFitMaxWidth: maxWidth,
+                in: NSRange(location: range.location, length: shortedTextLength - range.location)
+            )
+        }
+
+        return text
+    }
+
+    func size(for string: String, attributes: [NSAttributedString.Key: Any]?) -> CGSize {
+        NSAttributedString(string: string, attributes: attributes).size()
+    }
+
+    // MARK: Private
+
+    private unowned let tokenField: TokenField
 
     private var imageForCurrentToken: UIImage? {
         let imageHeight: CGFloat = ceil(tokenField.fontLineHeight)
@@ -124,82 +207,5 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
             NSAttributedString.Key.font: tokenField.tokenTitleFont,
             NSAttributedString.Key.foregroundColor: titleColor,
         ]
-    }
-
-    // MARK: - String shortening
-
-    static let appendixString = "…"
-
-    func shortenedText(
-        forText text: String,
-        withAttributes attributes: [NSAttributedString.Key: Any]?,
-        toFitMaxWidth maxWidth: CGFloat
-    ) -> String {
-        if size(for: text, attributes: attributes).width < maxWidth {
-            return text
-        }
-
-        return searchForShortenedText(
-            forText: text,
-            withAttributes: attributes,
-            toFitMaxWidth: maxWidth,
-            in: NSRange(location: 0, length: text.count)
-        )
-    }
-
-    // Search for longest substring, which render width is less than maxWidth
-
-    func searchForShortenedText(
-        forText text: String,
-        withAttributes attributes: [NSAttributedString.Key: Any]?,
-        toFitMaxWidth maxWidth: CGFloat,
-        in range: NSRange
-    ) -> String {
-        // In other words, search for such number l, that
-        // [title substringToIndex:l].width <= maxWidth,
-        // and [title substringToIndex:l+1].width > maxWidth;
-
-        // the longer substring is, the longer its width, so
-        // we can use binary search here.
-
-        let nsString: NSString = text as NSString
-
-        let shortedTextLength = range.location + range.length / 2
-        let shortedText = (nsString.substring(to: shortedTextLength)) + TokenTextAttachment.appendixString
-        let shortedText1 = (nsString.substring(to: shortedTextLength + 1)) + TokenTextAttachment.appendixString
-
-        let shortedTextSize = size(for: shortedText, attributes: attributes)
-        let shortedText1Size = size(for: shortedText1, attributes: attributes)
-        if shortedTextSize.width <= maxWidth, shortedText1Size.width > maxWidth {
-            return shortedText
-        } else if shortedText1Size.width <= maxWidth {
-            // Search in right range
-            return searchForShortenedText(
-                forText: text,
-                withAttributes: attributes,
-                toFitMaxWidth: maxWidth,
-                in: NSRange(location: shortedTextLength, length: NSMaxRange(range) - shortedTextLength)
-            )
-        } else if shortedTextSize.width > maxWidth {
-            // Search in left range
-            return searchForShortenedText(
-                forText: text,
-                withAttributes: attributes,
-                toFitMaxWidth: maxWidth,
-                in: NSRange(location: range.location, length: shortedTextLength - range.location)
-            )
-        }
-
-        return text
-    }
-
-    func size(for string: String, attributes: [NSAttributedString.Key: Any]?) -> CGSize {
-        NSAttributedString(string: string, attributes: attributes).size()
-    }
-
-    // MARK: - Description
-
-    override var description: String {
-        String(format: "<\(type(of: self)): \(self), name \(token.title)>")
     }
 }

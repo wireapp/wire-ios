@@ -56,25 +56,7 @@ extension CallState {
 // MARK: - CallTopOverlayController
 
 final class CallTopOverlayController: UIViewController {
-    // MARK: - Properties
-
-    private let durationLabel = UILabel()
-    private let interactiveView = UIView()
-    private let muteIcon = UIImageView()
-    private var muteIconWidth: NSLayoutConstraint?
-    private var tapGestureRecognizer: UITapGestureRecognizer!
-    private weak var callDurationTimer: Timer?
-    private var observerTokens: [Any] = []
-    private let callDurationFormatter = DateComponentsFormatter()
-
-    let conversation: ZMConversation
-    weak var delegate: CallTopOverlayControllerDelegate?
-
-    private var callDuration: TimeInterval = 0 {
-        didSet {
-            updateLabel()
-        }
-    }
+    // MARK: Lifecycle
 
     deinit {
         stopCallDurationTimer()
@@ -98,6 +80,36 @@ final class CallTopOverlayController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - TapableAccessibleView
+
+    final class TapableAccessibleView: UIView {
+        // MARK: Lifecycle
+
+        init(onAccessibilityActivate: @escaping () -> Void) {
+            self.onAccessibilityActivate = onAccessibilityActivate
+            super.init(frame: .zero)
+        }
+
+        @available(*, unavailable)
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        // MARK: Internal
+
+        let onAccessibilityActivate: () -> Void
+
+        override func accessibilityActivate() -> Bool {
+            onAccessibilityActivate()
+            return true
+        }
+    }
+
+    let conversation: ZMConversation
+    weak var delegate: CallTopOverlayControllerDelegate?
 
     // MARK: - Override methods
 
@@ -153,6 +165,45 @@ final class CallTopOverlayController: UIViewController {
         (conversation.voiceChannel?.state).map(updateCallDurationTimer)
     }
 
+    func stopCallDurationTimer() {
+        callDurationTimer?.invalidate()
+        callDurationTimer = nil
+    }
+
+    // MARK: Fileprivate
+
+    // MARK: - Update methods
+
+    fileprivate func updateCallDurationTimer(for callState: CallState) {
+        switch callState {
+        case .established:
+            startCallDurationTimer()
+        case .terminating:
+            stopCallDurationTimer()
+        default:
+            updateLabel()
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let durationLabel = UILabel()
+    private let interactiveView = UIView()
+    private let muteIcon = UIImageView()
+    private var muteIconWidth: NSLayoutConstraint?
+    private var tapGestureRecognizer: UITapGestureRecognizer!
+    private weak var callDurationTimer: Timer?
+    private var observerTokens: [Any] = []
+    private let callDurationFormatter = DateComponentsFormatter()
+
+    private var callDuration: TimeInterval = 0 {
+        didSet {
+            updateLabel()
+        }
+    }
+
     private var displayMuteIcon = false {
         didSet {
             if displayMuteIcon {
@@ -167,16 +218,24 @@ final class CallTopOverlayController: UIViewController {
         }
     }
 
-    // MARK: - Update methods
+    private var statusString: String {
+        guard let state = conversation.voiceChannel?.state else {
+            return ""
+        }
 
-    fileprivate func updateCallDurationTimer(for callState: CallState) {
-        switch callState {
-        case .established:
-            startCallDurationTimer()
-        case .terminating:
-            stopCallDurationTimer()
+        switch state {
+        case .established, .establishedDataChannel:
+            let duration = callDurationFormatter.string(from: callDuration) ?? ""
+            return L10n.Localizable.Voice.TopOverlay.tapToReturn + "・" + duration
+
         default:
-            updateLabel()
+            let initiator = conversation.voiceChannel?.initiator?.name ?? ""
+            let conversation = conversation.displayNameWithFallback
+            return state.description(
+                callee: initiator,
+                conversation: conversation,
+                isGroup: self.conversation.conversationType == .group
+            )
         }
     }
 
@@ -201,58 +260,11 @@ final class CallTopOverlayController: UIViewController {
         view.accessibilityValue = durationLabel.text
     }
 
-    private var statusString: String {
-        guard let state = conversation.voiceChannel?.state else {
-            return ""
-        }
-
-        switch state {
-        case .established, .establishedDataChannel:
-            let duration = callDurationFormatter.string(from: callDuration) ?? ""
-            return L10n.Localizable.Voice.TopOverlay.tapToReturn + "・" + duration
-
-        default:
-            let initiator = conversation.voiceChannel?.initiator?.name ?? ""
-            let conversation = conversation.displayNameWithFallback
-            return state.description(
-                callee: initiator,
-                conversation: conversation,
-                isGroup: self.conversation.conversationType == .group
-            )
-        }
-    }
-
-    func stopCallDurationTimer() {
-        callDurationTimer?.invalidate()
-        callDurationTimer = nil
-    }
-
     // MARK: - Actions
 
     @objc
     private func openCall(_: UITapGestureRecognizer?) {
         delegate?.voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: conversation.voiceChannel)
-    }
-
-    // MARK: - TapableAccessibleView
-
-    final class TapableAccessibleView: UIView {
-        let onAccessibilityActivate: () -> Void
-
-        init(onAccessibilityActivate: @escaping () -> Void) {
-            self.onAccessibilityActivate = onAccessibilityActivate
-            super.init(frame: .zero)
-        }
-
-        @available(*, unavailable)
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-
-        override func accessibilityActivate() -> Bool {
-            onAccessibilityActivate()
-            return true
-        }
     }
 }
 

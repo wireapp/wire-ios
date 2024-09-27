@@ -22,7 +22,7 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class VoIPPushHelperTests: XCTestCase {
-    private let userDefaultsSuiteName = "VoIPPushHelperTests"
+    // MARK: Internal
 
     // MARK: - Set up
 
@@ -79,4 +79,8 @@ final class VoIPPushHelperTests: XCTestCase {
         // Then
         XCTAssertTrue(VoIPPushHelper.isAVSReady)
     }
+
+    // MARK: Private
+
+    private let userDefaultsSuiteName = "VoIPPushHelperTests"
 }

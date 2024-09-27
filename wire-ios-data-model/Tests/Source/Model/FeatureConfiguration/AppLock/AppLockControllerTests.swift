@@ -24,9 +24,9 @@ import XCTest
 // MARK: - AppLockControllerTests
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
-    var selfUser: ZMUser!
+    // MARK: Internal
 
-    private var mockAuthenticationContext: MockAuthenticationContextProtocol!
+    var selfUser: ZMUser!
 
     override func setUp() {
         super.setUp()
@@ -194,8 +194,6 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(sut.state, .needsChecking)
         XCTAssertEqual(sut.lastCheckpoint, lastCheckpoint)
     }
-
-    // MARK: - Open
 
     func test_ItOpens_IfNotLocked() {
         // Given
@@ -402,6 +400,10 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         // Clean up
         try sut.deletePasscode()
     }
+
+    // MARK: Private
+
+    private var mockAuthenticationContext: MockAuthenticationContextProtocol!
 }
 
 // MARK: - Helpers

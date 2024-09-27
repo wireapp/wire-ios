@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class RoundedPageIndicatorTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: RoundedPageIndicator!
-    private let frame = CGRect(x: 0, y: 0, width: 120, height: 24)
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -69,4 +65,12 @@ final class RoundedPageIndicatorTests: XCTestCase {
         // Then
         snapshotHelper.verify(matching: view)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: RoundedPageIndicator!
+    private let frame = CGRect(x: 0, y: 0, width: 120, height: 24)
 }

@@ -21,6 +21,8 @@ import Foundation
 /// Metadata for a conversation.
 
 public struct Conversation: Equatable, Codable {
+    // MARK: Public
+
     /// The unqualified conversation id.
 
     public var id: UUID?
@@ -94,6 +96,8 @@ public struct Conversation: Equatable, Codable {
     public var lastEvent: String?
 
     public var lastEventTime: Date?
+
+    // MARK: Internal
 
     enum CodingKeys: String, CodingKey {
         case id

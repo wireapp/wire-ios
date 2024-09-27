@@ -21,15 +21,19 @@ import WireSyncEngine
 // MARK: - ForegroundNotificationFilter
 
 final class ForegroundNotificationFilter {
-    // MARK: - Public Property
-
-    var sessionManager: SessionManager?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
     init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
     }
+
+    // MARK: Internal
+
+    // MARK: - Public Property
+
+    var sessionManager: SessionManager?
 }
 
 // MARK: ForegroundNotificationResponder

@@ -22,38 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class VideoMessageView: UIView, TransferView {
-    var fileMessage: ZMConversationMessage?
-    weak var delegate: TransferViewDelegate?
-
-    var timeLabelHidden = false {
-        didSet {
-            timeLabel.isHidden = timeLabelHidden
-        }
-    }
-
-    private let previewImageView = UIImageView()
-    private let progressView = CircularProgressView()
-    private let playButton: IconButton = {
-        let button = IconButton()
-        button.setIconColor(
-            SemanticColors.Icon.foregroundDefaultWhite,
-            for: .normal
-        )
-        return button
-    }()
-
-    private let bottomGradientView = GradientView()
-    private let timeLabel: UILabel = {
-        let label = UILabel()
-        label.font = .smallLightFont
-
-        return label
-    }()
-
-    private let loadingView = ThreeDotsLoadingView()
-
-    private var allViews: [UIView] = []
-    private var state: FileMessageViewState = .unavailable
+    // MARK: Lifecycle
 
     override required init(frame: CGRect) {
         super.init(frame: frame)
@@ -98,6 +67,112 @@ final class VideoMessageView: UIView, TransferView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var fileMessage: ZMConversationMessage?
+    weak var delegate: TransferViewDelegate?
+
+    var timeLabelHidden = false {
+        didSet {
+            timeLabel.isHidden = timeLabelHidden
+        }
+    }
+
+    override var tintColor: UIColor! {
+        didSet {
+            progressView.tintColor = tintColor
+        }
+    }
+
+    func configure(for message: ZMConversationMessage, isInitial: Bool) {
+        self.fileMessage = message
+
+        guard let fileMessage,
+              let fileMessageData = fileMessage.fileMessageData,
+              let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
+
+        self.state = state
+        previewImageView.image = nil
+
+        if state != .unavailable {
+            updateTimeLabel(withFileMessageData: fileMessageData)
+            timeLabel.textColor = SemanticColors.Label.textDefault
+
+            fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
+                guard let image else { return }
+                self?.updatePreviewImage(image)
+            }
+        }
+
+        if state == .uploading || state == .downloading {
+            progressView.setProgress(fileMessageData.progress, animated: !isInitial)
+        }
+
+        if let viewsState = state.viewsStateForVideo() {
+            playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
+            playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
+        }
+
+        updateVisibleViews()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playButton.layer.cornerRadius = playButton.bounds.size.width / 2.0
+    }
+
+    // MARK: - Actions
+
+    @objc
+    func onActionButtonPressed(_: UIButton) {
+        guard let fileMessageData = fileMessage?.fileMessageData else {
+            return
+        }
+
+        switch fileMessageData.transferState {
+        case .uploading:
+            guard fileMessageData.hasLocalFileData else { return }
+            delegate?.transferView(self, didSelect: .cancel)
+
+        case .uploadingCancelled, .uploadingFailed:
+            delegate?.transferView(self, didSelect: .resend)
+
+        case .uploaded:
+            if case .downloading = fileMessageData.downloadState {
+                progressView.setProgress(0, animated: false)
+                delegate?.transferView(self, didSelect: .cancel)
+            } else {
+                delegate?.transferView(self, didSelect: .present)
+            }
+        }
+    }
+
+    // MARK: Private
+
+    private let previewImageView = UIImageView()
+    private let progressView = CircularProgressView()
+    private let playButton: IconButton = {
+        let button = IconButton()
+        button.setIconColor(
+            SemanticColors.Icon.foregroundDefaultWhite,
+            for: .normal
+        )
+        return button
+    }()
+
+    private let bottomGradientView = GradientView()
+    private let timeLabel: UILabel = {
+        let label = UILabel()
+        label.font = .smallLightFont
+
+        return label
+    }()
+
+    private let loadingView = ThreeDotsLoadingView()
+
+    private var allViews: [UIView] = []
+    private var state: FileMessageViewState = .unavailable
 
     private func createConstraints() {
         [
@@ -145,38 +220,6 @@ final class VideoMessageView: UIView, TransferView {
                 loadingView.centerYAnchor.constraint(equalTo: previewImageView.centerYAnchor),
             ]
         )
-    }
-
-    func configure(for message: ZMConversationMessage, isInitial: Bool) {
-        self.fileMessage = message
-
-        guard let fileMessage,
-              let fileMessageData = fileMessage.fileMessageData,
-              let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
-
-        self.state = state
-        previewImageView.image = nil
-
-        if state != .unavailable {
-            updateTimeLabel(withFileMessageData: fileMessageData)
-            timeLabel.textColor = SemanticColors.Label.textDefault
-
-            fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
-                guard let image else { return }
-                self?.updatePreviewImage(image)
-            }
-        }
-
-        if state == .uploading || state == .downloading {
-            progressView.setProgress(fileMessageData.progress, animated: !isInitial)
-        }
-
-        if let viewsState = state.viewsStateForVideo() {
-            playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
-            playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
-        }
-
-        updateVisibleViews()
     }
 
     private func visibleViews(for state: FileMessageViewState) -> [UIView] {
@@ -230,42 +273,5 @@ final class VideoMessageView: UIView, TransferView {
 
     private func updateVisibleViews() {
         updateVisibleViews(allViews, visibleViews: visibleViews(for: state), animated: !loadingView.isHidden)
-    }
-
-    override var tintColor: UIColor! {
-        didSet {
-            progressView.tintColor = tintColor
-        }
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        playButton.layer.cornerRadius = playButton.bounds.size.width / 2.0
-    }
-
-    // MARK: - Actions
-
-    @objc
-    func onActionButtonPressed(_: UIButton) {
-        guard let fileMessageData = fileMessage?.fileMessageData else {
-            return
-        }
-
-        switch fileMessageData.transferState {
-        case .uploading:
-            guard fileMessageData.hasLocalFileData else { return }
-            delegate?.transferView(self, didSelect: .cancel)
-
-        case .uploadingCancelled, .uploadingFailed:
-            delegate?.transferView(self, didSelect: .resend)
-
-        case .uploaded:
-            if case .downloading = fileMessageData.downloadState {
-                progressView.setProgress(0, animated: false)
-                delegate?.transferView(self, didSelect: .cancel)
-            } else {
-                delegate?.transferView(self, didSelect: .present)
-            }
-        }
     }
 }

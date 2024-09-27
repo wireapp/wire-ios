@@ -21,6 +21,15 @@ import Foundation
 // MARK: - CallingConfiguration
 
 struct CallingConfiguration {
+    // MARK: Internal
+
+    enum StreamLimit {
+        case noLimit
+        case limit(amount: Int)
+    }
+
+    static var config = Self.default
+
     let canSwipeToDismissCall: Bool
     let audioTilesEnabled: Bool
     let paginationEnabled: Bool
@@ -28,20 +37,15 @@ struct CallingConfiguration {
     let canAudioCallHideOverlay: Bool
     let streamLimit: StreamLimit
 
-    static var config = Self.default
-
-    private static let `default` = Self.largeConferenceCalls
-
     #if DEBUG
         static func testHelper_resetDefaultConfig() {
             config = Self.default
         }
     #endif
 
-    enum StreamLimit {
-        case noLimit
-        case limit(amount: Int)
-    }
+    // MARK: Private
+
+    private static let `default` = Self.largeConferenceCalls
 }
 
 extension CallingConfiguration {

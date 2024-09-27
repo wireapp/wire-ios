@@ -22,6 +22,23 @@ import WireDataModel
 import WireDesign
 
 final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setupViews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
 
     struct Configuration {
@@ -37,6 +54,21 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     var isSelected = true
+
+    // MARK: - Setup UI
+
+    func configure(with object: Configuration, animated: Bool) {
+        config = object
+    }
+
+    // MARK: - Methods
+
+    @objc
+    func buttonTapped(_: UIButton) {
+        buttonAction?()
+    }
+
+    // MARK: Private
 
     private var isCollapsed = true
     private var buttonAction: Completion?
@@ -56,25 +88,6 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
         didSet {
             updateUI()
         }
-    }
-
-    // MARK: - Initialization
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        setupViews()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
-    // MARK: - Setup UI
-
-    func configure(with object: Configuration, animated: Bool) {
-        config = object
     }
 
     private func updateUI() {
@@ -160,12 +173,5 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
         totalCountView.accessibilityIdentifier = "total_count.label"
         usersView.accessibilityIdentifier = "users_list.label"
         button.accessibilityIdentifier = "details.button"
-    }
-
-    // MARK: - Methods
-
-    @objc
-    func buttonTapped(_: UIButton) {
-        buttonAction?()
     }
 }

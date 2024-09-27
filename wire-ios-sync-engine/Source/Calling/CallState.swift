@@ -26,11 +26,7 @@ private let zmLog = ZMSLog(tag: "calling")
 /// A participant in the call.
 
 public struct CallParticipant: Hashable {
-    public let user: UserType
-    public let clientId: String
-    public let userId: AVSIdentifier
-    public let state: CallParticipantState
-    public let activeSpeakerState: ActiveSpeakerState
+    // MARK: Lifecycle
 
     /// convenience init method for ZMUser
     /// - Parameters:
@@ -85,6 +81,14 @@ public struct CallParticipant: Hashable {
             activeSpeakerState: activeSpeakerState
         )
     }
+
+    // MARK: Public
+
+    public let user: UserType
+    public let clientId: String
+    public let userId: AVSIdentifier
+    public let state: CallParticipantState
+    public let activeSpeakerState: ActiveSpeakerState
 
     // MARK: - Hashable
 
@@ -190,6 +194,8 @@ public enum CallState: Equatable {
     case terminating(reason: CallClosedReason)
     /// Unknown call state
     case unknown
+
+    // MARK: Internal
 
     /// Logs the current state to the calling logs.
 

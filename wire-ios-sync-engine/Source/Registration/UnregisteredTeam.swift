@@ -21,14 +21,7 @@ import WireUtilities
 
 /// An object containing the details required to create a team.
 public struct UnregisteredTeam: Equatable {
-    public let teamName: String
-    public let email: String
-    public let emailCode: String
-    public let fullName: String
-    public let password: String
-    public let accentColor: AccentColor
-    public let locale: String
-    public let label: UUID?
+    // MARK: Lifecycle
 
     public init(
         teamName: String,
@@ -47,6 +40,19 @@ public struct UnregisteredTeam: Equatable {
         self.locale = NSLocale.formattedLocaleIdentifier()!
         self.label = UIDevice.current.identifierForVendor
     }
+
+    // MARK: Public
+
+    public let teamName: String
+    public let email: String
+    public let emailCode: String
+    public let fullName: String
+    public let password: String
+    public let accentColor: AccentColor
+    public let locale: String
+    public let label: UUID?
+
+    // MARK: Internal
 
     var payload: ZMTransportData {
         [

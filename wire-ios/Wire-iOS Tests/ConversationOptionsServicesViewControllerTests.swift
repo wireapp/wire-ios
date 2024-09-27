@@ -24,13 +24,7 @@ import XCTest
 // MARK: - MockServicesOptionsViewModelConfiguration
 
 final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptionsViewModelConfiguration {
-    // MARK: Properties
-
-    typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
-    var allowServices: Bool
-    var allowServicesChangedHandler: ((Bool) -> Void)?
-    var areServicePresent = true
-    var setAllowServices: SetHandler?
+    // MARK: Lifecycle
 
     // MARK: Init
 
@@ -38,6 +32,17 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
         self.allowServices = allowServices
         self.setAllowServices = setAllowServices
     }
+
+    // MARK: Internal
+
+    // MARK: Properties
+
+    typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
+
+    var allowServices: Bool
+    var allowServicesChangedHandler: ((Bool) -> Void)?
+    var areServicePresent = true
+    var setAllowServices: SetHandler?
 
     func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         setAllowServices?(allowServices, completion)
@@ -47,7 +52,7 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
 // MARK: - ConversationServicesOptionsViewControllerTests
 
 final class ConversationServicesOptionsViewControllerTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -174,4 +179,8 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         // THEN
         XCTAssertNotNil(sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

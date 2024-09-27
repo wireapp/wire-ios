@@ -26,6 +26,8 @@ enum AssetTransportError: Error {
     case assetTooLarge
     case other(Error?)
 
+    // MARK: Lifecycle
+
     init(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (400, .some("invalid-length")):
@@ -42,14 +44,7 @@ enum AssetTransportError: Error {
 
 public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
     ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
-    let requestFactory = AssetRequestFactory()
-    var upstreamRequestSyncs = [ProfileImageSize: ZMSingleRequestSync]()
-    var deleteRequestSync: ZMSingleRequestSync?
-    var downstreamRequestSyncs = [ProfileImageSize: ZMDownstreamObjectSyncWithWhitelist]()
-    let moc: NSManagedObjectContext
-    weak var imageUploadStatus: UserProfileImageUploadStatusProtocol?
-
-    fileprivate var observers: [Any] = []
+    // MARK: Lifecycle
 
     @objc
     public convenience init(
@@ -95,53 +90,12 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         ))
     }
 
-    fileprivate func whitelistUserImageSync(for size: ProfileImageSize) -> ZMDownstreamObjectSyncWithWhitelist {
-        let predicate: NSPredicate = switch size {
-        case .preview:
-            ZMUser.previewImageDownloadFilter
-        case .complete:
-            ZMUser.completeImageDownloadFilter
-        }
+    // MARK: Public
 
-        return ZMDownstreamObjectSyncWithWhitelist(
-            transcoder: self,
-            entityName: ZMUser.entityName(),
-            predicateForObjectsToDownload: predicate,
-            managedObjectContext: moc
-        )
-    }
+    // MARK: - ZMContextChangeTrackerSource
 
-    func size(for requestSync: ZMDownstreamObjectSyncWithWhitelist) -> ProfileImageSize? {
-        for (size, sync) in downstreamRequestSyncs where sync === requestSync {
-            return size
-        }
-        return nil
-    }
-
-    func size(for requestSync: ZMSingleRequestSync) -> ProfileImageSize? {
-        for (size, sync) in upstreamRequestSyncs where sync === requestSync {
-            return size
-        }
-        return nil
-    }
-
-    func requestAssetForNotification(note: NotificationInContext) {
-        moc.performGroupedBlock {
-            guard let objectID = note.object as? NSManagedObjectID,
-                  let object = self.moc.object(with: objectID) as? ZMManagedObject
-            else { return }
-
-            switch note.name {
-            case .userDidRequestPreviewAsset:
-                self.downstreamRequestSyncs[.preview]?.whiteListObject(object)
-            case .userDidRequestCompleteAsset:
-                self.downstreamRequestSyncs[.complete]?.whiteListObject(object)
-            default:
-                break
-            }
-
-            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        }
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        Array(downstreamRequestSyncs.values)
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -164,12 +118,6 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             .compactMap { upstreamRequestSyncs[$0] }.first
         sync?.readyForNextRequestIfNotBusy()
         return sync?.nextRequest(for: apiVersion)
-    }
-
-    // MARK: - ZMContextChangeTrackerSource
-
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        Array(downstreamRequestSyncs.values)
     }
 
     // MARK: - ZMDownstreamTranscoder
@@ -268,5 +216,67 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         guard let payload = response.payload?.asDictionary(),
               let assetId = payload["key"] as? String else { fatal("No asset ID present in payload") }
         imageUploadStatus?.uploadingDone(imageSize: size, assetId: assetId)
+    }
+
+    // MARK: Internal
+
+    let requestFactory = AssetRequestFactory()
+    var upstreamRequestSyncs = [ProfileImageSize: ZMSingleRequestSync]()
+    var deleteRequestSync: ZMSingleRequestSync?
+    var downstreamRequestSyncs = [ProfileImageSize: ZMDownstreamObjectSyncWithWhitelist]()
+    let moc: NSManagedObjectContext
+    weak var imageUploadStatus: UserProfileImageUploadStatusProtocol?
+
+    func size(for requestSync: ZMDownstreamObjectSyncWithWhitelist) -> ProfileImageSize? {
+        for (size, sync) in downstreamRequestSyncs where sync === requestSync {
+            return size
+        }
+        return nil
+    }
+
+    func size(for requestSync: ZMSingleRequestSync) -> ProfileImageSize? {
+        for (size, sync) in upstreamRequestSyncs where sync === requestSync {
+            return size
+        }
+        return nil
+    }
+
+    func requestAssetForNotification(note: NotificationInContext) {
+        moc.performGroupedBlock {
+            guard let objectID = note.object as? NSManagedObjectID,
+                  let object = self.moc.object(with: objectID) as? ZMManagedObject
+            else { return }
+
+            switch note.name {
+            case .userDidRequestPreviewAsset:
+                self.downstreamRequestSyncs[.preview]?.whiteListObject(object)
+            case .userDidRequestCompleteAsset:
+                self.downstreamRequestSyncs[.complete]?.whiteListObject(object)
+            default:
+                break
+            }
+
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var observers: [Any] = []
+
+    fileprivate func whitelistUserImageSync(for size: ProfileImageSize) -> ZMDownstreamObjectSyncWithWhitelist {
+        let predicate: NSPredicate = switch size {
+        case .preview:
+            ZMUser.previewImageDownloadFilter
+        case .complete:
+            ZMUser.completeImageDownloadFilter
+        }
+
+        return ZMDownstreamObjectSyncWithWhitelist(
+            transcoder: self,
+            entityName: ZMUser.entityName(),
+            predicateForObjectsToDownload: predicate,
+            managedObjectContext: moc
+        )
     }
 }

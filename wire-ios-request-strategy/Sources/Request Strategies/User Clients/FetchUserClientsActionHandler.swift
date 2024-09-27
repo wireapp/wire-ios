@@ -26,6 +26,12 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
         let qualified_users: Set<QualifiedID>
     }
 
+    // MARK: - Response
+
+    struct ResponsePayload: Codable, Equatable {
+        let qualified_user_map: Payload.UserClientByDomain
+    }
+
     override func request(
         for action: FetchUserClientsAction,
         apiVersion: APIVersion
@@ -53,12 +59,6 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
                 apiVersion: apiVersion.rawValue
             )
         }
-    }
-
-    // MARK: - Response
-
-    struct ResponsePayload: Codable, Equatable {
-        let qualified_user_map: Payload.UserClientByDomain
     }
 
     override func handleResponse(

@@ -79,11 +79,15 @@ final class AutomationHelperOperation: LaunchSequenceOperation {
 // MARK: - MediaManagerOperation
 
 final class MediaManagerOperation: LaunchSequenceOperation {
-    private let mediaManagerLoader = MediaManagerLoader()
+    // MARK: Internal
 
     func execute() {
         mediaManagerLoader.send(message: .appStart)
     }
+
+    // MARK: Private
+
+    private let mediaManagerLoader = MediaManagerLoader()
 }
 
 // MARK: - TrackingOperation
@@ -101,7 +105,7 @@ final class TrackingOperation: LaunchSequenceOperation {
 // MARK: - FileBackupExcluderOperation
 
 final class FileBackupExcluderOperation: LaunchSequenceOperation {
-    private let fileBackupExcluder = FileBackupExcluder()
+    // MARK: Internal
 
     func execute() {
         guard let appGroupIdentifier = Bundle.main.appGroupIdentifier else {
@@ -111,6 +115,10 @@ final class FileBackupExcluderOperation: LaunchSequenceOperation {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
         fileBackupExcluder.excludeLibraryFolderInSharedContainer(sharedContainerURL: sharedContainerURL)
     }
+
+    // MARK: Private
+
+    private let fileBackupExcluder = FileBackupExcluder()
 }
 
 // MARK: - BackendInfoOperation

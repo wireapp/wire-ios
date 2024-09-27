@@ -44,17 +44,7 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - URLActionRouter
 
 class URLActionRouter: URLActionRouterProtocol {
-    // MARK: - Public Properties
-
-    private(set) var sessionManager: SessionManager?
-    weak var delegate: URLActionRouterDelegate?
-    weak var authenticatedRouter: AuthenticatedRouterProtocol?
-
-    // MARK: - Private Properties
-
-    private let rootViewController: () -> UIViewController
-    private var pendingDestination: NavigationDestination?
-    private var pendingAlert: UIAlertController?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -65,6 +55,14 @@ class URLActionRouter: URLActionRouterProtocol {
         self.rootViewController = viewController
         self.sessionManager = sessionManager
     }
+
+    // MARK: Internal
+
+    // MARK: - Public Properties
+
+    private(set) var sessionManager: SessionManager?
+    weak var delegate: URLActionRouterDelegate?
+    weak var authenticatedRouter: AuthenticatedRouterProtocol?
 
     // MARK: - Public Implementation
 
@@ -134,6 +132,14 @@ class URLActionRouter: URLActionRouterProtocol {
     func internalPresentAlert(_ alert: UIAlertController) {
         rootViewController().present(alert, animated: true, completion: nil)
     }
+
+    // MARK: Private
+
+    // MARK: - Private Properties
+
+    private let rootViewController: () -> UIViewController
+    private var pendingDestination: NavigationDestination?
+    private var pendingAlert: UIAlertController?
 }
 
 // MARK: PresentationDelegate
@@ -312,8 +318,6 @@ extension URLActionRouter: PresentationDelegate {
 
 extension URLActionRouter {
     fileprivate enum URLActionError: LocalizedError {
-        private typealias AlertStrings = L10n.Localizable.UrlAction.JoinConversation.Error.Alert
-
         /// Could not join a conversation because it is full.
 
         case conversationIsFull
@@ -334,6 +338,8 @@ extension URLActionRouter {
 
         case unknown
 
+        // MARK: Lifecycle
+
         init(from error: Error) {
             switch error {
             case ConversationJoinError.invalidCode:
@@ -352,6 +358,8 @@ extension URLActionRouter {
                 self = .unknown
             }
         }
+
+        // MARK: Internal
 
         var errorDescription: String? {
             AlertStrings.title
@@ -372,6 +380,10 @@ extension URLActionRouter {
                 L10n.Localizable.Error.User.unkownError
             }
         }
+
+        // MARK: Private
+
+        private typealias AlertStrings = L10n.Localizable.UrlAction.JoinConversation.Error.Alert
     }
 
     private func mapToLocalizedError(_ error: Error) -> LocalizedError {

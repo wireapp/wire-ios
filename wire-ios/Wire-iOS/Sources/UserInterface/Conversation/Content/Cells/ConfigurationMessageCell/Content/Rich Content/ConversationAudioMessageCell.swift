@@ -23,22 +23,7 @@ import WireDesign
 // MARK: - ConversationAudioMessageCell
 
 final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
-    struct Configuration {
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
-    }
-
-    private var containerView = UIView()
-    private let transferView = AudioMessageView()
-    private let obfuscationView = ObfuscationView(icon: .microphone)
-    private let restrictionView = AudioMessageRestrictionView()
-
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
-
-    var isSelected = false
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,6 +35,49 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    struct Configuration {
+        let message: ZMConversationMessage
+
+        var isObfuscated: Bool {
+            message.isObfuscated
+        }
+    }
+
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage?
+
+    var isSelected = false
+
+    override var tintColor: UIColor! {
+        didSet {
+            transferView.tintColor = tintColor
+        }
+    }
+
+    var selectionRect: CGRect {
+        transferView.bounds
+    }
+
+    func configure(with object: Configuration, animated: Bool) {
+        if object.isObfuscated {
+            setup(obfuscationView)
+        } else if !object.message.canBeShared {
+            setup(restrictionView)
+            restrictionView.configure()
+        } else {
+            transferView.configure(for: object.message, isInitial: false)
+        }
+    }
+
+    // MARK: Private
+
+    private var containerView = UIView()
+    private let transferView = AudioMessageView()
+    private let obfuscationView = ObfuscationView(icon: .microphone)
+    private let restrictionView = AudioMessageRestrictionView()
 
     private func configureSubview() {
         shape = .rounded(radius: 12)
@@ -76,17 +104,6 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
         ])
     }
 
-    func configure(with object: Configuration, animated: Bool) {
-        if object.isObfuscated {
-            setup(obfuscationView)
-        } else if !object.message.canBeShared {
-            setup(restrictionView)
-            restrictionView.configure()
-        } else {
-            transferView.configure(for: object.message, isInitial: false)
-        }
-    }
-
     private func setup(_ view: UIView) {
         containerView.removeSubviews()
         containerView.addSubview(view)
@@ -98,16 +115,6 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
             view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
-    }
-
-    override var tintColor: UIColor! {
-        didSet {
-            transferView.tintColor = tintColor
-        }
-    }
-
-    var selectionRect: CGRect {
-        transferView.bounds
     }
 }
 
@@ -124,7 +131,17 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
 // MARK: - ConversationAudioMessageCellDescription
 
 final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(message: ZMConversationMessage) {
+        self.configuration = View.Configuration(message: message)
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationAudioMessageCell
+
     let configuration: View.Configuration
 
     var topMargin: Float = 8
@@ -138,14 +155,9 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedAudioCell" : "AudioCell"
-    }
-
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
-        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
+    var accessibilityIdentifier: String? {
+        configuration.isObfuscated ? "ObfuscatedAudioCell" : "AudioCell"
     }
 }

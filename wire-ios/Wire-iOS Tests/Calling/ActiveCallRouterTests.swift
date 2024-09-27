@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 
 final class ActiveCallRouterTests: ZMSnapshotTestCase {
+    // MARK: Internal
+
     var mockTopOverlayPresenter: MockTopOverlayPresenting!
     var sut: ActiveCallRouter<MockTopOverlayPresenting>!
     var userSession: UserSessionMock!
@@ -92,6 +94,8 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         // then
         XCTAssertFalse(sut.isActiveCallShown)
     }
+
+    // MARK: Private
 
     private func createOneOnOneConversation() -> ZMConversation {
         let selfUser = ZMUser.selfUser(in: uiMOC)

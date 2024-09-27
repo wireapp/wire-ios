@@ -31,58 +31,7 @@ final class ClientListViewController: UIViewController,
     UITableViewDataSource,
     ClientUpdateObserver,
     ClientColorVariantProtocol {
-    // MARK: SpinnerCapable
-
-    var removalObserver: ClientRemovalObserver?
-
-    private var clientsTableView: UITableView?
-    private let topSeparator = OverflowSeparatorView()
-    private weak var delegate: ClientListViewControllerDelegate?
-
-    private var editingList = false {
-        didSet {
-            guard !clients.isEmpty else {
-                navigationItem.rightBarButtonItem = nil
-                navigationItem.setHidesBackButton(false, animated: true)
-                return
-            }
-
-            createRightBarButtonItem()
-
-            navigationItem.setHidesBackButton(editingList, animated: true)
-
-            clientsTableView?.setEditing(editingList, animated: true)
-        }
-    }
-
-    private var clients: [UserClient] = [] {
-        didSet {
-            sortedClients = clients.filter(clientFilter).sorted(by: clientSorter)
-            clientsTableView?.reloadData()
-
-            if !clients.isEmpty {
-                createRightBarButtonItem()
-            } else {
-                editingList = false
-            }
-        }
-    }
-
-    private let clientSorter: (UserClient, UserClient) -> Bool
-    private let clientFilter: (UserClient) -> Bool
-    private let userSession: UserSession?
-    private let contextProvider: ContextProvider?
-    private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
-
-    private var sortedClients: [UserClient] = []
-
-    private var selfClient: UserClient?
-    private let detailedView: Bool
-    private var credentials: UserEmailCredentials?
-    private var clientsObserverToken: NSObjectProtocol?
-    private var userObserverToken: NSObjectProtocol?
-
-    private(set) lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
+    // MARK: Lifecycle
 
     required init(
         clientsList: [UserClient]?,
@@ -135,10 +84,13 @@ final class ClientListViewController: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func initalizeProperties(_ clientsList: [UserClient]) {
-        clients = clientsList.filter { !$0.isSelfClient() }
-        editingList = false
-    }
+    // MARK: Internal
+
+    // MARK: SpinnerCapable
+
+    var removalObserver: ClientRemovalObserver?
+
+    private(set) lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         [.portrait]
@@ -170,10 +122,6 @@ final class ClientListViewController: UIViewController,
 
         // Prevent more then one removalObserver in self and SettingsClientViewController
         removalObserver = nil
-    }
-
-    private func dismissLoadingView() {
-        activityIndicator.stop()
     }
 
     func openDetailsOfClient(_ client: UserClient) {
@@ -209,73 +157,6 @@ final class ClientListViewController: UIViewController,
 
         let detailsViewController = DeviceInfoViewController(rootView: DeviceDetailsView(viewModel: viewModel))
         navigationController.pushViewController(detailsViewController, animated: true)
-    }
-
-    private func makeDeviceInfoViewModel(
-        client: UserClient,
-        userSession: UserSession,
-        contextProvider: ContextProvider
-    ) -> DeviceInfoViewModel {
-        let saveFileManager = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
-        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
-            userClient: client,
-            userSession: userSession,
-            credentials: credentials,
-            saveFileManager: saveFileManager,
-            getProteusFingerprint: userSession.getUserClientFingerprint,
-            contextProvider: contextProvider,
-            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
-        )
-        return DeviceInfoViewModel(
-            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
-            addedDate: client.activationDate?.formattedDate ?? "",
-            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16) ?? "",
-            userClient: client,
-            isSelfClient: client.isSelfClient(),
-            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-            mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
-            isFromConversation: false,
-            actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler
-        )
-    }
-
-    private func createTableView() {
-        let tableView = UITableView(frame: CGRect.zero, style: .grouped)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 80
-        tableView.register(ClientTableViewCell.self, forCellReuseIdentifier: ClientTableViewCell.zm_reuseIdentifier)
-        tableView.isEditing = editingList
-        tableView.backgroundColor = SemanticColors.View.backgroundDefault
-        tableView.separatorStyle = .none
-        view.addSubview(tableView)
-        clientsTableView = tableView
-    }
-
-    private func createConstraints() {
-        guard let clientsTableView else {
-            return
-        }
-
-        clientsTableView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            clientsTableView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            clientsTableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            clientsTableView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            clientsTableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
-        ])
-    }
-
-    private func convertSection(_ section: Int) -> Int {
-        if selfClient != nil {
-            section
-        } else {
-            section + 1
-        }
     }
 
     @objc
@@ -514,6 +395,136 @@ final class ClientListViewController: UIViewController,
     }
 
     @MainActor
+    func refreshViews() {
+        clientsTableView?.reloadData()
+    }
+
+    // MARK: Private
+
+    private var clientsTableView: UITableView?
+    private let topSeparator = OverflowSeparatorView()
+    private weak var delegate: ClientListViewControllerDelegate?
+
+    private let clientSorter: (UserClient, UserClient) -> Bool
+    private let clientFilter: (UserClient) -> Bool
+    private let userSession: UserSession?
+    private let contextProvider: ContextProvider?
+    private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
+
+    private var sortedClients: [UserClient] = []
+
+    private var selfClient: UserClient?
+    private let detailedView: Bool
+    private var credentials: UserEmailCredentials?
+    private var clientsObserverToken: NSObjectProtocol?
+    private var userObserverToken: NSObjectProtocol?
+
+    private var editingList = false {
+        didSet {
+            guard !clients.isEmpty else {
+                navigationItem.rightBarButtonItem = nil
+                navigationItem.setHidesBackButton(false, animated: true)
+                return
+            }
+
+            createRightBarButtonItem()
+
+            navigationItem.setHidesBackButton(editingList, animated: true)
+
+            clientsTableView?.setEditing(editingList, animated: true)
+        }
+    }
+
+    private var clients: [UserClient] = [] {
+        didSet {
+            sortedClients = clients.filter(clientFilter).sorted(by: clientSorter)
+            clientsTableView?.reloadData()
+
+            if !clients.isEmpty {
+                createRightBarButtonItem()
+            } else {
+                editingList = false
+            }
+        }
+    }
+
+    private func initalizeProperties(_ clientsList: [UserClient]) {
+        clients = clientsList.filter { !$0.isSelfClient() }
+        editingList = false
+    }
+
+    private func dismissLoadingView() {
+        activityIndicator.stop()
+    }
+
+    private func makeDeviceInfoViewModel(
+        client: UserClient,
+        userSession: UserSession,
+        contextProvider: ContextProvider
+    ) -> DeviceInfoViewModel {
+        let saveFileManager = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: userSession,
+            credentials: credentials,
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
+        )
+        return DeviceInfoViewModel(
+            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
+            addedDate: client.activationDate?.formattedDate ?? "",
+            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16) ?? "",
+            userClient: client,
+            isSelfClient: client.isSelfClient(),
+            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
+            isFromConversation: false,
+            actionsHandler: deviceActionsHandler,
+            conversationClientDetailsActions: deviceActionsHandler
+        )
+    }
+
+    private func createTableView() {
+        let tableView = UITableView(frame: CGRect.zero, style: .grouped)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 80
+        tableView.register(ClientTableViewCell.self, forCellReuseIdentifier: ClientTableViewCell.zm_reuseIdentifier)
+        tableView.isEditing = editingList
+        tableView.backgroundColor = SemanticColors.View.backgroundDefault
+        tableView.separatorStyle = .none
+        view.addSubview(tableView)
+        clientsTableView = tableView
+    }
+
+    private func createConstraints() {
+        guard let clientsTableView else {
+            return
+        }
+
+        clientsTableView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            clientsTableView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
+            clientsTableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
+            clientsTableView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            clientsTableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
+        ])
+    }
+
+    private func convertSection(_ section: Int) -> Int {
+        if selfClient != nil {
+            section
+        } else {
+            section + 1
+        }
+    }
+
+    @MainActor
     private func updateCertificates(for userClients: [UserClient]) async {
         guard
             let userSession,
@@ -566,11 +577,6 @@ final class ClientListViewController: UIViewController,
             refreshViews()
             completed?()
         }
-    }
-
-    @MainActor
-    func refreshViews() {
-        clientsTableView?.reloadData()
     }
 
     private func updateE2EIdentityCertificateInDetailsView() {

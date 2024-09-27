@@ -27,20 +27,24 @@ public enum UpdateRoleError: Error {
 // MARK: - UpdateRoleAction
 
 public class UpdateRoleAction: EntityAction {
-    public var resultHandler: ResultHandler?
-
-    public typealias Result = Void
-    public typealias Failure = UpdateRoleError
-
-    public let userID: NSManagedObjectID
-    public let conversationID: NSManagedObjectID
-    public let roleID: NSManagedObjectID
+    // MARK: Lifecycle
 
     public required init(user: ZMUser, conversation: ZMConversation, role: Role) {
         self.userID = user.objectID
         self.conversationID = conversation.objectID
         self.roleID = role.objectID
     }
+
+    // MARK: Public
+
+    public typealias Result = Void
+    public typealias Failure = UpdateRoleError
+
+    public var resultHandler: ResultHandler?
+
+    public let userID: NSManagedObjectID
+    public let conversationID: NSManagedObjectID
+    public let roleID: NSManagedObjectID
 }
 
 extension ZMConversation {

@@ -40,50 +40,7 @@ final class ProfileDetailsContentController: NSObject,
     UITableViewDataSource,
     UITableViewDelegate,
     UserObserving {
-    /// The type of content that can be displayed in the profile details.
-
-    enum Content: Equatable {
-        /// Display rich profile data from SCIM.
-        case richProfile([UserRichProfileField])
-
-        /// Display the status of read receipts for a 1:1 conversation.
-        case readReceiptsStatus(enabled: Bool)
-
-        /// Display the status of groud admin enabled for a group conversation.
-        case groupAdminStatus(enabled: Bool)
-
-        /// Display the reason for the forced user block.
-        case blockingReason
-
-        /// Display the message protocol used for a 1:1 conversation
-        case messageProtocol(MessageProtocol)
-    }
-
-    /// The user to display the details of.
-    let user: UserType
-
-    /// The user that will see the details.
-    let viewer: UserType
-
-    /// The conversation where the profile details will be displayed.
-    let conversation: ZMConversation?
-
-    /// The current group admin status for UI.
-    private var isAdminState: Bool
-
-    // MARK: - Accessing the Content
-
-    /// The contents to display for the current configuration.
-    private(set) var contents: [Content] = []
-
-    /// The object that will receive notifications in case of content change.
-    weak var delegate: ProfileDetailsContentControllerDelegate?
-
-    // MARK: - Properties
-
-    private var observerToken: Any?
-    private let userPropertyCellID = "UserPropertyCell"
-    private let messageProtocolCellID = "MessageProtocolCell"
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -112,92 +69,43 @@ final class ProfileDetailsContentController: NSObject,
         }
     }
 
-    // MARK: - Calculating the Content
+    // MARK: Internal
 
-    /// Whether the viewer can access the rich profile data of the displayed user.
-    private var viewerCanAccessRichProfile: Bool {
-        viewer.canAccessCompanyInformation(of: user)
+    /// The type of content that can be displayed in the profile details.
+
+    enum Content: Equatable {
+        /// Display rich profile data from SCIM.
+        case richProfile([UserRichProfileField])
+
+        /// Display the status of read receipts for a 1:1 conversation.
+        case readReceiptsStatus(enabled: Bool)
+
+        /// Display the status of groud admin enabled for a group conversation.
+        case groupAdminStatus(enabled: Bool)
+
+        /// Display the reason for the forced user block.
+        case blockingReason
+
+        /// Display the message protocol used for a 1:1 conversation
+        case messageProtocol(MessageProtocol)
     }
 
-    /// Starts observing changes in the user profile.
-    private func configureObservers() {
-        if let userSession = ZMUserSession.shared() {
-            observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
-        }
-    }
+    /// The user to display the details of.
+    let user: UserType
 
-    private var richProfileInfoWithEmailAndDomain: ProfileDetailsContentController.Content? {
-        var richProfile = user.richProfile
+    /// The user that will see the details.
+    let viewer: UserType
 
-        // If viewer can't access rich profile information,
-        // delete all rich profile info just for displaying purposes.
-        if !viewerCanAccessRichProfile, !richProfile.isEmpty {
-            richProfile.removeAll()
-        }
+    /// The conversation where the profile details will be displayed.
+    let conversation: ZMConversation?
 
-        if let email = user.emailAddress {
-            richProfile.insert(UserRichProfileField(type: L10n.Localizable.Email.placeholder, value: email), at: 0)
-        }
-        if let domain = user.domain {
-            richProfile.append(UserRichProfileField(
-                type: L10n.Localizable.Self.Settings.AccountSection.Domain.title,
-                value: domain
-            ))
-        }
+    // MARK: - Accessing the Content
 
-        return richProfile.isEmpty ? nil : .richProfile(richProfile)
-    }
+    /// The contents to display for the current configuration.
+    private(set) var contents: [Content] = []
 
-    /// Updates the content for the current configuration.
-    private func updateContent() {
-        switch conversation?.conversationType ?? .group {
-        case .group:
-            let groupAdminEnabled = conversation.map(user.isGroupAdmin) ?? false
-
-            // Do not show group admin toggle for self user or requesting connection user
-            var items: [ProfileDetailsContentController.Content] = []
-
-            if let conversation {
-                let viewerCanChangeOtherRoles = viewer.canModifyOtherMember(in: conversation)
-                let userCanHaveRoleChanged = !user.isWirelessUser && !user.isFederated
-
-                if viewerCanChangeOtherRoles, userCanHaveRoleChanged {
-                    items.append(.groupAdminStatus(enabled: groupAdminEnabled))
-                }
-            }
-
-            if let richProfile = richProfileInfoWithEmailAndDomain {
-                // If there is rich profile data and the user is allowed to see it, display it.
-                items.append(richProfile)
-            }
-
-            if user.isBlocked, user.blockState == .blockedMissingLegalholdConsent {
-                items.append(.blockingReason)
-            }
-
-            contents = items
-
-        case .oneOnOne:
-            let readReceiptsEnabled = viewer.readReceiptsEnabled
-            if let richProfile = richProfileInfoWithEmailAndDomain {
-                // If there is rich profile data and the user is allowed to see it, display it and the read receipts
-                // status.
-                contents = [richProfile, .readReceiptsStatus(enabled: readReceiptsEnabled)]
-            } else {
-                // If there is no rich profile data, show the read receipts.
-                contents = [.readReceiptsStatus(enabled: readReceiptsEnabled)]
-            }
-
-            if let conversation, Bundle.developerModeEnabled, !ProcessInfo.processInfo.isRunningTests {
-                contents.append(.messageProtocol(conversation.messageProtocol))
-            }
-
-        default:
-            contents = []
-        }
-
-        delegate?.profileDetailsContentDidChange()
-    }
+    /// The object that will receive notifications in case of content change.
+    weak var delegate: ProfileDetailsContentControllerDelegate?
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.readReceiptsEnabledChanged || changeInfo.richProfileChanged else { return }
@@ -340,6 +248,104 @@ final class ProfileDetailsContentController: NSObject,
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    // MARK: Private
+
+    /// The current group admin status for UI.
+    private var isAdminState: Bool
+
+    // MARK: - Properties
+
+    private var observerToken: Any?
+    private let userPropertyCellID = "UserPropertyCell"
+    private let messageProtocolCellID = "MessageProtocolCell"
+
+    // MARK: - Calculating the Content
+
+    /// Whether the viewer can access the rich profile data of the displayed user.
+    private var viewerCanAccessRichProfile: Bool {
+        viewer.canAccessCompanyInformation(of: user)
+    }
+
+    private var richProfileInfoWithEmailAndDomain: ProfileDetailsContentController.Content? {
+        var richProfile = user.richProfile
+
+        // If viewer can't access rich profile information,
+        // delete all rich profile info just for displaying purposes.
+        if !viewerCanAccessRichProfile, !richProfile.isEmpty {
+            richProfile.removeAll()
+        }
+
+        if let email = user.emailAddress {
+            richProfile.insert(UserRichProfileField(type: L10n.Localizable.Email.placeholder, value: email), at: 0)
+        }
+        if let domain = user.domain {
+            richProfile.append(UserRichProfileField(
+                type: L10n.Localizable.Self.Settings.AccountSection.Domain.title,
+                value: domain
+            ))
+        }
+
+        return richProfile.isEmpty ? nil : .richProfile(richProfile)
+    }
+
+    /// Starts observing changes in the user profile.
+    private func configureObservers() {
+        if let userSession = ZMUserSession.shared() {
+            observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
+        }
+    }
+
+    /// Updates the content for the current configuration.
+    private func updateContent() {
+        switch conversation?.conversationType ?? .group {
+        case .group:
+            let groupAdminEnabled = conversation.map(user.isGroupAdmin) ?? false
+
+            // Do not show group admin toggle for self user or requesting connection user
+            var items: [ProfileDetailsContentController.Content] = []
+
+            if let conversation {
+                let viewerCanChangeOtherRoles = viewer.canModifyOtherMember(in: conversation)
+                let userCanHaveRoleChanged = !user.isWirelessUser && !user.isFederated
+
+                if viewerCanChangeOtherRoles, userCanHaveRoleChanged {
+                    items.append(.groupAdminStatus(enabled: groupAdminEnabled))
+                }
+            }
+
+            if let richProfile = richProfileInfoWithEmailAndDomain {
+                // If there is rich profile data and the user is allowed to see it, display it.
+                items.append(richProfile)
+            }
+
+            if user.isBlocked, user.blockState == .blockedMissingLegalholdConsent {
+                items.append(.blockingReason)
+            }
+
+            contents = items
+
+        case .oneOnOne:
+            let readReceiptsEnabled = viewer.readReceiptsEnabled
+            if let richProfile = richProfileInfoWithEmailAndDomain {
+                // If there is rich profile data and the user is allowed to see it, display it and the read receipts
+                // status.
+                contents = [richProfile, .readReceiptsStatus(enabled: readReceiptsEnabled)]
+            } else {
+                // If there is no rich profile data, show the read receipts.
+                contents = [.readReceiptsStatus(enabled: readReceiptsEnabled)]
+            }
+
+            if let conversation, Bundle.developerModeEnabled, !ProcessInfo.processInfo.isRunningTests {
+                contents.append(.messageProtocol(conversation.messageProtocol))
+            }
+
+        default:
+            contents = []
+        }
+
+        delegate?.profileDetailsContentDidChange()
     }
 
     private func updateConversationRole() {

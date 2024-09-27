@@ -22,8 +22,7 @@ import XCTest
 @testable import Wire
 
 final class ArchivedListViewControllerSnapshotTests: XCTestCase {
-    private var userSessionMock: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -66,4 +65,9 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
         let sut = ArchivedListViewController(userSession: userSessionMock)
         snapshotHelper.verify(matching: UINavigationController(rootViewController: sut))
     }
+
+    // MARK: Private
+
+    private var userSessionMock: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 }

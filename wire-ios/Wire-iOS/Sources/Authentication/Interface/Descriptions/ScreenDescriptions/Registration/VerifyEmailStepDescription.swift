@@ -21,10 +21,7 @@ import Foundation
 // MARK: - VerifyEmailStepSecondaryView
 
 final class VerifyEmailStepSecondaryView: AuthenticationFooterViewDescription {
-    let views: [ViewDescriptor]
-    weak var actioner: AuthenticationActioner?
-
-    typealias TeamActivationCode = L10n.Localizable.Team.ActivationCode.Button
+    // MARK: Lifecycle
 
     init(canResend: Bool = true, canChangeEmail: Bool = true) {
         let resendCode = SecondaryButtonDescription(
@@ -55,18 +52,19 @@ final class VerifyEmailStepSecondaryView: AuthenticationFooterViewDescription {
             self?.actioner?.repeatAction()
         }
     }
+
+    // MARK: Internal
+
+    typealias TeamActivationCode = L10n.Localizable.Team.ActivationCode.Button
+
+    let views: [ViewDescriptor]
+    weak var actioner: AuthenticationActioner?
 }
 
 // MARK: - VerifyEmailStepDescription
 
 final class VerifyEmailStepDescription: AuthenticationStepDescription {
-    let email: String
-    let backButton: BackButtonDescription?
-    let mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription?
+    // MARK: Lifecycle
 
     init(email: String, canChangeEmail: Bool = true) {
         self.email = email
@@ -77,4 +75,14 @@ final class VerifyEmailStepDescription: AuthenticationStepDescription {
         self.secondaryView = nil
         self.footerView = VerifyEmailStepSecondaryView(canChangeEmail: canChangeEmail)
     }
+
+    // MARK: Internal
+
+    let email: String
+    let backButton: BackButtonDescription?
+    let mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let footerView: AuthenticationFooterViewDescription?
 }

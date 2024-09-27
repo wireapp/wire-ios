@@ -105,18 +105,7 @@ public enum UserClientKeyStoreError: Error {
 /// A storage for cryptographic keys material
 @objc(UserClientKeysStore) @objcMembers
 open class UserClientKeysStore: NSObject {
-    /// Maximum possible ID for prekey
-    public static let MaxPreKeyID = UInt16.max - 1
-
-    open var encryptionContext: EncryptionContext
-
-    /// Fallback prekeys (when no other prekey is available, this will always work)
-    fileprivate var internalLastPreKey: String?
-
-    /// Folder where the material is stored (managed by Cryptobox)
-    public private(set) var cryptoboxDirectory: URL
-
-    public private(set) var applicationContainer: URL
+    // MARK: Lifecycle
 
     /// Loads new key store (if not present) or load an existing one
     public init(accountDirectory: URL, applicationContainer: URL) {
@@ -128,10 +117,9 @@ open class UserClientKeysStore: NSObject {
         self.encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectory)!
     }
 
-    private static func setupContext(in directory: URL) -> EncryptionContext? {
-        try! FileManager.default.createAndProtectDirectory(at: directory)
-        return EncryptionContext(path: directory)
-    }
+    // MARK: Open
+
+    open var encryptionContext: EncryptionContext
 
     open func deleteAndCreateNewBox() {
         _ = try? FileManager.default.removeItem(at: cryptoboxDirectory)
@@ -181,10 +169,32 @@ open class UserClientKeysStore: NSObject {
         throw UserClientKeyStoreError.preKeysCountNeedsToBePositive
     }
 
+    // MARK: Public
+
+    /// Maximum possible ID for prekey
+    public static let MaxPreKeyID = UInt16.max - 1
+
+    /// Folder where the material is stored (managed by Cryptobox)
+    public private(set) var cryptoboxDirectory: URL
+
+    public private(set) var applicationContainer: URL
+
+    // MARK: Fileprivate
+
+    /// Fallback prekeys (when no other prekey is available, this will always work)
+    fileprivate var internalLastPreKey: String?
+
     fileprivate func preKeysRange(_ count: UInt16, start: UInt16) -> CountableRange<UInt16> {
         if start >= UserClientKeysStore.MaxPreKeyID - count {
             return 0 ..< count
         }
         return start ..< (start + count)
+    }
+
+    // MARK: Private
+
+    private static func setupContext(in directory: URL) -> EncryptionContext? {
+        try! FileManager.default.createAndProtectDirectory(at: directory)
+        return EncryptionContext(path: directory)
     }
 }

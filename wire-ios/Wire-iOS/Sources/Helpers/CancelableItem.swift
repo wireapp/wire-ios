@@ -19,7 +19,7 @@
 import Foundation
 
 struct CancelableItem {
-    private let item: DispatchWorkItem
+    // MARK: Lifecycle
 
     init(queue: DispatchQueue = .main, delay: TimeInterval, block: @escaping () -> Void) {
         self.item = DispatchWorkItem(block: block)
@@ -31,7 +31,13 @@ struct CancelableItem {
         }
     }
 
+    // MARK: Internal
+
     func cancel() {
         item.cancel()
     }
+
+    // MARK: Private
+
+    private let item: DispatchWorkItem
 }

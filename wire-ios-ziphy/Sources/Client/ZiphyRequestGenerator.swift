@@ -23,8 +23,12 @@ import Foundation
 /// An object that generates requests to the Giphy API.
 
 struct ZiphyRequestGenerator {
+    // MARK: Internal
+
     /// The host
     let host: String
+
+    // MARK: Private
 
     /// Creates a request for the specified endpoint and query items, if the resulting URL is valid.
 

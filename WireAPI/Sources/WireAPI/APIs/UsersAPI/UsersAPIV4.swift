@@ -74,19 +74,6 @@ struct UserListResponseV4: Decodable, ToAPIModelConvertible {
 // MARK: - UserResponseV4
 
 struct UserResponseV4: Decodable, ToAPIModelConvertible {
-    let id: UserID
-    let name: String
-    let handle: String?
-    let teamID: UUID?
-    let accentID: Int
-    let assets: [UserAsset]
-    let deleted: Bool?
-    let email: String?
-    let expiresAt: UTCTimeMillis?
-    let service: ServiceResponseV0?
-    let supportedProtocols: Set<MessageProtocol>?
-    let legalholdStatus: LegalholdStatusV0
-
     enum CodingKeys: String, CodingKey {
         case id = "qualified_id"
         case name
@@ -101,6 +88,19 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
         case supportedProtocols = "supported_protocols"
         case legalholdStatus = "legalhold_status"
     }
+
+    let id: UserID
+    let name: String
+    let handle: String?
+    let teamID: UUID?
+    let accentID: Int
+    let assets: [UserAsset]
+    let deleted: Bool?
+    let email: String?
+    let expiresAt: UTCTimeMillis?
+    let service: ServiceResponseV0?
+    let supportedProtocols: Set<MessageProtocol>?
+    let legalholdStatus: LegalholdStatusV0
 
     func toAPIModel() -> User {
         User(

@@ -21,13 +21,16 @@ import WireDataModel
 import WireSyncEngine
 
 final class ConversationInputBarSendController: NSObject {
-    let conversation: InputBarConversationType
-    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    // MARK: Lifecycle
 
     init(conversation: InputBarConversationType) {
         self.conversation = conversation
         super.init()
     }
+
+    // MARK: Internal
+
+    let conversation: InputBarConversationType
 
     func sendMessage(
         withImageData imageData: Data,
@@ -102,4 +105,8 @@ final class ConversationInputBarSendController: NSObject {
             Analytics.shared.tagMediaActionCompleted(.text, inConversation: conversation)
         })
     }
+
+    // MARK: Private
+
+    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 }

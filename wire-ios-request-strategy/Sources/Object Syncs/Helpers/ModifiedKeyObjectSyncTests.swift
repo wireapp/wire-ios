@@ -47,8 +47,6 @@ class ModifiedKeyObjectSyncTests: ZMTBaseTest {
     var sut: ModifiedKeyObjectSync<MockModifiedKeyObjectSyncTranscoder>!
     let modifiedPredicate = NSPredicate(format: "field2 != \"not allowed\"")
 
-    // MARK: - Life Cycle
-
     override func setUp() {
         super.setUp()
 

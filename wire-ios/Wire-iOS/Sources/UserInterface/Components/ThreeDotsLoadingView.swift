@@ -20,16 +20,7 @@ import UIKit
 import WireDesign
 
 final class ThreeDotsLoadingView: UIView {
-    // MARK: - Properties
-
-    private let loadingAnimationKey = "loading"
-    private let dotRadius: CGFloat = 2
-    private let activeColor = SemanticColors.Icon.foregroundLoadingDotActive
-    private let inactiveColor = SemanticColors.Icon.foregroundLoadingDotInactive
-
-    private let dot1 = UIView()
-    private let dot2 = UIView()
-    private let dot3 = UIView()
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -57,43 +48,22 @@ final class ThreeDotsLoadingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Setup views and constraints
-
-    func setupViews() {
-        for dot in [dot1, dot2, dot3] {
-            dot.layer.cornerRadius = dotRadius
-            dot.backgroundColor = inactiveColor
-        }
-    }
-
-    private func setupConstraints() {
-        [dot1, dot2, dot3].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        var constraints: [NSLayoutConstraint] = [
-            dot1.leftAnchor.constraint(equalTo: leftAnchor),
-            dot3.rightAnchor.constraint(equalTo: rightAnchor),
-
-            dot2.leftAnchor.constraint(equalTo: dot1.rightAnchor, constant: 4),
-            dot3.leftAnchor.constraint(equalTo: dot2.rightAnchor, constant: 4),
-        ]
-
-        for dot in [dot1, dot2, dot3] {
-            constraints.append(contentsOf: [
-                dot.topAnchor.constraint(equalTo: topAnchor),
-                dot.bottomAnchor.constraint(equalTo: bottomAnchor),
-                dot.widthAnchor.constraint(equalToConstant: dotRadius * 2),
-                dot.heightAnchor.constraint(equalToConstant: dotRadius * 2),
-            ])
-        }
-
-        NSLayoutConstraint.activate(constraints)
-    }
+    // MARK: Internal
 
     // MARK: - Animation
 
     override var isHidden: Bool {
         didSet {
             updateLoadingAnimation()
+        }
+    }
+
+    // MARK: - Setup views and constraints
+
+    func setupViews() {
+        for dot in [dot1, dot2, dot3] {
+            dot.layer.cornerRadius = dotRadius
+            dot.backgroundColor = inactiveColor
         }
     }
 
@@ -141,5 +111,41 @@ final class ThreeDotsLoadingView: UIView {
     @objc
     func applicationDidBecomeActive(_: Notification) {
         updateLoadingAnimation()
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let loadingAnimationKey = "loading"
+    private let dotRadius: CGFloat = 2
+    private let activeColor = SemanticColors.Icon.foregroundLoadingDotActive
+    private let inactiveColor = SemanticColors.Icon.foregroundLoadingDotInactive
+
+    private let dot1 = UIView()
+    private let dot2 = UIView()
+    private let dot3 = UIView()
+
+    private func setupConstraints() {
+        [dot1, dot2, dot3].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        var constraints: [NSLayoutConstraint] = [
+            dot1.leftAnchor.constraint(equalTo: leftAnchor),
+            dot3.rightAnchor.constraint(equalTo: rightAnchor),
+
+            dot2.leftAnchor.constraint(equalTo: dot1.rightAnchor, constant: 4),
+            dot3.leftAnchor.constraint(equalTo: dot2.rightAnchor, constant: 4),
+        ]
+
+        for dot in [dot1, dot2, dot3] {
+            constraints.append(contentsOf: [
+                dot.topAnchor.constraint(equalTo: topAnchor),
+                dot.bottomAnchor.constraint(equalTo: bottomAnchor),
+                dot.widthAnchor.constraint(equalToConstant: dotRadius * 2),
+                dot.heightAnchor.constraint(equalToConstant: dotRadius * 2),
+            ])
+        }
+
+        NSLayoutConstraint.activate(constraints)
     }
 }

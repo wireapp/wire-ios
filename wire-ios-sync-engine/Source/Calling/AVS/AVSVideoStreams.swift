@@ -19,11 +19,11 @@
 import Foundation
 
 public struct AVSVideoStreams: Codable, Equatable {
-    let conversationId: String
-    let clients: [AVSClient]
-
     enum CodingKeys: String, CodingKey {
         case conversationId = "convid"
         case clients
     }
+
+    let conversationId: String
+    let clients: [AVSClient]
 }

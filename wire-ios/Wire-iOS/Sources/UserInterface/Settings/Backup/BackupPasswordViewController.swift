@@ -22,11 +22,43 @@ import WireDesign
 // MARK: - BackupPasswordViewController
 
 final class BackupPasswordViewController: UIViewController {
+    // MARK: Lifecycle
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+
+        setupViews()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
     typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
 
     var onCompletion: ((_ password: String?) -> Void)?
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        passwordView.becomeFirstResponder()
+    }
+
+    // MARK: Private
 
     private var password: String?
     private let passwordView = SimpleTextField()
@@ -49,32 +81,6 @@ final class BackupPasswordViewController: UIViewController {
         label.numberOfLines = 0
         return label
     }()
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
-
-        setupViews()
-        createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupNavigationBar()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        passwordView.becomeFirstResponder()
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
 
     private func setupViews() {
         view.backgroundColor = ViewColors.backgroundDefault

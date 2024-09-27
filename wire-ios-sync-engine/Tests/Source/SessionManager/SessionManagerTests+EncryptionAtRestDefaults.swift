@@ -20,17 +20,17 @@ import Foundation
 @testable import WireSyncEngine
 
 final class SessionManagerEncryptionAtRestDefaultsTests: IntegrationTest {
-    override func setUp() {
-        super.setUp()
-        createSelfUserAndConversation()
-    }
-
     override var useInMemoryStore: Bool {
         false
     }
 
     override var sessionManagerConfiguration: SessionManagerConfiguration {
         SessionManagerConfiguration(encryptionAtRestIsEnabledByDefault: true)
+    }
+
+    override func setUp() {
+        super.setUp()
+        createSelfUserAndConversation()
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2

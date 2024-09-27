@@ -33,8 +33,7 @@ protocol ConversationLabelsRepositoryProtocol {
 // MARK: - ConversationLabelsRepository
 
 final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
-    private let userPropertiesAPI: any UserPropertiesAPI
-    private let context: NSManagedObjectContext
+    // MARK: Lifecycle
 
     init(
         userPropertiesAPI: any UserPropertiesAPI,
@@ -43,6 +42,8 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
         self.userPropertiesAPI = userPropertiesAPI
         self.context = context
     }
+
+    // MARK: Internal
 
     /// Retrieve from backend and store conversation labels locally
 
@@ -59,6 +60,11 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
 
         try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
     }
+
+    // MARK: Private
+
+    private let userPropertiesAPI: any UserPropertiesAPI
+    private let context: NSManagedObjectContext
 
     /// Save label and related conversations objects to local storage.
     /// - Parameter conversationLabel: conversation label from WireAPI

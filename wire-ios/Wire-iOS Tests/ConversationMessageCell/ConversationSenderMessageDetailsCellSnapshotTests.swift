@@ -22,12 +22,7 @@ import XCTest
 @testable import Wire
 
 final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationSenderMessageDetailsCell!
-    private var teamID = UUID()
-    private var mockUser: MockUserType!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -231,4 +226,13 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationSenderMessageDetailsCell!
+    private var teamID = UUID()
+    private var mockUser: MockUserType!
 }

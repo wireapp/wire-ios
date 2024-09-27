@@ -62,29 +62,7 @@ protocol SettingsPropertyFactoryDelegate: AnyObject {
 // MARK: - SettingsPropertyFactory
 
 final class SettingsPropertyFactory {
-    let userDefaults: UserDefaults
-    var tracking: TrackingInterface?
-    var mediaManager: AVSMediaManagerInterface?
-    weak var userSession: UserSession?
-    var selfUser: SettingsSelfUser?
-    var marketingConsent: SettingsPropertyValue = .none
-    let userPropertyValidator: UserPropertyValidating
-    weak var delegate: SettingsPropertyFactoryDelegate?
-
-    static let userDefaultsPropertiesToKeys: [SettingsPropertyName: SettingKey] = [
-        SettingsPropertyName.disableMarkdown: .disableMarkdown,
-        SettingsPropertyName.chatHeadsDisabled: .chatHeadsDisabled,
-        SettingsPropertyName.messageSoundName: .messageSoundName,
-        SettingsPropertyName.callSoundName: .callSoundName,
-        SettingsPropertyName.pingSoundName: .pingSoundName,
-        SettingsPropertyName.disableSendButton: .sendButtonDisabled,
-        SettingsPropertyName.mapsOpeningOption: .mapsOpeningRawValue,
-        SettingsPropertyName.browserOpeningOption: .browserOpeningRawValue,
-        SettingsPropertyName.tweetOpeningOption: .twitterOpeningRawValue,
-        SettingsPropertyName.callingProtocolStrategy: .callingProtocolStrategy,
-        SettingsPropertyName.enableBatchCollections: .enableBatchCollections,
-        SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate,
-    ]
+    // MARK: Lifecycle
 
     convenience init(userSession: UserSession?, selfUser: SettingsSelfUser?) {
         self.init(
@@ -120,13 +98,31 @@ final class SettingsPropertyFactory {
         }
     }
 
-    private func getOnlyProperty(propertyName: SettingsPropertyName, value: String?) -> SettingsBlockProperty {
-        let getAction: GetAction = { _ in
-            SettingsPropertyValue.string(value: value ?? "")
-        }
-        let setAction: SetAction = { _, _ in }
-        return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
-    }
+    // MARK: Internal
+
+    static let userDefaultsPropertiesToKeys: [SettingsPropertyName: SettingKey] = [
+        SettingsPropertyName.disableMarkdown: .disableMarkdown,
+        SettingsPropertyName.chatHeadsDisabled: .chatHeadsDisabled,
+        SettingsPropertyName.messageSoundName: .messageSoundName,
+        SettingsPropertyName.callSoundName: .callSoundName,
+        SettingsPropertyName.pingSoundName: .pingSoundName,
+        SettingsPropertyName.disableSendButton: .sendButtonDisabled,
+        SettingsPropertyName.mapsOpeningOption: .mapsOpeningRawValue,
+        SettingsPropertyName.browserOpeningOption: .browserOpeningRawValue,
+        SettingsPropertyName.tweetOpeningOption: .twitterOpeningRawValue,
+        SettingsPropertyName.callingProtocolStrategy: .callingProtocolStrategy,
+        SettingsPropertyName.enableBatchCollections: .enableBatchCollections,
+        SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate,
+    ]
+
+    let userDefaults: UserDefaults
+    var tracking: TrackingInterface?
+    var mediaManager: AVSMediaManagerInterface?
+    weak var userSession: UserSession?
+    var selfUser: SettingsSelfUser?
+    var marketingConsent: SettingsPropertyValue = .none
+    let userPropertyValidator: UserPropertyValidating
+    weak var delegate: SettingsPropertyFactoryDelegate?
 
     func property(_ propertyName: SettingsPropertyName) -> SettingsProperty {
         switch propertyName {
@@ -464,5 +460,15 @@ final class SettingsPropertyFactory {
         }
 
         fatalError("Cannot create SettingsProperty for \(propertyName)")
+    }
+
+    // MARK: Private
+
+    private func getOnlyProperty(propertyName: SettingsPropertyName, value: String?) -> SettingsBlockProperty {
+        let getAction: GetAction = { _ in
+            SettingsPropertyValue.string(value: value ?? "")
+        }
+        let setAction: SetAction = { _, _ in }
+        return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
     }
 }

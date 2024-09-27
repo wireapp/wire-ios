@@ -22,6 +22,8 @@ import XCTest
 // MARK: - TeamInvitationRequestStrategyTests
 
 class TeamInvitationRequestStrategyTests: MessagingTest {
+    // MARK: Internal
+
     var applicationStatus: MockApplicationStatus!
     var teamInvitationStatus: TeamInvitationStatus!
     var team: Team!
@@ -162,6 +164,8 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
             XCTAssertTrue(result == expectedResult)
         }
     }
+
+    // MARK: Private
 
     private func sutNextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }

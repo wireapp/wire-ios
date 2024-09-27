@@ -22,12 +22,7 @@ import WireDesign
 // MARK: - ProxyCredentialsViewController
 
 final class ProxyCredentialsViewController: UIViewController {
-    typealias Credentials = L10n.Localizable.ProxyCredentials
-
-    let backendURL: URL
-
-    var textFieldDidUpdateText: (ValidatedTextField) -> Void
-    var activeFieldChange: (UITextField?) -> Void
+    // MARK: Lifecycle
 
     init(
         backendURL: URL,
@@ -44,6 +39,15 @@ final class ProxyCredentialsViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    typealias Credentials = L10n.Localizable.ProxyCredentials
+
+    let backendURL: URL
+
+    var textFieldDidUpdateText: (ValidatedTextField) -> Void
+    var activeFieldChange: (UITextField?) -> Void
 
     lazy var titleLabel = {
         let label = DynamicFontLabel(
@@ -152,6 +156,8 @@ final class ProxyCredentialsViewController: UIViewController {
             passwordInput.heightAnchor.constraint(equalToConstant: 48),
         ])
     }
+
+    // MARK: Private
 
     @objc
     private func textInputDidChange(sender: ValidatedTextField) {

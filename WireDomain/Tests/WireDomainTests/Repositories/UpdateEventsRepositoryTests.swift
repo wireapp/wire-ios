@@ -27,6 +27,8 @@ import XCTest
 // MARK: - UpdateEventsRepositoryTests
 
 final class UpdateEventsRepositoryTests: XCTestCase {
+    // MARK: Internal
+
     var sut: UpdateEventsRepository!
     var updateEventsAPI: MockUpdateEventsAPI!
     var pushChannel: MockPushChannelProtocol!
@@ -70,20 +72,6 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
-    }
-
-    private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
-        try await context.perform { [context] in
-            let encoder = JSONEncoder()
-
-            for (index, envelope) in envelopes.enumerated() {
-                let storedEventEnvelope = StoredUpdateEventEnvelope(context: context)
-                storedEventEnvelope.data = try encoder.encode(envelope)
-                storedEventEnvelope.sortIndex = Int64(index)
-            }
-
-            try context.save()
-        }
     }
 
     // MARK: - Pull pending events
@@ -365,6 +353,22 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
         // Then
         lastEventIDRepository.storeLastEventID_Invocations = [id]
+    }
+
+    // MARK: Private
+
+    private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
+        try await context.perform { [context] in
+            let encoder = JSONEncoder()
+
+            for (index, envelope) in envelopes.enumerated() {
+                let storedEventEnvelope = StoredUpdateEventEnvelope(context: context)
+                storedEventEnvelope.data = try encoder.encode(envelope)
+                storedEventEnvelope.sortIndex = Int64(index)
+            }
+
+            try context.save()
+        }
     }
 }
 

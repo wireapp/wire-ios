@@ -19,9 +19,13 @@
 import Foundation
 
 public actor GenericArrayActor<T> {
-    public var items = [T]()
+    // MARK: Lifecycle
 
     public init() {}
+
+    // MARK: Public
+
+    public var items = [T]()
 
     public func append(_ item: T) {
         items.append(item)

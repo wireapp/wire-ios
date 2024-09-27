@@ -26,16 +26,7 @@ import Foundation
 /// - When a user is marked as `needsToBeUpdatedFromBackend`.
 ///
 public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObjectSyncDelegate {
-    var isFetchingAllConnectedUsers = false
-    let syncProgress: SyncProgress
-
-    let userProfileByID: IdentifierObjectSync<UserProfileByIDTranscoder>
-    let userProfileByQualifiedID: IdentifierObjectSync<UserProfileByQualifiedIDTranscoder>
-
-    let userProfileByIDTranscoder: UserProfileByIDTranscoder
-    let userProfileByQualifiedIDTranscoder: UserProfileByQualifiedIDTranscoder
-
-    let actionSync: EntityActionSync
+    // MARK: Lifecycle
 
     public init(
         managedObjectContext: NSManagedObjectContext,
@@ -68,11 +59,46 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         userProfileByQualifiedIDTranscoder.contextChangedTracker = self
     }
 
+    // MARK: Public
+
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fetchAllConnectedUsers(for: apiVersion)
 
         return [userProfileByID, userProfileByQualifiedID, actionSync].nextRequest(for: apiVersion)
     }
+
+    public func didFailToSyncAllObjects() {
+        if syncProgress.currentSyncPhase == .fetchingUsers {
+            syncProgress.failCurrentSyncPhase(phase: .fetchingUsers)
+            isFetchingAllConnectedUsers = false
+        }
+    }
+
+    public func didFinishSyncingAllObjects() {
+        guard
+            syncProgress.currentSyncPhase == .fetchingUsers,
+            !userProfileByID.isSyncing,
+            !userProfileByQualifiedID.isSyncing
+        else {
+            return
+        }
+
+        syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)
+        isFetchingAllConnectedUsers = false
+    }
+
+    // MARK: Internal
+
+    var isFetchingAllConnectedUsers = false
+    let syncProgress: SyncProgress
+
+    let userProfileByID: IdentifierObjectSync<UserProfileByIDTranscoder>
+    let userProfileByQualifiedID: IdentifierObjectSync<UserProfileByQualifiedIDTranscoder>
+
+    let userProfileByIDTranscoder: UserProfileByIDTranscoder
+    let userProfileByQualifiedIDTranscoder: UserProfileByQualifiedIDTranscoder
+
+    let actionSync: EntityActionSync
 
     func fetchAllConnectedUsers(for apiVersion: APIVersion) {
         guard
@@ -114,26 +140,6 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             }
         }
-    }
-
-    public func didFailToSyncAllObjects() {
-        if syncProgress.currentSyncPhase == .fetchingUsers {
-            syncProgress.failCurrentSyncPhase(phase: .fetchingUsers)
-            isFetchingAllConnectedUsers = false
-        }
-    }
-
-    public func didFinishSyncingAllObjects() {
-        guard
-            syncProgress.currentSyncPhase == .fetchingUsers,
-            !userProfileByID.isSyncing,
-            !userProfileByQualifiedID.isSyncing
-        else {
-            return
-        }
-
-        syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)
-        isFetchingAllConnectedUsers = false
     }
 }
 
@@ -233,19 +239,23 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
 // MARK: - UserProfileByIDTranscoder
 
 class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
+    // MARK: Lifecycle
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    // MARK: Public
+
     public typealias T = UUID
+
+    // MARK: Internal
 
     var fetchLimit = 1600 / 25 // UUID as string is 24 + 1 for the comma
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
-
-    private let processor = UserProfilePayloadProcessor()
-
-    init(context: NSManagedObjectContext) {
-        self.context = context
-    }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard apiVersion == .v0 else { return nil }
@@ -285,6 +295,10 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
         markUserProfilesAsFetched(missingIdentifiers)
     }
 
+    // MARK: Private
+
+    private let processor = UserProfilePayloadProcessor()
+
     private func markUserProfilesAsFetched(_ missingUsers: Set<UUID>) {
         for userID in missingUsers {
             let user = ZMUser.fetch(with: userID, in: context)
@@ -296,7 +310,17 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
 // MARK: - UserProfileByQualifiedIDTranscoder
 
 class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
+    // MARK: Lifecycle
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    // MARK: Public
+
     public typealias T = QualifiedID
+
+    // MARK: Internal
 
     var fetchLimit = 500
 
@@ -304,12 +328,6 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
-
-    private let processor = UserProfilePayloadProcessor()
-
-    init(context: NSManagedObjectContext) {
-        self.context = context
-    }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
@@ -391,6 +409,10 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             }
         }
     }
+
+    // MARK: Private
+
+    private let processor = UserProfilePayloadProcessor()
 
     private func markUserProfilesAsFetched(_ missingUsers: Set<QualifiedID>) {
         for qualifiedID in missingUsers {

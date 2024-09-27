@@ -20,6 +20,8 @@ import Foundation
 import WireTesting
 
 class DatabaseTest: ZMTBaseTest {
+    // MARK: Internal
+
     let accountId = UUID()
     var coreDataStack: CoreDataStack?
 
@@ -47,45 +49,6 @@ class DatabaseTest: ZMTBaseTest {
 
     var cacheURL: URL {
         FileManager.default.randomCacheURL!
-    }
-
-    private func cleanUp() {
-        try? FileManager.default.contentsOfDirectory(
-            at: sharedContainerURL!,
-            includingPropertiesForKeys: nil,
-            options: .skipsHiddenFiles
-        ).forEach {
-            try? FileManager.default.removeItem(at: $0)
-        }
-    }
-
-    private func createCoreDataStack() -> CoreDataStack {
-        let account = Account(userName: "", userIdentifier: accountId)
-        let stack = CoreDataStack(
-            account: account,
-            applicationContainer: sharedContainerURL!,
-            inMemoryStore: true,
-            dispatchGroup: dispatchGroup
-        )
-
-        stack.loadStores { error in
-            XCTAssertNil(error)
-        }
-
-        return stack
-    }
-
-    private func configureCaches() {
-        let fileAssetCache = FileAssetCache(location: cacheURL)
-        let userImageCache = UserImageLocalCache(location: nil)
-
-        uiMOC.zm_fileAssetCache = fileAssetCache
-        uiMOC.zm_userImageCache = userImageCache
-
-        syncMOC.performGroupedAndWait {
-            self.syncMOC.zm_fileAssetCache = fileAssetCache
-            self.uiMOC.zm_userImageCache = userImageCache
-        }
     }
 
     override func setUp() {
@@ -129,6 +92,47 @@ class DatabaseTest: ZMTBaseTest {
             decrypted: true,
             source: .download
         )!
+    }
+
+    // MARK: Private
+
+    private func cleanUp() {
+        try? FileManager.default.contentsOfDirectory(
+            at: sharedContainerURL!,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ).forEach {
+            try? FileManager.default.removeItem(at: $0)
+        }
+    }
+
+    private func createCoreDataStack() -> CoreDataStack {
+        let account = Account(userName: "", userIdentifier: accountId)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL!,
+            inMemoryStore: true,
+            dispatchGroup: dispatchGroup
+        )
+
+        stack.loadStores { error in
+            XCTAssertNil(error)
+        }
+
+        return stack
+    }
+
+    private func configureCaches() {
+        let fileAssetCache = FileAssetCache(location: cacheURL)
+        let userImageCache = UserImageLocalCache(location: nil)
+
+        uiMOC.zm_fileAssetCache = fileAssetCache
+        uiMOC.zm_userImageCache = userImageCache
+
+        syncMOC.performGroupedAndWait {
+            self.syncMOC.zm_fileAssetCache = fileAssetCache
+            self.uiMOC.zm_userImageCache = userImageCache
+        }
     }
 
     private func eventPayload(

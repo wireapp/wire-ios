@@ -22,9 +22,7 @@ public enum TLSVersion {
     case v1_2
     case v1_3
 
-    public static func minVersionFrom(_ string: String?) -> TLSVersion {
-        string.flatMap(TLSVersion.init) ?? .v1_2
-    }
+    // MARK: Lifecycle
 
     public init?(_ string: String) {
         switch string {
@@ -39,6 +37,8 @@ public enum TLSVersion {
         }
     }
 
+    // MARK: Public
+
     public var secValue: tls_protocol_version_t {
         switch self {
         case .v1_2:
@@ -47,5 +47,9 @@ public enum TLSVersion {
         case .v1_3:
             .TLSv13
         }
+    }
+
+    public static func minVersionFrom(_ string: String?) -> TLSVersion {
+        string.flatMap(TLSVersion.init) ?? .v1_2
     }
 }

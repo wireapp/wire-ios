@@ -23,8 +23,7 @@ import WireUtilities
 // MARK: - SignalingKeys
 
 public struct SignalingKeys {
-    let verificationKey: Data
-    let decryptionKey: Data
+    // MARK: Lifecycle
 
     init(verificationKey: Data? = nil, decryptionKey: Data? = nil) {
         self.verificationKey = verificationKey ?? NSData
@@ -32,19 +31,18 @@ public struct SignalingKeys {
         self.decryptionKey = decryptionKey ?? NSData
             .secureRandomData(ofLength: APSSignalingKeysStore.defaultKeyLengthBytes)
     }
+
+    // MARK: Internal
+
+    let verificationKey: Data
+    let decryptionKey: Data
 }
 
 // MARK: - APSSignalingKeysStore
 
 @objcMembers
 public final class APSSignalingKeysStore: NSObject {
-    public var apsDecoder: ZMAPSMessageDecoder!
-    var verificationKey: Data!
-    var decryptionKey: Data!
-
-    static let verificationKeyAccountName = "APSVerificationKey"
-    static let decryptionKeyAccountName = "APSDecryptionKey"
-    static let defaultKeyLengthBytes: UInt = 256 / 8
+    // MARK: Lifecycle
 
     public init?(userClient: UserClient) {
         super.init()
@@ -56,6 +54,23 @@ public final class APSSignalingKeysStore: NSObject {
             return nil
         }
     }
+
+    // MARK: Public
+
+    public var apsDecoder: ZMAPSMessageDecoder!
+
+    public func decryptDataDictionary(_ payload: [AnyHashable: Any]!) -> [AnyHashable: Any]! {
+        apsDecoder.decodeAPSPayload(payload)
+    }
+
+    // MARK: Internal
+
+    static let verificationKeyAccountName = "APSVerificationKey"
+    static let decryptionKeyAccountName = "APSDecryptionKey"
+    static let defaultKeyLengthBytes: UInt = 256 / 8
+
+    var verificationKey: Data!
+    var decryptionKey: Data!
 
     /// use this method to create new keys, e.g. for client registration or update
     static func createKeys() -> SignalingKeys {
@@ -75,9 +90,5 @@ public final class APSSignalingKeysStore: NSObject {
     static func clearSignalingKeysInKeyChain() {
         ZMKeychain.deleteAllKeychainItems(withAccountName: verificationKeyAccountName)
         ZMKeychain.deleteAllKeychainItems(withAccountName: decryptionKeyAccountName)
-    }
-
-    public func decryptDataDictionary(_ payload: [AnyHashable: Any]!) -> [AnyHashable: Any]! {
-        apsDecoder.decodeAPSPayload(payload)
     }
 }

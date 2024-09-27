@@ -24,23 +24,7 @@ import WireSyncEngine
 // MARK: - GroupParticipantsDetailViewController
 
 final class GroupParticipantsDetailViewController: UIViewController {
-    private let mainCoordinator: MainCoordinating
-    private let collectionView = UICollectionView(forGroupedSections: ())
-    private let searchViewController = SearchHeaderViewController(userSelection: .init())
-    let viewModel: GroupParticipantsDetailViewModel
-    private let collectionViewController: SectionCollectionViewController
-
-    typealias PeoplePicker = L10n.Localizable.Peoplepicker
-
-    // used for scrolling and fading selected cells
-    private var firstLayout = true
-    private var firstLoad = true
-
-    weak var delegate: GroupDetailsUserDetailPresenter?
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
+    // MARK: Lifecycle
 
     init(
         selectedParticipants: [UserType],
@@ -64,6 +48,17 @@ final class GroupParticipantsDetailViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    typealias PeoplePicker = L10n.Localizable.Peoplepicker
+
+    let viewModel: GroupParticipantsDetailViewModel
+    weak var delegate: GroupDetailsUserDetailPresenter?
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
     }
 
     override func viewDidLoad() {
@@ -119,6 +114,30 @@ final class GroupParticipantsDetailViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
+    func participantsDidChange() {
+        collectionViewController.sections = computeSections()
+        collectionViewController.collectionView?.reloadData()
+
+        let emptyResultMessage = (viewModel.admins.isEmpty && viewModel.members.isEmpty) ? PeoplePicker
+            .noSearchResults : ""
+        collectionViewController.collectionView?.setEmptyMessage(emptyResultMessage)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        viewModel.participants[indexPath.row].isSelfUser == false
+    }
+
+    // MARK: Private
+
+    private let mainCoordinator: MainCoordinating
+    private let collectionView = UICollectionView(forGroupedSections: ())
+    private let searchViewController = SearchHeaderViewController(userSelection: .init())
+    private let collectionViewController: SectionCollectionViewController
+
+    // used for scrolling and fading selected cells
+    private var firstLayout = true
+    private var firstLoad = true
+
     private func createConstraints() {
         NSLayoutConstraint.activate([
             searchViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -129,15 +148,6 @@ final class GroupParticipantsDetailViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
-    }
-
-    func participantsDidChange() {
-        collectionViewController.sections = computeSections()
-        collectionViewController.collectionView?.reloadData()
-
-        let emptyResultMessage = (viewModel.admins.isEmpty && viewModel.members.isEmpty) ? PeoplePicker
-            .noSearchResults : ""
-        collectionViewController.collectionView?.setEmptyMessage(emptyResultMessage)
     }
 
     private func scrollToFirstHighlightedUser() {
@@ -182,10 +192,6 @@ final class GroupParticipantsDetailViewController: UIViewController {
         }
 
         return sections
-    }
-
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        viewModel.participants[indexPath.row].isSelfUser == false
     }
 }
 

@@ -20,7 +20,8 @@ import XCTest
 @testable import Wire
 
 class VoiceChannelStreamArrangementTests: XCTestCase {
-    private var sut: MockVoiceChannel!
+    // MARK: Internal
+
     var mockUser1: ZMUser!
     var mockUser2: ZMUser!
     var mockUser3: ZMUser!
@@ -71,16 +72,6 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
         mockUser3 = nil
         CallingConfiguration.testHelper_resetDefaultConfig()
         super.tearDown()
-    }
-
-    private func participantStub(for user: ZMUser, videoEnabled: Bool) -> CallParticipant {
-        let state: VideoState = videoEnabled ? .started : .stopped
-        return CallParticipant(
-            user: user,
-            clientId: UUID().transportString(),
-            state: .connected(videoState: state, microphoneState: .unmuted),
-            activeSpeakerState: .inactive
-        )
     }
 
     // MARK: - activeVideoStreams(from participants:)
@@ -223,5 +214,19 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
         XCTAssertEqual(userIds[0], avsId1)
         XCTAssertEqual(userIds[1], avsId3)
         XCTAssertEqual(userIds[2], avsId2)
+    }
+
+    // MARK: Private
+
+    private var sut: MockVoiceChannel!
+
+    private func participantStub(for user: ZMUser, videoEnabled: Bool) -> CallParticipant {
+        let state: VideoState = videoEnabled ? .started : .stopped
+        return CallParticipant(
+            user: user,
+            clientId: UUID().transportString(),
+            state: .connected(videoState: state, microphoneState: .unmuted),
+            activeSpeakerState: .inactive
+        )
     }
 }

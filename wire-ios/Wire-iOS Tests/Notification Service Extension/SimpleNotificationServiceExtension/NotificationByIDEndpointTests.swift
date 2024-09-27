@@ -20,23 +20,6 @@ import XCTest
 @testable import Wire_Notification_Service_Extension
 
 class NotificationByIDEndpointTests: XCTestCase {
-    // MARK: - Request generation
-
-    func test_RequestGeneration() {
-        // Given
-        let eventID = UUID.create()
-        let sut = NotificationByIDEndpoint(eventID: eventID)
-
-        // When
-        let request = sut.request
-
-        // Then
-        XCTAssertEqual(request.path, "/notifications/\(eventID.uuidString.lowercased())")
-        XCTAssertEqual(request.httpMethod, .get)
-        XCTAssertEqual(request.contentType, .json)
-        XCTAssertEqual(request.acceptType, .json)
-    }
-
     // MARK: - Response parsing
 
     let eventID = UUID.create()
@@ -87,6 +70,23 @@ class NotificationByIDEndpointTests: XCTestCase {
         "foo": "bar"
     }
     """.utf8)
+
+    // MARK: - Request generation
+
+    func test_RequestGeneration() {
+        // Given
+        let eventID = UUID.create()
+        let sut = NotificationByIDEndpoint(eventID: eventID)
+
+        // When
+        let request = sut.request
+
+        // Then
+        XCTAssertEqual(request.path, "/notifications/\(eventID.uuidString.lowercased())")
+        XCTAssertEqual(request.httpMethod, .get)
+        XCTAssertEqual(request.contentType, .json)
+        XCTAssertEqual(request.acceptType, .json)
+    }
 
     func test_ParseSuccessResponse() {
         // Given

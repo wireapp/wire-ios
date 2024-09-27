@@ -47,12 +47,14 @@ protocol KeyPathObjectSyncTranscoder: AnyObject {
 /// Note this is only supported for managed objects and for properties which are stored in Core Data.
 ///
 class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
-    // MARK: - Life Cycle
+    // MARK: Lifecycle
 
     init(entityName: String, _ keyPath: WritableKeyPath<Transcoder.T, Bool>) {
         self.entityName = entityName
         self.keyPath = keyPath
     }
+
+    // MARK: Internal
 
     // MARK: - Properties
 

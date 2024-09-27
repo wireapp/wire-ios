@@ -33,11 +33,15 @@ final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
 // MARK: - ClientRegistrationStatus
 
 final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-    let context: NSManagedObjectContext
+    // MARK: Lifecycle
 
     init(context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: Internal
+
+    let context: NSManagedObjectContext
 
     var clientIsReadyForRequests: Bool {
         if let clientId = context
@@ -57,15 +61,21 @@ final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 // MARK: - AuthenticationStatus
 
 final class AuthenticationStatus: AuthenticationStatusProvider {
-    let transportSession: ZMTransportSession
+    // MARK: Lifecycle
 
     init(transportSession: ZMTransportSession) {
         self.transportSession = transportSession
     }
 
+    // MARK: Internal
+
+    let transportSession: ZMTransportSession
+
     var state: AuthenticationState {
         isLoggedIn ? .authenticated : .unauthenticated
     }
+
+    // MARK: Private
 
     private var isLoggedIn: Bool {
         transportSession.cookieStorage.hasAuthenticationCookie
@@ -90,15 +100,7 @@ extension BackendEnvironmentProvider {
 // MARK: - ApplicationStatusDirectory
 
 final class ApplicationStatusDirectory: ApplicationStatus {
-    let transportSession: ZMTransportSession
-
-    /// The authentication status used to verify a user is authenticated
-    public let authenticationStatus: AuthenticationStatusProvider
-
-    /// The client registration status used to lookup if a user has registered a self client
-    public let clientRegistrationStatus: ClientRegistrationDelegate
-
-    public let linkPreviewDetector: LinkPreviewDetectorType
+    // MARK: Lifecycle
 
     public init(
         transportSession: ZMTransportSession,
@@ -124,6 +126,16 @@ final class ApplicationStatusDirectory: ApplicationStatus {
         )
     }
 
+    // MARK: Public
+
+    /// The authentication status used to verify a user is authenticated
+    public let authenticationStatus: AuthenticationStatusProvider
+
+    /// The client registration status used to lookup if a user has registered a self client
+    public let clientRegistrationStatus: ClientRegistrationDelegate
+
+    public let linkPreviewDetector: LinkPreviewDetectorType
+
     public var synchronizationState: SynchronizationState {
         if clientRegistrationStatus.clientIsReadyForRequests {
             .online
@@ -144,6 +156,10 @@ final class ApplicationStatusDirectory: ApplicationStatus {
         transportSession
     }
 
+    // MARK: Internal
+
+    let transportSession: ZMTransportSession
+
     func requestResyncResources() {
         // we don't resync Resources in the share engine
     }
@@ -159,73 +175,7 @@ final class ApplicationStatusDirectory: ApplicationStatus {
 /// - warning: creating multiple sessions in the same process
 /// is not supported and will result in undefined behaviour
 public final class SharingSession {
-    /// The failure reason of a `SharingSession` initialization
-    /// - NeedsMigration: The database needs a migration which is only done in the main app
-    /// - LoggedOut: No user is logged in
-    /// - missingSharedContainer: The shared container is missing
-    public enum InitializationError: Error {
-        case needsMigration, loggedOut, missingSharedContainer, pendingCryptoboxMigration
-    }
-
-    /// The `NSManagedObjectContext` used to retrieve the conversations
-    var userInterfaceContext: NSManagedObjectContext {
-        coreDataStack.viewContext
-    }
-
-    private var syncContext: NSManagedObjectContext {
-        coreDataStack.syncContext
-    }
-
-    /// Directory of all application statuses
-    private let applicationStatusDirectory: ApplicationStatusDirectory
-
-    /// The list to which save notifications of the UI moc are appended and persistet
-    private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
-
-    public let analyticsEventPersistence: ShareExtensionAnalyticsPersistence
-
-    private var contextSaveObserverToken: NSObjectProtocol?
-
-    let transportSession: ZMTransportSession
-
-    let coreDataStack: CoreDataStack
-
-    /// The `ZMConversationListDirectory` containing all conversation lists
-    private var directory: ZMConversationListDirectory {
-        userInterfaceContext.conversationListDirectory()
-    }
-
-    /// Whether all prerequsisties for sharing are met
-    public var canShare: Bool {
-        applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory
-            .clientRegistrationStatus.clientIsReadyForRequests
-    }
-
-    /// List of non-archived conversations in which the user can write
-    /// The list will be sorted by relevance
-    public var writeableNonArchivedConversations: [Conversation] {
-        directory.unarchivedConversations.writeableConversations
-    }
-
-    /// List of archived conversations in which the user can write
-    public var writebleArchivedConversations: [Conversation] {
-        directory.archivedConversations.writeableConversations
-    }
-
-    private let operationLoop: RequestGeneratingOperationLoop
-
-    private let strategyFactory: StrategyFactory
-
-    public let appLockController: AppLockType
-
-    private let contextStorage: LAContextStorable
-
-    let earService: EARServiceInterface
-
-    public var fileSharingFeature: Feature.FileSharing {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
-        return featureRepository.fetchFileSharing()
-    }
+    // MARK: Lifecycle
 
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -466,6 +416,92 @@ public final class SharingSession {
         strategyFactory.tearDown()
     }
 
+    // MARK: Public
+
+    /// The failure reason of a `SharingSession` initialization
+    /// - NeedsMigration: The database needs a migration which is only done in the main app
+    /// - LoggedOut: No user is logged in
+    /// - missingSharedContainer: The shared container is missing
+    public enum InitializationError: Error {
+        case needsMigration, loggedOut, missingSharedContainer, pendingCryptoboxMigration
+    }
+
+    public let analyticsEventPersistence: ShareExtensionAnalyticsPersistence
+
+    public let appLockController: AppLockType
+
+    /// Whether all prerequsisties for sharing are met
+    public var canShare: Bool {
+        applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory
+            .clientRegistrationStatus.clientIsReadyForRequests
+    }
+
+    /// List of non-archived conversations in which the user can write
+    /// The list will be sorted by relevance
+    public var writeableNonArchivedConversations: [Conversation] {
+        directory.unarchivedConversations.writeableConversations
+    }
+
+    /// List of archived conversations in which the user can write
+    public var writebleArchivedConversations: [Conversation] {
+        directory.archivedConversations.writeableConversations
+    }
+
+    public var fileSharingFeature: Feature.FileSharing {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchFileSharing()
+    }
+
+    public func enqueue(changes: @escaping () -> Void) {
+        enqueue(changes: changes, completionHandler: nil)
+    }
+
+    public func enqueue(changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
+        userInterfaceContext.performGroupedBlock { [weak self] in
+            changes()
+            self?.userInterfaceContext.saveOrRollback()
+            completionHandler?()
+        }
+    }
+
+    // MARK: Internal
+
+    let transportSession: ZMTransportSession
+
+    let coreDataStack: CoreDataStack
+
+    let earService: EARServiceInterface
+
+    /// The `NSManagedObjectContext` used to retrieve the conversations
+    var userInterfaceContext: NSManagedObjectContext {
+        coreDataStack.viewContext
+    }
+
+    // MARK: Private
+
+    /// Directory of all application statuses
+    private let applicationStatusDirectory: ApplicationStatusDirectory
+
+    /// The list to which save notifications of the UI moc are appended and persistet
+    private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
+
+    private var contextSaveObserverToken: NSObjectProtocol?
+
+    private let operationLoop: RequestGeneratingOperationLoop
+
+    private let strategyFactory: StrategyFactory
+
+    private let contextStorage: LAContextStorable
+
+    private var syncContext: NSManagedObjectContext {
+        coreDataStack.syncContext
+    }
+
+    /// The `ZMConversationListDirectory` containing all conversation lists
+    private var directory: ZMConversationListDirectory {
+        userInterfaceContext.conversationListDirectory()
+    }
+
     private func setupCaches(at cachesDirectory: URL) {
         let userImageCache = UserImageLocalCache(location: cachesDirectory)
         userInterfaceContext.zm_userImageCache = userImageCache
@@ -486,18 +522,6 @@ public final class SharingSession {
                 DarwinNotification.shareExtDidSaveNote.post()
             }
         )
-    }
-
-    public func enqueue(changes: @escaping () -> Void) {
-        enqueue(changes: changes, completionHandler: nil)
-    }
-
-    public func enqueue(changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
-        userInterfaceContext.performGroupedBlock { [weak self] in
-            changes()
-            self?.userInterfaceContext.saveOrRollback()
-            completionHandler?()
-        }
     }
 }
 

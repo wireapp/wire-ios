@@ -33,9 +33,7 @@ extension UIApplicationShortcutItem {
 // MARK: - QuickActionsManager
 
 final class QuickActionsManager: NSObject {
-    // MARK: - Public Property
-
-    var sessionManager: SessionManager?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -44,6 +42,12 @@ final class QuickActionsManager: NSObject {
         super.init()
         updateQuickActions()
     }
+
+    // MARK: Internal
+
+    // MARK: - Public Property
+
+    var sessionManager: SessionManager?
 
     func updateQuickActions() {
         guard Bundle.developerModeEnabled else {

@@ -21,10 +21,7 @@ import WireTransport
 
 /// Requests the account deletion
 public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-    fileprivate static let path = "/self"
-    public static let userDeletionInitiatedKey = "ZMUserDeletionInitiatedKey"
-    fileprivate(set) var deleteSync: ZMSingleRequestSync! = nil
-    let cookieStorage: ZMPersistentCookieStorage
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext moc: NSManagedObjectContext,
@@ -42,6 +39,10 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
         ]
         self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
+
+    // MARK: Public
+
+    public static let userDeletionInitiatedKey = "ZMUserDeletionInitiatedKey"
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let shouldBeDeleted: NSNumber = managedObjectContext
@@ -82,4 +83,13 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
             notification.post(in: context.notificationContext)
         }
     }
+
+    // MARK: Internal
+
+    fileprivate(set) var deleteSync: ZMSingleRequestSync! = nil
+    let cookieStorage: ZMPersistentCookieStorage
+
+    // MARK: Fileprivate
+
+    fileprivate static let path = "/self"
 }

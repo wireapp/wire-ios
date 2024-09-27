@@ -19,9 +19,7 @@
 import UIKit
 
 final class NotSignedInViewController: UIViewController {
-    var closeHandler: (() -> Void)?
-
-    let messageLabel = UILabel()
+    // MARK: Lifecycle
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -31,6 +29,12 @@ final class NotSignedInViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var closeHandler: (() -> Void)?
+
+    let messageLabel = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +55,8 @@ final class NotSignedInViewController: UIViewController {
 
         createConstraints()
     }
+
+    // MARK: Private
 
     private func createConstraints() {
         messageLabel.translatesAutoresizingMaskIntoConstraints = false

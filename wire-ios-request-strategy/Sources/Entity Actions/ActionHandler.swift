@@ -19,12 +19,7 @@
 import Foundation
 
 class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGenerator {
-    typealias Action = T
-
-    let context: NSManagedObjectContext
-
-    private(set) var pendingActions: [Action] = []
-    private var token: NSObjectProtocol?
+    // MARK: Lifecycle
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -33,6 +28,14 @@ class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGe
 
         self.token = Action.registerHandler(self, context: context.notificationContext)
     }
+
+    // MARK: Internal
+
+    typealias Action = T
+
+    let context: NSManagedObjectContext
+
+    private(set) var pendingActions: [Action] = []
 
     func performAction(_ action: Action) {
         context.performGroupedBlock {
@@ -69,4 +72,8 @@ class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGe
 
         return request
     }
+
+    // MARK: Private
+
+    private var token: NSObjectProtocol?
 }

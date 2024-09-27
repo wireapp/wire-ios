@@ -38,13 +38,7 @@ extension ProxiedRequestType {
 
 /// Perform requests to the Giphy search API
 public final class ProxiedRequestStrategy: AbstractRequestStrategy {
-    fileprivate static let BasePath = "/proxy"
-
-    /// The requests to fulfill
-    fileprivate weak var requestsStatus: ProxiedRequestsStatus?
-
-    /// Requests fail after this interval if the network is unreachable
-    fileprivate static let RequestExpirationTime: TimeInterval = 20
+    // MARK: Lifecycle
 
     @available(
         *,
@@ -63,6 +57,8 @@ public final class ProxiedRequestStrategy: AbstractRequestStrategy {
         self.requestsStatus = requestsStatus
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
     }
+
+    // MARK: Public
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let status = requestsStatus else { return nil }
@@ -95,4 +91,14 @@ public final class ProxiedRequestStrategy: AbstractRequestStrategy {
 
         return nil
     }
+
+    // MARK: Fileprivate
+
+    fileprivate static let BasePath = "/proxy"
+
+    /// Requests fail after this interval if the network is unreachable
+    fileprivate static let RequestExpirationTime: TimeInterval = 20
+
+    /// The requests to fulfill
+    fileprivate weak var requestsStatus: ProxiedRequestsStatus?
 }

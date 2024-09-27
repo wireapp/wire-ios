@@ -21,25 +21,7 @@ import WireDataModel
 import WireDesign
 
 final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
-    typealias View = ConversationStartedSystemMessageCell
-    typealias IconColors = SemanticColors.Icon
-    typealias LabelColors = SemanticColors.Label
-
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer = false
-    var topMargin: Float = 0
-
-    let isFullWidth = true
-    let supportsActions = false
-    let containsHighlightableContent = false
-
-    let accessibilityIdentifier: String? = nil
-    var conversationObserverToken: Any?
+    // MARK: Lifecycle
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
         let color = LabelColors.textDefault
@@ -63,4 +45,26 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
 
         accessibilityLabel = configuration.message.string
     }
+
+    // MARK: Internal
+
+    typealias View = ConversationStartedSystemMessageCell
+    typealias IconColors = SemanticColors.Icon
+    typealias LabelColors = SemanticColors.Label
+
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer = false
+    var topMargin: Float = 0
+
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
+
+    let accessibilityIdentifier: String? = nil
+    var conversationObserverToken: Any?
 }

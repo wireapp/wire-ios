@@ -23,14 +23,7 @@ import XCTest
 // MARK: - UIAlertControllerFeatureConfigSnapshotTests
 
 final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
-    private func createSut(for featureChange: FeatureRepository.FeatureChange) -> UIAlertController? {
-        let result = UIAlertController.fromFeatureChange(
-            featureChange,
-            acknowledger: MockFeatureChangeAcknowledger()
-        )
-        result?.view.backgroundColor = .white
-        return result
-    }
+    // MARK: Internal
 
     // MARK: - Tests
 
@@ -52,6 +45,17 @@ final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
 
     func testFileSharingDisabled() throws {
         try verify(matching: createSut(for: .fileSharingDisabled)!)
+    }
+
+    // MARK: Private
+
+    private func createSut(for featureChange: FeatureRepository.FeatureChange) -> UIAlertController? {
+        let result = UIAlertController.fromFeatureChange(
+            featureChange,
+            acknowledger: MockFeatureChangeAcknowledger()
+        )
+        result?.view.backgroundColor = .white
+        return result
     }
 }
 

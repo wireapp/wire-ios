@@ -60,32 +60,7 @@ public protocol CallKitManagerInterface {
 
 @objc
 public class CallKitManager: NSObject, CallKitManagerInterface {
-    // MARK: - Properties
-
-    public var isEnabled: Bool {
-        didSet {
-            VoIPPushHelper.isCallKitAvailable = isEnabled
-        }
-    }
-
-    private let application: ZMApplication
-    private let requirePushTokenType: PushToken.TokenType
-
-    private let provider: CXProvider
-    private let callController: CXCallController
-    private weak var mediaManager: MediaManagerType?
-
-    weak var delegate: CallKitManagerDelegate?
-
-    private var callStateObserverToken: Any?
-    private var missedCallObserverToken: Any?
-
-    let callRegister = CallKitCallRegister()
-    private var connectedCallConversation: ZMConversation?
-
-    private let logger = WireLogger(tag: "call-kit")
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public convenience init(
         application: ZMApplication,
@@ -145,6 +120,16 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         provider.invalidate()
     }
 
+    // MARK: Public
+
+    // MARK: - Properties
+
+    public var isEnabled: Bool {
+        didSet {
+            VoIPPushHelper.isCallKitAvailable = isEnabled
+        }
+    }
+
     // MARK: - Delegate
 
     public func setDelegate(_ delegate: Any) {
@@ -160,68 +145,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     public func updateConfiguration() {
         logger.info("update configuration")
         provider.configuration = CallKitManager.providerConfiguration
-    }
-
-    static var providerConfiguration: CXProviderConfiguration {
-        let configuration = CXProviderConfiguration()
-        configuration.supportsVideo = true
-        configuration.maximumCallGroups = 1
-        configuration.maximumCallsPerCallGroup = 1
-        configuration.supportedHandleTypes = [.generic]
-        configuration.ringtoneSound = NotificationSound.call.name
-
-        if let image = UIImage(named: "wire-logo-letter") {
-            configuration.iconTemplateImageData = image.pngData()
-        }
-
-        return configuration
-    }
-
-    // MARK: - Logging
-
-    private func log(
-        _ message: String,
-        file: String = #file,
-        line: Int = #line
-    ) {
-        let messageWithLineNumber = String(
-            format: "%@:%ld: %@",
-            URL(fileURLWithPath: file).lastPathComponent,
-            line,
-            message
-        )
-
-        SessionManager.logAVS(message: messageWithLineNumber)
-    }
-
-    // MARK: - Actions
-
-    private func actionsToEndAllOngoingCalls(excepting handle: CallHandle) -> [CXAction] {
-        callRegister.allCalls
-            .lazy
-            .filter { $0.handle != handle }
-            .map { CXEndCallAction(call: $0.id) }
-    }
-
-    // MARK: - Intents
-
-    func findConversationAssociated(
-        with contacts: [INPerson],
-        completion: @escaping (ZMConversation) -> Void
-    ) {
-        guard
-            contacts.count == 1,
-            let contact = contacts.first,
-            let customIdentifier = contact.personHandle?.value,
-            let callHandle = CallHandle(encodedString: customIdentifier)
-        else {
-            return
-        }
-
-        delegate?.lookupConversation(by: callHandle) { result in
-            guard case let .success(conversation) = result else { return }
-            completion(conversation)
-        }
     }
 
     public func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
@@ -290,15 +213,73 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         }
     }
 
-    private func existsIncomingCall(in conversation: ZMConversation) -> Bool {
-        guard
-            let call = callRegister.lookupCall(by: conversation),
-            let existingCall = callController.existingCall(for: call)
-        else {
-            return false
+    public func requestEndCall(
+        in conversation: ZMConversation,
+        completion: (() -> Void)? = nil
+    ) {
+        logger.info("request end call")
+
+        guard let call = callRegister.lookupCall(by: conversation) else {
+            logger.warn("fail: request end call: call doesn't exist")
+            return
         }
 
-        return !existingCall.isOutgoing
+        let action = CXEndCallAction(call: call.id)
+        let transaction = CXTransaction(action: action)
+
+        log("request CXEndCallAction")
+
+        callController.request(transaction) { [weak self] error in
+            if let error {
+                self?.logger.error("fail: request end call: \(error)")
+                self?.log("Cannot end call: \(error)")
+                conversation.voiceChannel?.leave()
+            }
+
+            completion?()
+        }
+    }
+
+    // MARK: Internal
+
+    static var providerConfiguration: CXProviderConfiguration {
+        let configuration = CXProviderConfiguration()
+        configuration.supportsVideo = true
+        configuration.maximumCallGroups = 1
+        configuration.maximumCallsPerCallGroup = 1
+        configuration.supportedHandleTypes = [.generic]
+        configuration.ringtoneSound = NotificationSound.call.name
+
+        if let image = UIImage(named: "wire-logo-letter") {
+            configuration.iconTemplateImageData = image.pngData()
+        }
+
+        return configuration
+    }
+
+    weak var delegate: CallKitManagerDelegate?
+
+    let callRegister = CallKitCallRegister()
+
+    // MARK: - Intents
+
+    func findConversationAssociated(
+        with contacts: [INPerson],
+        completion: @escaping (ZMConversation) -> Void
+    ) {
+        guard
+            contacts.count == 1,
+            let contact = contacts.first,
+            let customIdentifier = contact.personHandle?.value,
+            let callHandle = CallHandle(encodedString: customIdentifier)
+        else {
+            return
+        }
+
+        delegate?.lookupConversation(by: callHandle) { result in
+            guard case let .success(conversation) = result else { return }
+            completion(conversation)
+        }
     }
 
     func requestStartCall(
@@ -359,33 +340,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
                 self?.logger.error("fail: request answer call: \(error)")
                 self?.log("Cannot answer call: \(error)")
             }
-        }
-    }
-
-    public func requestEndCall(
-        in conversation: ZMConversation,
-        completion: (() -> Void)? = nil
-    ) {
-        logger.info("request end call")
-
-        guard let call = callRegister.lookupCall(by: conversation) else {
-            logger.warn("fail: request end call: call doesn't exist")
-            return
-        }
-
-        let action = CXEndCallAction(call: call.id)
-        let transaction = CXTransaction(action: action)
-
-        log("request CXEndCallAction")
-
-        callController.request(transaction) { [weak self] error in
-            if let error {
-                self?.logger.error("fail: request end call: \(error)")
-                self?.log("Cannot end call: \(error)")
-                conversation.voiceChannel?.leave()
-            }
-
-            completion?()
         }
     }
 
@@ -537,6 +491,59 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             log("provider.reportCallEndedAt: \(String(describing: timestamp))")
             provider.reportCall(with: call.id, endedAt: timestamp?.clampForCallKit() ?? Date(), reason: reason)
         }
+    }
+
+    // MARK: Private
+
+    private let application: ZMApplication
+    private let requirePushTokenType: PushToken.TokenType
+
+    private let provider: CXProvider
+    private let callController: CXCallController
+    private weak var mediaManager: MediaManagerType?
+
+    private var callStateObserverToken: Any?
+    private var missedCallObserverToken: Any?
+
+    private var connectedCallConversation: ZMConversation?
+
+    private let logger = WireLogger(tag: "call-kit")
+
+    // MARK: - Logging
+
+    private func log(
+        _ message: String,
+        file: String = #file,
+        line: Int = #line
+    ) {
+        let messageWithLineNumber = String(
+            format: "%@:%ld: %@",
+            URL(fileURLWithPath: file).lastPathComponent,
+            line,
+            message
+        )
+
+        SessionManager.logAVS(message: messageWithLineNumber)
+    }
+
+    // MARK: - Actions
+
+    private func actionsToEndAllOngoingCalls(excepting handle: CallHandle) -> [CXAction] {
+        callRegister.allCalls
+            .lazy
+            .filter { $0.handle != handle }
+            .map { CXEndCallAction(call: $0.id) }
+    }
+
+    private func existsIncomingCall(in conversation: ZMConversation) -> Bool {
+        guard
+            let call = callRegister.lookupCall(by: conversation),
+            let existingCall = callController.existingCall(for: call)
+        else {
+            return false
+        }
+
+        return !existingCall.isOutgoing
     }
 }
 

@@ -19,9 +19,7 @@
 import Foundation
 
 public final class FetchMLSSubconversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
-    public var conversationId: UUID
-    public var domain: String
-    public var subgroupType: SubgroupType
+    // MARK: Lifecycle
 
     public init(
         conversationId: UUID,
@@ -34,4 +32,10 @@ public final class FetchMLSSubconversationGroupInfoAction: BaseFetchMLSGroupInfo
         self.subgroupType = subgroupType
         super.init(resultHandler: resultHandler)
     }
+
+    // MARK: Public
+
+    public var conversationId: UUID
+    public var domain: String
+    public var subgroupType: SubgroupType
 }

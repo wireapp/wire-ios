@@ -41,12 +41,7 @@ public protocol E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 // MARK: - E2EIdentityCertificateUpdateStatusUseCase
 
 public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
-    private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
-    private let gracePeriod: TimeInterval
-    private let comparedDate: CurrentDateProviding
-    private let mlsClientID: MLSClientID
-    private let context: NSManagedObjectContext
-    private let lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
+    // MARK: Lifecycle
 
     public init(
         getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
@@ -63,6 +58,8 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         self.context = context
         self.comparedDate = comparedDate
     }
+
+    // MARK: Public
 
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
         let selfMLSConversationGroupID = await context.perform {
@@ -125,4 +122,13 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
             return .noAction
         }
     }
+
+    // MARK: Private
+
+    private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
+    private let gracePeriod: TimeInterval
+    private let comparedDate: CurrentDateProviding
+    private let mlsClientID: MLSClientID
+    private let context: NSManagedObjectContext
+    private let lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 }

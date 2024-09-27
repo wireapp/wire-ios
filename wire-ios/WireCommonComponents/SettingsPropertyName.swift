@@ -80,6 +80,8 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
 
     case encryptMessagesAtRest
 
+    // MARK: Public
+
     public var changeNotificationName: String {
         description + "ChangeNotification"
     }

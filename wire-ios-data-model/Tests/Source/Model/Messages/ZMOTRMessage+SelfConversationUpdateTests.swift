@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 
 class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
+    // MARK: Internal
+
     func testThatWeIgnoreClearedEventNotSentFromSelfUser() {
         syncMOC.performGroupedAndWait {
             // given
@@ -177,6 +179,8 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             XCTAssertEqual(selfUser.analyticsIdentifier, "foo")
         }
     }
+
+    // MARK: Private
 
     private func createUpdateEvent(
         trackingIdentifier: UUID,

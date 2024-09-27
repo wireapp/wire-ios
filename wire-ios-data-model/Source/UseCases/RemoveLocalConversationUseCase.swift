@@ -28,7 +28,11 @@ public protocol RemoveLocalConversationUseCaseProtocol {
 // MARK: - RemoveLocalConversationUseCase
 
 public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol {
+    // MARK: Lifecycle
+
     public init() {}
+
+    // MARK: Public
 
     public func invoke(
         with conversation: ZMConversation,
@@ -41,6 +45,8 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
         try await wipeMLSGroupIfNeeded(for: conversation, in: syncContext)
         await syncContext.perform { _ = syncContext.saveOrRollback() }
     }
+
+    // MARK: Internal
 
     func wipeMLSGroupIfNeeded(
         for conversation: ZMConversation,

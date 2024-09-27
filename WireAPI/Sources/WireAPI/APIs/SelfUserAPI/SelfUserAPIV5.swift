@@ -47,9 +47,9 @@ class SelfUserAPIV5: SelfUserAPIV4 {
 // MARK: - SupportedProtocolsPayloadV5
 
 struct SupportedProtocolsPayloadV5: Encodable {
-    let supportedProtocols: Set<MessageProtocol>
-
     enum CodingKeys: String, CodingKey {
         case supportedProtocols = "supported_protocols"
     }
+
+    let supportedProtocols: Set<MessageProtocol>
 }

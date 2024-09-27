@@ -51,35 +51,9 @@ protocol UserList: AnyObject {
 // MARK: - UserSearchResultsViewController
 
 final class UserSearchResultsViewController: UIViewController, KeyboardCollapseObserver {
-    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
-    private var searchResults: [UserType] = [] {
-        didSet {
-            if !searchResults.isEmpty {
-                collectionViewSelectedIndex = searchResults.count - 1
-            } else {
-                collectionViewSelectedIndex = .none
-            }
-        }
-    }
+    // MARK: Internal
 
-    private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor
-        .constraint(equalToConstant: 0)
-    private let rowHeight: CGFloat = 56.0
-    private var isKeyboardCollapsedFirstCalled = true
-
-    private var _collectionViewSelectedIndex: Int? = .none
-    private var collectionViewSelectedIndex: Int? {
-        get {
-            _collectionViewSelectedIndex
-        }
-        set {
-            if let newValue {
-                _collectionViewSelectedIndex = min(searchResults.count - 1, max(0, newValue))
-            } else {
-                _collectionViewSelectedIndex = newValue
-            }
-        }
-    }
+    weak var delegate: UserSearchResultsViewControllerDelegate?
 
     private(set) var isKeyboardCollapsed = true {
         didSet {
@@ -89,10 +63,6 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
             isKeyboardCollapsedFirstCalled = false
         }
     }
-
-    weak var delegate: UserSearchResultsViewControllerDelegate?
-
-    private var keyboardObserver: KeyboardBlockObserver?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,6 +85,80 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         if collectionView.frame.size != view.bounds.size {
             collectionView.frame = view.bounds
             resizeTable()
+        }
+    }
+
+    @objc
+    func reloadTable(with results: [UserType]) {
+        searchResults = results
+        resizeTable()
+
+        collectionView.reloadData()
+        collectionView.layoutIfNeeded()
+
+        scrollToLastItem()
+
+        if !results.isEmpty {
+            show()
+        } else {
+            dismiss()
+        }
+    }
+
+    func show() {
+        view.isHidden = false
+    }
+
+    @objc
+    dynamic func keyboardWillChangeFrame(_ notification: Notification) {
+        guard let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+        else { return }
+        resizeTable()
+        UIView.animate(withDuration: duration) {
+            self.view.layoutIfNeeded()
+            self.scrollToLastItem()
+        }
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        coordinator.animate(alongsideTransition: nil) { _ in
+            self.collectionView.reloadData()
+        }
+    }
+
+    // MARK: Private
+
+    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+    private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor
+        .constraint(equalToConstant: 0)
+    private let rowHeight: CGFloat = 56.0
+    private var isKeyboardCollapsedFirstCalled = true
+
+    private var _collectionViewSelectedIndex: Int? = .none
+    private var keyboardObserver: KeyboardBlockObserver?
+
+    private var searchResults: [UserType] = [] {
+        didSet {
+            if !searchResults.isEmpty {
+                collectionViewSelectedIndex = searchResults.count - 1
+            } else {
+                collectionViewSelectedIndex = .none
+            }
+        }
+    }
+
+    private var collectionViewSelectedIndex: Int? {
+        get {
+            _collectionViewSelectedIndex
+        }
+        set {
+            if let newValue {
+                _collectionViewSelectedIndex = min(searchResults.count - 1, max(0, newValue))
+            } else {
+                _collectionViewSelectedIndex = newValue
+            }
         }
     }
 
@@ -160,23 +204,6 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         ])
     }
 
-    @objc
-    func reloadTable(with results: [UserType]) {
-        searchResults = results
-        resizeTable()
-
-        collectionView.reloadData()
-        collectionView.layoutIfNeeded()
-
-        scrollToLastItem()
-
-        if !results.isEmpty {
-            show()
-        } else {
-            dismiss()
-        }
-    }
-
     private func resizeTable() {
         let viewHeight = view.bounds.size.height
         let contentHeight = CGFloat(searchResults.count) * rowHeight
@@ -197,29 +224,6 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
         if collectionView.containsCell(at: firstMatchIndexPath) {
             collectionView.scrollToItem(at: firstMatchIndexPath, at: .bottom, animated: false)
-        }
-    }
-
-    func show() {
-        view.isHidden = false
-    }
-
-    @objc
-    dynamic func keyboardWillChangeFrame(_ notification: Notification) {
-        guard let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
-        else { return }
-        resizeTable()
-        UIView.animate(withDuration: duration) {
-            self.view.layoutIfNeeded()
-            self.scrollToLastItem()
-        }
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        coordinator.animate(alongsideTransition: nil) { _ in
-            self.collectionView.reloadData()
         }
     }
 }

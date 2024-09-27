@@ -29,7 +29,8 @@ private final class MockBackupExcluder: BackupExcluder {}
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: test protocol instead
 final class BackupExcluderTests: XCTestCase {
-    private var sut: MockBackupExcluder!
+    // MARK: Internal
+
     let filename = "test.txt"
 
     override func setUp() {
@@ -84,4 +85,8 @@ final class BackupExcluderTests: XCTestCase {
             XCTAssert(url.isExcludedFromBackup)
         }
     }
+
+    // MARK: Private
+
+    private var sut: MockBackupExcluder!
 }

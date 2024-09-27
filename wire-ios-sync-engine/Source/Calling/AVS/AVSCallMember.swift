@@ -24,17 +24,7 @@ import Foundation
 /// An object that represents the member of an AVS call.
 
 public struct AVSCallMember: Hashable {
-    /// The client used in the call.
-    public let client: AVSClient
-
-    /// The state of the audio connection.
-    public let audioState: AudioState
-
-    /// The state of video connection.
-    public let videoState: VideoState
-
-    /// The state of microphone
-    public let microphoneState: MicrophoneState
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -57,6 +47,32 @@ public struct AVSCallMember: Hashable {
         self.microphoneState = microphoneState
     }
 
+    // MARK: Public
+
+    /// The client used in the call.
+    public let client: AVSClient
+
+    /// The state of the audio connection.
+    public let audioState: AudioState
+
+    /// The state of video connection.
+    public let videoState: VideoState
+
+    /// The state of microphone
+    public let microphoneState: MicrophoneState
+
+    public static func == (lhs: AVSCallMember, rhs: AVSCallMember) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+
+    // MARK: - Hashable
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(client)
+    }
+
+    // MARK: Internal
+
     // MARK: - Properties
 
     /// The state of the participant.
@@ -69,16 +85,6 @@ public struct AVSCallMember: Hashable {
         case .networkProblem:
             .unconnectedButMayConnect
         }
-    }
-
-    // MARK: - Hashable
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(client)
-    }
-
-    public static func == (lhs: AVSCallMember, rhs: AVSCallMember) -> Bool {
-        lhs.hashValue == rhs.hashValue
     }
 }
 

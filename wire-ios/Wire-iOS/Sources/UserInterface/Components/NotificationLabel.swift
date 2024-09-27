@@ -19,17 +19,7 @@
 import UIKit
 
 class NotificationLabel: RoundedBlurView {
-    private(set) var timer: Timer?
-
-    private let messageLabel = UILabel(
-        key: nil,
-        size: .medium,
-        weight: .semibold,
-        color: .white
-    )
-
-    /// use to disable animations for unit tests
-    private var shouldAnimate: Bool
+    // MARK: Lifecycle
 
     // MARK: - View Life Cycle
 
@@ -37,6 +27,10 @@ class NotificationLabel: RoundedBlurView {
         self.shouldAnimate = shouldAnimate
         super.init()
     }
+
+    // MARK: Internal
+
+    private(set) var timer: Timer?
 
     // MARK: - Setup
 
@@ -98,6 +92,18 @@ class NotificationLabel: RoundedBlurView {
 
         animateMessage(show: !hidden)
     }
+
+    // MARK: Private
+
+    private let messageLabel = UILabel(
+        key: nil,
+        size: .medium,
+        weight: .semibold,
+        color: .white
+    )
+
+    /// use to disable animations for unit tests
+    private var shouldAnimate: Bool
 
     // MARK: - Helpers
 

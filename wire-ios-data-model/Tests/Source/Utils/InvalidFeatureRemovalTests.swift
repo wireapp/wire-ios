@@ -20,7 +20,7 @@ import CoreData
 @testable import WireDataModel
 
 final class InvalidFeatureRemovalTests: DiskDatabaseTest {
-    private var context: NSManagedObjectContext { coreDataStack.syncContext }
+    // MARK: Internal
 
     func testAllInstancesRemoved() throws {
         context.performGroupedAndWait {
@@ -58,6 +58,10 @@ final class InvalidFeatureRemovalTests: DiskDatabaseTest {
             XCTAssertEqual(instances[0].status, .enabled)
         }
     }
+
+    // MARK: Private
+
+    private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     private func fetchInstances(in context: NSManagedObjectContext) -> [Feature] {
         let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())

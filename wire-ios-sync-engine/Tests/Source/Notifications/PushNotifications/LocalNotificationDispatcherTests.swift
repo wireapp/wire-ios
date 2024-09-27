@@ -32,12 +32,12 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
 
     var notificationCenter: UserNotificationCenterMock!
 
+    var user1: ZMUser!
+    var user2: ZMUser!
+
     var scheduledRequests: [UNNotificationRequest] {
         notificationCenter.scheduledRequests
     }
-
-    var user1: ZMUser!
-    var user2: ZMUser!
 
     var selfUser: ZMUser {
         ZMUser.selfUser(in: syncMOC)

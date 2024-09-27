@@ -21,9 +21,7 @@ import Foundation
 // MARK: - RegistrationStrategy
 
 final class RegistrationStrategy: NSObject {
-    let registrationStatus: RegistrationStatusProtocol
-    weak var userInfoParser: UserInfoParser?
-    var registrationSync: ZMSingleRequestSync!
+    // MARK: Lifecycle
 
     init(groupQueue: GroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
         self.registrationStatus = status
@@ -31,6 +29,12 @@ final class RegistrationStrategy: NSObject {
         super.init()
         self.registrationSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
     }
+
+    // MARK: Internal
+
+    let registrationStatus: RegistrationStatusProtocol
+    weak var userInfoParser: UserInfoParser?
+    var registrationSync: ZMSingleRequestSync!
 }
 
 // MARK: ZMSingleRequestTranscoder

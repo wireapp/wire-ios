@@ -27,13 +27,14 @@ protocol SystemSaveFilePresenting {
 // MARK: - SystemSavePresenter
 
 final class SystemSavePresenter: NSObject, SystemSaveFilePresenting {
-    private var finishedPresenting: (() -> Void)?
-    private let documentInteractionController: UIDocumentInteractionController
+    // MARK: Lifecycle
 
     init(documentInteractionController: UIDocumentInteractionController = UIDocumentInteractionController()) {
         self.documentInteractionController = documentInteractionController
         super.init()
     }
+
+    // MARK: Internal
 
     @MainActor
     func presentSystemPromptToSave(file fileURL: URL, completed: @escaping () -> Void) {
@@ -43,6 +44,11 @@ final class SystemSavePresenter: NSObject, SystemSaveFilePresenting {
         documentInteractionController.name = fileURL.lastPathComponent
         documentInteractionController.presentPreview(animated: true)
     }
+
+    // MARK: Private
+
+    private var finishedPresenting: (() -> Void)?
+    private let documentInteractionController: UIDocumentInteractionController
 }
 
 // MARK: UIDocumentInteractionControllerDelegate

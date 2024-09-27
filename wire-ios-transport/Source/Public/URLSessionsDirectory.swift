@@ -31,15 +31,20 @@ public protocol URLSessionsDirectory: NSObjectProtocol {
 
 @objcMembers
 public final class CurrentURLSessionsDirectory: NSObject, URLSessionsDirectory {
-    public var foregroundSession: ZMURLSession
-    public var backgroundSession: ZMURLSession
-    public var allSessions: [ZMURLSession] {
-        [foregroundSession, backgroundSession]
-    }
+    // MARK: Lifecycle
 
     public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession) {
         self.foregroundSession = foregroundSession
         self.backgroundSession = backgroundSession
+    }
+
+    // MARK: Public
+
+    public var foregroundSession: ZMURLSession
+    public var backgroundSession: ZMURLSession
+
+    public var allSessions: [ZMURLSession] {
+        [foregroundSession, backgroundSession]
     }
 }
 

@@ -19,7 +19,7 @@
 import Foundation
 
 class TypingUsersTimeout: NSObject {
-    private var timeouts = [Key: Date]()
+    // MARK: Internal
 
     var firstTimeout: Date? {
         timeouts.values.min()
@@ -56,4 +56,8 @@ class TypingUsersTimeout: NSObject {
         keysToRemove.forEach { self.timeouts.removeValue(forKey: $0) }
         return Set(keysToRemove.map(\.conversationObjectId))
     }
+
+    // MARK: Private
+
+    private var timeouts = [Key: Date]()
 }

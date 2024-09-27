@@ -17,11 +17,13 @@
 //
 
 enum TeamInviteEvent: Event {
+    case sentInvite(InviteMethod)
+
+    // MARK: Internal
+
     enum InviteMethod: String {
         case teamCreation = "team_creation"
     }
-
-    case sentInvite(InviteMethod)
 
     var name: String {
         switch self {

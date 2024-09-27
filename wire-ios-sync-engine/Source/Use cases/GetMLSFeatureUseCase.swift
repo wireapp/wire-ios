@@ -30,11 +30,13 @@ public protocol GetMLSFeatureUseCaseProtocol {
 // MARK: - GetMLSFeatureUseCase
 
 public struct GetMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol {
-    private let featureRepository: FeatureRepositoryInterface
+    // MARK: Lifecycle
 
     public init(featureRepository: FeatureRepositoryInterface) {
         self.featureRepository = featureRepository
     }
+
+    // MARK: Public
 
     public func invoke() -> Feature.MLS {
         featureRepository.fetchMLS()
@@ -43,4 +45,8 @@ public struct GetMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol {
     public func invoke() async -> Feature.MLS {
         await featureRepository.fetchMLS()
     }
+
+    // MARK: Private
+
+    private let featureRepository: FeatureRepositoryInterface
 }

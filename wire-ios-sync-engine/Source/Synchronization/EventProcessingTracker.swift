@@ -36,25 +36,22 @@ public protocol EventProcessingTrackerProtocol: AnyObject {
 
 @objc
 public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {
-    var eventAttributes = [String: [String: NSObject]]()
-    public let eventName = "event.processing"
-
-    enum Attributes: String {
-        case processedEvents
-        case dataDeletionPerformed
-        case dataInsertionPerformed
-        case dataUpdatePerformed
-        case savesPerformed
-
-        var identifier: String {
-            "event_" + rawValue
-        }
-    }
-
-    private let isolationQueue = DispatchQueue(label: "EventProcessing")
+    // MARK: Lifecycle
 
     override public init() {
         super.init()
+    }
+
+    // MARK: Public
+
+    public let eventName = "event.processing"
+
+    override public var debugDescription: String {
+        let description = isolationQueue.sync {
+            "\(persistedAttributes(for: eventName))"
+        }
+
+        return description
     }
 
     public func registerEventProcessed() {
@@ -77,6 +74,41 @@ public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {
         increment(attribute: .dataDeletionPerformed)
     }
 
+    public func dispatchEvent() {
+        isolationQueue.sync {
+            let attributes = persistedAttributes(for: eventName)
+            if !attributes.isEmpty {
+                setPersistedAttributes(nil, for: eventName)
+            }
+        }
+    }
+
+    public func persistedAttributes(for event: String) -> [String: NSObject] {
+        eventAttributes[event] ?? [:]
+    }
+
+    // MARK: Internal
+
+    enum Attributes: String {
+        case processedEvents
+        case dataDeletionPerformed
+        case dataInsertionPerformed
+        case dataUpdatePerformed
+        case savesPerformed
+
+        // MARK: Internal
+
+        var identifier: String {
+            "event_" + rawValue
+        }
+    }
+
+    var eventAttributes = [String: [String: NSObject]]()
+
+    // MARK: Private
+
+    private let isolationQueue = DispatchQueue(label: "EventProcessing")
+
     private func increment(attribute: Attributes, by amount: Int = 1) {
         isolationQueue.sync {
             var currentAttributes = persistedAttributes(for: eventName)
@@ -97,32 +129,11 @@ public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {
         }
     }
 
-    public func dispatchEvent() {
-        isolationQueue.sync {
-            let attributes = persistedAttributes(for: eventName)
-            if !attributes.isEmpty {
-                setPersistedAttributes(nil, for: eventName)
-            }
-        }
-    }
-
     private func setPersistedAttributes(_ attributes: [String: NSObject]?, for event: String) {
         if let attributes {
             eventAttributes[event] = attributes
         } else {
             eventAttributes.removeValue(forKey: event)
         }
-    }
-
-    public func persistedAttributes(for event: String) -> [String: NSObject] {
-        eventAttributes[event] ?? [:]
-    }
-
-    override public var debugDescription: String {
-        let description = isolationQueue.sync {
-            "\(persistedAttributes(for: eventName))"
-        }
-
-        return description
     }
 }

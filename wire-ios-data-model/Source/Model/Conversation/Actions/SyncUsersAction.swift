@@ -19,6 +19,18 @@
 /// Fetches users locally and stores them in the database.
 
 public final class SyncUsersAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        qualifiedIDs: [QualifiedID],
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.qualifiedIDs = qualifiedIDs
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
@@ -33,14 +45,4 @@ public final class SyncUsersAction: EntityAction {
 
     public let qualifiedIDs: [QualifiedID]
     public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(
-        qualifiedIDs: [QualifiedID],
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.qualifiedIDs = qualifiedIDs
-        self.resultHandler = resultHandler
-    }
 }

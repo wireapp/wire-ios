@@ -99,8 +99,6 @@ final class ConnectionsRepositoryTests: XCTestCase {
         try await internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: true)
     }
 
-    // MARK: Private
-
     func internalTestPullConnections_GivenConnectionDoesNotExist(
         federationEnabled: Bool,
         file: StaticString = #file,

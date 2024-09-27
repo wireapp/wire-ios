@@ -50,16 +50,7 @@ extension ZMConversation {
 // MARK: - ConversationTimeoutOptionsViewController
 
 final class ConversationTimeoutOptionsViewController: UIViewController {
-    private let conversation: ZMConversation
-    private var items: [Item] = []
-    private let userSession: ZMUserSession
-    private var observerToken: Any! = nil
-
-    weak var dismisser: ViewControllerDismisser?
-
-    private let collectionViewLayout = UICollectionViewFlowLayout()
-
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -74,6 +65,14 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    weak var dismisser: ViewControllerDismisser?
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
     }
 
     // MARK: - View Lifecycle
@@ -92,9 +91,16 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
         }, accessibilityLabel: L10n.Accessibility.SelfDeletingMessagesConversationSettings.CloseButton.description)
     }
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
+    // MARK: Private
+
+    private let conversation: ZMConversation
+    private var items: [Item] = []
+    private let userSession: ZMUserSession
+    private var observerToken: Any! = nil
+
+    private let collectionViewLayout = UICollectionViewFlowLayout()
+
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
 
     private func configureSubviews() {
         collectionView.dataSource = self

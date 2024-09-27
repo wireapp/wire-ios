@@ -36,6 +36,8 @@ enum EphemeralState: Equatable {
     case message
     case none
 
+    // MARK: Internal
+
     var isEphemeral: Bool {
         [.message, .conversation].contains(self)
     }
@@ -47,6 +49,8 @@ enum InputBarState: Equatable {
     case writing(ephemeral: EphemeralState)
     case editing(originalText: String, mentions: [Mention])
     case markingDown(ephemeral: EphemeralState)
+
+    // MARK: Internal
 
     var isWriting: Bool {
         switch self {
@@ -112,110 +116,7 @@ private struct InputBarConstants {
 // MARK: - InputBar
 
 final class InputBar: UIView {
-    typealias ConversationInputBar = L10n.Localizable.Conversation.InputBar
-
-    private let inputBarVerticalInset: CGFloat = 34
-    static let rightIconSize: CGFloat = 32
-    private let textViewFont = FontSpec.normalRegularFont.font!
-
-    let textView = MarkdownTextView(with: DownStyle.compact)
-    let leftAccessoryView = UIView()
-    let rightAccessoryStackView: UIStackView = {
-        let stackView = UIStackView()
-
-        let rightInset = (stackView.conversationHorizontalMargins.left - rightIconSize) / 2
-
-        stackView.spacing = 16
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.distribution = .fill
-        stackView.isLayoutMarginsRelativeArrangement = true
-
-        return stackView
-    }()
-
-    // Contains and clips the buttonInnerContainer
-    let buttonContainer = UIView()
-
-    // Contains editingView and mardownView
-    let secondaryButtonsView: InputBarSecondaryButtonsView
-
-    let buttonsView: InputBarButtonsView
-    let editingView = InputBarEditView()
-
-    let markdownView = MarkdownBarView()
-
-    var editingBackgroundColor: UIColor {
-        .lowAccentColor()
-    }
-
-    var barBackgroundColor: UIColor? = SemanticColors.SearchBar.backgroundInputView
-    var writingSeparatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
-    var editingSeparatorColor: UIColor? = SemanticColors.View.backgroundSeparatorEditView
-
-    var ephemeralColor: UIColor {
-        .accent()
-    }
-
-    var placeholderColor: UIColor = SemanticColors.SearchBar.textInputViewPlaceholder
-    var textColor: UIColor? = SemanticColors.SearchBar.textInputView
-
-    private lazy var rowTopInsetConstraint: NSLayoutConstraint = buttonInnerContainer.topAnchor.constraint(
-        equalTo: buttonContainer.topAnchor,
-        constant: -constants.buttonsBarHeight
-    )
-
-    // Contains the secondaryButtonsView and buttonsView
-    private let buttonInnerContainer = UIView()
-
-    fileprivate let buttonRowSeparator = UIView()
-    fileprivate let constants = InputBarConstants()
-
-    private lazy var leftAccessoryViewWidthConstraint: NSLayoutConstraint = leftAccessoryView.widthAnchor
-        .constraint(equalToConstant: conversationHorizontalMargins.left)
-
-    var isEditing: Bool {
-        inputBarState.isEditing
-    }
-
-    var isMarkingDown: Bool {
-        inputBarState.isMarkingDown
-    }
-
-    private var inputBarState: InputBarState = .writing(ephemeral: .none) {
-        didSet {
-            updatePlaceholder()
-            updatePlaceholderColors()
-        }
-    }
-
-    func changeEphemeralState(to newState: EphemeralState) {
-        inputBarState.changeEphemeralState(to: newState)
-    }
-
-    var invisibleInputAccessoryView: InvisibleInputAccessoryView? {
-        didSet {
-            textView.inputAccessoryView = invisibleInputAccessoryView
-        }
-    }
-
-    override var bounds: CGRect {
-        didSet {
-            invisibleInputAccessoryView?.overriddenIntrinsicContentSize = CGSize(
-                width: UIView.noIntrinsicMetric,
-                height: bounds.height
-            )
-        }
-    }
-
-    override func didMoveToWindow() {
-        super.didMoveToWindow()
-
-        // This is a workaround for UITextView truncating long contents.
-        // However, this breaks the text view on iOS 8 ¯\_(ツ)_/¯.
-        textView.isScrollEnabled = false
-        textView.isScrollEnabled = true
-    }
+    // MARK: Lifecycle
 
     required init(buttons: [UIButton]) {
         self.buttonsView = InputBarButtonsView(buttons: buttons)
@@ -273,16 +174,208 @@ final class InputBar: UIView {
         )
     }
 
-    /// Update return key type when receiving a notification (from setting->toggle send key option)
-    @objc
-    private func sendButtonEnablingDidApplyChanges() {
-        updateReturnKey()
-    }
-
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    typealias ConversationInputBar = L10n.Localizable.Conversation.InputBar
+
+    static let rightIconSize: CGFloat = 32
+
+    let textView = MarkdownTextView(with: DownStyle.compact)
+    let leftAccessoryView = UIView()
+    let rightAccessoryStackView: UIStackView = {
+        let stackView = UIStackView()
+
+        let rightInset = (stackView.conversationHorizontalMargins.left - rightIconSize) / 2
+
+        stackView.spacing = 16
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.isLayoutMarginsRelativeArrangement = true
+
+        return stackView
+    }()
+
+    // Contains and clips the buttonInnerContainer
+    let buttonContainer = UIView()
+
+    // Contains editingView and mardownView
+    let secondaryButtonsView: InputBarSecondaryButtonsView
+
+    let buttonsView: InputBarButtonsView
+    let editingView = InputBarEditView()
+
+    let markdownView = MarkdownBarView()
+
+    var barBackgroundColor: UIColor? = SemanticColors.SearchBar.backgroundInputView
+    var writingSeparatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
+    var editingSeparatorColor: UIColor? = SemanticColors.View.backgroundSeparatorEditView
+
+    var placeholderColor: UIColor = SemanticColors.SearchBar.textInputViewPlaceholder
+    var textColor: UIColor? = SemanticColors.SearchBar.textInputView
+
+    var editingBackgroundColor: UIColor {
+        .lowAccentColor()
+    }
+
+    var ephemeralColor: UIColor {
+        .accent()
+    }
+
+    var isEditing: Bool {
+        inputBarState.isEditing
+    }
+
+    var isMarkingDown: Bool {
+        inputBarState.isMarkingDown
+    }
+
+    var invisibleInputAccessoryView: InvisibleInputAccessoryView? {
+        didSet {
+            textView.inputAccessoryView = invisibleInputAccessoryView
+        }
+    }
+
+    override var bounds: CGRect {
+        didSet {
+            invisibleInputAccessoryView?.overriddenIntrinsicContentSize = CGSize(
+                width: UIView.noIntrinsicMetric,
+                height: bounds.height
+            )
+        }
+    }
+
+    func changeEphemeralState(to newState: EphemeralState) {
+        inputBarState.changeEphemeralState(to: newState)
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+
+        // This is a workaround for UITextView truncating long contents.
+        // However, this breaks the text view on iOS 8 ¯\_(ツ)_/¯.
+        textView.isScrollEnabled = false
+        textView.isScrollEnabled = true
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
+
+        updateLeftAccessoryViewWidth()
+        updateRightAccessoryStackViewLayoutMargins()
+    }
+
+    func updateReturnKey() {
+        textView.returnKeyType = isMarkingDown ? .default : Settings.shared.returnKeyType
+        textView.reloadInputViews()
+    }
+
+    func updatePlaceholder() {
+        textView.attributedPlaceholder = placeholderText(for: inputBarState)
+        textView.setNeedsLayout()
+    }
+
+    func placeholderText(for state: InputBarState) -> NSAttributedString? {
+        var placeholder = NSAttributedString(string: ConversationInputBar.placeholder)
+
+        if inputBarState.isEphemeral {
+            placeholder = NSAttributedString(string: ConversationInputBar.placeholderEphemeral) && ephemeralColor
+        }
+        if state.isEditing {
+            return nil
+        } else {
+            return placeholder
+        }
+    }
+
+    // MARK: - Disable interactions on the lower part to not to interfere with the keyboard
+
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        if textView.isFirstResponder {
+            if super.point(inside: point, with: event) {
+                let locationInButtonRow = buttonInnerContainer.convert(point, from: self)
+                return locationInButtonRow.y < buttonInnerContainer.bounds.height / 1.3
+            } else {
+                return false
+            }
+        } else {
+            return super.point(inside: point, with: event)
+        }
+    }
+
+    // MARK: - InputBarState
+
+    func setInputBarState(_ state: InputBarState, animated: Bool) {
+        let oldState = inputBarState
+        inputBarState = state
+        updateInputBar(withState: state, oldState: oldState, animated: animated)
+    }
+
+    func updateEphemeralState() {
+        guard inputBarState.isWriting else { return }
+        updateColors()
+        updatePlaceholder()
+    }
+
+    func updateColors() {
+        backgroundColor = backgroundColor(forInputBarState: inputBarState)
+        buttonRowSeparator.backgroundColor = isEditing ? editingSeparatorColor : writingSeparatorColor
+
+        updatePlaceholderColors()
+
+        textView.tintColor = .accent()
+        textView.updateTextColor(base: isEditing ? SemanticColors.Label.textDefault : textColor)
+
+        var buttons = buttonsView.buttons
+
+        buttons.append(buttonsView.expandRowButton)
+
+        buttons.forEach { button in
+            guard let button = button as? IconButton else { return }
+
+            button.layer.borderWidth = 1
+
+            button.setIconColor(SemanticColors.Button.textInputBarItemEnabled, for: .normal)
+            button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemEnabled, for: .normal)
+            button.setBorderColor(SemanticColors.Button.borderInputBarItemEnabled, for: .normal)
+
+            button.setIconColor(SemanticColors.Button.textInputBarItemHighlighted, for: .highlighted)
+            button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemHighlighted, for: .highlighted)
+            button.setBorderColor(SemanticColors.Button.borderInputBarItemHighlighted, for: .highlighted)
+
+            button.setIconColor(SemanticColors.Button.textInputBarItemHighlighted, for: .selected)
+            button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemHighlighted, for: .selected)
+            button.setBorderColor(SemanticColors.Button.borderInputBarItemHighlighted, for: .selected)
+        }
+    }
+
+    // MARK: – Editing View State
+
+    func setInputBarText(_ text: String, mentions: [Mention]) {
+        textView.setText(text, withMentions: mentions)
+        textView.setContentOffset(.zero, animated: false)
+        textView.undoManager?.removeAllActions()
+        updateEditViewState()
+    }
+
+    func undo() {
+        guard inputBarState.isEditing else { return }
+        guard let undoManager = textView.undoManager, undoManager.canUndo else { return }
+        undoManager.undo()
+        updateEditViewState()
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let buttonRowSeparator = UIView()
+    fileprivate let constants = InputBarConstants()
 
     fileprivate func setupViews() {
         textView.accessibilityIdentifier = "inputField"
@@ -379,15 +472,6 @@ final class InputBar: UIView {
         ])
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
-
-        updateLeftAccessoryViewWidth()
-        updateRightAccessoryStackViewLayoutMargins()
-    }
-
     fileprivate func updateLeftAccessoryViewWidth() {
         leftAccessoryViewWidthConstraint.constant = conversationHorizontalMargins.left
     }
@@ -397,56 +481,65 @@ final class InputBar: UIView {
         rightAccessoryStackView.layoutMargins = UIEdgeInsets(top: 0, left: rightInset, bottom: 0, right: rightInset)
     }
 
+    fileprivate func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
+        guard let writingColor = barBackgroundColor else { return nil }
+        return state.isWriting || state.isMarkingDown ? writingColor : editingBackgroundColor
+    }
+
+    fileprivate func updatePlaceholderColors() {
+        if inputBarState.isEphemeral, inputBarState.isEphemeralEnabled {
+            textView.placeholderTextColor = ephemeralColor
+        } else {
+            textView.placeholderTextColor = placeholderColor
+        }
+    }
+
+    fileprivate func updateEditViewState() {
+        if case let .editing(text, _) = inputBarState {
+            let canUndo = textView.undoManager?.canUndo ?? false
+            editingView.undoButton.isEnabled = canUndo
+
+            // We do not want to enable the confirm button when
+            // the text is the same as the original message
+            let trimmedText = textView.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+            let hasChanges = text != trimmedText && canUndo
+            editingView.confirmButton.isEnabled = hasChanges
+        }
+    }
+
+    // MARK: Private
+
+    private let inputBarVerticalInset: CGFloat = 34
+    private let textViewFont = FontSpec.normalRegularFont.font!
+
+    private lazy var rowTopInsetConstraint: NSLayoutConstraint = buttonInnerContainer.topAnchor.constraint(
+        equalTo: buttonContainer.topAnchor,
+        constant: -constants.buttonsBarHeight
+    )
+
+    // Contains the secondaryButtonsView and buttonsView
+    private let buttonInnerContainer = UIView()
+
+    private lazy var leftAccessoryViewWidthConstraint: NSLayoutConstraint = leftAccessoryView.widthAnchor
+        .constraint(equalToConstant: conversationHorizontalMargins.left)
+
+    private var inputBarState: InputBarState = .writing(ephemeral: .none) {
+        didSet {
+            updatePlaceholder()
+            updatePlaceholderColors()
+        }
+    }
+
+    /// Update return key type when receiving a notification (from setting->toggle send key option)
+    @objc
+    private func sendButtonEnablingDidApplyChanges() {
+        updateReturnKey()
+    }
+
     @objc
     private func didTapBackground(_ gestureRecognizer: UITapGestureRecognizer!) {
         guard gestureRecognizer.state == .recognized else { return }
         buttonsView.showRow(0, animated: true)
-    }
-
-    func updateReturnKey() {
-        textView.returnKeyType = isMarkingDown ? .default : Settings.shared.returnKeyType
-        textView.reloadInputViews()
-    }
-
-    func updatePlaceholder() {
-        textView.attributedPlaceholder = placeholderText(for: inputBarState)
-        textView.setNeedsLayout()
-    }
-
-    func placeholderText(for state: InputBarState) -> NSAttributedString? {
-        var placeholder = NSAttributedString(string: ConversationInputBar.placeholder)
-
-        if inputBarState.isEphemeral {
-            placeholder = NSAttributedString(string: ConversationInputBar.placeholderEphemeral) && ephemeralColor
-        }
-        if state.isEditing {
-            return nil
-        } else {
-            return placeholder
-        }
-    }
-
-    // MARK: - Disable interactions on the lower part to not to interfere with the keyboard
-
-    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        if textView.isFirstResponder {
-            if super.point(inside: point, with: event) {
-                let locationInButtonRow = buttonInnerContainer.convert(point, from: self)
-                return locationInButtonRow.y < buttonInnerContainer.bounds.height / 1.3
-            } else {
-                return false
-            }
-        } else {
-            return super.point(inside: point, with: event)
-        }
-    }
-
-    // MARK: - InputBarState
-
-    func setInputBarState(_ state: InputBarState, animated: Bool) {
-        let oldState = inputBarState
-        inputBarState = state
-        updateInputBar(withState: state, oldState: oldState, animated: animated)
     }
 
     private func updateInputBar(withState state: InputBarState, oldState: InputBarState? = nil, animated: Bool = true) {
@@ -490,86 +583,6 @@ final class InputBar: UIView {
             layoutIfNeeded()
             textViewChanges()
             completion()
-        }
-    }
-
-    func updateEphemeralState() {
-        guard inputBarState.isWriting else { return }
-        updateColors()
-        updatePlaceholder()
-    }
-
-    fileprivate func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
-        guard let writingColor = barBackgroundColor else { return nil }
-        return state.isWriting || state.isMarkingDown ? writingColor : editingBackgroundColor
-    }
-
-    fileprivate func updatePlaceholderColors() {
-        if inputBarState.isEphemeral, inputBarState.isEphemeralEnabled {
-            textView.placeholderTextColor = ephemeralColor
-        } else {
-            textView.placeholderTextColor = placeholderColor
-        }
-    }
-
-    func updateColors() {
-        backgroundColor = backgroundColor(forInputBarState: inputBarState)
-        buttonRowSeparator.backgroundColor = isEditing ? editingSeparatorColor : writingSeparatorColor
-
-        updatePlaceholderColors()
-
-        textView.tintColor = .accent()
-        textView.updateTextColor(base: isEditing ? SemanticColors.Label.textDefault : textColor)
-
-        var buttons = buttonsView.buttons
-
-        buttons.append(buttonsView.expandRowButton)
-
-        buttons.forEach { button in
-            guard let button = button as? IconButton else { return }
-
-            button.layer.borderWidth = 1
-
-            button.setIconColor(SemanticColors.Button.textInputBarItemEnabled, for: .normal)
-            button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemEnabled, for: .normal)
-            button.setBorderColor(SemanticColors.Button.borderInputBarItemEnabled, for: .normal)
-
-            button.setIconColor(SemanticColors.Button.textInputBarItemHighlighted, for: .highlighted)
-            button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemHighlighted, for: .highlighted)
-            button.setBorderColor(SemanticColors.Button.borderInputBarItemHighlighted, for: .highlighted)
-
-            button.setIconColor(SemanticColors.Button.textInputBarItemHighlighted, for: .selected)
-            button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemHighlighted, for: .selected)
-            button.setBorderColor(SemanticColors.Button.borderInputBarItemHighlighted, for: .selected)
-        }
-    }
-
-    // MARK: – Editing View State
-
-    func setInputBarText(_ text: String, mentions: [Mention]) {
-        textView.setText(text, withMentions: mentions)
-        textView.setContentOffset(.zero, animated: false)
-        textView.undoManager?.removeAllActions()
-        updateEditViewState()
-    }
-
-    func undo() {
-        guard inputBarState.isEditing else { return }
-        guard let undoManager = textView.undoManager, undoManager.canUndo else { return }
-        undoManager.undo()
-        updateEditViewState()
-    }
-
-    fileprivate func updateEditViewState() {
-        if case let .editing(text, _) = inputBarState {
-            let canUndo = textView.undoManager?.canUndo ?? false
-            editingView.undoButton.isEnabled = canUndo
-
-            // We do not want to enable the confirm button when
-            // the text is the same as the original message
-            let trimmedText = textView.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-            let hasChanges = text != trimmedText && canUndo
-            editingView.confirmButton.isEnabled = hasChanges
         }
     }
 }

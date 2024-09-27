@@ -28,10 +28,7 @@ public protocol FlowManagerType {
 // MARK: - FlowManager
 
 public class FlowManager: NSObject, FlowManagerType {
-    public static let AVSFlowManagerCreatedNotification = Notification.Name("AVSFlowManagerCreatedNotification")
-
-    fileprivate var mediaManager: MediaManagerType?
-    fileprivate var avsFlowManager: AVSFlowManager?
+    // MARK: Lifecycle
 
     init(mediaManager: MediaManagerType) {
         super.init()
@@ -41,9 +38,18 @@ public class FlowManager: NSObject, FlowManagerType {
         NotificationCenter.default.post(name: type(of: self).AVSFlowManagerCreatedNotification, object: self)
     }
 
+    // MARK: Public
+
+    public static let AVSFlowManagerCreatedNotification = Notification.Name("AVSFlowManagerCreatedNotification")
+
     public func setVideoCaptureDevice(_ device: CaptureDevice, for conversationId: AVSIdentifier) {
         avsFlowManager?.setVideoCaptureDevice(device.deviceIdentifier, forConversation: conversationId.serialized)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var mediaManager: MediaManagerType?
+    fileprivate var avsFlowManager: AVSFlowManager?
 }
 
 // MARK: AVSFlowManagerDelegate

@@ -32,6 +32,7 @@ extension BackgroundActivity: SafeForLoggingStringConvertible {
 
 struct ActivityName: SafeForLoggingStringConvertible {
     let name: String
+
     var safeForLoggingDescription: String {
         name.readableHash
     }

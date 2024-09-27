@@ -114,10 +114,7 @@ class TypingEventQueue {
 // MARK: - TypingStrategy
 
 public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventConsumer {
-    fileprivate var typing: Typing!
-    fileprivate let typingEventQueue = TypingEventQueue()
-    fileprivate var tornDown = false
-    fileprivate var observers: [Any] = []
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
@@ -179,38 +176,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         assert(tornDown, "Need to tearDown TypingStrategy")
     }
 
-    @objc
-    fileprivate func addConversationForNextRequest(note: NotificationInContext) {
-        guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
-        else { return }
-
-        if let isTyping = (note.userInfo[IsTypingKey] as? NSNumber)?.boolValue {
-            add(conversation: conversation, isTyping: isTyping, clearIsTyping: false)
-        }
-    }
-
-    @objc
-    fileprivate func shouldClearTypingForConversation(note: NotificationInContext) {
-        guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
-        else { return }
-
-        add(conversation: conversation, isTyping: false, clearIsTyping: true)
-    }
-
-    fileprivate func add(conversation: ZMConversation, isTyping: Bool, clearIsTyping: Bool) {
-        guard conversation.remoteIdentifier != nil
-        else { return }
-
-        managedObjectContext.performGroupedBlock {
-            if clearIsTyping {
-                self.typingEventQueue.clear(conversationID: conversation.objectID)
-                self.typingEventQueue.lastSentTypingEvent = nil
-            } else {
-                self.typingEventQueue.addItem(conversationID: conversation.objectID, isTyping: isTyping)
-                RequestAvailableNotification.notifyNewRequestsAvailable(self)
-            }
-        }
-    }
+    // MARK: Public
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let typingEvent = typingEventQueue.nextEvent(),
@@ -260,6 +226,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         }
     }
 
+    // MARK: Internal
+
     func process(event: ZMUpdateEvent, conversationsByID: [UUID: ZMConversation]?) {
         guard
             event.type.isOne(of: [
@@ -301,6 +269,46 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         let stoppedTyping = (status == StoppedKey)
         if startedTyping || stoppedTyping {
             typing.setIsTyping(startedTyping, for: user, in: conversation)
+        }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var typing: Typing!
+    fileprivate let typingEventQueue = TypingEventQueue()
+    fileprivate var tornDown = false
+    fileprivate var observers: [Any] = []
+
+    @objc
+    fileprivate func addConversationForNextRequest(note: NotificationInContext) {
+        guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
+        else { return }
+
+        if let isTyping = (note.userInfo[IsTypingKey] as? NSNumber)?.boolValue {
+            add(conversation: conversation, isTyping: isTyping, clearIsTyping: false)
+        }
+    }
+
+    @objc
+    fileprivate func shouldClearTypingForConversation(note: NotificationInContext) {
+        guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
+        else { return }
+
+        add(conversation: conversation, isTyping: false, clearIsTyping: true)
+    }
+
+    fileprivate func add(conversation: ZMConversation, isTyping: Bool, clearIsTyping: Bool) {
+        guard conversation.remoteIdentifier != nil
+        else { return }
+
+        managedObjectContext.performGroupedBlock {
+            if clearIsTyping {
+                self.typingEventQueue.clear(conversationID: conversation.objectID)
+                self.typingEventQueue.lastSentTypingEvent = nil
+            } else {
+                self.typingEventQueue.addItem(conversationID: conversation.objectID, isTyping: isTyping)
+                RequestAvailableNotification.notifyNewRequestsAvailable(self)
+            }
         }
     }
 }

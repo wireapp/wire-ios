@@ -23,19 +23,12 @@ import XCTest
 @testable import Wire
 
 final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
-    private let mockProteusId = "abcdefghijklmnop"
-        .uppercased()
-        .splitStringIntoLines(charactersPerLine: 16)
-
-    private let mockFingerPrint = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
-        .uppercased()
-        .splitStringIntoLines(charactersPerLine: 16)
+    // MARK: Internal
 
     var coreDataFixture: CoreDataFixture!
     var sut: DeviceInfoViewController<DeviceDetailsView>!
     var client: UserClient!
     var mockContextProvider: ContextProvider!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -409,4 +402,16 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             .withUserInterfaceStyle(.dark)
             .verify(matching: viewController)
     }
+
+    // MARK: Private
+
+    private let mockProteusId = "abcdefghijklmnop"
+        .uppercased()
+        .splitStringIntoLines(charactersPerLine: 16)
+
+    private let mockFingerPrint = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
+        .uppercased()
+        .splitStringIntoLines(charactersPerLine: 16)
+
+    private var snapshotHelper: SnapshotHelper!
 }

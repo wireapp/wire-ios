@@ -21,7 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 class ZMManagedObjectGroupingTests: DatabaseBaseTest {
-    var mocs: CoreDataStack!
+    // MARK: Public
 
     override public func setUp() {
         super.setUp()
@@ -149,4 +149,8 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         // THEN
         XCTAssertEqual(grouped.keys.count, 0)
     }
+
+    // MARK: Internal
+
+    var mocs: CoreDataStack!
 }

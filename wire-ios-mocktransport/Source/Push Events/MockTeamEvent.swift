@@ -20,6 +20,16 @@ import Foundation
 
 @objcMembers
 public class MockTeamEvent: NSObject {
+    // MARK: Lifecycle
+
+    public init(kind: Kind, team: MockTeam, data: [String: Any?]) {
+        self.kind = kind
+        self.teamIdentifier = team.identifier
+        self.data = data
+    }
+
+    // MARK: Public
+
     public enum Kind: String {
         case delete = "team.delete"
         case update = "team.update"
@@ -29,6 +39,19 @@ public class MockTeamEvent: NSObject {
     public let teamIdentifier: String
     public let kind: Kind
     public let timestamp = Date()
+
+    public var payload: ZMTransportData {
+        [
+            "team": teamIdentifier,
+            "time": timestamp.transportString(),
+            "type": kind.rawValue,
+            "data": data,
+        ] as ZMTransportData
+    }
+
+    override public var debugDescription: String {
+        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier)"
+    }
 
     public static func updated(team: MockTeam, changedValues: [String: Any]) -> MockTeamEvent? {
         var data = [String: String?]()
@@ -57,24 +80,5 @@ public class MockTeamEvent: NSObject {
 
     public static func deleted(team: MockTeam) -> MockTeamEvent {
         MockTeamEvent(kind: .delete, team: team, data: [:])
-    }
-
-    public init(kind: Kind, team: MockTeam, data: [String: Any?]) {
-        self.kind = kind
-        self.teamIdentifier = team.identifier
-        self.data = data
-    }
-
-    public var payload: ZMTransportData {
-        [
-            "team": teamIdentifier,
-            "time": timestamp.transportString(),
-            "type": kind.rawValue,
-            "data": data,
-        ] as ZMTransportData
-    }
-
-    override public var debugDescription: String {
-        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier)"
     }
 }

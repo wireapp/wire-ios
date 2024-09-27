@@ -30,7 +30,95 @@ protocol CallActionsViewDelegate: AnyObject {
 // A view showing multiple buttons depending on the given `CallActionsView.Input`.
 // Button touches result in `CallActionsView.Action` cases to be sent to the objects delegate.
 final class CallActionsView: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Setup
+
+    init() {
+        super.init(frame: .zero)
+        self.videoButtonDisabledTapRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(performButtonAction)
+        )
+        setupViews()
+        setupAccessibility()
+        createConstraints()
+        updateToLayoutSize(layoutSize)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     weak var delegate: CallActionsViewDelegate?
+
+    // MARK: - Orientation
+
+    func updateToLayoutSize(_ layoutSize: LayoutSize, animated: Bool = false) {
+        let canAcceptCall = input?.callState.canAccept ?? false
+        let isCompact = layoutSize == .compact
+
+        let block = {
+            NSLayoutConstraint.deactivate(isCompact ? self.regularConstraints : self.compactConstraints)
+            NSLayoutConstraint.activate(isCompact ? self.compactConstraints : self.regularConstraints)
+        }
+
+        if animated && !ProcessInfo.processInfo.isRunningTests {
+            UIView.animate(easing: .easeInOutSine, duration: 0.1, animations: block)
+        } else {
+            block()
+        }
+
+        bottomStackView.alignment = isCompact ? .trailing : .top
+        secondBottomRowSpacer.isHidden = isCompact
+        firstBottomRowSpacer.isHidden = isCompact || canAcceptCall
+        acceptCallButton.isHidden = isCompact || !canAcceptCall
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else { return }
+        updateToLayoutSize(layoutSize)
+        setNeedsLayout()
+        layoutIfNeeded()
+    }
+
+    // MARK: - State Input
+
+    // Single entry point for all state changes.
+    // All side effects should be started from this method.
+    func update(with input: CallActionsViewInputType) {
+        self.input = input
+        speakersAllSegmentedView.isHidden = !input.allowPresentationModeUpdates
+        speakersAllSegmentedView.setSelected(true, forItemAt: input.videoGridPresentationMode.index)
+        microphoneButton.isSelected = !input.isMuted
+        microphoneButton.isEnabled = canToggleMuteButton(input)
+        cameraButtonDisabled.isUserInteractionEnabled = !input.canToggleMediaType
+        videoButtonDisabledTapRecognizer?.isEnabled = !input.canToggleMediaType
+        cameraButton.isEnabled = input.canToggleMediaType
+        cameraButton.isSelected = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
+        flipCameraButton.isEnabled = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
+        speakerButton.isSelected = input.mediaState.isSpeakerEnabled
+        speakerButton.isEnabled = canToggleSpeakerButton(input)
+        [microphoneButton, cameraButton, flipCameraButton, speakerButton].forEach { $0.appearance = input.appearance }
+        alpha = input.callState.isTerminating ? 0.4 : 1
+        isUserInteractionEnabled = !input.callState.isTerminating
+        updateToLayoutSize(layoutSize, animated: true)
+        updateAccessibilityElements(with: input)
+        setNeedsLayout()
+        layoutIfNeeded()
+    }
+
+    // MARK: - Action Output
+
+    func updateVideoGridPresentationMode(with mode: VideoGridPresentationMode) {
+        delegate?.callActionsView(self, perform: .updateVideoGridPresentationMode(mode))
+    }
+
+    // MARK: Private
 
     private let verticalStackView = UIStackView(axis: .vertical)
     private let topStackView = UIStackView(axis: .horizontal)
@@ -56,23 +144,11 @@ final class CallActionsView: UIView {
         [microphoneButton, cameraButton, speakerButton, flipCameraButton, endCallButton, acceptCallButton]
     }
 
-    // MARK: - Setup
-
-    init() {
-        super.init(frame: .zero)
-        self.videoButtonDisabledTapRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(performButtonAction)
+    private var layoutSize: LayoutSize {
+        LayoutSize(
+            isConnected: input?.callState.isConnected ?? false,
+            isCompactVerticalSizeClass: traitCollection.verticalSizeClass == .compact
         )
-        setupViews()
-        setupAccessibility()
-        createConstraints()
-        updateToLayoutSize(layoutSize)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupViews() {
@@ -153,82 +229,12 @@ final class CallActionsView: UIView {
         ]
     }
 
-    // MARK: - Orientation
-
-    func updateToLayoutSize(_ layoutSize: LayoutSize, animated: Bool = false) {
-        let canAcceptCall = input?.callState.canAccept ?? false
-        let isCompact = layoutSize == .compact
-
-        let block = {
-            NSLayoutConstraint.deactivate(isCompact ? self.regularConstraints : self.compactConstraints)
-            NSLayoutConstraint.activate(isCompact ? self.compactConstraints : self.regularConstraints)
-        }
-
-        if animated && !ProcessInfo.processInfo.isRunningTests {
-            UIView.animate(easing: .easeInOutSine, duration: 0.1, animations: block)
-        } else {
-            block()
-        }
-
-        bottomStackView.alignment = isCompact ? .trailing : .top
-        secondBottomRowSpacer.isHidden = isCompact
-        firstBottomRowSpacer.isHidden = isCompact || canAcceptCall
-        acceptCallButton.isHidden = isCompact || !canAcceptCall
-    }
-
-    private var layoutSize: LayoutSize {
-        LayoutSize(
-            isConnected: input?.callState.isConnected ?? false,
-            isCompactVerticalSizeClass: traitCollection.verticalSizeClass == .compact
-        )
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard traitCollection.didSizeClassChange(from: previousTraitCollection) else { return }
-        updateToLayoutSize(layoutSize)
-        setNeedsLayout()
-        layoutIfNeeded()
-    }
-
-    // MARK: - State Input
-
-    // Single entry point for all state changes.
-    // All side effects should be started from this method.
-    func update(with input: CallActionsViewInputType) {
-        self.input = input
-        speakersAllSegmentedView.isHidden = !input.allowPresentationModeUpdates
-        speakersAllSegmentedView.setSelected(true, forItemAt: input.videoGridPresentationMode.index)
-        microphoneButton.isSelected = !input.isMuted
-        microphoneButton.isEnabled = canToggleMuteButton(input)
-        cameraButtonDisabled.isUserInteractionEnabled = !input.canToggleMediaType
-        videoButtonDisabledTapRecognizer?.isEnabled = !input.canToggleMediaType
-        cameraButton.isEnabled = input.canToggleMediaType
-        cameraButton.isSelected = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
-        flipCameraButton.isEnabled = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
-        speakerButton.isSelected = input.mediaState.isSpeakerEnabled
-        speakerButton.isEnabled = canToggleSpeakerButton(input)
-        [microphoneButton, cameraButton, flipCameraButton, speakerButton].forEach { $0.appearance = input.appearance }
-        alpha = input.callState.isTerminating ? 0.4 : 1
-        isUserInteractionEnabled = !input.callState.isTerminating
-        updateToLayoutSize(layoutSize, animated: true)
-        updateAccessibilityElements(with: input)
-        setNeedsLayout()
-        layoutIfNeeded()
-    }
-
     private func canToggleMuteButton(_ input: CallActionsViewInputType) -> Bool {
         !input.permissions.isAudioDisabledForever
     }
 
     private func canToggleSpeakerButton(_ input: CallActionsViewInputType) -> Bool {
         input.mediaState.canSpeakerBeToggled
-    }
-
-    // MARK: - Action Output
-
-    func updateVideoGridPresentationMode(with mode: VideoGridPresentationMode) {
-        delegate?.callActionsView(self, perform: .updateVideoGridPresentationMode(mode))
     }
 
     @objc

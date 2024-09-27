@@ -21,23 +21,7 @@ import UIKit
 /// The context for computing the position of items.
 
 struct VerticalColumnPositioningContext {
-    /// The width of the collection view container, minus insets.
-    let contentWidth: CGFloat
-
-    /// The number of columns that will organize the contents.
-    let numberOfColumns: Int
-
-    /// The spacing between items inside the same column.
-    let interItemSpacing: CGFloat
-
-    /// The spacing between columns.
-    let interColumnSpacing: CGFloat
-
-    /// The start position of each columns.
-    let columns: [CGFloat]
-
-    /// The width of a single column.
-    let columnWidth: CGFloat
+    // MARK: Lifecycle
 
     init(contentWidth: CGFloat, numberOfColumns: Int, interItemSpacing: CGFloat, interColumnSpacing: CGFloat) {
         self.contentWidth = contentWidth
@@ -56,4 +40,24 @@ struct VerticalColumnPositioningContext {
 
         self.columnWidth = columnWidth
     }
+
+    // MARK: Internal
+
+    /// The width of the collection view container, minus insets.
+    let contentWidth: CGFloat
+
+    /// The number of columns that will organize the contents.
+    let numberOfColumns: Int
+
+    /// The spacing between items inside the same column.
+    let interItemSpacing: CGFloat
+
+    /// The spacing between columns.
+    let interColumnSpacing: CGFloat
+
+    /// The start position of each columns.
+    let columns: [CGFloat]
+
+    /// The width of a single column.
+    let columnWidth: CGFloat
 }

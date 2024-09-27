@@ -21,8 +21,7 @@ import Foundation
 @testable import WireSyncEngineSupport
 
 final class SearchDirectoryTests: DatabaseTest {
-    private var mockCache: SearchUsersCache!
-    private var mockTransport: MockTransportSession!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -53,6 +52,11 @@ final class SearchDirectoryTests: DatabaseTest {
         // then
         XCTAssertNil(mockCache.object(forKey: uuid as NSUUID))
     }
+
+    // MARK: Private
+
+    private var mockCache: SearchUsersCache!
+    private var mockTransport: MockTransportSession!
 
     // MARK: - Helpers
 

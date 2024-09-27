@@ -24,6 +24,8 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<
     FetchBackendMLSPublicKeysAction,
     FetchBackendMLSPublicKeysActionHandler
 > {
+    // MARK: Internal
+
     override func setUp() {
         super.setUp()
         action = FetchBackendMLSPublicKeysAction()
@@ -55,10 +57,6 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<
             )
         }
     }
-
-    // MARK: - Response handling
-
-    private typealias ResponsePayload = FetchBackendMLSPublicKeysActionHandler.ResponsePayload
 
     func test_itHandlesSuccess() {
         // Given
@@ -108,4 +106,10 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<
             expectedError: .unknown(status: 999, label: "foo", message: "?")
         )
     }
+
+    // MARK: Private
+
+    // MARK: - Response handling
+
+    private typealias ResponsePayload = FetchBackendMLSPublicKeysActionHandler.ResponsePayload
 }

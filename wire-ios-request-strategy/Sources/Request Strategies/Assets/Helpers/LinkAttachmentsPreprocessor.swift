@@ -24,7 +24,7 @@ import WireUtilities
 // MARK: - LinkAttachmentDetectorHelper
 
 public final class LinkAttachmentDetectorHelper: NSObject {
-    fileprivate static var _test_debug_linkAttachmentDetector: LinkAttachmentDetectorType?
+    // MARK: Public
 
     public static func defaultDetector() -> LinkAttachmentDetectorType {
         test_debug_linkAttachmentDetector() ?? LinkAttachmentDetector()
@@ -41,13 +41,17 @@ public final class LinkAttachmentDetectorHelper: NSObject {
     public static func tearDown() {
         _test_debug_linkAttachmentDetector = nil
     }
+
+    // MARK: Fileprivate
+
+    fileprivate static var _test_debug_linkAttachmentDetector: LinkAttachmentDetectorType?
 }
 
 // MARK: - LinkAttachmentsPreprocessor
 
 @objcMembers
 public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment> {
-    fileprivate let linkAttachmentDetector: LinkAttachmentDetectorType
+    // MARK: Lifecycle
 
     public init(linkAttachmentDetector: LinkAttachmentDetectorType, managedObjectContext: NSManagedObjectContext) {
         self.linkAttachmentDetector = linkAttachmentDetector
@@ -55,10 +59,14 @@ public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment>
         super.init(managedObjectContext: managedObjectContext, zmLog: log)
     }
 
+    // MARK: Public
+
     override public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         let predicate = ZMMessage.predicateForMessagesThatNeedToUpdateLinkAttachments()
         return ZMClientMessage.sortedFetchRequest(with: predicate)
     }
+
+    // MARK: Internal
 
     override func objectsToPreprocess(_ object: NSObject) -> ZMClientMessage? {
         guard let message = object as? ZMClientMessage else { return nil }
@@ -93,4 +101,8 @@ public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment>
         // which is why we need to enque a save maually here
         managedObjectContext.enqueueDelayedSave()
     }
+
+    // MARK: Fileprivate
+
+    fileprivate let linkAttachmentDetector: LinkAttachmentDetectorType
 }

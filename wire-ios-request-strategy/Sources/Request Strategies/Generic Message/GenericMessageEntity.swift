@@ -22,6 +22,24 @@ import Foundation
 
 @objcMembers
 public class GenericMessageEntity: NSObject, ProteusMessage {
+    // MARK: Lifecycle
+
+    public init(
+        message: GenericMessage,
+        context: NSManagedObjectContext,
+        conversation: ZMConversation? = nil,
+        targetRecipients: Recipients = .conversationParticipants,
+        completionHandler: ((_ response: ZMTransportResponse) -> Void)?
+    ) {
+        self.context = context
+        self.conversation = conversation
+        self.message = message
+        self.targetRecipients = targetRecipients
+        self.completionHandler = completionHandler
+    }
+
+    // MARK: Public
+
     public enum Recipients {
         case conversationParticipants
         case users(Set<ZMUser>)
@@ -38,19 +56,7 @@ public class GenericMessageEntity: NSObject, ProteusMessage {
 
     public let targetRecipients: Recipients
 
-    public init(
-        message: GenericMessage,
-        context: NSManagedObjectContext,
-        conversation: ZMConversation? = nil,
-        targetRecipients: Recipients = .conversationParticipants,
-        completionHandler: ((_ response: ZMTransportResponse) -> Void)?
-    ) {
-        self.context = context
-        self.conversation = conversation
-        self.message = message
-        self.targetRecipients = targetRecipients
-        self.completionHandler = completionHandler
-    }
+    public var shouldIgnoreTheSecurityLevelCheck = false
 
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         guard let conversation else { return nil }
@@ -58,7 +64,9 @@ public class GenericMessageEntity: NSObject, ProteusMessage {
         return dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
     }
 
-    public var shouldIgnoreTheSecurityLevelCheck = false
+    override public var hash: Int {
+        message.hashValue
+    }
 
     public func missesRecipients(_: Set<UserClient>!) {
         // no-op
@@ -78,10 +86,6 @@ public class GenericMessageEntity: NSObject, ProteusMessage {
 
     public func expire() {
         isExpired = true
-    }
-
-    override public var hash: Int {
-        message.hashValue
     }
 }
 

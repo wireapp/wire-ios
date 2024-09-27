@@ -25,39 +25,7 @@ import WireDesign
 final class ConversationImageMessageCell: UIView,
     ConversationMessageCell,
     ContextMenuDelegate {
-    struct Configuration {
-        let image: ZMImageMessageData
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
-    }
-
-    private var containerView = UIView()
-    private lazy var imageResourceView: ImageResourceView = {
-        let view = ImageResourceView()
-
-        view.delegate = self
-        view.isUserInteractionEnabled = true
-
-        return view
-    }()
-
-    private let obfuscationView = ObfuscationView(icon: .photo)
-    private let restrictionView = ImageMessageRestrictionView()
-
-    private var aspectConstraint: NSLayoutConstraint?
-    private var widthConstraint: NSLayoutConstraint?
-    private var heightConstraint: NSLayoutConstraint?
-
-    weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-
-    var isSelected = false
-
-    var selectionView: UIView? {
-        containerView
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -70,39 +38,24 @@ final class ConversationImageMessageCell: UIView,
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func configureView() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+    // MARK: Internal
 
-        containerView.layer.cornerRadius = 12
-        containerView.layer.borderWidth = 1
-        containerView.layer.masksToBounds = true
-        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
+    struct Configuration {
+        let image: ZMImageMessageData
+        let message: ZMConversationMessage
 
-        addSubview(containerView)
+        var isObfuscated: Bool {
+            message.isObfuscated
+        }
     }
 
-    private func createConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+    weak var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor)
-        let trailing = containerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
-        let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let bottom = containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+    var isSelected = false
 
-        widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
-        heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
-        widthConstraint?.priority = .defaultHigh
-        heightConstraint?.priority = .defaultHigh
-
-        NSLayoutConstraint.activate([
-            leading,
-            trailing,
-            top,
-            bottom,
-            widthConstraint!,
-            heightConstraint!,
-        ])
+    var selectionView: UIView? {
+        containerView
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -142,6 +95,60 @@ final class ConversationImageMessageCell: UIView,
         }
     }
 
+    // MARK: Private
+
+    private var containerView = UIView()
+    private lazy var imageResourceView: ImageResourceView = {
+        let view = ImageResourceView()
+
+        view.delegate = self
+        view.isUserInteractionEnabled = true
+
+        return view
+    }()
+
+    private let obfuscationView = ObfuscationView(icon: .photo)
+    private let restrictionView = ImageMessageRestrictionView()
+
+    private var aspectConstraint: NSLayoutConstraint?
+    private var widthConstraint: NSLayoutConstraint?
+    private var heightConstraint: NSLayoutConstraint?
+
+    private func configureView() {
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+
+        containerView.layer.cornerRadius = 12
+        containerView.layer.borderWidth = 1
+        containerView.layer.masksToBounds = true
+        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
+
+        addSubview(containerView)
+    }
+
+    private func createConstraints() {
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+
+        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor)
+        let trailing = containerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
+        let top = containerView.topAnchor.constraint(equalTo: topAnchor)
+        let bottom = containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+
+        widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
+        heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
+        widthConstraint?.priority = .defaultHigh
+        heightConstraint?.priority = .defaultHigh
+
+        NSLayoutConstraint.activate([
+            leading,
+            trailing,
+            top,
+            bottom,
+            widthConstraint!,
+            heightConstraint!,
+        ])
+    }
+
     private func setup(_ view: UIView) {
         containerView.removeSubviews()
         containerView.addSubview(view)
@@ -169,7 +176,18 @@ final class ConversationImageMessageCell: UIView,
 // MARK: - ConversationImageMessageCellDescription
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(message: ZMConversationMessage, image: ZMImageMessageData) {
+        self.message = message
+        self.configuration = View.Configuration(image: image, message: message)
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationImageMessageCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -183,15 +201,9 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     let supportsActions = true
     let containsHighlightableContent = true
 
-    var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
-    }
-
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, image: ZMImageMessageData) {
-        self.message = message
-        self.configuration = View.Configuration(image: image, message: message)
-        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
+    var accessibilityIdentifier: String? {
+        configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
     }
 }

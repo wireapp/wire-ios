@@ -19,6 +19,18 @@
 import Foundation
 
 public final class SendMLSMessageAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        message: Data,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.message = message
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = [ZMUpdateEvent]
@@ -62,6 +74,8 @@ public final class SendMLSMessageAction: EntityAction {
         case nonFederatingDomains(Set<String>)
 
         case unknown(status: Int, label: String, message: String)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -147,14 +161,4 @@ public final class SendMLSMessageAction: EntityAction {
 
     public var message: Data
     public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(
-        message: Data,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.message = message
-        self.resultHandler = resultHandler
-    }
 }

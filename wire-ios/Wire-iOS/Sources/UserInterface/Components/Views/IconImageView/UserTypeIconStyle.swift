@@ -28,6 +28,8 @@ enum UserTypeIconStyle: String, IconImageStyle {
     case member
     case federated
 
+    // MARK: Internal
+
     var icon: StyleKitIcon? {
         switch self {
         case .guest:

@@ -22,6 +22,18 @@ import WireDataModel
 class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
     typealias EventPayload = [AnyHashable: Any]
 
+    // MARK: - Error response
+
+    struct FederationErrorResponse: Codable {
+        enum CodingKeys: String, CodingKey {
+            case unreachableBackends = "unreachable_backends"
+            case nonFederatingBackends = "non_federating_backends"
+        }
+
+        var unreachableBackends: [String]?
+        var nonFederatingBackends: [String]?
+    }
+
     // MARK: - Methods
 
     override func request(
@@ -171,18 +183,6 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
                 label: errorInfo.label,
                 message: errorInfo.message
             ))
-        }
-    }
-
-    // MARK: - Error response
-
-    struct FederationErrorResponse: Codable {
-        var unreachableBackends: [String]?
-        var nonFederatingBackends: [String]?
-
-        enum CodingKeys: String, CodingKey {
-            case unreachableBackends = "unreachable_backends"
-            case nonFederatingBackends = "non_federating_backends"
         }
     }
 }

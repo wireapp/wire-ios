@@ -21,18 +21,7 @@ import Foundation
 // MARK: - ConversationTests
 
 final class ConversationTests: ZMConversationTestsBase {
-    @discardableResult
-    private func insertMockGroupConversation(userDefinedName: String) -> ZMConversation {
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.userDefinedName = userDefinedName
-        conversation.conversationType = .group
-        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-        uiMOC.saveOrRollback()
-        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
-
-        return conversation
-    }
+    // MARK: Internal
 
     func testThatItFindsConversationByUserDefinedNameDiacriticsWithSymbol() throws {
         // given
@@ -117,6 +106,21 @@ final class ConversationTests: ZMConversationTestsBase {
         // then
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result.first as? ZMConversation, conversation)
+    }
+
+    // MARK: Private
+
+    @discardableResult
+    private func insertMockGroupConversation(userDefinedName: String) -> ZMConversation {
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.userDefinedName = userDefinedName
+        conversation.conversationType = .group
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        uiMOC.saveOrRollback()
+        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
+
+        return conversation
     }
 }
 

@@ -28,18 +28,20 @@ import XCTest
 
 final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControllerDelegate {
     var cameraKeyboardWantsToOpenCameraRollHitCount: UInt = 0
+    var cameraKeyboardWantsToOpenFullScreenCameraHitCount: UInt = 0
+    var cameraKeyboardDidSelectVideoHitCount: UInt = 0
+    var cameraKeyboardViewControllerDidSelectImageDataHitCount: UInt = 0
+
     @objc
     func cameraKeyboardViewControllerWantsToOpenCameraRoll(_: CameraKeyboardViewController) {
         cameraKeyboardWantsToOpenCameraRollHitCount += 1
     }
 
-    var cameraKeyboardWantsToOpenFullScreenCameraHitCount: UInt = 0
     @objc
     func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_: CameraKeyboardViewController) {
         cameraKeyboardWantsToOpenFullScreenCameraHitCount += 1
     }
 
-    var cameraKeyboardDidSelectVideoHitCount: UInt = 0
     @objc
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
@@ -49,7 +51,6 @@ final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControll
         cameraKeyboardDidSelectVideoHitCount += 1
     }
 
-    var cameraKeyboardViewControllerDidSelectImageDataHitCount: UInt = 0
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
         didSelectImageData: Data,
@@ -80,6 +81,8 @@ private final class MockAssetLibrary: AssetLibrary {
 // MARK: - MockImageManager
 
 private final class MockImageManager: ImageManagerProtocol {
+    static var defaultInstance: ImageManagerProtocol = MockImageManager()
+
     func cancelImageRequest(_: PHImageRequestID) {
         // no op
     }
@@ -112,8 +115,6 @@ private final class MockImageManager: ImageManagerProtocol {
         -> PHImageRequestID {
         0
     }
-
-    static var defaultInstance: ImageManagerProtocol = MockImageManager()
 }
 
 // MARK: - CallingMockCameraKeyboardViewController
@@ -127,14 +128,7 @@ private final class CallingMockCameraKeyboardViewController: CameraKeyboardViewC
 // MARK: - CameraKeyboardViewControllerTests
 
 final class CameraKeyboardViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: CameraKeyboardViewController!
-    private var splitView: SplitLayoutObservableMock!
-    private var delegateMock: CameraKeyboardViewControllerDelegateMock!
-    fileprivate var mockAssetLibrary: MockAssetLibrary!
-    fileprivate var mockImageManager: MockImageManager!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -158,39 +152,6 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         mockImageManager = nil
 
         super.tearDown()
-    }
-
-    // MARK: - Helper methods
-
-    @discardableResult
-    private func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
-        sut.beginAppearanceTransition(true, animated: false)
-        sut.endAppearanceTransition()
-
-        let container = UIView()
-        container.addSubview(sut.view)
-        container.backgroundColor = SemanticColors.View.backgroundConversationView
-        container.translatesAutoresizingMaskIntoConstraints = false
-        sut.view.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            container.heightAnchor.constraint(equalToConstant: size.height),
-            container.widthAnchor.constraint(equalToConstant: size.width),
-            sut.view.topAnchor.constraint(equalTo: container.topAnchor),
-            sut.view.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            sut.view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            sut.view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-        ])
-
-        container.layoutIfNeeded()
-        return container
-    }
-
-    private func setupSut(permissions: PhotoPermissionsController) {
-        sut = CameraKeyboardViewController(
-            splitLayoutObservable: splitView,
-            permissions: permissions
-        )
     }
 
     // MARK: - Tests
@@ -238,27 +199,6 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.collectionView.numberOfItems(inSection: 0), 1)
     }
 
-    // MARK: - Tests for InitialStateLayoutSizeCompact
-
-    private func initialStateLayoutSizeCompact(
-        with permissions: PhotoPermissionsController,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        // GIVEN
-        splitView?.layoutSize = .compact
-        // WHEN
-        setupSut(permissions: permissions)
-        // THEN
-        snapshotHelper.verify(
-            matching: prepareForSnapshot(),
-            file: file,
-            testName: testName,
-            line: line
-        )
-    }
-
     func testInitialStateLayoutSizeCompact() {
         // GIVEN && WHEN
         let permissions = MockPhotoPermissionsController(camera: true, library: true)
@@ -289,28 +229,6 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
         // THEN
         initialStateLayoutSizeCompact(with: permissions)
-    }
-
-    // MARK: - Tests for InitialStateLayoutSizeRegularPortrait
-
-    private func initialStateLayoutSizeRegularPortrait(
-        with permissions: PhotoPermissionsController,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        // GIVEN
-        splitView?.layoutSize = .regularPortrait
-        splitView?.leftViewControllerWidth = 216
-        // WHEN
-        setupSut(permissions: permissions)
-        // THEN
-        snapshotHelper.verify(
-            matching: prepareForSnapshot(CGSize(width: 768, height: 264)),
-            file: file,
-            testName: testName,
-            line: line
-        )
     }
 
     func testInitialStateLayoutSizeRegularPortrait() {
@@ -399,29 +317,6 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         initialStateLayoutSizeRegularLandscape(with: permissions)
     }
 
-    // MARK: - Tests for CameraScrolledHorizontallySomePercent
-
-    private func cameraScrolledHorizontallySomePercent(
-        with permissions: PhotoPermissionsController,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        // GIVEN
-        splitView?.layoutSize = .compact
-        setupSut(permissions: permissions)
-        prepareForSnapshot()
-        // WHEN
-        sut.collectionView.scrollRectToVisible(CGRect(x: 300, y: 0, width: 160, height: 10), animated: false)
-        // THEN
-        snapshotHelper.verify(
-            matching: prepareForSnapshot(),
-            file: file,
-            testName: testName,
-            line: line
-        )
-    }
-
     func testCameraScrolledHorizontallySomePercent() {
         // GIVEN && WHEN
         let permissions = MockPhotoPermissionsController(camera: true, library: true)
@@ -452,29 +347,6 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
         // THEN
         cameraScrolledHorizontallySomePercent(with: permissions)
-    }
-
-    // MARK: - Tests for CameraScrolledHorizontallyAwayPercent
-
-    private func cameraScrolledHorizontallyAwayPercent(
-        with permissions: PhotoPermissionsController,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        // GIVEN
-        splitView?.layoutSize = .compact
-        setupSut(permissions: permissions)
-        prepareForSnapshot()
-        // WHEN
-        sut.collectionView.scrollRectToVisible(CGRect(x: 320, y: 0, width: 160, height: 10), animated: false)
-        // THEN
-        snapshotHelper.verify(
-            matching: prepareForSnapshot(),
-            file: file,
-            testName: testName,
-            line: line
-        )
     }
 
     func testCameraScrolledHorizontallyAwayPercent() {
@@ -541,5 +413,141 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         XCTAssertEqual(delegateMock.cameraKeyboardWantsToOpenFullScreenCameraHitCount, 1)
         XCTAssertEqual(delegateMock.cameraKeyboardDidSelectVideoHitCount, 0)
         XCTAssertEqual(delegateMock.cameraKeyboardViewControllerDidSelectImageDataHitCount, 0)
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var mockAssetLibrary: MockAssetLibrary!
+    fileprivate var mockImageManager: MockImageManager!
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: CameraKeyboardViewController!
+    private var splitView: SplitLayoutObservableMock!
+    private var delegateMock: CameraKeyboardViewControllerDelegateMock!
+
+    // MARK: - Helper methods
+
+    @discardableResult
+    private func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
+        sut.beginAppearanceTransition(true, animated: false)
+        sut.endAppearanceTransition()
+
+        let container = UIView()
+        container.addSubview(sut.view)
+        container.backgroundColor = SemanticColors.View.backgroundConversationView
+        container.translatesAutoresizingMaskIntoConstraints = false
+        sut.view.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            container.heightAnchor.constraint(equalToConstant: size.height),
+            container.widthAnchor.constraint(equalToConstant: size.width),
+            sut.view.topAnchor.constraint(equalTo: container.topAnchor),
+            sut.view.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            sut.view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            sut.view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+        ])
+
+        container.layoutIfNeeded()
+        return container
+    }
+
+    private func setupSut(permissions: PhotoPermissionsController) {
+        sut = CameraKeyboardViewController(
+            splitLayoutObservable: splitView,
+            permissions: permissions
+        )
+    }
+
+    // MARK: - Tests for InitialStateLayoutSizeCompact
+
+    private func initialStateLayoutSizeCompact(
+        with permissions: PhotoPermissionsController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        // GIVEN
+        splitView?.layoutSize = .compact
+        // WHEN
+        setupSut(permissions: permissions)
+        // THEN
+        snapshotHelper.verify(
+            matching: prepareForSnapshot(),
+            file: file,
+            testName: testName,
+            line: line
+        )
+    }
+
+    // MARK: - Tests for InitialStateLayoutSizeRegularPortrait
+
+    private func initialStateLayoutSizeRegularPortrait(
+        with permissions: PhotoPermissionsController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        // GIVEN
+        splitView?.layoutSize = .regularPortrait
+        splitView?.leftViewControllerWidth = 216
+        // WHEN
+        setupSut(permissions: permissions)
+        // THEN
+        snapshotHelper.verify(
+            matching: prepareForSnapshot(CGSize(width: 768, height: 264)),
+            file: file,
+            testName: testName,
+            line: line
+        )
+    }
+
+    // MARK: - Tests for CameraScrolledHorizontallySomePercent
+
+    private func cameraScrolledHorizontallySomePercent(
+        with permissions: PhotoPermissionsController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        // GIVEN
+        splitView?.layoutSize = .compact
+        setupSut(permissions: permissions)
+        prepareForSnapshot()
+        // WHEN
+        sut.collectionView.scrollRectToVisible(CGRect(x: 300, y: 0, width: 160, height: 10), animated: false)
+        // THEN
+        snapshotHelper.verify(
+            matching: prepareForSnapshot(),
+            file: file,
+            testName: testName,
+            line: line
+        )
+    }
+
+    // MARK: - Tests for CameraScrolledHorizontallyAwayPercent
+
+    private func cameraScrolledHorizontallyAwayPercent(
+        with permissions: PhotoPermissionsController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        // GIVEN
+        splitView?.layoutSize = .compact
+        setupSut(permissions: permissions)
+        prepareForSnapshot()
+        // WHEN
+        sut.collectionView.scrollRectToVisible(CGRect(x: 320, y: 0, width: 160, height: 10), animated: false)
+        // THEN
+        snapshotHelper.verify(
+            matching: prepareForSnapshot(),
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 }

@@ -20,13 +20,7 @@ import UIKit
 import WireDesign
 
 final class DestructionCountdownView: UIView {
-    // MARK: - Properties
-
-    typealias IconColors = SemanticColors.Icon
-
-    private let remainingTimeLayer = CAShapeLayer()
-    private let elapsedTimeLayer = CAShapeLayer()
-    private let elapsedTimeAnimationKey = "elapsedTime"
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -40,53 +34,11 @@ final class DestructionCountdownView: UIView {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    private func configureSublayers() {
-        layer.addSublayer(remainingTimeLayer)
-        layer.addSublayer(elapsedTimeLayer)
+    // MARK: Internal
 
-        elapsedTimeLayer.strokeEnd = 0
-        elapsedTimeLayer.isOpaque = false
-        remainingTimeLayer.isOpaque = false
+    // MARK: - Properties
 
-        elapsedTimeColor = IconColors.foregroundElapsedTimeSelfDeletingMessage
-
-        remainingTimeColor = IconColors.foregroundRemainingTimeSelfDeletingMessage
-    }
-
-    // MARK: - Layout
-
-    override func layoutSublayers(of layer: CALayer) {
-        super.layoutSublayers(of: layer)
-        let backgroundFrame = bounds
-        let borderWidth = 0.10 * backgroundFrame.width
-        let elapsedFrame = bounds.insetBy(dx: borderWidth, dy: borderWidth)
-
-        elapsedTimeLayer.frame = backgroundFrame
-        elapsedTimeLayer.path = makePath(for: elapsedFrame)
-        elapsedTimeLayer.fillColor = nil
-        elapsedTimeLayer.lineWidth = min(elapsedFrame.width, elapsedFrame.height) / 2
-
-        remainingTimeLayer.frame = backgroundFrame
-        remainingTimeLayer.path = CGPath(ellipseIn: bounds, transform: nil)
-    }
-
-    private func makePath(for bounds: CGRect) -> CGPath {
-        let path = CGMutablePath()
-        path.addArc(
-            center: CGPoint(
-                x: bounds.midX,
-                y: bounds.midY
-            ),
-            radius: min(
-                bounds.height,
-                bounds.width
-            ) / 4,
-            startAngle: -.pi / 2,
-            endAngle: 3 * .pi / 2,
-            clockwise: false
-        )
-        return path
-    }
+    typealias IconColors = SemanticColors.Icon
 
     // MARK: - Animation
 
@@ -113,6 +65,23 @@ final class DestructionCountdownView: UIView {
         }
     }
 
+    // MARK: - Layout
+
+    override func layoutSublayers(of layer: CALayer) {
+        super.layoutSublayers(of: layer)
+        let backgroundFrame = bounds
+        let borderWidth = 0.10 * backgroundFrame.width
+        let elapsedFrame = bounds.insetBy(dx: borderWidth, dy: borderWidth)
+
+        elapsedTimeLayer.frame = backgroundFrame
+        elapsedTimeLayer.path = makePath(for: elapsedFrame)
+        elapsedTimeLayer.fillColor = nil
+        elapsedTimeLayer.lineWidth = min(elapsedFrame.width, elapsedFrame.height) / 2
+
+        remainingTimeLayer.frame = backgroundFrame
+        remainingTimeLayer.path = CGPath(ellipseIn: bounds, transform: nil)
+    }
+
     func startAnimating(duration: TimeInterval, currentProgress: CGFloat) {
         let elapsedTimeAnimation = CABasicAnimation(keyPath: #keyPath(CAShapeLayer.strokeEnd))
         elapsedTimeAnimation.duration = duration
@@ -130,5 +99,42 @@ final class DestructionCountdownView: UIView {
 
     func setProgress(_ newValue: CGFloat) {
         elapsedTimeLayer.strokeEnd = newValue
+    }
+
+    // MARK: Private
+
+    private let remainingTimeLayer = CAShapeLayer()
+    private let elapsedTimeLayer = CAShapeLayer()
+    private let elapsedTimeAnimationKey = "elapsedTime"
+
+    private func configureSublayers() {
+        layer.addSublayer(remainingTimeLayer)
+        layer.addSublayer(elapsedTimeLayer)
+
+        elapsedTimeLayer.strokeEnd = 0
+        elapsedTimeLayer.isOpaque = false
+        remainingTimeLayer.isOpaque = false
+
+        elapsedTimeColor = IconColors.foregroundElapsedTimeSelfDeletingMessage
+
+        remainingTimeColor = IconColors.foregroundRemainingTimeSelfDeletingMessage
+    }
+
+    private func makePath(for bounds: CGRect) -> CGPath {
+        let path = CGMutablePath()
+        path.addArc(
+            center: CGPoint(
+                x: bounds.midX,
+                y: bounds.midY
+            ),
+            radius: min(
+                bounds.height,
+                bounds.width
+            ) / 4,
+            startAngle: -.pi / 2,
+            endAngle: 3 * .pi / 2,
+            clockwise: false
+        )
+        return path
     }
 }

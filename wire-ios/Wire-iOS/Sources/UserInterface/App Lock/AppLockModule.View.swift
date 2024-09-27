@@ -22,17 +22,17 @@ import UIKit
 
 extension AppLockModule {
     final class View: UIViewController, ViewInterface {
+        // MARK: Internal
+
         // MARK: - Properties
 
         var presenter: AppLockPresenterViewInterface!
 
+        let lockView = LockView()
+
         override var prefersStatusBarHidden: Bool {
             true
         }
-
-        let lockView = LockView()
-
-        // MARK: - Life cycle
 
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -44,6 +44,13 @@ extension AppLockModule {
             super.viewDidAppear(animated)
             presenter.processEvent(.viewDidAppear)
         }
+
+        @objc
+        func applicationWillEnterForeground() {
+            presenter.processEvent(.applicationWillEnterForeground)
+        }
+
+        // MARK: Private
 
         // MARK: - Methods
 
@@ -61,11 +68,6 @@ extension AppLockModule {
                 object: nil
             )
         }
-
-        @objc
-        func applicationWillEnterForeground() {
-            presenter.processEvent(.applicationWillEnterForeground)
-        }
     }
 }
 
@@ -75,6 +77,8 @@ extension AppLockModule {
     enum ViewModel: Equatable {
         case locked(AuthenticationType)
         case authenticating
+
+        // MARK: Internal
 
         var showReauth: Bool {
             switch self {

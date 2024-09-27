@@ -19,13 +19,7 @@
 @testable import WireSyncEngine
 
 class TypingUsersTimeoutTests: MessagingTest {
-    private typealias TypingUsersTimeout = WireSyncEngine.TypingUsersTimeout
-
-    private var sut: TypingUsersTimeout!
-    private var conversationA: ZMConversation!
-    private var conversationB: ZMConversation!
-    private var userA: ZMUser!
-    private var userB: ZMUser!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -222,4 +216,14 @@ class TypingUsersTimeoutTests: MessagingTest {
         XCTAssertTrue(sut.contains(userB, for: conversationA))
         XCTAssertEqual(sut.userIds(in: conversationA), Set([userB.objectID]))
     }
+
+    // MARK: Private
+
+    private typealias TypingUsersTimeout = WireSyncEngine.TypingUsersTimeout
+
+    private var sut: TypingUsersTimeout!
+    private var conversationA: ZMConversation!
+    private var conversationB: ZMConversation!
+    private var userA: ZMUser!
+    private var userB: ZMUser!
 }

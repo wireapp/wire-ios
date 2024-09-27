@@ -20,11 +20,16 @@ import Foundation
 import WireSyncEngine
 
 final class DeveloperE2eiViewModel: ObservableObject {
-    private var userSession: ZMUserSession? { ZMUserSession.shared() }
-    private var crlExpirationDatesRepository: CRLExpirationDatesRepository? {
-        guard let userSession else { return nil }
-        return CRLExpirationDatesRepository(userID: userSession.selfUser.remoteIdentifier)
+    // MARK: Lifecycle
+
+    init() {
+        refreshCRLExpirationDates()
+        Task {
+            await fetchSelfClientCertificate()
+        }
     }
+
+    // MARK: Internal
 
     @Published var certificateExpirationTime = ""
 
@@ -33,13 +38,6 @@ final class DeveloperE2eiViewModel: ObservableObject {
     @Published var certificateValidFrom = ""
 
     @Published var certificateValidTo = ""
-
-    init() {
-        refreshCRLExpirationDates()
-        Task {
-            await fetchSelfClientCertificate()
-        }
-    }
 
     // MARK: - Actions
 
@@ -98,6 +96,14 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
         certificateValidFrom = dateFormatter.string(from: certificate.notValidBefore)
         certificateValidTo = dateFormatter.string(from: certificate.expiryDate)
+    }
+
+    // MARK: Private
+
+    private var userSession: ZMUserSession? { ZMUserSession.shared() }
+    private var crlExpirationDatesRepository: CRLExpirationDatesRepository? {
+        guard let userSession else { return nil }
+        return CRLExpirationDatesRepository(userID: userSession.selfUser.remoteIdentifier)
     }
 
     // MARK: - Helper

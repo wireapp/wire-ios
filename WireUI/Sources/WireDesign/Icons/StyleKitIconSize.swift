@@ -38,6 +38,8 @@ extension StyleKitIcon {
         /// A custom size.
         case custom(CGFloat)
 
+        // MARK: Lifecycle
+
         // MARK: - Literal Conversion
 
         public init(floatLiteral value: CGFloat) {
@@ -51,6 +53,8 @@ extension StyleKitIcon {
         public init?(rawValue: CGFloat) {
             self.init(floatLiteral: rawValue)
         }
+
+        // MARK: Public
 
         // MARK: - CGFloat Conversion
 

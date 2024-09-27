@@ -22,7 +22,13 @@ import WireDataModel
 // MARK: - SearchOptions
 
 public struct SearchOptions: OptionSet {
-    public let rawValue: Int
+    // MARK: Lifecycle
+
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    // MARK: Public
 
     /// Users you are connected to via connection request.
 
@@ -64,9 +70,7 @@ public struct SearchOptions: OptionSet {
 
     public static let localResultsOnly = SearchOptions(rawValue: 1 << 9)
 
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
+    public let rawValue: Int
 }
 
 extension SearchOptions {
@@ -83,9 +87,23 @@ extension SearchOptions {
 // MARK: - SearchRequest
 
 public struct SearchRequest {
+    // MARK: Lifecycle
+
+    public init(query: String, searchOptions: SearchOptions, team: Team? = nil) {
+        let (query, searchDomain) = Self.parseQuery(query)
+        self.query = query
+        self.searchDomain = searchDomain
+        self.searchOptions = searchOptions
+        self.team = team
+    }
+
+    // MARK: Public
+
     public enum Query {
         case exactHandle(String)
         case fullTextSearch(String)
+
+        // MARK: Internal
 
         var isHandleQuery: Bool {
             switch self {
@@ -106,18 +124,12 @@ public struct SearchRequest {
         }
     }
 
+    // MARK: Internal
+
     var team: Team?
     let query: Query
     let searchDomain: String?
     let searchOptions: SearchOptions
-
-    public init(query: String, searchOptions: SearchOptions, team: Team? = nil) {
-        let (query, searchDomain) = Self.parseQuery(query)
-        self.query = query
-        self.searchDomain = searchDomain
-        self.searchOptions = searchOptions
-        self.team = team
-    }
 
     var normalizedQuery: String {
         query.string.normalizedAndTrimmed()

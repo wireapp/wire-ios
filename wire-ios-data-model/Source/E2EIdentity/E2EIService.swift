@@ -51,20 +51,7 @@ public protocol E2EIServiceInterface {
 
 /// This class provides an interface for WireE2eIdentityProtocol (CoreCrypto) methods.
 public final class E2EIService: E2EIServiceInterface {
-    // MARK: - Properties
-
-    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
-    private let defaultDPoPTokenExpiry: UInt32 = 30
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
-        get async throws {
-            try await coreCryptoProvider.coreCrypto()
-        }
-    }
-
-    public let e2eIdentity: E2eiEnrollmentProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         e2eIdentity: E2eiEnrollmentProtocol,
@@ -75,6 +62,10 @@ public final class E2EIService: E2EIServiceInterface {
         self.coreCryptoProvider = coreCryptoProvider
         self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
     }
+
+    // MARK: Public
+
+    public let e2eIdentity: E2eiEnrollmentProtocol
 
     // MARK: - Methods
 
@@ -175,8 +166,24 @@ public final class E2EIService: E2EIServiceInterface {
         }
     }
 
+    // MARK: Internal
+
     enum E2EIServiceFailure: Error {
         case missingCoreCrypto
         case missingEnrollment
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
+    private let defaultDPoPTokenExpiry: UInt32 = 30
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto()
+        }
     }
 }

@@ -37,15 +37,7 @@ public protocol AcmeAPIInterface {
 /// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI
 /// certificate.
 public class AcmeAPI: NSObject, AcmeAPIInterface {
-    // MARK: - Properties
-
-    private let rootCertificatePath = "roots.pem"
-    private let federationCertificatePath = "federation"
-    private let acmeDiscoveryPath: String
-    private let httpClient: HttpClientCustom
-    private let decoder = JSONDecoder()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     // TODO: [WPB-6785] refactor HttpClientE2EI
     public init(
@@ -55,6 +47,8 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         self.acmeDiscoveryPath = acmeDiscoveryPath
         self.httpClient = httpClient
     }
+
+    // MARK: Public
 
     public func getACMEDirectory() async throws -> Data {
         guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
@@ -209,6 +203,8 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         )
     }
 
+    // MARK: Private
+
     private struct Challenge: Codable, Equatable {
         var type: String
         var url: String
@@ -224,6 +220,14 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     private struct AuthorizationChallenge: Decodable {
         var type: AuthorizationChallengeType
     }
+
+    // MARK: - Properties
+
+    private let rootCertificatePath = "roots.pem"
+    private let federationCertificatePath = "federation"
+    private let acmeDiscoveryPath: String
+    private let httpClient: HttpClientCustom
+    private let decoder = JSONDecoder()
 }
 
 // MARK: - HeaderKey
@@ -264,7 +268,7 @@ public protocol HttpClientCustom {
 // MARK: - HttpClientE2EI
 
 public class HttpClientE2EI: NSObject, HttpClientCustom {
-    private let urlSession: URLSession
+    // MARK: Lifecycle
 
     override public init() {
         let configuration = URLSessionConfiguration.ephemeral
@@ -274,9 +278,15 @@ public class HttpClientE2EI: NSObject, HttpClientCustom {
         super.init()
     }
 
+    // MARK: Public
+
     public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         try await urlSession.data(for: request)
     }
+
+    // MARK: Private
+
+    private let urlSession: URLSession
 }
 
 extension URL {

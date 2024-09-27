@@ -31,31 +31,7 @@ protocol MarkdownBarViewDelegate: AnyObject {
 // MARK: - MarkdownBarView
 
 final class MarkdownBarView: UIView {
-    weak var delegate: MarkdownBarViewDelegate?
-
-    private let stackView = UIStackView()
-
-    private let enabledStateIconColor = SemanticColors.Button.textInputBarItemEnabled
-    private let highlightedStateIconColor = SemanticColors.Button.textInputBarItemHighlighted
-
-    private let enabledStateBackgroundColor = SemanticColors.Button.backgroundInputBarItemEnabled
-    private let highlightedStateBackgroundColor = SemanticColors.Button.backgroundInputBarItemHighlighted
-
-    private let enabledStateBorderColor = SemanticColors.Button.borderInputBarItemEnabled
-    private let highlightedStateBorderColor = SemanticColors.Button.borderInputBarItemHighlighted
-
-    let headerButton         = PopUpIconButton()
-    let boldButton           = IconButton()
-    let italicButton         = IconButton()
-    let numberListButton     = IconButton()
-    let bulletListButton     = IconButton()
-    let codeButton           = IconButton()
-
-    let buttons: [IconButton]
-
-    private var buttonMargin: CGFloat {
-        conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
-    }
+    // MARK: Lifecycle
 
     required init() {
         self.buttons = [headerButton, boldButton, italicButton, numberListButton, bulletListButton, codeButton]
@@ -67,6 +43,19 @@ final class MarkdownBarView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    weak var delegate: MarkdownBarViewDelegate?
+
+    let headerButton         = PopUpIconButton()
+    let boldButton           = IconButton()
+    let italicButton         = IconButton()
+    let numberListButton     = IconButton()
+    let bulletListButton     = IconButton()
+    let codeButton           = IconButton()
+
+    let buttons: [IconButton]
 
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: 56)
@@ -141,48 +130,10 @@ final class MarkdownBarView: UIView {
         setupAccessibility()
     }
 
-    private func setupAccessibility() {
-        typealias Conversation = L10n.Accessibility.Conversation
-
-        headerButton.accessibilityLabel = Conversation.HeaderButton.description
-        boldButton.accessibilityLabel = Conversation.BoldButton.description
-        italicButton.accessibilityLabel = Conversation.ItalicButton.description
-        numberListButton.accessibilityLabel = Conversation.NumberListButton.description
-        bulletListButton.accessibilityLabel = Conversation.BulletListButton.description
-        codeButton.accessibilityLabel = Conversation.CodeButton.description
-    }
-
     @objc
     func textViewDidChangeActiveMarkdown(note: Notification) {
         guard let textView = note.object as? MarkdownTextView else { return }
         updateIcons(for: textView.activeMarkdown)
-    }
-
-    // MARK: Actions
-
-    @objc
-    private func buttonTapped(sender: IconButton) {
-        guard let markdown = markdown(for: sender) else { return }
-
-        if sender.iconColor(for: .normal) != enabledStateIconColor {
-            delegate?.markdownBarView(self, didDeselectMarkdown: markdown, with: sender)
-        } else {
-            delegate?.markdownBarView(self, didSelectMarkdown: markdown, with: sender)
-        }
-    }
-
-    // MARK: - Conversions
-
-    fileprivate func markdown(for button: IconButton) -> Markdown? {
-        switch button {
-        case headerButton:      headerButton.icon(for: .normal)?.headerMarkdown ?? .h1
-        case boldButton:        .bold
-        case italicButton:      .italic
-        case codeButton:        .code
-        case numberListButton:  .oList
-        case bulletListButton:  .uList
-        default:                nil
-        }
     }
 
     func updateIcons(for markdown: Markdown) {
@@ -214,6 +165,63 @@ final class MarkdownBarView: UIView {
 
     func updateAccessibilityElements(isAccessible: Bool) {
         buttons.forEach { $0.isAccessibilityElement = isAccessible }
+    }
+
+    // MARK: Fileprivate
+
+    // MARK: - Conversions
+
+    fileprivate func markdown(for button: IconButton) -> Markdown? {
+        switch button {
+        case headerButton:      headerButton.icon(for: .normal)?.headerMarkdown ?? .h1
+        case boldButton:        .bold
+        case italicButton:      .italic
+        case codeButton:        .code
+        case numberListButton:  .oList
+        case bulletListButton:  .uList
+        default:                nil
+        }
+    }
+
+    // MARK: Private
+
+    private let stackView = UIStackView()
+
+    private let enabledStateIconColor = SemanticColors.Button.textInputBarItemEnabled
+    private let highlightedStateIconColor = SemanticColors.Button.textInputBarItemHighlighted
+
+    private let enabledStateBackgroundColor = SemanticColors.Button.backgroundInputBarItemEnabled
+    private let highlightedStateBackgroundColor = SemanticColors.Button.backgroundInputBarItemHighlighted
+
+    private let enabledStateBorderColor = SemanticColors.Button.borderInputBarItemEnabled
+    private let highlightedStateBorderColor = SemanticColors.Button.borderInputBarItemHighlighted
+
+    private var buttonMargin: CGFloat {
+        conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
+    }
+
+    private func setupAccessibility() {
+        typealias Conversation = L10n.Accessibility.Conversation
+
+        headerButton.accessibilityLabel = Conversation.HeaderButton.description
+        boldButton.accessibilityLabel = Conversation.BoldButton.description
+        italicButton.accessibilityLabel = Conversation.ItalicButton.description
+        numberListButton.accessibilityLabel = Conversation.NumberListButton.description
+        bulletListButton.accessibilityLabel = Conversation.BulletListButton.description
+        codeButton.accessibilityLabel = Conversation.CodeButton.description
+    }
+
+    // MARK: Actions
+
+    @objc
+    private func buttonTapped(sender: IconButton) {
+        guard let markdown = markdown(for: sender) else { return }
+
+        if sender.iconColor(for: .normal) != enabledStateIconColor {
+            delegate?.markdownBarView(self, didDeselectMarkdown: markdown, with: sender)
+        } else {
+            delegate?.markdownBarView(self, didSelectMarkdown: markdown, with: sender)
+        }
     }
 }
 

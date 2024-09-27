@@ -22,8 +22,7 @@ import XCTest
 @testable import Wire
 
 final class AccountViewSnapshotTests: XCTestCase {
-    private var imageData: Data!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -198,4 +197,9 @@ final class AccountViewSnapshotTests: XCTestCase {
         // WHEN && THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var imageData: Data!
+    private var snapshotHelper: SnapshotHelper!
 }

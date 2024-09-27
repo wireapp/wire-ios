@@ -21,7 +21,7 @@ import WireDesign
 import WireReusableUIComponents
 
 final class LoadingIndicatorCell: UITableViewCell, CellConfigurationConfigurable {
-    private let spinner = ProgressSpinner()
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -44,9 +44,15 @@ final class LoadingIndicatorCell: UITableViewCell, CellConfigurationConfigurable
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     func configure(with configuration: CellConfiguration) {
         spinner.color = SemanticColors.Label.textDefault
         spinner.isAnimating = false
         spinner.isAnimating = true
     }
+
+    // MARK: Private
+
+    private let spinner = ProgressSpinner()
 }

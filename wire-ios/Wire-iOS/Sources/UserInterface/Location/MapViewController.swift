@@ -33,15 +33,7 @@ protocol MapViewControllerDelegate: AnyObject {
 /// This class is designed to handle map-related functionalities such as displaying the user’s location, adding and
 /// updating annotations, and adjusting the map’s region.
 final class MapViewController: UIViewController {
-    // MARK: - Properties
-
-    let mapView = MKMapView()
-    weak var delegate: MapViewControllerDelegate?
-    private let pointAnnotation = MKPointAnnotation()
-    private lazy var annotationView = MKPinAnnotationView(
-        annotation: pointAnnotation,
-        reuseIdentifier: String(describing: type(of: self))
-    )
+    // MARK: Internal
 
     enum LayoutConstants {
         static let annotationViewCenterXOffset: CGFloat = 8.5
@@ -49,6 +41,11 @@ final class MapViewController: UIViewController {
         static let annotationViewHeight: CGFloat = 39
         static let annotationViewWidth: CGFloat = 32
     }
+
+    // MARK: - Properties
+
+    let mapView = MKMapView()
+    weak var delegate: MapViewControllerDelegate?
 
     // MARK: - Init
 
@@ -60,6 +57,41 @@ final class MapViewController: UIViewController {
         configureMapView()
         setupAnnotationView()
     }
+
+    func zoomToUserLocation(animated: Bool) {
+        guard let coordinate = mapView.userLocation.location?.coordinate else { return }
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+        mapView.setRegion(region, animated: animated)
+    }
+
+    func updateAnnotation(to coordinate: CLLocationCoordinate2D) {
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        mapView.removeAnnotations(mapView.annotations) // Remove existing annotations
+        mapView.addAnnotation(annotation)
+    }
+
+    func setRegion(
+        to coordinate: CLLocationCoordinate2D,
+        latitudinalMeters: Double,
+        longitudinalMeters: Double,
+        animated: Bool
+    ) {
+        let region = MKCoordinateRegion(
+            center: coordinate,
+            latitudinalMeters: latitudinalMeters,
+            longitudinalMeters: longitudinalMeters
+        )
+        mapView.setRegion(region, animated: animated)
+    }
+
+    // MARK: Private
+
+    private let pointAnnotation = MKPointAnnotation()
+    private lazy var annotationView = MKPinAnnotationView(
+        annotation: pointAnnotation,
+        reuseIdentifier: String(describing: type(of: self))
+    )
 
     // MARK: - Methods
 
@@ -91,33 +123,6 @@ final class MapViewController: UIViewController {
             annotationView.heightAnchor.constraint(equalToConstant: LayoutConstants.annotationViewHeight),
             annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth),
         ])
-    }
-
-    func zoomToUserLocation(animated: Bool) {
-        guard let coordinate = mapView.userLocation.location?.coordinate else { return }
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
-        mapView.setRegion(region, animated: animated)
-    }
-
-    func updateAnnotation(to coordinate: CLLocationCoordinate2D) {
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = coordinate
-        mapView.removeAnnotations(mapView.annotations) // Remove existing annotations
-        mapView.addAnnotation(annotation)
-    }
-
-    func setRegion(
-        to coordinate: CLLocationCoordinate2D,
-        latitudinalMeters: Double,
-        longitudinalMeters: Double,
-        animated: Bool
-    ) {
-        let region = MKCoordinateRegion(
-            center: coordinate,
-            latitudinalMeters: latitudinalMeters,
-            longitudinalMeters: longitudinalMeters
-        )
-        mapView.setRegion(region, animated: animated)
     }
 }
 

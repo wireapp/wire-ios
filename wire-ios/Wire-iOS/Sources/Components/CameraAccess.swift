@@ -30,6 +30,8 @@ enum CameraAccessFeature: Int {
 // MARK: - CameraAccess
 
 final class CameraAccess: NSObject {
+    // MARK: Internal
+
     /// if there is an on going call, show a alert and return true
     ///
     /// - Parameters:
@@ -47,6 +49,8 @@ final class CameraAccess: NSObject {
 
         return false
     }
+
+    // MARK: Private
 
     private static func displayCameraAlertForOngoingCall(
         at feature: CameraAccessFeature,

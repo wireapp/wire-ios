@@ -29,6 +29,7 @@ class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {
     var objectsAskedToBeCancelled: Set<MockEntity> = Set()
 
     var completionBlock: (() -> Void)?
+
     func synchronize(_ object: MockEntity, completion: @escaping () -> Void) {
         objectsAskedToBeSynchronized.insert(object)
         completionBlock = completion
@@ -50,8 +51,6 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
     var moc: NSManagedObjectContext!
     var transcoder: MockKeyPathObjectSyncTranscoder!
     var sut: KeyPathObjectSync<MockKeyPathObjectSyncTranscoder>!
-
-    // MARK: - Life Cycle
 
     override func setUp() {
         super.setUp()

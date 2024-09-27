@@ -22,9 +22,7 @@ import WireDataModel
 // MARK: - AssetDeletionRequestStrategyTests
 
 class AssetDeletionRequestStrategyTests: MessagingTest {
-    private var sut: AssetDeletionRequestStrategy!
-    private var mockApplicationStatus: MockApplicationStatus!
-    fileprivate var mockIdentifierProvider: MockIdentifierProvider!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -110,6 +108,15 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         XCTAssertEqual(mockIdentifierProvider.failedToDeleteIdentifiers.first, identifier)
         XCTAssert(mockIdentifierProvider.deletedIdentifiers.isEmpty)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var mockIdentifierProvider: MockIdentifierProvider!
+
+    // MARK: Private
+
+    private var sut: AssetDeletionRequestStrategy!
+    private var mockApplicationStatus: MockApplicationStatus!
 }
 
 // MARK: Helper Method

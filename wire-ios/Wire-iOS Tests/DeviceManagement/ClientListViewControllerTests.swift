@@ -21,14 +21,8 @@ import XCTest
 @testable import Wire
 
 final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
-    // MARK: - Properties
+    // MARK: Internal
 
-    private var sut: ClientListViewController!
-    private var mockUser: MockUserType!
-    private var client: UserClient!
-    private var selfClient: UserClient!
-    private weak var clientRemovalObserver: ClientRemovalObserver!
-    private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
 
     // MARK: - setUp
@@ -149,4 +143,15 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
 
         snapshotHelper.verify(matching: navWrapperController)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ClientListViewController!
+    private var mockUser: MockUserType!
+    private var client: UserClient!
+    private var selfClient: UserClient!
+    private weak var clientRemovalObserver: ClientRemovalObserver!
+    private var snapshotHelper: SnapshotHelper!
 }

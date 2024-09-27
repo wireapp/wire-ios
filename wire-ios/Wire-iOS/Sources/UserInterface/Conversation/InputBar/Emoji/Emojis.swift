@@ -23,20 +23,7 @@ import WireDesign
 // MARK: - EmojiDataSource
 
 final class EmojiDataSource: NSObject, UICollectionViewDataSource {
-    // MARK: - Properties
-
-    let cellProvider: CellProvider
-
-    private let initialSections: [Section]
-    private var sections: [Section]
-    private let recentlyUsed: RecentlyUsedEmojiSection
-    private let emojiRepository: EmojiRepositoryInterface
-
-    var sectionTypes: [EmojiSectionType] {
-        sections.map(\.id)
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         provider: @escaping CellProvider,
@@ -75,6 +62,16 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
         super.init()
         insertRecentlyUsedSectionIfNeeded()
+    }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let cellProvider: CellProvider
+
+    var sectionTypes: [EmojiSectionType] {
+        sections.map(\.id)
     }
 
     // MARK: - Helpers
@@ -159,6 +156,13 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         sections.insert(recentlyUsed, at: 0)
         return true
     }
+
+    // MARK: Private
+
+    private let initialSections: [Section]
+    private var sections: [Section]
+    private let recentlyUsed: RecentlyUsedEmojiSection
+    private let emojiRepository: EmojiRepositoryInterface
 }
 
 extension EmojiDataSource {
@@ -170,8 +174,7 @@ extension EmojiDataSource {
     }
 
     class Section {
-        let id: EmojiSectionType
-        var items: [Emoji]
+        // MARK: Lifecycle
 
         init(
             id: EmojiSectionType,
@@ -180,6 +183,11 @@ extension EmojiDataSource {
             self.id = id
             self.items = items
         }
+
+        // MARK: Internal
+
+        let id: EmojiSectionType
+        var items: [Emoji]
 
         func filteredBySearchQuery(_ query: String) -> Section? {
             guard !query.isEmpty else {
@@ -214,6 +222,8 @@ enum EmojiSectionType: Int, CaseIterable {
     case objects
     case symbols
     case flags
+
+    // MARK: Internal
 
     var icon: StyleKitIcon {
         switch self {

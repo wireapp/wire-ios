@@ -23,9 +23,7 @@ import WireDataModel
 // MARK: - TestTeamObserver
 
 final class TestTeamObserver: NSObject, TeamObserver {
-    var token: NSObjectProtocol!
-    var observedTeam: Team?
-    var notifications: [TeamChangeInfo] = []
+    // MARK: Lifecycle
 
     init(team: Team? = nil, userSession: ZMUserSession) {
         super.init()
@@ -35,6 +33,12 @@ final class TestTeamObserver: NSObject, TeamObserver {
             managedObjectContext: userSession.managedObjectContext
         )
     }
+
+    // MARK: Internal
+
+    var token: NSObjectProtocol!
+    var observedTeam: Team?
+    var notifications: [TeamChangeInfo] = []
 
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
         if let observedTeam, (changeInfo.team as? Team) != observedTeam {

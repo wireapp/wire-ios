@@ -20,21 +20,7 @@ import UIKit
 
 /// @abstract Generates the cell that displays one button
 class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
-    static let cellType: SettingsTableCellProtocol.Type = SettingsButtonCell.self
-    let title: String
-    let identifier: String?
-    var visible: Bool {
-        if let visibilityAction {
-            visibilityAction(self)
-        } else {
-            true
-        }
-    }
-
-    weak var group: SettingsGroupCellDescriptorType?
-    let selectAction: (SettingsCellDescriptorType) -> Void
-    let visibilityAction: ((SettingsCellDescriptorType) -> (Bool))?
-    let isDestructive: Bool
+    // MARK: Lifecycle
 
     init(title: String, isDestructive: Bool, selectAction: @escaping (SettingsCellDescriptorType) -> Void) {
         self.title = title
@@ -69,6 +55,25 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
         self.selectAction = selectAction
         self.visibilityAction = visibilityAction
         self.identifier = identifier
+    }
+
+    // MARK: Internal
+
+    static let cellType: SettingsTableCellProtocol.Type = SettingsButtonCell.self
+
+    let title: String
+    let identifier: String?
+    weak var group: SettingsGroupCellDescriptorType?
+    let selectAction: (SettingsCellDescriptorType) -> Void
+    let visibilityAction: ((SettingsCellDescriptorType) -> (Bool))?
+    let isDestructive: Bool
+
+    var visible: Bool {
+        if let visibilityAction {
+            visibilityAction(self)
+        } else {
+            true
+        }
     }
 
     func featureCell(_ cell: SettingsCellType) {

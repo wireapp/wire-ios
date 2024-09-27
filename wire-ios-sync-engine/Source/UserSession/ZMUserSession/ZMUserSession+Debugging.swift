@@ -121,11 +121,15 @@ extension DebugCommand {
 /// This is a mixin (implementation of a protocol that can be
 /// inherited to avoid having to rewrite all protocol methods and vars)
 private class DebugCommandMixin: DebugCommand {
-    let keyword: String
+    // MARK: Lifecycle
 
     init(keyword: String) {
         self.keyword = keyword
     }
+
+    // MARK: Internal
+
+    let keyword: String
 
     func execute(
         arguments: [String],
@@ -168,15 +172,15 @@ extension EncryptionSessionIdentifier {
 // MARK: - DebugCommandLogEncryption
 
 private class DebugCommandLogEncryption: DebugCommandMixin {
-    var currentlyEnabledLogs: Set<EncryptionSessionIdentifier> = Set()
-
-    private var usage: String {
-        "\(keyword) <add|remove|list> <sessionId|all>"
-    }
+    // MARK: Lifecycle
 
     init() {
         super.init(keyword: "logEncryption")
     }
+
+    // MARK: Internal
+
+    var currentlyEnabledLogs: Set<EncryptionSessionIdentifier> = Set()
 
     override func execute(
         arguments: [String],
@@ -235,13 +239,6 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         }
     }
 
-    private let logsKey = "enabledLogs"
-
-    private func saveEnabledLogs(userSession: ZMUserSession) {
-        let idsToSave = currentlyEnabledLogs.map(\.rawValue)
-        saveState(userSession: userSession, state: [logsKey: idsToSave])
-    }
-
     override func restoreFromState(
         userSession: ZMUserSession,
         state: [String: Any]
@@ -260,15 +257,32 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
             }
         }
     }
+
+    // MARK: Private
+
+    private let logsKey = "enabledLogs"
+
+    private var usage: String {
+        "\(keyword) <add|remove|list> <sessionId|all>"
+    }
+
+    private func saveEnabledLogs(userSession: ZMUserSession) {
+        let idsToSave = currentlyEnabledLogs.map(\.rawValue)
+        saveState(userSession: userSession, state: [logsKey: idsToSave])
+    }
 }
 
 // MARK: - DebugCommandShowIdentifiers
 
 /// Show the user and client identifier
 private class DebugCommandShowIdentifiers: DebugCommandMixin {
+    // MARK: Lifecycle
+
     init() {
         super.init(keyword: "showIdentifier")
     }
+
+    // MARK: Internal
 
     override func execute(
         arguments: [String],
@@ -297,9 +311,13 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
 
 /// Show commands
 private class DebugCommandHelp: DebugCommandMixin {
+    // MARK: Lifecycle
+
     init() {
         super.init(keyword: "help")
     }
+
+    // MARK: Internal
 
     override func execute(
         arguments: [String],
@@ -316,9 +334,13 @@ private class DebugCommandHelp: DebugCommandMixin {
 
 /// Debug variables
 private class DebugCommandVariables: DebugCommandMixin {
+    // MARK: Lifecycle
+
     init() {
         super.init(keyword: "variables")
     }
+
+    // MARK: Internal
 
     override func execute(
         arguments: [String],

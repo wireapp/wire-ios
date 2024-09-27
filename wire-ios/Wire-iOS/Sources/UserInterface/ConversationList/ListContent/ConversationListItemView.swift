@@ -28,49 +28,7 @@ extension Notification.Name {
 // MARK: - ConversationListItemView
 
 final class ConversationListItemView: UIView {
-    // MARK: UI constants
-
-    static let minHeight: CGFloat = 64
-
-    // Please use `updateForConversation:` to set conversation.
-    private var conversation: ConversationAvatarViewConversation?
-
-    var titleText: NSAttributedString? {
-        didSet {
-            titleField.attributedText = titleText
-            titleField.textColor = SemanticColors.Label.textDefault
-        }
-    }
-
-    var subtitleAttributedText: NSAttributedString? {
-        didSet {
-            subtitleField.attributedText = subtitleAttributedText
-            subtitleField.textColor = SemanticColors.Label.textConversationListItemSubtitleField
-            subtitleField.accessibilityValue = subtitleAttributedText?.string
-        }
-    }
-
-    let titleField = UILabel()
-    let avatarView = ConversationAvatarView()
-    lazy var rightAccessory = ConversationListAccessoryView()
-
-    var selected = false {
-        didSet {
-            backgroundColor = .clear
-        }
-    }
-
-    var visualDrawerOffset: CGFloat = 0 {
-        didSet {
-            guard oldValue != visualDrawerOffset else { return }
-
-            NotificationCenter.default.post(name: .conversationListItemDidScroll, object: self)
-        }
-    }
-
-    let labelsStack = UIStackView()
-    let contentStack = UIStackView()
-    private let subtitleField = UILabel()
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero)
@@ -90,6 +48,48 @@ final class ConversationListItemView: UIView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    // MARK: UI constants
+
+    static let minHeight: CGFloat = 64
+
+    let titleField = UILabel()
+    let avatarView = ConversationAvatarView()
+    lazy var rightAccessory = ConversationListAccessoryView()
+
+    let labelsStack = UIStackView()
+    let contentStack = UIStackView()
+
+    var titleText: NSAttributedString? {
+        didSet {
+            titleField.attributedText = titleText
+            titleField.textColor = SemanticColors.Label.textDefault
+        }
+    }
+
+    var subtitleAttributedText: NSAttributedString? {
+        didSet {
+            subtitleField.attributedText = subtitleAttributedText
+            subtitleField.textColor = SemanticColors.Label.textConversationListItemSubtitleField
+            subtitleField.accessibilityValue = subtitleAttributedText?.string
+        }
+    }
+
+    var selected = false {
+        didSet {
+            backgroundColor = .clear
+        }
+    }
+
+    var visualDrawerOffset: CGFloat = 0 {
+        didSet {
+            guard oldValue != visualDrawerOffset else { return }
+
+            NotificationCenter.default.post(name: .conversationListItemDidScroll, object: self)
+        }
     }
 
     func setupConversationListItemView() {
@@ -126,6 +126,109 @@ final class ConversationListItemView: UIView {
             object: nil
         )
     }
+
+    func configure(
+        with title: NSAttributedString?,
+        subtitle: NSAttributedString?
+    ) {
+        titleText = title
+        subtitleAttributedText = subtitle
+    }
+
+    /// configure without a conversation, i.e. when displaying a pending user
+    ///
+    /// - Parameters:
+    ///   - title: title of the cell
+    ///   - subtitle: subtitle of the cell
+    ///   - users: the pending user(s) waiting for self user to accept connection request
+    func configure(with title: NSAttributedString?, subtitle: NSAttributedString?, users: [UserType]) {
+        titleText = title
+        subtitleAttributedText = subtitle
+        rightAccessory.icon = .pendingConnection
+        avatarView.configure(context: .connect(users: users))
+        labelsStack.accessibilityLabel = title?.string
+    }
+
+    func update(for conversation: ConversationListCellConversation?) {
+        self.conversation = conversation
+
+        guard let conversation else {
+            configure(with: nil, subtitle: nil)
+            return
+        }
+
+        let status = conversation.status
+
+        // Configure the subtitle
+        var statusComponents: [String] = []
+        let subtitle = status.description(for: conversation)
+        let subtitleString = subtitle.string
+
+        // Configure the title and status
+        let title: NSAttributedString?
+
+        if let selfUser = SelfUser.provider?.providedSelfUser,
+           selfUser.isTeamMember,
+           let connectedUser = conversation.connectedUserType {
+            title = AvailabilityStringBuilder.titleForUser(
+                name: connectedUser.name ?? "",
+                availability: connectedUser.availability,
+                isE2EICertified: false,
+                isProteusVerified: false,
+                appendYouSuffix: false,
+                style: .list
+            )
+            if connectedUser.availability != .none {
+                statusComponents.append(connectedUser.availability.localizedName)
+            }
+            labelsStack.accessibilityLabel = title?.string
+        } else {
+            title = conversation.displayNameWithFallback.attributedString
+            labelsStack.accessibilityLabel = conversation.displayName
+        }
+
+        if !subtitleString.isEmpty {
+            statusComponents.append(subtitleString)
+        }
+
+        // Configure the avatar
+        avatarView.configure(context: .conversation(conversation: conversation))
+
+        // Configure the accessory
+        let statusIcon: ConversationStatusIcon? = if let player = AppDelegate.shared.mediaPlaybackManager?
+            .activeMediaPlayer,
+            let message = player.sourceMessage,
+            message.conversationLike === conversation {
+            .playingMedia
+        } else {
+            status.icon(for: conversation)
+        }
+        rightAccessory.icon = statusIcon
+
+        if let statusIconAccessibilityValue = rightAccessory.accessibilityValue {
+            statusComponents.append(statusIconAccessibilityValue)
+        }
+        configure(with: title, subtitle: status.description(for: conversation))
+
+        typealias ConversationsList = L10n.Accessibility.ConversationsList
+
+        if let conversation = conversation as? ZMConversation,
+           let firstParticipant = conversation.localParticipants.first,
+           firstParticipant.isPendingApproval {
+            statusComponents.append(ConversationsList.ConnectionRequest.description)
+            labelsStack.accessibilityHint = ConversationsList.ConnectionRequest.hint
+        } else {
+            labelsStack.accessibilityHint = ConversationsList.ItemCell.hint
+        }
+        labelsStack.accessibilityValue = statusComponents.joined(separator: ", ")
+    }
+
+    // MARK: Private
+
+    // Please use `updateForConversation:` to set conversation.
+    private var conversation: ConversationAvatarViewConversation?
+
+    private let subtitleField = UILabel()
 
     private func createConstraints() {
         contentStack.translatesAutoresizingMaskIntoConstraints = false
@@ -235,101 +338,5 @@ final class ConversationListItemView: UIView {
                 self.update(for: conversation)
             }
         }
-    }
-
-    func configure(
-        with title: NSAttributedString?,
-        subtitle: NSAttributedString?
-    ) {
-        titleText = title
-        subtitleAttributedText = subtitle
-    }
-
-    /// configure without a conversation, i.e. when displaying a pending user
-    ///
-    /// - Parameters:
-    ///   - title: title of the cell
-    ///   - subtitle: subtitle of the cell
-    ///   - users: the pending user(s) waiting for self user to accept connection request
-    func configure(with title: NSAttributedString?, subtitle: NSAttributedString?, users: [UserType]) {
-        titleText = title
-        subtitleAttributedText = subtitle
-        rightAccessory.icon = .pendingConnection
-        avatarView.configure(context: .connect(users: users))
-        labelsStack.accessibilityLabel = title?.string
-    }
-
-    func update(for conversation: ConversationListCellConversation?) {
-        self.conversation = conversation
-
-        guard let conversation else {
-            configure(with: nil, subtitle: nil)
-            return
-        }
-
-        let status = conversation.status
-
-        // Configure the subtitle
-        var statusComponents: [String] = []
-        let subtitle = status.description(for: conversation)
-        let subtitleString = subtitle.string
-
-        // Configure the title and status
-        let title: NSAttributedString?
-
-        if let selfUser = SelfUser.provider?.providedSelfUser,
-           selfUser.isTeamMember,
-           let connectedUser = conversation.connectedUserType {
-            title = AvailabilityStringBuilder.titleForUser(
-                name: connectedUser.name ?? "",
-                availability: connectedUser.availability,
-                isE2EICertified: false,
-                isProteusVerified: false,
-                appendYouSuffix: false,
-                style: .list
-            )
-            if connectedUser.availability != .none {
-                statusComponents.append(connectedUser.availability.localizedName)
-            }
-            labelsStack.accessibilityLabel = title?.string
-        } else {
-            title = conversation.displayNameWithFallback.attributedString
-            labelsStack.accessibilityLabel = conversation.displayName
-        }
-
-        if !subtitleString.isEmpty {
-            statusComponents.append(subtitleString)
-        }
-
-        // Configure the avatar
-        avatarView.configure(context: .conversation(conversation: conversation))
-
-        // Configure the accessory
-        let statusIcon: ConversationStatusIcon? = if let player = AppDelegate.shared.mediaPlaybackManager?
-            .activeMediaPlayer,
-            let message = player.sourceMessage,
-            message.conversationLike === conversation {
-            .playingMedia
-        } else {
-            status.icon(for: conversation)
-        }
-        rightAccessory.icon = statusIcon
-
-        if let statusIconAccessibilityValue = rightAccessory.accessibilityValue {
-            statusComponents.append(statusIconAccessibilityValue)
-        }
-        configure(with: title, subtitle: status.description(for: conversation))
-
-        typealias ConversationsList = L10n.Accessibility.ConversationsList
-
-        if let conversation = conversation as? ZMConversation,
-           let firstParticipant = conversation.localParticipants.first,
-           firstParticipant.isPendingApproval {
-            statusComponents.append(ConversationsList.ConnectionRequest.description)
-            labelsStack.accessibilityHint = ConversationsList.ConnectionRequest.hint
-        } else {
-            labelsStack.accessibilityHint = ConversationsList.ItemCell.hint
-        }
-        labelsStack.accessibilityValue = statusComponents.joined(separator: ", ")
     }
 }

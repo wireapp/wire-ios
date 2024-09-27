@@ -23,7 +23,7 @@ import WireFoundation
 // MARK: - ReactionsCollectionView
 
 final class ReactionsCollectionView: UICollectionView {
-    private let layout = UICollectionViewFlowLayout()
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero, collectionViewLayout: layout)
@@ -39,6 +39,10 @@ final class ReactionsCollectionView: UICollectionView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Private
+
+    private let layout = UICollectionViewFlowLayout()
 }
 
 extension ReactionsCollectionView {

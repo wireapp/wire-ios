@@ -21,30 +21,22 @@ import WireCoreCrypto
 import WireDataModel
 
 public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
-    var coreCrypto: MockCoreCryptoProtocol
+    // MARK: Lifecycle
 
     public init(coreCrypto: MockCoreCryptoProtocol = .init()) {
         self.coreCrypto = coreCrypto
     }
 
-    var performCount = 0
-    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) async rethrows -> T {
-        performCount += 1
-        return try block(coreCrypto)
-    }
+    // MARK: Public
 
-    var unsafePerformCount = 0
     public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
         unsafePerformCount += 1
         return try block(coreCrypto)
     }
 
-    var performAsyncCount = 0
     public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) async throws -> T) async rethrows -> T {
         try await block(coreCrypto)
     }
-
-    var mockMlsInit: ((String) throws -> Void)?
 
     public func mlsInit(clientID: String) throws {
         guard let mock = mockMlsInit else {
@@ -54,8 +46,23 @@ public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
         try mock(clientID)
     }
 
-    var tearDownCount = 0
     public func tearDown() throws {
         tearDownCount += 1
+    }
+
+    // MARK: Internal
+
+    var coreCrypto: MockCoreCryptoProtocol
+
+    var performCount = 0
+    var unsafePerformCount = 0
+    var performAsyncCount = 0
+    var mockMlsInit: ((String) throws -> Void)?
+
+    var tearDownCount = 0
+
+    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) async rethrows -> T {
+        performCount += 1
+        return try block(coreCrypto)
     }
 }

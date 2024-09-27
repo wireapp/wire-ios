@@ -19,12 +19,7 @@
 import Foundation
 
 final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
-    // MARK: - Properties
-
-    private let capacity: Int
-    private let backing: NSMutableOrderedSet
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         capacity: Int,
@@ -35,6 +30,8 @@ final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
         super.init(id: .recent, items: items)
         updateContent()
     }
+
+    // MARK: Internal
 
     // MARK: - Methods
 
@@ -55,6 +52,13 @@ final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
         updateContent()
         return true
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let capacity: Int
+    private let backing: NSMutableOrderedSet
 
     private func updateContent() {
         defer { items = backing.array as! [Emoji] }

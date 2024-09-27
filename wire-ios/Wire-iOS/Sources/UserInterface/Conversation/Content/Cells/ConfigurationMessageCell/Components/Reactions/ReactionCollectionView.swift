@@ -23,28 +23,7 @@ import UIKit
 
 final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,
     UICollectionViewDelegate {
-    // MARK: - Properties
-
-    private var collectionViewHeight: CGFloat = 40
-    private lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor
-        .constraint(equalToConstant: collectionViewHeight)
-    private let flowLayout = UICollectionViewFlowLayout()
-    private var contentSizeObservation: NSKeyValueObservation?
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
-
-    var reactions = [MessageReactionMetadata]() {
-        didSet {
-            DispatchQueue.main.async { [self] in
-                collectionView.reloadData()
-            }
-        }
-    }
-
-    var contentHeight: CGFloat {
-        collectionView.contentSize.height
-    }
-
-    // MARK: - Lifecycle
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -58,6 +37,20 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var reactions = [MessageReactionMetadata]() {
+        didSet {
+            DispatchQueue.main.async { [self] in
+                collectionView.reloadData()
+            }
+        }
+    }
+
+    var contentHeight: CGFloat {
+        collectionView.contentSize.height
     }
 
     func createCollectionView() {
@@ -122,4 +115,15 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     ) -> CGFloat {
         4
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var collectionViewHeight: CGFloat = 40
+    private lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor
+        .constraint(equalToConstant: collectionViewHeight)
+    private let flowLayout = UICollectionViewFlowLayout()
+    private var contentSizeObservation: NSKeyValueObservation?
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
 }

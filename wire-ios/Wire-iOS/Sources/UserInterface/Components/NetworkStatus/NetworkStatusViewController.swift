@@ -38,21 +38,7 @@ protocol NetworkStatusViewControllerDelegate: AnyObject {
 // MARK: - NetworkStatusViewController
 
 final class NetworkStatusViewController: UIViewController {
-    weak var delegate: NetworkStatusBarDelegate? {
-        didSet {
-            networkStatusView.delegate = delegate
-        }
-    }
-
-    let networkStatusView = NetworkStatusView()
-    private var observersTokens: [Any] = []
-    private var networkStatusObserverToken: Any?
-    private var pendingState: NetworkStatusViewState?
-    private var state: NetworkStatusViewState = .online
-    private var finishedViewWillAppear = false
-
-    private var device: DeviceAbstraction
-    private var application: ApplicationProtocol
+    // MARK: Lifecycle
 
     /// default init method with a parameter for injecting mock device and mock application
     ///
@@ -85,16 +71,6 @@ final class NetworkStatusViewController: UIViewController {
         createConstraints()
     }
 
-    private func createConstraints() {
-        networkStatusView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            networkStatusView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            networkStatusView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            networkStatusView.topAnchor.constraint(equalTo: view.topAnchor),
-            networkStatusView.heightAnchor.constraint(equalTo: view.heightAnchor),
-        ])
-    }
-
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -102,6 +78,16 @@ final class NetworkStatusViewController: UIViewController {
 
     deinit {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(applyPendingState), object: nil)
+    }
+
+    // MARK: Internal
+
+    let networkStatusView = NetworkStatusView()
+
+    weak var delegate: NetworkStatusBarDelegate? {
+        didSet {
+            networkStatusView.delegate = delegate
+        }
     }
 
     override func loadView() {
@@ -148,17 +134,6 @@ final class NetworkStatusViewController: UIViewController {
         alert.presentTopmost()
     }
 
-    private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {
-        switch networkState {
-        case .offline:
-            .offlineExpanded
-        case .online:
-            .online
-        case .onlineSynchronizing:
-            .onlineSynchronizing
-        }
-    }
-
     @objc
     func tappedOnNetworkStatusBar() {
         switch networkStatusView.state {
@@ -167,13 +142,6 @@ final class NetworkStatusViewController: UIViewController {
         default:
             break
         }
-    }
-
-    private func enqueue(state: NetworkStatusViewState) {
-        pendingState = state
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(applyPendingState), object: nil)
-
-        perform(#selector(applyPendingState), with: nil, afterDelay: 1)
     }
 
     @objc
@@ -189,6 +157,45 @@ final class NetworkStatusViewController: UIViewController {
         guard shouldShowOnIPad() else { return }
 
         networkStatusView.update(state: newState, animated: true)
+    }
+
+    // MARK: Private
+
+    private var observersTokens: [Any] = []
+    private var networkStatusObserverToken: Any?
+    private var pendingState: NetworkStatusViewState?
+    private var state: NetworkStatusViewState = .online
+    private var finishedViewWillAppear = false
+
+    private var device: DeviceAbstraction
+    private var application: ApplicationProtocol
+
+    private func createConstraints() {
+        networkStatusView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            networkStatusView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            networkStatusView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            networkStatusView.topAnchor.constraint(equalTo: view.topAnchor),
+            networkStatusView.heightAnchor.constraint(equalTo: view.heightAnchor),
+        ])
+    }
+
+    private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {
+        switch networkState {
+        case .offline:
+            .offlineExpanded
+        case .online:
+            .online
+        case .onlineSynchronizing:
+            .onlineSynchronizing
+        }
+    }
+
+    private func enqueue(state: NetworkStatusViewState) {
+        pendingState = state
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(applyPendingState), object: nil)
+
+        perform(#selector(applyPendingState), with: nil, afterDelay: 1)
     }
 }
 

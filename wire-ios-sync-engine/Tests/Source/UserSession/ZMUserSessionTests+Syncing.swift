@@ -22,10 +22,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
-    // The mock in this place is a workaround, because somewhere down the line the test funcs call
-    // `func startQuickSync()` and this calls `PushSupportedProtocolsAction`.
-    // A proper solution and mocking requires a further refactoring.
-    private var mockPushSupportedProtocolsActionHandler: MockActionHandler<PushSupportedProtocolsAction>!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -203,4 +200,11 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         XCTAssertEqual(networkStateRecorder.stateChanges, [.onlineSynchronizing, .online])
         XCTAssertFalse(sut.isPerformingSync)
     }
+
+    // MARK: Private
+
+    // The mock in this place is a workaround, because somewhere down the line the test funcs call
+    // `func startQuickSync()` and this calls `PushSupportedProtocolsAction`.
+    // A proper solution and mocking requires a further refactoring.
+    private var mockPushSupportedProtocolsActionHandler: MockActionHandler<PushSupportedProtocolsAction>!
 }

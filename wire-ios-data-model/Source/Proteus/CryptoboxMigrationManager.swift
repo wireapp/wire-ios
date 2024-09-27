@@ -34,11 +34,7 @@ public protocol CryptoboxMigrationManagerInterface {
 // MARK: - CryptoboxMigrationManager
 
 public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
-    // MARK: - Properties
-
-    let fileManager: FileManagerInterface
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public convenience init() {
         self.init(fileManager: FileManager.default)
@@ -48,13 +44,7 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
         self.fileManager = fileManager
     }
 
-    // MARK: - Failure
-
-    enum Failure: Error {
-        case failedToMigrateData
-        case failedToDeleteLegacyData
-        case proteusServiceUnavailable
-    }
+    // MARK: Public
 
     // MARK: - Methods
 
@@ -85,6 +75,22 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
             throw Failure.failedToDeleteLegacyData
         }
     }
+
+    // MARK: Internal
+
+    // MARK: - Failure
+
+    enum Failure: Error {
+        case failedToMigrateData
+        case failedToDeleteLegacyData
+        case proteusServiceUnavailable
+    }
+
+    // MARK: - Properties
+
+    let fileManager: FileManagerInterface
+
+    // MARK: Private
 
     // MARK: - Helpers
 

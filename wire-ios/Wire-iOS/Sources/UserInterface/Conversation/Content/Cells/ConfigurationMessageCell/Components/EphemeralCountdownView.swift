@@ -20,11 +20,7 @@ import UIKit
 import WireDataModel
 
 final class EphemeralCountdownView: UIView {
-    fileprivate let destructionCountdownView = DestructionCountdownView()
-    fileprivate var timer: Timer?
-    fileprivate var wasEverAnimated = false
-
-    var message: ZMConversationMessage?
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero)
@@ -46,6 +42,10 @@ final class EphemeralCountdownView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var message: ZMConversationMessage?
 
     override func didMoveToWindow() {
         super.didMoveToWindow()
@@ -82,6 +82,12 @@ final class EphemeralCountdownView: UIView {
         timer = nil
         self.wasEverAnimated = wasEverAnimated
     }
+
+    // MARK: Fileprivate
+
+    fileprivate let destructionCountdownView = DestructionCountdownView()
+    fileprivate var timer: Timer?
+    fileprivate var wasEverAnimated = false
 
     @objc
     fileprivate func updateCountdown() {

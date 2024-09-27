@@ -19,14 +19,7 @@
 import Foundation
 
 final class SetFullNameStepDescription: AuthenticationStepDescription {
-    typealias TeamFullName = L10n.Localizable.Team.FullName
-
-    let backButton: BackButtonDescription?
-    let mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription?
+    // MARK: Lifecycle
 
     init() {
         self.backButton = BackButtonDescription()
@@ -40,4 +33,15 @@ final class SetFullNameStepDescription: AuthenticationStepDescription {
         self.secondaryView = nil
         self.footerView = nil
     }
+
+    // MARK: Internal
+
+    typealias TeamFullName = L10n.Localizable.Team.FullName
+
+    let backButton: BackButtonDescription?
+    let mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let footerView: AuthenticationFooterViewDescription?
 }

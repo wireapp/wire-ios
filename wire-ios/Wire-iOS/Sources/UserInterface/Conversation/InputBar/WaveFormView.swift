@@ -20,14 +20,21 @@ import UIKit
 import WireDesign
 
 final class WaveFormView: UIView {
-    private let visualizationView = SCSiriWaveformView()
-    private let leftGradient = GradientView()
-    private let rightGradient = GradientView()
+    // MARK: Lifecycle
 
-    private lazy var leftGradientWidthConstraint: NSLayoutConstraint = leftGradient.widthAnchor
-        .constraint(equalToConstant: gradientWidth)
-    private lazy var rightGradientWidthConstraint: NSLayoutConstraint = rightGradient.widthAnchor
-        .constraint(equalToConstant: gradientWidth)
+    init() {
+        super.init(frame: CGRect.zero)
+        configureViews()
+        updateWaveFormColor()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
 
     var gradientWidth: CGFloat = 25 {
         didSet {
@@ -48,21 +55,20 @@ final class WaveFormView: UIView {
         }
     }
 
-    init() {
-        super.init(frame: CGRect.zero)
-        configureViews()
-        updateWaveFormColor()
-        createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     func updateWithLevel(_ level: Float) {
         visualizationView.update(withLevel: level)
     }
+
+    // MARK: Private
+
+    private let visualizationView = SCSiriWaveformView()
+    private let leftGradient = GradientView()
+    private let rightGradient = GradientView()
+
+    private lazy var leftGradientWidthConstraint: NSLayoutConstraint = leftGradient.widthAnchor
+        .constraint(equalToConstant: gradientWidth)
+    private lazy var rightGradientWidthConstraint: NSLayoutConstraint = rightGradient.widthAnchor
+        .constraint(equalToConstant: gradientWidth)
 
     private func configureViews() {
         [visualizationView, leftGradient, rightGradient].forEach(addSubview)

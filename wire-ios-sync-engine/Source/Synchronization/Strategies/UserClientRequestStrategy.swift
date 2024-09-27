@@ -38,26 +38,7 @@ private let zmLog = ZMSLog(tag: "userClientRS")
 @objcMembers
 public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder,
     ZMSingleRequestTranscoder, RequestStrategy {
-    weak var clientRegistrationStatus: ZMClientRegistrationStatus?
-    weak var clientUpdateStatus: ClientUpdateStatus?
-
-    fileprivate(set) var modifiedSync: ZMUpstreamModifiedObjectSync! = nil
-    fileprivate(set) var deleteSync: ZMUpstreamModifiedObjectSync! = nil
-    fileprivate(set) var insertSync: ZMUpstreamInsertedObjectSync! = nil
-    fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
-    fileprivate var didRetryRegisteringSignalingKeys = false
-    fileprivate var didRetryUpdatingCapabilities = false
-    let prekeyGenerator: PrekeyGenerator
-
-    public var requestsFactory: UserClientRequestFactory
-    public var minNumberOfRemainingKeys: UInt = 20
-
-    fileprivate var insertSyncFilter: NSPredicate {
-        NSPredicate { object, _ -> Bool in
-            guard let client = object as? UserClient, let user = client.user else { return false }
-            return user.isSelfUser
-        }
-    }
+    // MARK: Lifecycle
 
     public init(
         clientRegistrationStatus: ZMClientRegistrationStatus,
@@ -107,38 +88,18 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         self.fetchAllClientsSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
     }
 
-    func modifiedPredicate() -> NSPredicate {
-        guard let baseModifiedPredicate = UserClient.predicateForObjectsThatNeedToBeUpdatedUpstream() else {
-            fatal("baseModifiedPredicate is nil!")
-        }
+    // MARK: Public
 
-        let needToUploadKeysPredicate = NSPredicate(
-            format: "\(ZMUserClientNumberOfKeysRemainingKey) < \(minNumberOfRemainingKeys)"
-        )
+    public var requestsFactory: UserClientRequestFactory
+    public var minNumberOfRemainingKeys: UInt = 20
 
-        let needsToUploadSignalingKeysPredicate = NSPredicate(
-            format: "\(ZMUserClientNeedsToUpdateSignalingKeysKey) == YES"
-        )
+    // we don;t use this method but it's required by ZMObjectStrategy protocol
+    public var requestGenerators: [ZMRequestGenerator] {
+        []
+    }
 
-        let needsToUpdateCapabilitiesPredicate = NSPredicate(
-            format: "\(ZMUserClientNeedsToUpdateCapabilitiesKey) == YES"
-        )
-
-        let needsToUploadMLSPublicKeysPredicate = NSPredicate(
-            format: "\(UserClient.needsToUploadMLSPublicKeysKey) == YES"
-        )
-
-        let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            baseModifiedPredicate,
-            NSCompoundPredicate(orPredicateWithSubpredicates: [
-                needToUploadKeysPredicate,
-                needsToUploadSignalingKeysPredicate,
-                needsToUpdateCapabilitiesPredicate,
-                needsToUploadMLSPublicKeysPredicate,
-            ]),
-        ])
-
-        return modifiedPredicate
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        [insertSync, modifiedSync, deleteSync]
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -200,15 +161,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
 
         return nil
-    }
-
-    // we don;t use this method but it's required by ZMObjectStrategy protocol
-    public var requestGenerators: [ZMRequestGenerator] {
-        []
-    }
-
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [insertSync, modifiedSync, deleteSync]
     }
 
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
@@ -506,6 +458,119 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
     }
 
+    /// Returns whether synchronization of this object needs additional requests
+    public func updateUpdatedObject(
+        _ managedObject: ZMManagedObject,
+        requestUserInfo: [AnyHashable: Any]?,
+        response: ZMTransportResponse,
+        keysToParse: Set<String>
+    ) -> Bool {
+        guard let userClient = managedObject as? UserClient else { return false }
+
+        if keysToParse.contains(ZMUserClientMarkedToDeleteKey) {
+            return processResponseForDeletingClients(
+                managedObject,
+                requestUserInfo: requestUserInfo,
+                responsePayload: response.payload
+            )
+        } else if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
+            (managedObject as! UserClient).numberOfKeysRemaining += Int32(prekeyGenerator.keyCount)
+            clientUpdateStatus?.didUploadPrekeys()
+        } else if keysToParse.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
+            didRetryRegisteringSignalingKeys = false
+        } else if keysToParse.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
+            didRetryUpdatingCapabilities = false
+        } else if keysToParse.contains(UserClient.needsToUploadMLSPublicKeysKey), response.result == .success {
+            userClient.needsToUploadMLSPublicKeys = false
+            clientRegistrationStatus?.didRegisterMLSClient(userClient)
+        }
+
+        return false
+    }
+
+    // Should return the objects that need to be refetched from the BE in case of upload error
+    public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
+        nil
+    }
+
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+        // Events are processed by the UserClientEventConsumer
+    }
+
+    // MARK: Internal
+
+    weak var clientRegistrationStatus: ZMClientRegistrationStatus?
+    weak var clientUpdateStatus: ClientUpdateStatus?
+
+    fileprivate(set) var modifiedSync: ZMUpstreamModifiedObjectSync! = nil
+    fileprivate(set) var deleteSync: ZMUpstreamModifiedObjectSync! = nil
+    fileprivate(set) var insertSync: ZMUpstreamInsertedObjectSync! = nil
+    fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
+    let prekeyGenerator: PrekeyGenerator
+
+    func modifiedPredicate() -> NSPredicate {
+        guard let baseModifiedPredicate = UserClient.predicateForObjectsThatNeedToBeUpdatedUpstream() else {
+            fatal("baseModifiedPredicate is nil!")
+        }
+
+        let needToUploadKeysPredicate = NSPredicate(
+            format: "\(ZMUserClientNumberOfKeysRemainingKey) < \(minNumberOfRemainingKeys)"
+        )
+
+        let needsToUploadSignalingKeysPredicate = NSPredicate(
+            format: "\(ZMUserClientNeedsToUpdateSignalingKeysKey) == YES"
+        )
+
+        let needsToUpdateCapabilitiesPredicate = NSPredicate(
+            format: "\(ZMUserClientNeedsToUpdateCapabilitiesKey) == YES"
+        )
+
+        let needsToUploadMLSPublicKeysPredicate = NSPredicate(
+            format: "\(UserClient.needsToUploadMLSPublicKeysKey) == YES"
+        )
+
+        let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            baseModifiedPredicate,
+            NSCompoundPredicate(orPredicateWithSubpredicates: [
+                needToUploadKeysPredicate,
+                needsToUploadSignalingKeysPredicate,
+                needsToUpdateCapabilitiesPredicate,
+                needsToUploadMLSPublicKeysPredicate,
+            ]),
+        ])
+
+        return modifiedPredicate
+    }
+
+    func processResponseForDeletingClients(
+        _ managedObject: ZMManagedObject!,
+        requestUserInfo: [AnyHashable: Any]!,
+        responsePayload payload: ZMTransportData!
+    ) -> Bool {
+        // is it safe for ui??
+        if let client = managedObject as? UserClient, let context = managedObjectContext {
+            WaitingGroupTask(context: context) {
+                await client.deleteClientAndEndSession()
+                await context.perform { self.clientUpdateStatus?.didDeleteClient() }
+            }
+        }
+        return false
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var didRetryRegisteringSignalingKeys = false
+    fileprivate var didRetryUpdatingCapabilities = false
+
+    fileprivate var insertSyncFilter: NSPredicate {
+        NSPredicate { object, _ -> Bool in
+            guard let client = object as? UserClient, let user = client.user else { return false }
+            return user.isSelfUser
+        }
+    }
+
+    // MARK: Private
+
     private func received(clients: [[String: AnyObject]]) {
         guard let context = managedObjectContext else { return }
 
@@ -537,59 +602,5 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
         context.saveOrRollback()
         clientUpdateStatus?.didFetchClients(clients)
-    }
-
-    /// Returns whether synchronization of this object needs additional requests
-    public func updateUpdatedObject(
-        _ managedObject: ZMManagedObject,
-        requestUserInfo: [AnyHashable: Any]?,
-        response: ZMTransportResponse,
-        keysToParse: Set<String>
-    ) -> Bool {
-        guard let userClient = managedObject as? UserClient else { return false }
-
-        if keysToParse.contains(ZMUserClientMarkedToDeleteKey) {
-            return processResponseForDeletingClients(
-                managedObject,
-                requestUserInfo: requestUserInfo,
-                responsePayload: response.payload
-            )
-        } else if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
-            (managedObject as! UserClient).numberOfKeysRemaining += Int32(prekeyGenerator.keyCount)
-            clientUpdateStatus?.didUploadPrekeys()
-        } else if keysToParse.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
-            didRetryRegisteringSignalingKeys = false
-        } else if keysToParse.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
-            didRetryUpdatingCapabilities = false
-        } else if keysToParse.contains(UserClient.needsToUploadMLSPublicKeysKey), response.result == .success {
-            userClient.needsToUploadMLSPublicKeys = false
-            clientRegistrationStatus?.didRegisterMLSClient(userClient)
-        }
-
-        return false
-    }
-
-    func processResponseForDeletingClients(
-        _ managedObject: ZMManagedObject!,
-        requestUserInfo: [AnyHashable: Any]!,
-        responsePayload payload: ZMTransportData!
-    ) -> Bool {
-        // is it safe for ui??
-        if let client = managedObject as? UserClient, let context = managedObjectContext {
-            WaitingGroupTask(context: context) {
-                await client.deleteClientAndEndSession()
-                await context.perform { self.clientUpdateStatus?.didDeleteClient() }
-            }
-        }
-        return false
-    }
-
-    // Should return the objects that need to be refetched from the BE in case of upload error
-    public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
-        nil
-    }
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        // Events are processed by the UserClientEventConsumer
     }
 }

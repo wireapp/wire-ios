@@ -24,14 +24,7 @@ import WireSyncEngine
 // MARK: - RemoveClientStepViewController
 
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
-    var authenticationCoordinator: AuthenticationCoordinator?
-    let clientListController: RemoveClientsViewController
-    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
-        traitEnvironment.traitCollection.horizontalSizeClass
-    }
-
-    private var contentViewWidthRegular: NSLayoutConstraint!
-    private var contentViewWidthCompact: NSLayoutConstraint!
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -46,7 +39,13 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Lifecycle
+    // MARK: Internal
+
+    var authenticationCoordinator: AuthenticationCoordinator?
+    let clientListController: RemoveClientsViewController
+    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
+        traitEnvironment.traitCollection.horizontalSizeClass
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +58,35 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
     }
+
+    // MARK: - Adaptive UI
+
+    func toggleConstraints() {
+        userInterfaceSizeClass(self).toggle(
+            compactConstraints: [contentViewWidthCompact],
+            regularConstraints: [contentViewWidthRegular]
+        )
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        toggleConstraints()
+    }
+
+    // MARK: - AuthenticationCoordinatedViewController
+
+    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {
+        // no-op
+    }
+
+    func displayError(_: Error) {
+        // no-op
+    }
+
+    // MARK: Private
+
+    private var contentViewWidthRegular: NSLayoutConstraint!
+    private var contentViewWidthCompact: NSLayoutConstraint!
 
     private func configureSubviews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -99,30 +127,6 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     @objc
     private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
-    }
-
-    // MARK: - Adaptive UI
-
-    func toggleConstraints() {
-        userInterfaceSizeClass(self).toggle(
-            compactConstraints: [contentViewWidthCompact],
-            regularConstraints: [contentViewWidthRegular]
-        )
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        toggleConstraints()
-    }
-
-    // MARK: - AuthenticationCoordinatedViewController
-
-    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {
-        // no-op
-    }
-
-    func displayError(_: Error) {
-        // no-op
     }
 }
 

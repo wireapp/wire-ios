@@ -20,16 +20,7 @@ import UIKit
 import WireDesign
 
 final class SearchResultsView: UIView {
-    let accessoryViewMargin: CGFloat = 16.0
-    let emptyResultContainer = UIView()
-
-    @objc let collectionView: UICollectionView
-    let collectionViewLayout: UICollectionViewFlowLayout
-    let accessoryContainer = UIView()
-    var lastLayoutBounds = CGRect.zero
-    var accessoryContainerHeightConstraint: NSLayoutConstraint?
-    var accessoryViewBottomOffsetConstraint: NSLayoutConstraint?
-    weak var parentViewController: UIViewController?
+    // MARK: Lifecycle
 
     init() {
         self.collectionViewLayout = UICollectionViewFlowLayout()
@@ -64,44 +55,18 @@ final class SearchResultsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func createConstraints() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        emptyResultContainer.translatesAutoresizingMaskIntoConstraints = false
-        accessoryContainer.translatesAutoresizingMaskIntoConstraints = false
+    // MARK: Internal
 
-        accessoryContainerHeightConstraint = accessoryContainer.heightAnchor.constraint(equalToConstant: 0)
-        accessoryViewBottomOffsetConstraint = accessoryContainer.bottomAnchor.constraint(equalTo: bottomAnchor)
+    let accessoryViewMargin: CGFloat = 16.0
+    let emptyResultContainer = UIView()
 
-        NSLayoutConstraint.activate([
-            // collectionView
-            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            collectionView.topAnchor.constraint(equalTo: topAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: accessoryContainer.topAnchor),
-
-            // emptyResultContainer
-            emptyResultContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            emptyResultContainer.topAnchor.constraint(equalTo: topAnchor),
-            emptyResultContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
-            emptyResultContainer.bottomAnchor.constraint(equalTo: accessoryContainer.topAnchor),
-
-            accessoryContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            accessoryContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
-            accessoryContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
-            accessoryContainerHeightConstraint!,
-            accessoryViewBottomOffsetConstraint!,
-        ])
-    }
-
-    override func layoutSubviews() {
-        if !lastLayoutBounds.equalTo(bounds) {
-            collectionView.collectionViewLayout.invalidateLayout()
-        }
-
-        lastLayoutBounds = bounds
-
-        super.layoutSubviews()
-    }
+    @objc let collectionView: UICollectionView
+    let collectionViewLayout: UICollectionViewFlowLayout
+    let accessoryContainer = UIView()
+    var lastLayoutBounds = CGRect.zero
+    var accessoryContainerHeightConstraint: NSLayoutConstraint?
+    var accessoryViewBottomOffsetConstraint: NSLayoutConstraint?
+    weak var parentViewController: UIViewController?
 
     var accessoryView: UIView? {
         didSet {
@@ -148,6 +113,47 @@ final class SearchResultsView: UIView {
 
             emptyResultContainer.setNeedsLayout()
         }
+    }
+
+    override func layoutSubviews() {
+        if !lastLayoutBounds.equalTo(bounds) {
+            collectionView.collectionViewLayout.invalidateLayout()
+        }
+
+        lastLayoutBounds = bounds
+
+        super.layoutSubviews()
+    }
+
+    // MARK: Private
+
+    private func createConstraints() {
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        emptyResultContainer.translatesAutoresizingMaskIntoConstraints = false
+        accessoryContainer.translatesAutoresizingMaskIntoConstraints = false
+
+        accessoryContainerHeightConstraint = accessoryContainer.heightAnchor.constraint(equalToConstant: 0)
+        accessoryViewBottomOffsetConstraint = accessoryContainer.bottomAnchor.constraint(equalTo: bottomAnchor)
+
+        NSLayoutConstraint.activate([
+            // collectionView
+            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionView.topAnchor.constraint(equalTo: topAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: accessoryContainer.topAnchor),
+
+            // emptyResultContainer
+            emptyResultContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            emptyResultContainer.topAnchor.constraint(equalTo: topAnchor),
+            emptyResultContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
+            emptyResultContainer.bottomAnchor.constraint(equalTo: accessoryContainer.topAnchor),
+
+            accessoryContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            accessoryContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
+            accessoryContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
+            accessoryContainerHeightConstraint!,
+            accessoryViewBottomOffsetConstraint!,
+        ])
     }
 
     @objc

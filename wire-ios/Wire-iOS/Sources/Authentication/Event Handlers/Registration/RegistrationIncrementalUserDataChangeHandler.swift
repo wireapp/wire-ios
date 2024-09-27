@@ -23,6 +23,8 @@ import WireDataModel
 /// Handles the change of user data during registration.
 
 final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
+    // MARK: Internal
+
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {
@@ -52,6 +54,8 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
             return handleRegistrationCompletion(with: unregisteredUser)
         }
     }
+
+    // MARK: Private
 
     // MARK: - Specific Flow Handlers
 

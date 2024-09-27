@@ -36,13 +36,13 @@ protocol AccessTokenRenewing {
 // MARK: - AccessTokenMigration
 
 class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
-    let version: APIVersion = .v3
-
-    private var continuation: CheckedContinuation<Void, Swift.Error>?
+    // MARK: Internal
 
     enum Error: Swift.Error {
         case failedToRenewAccessToken
     }
+
+    let version: APIVersion = .v3
 
     func perform(with session: ZMUserSession, clientID: String) async throws {
         try await perform(withTokenRenewer: session, clientID: clientID)
@@ -73,6 +73,10 @@ class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
         continuation?.resume(throwing: Self.Error.failedToRenewAccessToken)
         teardownContinuation()
     }
+
+    // MARK: Private
+
+    private var continuation: CheckedContinuation<Void, Swift.Error>?
 
     private func teardownContinuation() {
         continuation = nil

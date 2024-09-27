@@ -20,21 +20,7 @@ import UIKit
 import WireDesign
 
 final class TwoLineTitleView: UIView {
-    let titleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(
-            fontSpec: .headerSemiboldFont,
-            color: SemanticColors.Label.textDefault
-        )
-        return label
-    }()
-
-    let subtitleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(
-            fontSpec: .mediumRegularFont,
-            color: SemanticColors.Label.textDefault
-        )
-        return label
-    }()
+    // MARK: Lifecycle
 
     init(first: NSAttributedString, second: NSAttributedString?) {
         super.init(frame: CGRect.zero)
@@ -65,4 +51,22 @@ final class TwoLineTitleView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let titleLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(
+            fontSpec: .headerSemiboldFont,
+            color: SemanticColors.Label.textDefault
+        )
+        return label
+    }()
+
+    let subtitleLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(
+            fontSpec: .mediumRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
+        return label
+    }()
 }

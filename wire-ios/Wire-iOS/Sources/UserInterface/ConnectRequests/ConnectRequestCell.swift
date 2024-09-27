@@ -20,10 +20,22 @@ import UIKit
 import WireSyncEngine
 
 final class ConnectRequestCell: UITableViewCell {
+    // MARK: Lifecycle
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = UIColor.clear
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     var acceptBlock: (() -> Void)?
     var ignoreBlock: (() -> Void)?
-
-    private var connectRequestViewController: IncomingConnectionViewController?
 
     var user: UserType! {
         didSet {
@@ -58,13 +70,7 @@ final class ConnectRequestCell: UITableViewCell {
         }
     }
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = UIColor.clear
-    }
+    // MARK: Private
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private var connectRequestViewController: IncomingConnectionViewController?
 }

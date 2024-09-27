@@ -24,6 +24,8 @@ import XCTest
 @testable import WireSyncEngine
 
 final class GetUserClientFingerprintUseCaseTests: MessagingTest {
+    // MARK: Internal
+
     var sut: GetUserClientFingerprintUseCase!
 
     var mockProteusService: MockProteusServiceInterface!
@@ -154,6 +156,8 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
         // THEN
         XCTAssertEqual(mockProteusProvider.mockKeyStore.accessEncryptionContextCount, 1)
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

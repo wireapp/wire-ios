@@ -23,7 +23,7 @@ import XCTest
 // MARK: - FeatureTests
 
 final class FeatureTests: ZMBaseManagedObjectTest {
-    private var context: NSManagedObjectContext { syncMOC }
+    // MARK: Internal
 
     // MARK: - Tests
 
@@ -188,6 +188,10 @@ final class FeatureTests: ZMBaseManagedObjectTest {
             XCTAssertFalse(feature.needsToNotifyUser)
         }
     }
+
+    // MARK: Private
+
+    private var context: NSManagedObjectContext { syncMOC }
 }
 
 // MARK: - Helpers

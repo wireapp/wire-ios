@@ -24,22 +24,7 @@ import WireSyncEngine
 // MARK: - ChangeEmailViewController
 
 final class ChangeEmailViewController: SettingsBaseTableViewController {
-    // MARK: - Types
-
-    typealias EmailAccountSection = L10n.Localizable.Self.Settings.AccountSection.Email
-
-    // MARK: - Properties
-
-    private let viewModel: ChangeEmailViewModel
-    private var observerToken: Any?
-
-    private let emailCell = AccessoryTextFieldCell(style: .default, reuseIdentifier: nil)
-
-    private let userSession: UserSession
-
-    // MARK: - Init
-
-    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
+    // MARK: Lifecycle
 
     init(user: UserType, userSession: UserSession) {
         self.userSession = userSession
@@ -55,6 +40,12 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    typealias EmailAccountSection = L10n.Localizable.Self.Settings.AccountSection.Email
 
     // MARK: - Override methods
 
@@ -85,23 +76,6 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         observerToken = nil
     }
 
-    // MARK: - Setup Views
-
-    private func setupViews() {
-        view.backgroundColor = .clear
-        tableView.isScrollEnabled = false
-
-        emailCell.textField.kind = .email
-        emailCell.textField.showConfirmButton = false
-        emailCell.textField.backgroundColor = .clear
-        emailCell.textField.textColor = SemanticColors.Label.textDefault
-        emailCell.textField.accessibilityIdentifier = "EmailField"
-        emailCell.textField.textFieldValidationDelegate = self
-        emailCell.textField.addTarget(self, action: #selector(emailTextFieldEditingChanged), for: .editingChanged)
-
-        updateSaveButtonState()
-    }
-
     // MARK: - Actions
 
     func updateSaveButtonState() {
@@ -124,19 +98,6 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         }
     }
 
-    private func handleEmailUpdateSuccess() {
-        activityIndicator.setIsActive(false)
-        updateSaveButtonState()
-        if let newEmail = viewModel.newEmail {
-            let confirmController = ConfirmEmailViewController(
-                newEmail: newEmail,
-                delegate: self,
-                userSession: userSession
-            )
-            navigationController?.pushViewController(confirmController, animated: true)
-        }
-    }
-
     // MARK: - SettingsBaseTableViewController
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -150,6 +111,51 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         emailCell.textField.text = viewModel.visibleEmail
         return emailCell
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let viewModel: ChangeEmailViewModel
+    private var observerToken: Any?
+
+    private let emailCell = AccessoryTextFieldCell(style: .default, reuseIdentifier: nil)
+
+    private let userSession: UserSession
+
+    // MARK: - Init
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
+
+    // MARK: - Setup Views
+
+    private func setupViews() {
+        view.backgroundColor = .clear
+        tableView.isScrollEnabled = false
+
+        emailCell.textField.kind = .email
+        emailCell.textField.showConfirmButton = false
+        emailCell.textField.backgroundColor = .clear
+        emailCell.textField.textColor = SemanticColors.Label.textDefault
+        emailCell.textField.accessibilityIdentifier = "EmailField"
+        emailCell.textField.textFieldValidationDelegate = self
+        emailCell.textField.addTarget(self, action: #selector(emailTextFieldEditingChanged), for: .editingChanged)
+
+        updateSaveButtonState()
+    }
+
+    private func handleEmailUpdateSuccess() {
+        activityIndicator.setIsActive(false)
+        updateSaveButtonState()
+        if let newEmail = viewModel.newEmail {
+            let confirmController = ConfirmEmailViewController(
+                newEmail: newEmail,
+                delegate: self,
+                userSession: userSession
+            )
+            navigationController?.pushViewController(confirmController, animated: true)
+        }
     }
 }
 

@@ -21,26 +21,7 @@ import Foundation
 // MARK: - Typing
 
 class Typing {
-    #if DEBUG
-        public static var defaultTimeout: TimeInterval = 60
-    #else
-        public static let defaultTimeout: TimeInterval = 60
-    #endif
-
-    // MARK: - Properties
-
-    var timeout: TimeInterval = 0
-
-    private let uiContext: NSManagedObjectContext
-    private let syncContext: NSManagedObjectContext
-
-    private let typingUserTimeout: TypingUsersTimeout
-    private var expirationTimer: ZMTimer?
-    private var nextPruneDate: Date?
-
-    private var needsTearDown: Bool
-
-    // MARK: - Life Cycle
+    // MARK: Lifecycle
 
     init(uiContext: NSManagedObjectContext, syncContext: NSManagedObjectContext) {
         self.needsTearDown = true
@@ -49,6 +30,20 @@ class Typing {
         self.timeout = Typing.defaultTimeout
         self.typingUserTimeout = TypingUsersTimeout()
     }
+
+    // MARK: Public
+
+    #if DEBUG
+        public static var defaultTimeout: TimeInterval = 60
+    #else
+        public static let defaultTimeout: TimeInterval = 60
+    #endif
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    var timeout: TimeInterval = 0
 
     func tearDown() {
         needsTearDown = false
@@ -74,6 +69,17 @@ class Typing {
 
         updateExpirationIfNeeded()
     }
+
+    // MARK: Private
+
+    private let uiContext: NSManagedObjectContext
+    private let syncContext: NSManagedObjectContext
+
+    private let typingUserTimeout: TypingUsersTimeout
+    private var expirationTimer: ZMTimer?
+    private var nextPruneDate: Date?
+
+    private var needsTearDown: Bool
 
     private func sendNotification(for conversation: ZMConversation) {
         let userIds = typingUserTimeout.userIds(in: conversation)

@@ -83,11 +83,13 @@ extension NSManagedObjectContext {
 ///
 /// We call `NSManagedObjectContext/enterAllGroupsExceptSecondary()` before the Task and leave the groups at the end.
 public struct WaitingGroupTask {
-    let context: NSManagedObjectContext
+    // MARK: Lifecycle
 
     public init(context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: Public
 
     public func callAsFunction(_ block: @escaping () async -> Void) {
         let groups = context.enterAllGroupsExceptSecondary()
@@ -96,4 +98,8 @@ public struct WaitingGroupTask {
             context.leaveAllGroups(groups)
         }
     }
+
+    // MARK: Internal
+
+    let context: NSManagedObjectContext
 }

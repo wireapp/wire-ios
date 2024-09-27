@@ -49,7 +49,7 @@ public protocol NetworkStatusObservable {
 
 /// This class monitors the reachability of backend. It emits notifications to its observers if the status changes.
 public final class NetworkStatus: NetworkStatusObservable {
-    private let reachabilityRef: SCNetworkReachability
+    // MARK: Lifecycle
 
     init() {
         var zeroAddress = sockaddr_in()
@@ -81,31 +81,7 @@ public final class NetworkStatus: NetworkStatusObservable {
         )
     }
 
-    private func startReachabilityObserving() {
-        var context = SCNetworkReachabilityContext(
-            version: 0,
-            info: nil,
-            retain: nil,
-            release: nil,
-            copyDescription: nil
-        )
-        // Sets `self` as listener object
-        context.info = UnsafeMutableRawPointer(Unmanaged<NetworkStatus>.passUnretained(self).toOpaque())
-
-        if SCNetworkReachabilitySetCallback(reachabilityRef, reachabilityCallback, &context) {
-            if SCNetworkReachabilityScheduleWithRunLoop(
-                reachabilityRef,
-                CFRunLoopGetCurrent(),
-                CFRunLoopMode.defaultMode!.rawValue
-            ) {
-                zmLog.info("Scheduled network reachability callback in runloop")
-            } else {
-                zmLog.error("Error scheduling network reachability in runloop")
-            }
-        } else {
-            zmLog.error("Error setting network reachability callback")
-        }
-    }
+    // MARK: Public
 
     // MARK: - Public API
 
@@ -140,6 +116,10 @@ public final class NetworkStatus: NetworkStatusObservable {
         return returnValue
     }
 
+    // MARK: Private
+
+    private let reachabilityRef: SCNetworkReachability
+
     // MARK: - Utilities
 
     private var reachabilityCallback: SCNetworkReachabilityCallBack = { (
@@ -154,5 +134,31 @@ public final class NetworkStatus: NetworkStatusObservable {
         let networkStatus = Unmanaged<NetworkStatus>.fromOpaque(info).takeUnretainedValue()
         // Post a notification to notify the client that the network reachability changed.
         NotificationCenter.default.post(name: Notification.Name.NetworkStatus, object: networkStatus)
+    }
+
+    private func startReachabilityObserving() {
+        var context = SCNetworkReachabilityContext(
+            version: 0,
+            info: nil,
+            retain: nil,
+            release: nil,
+            copyDescription: nil
+        )
+        // Sets `self` as listener object
+        context.info = UnsafeMutableRawPointer(Unmanaged<NetworkStatus>.passUnretained(self).toOpaque())
+
+        if SCNetworkReachabilitySetCallback(reachabilityRef, reachabilityCallback, &context) {
+            if SCNetworkReachabilityScheduleWithRunLoop(
+                reachabilityRef,
+                CFRunLoopGetCurrent(),
+                CFRunLoopMode.defaultMode!.rawValue
+            ) {
+                zmLog.info("Scheduled network reachability callback in runloop")
+            } else {
+                zmLog.error("Error scheduling network reachability in runloop")
+            }
+        } else {
+            zmLog.error("Error setting network reachability callback")
+        }
     }
 }

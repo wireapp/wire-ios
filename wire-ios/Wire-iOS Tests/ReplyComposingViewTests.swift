@@ -23,11 +23,12 @@ import XCTest
 
 private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelegate {
     var didCancelCalledCount = 0
+    var composingViewWantsToShowMessage = 0
+
     func composingViewDidCancel(composingView: ReplyComposingView) {
         didCancelCalledCount += 1
     }
 
-    var composingViewWantsToShowMessage = 0
     func composingViewWantsToShowMessage(composingView: ReplyComposingView, message: ZMConversationMessage) {
         composingViewWantsToShowMessage += 1
     }

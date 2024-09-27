@@ -130,27 +130,7 @@ protocol SettingsControllerGeneratorType {
 // MARK: - SettingsSectionDescriptor
 
 class SettingsSectionDescriptor: SettingsSectionDescriptorType {
-    let cellDescriptors: [SettingsCellDescriptorType]
-    var visibleCellDescriptors: [SettingsCellDescriptorType] {
-        cellDescriptors.filter(\.visible)
-    }
-
-    var visible: Bool {
-        visibilityAction?(self) ?? true
-    }
-
-    let visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))?
-
-    var header: String? {
-        headerGenerator()
-    }
-
-    var footer: String? {
-        footerGenerator()
-    }
-
-    let headerGenerator: () -> String?
-    let footerGenerator: () -> String?
+    // MARK: Lifecycle
 
     convenience init(
         cellDescriptors: [SettingsCellDescriptorType],
@@ -177,29 +157,36 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
         self.footerGenerator = footerGenerator
         self.visibilityAction = visibilityAction
     }
+
+    // MARK: Internal
+
+    let cellDescriptors: [SettingsCellDescriptorType]
+    let visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))?
+
+    let headerGenerator: () -> String?
+    let footerGenerator: () -> String?
+
+    var visibleCellDescriptors: [SettingsCellDescriptorType] {
+        cellDescriptors.filter(\.visible)
+    }
+
+    var visible: Bool {
+        visibilityAction?(self) ?? true
+    }
+
+    var header: String? {
+        headerGenerator()
+    }
+
+    var footer: String? {
+        footerGenerator()
+    }
 }
 
 // MARK: - SettingsGroupCellDescriptor
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
-    static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
-    var visible = true
-    let title: String
-    let accessibilityBackButtonText: String
-    let style: InternalScreenStyle
-    let items: [SettingsSectionDescriptorType]
-    let identifier: String?
-    let icon: StyleKitIcon?
-
-    let previewGenerator: PreviewGeneratorType?
-
-    weak var group: SettingsGroupCellDescriptorType?
-
-    var visibleItems: [SettingsSectionDescriptorType] {
-        items.filter(\.visible)
-    }
-
-    weak var viewController: UIViewController?
+    // MARK: Lifecycle
 
     init(
         items: [SettingsSectionDescriptorType],
@@ -217,6 +204,28 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         self.previewGenerator = previewGenerator
         self.icon = icon
         self.accessibilityBackButtonText = accessibilityBackButtonText
+    }
+
+    // MARK: Internal
+
+    static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
+
+    var visible = true
+    let title: String
+    let accessibilityBackButtonText: String
+    let style: InternalScreenStyle
+    let items: [SettingsSectionDescriptorType]
+    let identifier: String?
+    let icon: StyleKitIcon?
+
+    let previewGenerator: PreviewGeneratorType?
+
+    weak var group: SettingsGroupCellDescriptorType?
+
+    weak var viewController: UIViewController?
+
+    var visibleItems: [SettingsSectionDescriptorType] {
+        items.filter(\.visible)
     }
 
     func featureCell(_ cell: SettingsCellType) {

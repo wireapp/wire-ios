@@ -35,19 +35,7 @@ extension Logging {
 // MARK: - VoIPPushManager
 
 public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
-    // MARK: - Properties
-
-    let registry = PKPushRegistry(queue: nil)
-    public let callKitManager: CallKitManager
-
-    private let requiredPushTokenType: PushToken.TokenType
-    private let pushTokenService: PushTokenServiceInterface
-
-    public weak var delegate: VoIPPushManagerDelegate?
-
-    private static let logger = Logger(subsystem: "VoIP Push", category: "VoipPushManager")
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         application: ZMApplication,
@@ -68,6 +56,12 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
         registry.delegate = self
     }
+
+    // MARK: Public
+
+    public let callKitManager: CallKitManager
+
+    public weak var delegate: VoIPPushManagerDelegate?
 
     // MARK: - Methods
 
@@ -132,6 +126,19 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             )
         }
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let registry = PKPushRegistry(queue: nil)
+
+    // MARK: Private
+
+    private static let logger = Logger(subsystem: "VoIP Push", category: "VoipPushManager")
+
+    private let requiredPushTokenType: PushToken.TokenType
+    private let pushTokenService: PushTokenServiceInterface
 
     private func processNSEPush(
         payload: [AnyHashable: Any],

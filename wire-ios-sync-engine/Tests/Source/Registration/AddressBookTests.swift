@@ -23,7 +23,7 @@ import Foundation
 // MARK: - AddressBookTests
 
 final class AddressBookTests: XCTestCase {
-    fileprivate var addressBook: MockAddressBook!
+    // MARK: Internal
 
     override func setUp() {
         addressBook = MockAddressBook()
@@ -34,6 +34,10 @@ final class AddressBookTests: XCTestCase {
         addressBook = nil
         super.tearDown()
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var addressBook: MockAddressBook!
 }
 
 // MARK: - Access to AB

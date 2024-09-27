@@ -23,16 +23,20 @@ import Foundation
 
 /// Search for contacts in the address book
 class AddressBookSearch {
+    // MARK: Lifecycle
+
+    init(addressBook: AddressBookAccessor? = nil) {
+        self.addressBook = addressBook ?? AddressBook.factory()
+    }
+
+    // MARK: Private
+
     /// Maximum number of contacts to consider when matching/searching,
     /// for performance reasons
     private let maximumSearchRange: UInt = 3000
 
     /// Address book
     private let addressBook: AddressBookAccessor?
-
-    init(addressBook: AddressBookAccessor? = nil) {
-        self.addressBook = addressBook ?? AddressBook.factory()
-    }
 }
 
 // MARK: - Search contacts

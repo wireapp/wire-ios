@@ -25,32 +25,7 @@ import WireLinkPreview
 // MARK: - ArticleView
 
 final class ArticleView: UIView {
-    // MARK: - Styling
-
-    private let containerColor: UIColor = SemanticColors.View.backgroundCollectionCell
-    private let titleTextColor: UIColor = SemanticColors.Label.textDefault
-    private let titleFont: UIFont = .normalSemiboldFont
-    private let authorTextColor: UIColor = SemanticColors.Label.textDefault
-    private let authorFont: UIFont = .smallLightFont
-    private let authorHighlightTextColor = SemanticColors.Label.textDefault
-    private let authorHighlightFont = UIFont.smallSemiboldFont
-
-    var imageHeight: CGFloat = 144 {
-        didSet {
-            imageHeightConstraint.constant = imageHeight
-        }
-    }
-
-    // MARK: - Views
-
-    let messageLabel = UILabel()
-    let authorLabel = UILabel()
-    let imageView = ImageResourceView()
-    var linkPreview: LinkMetadata?
-    private let obfuscationView = ObfuscationView(icon: .link)
-    private let ephemeralColor = UIColor.accent()
-    private var imageHeightConstraint: NSLayoutConstraint!
-    weak var delegate: ContextMenuLinkViewDelegate?
+    // MARK: Lifecycle
 
     init(withImagePlaceholder imagePlaceholder: Bool) {
         super.init(frame: .zero)
@@ -68,6 +43,85 @@ final class ArticleView: UIView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    // MARK: - Views
+
+    let messageLabel = UILabel()
+    let authorLabel = UILabel()
+    let imageView = ImageResourceView()
+    var linkPreview: LinkMetadata?
+    weak var delegate: ContextMenuLinkViewDelegate?
+
+    var imageHeight: CGFloat = 144 {
+        didSet {
+            imageHeightConstraint.constant = imageHeight
+        }
+    }
+
+    func configure(
+        withTextMessageData textMessageData: TextMessageData,
+        obfuscated: Bool
+    ) {
+        guard let linkPreview = textMessageData.linkPreview else {
+            return
+        }
+
+        self.linkPreview = linkPreview
+        updateLabels(obfuscated: obfuscated)
+
+        if let article = linkPreview as? ArticleMetadata {
+            configure(withArticle: article, obfuscated: obfuscated)
+        }
+
+        if let twitterStatus = linkPreview as? TwitterStatusMetadata {
+            configure(withTwitterStatus: twitterStatus)
+        }
+
+        obfuscationView.isHidden = !obfuscated
+        imageView.isHidden = obfuscated
+
+        if !obfuscated {
+            imageView.image = nil
+            imageView.contentMode = .scaleAspectFill
+            imageView.setImageResource(textMessageData.linkPreviewImage) { [weak self] in
+                self?.updateContentMode()
+            }
+        }
+    }
+
+    func updateContentMode() {
+        guard let image = imageView.image else { return }
+        let width = image.size.width * image.scale
+        let height = image.size.height * image.scale
+
+        if width < 480.0 || height < 160.0 {
+            imageView.contentMode = .center
+        } else {
+            imageView.contentMode = .scaleAspectFill
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Styling
+
+    private let containerColor: UIColor = SemanticColors.View.backgroundCollectionCell
+    private let titleTextColor: UIColor = SemanticColors.Label.textDefault
+    private let titleFont: UIFont = .normalSemiboldFont
+    private let authorTextColor: UIColor = SemanticColors.Label.textDefault
+    private let authorFont: UIFont = .smallLightFont
+    private let authorHighlightTextColor = SemanticColors.Label.textDefault
+    private let authorHighlightFont = UIFont.smallSemiboldFont
+
+    private let obfuscationView = ObfuscationView(icon: .link)
+    private let ephemeralColor = UIColor.accent()
+    private var imageHeightConstraint: NSLayoutConstraint!
+
+    private var authorHighlightAttributes: [NSAttributedString.Key: AnyObject] {
+        [.font: authorHighlightFont, .foregroundColor: authorHighlightTextColor]
     }
 
     private func setupViews() {
@@ -132,10 +186,6 @@ final class ArticleView: UIView {
         ])
     }
 
-    private var authorHighlightAttributes: [NSAttributedString.Key: AnyObject] {
-        [.font: authorHighlightFont, .foregroundColor: authorHighlightTextColor]
-    }
-
     private func formatURL(_ URL: Foundation.URL) -> NSAttributedString {
         let urlWithoutScheme = URL.urlWithoutScheme
         let displayString = urlWithoutScheme.removingPrefixWWW.removingTrailingForwardSlash
@@ -144,49 +194,6 @@ final class ArticleView: UIView {
             return displayString.attributedString.addAttributes(authorHighlightAttributes, toSubstring: host)
         } else {
             return displayString.attributedString
-        }
-    }
-
-    func configure(
-        withTextMessageData textMessageData: TextMessageData,
-        obfuscated: Bool
-    ) {
-        guard let linkPreview = textMessageData.linkPreview else {
-            return
-        }
-
-        self.linkPreview = linkPreview
-        updateLabels(obfuscated: obfuscated)
-
-        if let article = linkPreview as? ArticleMetadata {
-            configure(withArticle: article, obfuscated: obfuscated)
-        }
-
-        if let twitterStatus = linkPreview as? TwitterStatusMetadata {
-            configure(withTwitterStatus: twitterStatus)
-        }
-
-        obfuscationView.isHidden = !obfuscated
-        imageView.isHidden = obfuscated
-
-        if !obfuscated {
-            imageView.image = nil
-            imageView.contentMode = .scaleAspectFill
-            imageView.setImageResource(textMessageData.linkPreviewImage) { [weak self] in
-                self?.updateContentMode()
-            }
-        }
-    }
-
-    func updateContentMode() {
-        guard let image = imageView.image else { return }
-        let width = image.size.width * image.scale
-        let height = image.size.height * image.scale
-
-        if width < 480.0 || height < 160.0 {
-            imageView.contentMode = .center
-        } else {
-            imageView.contentMode = .scaleAspectFill
         }
     }
 

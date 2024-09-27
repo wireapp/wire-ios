@@ -27,13 +27,7 @@ import XCTest
 // MARK: - SessionManagerTests
 
 final class SessionManagerTests: IntegrationTest {
-    private var sessionManagerBuilder: SessionManagerBuilder!
-
-    private var tmpDirectoryPath: URL { URL(fileURLWithPath: NSTemporaryDirectory()) }
-
-    private var cachesDirectoryPath: URL {
-        FileManager.default.randomCacheURL!
-    }
+    // MARK: Internal
 
     var mockDelegate: MockSessionManagerDelegate!
 
@@ -609,6 +603,16 @@ final class SessionManagerTests: IntegrationTest {
 
         // THEN
         XCTAssertNil(userSession)
+    }
+
+    // MARK: Private
+
+    private var sessionManagerBuilder: SessionManagerBuilder!
+
+    private var tmpDirectoryPath: URL { URL(fileURLWithPath: NSTemporaryDirectory()) }
+
+    private var cachesDirectoryPath: URL {
+        FileManager.default.randomCacheURL!
     }
 
     // MARK: - Helpers

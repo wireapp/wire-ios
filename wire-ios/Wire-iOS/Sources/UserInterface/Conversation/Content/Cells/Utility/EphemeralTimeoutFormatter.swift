@@ -19,23 +19,19 @@
 import UIKit
 
 final class EphemeralTimeoutFormatter {
+    // MARK: Internal
+
+    func string(from interval: TimeInterval) -> String? {
+        timeString(from: interval).map {
+            L10n.Localizable.Content.System.ephemeralTimeRemaining($0)
+        }
+    }
+
+    // MARK: Fileprivate
+
     /// A formatter to produce a string with day in full style and hour/minute in positional style
     fileprivate final class DayFormatter {
-        /// hour formatter with no second unit
-        private let hourFormatter: DateComponentsFormatter = {
-            let formatter = DateComponentsFormatter()
-            formatter.allowedUnits = [.day, .hour, .minute]
-            formatter.zeroFormattingBehavior = .pad
-            return formatter
-        }()
-
-        private let dayFormatter: DateComponentsFormatter = {
-            let formatter = DateComponentsFormatter()
-            formatter.unitsStyle = .full
-            formatter.allowedUnits = [.year, .weekOfMonth, .day]
-            formatter.zeroFormattingBehavior = .dropAll
-            return formatter
-        }()
+        // MARK: Internal
 
         /// return a string with day in full style and hour/minute in positional style e.g. 27 days 23:43 left
         ///
@@ -75,7 +71,27 @@ final class EphemeralTimeoutFormatter {
                 return dayString
             }
         }
+
+        // MARK: Private
+
+        /// hour formatter with no second unit
+        private let hourFormatter: DateComponentsFormatter = {
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.day, .hour, .minute]
+            formatter.zeroFormattingBehavior = .pad
+            return formatter
+        }()
+
+        private let dayFormatter: DateComponentsFormatter = {
+            let formatter = DateComponentsFormatter()
+            formatter.unitsStyle = .full
+            formatter.allowedUnits = [.year, .weekOfMonth, .day]
+            formatter.zeroFormattingBehavior = .dropAll
+            return formatter
+        }()
     }
+
+    // MARK: Private
 
     private let secondsFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
@@ -100,12 +116,6 @@ final class EphemeralTimeoutFormatter {
     }()
 
     private let dayFormatter = DayFormatter()
-
-    func string(from interval: TimeInterval) -> String? {
-        timeString(from: interval).map {
-            L10n.Localizable.Content.System.ephemeralTimeRemaining($0)
-        }
-    }
 
     private func timeString(from interval: TimeInterval) -> String? {
         let now = Date()

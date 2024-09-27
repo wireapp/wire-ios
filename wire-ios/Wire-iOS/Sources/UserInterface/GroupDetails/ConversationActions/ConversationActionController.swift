@@ -20,16 +20,7 @@ import UIKit
 import WireSyncEngine
 
 final class ConversationActionController {
-    enum Context {
-        case list, details
-    }
-
-    private let conversation: GroupDetailsConversationType
-    private unowned let target: UIViewController
-    private(set) weak var sourceView: UIView?
-    var currentContext: PopoverPresentationControllerConfiguration?
-    private(set) weak var alertController: UIAlertController?
-    let userSession: UserSession
+    // MARK: Lifecycle
 
     init(
         conversation: GroupDetailsConversationType,
@@ -42,6 +33,17 @@ final class ConversationActionController {
         self.sourceView = sourceView
         self.userSession = userSession
     }
+
+    // MARK: Internal
+
+    enum Context {
+        case list, details
+    }
+
+    private(set) weak var sourceView: UIView?
+    var currentContext: PopoverPresentationControllerConfiguration?
+    private(set) weak var alertController: UIAlertController?
+    let userSession: UserSession
 
     func presentMenu(from sourceView: UIView, context: Context) {
         let actions: [ZMConversation.Action] = switch context {
@@ -149,13 +151,6 @@ final class ConversationActionController {
         }
     }
 
-    private func alertAction(for action: ZMConversation.Action) -> UIAlertAction {
-        action.alertAction { [weak self] in
-            guard let self else { return }
-            handleAction(action)
-        }
-    }
-
     func presentError(_ error: LocalizedError) {
         target.presentLocalizedErrorAlert(error)
     }
@@ -166,6 +161,18 @@ final class ConversationActionController {
         }
 
         target.present(controller, animated: true)
+    }
+
+    // MARK: Private
+
+    private let conversation: GroupDetailsConversationType
+    private unowned let target: UIViewController
+
+    private func alertAction(for action: ZMConversation.Action) -> UIAlertAction {
+        action.alertAction { [weak self] in
+            guard let self else { return }
+            handleAction(action)
+        }
     }
 
     private func duplicateConversation() {

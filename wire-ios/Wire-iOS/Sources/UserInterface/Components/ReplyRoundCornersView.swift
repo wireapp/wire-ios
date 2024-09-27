@@ -20,13 +20,7 @@ import UIKit
 import WireDesign
 
 final class ReplyRoundCornersView: UIControl {
-    // MARK: - Properties
-
-    typealias ViewColors = SemanticColors.View
-
-    let containedView: UIView
-    private let grayBoxView = UIView()
-    private let highlightLayer = UIView()
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -41,6 +35,46 @@ final class ReplyRoundCornersView: UIControl {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    typealias ViewColors = SemanticColors.View
+
+    let containedView: UIView
+
+    // MARK: - UIControl
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        setHighlighted(true, animated: false)
+        sendActions(for: .touchDown)
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        defer {
+            setHighlighted(false, animated: true)
+        }
+
+        guard
+            let touchLocation = touches.first?.location(in: self),
+            bounds.contains(touchLocation)
+        else {
+            return sendActions(for: .touchUpOutside)
+        }
+
+        sendActions(for: .touchUpInside)
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        setHighlighted(false, animated: true)
+        sendActions(for: .touchCancel)
+    }
+
+    // MARK: Private
+
+    private let grayBoxView = UIView()
+    private let highlightLayer = UIView()
 
     // MARK: Setup Subviews and Constraints
 
@@ -79,33 +113,6 @@ final class ReplyRoundCornersView: UIControl {
             highlightLayer.bottomAnchor.constraint(equalTo: bottomAnchor),
             highlightLayer.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
-    }
-
-    // MARK: - UIControl
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        setHighlighted(true, animated: false)
-        sendActions(for: .touchDown)
-    }
-
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        defer {
-            setHighlighted(false, animated: true)
-        }
-
-        guard
-            let touchLocation = touches.first?.location(in: self),
-            bounds.contains(touchLocation)
-        else {
-            return sendActions(for: .touchUpOutside)
-        }
-
-        sendActions(for: .touchUpInside)
-    }
-
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        setHighlighted(false, animated: true)
-        sendActions(for: .touchCancel)
     }
 
     private func setHighlighted(_ isHighlighted: Bool, animated: Bool) {

@@ -81,6 +81,8 @@ public enum ValidationError: Equatable {
     case invalidStatus(StatusCode)
     case unknown
 
+    // MARK: Lifecycle
+
     init?(response: HTTPURLResponse?, error: Error?) {
         switch (response?.statusCode, error) {
         case (404?, _): self = .invalidCode
@@ -107,14 +109,7 @@ public protocol CompanyLoginRequesterDelegate: AnyObject {
 /// An object that validates the identity of the user and creates a session using company login.
 
 public class CompanyLoginRequester {
-    /// The URL scheme that where the callback will be provided.
-    public let callbackScheme: String
-
-    /// The object that observes events and performs the required actions.
-    public weak var delegate: CompanyLoginRequesterDelegate?
-
-    private let defaults: UserDefaults
-    private let session: URLSessionProtocol
+    // MARK: Lifecycle
 
     /// Creates a session requester that uses the specified parameters.
     public init(
@@ -126,6 +121,14 @@ public class CompanyLoginRequester {
         self.defaults = defaults
         self.session = session ?? URLSession(configuration: .ephemeral)
     }
+
+    // MARK: Public
+
+    /// The URL scheme that where the callback will be provided.
+    public let callbackScheme: String
+
+    /// The object that observes events and performs the required actions.
+    public weak var delegate: CompanyLoginRequesterDelegate?
 
     // MARK: - Token Validation
 
@@ -185,6 +188,11 @@ public class CompanyLoginRequester {
         validationToken.store(in: defaults)
         delegate?.companyLoginRequester(self, didRequestIdentityValidationAtURL: url)
     }
+
+    // MARK: Private
+
+    private let defaults: UserDefaults
+    private let session: URLSessionProtocol
 
     // MARK: - Utilities
 

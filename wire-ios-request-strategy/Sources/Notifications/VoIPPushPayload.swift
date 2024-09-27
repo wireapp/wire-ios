@@ -21,45 +21,7 @@ import Foundation
 /// The payload of a push for call events.
 
 public struct VoIPPushPayload: Codable {
-    // MARK: - Properties
-
-    /// The id of the account that triggered this push.
-
-    public let accountID: UUID
-
-    /// The id of the conversation in which the call event originated.
-
-    public let conversationID: UUID
-
-    /// The domain of the conversation in whcih the call event originated.
-
-    public let conversationDomain: String?
-
-    /// The user id of the sender who triggerd the call event.
-
-    public let senderID: UUID
-
-    /// The user domain of the sender who triggered the call event.
-
-    public let senderDomain: String?
-
-    /// The client id of the sender who triggered the call event.
-
-    public let senderClientID: String
-
-    /// The event timestamp.
-
-    public let timestamp: Date
-
-    /// The age of the event since it left the server.
-
-    public let serverTimeDelta: TimeInterval
-
-    /// The call event data.
-
-    public let data: Data
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     /// Create a new instance from an update event.
     ///
@@ -106,6 +68,46 @@ public struct VoIPPushPayload: Codable {
 
         self = value
     }
+
+    // MARK: Public
+
+    // MARK: - Properties
+
+    /// The id of the account that triggered this push.
+
+    public let accountID: UUID
+
+    /// The id of the conversation in which the call event originated.
+
+    public let conversationID: UUID
+
+    /// The domain of the conversation in whcih the call event originated.
+
+    public let conversationDomain: String?
+
+    /// The user id of the sender who triggerd the call event.
+
+    public let senderID: UUID
+
+    /// The user domain of the sender who triggered the call event.
+
+    public let senderDomain: String?
+
+    /// The client id of the sender who triggered the call event.
+
+    public let senderClientID: String
+
+    /// The event timestamp.
+
+    public let timestamp: Date
+
+    /// The age of the event since it left the server.
+
+    public let serverTimeDelta: TimeInterval
+
+    /// The call event data.
+
+    public let data: Data
 
     // MARK: - Methods
 

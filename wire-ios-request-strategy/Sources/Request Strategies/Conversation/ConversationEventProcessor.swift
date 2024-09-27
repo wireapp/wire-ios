@@ -20,19 +20,7 @@ import Foundation
 import WireDataModel
 
 public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol, ZMEventAsyncConsumer {
-    // MARK: - Properties
-
-    let context: NSManagedObjectContext
-    let conversationService: ConversationServiceInterface
-    let mlsEventProcessor: MLSEventProcessing
-
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: mlsEventProcessor,
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
-    private let eventPayloadDecoder = EventPayloadDecoder()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public convenience init(context: NSManagedObjectContext) {
         self.init(
@@ -53,16 +41,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         super.init()
     }
 
-    // MARK: - Methods
-
-    func processPayload(_ payload: ZMTransportData) {
-        // here's no uuid is needed since we process it directly it's just convenience to get the payload
-        if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
-            Task {
-                await processConversationEvents([event])
-            }
-        }
-    }
+    // MARK: Public
 
     /// This method is called from EventProcessor directly
     public func processEvents(_ events: [ZMUpdateEvent]) async {
@@ -81,6 +60,46 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             self.context.saveOrRollback()
         }
     }
+
+    // MARK: Internal
+
+    // MARK: - Member Join
+
+    typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
+
+    // MARK: - Properties
+
+    let context: NSManagedObjectContext
+    let conversationService: ConversationServiceInterface
+    let mlsEventProcessor: MLSEventProcessing
+
+    // MARK: - Methods
+
+    func processPayload(_ payload: ZMTransportData) {
+        // here's no uuid is needed since we process it directly it's just convenience to get the payload
+        if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
+            Task {
+                await processConversationEvents([event])
+            }
+        }
+    }
+
+    func fetchOrCreateConversation(
+        id: UUID?,
+        qualifiedID: QualifiedID?,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation? {
+        guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
+        return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
+    }
+
+    // MARK: Private
+
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: mlsEventProcessor,
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
+    private let eventPayloadDecoder = EventPayloadDecoder()
 
     private func processConversationEvent(_ event: ZMUpdateEvent) async {
         switch event.type {
@@ -285,18 +304,5 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             originalEvent: event,
             in: context
         )
-    }
-
-    // MARK: - Member Join
-
-    typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
-
-    func fetchOrCreateConversation(
-        id: UUID?,
-        qualifiedID: QualifiedID?,
-        in context: NSManagedObjectContext
-    ) -> ZMConversation? {
-        guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
-        return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
     }
 }

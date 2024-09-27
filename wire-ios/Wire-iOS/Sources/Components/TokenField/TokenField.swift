@@ -26,12 +26,44 @@ private let zmLog = ZMSLog(tag: "TokenField")
 // MARK: - TokenField
 
 final class TokenField: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    init() {
+        super.init(frame: .zero)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     let accessoryButtonSize: CGFloat = 32
 
     weak var delegate: TokenFieldDelegate?
 
     let textView = SearchTextView(style: .default)
     let accessoryButton = IconButton()
+
+    private(set) var filterText = ""
+
+    // Dynamic Type is disabled for now until the separator dots
+    // vertical alignment has been fixed for larger fonts.
+    let tokenTitleFont: UIFont = FontSpec(.small, .regular).font!
+
+    var dotColor: UIColor = SemanticColors.View.backgroundDefaultBlack
+    var tokenTextTransform: TextTransform = .none
+    private(set) var userDidConfirmInput = false
+
+    private(set) var tokens = [Token<NSObjectProtocol>]()
+    // Collapse
+
+    // in not collapsed state; in collapsed state - 1 line; default to NSUIntegerMax
+    var isCollapsed = false
 
     var hasAccessoryButton = false {
         didSet {
@@ -41,8 +73,6 @@ final class TokenField: UIView {
             updateExcludePath()
         }
     }
-
-    private(set) var filterText = ""
 
     // MARK: - Appearance
 
@@ -59,10 +89,6 @@ final class TokenField: UIView {
             updateTokenAttachments()
         }
     }
-
-    // Dynamic Type is disabled for now until the separator dots
-    // vertical alignment has been fixed for larger fonts.
-    let tokenTitleFont: UIFont = FontSpec(.small, .regular).font!
 
     var tokenTitleColor: UIColor = SemanticColors.Label.textDefault {
         didSet {
@@ -111,8 +137,6 @@ final class TokenField: UIView {
         }
     }
 
-    var dotColor: UIColor = SemanticColors.View.backgroundDefaultBlack
-    var tokenTextTransform: TextTransform = .none
     var tokenOffset: CGFloat = 0 {
         didSet {
             guard tokenOffset != oldValue else {
@@ -144,7 +168,282 @@ final class TokenField: UIView {
         }
     }
 
-    private(set) var userDidConfirmInput = false
+    // MARK: - Appearance
+
+    var lineSpacing: CGFloat = 8 {
+        didSet {
+            guard oldValue != lineSpacing else {
+                return
+            }
+
+            updateTextAttributes()
+        }
+    }
+
+    // MARK: - UIView overrides
+
+    override var intrinsicContentSize: CGSize {
+        let height = textView.contentSize.height
+        let maxHeight = fontLineHeight * CGFloat(numberOfLines) + lineSpacing * CGFloat(numberOfLines - 1) + textView
+            .textContainerInset.top + textView.textContainerInset.bottom
+        let minHeight = fontLineHeight + textView.textContainerInset.top + textView.textContainerInset.bottom
+
+        return CGSize(
+            width: UIView.noIntrinsicMetric,
+            height: isCollapsed ? minHeight : max(min(height, maxHeight), minHeight)
+        )
+    }
+
+    override var isFirstResponder: Bool {
+        textView.isFirstResponder
+    }
+
+    override var canBecomeFirstResponder: Bool {
+        textView.canBecomeFirstResponder
+    }
+
+    override var canResignFirstResponder: Bool {
+        textView.canResignFirstResponder
+    }
+
+    var numberOfLines = Int.max {
+        didSet {
+            if oldValue != numberOfLines {
+                invalidateIntrinsicContentSize()
+            }
+        }
+    }
+
+    // MARK: - Layout
+
+    var fontLineHeight: CGFloat {
+        font.lineHeight
+    }
+
+    // MARK: - Utility
+
+    var collapsedString: NSAttributedString? {
+        let collapsedText = " ...".localized
+
+        return NSAttributedString(string: collapsedText, attributes: textAttributes)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        var anyTokenUpdated = false
+        for token in tokens where token.maxTitleWidth == 0 {
+            updateMaxTitleWidth(for: token)
+            anyTokenUpdated = true
+        }
+
+        if anyTokenUpdated {
+            updateTokenAttachments()
+            let wholeRange = NSRange(location: 0, length: textView.attributedText.length)
+            textView.layoutManager.invalidateLayout(forCharacterRange: wholeRange, actualCharacterRange: nil)
+        }
+    }
+
+    override func becomeFirstResponder() -> Bool {
+        setCollapsed(false, animated: true)
+        return textView.becomeFirstResponder()
+    }
+
+    override func resignFirstResponder() -> Bool {
+        super.resignFirstResponder()
+        return textView.resignFirstResponder()
+    }
+
+    // MARK: - Interface
+
+    func addToken(
+        forTitle title: String,
+        representedObject object: NSObjectProtocol
+    ) {
+        let token = Token(title: title, representedObject: object)
+        addToken(token)
+    }
+
+    func addToken(_ token: Token<NSObjectProtocol>) {
+        guard !tokens.contains(token) else {
+            return
+        }
+
+        tokens.append(token)
+
+        updateMaxTitleWidth(for: token)
+
+        if !isCollapsed {
+            textView.attributedText = string(forTokens: tokens)
+            // Calling -insertText: forces textView to update its contentSize, while other public methods do not.
+            // Broken contentSize leads to broken scrolling to bottom of input field.
+            textView.insertText("")
+
+            delegate?.tokenField(self, changedFilterTextTo: "")
+
+            invalidateIntrinsicContentSize()
+
+            // Move the cursor to the end of the input field
+            textView.selectedRange = NSRange(location: textView.text.utf16.count, length: 0)
+
+            // autoscroll to the end of the input field
+            setNeedsLayout()
+            updateLayout()
+            scrollToBottomOfInputField()
+        } else {
+            textView.attributedText = collapsedString
+            invalidateIntrinsicContentSize()
+        }
+    }
+
+    func updateMaxTitleWidth(for token: Token<NSObjectProtocol>) {
+        var tokenMaxSizeWidth = textView.textContainer.size.width
+        if tokens.isEmpty {
+            tokenMaxSizeWidth -= toLabel.frame.size
+                .width + (hasAccessoryButton ? accessoryButton.frame.size.width : 0) + tokenOffset
+        } else if tokens.count == 1 {
+            tokenMaxSizeWidth -= hasAccessoryButton ? accessoryButton.frame.size.width : 0
+        }
+
+        token.maxTitleWidth = tokenMaxSizeWidth
+    }
+
+    // searches by isEqual:
+    func token(forRepresentedObject object: NSObjectProtocol) -> Token<NSObjectProtocol>? {
+        tokens.first(where: { $0.representedObject == HashBox(value: object) })
+    }
+
+    func setCollapsed(_ collapsed: Bool, animated: Bool = false) {
+        guard isCollapsed != collapsed, !tokens.isEmpty else {
+            return
+        }
+
+        isCollapsed = collapsed
+
+        let animationBlock = {
+            self.invalidateIntrinsicContentSize()
+            self.layoutIfNeeded()
+        }
+
+        let compeltionBlock: ((Bool) -> Void)? = { [weak self] _ in
+
+            guard let self else { return }
+
+            if isCollapsed {
+                textView.attributedText = collapsedString
+                invalidateIntrinsicContentSize()
+                UIView.animate(withDuration: 0.2) {
+                    self.textView.setContentOffset(CGPoint.zero, animated: false)
+                }
+            } else {
+                textView.attributedText = string(forTokens: tokens)
+                invalidateIntrinsicContentSize()
+                if textView.attributedText.length > 0 {
+                    textView.selectedRange = NSRange(location: textView.attributedText.length, length: 0)
+                    UIView.animate(withDuration: 0.2) {
+                        self.textView.scrollRangeToVisible(self.textView.selectedRange)
+                    }
+                }
+            }
+        }
+
+        if animated {
+            UIView.animate(withDuration: 0.25, animations: animationBlock, completion: compeltionBlock)
+        } else {
+            animationBlock()
+            compeltionBlock?(true)
+        }
+    }
+
+    /// clean filter text other then NSTextAttachment
+    func clearFilterText() {
+        guard let text = textView.text else { return }
+
+        guard let attachmentCharacter = UnicodeScalar.textAttachmentCharacter,
+              let firstCharacterIndex = text.unicodeScalars
+              .firstIndex(where: { $0 != attachmentCharacter && !CharacterSet.whitespaces.contains($0) }) else {
+            return
+        }
+
+        filterText = ""
+
+        let rangeToDelete = firstCharacterIndex ..< text.endIndex
+        let nsRange = textView.text.nsRange(from: rangeToDelete)
+
+        textView.textStorage.beginEditing()
+        textView.textStorage.deleteCharacters(in: nsRange)
+        textView.textStorage.endEditing()
+        textView.insertText("")
+        textView.resignFirstResponder()
+
+        invalidateIntrinsicContentSize()
+        layoutIfNeeded()
+    }
+
+    // MARK: - UIScrollViewDelegate
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == textView {
+            updateExcludePath()
+        }
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        updateTokenAttachments()
+    }
+
+    // MARK: - Utility
+
+    func updateTokenAttachments() {
+        textView.attributedText.enumerateAttachment { tokenAttachment, _, _ in
+            (tokenAttachment as? TokenTextAttachment)?.refreshImage()
+        }
+    }
+
+    /// update currentTokens with textView's current attributedText text after the textView change the text
+    func filterUnwantedAttachments() {
+        var updatedCurrentTokens = Set<Token<NSObjectProtocol>>()
+        var updatedCurrentSeparatorTokens: Set<Token<NSObjectProtocol>> = []
+
+        textView.attributedText.enumerateAttachment { textAttachment, _, _ in
+
+            if let token = (textAttachment as? TokenTextAttachment)?.token,
+               !updatedCurrentTokens.contains(token) {
+                updatedCurrentTokens.insert(token)
+            }
+
+            if let token = (textAttachment as? TokenSeparatorAttachment)?.token,
+               !updatedCurrentSeparatorTokens.contains(token) {
+                updatedCurrentSeparatorTokens.insert(token)
+            }
+        }
+
+        updatedCurrentTokens = updatedCurrentTokens.intersection(updatedCurrentSeparatorTokens)
+
+        var deletedTokens = Set<Token>(tokens)
+        deletedTokens.subtract(updatedCurrentTokens)
+
+        if !deletedTokens.isEmpty {
+            removeTokens(Array(deletedTokens))
+        }
+        tokens.removeAll(where: { deletedTokens.contains($0) })
+        delegate?.tokenField(self, changedTokensTo: tokens)
+    }
+
+    // MARK: - remove token
+
+    func removeAllTokens() {
+        removeTokens(tokens)
+        textView.showOrHidePlaceholder()
+    }
+
+    func removeToken(_ token: Token<NSObjectProtocol>) {
+        removeTokens([token])
+    }
+
+    // MARK: Private
 
     private var accessoryButtonTopMargin: NSLayoutConstraint!
     private var accessoryButtonRightMargin: NSLayoutConstraint!
@@ -153,7 +452,6 @@ final class TokenField: UIView {
     private var toLabelLeftMargin: NSLayoutConstraint!
     private var toLabelTopMargin: NSLayoutConstraint!
 
-    private(set) var tokens = [Token<NSObjectProtocol>]()
     private var textAttributes: [NSAttributedString.Key: Any] {
         [
             .font: font,
@@ -161,21 +459,12 @@ final class TokenField: UIView {
         ]
     }
 
-    // Collapse
-
-    // in not collapsed state; in collapsed state - 1 line; default to NSUIntegerMax
-    var isCollapsed = false
-
-    // MARK: - Init
-
-    init() {
-        super.init(frame: .zero)
-        setup()
+    private var accessoryButtonTop: CGFloat {
+        textView.textContainerInset.top + (fontLineHeight - accessoryButtonSize) / 2 - textView.contentOffset.y
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private var accessoryButtonRight: CGFloat {
+        textView.textContainerInset.right
     }
 
     // MARK: - Setup
@@ -256,129 +545,6 @@ final class TokenField: UIView {
         updateTextAttributes()
     }
 
-    // MARK: - Appearance
-
-    var lineSpacing: CGFloat = 8 {
-        didSet {
-            guard oldValue != lineSpacing else {
-                return
-            }
-
-            updateTextAttributes()
-        }
-    }
-
-    // MARK: - UIView overrides
-
-    override var intrinsicContentSize: CGSize {
-        let height = textView.contentSize.height
-        let maxHeight = fontLineHeight * CGFloat(numberOfLines) + lineSpacing * CGFloat(numberOfLines - 1) + textView
-            .textContainerInset.top + textView.textContainerInset.bottom
-        let minHeight = fontLineHeight + textView.textContainerInset.top + textView.textContainerInset.bottom
-
-        return CGSize(
-            width: UIView.noIntrinsicMetric,
-            height: isCollapsed ? minHeight : max(min(height, maxHeight), minHeight)
-        )
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        var anyTokenUpdated = false
-        for token in tokens where token.maxTitleWidth == 0 {
-            updateMaxTitleWidth(for: token)
-            anyTokenUpdated = true
-        }
-
-        if anyTokenUpdated {
-            updateTokenAttachments()
-            let wholeRange = NSRange(location: 0, length: textView.attributedText.length)
-            textView.layoutManager.invalidateLayout(forCharacterRange: wholeRange, actualCharacterRange: nil)
-        }
-    }
-
-    override var isFirstResponder: Bool {
-        textView.isFirstResponder
-    }
-
-    override var canBecomeFirstResponder: Bool {
-        textView.canBecomeFirstResponder
-    }
-
-    override var canResignFirstResponder: Bool {
-        textView.canResignFirstResponder
-    }
-
-    override func becomeFirstResponder() -> Bool {
-        setCollapsed(false, animated: true)
-        return textView.becomeFirstResponder()
-    }
-
-    override func resignFirstResponder() -> Bool {
-        super.resignFirstResponder()
-        return textView.resignFirstResponder()
-    }
-
-    // MARK: - Interface
-
-    func addToken(
-        forTitle title: String,
-        representedObject object: NSObjectProtocol
-    ) {
-        let token = Token(title: title, representedObject: object)
-        addToken(token)
-    }
-
-    func addToken(_ token: Token<NSObjectProtocol>) {
-        guard !tokens.contains(token) else {
-            return
-        }
-
-        tokens.append(token)
-
-        updateMaxTitleWidth(for: token)
-
-        if !isCollapsed {
-            textView.attributedText = string(forTokens: tokens)
-            // Calling -insertText: forces textView to update its contentSize, while other public methods do not.
-            // Broken contentSize leads to broken scrolling to bottom of input field.
-            textView.insertText("")
-
-            delegate?.tokenField(self, changedFilterTextTo: "")
-
-            invalidateIntrinsicContentSize()
-
-            // Move the cursor to the end of the input field
-            textView.selectedRange = NSRange(location: textView.text.utf16.count, length: 0)
-
-            // autoscroll to the end of the input field
-            setNeedsLayout()
-            updateLayout()
-            scrollToBottomOfInputField()
-        } else {
-            textView.attributedText = collapsedString
-            invalidateIntrinsicContentSize()
-        }
-    }
-
-    func updateMaxTitleWidth(for token: Token<NSObjectProtocol>) {
-        var tokenMaxSizeWidth = textView.textContainer.size.width
-        if tokens.isEmpty {
-            tokenMaxSizeWidth -= toLabel.frame.size
-                .width + (hasAccessoryButton ? accessoryButton.frame.size.width : 0) + tokenOffset
-        } else if tokens.count == 1 {
-            tokenMaxSizeWidth -= hasAccessoryButton ? accessoryButton.frame.size.width : 0
-        }
-
-        token.maxTitleWidth = tokenMaxSizeWidth
-    }
-
-    // searches by isEqual:
-    func token(forRepresentedObject object: NSObjectProtocol) -> Token<NSObjectProtocol>? {
-        tokens.first(where: { $0.representedObject == HashBox(value: object) })
-    }
-
     private func scrollToBottomOfInputField() {
         if textView.contentSize.height > textView.bounds.size.height {
             textView.setContentOffset(
@@ -390,70 +556,6 @@ final class TokenField: UIView {
         }
     }
 
-    var numberOfLines = Int.max {
-        didSet {
-            if oldValue != numberOfLines {
-                invalidateIntrinsicContentSize()
-            }
-        }
-    }
-
-    func setCollapsed(_ collapsed: Bool, animated: Bool = false) {
-        guard isCollapsed != collapsed, !tokens.isEmpty else {
-            return
-        }
-
-        isCollapsed = collapsed
-
-        let animationBlock = {
-            self.invalidateIntrinsicContentSize()
-            self.layoutIfNeeded()
-        }
-
-        let compeltionBlock: ((Bool) -> Void)? = { [weak self] _ in
-
-            guard let self else { return }
-
-            if isCollapsed {
-                textView.attributedText = collapsedString
-                invalidateIntrinsicContentSize()
-                UIView.animate(withDuration: 0.2) {
-                    self.textView.setContentOffset(CGPoint.zero, animated: false)
-                }
-            } else {
-                textView.attributedText = string(forTokens: tokens)
-                invalidateIntrinsicContentSize()
-                if textView.attributedText.length > 0 {
-                    textView.selectedRange = NSRange(location: textView.attributedText.length, length: 0)
-                    UIView.animate(withDuration: 0.2) {
-                        self.textView.scrollRangeToVisible(self.textView.selectedRange)
-                    }
-                }
-            }
-        }
-
-        if animated {
-            UIView.animate(withDuration: 0.25, animations: animationBlock, completion: compeltionBlock)
-        } else {
-            animationBlock()
-            compeltionBlock?(true)
-        }
-    }
-
-    // MARK: - Layout
-
-    var fontLineHeight: CGFloat {
-        font.lineHeight
-    }
-
-    private var accessoryButtonTop: CGFloat {
-        textView.textContainerInset.top + (fontLineHeight - accessoryButtonSize) / 2 - textView.contentOffset.y
-    }
-
-    private var accessoryButtonRight: CGFloat {
-        textView.textContainerInset.right
-    }
-
     private func updateLayout() {
         if toLabelText?.isEmpty == false {
             toLabelLeftMargin.constant = textView.textContainerInset.left
@@ -463,39 +565,6 @@ final class TokenField: UIView {
             accessoryButtonRightMargin.constant = accessoryButtonRight
             accessoryButtonTopMargin.constant = accessoryButtonTop
         }
-        layoutIfNeeded()
-    }
-
-    // MARK: - Utility
-
-    var collapsedString: NSAttributedString? {
-        let collapsedText = " ...".localized
-
-        return NSAttributedString(string: collapsedText, attributes: textAttributes)
-    }
-
-    /// clean filter text other then NSTextAttachment
-    func clearFilterText() {
-        guard let text = textView.text else { return }
-
-        guard let attachmentCharacter = UnicodeScalar.textAttachmentCharacter,
-              let firstCharacterIndex = text.unicodeScalars
-              .firstIndex(where: { $0 != attachmentCharacter && !CharacterSet.whitespaces.contains($0) }) else {
-            return
-        }
-
-        filterText = ""
-
-        let rangeToDelete = firstCharacterIndex ..< text.endIndex
-        let nsRange = textView.text.nsRange(from: rangeToDelete)
-
-        textView.textStorage.beginEditing()
-        textView.textStorage.deleteCharacters(in: nsRange)
-        textView.textStorage.endEditing()
-        textView.insertText("")
-        textView.resignFirstResponder()
-
-        invalidateIntrinsicContentSize()
         layoutIfNeeded()
     }
 
@@ -565,14 +634,6 @@ final class TokenField: UIView {
         textView.textContainer.exclusionPaths = exclusionPaths
     }
 
-    // MARK: - UIScrollViewDelegate
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView == textView {
-            updateExcludePath()
-        }
-    }
-
     private func setupSubviews() {
         // this prevents accessoryButton to be visible sometimes on scrolling
         clipsToBounds = true
@@ -610,20 +671,6 @@ final class TokenField: UIView {
         textView.lineFragmentPadding = 0
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        updateTokenAttachments()
-    }
-
-    // MARK: - Utility
-
-    func updateTokenAttachments() {
-        textView.attributedText.enumerateAttachment { tokenAttachment, _, _ in
-            (tokenAttachment as? TokenTextAttachment)?.refreshImage()
-        }
-    }
-
     private func string(forTokens tokens: [Token<NSObjectProtocol>]) -> NSAttributedString {
         let string = NSMutableAttributedString()
         for token in tokens {
@@ -639,47 +686,6 @@ final class TokenField: UIView {
         }
 
         return string && textAttributes
-    }
-
-    /// update currentTokens with textView's current attributedText text after the textView change the text
-    func filterUnwantedAttachments() {
-        var updatedCurrentTokens = Set<Token<NSObjectProtocol>>()
-        var updatedCurrentSeparatorTokens: Set<Token<NSObjectProtocol>> = []
-
-        textView.attributedText.enumerateAttachment { textAttachment, _, _ in
-
-            if let token = (textAttachment as? TokenTextAttachment)?.token,
-               !updatedCurrentTokens.contains(token) {
-                updatedCurrentTokens.insert(token)
-            }
-
-            if let token = (textAttachment as? TokenSeparatorAttachment)?.token,
-               !updatedCurrentSeparatorTokens.contains(token) {
-                updatedCurrentSeparatorTokens.insert(token)
-            }
-        }
-
-        updatedCurrentTokens = updatedCurrentTokens.intersection(updatedCurrentSeparatorTokens)
-
-        var deletedTokens = Set<Token>(tokens)
-        deletedTokens.subtract(updatedCurrentTokens)
-
-        if !deletedTokens.isEmpty {
-            removeTokens(Array(deletedTokens))
-        }
-        tokens.removeAll(where: { deletedTokens.contains($0) })
-        delegate?.tokenField(self, changedTokensTo: tokens)
-    }
-
-    // MARK: - remove token
-
-    func removeAllTokens() {
-        removeTokens(tokens)
-        textView.showOrHidePlaceholder()
-    }
-
-    func removeToken(_ token: Token<NSObjectProtocol>) {
-        removeTokens([token])
     }
 
     private func removeTokens(_ tokensToRemove: [Token<NSObjectProtocol>]) {

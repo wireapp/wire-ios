@@ -21,7 +21,7 @@ import Foundation
 // MARK: - MockAnalytics
 
 final class MockAnalytics: NSObject, AnalyticsType {
-    var eventAttributes = [String: [String: NSObject]]()
+    // MARK: Public
 
     public func setPersistedAttributes(_ attributes: [String: NSObject]?, for event: String) {
         if let attributes {
@@ -35,6 +35,14 @@ final class MockAnalytics: NSObject, AnalyticsType {
         let value = eventAttributes[event] ?? [:]
         return value
     }
+
+    // MARK: Internal
+
+    var eventAttributes = [String: [String: NSObject]]()
+
+    var taggedEvents = [String]()
+    var taggedEventsWithAttributes = [EventWithAttributes]()
+    var uploadCallCount = 0
 
     @objc
     func tagEvent(_ event: String) {
@@ -50,10 +58,6 @@ final class MockAnalytics: NSObject, AnalyticsType {
     func upload() {
         uploadCallCount += 1
     }
-
-    var taggedEvents = [String]()
-    var taggedEventsWithAttributes = [EventWithAttributes]()
-    var uploadCallCount = 0
 }
 
 // MARK: - EventWithAttributes

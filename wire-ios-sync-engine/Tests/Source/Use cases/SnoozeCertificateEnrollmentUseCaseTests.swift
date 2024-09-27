@@ -23,10 +23,7 @@ import WireTesting
 @testable import WireSyncEngineSupport
 
 final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
-
-    private var context: NSManagedObjectContext { syncMOC }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -62,6 +59,13 @@ final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
         // Then
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 1)
     }
+
+    // MARK: Private
+
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
+
+    private var context: NSManagedObjectContext { syncMOC }
 
     // MARK: Helpers
 

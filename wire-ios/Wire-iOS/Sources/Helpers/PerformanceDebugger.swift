@@ -22,10 +22,7 @@ import WireSystem
 /// An object that tracks performance issues in the application for debugging purposes.
 
 final class PerformanceDebugger {
-    /// The shared debugger.
-    static let shared = PerformanceDebugger()
-
-    private var displayLink: CADisplayLink!
+    // MARK: Lifecycle
 
     init() {
         self.displayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLink))
@@ -34,6 +31,11 @@ final class PerformanceDebugger {
     deinit {
         displayLink.remove(from: .main, forMode: .default)
     }
+
+    // MARK: Internal
+
+    /// The shared debugger.
+    static let shared = PerformanceDebugger()
 
     /// Starts tracking performance issues.
     func start() {
@@ -49,6 +51,10 @@ final class PerformanceDebugger {
             object: nil
         )
     }
+
+    // MARK: Private
+
+    private var displayLink: CADisplayLink!
 
     @objc
     private func handleDisplayLink() {

@@ -19,6 +19,8 @@
 import Foundation
 
 struct ConversationRenameEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationRenameEvent {
@@ -49,6 +51,8 @@ struct ConversationRenameEventDecoder {
             newName: payload.name
         )
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let name: String

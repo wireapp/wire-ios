@@ -53,10 +53,14 @@ public enum UserClientChangeInfoKey: String {
 
 @objcMembers
 open class UserClientChangeInfo: ObjectChangeInfo {
+    // MARK: Lifecycle
+
     public required init(object: NSObject) {
         self.userClient = object as! UserClient
         super.init(object: object)
     }
+
+    // MARK: Open
 
     open var trustedByClientsChanged: Bool {
         changedKeysContain(keys: #keyPath(UserClient.trustedByClients))
@@ -75,7 +79,11 @@ open class UserClientChangeInfo: ObjectChangeInfo {
             userClient.needsToNotifyOtherUserAboutSessionReset == false
     }
 
+    // MARK: Public
+
     public let userClient: UserClient
+
+    // MARK: Internal
 
     static func changeInfo(for client: UserClient, changes: Changes) -> UserClientChangeInfo? {
         UserClientChangeInfo(object: client, changes: changes)

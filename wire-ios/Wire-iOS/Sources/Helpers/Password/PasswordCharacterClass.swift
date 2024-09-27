@@ -42,6 +42,8 @@ enum PasswordCharacterClass: Hashable, Decodable {
     /// A user-defined character set.
     case custom(String)
 
+    // MARK: Lifecycle
+
     // MARK: - Raw Representation
 
     /// Creates the character class from its raw representation.
@@ -69,19 +71,6 @@ enum PasswordCharacterClass: Hashable, Decodable {
         }
     }
 
-    /// The string describing the character set.
-    var rawValue: String {
-        switch self {
-        case .unicode: "unicode"
-        case .uppercase: "upper"
-        case .lowercase: "lower"
-        case .digits: "digits"
-        case .special: "special"
-        case .asciiPrintable: "ascii-printable"
-        case let .custom(characterSet): "[\(characterSet)]"
-        }
-    }
-
     // MARK: - Codable
 
     init(from decoder: Decoder) throws {
@@ -98,9 +87,19 @@ enum PasswordCharacterClass: Hashable, Decodable {
         self = decodedSet
     }
 
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(rawValue)
+    // MARK: Internal
+
+    /// The string describing the character set.
+    var rawValue: String {
+        switch self {
+        case .unicode: "unicode"
+        case .uppercase: "upper"
+        case .lowercase: "lower"
+        case .digits: "digits"
+        case .special: "special"
+        case .asciiPrintable: "ascii-printable"
+        case let .custom(characterSet): "[\(characterSet)]"
+        }
     }
 
     // MARK: - Standard Character Set
@@ -116,5 +115,10 @@ enum PasswordCharacterClass: Hashable, Decodable {
         case .special: CharacterSet.asciiStandardCharacters.inverted
         case let .custom(charactersString): CharacterSet(charactersIn: charactersString)
         }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
     }
 }

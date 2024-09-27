@@ -23,16 +23,7 @@ import WireSyncEngine
 // MARK: - ShareableDebugReport
 
 struct ShareableDebugReport: Shareable {
-    // MARK: - Types
-
-    typealias I = ZMConversation
-
-    // MARK: - Properties
-
-    private let logFileMetadata: ZMFileMetadata
-    private let shareFile: ShareFileUseCaseProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         logFileMetadata: ZMFileMetadata,
@@ -41,6 +32,12 @@ struct ShareableDebugReport: Shareable {
         self.logFileMetadata = logFileMetadata
         self.shareFile = shareFile
     }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    typealias I = ZMConversation
 
     // MARK: - Interface
 
@@ -62,6 +59,13 @@ struct ShareableDebugReport: Shareable {
         view.configure(with: logFileMetadata)
         return view
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let logFileMetadata: ZMFileMetadata
+    private let shareFile: ShareFileUseCaseProtocol
 }
 
 // MARK: Equatable

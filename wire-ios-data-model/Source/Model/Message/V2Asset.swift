@@ -23,8 +23,78 @@ import MobileCoreServices
 
 @objcMembers
 public class V2Asset: NSObject, ZMImageMessageData {
+    // MARK: Lifecycle
+
+    public init?(with message: ZMAssetClientMessage) {
+        guard message.version < 3 else { return nil }
+        self.assetClientMessage = message
+
+        guard let managedObjectContext = message.managedObjectContext else { return nil }
+        self.moc = managedObjectContext
+    }
+
+    // MARK: Public
+
     public var isDownloaded: Bool {
         hasDownloadedFile
+    }
+
+    public var imageMessageData: ZMImageMessageData? {
+        guard assetClientMessage.mediumGenericMessage != nil || assetClientMessage.previewGenericMessage != nil
+        else { return nil }
+
+        return self
+    }
+
+    public var imageData: Data? {
+        guard let cache = moc.zm_fileAssetCache else {
+            return nil
+        }
+
+        return mediumData ?? cache.originalImageData(for: assetClientMessage)
+    }
+
+    public var imageDataIdentifier: String? {
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
+    }
+
+    public var imagePreviewDataIdentifier: String? {
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
+    }
+
+    public var previewData: Data? {
+        if assetClientMessage.hasDownloadedPreview {
+            guard let cache = moc.zm_fileAssetCache else {
+                return nil
+            }
+
+            // File preview data
+            return cache.originalImageData(for: assetClientMessage) ?? cache.mediumImageData(for: assetClientMessage)
+        }
+
+        return nil
+    }
+
+    public var isAnimatedGIF: Bool {
+        guard let mimeType = assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType else {
+            return false
+        }
+        return UTIHelper.conformsToGifType(mime: mimeType)
+    }
+
+    public var imageType: String? {
+        assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType
+    }
+
+    public var originalSize: CGSize {
+        guard let asset = assetClientMessage.mediumGenericMessage?.imageAssetData else { return .zero }
+        let size = CGSize(width: Int(asset.originalWidth), height: Int(asset.originalHeight))
+
+        if size != .zero {
+            return size
+        }
+
+        return assetClientMessage.preprocessedSize
     }
 
     public func fetchImageData(
@@ -80,23 +150,12 @@ public class V2Asset: NSObject, ZMImageMessageData {
         }
     }
 
+    // MARK: Fileprivate
+
     fileprivate let assetClientMessage: ZMAssetClientMessage
     fileprivate let moc: NSManagedObjectContext
 
-    public init?(with message: ZMAssetClientMessage) {
-        guard message.version < 3 else { return nil }
-        self.assetClientMessage = message
-
-        guard let managedObjectContext = message.managedObjectContext else { return nil }
-        self.moc = managedObjectContext
-    }
-
-    public var imageMessageData: ZMImageMessageData? {
-        guard assetClientMessage.mediumGenericMessage != nil || assetClientMessage.previewGenericMessage != nil
-        else { return nil }
-
-        return self
-    }
+    // MARK: Private
 
     // MARK: - ZMImageMessageData
 
@@ -121,57 +180,6 @@ public class V2Asset: NSObject, ZMImageMessageData {
         } else {
             return nil
         }
-    }
-
-    public var imageData: Data? {
-        guard let cache = moc.zm_fileAssetCache else {
-            return nil
-        }
-
-        return mediumData ?? cache.originalImageData(for: assetClientMessage)
-    }
-
-    public var imageDataIdentifier: String? {
-        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
-    }
-
-    public var imagePreviewDataIdentifier: String? {
-        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
-    }
-
-    public var previewData: Data? {
-        if assetClientMessage.hasDownloadedPreview {
-            guard let cache = moc.zm_fileAssetCache else {
-                return nil
-            }
-
-            // File preview data
-            return cache.originalImageData(for: assetClientMessage) ?? cache.mediumImageData(for: assetClientMessage)
-        }
-
-        return nil
-    }
-
-    public var isAnimatedGIF: Bool {
-        guard let mimeType = assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType else {
-            return false
-        }
-        return UTIHelper.conformsToGifType(mime: mimeType)
-    }
-
-    public var imageType: String? {
-        assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType
-    }
-
-    public var originalSize: CGSize {
-        guard let asset = assetClientMessage.mediumGenericMessage?.imageAssetData else { return .zero }
-        let size = CGSize(width: Int(asset.originalWidth), height: Int(asset.originalHeight))
-
-        if size != .zero {
-            return size
-        }
-
-        return assetClientMessage.preprocessedSize
     }
 }
 

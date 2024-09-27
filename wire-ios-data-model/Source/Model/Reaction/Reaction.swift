@@ -39,10 +39,21 @@ public enum TransportReaction: UInt32 {
 
 @objcMembers
 open class Reaction: ZMManagedObject {
-    @NSManaged var unicodeValue: String?
-    @NSManaged var message: ZMMessage?
-    @NSManaged var users: Set<ZMUser>
-    @NSManaged private var firstReactionDate: Date?
+    // MARK: Open
+
+    override open class func entityName() -> String {
+        "Reaction"
+    }
+
+    override open class func sortKey() -> String? {
+        ZMReactionUnicodeValueKey
+    }
+
+    override open func keysTrackedForLocalModifications() -> Set<String> {
+        [ZMReactionUsersValueKey]
+    }
+
+    // MARK: Public
 
     public var creationDate: Date {
         firstReactionDate ?? Date.distantPast
@@ -62,18 +73,6 @@ open class Reaction: ZMManagedObject {
         return reaction
     }
 
-    override open func keysTrackedForLocalModifications() -> Set<String> {
-        [ZMReactionUsersValueKey]
-    }
-
-    override open class func entityName() -> String {
-        "Reaction"
-    }
-
-    override open class func sortKey() -> String? {
-        ZMReactionUnicodeValueKey
-    }
-
     public static func validate(unicode: String) -> Bool {
         let isDelete = unicode.count == 0
         let unicodeScalars = unicode.unicodeScalars
@@ -84,4 +83,14 @@ open class Reaction: ZMManagedObject {
 
         return isDelete || isValidReaction
     }
+
+    // MARK: Internal
+
+    @NSManaged var unicodeValue: String?
+    @NSManaged var message: ZMMessage?
+    @NSManaged var users: Set<ZMUser>
+
+    // MARK: Private
+
+    @NSManaged private var firstReactionDate: Date?
 }

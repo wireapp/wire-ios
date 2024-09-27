@@ -38,6 +38,8 @@ public protocol TeamType: AnyObject {
 
 @objcMembers
 public class Team: ZMManagedObject, TeamType {
+    // MARK: Public
+
     @NSManaged public var conversations: Set<ZMConversation>
     @NSManaged public var members: Set<Member>
     @NSManaged public var roles: Set<Role>
@@ -48,8 +50,6 @@ public class Team: ZMManagedObject, TeamType {
 
     @NSManaged public var needsToRedownloadMembers: Bool
     @NSManaged public var needsToDownloadRoles: Bool
-
-    @NSManaged private var remoteIdentifier_data: Data?
 
     public var remoteIdentifier: UUID? {
         get {
@@ -88,6 +88,10 @@ public class Team: ZMManagedObject, TeamType {
     public func refreshMetadata() {
         needsToBeUpdatedFromBackend = true
     }
+
+    // MARK: Private
+
+    @NSManaged private var remoteIdentifier_data: Data?
 }
 
 extension Team {

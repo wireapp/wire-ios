@@ -19,12 +19,7 @@
 @testable import Wire
 
 final class MockCollection: NSObject, ZMCollection {
-    static let onlyImagesCategory = CategoryMatch(including: .image, excluding: .none)
-    static let onlyVideosCategory = CategoryMatch(including: .video, excluding: .none)
-    static let onlyFilesCategory = CategoryMatch(including: .file, excluding: .video)
-    static let onlyLinksCategory = CategoryMatch(including: .linkPreview, excluding: .none)
-
-    let messages: [CategoryMatch: [ZMConversationMessage]]
+    // MARK: Lifecycle
 
     init(messages: [CategoryMatch: [ZMConversationMessage]]) {
         self.messages = messages
@@ -42,15 +37,24 @@ final class MockCollection: NSObject, ZMCollection {
         ])
     }
 
+    // MARK: Internal
+
+    static let onlyImagesCategory = CategoryMatch(including: .image, excluding: .none)
+    static let onlyVideosCategory = CategoryMatch(including: .video, excluding: .none)
+    static let onlyFilesCategory = CategoryMatch(including: .file, excluding: .video)
+    static let onlyLinksCategory = CategoryMatch(including: .linkPreview, excluding: .none)
+
     static var empty: MockCollection {
         MockCollection(messages: [:])
     }
+
+    let messages: [CategoryMatch: [ZMConversationMessage]]
+
+    let fetchingDone = true
 
     func tearDown() {}
 
     func assets(for category: WireDataModel.CategoryMatch) -> [ZMConversationMessage] {
         messages[category] ?? []
     }
-
-    let fetchingDone = true
 }

@@ -47,8 +47,7 @@ extension ZMConversation {
 
 public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
     ZMRequestGeneratorSource, ZMDownstreamTranscoder {
-    fileprivate let jsonDecoder = JSONDecoder()
-    private(set) var downstreamSync: ZMDownstreamObjectSync!
+    // MARK: Lifecycle
 
     @objc
     override public init(
@@ -71,9 +70,7 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
         )
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        downstreamSync.nextRequest(for: apiVersion)
-    }
+    // MARK: Public
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [downstreamSync]
@@ -83,11 +80,13 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
         [downstreamSync]
     }
 
-    static let requestPath = "/conversations"
-
     public static func getRolesRequest(in conversationIdentifier: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
         let path = requestPath + "/" + conversationIdentifier.transportString() + "/roles"
         return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
+    }
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
     public func request(
@@ -129,4 +128,14 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
         conversation.needsToDownloadRoles = false
         conversation.updateRoles(with: response)
     }
+
+    // MARK: Internal
+
+    static let requestPath = "/conversations"
+
+    private(set) var downstreamSync: ZMDownstreamObjectSync!
+
+    // MARK: Fileprivate
+
+    fileprivate let jsonDecoder = JSONDecoder()
 }

@@ -37,15 +37,7 @@ extension SectionListCellType {
 // MARK: - ConnectRequestsCell
 
 final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
-    var sectionName: String?
-    var obfuscatedSectionName: String?
-    var cellIdentifier: String?
-
-    let itemView = ConversationListItemView()
-
-    private var hasCreatedInitialConstraints = false
-    private var currentConnectionRequestsCount = 0
-    private var conversationListObserverToken: Any?
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,21 +49,13 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupConnectRequestsCell() {
-        clipsToBounds = true
-        addSubview(itemView)
-        updateAppearance()
+    // MARK: Internal
 
-        if let userSession = ZMUserSession.shared() {
-            conversationListObserverToken = ConversationListChangeInfo.add(
-                observer: self,
-                for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
-                userSession: userSession
-            )
-        }
+    var sectionName: String?
+    var obfuscatedSectionName: String?
+    var cellIdentifier: String?
 
-        setNeedsUpdateConstraints()
-    }
+    let itemView = ConversationListItemView()
 
     override var accessibilityIdentifier: String? {
         get {
@@ -80,19 +64,6 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         set {
             // no op
         }
-    }
-
-    override func updateConstraints() {
-        if !hasCreatedInitialConstraints {
-            hasCreatedInitialConstraints = true
-            itemView.translatesAutoresizingMaskIntoConstraints = false
-            itemView.fitIn(view: self)
-        }
-        super.updateConstraints()
-    }
-
-    private func updateItemViewSelected() {
-        itemView.selected = isSelected || isHighlighted
     }
 
     override var isSelected: Bool {
@@ -111,6 +82,41 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
                 itemView.selected = isHighlighted
             }
         }
+    }
+
+    override func updateConstraints() {
+        if !hasCreatedInitialConstraints {
+            hasCreatedInitialConstraints = true
+            itemView.translatesAutoresizingMaskIntoConstraints = false
+            itemView.fitIn(view: self)
+        }
+        super.updateConstraints()
+    }
+
+    // MARK: Private
+
+    private var hasCreatedInitialConstraints = false
+    private var currentConnectionRequestsCount = 0
+    private var conversationListObserverToken: Any?
+
+    private func setupConnectRequestsCell() {
+        clipsToBounds = true
+        addSubview(itemView)
+        updateAppearance()
+
+        if let userSession = ZMUserSession.shared() {
+            conversationListObserverToken = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
+                userSession: userSession
+            )
+        }
+
+        setNeedsUpdateConstraints()
+    }
+
+    private func updateItemViewSelected() {
+        itemView.selected = isSelected || isHighlighted
     }
 
     private

@@ -23,9 +23,7 @@ import WireDesign
 // MARK: - MessageActionsViewController
 
 final class MessageActionsViewController: UIAlertController {
-    // We're using custom marker to add space for custom view in UIAlertController. Solution explained in
-    // https://stackoverflow.com/a/47925120
-    private static let MessageLabelMarker = "__CUSTOM_CONTENT_MARKER__"
+    // MARK: Internal
 
     static func controller(
         withActions actions: [MessageAction],
@@ -40,6 +38,12 @@ final class MessageActionsViewController: UIAlertController {
         controller.addMessageActions(actions, withActionController: actionController)
         return controller
     }
+
+    // MARK: Private
+
+    // We're using custom marker to add space for custom view in UIAlertController. Solution explained in
+    // https://stackoverflow.com/a/47925120
+    private static let MessageLabelMarker = "__CUSTOM_CONTENT_MARKER__"
 
     private var actionController: ConversationMessageActionController?
 

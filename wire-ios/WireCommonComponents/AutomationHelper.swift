@@ -24,13 +24,18 @@ import WireSystem
 // MARK: - AutomationEmailCredentials
 
 public final class AutomationEmailCredentials: NSObject {
-    public var email: String
-    public var password: String
+    // MARK: Lifecycle
+
     init(email: String, password: String) {
         self.email = email
         self.password = password
         super.init()
     }
+
+    // MARK: Public
+
+    public var email: String
+    public var password: String
 }
 
 // MARK: - AutomationHelper
@@ -39,49 +44,7 @@ public final class AutomationEmailCredentials: NSObject {
 /// command line when running automation tests.
 /// These values typically do not need to be stored in `Settings`.
 public final class AutomationHelper: NSObject {
-    public static let sharedHelper = AutomationHelper()
-    /// Whether analytics should be used
-    public var useAnalytics: Bool {
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: get it from xcconfig?
-        // return UserDefaults.standard.bool(forKey: "UseAnalytics")
-        true
-    }
-
-    /// Whether to skip the first login alert
-    public var skipFirstLoginAlerts: Bool {
-        automationEmailCredentials != nil
-    }
-
-    /// The login credentials provides by command line
-    public let automationEmailCredentials: AutomationEmailCredentials?
-    /// Whether we push notification permissions alert is disabled
-    public let disablePushNotificationAlert: Bool
-    /// Whether autocorrection is disabled
-    public let disableAutocorrection: Bool
-    /// Whether address book upload is enabled on simulator
-    let uploadAddressbookOnSimulator: Bool
-    /// Whether we should disable the call quality survey.
-    public let disableCallQualitySurvey: Bool
-    /// Whether we should disable dismissing the conversation input bar keyboard by dragging it downwards.
-    public let disableInteractiveKeyboardDismissal: Bool
-    /// Delay in address book remote search override
-    let delayInAddressBookRemoteSearch: TimeInterval?
-    /// Debug data to install in the share container
-    let debugDataToInstall: URL?
-
-    /// The name of the arguments file in the /tmp directory
-    private let fileArgumentsName = "wire_arguments.txt"
-
-    /// Whether the backend environment type should be persisted as a setting.
-    let shouldPersistBackendType: Bool
-
-    /// Whether the calling overlay should disappear automatically.
-    public let keepCallingOverlayVisible: Bool
-
-    public private(set) var preferredAPIVersion: APIVersion?
-    public private(set) var allowMLSGroupCreation: Bool?
-    public private(set) var enableMLSSupport: Bool?
+    // MARK: Lifecycle
 
     override init() {
         let url = URL(string: NSTemporaryDirectory())?.appendingPathComponent(fileArgumentsName)
@@ -122,6 +85,54 @@ public final class AutomationHelper: NSObject {
         super.init()
     }
 
+    // MARK: Public
+
+    public static let sharedHelper = AutomationHelper()
+
+    /// The login credentials provides by command line
+    public let automationEmailCredentials: AutomationEmailCredentials?
+    /// Whether we push notification permissions alert is disabled
+    public let disablePushNotificationAlert: Bool
+    /// Whether autocorrection is disabled
+    public let disableAutocorrection: Bool
+    /// Whether we should disable the call quality survey.
+    public let disableCallQualitySurvey: Bool
+    /// Whether we should disable dismissing the conversation input bar keyboard by dragging it downwards.
+    public let disableInteractiveKeyboardDismissal: Bool
+    /// Whether the calling overlay should disappear automatically.
+    public let keepCallingOverlayVisible: Bool
+
+    public private(set) var preferredAPIVersion: APIVersion?
+    public private(set) var allowMLSGroupCreation: Bool?
+    public private(set) var enableMLSSupport: Bool?
+
+    /// Whether analytics should be used
+    public var useAnalytics: Bool {
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: get it from xcconfig?
+        // return UserDefaults.standard.bool(forKey: "UseAnalytics")
+        true
+    }
+
+    /// Whether to skip the first login alert
+    public var skipFirstLoginAlerts: Bool {
+        automationEmailCredentials != nil
+    }
+
+    // MARK: Internal
+
+    /// Whether address book upload is enabled on simulator
+    let uploadAddressbookOnSimulator: Bool
+    /// Delay in address book remote search override
+    let delayInAddressBookRemoteSearch: TimeInterval?
+    /// Debug data to install in the share container
+    let debugDataToInstall: URL?
+
+    /// Whether the backend environment type should be persisted as a setting.
+    let shouldPersistBackendType: Bool
+
+    // MARK: Private
+
     private enum AutomationKey: String {
         case email = "loginemail"
         case password = "loginpassword"
@@ -142,6 +153,9 @@ public final class AutomationHelper: NSObject {
         case deprecatedCallingUI = "deprecated-calling-ui"
         case enableMLSSupport = "enable-mls-support"
     }
+
+    /// The name of the arguments file in the /tmp directory
+    private let fileArgumentsName = "wire_arguments.txt"
 
     /// Returns the login email and password credentials if set in the given arguments
     private static func credentials(_ arguments: ArgumentsType) -> AutomationEmailCredentials? {
@@ -212,23 +226,31 @@ extension ArgumentsType {
 
 /// Command line arguments
 private struct CommandLineArguments: ArgumentsType {
-    let arguments: Set<String>
+    // MARK: Lifecycle
 
     init() {
         self.arguments = Set(ProcessInfo.processInfo.arguments)
     }
+
+    // MARK: Internal
+
+    let arguments: Set<String>
 }
 
 // MARK: - FileArguments
 
 /// Arguments read from a file on disk
 private struct FileArguments: ArgumentsType {
-    let arguments: Set<String>
+    // MARK: Lifecycle
 
     init?(url: URL) {
         guard let argumentsString = try? String(contentsOfFile: url.path, encoding: .utf8) else { return nil }
         self.arguments = Set(argumentsString.components(separatedBy: .whitespaces))
     }
+
+    // MARK: Internal
+
+    let arguments: Set<String>
 }
 
 // MARK: - Debug

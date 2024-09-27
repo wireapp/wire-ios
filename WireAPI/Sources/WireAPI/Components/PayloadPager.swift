@@ -22,11 +22,7 @@ import Foundation
 /// an api endpoint.
 
 public struct PayloadPager<Payload>: AsyncSequence {
-    public typealias Element = [Payload]
-    public typealias PageFetcher = (String?) async throws -> Page
-
-    var start: String?
-    let fetchPage: PageFetcher
+    // MARK: Lifecycle
 
     public init(
         start: String? = nil,
@@ -36,17 +32,13 @@ public struct PayloadPager<Payload>: AsyncSequence {
         self.fetchPage = fetchPage
     }
 
-    public func makeAsyncIterator() -> Iterator {
-        Iterator(
-            start: start,
-            fetchPage: fetchPage
-        )
-    }
+    // MARK: Public
+
+    public typealias Element = [Payload]
+    public typealias PageFetcher = (String?) async throws -> Page
 
     public struct Page {
-        public let element: Element
-        public let hasMore: Bool
-        public let nextStart: String
+        // MARK: Lifecycle
 
         public init(
             element: Element,
@@ -57,12 +49,16 @@ public struct PayloadPager<Payload>: AsyncSequence {
             self.hasMore = hasMore
             self.nextStart = nextStart
         }
+
+        // MARK: Public
+
+        public let element: Element
+        public let hasMore: Bool
+        public let nextStart: String
     }
 
     public struct Iterator: AsyncIteratorProtocol {
-        private var start: String?
-        private var hasMore = true
-        private let fetchPage: PageFetcher
+        // MARK: Lifecycle
 
         init(
             start: String?,
@@ -72,6 +68,8 @@ public struct PayloadPager<Payload>: AsyncSequence {
             self.fetchPage = fetchPage
         }
 
+        // MARK: Public
+
         public mutating func next() async throws -> [Payload]? {
             guard hasMore else { return nil }
             let page = try await fetchPage(start)
@@ -79,5 +77,23 @@ public struct PayloadPager<Payload>: AsyncSequence {
             start = page.nextStart
             return page.element
         }
+
+        // MARK: Private
+
+        private var start: String?
+        private var hasMore = true
+        private let fetchPage: PageFetcher
     }
+
+    public func makeAsyncIterator() -> Iterator {
+        Iterator(
+            start: start,
+            fetchPage: fetchPage
+        )
+    }
+
+    // MARK: Internal
+
+    var start: String?
+    let fetchPage: PageFetcher
 }

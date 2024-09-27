@@ -29,6 +29,30 @@ enum ImageToolbarConfiguration {
 // MARK: - ImageToolbarView
 
 final class ImageToolbarView: UIView {
+    // MARK: Lifecycle
+
+    init(withConfiguraton configuration: ImageToolbarConfiguration) {
+        self.configuration = configuration
+
+        super.init(frame: CGRect.zero)
+
+        updateButtonStyle()
+
+        addSubview(buttonContainer)
+
+        createConstraints()
+
+        setupButtons()
+        updateButtonConfiguration()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     let buttonContainer = UIView()
     let sketchButton = IconButton()
     let emojiButton = IconButton()
@@ -65,51 +89,6 @@ final class ImageToolbarView: UIView {
         }
     }
 
-    private func updateButtonStyle() {
-        let normalColor: UIColor = isPlacedOnImage ? .from(scheme: .iconNormal, variant: .dark) :
-            .from(scheme: .iconNormal)
-        let highlightedColor: UIColor = isPlacedOnImage ? .from(scheme: .iconHighlighted, variant: .dark) :
-            .from(scheme: .iconHighlighted)
-        let selectedColor: UIColor = isPlacedOnImage ? .accentDarken : .accent()
-
-        for item in [sketchButton, emojiButton, textButton, expandButton] {
-            item.setIconColor(normalColor, for: .normal)
-            item.setIconColor(highlightedColor, for: .highlighted)
-            item.setIconColor(selectedColor, for: .selected)
-        }
-    }
-
-    init(withConfiguraton configuration: ImageToolbarConfiguration) {
-        self.configuration = configuration
-
-        super.init(frame: CGRect.zero)
-
-        updateButtonStyle()
-
-        addSubview(buttonContainer)
-
-        createConstraints()
-
-        setupButtons()
-        updateButtonConfiguration()
-    }
-
-    private func createConstraints() {
-        buttonContainer.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            buttonContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
-            buttonContainer.topAnchor.constraint(equalTo: topAnchor),
-            buttonContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
-            buttonContainer.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor),
-            buttonContainer.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor),
-        ])
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     func updateButtonConfiguration() {
         buttons.forEach { $0.removeFromSuperview() }
         var newButtons = showsSketchButton ? [sketchButton] : []
@@ -129,6 +108,33 @@ final class ImageToolbarView: UIView {
         buttons = newButtons
         buttons.forEach(buttonContainer.addSubview)
         createButtonConstraints()
+    }
+
+    // MARK: Private
+
+    private func updateButtonStyle() {
+        let normalColor: UIColor = isPlacedOnImage ? .from(scheme: .iconNormal, variant: .dark) :
+            .from(scheme: .iconNormal)
+        let highlightedColor: UIColor = isPlacedOnImage ? .from(scheme: .iconHighlighted, variant: .dark) :
+            .from(scheme: .iconHighlighted)
+        let selectedColor: UIColor = isPlacedOnImage ? .accentDarken : .accent()
+
+        for item in [sketchButton, emojiButton, textButton, expandButton] {
+            item.setIconColor(normalColor, for: .normal)
+            item.setIconColor(highlightedColor, for: .highlighted)
+            item.setIconColor(selectedColor, for: .selected)
+        }
+    }
+
+    private func createConstraints() {
+        buttonContainer.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            buttonContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
+            buttonContainer.topAnchor.constraint(equalTo: topAnchor),
+            buttonContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
+            buttonContainer.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor),
+            buttonContainer.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor),
+        ])
     }
 
     // swiftlint:disable:next todo_requires_jira_link

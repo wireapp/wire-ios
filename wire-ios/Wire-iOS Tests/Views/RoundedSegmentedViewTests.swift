@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class RoundedSegmentedViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: RoundedSegmentedView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -40,17 +37,6 @@ final class RoundedSegmentedViewTests: XCTestCase {
         sut = nil
 
         super.tearDown()
-    }
-
-    // MARK: - Helper Method
-
-    private func createView(with items: [String]) -> RoundedSegmentedView {
-        let view = RoundedSegmentedView()
-        for item in items {
-            view.addButton(withTitle: item, actionHandler: {})
-        }
-        view.frame = CGRect(x: 0, y: 0, width: 95, height: 25)
-        return view
     }
 
     // MARK: - Snapshot Tests
@@ -80,5 +66,23 @@ final class RoundedSegmentedViewTests: XCTestCase {
 
         // THEN
         snapshotHelper.verify(matching: sut)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: RoundedSegmentedView!
+
+    // MARK: - Helper Method
+
+    private func createView(with items: [String]) -> RoundedSegmentedView {
+        let view = RoundedSegmentedView()
+        for item in items {
+            view.addButton(withTitle: item, actionHandler: {})
+        }
+        view.frame = CGRect(x: 0, y: 0, width: 95, height: 25)
+        return view
     }
 }

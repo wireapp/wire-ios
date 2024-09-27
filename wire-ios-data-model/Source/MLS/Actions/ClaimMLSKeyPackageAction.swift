@@ -21,6 +21,24 @@ import Foundation
 // MARK: - ClaimMLSKeyPackageAction
 
 public class ClaimMLSKeyPackageAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        domain: String?,
+        userId: UUID,
+        ciphersuite: MLSCipherSuite,
+        excludedSelfClientId: String? = nil,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.domain = domain
+        self.userId = userId
+        self.ciphersuite = ciphersuite
+        self.excludedSelfClientId = excludedSelfClientId
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     // Until we know what type is best for the result, we'll use [KeyPackage]
@@ -34,6 +52,8 @@ public class ClaimMLSKeyPackageAction: EntityAction {
         case userOrDomainNotFound
         case emptyKeyPackages
         case unknown(status: Int)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -63,20 +83,6 @@ public class ClaimMLSKeyPackageAction: EntityAction {
     public let userId: UUID
     public let ciphersuite: MLSCipherSuite
     public var resultHandler: ResultHandler?
-
-    public init(
-        domain: String?,
-        userId: UUID,
-        ciphersuite: MLSCipherSuite,
-        excludedSelfClientId: String? = nil,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.domain = domain
-        self.userId = userId
-        self.ciphersuite = ciphersuite
-        self.excludedSelfClientId = excludedSelfClientId
-        self.resultHandler = resultHandler
-    }
 }
 
 // MARK: - KeyPackage
@@ -84,19 +90,7 @@ public class ClaimMLSKeyPackageAction: EntityAction {
 // Temporary solution until we know what we need from the result. Once we do, this should move to the action handler
 // extension.
 public struct KeyPackage: Codable, Equatable {
-    public let client: String
-    public let domain: String
-    public let keyPackage: String
-    public let keyPackageRef: String
-    public let userID: UUID
-
-    enum CodingKeys: String, CodingKey {
-        case client
-        case domain
-        case keyPackage = "key_package"
-        case keyPackageRef = "key_package_ref"
-        case userID = "user"
-    }
+    // MARK: Lifecycle
 
     public init(
         client: String,
@@ -110,5 +104,23 @@ public struct KeyPackage: Codable, Equatable {
         self.keyPackage = keyPackage
         self.keyPackageRef = keyPackageRef
         self.userID = userID
+    }
+
+    // MARK: Public
+
+    public let client: String
+    public let domain: String
+    public let keyPackage: String
+    public let keyPackageRef: String
+    public let userID: UUID
+
+    // MARK: Internal
+
+    enum CodingKeys: String, CodingKey {
+        case client
+        case domain
+        case keyPackage = "key_package"
+        case keyPackageRef = "key_package_ref"
+        case userID = "user"
     }
 }

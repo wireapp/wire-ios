@@ -22,6 +22,8 @@ enum PinchToZoomRule {
     case enableWhenFitted
     case enableWhenMaximized
 
+    // MARK: Lifecycle
+
     init(isOneToOneCall: Bool) {
         self = isOneToOneCall ? .enableWhenFitted : .enableWhenMaximized
     }

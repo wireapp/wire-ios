@@ -22,42 +22,7 @@ import Foundation
 
 @objcMembers
 final class NativePushChannel: NSObject, PushChannelType {
-    var clientID: String? {
-        didSet {
-            WireLogger.pushChannel.debug("Setting client ID")
-            scheduleOpen()
-        }
-    }
-
-    var accessToken: AccessToken? {
-        didSet {
-            WireLogger.pushChannel.debug("Setting access token")
-        }
-    }
-
-    var keepOpen = false {
-        didSet {
-            if keepOpen {
-                scheduleOpen()
-            } else {
-                close()
-            }
-        }
-    }
-
-    var canOpenConnection: Bool {
-        keepOpen && websocketURL != nil && consumer != nil
-    }
-
-    let environment: BackendEnvironmentProvider
-    var session: URLSession?
-    let scheduler: ZMTransportRequestScheduler
-    var websocketTask: URLSessionWebSocketTask?
-    weak var consumer: ZMPushChannelConsumer?
-    var consumerQueue: GroupQueue?
-    var workQueue: OperationQueue
-    var pingTimer: ZMTimer?
-    private let minTLSVersion: TLSVersion
+    // MARK: Lifecycle
 
     required init(
         scheduler: ZMTransportRequestScheduler,
@@ -86,6 +51,54 @@ final class NativePushChannel: NSObject, PushChannelType {
         }
 
         self.session = URLSession(configuration: sessionConfig, delegate: self, delegateQueue: queue)
+    }
+
+    // MARK: Internal
+
+    let environment: BackendEnvironmentProvider
+    var session: URLSession?
+    let scheduler: ZMTransportRequestScheduler
+    var websocketTask: URLSessionWebSocketTask?
+    weak var consumer: ZMPushChannelConsumer?
+    var consumerQueue: GroupQueue?
+    var workQueue: OperationQueue
+    var pingTimer: ZMTimer?
+
+    var clientID: String? {
+        didSet {
+            WireLogger.pushChannel.debug("Setting client ID")
+            scheduleOpen()
+        }
+    }
+
+    var accessToken: AccessToken? {
+        didSet {
+            WireLogger.pushChannel.debug("Setting access token")
+        }
+    }
+
+    var keepOpen = false {
+        didSet {
+            if keepOpen {
+                scheduleOpen()
+            } else {
+                close()
+            }
+        }
+    }
+
+    var canOpenConnection: Bool {
+        keepOpen && websocketURL != nil && consumer != nil
+    }
+
+    var websocketURL: URL? {
+        guard let clientID else { return nil }
+
+        let url = environment.backendWSURL.appendingPathComponent("/await")
+        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        urlComponents?.queryItems = [URLQueryItem(name: "client", value: clientID)]
+
+        return urlComponents?.url
     }
 
     func close() {
@@ -138,25 +151,6 @@ final class NativePushChannel: NSObject, PushChannelType {
         }
     }
 
-    private func scheduleOpenInternal() {
-        guard canOpenConnection else {
-            WireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
-            return
-        }
-        WireLogger.pushChannel.debug("Schedule opening..")
-        scheduler.add(ZMOpenPushChannelRequest())
-    }
-
-    var websocketURL: URL? {
-        guard let clientID else { return nil }
-
-        let url = environment.backendWSURL.appendingPathComponent("/await")
-        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        urlComponents?.queryItems = [URLQueryItem(name: "client", value: clientID)]
-
-        return urlComponents?.url
-    }
-
     func listen() {
         websocketTask?.receive(completionHandler: { [weak self] result in
             switch result {
@@ -178,10 +172,21 @@ final class NativePushChannel: NSObject, PushChannelType {
         })
     }
 
-    // MARK: - Private
+    // MARK: Private
+
+    private let minTLSVersion: TLSVersion
 
     private let proxyUsername: String?
     private let proxyPassword: String?
+
+    private func scheduleOpenInternal() {
+        guard canOpenConnection else {
+            WireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
+            return
+        }
+        WireLogger.pushChannel.debug("Schedule opening..")
+        scheduler.add(ZMOpenPushChannelRequest())
+    }
 
     private func onClose() {
         websocketTask = nil

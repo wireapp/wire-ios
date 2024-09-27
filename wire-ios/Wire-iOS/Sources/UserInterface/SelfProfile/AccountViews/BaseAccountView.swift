@@ -24,56 +24,7 @@ import WireSyncEngine
 /// The subclasses of BaseAccountView must conform to AccountViewType,
 /// otherwise `init?(account: Account, user: ZMUser? = nil)` returns nil
 class BaseAccountView: UIView {
-    var autoUpdateSelection = true
-
-    let imageViewContainer = UIView()
-    private let outlineView = UIView()
-    let dotView: DotView
-    let selectionView = ShapeView()
-    private var unreadCountToken: Any?
-    private var selfUserObserver: NSObjectProtocol!
-    let account: Account
-
-    var unreadCountStyle: AccountUnreadCountStyle = .none {
-        didSet { updateAppearance() }
-    }
-
-    var selected = true {
-        didSet { updateAppearance() }
-    }
-
-    var hasUnreadMessages: Bool {
-        switch unreadCountStyle {
-        case .none:
-            false
-        case .current:
-            account.unreadConversationCount > 0
-        case .others:
-            ((SessionManager.shared?.accountManager.totalUnreadCount ?? 0) - account.unreadConversationCount) > 0
-        }
-    }
-
-    func updateAppearance() {
-        selectionView.isHidden = !selected
-        dotView.hasUnreadMessages = hasUnreadMessages
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
-        layoutSubviews()
-    }
-
-    var onTap: (Account) -> Void = { _ in }
-
-    var accessibilityState: String {
-        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam
-            .AccessibilityValue
-        var result = selected ? ConversationListHeaderAccessibilityLocale
-            .active : ConversationListHeaderAccessibilityLocale.inactive
-
-        if hasUnreadMessages {
-            result += "\(L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue.hasNewMessages)"
-        }
-
-        return result
-    }
+    // MARK: Lifecycle
 
     init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         self.account = account
@@ -145,17 +96,67 @@ class BaseAccountView: UIView {
         updateAppearance()
     }
 
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var autoUpdateSelection = true
+
+    let imageViewContainer = UIView()
+    let dotView: DotView
+    let selectionView = ShapeView()
+    let account: Account
+
+    var onTap: (Account) -> Void = { _ in }
+
+    var unreadCountStyle: AccountUnreadCountStyle = .none {
+        didSet { updateAppearance() }
+    }
+
+    var selected = true {
+        didSet { updateAppearance() }
+    }
+
+    var hasUnreadMessages: Bool {
+        switch unreadCountStyle {
+        case .none:
+            false
+        case .current:
+            account.unreadConversationCount > 0
+        case .others:
+            ((SessionManager.shared?.accountManager.totalUnreadCount ?? 0) - account.unreadConversationCount) > 0
+        }
+    }
+
+    var accessibilityState: String {
+        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam
+            .AccessibilityValue
+        var result = selected ? ConversationListHeaderAccessibilityLocale
+            .active : ConversationListHeaderAccessibilityLocale.inactive
+
+        if hasUnreadMessages {
+            result += "\(L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue.hasNewMessages)"
+        }
+
+        return result
+    }
+
+    func updateAppearance() {
+        selectionView.isHidden = !selected
+        dotView.hasUnreadMessages = hasUnreadMessages
+        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
+        layoutSubviews()
+    }
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     func createDotConstraints() -> [NSLayoutConstraint] {
@@ -172,6 +173,12 @@ class BaseAccountView: UIView {
     func didTap(_: UITapGestureRecognizer) {
         onTap(account)
     }
+
+    // MARK: Private
+
+    private let outlineView = UIView()
+    private var unreadCountToken: Any?
+    private var selfUserObserver: NSObjectProtocol!
 }
 
 // MARK: - AccountUnreadCountStyle

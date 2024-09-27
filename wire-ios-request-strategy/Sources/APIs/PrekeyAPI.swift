@@ -34,13 +34,19 @@ extension Payload.PrekeyByUserID {
 // MARK: - PrekeyAPIV0
 
 class PrekeyAPIV0: PrekeyAPI {
+    // MARK: Lifecycle
+
     init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }
 
+    // MARK: Open
+
     open var apiVersion: APIVersion {
         .v0
     }
+
+    // MARK: Internal
 
     let httpClient: HttpClient
     let defaultEncoder = JSONEncoder.defaultEncoder

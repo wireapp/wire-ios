@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 
 class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
-    private let payloadProcessor: UserProfilePayloadProcessing
+    // MARK: Lifecycle
 
     required init(
         context: NSManagedObjectContext,
@@ -30,20 +30,12 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
         super.init(context: context)
     }
 
+    // MARK: Internal
+
     // MARK: - Request
 
     struct RequestPayload: Codable, Equatable {
         let qualified_ids: [QualifiedID]
-    }
-
-    private func markUserProfilesAsUnavailable(_ users: Set<QualifiedID>) {
-        context.performAndWait {
-            for qualifiedID in users {
-                let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
-                user?.isPendingMetadataRefresh = true
-                user?.needsToBeUpdatedFromBackend = false
-            }
-        }
     }
 
     override func request(
@@ -120,6 +112,20 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
                     label: errorInfo.label,
                     message: errorInfo.message
                 ))
+            }
+        }
+    }
+
+    // MARK: Private
+
+    private let payloadProcessor: UserProfilePayloadProcessing
+
+    private func markUserProfilesAsUnavailable(_ users: Set<QualifiedID>) {
+        context.performAndWait {
+            for qualifiedID in users {
+                let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+                user?.isPendingMetadataRefresh = true
+                user?.needsToBeUpdatedFromBackend = false
             }
         }
     }

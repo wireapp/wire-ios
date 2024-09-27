@@ -24,28 +24,7 @@ import XCTest
 // MARK: - LegacyNotificationServiceTests
 
 final class LegacyNotificationServiceTests: XCTestCase {
-    private var sut: LegacyNotificationService!
-    private var request: UNNotificationRequest!
-    private var notificationContent: UNNotificationContent!
-    private var contentResult: UNNotificationContent?
-
-    private var coreDataFixture: CoreDataFixture!
-    private var mockConversation: ZMConversation!
-    private var currentUserIdentifier: UUID!
-
-    private var callEventHandlerMock: CallEventHandlerMock!
-
-    private var otherUser: ZMUser {
-        coreDataFixture.otherUser
-    }
-
-    private var selfUser: ZMUser {
-        coreDataFixture.selfUser
-    }
-
-    private var client: UserClient {
-        coreDataFixture.mockUserClient()
-    }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -116,6 +95,31 @@ final class LegacyNotificationServiceTests: XCTestCase {
 
         // THEN
         XCTAssertTrue(callEventHandlerMock.reportIncomingVoIPCallCalled)
+    }
+
+    // MARK: Private
+
+    private var sut: LegacyNotificationService!
+    private var request: UNNotificationRequest!
+    private var notificationContent: UNNotificationContent!
+    private var contentResult: UNNotificationContent?
+
+    private var coreDataFixture: CoreDataFixture!
+    private var mockConversation: ZMConversation!
+    private var currentUserIdentifier: UUID!
+
+    private var callEventHandlerMock: CallEventHandlerMock!
+
+    private var otherUser: ZMUser {
+        coreDataFixture.otherUser
+    }
+
+    private var selfUser: ZMUser {
+        coreDataFixture.selfUser
+    }
+
+    private var client: UserClient {
+        coreDataFixture.mockUserClient()
     }
 
     // MARK: - Helpers

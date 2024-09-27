@@ -27,7 +27,7 @@ protocol Bar {
 // MARK: - BarController
 
 final class BarController: UIViewController {
-    private let stackView = UIStackView()
+    // MARK: Internal
 
     private(set) var bars: [UIViewController] = []
 
@@ -65,17 +65,6 @@ final class BarController: UIViewController {
         bar.removeFromParent()
     }
 
-    private func updateStackView() {
-        UIView.animate(withDuration: 0.35) {
-            for arrangedSubview in self.stackView.arrangedSubviews {
-                self.stackView.removeArrangedSubview(arrangedSubview)
-                arrangedSubview.removeFromSuperview()
-            }
-
-            self.bars.map(\.view).forEach(self.stackView.addArrangedSubview)
-        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -92,5 +81,20 @@ final class BarController: UIViewController {
             stackView.leftAnchor.constraint(equalTo: view.leftAnchor),
             stackView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
+    }
+
+    // MARK: Private
+
+    private let stackView = UIStackView()
+
+    private func updateStackView() {
+        UIView.animate(withDuration: 0.35) {
+            for arrangedSubview in self.stackView.arrangedSubviews {
+                self.stackView.removeArrangedSubview(arrangedSubview)
+                arrangedSubview.removeFromSuperview()
+            }
+
+            self.bars.map(\.view).forEach(self.stackView.addArrangedSubview)
+        }
     }
 }

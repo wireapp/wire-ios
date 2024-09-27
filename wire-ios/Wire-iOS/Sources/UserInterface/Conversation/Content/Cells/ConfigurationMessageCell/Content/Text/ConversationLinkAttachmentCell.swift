@@ -24,6 +24,23 @@ import WireDesign
 // MARK: - ConversationLinkAttachmentCell
 
 final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     struct Configuration {
         let attachment: LinkAttachment
         let thumbnailResource: WireImageResource?
@@ -45,18 +62,39 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     var currentAttachment: LinkAttachment?
     var heightRatioConstraint: NSLayoutConstraint?
 
-    // MARK: - Initialization
+    // MARK: - HighlightableView
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
+    var highlightContainer: UIView {
+        attachmentView
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    // MARK: - Configuration
+
+    func configure(with object: Configuration, animated: Bool) {
+        currentAttachment = object.attachment
+        attachmentView.titleLabel.text = object.attachment.title
+        attachmentView.previewImageView.setImageResource(object.thumbnailResource, hideLoadingView: true)
+        accessibilityValue = object.attachment.title
+
+        switch object.attachment.type {
+        case .youTubeVideo:
+            updateAspectRatio(3 / 4)
+            attachmentView.providerImageView.image = WireStyleKit.imageOfYoutube(color: .white)
+            accessibilityLabel = L10n.Localizable.Content.Message.LinkAttachment.AccessibilityLabel.youtube
+
+        case .soundCloudTrack:
+            updateAspectRatio(1 / 1)
+            attachmentView.providerImageView.image = UIImage(named: "soundcloud")
+            accessibilityLabel = L10n.Localizable.Content.Message.LinkAttachment.AccessibilityLabel.soundcloudSong
+
+        case .soundCloudPlaylist:
+            updateAspectRatio(1 / 1)
+            attachmentView.providerImageView.image = UIImage(named: "soundcloud")
+            accessibilityLabel = L10n.Localizable.Content.Message.LinkAttachment.AccessibilityLabel.soundcloudSet
+        }
     }
+
+    // MARK: Private
 
     private func configureSubviews() {
         isAccessibilityElement = true
@@ -94,38 +132,6 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         self.heightRatioConstraint = heightRatioConstraint
     }
 
-    // MARK: - Configuration
-
-    func configure(with object: Configuration, animated: Bool) {
-        currentAttachment = object.attachment
-        attachmentView.titleLabel.text = object.attachment.title
-        attachmentView.previewImageView.setImageResource(object.thumbnailResource, hideLoadingView: true)
-        accessibilityValue = object.attachment.title
-
-        switch object.attachment.type {
-        case .youTubeVideo:
-            updateAspectRatio(3 / 4)
-            attachmentView.providerImageView.image = WireStyleKit.imageOfYoutube(color: .white)
-            accessibilityLabel = L10n.Localizable.Content.Message.LinkAttachment.AccessibilityLabel.youtube
-
-        case .soundCloudTrack:
-            updateAspectRatio(1 / 1)
-            attachmentView.providerImageView.image = UIImage(named: "soundcloud")
-            accessibilityLabel = L10n.Localizable.Content.Message.LinkAttachment.AccessibilityLabel.soundcloudSong
-
-        case .soundCloudPlaylist:
-            updateAspectRatio(1 / 1)
-            attachmentView.providerImageView.image = UIImage(named: "soundcloud")
-            accessibilityLabel = L10n.Localizable.Content.Message.LinkAttachment.AccessibilityLabel.soundcloudSet
-        }
-    }
-
-    // MARK: - HighlightableView
-
-    var highlightContainer: UIView {
-        attachmentView
-    }
-
     // MARK: - Events
 
     @objc
@@ -145,7 +151,17 @@ extension ConversationLinkAttachmentCell: LinkViewDelegate {
 // MARK: - ConversationLinkAttachmentCellDescription
 
 final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(attachment: LinkAttachment, thumbnailResource: WireImageResource?) {
+        self.configuration = View.Configuration(attachment: attachment, thumbnailResource: thumbnailResource)
+        self.actionController = nil
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationLinkAttachmentCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -161,9 +177,4 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
-
-    init(attachment: LinkAttachment, thumbnailResource: WireImageResource?) {
-        self.configuration = View.Configuration(attachment: attachment, thumbnailResource: thumbnailResource)
-        self.actionController = nil
-    }
 }

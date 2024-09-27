@@ -21,13 +21,13 @@ import XCTest
 @testable import Wire
 
 final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
+    override var needsCaches: Bool {
+        true
+    }
+
     override func setUp() {
         selfUserInTeam = true
         super.setUp()
-    }
-
-    override var needsCaches: Bool {
-        true
     }
 
     func testStatusForNotActiveConversationWithHandle() {

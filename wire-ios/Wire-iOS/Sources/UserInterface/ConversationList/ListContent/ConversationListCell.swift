@@ -29,41 +29,7 @@ typealias ConversationListCellConversation = MatcherConversation & StableRandomP
 
 final class ConversationListCell: SwipeMenuCollectionCell,
     SectionListCellType {
-    static let IgnoreOverscrollTimeInterval: TimeInterval = 0.005
-    static let OverscrollRatio: CGFloat = 2.5
-
-    static var cachedSize: CGSize = .zero
-
-    var conversation: ConversationListCellConversation? {
-        didSet {
-            guard !(conversation === oldValue) else { return }
-
-            typingObserverToken = nil
-            if let conversation = conversation as? ZMConversation {
-                typingObserverToken = conversation.addTypingObserver(self)
-                setupConversationObserver(conversation: conversation)
-            }
-
-            updateAppearance()
-        }
-    }
-
-    let itemView = ConversationListItemView()
-
-    weak var delegate: ConversationListCellDelegate?
-
-    private var typingObserverToken: Any?
-
-    // MARK: - SectionListCellType
-
-    var sectionName: String?
-    var obfuscatedSectionName: String?
-    var cellIdentifier: String?
-
-    private var hasCreatedInitialConstraints = false
-    let menuDotsView = AnimatedListMenuView()
-    private var overscrollStartDate: Date?
-    private var conversationObserverToken: Any?
+    // MARK: Lifecycle
 
     convenience init() {
         self.init(frame: .zero)
@@ -83,40 +49,37 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupConversationListCell() {
-        separatorLineViewDisabled = true
-        maxVisualDrawerOffset = SwipeMenuCollectionCell.MaxVisualDrawerOffsetRevealDistance
-        overscrollFraction = CGFloat.greatestFiniteMagnitude // Never overscroll
-        clipsToBounds = true
+    // MARK: Internal
 
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(onRightAccessorySelected(_:)))
-        itemView.rightAccessory.addGestureRecognizer(tapGestureRecognizer)
-        swipeView.addSubview(itemView)
+    static let IgnoreOverscrollTimeInterval: TimeInterval = 0.005
+    static let OverscrollRatio: CGFloat = 2.5
 
-        menuView.addSubview(menuDotsView)
+    static var cachedSize: CGSize = .zero
 
-        setNeedsUpdateConstraints()
+    let itemView = ConversationListItemView()
 
-        AVSMediaManagerClientChangeNotification.add(self)
-        backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
-        addBorder(for: .bottom)
-    }
+    weak var delegate: ConversationListCellDelegate?
 
-    override func drawerScrollingEnded(withOffset offset: CGFloat) {
-        if menuDotsView.progress >= 1 {
-            var overscrolled = false
-            if offset > frame.width / ConversationListCell.OverscrollRatio {
-                overscrolled = true
-            } else if let overscrollStartDate {
-                let diff = Date().timeIntervalSince(overscrollStartDate)
-                overscrolled = diff > ConversationListCell.IgnoreOverscrollTimeInterval
+    // MARK: - SectionListCellType
+
+    var sectionName: String?
+    var obfuscatedSectionName: String?
+    var cellIdentifier: String?
+
+    let menuDotsView = AnimatedListMenuView()
+
+    var conversation: ConversationListCellConversation? {
+        didSet {
+            guard !(conversation === oldValue) else { return }
+
+            typingObserverToken = nil
+            if let conversation = conversation as? ZMConversation {
+                typingObserverToken = conversation.addTypingObserver(self)
+                setupConversationObserver(conversation: conversation)
             }
 
-            if overscrolled {
-                delegate?.conversationListCellOverscrolled(self)
-            }
+            updateAppearance()
         }
-        overscrollStartDate = nil
     }
 
     override var accessibilityValue: String? {
@@ -155,6 +118,27 @@ final class ConversationListCell: SwipeMenuCollectionCell,
                 itemView.selected = isHighlighted
             }
         }
+    }
+
+    static func invalidateCachedCellSize() {
+        cachedSize = CGSize.zero
+    }
+
+    override func drawerScrollingEnded(withOffset offset: CGFloat) {
+        if menuDotsView.progress >= 1 {
+            var overscrolled = false
+            if offset > frame.width / ConversationListCell.OverscrollRatio {
+                overscrolled = true
+            } else if let overscrollStartDate {
+                let diff = Date().timeIntervalSince(overscrollStartDate)
+                overscrolled = diff > ConversationListCell.IgnoreOverscrollTimeInterval
+            }
+
+            if overscrolled {
+                delegate?.conversationListCellOverscrolled(self)
+            }
+        }
+        overscrollStartDate = nil
     }
 
     override func updateConstraints() {
@@ -226,24 +210,6 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         return cellSize
     }
 
-    static func invalidateCachedCellSize() {
-        cachedSize = CGSize.zero
-    }
-
-    @objc
-    private func onRightAccessorySelected(_: UIButton?) {
-        guard let conversation = conversation as? ZMConversation else { return }
-
-        let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer
-
-        if activeMediaPlayer != nil,
-           activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
-            toggleMediaPlayer()
-        } else if conversation.canJoinCall {
-            delegate?.conversationListCellJoinCallButtonTapped(self)
-        }
-    }
-
     func toggleMediaPlayer() {
         let mediaPlaybackManager = AppDelegate.shared.mediaPlaybackManager
 
@@ -260,6 +226,47 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     func setupConversationObserver(conversation: ZMConversation) {
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
+    }
+
+    // MARK: Private
+
+    private var typingObserverToken: Any?
+
+    private var hasCreatedInitialConstraints = false
+    private var overscrollStartDate: Date?
+    private var conversationObserverToken: Any?
+
+    private func setupConversationListCell() {
+        separatorLineViewDisabled = true
+        maxVisualDrawerOffset = SwipeMenuCollectionCell.MaxVisualDrawerOffsetRevealDistance
+        overscrollFraction = CGFloat.greatestFiniteMagnitude // Never overscroll
+        clipsToBounds = true
+
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(onRightAccessorySelected(_:)))
+        itemView.rightAccessory.addGestureRecognizer(tapGestureRecognizer)
+        swipeView.addSubview(itemView)
+
+        menuView.addSubview(menuDotsView)
+
+        setNeedsUpdateConstraints()
+
+        AVSMediaManagerClientChangeNotification.add(self)
+        backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
+        addBorder(for: .bottom)
+    }
+
+    @objc
+    private func onRightAccessorySelected(_: UIButton?) {
+        guard let conversation = conversation as? ZMConversation else { return }
+
+        let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer
+
+        if activeMediaPlayer != nil,
+           activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
+            toggleMediaPlayer()
+        } else if conversation.canJoinCall {
+            delegate?.conversationListCellJoinCallButtonTapped(self)
+        }
     }
 }
 

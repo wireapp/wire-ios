@@ -22,9 +22,14 @@ import Foundation
 // MARK: - AVSActiveSpeakersChange
 
 struct AVSActiveSpeakersChange: Codable {
-    let activeSpeakers: [ActiveSpeaker]
-
     struct ActiveSpeaker: Codable, Equatable, Hashable {
+        enum CodingKeys: String, CodingKey {
+            case userId = "userid"
+            case clientId = "clientid"
+            case audioLevel = "audio_level"
+            case audioLevelNow = "audio_level_now"
+        }
+
         let userId: String
         let clientId: String
 
@@ -33,18 +38,13 @@ struct AVSActiveSpeakersChange: Codable {
 
         /// Instantaneous audio level
         let audioLevelNow: Int
-
-        enum CodingKeys: String, CodingKey {
-            case userId = "userid"
-            case clientId = "clientid"
-            case audioLevel = "audio_level"
-            case audioLevelNow = "audio_level_now"
-        }
     }
 
     enum CodingKeys: String, CodingKey {
         case activeSpeakers = "audio_levels"
     }
+
+    let activeSpeakers: [ActiveSpeaker]
 }
 
 extension AVSActiveSpeakersChange.ActiveSpeaker {

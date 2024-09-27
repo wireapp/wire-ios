@@ -47,74 +47,18 @@ public protocol AssetProxyType {
 
 @objcMembers
 public class V3Asset: NSObject, ZMImageMessageData {
-    @objc(fetchImageDataWithQueue:completionHandler:)
-    public func fetchImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
-        let cache = moc.zm_fileAssetCache
-
-        let mediumKey = FileAssetCache.cacheKeyForAsset(
-            assetClientMessage,
-            format: .medium,
-            encrypted: true
-        )
-
-        // Just in case we're trying to access an asset that in not stored encrypted.
-        let fallbackKey = FileAssetCache.cacheKeyForAsset(
-            assetClientMessage,
-            format: .medium,
-            encrypted: false
-        )
-
-        var key: Data?
-        var digest: Data?
-
-        if isImage {
-            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded
-            key = asset?.otrKey
-            digest = asset?.sha256
-        } else {
-            let asset = assetClientMessage.underlyingMessage?.assetData?.preview.remote
-            key = asset?.otrKey
-            digest = asset?.sha256
-        }
-
-        queue.async {
-            guard let cache else {
-                completionHandler(nil)
-                return
-            }
-
-            if let mediumKey,
-               let key,
-               let digest,
-               let data = cache.decryptData(
-                   key: mediumKey,
-                   encryptionKey: key,
-                   sha256Digest: digest
-               ) {
-                completionHandler(data)
-            } else if let fallbackKey {
-                completionHandler(cache.assetData(fallbackKey))
-            } else {
-                completionHandler(nil)
-            }
-        }
-    }
-
-    public var isDownloaded: Bool {
-        hasDownloadedFile
-    }
-
-    fileprivate let assetClientMessage: ZMAssetClientMessage
-    fileprivate let moc: NSManagedObjectContext
-
-    fileprivate var isImage: Bool {
-        assetClientMessage.underlyingMessage?.v3_isImage ?? false
-    }
+    // MARK: Lifecycle
 
     public init?(with message: ZMAssetClientMessage) {
         guard message.version == 3 else { return nil }
         self.assetClientMessage = message
         self.moc = message.managedObjectContext!
+    }
+
+    // MARK: Public
+
+    public var isDownloaded: Bool {
+        hasDownloadedFile
     }
 
     public var imageMessageData: ZMImageMessageData? {
@@ -177,6 +121,68 @@ public class V3Asset: NSObject, ZMImageMessageData {
         }
 
         return assetClientMessage.preprocessedSize
+    }
+
+    @objc(fetchImageDataWithQueue:completionHandler:)
+    public func fetchImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
+        let cache = moc.zm_fileAssetCache
+
+        let mediumKey = FileAssetCache.cacheKeyForAsset(
+            assetClientMessage,
+            format: .medium,
+            encrypted: true
+        )
+
+        // Just in case we're trying to access an asset that in not stored encrypted.
+        let fallbackKey = FileAssetCache.cacheKeyForAsset(
+            assetClientMessage,
+            format: .medium,
+            encrypted: false
+        )
+
+        var key: Data?
+        var digest: Data?
+
+        if isImage {
+            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded
+            key = asset?.otrKey
+            digest = asset?.sha256
+        } else {
+            let asset = assetClientMessage.underlyingMessage?.assetData?.preview.remote
+            key = asset?.otrKey
+            digest = asset?.sha256
+        }
+
+        queue.async {
+            guard let cache else {
+                completionHandler(nil)
+                return
+            }
+
+            if let mediumKey,
+               let key,
+               let digest,
+               let data = cache.decryptData(
+                   key: mediumKey,
+                   encryptionKey: key,
+                   sha256Digest: digest
+               ) {
+                completionHandler(data)
+            } else if let fallbackKey {
+                completionHandler(cache.assetData(fallbackKey))
+            } else {
+                completionHandler(nil)
+            }
+        }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let assetClientMessage: ZMAssetClientMessage
+    fileprivate let moc: NSManagedObjectContext
+
+    fileprivate var isImage: Bool {
+        assetClientMessage.underlyingMessage?.v3_isImage ?? false
     }
 }
 

@@ -29,13 +29,7 @@ protocol CameraCellDelegate: AnyObject {
 // MARK: - CameraCell
 
 final class CameraCell: UICollectionViewCell {
-    let cameraController: CameraController?
-
-    let expandButton = IconButton()
-    let takePictureButton = IconButton()
-    let changeCameraButton = IconButton()
-
-    weak var delegate: CameraCellDelegate?
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         let camera: SettingsCamera = Settings.shared[.preferredCamera] ?? .front
@@ -96,41 +90,20 @@ final class CameraCell: UICollectionViewCell {
         createConstraints()
     }
 
-    private func createConstraints() {
-        [
-            expandButton,
-            takePictureButton,
-            changeCameraButton,
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        NSLayoutConstraint.activate([
-            expandButton.widthAnchor.constraint(equalToConstant: 40),
-            expandButton.widthAnchor.constraint(equalTo: expandButton.heightAnchor),
-
-            expandButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -12),
-            expandButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-
-            takePictureButton.widthAnchor.constraint(equalToConstant: 60),
-            takePictureButton.widthAnchor.constraint(equalTo: takePictureButton.heightAnchor),
-
-            takePictureButton.bottomAnchor.constraint(
-                equalTo: contentView.bottomAnchor,
-                constant: -(6 + UIScreen.safeArea.bottom)
-            ),
-            takePictureButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-
-            changeCameraButton.widthAnchor.constraint(equalToConstant: 40),
-            changeCameraButton.widthAnchor.constraint(equalTo: changeCameraButton.heightAnchor),
-
-            changeCameraButton.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 12),
-            changeCameraButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-        ])
-    }
-
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let cameraController: CameraController?
+
+    let expandButton = IconButton()
+    let takePictureButton = IconButton()
+    let changeCameraButton = IconButton()
+
+    weak var delegate: CameraCellDelegate?
 
     override func didMoveToWindow() {
         super.didMoveToWindow()
@@ -174,5 +147,38 @@ final class CameraCell: UICollectionViewCell {
         cameraController?.switchCamera { currentCamera in
             Settings.shared[.preferredCamera] = currentCamera
         }
+    }
+
+    // MARK: Private
+
+    private func createConstraints() {
+        [
+            expandButton,
+            takePictureButton,
+            changeCameraButton,
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        NSLayoutConstraint.activate([
+            expandButton.widthAnchor.constraint(equalToConstant: 40),
+            expandButton.widthAnchor.constraint(equalTo: expandButton.heightAnchor),
+
+            expandButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -12),
+            expandButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+
+            takePictureButton.widthAnchor.constraint(equalToConstant: 60),
+            takePictureButton.widthAnchor.constraint(equalTo: takePictureButton.heightAnchor),
+
+            takePictureButton.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor,
+                constant: -(6 + UIScreen.safeArea.bottom)
+            ),
+            takePictureButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+
+            changeCameraButton.widthAnchor.constraint(equalToConstant: 40),
+            changeCameraButton.widthAnchor.constraint(equalTo: changeCameraButton.heightAnchor),
+
+            changeCameraButton.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 12),
+            changeCameraButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+        ])
     }
 }

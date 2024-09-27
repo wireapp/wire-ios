@@ -21,10 +21,11 @@ import WireLinkPreview
 
 @objc(ZMTextMessage) @objcMembers
 final class TextMessage: ZMMessage, TextMessageData {
-    // swiftlint:disable:next static_over_final_class
-    override class func entityName() -> String { "TextMessage" }
+    // MARK: Public
 
     @NSManaged public var text: String?
+
+    // MARK: Internal
 
     override var textMessageData: (any TextMessageData)? { self }
     var messageText: String? { text }
@@ -39,9 +40,8 @@ final class TextMessage: ZMMessage, TextMessageData {
     var quoteMessage: (any ZMConversationMessage)? { nil }
     var isQuotingSelf: Bool { false }
 
-    override func shortDebugDescription() -> String {
-        super.shortDebugDescription() + (text.map { "'\($0)'" } ?? "<nil>")
-    }
+    // swiftlint:disable:next static_over_final_class
+    override class func entityName() -> String { "TextMessage" }
 
     // swiftlint:disable:next static_over_final_class
     override class func createOrUpdate(
@@ -50,6 +50,10 @@ final class TextMessage: ZMMessage, TextMessageData {
         prefetchResult: ZMFetchRequestBatchResult?
     ) -> Self? {
         nil
+    }
+
+    override func shortDebugDescription() -> String {
+        super.shortDebugDescription() + (text.map { "'\($0)'" } ?? "<nil>")
     }
 
     func fetchLinkPreviewImageData(

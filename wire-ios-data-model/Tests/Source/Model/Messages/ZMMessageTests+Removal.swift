@@ -20,6 +20,8 @@ import Foundation
 @testable import WireDataModel
 
 class ZMMessageTests_Removal: BaseZMClientMessageTests {
+    // MARK: Internal
+
     func testThatAMessageIsRemovedWhenAskForDeletionWithMessageHide() {
         // GIVEN
 
@@ -175,43 +177,6 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         XCTAssertTrue(removed)
     }
 
-    // Returns whether the message was deleted
-    private func checkThatAMessageIsRemoved(messageCreationBlock: () -> ZMMessage) throws -> Bool {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = UUID.create()
-
-        let testMessage = messageCreationBlock()
-        testMessage.visibleInConversation = conversation
-
-        // sanity check
-        XCTAssertNotNil(conversation)
-        XCTAssertNotNil(testMessage)
-        uiMOC.saveOrRollback()
-
-        // when
-        performPretendingUiMocIsSyncMoc {
-            testMessage.removeClearingSender(true)
-        }
-        uiMOC.saveOrRollback()
-
-        // then
-        let fetchedMessage = try XCTUnwrap(ZMMessage.fetch(
-            withNonce: testMessage.nonce,
-            for: conversation,
-            in: uiMOC
-        ))
-        var removed = fetchedMessage.visibleInConversation == nil && fetchedMessage
-            .hiddenInConversation == conversation && fetchedMessage.sender == nil
-
-        if fetchedMessage.isKind(of: ZMClientMessage.self) {
-            let clientMessage = fetchedMessage as! ZMClientMessage
-            removed = clientMessage.dataSet.count == 0 && clientMessage.underlyingMessage == nil
-        }
-
-        return removed
-    }
-
     func testThatATextMessageIsRemovedWhenAskForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
@@ -258,5 +223,44 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
 
         // then
         XCTAssertTrue(removed)
+    }
+
+    // MARK: Private
+
+    // Returns whether the message was deleted
+    private func checkThatAMessageIsRemoved(messageCreationBlock: () -> ZMMessage) throws -> Bool {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+
+        let testMessage = messageCreationBlock()
+        testMessage.visibleInConversation = conversation
+
+        // sanity check
+        XCTAssertNotNil(conversation)
+        XCTAssertNotNil(testMessage)
+        uiMOC.saveOrRollback()
+
+        // when
+        performPretendingUiMocIsSyncMoc {
+            testMessage.removeClearingSender(true)
+        }
+        uiMOC.saveOrRollback()
+
+        // then
+        let fetchedMessage = try XCTUnwrap(ZMMessage.fetch(
+            withNonce: testMessage.nonce,
+            for: conversation,
+            in: uiMOC
+        ))
+        var removed = fetchedMessage.visibleInConversation == nil && fetchedMessage
+            .hiddenInConversation == conversation && fetchedMessage.sender == nil
+
+        if fetchedMessage.isKind(of: ZMClientMessage.self) {
+            let clientMessage = fetchedMessage as! ZMClientMessage
+            removed = clientMessage.dataSet.count == 0 && clientMessage.underlyingMessage == nil
+        }
+
+        return removed
     }
 }

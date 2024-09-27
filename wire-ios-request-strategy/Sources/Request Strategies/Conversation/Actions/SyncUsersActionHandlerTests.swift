@@ -21,10 +21,7 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, SyncUsersActionHandler> {
-    // MARK: - Properties
-
-    private let qualifiedIDs = QualifiedID(uuid: .create(), domain: "example.com")
-    private var mockProcessor: MockUserProfilePayloadProcessing!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -165,4 +162,11 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
             expectedError: .unknownError(code: 999, label: "foo", message: "?")
         )
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let qualifiedIDs = QualifiedID(uuid: .create(), domain: "example.com")
+    private var mockProcessor: MockUserProfilePayloadProcessing!
 }

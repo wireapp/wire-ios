@@ -27,17 +27,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation,
     ConversationStatusProvider,
     TypingStatusProvider,
     VoiceChannelProvider {
-    var voiceChannel: VoiceChannel?
-
-    var typingUsers: [UserType] = []
-
-    func setIsTyping(
-        _: Bool
-    ) {
-        // no-op
-    }
-
-    var status: ConversationStatus
+    // MARK: Lifecycle
 
     required init() {
         self.status = ConversationStatus(
@@ -55,6 +45,14 @@ private final class MockConversation: MockStableRandomParticipantsConversation,
             hasSelfReply: false
         )
     }
+
+    // MARK: Internal
+
+    var voiceChannel: VoiceChannel?
+
+    var typingUsers: [UserType] = []
+
+    var status: ConversationStatus
 
     static func createOneOnOneConversation(
         otherUser: MockUserType
@@ -74,17 +72,18 @@ private final class MockConversation: MockStableRandomParticipantsConversation,
 
         return otherUserConversation
     }
+
+    func setIsTyping(
+        _: Bool
+    ) {
+        // no-op
+    }
 }
 
 // MARK: - ConversationListCellTests
 
 final class ConversationListCellTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationListCell!
-    private var otherUserConversation: MockConversation!
-    private var otherUser: MockUserType!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -109,46 +108,6 @@ final class ConversationListCellTests: XCTestCase {
         otherUser = nil
 
         super.tearDown()
-    }
-
-    // MARK: - Helper Methods
-
-    private func createNewMessage(text: String = "Hey there!") -> MockMessage {
-        let message: MockMessage = MockMessageFactory.textMessage(
-            withText: text,
-            sender: otherUser,
-            conversation: otherUserConversation
-        )
-
-        return message
-    }
-
-    private func createMentionSelfMessage() -> MockMessage {
-        let mentionMessage: MockMessage = MockMessageFactory.textMessage(
-            withText: "@self test",
-            sender: otherUser,
-            conversation: otherUserConversation
-        )
-
-        return mentionMessage
-    }
-
-    private func verify(
-        _ conversation: MockConversation,
-        icon: ConversationStatusIcon? = nil,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        sut.conversation = conversation
-
-        if let icon {
-            sut.itemView.rightAccessory.icon = icon
-        }
-
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, file: file, testName: testName, line: line)
     }
 
     // MARK: - Snapshot Tests
@@ -508,14 +467,6 @@ final class ConversationListCellTests: XCTestCase {
         verify(conversation)
     }
 
-    private func createGroupConversation() -> MockConversation {
-        let conversation = MockConversation()
-        conversation.stableRandomParticipants = [otherUser]
-        conversation.displayName = otherUser.displayName
-
-        return conversation
-    }
-
     /// test for SelfUserLeftMatcher is matched
     func testThatItRendersGroupConversationThatWasLeft() {
         // WHEN
@@ -633,5 +584,62 @@ final class ConversationListCellTests: XCTestCase {
         let conversation = otherUserConversation
         let icon = CallingMatcher.icon(for: .outgoing(degraded: false), conversation: conversation)
         verify(conversation!, icon: icon)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationListCell!
+    private var otherUserConversation: MockConversation!
+    private var otherUser: MockUserType!
+
+    // MARK: - Helper Methods
+
+    private func createNewMessage(text: String = "Hey there!") -> MockMessage {
+        let message: MockMessage = MockMessageFactory.textMessage(
+            withText: text,
+            sender: otherUser,
+            conversation: otherUserConversation
+        )
+
+        return message
+    }
+
+    private func createMentionSelfMessage() -> MockMessage {
+        let mentionMessage: MockMessage = MockMessageFactory.textMessage(
+            withText: "@self test",
+            sender: otherUser,
+            conversation: otherUserConversation
+        )
+
+        return mentionMessage
+    }
+
+    private func verify(
+        _ conversation: MockConversation,
+        icon: ConversationStatusIcon? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        sut.conversation = conversation
+
+        if let icon {
+            sut.itemView.rightAccessory.icon = icon
+        }
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, file: file, testName: testName, line: line)
+    }
+
+    private func createGroupConversation() -> MockConversation {
+        let conversation = MockConversation()
+        conversation.stableRandomParticipants = [otherUser]
+        conversation.displayName = otherUser.displayName
+
+        return conversation
     }
 }

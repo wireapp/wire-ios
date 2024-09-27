@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var mockThumbnail: MockImageResource!
-    private var sut: ConversationLinkAttachmentCell!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -127,4 +123,12 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var mockThumbnail: MockImageResource!
+    private var sut: ConversationLinkAttachmentCell!
 }

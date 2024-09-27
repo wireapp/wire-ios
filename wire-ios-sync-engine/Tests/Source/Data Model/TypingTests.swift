@@ -19,17 +19,7 @@
 @testable import WireSyncEngine
 
 class TypingTests: MessagingTest, ZMTypingChangeObserver {
-    private typealias Typing = WireSyncEngine.Typing
-
-    private var sut: Typing!
-    private var token: Any?
-    private var receivedNotifications = [TypingChange]()
-
-    private var conversationA: ZMConversation!
-    private var userA: ZMUser!
-    private var userB: ZMUser!
-    private var userAOnUi: ZMUser!
-    private var userBOnUi: ZMUser!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -62,21 +52,6 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
         userAOnUi = nil
         userBOnUi = nil
         super.tearDown()
-    }
-
-    private func resetNotifications() {
-        receivedNotifications.removeAll()
-    }
-
-    private func createConversation(with user: ZMUser) -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .group
-        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-        return conversation
-    }
-
-    private func createUser() -> ZMUser {
-        ZMUser.insertNewObject(in: uiMOC)
     }
 
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType]) {
@@ -217,5 +192,34 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
         XCTAssertNotNil(notification)
         XCTAssertEqual(notification!.conversation.objectID, conversationA.objectID)
         XCTAssertEqual(notification!.typingUsers, Set())
+    }
+
+    // MARK: Private
+
+    private typealias Typing = WireSyncEngine.Typing
+
+    private var sut: Typing!
+    private var token: Any?
+    private var receivedNotifications = [TypingChange]()
+
+    private var conversationA: ZMConversation!
+    private var userA: ZMUser!
+    private var userB: ZMUser!
+    private var userAOnUi: ZMUser!
+    private var userBOnUi: ZMUser!
+
+    private func resetNotifications() {
+        receivedNotifications.removeAll()
+    }
+
+    private func createConversation(with user: ZMUser) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+        return conversation
+    }
+
+    private func createUser() -> ZMUser {
+        ZMUser.insertNewObject(in: uiMOC)
     }
 }

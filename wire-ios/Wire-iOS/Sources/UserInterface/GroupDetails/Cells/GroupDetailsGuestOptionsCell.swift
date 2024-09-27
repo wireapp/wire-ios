@@ -30,6 +30,14 @@ final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
         }
     }
 
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
+        }
+    }
+
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "cell.groupdetails.guestoptions"
@@ -42,13 +50,5 @@ final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
 
     func configure(with conversation: GroupDetailsConversationType) {
         isOn = conversation.allowGuests
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted
-                ? SemanticColors.View.backgroundUserCellHightLighted
-                : SemanticColors.View.backgroundUserCell
-        }
     }
 }

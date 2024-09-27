@@ -244,22 +244,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
 /// A type erased box containing a conversation message cell description.
 
 final class AnyConversationMessageCellDescription: NSObject {
-    private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
-    private let viewGenerator: () -> UIView
-    private let registrationBlock: (UITableView) -> Void
-    private let configureBlock: (UITableViewCell, Bool) -> Void
-    private let baseTypeGetter: () -> AnyClass
-    private let instanceGetter: () -> AnyObject
-    private let isConfigurationEqualBlock: (AnyConversationMessageCellDescription) -> Bool
-
-    private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
-    private let _message: AnyMutableProperty<ZMConversationMessage?>
-    private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
-    private let _topMargin: AnyMutableProperty<Float>
-    private let _containsHighlightableContent: AnyConstantProperty<Bool>
-    private let _showEphemeralTimer: AnyMutableProperty<Bool>
-    private let _axIdentifier: AnyConstantProperty<String?>
-    private let _axLabel: AnyConstantProperty<String?>
+    // MARK: Lifecycle
 
     init<T: ConversationMessageCellDescription>(_ description: T) {
         self.registrationBlock = { tableView in
@@ -299,6 +284,8 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
+
+    // MARK: Internal
 
     var instance: AnyObject {
         instanceGetter()
@@ -366,4 +353,23 @@ final class AnyConversationMessageCellDescription: NSObject {
     func isConfigurationEqual(with description: AnyConversationMessageCellDescription) -> Bool {
         isConfigurationEqualBlock(description)
     }
+
+    // MARK: Private
+
+    private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
+    private let viewGenerator: () -> UIView
+    private let registrationBlock: (UITableView) -> Void
+    private let configureBlock: (UITableViewCell, Bool) -> Void
+    private let baseTypeGetter: () -> AnyClass
+    private let instanceGetter: () -> AnyObject
+    private let isConfigurationEqualBlock: (AnyConversationMessageCellDescription) -> Bool
+
+    private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
+    private let _message: AnyMutableProperty<ZMConversationMessage?>
+    private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
+    private let _topMargin: AnyMutableProperty<Float>
+    private let _containsHighlightableContent: AnyConstantProperty<Bool>
+    private let _showEphemeralTimer: AnyMutableProperty<Bool>
+    private let _axIdentifier: AnyConstantProperty<String?>
+    private let _axLabel: AnyConstantProperty<String?>
 }

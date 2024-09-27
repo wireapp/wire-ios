@@ -32,11 +32,7 @@ public typealias ZiphyImageDataCallback = (ZiphyResult<Data>) -> Void
 /// An object that provides access to the Giphy API.
 
 public final class ZiphyClient {
-    let host: String
-    let requester: ZiphyURLRequester
-    let downloadSession: ZiphyURLRequester
-    let requestGenerator: ZiphyRequestGenerator
-    let callbackQueue: DispatchQueue
+    // MARK: Lifecycle
 
     /// Creates a Giphy API client.
     ///
@@ -57,6 +53,14 @@ public final class ZiphyClient {
         self.downloadSession = downloadSession
         self.requestGenerator = ZiphyRequestGenerator(host: host)
     }
+
+    // MARK: Internal
+
+    let host: String
+    let requester: ZiphyURLRequester
+    let downloadSession: ZiphyURLRequester
+    let requestGenerator: ZiphyRequestGenerator
+    let callbackQueue: DispatchQueue
 }
 
 // MARK: - List Requests

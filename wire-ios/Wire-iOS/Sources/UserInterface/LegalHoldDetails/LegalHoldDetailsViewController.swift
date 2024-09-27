@@ -24,11 +24,7 @@ import WireSyncEngine
 // MARK: - LegalHoldDetailsViewController
 
 final class LegalHoldDetailsViewController: UIViewController {
-    private let collectionView = UICollectionView(forGroupedSections: ())
-    private let collectionViewController: SectionCollectionViewController
-    private let conversation: LegalHoldDetailsConversation
-    let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    // MARK: Lifecycle
 
     convenience init?(
         user: UserType,
@@ -66,6 +62,10 @@ final class LegalHoldDetailsViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let userSession: UserSession
 
     @discardableResult
     static func present(
@@ -117,6 +117,13 @@ final class LegalHoldDetailsViewController: UIViewController {
 
         (conversation as? ZMConversation)?.verifyLegalHoldSubjects()
     }
+
+    // MARK: Private
+
+    private let collectionView = UICollectionView(forGroupedSections: ())
+    private let collectionViewController: SectionCollectionViewController
+    private let conversation: LegalHoldDetailsConversation
+    private let mainCoordinator: MainCoordinating
 
     private func setupViews() {
         view.addSubview(collectionView)

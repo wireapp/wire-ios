@@ -23,11 +23,13 @@ import Ziphy
 // MARK: - ZiphySession
 
 final class ZiphySession: ZiphyURLRequester {
-    private let userSession: UserSession
+    // MARK: Lifecycle
 
     init(userSession: UserSession) {
         self.userSession = userSession
     }
+
+    // MARK: Internal
 
     func performZiphyRequest(
         _ request: URLRequest,
@@ -54,6 +56,10 @@ final class ZiphySession: ZiphyURLRequester {
         guard let requestIdentifier = requestIdentifier as? ProxyRequest else { return }
         userSession.cancelProxiedRequest(requestIdentifier)
     }
+
+    // MARK: Private
+
+    private let userSession: UserSession
 
     private func doRequest(
         withPath path: String,

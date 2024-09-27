@@ -28,21 +28,7 @@ protocol ParticipantDeviceHeaderViewDelegate: AnyObject {
 // MARK: - ParticipantDeviceHeaderView
 
 final class ParticipantDeviceHeaderView: UIView {
-    private var font: UIFont = .normalLightFont
-    private var textColor: UIColor = SemanticColors.Label.textSectionHeader
-    private var linkAttributeColor: UIColor = .accent()
-    private var textView = WebLinkTextView()
-    let userName: String
-
-    weak var delegate: ParticipantDeviceHeaderViewDelegate?
-    var showUnencryptedLabel = false {
-        didSet {
-            textView.attributedText = attributedExplanationText(
-                for: userName,
-                showUnencryptedLabel: showUnencryptedLabel
-            )
-        }
-    }
+    // MARK: Lifecycle
 
     init(userName: String) {
         self.userName = userName
@@ -55,6 +41,37 @@ final class ParticipantDeviceHeaderView: UIView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let userName: String
+
+    weak var delegate: ParticipantDeviceHeaderViewDelegate?
+
+    var showUnencryptedLabel = false {
+        didSet {
+            textView.attributedText = attributedExplanationText(
+                for: userName,
+                showUnencryptedLabel: showUnencryptedLabel
+            )
+        }
+    }
+
+    var linkAttributes: [NSAttributedString.Key: Any] {
+        [
+            NSAttributedString.Key.font: font,
+            NSAttributedString.Key.foregroundColor: linkAttributeColor,
+            NSAttributedString.Key.link: WireURLs.shared.whyToVerifyFingerprintArticle,
+            NSAttributedString.Key.paragraphStyle: paragraphStyleForFingerprint,
+        ]
+    }
+
+    var paragraphStyleForFingerprint: NSMutableParagraphStyle {
+        let paragraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
+        paragraphStyle.lineSpacing = 2
+
+        return paragraphStyle
     }
 
     func setup() {
@@ -107,21 +124,12 @@ final class ParticipantDeviceHeaderView: UIView {
         return NSAttributedString(string: fingerprintExplanation, attributes: textAttributes)
     }
 
-    var linkAttributes: [NSAttributedString.Key: Any] {
-        [
-            NSAttributedString.Key.font: font,
-            NSAttributedString.Key.foregroundColor: linkAttributeColor,
-            NSAttributedString.Key.link: WireURLs.shared.whyToVerifyFingerprintArticle,
-            NSAttributedString.Key.paragraphStyle: paragraphStyleForFingerprint,
-        ]
-    }
+    // MARK: Private
 
-    var paragraphStyleForFingerprint: NSMutableParagraphStyle {
-        let paragraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
-        paragraphStyle.lineSpacing = 2
-
-        return paragraphStyle
-    }
+    private var font: UIFont = .normalLightFont
+    private var textColor: UIColor = SemanticColors.Label.textSectionHeader
+    private var linkAttributeColor: UIColor = .accent()
+    private var textView = WebLinkTextView()
 
     private func setupConstraints() {
         textView.translatesAutoresizingMaskIntoConstraints = false

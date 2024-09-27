@@ -26,6 +26,8 @@ import WireSyncEngine
 enum PlayingState: UInt, CustomStringConvertible {
     case idle, playing
 
+    // MARK: Internal
+
     var description: String {
         switch self {
         case .idle: "idle"
@@ -40,6 +42,9 @@ typealias RecordingLevel = Float
 
 enum AudioRecorderFormat {
     case m4A, wav
+
+    // MARK: Internal
+
     func fileExtension() -> String {
         switch self {
         case .m4A:
@@ -99,26 +104,7 @@ protocol AudioRecorderType: AnyObject {
 // MARK: - AudioRecorder
 
 final class AudioRecorder: NSObject, AudioRecorderType {
-    let format: AudioRecorderFormat
-    var state: AudioRecorderState = .initializing
-
-    var audioRecorder: AVAudioRecorder?
-
-    var displayLink: CADisplayLink?
-    var audioPlayer: AVAudioPlayer?
-    var audioPlayerDelegate: AudioPlayerDelegate?
-    var pauseButtonCallback: Any?
-    var maxRecordingDuration: TimeInterval? = .none
-    let fm = FileManager.default
-    var currentDuration: TimeInterval = 0
-    var recordTimerCallback: ((TimeInterval) -> Void)?
-    var recordLevelCallBack: ((RecordingLevel) -> Void)?
-    var playingStateCallback: ((PlayingState) -> Void)?
-    var recordEndedCallback: ((Result<Void, Error>) -> Void)?
-    var fileURL: URL?
-    var maxFileSize: UInt64?
-
-    private var token: Any?
+    // MARK: Lifecycle
 
     override init() {
         fatalError("init() is not implemented for AudioRecorder")
@@ -137,6 +123,27 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         removeDisplayLink()
         audioRecorder?.delegate = nil
     }
+
+    // MARK: Internal
+
+    let format: AudioRecorderFormat
+    var state: AudioRecorderState = .initializing
+
+    var audioRecorder: AVAudioRecorder?
+
+    var displayLink: CADisplayLink?
+    var audioPlayer: AVAudioPlayer?
+    var audioPlayerDelegate: AudioPlayerDelegate?
+    var pauseButtonCallback: Any?
+    var maxRecordingDuration: TimeInterval? = .none
+    let fm = FileManager.default
+    var currentDuration: TimeInterval = 0
+    var recordTimerCallback: ((TimeInterval) -> Void)?
+    var recordLevelCallBack: ((RecordingLevel) -> Void)?
+    var playingStateCallback: ((PlayingState) -> Void)?
+    var recordEndedCallback: ((Result<Void, Error>) -> Void)?
+    var fileURL: URL?
+    var maxFileSize: UInt64?
 
     func createAudioRecorderIfNeeded() {
         guard self.audioRecorder == nil else {
@@ -164,39 +171,6 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         )
 
         self.audioRecorder = audioRecorder
-    }
-
-    private func makeAudioRecorder(
-        audioFormatID: AudioFormatID,
-        fileURL: URL
-    ) -> AVAudioRecorder? {
-        let settings = [
-            AVFormatIDKey: audioFormatID,
-            AVSampleRateKey: 32000,
-            AVNumberOfChannelsKey: 1,
-        ]
-
-        do {
-            let audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
-            audioRecorder.isMeteringEnabled = true
-            audioRecorder.delegate = self
-            return audioRecorder
-        } catch {
-            WireLogger.ui.error("Failed to initialize `AVAudioRecorder`!")
-            return nil
-        }
-    }
-
-    private func setupDidEnterBackgroundObserver() {
-        token = NotificationCenter.default.addObserver(
-            forName: UIApplication.didEnterBackgroundNotification,
-            object: nil,
-            queue: .main,
-            using: { _ in
-                self.stopRecording()
-                UIApplication.shared.isIdleTimerDisabled = false
-            }
-        )
     }
 
     // MARK: Audio Session Interruption handling
@@ -256,14 +230,6 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         return postRecordingProcessing()
     }
 
-    fileprivate func postRecordingProcessing() -> Bool {
-        recordLevelCallBack?(0)
-        removeDisplayLink()
-        guard let filePath = audioRecorder?.url.path, fm.fileExists(atPath: filePath) else { return false }
-        fileURL = audioRecorder?.url
-        return true
-    }
-
     func deleteRecording() {
         currentDuration = 0
 
@@ -272,45 +238,6 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         }
 
         state = .initializing
-    }
-
-    fileprivate func setupDisplayLink() {
-        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
-        displayLink?.add(to: .current, forMode: .common)
-    }
-
-    fileprivate func removeDisplayLink() {
-        displayLink?.invalidate()
-        displayLink = nil
-    }
-
-    @objc
-    fileprivate func displayLinkDidFire() {
-        recordLevelCallBack?(levelForCurrentState())
-        guard let duration = durationForCurrentState(), currentDuration != duration else { return }
-        currentDuration = duration
-        recordTimerCallback?(currentDuration)
-
-        if audioSizeIsCritical {
-            stopRecording()
-        }
-    }
-
-    fileprivate var audioSizeIsCritical: Bool {
-        guard let fileURL,
-              let attribs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
-              let size = attribs[.size] as? UInt32,
-              size > maxAllowedSize else { return false }
-        WireLogger.ui
-            .debug(
-                "Audio message size is over the maximum amount allowed. File size is \(size), threshold is \(maxAllowedSize)"
-            )
-        return true
-    }
-
-    private var maxAllowedSize: UInt32 {
-        guard let maxSize = maxFileSize else { return 0 }
-        return UInt32(Double(maxSize) * (1.00 - 0.01)) // 1% of tolerance
     }
 
     // MARK: Playing
@@ -411,6 +338,92 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
         return alertController
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var audioSizeIsCritical: Bool {
+        guard let fileURL,
+              let attribs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
+              let size = attribs[.size] as? UInt32,
+              size > maxAllowedSize else { return false }
+        WireLogger.ui
+            .debug(
+                "Audio message size is over the maximum amount allowed. File size is \(size), threshold is \(maxAllowedSize)"
+            )
+        return true
+    }
+
+    fileprivate func postRecordingProcessing() -> Bool {
+        recordLevelCallBack?(0)
+        removeDisplayLink()
+        guard let filePath = audioRecorder?.url.path, fm.fileExists(atPath: filePath) else { return false }
+        fileURL = audioRecorder?.url
+        return true
+    }
+
+    fileprivate func setupDisplayLink() {
+        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
+        displayLink?.add(to: .current, forMode: .common)
+    }
+
+    fileprivate func removeDisplayLink() {
+        displayLink?.invalidate()
+        displayLink = nil
+    }
+
+    @objc
+    fileprivate func displayLinkDidFire() {
+        recordLevelCallBack?(levelForCurrentState())
+        guard let duration = durationForCurrentState(), currentDuration != duration else { return }
+        currentDuration = duration
+        recordTimerCallback?(currentDuration)
+
+        if audioSizeIsCritical {
+            stopRecording()
+        }
+    }
+
+    // MARK: Private
+
+    private var token: Any?
+
+    private var maxAllowedSize: UInt32 {
+        guard let maxSize = maxFileSize else { return 0 }
+        return UInt32(Double(maxSize) * (1.00 - 0.01)) // 1% of tolerance
+    }
+
+    private func makeAudioRecorder(
+        audioFormatID: AudioFormatID,
+        fileURL: URL
+    ) -> AVAudioRecorder? {
+        let settings = [
+            AVFormatIDKey: audioFormatID,
+            AVSampleRateKey: 32000,
+            AVNumberOfChannelsKey: 1,
+        ]
+
+        do {
+            let audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
+            audioRecorder.isMeteringEnabled = true
+            audioRecorder.delegate = self
+            return audioRecorder
+        } catch {
+            WireLogger.ui.error("Failed to initialize `AVAudioRecorder`!")
+            return nil
+        }
+    }
+
+    private func setupDidEnterBackgroundObserver() {
+        token = NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main,
+            using: { _ in
+                self.stopRecording()
+                UIApplication.shared.isIdleTimerDisabled = false
+            }
+        )
+    }
 }
 
 // MARK: AVAudioRecorderDelegate
@@ -448,12 +461,16 @@ extension AudioRecorder: AVAudioRecorderDelegate {
 // MARK: - AudioPlayerDelegate
 
 final class AudioPlayerDelegate: NSObject, AVAudioPlayerDelegate {
-    let playerDidFinishClosure: (Bool) -> Void
+    // MARK: Lifecycle
 
     init(playerDidFinishClosure: @escaping (Bool) -> Void) {
         self.playerDidFinishClosure = playerDidFinishClosure
         super.init()
     }
+
+    // MARK: Internal
+
+    let playerDidFinishClosure: (Bool) -> Void
 
     @objc
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {

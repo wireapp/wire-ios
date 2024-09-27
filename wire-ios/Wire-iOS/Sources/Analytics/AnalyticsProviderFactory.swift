@@ -28,16 +28,18 @@ private let ZMEnableConsoleLog = "ZMEnableAnalyticsLog"
 // MARK: - AnalyticsProviderFactory
 
 final class AnalyticsProviderFactory: NSObject {
-    static let shared = AnalyticsProviderFactory(userDefaults: .shared()!)
-    static let ZMConsoleAnalyticsArgumentKey = "-ConsoleAnalytics"
-
-    var useConsoleAnalytics = false
-
-    private let userDefaults: UserDefaults
+    // MARK: Lifecycle
 
     init(userDefaults: UserDefaults) {
         self.userDefaults = userDefaults
     }
+
+    // MARK: Internal
+
+    static let shared = AnalyticsProviderFactory(userDefaults: .shared()!)
+    static let ZMConsoleAnalyticsArgumentKey = "-ConsoleAnalytics"
+
+    var useConsoleAnalytics = false
 
     func analyticsProvider() -> AnalyticsProvider? {
         if useConsoleAnalytics || UserDefaults.standard.bool(forKey: ZMEnableConsoleLog) {
@@ -63,4 +65,8 @@ final class AnalyticsProviderFactory: NSObject {
             return nil
         }
     }
+
+    // MARK: Private
+
+    private let userDefaults: UserDefaults
 }

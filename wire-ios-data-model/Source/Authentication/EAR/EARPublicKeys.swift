@@ -19,8 +19,7 @@
 import class Security.SecKey
 
 public struct EARPublicKeys {
-    public let primary: SecKey
-    public let secondary: SecKey
+    // MARK: Lifecycle
 
     public init(
         primary: SecKey,
@@ -29,4 +28,9 @@ public struct EARPublicKeys {
         self.primary = primary
         self.secondary = secondary
     }
+
+    // MARK: Public
+
+    public let primary: SecKey
+    public let secondary: SecKey
 }

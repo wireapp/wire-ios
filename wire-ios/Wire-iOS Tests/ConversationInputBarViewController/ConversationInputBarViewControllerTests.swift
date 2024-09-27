@@ -27,10 +27,8 @@ import XCTest
 // More on the issue can be found here:
 // https://github.com/pointfreeco/swift-snapshot-testing/issues/358#issuecomment-939854566
 final class ConversationInputBarViewControllerTests: XCTestCase {
-    // MARK: - Properties
+    // MARK: Internal
 
-    private var mockConversation: MockInputBarConversationType!
-    private var mockClassificationProvider: MockSecurityClassificationProviding!
     var mockUserSession: UserSessionMock!
 
     // MARK: - setUp
@@ -113,10 +111,6 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
         }
 
         verifyInAllPhoneWidths(createSut: createSut)
-    }
-
-    private func setMessageDestructionTimeout(timeInterval: TimeInterval) {
-        mockConversation.activeMessageDestructionTimeoutValue = .init(rawValue: timeInterval)
     }
 
     func testEphemeralTime10Second() {
@@ -294,6 +288,17 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
             return self.makeViewController()
         } as () -> UIViewController)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var mockConversation: MockInputBarConversationType!
+    private var mockClassificationProvider: MockSecurityClassificationProviding!
+
+    private func setMessageDestructionTimeout(timeInterval: TimeInterval) {
+        mockConversation.activeMessageDestructionTimeoutValue = .init(rawValue: timeInterval)
     }
 
     // MARK: Helpers

@@ -41,6 +41,18 @@ protocol AuthenticationStateControllerDelegate: AnyObject {
 /// and unwinding functionality.
 
 final class AuthenticationStateController {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    /// Creates a new state controller with the first state.
+    init() {
+        self.currentStep = .start
+        self.stack = [currentStep]
+    }
+
+    // MARK: Internal
+
     enum RewindMilestone: Equatable {
         case createCredentials(_ user: UnregisteredUser)
     }
@@ -78,14 +90,6 @@ final class AuthenticationStateController {
 
     /// The stack of all previously executed actions. The last element is the current step.
     private(set) var stack: [AuthenticationFlowStep]
-
-    // MARK: - Initialization
-
-    /// Creates a new state controller with the first state.
-    init() {
-        self.currentStep = .start
-        self.stack = [currentStep]
-    }
 
     // MARK: - Transitions
 

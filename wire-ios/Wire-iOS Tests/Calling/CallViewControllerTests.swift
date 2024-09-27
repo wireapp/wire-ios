@@ -41,6 +41,8 @@ extension XCTestCase {
 // MARK: - CallViewControllerTests
 
 final class CallViewControllerTests: ZMSnapshotTestCase {
+    // MARK: Internal
+
     var mockVoiceChannel: MockVoiceChannel!
     var conversation: ZMConversation!
     var sut: CallViewController!
@@ -81,40 +83,6 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         conversation = nil
         mockVoiceChannel = nil
         super.tearDown()
-    }
-
-    private func createCallViewController(
-        selfUser: UserType,
-        mediaManager: ZMMockAVSMediaManager
-    ) -> CallViewController {
-        let proximityManager = ProximityMonitorManager()
-        let callController = CallViewController(
-            voiceChannel: mockVoiceChannel,
-            selfUser: selfUser,
-            proximityMonitorManager: proximityManager,
-            mediaManager: mediaManager,
-            userSession: userSession
-        )
-
-        return callController
-    }
-
-    private func participants(amount: Int) -> [CallParticipant] {
-        var participants = [CallParticipant]()
-
-        for _ in 0 ..< amount {
-            participants.append(
-                CallParticipant(
-                    user: MockUserType(),
-                    userId: AVSIdentifier.stub,
-                    clientId: UUID().transportString(),
-                    state: .connected(videoState: .started, microphoneState: .unmuted),
-                    activeSpeakerState: .inactive
-                )
-            )
-        }
-
-        return participants
     }
 
     func testThatVideoGridPresentationMode_IsUpdatedToAllVideoStreams_WhenUnderThreeParticipants() {
@@ -192,5 +160,41 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         connection.status = .accepted
 
         return mockConversation
+    }
+
+    // MARK: Private
+
+    private func createCallViewController(
+        selfUser: UserType,
+        mediaManager: ZMMockAVSMediaManager
+    ) -> CallViewController {
+        let proximityManager = ProximityMonitorManager()
+        let callController = CallViewController(
+            voiceChannel: mockVoiceChannel,
+            selfUser: selfUser,
+            proximityMonitorManager: proximityManager,
+            mediaManager: mediaManager,
+            userSession: userSession
+        )
+
+        return callController
+    }
+
+    private func participants(amount: Int) -> [CallParticipant] {
+        var participants = [CallParticipant]()
+
+        for _ in 0 ..< amount {
+            participants.append(
+                CallParticipant(
+                    user: MockUserType(),
+                    userId: AVSIdentifier.stub,
+                    clientId: UUID().transportString(),
+                    state: .connected(videoState: .started, microphoneState: .unmuted),
+                    activeSpeakerState: .inactive
+                )
+            )
+        }
+
+        return participants
     }
 }

@@ -19,12 +19,7 @@
 import CoreData
 
 struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
-    let sourceVersion: Version
-    let destinationVersion: Version
-
-    let sourceModel: NSManagedObjectModel
-    let destinationModel: NSManagedObjectModel
-    let mappingModel: NSMappingModel
+    // MARK: Lifecycle
 
     // MARK: Init
 
@@ -53,6 +48,17 @@ struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
         self.destinationModel = destinationModel
         self.mappingModel = mappingModel
     }
+
+    // MARK: Internal
+
+    let sourceVersion: Version
+    let destinationVersion: Version
+
+    let sourceModel: NSManagedObjectModel
+    let destinationModel: NSManagedObjectModel
+    let mappingModel: NSMappingModel
+
+    // MARK: Private
 
     // MARK: - Mapping
 

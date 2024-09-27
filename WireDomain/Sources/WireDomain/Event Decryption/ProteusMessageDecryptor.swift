@@ -38,17 +38,7 @@ protocol ProteusMessageDecryptorProtocol {
 // MARK: - ProteusMessageDecryptor
 
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
-    let proteusService: any ProteusServiceInterface
-    let managedObjectContext: NSManagedObjectContext
-
-    private let maxCiphertextSize = Int(12000 * 1.5)
-
-    typealias Context = (
-        selfClient: WireDataModel.UserClient,
-        senderUser: WireDataModel.ZMUser,
-        senderClient: WireDataModel.UserClient,
-        proteusSessionID: ProteusSessionID
-    )
+    // MARK: Lifecycle
 
     init(
         proteusService: any ProteusServiceInterface,
@@ -57,6 +47,18 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         self.proteusService = proteusService
         self.managedObjectContext = managedObjectContext
     }
+
+    // MARK: Internal
+
+    typealias Context = (
+        selfClient: WireDataModel.UserClient,
+        senderUser: WireDataModel.ZMUser,
+        senderClient: WireDataModel.UserClient,
+        proteusSessionID: ProteusSessionID
+    )
+
+    let proteusService: any ProteusServiceInterface
+    let managedObjectContext: NSManagedObjectContext
 
     func decryptedEventData(
         from eventData: ConversationProteusMessageAddEvent
@@ -90,6 +92,10 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         decryptedEvent.message = .plaintext(plaintextData.base64String())
         return decryptedEvent
     }
+
+    // MARK: Private
+
+    private let maxCiphertextSize = Int(12000 * 1.5)
 
     private func validateCiphertext(_ ciphertext: String) throws -> Data {
         guard ciphertext != ZMFailedToCreateEncryptedMessagePayloadString else {

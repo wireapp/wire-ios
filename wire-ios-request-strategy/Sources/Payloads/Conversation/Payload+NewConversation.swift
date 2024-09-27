@@ -20,35 +20,7 @@ import Foundation
 
 extension Payload {
     struct NewConversation: CodableAPIVersionAware, Equatable {
-        enum CodingKeys: String, CodingKey {
-            case users
-            case qualifiedUsers = "qualified_users"
-            case access
-            case accessRole = "access_role"
-            case accessRoleV2 = "access_role_v2"
-            case name
-            case team
-            case messageTimer = "message_timer"
-            case readReceiptMode = "receipt_mode"
-            case conversationRole = "conversation_role"
-            case creatorClient = "creator_client"
-            case messageProtocol = "protocol"
-        }
-
-        let users: [UUID]?
-        let qualifiedUsers: [QualifiedID]?
-        let access: [String]?
-        let legacyAccessRole: String?
-        let accessRoles: [String]?
-        let name: String?
-        let team: ConversationTeamInfo?
-        let messageTimer: TimeInterval?
-        let readReceiptMode: Int?
-        let conversationRole: String?
-
-        // API V2 only
-        let creatorClient: String?
-        let messageProtocol: String?
+        // MARK: Lifecycle
 
         init(
             users: [UUID]? = nil,
@@ -127,6 +99,38 @@ extension Payload {
                 self.legacyAccessRole = nil
             }
         }
+
+        // MARK: Internal
+
+        enum CodingKeys: String, CodingKey {
+            case users
+            case qualifiedUsers = "qualified_users"
+            case access
+            case accessRole = "access_role"
+            case accessRoleV2 = "access_role_v2"
+            case name
+            case team
+            case messageTimer = "message_timer"
+            case readReceiptMode = "receipt_mode"
+            case conversationRole = "conversation_role"
+            case creatorClient = "creator_client"
+            case messageProtocol = "protocol"
+        }
+
+        let users: [UUID]?
+        let qualifiedUsers: [QualifiedID]?
+        let access: [String]?
+        let legacyAccessRole: String?
+        let accessRoles: [String]?
+        let name: String?
+        let team: ConversationTeamInfo?
+        let messageTimer: TimeInterval?
+        let readReceiptMode: Int?
+        let conversationRole: String?
+
+        // API V2 only
+        let creatorClient: String?
+        let messageProtocol: String?
 
         func encode(to encoder: Encoder, apiVersion: APIVersion) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)

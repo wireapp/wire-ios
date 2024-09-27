@@ -23,10 +23,7 @@ import XCTest
 // MARK: - ConversationAvatarViewTests
 
 final class ConversationAvatarViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: ConversationAvatarView!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -163,6 +160,13 @@ final class ConversationAvatarViewTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ConversationAvatarView!
+    private var snapshotHelper: SnapshotHelper!
 }
 
 // MARK: - Helper method

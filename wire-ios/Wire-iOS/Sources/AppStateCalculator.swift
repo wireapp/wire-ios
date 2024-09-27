@@ -34,6 +34,8 @@ enum AppState: Equatable {
     case migrating
     case loading(account: Account, from: Account?)
 
+    // MARK: Internal
+
     static func == (lhs: AppState, rhs: AppState) -> Bool {
         switch (lhs, rhs) {
         case (.headless, .headless):
@@ -140,6 +142,8 @@ protocol AppStateCalculatorDelegate: AnyObject {
 // MARK: - AppStateCalculator
 
 final class AppStateCalculator {
+    // MARK: Lifecycle
+
     init() {
         setupApplicationNotifications()
     }
@@ -147,6 +151,8 @@ final class AppStateCalculator {
     deinit {
         removeObserverToken()
     }
+
+    // MARK: Internal
 
     // MARK: - Public Property
 
@@ -156,6 +162,7 @@ final class AppStateCalculator {
     // MARK: - Private Set Property
 
     private(set) var pendingAppState: AppState?
+
     private(set) var appState: AppState = .headless {
         willSet {
             if case .unauthenticated = appState {
@@ -165,6 +172,8 @@ final class AppStateCalculator {
             }
         }
     }
+
+    // MARK: Private
 
     // MARK: - Private Property
 

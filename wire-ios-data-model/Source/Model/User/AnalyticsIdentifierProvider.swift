@@ -19,11 +19,15 @@
 import Foundation
 
 public struct AnalyticsIdentifierProvider {
-    public var selfUser: UserType
+    // MARK: Lifecycle
 
     public init(selfUser: UserType) {
         self.selfUser = selfUser
     }
+
+    // MARK: Public
+
+    public var selfUser: UserType
 
     public func setIdentifierIfNeeded() {
         guard let user = selfUser as? ZMUser, user.analyticsIdentifier == nil else { return }
@@ -31,6 +35,8 @@ public struct AnalyticsIdentifierProvider {
         let newId = UUID()
         setAnalytics(identifier: newId, forSelfUser: user)
     }
+
+    // MARK: Internal
 
     func setAnalytics(identifier: UUID, forSelfUser user: ZMUser) {
         guard user.isSelfUser, user.isTeamMember else { return }
@@ -45,6 +51,8 @@ public struct AnalyticsIdentifierProvider {
             broadcast(identifier: identifier, context: syncContext)
         }
     }
+
+    // MARK: Private
 
     private func broadcast(identifier: UUID, context: NSManagedObjectContext) {
         let message = DataTransfer(trackingIdentifier: identifier)

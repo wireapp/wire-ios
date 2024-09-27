@@ -106,13 +106,7 @@ public protocol E2EIEnrollmentInterface {
 
 /// This class implements the steps of the E2EI certificate enrollment process.
 public final class E2EIEnrollment: E2EIEnrollmentInterface {
-    private let acmeApi: AcmeAPIInterface
-    private let acmeDirectory: AcmeDirectory
-    private let apiProvider: APIProviderInterface
-    private let e2eiService: E2EIServiceInterface
-    private let keyRotator: E2EIKeyPackageRotating
-
-    private let logger = WireLogger.e2ei
+    // MARK: Lifecycle
 
     public init(
         acmeApi: AcmeAPIInterface,
@@ -127,6 +121,8 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
         self.acmeDirectory = acmeDirectory
         self.keyRotator = keyRotator
     }
+
+    // MARK: Public
 
     public func getACMENonce() async throws -> String {
         logger.info("get ACME nonce from \(acmeDirectory.newNonce)")
@@ -438,6 +434,16 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
             throw E2EIRepositoryFailure.failedToGetOAuthRefreshToken(error)
         }
     }
+
+    // MARK: Private
+
+    private let acmeApi: AcmeAPIInterface
+    private let acmeDirectory: AcmeDirectory
+    private let apiProvider: APIProviderInterface
+    private let e2eiService: E2EIServiceInterface
+    private let keyRotator: E2EIKeyPackageRotating
+
+    private let logger = WireLogger.e2ei
 }
 
 // MARK: - E2EIRepositoryFailure
@@ -476,15 +482,19 @@ public struct ChallengeResponse: Codable, Equatable {
 // MARK: - AccessTokenResponse
 
 public struct AccessTokenResponse: Decodable, Equatable {
-    var expiresIn: Int
-    var token: String
-    var type: String
+    // MARK: Public
 
     public enum CodingKeys: String, CodingKey {
         case expiresIn = "expires_in"
         case token
         case type
     }
+
+    // MARK: Internal
+
+    var expiresIn: Int
+    var token: String
+    var type: String
 }
 
 // MARK: - AuthorizationResult

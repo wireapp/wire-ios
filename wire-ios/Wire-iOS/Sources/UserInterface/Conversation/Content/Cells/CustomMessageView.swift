@@ -24,17 +24,7 @@ import WireDesign
 // MARK: - CustomMessageView
 
 final class CustomMessageView: UIView {
-    var isSelected = false
-
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
-
-    var messageLabel = WebLinkTextView()
-    var messageText: String? {
-        didSet {
-            messageLabel.text = messageText?.applying(transform: .upper)
-        }
-    }
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -65,6 +55,21 @@ final class CustomMessageView: UIView {
 
         messageLabel.font = FontSpec(.small, .light).font
         messageLabel.textColor = SemanticColors.Label.textDefault
+    }
+
+    // MARK: Internal
+
+    var isSelected = false
+
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage?
+
+    var messageLabel = WebLinkTextView()
+
+    var messageText: String? {
+        didSet {
+            messageLabel.text = messageText?.applying(transform: .upper)
+        }
     }
 }
 

@@ -44,12 +44,15 @@ extension NSSet: Countable {}
 // MARK: - SnapshotCenter
 
 public class SnapshotCenter {
-    private unowned var managedObjectContext: NSManagedObjectContext
-    var snapshots: [NSManagedObjectID: Snapshot] = [:]
+    // MARK: Lifecycle
 
     public init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
     }
+
+    // MARK: Internal
+
+    var snapshots: [NSManagedObjectID: Snapshot] = [:]
 
     func createSnapshots(for insertedObjects: Set<NSManagedObject>) {
         for insertedObject in insertedObjects {
@@ -142,4 +145,8 @@ public class SnapshotCenter {
     func clearAllSnapshots() {
         snapshots = [:]
     }
+
+    // MARK: Private
+
+    private unowned var managedObjectContext: NSManagedObjectContext
 }

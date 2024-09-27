@@ -20,7 +20,7 @@ import Foundation
 
 extension ChaCha20Poly1305 {
     public enum StreamEncryption {
-        private static let bufferSize = 1024 * 1024
+        // MARK: Public
 
         public enum EncryptionError: Error {
             /// Couldn't read corrupt message header
@@ -45,180 +45,19 @@ extension ChaCha20Poly1305 {
             case unknown
         }
 
-        struct Header {
-            enum Field: Int {
-                case platform = 4
-                case emptySpace = 1
-                case version = 2
-                case salt = 16
-                case uuidHash = 32
-
-                static var layout: [Field] {
-                    [.platform, .emptySpace, .version, .salt, .uuidHash]
-                }
-
-                static var sizeOfAllFields: Int {
-                    layout.reduce(0) { result, part in
-                        result + part.rawValue
-                    }
-                }
-
-                static func partition(
-                    buffer: [UInt8],
-                    _ into: (_ partition: ArraySlice<UInt8>, _ field: Field) throws -> Void
-                ) throws {
-                    guard buffer.count == Field.sizeOfAllFields else {
-                        throw EncryptionError.malformedHeader
-                    }
-
-                    var index = 0
-                    for field in layout {
-                        let upperBound = index + field.rawValue
-                        try into(buffer[index ..< upperBound], field)
-                        index = upperBound
-                    }
-                }
-            }
-
-            public static let version: UInt16 = 1
-            public static let platform = "WBUI".data(using: .ascii)!
-
-            let buffer: [UInt8]
-            let salt: [UInt8]
-            let uuidHash: [UInt8]
-
-            init(buffer: [UInt8]) throws {
-                var salt = [UInt8](repeating: 0, count: Field.salt.rawValue)
-                var hash = [UInt8](repeating: 0, count: Field.uuidHash.rawValue)
-
-                try Field.partition(buffer: buffer) { partition, field in
-                    switch field {
-                    case .platform:
-                        guard Array(partition) == [UInt8](Header.platform) else {
-                            throw EncryptionError.malformedHeader
-                        }
-
-                    case .emptySpace:
-                        break
-
-                    case .version:
-                        guard UInt16(
-                            bigEndian: Data(Array(partition))
-                                .withUnsafeBytes { $0.baseAddress!.assumingMemoryBound(to: UInt16.self).pointee }
-                        ) == Header
-                            .version else {
-                            throw EncryptionError.malformedHeader
-                        }
-
-                    case .salt:
-                        salt = Array(partition)
-
-                    case .uuidHash:
-                        hash = Array(partition)
-                    }
-                }
-
-                self.salt = salt
-                self.uuidHash = hash
-                self.buffer = buffer
-            }
-
-            init(uuid: UUID) throws {
-                var buffer = [UInt8]()
-                var version = Header.version.bigEndian
-                var salt = [UInt8](repeating: 0, count: Int(crypto_pwhash_argon2i_SALTBYTES))
-                randombytes_buf(&salt, Int(UInt64(crypto_pwhash_argon2i_SALTBYTES)))
-                let uuidHash = try Header.hash(uuid: uuid, salt: salt)
-
-                buffer.append(contentsOf: [UInt8](Header.platform))
-                buffer.append(0)
-                withUnsafeBytes(of: &version) { versionBytes in
-                    buffer.append(contentsOf: versionBytes)
-                }
-                buffer.append(contentsOf: salt)
-                buffer.append(contentsOf: uuidHash)
-
-                self.salt = salt
-                self.uuidHash = uuidHash
-                self.buffer = buffer
-            }
-
-            func deriveKey(from passphrase: Passphrase) throws -> Key {
-                let salt = Array(salt)
-
-                guard try Header.hash(uuid: passphrase.uuid, salt: salt) == Array(uuidHash) else {
-                    throw EncryptionError.mismatchingUUID
-                }
-
-                return try Key(password: passphrase.password, salt: salt)
-            }
-
-            fileprivate static func hash(uuid: UUID, salt: [UInt8]) throws -> [UInt8] {
-                var uuidAsBytes = [UInt8](repeating: 0, count: 128)
-                (uuid as NSUUID).getBytes(&uuidAsBytes)
-
-                let hashSize = 32
-                var hash = [UInt8](repeating: 0, count: hashSize)
-                guard crypto_pwhash_argon2i(
-                    &hash,
-                    UInt64(hashSize),
-                    uuidAsBytes.map(Int8.init),
-                    UInt64(uuidAsBytes.count),
-                    salt,
-                    UInt64(crypto_pwhash_argon2i_OPSLIMIT_INTERACTIVE),
-                    Int(crypto_pwhash_argon2i_MEMLIMIT_INTERACTIVE),
-                    crypto_pwhash_argon2i_ALG_ARGON2I13
-                ) == 0 else {
-                    throw EncryptionError.keyGenerationFailed
-                }
-
-                return hash
-            }
-        }
-
         /// Passphrase for encrypting/decrypting using ChaCha20.
         public struct Passphrase {
-            fileprivate let uuid: UUID
-            fileprivate let password: String
+            // MARK: Lifecycle
 
             public init(password: String, uuid: UUID) {
                 self.password = password
                 self.uuid = uuid
             }
-        }
 
-        /// ChaCha20 Key
-        struct Key {
-            fileprivate let buffer: [UInt8]
+            // MARK: Fileprivate
 
-            /// Generate a key from a passphrase.
-            /// - passphrase: string which is used to derive the key
-            ///
-            /// NOTE: this can fail if the system runs out of memory.
-            public init(password: String, salt: [UInt8]) throws {
-                var buffer = [UInt8](repeating: 0, count: Int(crypto_secretstream_xchacha20poly1305_KEYBYTES))
-
-                guard crypto_pwhash_argon2i(
-                    &buffer,
-                    UInt64(crypto_secretstream_xchacha20poly1305_KEYBYTES),
-                    password,
-                    UInt64(password.lengthOfBytes(using: .utf8)),
-                    salt,
-                    UInt64(crypto_pwhash_argon2i_OPSLIMIT_MODERATE),
-                    Int(crypto_pwhash_argon2i_MEMLIMIT_MODERATE),
-                    crypto_pwhash_argon2i_ALG_ARGON2I13
-                ) == 0 else {
-                    throw EncryptionError.keyGenerationFailed
-                }
-
-                self.buffer = buffer
-            }
-        }
-
-        fileprivate static func initializeSodium() throws {
-            guard sodium_init() >= 0 else {
-                throw EncryptionError.failureInitializingSodium
-            }
+            fileprivate let uuid: UUID
+            fileprivate let password: String
         }
 
         /// Encrypts an input stream using xChaCha20
@@ -420,5 +259,192 @@ extension ChaCha20Poly1305 {
 
             return totalBytesWritten
         }
+
+        // MARK: Internal
+
+        struct Header {
+            // MARK: Lifecycle
+
+            init(buffer: [UInt8]) throws {
+                var salt = [UInt8](repeating: 0, count: Field.salt.rawValue)
+                var hash = [UInt8](repeating: 0, count: Field.uuidHash.rawValue)
+
+                try Field.partition(buffer: buffer) { partition, field in
+                    switch field {
+                    case .platform:
+                        guard Array(partition) == [UInt8](Header.platform) else {
+                            throw EncryptionError.malformedHeader
+                        }
+
+                    case .emptySpace:
+                        break
+
+                    case .version:
+                        guard UInt16(
+                            bigEndian: Data(Array(partition))
+                                .withUnsafeBytes { $0.baseAddress!.assumingMemoryBound(to: UInt16.self).pointee }
+                        ) == Header
+                            .version else {
+                            throw EncryptionError.malformedHeader
+                        }
+
+                    case .salt:
+                        salt = Array(partition)
+
+                    case .uuidHash:
+                        hash = Array(partition)
+                    }
+                }
+
+                self.salt = salt
+                self.uuidHash = hash
+                self.buffer = buffer
+            }
+
+            init(uuid: UUID) throws {
+                var buffer = [UInt8]()
+                var version = Header.version.bigEndian
+                var salt = [UInt8](repeating: 0, count: Int(crypto_pwhash_argon2i_SALTBYTES))
+                randombytes_buf(&salt, Int(UInt64(crypto_pwhash_argon2i_SALTBYTES)))
+                let uuidHash = try Header.hash(uuid: uuid, salt: salt)
+
+                buffer.append(contentsOf: [UInt8](Header.platform))
+                buffer.append(0)
+                withUnsafeBytes(of: &version) { versionBytes in
+                    buffer.append(contentsOf: versionBytes)
+                }
+                buffer.append(contentsOf: salt)
+                buffer.append(contentsOf: uuidHash)
+
+                self.salt = salt
+                self.uuidHash = uuidHash
+                self.buffer = buffer
+            }
+
+            // MARK: Public
+
+            public static let version: UInt16 = 1
+            public static let platform = "WBUI".data(using: .ascii)!
+
+            // MARK: Internal
+
+            enum Field: Int {
+                case platform = 4
+                case emptySpace = 1
+                case version = 2
+                case salt = 16
+                case uuidHash = 32
+
+                // MARK: Internal
+
+                static var layout: [Field] {
+                    [.platform, .emptySpace, .version, .salt, .uuidHash]
+                }
+
+                static var sizeOfAllFields: Int {
+                    layout.reduce(0) { result, part in
+                        result + part.rawValue
+                    }
+                }
+
+                static func partition(
+                    buffer: [UInt8],
+                    _ into: (_ partition: ArraySlice<UInt8>, _ field: Field) throws -> Void
+                ) throws {
+                    guard buffer.count == Field.sizeOfAllFields else {
+                        throw EncryptionError.malformedHeader
+                    }
+
+                    var index = 0
+                    for field in layout {
+                        let upperBound = index + field.rawValue
+                        try into(buffer[index ..< upperBound], field)
+                        index = upperBound
+                    }
+                }
+            }
+
+            let buffer: [UInt8]
+            let salt: [UInt8]
+            let uuidHash: [UInt8]
+
+            func deriveKey(from passphrase: Passphrase) throws -> Key {
+                let salt = Array(salt)
+
+                guard try Header.hash(uuid: passphrase.uuid, salt: salt) == Array(uuidHash) else {
+                    throw EncryptionError.mismatchingUUID
+                }
+
+                return try Key(password: passphrase.password, salt: salt)
+            }
+
+            // MARK: Fileprivate
+
+            fileprivate static func hash(uuid: UUID, salt: [UInt8]) throws -> [UInt8] {
+                var uuidAsBytes = [UInt8](repeating: 0, count: 128)
+                (uuid as NSUUID).getBytes(&uuidAsBytes)
+
+                let hashSize = 32
+                var hash = [UInt8](repeating: 0, count: hashSize)
+                guard crypto_pwhash_argon2i(
+                    &hash,
+                    UInt64(hashSize),
+                    uuidAsBytes.map(Int8.init),
+                    UInt64(uuidAsBytes.count),
+                    salt,
+                    UInt64(crypto_pwhash_argon2i_OPSLIMIT_INTERACTIVE),
+                    Int(crypto_pwhash_argon2i_MEMLIMIT_INTERACTIVE),
+                    crypto_pwhash_argon2i_ALG_ARGON2I13
+                ) == 0 else {
+                    throw EncryptionError.keyGenerationFailed
+                }
+
+                return hash
+            }
+        }
+
+        /// ChaCha20 Key
+        struct Key {
+            // MARK: Lifecycle
+
+            /// Generate a key from a passphrase.
+            /// - passphrase: string which is used to derive the key
+            ///
+            /// NOTE: this can fail if the system runs out of memory.
+            public init(password: String, salt: [UInt8]) throws {
+                var buffer = [UInt8](repeating: 0, count: Int(crypto_secretstream_xchacha20poly1305_KEYBYTES))
+
+                guard crypto_pwhash_argon2i(
+                    &buffer,
+                    UInt64(crypto_secretstream_xchacha20poly1305_KEYBYTES),
+                    password,
+                    UInt64(password.lengthOfBytes(using: .utf8)),
+                    salt,
+                    UInt64(crypto_pwhash_argon2i_OPSLIMIT_MODERATE),
+                    Int(crypto_pwhash_argon2i_MEMLIMIT_MODERATE),
+                    crypto_pwhash_argon2i_ALG_ARGON2I13
+                ) == 0 else {
+                    throw EncryptionError.keyGenerationFailed
+                }
+
+                self.buffer = buffer
+            }
+
+            // MARK: Fileprivate
+
+            fileprivate let buffer: [UInt8]
+        }
+
+        // MARK: Fileprivate
+
+        fileprivate static func initializeSodium() throws {
+            guard sodium_init() >= 0 else {
+                throw EncryptionError.failureInitializingSodium
+            }
+        }
+
+        // MARK: Private
+
+        private static let bufferSize = 1024 * 1024
     }
 }

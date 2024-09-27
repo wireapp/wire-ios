@@ -25,23 +25,26 @@ public enum ZMSound: String, CustomStringConvertible {
     case WirePing   = "ping_from_them"
     case WireText   = "new_message"
 
+    // MARK: Public
+
     public static let soundEffects = [ZMSound]()
 
     public static let ringtones = [ZMSound]()
 
-    public func isRingtone() -> Bool {
-        type(of: self).ringtones.contains(self)
+    public var description: String {
+        rawValue.capitalized
     }
 
-    fileprivate static var playingPreviewID: SystemSoundID?
-    fileprivate static var playingPreviewURL: URL?
-
-    fileprivate static func stopPlayingPreview() {
-        if playingPreviewURL != nil,
-           let soundId = playingPreviewID {
-            AudioServicesDisposeSystemSoundID(soundId)
-            playingPreviewID = .none
-            playingPreviewURL = .none
+    public var descriptionLocalizationKey: String {
+        switch self {
+        case .None:
+            "self.settings.sound_menu.sounds.none"
+        case .WireCall:
+            "self.settings.sound_menu.sounds.wire_call"
+        case .WireText:
+            "self.settings.sound_menu.sounds.wire_message"
+        case .WirePing:
+            "self.settings.sound_menu.sounds.wire_ping"
         }
     }
 
@@ -65,6 +68,10 @@ public enum ZMSound: String, CustomStringConvertible {
             }
     }
 
+    public func isRingtone() -> Bool {
+        type(of: self).ringtones.contains(self)
+    }
+
     public func fileURL() -> URL? {
         switch self {
         case .None:
@@ -81,27 +88,8 @@ public enum ZMSound: String, CustomStringConvertible {
         }
     }
 
-    fileprivate static let fileExtension = "m4a"
-
     public func filename() -> String {
         (rawValue as NSString).appendingPathExtension(type(of: self).fileExtension)!
-    }
-
-    public var description: String {
-        rawValue.capitalized
-    }
-
-    public var descriptionLocalizationKey: String {
-        switch self {
-        case .None:
-            "self.settings.sound_menu.sounds.none"
-        case .WireCall:
-            "self.settings.sound_menu.sounds.wire_call"
-        case .WireText:
-            "self.settings.sound_menu.sounds.wire_message"
-        case .WirePing:
-            "self.settings.sound_menu.sounds.wire_ping"
-        }
     }
 
     public func playPreview() {
@@ -109,6 +97,22 @@ public enum ZMSound: String, CustomStringConvertible {
             type(of: self).playPreviewForURL(soundFileURL)
         } else {
             type(of: self).stopPlayingPreview()
+        }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate static var playingPreviewID: SystemSoundID?
+    fileprivate static var playingPreviewURL: URL?
+
+    fileprivate static let fileExtension = "m4a"
+
+    fileprivate static func stopPlayingPreview() {
+        if playingPreviewURL != nil,
+           let soundId = playingPreviewID {
+            AudioServicesDisposeSystemSoundID(soundId)
+            playingPreviewID = .none
+            playingPreviewURL = .none
         }
     }
 }

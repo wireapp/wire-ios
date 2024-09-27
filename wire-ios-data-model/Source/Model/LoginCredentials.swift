@@ -22,9 +22,7 @@ import Foundation
 
 @objc
 public class LoginCredentials: NSObject, Codable {
-    @objc public let emailAddress: String?
-    @objc public let hasPassword: Bool
-    @objc public let usesCompanyLogin: Bool
+    // MARK: Lifecycle
 
     public init(emailAddress: String?, hasPassword: Bool, usesCompanyLogin: Bool) {
         self.emailAddress = emailAddress
@@ -32,8 +30,22 @@ public class LoginCredentials: NSObject, Codable {
         self.usesCompanyLogin = usesCompanyLogin
     }
 
+    // MARK: Public
+
+    @objc public let emailAddress: String?
+    @objc public let hasPassword: Bool
+    @objc public let usesCompanyLogin: Bool
+
     override public var debugDescription: String {
         "<LoginCredentials>:\n\temailAddress: \(String(describing: emailAddress))\n\thasPassword: \(hasPassword)\n\tusesCompanyLogin: \(usesCompanyLogin)"
+    }
+
+    override public var hash: Int {
+        var hasher = Hasher()
+        hasher.combine(emailAddress)
+        hasher.combine(hasPassword)
+        hasher.combine(usesCompanyLogin)
+        return hasher.finalize()
     }
 
     override public func isEqual(_ object: Any?) -> Bool {
@@ -46,13 +58,5 @@ public class LoginCredentials: NSObject, Codable {
         let companyLoginEquals = usesCompanyLogin == otherCredentials.usesCompanyLogin
 
         return emailEquals && passwordEquals && companyLoginEquals
-    }
-
-    override public var hash: Int {
-        var hasher = Hasher()
-        hasher.combine(emailAddress)
-        hasher.combine(hasPassword)
-        hasher.combine(usesCompanyLogin)
-        return hasher.finalize()
     }
 }

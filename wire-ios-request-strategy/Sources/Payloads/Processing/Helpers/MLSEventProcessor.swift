@@ -79,12 +79,7 @@ public protocol MLSEventProcessing {
 /// Such as updating the conversation's MLS status, handling welcome messages, or wiping MLS groups.
 
 public class MLSEventProcessor: MLSEventProcessing {
-    // MARK: - Properties
-
-    private let conversationService: ConversationServiceInterface
-    private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     convenience init(context: NSManagedObjectContext) {
         self.init(
@@ -100,6 +95,8 @@ public class MLSEventProcessor: MLSEventProcessing {
         self.conversationService = conversationService
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
     }
+
+    // MARK: Public
 
     // MARK: - Update conversation
 
@@ -186,6 +183,46 @@ public class MLSEventProcessor: MLSEventProcessing {
         )
     }
 
+    // MARK: - Wipe conversation
+
+    public func wipeMLSGroup(
+        forConversation conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) async {
+        WireLogger.mls.info("MLS event processor is wiping conversation")
+
+        let (messageProtocol, groupID, mlsService) = await context.perform {
+            (
+                conversation.messageProtocol,
+                conversation.mlsGroupID,
+                context.mlsService
+            )
+        }
+
+        guard messageProtocol.isOne(of: .mls, .mixed) else {
+            return logWarn(aborting: .conversationWipe, withReason: .conversationNotMLSCapable)
+        }
+
+        guard let groupID else {
+            return logWarn(aborting: .conversationWipe, withReason: .missingGroupID)
+        }
+
+        guard let mlsService else {
+            return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
+        }
+
+        do {
+            try await mlsService.wipeGroup(groupID)
+        } catch {
+            WireLogger.mls
+                .error(
+                    "mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))"
+                )
+        }
+    }
+
+    // MARK: Internal
+
     func process(
         welcomeMessage: String,
         conversationID: QualifiedID,
@@ -210,6 +247,42 @@ public class MLSEventProcessor: MLSEventProcessing {
             oneOneOneResolver: oneOnOneResolver
         )
     }
+
+    // MARK: Private
+
+    private enum ActionLog: String {
+        case conversationUpdate = "conversation update"
+        case conversationWipe = "conversation wipe"
+        case joiningGroup = "joining group"
+        case processingWelcome = "processing welcome message"
+    }
+
+    private enum AbortReason {
+        case conversationNotMLSCapable
+        case missingGroupID
+        case missingMLSService
+        case other(reason: String)
+
+        // MARK: Internal
+
+        var stringValue: String {
+            switch self {
+            case .conversationNotMLSCapable:
+                "conversation is not MLS capable"
+            case .missingGroupID:
+                "missing group ID"
+            case .missingMLSService:
+                "missing mlsService"
+            case let .other(reason: reason):
+                reason
+            }
+        }
+    }
+
+    // MARK: - Properties
+
+    private let conversationService: ConversationServiceInterface
+    private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
 
     private func resolveOneOnOneConversationIfNeeded(
         conversation: ZMConversation,
@@ -254,44 +327,6 @@ public class MLSEventProcessor: MLSEventProcessing {
         }
     }
 
-    // MARK: - Wipe conversation
-
-    public func wipeMLSGroup(
-        forConversation conversation: ZMConversation,
-        context: NSManagedObjectContext
-    ) async {
-        WireLogger.mls.info("MLS event processor is wiping conversation")
-
-        let (messageProtocol, groupID, mlsService) = await context.perform {
-            (
-                conversation.messageProtocol,
-                conversation.mlsGroupID,
-                context.mlsService
-            )
-        }
-
-        guard messageProtocol.isOne(of: .mls, .mixed) else {
-            return logWarn(aborting: .conversationWipe, withReason: .conversationNotMLSCapable)
-        }
-
-        guard let groupID else {
-            return logWarn(aborting: .conversationWipe, withReason: .missingGroupID)
-        }
-
-        guard let mlsService else {
-            return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
-        }
-
-        do {
-            try await mlsService.wipeGroup(groupID)
-        } catch {
-            WireLogger.mls
-                .error(
-                    "mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))"
-                )
-        }
-    }
-
     // MARK: Log Helpers
 
     private func logWarn(
@@ -299,32 +334,5 @@ public class MLSEventProcessor: MLSEventProcessing {
         withReason reason: AbortReason
     ) {
         WireLogger.mls.warn("MLS event processor aborting \(action.rawValue): \(reason.stringValue)")
-    }
-
-    private enum ActionLog: String {
-        case conversationUpdate = "conversation update"
-        case conversationWipe = "conversation wipe"
-        case joiningGroup = "joining group"
-        case processingWelcome = "processing welcome message"
-    }
-
-    private enum AbortReason {
-        case conversationNotMLSCapable
-        case missingGroupID
-        case missingMLSService
-        case other(reason: String)
-
-        var stringValue: String {
-            switch self {
-            case .conversationNotMLSCapable:
-                "conversation is not MLS capable"
-            case .missingGroupID:
-                "missing group ID"
-            case .missingMLSService:
-                "missing mlsService"
-            case let .other(reason: reason):
-                reason
-            }
-        }
     }
 }

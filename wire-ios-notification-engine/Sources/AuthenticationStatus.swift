@@ -20,21 +20,25 @@ import Foundation
 import WireRequestStrategy
 
 final class AuthenticationStatus: AuthenticationStatusProvider {
-    // MARK: - Properties
-
-    let transportSession: ZMTransportSession
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(transportSession: ZMTransportSession) {
         self.transportSession = transportSession
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let transportSession: ZMTransportSession
 
     // MARK: - Methods
 
     var state: AuthenticationState {
         isLoggedIn ? .authenticated : .unauthenticated
     }
+
+    // MARK: Private
 
     private var isLoggedIn: Bool {
         transportSession.cookieStorage.hasAuthenticationCookie

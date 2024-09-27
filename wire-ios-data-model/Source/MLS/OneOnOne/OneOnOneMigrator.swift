@@ -32,15 +32,13 @@ public protocol OneOnOneMigratorInterface {
 // MARK: - OneOnOneMigrator
 
 public struct OneOnOneMigrator: OneOnOneMigratorInterface {
-    // MARK: - Dependencies
-
-    private let mlsService: MLSServiceInterface
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(mlsService: MLSServiceInterface) {
         self.mlsService = mlsService
     }
+
+    // MARK: Public
 
     // MARK: - Methods
 
@@ -84,6 +82,12 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
         return mlsGroupID
     }
+
+    // MARK: Private
+
+    // MARK: - Dependencies
+
+    private let mlsService: MLSServiceInterface
 
     // MARK: Helpers
 

@@ -52,6 +52,8 @@ enum NetworkResponse: CustomStringConvertible {
     case success(SuccessResponse)
     case failure(ErrorResponse)
 
+    // MARK: Internal
+
     var description: String {
         switch self {
         case let .success(response):

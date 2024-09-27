@@ -23,6 +23,23 @@ import WireSyncEngine
 /// An object that coordinates disclosing the legal hold state to the user.
 
 final class LegalHoldDisclosureController: UserObserving {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    init(
+        selfUserLegalHoldSubject: SelfUserLegalHoldable,
+        userSession: UserSession,
+        presenter: @escaping ViewControllerPresenter
+    ) {
+        self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
+        self.presenter = presenter
+
+        configureObservers(userSession: userSession)
+    }
+
+    // MARK: Internal
+
     enum DisclosureState: Equatable {
         /// No legal hold status is being disclosed.
         case none
@@ -73,38 +90,6 @@ final class LegalHoldDisclosureController: UserObserving {
         }
     }
 
-    private var userObserverToken: Any?
-
-    // MARK: - Initialization
-
-    init(
-        selfUserLegalHoldSubject: SelfUserLegalHoldable,
-        userSession: UserSession,
-        presenter: @escaping ViewControllerPresenter
-    ) {
-        self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
-        self.presenter = presenter
-
-        configureObservers(userSession: userSession)
-    }
-
-    private func configureObservers(userSession: UserSession) {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(applicationDidEnterForeground),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
-        userObserverToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
-    }
-
-    // MARK: - Notifications
-
-    @objc
-    private func applicationDidEnterForeground() {
-        discloseCurrentState(cause: .appOpen)
-    }
-
     // MARK: User Change
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
@@ -129,6 +114,27 @@ final class LegalHoldDisclosureController: UserObserving {
         case .disabled:
             discloseDisabledStateIfPossible()
         }
+    }
+
+    // MARK: Private
+
+    private var userObserverToken: Any?
+
+    private func configureObservers(userSession: UserSession) {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterForeground),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+        userObserverToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
+    }
+
+    // MARK: - Notifications
+
+    @objc
+    private func applicationDidEnterForeground() {
+        discloseCurrentState(cause: .appOpen)
     }
 
     /// Present an alert about legal hold being enabled.

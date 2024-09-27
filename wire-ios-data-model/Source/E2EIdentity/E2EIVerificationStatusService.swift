@@ -29,20 +29,13 @@ public protocol E2EIVerificationStatusServiceInterface {
 // MARK: - E2EIVerificationStatusService
 
 public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceInterface {
-    // MARK: - Properties
-
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
-        get async throws {
-            try await coreCryptoProvider.coreCrypto()
-        }
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
         self.coreCryptoProvider = coreCryptoProvider
     }
+
+    // MARK: Public
 
     // MARK: - Error
 
@@ -75,6 +68,18 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
                 .warn("can't get conversation \(groupID.safeForLoggingDescription) verification state: \(error)")
 
             throw E2EIVerificationStatusError.failedToFetchVerificationStatus
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 }

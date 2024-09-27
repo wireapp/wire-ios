@@ -22,6 +22,36 @@ import WireDataModel
 import WireDesign
 
 class SettingsDebugReportViewController: UIViewController {
+    // MARK: Lifecycle
+
+    init(viewModel: SettingsDebugReportViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        setupViews()
+        setupConstraints()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(Strings.TechnicalReportSection.title.capitalized)
+    }
+
+    // MARK: Private
+
     // MARK: - Constants
 
     private enum LayoutConstants {
@@ -64,32 +94,6 @@ class SettingsDebugReportViewController: UIViewController {
         title: Strings.TechnicalReport.shareReport.capitalized,
         action: UIAction { [weak self] _ in self?.didTapShareReport() }
     )
-
-    // MARK: - Life cycle
-
-    init(viewModel: SettingsDebugReportViewModelProtocol) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        setupViews()
-        setupConstraints()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupNavigationBarTitle(Strings.TechnicalReportSection.title.capitalized)
-    }
 
     // MARK: - Setup
 

@@ -20,7 +20,7 @@ import XCTest
 @testable import WireDataModel
 
 final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
-    private var mockCache: SearchUsersCache!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -228,4 +228,8 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(searchUser1, searchUser2)
         XCTAssertEqual(searchUser2?.user, localUser)
     }
+
+    // MARK: Private
+
+    private var mockCache: SearchUsersCache!
 }

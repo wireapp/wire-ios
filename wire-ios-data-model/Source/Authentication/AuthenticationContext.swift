@@ -34,18 +34,20 @@ public protocol AuthenticationContextProtocol {
 // MARK: - AuthenticationContext
 
 public struct AuthenticationContext: AuthenticationContextProtocol {
+    // MARK: Lifecycle
+
+    public init(storage: any LAContextStorable) {
+        self.storage = storage
+    }
+
+    // MARK: Public
+
     public var laContext: LAContext {
         storedContext()
     }
 
     public var evaluatedPolicyDomainState: Data? {
         storedContext().evaluatedPolicyDomainState
-    }
-
-    private let storage: any LAContextStorable
-
-    public init(storage: any LAContextStorable) {
-        self.storage = storage
     }
 
     public func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
@@ -60,6 +62,10 @@ public struct AuthenticationContext: AuthenticationContextProtocol {
         WireLogger.ear.info("AuthenticationContext: evaluatePolicy")
         storedContext().evaluatePolicy(policy, localizedReason: localizedReason, reply: reply)
     }
+
+    // MARK: Private
+
+    private let storage: any LAContextStorable
 
     // MARK: Helpers
 

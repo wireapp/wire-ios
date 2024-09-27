@@ -33,30 +33,7 @@ extension Notification.Name {
 /// such as the accounts users name,
 /// team name if there is any, picture and uuid.
 public final class Account: NSObject, Codable {
-    public var userName: String
-    public var teamName: String?
-    public let userIdentifier: UUID
-    public var imageData: Data?
-    public var teamImageData: Data?
-    public var loginCredentials: LoginCredentials?
-
-    public var unreadConversationCount = 0 {
-        didSet {
-            if oldValue != unreadConversationCount {
-                NotificationInContext(name: .AccountUnreadCountDidChangeNotification, context: self).post()
-            }
-        }
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case userName = "name"
-        case teamName = "team"
-        case userIdentifier = "identifier"
-        case imageData = "image"
-        case teamImageData = "teamImage"
-        case unreadConversationCount
-        case loginCredentials
-    }
+    // MARK: Lifecycle
 
     public required init(
         userName: String,
@@ -77,6 +54,31 @@ public final class Account: NSObject, Codable {
         super.init()
     }
 
+    // MARK: Public
+
+    public var userName: String
+    public var teamName: String?
+    public let userIdentifier: UUID
+    public var imageData: Data?
+    public var teamImageData: Data?
+    public var loginCredentials: LoginCredentials?
+
+    public var unreadConversationCount = 0 {
+        didSet {
+            if oldValue != unreadConversationCount {
+                NotificationInContext(name: .AccountUnreadCountDidChangeNotification, context: self).post()
+            }
+        }
+    }
+
+    override public var hash: Int {
+        userIdentifier.hashValue
+    }
+
+    override public var debugDescription: String {
+        "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tcredentials:\n\t\(String(describing: loginCredentials?.debugDescription))\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
+    }
+
     /// Updates the properties of the receiver with the given account. Use this method
     /// when you wish to update an exisiting account object with newly fetched properties
     /// from the account store.
@@ -95,12 +97,16 @@ public final class Account: NSObject, Codable {
         return userIdentifier == other.userIdentifier
     }
 
-    override public var hash: Int {
-        userIdentifier.hashValue
-    }
+    // MARK: Internal
 
-    override public var debugDescription: String {
-        "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tcredentials:\n\t\(String(describing: loginCredentials?.debugDescription))\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
+    enum CodingKeys: String, CodingKey {
+        case userName = "name"
+        case teamName = "team"
+        case userIdentifier = "identifier"
+        case imageData = "image"
+        case teamImageData = "teamImage"
+        case unreadConversationCount
+        case loginCredentials
     }
 }
 

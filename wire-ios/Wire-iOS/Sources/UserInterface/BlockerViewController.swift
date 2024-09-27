@@ -33,11 +33,7 @@ enum BlockerViewControllerContext {
 // MARK: - BlockerViewController
 
 final class BlockerViewController: LaunchImageViewController {
-    private var context: BlockerViewControllerContext = .blacklist
-    private var error: Error?
-    private var sessionManager: SessionManager?
-
-    private var observerTokens = [Any]()
+    // MARK: Lifecycle
 
     init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil, error: Error? = nil) {
         self.error = error
@@ -50,6 +46,8 @@ final class BlockerViewController: LaunchImageViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +73,26 @@ final class BlockerViewController: LaunchImageViewController {
             showGetCertificateMessage()
         }
     }
+
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
+        // shown after sending report logs, we should show other choices again
+        // in order not to be stuck on black screen
+        controller.presentingViewController?.dismiss(animated: true) {
+            self.showDatabaseFailureMessage()
+        }
+    }
+
+    // MARK: Private
+
+    private var context: BlockerViewControllerContext = .blacklist
+    private var error: Error?
+    private var sessionManager: SessionManager?
+
+    private var observerTokens = [Any]()
 
     private func showBackendNotSupportedMessage() {
         typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
@@ -224,18 +242,6 @@ final class BlockerViewController: LaunchImageViewController {
 
         deleteDatabaseConfirmationAlert.addAction(cancelAction)
         present(deleteDatabaseConfirmationAlert, animated: true)
-    }
-
-    func mailComposeController(
-        _ controller: MFMailComposeViewController,
-        didFinishWith result: MFMailComposeResult,
-        error: Error?
-    ) {
-        // shown after sending report logs, we should show other choices again
-        // in order not to be stuck on black screen
-        controller.presentingViewController?.dismiss(animated: true) {
-            self.showDatabaseFailureMessage()
-        }
     }
 }
 

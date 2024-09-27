@@ -130,6 +130,8 @@ enum ParagraphStyleDescriptor {
     case lineSpacing(CGFloat)
     case paragraphSpacing(CGFloat)
 
+    // MARK: Internal
+
     var style: NSParagraphStyle {
         let style = NSMutableParagraphStyle()
         switch self {
@@ -168,6 +170,8 @@ enum PointOfView: UInt {
     case secondPerson
     // Third person: They/He/She/It case
     case thirdPerson
+
+    // MARK: Fileprivate
 
     fileprivate var suffix: String {
         switch self {

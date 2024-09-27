@@ -29,12 +29,7 @@ enum OutgoingConnectionBottomBarAction: UInt {
 // MARK: - OutgoingConnectionViewController
 
 final class OutgoingConnectionViewController: UIViewController {
-    typealias Connection = L10n.Accessibility.Connection
-
-    private let cancelButton = IconButton()
-    private let archiveButton = IconButton()
-
-    var buttonCallback: ((OutgoingConnectionBottomBarAction) -> Void)?
+    // MARK: Lifecycle
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -46,6 +41,17 @@ final class OutgoingConnectionViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    typealias Connection = L10n.Accessibility.Connection
+
+    var buttonCallback: ((OutgoingConnectionBottomBarAction) -> Void)?
+
+    // MARK: Private
+
+    private let cancelButton = IconButton()
+    private let archiveButton = IconButton()
 
     private func setupViews() {
         view.backgroundColor = SemanticColors.View.backgroundConversationView

@@ -25,6 +25,11 @@ import WireTransport
 @objcMembers
 public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCapable {
     public var observerCount = 0
+    public var mayBeReachable = true
+    public var isMobileConnection = true
+    public var oldMayBeReachable = true
+    public var oldIsMobileConnection = true
+
     public func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {
         observerCount += 1
         return NSObject()
@@ -34,11 +39,6 @@ public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCap
         NSObject()
     }
 
-    public var mayBeReachable = true
-    public var isMobileConnection = true
-    public var oldMayBeReachable = true
-    public var oldIsMobileConnection = true
-
     public func tearDown() {}
 }
 
@@ -46,9 +46,7 @@ public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCap
 
 @objcMembers
 public final class MockSessionsDirectory: NSObject, URLSessionsDirectory, TearDownCapable {
-    public var foregroundSession: ZMURLSession
-    public var backgroundSession: ZMURLSession
-    public var allSessions: [ZMURLSession]
+    // MARK: Lifecycle
 
     public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession? = nil) {
         self.foregroundSession = foregroundSession
@@ -56,10 +54,19 @@ public final class MockSessionsDirectory: NSObject, URLSessionsDirectory, TearDo
         self.allSessions = [foregroundSession, backgroundSession].compactMap { $0 }
     }
 
-    var tearDownCalled = false
+    // MARK: Public
+
+    public var foregroundSession: ZMURLSession
+    public var backgroundSession: ZMURLSession
+    public var allSessions: [ZMURLSession]
+
     public func tearDown() {
         tearDownCalled = true
     }
+
+    // MARK: Internal
+
+    var tearDownCalled = false
 }
 
 // MARK: - ZMTransportSessionTests_Initialization

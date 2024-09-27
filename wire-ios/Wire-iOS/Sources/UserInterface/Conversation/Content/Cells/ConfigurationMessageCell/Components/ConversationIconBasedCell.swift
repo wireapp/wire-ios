@@ -23,6 +23,21 @@ import WireDesign
 // MARK: - ConversationIconBasedCell
 
 class ConversationIconBasedCell: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     let imageContainer = UIView()
     let imageView = UIImageView()
     let textLabel = WebLinkTextView()
@@ -31,11 +46,6 @@ class ConversationIconBasedCell: UIView {
     let topContentView = UIView()
     let bottomContentView = UIView()
     let labelFont: UIFont = .mediumFont
-
-    private var containerWidthConstraint: NSLayoutConstraint!
-    private var textLabelTrailingConstraint: NSLayoutConstraint!
-    private var textLabelTopConstraint: NSLayoutConstraint!
-    private var topContentViewTrailingConstraint: NSLayoutConstraint!
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
@@ -61,21 +71,6 @@ class ConversationIconBasedCell: UIView {
                 textLabelTopConstraint.constant = 0
             }
         }
-    }
-
-    private var trailingTextMargin: CGFloat {
-        -conversationHorizontalMargins.right * 2
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
     func configureSubviews() {
@@ -170,6 +165,17 @@ class ConversationIconBasedCell: UIView {
         containerWidthConstraint.constant = conversationHorizontalMargins.left
         textLabelTrailingConstraint.constant = trailingTextMargin
         topContentViewTrailingConstraint.constant = trailingTextMargin
+    }
+
+    // MARK: Private
+
+    private var containerWidthConstraint: NSLayoutConstraint!
+    private var textLabelTrailingConstraint: NSLayoutConstraint!
+    private var textLabelTopConstraint: NSLayoutConstraint!
+    private var topContentViewTrailingConstraint: NSLayoutConstraint!
+
+    private var trailingTextMargin: CGFloat {
+        -conversationHorizontalMargins.right * 2
     }
 }
 

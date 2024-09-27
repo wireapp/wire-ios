@@ -17,23 +17,7 @@
 //
 
 final class SearchUserImageStrategy: AbstractRequestStrategy {
-    private static let userPath = "/users?ids="
-
-    fileprivate unowned var uiContext: NSManagedObjectContext
-    fileprivate unowned var syncContext: NSManagedObjectContext
-
-    fileprivate var requestedMissingFullProfiles: Set<UUID> = Set()
-    fileprivate var requestedMissingFullProfilesInProgress: Set<UUID> = Set()
-
-    fileprivate var requestedPreviewAssets: [UUID: SearchUserAssetKeys?] = [:]
-    fileprivate var requestedCompleteAssets: [UUID: SearchUserAssetKeys?] = [:]
-    fileprivate var requestedUserDomain: [UUID: String] = [:]
-    fileprivate var requestedPreviewAssetsInProgress: Set<UUID> = Set()
-    fileprivate var requestedCompleteAssetsInProgress: Set<UUID> = Set()
-
-    fileprivate var observers: [any NSObjectProtocol] = []
-
-    private let searchUsersCache: SearchUsersCache?
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
@@ -66,6 +50,25 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
                 self?.requestAsset(with: $0)
             }
         ))
+    }
+
+    // MARK: Internal
+
+    static func requestForFetchingFullProfile(
+        for usersWithIDs: Set<UUID>,
+        apiVersion: APIVersion,
+        completionHandler: ZMCompletionHandler
+    ) -> ZMTransportRequest {
+        let usersList = usersWithIDs
+            .map { $0.transportString() }
+            .joined(separator: ",")
+        let request = ZMTransportRequest(
+            getFromPath: userPath + usersList,
+            apiVersion: apiVersion.rawValue
+        )
+        request.add(completionHandler)
+
+        return request
     }
 
     func requestAsset(with note: NotificationInContext) {
@@ -271,20 +274,25 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
         }
     }
 
-    static func requestForFetchingFullProfile(
-        for usersWithIDs: Set<UUID>,
-        apiVersion: APIVersion,
-        completionHandler: ZMCompletionHandler
-    ) -> ZMTransportRequest {
-        let usersList = usersWithIDs
-            .map { $0.transportString() }
-            .joined(separator: ",")
-        let request = ZMTransportRequest(
-            getFromPath: userPath + usersList,
-            apiVersion: apiVersion.rawValue
-        )
-        request.add(completionHandler)
+    // MARK: Fileprivate
 
-        return request
-    }
+    fileprivate unowned var uiContext: NSManagedObjectContext
+    fileprivate unowned var syncContext: NSManagedObjectContext
+
+    fileprivate var requestedMissingFullProfiles: Set<UUID> = Set()
+    fileprivate var requestedMissingFullProfilesInProgress: Set<UUID> = Set()
+
+    fileprivate var requestedPreviewAssets: [UUID: SearchUserAssetKeys?] = [:]
+    fileprivate var requestedCompleteAssets: [UUID: SearchUserAssetKeys?] = [:]
+    fileprivate var requestedUserDomain: [UUID: String] = [:]
+    fileprivate var requestedPreviewAssetsInProgress: Set<UUID> = Set()
+    fileprivate var requestedCompleteAssetsInProgress: Set<UUID> = Set()
+
+    fileprivate var observers: [any NSObjectProtocol] = []
+
+    // MARK: Private
+
+    private static let userPath = "/users?ids="
+
+    private let searchUsersCache: SearchUsersCache?
 }

@@ -22,27 +22,7 @@ import WireDataModel
 // MARK: - ConversationLinkPreviewArticleCell
 
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
-    struct Configuration {
-        let textMessageData: TextMessageData
-        let showImage: Bool
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
-    }
-
-    private let articleView = ArticleView(withImagePlaceholder: true)
-
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
-
-    var isSelected = false
-
-    var selectionView: UIView? {
-        articleView
-    }
-
-    var configuration: Configuration?
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -55,14 +35,27 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    private func configureSubviews() {
-        articleView.delegate = self
-        addSubview(articleView)
+    // MARK: Internal
+
+    struct Configuration {
+        let textMessageData: TextMessageData
+        let showImage: Bool
+        let message: ZMConversationMessage
+
+        var isObfuscated: Bool {
+            message.isObfuscated
+        }
     }
 
-    private func configureConstraints() {
-        articleView.translatesAutoresizingMaskIntoConstraints = false
-        articleView.fitIn(view: self)
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage?
+
+    var isSelected = false
+
+    var configuration: Configuration?
+
+    var selectionView: UIView? {
+        articleView
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -87,6 +80,20 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
         super.traitCollectionDidChange(previousTraitCollection)
         updateImageLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
     }
+
+    // MARK: Private
+
+    private let articleView = ArticleView(withImagePlaceholder: true)
+
+    private func configureSubviews() {
+        articleView.delegate = self
+        addSubview(articleView)
+    }
+
+    private func configureConstraints() {
+        articleView.translatesAutoresizingMaskIntoConstraints = false
+        articleView.fitIn(view: self)
+    }
 }
 
 // MARK: LinkViewDelegate
@@ -100,7 +107,18 @@ extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
 // MARK: - ConversationLinkPreviewArticleCellDescription
 
 final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(message: ZMConversationMessage, data: TextMessageData) {
+        let showImage = data.linkPreviewHasImage
+        self.configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationLinkPreviewArticleCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -114,15 +132,9 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
     let supportsActions = true
     let containsHighlightableContent = true
 
-    var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
-    }
-
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: TextMessageData) {
-        let showImage = data.linkPreviewHasImage
-        self.configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
-        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
+    var accessibilityIdentifier: String? {
+        configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
     }
 }

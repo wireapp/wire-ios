@@ -19,6 +19,8 @@
 import Foundation
 
 struct MLSFeatureConfigDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> MLSFeatureConfig {
@@ -36,6 +38,8 @@ struct MLSFeatureConfigDecoder {
             supportedProtocols: payload.config.supportedProtocols
         )
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let protocolToggleUsers: Set<UUID>

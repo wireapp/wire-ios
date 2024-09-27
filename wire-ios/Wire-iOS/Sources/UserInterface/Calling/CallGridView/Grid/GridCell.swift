@@ -19,9 +19,7 @@
 import UIKit
 
 class GridCell: UICollectionViewCell {
-    static let reuseIdentifier = String(describing: GridCell.self)
-
-    private var streamView: OrientableView?
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,6 +33,15 @@ class GridCell: UICollectionViewCell {
         )
     }
 
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    static let reuseIdentifier = String(describing: GridCell.self)
+
     override func layoutSubviews() {
         super.layoutSubviews()
         streamView?.layoutForOrientation()
@@ -45,11 +52,6 @@ class GridCell: UICollectionViewCell {
         streamView?.layoutForOrientation()
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     func add(streamView: OrientableView) {
         guard !contentView.subviews.contains(streamView) else { return }
         contentView.subviews.forEach { $0.removeFromSuperview() }
@@ -57,4 +59,8 @@ class GridCell: UICollectionViewCell {
         streamView.layoutForOrientation()
         self.streamView = streamView
     }
+
+    // MARK: Private
+
+    private var streamView: OrientableView?
 }

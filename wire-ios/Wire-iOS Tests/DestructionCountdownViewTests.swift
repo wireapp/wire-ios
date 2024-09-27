@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class DestructionCountdownViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: DestructionCountdownView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -169,4 +166,11 @@ final class DestructionCountdownViewTests: XCTestCase {
         // THEN
         XCTAssertFalse(sut.isAnimatingProgress)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: DestructionCountdownView!
 }

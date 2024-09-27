@@ -23,23 +23,34 @@ import WireSyncEngine
 import WireUtilities
 
 final class CallParticipantDetailsView: RoundedBlurView {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    override init() {
+        self.nameLabel = DynamicFontLabel(
+            fontSpec: .mediumRegularFont,
+            color: SemanticColors.Label.textWhite
+        )
+        self.connectingLabel = DynamicFontLabel(
+            fontSpec: .smallSemiboldFont,
+            color: SemanticColors.Label.textParticipantDisconnected
+        )
+        connectingLabel.text = L10n.Localizable.Call.Grid.connecting
+        super.init()
+    }
+
+    // MARK: Internal
+
     // MARK: - Properties
 
     typealias IconColors = SemanticColors.Icon
-
-    private let nameLabel: UILabel
-    private let connectingLabel: UILabel
-    private let microphoneIconView = PulsingIconImageView()
 
     var name: String? {
         didSet {
             nameLabel.text = name
         }
     }
-
-    private let labelsContainerView = UIStackView(axis: .horizontal)
-    private let microphoneImageView = UIImageView()
-    private var microphoneWidth: NSLayoutConstraint?
 
     var microphoneIconStyle: MicrophoneIconStyle = .hidden {
         didSet {
@@ -59,21 +70,6 @@ final class CallParticipantDetailsView: RoundedBlurView {
                 connectingLabel.isHidden = true
             }
         }
-    }
-
-    // MARK: - Init
-
-    override init() {
-        self.nameLabel = DynamicFontLabel(
-            fontSpec: .mediumRegularFont,
-            color: SemanticColors.Label.textWhite
-        )
-        self.connectingLabel = DynamicFontLabel(
-            fontSpec: .smallSemiboldFont,
-            color: SemanticColors.Label.textParticipantDisconnected
-        )
-        connectingLabel.text = L10n.Localizable.Call.Grid.connecting
-        super.init()
     }
 
     // MARK: - Setup Views
@@ -131,6 +127,25 @@ final class CallParticipantDetailsView: RoundedBlurView {
         updateMicrophoneView()
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(
+            size: .tiny,
+            color: IconColors.foregroundMicrophone
+        )
+    }
+
+    // MARK: Private
+
+    private let nameLabel: UILabel
+    private let connectingLabel: UILabel
+    private let microphoneIconView = PulsingIconImageView()
+
+    private let labelsContainerView = UIStackView(axis: .horizontal)
+    private let microphoneImageView = UIImageView()
+    private var microphoneWidth: NSLayoutConstraint?
+
     // MARK: - Methods to update the state of the microphone view
 
     private func updateMicrophoneView() {
@@ -156,14 +171,5 @@ final class CallParticipantDetailsView: RoundedBlurView {
         microphoneWidth?.constant = hidden ? 0 : 22
         microphoneImageView.isHidden = hidden
         setNeedsDisplay()
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(
-            size: .tiny,
-            color: IconColors.foregroundMicrophone
-        )
     }
 }

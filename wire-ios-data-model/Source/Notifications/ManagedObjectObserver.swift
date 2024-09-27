@@ -20,10 +20,7 @@ import Foundation
 
 @objc
 public final class ManagedObjectContextChangeObserver: NSObject {
-    public typealias ChangeCallback = () -> Void
-    private unowned var context: NSManagedObjectContext
-    private let callback: ChangeCallback
-    private var token: NSObjectProtocol?
+    // MARK: Lifecycle
 
     public init(context: NSManagedObjectContext, callback: @escaping ChangeCallback) {
         self.context = context
@@ -32,6 +29,21 @@ public final class ManagedObjectContextChangeObserver: NSObject {
         addSaveNotificationObserver()
     }
 
+    deinit {
+        guard let token else { return }
+        NotificationCenter.default.removeObserver(token)
+    }
+
+    // MARK: Public
+
+    public typealias ChangeCallback = () -> Void
+
+    // MARK: Private
+
+    private unowned var context: NSManagedObjectContext
+    private let callback: ChangeCallback
+    private var token: NSObjectProtocol?
+
     private func addSaveNotificationObserver() {
         token = NotificationCenter.default.addObserver(
             forName: .NSManagedObjectContextObjectsDidChange,
@@ -39,10 +51,5 @@ public final class ManagedObjectContextChangeObserver: NSObject {
             queue: nil,
             using: { [weak self] _ in self?.callback() }
         )
-    }
-
-    deinit {
-        guard let token else { return }
-        NotificationCenter.default.removeObserver(token)
     }
 }

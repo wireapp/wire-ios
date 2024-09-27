@@ -22,8 +22,6 @@ import WireUtilities
 // MARK: - TextFieldValidator
 
 final class TextFieldValidator {
-    var customValidator: ((String) -> ValidationError?)?
-
     enum ValidationError: Error, Equatable {
         case tooShort(kind: ValidatedTextField.Kind)
         case tooLong(kind: ValidatedTextField.Kind)
@@ -32,6 +30,8 @@ final class TextFieldValidator {
         case invalidPassword([PasswordValidationResult.Violation])
         case custom(String)
     }
+
+    var customValidator: ((String) -> ValidationError?)?
 
     func validate(
         text: String?,

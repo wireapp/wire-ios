@@ -19,11 +19,15 @@
 import Foundation
 
 class PushChannelAPIImpl: PushChannelAPI {
-    let pushChannelService: any PushChannelServiceProtocol
+    // MARK: Lifecycle
 
     init(pushChannelService: any PushChannelServiceProtocol) {
         self.pushChannelService = pushChannelService
     }
+
+    // MARK: Internal
+
+    let pushChannelService: any PushChannelServiceProtocol
 
     func createPushChannel(clientID: String) throws -> any PushChannelProtocol {
         var components = URLComponents(string: "/await")

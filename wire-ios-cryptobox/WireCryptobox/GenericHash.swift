@@ -23,11 +23,15 @@ import Foundation
 /// Encapsulates the hash value.
 
 public struct GenericHash: Hashable {
-    private let value: Int
+    // MARK: Lifecycle
 
     init(value: Int) {
         self.value = value
     }
+
+    // MARK: Private
+
+    private let value: Int
 }
 
 // MARK: CustomStringConvertible
@@ -48,17 +52,7 @@ extension GenericHash: CustomStringConvertible {
 ///     builder.append(data2)
 ///     let hash = builder.build()
 public final class GenericHashBuilder {
-    private enum State {
-        case initial
-        case readyToBuild
-        case done
-    }
-
-    private var cryptoState: UnsafeMutableRawBufferPointer
-    private var opaqueCryptoState: OpaquePointer
-
-    private var state: State = .initial
-    private static let size = MemoryLayout<Int>.size
+    // MARK: Lifecycle
 
     init() {
         self.cryptoState = UnsafeMutableRawBufferPointer.allocate(
@@ -69,6 +63,8 @@ public final class GenericHashBuilder {
 
         crypto_generichash_init(opaqueCryptoState, nil, 0, GenericHashBuilder.size)
     }
+
+    // MARK: Public
 
     public func append(_ data: Data) {
         assert(state != .done, "This builder cannot be used any more: hash is already calculated")
@@ -94,4 +90,19 @@ public final class GenericHashBuilder {
 
         return GenericHash(value: value)
     }
+
+    // MARK: Private
+
+    private enum State {
+        case initial
+        case readyToBuild
+        case done
+    }
+
+    private static let size = MemoryLayout<Int>.size
+
+    private var cryptoState: UnsafeMutableRawBufferPointer
+    private var opaqueCryptoState: OpaquePointer
+
+    private var state: State = .initial
 }

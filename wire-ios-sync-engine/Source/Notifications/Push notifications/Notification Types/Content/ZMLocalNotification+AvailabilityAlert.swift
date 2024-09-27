@@ -28,13 +28,17 @@ extension ZMLocalNotification {
 // MARK: - AvailabilityNotificationBuilder
 
 private class AvailabilityNotificationBuilder: NotificationBuilder {
-    let managedObjectContext: NSManagedObjectContext
-    let availability: Availability
+    // MARK: Lifecycle
 
     init(availability: Availability, managedObjectContext: NSManagedObjectContext) {
         self.availability = availability
         self.managedObjectContext = managedObjectContext
     }
+
+    // MARK: Internal
+
+    let managedObjectContext: NSManagedObjectContext
+    let availability: Availability
 
     var notificationType: LocalNotificationType {
         .availabilityBehaviourChangeAlert(availability)

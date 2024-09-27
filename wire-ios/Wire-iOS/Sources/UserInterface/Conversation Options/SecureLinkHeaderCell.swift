@@ -21,12 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable {
-    // MARK: - Properties
-
-    private let topSeparator = UIView()
-    private let iconImageView = UIImageView()
-    private let titleLabel = UILabel()
-    private let subtitleLabel = UILabel()
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -40,6 +35,21 @@ final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    func configure(with configuration: CellConfiguration) {
+        styleViews()
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let topSeparator = UIView()
+    private let iconImageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let subtitleLabel = UILabel()
 
     private func setupViews() {
         contentView.addSubview(topSeparator)
@@ -88,9 +98,5 @@ final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable
         titleLabel.textColor = SemanticColors.Label.textLinkHeaderCellTitle
         subtitleLabel.textColor = SemanticColors.Label.textSectionFooter
         backgroundColor = .clear
-    }
-
-    func configure(with configuration: CellConfiguration) {
-        styleViews()
     }
 }

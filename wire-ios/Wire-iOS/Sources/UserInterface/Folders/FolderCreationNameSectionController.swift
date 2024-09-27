@@ -21,6 +21,15 @@ import UIKit
 // MARK: - FolderCreationNameSectionController
 
 final class FolderCreationNameSectionController: NSObject, CollectionViewSectionController {
+    // MARK: Lifecycle
+
+    init(delegate: SimpleTextFieldDelegate? = nil, conversationName: String) {
+        self.textFieldDelegate = delegate
+        self.conversationName = conversationName
+    }
+
+    // MARK: Internal
+
     typealias Cell = FolderCreationNameCell
 
     var isHidden: Bool {
@@ -29,22 +38,6 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
 
     var value: SimpleTextField.Value? {
         nameCell?.textField.value
-    }
-
-    private var conversationName: String
-    private weak var nameCell: Cell?
-    private weak var textFieldDelegate: SimpleTextFieldDelegate?
-    private var footer = SectionFooter(frame: .zero)
-
-    private lazy var footerText: String = L10n.Localizable.Folder.Creation.Name.footer
-
-    private var header = SectionHeader(frame: .zero)
-
-    private lazy var headerText: String = L10n.Localizable.Folder.Creation.Name.header(conversationName)
-
-    init(delegate: SimpleTextFieldDelegate? = nil, conversationName: String) {
-        self.textFieldDelegate = delegate
-        self.conversationName = conversationName
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
@@ -68,6 +61,19 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
     func resignFirstResponder() {
         nameCell?.textField.resignFirstResponder()
     }
+
+    // MARK: Private
+
+    private var conversationName: String
+    private weak var nameCell: Cell?
+    private weak var textFieldDelegate: SimpleTextFieldDelegate?
+    private var footer = SectionFooter(frame: .zero)
+
+    private lazy var footerText: String = L10n.Localizable.Folder.Creation.Name.footer
+
+    private var header = SectionHeader(frame: .zero)
+
+    private lazy var headerText: String = L10n.Localizable.Folder.Creation.Name.header(conversationName)
 }
 
 extension FolderCreationNameSectionController {

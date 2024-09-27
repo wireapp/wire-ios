@@ -30,6 +30,14 @@ protocol CollectionViewSectionController: UICollectionViewDataSource, UICollecti
 // MARK: - SectionCollectionViewController
 
 final class SectionCollectionViewController: NSObject {
+    // MARK: Lifecycle
+
+    init(sections: [CollectionViewSectionController] = []) {
+        self.sections = sections
+    }
+
+    // MARK: Internal
+
     var collectionView: UICollectionView? {
         didSet {
             collectionView?.dataSource = self
@@ -55,10 +63,6 @@ final class SectionCollectionViewController: NSObject {
 
     var visibleSections: [CollectionViewSectionController] {
         sections.filter { !$0.isHidden }
-    }
-
-    init(sections: [CollectionViewSectionController] = []) {
-        self.sections = sections
     }
 }
 

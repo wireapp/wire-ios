@@ -39,57 +39,7 @@ protocol MenuVisibilityController: UIViewController {
 // MARK: - FullscreenImageViewController
 
 final class FullscreenImageViewController: UIViewController {
-    static let kZoomScaleDelta: CGFloat = 0.0003
-
-    let message: ZMConversationMessage
-    weak var delegate: (ScreenshotProvider & MenuVisibilityController)?
-    var swipeToDismiss = true {
-        didSet {
-            panRecognizer.isEnabled = swipeToDismiss
-        }
-    }
-
-    var showCloseButton = true
-    var dismissAction: DismissAction?
-
-    private var lastZoomScale: CGFloat = 0
-    var imageView: UIImageView?
-    let scrollView = UIScrollView()
-    var snapshotBackgroundView: UIView?
-    private var minimumDismissMagnitude: CGFloat = 0
-    private lazy var actionController = ConversationMessageActionController(
-        responder: self,
-        message: message,
-        context: .collection,
-        view: scrollView
-    )
-
-    // MARK: pull to dismiss
-
-    private var isDraggingImage = false
-    private var imageViewStartingTransform: CGAffineTransform = .identity
-    private var imageDragStartingPoint: CGPoint = .zero
-    private var imageDragOffsetFromActualTranslation: UIOffset = .zero
-    private var imageDragOffsetFromImageCenter: UIOffset = .zero
-    private lazy var animator = UIDynamicAnimator(referenceView: scrollView)
-
-    private var attachmentBehavior: UIAttachmentBehavior?
-    private var initialImageViewBounds = CGRect.zero
-    private var initialImageViewCenter = CGPoint.zero
-    private let panRecognizer = UIPanGestureRecognizer()
-
-    private var highlightLayer: CALayer?
-
-    private let tapGestureRecognzier = UITapGestureRecognizer()
-    private let doubleTapGestureRecognizer = UITapGestureRecognizer()
-    private let longPressGestureRecognizer = UILongPressGestureRecognizer()
-
-    private var isShowingChrome = true
-
-    let userSession: UserSession
-    let mainCoordinator: MainCoordinating
-
-    private var messageObserverToken: NSObjectProtocol?
+    // MARK: Lifecycle
 
     // MARK: - init
 
@@ -115,6 +65,45 @@ final class FullscreenImageViewController: UIViewController {
         setupGestureRecognizers()
         setupStyle()
         setupObservers()
+    }
+
+    // MARK: Internal
+
+    static let kZoomScaleDelta: CGFloat = 0.0003
+
+    let message: ZMConversationMessage
+    weak var delegate: (ScreenshotProvider & MenuVisibilityController)?
+    var showCloseButton = true
+    var dismissAction: DismissAction?
+
+    var imageView: UIImageView?
+    let scrollView = UIScrollView()
+    var snapshotBackgroundView: UIView?
+    let userSession: UserSession
+    let mainCoordinator: MainCoordinating
+
+    var swipeToDismiss = true {
+        didSet {
+            panRecognizer.isEnabled = swipeToDismiss
+        }
+    }
+
+    // MARK: - Overrides
+
+    override var prefersStatusBarHidden: Bool {
+        false
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        .all
+    }
+
+    override var shouldAutorotate: Bool {
+        true
+    }
+
+    override var canBecomeFirstResponder: Bool {
+        true
     }
 
     // MARK: - View life cycle
@@ -158,22 +147,258 @@ final class FullscreenImageViewController: UIViewController {
         centerScrollViewContent()
     }
 
-    // MARK: - Overrides
-
-    override var prefersStatusBarHidden: Bool {
-        false
+    func removeImage() {
+        imageView?.removeFromSuperview()
+        imageView = nil
     }
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        .all
+    // MARK: - Utilities, custom UI
+
+    func performSaveImageAnimation(from saveView: UIView) {
+        guard let imageView else { return }
+
+        let ghostImageView = UIImageView(image: imageView.image)
+        ghostImageView.contentMode = .scaleAspectFit
+        ghostImageView.translatesAutoresizingMaskIntoConstraints = false
+
+        ghostImageView.frame = view.convert(imageView.frame, from: imageView.superview)
+        view.addSubview(ghostImageView)
+
+        let targetCenter = view.convert(saveView.center, from: saveView.superview)
+
+        UIView.animate(easing: .easeInExpo, duration: 0.55, animations: {
+            ghostImageView.center = targetCenter
+            ghostImageView.alpha = 0
+            ghostImageView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+        }, completion: { _ in
+            ghostImageView.removeFromSuperview()
+        })
     }
 
-    override var shouldAutorotate: Bool {
-        true
+    func updateBackgroundColor(progress: CGFloat) {
+        let orientation = UIDevice.current.orientation
+        let interfaceIdiom = UIDevice.current.userInterfaceIdiom
+        if orientation.isLandscape, interfaceIdiom == .phone {
+            return
+        }
+        var newAlpha = 1 - progress
+        if isDraggingImage {
+            newAlpha = max(newAlpha, 0.8)
+        }
+
+        if let snapshotBackgroundView {
+            snapshotBackgroundView.alpha = 1 - newAlpha
+        } else {
+            view.backgroundColor = view.backgroundColor?.withAlphaComponent(newAlpha)
+        }
     }
 
-    override var canBecomeFirstResponder: Bool {
-        true
+    func setSelectedByMenu(_ selected: Bool, animated: Bool) {
+        zmLog.debug("Setting selected: \(selected) animated: \(animated)")
+
+        if selected {
+            guard !isImageViewHightlighted else {
+                return
+            }
+
+            if let highlightLayer {
+                guard imageView?.layer.sublayers?.contains(highlightLayer) == false else {
+                    return
+                }
+            }
+
+            let layer = CALayer()
+            layer.backgroundColor = UIColor.clear.cgColor
+            layer.frame = CGRect(
+                x: 0,
+                y: 0,
+                width: (imageView?.frame.size.width ?? 0) / scrollView.zoomScale,
+                height: (imageView?.frame.size.height ?? 0) / scrollView.zoomScale
+            )
+            imageView?.layer.insertSublayer(layer, at: 0)
+
+            let blackLayerClosure: Completion = {
+                self.highlightLayer?.backgroundColor = UIColor.black.withAlphaComponent(0.4).cgColor
+            }
+
+            highlightLayer = layer
+
+            if animated {
+                UIView.animate(withDuration: fadeAnimationDuration, animations: blackLayerClosure)
+            } else {
+                blackLayerClosure()
+            }
+
+        } else {
+            let removeLayerClosure: Completion = {
+                self.highlightLayer?.removeFromSuperlayer()
+                self.highlightLayer = nil
+            }
+
+            if animated {
+                UIView.animate(withDuration: fadeAnimationDuration, animations: {
+                    self.highlightLayer?.backgroundColor = UIColor.clear.cgColor
+                }, completion: { finished in
+                    if finished {
+                        removeLayerClosure()
+                    }
+                })
+            } else {
+                highlightLayer?.backgroundColor = UIColor.clear.cgColor
+                removeLayerClosure()
+            }
+        }
+    }
+
+    @objc
+    func handleDoubleTap(_ doubleTapper: UITapGestureRecognizer) {
+        setSelectedByMenu(false, animated: false)
+
+        guard let image = imageView?.image else { return }
+
+        hideMenu()
+
+        // Notice: fix the case the the image is just fit on the screen and call scrollView.zoom causes images move outside the frame issue
+        guard scrollView.minimumZoomScale != scrollView.maximumZoomScale else {
+            return
+        }
+
+        let scaleDiff: CGFloat = scrollView.zoomScale - scrollView.minimumZoomScale
+
+        // image view in minimum zoom scale, zoom in to a 50 x 50 rect
+        if scaleDiff < FullscreenImageViewController.kZoomScaleDelta {
+            // image is smaller than screen bound and zoom sclae is max(1), do not zoom in
+            let point = doubleTapper.location(in: doubleTapper.view)
+
+            let zoomLength = image.size.longestLength < 50 ? image.size.longestLength : 50
+
+            let zoomRect = CGRect(
+                x: point.x - zoomLength / 2,
+                y: point.y - zoomLength / 2,
+                width: zoomLength,
+                height: zoomLength
+            )
+            let finalRect = imageView?.convert(zoomRect, from: doubleTapper.view)
+
+            scrollView.zoom(
+                to: finalRect ?? .zero,
+                animated: true
+            )
+        } else {
+            scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
+        }
+    }
+
+    // MARK: - Zoom scale
+
+    func updateScrollViewZoomScale(viewSize: CGSize, imageSize: CGSize) {
+        scrollView.minimumZoomScale = viewSize.minZoom(imageSize: imageSize)
+
+        // if the image is small than the screen size, max zoom level is "zoom to fit screen"
+        if viewSize.contains(imageSize) {
+            scrollView.maximumZoomScale = min(viewSize.height / imageSize.height, viewSize.width / imageSize.width)
+        } else {
+            scrollView.maximumZoomScale = 1
+        }
+    }
+
+    func updateZoom() {
+        guard let size = parent?.view?.frame.size else { return }
+        updateZoom(withSize: size)
+    }
+
+    /// Zoom to show as much image as possible unless image is smaller than screen
+    ///
+    /// - Parameter size: size of the view which contains imageView
+    func updateZoom(withSize size: CGSize) {
+        guard let image = imageView?.image else { return }
+        guard !(size.width == 0 && size.height == 0) else { return }
+
+        var minZoom = size.minZoom(imageSize: image.size)
+
+        // Force scrollViewDidZoom fire if zoom did not change
+        if minZoom == lastZoomScale {
+            minZoom += 0.000001
+        }
+        scrollView.zoomScale = minZoom
+        lastZoomScale = minZoom
+    }
+
+    // MARK: - Image view
+
+    /// Setup image view(UIImageView or FLAnimatedImageView) for given MediaAsset
+    ///
+    /// - Parameters:
+    ///   - image: a MediaAsset object contains GIF or other images
+    ///   - parentSize: parent view's size
+    func setupImageView(image: MediaAsset, parentSize: CGSize) {
+        let imageView = image.imageView
+
+        imageView.clipsToBounds = true
+        imageView.layer.allowsEdgeAntialiasing = true
+        self.imageView = imageView as? UIImageView
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+
+        scrollView.addSubview(imageView)
+        scrollView.contentSize = self.imageView?.image?.size ?? .zero
+
+        updateScrollViewZoomScale(viewSize: parentSize, imageSize: image.size)
+        updateZoom(withSize: parentSize)
+
+        centerScrollViewContent()
+    }
+
+    // MARK: Private
+
+    private var lastZoomScale: CGFloat = 0
+    private var minimumDismissMagnitude: CGFloat = 0
+    private lazy var actionController = ConversationMessageActionController(
+        responder: self,
+        message: message,
+        context: .collection,
+        view: scrollView
+    )
+
+    // MARK: pull to dismiss
+
+    private var isDraggingImage = false
+    private var imageViewStartingTransform: CGAffineTransform = .identity
+    private var imageDragStartingPoint: CGPoint = .zero
+    private var imageDragOffsetFromActualTranslation: UIOffset = .zero
+    private var imageDragOffsetFromImageCenter: UIOffset = .zero
+    private lazy var animator = UIDynamicAnimator(referenceView: scrollView)
+
+    private var attachmentBehavior: UIAttachmentBehavior?
+    private var initialImageViewBounds = CGRect.zero
+    private var initialImageViewCenter = CGPoint.zero
+    private let panRecognizer = UIPanGestureRecognizer()
+
+    private var highlightLayer: CALayer?
+
+    private let tapGestureRecognzier = UITapGestureRecognizer()
+    private let doubleTapGestureRecognizer = UITapGestureRecognizer()
+    private let longPressGestureRecognizer = UILongPressGestureRecognizer()
+
+    private var isShowingChrome = true
+
+    private var messageObserverToken: NSObjectProtocol?
+
+    // MARK: - Gesture Handling
+
+    private let fadeAnimationDuration: TimeInterval = 0.33
+
+    private var imageViewIsOffscreen: Bool {
+        // tiny inset threshold for small zoom
+        !view.bounds.insetBy(dx: -10, dy: -10).intersects(view.convert(imageView?.bounds ?? .zero, from: imageView))
+    }
+
+    private var isImageViewHightlighted: Bool {
+        if let highlightLayer,
+           imageView?.layer.sublayers?.contains(highlightLayer) == true {
+            return true
+        }
+
+        return false
     }
 
     // MARK: - Dismiss
@@ -196,11 +421,6 @@ final class FullscreenImageViewController: UIViewController {
         } else {
             loadImageAndSetupImageView()
         }
-    }
-
-    func removeImage() {
-        imageView?.removeFromSuperview()
-        imageView = nil
     }
 
     // MARK: - setup
@@ -287,29 +507,6 @@ final class FullscreenImageViewController: UIViewController {
         delayedTouchBeganRecognizer?.require(toFail: panRecognizer)
 
         tapGestureRecognzier.require(toFail: doubleTapGestureRecognizer)
-    }
-
-    // MARK: - Utilities, custom UI
-
-    func performSaveImageAnimation(from saveView: UIView) {
-        guard let imageView else { return }
-
-        let ghostImageView = UIImageView(image: imageView.image)
-        ghostImageView.contentMode = .scaleAspectFit
-        ghostImageView.translatesAutoresizingMaskIntoConstraints = false
-
-        ghostImageView.frame = view.convert(imageView.frame, from: imageView.superview)
-        view.addSubview(ghostImageView)
-
-        let targetCenter = view.convert(saveView.center, from: saveView.superview)
-
-        UIView.animate(easing: .easeInExpo, duration: 0.55, animations: {
-            ghostImageView.center = targetCenter
-            ghostImageView.alpha = 0
-            ghostImageView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-        }, completion: { _ in
-            ghostImageView.removeFromSuperview()
-        })
     }
 
     private func loadImageAndSetupImageView() {
@@ -504,102 +701,9 @@ final class FullscreenImageViewController: UIViewController {
         animator.addBehavior(push)
     }
 
-    private var imageViewIsOffscreen: Bool {
-        // tiny inset threshold for small zoom
-        !view.bounds.insetBy(dx: -10, dy: -10).intersects(view.convert(imageView?.bounds ?? .zero, from: imageView))
-    }
-
     private func updateBackgroundColor(imageViewCenter: CGPoint) {
         let progress: CGFloat = abs(imageViewCenter.y - initialImageViewCenter.y) / 1000
         updateBackgroundColor(progress: progress)
-    }
-
-    func updateBackgroundColor(progress: CGFloat) {
-        let orientation = UIDevice.current.orientation
-        let interfaceIdiom = UIDevice.current.userInterfaceIdiom
-        if orientation.isLandscape, interfaceIdiom == .phone {
-            return
-        }
-        var newAlpha = 1 - progress
-        if isDraggingImage {
-            newAlpha = max(newAlpha, 0.8)
-        }
-
-        if let snapshotBackgroundView {
-            snapshotBackgroundView.alpha = 1 - newAlpha
-        } else {
-            view.backgroundColor = view.backgroundColor?.withAlphaComponent(newAlpha)
-        }
-    }
-
-    // MARK: - Gesture Handling
-
-    private let fadeAnimationDuration: TimeInterval = 0.33
-
-    private var isImageViewHightlighted: Bool {
-        if let highlightLayer,
-           imageView?.layer.sublayers?.contains(highlightLayer) == true {
-            return true
-        }
-
-        return false
-    }
-
-    func setSelectedByMenu(_ selected: Bool, animated: Bool) {
-        zmLog.debug("Setting selected: \(selected) animated: \(animated)")
-
-        if selected {
-            guard !isImageViewHightlighted else {
-                return
-            }
-
-            if let highlightLayer {
-                guard imageView?.layer.sublayers?.contains(highlightLayer) == false else {
-                    return
-                }
-            }
-
-            let layer = CALayer()
-            layer.backgroundColor = UIColor.clear.cgColor
-            layer.frame = CGRect(
-                x: 0,
-                y: 0,
-                width: (imageView?.frame.size.width ?? 0) / scrollView.zoomScale,
-                height: (imageView?.frame.size.height ?? 0) / scrollView.zoomScale
-            )
-            imageView?.layer.insertSublayer(layer, at: 0)
-
-            let blackLayerClosure: Completion = {
-                self.highlightLayer?.backgroundColor = UIColor.black.withAlphaComponent(0.4).cgColor
-            }
-
-            highlightLayer = layer
-
-            if animated {
-                UIView.animate(withDuration: fadeAnimationDuration, animations: blackLayerClosure)
-            } else {
-                blackLayerClosure()
-            }
-
-        } else {
-            let removeLayerClosure: Completion = {
-                self.highlightLayer?.removeFromSuperlayer()
-                self.highlightLayer = nil
-            }
-
-            if animated {
-                UIView.animate(withDuration: fadeAnimationDuration, animations: {
-                    self.highlightLayer?.backgroundColor = UIColor.clear.cgColor
-                }, completion: { finished in
-                    if finished {
-                        removeLayerClosure()
-                    }
-                })
-            } else {
-                highlightLayer?.backgroundColor = UIColor.clear.cgColor
-                removeLayerClosure()
-            }
-        }
     }
 
     @objc
@@ -635,104 +739,6 @@ final class FullscreenImageViewController: UIViewController {
 
     private func hideMenu() {
         UIMenuController.shared.hideMenu()
-    }
-
-    @objc
-    func handleDoubleTap(_ doubleTapper: UITapGestureRecognizer) {
-        setSelectedByMenu(false, animated: false)
-
-        guard let image = imageView?.image else { return }
-
-        hideMenu()
-
-        // Notice: fix the case the the image is just fit on the screen and call scrollView.zoom causes images move outside the frame issue
-        guard scrollView.minimumZoomScale != scrollView.maximumZoomScale else {
-            return
-        }
-
-        let scaleDiff: CGFloat = scrollView.zoomScale - scrollView.minimumZoomScale
-
-        // image view in minimum zoom scale, zoom in to a 50 x 50 rect
-        if scaleDiff < FullscreenImageViewController.kZoomScaleDelta {
-            // image is smaller than screen bound and zoom sclae is max(1), do not zoom in
-            let point = doubleTapper.location(in: doubleTapper.view)
-
-            let zoomLength = image.size.longestLength < 50 ? image.size.longestLength : 50
-
-            let zoomRect = CGRect(
-                x: point.x - zoomLength / 2,
-                y: point.y - zoomLength / 2,
-                width: zoomLength,
-                height: zoomLength
-            )
-            let finalRect = imageView?.convert(zoomRect, from: doubleTapper.view)
-
-            scrollView.zoom(
-                to: finalRect ?? .zero,
-                animated: true
-            )
-        } else {
-            scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
-        }
-    }
-
-    // MARK: - Zoom scale
-
-    func updateScrollViewZoomScale(viewSize: CGSize, imageSize: CGSize) {
-        scrollView.minimumZoomScale = viewSize.minZoom(imageSize: imageSize)
-
-        // if the image is small than the screen size, max zoom level is "zoom to fit screen"
-        if viewSize.contains(imageSize) {
-            scrollView.maximumZoomScale = min(viewSize.height / imageSize.height, viewSize.width / imageSize.width)
-        } else {
-            scrollView.maximumZoomScale = 1
-        }
-    }
-
-    func updateZoom() {
-        guard let size = parent?.view?.frame.size else { return }
-        updateZoom(withSize: size)
-    }
-
-    /// Zoom to show as much image as possible unless image is smaller than screen
-    ///
-    /// - Parameter size: size of the view which contains imageView
-    func updateZoom(withSize size: CGSize) {
-        guard let image = imageView?.image else { return }
-        guard !(size.width == 0 && size.height == 0) else { return }
-
-        var minZoom = size.minZoom(imageSize: image.size)
-
-        // Force scrollViewDidZoom fire if zoom did not change
-        if minZoom == lastZoomScale {
-            minZoom += 0.000001
-        }
-        scrollView.zoomScale = minZoom
-        lastZoomScale = minZoom
-    }
-
-    // MARK: - Image view
-
-    /// Setup image view(UIImageView or FLAnimatedImageView) for given MediaAsset
-    ///
-    /// - Parameters:
-    ///   - image: a MediaAsset object contains GIF or other images
-    ///   - parentSize: parent view's size
-    func setupImageView(image: MediaAsset, parentSize: CGSize) {
-        let imageView = image.imageView
-
-        imageView.clipsToBounds = true
-        imageView.layer.allowsEdgeAntialiasing = true
-        self.imageView = imageView as? UIImageView
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-
-        scrollView.addSubview(imageView)
-        scrollView.contentSize = self.imageView?.image?.size ?? .zero
-
-        updateScrollViewZoomScale(viewSize: parentSize, imageSize: image.size)
-        updateZoom(withSize: parentSize)
-
-        centerScrollViewContent()
     }
 }
 

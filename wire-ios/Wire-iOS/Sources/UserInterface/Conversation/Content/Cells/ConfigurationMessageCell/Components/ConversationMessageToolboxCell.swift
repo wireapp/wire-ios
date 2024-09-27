@@ -23,6 +23,21 @@ import WireSyncEngine
 // MARK: - ConversationMessageToolboxCell
 
 final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     struct Configuration: Equatable {
         let message: ZMConversationMessage
         let deliveryState: ZMDeliveryState
@@ -42,27 +57,6 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 
     var observerToken: Any?
     var isSelected = false
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
-    private func configureSubviews() {
-        toolboxView.delegate = self
-        addSubview(toolboxView)
-    }
-
-    private func configureConstraints() {
-        toolboxView.translatesAutoresizingMaskIntoConstraints = false
-        toolboxView.fitIn(view: self)
-    }
 
     func willDisplay() {
         toolboxView.startCountdownTimer()
@@ -88,10 +82,6 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         )
     }
 
-    private func perform(action: MessageAction, sender: UIView? = nil) {
-        delegate?.perform(action: action, for: message!, view: selectionView ?? sender ?? self)
-    }
-
     func messageToolboxViewDidSelectDelete(_ sender: UIView?) {
         perform(action: .delete, sender: sender)
     }
@@ -99,12 +89,38 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     func messageToolboxViewDidSelectResend(_: MessageToolboxView) {
         perform(action: .resend)
     }
+
+    // MARK: Private
+
+    private func configureSubviews() {
+        toolboxView.delegate = self
+        addSubview(toolboxView)
+    }
+
+    private func configureConstraints() {
+        toolboxView.translatesAutoresizingMaskIntoConstraints = false
+        toolboxView.fitIn(view: self)
+    }
+
+    private func perform(action: MessageAction, sender: UIView? = nil) {
+        delegate?.perform(action: action, for: message!, view: selectionView ?? sender ?? self)
+    }
 }
 
 // MARK: - ConversationMessageToolboxCellDescription
 
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(message: ZMConversationMessage) {
+        self.message = message
+        self.configuration = View.Configuration(message: message, deliveryState: message.deliveryState)
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationMessageToolboxCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -119,9 +135,4 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
 
     let accessibilityIdentifier: String? = "MessageToolbox"
     let accessibilityLabel: String? = nil
-
-    init(message: ZMConversationMessage) {
-        self.message = message
-        self.configuration = View.Configuration(message: message, deliveryState: message.deliveryState)
-    }
 }

@@ -19,9 +19,7 @@
 import Foundation
 
 class PotentialChangeDetector: ChangeDetector {
-    // MARK: - Private properties
-
-    private var modifiedObjects = ModifiedObjects()
+    // MARK: Internal
 
     // MARK: - Methods
 
@@ -46,4 +44,10 @@ class PotentialChangeDetector: ChangeDetector {
     func detectChanges(for objects: ModifiedObjects) {
         modifiedObjects = modifiedObjects.merged(with: objects)
     }
+
+    // MARK: Private
+
+    // MARK: - Private properties
+
+    private var modifiedObjects = ModifiedObjects()
 }

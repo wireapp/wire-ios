@@ -24,6 +24,8 @@ import WireDesign
 // MARK: - GuestsBarController
 
 final class GuestsBarController: UIViewController {
+    // MARK: Internal
+
     // MARK: Properties
 
     enum State: Equatable {
@@ -31,21 +33,6 @@ final class GuestsBarController: UIViewController {
         case hidden
     }
 
-    private let label = UILabel()
-    private let container = UIView()
-    private lazy var containerHeightConstraint: NSLayoutConstraint = container.heightAnchor
-        .constraint(equalToConstant: GuestsBarController.expandedHeight)
-    private lazy var heightConstraint: NSLayoutConstraint = view.heightAnchor
-        .constraint(equalToConstant: GuestsBarController.expandedHeight)
-    private lazy var bottomLabelConstraint: NSLayoutConstraint = label.bottomAnchor.constraint(
-        equalTo: view.bottomAnchor,
-        constant: -3
-    )
-
-    private static let collapsedHeight: CGFloat = 2
-    private static let expandedHeight: CGFloat = 20
-
-    private var _state: State = .hidden
     var shouldIgnoreUpdates = false
 
     var state: State {
@@ -65,6 +52,50 @@ final class GuestsBarController: UIViewController {
         createConstraints()
         updateState(animated: false)
     }
+
+    // MARK: - State Changes
+
+    func setState(_ state: State, animated: Bool) {
+        guard state != _state else {
+            return
+        }
+
+        _state = state
+        updateState(animated: animated)
+    }
+
+    func configureTitle(with state: State) {
+        switch state {
+        case .hidden:
+            label.text = nil
+            label.accessibilityIdentifier = nil
+
+        case let .visible(text, accessibilityIdentifier):
+            label.text = text
+            label.font = FontSpec.mediumSemiboldFont.font!
+            label.textColor = SemanticColors.Label.textDefaultWhite
+            label.textAlignment = .center
+            label.accessibilityIdentifier = accessibilityIdentifier
+        }
+    }
+
+    // MARK: Private
+
+    private static let collapsedHeight: CGFloat = 2
+    private static let expandedHeight: CGFloat = 20
+
+    private let label = UILabel()
+    private let container = UIView()
+    private lazy var containerHeightConstraint: NSLayoutConstraint = container.heightAnchor
+        .constraint(equalToConstant: GuestsBarController.expandedHeight)
+    private lazy var heightConstraint: NSLayoutConstraint = view.heightAnchor
+        .constraint(equalToConstant: GuestsBarController.expandedHeight)
+    private lazy var bottomLabelConstraint: NSLayoutConstraint = label.bottomAnchor.constraint(
+        equalTo: view.bottomAnchor,
+        constant: -3
+    )
+
+    private var _state: State = .hidden
 
     // MARK: UI and Layout
 
@@ -89,17 +120,6 @@ final class GuestsBarController: UIViewController {
             heightConstraint,
             containerHeightConstraint,
         ])
-    }
-
-    // MARK: - State Changes
-
-    func setState(_ state: State, animated: Bool) {
-        guard state != _state else {
-            return
-        }
-
-        _state = state
-        updateState(animated: animated)
     }
 
     private func updateState(animated: Bool) {
@@ -138,21 +158,6 @@ final class GuestsBarController: UIViewController {
         } else {
             change()
             completion(true)
-        }
-    }
-
-    func configureTitle(with state: State) {
-        switch state {
-        case .hidden:
-            label.text = nil
-            label.accessibilityIdentifier = nil
-
-        case let .visible(text, accessibilityIdentifier):
-            label.text = text
-            label.font = FontSpec.mediumSemiboldFont.font!
-            label.textColor = SemanticColors.Label.textDefaultWhite
-            label.textAlignment = .center
-            label.accessibilityIdentifier = accessibilityIdentifier
         }
     }
 }

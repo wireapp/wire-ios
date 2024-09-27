@@ -24,23 +24,29 @@ import WireDesign
 // MARK: - ConversationLocationMessageCell
 
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureViews()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     struct Configuration {
         let location: LocationMessageData
         let message: ZMConversationMessage
+
         var isObfuscated: Bool {
             message.isObfuscated
         }
     }
-
-    private var lastConfiguration: Configuration?
-
-    private var mapView = MKMapView()
-    private let containerView = UIView()
-    private let obfuscationView = ObfuscationView(icon: .locationPin)
-    private let addressContainerView = UIView()
-    private let addressLabel = UILabel()
-    private var recognizer: UITapGestureRecognizer?
-    private weak var locationAnnotation: MKPointAnnotation?
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
@@ -56,16 +62,69 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         containerView
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureViews()
-        createConstraints()
+    override func willMove(toSuperview newSuperview: UIView?) {
+        if newSuperview == nil {
+            locationAnnotation.map(mapView.removeAnnotation)
+        }
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func configure(with object: Configuration, animated: Bool) {
+        lastConfiguration = object
+        recognizer?.isEnabled = !object.isObfuscated
+        obfuscationView.isHidden = !object.isObfuscated
+        mapView.isHidden = object.isObfuscated
+
+        if let address = object.location.name {
+            addressContainerView.isHidden = false
+            addressLabel.text = address
+        } else {
+            addressContainerView.isHidden = true
+        }
+
+        updateMapLocation(withLocationData: object.location)
+
+        if let annotation = locationAnnotation {
+            mapView.removeAnnotation(annotation)
+        }
+
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = object.location.coordinate
+        mapView.addAnnotation(annotation)
+        locationAnnotation = annotation
     }
+
+    func updateMapLocation(withLocationData locationData: LocationMessageData) {
+        if locationData.zoomLevel != 0 {
+            mapView.setCenterCoordinate(locationData.coordinate, zoomLevel: Int(locationData.zoomLevel))
+        } else {
+            // As the zoom level is optional we use a viewport of 250m x 250m if none is specified
+            let region = MKCoordinateRegion(
+                center: locationData.coordinate,
+                latitudinalMeters: 250,
+                longitudinalMeters: 250
+            )
+            mapView.setRegion(region, animated: false)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // The zoomLevel calculation depends on the frame of the mapView, so we need to call this here again
+        guard let locationData = lastConfiguration?.location else { return }
+        updateMapLocation(withLocationData: locationData)
+    }
+
+    // MARK: Private
+
+    private var lastConfiguration: Configuration?
+
+    private var mapView = MKMapView()
+    private let containerView = UIView()
+    private let obfuscationView = ObfuscationView(icon: .locationPin)
+    private let addressContainerView = UIView()
+    private let addressLabel = UILabel()
+    private var recognizer: UITapGestureRecognizer?
+    private weak var locationAnnotation: MKPointAnnotation?
 
     private func configureViews() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -126,58 +185,6 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         ])
     }
 
-    override func willMove(toSuperview newSuperview: UIView?) {
-        if newSuperview == nil {
-            locationAnnotation.map(mapView.removeAnnotation)
-        }
-    }
-
-    func configure(with object: Configuration, animated: Bool) {
-        lastConfiguration = object
-        recognizer?.isEnabled = !object.isObfuscated
-        obfuscationView.isHidden = !object.isObfuscated
-        mapView.isHidden = object.isObfuscated
-
-        if let address = object.location.name {
-            addressContainerView.isHidden = false
-            addressLabel.text = address
-        } else {
-            addressContainerView.isHidden = true
-        }
-
-        updateMapLocation(withLocationData: object.location)
-
-        if let annotation = locationAnnotation {
-            mapView.removeAnnotation(annotation)
-        }
-
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = object.location.coordinate
-        mapView.addAnnotation(annotation)
-        locationAnnotation = annotation
-    }
-
-    func updateMapLocation(withLocationData locationData: LocationMessageData) {
-        if locationData.zoomLevel != 0 {
-            mapView.setCenterCoordinate(locationData.coordinate, zoomLevel: Int(locationData.zoomLevel))
-        } else {
-            // As the zoom level is optional we use a viewport of 250m x 250m if none is specified
-            let region = MKCoordinateRegion(
-                center: locationData.coordinate,
-                latitudinalMeters: 250,
-                longitudinalMeters: 250
-            )
-            mapView.setRegion(region, animated: false)
-        }
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        // The zoomLevel calculation depends on the frame of the mapView, so we need to call this here again
-        guard let locationData = lastConfiguration?.location else { return }
-        updateMapLocation(withLocationData: locationData)
-    }
-
     @objc
     private func openInMaps() {
         lastConfiguration?.location.openInMaps(with: mapView.region.span)
@@ -187,7 +194,16 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 // MARK: - ConversationLocationMessageCellDescription
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(message: ZMConversationMessage, location: LocationMessageData) {
+        self.configuration = View.Configuration(location: location, message: message)
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationLocationMessageCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -201,13 +217,9 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     let supportsActions = true
     let containsHighlightableContent = true
 
-    var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
-    }
-
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage, location: LocationMessageData) {
-        self.configuration = View.Configuration(location: location, message: message)
+    var accessibilityIdentifier: String? {
+        configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
     }
 }

@@ -24,10 +24,7 @@ import XCTest
 // MARK: - LandingViewControllerSnapshotTests
 
 final class LandingViewControllerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: LandingViewController!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -78,20 +75,31 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
 
         return navigationController
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: LandingViewController!
+    private var snapshotHelper: SnapshotHelper!
 }
 
 // MARK: - FakeProxySettings
 
 final class FakeProxySettings: NSObject, ProxySettingsProvider {
-    var host: String
-    var port: Int
-    var needsAuthentication: Bool
+    // MARK: Lifecycle
 
     init(host: String = "api.example.org", port: Int = 1345, needsAuthentication: Bool = false) {
         self.host = host
         self.port = port
         self.needsAuthentication = needsAuthentication
     }
+
+    // MARK: Internal
+
+    var host: String
+    var port: Int
+    var needsAuthentication: Bool
 
     func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable: Any]? {
         nil

@@ -24,14 +24,20 @@ import XCTest
 // MARK: - EARServiceTests
 
 final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
+    // MARK: Internal
+
+    // MARK: - Mock helpers
+
+    enum MockError: Error {
+        case cannotStoreKey
+    }
+
     var sut: EARService!
     var keyRepository: MockEARKeyRepositoryInterface!
     var keyEncryptor: MockEARKeyEncryptorInterface!
     var earStorage: EARStorage!
 
     var prepareForMigrationCalls = 0
-
-    // MARK: - Life cycle
 
     override func setUp() {
         super.setUp()
@@ -76,12 +82,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows {
         prepareForMigrationCalls += 1
         try onReady(uiMOC)
-    }
-
-    // MARK: - Mock helpers
-
-    enum MockError: Error {
-        case cannotStoreKey
     }
 
     func generatePrimaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
@@ -674,21 +674,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         }
     }
 
-    private func mockFetchingPublicKeys(primary: SecKey?, secondary: SecKey?) {
-        keyRepository.fetchPublicKeyDescription_MockMethod = { description in
-            switch (description.label, primary, secondary) {
-            case let ("public", primary?, _):
-                return primary
-
-            case let ("secondary-public", _, secondary?):
-                return secondary
-
-            default:
-                throw EARKeyRepositoryFailure.keyNotFound
-            }
-        }
-    }
-
     // MARK: - Fetch private keys
 
     func test_FetchPrivateKeys() throws {
@@ -776,21 +761,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertThrowsError(try sut.fetchPrivateKeys(includingPrimary: true)) { error in
             guard case EARKeyRepositoryFailure.keyNotFound = error else {
                 return XCTFail("unexpected error")
-            }
-        }
-    }
-
-    private func mockFetchingPrivateKeys(primary: SecKey?, secondary: SecKey?) {
-        keyRepository.fetchPrivateKeyDescription_MockMethod = { description in
-            switch (description.label, primary, secondary) {
-            case let ("private", primary?, _):
-                return primary
-
-            case let ("secondary-private", _, secondary?):
-                return secondary
-
-            default:
-                throw EARKeyRepositoryFailure.keyNotFound
             }
         }
     }
@@ -934,6 +904,38 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         sut.setInitialEARFlagValue(!currentValue)
         // THEN
         XCTAssertEqual(earStorage.earEnabled(), !currentValue)
+    }
+
+    // MARK: Private
+
+    private func mockFetchingPublicKeys(primary: SecKey?, secondary: SecKey?) {
+        keyRepository.fetchPublicKeyDescription_MockMethod = { description in
+            switch (description.label, primary, secondary) {
+            case let ("public", primary?, _):
+                return primary
+
+            case let ("secondary-public", _, secondary?):
+                return secondary
+
+            default:
+                throw EARKeyRepositoryFailure.keyNotFound
+            }
+        }
+    }
+
+    private func mockFetchingPrivateKeys(primary: SecKey?, secondary: SecKey?) {
+        keyRepository.fetchPrivateKeyDescription_MockMethod = { description in
+            switch (description.label, primary, secondary) {
+            case let ("private", primary?, _):
+                return primary
+
+            case let ("secondary-private", _, secondary?):
+                return secondary
+
+            default:
+                throw EARKeyRepositoryFailure.keyNotFound
+            }
+        }
     }
 }
 

@@ -21,16 +21,13 @@ import XCTest
 @testable import Wire
 
 final class SearchGroupSelectorSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     var sut: SearchGroupSelector!
 
     override func tearDown() {
         sut = nil
         super.tearDown()
-    }
-
-    private func createSut() {
-        sut = SearchGroupSelector(style: .light)
-        sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 320))
     }
 
     func testForInitState_WhenSelfUserCanNotCreateService() {
@@ -53,5 +50,12 @@ final class SearchGroupSelectorSnapshotTests: XCTestCase {
 
         // WHEN & THEN
         verify(matching: sut)
+    }
+
+    // MARK: Private
+
+    private func createSut() {
+        sut = SearchGroupSelector(style: .light)
+        sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 320))
     }
 }

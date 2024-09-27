@@ -21,12 +21,7 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class ConversationListViewControllerViewModelTests: XCTestCase {
-    private var sut: ConversationListViewController.ViewModel!
-    private var mockViewController: MockConversationListContainer!
-    private var selfUser: MockUserType!
-    private var mockConversation: ZMConversation!
-    private var userSession: UserSessionMock!
-    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -70,4 +65,13 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         XCTAssertEqual(mockConversation, sut.selectedConversation)
         XCTAssert(mockViewController.isSelectedOnListContentController)
     }
+
+    // MARK: Private
+
+    private var sut: ConversationListViewController.ViewModel!
+    private var mockViewController: MockConversationListContainer!
+    private var selfUser: MockUserType!
+    private var mockConversation: ZMConversation!
+    private var userSession: UserSessionMock!
+    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 }

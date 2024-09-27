@@ -22,13 +22,7 @@ import XCTest
 @testable import WireSyncEngine
 
 class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
-    private var sut: CheckOneOnOneConversationIsReadyUseCase!
-    private var coreDataStack: CoreDataStack!
-    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockCoreCrypto: MockCoreCryptoProtocol!
-    private var syncMOC: NSManagedObjectContext!
-    private var user: ZMUser!
-    private var userID: QualifiedID!
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -56,20 +50,6 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         syncMOC = nil
         user = nil
         super.tearDown()
-    }
-
-    private func setupUser() async {
-        let uuid = UUID()
-        let domain = "domain.com"
-
-        user = await syncMOC.perform { [self] in
-            let user = ZMUser.insertNewObject(in: syncMOC)
-            user.remoteIdentifier = uuid
-            user.domain = domain
-            return user
-        }
-
-        userID = QualifiedID(uuid: uuid, domain: domain)
     }
 
     func test_ItReturnsTrue_WhenConversationExists_Proteus() async throws {
@@ -130,6 +110,30 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         await assertItThrows(error: CheckOneOnOneConversationIsReadyError.missingGroupID) {
             _ = try await self.sut.invoke(userID: userID)
         }
+    }
+
+    // MARK: Private
+
+    private var sut: CheckOneOnOneConversationIsReadyUseCase!
+    private var coreDataStack: CoreDataStack!
+    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
+    private var syncMOC: NSManagedObjectContext!
+    private var user: ZMUser!
+    private var userID: QualifiedID!
+
+    private func setupUser() async {
+        let uuid = UUID()
+        let domain = "domain.com"
+
+        user = await syncMOC.perform { [self] in
+            let user = ZMUser.insertNewObject(in: syncMOC)
+            user.remoteIdentifier = uuid
+            user.domain = domain
+            return user
+        }
+
+        userID = QualifiedID(uuid: uuid, domain: domain)
     }
 
     private func setupOneOnOne(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil) async {

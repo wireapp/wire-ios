@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 
 final class AnalyticsDecryptionFailedObserver: NSObject {
-    private let analytics: Analytics
+    // MARK: Lifecycle
 
     init(analytics: Analytics) {
         self.analytics = analytics
@@ -34,6 +34,10 @@ final class AnalyticsDecryptionFailedObserver: NSObject {
             object: nil
         )
     }
+
+    // MARK: Private
+
+    private let analytics: Analytics
 
     @objc
     private func messageCannotBeDecrypted(_ note: Notification?) {

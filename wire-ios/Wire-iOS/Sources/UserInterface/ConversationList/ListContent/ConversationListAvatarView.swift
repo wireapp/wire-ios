@@ -28,12 +28,15 @@ public protocol RandomGenerator {
 /// Generates the pseudorandom values from the data given.
 /// @param data the source of random values.
 final class RandomGeneratorFromData: RandomGenerator {
-    public let source: Data
-    private var step = 0
+    // MARK: Lifecycle
 
     init(data: Data) {
         self.source = data
     }
+
+    // MARK: Public
+
+    public let source: Data
 
     public func rand<ContentType>() -> ContentType {
         let currentStep = step
@@ -44,6 +47,10 @@ final class RandomGeneratorFromData: RandomGenerator {
 
         return result
     }
+
+    // MARK: Private
+
+    private var step = 0
 }
 
 extension RandomGeneratorFromData {
@@ -117,6 +124,24 @@ extension Mode {
 // MARK: - ConversationListAvatarView
 
 public final class ConversationListAvatarView: UIView {
+    // MARK: Lifecycle
+
+    init() {
+        super.init(frame: .zero)
+        updateCornerRadius()
+        backgroundColor = UIColor(white: 0, alpha: 0.16)
+        layer.masksToBounds = true
+        clippingView.clipsToBounds = true
+        addSubview(clippingView)
+    }
+
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Public
+
     public var conversation: ZMConversation? = .none {
         didSet {
             guard let conversation else {
@@ -144,55 +169,6 @@ public final class ConversationListAvatarView: UIView {
             }
             setNeedsLayout()
         }
-    }
-
-    private var mode: Mode = .two {
-        didSet {
-            clippingView.subviews.forEach { $0.removeFromSuperview() }
-            userImages().forEach(clippingView.addSubview)
-
-            if mode == .one {
-                layer.borderWidth = 0
-            } else {
-                layer.borderWidth = .hairline
-                layer.borderColor = UIColor(white: 1, alpha: 0.24).cgColor
-            }
-        }
-    }
-
-    func userImages() -> [UserImageView] {
-        switch mode {
-        case .one:
-            [imageViewLeftTop]
-
-        case .two:
-            [imageViewLeftTop, imageViewRightTop]
-
-        case .four:
-            [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
-        }
-    }
-
-    let clippingView = UIView()
-    let imageViewLeftTop = UserImageView()
-    lazy var imageViewRightTop = UserImageView()
-
-    lazy var imageViewLeftBottom = UserImageView()
-
-    lazy var imageViewRightBottom = UserImageView()
-
-    init() {
-        super.init(frame: .zero)
-        updateCornerRadius()
-        backgroundColor = UIColor(white: 0, alpha: 0.16)
-        layer.masksToBounds = true
-        clippingView.clipsToBounds = true
-        addSubview(clippingView)
-    }
-
-    @available(*, unavailable)
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     override public func layoutSubviews() {
@@ -232,6 +208,45 @@ public final class ConversationListAvatarView: UIView {
         }
 
         updateCornerRadius()
+    }
+
+    // MARK: Internal
+
+    let clippingView = UIView()
+    let imageViewLeftTop = UserImageView()
+    lazy var imageViewRightTop = UserImageView()
+
+    lazy var imageViewLeftBottom = UserImageView()
+
+    lazy var imageViewRightBottom = UserImageView()
+
+    func userImages() -> [UserImageView] {
+        switch mode {
+        case .one:
+            [imageViewLeftTop]
+
+        case .two:
+            [imageViewLeftTop, imageViewRightTop]
+
+        case .four:
+            [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
+        }
+    }
+
+    // MARK: Private
+
+    private var mode: Mode = .two {
+        didSet {
+            clippingView.subviews.forEach { $0.removeFromSuperview() }
+            userImages().forEach(clippingView.addSubview)
+
+            if mode == .one {
+                layer.borderWidth = 0
+            } else {
+                layer.borderWidth = .hairline
+                layer.borderColor = UIColor(white: 1, alpha: 0.24).cgColor
+            }
+        }
     }
 
     private func updateCornerRadius() {

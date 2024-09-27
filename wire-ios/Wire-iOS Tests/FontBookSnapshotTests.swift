@@ -24,9 +24,7 @@ import XCTest
 @testable import Wire
 
 final class FontBookSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -101,4 +99,10 @@ final class FontBookSnapshotTests: XCTestCase {
     func testForButtonBigSemiboldFontStyle() {
         snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .buttonBig))
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
 }

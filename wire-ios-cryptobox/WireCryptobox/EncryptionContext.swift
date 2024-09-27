@@ -58,35 +58,7 @@ class _CBox: PointerWrapper {}
 /// 3. When the block passed to `perform:` is completed, the sessions are persisted to disk.
 ///   The lock is relased.
 public final class EncryptionContext: NSObject {
-    /// What to do with modified sessions
-    public enum ModifiedSessionsBehaviour {
-        case save
-        case discard
-    }
-
-    /// Set of session identifier that require full debugging logs
-    private var extensiveLoggingSessions = Set<EncryptionSessionIdentifier>()
-
-    /// Underlying C-style implementation
-    let implementation = _CBox()
-
-    /// File directory with the implementation files
-    let path: URL
-
-    /// The latest created and still open session directory
-    /// will be set to `nil` after calling `doneUsingSessions`
-    fileprivate(set) var currentSessionsDirectory: EncryptionSessionsDirectory?
-
-    /// Folder file descriptor
-    fileprivate var fileDescriptor: CInt!
-
-    /// Keeps track of how many times we enter a `perform` block,
-    /// to allow re-entry
-    fileprivate var performCount: UInt = 0
-
-    // The maximum size of the end-to-end encrypted payload is defined by ZMClientMessageByteSizeExternalThreshold
-    // It's currently 128KB of data. NOTE that this cache is shared between all sessions in an encryption context.
-    fileprivate let cache = Cache<GenericHash, Data>(maxCost: 10_000_000, maxElementsCount: 100_000)
+    // MARK: Lifecycle
 
     /// Opens cryptobox from a given folder
     /// - throws: CryptoBox error in case of lower-level error
@@ -113,6 +85,44 @@ public final class EncryptionContext: NSObject {
         cbox_close(implementation.ptr)
         zmLog.debug("Closed cryptobox at path: \(path)")
     }
+
+    // MARK: Public
+
+    /// What to do with modified sessions
+    public enum ModifiedSessionsBehaviour {
+        case save
+        case discard
+    }
+
+    // MARK: Internal
+
+    /// Underlying C-style implementation
+    let implementation = _CBox()
+
+    /// File directory with the implementation files
+    let path: URL
+
+    /// The latest created and still open session directory
+    /// will be set to `nil` after calling `doneUsingSessions`
+    fileprivate(set) var currentSessionsDirectory: EncryptionSessionsDirectory?
+
+    // MARK: Fileprivate
+
+    /// Folder file descriptor
+    fileprivate var fileDescriptor: CInt!
+
+    /// Keeps track of how many times we enter a `perform` block,
+    /// to allow re-entry
+    fileprivate var performCount: UInt = 0
+
+    // The maximum size of the end-to-end encrypted payload is defined by ZMClientMessageByteSizeExternalThreshold
+    // It's currently 128KB of data. NOTE that this cache is shared between all sessions in an encryption context.
+    fileprivate let cache = Cache<GenericHash, Data>(maxCost: 10_000_000, maxElementsCount: 100_000)
+
+    // MARK: Private
+
+    /// Set of session identifier that require full debugging logs
+    private var extensiveLoggingSessions = Set<EncryptionSessionIdentifier>()
 }
 
 // MARK: - Start and stop using sessions

@@ -23,12 +23,7 @@ import XCTest
 @testable import WireRequestStrategy
 
 class E2EIKeyPackageRotatorTests: MessagingTestBase {
-    private var mockCoreCrypto: MockCoreCryptoProtocol!
-    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockCommitSender: MockCommitSending!
-    private var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var sut: E2EIKeyPackageRotator!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -71,4 +66,13 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
         //
         // TODO: [WPB-6035] Investigate solutions to mock core crypto types
     }
+
+    // MARK: Private
+
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
+    private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var mockCommitSender: MockCommitSending!
+    private var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var sut: E2EIKeyPackageRotator!
 }

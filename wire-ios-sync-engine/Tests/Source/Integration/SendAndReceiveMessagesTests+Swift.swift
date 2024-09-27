@@ -22,9 +22,7 @@ import XCTest
 // MARK: - SendAndReceiveMessagesTests_Swift
 
 class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
-    private func uniqueText() -> String {
-        "This is a test for \(name): \(UUID.create())"
-    }
+    // MARK: Internal
 
     func testThatWeReceiveAMessageSentRemotely() {
         // given
@@ -354,6 +352,12 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         XCTAssertNotNil(addedUser)
         XCTAssertEqual(addedUser!.name, "Bruno")
         XCTAssertFalse(systemMessage.needsUpdatingUsers)
+    }
+
+    // MARK: Private
+
+    private func uniqueText() -> String {
+        "This is a test for \(name): \(UUID.create())"
     }
 }
 

@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 
 final class CollectionLoadingCell: UICollectionViewCell {
-    let loadingView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,7 +42,12 @@ final class CollectionLoadingCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let loadingView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+
     var containerWidth: CGFloat = 320
+
     var collapsed = false {
         didSet {
             loadingView.isHidden = collapsed

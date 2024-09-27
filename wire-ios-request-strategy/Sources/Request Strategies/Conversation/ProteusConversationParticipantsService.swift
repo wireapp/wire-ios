@@ -37,11 +37,13 @@ protocol ProteusConversationParticipantsServiceInterface {
 // MARK: - ProteusConversationParticipantsService
 
 struct ProteusConversationParticipantsService: ProteusConversationParticipantsServiceInterface {
-    private let context: NSManagedObjectContext
+    // MARK: Lifecycle
 
     init(context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: Internal
 
     func addParticipants(
         _ users: [ZMUser],
@@ -65,4 +67,8 @@ struct ProteusConversationParticipantsService: ProteusConversationParticipantsSe
         var action = RemoveParticipantAction(user: user, conversation: conversation)
         try await action.perform(in: context.notificationContext)
     }
+
+    // MARK: Private
+
+    private let context: NSManagedObjectContext
 }

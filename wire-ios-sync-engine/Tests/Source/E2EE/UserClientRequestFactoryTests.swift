@@ -28,6 +28,8 @@ import WireUtilities
 // MARK: - UserClientRequestFactoryTests
 
 final class UserClientRequestFactoryTests: MessagingTest {
+    // MARK: Internal
+
     var sut: UserClientRequestFactory!
     var authenticationStatus: ZMAuthenticationStatus!
     var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!
@@ -51,16 +53,6 @@ final class UserClientRequestFactoryTests: MessagingTest {
         sut = nil
         userInfoParser = nil
         super.tearDown()
-    }
-
-    private func mockProteusService() -> MockProteusServiceInterface {
-        let proteusService = MockProteusServiceInterface()
-
-        proteusService.generatePrekeysStartCount_MockValue = [(1, "prekey")]
-        proteusService.lastPrekey_MockValue = "prekey"
-        proteusService.underlyingLastPrekeyID = UInt16.max
-
-        return proteusService
     }
 
     // MARK: - Registration request creation
@@ -109,45 +101,6 @@ final class UserClientRequestFactoryTests: MessagingTest {
         )
     }
 
-    private func testThatItCreatesRegistrationRequestCorrectly(
-        credentials: UserEmailCredentials?,
-        usingProteusService: Bool
-    ) throws {
-        let request = try syncMOC.performAndWait {
-            // given
-            let client = UserClient.insertNewObject(in: self.syncMOC)
-            let prekeys = [IdPrekeyTuple(id: 0, "prekey0")]
-            let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
-
-            // when
-            return try sut.registerClientRequest(
-                client,
-                credentials: credentials,
-                cookieLabel: "mycookie",
-                prekeys: prekeys,
-                lastRestortPrekey: lastRestortPrekey,
-                apiVersion: .v0
-            )
-        }
-
-        // then
-        let transportRequest = try XCTUnwrap(request.transportRequest)
-        assertRequest(transportRequest, path: "/clients", method: .post)
-
-        let payload = try XCTUnwrap(payload(from: transportRequest))
-        try assertSigkeys(payload)
-
-        XCTAssertEqual(payload.type, DeviceType.permanent.rawValue)
-
-        if let credentials {
-            XCTAssertEqual(payload.password, credentials.password)
-        }
-
-        if let emailVerificationCode = credentials?.emailVerificationCode {
-            XCTAssertEqual(payload.verificationCode, emailVerificationCode)
-        }
-    }
-
     func testThatItReturnsNilForRegisterClientRequest_PrekeyError() {
         // Failing to generate prekeys
 
@@ -172,38 +125,6 @@ final class UserClientRequestFactoryTests: MessagingTest {
         )
     }
 
-    private func testThatItReturnsNilForRegisterClientRequestIfPreKeyError(
-        _ error: PrekeyError,
-        usingProteusService: Bool
-    ) {
-        // given
-        let emptyPrekeys: [IdPrekeyTuple] = []
-        let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
-        let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
-
-        syncMOC.performAndWait {
-            let client = UserClient.insertNewObject(in: syncMOC)
-
-            // when
-            let request = try? sut.registerClientRequest(
-                client,
-                credentials: credentials,
-                cookieLabel: "mycookie",
-                prekeys: emptyPrekeys,
-                lastRestortPrekey: lastRestortPrekey,
-                apiVersion: .v0
-            )
-
-            // then
-            XCTAssertNil(request)
-        }
-    }
-
-    private enum PrekeyError: Error {
-        case failedToGeneratePrekeys
-        case failedToGenerateLastPrekey
-    }
-
     // MARK: - Updating client request creation
 
     func testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey0() throws {
@@ -214,33 +135,6 @@ final class UserClientRequestFactoryTests: MessagingTest {
     func testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey400() throws {
         try testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey(400, usingProteusService: false)
         try testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey(400, usingProteusService: true)
-    }
-
-    private func testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey(
-        _ prekeyRangeMax: Int64,
-        usingProteusService: Bool
-    ) throws {
-        try syncMOC.performAndWait {
-            // given
-            let prekeys = [IdPrekeyTuple(id: 1, "prekey1")]
-            let client = UserClient.insertNewObject(in: self.syncMOC)
-            client.remoteIdentifier = UUID.create().transportString()
-            client.preKeysRangeMax = prekeyRangeMax
-
-            // when
-            let request = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
-
-            // then
-            let transportRequest = try XCTUnwrap(request.transportRequest)
-            let id = try XCTUnwrap(client.remoteIdentifier)
-            assertRequest(
-                transportRequest,
-                path: "/clients/\(id)",
-                method: .put
-            )
-
-            _ = try XCTUnwrap(payload(from: transportRequest))
-        }
     }
 
     func testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys() {
@@ -334,6 +228,116 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
             let payload = try XCTUnwrap(payload(from: transportRequest))
             XCTAssertEqual(payload.mlsPublicKeys?.ed25519, "foo")
+        }
+    }
+
+    // MARK: Private
+
+    private enum PrekeyError: Error {
+        case failedToGeneratePrekeys
+        case failedToGenerateLastPrekey
+    }
+
+    private func mockProteusService() -> MockProteusServiceInterface {
+        let proteusService = MockProteusServiceInterface()
+
+        proteusService.generatePrekeysStartCount_MockValue = [(1, "prekey")]
+        proteusService.lastPrekey_MockValue = "prekey"
+        proteusService.underlyingLastPrekeyID = UInt16.max
+
+        return proteusService
+    }
+
+    private func testThatItCreatesRegistrationRequestCorrectly(
+        credentials: UserEmailCredentials?,
+        usingProteusService: Bool
+    ) throws {
+        let request = try syncMOC.performAndWait {
+            // given
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            let prekeys = [IdPrekeyTuple(id: 0, "prekey0")]
+            let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
+
+            // when
+            return try sut.registerClientRequest(
+                client,
+                credentials: credentials,
+                cookieLabel: "mycookie",
+                prekeys: prekeys,
+                lastRestortPrekey: lastRestortPrekey,
+                apiVersion: .v0
+            )
+        }
+
+        // then
+        let transportRequest = try XCTUnwrap(request.transportRequest)
+        assertRequest(transportRequest, path: "/clients", method: .post)
+
+        let payload = try XCTUnwrap(payload(from: transportRequest))
+        try assertSigkeys(payload)
+
+        XCTAssertEqual(payload.type, DeviceType.permanent.rawValue)
+
+        if let credentials {
+            XCTAssertEqual(payload.password, credentials.password)
+        }
+
+        if let emailVerificationCode = credentials?.emailVerificationCode {
+            XCTAssertEqual(payload.verificationCode, emailVerificationCode)
+        }
+    }
+
+    private func testThatItReturnsNilForRegisterClientRequestIfPreKeyError(
+        _ error: PrekeyError,
+        usingProteusService: Bool
+    ) {
+        // given
+        let emptyPrekeys: [IdPrekeyTuple] = []
+        let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
+        let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
+
+        syncMOC.performAndWait {
+            let client = UserClient.insertNewObject(in: syncMOC)
+
+            // when
+            let request = try? sut.registerClientRequest(
+                client,
+                credentials: credentials,
+                cookieLabel: "mycookie",
+                prekeys: emptyPrekeys,
+                lastRestortPrekey: lastRestortPrekey,
+                apiVersion: .v0
+            )
+
+            // then
+            XCTAssertNil(request)
+        }
+    }
+
+    private func testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey(
+        _ prekeyRangeMax: Int64,
+        usingProteusService: Bool
+    ) throws {
+        try syncMOC.performAndWait {
+            // given
+            let prekeys = [IdPrekeyTuple(id: 1, "prekey1")]
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = UUID.create().transportString()
+            client.preKeysRangeMax = prekeyRangeMax
+
+            // when
+            let request = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
+
+            // then
+            let transportRequest = try XCTUnwrap(request.transportRequest)
+            let id = try XCTUnwrap(client.remoteIdentifier)
+            assertRequest(
+                transportRequest,
+                path: "/clients/\(id)",
+                method: .put
+            )
+
+            _ = try XCTUnwrap(payload(from: transportRequest))
         }
     }
 

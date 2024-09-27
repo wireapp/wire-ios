@@ -22,12 +22,7 @@ import WireCommonComponents
 import WireDesign
 
 final class AssetCell: UICollectionViewCell {
-    let imageView = UIImageView()
-    let durationView = UILabel()
-
-    var imageRequestTag: PHImageRequestID = PHInvalidImageRequestID
-    var representedAssetIdentifier: String!
-    var manager: ImageManagerProtocol!
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -62,6 +57,8 @@ final class AssetCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     static let imageFetchOptions: PHImageRequestOptions = {
         let options = PHImageRequestOptions()
         options.deliveryMode = .opportunistic
@@ -69,6 +66,13 @@ final class AssetCell: UICollectionViewCell {
         options.isSynchronous = false
         return options
     }()
+
+    let imageView = UIImageView()
+    let durationView = UILabel()
+
+    var imageRequestTag: PHImageRequestID = PHInvalidImageRequestID
+    var representedAssetIdentifier: String!
+    var manager: ImageManagerProtocol!
 
     var asset: PHAsset? {
         didSet {

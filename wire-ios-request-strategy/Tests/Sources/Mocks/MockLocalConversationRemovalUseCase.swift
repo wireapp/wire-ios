@@ -21,6 +21,7 @@ import Foundation
 
 class MockLocalConversationRemovalUseCase: RemoveLocalConversationUseCaseProtocol {
     typealias MockInvoke = (ZMConversation, NSManagedObjectContext) -> Void
+
     var invokeMock: MockInvoke?
     var invokeCalls = [ZMConversation]()
 

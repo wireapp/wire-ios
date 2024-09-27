@@ -22,6 +22,8 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
+    // MARK: Internal
+
     // MARK: - Properties
 
     var sut: ProteusToMLSMigrationCoordinator!
@@ -231,33 +233,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(isBackendSupportingMLS: false)
     }
 
-    private func internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(
-        isAPIV5Supported: Bool = true,
-        isClientSupportingMLS: Bool = true,
-        isBackendSupportingMLS: Bool = true,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) async throws {
-        // GIVEN
-        await createUserAndGroupConversation()
-
-        setMockValues(
-            isAPIV5Supported: isAPIV5Supported,
-            isClientSupportingMLS: isClientSupportingMLS,
-            isBackendSupportingMLS: isBackendSupportingMLS,
-            isMLSProtocolSupported: true,
-            isMLSMigrationFeatureEnabled: true,
-            hasStartTimeBeenReached: true
-        )
-        mockStorage.underlyingMigrationStatus = .notStarted
-
-        // WHEN
-        try await sut.updateMigrationStatus()
-
-        // THEN
-        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0, file: file, line: line)
-    }
-
     // MARK: - Migration finalisation
 
     func test_ItSyncsUsers_IfFinalisationTimeHasNotBeenReached() async throws {
@@ -376,9 +351,38 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         // TODO: [WPB-542] Assert we update the conversation protocol
     }
 
+    // MARK: Private
+
     // MARK: - Helpers
 
     private typealias MigrationStartStatus = ProteusToMLSMigrationCoordinator.MigrationStartStatus
+
+    private func internalTest_updateMigrationStatusDoesntFetchFeaturesConfig(
+        isAPIV5Supported: Bool = true,
+        isClientSupportingMLS: Bool = true,
+        isBackendSupportingMLS: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        // GIVEN
+        await createUserAndGroupConversation()
+
+        setMockValues(
+            isAPIV5Supported: isAPIV5Supported,
+            isClientSupportingMLS: isClientSupportingMLS,
+            isBackendSupportingMLS: isBackendSupportingMLS,
+            isMLSProtocolSupported: true,
+            isMLSMigrationFeatureEnabled: true,
+            hasStartTimeBeenReached: true
+        )
+        mockStorage.underlyingMigrationStatus = .notStarted
+
+        // WHEN
+        try await sut.updateMigrationStatus()
+
+        // THEN
+        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0, file: file, line: line)
+    }
 
     private func setMocksForFinalisation(
         supportedProtocolForAllParticipants protocol: MessageProtocol,

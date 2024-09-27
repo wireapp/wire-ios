@@ -24,7 +24,7 @@ import Foundation
 /// valid images will be included.
 
 public struct ZiphyAnimatedImageList: Codable {
-    fileprivate let images: [ZiphyImageType: ZiphyAnimatedImage]
+    // MARK: Lifecycle
 
     public init(images: [ZiphyImageType: ZiphyAnimatedImage]) {
         self.images = images
@@ -43,6 +43,8 @@ public struct ZiphyAnimatedImageList: Codable {
         self.images = images
     }
 
+    // MARK: Public
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: ZiphyImageType.self)
 
@@ -50,6 +52,10 @@ public struct ZiphyAnimatedImageList: Codable {
             try container.encode(image, forKey: type)
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate let images: [ZiphyImageType: ZiphyAnimatedImage]
 }
 
 // MARK: Sequence

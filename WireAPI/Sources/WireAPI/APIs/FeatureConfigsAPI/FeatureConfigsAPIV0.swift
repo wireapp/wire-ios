@@ -21,11 +21,15 @@ import Foundation
 // MARK: - FeatureConfigsAPIV0
 
 class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Internal
+
+    let httpClient: any HTTPClient
 
     var apiVersion: APIVersion {
         .v0

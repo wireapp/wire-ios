@@ -21,9 +21,7 @@ import Foundation
 // MARK: - ImageV2DownloadRequestStrategy
 
 public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
-    fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
-    fileprivate let requestFactory = ClientMessageRequestFactory()
-    private var token: Any?
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -53,6 +51,14 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
         registerForWhitelistingNotification()
     }
 
+    // MARK: Public
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        downstreamSync.nextRequest(for: apiVersion)
+    }
+
+    // MARK: Internal
+
     func registerForWhitelistingNotification() {
         token = NotificationInContext.addObserver(
             name: ZMAssetClientMessage.imageDownloadNotificationName,
@@ -74,9 +80,14 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
         }
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        downstreamSync.nextRequest(for: apiVersion)
-    }
+    // MARK: Fileprivate
+
+    fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
+    fileprivate let requestFactory = ClientMessageRequestFactory()
+
+    // MARK: Private
+
+    private var token: Any?
 }
 
 // MARK: ZMDownstreamTranscoder

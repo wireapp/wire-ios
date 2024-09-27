@@ -28,12 +28,7 @@ public protocol NotificationStreamSyncDelegate: AnyObject {
 // MARK: - NotificationStreamSync
 
 public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListRequestPaginatorSync {
-    private var notificationsTracker: NotificationsTracker?
-    private var listPaginator: ZMSimpleListRequestPaginator!
-    private var managedObjectContext: NSManagedObjectContext!
-    private let lastEventIDRepository: LastEventIDRepositoryInterface
-    private weak var notificationStreamSyncDelegate: NotificationStreamSyncDelegate?
-    private var clientID: String?
+    // MARK: Lifecycle
 
     public init(
         moc: NSManagedObjectContext,
@@ -62,6 +57,8 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         self.notificationStreamSyncDelegate = delegate
     }
 
+    // MARK: Public
+
     public func reset() {
         listPaginator.resetFetching()
     }
@@ -83,10 +80,6 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         }))
 
         return request
-    }
-
-    private var lastUpdateEventID: UUID? {
-        lastEventIDRepository.fetchLastEventID()
     }
 
     public func selfClientID() -> String? {
@@ -115,6 +108,21 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         lastUpdateEventID
     }
 
+    @objc(shouldParseErrorForResponse:)
+    public func shouldParseError(for response: ZMTransportResponse) -> Bool {
+        notificationStreamSyncDelegate?.failedFetchingEvents(recoverable: false)
+        guard response.apiVersion < APIVersion.v3.rawValue else {
+            return false
+        }
+        return response.httpStatus == 404 ? true : false
+    }
+
+    public func parseTemporaryError(for response: ZMTransportResponse!) {
+        notificationStreamSyncDelegate?.failedFetchingEvents(recoverable: true)
+    }
+
+    // MARK: Internal
+
     @objc(processUpdateEventsAndReturnLastNotificationIDFromPayload:)
     func processUpdateEventsAndReturnLastNotificationID(from payload: ZMTransportData?) -> UUID? {
         let tp = TimePoint(interval: 10, label: NSStringFromClass(type(of: self)))
@@ -135,19 +143,6 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
         tp.warnIfLongerThanInterval()
         return latestEventId
-    }
-
-    @objc(shouldParseErrorForResponse:)
-    public func shouldParseError(for response: ZMTransportResponse) -> Bool {
-        notificationStreamSyncDelegate?.failedFetchingEvents(recoverable: false)
-        guard response.apiVersion < APIVersion.v3.rawValue else {
-            return false
-        }
-        return response.httpStatus == 404 ? true : false
-    }
-
-    public func parseTemporaryError(for response: ZMTransportResponse!) {
-        notificationStreamSyncDelegate?.failedFetchingEvents(recoverable: true)
     }
 
     @objc(appendPotentialGapSystemMessageIfNeededWithResponse:)
@@ -171,6 +166,19 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             }
             ZMConversation.appendNewPotentialGapSystemMessage(at: timestamp, inContext: managedObjectContext)
         }
+    }
+
+    // MARK: Private
+
+    private var notificationsTracker: NotificationsTracker?
+    private var listPaginator: ZMSimpleListRequestPaginator!
+    private var managedObjectContext: NSManagedObjectContext!
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
+    private weak var notificationStreamSyncDelegate: NotificationStreamSyncDelegate?
+    private var clientID: String?
+
+    private var lastUpdateEventID: UUID? {
+        lastEventIDRepository.fetchLastEventID()
     }
 }
 

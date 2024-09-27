@@ -23,16 +23,7 @@ import WireSyncEngine
 // MARK: - RenameGroupSectionController
 
 final class RenameGroupSectionController: NSObject, CollectionViewSectionController {
-    private var validName: String?
-    private var conversation: GroupDetailsConversationType
-    private var renameCell: GroupDetailsRenameCell?
-    private var token: AnyObject?
-    private var sizingFooter = SectionFooter(frame: .zero)
-    let userSession: UserSession
-
-    var isHidden: Bool {
-        false
-    }
+    // MARK: Lifecycle
 
     init(conversation: GroupDetailsConversationType, userSession: UserSession) {
         self.conversation = conversation
@@ -42,6 +33,14 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
         if let conversation = conversation as? ZMConversation {
             self.token = ConversationChangeInfo.add(observer: self, for: conversation)
         }
+    }
+
+    // MARK: Internal
+
+    let userSession: UserSession
+
+    var isHidden: Bool {
+        false
     }
 
     func focus() {
@@ -120,6 +119,14 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         focus()
     }
+
+    // MARK: Private
+
+    private var validName: String?
+    private var conversation: GroupDetailsConversationType
+    private var renameCell: GroupDetailsRenameCell?
+    private var token: AnyObject?
+    private var sizingFooter = SectionFooter(frame: .zero)
 }
 
 // MARK: ZMConversationObserver

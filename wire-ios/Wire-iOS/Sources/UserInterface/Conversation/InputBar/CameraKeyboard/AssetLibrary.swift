@@ -28,8 +28,29 @@ protocol AssetLibraryDelegate: AnyObject {
 // MARK: - AssetLibrary
 
 class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
+    // MARK: Lifecycle
+
+    init(synchronous: Bool = false, photoLibrary: PhotoLibraryProtocol = PHPhotoLibrary.shared()) {
+        self.synchronous = synchronous
+        self.photoLibrary = photoLibrary
+
+        super.init()
+
+        self.photoLibrary.register(self)
+        refetchAssets(synchronous: synchronous)
+    }
+
+    deinit {
+        photoLibrary.unregisterChangeObserver(self)
+    }
+
+    // MARK: Internal
+
+    enum AssetError: Error {
+        case outOfRange, notLoadedError
+    }
+
     weak var delegate: AssetLibraryDelegate?
-    fileprivate var fetchingAssets = false
     let synchronous: Bool
     let photoLibrary: PhotoLibraryProtocol
 
@@ -38,10 +59,6 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
             return 0
         }
         return UInt(fetch.count)
-    }
-
-    enum AssetError: Error {
-        case outOfRange, notLoadedError
     }
 
     func asset(atIndex index: UInt) throws -> PHAsset {
@@ -95,6 +112,9 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
         notifyChangeToDelegate()
     }
 
+    // MARK: Fileprivate
+
+    fileprivate var fetchingAssets = false
     fileprivate var fetch: PHFetchResult<PHAsset>?
 
     fileprivate func notifyChangeToDelegate() {
@@ -108,19 +128,5 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
         } else {
             DispatchQueue.main.async(execute: completion)
         }
-    }
-
-    init(synchronous: Bool = false, photoLibrary: PhotoLibraryProtocol = PHPhotoLibrary.shared()) {
-        self.synchronous = synchronous
-        self.photoLibrary = photoLibrary
-
-        super.init()
-
-        self.photoLibrary.register(self)
-        refetchAssets(synchronous: synchronous)
-    }
-
-    deinit {
-        photoLibrary.unregisterChangeObserver(self)
     }
 }

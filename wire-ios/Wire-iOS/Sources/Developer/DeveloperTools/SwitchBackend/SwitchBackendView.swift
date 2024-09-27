@@ -21,6 +21,8 @@ import SwiftUI
 // MARK: - SwitchBackendView
 
 struct SwitchBackendView: View {
+    // MARK: Internal
+
     // MARK: - Properties
 
     @StateObject var viewModel: SwitchBackendViewModel
@@ -39,6 +41,8 @@ struct SwitchBackendView: View {
                 )
             }
     }
+
+    // MARK: Private
 
     @ViewBuilder
     private func itemView(for item: SwitchBackendViewModel.Item) -> some View {

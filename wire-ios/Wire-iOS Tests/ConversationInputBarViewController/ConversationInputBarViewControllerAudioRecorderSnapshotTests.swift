@@ -23,8 +23,7 @@ import XCTest
 // MARK: - MockLongPressGestureRecognizer
 
 final class MockLongPressGestureRecognizer: UILongPressGestureRecognizer {
-    let mockState: UIGestureRecognizer.State
-    var mockLocation: CGPoint?
+    // MARK: Lifecycle
 
     init(location: CGPoint?, state: UIGestureRecognizer.State) {
         self.mockLocation = location
@@ -33,15 +32,20 @@ final class MockLongPressGestureRecognizer: UILongPressGestureRecognizer {
         super.init(target: nil, action: nil)
     }
 
-    override func location(in view: UIView?) -> CGPoint {
-        mockLocation ?? super.location(in: view)
-    }
+    // MARK: Internal
+
+    let mockState: UIGestureRecognizer.State
+    var mockLocation: CGPoint?
 
     override var state: UIGestureRecognizer.State {
         get {
             mockState
         }
         set {}
+    }
+
+    override func location(in view: UIView?) -> CGPoint {
+        mockLocation ?? super.location(in: view)
     }
 }
 

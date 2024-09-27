@@ -22,8 +22,12 @@ import WireUtilities
 // MARK: - SetStateUpdate
 
 public struct SetStateUpdate<T: Hashable> {
+    // MARK: Public
+
     public let newSnapshot: SetSnapshot<T>
     public let changeInfo: SetChangeInfo<T>
+
+    // MARK: Internal
 
     let removedObjects: Set<T>
     let insertedObjects: Set<T>
@@ -48,20 +52,8 @@ public protocol SetChangeInfoOwner {
 // MARK: - SetChangeInfo
 
 open class SetChangeInfo<T: Hashable>: NSObject {
-    let changeSet: ChangedIndexes<T>
-    public let orderedSetState: OrderedSetState<T>
+    // MARK: Lifecycle
 
-    public let observedObject: NSObject
-    open var insertedIndexes: IndexSet { changeSet.insertedIndexes }
-    open var deletedIndexes: IndexSet { changeSet.deletedIndexes }
-    open var deletedObjects: Set<AnyHashable> { changeSet.deletedObjects }
-    open var updatedIndexes: IndexSet { changeSet.updatedIndexes }
-    open var movedIndexPairs: [MovedIndex] { changeSet.movedIndexes }
-    // for temporary objC-compatibility
-    open var zm_movedIndexPairs: [ZMMovedIndex] { changeSet.movedIndexes.map { ZMMovedIndex(
-        from: UInt($0.from),
-        to: UInt($0.to)
-    ) } }
     convenience init(observedObject: NSObject) {
         let orderSetState = OrderedSetState<T>(array: [])
         self.init(
@@ -77,27 +69,53 @@ open class SetChangeInfo<T: Hashable>: NSObject {
         self.observedObject = observedObject
     }
 
-    open func enumerateMovedIndexes(_ block: @escaping (_ from: Int, _ to: Int) -> Void) {
-        changeSet.enumerateMovedIndexes(block: block)
-    }
+    // MARK: Open
 
+    open var insertedIndexes: IndexSet { changeSet.insertedIndexes }
+    open var deletedIndexes: IndexSet { changeSet.deletedIndexes }
+    open var deletedObjects: Set<AnyHashable> { changeSet.deletedObjects }
+    open var updatedIndexes: IndexSet { changeSet.updatedIndexes }
+    open var movedIndexPairs: [MovedIndex] { changeSet.movedIndexes }
+    // for temporary objC-compatibility
+    open var zm_movedIndexPairs: [ZMMovedIndex] { changeSet.movedIndexes.map { ZMMovedIndex(
+        from: UInt($0.from),
+        to: UInt($0.to)
+    ) } }
     override open var description: String { debugDescription }
     override open var debugDescription: String {
         "deleted: \(deletedIndexes), inserted: \(insertedIndexes), " +
             "updated: \(updatedIndexes), moved: \(movedIndexPairs)"
     }
+
+    open func enumerateMovedIndexes(_ block: @escaping (_ from: Int, _ to: Int) -> Void) {
+        changeSet.enumerateMovedIndexes(block: block)
+    }
+
+    // MARK: Public
+
+    public let orderedSetState: OrderedSetState<T>
+
+    public let observedObject: NSObject
+
+    // MARK: Internal
+
+    let changeSet: ChangedIndexes<T>
 }
 
 // MARK: - SetSnapshot
 
 public struct SetSnapshot<T: Hashable> {
-    public let set: OrderedSetState<T>
-    public let moveType: SetChangeMoveType
+    // MARK: Lifecycle
 
     public init(set: OrderedSetState<T>, moveType: SetChangeMoveType) {
         self.set = set
         self.moveType = moveType
     }
+
+    // MARK: Public
+
+    public let set: OrderedSetState<T>
+    public let moveType: SetChangeMoveType
 
     // Returns the new state and the notification to send after some changes in messages
     public func updatedState(

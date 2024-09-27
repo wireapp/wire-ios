@@ -36,6 +36,8 @@ public enum AppLockPasscodePreference {
 
     case customOnly
 
+    // MARK: Internal
+
     // MARK: - Methods
 
     var policy: LAPolicy {

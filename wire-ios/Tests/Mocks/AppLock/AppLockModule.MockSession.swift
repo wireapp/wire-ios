@@ -22,13 +22,13 @@ import LocalAuthentication
 
 extension AppLockModule {
     final class MockSession {
-        var methodCalls = MethodCalls()
-
         struct MethodCalls {
             var setEncryptionAtRest: [(enabled: Bool, skipMigration: Bool)] = []
             var unlockDatabase: [LAContext] = []
             var registerDatabaseLockedHandler: [(Bool) -> Void] = []
         }
+
+        var methodCalls = MethodCalls()
 
         // MARK: - Properties
 

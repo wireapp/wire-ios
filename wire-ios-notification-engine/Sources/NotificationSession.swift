@@ -28,6 +28,8 @@ public enum NotificationSessionError: LocalizedError {
     case alreadyFetchedEvent
     case unknown
 
+    // MARK: Public
+
     public var errorDescription: String? {
         switch self {
         case .accountNotAuthenticated:
@@ -73,43 +75,7 @@ public protocol NotificationSessionDelegate: AnyObject {
 /// for the entire lifetime.
 ///
 public final class NotificationSession {
-    /// The failure reason of a `NotificationSession` initialization
-    /// - noAccount: Account doesn't exist
-
-    public enum InitializationError: Error {
-        case noAccount
-        case pendingCryptoboxMigration
-        case coreDataMissingSharedContainer
-        case coreDataMigrationRequired
-    }
-
-    // MARK: - Properties
-
-    /// Directory of all application statuses.
-
-    private let applicationStatusDirectory: ApplicationStatusDirectory
-
-    /// The list to which save notifications of the UI moc are appended and persisted.
-
-    private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
-
-    private var contextSaveObserverToken: NSObjectProtocol?
-    private let transportSession: ZMTransportSession
-    private let coreDataStack: CoreDataStack
-    private let operationLoop: RequestGeneratingOperationLoop
-    private let eventDecoder: EventDecoder
-    private let earService: EARServiceInterface
-
-    public let accountIdentifier: UUID
-
-    private var callEvent: CallEventPayload?
-    private var localNotifications = [ZMLocalNotification]()
-
-    private var context: NSManagedObjectContext { coreDataStack.syncContext }
-
-    public weak var delegate: NotificationSessionDelegate?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -338,6 +304,22 @@ public final class NotificationSession {
         transportSession.tearDown()
     }
 
+    // MARK: Public
+
+    /// The failure reason of a `NotificationSession` initialization
+    /// - noAccount: Account doesn't exist
+
+    public enum InitializationError: Error {
+        case noAccount
+        case pendingCryptoboxMigration
+        case coreDataMissingSharedContainer
+        case coreDataMigrationRequired
+    }
+
+    public let accountIdentifier: UUID
+
+    public weak var delegate: NotificationSessionDelegate?
+
     // MARK: - Methods
 
     public func processPushNotification(with payload: [AnyHashable: Any]) {
@@ -358,6 +340,8 @@ public final class NotificationSession {
             self.fetchEvents(fromPushChannelPayload: payload)
         }
     }
+
+    // MARK: Internal
 
     func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any]) {
         guard let nonce = messageNonce(fromPushChannelData: payload) else {
@@ -383,6 +367,35 @@ public final class NotificationSession {
         }
     }
 
+    // MARK: Private
+
+    private enum PushChannelKeys: String {
+        case data
+        case identifier = "id"
+    }
+
+    // MARK: - Properties
+
+    /// Directory of all application statuses.
+
+    private let applicationStatusDirectory: ApplicationStatusDirectory
+
+    /// The list to which save notifications of the UI moc are appended and persisted.
+
+    private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
+
+    private var contextSaveObserverToken: NSObjectProtocol?
+    private let transportSession: ZMTransportSession
+    private let coreDataStack: CoreDataStack
+    private let operationLoop: RequestGeneratingOperationLoop
+    private let eventDecoder: EventDecoder
+    private let earService: EARServiceInterface
+
+    private var callEvent: CallEventPayload?
+    private var localNotifications = [ZMLocalNotification]()
+
+    private var context: NSManagedObjectContext { coreDataStack.syncContext }
+
     private func messageNonce(fromPushChannelData payload: [AnyHashable: Any]) -> UUID? {
         guard
             let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
@@ -393,11 +406,6 @@ public final class NotificationSession {
         }
 
         return UUID(uuidString: rawUUID)
-    }
-
-    private enum PushChannelKeys: String {
-        case data
-        case identifier = "id"
     }
 }
 
@@ -626,11 +634,7 @@ extension NotificationSession {
 // MARK: - CallEventPayload
 
 public struct CallEventPayload {
-    public let accountID: String
-    public let conversationID: String
-    public let shouldRing: Bool
-    public let callerName: String
-    public let hasVideo: Bool
+    // MARK: Lifecycle
 
     public init(
         accountID: String,
@@ -645,4 +649,12 @@ public struct CallEventPayload {
         self.callerName = callerName
         self.hasVideo = hasVideo
     }
+
+    // MARK: Public
+
+    public let accountID: String
+    public let conversationID: String
+    public let shouldRing: Bool
+    public let callerName: String
+    public let hasVideo: Bool
 }

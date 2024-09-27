@@ -31,6 +31,8 @@ struct OpenGraphMockData {
 // MARK: - OpenGraphMockDataProvider
 
 final class OpenGraphMockDataProvider: NSObject {
+    // MARK: Internal
+
     static func twitterData() -> OpenGraphMockData {
         let expected = OpenGraphData(
             title: "ericasadun on Twitter",
@@ -422,6 +424,8 @@ final class OpenGraphMockDataProvider: NSObject {
             urlVersion: nil
         )
     }
+
+    // MARK: Private
 
     // MARK: - Helper
 

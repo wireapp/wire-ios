@@ -647,7 +647,7 @@ extension ZMClientMessageTests_Deletion {
 // MARK: - AssetDeletionNotificationObserver
 
 private final class AssetDeletionNotificationObserver: NSObject {
-    private(set) var deletedIdentifiers = [String]()
+    // MARK: Lifecycle
 
     override init() {
         super.init()
@@ -658,6 +658,12 @@ private final class AssetDeletionNotificationObserver: NSObject {
             object: nil
         )
     }
+
+    // MARK: Internal
+
+    private(set) var deletedIdentifiers = [String]()
+
+    // MARK: Private
 
     @objc
     private func handle(note: Notification) {

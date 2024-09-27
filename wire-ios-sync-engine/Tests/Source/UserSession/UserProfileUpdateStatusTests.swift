@@ -21,15 +21,11 @@ import XCTest
 @testable import WireSyncEngine
 
 final class UserProfileUpdateStatusTests: MessagingTest {
+    // MARK: Internal
+
     var observerToken: Any?
 
     var sut: UserProfileUpdateStatus! = nil
-
-    fileprivate var observer: TestUserProfileUpdateObserver! = nil
-
-    fileprivate var newRequestObserver: OperationLoopNewRequestObserver!
-
-    fileprivate var mockAnalytics: MockAnalytics!
 
     /// Number of time the new request callback was invoked
     var newRequestCallbackCount: Int {
@@ -875,4 +871,12 @@ final class UserProfileUpdateStatusTests: MessagingTest {
         XCTAssertEqual(sut.suggestedHandlesToCheck?.count, 1)
         XCTAssertEqual(sut.suggestedHandlesToCheck?.first, handle)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var observer: TestUserProfileUpdateObserver! = nil
+
+    fileprivate var newRequestObserver: OperationLoopNewRequestObserver!
+
+    fileprivate var mockAnalytics: MockAnalytics!
 }

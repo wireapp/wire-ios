@@ -56,40 +56,7 @@ public protocol AssetCollectionDelegate: NSObjectProtocol {
 /// For every categorized batch it will call the delegate with the newly categorized objects and then once again when it
 /// finished categorizing all objects
 public class AssetCollection: NSObject, ZMCollection {
-    private unowned var delegate: AssetCollectionDelegate
-    private var assets: [CategoryMatch: [ZMMessage]]?
-    private var lastAssetMessage: ZMAssetClientMessage?
-    private var lastClientMessage: ZMClientMessage?
-    private let conversation: ZMConversation?
-    private let matchingCategories: [CategoryMatch]
-
-    enum MessagesToFetch {
-        case client, asset
-    }
-
-    public static let initialFetchCount = 100
-    public static let defaultFetchCount = 500
-    public private(set) var doneFetchingAssets = false
-    public private(set) var doneFetchingTexts = false
-
-    private var tornDown = false {
-        didSet {
-            doneFetchingAssets = true
-            doneFetchingTexts = true
-        }
-    }
-
-    public var fetchingDone: Bool {
-        doneFetchingTexts && doneFetchingAssets
-    }
-
-    private var syncMOC: NSManagedObjectContext? {
-        conversation?.managedObjectContext?.zm_sync
-    }
-
-    private var uiMOC: NSManagedObjectContext? {
-        conversation?.managedObjectContext
-    }
+    // MARK: Lifecycle
 
     /// Returns a collection that automatically fetches the assets in batches
     /// @param categoriesToFetch: The AssetCollection only returns and calls the delegate for these categories
@@ -139,15 +106,27 @@ public class AssetCollection: NSObject, ZMCollection {
         }
     }
 
+    deinit {
+        precondition(tornDown, "Call tearDown to avoid continued fetch requests")
+    }
+
+    // MARK: Public
+
+    public static let initialFetchCount = 100
+    public static let defaultFetchCount = 500
+
+    public private(set) var doneFetchingAssets = false
+    public private(set) var doneFetchingTexts = false
+
+    public var fetchingDone: Bool {
+        doneFetchingTexts && doneFetchingAssets
+    }
+
     /// Cancels further fetch requests
     public func tearDown() {
         tornDown = true
         doneFetchingAssets = true
         doneFetchingTexts = true
-    }
-
-    deinit {
-        precondition(tornDown, "Call tearDown to avoid continued fetch requests")
     }
 
     /// Returns all assets that have been fetched thus far
@@ -159,6 +138,56 @@ public class AssetCollection: NSObject, ZMCollection {
             return withoutZombie
         }
         return []
+    }
+
+    // MARK: Internal
+
+    enum MessagesToFetch {
+        case client, asset
+    }
+
+    func messages<T: ZMMessage>(
+        for conversation: ZMConversation,
+        startAfter previousMessage: ZMMessage?,
+        fetchLimit: Int
+    ) -> [T] {
+        let request: NSFetchRequest<T> = AssetCollectionBatched.fetchRequestForUnCategorizedMessages(in: conversation)
+        if let serverTimestamp = previousMessage?.serverTimestamp {
+            let messagePredicate = NSPredicate(format: "serverTimestamp < %@", serverTimestamp as NSDate)
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                request.predicate!,
+                messagePredicate,
+            ])
+        }
+        request.fetchLimit = fetchLimit
+        request.returnsObjectsAsFaults = false
+
+        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else { return [] }
+        return result
+    }
+
+    // MARK: Private
+
+    private unowned var delegate: AssetCollectionDelegate
+    private var assets: [CategoryMatch: [ZMMessage]]?
+    private var lastAssetMessage: ZMAssetClientMessage?
+    private var lastClientMessage: ZMClientMessage?
+    private let conversation: ZMConversation?
+    private let matchingCategories: [CategoryMatch]
+
+    private var tornDown = false {
+        didSet {
+            doneFetchingAssets = true
+            doneFetchingTexts = true
+        }
+    }
+
+    private var syncMOC: NSManagedObjectContext? {
+        conversation?.managedObjectContext?.zm_sync
+    }
+
+    private var uiMOC: NSManagedObjectContext? {
+        conversation?.managedObjectContext
     }
 
     private func setFetchingCompleteFor(type: MessagesToFetch) {
@@ -281,25 +310,5 @@ public class AssetCollection: NSObject, ZMCollection {
             guard let self, !self.tornDown else { return }
             delegate.assetCollectionDidFinishFetching(collection: self, result: result)
         }
-    }
-
-    func messages<T: ZMMessage>(
-        for conversation: ZMConversation,
-        startAfter previousMessage: ZMMessage?,
-        fetchLimit: Int
-    ) -> [T] {
-        let request: NSFetchRequest<T> = AssetCollectionBatched.fetchRequestForUnCategorizedMessages(in: conversation)
-        if let serverTimestamp = previousMessage?.serverTimestamp {
-            let messagePredicate = NSPredicate(format: "serverTimestamp < %@", serverTimestamp as NSDate)
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                request.predicate!,
-                messagePredicate,
-            ])
-        }
-        request.fetchLimit = fetchLimit
-        request.returnsObjectsAsFaults = false
-
-        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else { return [] }
-        return result
     }
 }

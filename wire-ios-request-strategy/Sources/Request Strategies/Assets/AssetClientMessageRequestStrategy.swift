@@ -26,9 +26,7 @@ import Foundation
 /// send it using the `/messages` endpoint like any other message. This is an additional step required
 /// as the fan-out was previously done by the backend when uploading a v2 asset.
 public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-    let managedObjectContext: NSManagedObjectContext
-    let insertedObjectSync: InsertedObjectSync<AssetClientMessageRequestStrategy>
-    let messageSender: MessageSenderInterface
+    // MARK: Lifecycle
 
     public init(managedObjectContext: NSManagedObjectContext, messageSender: MessageSenderInterface) {
         self.managedObjectContext = managedObjectContext
@@ -44,9 +42,17 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
         insertedObjectSync.transcoder = self
     }
 
+    // MARK: Public
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [insertedObjectSync]
     }
+
+    // MARK: Internal
+
+    let managedObjectContext: NSManagedObjectContext
+    let insertedObjectSync: InsertedObjectSync<AssetClientMessageRequestStrategy>
+    let messageSender: MessageSenderInterface
 
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)

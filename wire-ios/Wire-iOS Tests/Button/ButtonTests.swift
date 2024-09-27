@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ButtonTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: LegacyButton!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -76,4 +73,11 @@ final class ButtonTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: LegacyButton!
 }

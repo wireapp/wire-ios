@@ -22,14 +22,18 @@ import WireCommonComponents
 // MARK: - SecondaryButtonDescription
 
 final class SecondaryButtonDescription {
-    var buttonTapped: (() -> Void)?
-    let title: String
-    let accessibilityIdentifier: String
+    // MARK: Lifecycle
 
     init(title: String, accessibilityIdentifier: String) {
         self.title = title
         self.accessibilityIdentifier = accessibilityIdentifier
     }
+
+    // MARK: Internal
+
+    var buttonTapped: (() -> Void)?
+    let title: String
+    let accessibilityIdentifier: String
 }
 
 // MARK: ViewDescriptor

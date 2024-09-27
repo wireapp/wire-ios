@@ -21,7 +21,7 @@ import XCTest
 @testable import Wire
 
 final class SwitchBackendConfirmationViewTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -31,19 +31,6 @@ final class SwitchBackendConfirmationViewTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         super.tearDown()
-    }
-
-    private func createSUT() -> SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(viewModel: SwitchBackendConfirmationViewModel(
-            backendName: "Staging",
-            backendURL: "www.staging.com",
-            backendWSURL: "www.ws.staging.com",
-            blacklistURL: "www.blacklist.staging.com",
-            teamsURL: "www.teams.staging.com",
-            accountsURL: "www.accounts.staging.com",
-            websiteURL: "www.wire.com",
-            didConfirm: { _ in }
-        ))
     }
 
     func testLightUI() {
@@ -56,5 +43,22 @@ final class SwitchBackendConfirmationViewTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: createSUT)
+    }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
+
+    private func createSUT() -> SwitchBackendConfirmationView {
+        SwitchBackendConfirmationView(viewModel: SwitchBackendConfirmationViewModel(
+            backendName: "Staging",
+            backendURL: "www.staging.com",
+            backendWSURL: "www.ws.staging.com",
+            blacklistURL: "www.blacklist.staging.com",
+            teamsURL: "www.teams.staging.com",
+            accountsURL: "www.accounts.staging.com",
+            websiteURL: "www.wire.com",
+            didConfirm: { _ in }
+        ))
     }
 }

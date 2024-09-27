@@ -35,11 +35,7 @@ protocol SyncManagerProtocol {
 // MARK: - SyncManager
 
 final class SyncManager: SyncManagerProtocol {
-    private(set) var syncState: SyncState = .suspended
-    private var isSuspending = false
-
-    private let updateEventsRepository: any UpdateEventsRepositoryProtocol
-    private let updateEventProcessor: any UpdateEventProcessorProtocol
+    // MARK: Lifecycle
 
     init(
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
@@ -48,6 +44,10 @@ final class SyncManager: SyncManagerProtocol {
         self.updateEventsRepository = updateEventsRepository
         self.updateEventProcessor = updateEventProcessor
     }
+
+    // MARK: Internal
+
+    private(set) var syncState: SyncState = .suspended
 
     func performQuickSync() async throws {
         if case .quickSync = syncState {
@@ -111,6 +111,13 @@ final class SyncManager: SyncManagerProtocol {
         syncState = .suspended
         isSuspending = false
     }
+
+    // MARK: Private
+
+    private var isSuspending = false
+
+    private let updateEventsRepository: any UpdateEventsRepositoryProtocol
+    private let updateEventProcessor: any UpdateEventProcessorProtocol
 
     private var ongoingTask: Task<Void, Error>? {
         switch syncState {

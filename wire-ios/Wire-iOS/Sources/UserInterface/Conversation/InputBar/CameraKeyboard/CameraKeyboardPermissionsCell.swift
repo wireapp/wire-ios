@@ -32,17 +32,7 @@ enum DeniedAuthorizationType {
 // MARK: - CameraKeyboardPermissionsCell
 
 final class CameraKeyboardPermissionsCell: UICollectionViewCell {
-    // MARK: - Properties
-
-    let settingsButton = ZMButton(
-        style: .secondaryTextButtonStyle,
-        cornerRadius: 4,
-        fontSpec: .normalSemiboldFont
-    )
-    let cameraIcon = IconButton()
-    let descriptionLabel = UILabel()
-
-    private let containerView = UIView()
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -83,6 +73,18 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
         configure(deniedAuthorization: deniedAuthorization)
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let settingsButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 4,
+        fontSpec: .normalSemiboldFont
+    )
+    let cameraIcon = IconButton()
+    let descriptionLabel = UILabel()
+
     // MARK: - Configure elements
 
     func configure(deniedAuthorization: DeniedAuthorizationType) {
@@ -104,6 +106,10 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
             createConstraints(deniedAuthorization: deniedAuthorization)
         }
     }
+
+    // MARK: Private
+
+    private let containerView = UIView()
 
     // MARK: - Actions
 

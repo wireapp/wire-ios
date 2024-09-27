@@ -45,13 +45,11 @@ protocol CallDegradationControllerDelegate: AnyObject {
 // MARK: - CallDegradationController
 
 final class CallDegradationController: UIViewController {
+    // MARK: Internal
+
     weak var delegate: CallDegradationControllerDelegate?
     weak var targetViewController: UIViewController?
     var visibleAlertController: UIAlertController?
-
-    // Used to delay presentation of the alert controller until
-    // the view is ready.
-    private var viewIsReady = false
 
     var state: CallDegradationState = .none {
         didSet {
@@ -60,6 +58,19 @@ final class CallDegradationController: UIViewController {
             updateState()
         }
     }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.isUserInteractionEnabled = false
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewIsReady = true
+        presentAlertIfNeeded()
+    }
+
+    // MARK: Fileprivate
 
     fileprivate func updateState() {
         switch state {
@@ -90,16 +101,11 @@ final class CallDegradationController: UIViewController {
         presentAlertIfNeeded()
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.isUserInteractionEnabled = false
-    }
+    // MARK: Private
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        viewIsReady = true
-        presentAlertIfNeeded()
-    }
+    // Used to delay presentation of the alert controller until
+    // the view is ready.
+    private var viewIsReady = false
 
     private func presentAlertIfNeeded() {
         guard

@@ -27,6 +27,8 @@ public enum ZMConversationLegalHoldStatus: Int16 {
     case pendingApproval = 1
     case enabled = 2
 
+    // MARK: Public
+
     public var denotesEnabledComplianceDevice: Bool {
         switch self {
         case .pendingApproval, .enabled:
@@ -42,11 +44,13 @@ public enum ZMConversationLegalHoldStatus: Int16 {
 /// Represents a set of client changes in a conversation.
 
 public struct ZMConversationRemoteClientChangeSet: OptionSet {
-    public let rawValue: Int
+    // MARK: Lifecycle
 
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
+
+    // MARK: Public
 
     /// Deleted clients were detected.
     public static let deleted = ZMConversationRemoteClientChangeSet(rawValue: 1 << 0)
@@ -56,6 +60,8 @@ public struct ZMConversationRemoteClientChangeSet: OptionSet {
 
     /// Redundant clients were detected.
     public static let redundant = ZMConversationRemoteClientChangeSet(rawValue: 1 << 2)
+
+    public let rawValue: Int
 }
 
 extension ZMConversation {

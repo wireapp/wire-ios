@@ -24,15 +24,7 @@ import XCTest
 // MARK: - MockDestination
 
 final class MockDestination: NSObject, ShareDestination {
-    var isUnderLegalHold: Bool
-
-    var showsGuestIcon: Bool
-
-    var displayNameWithFallback: String
-
-    var securityLevel: ZMConversationSecurityLevel
-
-    var avatarView: UIView?
+    // MARK: Lifecycle
 
     init(
         displayName: String,
@@ -47,23 +39,24 @@ final class MockDestination: NSObject, ShareDestination {
         self.showsGuestIcon = showsGuestIcon
         self.isUnderLegalHold = isUnderLegalHold
     }
+
+    // MARK: Internal
+
+    var isUnderLegalHold: Bool
+
+    var showsGuestIcon: Bool
+
+    var displayNameWithFallback: String
+
+    var securityLevel: ZMConversationSecurityLevel
+
+    var avatarView: UIView?
 }
 
 // MARK: - ShareDestinationCellTests
 
 final class ShareDestinationCellTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: ShareDestinationCell<MockDestination>!
-    private var destination: MockDestination?
-    private var mockAvatarView: UIImageView {
-        // just using a simple UIImageView, since ConversationAvatarView is covered in ConversationAvatarViewTests
-        let imageView = UIImageView(image: image(inTestBundleNamed: "unsplash_burger.jpg"))
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        return imageView
-    }
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -384,6 +377,22 @@ final class ShareDestinationCellTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut.prepareForSnapshotWithCellSelected())
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ShareDestinationCell<MockDestination>!
+    private var destination: MockDestination?
+
+    private var mockAvatarView: UIImageView {
+        // just using a simple UIImageView, since ConversationAvatarView is covered in ConversationAvatarViewTests
+        let imageView = UIImageView(image: image(inTestBundleNamed: "unsplash_burger.jpg"))
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
     }
 }
 

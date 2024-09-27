@@ -44,6 +44,21 @@ extension BackendEnvironmentProvider {
 
 /// Wrapper around Reachability to delay network calls if needed
 final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable {
+    // MARK: Lifecycle
+
+    init(enabled: Bool, reachabilityClosure: @escaping () -> Reachability) {
+        self.enabled = enabled
+        self.reachabilityClosure = reachabilityClosure
+        super.init()
+        if enabled {
+            self.safeReachability = reachabilityClosure()
+        }
+    }
+
+    // MARK: Internal
+
+    var reachabilityClosure: () -> Reachability
+
     var mayBeReachable: Bool {
         safeReachability?.mayBeReachable == true
     }
@@ -58,21 +73,6 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
 
     var oldIsMobileConnection: Bool {
         safeReachability?.oldIsMobileConnection == true
-    }
-
-    func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {
-        guard let reachability = safeReachability, enabled else {
-            return NSObject()
-        }
-        return reachability.add(observer, queue: queue)
-    }
-
-    func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
-        guard let reachability = safeReachability, enabled else {
-            return NSObject()
-        }
-
-        return reachability.addReachabilityObserver(on: queue, block: block)
     }
 
     var enabled: Bool {
@@ -91,7 +91,27 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
         }
     }
 
-    var reachabilityClosure: () -> Reachability
+    func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {
+        guard let reachability = safeReachability, enabled else {
+            return NSObject()
+        }
+        return reachability.add(observer, queue: queue)
+    }
+
+    func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
+        guard let reachability = safeReachability, enabled else {
+            return NSObject()
+        }
+
+        return reachability.addReachabilityObserver(on: queue, block: block)
+    }
+
+    func tearDown() {
+        safeReachability?.tearDown()
+    }
+
+    // MARK: Private
+
     private var safeReachability: Reachability? {
         didSet {
             if safeReachability == nil {
@@ -100,18 +120,5 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
                 WireLogger.backend.debug("did set reachbility provider")
             }
         }
-    }
-
-    init(enabled: Bool, reachabilityClosure: @escaping () -> Reachability) {
-        self.enabled = enabled
-        self.reachabilityClosure = reachabilityClosure
-        super.init()
-        if enabled {
-            self.safeReachability = reachabilityClosure()
-        }
-    }
-
-    func tearDown() {
-        safeReachability?.tearDown()
     }
 }

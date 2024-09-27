@@ -21,8 +21,7 @@ import XCTest
 @testable import Wire
 
 final class RoundedBlurViewTests: XCTestCase {
-    private var sut: RoundedBlurView!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -56,4 +55,9 @@ final class RoundedBlurViewTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: container)
     }
+
+    // MARK: Private
+
+    private var sut: RoundedBlurView!
+    private var snapshotHelper: SnapshotHelper!
 }

@@ -29,28 +29,27 @@ protocol APIMigration {
 // MARK: - APIMigrationManager
 
 final class APIMigrationManager {
-    let migrations: [APIMigration]
-    var previousAPIVersion: APIVersion?
+    // MARK: Lifecycle
 
     init(migrations: [APIMigration]) {
         self.migrations = migrations
+    }
+
+    // MARK: Internal
+
+    let migrations: [APIMigration]
+    var previousAPIVersion: APIVersion?
+
+    // MARK: - Tests
+
+    static func removeDefaults(for clientID: String) {
+        UserDefaults.standard.removePersistentDomain(forName: "com.wire.apiversion.\(clientID)")
     }
 
     func isMigration(to apiVersion: APIVersion, neededForSessions sessions: [ZMUserSession]) -> Bool {
         sessions.contains {
             isMigration(to: apiVersion, neededForSession: $0)
         }
-    }
-
-    private func isMigration(to apiVersion: APIVersion, neededForSession session: ZMUserSession) -> Bool {
-        guard let clientID = clientId(for: session) else {
-            return false
-        }
-
-        return !migrations(
-            between: lastUsedAPIVersion(for: clientID),
-            and: apiVersion
-        ).isEmpty
     }
 
     func migrateIfNeeded(sessions: [ZMUserSession], to apiVersion: APIVersion) async {
@@ -68,6 +67,41 @@ final class APIMigrationManager {
 
             persistLastUsedAPIVersion(for: session, apiVersion: apiVersion)
         }
+    }
+
+    func persistLastUsedAPIVersion(for sessions: [ZMUserSession], apiVersion: APIVersion) {
+        for session in sessions {
+            persistLastUsedAPIVersion(for: session, apiVersion: apiVersion)
+        }
+    }
+
+    // MARK: - Helpers
+
+    func lastUsedAPIVersion(for clientID: String) -> APIVersion {
+        userDefaults(for: clientID).lastUsedAPIVersion ?? previousAPIVersion ?? .v2
+    }
+
+    func persistLastUsedAPIVersion(for session: ZMUserSession, apiVersion: APIVersion) {
+        guard let clientID = clientId(for: session) else {
+            return
+        }
+
+        WireLogger.apiMigration
+            .info("persisting last used API version (v\(apiVersion.rawValue)) for client (\(clientID))")
+        userDefaults(for: clientID).lastUsedAPIVersion = apiVersion
+    }
+
+    // MARK: Private
+
+    private func isMigration(to apiVersion: APIVersion, neededForSession session: ZMUserSession) -> Bool {
+        guard let clientID = clientId(for: session) else {
+            return false
+        }
+
+        return !migrations(
+            between: lastUsedAPIVersion(for: clientID),
+            and: apiVersion
+        ).isEmpty
     }
 
     private func migrate(
@@ -101,28 +135,6 @@ final class APIMigrationManager {
         }
     }
 
-    func persistLastUsedAPIVersion(for sessions: [ZMUserSession], apiVersion: APIVersion) {
-        for session in sessions {
-            persistLastUsedAPIVersion(for: session, apiVersion: apiVersion)
-        }
-    }
-
-    // MARK: - Helpers
-
-    func lastUsedAPIVersion(for clientID: String) -> APIVersion {
-        userDefaults(for: clientID).lastUsedAPIVersion ?? previousAPIVersion ?? .v2
-    }
-
-    func persistLastUsedAPIVersion(for session: ZMUserSession, apiVersion: APIVersion) {
-        guard let clientID = clientId(for: session) else {
-            return
-        }
-
-        WireLogger.apiMigration
-            .info("persisting last used API version (v\(apiVersion.rawValue)) for client (\(clientID))")
-        userDefaults(for: clientID).lastUsedAPIVersion = apiVersion
-    }
-
     private func userDefaults(for clientID: String) -> UserDefaults {
         UserDefaults(suiteName: "com.wire.apiversion.\(clientID)")!
     }
@@ -143,12 +155,6 @@ final class APIMigrationManager {
         return migrations.filter {
             (lVersion.rawValue + 1 ..< rVersion.rawValue + 1).contains($0.version.rawValue)
         }
-    }
-
-    // MARK: - Tests
-
-    static func removeDefaults(for clientID: String) {
-        UserDefaults.standard.removePersistentDomain(forName: "com.wire.apiversion.\(clientID)")
     }
 }
 

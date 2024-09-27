@@ -25,10 +25,7 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - ExtensionBackupExcluder
 
 final class ExtensionBackupExcluder: BackupExcluder {
-    private static let filesToExclude: [FileInDirectory] = [
-        (.libraryDirectory, "Cookies/Cookies.binarycookies"),
-        (.libraryDirectory, "."),
-    ]
+    // MARK: Internal
 
     static func exclude() {
         do {
@@ -37,4 +34,11 @@ final class ExtensionBackupExcluder: BackupExcluder {
             zmLog.error("Cannot exclude file from the backup: \(self): \(error)")
         }
     }
+
+    // MARK: Private
+
+    private static let filesToExclude: [FileInDirectory] = [
+        (.libraryDirectory, "Cookies/Cookies.binarycookies"),
+        (.libraryDirectory, "."),
+    ]
 }

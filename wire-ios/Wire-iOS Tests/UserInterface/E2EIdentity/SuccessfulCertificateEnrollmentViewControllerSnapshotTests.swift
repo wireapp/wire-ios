@@ -21,7 +21,7 @@ import XCTest
 @testable import Wire
 
 final class SuccessfulCertificateEnrollmentViewControllerSnapshotTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -42,4 +42,8 @@ final class SuccessfulCertificateEnrollmentViewControllerSnapshotTests: XCTestCa
         let sut = SuccessfulCertificateEnrollmentViewController(isUpdateMode: true)
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

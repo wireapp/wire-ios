@@ -25,6 +25,27 @@ import WireSyncEngine
 
 /// A user image view that can display a badge on top for different connection states.
 final class BadgeUserImageView: UserImageView {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override convenience init(frame: CGRect) {
+        self.init(size: .small)
+    }
+
+    override init(size: UserImageView.Size = .small) {
+        super.init(size: size)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     /// The color of the badge.
     var badgeColor: UIColor = .white {
         didSet {
@@ -46,25 +67,25 @@ final class BadgeUserImageView: UserImageView {
         }
     }
 
+    // MARK: - Updates
+
+    override func updateUser() {
+        super.updateUser()
+        updateBadgeIcon()
+    }
+
+    override func userDidChange(_ changeInfo: UserChangeInfo) {
+        super.userDidChange(changeInfo)
+
+        if changeInfo.connectionStateChanged {
+            updateBadgeIcon()
+        }
+    }
+
+    // MARK: Private
+
     private let badgeImageView = UIImageView()
     private let badgeShadow = UIView()
-
-    // MARK: - Initialization
-
-    override convenience init(frame: CGRect) {
-        self.init(size: .small)
-    }
-
-    override init(size: UserImageView.Size = .small) {
-        super.init(size: size)
-        configureSubviews()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     private func configureSubviews() {
         isOpaque = false
@@ -94,21 +115,6 @@ final class BadgeUserImageView: UserImageView {
             badgeImageView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
             badgeImageView.centerYAnchor.constraint(equalTo: container.centerYAnchor),
         ])
-    }
-
-    // MARK: - Updates
-
-    override func updateUser() {
-        super.updateUser()
-        updateBadgeIcon()
-    }
-
-    override func userDidChange(_ changeInfo: UserChangeInfo) {
-        super.userDidChange(changeInfo)
-
-        if changeInfo.connectionStateChanged {
-            updateBadgeIcon()
-        }
     }
 
     /// Updates the badge icon.

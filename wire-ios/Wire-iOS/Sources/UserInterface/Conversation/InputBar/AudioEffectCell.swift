@@ -23,25 +23,17 @@ import WireDesign
 // MARK: - AudioEffectCellBorders
 
 struct AudioEffectCellBorders: OptionSet {
-    let rawValue: Int
-
     static let None   = AudioEffectCellBorders([])
     static let Right  = AudioEffectCellBorders(rawValue: 1 << 0)
     static let Bottom = AudioEffectCellBorders(rawValue: 1 << 1)
+
+    let rawValue: Int
 }
 
 // MARK: - AudioEffectCell
 
 final class AudioEffectCell: UICollectionViewCell {
-    private let iconView = IconButton()
-    private let borderRightView = UIView()
-    private let borderBottomView = UIView()
-
-    var borders: AudioEffectCellBorders = [.None] {
-        didSet {
-            updateBorders()
-        }
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -86,25 +78,18 @@ final class AudioEffectCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var borders: AudioEffectCellBorders = [.None] {
+        didSet {
+            updateBorders()
+        }
+    }
+
     override var isSelected: Bool {
         didSet {
             updateForSelectedState()
         }
-    }
-
-    private func updateBorders() {
-        borderRightView.isHidden = !borders.contains(.Right)
-        borderBottomView.isHidden = !borders.contains(.Bottom)
-    }
-
-    private func updateForSelectedState() {
-        let color: UIColor = isSelected ? UIColor.accent() : SemanticColors.Icon.foregroundDefaultBlack
-        iconView.setIconColor(color, for: .normal)
-    }
-
-    private func setupAccessibility() {
-        isAccessibilityElement = true
-        accessibilityTraits = .button
     }
 
     var effect: AVSAudioEffectType = .none {
@@ -119,5 +104,26 @@ final class AudioEffectCell: UICollectionViewCell {
         effect = .none
         borders = .None
         updateForSelectedState()
+    }
+
+    // MARK: Private
+
+    private let iconView = IconButton()
+    private let borderRightView = UIView()
+    private let borderBottomView = UIView()
+
+    private func updateBorders() {
+        borderRightView.isHidden = !borders.contains(.Right)
+        borderBottomView.isHidden = !borders.contains(.Bottom)
+    }
+
+    private func updateForSelectedState() {
+        let color: UIColor = isSelected ? UIColor.accent() : SemanticColors.Icon.foregroundDefaultBlack
+        iconView.setIconColor(color, for: .normal)
+    }
+
+    private func setupAccessibility() {
+        isAccessibilityElement = true
+        accessibilityTraits = .button
     }
 }

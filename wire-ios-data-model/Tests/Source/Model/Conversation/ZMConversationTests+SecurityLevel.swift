@@ -21,20 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
-    private var context: NSManagedObjectContext { syncMOC }
-
-    private func createUsersWithClientsOnSyncMOC(count: Int) -> [ZMUser] {
-        selfUser = ZMUser.selfUser(in: context)
-        return (0 ..< count).map { i in
-            let user = ZMUser.insertNewObject(in: context)
-            let userClient = UserClient.insertNewObject(in: context)
-            let userConnection = ZMConnection.insertNewSentConnection(to: user)
-            userConnection.status = .accepted
-            userClient.user = user
-            user.name = "createdUser \(i + 1)"
-            return user
-        }
-    }
+    // MARK: Internal
 
     func testThatConversationInitialSecurityLevelIsNotSecured() {
         context.performGroupedAndWait {
@@ -391,8 +378,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
-
-    private var creationCounter = 1 // used to distinguish users
 
     func insertUser(conversation: ZMConversation, userIsTrusted: Bool, moc: NSManagedObjectContext) -> ZMUser {
         let selfClient = createSelfClient(onMOC: moc)
@@ -1062,5 +1047,24 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.securityLevel, .secure)
+    }
+
+    // MARK: Private
+
+    private var creationCounter = 1 // used to distinguish users
+
+    private var context: NSManagedObjectContext { syncMOC }
+
+    private func createUsersWithClientsOnSyncMOC(count: Int) -> [ZMUser] {
+        selfUser = ZMUser.selfUser(in: context)
+        return (0 ..< count).map { i in
+            let user = ZMUser.insertNewObject(in: context)
+            let userClient = UserClient.insertNewObject(in: context)
+            let userConnection = ZMConnection.insertNewSentConnection(to: user)
+            userConnection.status = .accepted
+            userClient.user = user
+            user.name = "createdUser \(i + 1)"
+            return user
+        }
     }
 }

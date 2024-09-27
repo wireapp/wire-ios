@@ -20,7 +20,7 @@ import XCTest
 @testable import WireAPI
 
 final class FeatureConfigEventDecodingTests: XCTestCase {
-    private var decoder: JSONDecoder!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -202,11 +202,9 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         )
     }
 
-    private enum Scaffolding {
-        static func date(from string: String) -> Date {
-            ISO8601DateFormatter.internetDateTime.date(from: string)!
-        }
+    // MARK: Private
 
+    private enum Scaffolding {
         static let connectionRemovedEvent = FederationConnectionRemovedEvent(
             domains: [
                 "a.com",
@@ -322,5 +320,11 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                 )
             )
         )
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
+        }
     }
+
+    private var decoder: JSONDecoder!
 }

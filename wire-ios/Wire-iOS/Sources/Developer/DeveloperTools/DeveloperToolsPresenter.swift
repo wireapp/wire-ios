@@ -21,7 +21,7 @@ import SwiftUI
 // MARK: - DeveloperToolsPresenter
 
 final class DeveloperToolsPresenter: NSObject {
-    private var displayedDeveloperTools = false
+    // MARK: Internal
 
     func presentIfNotDisplayed(
         with router: AppRootRouter?,
@@ -46,6 +46,10 @@ final class DeveloperToolsPresenter: NSObject {
             self?.displayedDeveloperTools = true
         }
     }
+
+    // MARK: Private
+
+    private var displayedDeveloperTools = false
 }
 
 // MARK: UIAdaptivePresentationControllerDelegate

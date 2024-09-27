@@ -23,8 +23,7 @@ import WireShareEngine
 
 /// `UnsentSendable` implementation to send GIF image messages
 final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
-    private var gifImageData: Data?
-    private let attachment: NSItemProvider
+    // MARK: Lifecycle
 
     init?(conversation: Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
         guard attachment.hasItemConformingToTypeIdentifier(UTType.gif.identifier) else { return nil }
@@ -32,6 +31,8 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
         super.init(conversation: conversation, sharingSession: sharingSession)
         needsPreparation = true
     }
+
+    // MARK: Internal
 
     func prepare(completion: @escaping () -> Void) {
         precondition(needsPreparation, "Ensure this objects needs preparation, c.f. `needsPreparation`")
@@ -60,4 +61,9 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
             completion(gifImageData.flatMap(conversation.appendImage))
         }
     }
+
+    // MARK: Private
+
+    private var gifImageData: Data?
+    private let attachment: NSItemProvider
 }

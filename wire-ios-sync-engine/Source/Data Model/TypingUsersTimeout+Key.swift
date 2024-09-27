@@ -24,8 +24,7 @@ private let log = ZMSLog(tag: "core-data")
 
 extension TypingUsersTimeout {
     struct Key: Hashable {
-        var userObjectId: NSManagedObjectID
-        var conversationObjectId: NSManagedObjectID
+        // MARK: Lifecycle
 
         init(user: ZMUser, conversation: ZMConversation) {
             // We need the ids to be permanent.
@@ -41,5 +40,10 @@ extension TypingUsersTimeout {
             self.conversationObjectId = conversation.objectID
             require(!userObjectId.isTemporaryID && !conversationObjectId.isTemporaryID)
         }
+
+        // MARK: Internal
+
+        var userObjectId: NSManagedObjectID
+        var conversationObjectId: NSManagedObjectID
     }
 }

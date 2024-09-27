@@ -20,6 +20,8 @@ import XCTest
 @testable import Ziphy
 
 class ZiphyRequestGeneratorTests: XCTestCase {
+    // MARK: Internal
+
     var generator: ZiphyRequestGenerator!
 
     override func setUp() {
@@ -52,6 +54,8 @@ class ZiphyRequestGeneratorTests: XCTestCase {
         let request = generator.makeRandomImageRequest()
         verifyURL(request, expected: "https://localhost/v1/gifs/random")
     }
+
+    // MARK: Private
 
     // MARK: - Utilities
 

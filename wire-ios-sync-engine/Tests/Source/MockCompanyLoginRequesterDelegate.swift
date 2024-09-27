@@ -19,13 +19,19 @@
 import WireSyncEngine
 
 class MockCompanyLoginRequesterDelegate: CompanyLoginRequesterDelegate {
-    private let verificationBlock: (URL) -> Void
+    // MARK: Lifecycle
 
     init(verificationBlock: @escaping (URL) -> Void) {
         self.verificationBlock = verificationBlock
     }
 
+    // MARK: Internal
+
     func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL) {
         verificationBlock(url)
     }
+
+    // MARK: Private
+
+    private let verificationBlock: (URL) -> Void
 }

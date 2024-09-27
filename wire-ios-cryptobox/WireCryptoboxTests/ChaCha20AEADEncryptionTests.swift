@@ -20,16 +20,7 @@ import XCTest
 @testable import WireCryptobox
 
 class ChaCha20AEADEncryptionTests: XCTestCase {
-    private let context = Data.secureRandomData(length: 8)
-
-    // MARK: - Helpers
-
-    private typealias Sut = ChaCha20Poly1305.AEADEncryption
-
-    private func generateRandomCiphertext(length: UInt) -> Data {
-        // Large enough to include authentication bytes in the ciphertext.
-        Data.secureRandomData(length: length + UInt(crypto_aead_aes256gcm_ABYTES))
-    }
+    // MARK: Internal
 
     // MARK: - Positive Tests
 
@@ -158,5 +149,18 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
         } catch {
             XCTFail("Unexpected error: \(error.localizedDescription)")
         }
+    }
+
+    // MARK: Private
+
+    // MARK: - Helpers
+
+    private typealias Sut = ChaCha20Poly1305.AEADEncryption
+
+    private let context = Data.secureRandomData(length: 8)
+
+    private func generateRandomCiphertext(length: UInt) -> Data {
+        // Large enough to include authentication bytes in the ciphertext.
+        Data.secureRandomData(length: length + UInt(crypto_aead_aes256gcm_ABYTES))
     }
 }

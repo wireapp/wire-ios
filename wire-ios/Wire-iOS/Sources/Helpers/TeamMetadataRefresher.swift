@@ -24,22 +24,7 @@ import WireSyncEngine
 /// It ensures the trigger is not made more than once within a specified time interval.
 
 final class TeamMetadataRefresher {
-    // MARK: - Properties
-
-    /// The minimum interval of time between consecutive refreshes. Defaults to 24 hours.
-
-    let refreshInterval: TimeInterval
-
-    // MARK: - Private Properties
-
-    private var dateOfLastRefresh: Date?
-    private let selfUserProvider: SelfUserProvider?
-
-    private var isTimeoutExpired: Bool {
-        guard let dateOfLastRefresh else { return true }
-        let intervalSinceLastRefresh = -dateOfLastRefresh.timeIntervalSinceNow
-        return intervalSinceLastRefresh > refreshInterval
-    }
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -50,6 +35,14 @@ final class TeamMetadataRefresher {
         self.refreshInterval = refreshInterval
         self.selfUserProvider = selfUserProvider
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    /// The minimum interval of time between consecutive refreshes. Defaults to 24 hours.
+
+    let refreshInterval: TimeInterval
 
     // MARK: - Methods
 
@@ -66,5 +59,18 @@ final class TeamMetadataRefresher {
 
         selfUser.refreshTeamData()
         dateOfLastRefresh = Date()
+    }
+
+    // MARK: Private
+
+    // MARK: - Private Properties
+
+    private var dateOfLastRefresh: Date?
+    private let selfUserProvider: SelfUserProvider?
+
+    private var isTimeoutExpired: Bool {
+        guard let dateOfLastRefresh else { return true }
+        let intervalSinceLastRefresh = -dateOfLastRefresh.timeIntervalSinceNow
+        return intervalSinceLastRefresh > refreshInterval
     }
 }

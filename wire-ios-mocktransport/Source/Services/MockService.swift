@@ -20,6 +20,10 @@ import Foundation
 
 @objcMembers
 public final class MockService: NSManagedObject, EntityNamedProtocol {
+    // MARK: Public
+
+    public static var entityName = "Service"
+
     @NSManaged public var identifier: String
     @NSManaged public var name: String
     @NSManaged public var handle: String?
@@ -35,14 +39,6 @@ public final class MockService: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var providerName: String?
     @NSManaged public var providerEmail: String?
     @NSManaged public var providerDescription: String?
-
-    override public func awakeFromInsert() {
-        if accentID == 0 {
-            accentID = 2
-        }
-    }
-
-    public static var entityName = "Service"
 
     public static func existingService(
         with identifier: String,
@@ -61,6 +57,14 @@ public final class MockService: NSManagedObject, EntityNamedProtocol {
 
         return result.first
     }
+
+    override public func awakeFromInsert() {
+        if accentID == 0 {
+            accentID = 2
+        }
+    }
+
+    // MARK: Internal
 
     var payloadValues: [String: Any?] {
         [

@@ -21,11 +21,15 @@ import WireDataModel
 import WireDesign
 
 struct AddParticipantsViewModel {
-    let context: AddParticipantsViewController.Context
+    // MARK: Lifecycle
 
     init(with context: AddParticipantsViewController.Context) {
         self.context = context
     }
+
+    // MARK: Internal
+
+    let context: AddParticipantsViewController.Context
 
     var botCanBeAdded: Bool {
         switch context {
@@ -41,12 +45,6 @@ struct AddParticipantsViewModel {
         case let .create(values): values.participants
         default: []
         }
-    }
-
-    func title(with users: UserSet) -> String {
-        users.isEmpty
-            ? L10n.Localizable.Peoplepicker.Group.Title.singular.capitalized
-            : L10n.Localizable.Peoplepicker.Group.Title.plural(users.count).capitalized
     }
 
     var filterConversation: ZMConversation? {
@@ -73,6 +71,12 @@ struct AddParticipantsViewModel {
                 L10n.Localizable.Peoplepicker.Button.addToConversation.capitalized
             }
         }
+    }
+
+    func title(with users: UserSet) -> String {
+        users.isEmpty
+            ? L10n.Localizable.Peoplepicker.Group.Title.singular.capitalized
+            : L10n.Localizable.Peoplepicker.Group.Title.plural(users.count).capitalized
     }
 
     func rightNavigationItem(action: UIAction) -> UIBarButtonItem {

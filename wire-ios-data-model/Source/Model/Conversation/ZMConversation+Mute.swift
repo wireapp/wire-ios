@@ -40,11 +40,13 @@ public enum MutedMessageOptionValue: Int32 {
 /// | all                | X              | X                                      | X      |
 /// +--------------------+----------------+----------------------------------------+--------+
 public struct MutedMessageTypes: OptionSet {
-    public let rawValue: Int32
+    // MARK: Lifecycle
 
     public init(rawValue: Int32) {
         self.rawValue = rawValue
     }
+
+    // MARK: Public
 
     /// None of the messages are muted.
     public static let none = MutedMessageTypes(rawValue: MutedMessageOptionValue.none.rawValue)
@@ -61,6 +63,8 @@ public struct MutedMessageTypes: OptionSet {
         rawValue: MutedMessageOptionValue.mentionsAndReplies
             .rawValue
     )
+
+    public let rawValue: Int32
 }
 
 extension ZMConversation {

@@ -20,6 +20,8 @@ import WireTesting
 @testable import WireSyncEngine
 
 final class TeamDownloadRequestStrategyTests: MessagingTest {
+    // MARK: Internal
+
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
@@ -69,14 +71,6 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             "icon_key": "",
             "binding": isBound ? true : false,
         ]
-    }
-
-    // MARK: - Helper
-
-    fileprivate func boostrapChangeTrackers(with objects: ZMManagedObject...) {
-        for contextChangeTracker in sut.contextChangeTrackers {
-            contextChangeTracker.objectsDidChange(Set(objects))
-        }
     }
 
     // MARK: Incremental Sync
@@ -468,21 +462,6 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
     }
 
-    private func mockFetchingTeamsSyncPhase() {
-        mockSyncStatus.mockPhase = .fetchingTeams
-        mockApplicationStatus.mockSynchronizationState = .slowSyncing
-    }
-
-    private func mockNonTeamUser() throws {
-        syncMOC.performGroupedAndWait {
-            let user = ZMUser.selfUser(in: self.syncMOC)
-            user.teamIdentifier = nil
-        }
-        try syncMOC.performAndWait {
-            try syncMOC.save()
-        }
-    }
-
     func testThatItCreatesLocalTeam_DuringSlowSync() {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
@@ -586,6 +565,33 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // then
         XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
+    }
+
+    // MARK: Fileprivate
+
+    // MARK: - Helper
+
+    fileprivate func boostrapChangeTrackers(with objects: ZMManagedObject...) {
+        for contextChangeTracker in sut.contextChangeTrackers {
+            contextChangeTracker.objectsDidChange(Set(objects))
+        }
+    }
+
+    // MARK: Private
+
+    private func mockFetchingTeamsSyncPhase() {
+        mockSyncStatus.mockPhase = .fetchingTeams
+        mockApplicationStatus.mockSynchronizationState = .slowSyncing
+    }
+
+    private func mockNonTeamUser() throws {
+        syncMOC.performGroupedAndWait {
+            let user = ZMUser.selfUser(in: self.syncMOC)
+            user.teamIdentifier = nil
+        }
+        try syncMOC.performAndWait {
+            try syncMOC.save()
+        }
     }
 
     private func sutNextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {

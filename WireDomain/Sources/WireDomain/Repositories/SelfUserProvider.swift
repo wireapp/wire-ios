@@ -30,19 +30,23 @@ public protocol SelfUserProviderProtocol {
 
 @available(*, deprecated, message: "Use UserRepository instead")
 public final class SelfUserProvider: SelfUserProviderProtocol {
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: Public
 
     // MARK: - Methods
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
 }

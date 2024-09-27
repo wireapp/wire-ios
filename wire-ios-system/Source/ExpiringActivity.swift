@@ -52,8 +52,7 @@ public func withExpiringActivity(reason: String, block: @escaping () async throw
 // MARK: - ExpiringActivityManager
 
 actor ExpiringActivityManager {
-    let api: ExpiringActivityInterface
-    var task: Task<Void, Error>?
+    // MARK: Lifecycle
 
     init() {
         self.init(api: ProcessInfo.processInfo)
@@ -62,6 +61,11 @@ actor ExpiringActivityManager {
     init(api: ExpiringActivityInterface) {
         self.api = api
     }
+
+    // MARK: Internal
+
+    let api: ExpiringActivityInterface
+    var task: Task<Void, Error>?
 
     func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
         try await withCheckedThrowingContinuation { continuation in

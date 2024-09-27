@@ -20,6 +20,26 @@ import UIKit
 import WireDesign
 
 final class ColorKnobView: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    init() {
+        super.init(frame: .zero)
+
+        layer.addSublayer(innerCircleLayer)
+        layer.addSublayer(borderCircleLayer)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var knobDiameter: CGFloat = 12
+
     // MARK: - Properties
 
     var isSelected = false {
@@ -37,25 +57,10 @@ final class ColorKnobView: UIView {
         }
     }
 
-    var knobDiameter: CGFloat = 12
+    // MARK: - Helpers
 
-    /// The actual circle knob, filled with the color
-    private var innerCircleLayer = CALayer()
-    /// Just a layer, used for the thin border around the selected knob
-    private var borderCircleLayer = CALayer()
-
-    // MARK: - Init
-
-    init() {
-        super.init(frame: .zero)
-
-        layer.addSublayer(innerCircleLayer)
-        layer.addSublayer(borderCircleLayer)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    var knobBorderColor: UIColor? {
+        knobColor == SemanticColors.DrawingColors.white ? .black : knobColor
     }
 
     // MARK: - Override method
@@ -84,9 +89,10 @@ final class ColorKnobView: UIView {
         borderCircleLayer.cornerRadius = knobBorderDiameter / 2
     }
 
-    // MARK: - Helpers
+    // MARK: Private
 
-    var knobBorderColor: UIColor? {
-        knobColor == SemanticColors.DrawingColors.white ? .black : knobColor
-    }
+    /// The actual circle knob, filled with the color
+    private var innerCircleLayer = CALayer()
+    /// Just a layer, used for the thin border around the selected knob
+    private var borderCircleLayer = CALayer()
 }

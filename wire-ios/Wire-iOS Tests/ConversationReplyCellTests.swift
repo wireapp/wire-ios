@@ -21,6 +21,8 @@ import XCTest
 @testable import Wire
 
 final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
+    // MARK: Internal
+
     override func tearDown() {
         super.tearDown()
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
@@ -494,6 +496,8 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         verifyInAllPhoneWidths(matching: cell)
         verifyAccessibilityIdentifiers(cell, message)
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

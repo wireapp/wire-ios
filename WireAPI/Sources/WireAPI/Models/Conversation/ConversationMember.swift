@@ -22,6 +22,8 @@ extension Conversation {
     /// Represents a conversation's member.
 
     public struct Member: Equatable, Codable {
+        // MARK: Public
+
         public let qualifiedID: QualifiedID?
         public let id: UUID?
         public let qualifiedTarget: QualifiedID?
@@ -34,6 +36,8 @@ extension Conversation {
         public let hiddenReference: String?
         public let mutedStatus: Int?
         public let mutedReference: Date?
+
+        // MARK: Internal
 
         enum CodingKeys: String, CodingKey {
             case qualifiedID = "qualified_id"

@@ -21,36 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class ReactionSectionViewController: UIViewController {
-    private var typesByButton = [ReactionCategoryButton: EmojiSectionType]()
-    private var sectionButtons = [ReactionCategoryButton]()
-    private let iconSize = StyleKitIcon.Size.tiny.rawValue
-    private var ignoreSelectionUpdates = false
-
-    private var selectedType: EmojiSectionType? {
-        willSet(value) {
-            guard isEnabled, let type = value else { return }
-            for (button, sectionType) in typesByButton {
-                button.isSelected = type == sectionType
-            }
-        }
-    }
-
-    var isEnabled = true {
-        didSet {
-            panGestureRecognizer.isEnabled = isEnabled
-            for (button, sectionType) in typesByButton {
-                button.isEnabled = isEnabled
-                button.isSelected = isEnabled && sectionType == selectedType
-            }
-        }
-    }
-
-    private let types: [EmojiSectionType]
-    private let panGestureRecognizer = UIPanGestureRecognizer(
-        target: ReactionSectionViewController.self,
-        action: #selector(didPan)
-    )
-    weak var sectionDelegate: EmojiSectionViewControllerDelegate?
+    // MARK: Lifecycle
 
     init(types: [EmojiSectionType]) {
         self.types = types
@@ -67,10 +38,51 @@ final class ReactionSectionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    weak var sectionDelegate: EmojiSectionViewControllerDelegate?
+
+    var isEnabled = true {
+        didSet {
+            panGestureRecognizer.isEnabled = isEnabled
+            for (button, sectionType) in typesByButton {
+                button.isEnabled = isEnabled
+                button.isSelected = isEnabled && sectionType == selectedType
+            }
+        }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         guard let firstType = types.first else { return }
         selectedType = firstType
+    }
+
+    func didSelectSection(_ type: EmojiSectionType) {
+        guard let selected = selectedType, type != selected, !ignoreSelectionUpdates else { return }
+        selectedType = type
+    }
+
+    // MARK: Private
+
+    private var typesByButton = [ReactionCategoryButton: EmojiSectionType]()
+    private var sectionButtons = [ReactionCategoryButton]()
+    private let iconSize = StyleKitIcon.Size.tiny.rawValue
+    private var ignoreSelectionUpdates = false
+
+    private let types: [EmojiSectionType]
+    private let panGestureRecognizer = UIPanGestureRecognizer(
+        target: ReactionSectionViewController.self,
+        action: #selector(didPan)
+    )
+
+    private var selectedType: EmojiSectionType? {
+        willSet(value) {
+            guard isEnabled, let type = value else { return }
+            for (button, sectionType) in typesByButton {
+                button.isSelected = type == sectionType
+            }
+        }
     }
 
     private func createButtons(_ types: [EmojiSectionType]) {
@@ -95,11 +107,6 @@ final class ReactionSectionViewController: UIViewController {
 
         button.addTarget(self, action: #selector(didTappButton), for: .touchUpInside)
         return button
-    }
-
-    func didSelectSection(_ type: EmojiSectionType) {
-        guard let selected = selectedType, type != selected, !ignoreSelectionUpdates else { return }
-        selectedType = type
     }
 
     @objc

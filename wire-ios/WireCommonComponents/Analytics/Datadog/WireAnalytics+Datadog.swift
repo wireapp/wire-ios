@@ -28,14 +28,7 @@ import WireSystem
 extension WireAnalytics {
     /// Namespace for Datadog analytics.
     public enum Datadog {
-        private static let shared: (any WireDatadogProtocol & LoggerProtocol)? = {
-            #if canImport(WireDatadog)
-                let builder = WireDatadogBuilder()
-                return builder.build()
-            #else
-                return nil
-            #endif
-        }()
+        // MARK: Public
 
         /// SHA256 string to identify current device across app and extensions.
         public static var userIdentifier: String? {
@@ -49,6 +42,8 @@ extension WireAnalytics {
             enableOnlyOnce.execute()
         }
 
+        // MARK: Internal
+
         static var enableOnlyOnce = OnceOnlyThreadSafeFunction {
             guard let shared else { return }
 
@@ -59,6 +54,17 @@ extension WireAnalytics {
             WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
             WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
         }
+
+        // MARK: Private
+
+        private static let shared: (any WireDatadogProtocol & LoggerProtocol)? = {
+            #if canImport(WireDatadog)
+                let builder = WireDatadogBuilder()
+                return builder.build()
+            #else
+                return nil
+            #endif
+        }()
     }
 }
 
@@ -66,13 +72,13 @@ extension WireAnalytics {
 
 /// Wrapper class to execute a function just once, thread safe
 class OnceOnlyThreadSafeFunction {
-    private let lock = NSLock()
-    private var executed = false
-    private let function: () -> Void
+    // MARK: Lifecycle
 
     init(_ function: @escaping () -> Void) {
         self.function = function
     }
+
+    // MARK: Internal
 
     func execute() {
         lock.lock()
@@ -83,4 +89,10 @@ class OnceOnlyThreadSafeFunction {
             function()
         }
     }
+
+    // MARK: Private
+
+    private let lock = NSLock()
+    private var executed = false
+    private let function: () -> Void
 }

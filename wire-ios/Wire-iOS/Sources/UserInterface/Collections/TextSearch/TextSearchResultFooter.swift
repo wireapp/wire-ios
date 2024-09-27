@@ -21,20 +21,7 @@ import WireDataModel
 import WireDesign
 
 final class TextSearchResultFooter: UIView {
-    var message: ZMConversationMessage? {
-        didSet {
-            guard let message, let serverTimestamp = message.serverTimestamp, let sender = message.senderUser else {
-                return
-            }
-
-            nameLabel.textColor = sender.accentColor
-            nameLabel.text = sender.name
-            nameLabel.accessibilityValue = nameLabel.text
-
-            dateLabel.text = serverTimestamp.formattedDate
-            dateLabel.accessibilityValue = dateLabel.text
-        }
-    }
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -61,6 +48,8 @@ final class TextSearchResultFooter: UIView {
         ])
     }
 
+    // MARK: Internal
+
     var nameLabel: UILabel = {
         let label = UILabel()
         label.font = .smallSemiboldFont
@@ -75,4 +64,19 @@ final class TextSearchResultFooter: UIView {
 
         return label
     }()
+
+    var message: ZMConversationMessage? {
+        didSet {
+            guard let message, let serverTimestamp = message.serverTimestamp, let sender = message.senderUser else {
+                return
+            }
+
+            nameLabel.textColor = sender.accentColor
+            nameLabel.text = sender.name
+            nameLabel.accessibilityValue = nameLabel.text
+
+            dateLabel.text = serverTimestamp.formattedDate
+            dateLabel.accessibilityValue = dateLabel.text
+        }
+    }
 }

@@ -57,16 +57,21 @@ extension Payload.MessageSendingStatusV0 {
 // MARK: - MessageAPIV0
 
 class MessageAPIV0: MessageAPI {
-    open var apiVersion: APIVersion {
-        .v0
-    }
-
-    let httpClient: HttpClient
-    private let protobufContentType = "application/x-protobuf"
+    // MARK: Lifecycle
 
     init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Open
+
+    open var apiVersion: APIVersion {
+        .v0
+    }
+
+    // MARK: Internal
+
+    let httpClient: HttpClient
 
     func broadcastProteusMessage(message: any ProteusMessage) async throws
         -> (Payload.MessageSendingStatus, ZMTransportResponse) {
@@ -155,6 +160,10 @@ class MessageAPIV0: MessageAPI {
     ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
         throw NetworkError.endpointNotAvailable
     }
+
+    // MARK: Private
+
+    private let protobufContentType = "application/x-protobuf"
 }
 
 func mapResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
@@ -186,7 +195,7 @@ func mapFailureResponse(_ response: ZMTransportResponse) -> Error {
 // MARK: - MessageAPIV1
 
 class MessageAPIV1: MessageAPIV0 {
-    private let protobufContentType = "application/x-protobuf"
+    // MARK: Internal
 
     override var apiVersion: APIVersion {
         .v1
@@ -271,6 +280,10 @@ class MessageAPIV1: MessageAPIV0 {
             return (payload.toAPIModel(), response)
         }
     }
+
+    // MARK: Private
+
+    private let protobufContentType = "application/x-protobuf"
 }
 
 // MARK: - MessageAPIV2
@@ -292,11 +305,11 @@ class MessageAPIV3: MessageAPIV2 {
 // MARK: - MessageAPIV4
 
 class MessageAPIV4: MessageAPIV3 {
+    // MARK: Internal
+
     override var apiVersion: APIVersion {
         .v4
     }
-
-    private let protobufContentType = "application/x-protobuf"
 
     override func broadcastProteusMessage(message: any ProteusMessage) async throws
         -> (Payload.MessageSendingStatus, ZMTransportResponse) {
@@ -379,6 +392,10 @@ class MessageAPIV4: MessageAPIV3 {
             return (payload.toAPIModel(), response)
         }
     }
+
+    // MARK: Private
+
+    private let protobufContentType = "application/x-protobuf"
 }
 
 // MARK: - MessageAPIV5

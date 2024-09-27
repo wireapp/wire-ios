@@ -20,8 +20,7 @@ import Foundation
 import WireLinkPreview
 
 class MockLinkPreviewDetector: LinkPreviewDetectorType {
-    fileprivate let mockImageURL = URL(string: "http://reallifepic.com/s0m3cHucKN0rR1sp1C.jpg")!
-    fileprivate let mockImageData = Data(repeating: 0x41, count: 10)
+    // MARK: Internal
 
     enum LinkPreviewURL: String {
         case article = "http://someurl.com/nopicture"
@@ -105,6 +104,11 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
             return twitterStatus
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate let mockImageURL = URL(string: "http://reallifepic.com/s0m3cHucKN0rR1sp1C.jpg")!
+    fileprivate let mockImageData = Data(repeating: 0x41, count: 10)
 
     fileprivate func randomAsset() -> WireProtos.Asset {
         WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())

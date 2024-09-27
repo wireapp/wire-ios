@@ -34,10 +34,7 @@ public protocol OneOnOneResolverInterface {
 // MARK: - OneOnOneResolver
 
 public final class OneOnOneResolver: OneOnOneResolverInterface {
-    // MARK: - Dependencies
-
-    private let protocolSelector: OneOnOneProtocolSelectorInterface
-    private let migrator: OneOnOneMigratorInterface?
+    // MARK: Lifecycle
 
     // MARK: - Initializer
 
@@ -48,6 +45,8 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
     }
+
+    // MARK: Public
 
     // MARK: - Resolve
 
@@ -103,6 +102,13 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return .noAction
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Dependencies
+
+    private let protocolSelector: OneOnOneProtocolSelectorInterface
+    private let migrator: OneOnOneMigratorInterface?
 
     // MARK: Resolve - None
 

@@ -21,10 +21,7 @@ import Foundation
 // MARK: - AvailabilityRequestStrategy
 
 public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-    private let maximumBroadcastRecipients = 500
-    private let context: NSManagedObjectContext
-    private let modifiedKeysSync: ModifiedKeyObjectSync<AvailabilityRequestStrategy>
-    private let messageSender: MessageSenderInterface
+    // MARK: Lifecycle
 
     public init(context: NSManagedObjectContext, messageSender: MessageSenderInterface) {
         self.context = context
@@ -36,9 +33,18 @@ public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource
         modifiedKeysSync.transcoder = self
     }
 
+    // MARK: Public
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [modifiedKeysSync]
     }
+
+    // MARK: Private
+
+    private let maximumBroadcastRecipients = 500
+    private let context: NSManagedObjectContext
+    private let modifiedKeysSync: ModifiedKeyObjectSync<AvailabilityRequestStrategy>
+    private let messageSender: MessageSenderInterface
 }
 
 // MARK: ModifiedKeyObjectSyncTranscoder

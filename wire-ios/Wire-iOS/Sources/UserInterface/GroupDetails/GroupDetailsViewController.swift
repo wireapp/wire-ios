@@ -23,25 +23,7 @@ import WireSyncEngine
 // MARK: - GroupDetailsViewController
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
-    private let mainCoordinator: MainCoordinating
-    private let collectionViewController: SectionCollectionViewController
-    private let conversation: GroupDetailsConversationType
-    private let footerView = GroupDetailsFooterView()
-    private var token: NSObjectProtocol?
-    var actionController: ConversationActionController?
-    private var renameGroupSectionController: RenameGroupSectionController?
-    private var initialSyncToken: (any NSObjectProtocol)!
-    let userSession: UserSession
-    private var userStatuses = [UUID: UserStatus]()
-    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
-
-    var didCompleteInitialSync = false {
-        didSet { collectionViewController.sections = computeVisibleSections() }
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
+    // MARK: Lifecycle
 
     init(
         conversation: GroupDetailsConversationType,
@@ -90,45 +72,17 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         fatalError("init(coder:) is not supported")
     }
 
-    private func createSubviews() {
-        let collectionView = UICollectionView(forGroupedSections: ())
-        collectionView.accessibilityIdentifier = "group_details.list"
+    // MARK: Internal
 
-        collectionView.contentInsetAdjustmentBehavior = .never
+    var actionController: ConversationActionController?
+    let userSession: UserSession
 
-        for subview in [collectionView, footerView] {
-            subview.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(subview)
-        }
-
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: footerView.topAnchor),
-            footerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            footerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            footerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-
-        collectionViewController.collectionView = collectionView
-        footerView.delegate = self
-        footerView.update(for: conversation)
-
-        collectionViewController.sections = computeVisibleSections()
+    var didCompleteInitialSync = false {
+        didSet { collectionViewController.sections = computeVisibleSections() }
     }
 
-    private func setupNavigatiomItem() {
-        navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.titleView = TwoLineTitleView(
-            first: L10n.Localizable.Participants.title.capitalized.attributedString,
-            second: verificationStatus
-        )
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
-
-        navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
     }
 
     override func viewDidLoad() {
@@ -372,6 +326,59 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         detailsViewController.delegate = self
         navigationController?.pushViewController(detailsViewController, animated: animated)
+    }
+
+    // MARK: Private
+
+    private let mainCoordinator: MainCoordinating
+    private let collectionViewController: SectionCollectionViewController
+    private let conversation: GroupDetailsConversationType
+    private let footerView = GroupDetailsFooterView()
+    private var token: NSObjectProtocol?
+    private var renameGroupSectionController: RenameGroupSectionController?
+    private var initialSyncToken: (any NSObjectProtocol)!
+    private var userStatuses = [UUID: UserStatus]()
+    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+
+    private func createSubviews() {
+        let collectionView = UICollectionView(forGroupedSections: ())
+        collectionView.accessibilityIdentifier = "group_details.list"
+
+        collectionView.contentInsetAdjustmentBehavior = .never
+
+        for subview in [collectionView, footerView] {
+            subview.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(subview)
+        }
+
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: footerView.topAnchor),
+            footerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            footerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            footerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+
+        collectionViewController.collectionView = collectionView
+        footerView.delegate = self
+        footerView.update(for: conversation)
+
+        collectionViewController.sections = computeVisibleSections()
+    }
+
+    private func setupNavigatiomItem() {
+        navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationItem.titleView = TwoLineTitleView(
+            first: L10n.Localizable.Participants.title.capitalized.attributedString,
+            second: verificationStatus
+        )
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
+
+        navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
     }
 }
 

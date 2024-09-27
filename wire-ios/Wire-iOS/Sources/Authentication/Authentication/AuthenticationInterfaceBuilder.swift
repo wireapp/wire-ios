@@ -27,6 +27,8 @@ typealias AuthenticationStepViewController = AuthenticationCoordinatedViewContro
 /// An object that builds view controllers for authentication steps.
 
 final class AuthenticationInterfaceBuilder {
+    // MARK: Internal
+
     /// Returns the view controller that displays the interface of the authentication step.
     ///
     /// - note: When new steps are added to the list of steps, you need to handle them here,
@@ -100,6 +102,8 @@ final class AuthenticationInterfaceBuilder {
             return nil
         }
     }
+
+    // MARK: Private
 
     /// Returns the view controller that displays the interface for the given intermediate
     /// registration step.

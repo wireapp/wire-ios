@@ -22,8 +22,7 @@ import Foundation
 
 @objc
 public class Mention: NSObject {
-    public let range: NSRange
-    public let user: UserType
+    // MARK: Lifecycle
 
     init?(_ protobuf: WireProtos.Mention, context: NSManagedObjectContext) {
         let userRemoteID = protobuf.hasQualifiedUserID ? protobuf.qualifiedUserID.id : protobuf.userID
@@ -46,6 +45,11 @@ public class Mention: NSObject {
         self.range = range
         self.user = user
     }
+
+    // MARK: Public
+
+    public let range: NSRange
+    public let user: UserType
 
     override public func isEqual(_ object: Any?) -> Bool {
         guard let otherMention = object as? Mention else { return false }

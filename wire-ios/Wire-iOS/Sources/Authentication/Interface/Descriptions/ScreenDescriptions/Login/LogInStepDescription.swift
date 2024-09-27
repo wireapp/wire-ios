@@ -34,12 +34,7 @@ struct AuthenticationPrefilledCredentials: Equatable {
 
 /// An authentication step to ask the user for login credentials.
 final class LogInStepDescription: AuthenticationStepDescription {
-    let backButton: BackButtonDescription?
-    let mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription?
+    // MARK: Lifecycle
 
     init() {
         self.backButton = BackButtonDescription()
@@ -49,4 +44,13 @@ final class LogInStepDescription: AuthenticationStepDescription {
         self.secondaryView = nil
         self.footerView = nil
     }
+
+    // MARK: Internal
+
+    let backButton: BackButtonDescription?
+    let mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let footerView: AuthenticationFooterViewDescription?
 }

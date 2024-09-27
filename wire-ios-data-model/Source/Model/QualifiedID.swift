@@ -21,21 +21,27 @@ import Foundation
 // MARK: - QualifiedID
 
 public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
-
-    public let uuid: UUID
-    public let domain: String
+    // MARK: Lifecycle
 
     public init(uuid: UUID, domain: String) {
         self.uuid = uuid
         self.domain = domain
     }
 
+    // MARK: Public
+
+    public let uuid: UUID
+    public let domain: String
+
     public var debugDescription: String {
         "\(uuid)@\(domain)"
+    }
+
+    // MARK: Internal
+
+    enum CodingKeys: String, CodingKey {
+        case uuid = "id"
+        case domain
     }
 }
 

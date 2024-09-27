@@ -42,58 +42,7 @@ extension UITableViewCell {
 
 class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView,
     HighlightableView, ConversationMessageCellMenuPresenter {
-    var cellView: C.View
-    var ephemeralCountdownView: EphemeralCountdownView
-
-    var cellDescription: C? {
-        didSet {
-            longPressGesture.isEnabled = cellDescription?.supportsActions == true
-            doubleTapGesture.isEnabled = cellDescription?.supportsActions == true
-            singleTapGesture.isEnabled = cellDescription?.supportsActions == true
-        }
-    }
-
-    var topMargin: Float = 0 {
-        didSet {
-            top.constant = CGFloat(topMargin)
-        }
-    }
-
-    var isFullWidth = false {
-        didSet {
-            configureConstraints(fullWidth: isFullWidth)
-        }
-    }
-
-    override var accessibilityIdentifier: String? {
-        get {
-            cellDescription?.accessibilityIdentifier
-        }
-
-        set {
-            super.accessibilityIdentifier = newValue
-        }
-    }
-
-    override var accessibilityLabel: String? {
-        get {
-            cellDescription?.accessibilityLabel
-        }
-
-        set {
-            super.accessibilityLabel = newValue
-        }
-    }
-
-    private var leading: NSLayoutConstraint!
-    private var top: NSLayoutConstraint!
-    private var trailing: NSLayoutConstraint!
-    private var bottom: NSLayoutConstraint!
-    private var ephemeralTop: NSLayoutConstraint!
-
-    private var longPressGesture: UILongPressGestureRecognizer!
-    private var doubleTapGesture: UITapGestureRecognizer!
-    private var singleTapGesture: UITapGestureRecognizer!
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.cellView = C.View(frame: .zero)
@@ -144,6 +93,69 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var cellView: C.View
+    var ephemeralCountdownView: EphemeralCountdownView
+
+    var cellDescription: C? {
+        didSet {
+            longPressGesture.isEnabled = cellDescription?.supportsActions == true
+            doubleTapGesture.isEnabled = cellDescription?.supportsActions == true
+            singleTapGesture.isEnabled = cellDescription?.supportsActions == true
+        }
+    }
+
+    var topMargin: Float = 0 {
+        didSet {
+            top.constant = CGFloat(topMargin)
+        }
+    }
+
+    var isFullWidth = false {
+        didSet {
+            configureConstraints(fullWidth: isFullWidth)
+        }
+    }
+
+    override var accessibilityIdentifier: String? {
+        get {
+            cellDescription?.accessibilityIdentifier
+        }
+
+        set {
+            super.accessibilityIdentifier = newValue
+        }
+    }
+
+    override var accessibilityLabel: String? {
+        get {
+            cellDescription?.accessibilityLabel
+        }
+
+        set {
+            super.accessibilityLabel = newValue
+        }
+    }
+
+    // MARK: - SelectableView
+
+    var selectionView: UIView! {
+        cellView.selectionView ?? self
+    }
+
+    var selectionRect: CGRect {
+        if cellView.selectionView != nil {
+            cellView.selectionRect
+        } else {
+            bounds
+        }
+    }
+
+    var highlightContainer: UIView {
+        self
     }
 
     func configure(with object: C.View.Configuration, fullWidth: Bool, topMargin: Float) {
@@ -203,13 +215,6 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         )
     }
 
-    @objc
-    private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
-        if gestureRecognizer.state == .began {
-            showMenu()
-        }
-    }
-
     func messageActionsMenuController(
         with actions: [MessageAction] = MessageAction
             .allCases
@@ -225,42 +230,6 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
 
         return actionsMenuController
-    }
-
-    // MARK: - Single Tap Action
-
-    @objc
-    private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
-            cellDescription?.actionController?.performSingleTapAction()
-        }
-    }
-
-    // MARK: - Double Tap Action
-
-    @objc
-    private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
-            cellDescription?.actionController?.performDoubleTapAction()
-        }
-    }
-
-    // MARK: - SelectableView
-
-    var selectionView: UIView! {
-        cellView.selectionView ?? self
-    }
-
-    var selectionRect: CGRect {
-        if cellView.selectionView != nil {
-            cellView.selectionRect
-        } else {
-            bounds
-        }
-    }
-
-    var highlightContainer: UIView {
-        self
     }
 
     override func willDisplayCell() {
@@ -304,6 +273,43 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
             withHorizontalFittingPriority: horizontalFittingPriority,
             verticalFittingPriority: verticalFittingPriority
         )
+    }
+
+    // MARK: Private
+
+    private var leading: NSLayoutConstraint!
+    private var top: NSLayoutConstraint!
+    private var trailing: NSLayoutConstraint!
+    private var bottom: NSLayoutConstraint!
+    private var ephemeralTop: NSLayoutConstraint!
+
+    private var longPressGesture: UILongPressGestureRecognizer!
+    private var doubleTapGesture: UITapGestureRecognizer!
+    private var singleTapGesture: UITapGestureRecognizer!
+
+    @objc
+    private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        if gestureRecognizer.state == .began {
+            showMenu()
+        }
+    }
+
+    // MARK: - Single Tap Action
+
+    @objc
+    private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+            cellDescription?.actionController?.performSingleTapAction()
+        }
+    }
+
+    // MARK: - Double Tap Action
+
+    @objc
+    private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+            cellDescription?.actionController?.performDoubleTapAction()
+        }
     }
 }
 

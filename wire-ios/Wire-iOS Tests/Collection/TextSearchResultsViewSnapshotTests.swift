@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class TextSearchResultsViewSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: TextSearchResultsView!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -53,4 +50,11 @@ final class TextSearchResultsViewSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TextSearchResultsView!
 }

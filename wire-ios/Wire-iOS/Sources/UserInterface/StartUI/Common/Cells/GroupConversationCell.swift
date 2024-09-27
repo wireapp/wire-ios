@@ -26,6 +26,20 @@ typealias GroupConversationCellConversation = Conversation & StableRandomPartici
 // MARK: - GroupConversationCell
 
 final class GroupConversationCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     let avatarSpacer = UIView()
     let avatarView = ConversationAvatarView()
     let titleLabel = UILabel()
@@ -41,15 +55,20 @@ final class GroupConversationCell: UICollectionViewCell {
         }
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
+    func configure(conversation: GroupConversationCellConversation) {
+        avatarView.configure(context: .conversation(conversation: conversation))
+
+        titleLabel.text = conversation.displayName
+
+        if conversation.conversationType == .oneOnOne, let handle = conversation.connectedUserType?.handle {
+            subtitleLabel.isHidden = false
+            subtitleLabel.text = "@\(handle)"
+        } else {
+            subtitleLabel.isHidden = true
+        }
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
+    // MARK: Private
 
     private func setup() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -107,18 +126,5 @@ final class GroupConversationCell: UICollectionViewCell {
             separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             separator.heightAnchor.constraint(equalToConstant: .hairline),
         ])
-    }
-
-    func configure(conversation: GroupConversationCellConversation) {
-        avatarView.configure(context: .conversation(conversation: conversation))
-
-        titleLabel.text = conversation.displayName
-
-        if conversation.conversationType == .oneOnOne, let handle = conversation.connectedUserType?.handle {
-            subtitleLabel.isHidden = false
-            subtitleLabel.text = "@\(handle)"
-        } else {
-            subtitleLabel.isHidden = true
-        }
     }
 }

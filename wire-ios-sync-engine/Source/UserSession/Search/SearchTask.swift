@@ -22,48 +22,7 @@ import WireUtilities
 // MARK: - SearchTask
 
 public class SearchTask {
-    public enum Task {
-        case search(searchRequest: SearchRequest)
-        case lookup(userId: UUID)
-    }
-
-    public typealias ResultHandler = (_ result: SearchResult, _ isCompleted: Bool) -> Void
-
-    private let transportSession: TransportSessionType
-    private let searchContext: NSManagedObjectContext
-    private let contextProvider: ContextProvider
-    private let searchUsersCache: SearchUsersCache?
-
-    private let task: Task
-    private var userLookupTaskIdentifier: ZMTaskIdentifier?
-    private var directoryTaskIdentifier: ZMTaskIdentifier?
-    private var teamMembershipTaskIdentifier: ZMTaskIdentifier?
-    private var handleTaskIdentifier: ZMTaskIdentifier?
-    private var servicesTaskIdentifier: ZMTaskIdentifier?
-    private var resultHandlers: [ResultHandler] = []
-    private var result = SearchResult(
-        contacts: [],
-        teamMembers: [],
-        addressBook: [],
-        directory: [],
-        conversations: [],
-        services: [],
-        searchUsersCache: nil
-    )
-
-    private var tasksRemaining = 0 {
-        didSet {
-            // only trigger handles if decrement to 0
-            if oldValue > tasksRemaining {
-                let isCompleted = tasksRemaining == 0
-                resultHandlers.forEach { $0(result, isCompleted) }
-
-                if isCompleted {
-                    resultHandlers.removeAll()
-                }
-            }
-        }
-    }
+    // MARK: Lifecycle
 
     convenience init(
         request: SearchRequest,
@@ -111,6 +70,15 @@ public class SearchTask {
         self.searchUsersCache = searchUsersCache
     }
 
+    // MARK: Public
+
+    public enum Task {
+        case search(searchRequest: SearchRequest)
+        case lookup(userId: UUID)
+    }
+
+    public typealias ResultHandler = (_ result: SearchResult, _ isCompleted: Bool) -> Void
+
     public func addResultHandler(_ resultHandler: @escaping ResultHandler) {
         resultHandlers.append(resultHandler)
     }
@@ -143,6 +111,44 @@ public class SearchTask {
         performRemoteSearchForTeamUser()
         // v2+
         performRemoteSearch()
+    }
+
+    // MARK: Private
+
+    private let transportSession: TransportSessionType
+    private let searchContext: NSManagedObjectContext
+    private let contextProvider: ContextProvider
+    private let searchUsersCache: SearchUsersCache?
+
+    private let task: Task
+    private var userLookupTaskIdentifier: ZMTaskIdentifier?
+    private var directoryTaskIdentifier: ZMTaskIdentifier?
+    private var teamMembershipTaskIdentifier: ZMTaskIdentifier?
+    private var handleTaskIdentifier: ZMTaskIdentifier?
+    private var servicesTaskIdentifier: ZMTaskIdentifier?
+    private var resultHandlers: [ResultHandler] = []
+    private var result = SearchResult(
+        contacts: [],
+        teamMembers: [],
+        addressBook: [],
+        directory: [],
+        conversations: [],
+        services: [],
+        searchUsersCache: nil
+    )
+
+    private var tasksRemaining = 0 {
+        didSet {
+            // only trigger handles if decrement to 0
+            if oldValue > tasksRemaining {
+                let isCompleted = tasksRemaining == 0
+                resultHandlers.forEach { $0(result, isCompleted) }
+
+                if isCompleted {
+                    resultHandlers.removeAll()
+                }
+            }
+        }
     }
 }
 

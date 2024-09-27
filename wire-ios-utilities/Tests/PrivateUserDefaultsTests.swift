@@ -27,8 +27,6 @@ final class PrivateUserDefaultsTests: XCTestCase {
     var userID: UUID!
     let key = "foo"
 
-    // MARK: - Life cycle
-
     override func setUp() {
         super.setUp()
         userID = UUID.create()

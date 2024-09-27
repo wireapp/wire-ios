@@ -28,19 +28,27 @@ protocol SearchServicesSectionDelegate: SearchSectionControllerDelegate {
 // MARK: - SearchServicesSectionController
 
 final class SearchServicesSectionController: SearchSectionController {
-    weak var delegate: SearchServicesSectionDelegate?
-
-    var services: [ServiceUser] = []
-
-    let canSelfUserManageTeam: Bool
+    // MARK: Lifecycle
 
     init(canSelfUserManageTeam: Bool) {
         self.canSelfUserManageTeam = canSelfUserManageTeam
         super.init()
     }
 
+    // MARK: Internal
+
+    weak var delegate: SearchServicesSectionDelegate?
+
+    var services: [ServiceUser] = []
+
+    let canSelfUserManageTeam: Bool
+
     override var isHidden: Bool {
         services.isEmpty
+    }
+
+    override var sectionTitle: String {
+        L10n.Localizable.Peoplepicker.Header.services
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -56,10 +64,6 @@ final class SearchServicesSectionController: SearchSectionController {
         } else {
             services.count
         }
-    }
-
-    override var sectionTitle: String {
-        L10n.Localizable.Peoplepicker.Header.services
     }
 
     func service(for indexPath: IndexPath) -> ServiceUser {

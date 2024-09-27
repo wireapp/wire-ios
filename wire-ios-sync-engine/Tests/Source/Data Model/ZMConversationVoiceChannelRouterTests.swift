@@ -19,8 +19,7 @@
 import Foundation
 
 class ZMConversationVoiceChannelTests: MessagingTest {
-    private var oneToOneconversation: ZMConversation!
-    private var groupConversation: ZMConversation!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -67,4 +66,9 @@ class ZMConversationVoiceChannelTests: MessagingTest {
             XCTAssertTrue(oneToOneconversation.voiceChannel === voiceChannel)
         }
     }
+
+    // MARK: Private
+
+    private var oneToOneconversation: ZMConversation!
+    private var groupConversation: ZMConversation!
 }

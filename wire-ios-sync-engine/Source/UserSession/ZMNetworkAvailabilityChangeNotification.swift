@@ -21,9 +21,7 @@ import Foundation
 // MARK: - ZMNetworkAvailabilityChangeNotification
 
 public class ZMNetworkAvailabilityChangeNotification: NSObject {
-    static let name = Notification.Name(rawValue: "ZMNetworkAvailabilityChangeNotification")
-
-    static let stateKey = "networkState"
+    // MARK: Public
 
     public static func addNetworkAvailabilityObserver(
         _ observer: ZMNetworkAvailabilityObserver,
@@ -48,6 +46,12 @@ public class ZMNetworkAvailabilityChangeNotification: NSObject {
             userInfo: [stateKey: networkState]
         ).post()
     }
+
+    // MARK: Internal
+
+    static let name = Notification.Name(rawValue: "ZMNetworkAvailabilityChangeNotification")
+
+    static let stateKey = "networkState"
 }
 
 // MARK: - ZMNetworkAvailabilityObserver

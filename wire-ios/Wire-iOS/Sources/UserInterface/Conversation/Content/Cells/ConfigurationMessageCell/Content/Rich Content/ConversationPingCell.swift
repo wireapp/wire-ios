@@ -24,15 +24,15 @@ import WireDesign
 
 final class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
     typealias AnimationBlock = (_ animationBlock: Any, _ reps: Int) -> Void
-    var animationBlock: AnimationBlock?
-    var isAnimationRunning = false
-    var configuration: Configuration?
-
     struct Configuration {
         let pingColor: UIColor
         let pingText: NSAttributedString
         var message: ZMConversationMessage?
     }
+
+    var animationBlock: AnimationBlock?
+    var isAnimationRunning = false
+    var configuration: Configuration?
 
     func configure(with object: Configuration, animated: Bool) {
         configuration = object
@@ -126,25 +126,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
 // MARK: - ConversationPingCellDescription
 
 final class ConversationPingCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationPingCell
-    let configuration: ConversationPingCell.Configuration
-
-    weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer: Bool {
-        get { false }
-        set { /* pings doesn't support the ephemeral timer */ }
-    }
-
-    var topMargin: Float = 0
-    let isFullWidth = true
-    let supportsActions = true
-    let containsHighlightableContent = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
+    // MARK: Lifecycle
 
     init(message: ZMConversationMessage, sender: UserType) {
         let senderText = sender.isSelfUser ? "content.ping.text.you".localized : (sender.name ?? "")
@@ -159,5 +141,28 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
         self.configuration = View.Configuration(pingColor: pingColor, pingText: text, message: message)
         self.accessibilityLabel = text.string
         self.actionController = nil
+    }
+
+    // MARK: Internal
+
+    typealias View = ConversationPingCell
+
+    let configuration: ConversationPingCell.Configuration
+
+    weak var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var topMargin: Float = 0
+    let isFullWidth = true
+    let supportsActions = true
+    let containsHighlightableContent = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String?
+
+    var showEphemeralTimer: Bool {
+        get { false }
+        set { /* pings doesn't support the ephemeral timer */ }
     }
 }

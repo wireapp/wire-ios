@@ -22,11 +22,7 @@ import XCTest
 @testable import WireReusableUIComponents
 
 final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var viewController: UIViewController!
-    private var sut: BlockingActivityIndicator!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -79,4 +75,12 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
         // Then
         snapshotHelper.verify(matching: viewController)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var viewController: UIViewController!
+    private var sut: BlockingActivityIndicator!
+    private var snapshotHelper: SnapshotHelper!
 }

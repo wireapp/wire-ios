@@ -28,14 +28,13 @@ protocol SaveFileActions {
 // MARK: - SaveFileManager
 
 final class SaveFileManager: NSObject, SaveFileActions {
-    private var pendingSaveURL: URL?
-
-    private let logger: LoggerProtocol = WireLogger.e2ei
-    private let systemSaveFilePresenter: SystemSaveFilePresenting
+    // MARK: Lifecycle
 
     init(systemFileSavePresenter: SystemSaveFilePresenting) {
         self.systemSaveFilePresenter = systemFileSavePresenter
     }
+
+    // MARK: Internal
 
     func save(value: String, fileName: String, type: String) {
         let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
@@ -51,6 +50,13 @@ final class SaveFileManager: NSObject, SaveFileActions {
             logger.error(error.localizedDescription)
         }
     }
+
+    // MARK: Private
+
+    private var pendingSaveURL: URL?
+
+    private let logger: LoggerProtocol = WireLogger.e2ei
+    private let systemSaveFilePresenter: SystemSaveFilePresenting
 
     private func deleteFilesInTemporyDirectory() throws {
         guard let fileURL = pendingSaveURL else {

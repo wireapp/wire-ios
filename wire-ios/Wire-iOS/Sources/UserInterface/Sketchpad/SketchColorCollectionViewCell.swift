@@ -23,9 +23,6 @@ import WireDesign
 // MARK: - SketchColors
 
 enum SketchColors: CaseIterable {
-    typealias SketchColorValues = SemanticColors.DrawingColors
-    typealias SketchColorName = L10n.Localizable.Drawing.Colors
-
     case black
     case white
     case blue
@@ -44,6 +41,11 @@ enum SketchColors: CaseIterable {
     case pink
     case chocolate
     case gray
+
+    // MARK: Internal
+
+    typealias SketchColorValues = SemanticColors.DrawingColors
+    typealias SketchColorName = L10n.Localizable.Drawing.Colors
 
     var name: String {
         switch self {
@@ -142,6 +144,33 @@ struct SketchColor: Equatable {
 // MARK: - SketchColorCollectionViewCell
 
 final class SketchColorCollectionViewCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.knobView = ColorKnobView()
+
+        contentStackView.axis = .vertical
+        contentStackView.alignment = .center
+        contentStackView.distribution = .fill
+        contentStackView.spacing = 9
+        contentStackView.addArrangedSubview(knobView)
+        contentStackView.addArrangedSubview(titleLabel)
+
+        addSubview(contentStackView)
+
+        setNeedsUpdateConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     // MARK: - Properties
 
     var titleLabel = DynamicFontLabel(
@@ -187,32 +216,6 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
         }
     }
 
-    private var knobView: ColorKnobView!
-    private var initialContraintsCreated = false
-
-    // MARK: - Init
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.knobView = ColorKnobView()
-
-        contentStackView.axis = .vertical
-        contentStackView.alignment = .center
-        contentStackView.distribution = .fill
-        contentStackView.spacing = 9
-        contentStackView.addArrangedSubview(knobView)
-        contentStackView.addArrangedSubview(titleLabel)
-
-        addSubview(contentStackView)
-
-        setNeedsUpdateConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     // MARK: - Setting up constraints
 
     override func updateConstraints() {
@@ -235,4 +238,9 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
 
         initialContraintsCreated = true
     }
+
+    // MARK: Private
+
+    private var knobView: ColorKnobView!
+    private var initialContraintsCreated = false
 }

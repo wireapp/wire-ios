@@ -22,12 +22,7 @@ extension ZMUserSession {
     /// An object used to configure a user session.
 
     public final class Configuration: NSObject {
-        // MARK: - Properties
-
-        public let appLockConfig: AppLockController.LegacyConfig?
-        public let useLegacyPushNotifications: Bool
-
-        // MARK: - Life cycle
+        // MARK: Lifecycle
 
         public init(
             appLockConfig: AppLockController.LegacyConfig? = nil,
@@ -36,5 +31,12 @@ extension ZMUserSession {
             self.appLockConfig = appLockConfig
             self.useLegacyPushNotifications = useLegacyPushNotifications
         }
+
+        // MARK: Public
+
+        // MARK: - Properties
+
+        public let appLockConfig: AppLockController.LegacyConfig?
+        public let useLegacyPushNotifications: Bool
     }
 }

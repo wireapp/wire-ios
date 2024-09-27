@@ -20,16 +20,20 @@ import Foundation
 
 /// Represents the sound for types of notifications.
 public enum NotificationSound {
+    case call, ping, newMessage
+
+    // MARK: Public
+
     /// Storage of the user's preferred notification sounds.
 
     public static var storage: UserDefaults = .standard
-
-    case call, ping, newMessage
 
     /// The name of the song.
     public var name: String {
         defaultFileName
     }
+
+    // MARK: Private
 
     // MARK: - Utilities
 

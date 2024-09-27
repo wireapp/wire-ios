@@ -24,16 +24,20 @@ import UIKit
 /// operation has completed.
 
 final class DecodeImageOperation: Operation {
-    /// The initial data of the image.
-    let imageData: Data
-
-    /// The image that was decoded from the initial data.
-    private(set) var decodedImage: UIImage?
+    // MARK: Lifecycle
 
     /// Creates the operation from the raw image data.
     init(imageData: Data) {
         self.imageData = imageData
     }
+
+    // MARK: Internal
+
+    /// The initial data of the image.
+    let imageData: Data
+
+    /// The image that was decoded from the initial data.
+    private(set) var decodedImage: UIImage?
 
     // MARK: - Decoding
 

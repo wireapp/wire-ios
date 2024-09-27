@@ -24,6 +24,8 @@ public enum ProteusToMLSMigrationState: String, CustomStringConvertible {
     case ongoing
     case finalised
 
+    // MARK: Public
+
     public var description: String {
         rawValue
     }

@@ -20,14 +20,7 @@ import Foundation
 import WireDataModel
 
 struct ClientTableViewCellModel {
-    let title: String
-    let proteusLabelText: String
-    let mlsThumbprintLabelText: String
-    let isProteusVerified: Bool
-    let e2eIdentityStatus: E2EIdentityCertificateStatus?
-    let activationDate: Date?
-
-    private typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
+    // MARK: Lifecycle
 
     init(
         title: String,
@@ -67,4 +60,17 @@ struct ClientTableViewCellModel {
         self.e2eIdentityStatus = userClient.e2eIdentityCertificate?.status
         self.activationDate = userClient.activationDate
     }
+
+    // MARK: Internal
+
+    let title: String
+    let proteusLabelText: String
+    let mlsThumbprintLabelText: String
+    let isProteusVerified: Bool
+    let e2eIdentityStatus: E2EIdentityCertificateStatus?
+    let activationDate: Date?
+
+    // MARK: Private
+
+    private typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
 }

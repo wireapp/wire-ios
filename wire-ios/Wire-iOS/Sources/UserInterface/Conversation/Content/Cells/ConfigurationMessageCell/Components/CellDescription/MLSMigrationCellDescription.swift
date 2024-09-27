@@ -21,13 +21,20 @@ import WireDataModel
 import WireDesign
 
 final class MLSMigrationCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(messageType: ZMSystemMessageType) {
+        let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
+        let content = Self.makeAttributedString(messageType: messageType)
+
+        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
+        self.accessibilityLabel = content?.string
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationSystemMessageCell
     typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
-
-    private static let linkAttributes: [NSAttributedString.Key: Any] = [
-        .font: UIFont.mediumSemiboldFont,
-        .link: WireURLs.shared.mlsInfo,
-    ]
 
     let configuration: View.Configuration
 
@@ -45,13 +52,12 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    init(messageType: ZMSystemMessageType) {
-        let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
-        let content = Self.makeAttributedString(messageType: messageType)
+    // MARK: Private
 
-        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
-        self.accessibilityLabel = content?.string
-    }
+    private static let linkAttributes: [NSAttributedString.Key: Any] = [
+        .font: UIFont.mediumSemiboldFont,
+        .link: WireURLs.shared.mlsInfo,
+    ]
 
     // MARK: Attributed Strings
 

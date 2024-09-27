@@ -30,6 +30,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var mockAttachmentsDetector: MockAttachmentDetector!
     var mockMessageSender: MockMessageSenderInterface!
+
     var apiVersion: APIVersion! {
         didSet {
             BackendInfo.apiVersion = apiVersion

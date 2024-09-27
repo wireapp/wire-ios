@@ -25,6 +25,8 @@ public enum AffectedKeys: Equatable {
     case some(KeySet)
     case all
 
+    // MARK: Internal
+
     func combinedWith(_ other: AffectedKeys) -> AffectedKeys {
         switch (self, other) {
         case let (.some(k1), .some(k2)):
@@ -58,9 +60,7 @@ public func == (lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
 // MARK: - KeySet
 
 public struct KeySet: Sequence {
-    public typealias Key = StringKeyPath
-    public typealias Iterator = Set<StringKeyPath>.Iterator
-    fileprivate let backing: Set<StringKeyPath>
+    // MARK: Lifecycle
 
     public init() {
         self.backing = Set()
@@ -114,6 +114,15 @@ public struct KeySet: Sequence {
         self.backing = Set<Key>(seq)
     }
 
+    // MARK: Public
+
+    public typealias Key = StringKeyPath
+    public typealias Iterator = Set<StringKeyPath>.Iterator
+
+    public var count: Int {
+        backing.count
+    }
+
     public func contains(_ i: StringKeyPath) -> Bool {
         backing.contains(i)
     }
@@ -126,9 +135,9 @@ public struct KeySet: Sequence {
         backing.makeIterator()
     }
 
-    public var count: Int {
-        backing.count
-    }
+    // MARK: Fileprivate
+
+    fileprivate let backing: Set<StringKeyPath>
 }
 
 // MARK: Hashable

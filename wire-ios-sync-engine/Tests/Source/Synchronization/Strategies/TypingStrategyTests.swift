@@ -52,12 +52,17 @@ class MockTyping: WireSyncEngine.Typing {
 // MARK: - MockClientRegistrationDelegate
 
 class MockClientRegistrationDelegate: NSObject, ClientRegistrationDelegate {
+    // MARK: Public
+
+    public func didDetectCurrentClientDeletion() {}
+
+    // MARK: Internal
+
     var mockReadiness = true
+
     var clientIsReadyForRequests: Bool {
         mockReadiness
     }
-
-    public func didDetectCurrentClientDeletion() {}
 }
 
 // MARK: - TestTyping

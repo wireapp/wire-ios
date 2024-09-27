@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var cell: GroupDetailsTimeoutOptionsCell!
-    private var conversation: ZMConversation!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -83,6 +79,14 @@ final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: cell)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var cell: GroupDetailsTimeoutOptionsCell!
+    private var conversation: ZMConversation!
 
     private func updateTimeout(_ newValue: TimeInterval) {
         conversation.setMessageDestructionTimeoutValue(.init(rawValue: newValue), for: .groupConversation)

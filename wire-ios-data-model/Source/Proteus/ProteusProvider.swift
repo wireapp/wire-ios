@@ -44,9 +44,7 @@ public protocol ProteusProviding {
 // MARK: - ProteusProvider
 
 public class ProteusProvider: ProteusProviding {
-    private let proteusService: ProteusServiceInterface?
-    private let keyStore: UserClientKeysStore?
-    private let proteusViaCoreCrypto: Bool
+    // MARK: Lifecycle
 
     convenience init(
         context: NSManagedObjectContext,
@@ -67,6 +65,15 @@ public class ProteusProvider: ProteusProviding {
         self.proteusService = proteusService
         self.keyStore = keyStore
         self.proteusViaCoreCrypto = proteusViaCoreCrypto
+    }
+
+    // MARK: Public
+
+    public var canPerform: Bool {
+        let canUseProteusService = proteusViaCoreCrypto && proteusService != nil
+        let canUseKeyStore = !proteusViaCoreCrypto
+
+        return canUseProteusService || canUseKeyStore
     }
 
     public func perform<T>(
@@ -101,10 +108,9 @@ public class ProteusProvider: ProteusProviding {
         }
     }
 
-    public var canPerform: Bool {
-        let canUseProteusService = proteusViaCoreCrypto && proteusService != nil
-        let canUseKeyStore = !proteusViaCoreCrypto
+    // MARK: Private
 
-        return canUseProteusService || canUseKeyStore
-    }
+    private let proteusService: ProteusServiceInterface?
+    private let keyStore: UserClientKeysStore?
+    private let proteusViaCoreCrypto: Bool
 }

@@ -20,7 +20,7 @@ import Foundation
 @testable import WireSyncEngine
 
 final class SearchResultTests: DatabaseTest {
-    private var mockCache: SearchUsersCache!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -464,4 +464,8 @@ final class SearchResultTests: DatabaseTest {
 
         return membershipPayload
     }
+
+    // MARK: Private
+
+    private var mockCache: SearchUsersCache!
 }

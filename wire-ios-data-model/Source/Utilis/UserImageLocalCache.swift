@@ -60,13 +60,7 @@ extension NSManagedObjectContext {
 
 @objcMembers
 open class UserImageLocalCache: NSObject {
-    fileprivate let log = ZMSLog(tag: "UserImageCache")
-
-    /// Cache for large user profile image
-    fileprivate let largeUserImageCache: any PINCaching
-
-    /// Cache for small user profile image
-    fileprivate let smallUserImageCache: any PINCaching
+    // MARK: Lifecycle
 
     /// Create UserImageLocalCache
     /// - parameter location: where cache is persisted on disk. Defaults to caches directory if nil.
@@ -99,14 +93,7 @@ open class UserImageLocalCache: NSObject {
         super.init()
     }
 
-    /// Stores image in cache and returns true if the data was stored
-    private func setImage(inCache cache: any PINCaching, cacheKey: String?, data: Data) -> Bool {
-        if let resolvedCacheKey = cacheKey {
-            cache.setObject(data as NSCoding, forKey: resolvedCacheKey)
-            return true
-        }
-        return false
-    }
+    // MARK: Open
 
     /// Removes all images for user
     open func removeAllUserImages(_ user: ZMUser) {
@@ -187,6 +174,27 @@ open class UserImageLocalCache: NSObject {
         case .complete:
             return largeUserImageCache.containsObject(forKey: cacheKey)
         }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let log = ZMSLog(tag: "UserImageCache")
+
+    /// Cache for large user profile image
+    fileprivate let largeUserImageCache: any PINCaching
+
+    /// Cache for small user profile image
+    fileprivate let smallUserImageCache: any PINCaching
+
+    // MARK: Private
+
+    /// Stores image in cache and returns true if the data was stored
+    private func setImage(inCache cache: any PINCaching, cacheKey: String?, data: Data) -> Bool {
+        if let resolvedCacheKey = cacheKey {
+            cache.setObject(data as NSCoding, forKey: resolvedCacheKey)
+            return true
+        }
+        return false
     }
 }
 

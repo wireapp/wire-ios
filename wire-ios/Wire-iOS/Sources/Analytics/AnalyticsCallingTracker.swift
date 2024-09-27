@@ -39,13 +39,7 @@ private let zmLog = ZMSLog(tag: "Analytics")
 // MARK: - AnalyticsCallingTracker
 
 final class AnalyticsCallingTracker: NSObject {
-    private static let conversationIdKey = "conversationId"
-
-    let analytics: Analytics
-    var callInfos: [UUID: CallInfo] = [:]
-    var callStateObserverToken: Any?
-    var callParticipantObserverToken: Any?
-    var screenSharingStartTimes: [String: Date] = [:]
+    // MARK: Lifecycle
 
     init(analytics: Analytics) {
         self.analytics = analytics
@@ -72,6 +66,14 @@ final class AnalyticsCallingTracker: NSObject {
         self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
     }
 
+    // MARK: Internal
+
+    let analytics: Analytics
+    var callInfos: [UUID: CallInfo] = [:]
+    var callStateObserverToken: Any?
+    var callParticipantObserverToken: Any?
+    var screenSharingStartTimes: [String: Date] = [:]
+
     static func userToggledVideo(in voiceChannel: VoiceChannel) {
         if let conversationId = voiceChannel.conversation?.remoteIdentifier {
             NotificationCenter.default.post(
@@ -81,6 +83,10 @@ final class AnalyticsCallingTracker: NSObject {
             )
         }
     }
+
+    // MARK: Private
+
+    private static let conversationIdKey = "conversationId"
 }
 
 // MARK: WireCallCenterCallStateObserver

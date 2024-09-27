@@ -34,11 +34,15 @@ public protocol NativelySupportedUserDefaultsKey {
 
 /// Used to store `Date` values in `UserDefaults`.
 public struct UserDefaultsDateValueKey: NativelySupportedUserDefaultsKey {
-    public typealias ValueType = Date
-
-    public var rawValue: String
+    // MARK: Lifecycle
 
     public init(_ rawValue: String) {
         self.rawValue = rawValue
     }
+
+    // MARK: Public
+
+    public typealias ValueType = Date
+
+    public var rawValue: String
 }

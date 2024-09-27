@@ -38,9 +38,7 @@ private class MockAVSVideoPreview: AVSVideoPreview {
 // MARK: - SelfCallParticipantViewTests
 
 final class SelfCallParticipantViewTests: XCTestCase {
-    private var sut: SelfCallParticipantView!
-    private var stubProvider: StreamStubProvider!
-    private var previewViewMock: MockAVSVideoPreview!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -132,4 +130,10 @@ final class SelfCallParticipantViewTests: XCTestCase {
         // Then
         XCTAssertTrue(previewViewMock.isCapturing)
     }
+
+    // MARK: Private
+
+    private var sut: SelfCallParticipantView!
+    private var stubProvider: StreamStubProvider!
+    private var previewViewMock: MockAVSVideoPreview!
 }

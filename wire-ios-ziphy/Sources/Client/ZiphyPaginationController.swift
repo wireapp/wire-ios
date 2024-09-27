@@ -26,6 +26,8 @@ typealias ZiphyPaginatedFetchBlock = (_ offset: Int) -> CancelableTask?
 /// An object that handles pagination of Giphy requests.
 
 final class ZiphyPaginationController {
+    // MARK: Internal
+
     var ziphs: [Ziph] = []
     var offset = 0
     var isAtEnd = false
@@ -43,16 +45,6 @@ final class ZiphyPaginationController {
         fetchNewPage(offset)
     }
 
-    // MARK: - Updating the Data
-
-    private func fetchNewPage(_ offset: Int) -> CancelableTask? {
-        guard !isAtEnd else {
-            return nil
-        }
-
-        return fetchBlock?(offset)
-    }
-
     func updatePagination(_ result: ZiphyResult<[Ziph]>, filter: ((Ziph) -> Bool)?) {
         switch result {
         case let .success(insertedZiphs):
@@ -68,5 +60,17 @@ final class ZiphyPaginationController {
 
             updateBlock?(.failure(error))
         }
+    }
+
+    // MARK: Private
+
+    // MARK: - Updating the Data
+
+    private func fetchNewPage(_ offset: Int) -> CancelableTask? {
+        guard !isAtEnd else {
+            return nil
+        }
+
+        return fetchBlock?(offset)
     }
 }

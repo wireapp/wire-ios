@@ -38,6 +38,8 @@ public enum LogAttributesKey: String, Comparable {
     case processId = "process_id"
     case processName = "process_name"
 
+    // MARK: Public
+
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }

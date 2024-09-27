@@ -22,15 +22,19 @@ import WireCommonComponents
 import WireUtilities
 
 final class NotificationService: UNNotificationServiceExtension {
-    // MARK: - Properties
-
-    let simpleService = SimpleNotificationService()
-    let legacyService = LegacyNotificationService()
+    // MARK: Lifecycle
 
     override init() {
         super.init()
         WireAnalytics.Datadog.enable()
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let simpleService = SimpleNotificationService()
+    let legacyService = LegacyNotificationService()
 
     // MARK: - Methods
 

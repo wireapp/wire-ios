@@ -21,6 +21,8 @@ import XCTest
 @testable import WireDataModel
 
 class UserClientKeysStoreTests: OtrBaseTest {
+    // MARK: Internal
+
     var sut: UserClientKeysStore!
     var accountID: UUID!
     var accountFolder: URL!
@@ -125,6 +127,8 @@ class UserClientKeysStoreTests: OtrBaseTest {
             }
         }
     }
+
+    // MARK: Fileprivate
 
     fileprivate func createLegacyOTRFolderWithDummyFile(
         fileName: String,

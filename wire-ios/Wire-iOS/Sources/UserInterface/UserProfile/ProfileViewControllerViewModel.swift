@@ -70,22 +70,7 @@ protocol ProfileViewControllerViewModeling {
 // MARK: - ProfileViewControllerViewModel
 
 final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewModeling {
-    // MARK: - Properties
-
-    let user: UserType
-    let conversation: ZMConversation?
-    let viewer: UserType
-    let context: ProfileViewControllerContext
-    let userSession: UserSession
-
-    private weak var viewModelDelegate: ProfileViewControllerViewModelDelegate?
-
-    private var observerToken: NSObjectProtocol?
-    private let profileActionsFactory: ProfileActionsFactoryProtocol
-    private let classificationProvider: SecurityClassificationProviding?
-    private var conversationTransitionClosure: ((ZMConversation) -> Void)?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         user: UserType,
@@ -108,6 +93,16 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
 
         self.observerToken = userSession.addUserObserver(self, for: user)
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let user: UserType
+    let conversation: ZMConversation?
+    let viewer: UserType
+    let context: ProfileViewControllerContext
+    let userSession: UserSession
 
     // MARK: - Computed Properties
 
@@ -309,6 +304,15 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
             }
         }
     }
+
+    // MARK: Private
+
+    private weak var viewModelDelegate: ProfileViewControllerViewModelDelegate?
+
+    private var observerToken: NSObjectProtocol?
+    private let profileActionsFactory: ProfileActionsFactoryProtocol
+    private let classificationProvider: SecurityClassificationProviding?
+    private var conversationTransitionClosure: ((ZMConversation) -> Void)?
 
     // MARK: - Helpers
 

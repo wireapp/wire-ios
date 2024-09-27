@@ -25,13 +25,7 @@ import DatadogTrace
 import UIKit
 
 public final class WireDatadog {
-    private let applicationID: String
-    private let buildVersion: String
-    private let buildNumber: String
-    private let logLevel: LogLevel = .debug
-
-    public private(set) var userIdentifier: String
-    public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
+    // MARK: Lifecycle
 
     public init(
         applicationID: String,
@@ -76,6 +70,11 @@ public final class WireDatadog {
         self.logger = Logger.create(with: loggerConfiguration)
     }
 
+    // MARK: Public
+
+    public private(set) var userIdentifier: String
+    public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
+
     public func enable() {
         let traceConfiguration = Trace.Configuration(
             sampleRate: 100,
@@ -119,6 +118,13 @@ public final class WireDatadog {
             attributes: finalAttributes
         )
     }
+
+    // MARK: Private
+
+    private let applicationID: String
+    private let buildVersion: String
+    private let buildNumber: String
+    private let logLevel: LogLevel = .debug
 
     // MARK: Static Helpers
 

@@ -21,16 +21,35 @@ import UIKit
 import WireDataModel
 
 final class ImageResourceView: FLAnimatedImageView {
+    // MARK: Lifecycle
+
+    convenience init() {
+        self.init(frame: .zero)
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        loadingView.accessibilityIdentifier = "loading"
+        loadingView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(loadingView)
+        NSLayoutConstraint.activate([
+            centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
+            centerYAnchor.constraint(equalTo: loadingView.centerYAnchor),
+        ])
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    // MARK: Internal
+
     weak var delegate: ContextMenuDelegate?
 
-    fileprivate var loadingView = ThreeDotsLoadingView()
-
-    /// This token is changes everytime the cell is re-used. Useful when performing
-    /// asynchronous tasks where the cell might have been re-used in the mean time.
-    fileprivate var reuseToken = UUID()
-    fileprivate var imageResourceInternal: WireImageResource?
-
     var imageSizeLimit: ImageSizeLimit = .deviceOptimized
+
     var imageResource: WireImageResource? {
         get { imageResourceInternal }
         set { setImageResource(newValue) }
@@ -71,24 +90,12 @@ final class ImageResourceView: FLAnimatedImageView {
         })
     }
 
-    convenience init() {
-        self.init(frame: .zero)
-    }
+    // MARK: Fileprivate
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    fileprivate var loadingView = ThreeDotsLoadingView()
 
-        loadingView.accessibilityIdentifier = "loading"
-        loadingView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(loadingView)
-        NSLayoutConstraint.activate([
-            centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
-            centerYAnchor.constraint(equalTo: loadingView.centerYAnchor),
-        ])
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
+    /// This token is changes everytime the cell is re-used. Useful when performing
+    /// asynchronous tasks where the cell might have been re-used in the mean time.
+    fileprivate var reuseToken = UUID()
+    fileprivate var imageResourceInternal: WireImageResource?
 }

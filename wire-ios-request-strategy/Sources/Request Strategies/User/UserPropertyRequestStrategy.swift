@@ -79,6 +79,8 @@ extension UserProperty {
         case set
         case delete
 
+        // MARK: Lifecycle
+
         init(eventType: ZMUpdateEventType) {
             switch eventType {
             case .userPropertiesSet:
@@ -128,10 +130,7 @@ extension UserProperty {
 // MARK: - UserPropertyRequestStrategy
 
 public class UserPropertyRequestStrategy: AbstractRequestStrategy {
-    var modifiedSync: ZMUpstreamModifiedObjectSync!
-    var downstreamSync: ZMSingleRequestSync!
-    fileprivate var propertiesToFetch: Set<UserProperty> = Set()
-    fileprivate var fetchedProperty: UserProperty?
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -160,6 +159,8 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
         )
     }
 
+    // MARK: Public
+
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate {
             downstreamSync.readyForNextRequestIfNotBusy()
@@ -168,6 +169,16 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
             return modifiedSync.nextRequest(for: apiVersion)
         }
     }
+
+    // MARK: Internal
+
+    var modifiedSync: ZMUpstreamModifiedObjectSync!
+    var downstreamSync: ZMSingleRequestSync!
+
+    // MARK: Fileprivate
+
+    fileprivate var propertiesToFetch: Set<UserProperty> = Set()
+    fileprivate var fetchedProperty: UserProperty?
 }
 
 // MARK: ZMUpstreamTranscoder

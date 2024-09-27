@@ -24,27 +24,13 @@ import Foundation
 /// to detect suspicious request loops
 @objcMembers
 public final class RequestLoopDetection: NSObject {
-    /// After this time, requests are purged from the list
-    static let decayTimer: TimeInterval = 60 // 1 minute
-
-    /// Repetition warning trigger threshold
-    /// If a request is repeated more than this number of times,
-    /// it will trigger a warning
-    static let repetitionTriggerThreshold = 20
-
-    /// Hard limit of URLs to keep in the history
-    static let historyLimit = 120
-
-    /// List of requests
-    private(set) var recordedRequests: [IdentifierDate] = []
-
-    /// Trigger that will be invoked when a loop is detected
-    /// The URL passed is the URL that created the loop
-    private let triggerCallback: (String) -> Void
+    // MARK: Lifecycle
 
     public init(triggerCallback: @escaping (String) -> Void) {
         self.triggerCallback = triggerCallback
     }
+
+    // MARK: Public
 
     // MARK: - Loop detection
 
@@ -69,6 +55,46 @@ public final class RequestLoopDetection: NSObject {
 
         triggerIfTooMany(identifier: identifier)
     }
+
+    // MARK: Internal
+
+    /// After this time, requests are purged from the list
+    static let decayTimer: TimeInterval = 60 // 1 minute
+
+    /// Repetition warning trigger threshold
+    /// If a request is repeated more than this number of times,
+    /// it will trigger a warning
+    static let repetitionTriggerThreshold = 20
+
+    /// Hard limit of URLs to keep in the history
+    static let historyLimit = 120
+
+    /// List of requests
+    private(set) var recordedRequests: [IdentifierDate] = []
+
+    func isPathExcluded(_ path: String) -> Bool {
+        guard let urlComponents = URLComponents(string: path) else {
+            return false
+        }
+
+        if urlComponents.path.hasSuffix("/typing") == true {
+            return true
+        }
+
+        if urlComponents.path.hasSuffix("/search/contacts") {
+            if  let query = urlComponents.queryItems?.first(where: { $0.name == "q" }), let value = query.value {
+                return value.isEmpty
+            }
+        }
+
+        return false
+    }
+
+    // MARK: Private
+
+    /// Trigger that will be invoked when a loop is detected
+    /// The URL passed is the URL that created the loop
+    private let triggerCallback: (String) -> Void
 
     /// Removes requests that are too old from the recorded requests
     private func purgeOldRequests() {
@@ -115,36 +141,22 @@ public final class RequestLoopDetection: NSObject {
             recordedRequests = recordedRequests.filter { $0.identifier != identifier.identifier }
         }
     }
-
-    func isPathExcluded(_ path: String) -> Bool {
-        guard let urlComponents = URLComponents(string: path) else {
-            return false
-        }
-
-        if urlComponents.path.hasSuffix("/typing") == true {
-            return true
-        }
-
-        if urlComponents.path.hasSuffix("/search/contacts") {
-            if  let query = urlComponents.queryItems?.first(where: { $0.name == "q" }), let value = query.value {
-                return value.isEmpty
-            }
-        }
-
-        return false
-    }
 }
 
 // MARK: - IdentifierDate
 
 struct IdentifierDate {
-    let identifier: String
-    let date: Date
-    let path: String
+    // MARK: Lifecycle
 
     init(path: String, contentHint: String, date: Date) {
         self.identifier = "\(path)[\(contentHint)]"
         self.date = date
         self.path = path
     }
+
+    // MARK: Internal
+
+    let identifier: String
+    let date: Date
+    let path: String
 }

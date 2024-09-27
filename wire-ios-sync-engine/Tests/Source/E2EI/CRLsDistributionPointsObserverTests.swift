@@ -23,9 +23,7 @@ import XCTest
 @testable import WireSyncEngineSupport
 
 class CRLsDistributionPointsObserverTests: XCTestCase {
-    private var publisher: PassthroughSubject<CRLsDistributionPoints, Never>!
-    private var sut: CRLsDistributionPointsObserver!
-    private var mockCRLsChecker: MockCertificateRevocationListsChecking!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -60,4 +58,10 @@ class CRLsDistributionPointsObserverTests: XCTestCase {
         XCTAssertEqual(mockCRLsChecker.checkNewCRLsFrom_Invocations.count, 1)
         XCTAssertEqual(mockCRLsChecker.checkNewCRLsFrom_Invocations.first, distributionPoints)
     }
+
+    // MARK: Private
+
+    private var publisher: PassthroughSubject<CRLsDistributionPoints, Never>!
+    private var sut: CRLsDistributionPointsObserver!
+    private var mockCRLsChecker: MockCertificateRevocationListsChecking!
 }

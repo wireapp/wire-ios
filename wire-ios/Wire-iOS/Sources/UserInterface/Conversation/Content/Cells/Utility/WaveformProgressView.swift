@@ -21,6 +21,20 @@ import UIKit
 // MARK: - WaveformBarsView
 
 private final class WaveformBarsView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     var samples: [Float] = [] {
         didSet {
             setNeedsDisplay()
@@ -33,15 +47,7 @@ private final class WaveformBarsView: UIView {
         }
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
+    // MARK: Fileprivate
 
     fileprivate func setup() {
         contentMode = .redraw
@@ -89,9 +95,32 @@ private final class WaveformBarsView: UIView {
 // MARK: - WaveformProgressView
 
 final class WaveformProgressView: UIView {
-    fileprivate let backgroundWaveform = WaveformBarsView()
-    fileprivate let foregroundWaveform = WaveformBarsView()
-    fileprivate var maskShape = CAShapeLayer()
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        maskShape.fillColor = UIColor.white.cgColor
+        backgroundWaveform.backgroundColor = UIColor.clear
+        backgroundWaveform.barColor = UIColor.gray
+        backgroundWaveform.translatesAutoresizingMaskIntoConstraints = false
+        foregroundWaveform.backgroundColor = UIColor.clear
+        foregroundWaveform.barColor = UIColor.accent()
+        foregroundWaveform.translatesAutoresizingMaskIntoConstraints = false
+        foregroundWaveform.layer.mask = maskShape
+
+        addSubview(backgroundWaveform)
+        addSubview(foregroundWaveform)
+
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
 
     var samples: [Float] = [] {
         didSet {
@@ -125,6 +154,17 @@ final class WaveformProgressView: UIView {
         }
     }
 
+    override var bounds: CGRect {
+        didSet {
+            maskShape.path = UIBezierPath(rect: CGRect(
+                x: 0,
+                y: 0,
+                width: bounds.width * CGFloat(progress),
+                height: bounds.height
+            )).cgPath
+        }
+    }
+
     func setProgress(_ progress: Float, animated: Bool) {
         let path = UIBezierPath(rect: CGRect(
             x: 0,
@@ -146,34 +186,13 @@ final class WaveformProgressView: UIView {
         maskShape.path = path
     }
 
-    override var bounds: CGRect {
-        didSet {
-            maskShape.path = UIBezierPath(rect: CGRect(
-                x: 0,
-                y: 0,
-                width: bounds.width * CGFloat(progress),
-                height: bounds.height
-            )).cgPath
-        }
-    }
+    // MARK: Fileprivate
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    fileprivate let backgroundWaveform = WaveformBarsView()
+    fileprivate let foregroundWaveform = WaveformBarsView()
+    fileprivate var maskShape = CAShapeLayer()
 
-        maskShape.fillColor = UIColor.white.cgColor
-        backgroundWaveform.backgroundColor = UIColor.clear
-        backgroundWaveform.barColor = UIColor.gray
-        backgroundWaveform.translatesAutoresizingMaskIntoConstraints = false
-        foregroundWaveform.backgroundColor = UIColor.clear
-        foregroundWaveform.barColor = UIColor.accent()
-        foregroundWaveform.translatesAutoresizingMaskIntoConstraints = false
-        foregroundWaveform.layer.mask = maskShape
-
-        addSubview(backgroundWaveform)
-        addSubview(foregroundWaveform)
-
-        createConstraints()
-    }
+    // MARK: Private
 
     private func createConstraints() {
         guard let superview = backgroundWaveform.superview else { return }
@@ -191,10 +210,5 @@ final class WaveformProgressView: UIView {
             foregroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
             foregroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor),
         ])
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

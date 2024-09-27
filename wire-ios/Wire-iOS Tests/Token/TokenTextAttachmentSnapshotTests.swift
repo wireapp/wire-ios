@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class TokenTextAttachmentSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: TokenTextAttachment!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -51,4 +48,11 @@ final class TokenTextAttachmentSnapshotTests: XCTestCase {
     func testTokenAttachmentImage() {
         snapshotHelper.verify(matching: sut.image!)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TokenTextAttachment!
 }

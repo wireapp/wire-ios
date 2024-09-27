@@ -23,9 +23,7 @@ import WireDesign
 // MARK: - DefaultNavigationBar
 
 class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
-    func redrawFont() {
-        titleTextAttributes?[.font] = FontSpec.smallSemiboldFont.font!
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,6 +33,23 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
+    static func titleTextAttributes(
+        for color: UIColor = SemanticColors.Label
+            .textDefault
+    ) -> [NSAttributedString.Key: Any] {
+        [
+            .font: FontSpec.smallSemiboldFont.font!,
+            .foregroundColor: color,
+            .baselineOffset: 1.0,
+        ]
+    }
+
+    func redrawFont() {
+        titleTextAttributes?[.font] = FontSpec.smallSemiboldFont.font!
     }
 
     func configure() {
@@ -57,17 +72,6 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
         isTranslucent = false
         barTintColor = SemanticColors.View.backgroundDefault
         shadowImage = UIImage.singlePixelImage(with: UIColor.clear)
-    }
-
-    static func titleTextAttributes(
-        for color: UIColor = SemanticColors.Label
-            .textDefault
-    ) -> [NSAttributedString.Key: Any] {
-        [
-            .font: FontSpec.smallSemiboldFont.font!,
-            .foregroundColor: color,
-            .baselineOffset: 1.0,
-        ]
     }
 }
 

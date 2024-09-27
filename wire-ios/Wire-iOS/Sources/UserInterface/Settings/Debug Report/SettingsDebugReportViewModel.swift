@@ -34,15 +34,7 @@ protocol SettingsDebugReportViewModelProtocol {
 // MARK: - SettingsDebugReportViewModel
 
 class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
-    // MARK: - Properties
-
-    private let router: SettingsDebugReportRouterProtocol
-    private let shareFile: ShareFileUseCaseProtocol
-    private let fetchShareableConversations: FetchShareableConversationsUseCaseProtocol
-    private let logsProvider: LogFilesProviding
-    private let fileMetaDataGenerator: FileMetaDataGenerating
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         router: SettingsDebugReportRouterProtocol,
@@ -57,6 +49,8 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
         self.logsProvider = logsProvider
         self.fileMetaDataGenerator = fileMetaDataGenerator
     }
+
+    // MARK: Internal
 
     // MARK: - Interface
 
@@ -97,4 +91,14 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
             WireLogger.system.error("failed to generate log files \(error)")
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let router: SettingsDebugReportRouterProtocol
+    private let shareFile: ShareFileUseCaseProtocol
+    private let fetchShareableConversations: FetchShareableConversationsUseCaseProtocol
+    private let logsProvider: LogFilesProviding
+    private let fileMetaDataGenerator: FileMetaDataGenerating
 }

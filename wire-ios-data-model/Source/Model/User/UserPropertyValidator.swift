@@ -17,7 +17,11 @@
 //
 
 public struct UserPropertyValidator: UserPropertyValidating {
+    // MARK: Lifecycle
+
     public init() {}
+
+    // MARK: Public
 
     // Name
 

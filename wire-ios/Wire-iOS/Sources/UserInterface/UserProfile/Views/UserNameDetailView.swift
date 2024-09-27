@@ -28,14 +28,28 @@ private let normalBoldFont = FontSpec(.normal, .medium)
 // MARK: - AddressBookCorrelationFormatter
 
 final class AddressBookCorrelationFormatter: NSObject {
-    let lightFont, boldFont: FontSpec
-    let color: UIColor
+    // MARK: Lifecycle
 
     init(lightFont: FontSpec, boldFont: FontSpec, color: UIColor) {
         self.lightFont = lightFont
         self.boldFont = boldFont
         self.color = color
     }
+
+    // MARK: Internal
+
+    let lightFont, boldFont: FontSpec
+    let color: UIColor
+
+    func correlationText(for user: UserType, addressBookName: String?) -> NSAttributedString? {
+        if let name = addressBookName, let addressBook = addressBookText(for: user, with: name) {
+            return addressBook
+        }
+
+        return nil
+    }
+
+    // MARK: Private
 
     private func addressBookText(for user: UserType, with addressBookName: String) -> NSAttributedString? {
         guard !user.isSelfUser, let userName = user.name else { return nil }
@@ -47,23 +61,31 @@ final class AddressBookCorrelationFormatter: NSObject {
         let contactName = addressBookName && boldFont.font! && color
         return contactName + " " + suffix
     }
-
-    func correlationText(for user: UserType, addressBookName: String?) -> NSAttributedString? {
-        if let name = addressBookName, let addressBook = addressBookText(for: user, with: name) {
-            return addressBook
-        }
-
-        return nil
-    }
 }
 
 // MARK: - UserNameDetailViewModel
 
 final class UserNameDetailViewModel: NSObject {
-    let title: NSAttributedString
+    // MARK: Lifecycle
 
-    private let handleText: NSAttributedString?
-    private let correlationText: NSAttributedString?
+    init(user: UserType?, fallbackName fallback: String, addressBookName: String?) {
+        self.title = UserNameDetailViewModel.attributedTitle(for: user, fallback: fallback)
+        self.handleText = UserNameDetailViewModel.attributedSubtitle(for: user)
+        self.correlationText = UserNameDetailViewModel.attributedCorrelationText(
+            for: user,
+            addressBookName: addressBookName
+        )
+    }
+
+    // MARK: Internal
+
+    static var formatter = AddressBookCorrelationFormatter(
+        lightFont: smallLightFont,
+        boldFont: smallBoldFont,
+        color: SemanticColors.Label.textDefault
+    )
+
+    let title: NSAttributedString
 
     var firstSubtitle: NSAttributedString? {
         handleText ?? correlationText
@@ -89,21 +111,6 @@ final class UserNameDetailViewModel: NSObject {
         return "correlation"
     }
 
-    static var formatter = AddressBookCorrelationFormatter(
-        lightFont: smallLightFont,
-        boldFont: smallBoldFont,
-        color: SemanticColors.Label.textDefault
-    )
-
-    init(user: UserType?, fallbackName fallback: String, addressBookName: String?) {
-        self.title = UserNameDetailViewModel.attributedTitle(for: user, fallback: fallback)
-        self.handleText = UserNameDetailViewModel.attributedSubtitle(for: user)
-        self.correlationText = UserNameDetailViewModel.attributedCorrelationText(
-            for: user,
-            addressBookName: addressBookName
-        )
-    }
-
     static func attributedTitle(for user: UserType?, fallback: String) -> NSAttributedString {
         (user?.name ?? fallback) && normalBoldFont.font! && SemanticColors.Label.textDefault
     }
@@ -117,17 +124,17 @@ final class UserNameDetailViewModel: NSObject {
         guard let user else { return nil }
         return formatter.correlationText(for: user, addressBookName: addressBookName)
     }
+
+    // MARK: Private
+
+    private let handleText: NSAttributedString?
+    private let correlationText: NSAttributedString?
 }
 
 // MARK: - UserNameDetailView
 
 final class UserNameDetailView: UIView, DynamicTypeCapable {
-    // MARK: - Properties
-
-    private var model: UserNameDetailViewModel?
-
-    let subtitleLabel = UILabel()
-    let correlationLabel = UILabel()
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -142,6 +149,11 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let subtitleLabel = UILabel()
+    let correlationLabel = UILabel()
+
     // MARK: - Configure
 
     func configure(with model: UserNameDetailViewModel) {
@@ -152,6 +164,18 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
         subtitleLabel.accessibilityIdentifier = model.firstAccessibilityIdentifier
         correlationLabel.accessibilityIdentifier = model.secondAccessibilityIdentifier
     }
+
+    func redrawFont() {
+        guard let model else { return }
+        subtitleLabel.attributedText = model.firstSubtitle
+        correlationLabel.attributedText = model.secondSubtitle
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var model: UserNameDetailViewModel?
 
     // MARK: - Layout - Private Methods
 
@@ -180,11 +204,5 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
             correlationLabel.heightAnchor.constraint(equalToConstant: 16),
             correlationLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
-    }
-
-    func redrawFont() {
-        guard let model else { return }
-        subtitleLabel.attributedText = model.firstSubtitle
-        correlationLabel.attributedText = model.secondSubtitle
     }
 }

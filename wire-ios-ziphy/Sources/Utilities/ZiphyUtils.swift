@@ -26,6 +26,8 @@ public enum ZiphyResult<T> {
     case success(T)
     case failure(ZiphyError)
 
+    // MARK: Internal
+
     var error: ZiphyError! {
         if case let .failure(error) = self {
             error

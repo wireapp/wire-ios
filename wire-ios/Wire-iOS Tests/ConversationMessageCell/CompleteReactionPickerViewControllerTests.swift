@@ -21,11 +21,12 @@ import XCTest
 @testable import Wire
 
 final class CompleteReactionPickerViewControllerTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: Properties
 
     var sut: CompleteReactionPickerViewController!
     var emojiRepository: EmojiRepository!
-    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
@@ -92,6 +93,10 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: Helper Methods
 

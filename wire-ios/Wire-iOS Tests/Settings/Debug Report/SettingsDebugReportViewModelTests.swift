@@ -22,17 +22,7 @@ import XCTest
 @testable import Wire
 
 class SettingsDebugReportViewModelTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: SettingsDebugReportViewModel!
-    private var mockRouter: MockSettingsDebugReportRouterProtocol!
-    private var mockShareFile: MockShareFileUseCaseProtocol!
-    private var mockFetchShareableConversations: MockFetchShareableConversationsUseCaseProtocol!
-    private var mockLogsProvider: MockLogFilesProviding!
-    private var mockFileMetaDataGenerator: MockFileMetaDataGenerating!
-
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var coreDataStack: CoreDataStack!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -111,4 +101,18 @@ class SettingsDebugReportViewModelTests: XCTestCase {
         XCTAssertEqual(mockFileMetaDataGenerator.metadataForFileAtURLUTINameCompletion_Invocations.count, 1)
         XCTAssertEqual(mockRouter.presentShareViewControllerDestinationsDebugReport_Invocations.count, 1)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: SettingsDebugReportViewModel!
+    private var mockRouter: MockSettingsDebugReportRouterProtocol!
+    private var mockShareFile: MockShareFileUseCaseProtocol!
+    private var mockFetchShareableConversations: MockFetchShareableConversationsUseCaseProtocol!
+    private var mockLogsProvider: MockLogFilesProviding!
+    private var mockFileMetaDataGenerator: MockFileMetaDataGenerating!
+
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var coreDataStack: CoreDataStack!
 }

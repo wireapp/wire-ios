@@ -23,13 +23,15 @@ import WireUtilities
 
 @objcMembers
 public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
-    fileprivate let linkPreviewDetector: LinkPreviewDetectorType
+    // MARK: Lifecycle
 
     public init(linkPreviewDetector: LinkPreviewDetectorType, managedObjectContext: NSManagedObjectContext) {
         self.linkPreviewDetector = linkPreviewDetector
         let log = ZMSLog(tag: "link previews")
         super.init(managedObjectContext: managedObjectContext, zmLog: log)
     }
+
+    // MARK: Public
 
     override public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         let predicate = NSPredicate(
@@ -39,6 +41,8 @@ public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
         )
         return ZMClientMessage.sortedFetchRequest(with: predicate)
     }
+
+    // MARK: Internal
 
     override func objectsToPreprocess(_ object: NSObject) -> ZMClientMessage? {
         guard let message = object as? ZMClientMessage else { return nil }
@@ -120,4 +124,8 @@ public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
             message.linkPreviewState = .uploaded
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate let linkPreviewDetector: LinkPreviewDetectorType
 }

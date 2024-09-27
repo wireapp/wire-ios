@@ -22,8 +22,9 @@ import XCTest
 @testable import Wire
 
 final class LaunchImageViewControllerSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     var sut: LaunchImageViewController!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -47,4 +48,8 @@ final class LaunchImageViewControllerSnapshotTests: XCTestCase {
 
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

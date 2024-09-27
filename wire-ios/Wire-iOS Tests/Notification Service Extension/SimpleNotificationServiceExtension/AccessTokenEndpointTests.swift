@@ -20,22 +20,6 @@ import XCTest
 @testable import Wire_Notification_Service_Extension
 
 class AccessTokenEndpointTests: XCTestCase {
-    // MARK: - Request generation
-
-    func test_RequestGeneration() {
-        // Given
-        let sut = AccessTokenEndpoint()
-
-        // When
-        let request = sut.request
-
-        // Then
-        XCTAssertEqual(request.path, "/access")
-        XCTAssertEqual(request.httpMethod, .post)
-        XCTAssertEqual(request.contentType, .json)
-        XCTAssertEqual(request.acceptType, .json)
-    }
-
     // MARK: - Response parsing
 
     let validPayload = Data("""
@@ -51,6 +35,22 @@ class AccessTokenEndpointTests: XCTestCase {
         "foo": "bar"
     }
     """.utf8)
+
+    // MARK: - Request generation
+
+    func test_RequestGeneration() {
+        // Given
+        let sut = AccessTokenEndpoint()
+
+        // When
+        let request = sut.request
+
+        // Then
+        XCTAssertEqual(request.path, "/access")
+        XCTAssertEqual(request.httpMethod, .post)
+        XCTAssertEqual(request.contentType, .json)
+        XCTAssertEqual(request.acceptType, .json)
+    }
 
     func test_ParseSuccessResponse() {
         // Given

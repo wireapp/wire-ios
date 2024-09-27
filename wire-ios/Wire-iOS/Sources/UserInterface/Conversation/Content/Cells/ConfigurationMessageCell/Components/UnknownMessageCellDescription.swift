@@ -36,7 +36,17 @@ extension CustomMessageView: ConversationMessageCell {
 /// A description for a message cell that informs the user a message cannot be rendered.
 
 final class UnknownMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init() {
+        self.configuration = L10n.Localizable.Content.System.UnknownMessage.body
+        self.accessibilityLabel = configuration
+    }
+
+    // MARK: Internal
+
     typealias View = CustomMessageView
+
     let configuration: String
 
     weak var message: ZMConversationMessage?
@@ -52,9 +62,4 @@ final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     let isFullWidth = false
     let supportsActions = false
     let containsHighlightableContent = false
-
-    init() {
-        self.configuration = L10n.Localizable.Content.System.UnknownMessage.body
-        self.accessibilityLabel = configuration
-    }
 }

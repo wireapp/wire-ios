@@ -22,10 +22,7 @@ import XCTest
 @testable import Wire
 
 final class TopPeopleCellSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: TopPeopleCell!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -51,4 +48,11 @@ final class TopPeopleCellSnapshotTests: XCTestCase {
     func testForInitState() {
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TopPeopleCell!
 }

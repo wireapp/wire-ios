@@ -32,12 +32,9 @@ extension TimeInterval {
 // MARK: - WirelessExpirationTimeFormatter
 
 final class WirelessExpirationTimeFormatter {
+    // MARK: Internal
+
     static let shared = WirelessExpirationTimeFormatter()
-    private let numberFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.maximumFractionDigits = 1
-        return formatter
-    }()
 
     func string(for user: UserType) -> String? {
         string(for: user.expiresAfter)
@@ -60,6 +57,14 @@ final class WirelessExpirationTimeFormatter {
         default: return localizedMinutes(15)
         }
     }
+
+    // MARK: Private
+
+    private let numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 1
+        return formatter
+    }()
 
     private func localizedMinutes(_ minutes: Double) -> String {
         L10n.Localizable.GuestRoom.Expiration.lessThanMinutesLeft(String(format: "%.0f", minutes))

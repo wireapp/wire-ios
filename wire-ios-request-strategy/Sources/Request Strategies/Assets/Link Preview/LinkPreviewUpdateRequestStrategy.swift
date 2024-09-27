@@ -21,19 +21,7 @@ import Foundation
 // MARK: - LinkPreviewUpdateRequestStrategy
 
 public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-    let managedObjectContext: NSManagedObjectContext
-    let modifiedKeysSync: ModifiedKeyObjectSync<LinkPreviewUpdateRequestStrategy>
-    let messageSender: MessageSenderInterface
-
-    static func linkPreviewIsUploadedPredicate(context: NSManagedObjectContext) -> NSPredicate {
-        NSPredicate(
-            format: "%K == %@ AND %K == %d",
-            #keyPath(ZMClientMessage.sender),
-            ZMUser.selfUser(in: context),
-            #keyPath(ZMClientMessage.linkPreviewState),
-            ZMLinkPreviewState.uploaded.rawValue
-        )
-    }
+    // MARK: Lifecycle
 
     public init(
         managedObjectContext: NSManagedObjectContext,
@@ -53,8 +41,26 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
         modifiedKeysSync.transcoder = self
     }
 
+    // MARK: Public
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [modifiedKeysSync]
+    }
+
+    // MARK: Internal
+
+    let managedObjectContext: NSManagedObjectContext
+    let modifiedKeysSync: ModifiedKeyObjectSync<LinkPreviewUpdateRequestStrategy>
+    let messageSender: MessageSenderInterface
+
+    static func linkPreviewIsUploadedPredicate(context: NSManagedObjectContext) -> NSPredicate {
+        NSPredicate(
+            format: "%K == %@ AND %K == %d",
+            #keyPath(ZMClientMessage.sender),
+            ZMUser.selfUser(in: context),
+            #keyPath(ZMClientMessage.linkPreviewState),
+            ZMLinkPreviewState.uploaded.rawValue
+        )
     }
 }
 

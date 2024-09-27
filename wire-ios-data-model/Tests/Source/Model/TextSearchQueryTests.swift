@@ -22,7 +22,11 @@ import WireTesting
 // MARK: - MockTextSearchQueryDelegate
 
 private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
+    // MARK: Internal
+
     var fetchedResults = [TextQueryResult]()
+
+    // MARK: Fileprivate
 
     fileprivate func textSearchQueryDidReceive(result: TextQueryResult) {
         fetchedResults.append(result)
@@ -32,6 +36,8 @@ private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
 // MARK: - TextSearchQueryTests
 
 class TextSearchQueryTests: BaseZMClientMessageTests {
+    // MARK: Internal
+
     override class func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
@@ -679,6 +685,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
             XCTAssertTrue(result.matches.isEmpty, "Expected to not find a match", file: file, line: line)
         }
     }
+
+    // MARK: Fileprivate
 
     fileprivate func search(
         for text: String,

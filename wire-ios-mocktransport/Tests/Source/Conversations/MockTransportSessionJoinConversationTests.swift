@@ -19,6 +19,8 @@
 import Foundation
 
 class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
+    // MARK: Internal
+
     var selfUser: MockUser!
     var conversation: MockConversation!
 
@@ -165,6 +167,8 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
 
         XCTAssertEqual(receivedPayload["label"] as! String, "no-conversation-code")
     }
+
+    // MARK: Private
 
     private func fetchConversation(
         with identifier: String,

@@ -21,32 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
-    // MARK: - Properties
-
-    let titleLabel = DynamicFontLabel(
-        fontSpec: .smallSemiboldFont,
-        color: SemanticColors.Label.textDefault
-    )
-    let fingerprintLabel = CopyableLabel()
-    let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
-
-    var fingerprintLabelFont: FontSpec? {
-        didSet {
-            updateFingerprint()
-        }
-    }
-
-    var fingerprintLabelBoldFont: FontSpec? {
-        didSet {
-            updateFingerprint()
-        }
-    }
-
-    var fingerprint: Data? {
-        didSet {
-            updateFingerprint()
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -96,6 +71,41 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let titleLabel = DynamicFontLabel(
+        fontSpec: .smallSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
+    let fingerprintLabel = CopyableLabel()
+    let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+
+    var fingerprintLabelFont: FontSpec? {
+        didSet {
+            updateFingerprint()
+        }
+    }
+
+    var fingerprintLabelBoldFont: FontSpec? {
+        didSet {
+            updateFingerprint()
+        }
+    }
+
+    var fingerprint: Data? {
+        didSet {
+            updateFingerprint()
+        }
+    }
+
+    func redrawFont() {
+        updateFingerprint()
+    }
+
+    // MARK: Private
+
     // MARK: - Methods
 
     private func setupStyle() {
@@ -131,9 +141,5 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
         accessibilityElements = [titleLabel, fingerprintLabel]
         isAccessibilityElement = true
         accessibilityLabel = "\(titleText), \(fingerprintText)"
-    }
-
-    func redrawFont() {
-        updateFingerprint()
     }
 }

@@ -43,6 +43,23 @@ protocol ChangeHandleTableViewCellDelegate: AnyObject {
 // MARK: - ChangeHandleTableViewCell
 
 final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
+    // MARK: Lifecycle
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupViews()
+        createConstraints()
+
+        setupStyle()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     weak var delegate: ChangeHandleTableViewCellDelegate?
     let prefixLabel: UILabel = {
         let label = UILabel()
@@ -69,21 +86,8 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
         return label
     }()
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupViews()
-        createConstraints()
-
-        setupStyle()
-    }
-
     func setupStyle() {
         backgroundColor = .clear
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     func setupViews() {
@@ -96,24 +100,6 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
         handleTextField.textAlignment = .right
         prefixLabel.text = "@"
         [prefixLabel, handleTextField, domainLabel].forEach(addSubview)
-    }
-
-    private func createConstraints() {
-        [prefixLabel, handleTextField, domainLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        NSLayoutConstraint.activate([
-            prefixLabel.topAnchor.constraint(equalTo: topAnchor),
-            prefixLabel.widthAnchor.constraint(equalToConstant: 16),
-            prefixLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            prefixLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            prefixLabel.trailingAnchor.constraint(equalTo: handleTextField.leadingAnchor, constant: -4),
-            handleTextField.topAnchor.constraint(equalTo: topAnchor),
-            handleTextField.bottomAnchor.constraint(equalTo: bottomAnchor),
-            handleTextField.trailingAnchor.constraint(equalTo: domainLabel.leadingAnchor, constant: -4),
-            domainLabel.topAnchor.constraint(equalTo: topAnchor),
-            domainLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            domainLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16),
-        ])
     }
 
     func performWiggleAnimation() {
@@ -146,6 +132,26 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
         performWiggleAnimation()
         return false
     }
+
+    // MARK: Private
+
+    private func createConstraints() {
+        [prefixLabel, handleTextField, domainLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        NSLayoutConstraint.activate([
+            prefixLabel.topAnchor.constraint(equalTo: topAnchor),
+            prefixLabel.widthAnchor.constraint(equalToConstant: 16),
+            prefixLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            prefixLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            prefixLabel.trailingAnchor.constraint(equalTo: handleTextField.leadingAnchor, constant: -4),
+            handleTextField.topAnchor.constraint(equalTo: topAnchor),
+            handleTextField.bottomAnchor.constraint(equalTo: bottomAnchor),
+            handleTextField.trailingAnchor.constraint(equalTo: domainLabel.leadingAnchor, constant: -4),
+            domainLabel.topAnchor.constraint(equalTo: topAnchor),
+            domainLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            domainLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16),
+        ])
+    }
 }
 
 // MARK: - HandleValidation
@@ -165,6 +171,16 @@ enum HandleValidation {
 /// a new handle. The `ChangeHandleViewController` uses this state
 /// to layout its interface.
 struct HandleChangeState {
+    // MARK: Lifecycle
+
+    init(currentHandle: String?, newHandle: String?, availability: HandleAvailability) {
+        self.currentHandle = currentHandle
+        self.newHandle = newHandle
+        self.availability = availability
+    }
+
+    // MARK: Internal
+
     enum ValidationError: Error {
         case tooShort, tooLong, invalidCharacter, sameAsPrevious
     }
@@ -179,12 +195,6 @@ struct HandleChangeState {
 
     var displayHandle: String? {
         newHandle ?? currentHandle
-    }
-
-    init(currentHandle: String?, newHandle: String?, availability: HandleAvailability) {
-        self.currentHandle = currentHandle
-        self.newHandle = newHandle
-        self.availability = availability
     }
 
     /// Validates the passed in handle and updates the state if
@@ -210,17 +220,7 @@ struct HandleChangeState {
 // MARK: - ChangeHandleViewController
 
 final class ChangeHandleViewController: SettingsBaseTableViewController {
-    private typealias HandleChange = L10n.Localizable.Self.Settings.AccountSection.Handle.Change
-
-    var footerFont: UIFont = .smallFont
-    var state: HandleChangeState
-    private var footerLabel = UILabel()
-    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
-    private var observerToken: Any?
-    var popOnSuccess = true
-    private var federationEnabled: Bool
-
-    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+    // MARK: Lifecycle
 
     convenience init() {
         let user = SelfUser.provider?.providedSelfUser
@@ -247,6 +247,12 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var footerFont: UIFont = .smallFont
+    var state: HandleChangeState
+    var popOnSuccess = true
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setupNavigationBar()
@@ -257,17 +263,6 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillAppear(animated)
         observerToken = nil
-    }
-
-    private func setupViews() {
-        view.backgroundColor = .clear
-        ChangeHandleTableViewCell.register(in: tableView)
-        tableView.allowsSelection = false
-        tableView.isScrollEnabled = false
-        tableView.separatorStyle = .singleLine
-        tableView.separatorColor = SemanticColors.View.backgroundSeparatorCell
-        footerLabel.numberOfLines = 0
-        updateUI()
     }
 
     func setupNavigationBar() {
@@ -287,29 +282,6 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         guard let handleToSet = state.newHandle else { return }
         userProfile?.requestSettingHandle(handle: handleToSet)
         activityIndicator.start()
-    }
-
-    fileprivate var attributedFooterTitle: NSAttributedString? {
-        let infoText = HandleChange.footer.attributedString && SemanticColors.Label.textSectionFooter
-        let alreadyTakenText = HandleChange.Footer.unavailable && SemanticColors.Label.textErrorDefault
-        let prefix = state.availability == .taken ? alreadyTakenText + "\n\n" : "\n\n".attributedString
-        return (prefix + infoText) && footerFont
-    }
-
-    private func updateFooter() {
-        footerLabel.attributedText = attributedFooterTitle
-        let size = footerLabel.sizeThatFits(CGSize(width: view.frame.width - 32, height: UIView.noIntrinsicMetric))
-        footerLabel.frame = CGRect(origin: CGPoint(x: 16, y: 0), size: size)
-        tableView.tableFooterView = footerLabel
-    }
-
-    private func updateNavigationItem() {
-        navigationItem.rightBarButtonItem?.isEnabled = state.availability == .available
-    }
-
-    fileprivate func updateUI() {
-        updateNavigationItem()
-        updateFooter()
     }
 
     // MARK: - UITableView
@@ -343,6 +315,54 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         56
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
+
+    fileprivate var attributedFooterTitle: NSAttributedString? {
+        let infoText = HandleChange.footer.attributedString && SemanticColors.Label.textSectionFooter
+        let alreadyTakenText = HandleChange.Footer.unavailable && SemanticColors.Label.textErrorDefault
+        let prefix = state.availability == .taken ? alreadyTakenText + "\n\n" : "\n\n".attributedString
+        return (prefix + infoText) && footerFont
+    }
+
+    fileprivate func updateUI() {
+        updateNavigationItem()
+        updateFooter()
+    }
+
+    // MARK: Private
+
+    private typealias HandleChange = L10n.Localizable.Self.Settings.AccountSection.Handle.Change
+
+    private var footerLabel = UILabel()
+    private var observerToken: Any?
+    private var federationEnabled: Bool
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
+    private func setupViews() {
+        view.backgroundColor = .clear
+        ChangeHandleTableViewCell.register(in: tableView)
+        tableView.allowsSelection = false
+        tableView.isScrollEnabled = false
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = SemanticColors.View.backgroundSeparatorCell
+        footerLabel.numberOfLines = 0
+        updateUI()
+    }
+
+    private func updateFooter() {
+        footerLabel.attributedText = attributedFooterTitle
+        let size = footerLabel.sizeThatFits(CGSize(width: view.frame.width - 32, height: UIView.noIntrinsicMetric))
+        footerLabel.frame = CGRect(origin: CGPoint(x: 16, y: 0), size: size)
+        tableView.tableFooterView = footerLabel
+    }
+
+    private func updateNavigationItem() {
+        navigationItem.rightBarButtonItem?.isEnabled = state.availability == .available
     }
 }
 

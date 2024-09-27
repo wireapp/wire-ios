@@ -19,10 +19,10 @@
 import Foundation
 
 class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
+    // MARK: Internal
+
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
-
-    private let processor = ConnectionPayloadProcessor()
 
     override func request(
         for action: ActionHandler<ConnectToUserAction>.Action,
@@ -112,4 +112,8 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
 
         action.notifyResult(.success(()))
     }
+
+    // MARK: Private
+
+    private let processor = ConnectionPayloadProcessor()
 }

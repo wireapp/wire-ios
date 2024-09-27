@@ -23,13 +23,13 @@ import XCTest
 // MARK: - ConversationStatusLineTests_Muting
 
 final class ConversationStatusLineTests_Muting: CoreDataSnapshotTestCase {
+    override var needsCaches: Bool {
+        true
+    }
+
     override func setUp() {
         selfUserInTeam = true
         super.setUp()
-    }
-
-    override var needsCaches: Bool {
-        true
     }
 }
 

@@ -40,6 +40,8 @@ public enum WirelessLinkError: Error {
     case noConversation
     case unknown
 
+    // MARK: Lifecycle
+
     init?(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "invalid-op"?): self = .invalidOperation

@@ -22,9 +22,7 @@ import XCTest
 @testable import Wire
 
 final class MessageActionTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: setUp
 
@@ -58,4 +56,10 @@ final class MessageActionTests: XCTestCase {
             }
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
 }

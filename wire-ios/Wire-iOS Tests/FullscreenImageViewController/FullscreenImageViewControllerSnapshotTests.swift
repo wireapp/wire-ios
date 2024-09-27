@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: FullscreenImageViewController!
-    private var userSession: UserSessionMock!
+    // MARK: Internal
 
     // MARK: - setup
 
@@ -88,4 +84,12 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
         snapshotHelper.verify(matching: sut.view)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: FullscreenImageViewController!
+    private var userSession: UserSessionMock!
 }

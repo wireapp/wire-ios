@@ -30,6 +30,10 @@ private let testDataURL = Bundle(for: AssetV3PreviewDownloadRequestStrategyTests
 // MARK: - AssetV3PreviewDownloadRequestStrategyTests
 
 class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
+    // MARK: Internal
+
+    typealias PreviewMeta = (otr: Data, sha: Data, assetId: String, token: String, domain: String)
+
     var mockApplicationStatus: MockApplicationStatus!
     var sut: AssetV3PreviewDownloadRequestStrategy!
     var conversation: ZMConversation!
@@ -39,8 +43,6 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             BackendInfo.apiVersion = apiVersion
         }
     }
-
-    typealias PreviewMeta = (otr: Data, sha: Data, assetId: String, token: String, domain: String)
 
     override func setUp() {
         super.setUp()
@@ -62,40 +64,6 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         sut = nil
         conversation = nil
         super.tearDown()
-    }
-
-    fileprivate func createConversation() -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.remoteIdentifier = UUID.create()
-        return conversation
-    }
-
-    fileprivate func createMessage(in conversation: ZMConversation)
-        -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, assetDomain: String)? {
-        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
-        let (otrKey, sha) = (Data.randomEncryptionKey(), Data.randomEncryptionKey())
-        let (assetId, token, domain) = (
-            UUID.create().transportString(),
-            UUID.create().transportString(),
-            UUID.create().transportString()
-        )
-        var uploaded = GenericMessage(
-            content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha),
-            nonce: message.nonce!,
-            expiresAfter: conversation.activeMessageDestructionTimeoutValue
-        )
-        uploaded.updateUploaded(assetId: assetId, token: token, domain: domain)
-
-        do {
-            try message.setUnderlyingMessage(uploaded)
-        } catch {
-            XCTFail("Could not set generic message")
-        }
-
-        message.updateTransferState(.uploaded, synchronize: false)
-        syncMOC.saveOrRollback()
-
-        return (message, assetId, token, domain)
     }
 
     func createPreview(
@@ -380,5 +348,41 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             let data = self.syncMOC.zm_fileAssetCache.encryptedMediumImageData(for: message)
             XCTAssertEqual(data, encryptedData)
         }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate func createConversation() -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+        conversation.remoteIdentifier = UUID.create()
+        return conversation
+    }
+
+    fileprivate func createMessage(in conversation: ZMConversation)
+        -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, assetDomain: String)? {
+        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+        let (otrKey, sha) = (Data.randomEncryptionKey(), Data.randomEncryptionKey())
+        let (assetId, token, domain) = (
+            UUID.create().transportString(),
+            UUID.create().transportString(),
+            UUID.create().transportString()
+        )
+        var uploaded = GenericMessage(
+            content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha),
+            nonce: message.nonce!,
+            expiresAfter: conversation.activeMessageDestructionTimeoutValue
+        )
+        uploaded.updateUploaded(assetId: assetId, token: token, domain: domain)
+
+        do {
+            try message.setUnderlyingMessage(uploaded)
+        } catch {
+            XCTFail("Could not set generic message")
+        }
+
+        message.updateTransferState(.uploaded, synchronize: false)
+        syncMOC.saveOrRollback()
+
+        return (message, assetId, token, domain)
     }
 }

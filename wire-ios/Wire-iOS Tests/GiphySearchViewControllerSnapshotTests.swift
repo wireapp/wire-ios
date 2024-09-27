@@ -23,17 +23,7 @@ import Ziphy
 @testable import Wire
 
 final class GiphySearchViewControllerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: GiphySearchViewController!
-
-    private var mockConversation: MockConversation!
-    private var mockNavigationController: UINavigationController!
-
-    private var client: ZiphyClient!
-    private var requester: MockURLSession!
-    private var resultsController: ZiphySearchResultsController!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -81,4 +71,18 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
     func testEmptySearchScreenWithKeyword() {
         snapshotHelper.verify(matching: mockNavigationController.view)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: GiphySearchViewController!
+
+    private var mockConversation: MockConversation!
+    private var mockNavigationController: UINavigationController!
+
+    private var client: ZiphyClient!
+    private var requester: MockURLSession!
+    private var resultsController: ZiphySearchResultsController!
 }

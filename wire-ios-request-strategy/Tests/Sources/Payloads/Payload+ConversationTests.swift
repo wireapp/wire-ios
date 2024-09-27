@@ -21,7 +21,7 @@ import XCTest
 @testable import WireRequestStrategy
 
 class Payload_ConversationTests: MessagingTestBase {
-    private typealias AccessRole = ConversationAccessRoleV2
+    // MARK: Internal
 
     func test_Conversation_DecodesLegacyAccessRoles_APIVersionV2() throws {
         try test_Conversation_DecodesLegacyAccessRoles(apiVersion: .v2)
@@ -29,30 +29,6 @@ class Payload_ConversationTests: MessagingTestBase {
 
     func test_Conversation_DecodesLegacyAccessRoles_APIVersionV3() throws {
         try test_Conversation_DecodesLegacyAccessRoles(apiVersion: .v3)
-    }
-
-    private func test_Conversation_DecodesLegacyAccessRoles(apiVersion: APIVersion) throws {
-        // GIVEN
-        let accessRoles = [
-            AccessRole.teamMember,
-            AccessRole.guest,
-        ].map(\.rawValue)
-
-        let legacyAccessRole = ConversationAccessRole.team.rawValue
-
-        let payload: [String: Any] = [
-            "access_role": legacyAccessRole,
-            "access_role_v2": accessRoles,
-        ]
-
-        let data = try JSONSerialization.data(withJSONObject: payload, options: [])
-
-        // WHEN
-        let conversation = Payload.Conversation(data, apiVersion: apiVersion)
-
-        // THEN
-        XCTAssertEqual(conversation?.accessRoles, accessRoles)
-        XCTAssertEqual(conversation?.legacyAccessRole, legacyAccessRole)
     }
 
     func test_Conversation_DecodesAccessRoles_APIVersionV3() throws {
@@ -185,5 +161,33 @@ class Payload_ConversationTests: MessagingTestBase {
 
         // THEN
         XCTAssertEqual(payloadAccessRoles, accessRoles)
+    }
+
+    // MARK: Private
+
+    private typealias AccessRole = ConversationAccessRoleV2
+
+    private func test_Conversation_DecodesLegacyAccessRoles(apiVersion: APIVersion) throws {
+        // GIVEN
+        let accessRoles = [
+            AccessRole.teamMember,
+            AccessRole.guest,
+        ].map(\.rawValue)
+
+        let legacyAccessRole = ConversationAccessRole.team.rawValue
+
+        let payload: [String: Any] = [
+            "access_role": legacyAccessRole,
+            "access_role_v2": accessRoles,
+        ]
+
+        let data = try JSONSerialization.data(withJSONObject: payload, options: [])
+
+        // WHEN
+        let conversation = Payload.Conversation(data, apiVersion: apiVersion)
+
+        // THEN
+        XCTAssertEqual(conversation?.accessRoles, accessRoles)
+        XCTAssertEqual(conversation?.legacyAccessRole, legacyAccessRole)
     }
 }

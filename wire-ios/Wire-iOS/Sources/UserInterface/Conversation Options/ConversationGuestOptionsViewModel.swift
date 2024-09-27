@@ -84,49 +84,7 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
 // MARK: - ConversationGuestOptionsViewModel
 
 final class ConversationGuestOptionsViewModel {
-    private let conversation: ZMConversation
-    private let createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
-
-    struct State {
-        var rows = [CellConfiguration]()
-        var isLoading = false
-    }
-
-    private var showLoadingCell = false {
-        didSet {
-            updateRows()
-        }
-    }
-
-    private var link: String?
-
-    var securedLink: String? {
-        didSet {
-            updateRows()
-        }
-    }
-
-    var copyInProgress = false {
-        didSet {
-            updateRows()
-        }
-    }
-
-    var state = State() {
-        didSet {
-            delegate?.conversationGuestOptionsViewModel(self, didUpdateState: state)
-        }
-    }
-
-    weak var delegate: ConversationGuestOptionsViewModelDelegate?
-
-    private var isGuestLinkWithPasswordAvailable: Bool {
-        guard let apiVersion = BackendInfo.apiVersion else { return false }
-
-        return apiVersion >= .v4
-    }
-
-    private let configuration: ConversationGuestOptionsViewModelConfiguration
+    // MARK: Lifecycle
 
     init(
         configuration: ConversationGuestOptionsViewModelConfiguration,
@@ -154,6 +112,140 @@ final class ConversationGuestOptionsViewModel {
         configuration.guestLinkFeatureStatusChangedHandler = { [weak self] _ in
             self?.updateRows()
         }
+    }
+
+    // MARK: Internal
+
+    struct State {
+        var rows = [CellConfiguration]()
+        var isLoading = false
+    }
+
+    weak var delegate: ConversationGuestOptionsViewModelDelegate?
+
+    var securedLink: String? {
+        didSet {
+            updateRows()
+        }
+    }
+
+    var copyInProgress = false {
+        didSet {
+            updateRows()
+        }
+    }
+
+    var state = State() {
+        didSet {
+            delegate?.conversationGuestOptionsViewModel(self, didUpdateState: state)
+        }
+    }
+
+    /// Starts the Guest Link Creation Flow
+    /// - Parameter view: the source view which triggers create action
+    func startGuestLinkCreationFlow(from view: UIView) {
+        if isGuestLinkWithPasswordAvailable {
+            delegate?.conversationGuestOptionsViewModel(
+                self,
+                sourceView: view,
+                presentGuestLinkTypeSelection: { [weak self] guestLinkType in
+                    guard let self else { return }
+                    switch guestLinkType {
+                    case .secure:
+                        let viewController = CreateSecureGuestLinkViewController(
+                            conversationSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
+                            conversation: conversation
+                        )
+
+                        let navigationController = viewController.wrapInNavigationController()
+                        delegate?.conversationGuestOptionsViewModel(
+                            self,
+                            presentCreateSecureGuestLink: navigationController,
+                            animated: true
+                        )
+
+                    case .normal:
+                        createLink()
+                    }
+                }
+            )
+        } else {
+            createLink()
+        }
+    }
+
+    /// set conversation option AllowGuests
+    /// - Parameters:
+    ///   - allowGuests: new state AllowGuests
+    ///   - view: the source view which triggers setAllowGuests action
+    /// - Returns: alert controller
+    @discardableResult
+    func setAllowGuests(_ allowGuests: Bool, view: UIView) -> UIAlertController? {
+        func _setAllowGuests() {
+            let item = CancelableItem(delay: 0.4) { [weak self] in
+                self?.state.isLoading = true
+            }
+
+            configuration.setAllowGuests(allowGuests) { [weak self] result in
+                guard let self else { return }
+                item.cancel()
+                state.isLoading = false
+
+                switch result {
+                case .success:
+                    updateRows()
+                    if link == nil, securedLink == nil, allowGuests {
+                        fetchLink()
+                    }
+
+                case let .failure(error): delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
+                }
+            }
+        }
+
+        guard allowGuests != configuration.allowGuests else { return nil }
+
+        // In case allow guests mode should be deactivated & guest in conversation, ask the delegate
+        // to confirm this action as all guests will be removed.
+        if !allowGuests, configuration.areGuestPresent {
+            // Make "remove guests and services" warning only appear if guests or services are present
+            return delegate?.conversationGuestOptionsViewModel(
+                self,
+                sourceView: view,
+                confirmRemovingGuests: { [weak self] remove in
+                    guard let self else { return }
+                    guard remove else { return updateRows() }
+                    link = nil
+                    securedLink = nil
+                    _setAllowGuests()
+                }
+            )
+        } else {
+            _setAllowGuests()
+        }
+
+        return nil
+    }
+
+    // MARK: Private
+
+    private let conversation: ZMConversation
+    private let createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
+
+    private var link: String?
+
+    private let configuration: ConversationGuestOptionsViewModelConfiguration
+
+    private var showLoadingCell = false {
+        didSet {
+            updateRows()
+        }
+    }
+
+    private var isGuestLinkWithPasswordAvailable: Bool {
+        guard let apiVersion = BackendInfo.apiVersion else { return false }
+
+        return apiVersion >= .v4
     }
 
     private func updateRows() {
@@ -320,91 +412,5 @@ final class ConversationGuestOptionsViewModel {
             item.cancel()
             showLoadingCell = false
         }
-    }
-
-    /// Starts the Guest Link Creation Flow
-    /// - Parameter view: the source view which triggers create action
-    func startGuestLinkCreationFlow(from view: UIView) {
-        if isGuestLinkWithPasswordAvailable {
-            delegate?.conversationGuestOptionsViewModel(
-                self,
-                sourceView: view,
-                presentGuestLinkTypeSelection: { [weak self] guestLinkType in
-                    guard let self else { return }
-                    switch guestLinkType {
-                    case .secure:
-                        let viewController = CreateSecureGuestLinkViewController(
-                            conversationSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
-                            conversation: conversation
-                        )
-
-                        let navigationController = viewController.wrapInNavigationController()
-                        delegate?.conversationGuestOptionsViewModel(
-                            self,
-                            presentCreateSecureGuestLink: navigationController,
-                            animated: true
-                        )
-
-                    case .normal:
-                        createLink()
-                    }
-                }
-            )
-        } else {
-            createLink()
-        }
-    }
-
-    /// set conversation option AllowGuests
-    /// - Parameters:
-    ///   - allowGuests: new state AllowGuests
-    ///   - view: the source view which triggers setAllowGuests action
-    /// - Returns: alert controller
-    @discardableResult
-    func setAllowGuests(_ allowGuests: Bool, view: UIView) -> UIAlertController? {
-        func _setAllowGuests() {
-            let item = CancelableItem(delay: 0.4) { [weak self] in
-                self?.state.isLoading = true
-            }
-
-            configuration.setAllowGuests(allowGuests) { [weak self] result in
-                guard let self else { return }
-                item.cancel()
-                state.isLoading = false
-
-                switch result {
-                case .success:
-                    updateRows()
-                    if link == nil, securedLink == nil, allowGuests {
-                        fetchLink()
-                    }
-
-                case let .failure(error): delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
-                }
-            }
-        }
-
-        guard allowGuests != configuration.allowGuests else { return nil }
-
-        // In case allow guests mode should be deactivated & guest in conversation, ask the delegate
-        // to confirm this action as all guests will be removed.
-        if !allowGuests, configuration.areGuestPresent {
-            // Make "remove guests and services" warning only appear if guests or services are present
-            return delegate?.conversationGuestOptionsViewModel(
-                self,
-                sourceView: view,
-                confirmRemovingGuests: { [weak self] remove in
-                    guard let self else { return }
-                    guard remove else { return updateRows() }
-                    link = nil
-                    securedLink = nil
-                    _setAllowGuests()
-                }
-            )
-        } else {
-            _setAllowGuests()
-        }
-
-        return nil
     }
 }

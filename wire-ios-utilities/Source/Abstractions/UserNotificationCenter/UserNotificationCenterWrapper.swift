@@ -21,15 +21,17 @@ import UserNotifications
 // MARK: - UserNotificationCenterWrapper
 
 public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
-    private var userNotificationCenter: UNUserNotificationCenter
+    // MARK: Lifecycle
+
+    public init(userNotificationCenter: UNUserNotificationCenter) {
+        self.userNotificationCenter = userNotificationCenter
+    }
+
+    // MARK: Public
 
     public var delegate: UNUserNotificationCenterDelegate? {
         get { userNotificationCenter.delegate }
         set { userNotificationCenter.delegate = newValue }
-    }
-
-    public init(userNotificationCenter: UNUserNotificationCenter) {
-        self.userNotificationCenter = userNotificationCenter
     }
 
     public func notificationSettings() async -> UNNotificationSettings {
@@ -76,6 +78,10 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
     public func removeDeliveredNotifications(withIdentifiers identifiers: [String]) {
         userNotificationCenter.removeDeliveredNotifications(withIdentifiers: identifiers)
     }
+
+    // MARK: Private
+
+    private var userNotificationCenter: UNUserNotificationCenter
 }
 
 // MARK: - UserNotificationCenterAbstraction + wrapper(_:)

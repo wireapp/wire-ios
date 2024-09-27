@@ -22,15 +22,20 @@ import WireSyncEngine
 // MARK: - LegalHoldParticipantsSectionViewModel
 
 private struct LegalHoldParticipantsSectionViewModel {
-    let participants: [UserType]
-
-    var sectionAccesibilityIdentifier = "label.groupdetails.participants"
-    var sectionTitle: String {
-        L10n.Localizable.Legalhold.Participants.Section.title(participants.count).localizedUppercase
-    }
+    // MARK: Lifecycle
 
     init(participants: [UserType]) {
         self.participants = participants
+    }
+
+    // MARK: Internal
+
+    let participants: [UserType]
+
+    var sectionAccesibilityIdentifier = "label.groupdetails.participants"
+
+    var sectionTitle: String {
+        L10n.Localizable.Legalhold.Participants.Section.title(participants.count).localizedUppercase
     }
 }
 
@@ -54,12 +59,7 @@ extension ConversationLike {
 // MARK: - LegalHoldParticipantsSectionController
 
 final class LegalHoldParticipantsSectionController: GroupDetailsSectionController {
-    fileprivate weak var collectionView: UICollectionView?
-    private var viewModel: LegalHoldParticipantsSectionViewModel
-    private let conversation: LegalHoldDetailsConversation
-    private var token: AnyObject?
-
-    weak var delegate: LegalHoldParticipantsSectionControllerDelegate?
+    // MARK: Lifecycle
 
     init(conversation: LegalHoldDetailsConversation) {
         self.viewModel = conversation.createViewModel()
@@ -71,11 +71,9 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
         }
     }
 
-    override func prepareForUse(in collectionView: UICollectionView?) {
-        super.prepareForUse(in: collectionView)
-        collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
-        self.collectionView = collectionView
-    }
+    // MARK: Internal
+
+    weak var delegate: LegalHoldParticipantsSectionControllerDelegate?
 
     override var sectionTitle: String {
         viewModel.sectionTitle
@@ -83,6 +81,12 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
     override var sectionAccessibilityIdentifier: String {
         viewModel.sectionAccesibilityIdentifier
+    }
+
+    override func prepareForUse(in collectionView: UICollectionView?) {
+        super.prepareForUse(in: collectionView)
+        collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
+        self.collectionView = collectionView
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -122,6 +126,16 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
         delegate?.legalHoldParticipantsSectionWantsToPresentUserProfile(for: user)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate weak var collectionView: UICollectionView?
+
+    // MARK: Private
+
+    private var viewModel: LegalHoldParticipantsSectionViewModel
+    private let conversation: LegalHoldDetailsConversation
+    private var token: AnyObject?
 }
 
 // MARK: UserObserving

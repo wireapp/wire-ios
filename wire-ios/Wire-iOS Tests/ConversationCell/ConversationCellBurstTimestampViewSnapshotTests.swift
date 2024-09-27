@@ -22,11 +22,7 @@ import XCTest
 @testable import Wire
 
 final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationCellBurstTimestampView!
-    private var userSession: UserSessionMock!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -81,4 +77,12 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationCellBurstTimestampView!
+    private var userSession: UserSessionMock!
 }

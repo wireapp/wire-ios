@@ -27,16 +27,16 @@ public final class MockRole: NSManagedObject, EntityNamedProtocol {
     public static let teamKey = #keyPath(MockRole.team)
     public static let conversationKey = #keyPath(MockRole.conversation)
 
+    @objc public static var adminRole: MockRole?
+    @objc public static var memberRole: MockRole?
+
+    public static var entityName = "Role"
+
     @NSManaged public var name: String
     @NSManaged public var actions: Set<MockAction>
     @NSManaged public var team: MockTeam?
     @NSManaged public var conversation: MockConversation?
     @NSManaged public var participantRoles: Set<MockParticipantRole>
-
-    @objc public static var adminRole: MockRole?
-    @objc public static var memberRole: MockRole?
-
-    public static var entityName = "Role"
 }
 
 extension MockRole {

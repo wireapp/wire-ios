@@ -22,8 +22,6 @@ import XCTest
 @testable import WireShareEngine
 
 final class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
-    // MARK: - Life Cycle
-
     override func tearDown() {
         try? sharingSession.earService.disableEncryptionAtRest(
             context: sharingSession.userInterfaceContext,

@@ -21,12 +21,11 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     var sut: ConversationListViewController.ViewModel!
     var mockView: UIView!
-    private var mockViewController: MockConversationListContainer!
     var userSession: UserSessionMock!
-    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
-
     var coreDataFixture: CoreDataFixture!
 
     override func setUp() {
@@ -88,4 +87,9 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
             try verify(matching: (sut?.actionsController?.alertController)!)
         }
     }
+
+    // MARK: Private
+
+    private var mockViewController: MockConversationListContainer!
+    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 }

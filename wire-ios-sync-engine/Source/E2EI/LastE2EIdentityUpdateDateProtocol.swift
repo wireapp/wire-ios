@@ -30,17 +30,7 @@ public protocol LastE2EIdentityUpdateDateRepositoryInterface {
 
 @objc
 public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentityUpdateDateRepositoryInterface {
-    // MARK: - Properties
-
-    private let storage: PrivateUserDefaults<Key>
-
-    // MARK: - Types
-
-    private enum Key: String, DefaultsKey {
-        case lastE2EIdenityUpdateDate
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     @objc
     public init(
@@ -55,6 +45,8 @@ public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentit
         super.init()
     }
 
+    // MARK: Public
+
     // MARK: - Methods
 
     public func fetchLastAlertDate() -> Date? {
@@ -64,4 +56,16 @@ public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentit
     public func storeLastAlertDate(_ date: Date?) {
         storage.set(date, forKey: .lastE2EIdenityUpdateDate)
     }
+
+    // MARK: Private
+
+    // MARK: - Types
+
+    private enum Key: String, DefaultsKey {
+        case lastE2EIdenityUpdateDate
+    }
+
+    // MARK: - Properties
+
+    private let storage: PrivateUserDefaults<Key>
 }

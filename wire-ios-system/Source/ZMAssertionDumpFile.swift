@@ -20,10 +20,14 @@ import Foundation
 
 @objc(ZMAssertionDumpFile) @objcMembers
 public final class AssertionDumpFile: NSObject {
+    // MARK: Lifecycle
+
     @available(*, unavailable)
     override public init() {
         fatalError()
     }
+
+    // MARK: Public
 
     public static var url: URL {
         get throws {

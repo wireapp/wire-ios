@@ -19,17 +19,7 @@
 import Foundation
 
 public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-    let userProfileUpdateStatus: UserProfileUpdateStatus
-
-    fileprivate var passwordUpdateSync: ZMSingleRequestSync! = nil
-
-    fileprivate var emailUpdateSync: ZMSingleRequestSync! = nil
-
-    fileprivate var handleCheckSync: ZMSingleRequestSync! = nil
-
-    fileprivate var handleSetSync: ZMSingleRequestSync! = nil
-
-    fileprivate var handleSuggestionSearchSync: ZMSingleRequestSync! = nil
+    // MARK: Lifecycle
 
     @available(
         *,
@@ -68,6 +58,8 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             groupQueue: managedObjectContext
         )
     }
+
+    // MARK: Public
 
     @objc
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -228,6 +220,24 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             break
         }
     }
+
+    // MARK: Internal
+
+    let userProfileUpdateStatus: UserProfileUpdateStatus
+
+    // MARK: Fileprivate
+
+    fileprivate var passwordUpdateSync: ZMSingleRequestSync! = nil
+
+    fileprivate var emailUpdateSync: ZMSingleRequestSync! = nil
+
+    fileprivate var handleCheckSync: ZMSingleRequestSync! = nil
+
+    fileprivate var handleSetSync: ZMSingleRequestSync! = nil
+
+    fileprivate var handleSuggestionSearchSync: ZMSingleRequestSync! = nil
+
+    // MARK: Private
 
     /// Finds the handle that was searched for suggestion that is not in the given response
     private func findMissingHandleInResponse(response: ZMTransportResponse) -> String? {

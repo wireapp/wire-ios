@@ -54,32 +54,7 @@ class RevisedEmailPasswordTextField: EmailPasswordTextField {
 // MARK: - EmailPasswordTextField
 
 class EmailPasswordTextField: UIView, MagicTappable {
-    let emailField = ValidatedTextField(kind: .email, cornerRadius: 12, setNewColors: true, style: .default)
-    let passwordField = ValidatedTextField(
-        kind: .password(.nonEmpty, isNew: false),
-        cornerRadius: 12,
-        setNewColors: true,
-        style: .default
-    )
-    let contentStack = UIStackView()
-
-    var hasPrefilledValue = false
-    var allowEditingPrefilledValue = true {
-        didSet {
-            updateEmailFieldisEnabled()
-        }
-    }
-
-    weak var delegate: EmailPasswordTextFieldDelegate?
-
-    private(set) var emailValidationError: TextFieldValidator.ValidationError? = .tooShort(kind: .email)
-    private(set) var passwordValidationError: TextFieldValidator.ValidationError? = .tooShort(kind: .email)
-
-    // MARK: - Helpers
-
-    var isPasswordEmpty: Bool {
-        passwordField.input.isEmpty
-    }
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -93,6 +68,53 @@ class EmailPasswordTextField: UIView, MagicTappable {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
+    let emailField = ValidatedTextField(kind: .email, cornerRadius: 12, setNewColors: true, style: .default)
+    let passwordField = ValidatedTextField(
+        kind: .password(.nonEmpty, isNew: false),
+        cornerRadius: 12,
+        setNewColors: true,
+        style: .default
+    )
+    let contentStack = UIStackView()
+
+    var hasPrefilledValue = false
+    weak var delegate: EmailPasswordTextFieldDelegate?
+
+    private(set) var emailValidationError: TextFieldValidator.ValidationError? = .tooShort(kind: .email)
+    private(set) var passwordValidationError: TextFieldValidator.ValidationError? = .tooShort(kind: .email)
+
+    var allowEditingPrefilledValue = true {
+        didSet {
+            updateEmailFieldisEnabled()
+        }
+    }
+
+    // MARK: - Helpers
+
+    var isPasswordEmpty: Bool {
+        passwordField.input.isEmpty
+    }
+
+    // MARK: - Responder
+
+    override var isFirstResponder: Bool {
+        emailField.isFirstResponder || passwordField.isFirstResponder
+    }
+
+    override var canBecomeFirstResponder: Bool {
+        logicalFirstResponder.canBecomeFirstResponder
+    }
+
+    override var canResignFirstResponder: Bool {
+        emailField.canResignFirstResponder || passwordField.canResignFirstResponder
+    }
+
+    var hasValidInput: Bool {
+        emailField.isInputValid && passwordField.isInputValid
     }
 
     func configureSubviews() {
@@ -153,22 +175,8 @@ class EmailPasswordTextField: UIView, MagicTappable {
         emailField.isEnabled = !hasPrefilledValue || allowEditingPrefilledValue
     }
 
-    // MARK: - Responder
-
-    override var isFirstResponder: Bool {
-        emailField.isFirstResponder || passwordField.isFirstResponder
-    }
-
-    override var canBecomeFirstResponder: Bool {
-        logicalFirstResponder.canBecomeFirstResponder
-    }
-
     override func becomeFirstResponder() -> Bool {
         logicalFirstResponder.becomeFirstResponder()
-    }
-
-    override var canResignFirstResponder: Bool {
-        emailField.canResignFirstResponder || passwordField.canResignFirstResponder
     }
 
     @discardableResult
@@ -179,16 +187,6 @@ class EmailPasswordTextField: UIView, MagicTappable {
             passwordField.resignFirstResponder()
         } else {
             false
-        }
-    }
-
-    /// Returns the text field that should be used to become first responder.
-    private var logicalFirstResponder: UITextField {
-        // If we have a pre-filled email and the password field is empty, start with the password field
-        if hasPrefilledValue, (passwordField.text ?? "").isEmpty {
-            passwordField
-        } else {
-            emailField
         }
     }
 
@@ -213,6 +211,18 @@ class EmailPasswordTextField: UIView, MagicTappable {
         return true
     }
 
+    // MARK: Private
+
+    /// Returns the text field that should be used to become first responder.
+    private var logicalFirstResponder: UITextField {
+        // If we have a pre-filled email and the password field is empty, start with the password field
+        if hasPrefilledValue, (passwordField.text ?? "").isEmpty {
+            passwordField
+        } else {
+            emailField
+        }
+    }
+
     @objc
     private func textInputDidChange(sender: UITextField) {
         if sender == emailField {
@@ -222,10 +232,6 @@ class EmailPasswordTextField: UIView, MagicTappable {
         }
 
         delegate?.textFieldDidUpdateText(self)
-    }
-
-    var hasValidInput: Bool {
-        emailField.isInputValid && passwordField.isInputValid
     }
 }
 

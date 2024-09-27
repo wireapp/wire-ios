@@ -93,15 +93,21 @@ extension ZMClientMessage {
 /// The result object passed to the `TextSearchQueryDelegate`
 /// when performing a search using `TextSearchQuery`.
 public class TextQueryResult: NSObject {
-    public var matches: [ZMMessage]
-    public var hasMore: Bool
-    public weak var query: TextSearchQuery?
+    // MARK: Lifecycle
 
     init(query: TextSearchQuery?, matches: [ZMMessage], hasMore: Bool) {
         self.query = query
         self.matches = matches
         self.hasMore = hasMore
     }
+
+    // MARK: Public
+
+    public var matches: [ZMMessage]
+    public var hasMore: Bool
+    public weak var query: TextSearchQuery?
+
+    // MARK: Internal
 
     func updated(appending matches: [ZMMessage], hasMore: Bool) -> TextQueryResult {
         TextQueryResult(query: query, matches: self.matches + matches, hasMore: hasMore)
@@ -113,12 +119,17 @@ public class TextQueryResult: NSObject {
 /// Configuration to initialize a `TextSearchQuery`.
 /// Specifies the fetch batch sizes for the indexed and not-indexed fetches.
 public struct TextSearchQueryFetchConfiguration {
-    let notIndexedBatchSize: Int
-    let indexedBatchSize: Int
+    // MARK: Lifecycle
+
     public init(notIndexedBatchSize: Int, indexedBatchSize: Int) {
         self.notIndexedBatchSize = notIndexedBatchSize
         self.indexedBatchSize = indexedBatchSize
     }
+
+    // MARK: Internal
+
+    let notIndexedBatchSize: Int
+    let indexedBatchSize: Int
 }
 
 // MARK: - TextSearchQueryDelegate
@@ -134,32 +145,7 @@ private let zmLog = ZMSLog(tag: "text search")
 /// This class should be used to perform a text search for messages in a conversation.
 /// Each instance can only be used to perform a search once. A running instance can be cancelled.
 public class TextSearchQuery: NSObject {
-    private let uiMOC: NSManagedObjectContext
-    private let syncMOC: NSManagedObjectContext
-
-    private let conversationRemoteIdentifier: UUID
-    private let conversation: ConversationLike
-    private let originalQuery: String
-    private let queryStrings: [String]
-
-    /// The fetch configuration specifies the fetch requests batch sizes
-    private let fetchConfiguration: TextSearchQueryFetchConfiguration
-
-    private weak var delegate: TextSearchQueryDelegate?
-
-    /// Whether the query has been cancelled (if `cancelled` has been called).
-    private var cancelled = false
-
-    /// Whether the query has alreday been executed (if `execute` has already been called).
-    private var executed = false
-
-    private var result: TextQueryResult?
-    private var indexedMessageCount = 0
-    private var notIndexedMessageCount = 0
-
-    public class func isValid(query: String) -> Bool {
-        query.count >= 2
-    }
+    // MARK: Lifecycle
 
     /// Creates a new `TextSearchQuery` object.
     /// - parameter conversation: The conversation in which the search should be performed. Needs to belong to the UI
@@ -192,6 +178,12 @@ public class TextSearchQuery: NSObject {
             .filter(TextSearchQuery.isValid)
         self.delegate = delegate
         self.fetchConfiguration = configuration
+    }
+
+    // MARK: Public
+
+    public class func isValid(query: String) -> Bool {
+        query.count >= 2
     }
 
     /// Start the search, the delegate will be called with
@@ -235,6 +227,56 @@ public class TextSearchQuery: NSObject {
         zmLog.debug("Cancelled search for original query: \"\(originalQuery)\".")
         cancelled = true
     }
+
+    // MARK: Private
+
+    private let uiMOC: NSManagedObjectContext
+    private let syncMOC: NSManagedObjectContext
+
+    private let conversationRemoteIdentifier: UUID
+    private let conversation: ConversationLike
+    private let originalQuery: String
+    private let queryStrings: [String]
+
+    /// The fetch configuration specifies the fetch requests batch sizes
+    private let fetchConfiguration: TextSearchQueryFetchConfiguration
+
+    private weak var delegate: TextSearchQueryDelegate?
+
+    /// Whether the query has been cancelled (if `cancelled` has been called).
+    private var cancelled = false
+
+    /// Whether the query has alreday been executed (if `execute` has already been called).
+    private var executed = false
+
+    private var result: TextQueryResult?
+    private var indexedMessageCount = 0
+    private var notIndexedMessageCount = 0
+
+    /// Predicate matching messages containing the query in the conversation
+    private lazy var predicateForQueryMatch: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+        ZMClientMessage.predicateForMessagesMatching(self.queryStrings),
+        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier),
+    ])
+
+    /// Predicate matching indexed messages containing the query in the conversation
+    private lazy var predicateForIndexedMessagesQueryMatch: NSPredicate =
+        NSCompoundPredicate(andPredicateWithSubpredicates: [
+            self.predicateForQueryMatch,
+            ZMClientMessage.predicateForIndexedMessages(),
+        ])
+
+    /// Predicate matching messages without a populated `normalizedText` field in the conversation
+    private lazy var predicateForNotIndexedMessages: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+        ZMClientMessage.predicateForNotIndexedMessages(),
+        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier),
+    ])
+
+    /// Predicate matching messages with a populated `normalizedText` field in the conversation
+    private lazy var predicateForIndexedMessages: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+        ZMClientMessage.predicateForIndexedMessages(),
+        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier),
+    ])
 
     /// Fetches the next batch of indexed messages in a conversation and notifies
     /// the delegate about the result.
@@ -338,29 +380,4 @@ public class TextSearchQuery: NSObject {
 
         return (try? syncMOC.count(for: request)) ?? 0
     }
-
-    /// Predicate matching messages containing the query in the conversation
-    private lazy var predicateForQueryMatch: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-        ZMClientMessage.predicateForMessagesMatching(self.queryStrings),
-        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier),
-    ])
-
-    /// Predicate matching indexed messages containing the query in the conversation
-    private lazy var predicateForIndexedMessagesQueryMatch: NSPredicate =
-        NSCompoundPredicate(andPredicateWithSubpredicates: [
-            self.predicateForQueryMatch,
-            ZMClientMessage.predicateForIndexedMessages(),
-        ])
-
-    /// Predicate matching messages without a populated `normalizedText` field in the conversation
-    private lazy var predicateForNotIndexedMessages: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-        ZMClientMessage.predicateForNotIndexedMessages(),
-        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier),
-    ])
-
-    /// Predicate matching messages with a populated `normalizedText` field in the conversation
-    private lazy var predicateForIndexedMessages: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-        ZMClientMessage.predicateForIndexedMessages(),
-        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier),
-    ])
 }

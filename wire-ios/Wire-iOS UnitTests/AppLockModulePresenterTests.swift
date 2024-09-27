@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class AppLockModulePresenterTests: XCTestCase {
-    private var sut: AppLockModule.Presenter!
-    private var interactor: AppLockModule.MockInteractor!
-    private var view: AppLockModule.MockView!
-    private var router: AppLockModule.MockRouter!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -165,4 +162,11 @@ final class AppLockModulePresenterTests: XCTestCase {
         // Then
         XCTAssertEqual(interactor.requests, [.initiateAuthentication(requireActiveApp: false)])
     }
+
+    // MARK: Private
+
+    private var sut: AppLockModule.Presenter!
+    private var interactor: AppLockModule.MockInteractor!
+    private var view: AppLockModule.MockView!
+    private var router: AppLockModule.MockRouter!
 }

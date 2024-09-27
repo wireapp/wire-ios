@@ -45,21 +45,13 @@ public protocol MLSEncryptionServiceInterface {
 /// A class responsible for encrypting messages for MLS groups.
 
 public final class MLSEncryptionService: MLSEncryptionServiceInterface {
-    // MARK: - Properties
-
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
         self.coreCryptoProvider = coreCryptoProvider
     }
 
-    var coreCrypto: SafeCoreCryptoProtocol {
-        get async throws {
-            try await coreCryptoProvider.coreCrypto()
-        }
-    }
+    // MARK: Public
 
     // MARK: - Message encryption
 
@@ -82,4 +74,18 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
             throw MLSMessageEncryptionError.failedToEncryptMessage
         }
     }
+
+    // MARK: Internal
+
+    var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto()
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
 }

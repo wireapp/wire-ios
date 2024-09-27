@@ -39,24 +39,7 @@ protocol AuthenticatedRouterProtocol: AnyObject {
 // MARK: - AuthenticatedRouter
 
 final class AuthenticatedRouter {
-    // MARK: - Private Property
-
-    private let builder: AuthenticatedWireFrame
-    private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
-    private weak var _viewController: ZClientViewController?
-    private let featureRepositoryProvider: any FeatureRepositoryProvider
-    private let featureChangeActionsHandler: E2EINotificationActions
-    private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
-    private var featureChangeObserverToken: Any?
-    private var revokedCertificateObserverToken: Any?
-
-    // MARK: - Public Property
-
-    var viewController: UIViewController {
-        let viewController = _viewController ?? builder.build(router: self)
-        _viewController = viewController
-        return viewController
-    }
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -109,6 +92,29 @@ final class AuthenticatedRouter {
             NotificationCenter.default.removeObserver(revokedCertificateObserverToken)
         }
     }
+
+    // MARK: Internal
+
+    // MARK: - Public Property
+
+    var viewController: UIViewController {
+        let viewController = _viewController ?? builder.build(router: self)
+        _viewController = viewController
+        return viewController
+    }
+
+    // MARK: Private
+
+    // MARK: - Private Property
+
+    private let builder: AuthenticatedWireFrame
+    private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
+    private weak var _viewController: ZClientViewController?
+    private let featureRepositoryProvider: any FeatureRepositoryProvider
+    private let featureChangeActionsHandler: E2EINotificationActions
+    private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
+    private var featureChangeObserverToken: Any?
+    private var revokedCertificateObserverToken: Any?
 
     private func notifyFeatureChange(_ note: Notification) {
         guard
@@ -176,8 +182,7 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 // MARK: - AuthenticatedWireFrame
 
 struct AuthenticatedWireFrame {
-    private var account: Account
-    private var userSession: UserSession
+    // MARK: Lifecycle
 
     init(
         account: Account,
@@ -187,11 +192,18 @@ struct AuthenticatedWireFrame {
         self.userSession = userSession
     }
 
+    // MARK: Internal
+
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(account: account, userSession: userSession)
         viewController.router = router
         return viewController
     }
+
+    // MARK: Private
+
+    private var account: Account
+    private var userSession: UserSession
 }
 
 extension UIViewController {

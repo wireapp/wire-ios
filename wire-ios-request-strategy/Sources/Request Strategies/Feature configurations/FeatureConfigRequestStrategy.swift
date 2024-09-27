@@ -21,24 +21,7 @@ import Foundation
 // MARK: - FeatureConfigRequestStrategy
 
 public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
-    // MARK: - Properties
-
-    // Slow Sync
-
-    private unowned var syncStatus: SyncProgress
-
-    private let syncPhase: SyncPhase = .fetchingFeatureConfig
-
-    private var isSlowSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
-
-    private var slowSyncTask: Task<Void, Never>?
-
-    // Action
-
-    private let actionHandler: GetFeatureConfigsActionHandler
-    private let actionSync: EntityActionSync
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -67,6 +50,8 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
     deinit {
         slowSyncTask?.cancel()
     }
+
+    // MARK: Public
 
     // MARK: - Request
 
@@ -104,6 +89,25 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
         return actionSync.nextRequest(for: apiVersion)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    // Slow Sync
+
+    private unowned var syncStatus: SyncProgress
+
+    private let syncPhase: SyncPhase = .fetchingFeatureConfig
+
+    private var slowSyncTask: Task<Void, Never>?
+
+    // Action
+
+    private let actionHandler: GetFeatureConfigsActionHandler
+    private let actionSync: EntityActionSync
+
+    private var isSlowSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
 }
 
 // MARK: ZMEventConsumer

@@ -20,17 +20,7 @@ import UIKit
 import WireDesign
 
 final class CollectionsView: UIView {
-    var collectionViewLayout: CollectionViewLeftAlignedFlowLayout!
-    var collectionView: UICollectionView!
-    let noResultsView = NoResultsView()
-
-    static let useAutolayout = false
-
-    var noItemsInLibrary = false {
-        didSet {
-            noResultsView.isHidden = !noItemsInLibrary
-        }
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -79,22 +69,23 @@ final class CollectionsView: UIView {
         addSubview(noResultsView)
     }
 
-    private func recreateLayout() {
-        let layout = CollectionViewLeftAlignedFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 1
-        layout.minimumInteritemSpacing = 1
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 16)
-        if CollectionsView.useAutolayout {
-            layout.estimatedItemSize = CGSize(width: 64, height: 64)
-        }
-
-        collectionViewLayout = layout
-    }
-
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    static let useAutolayout = false
+
+    var collectionViewLayout: CollectionViewLeftAlignedFlowLayout!
+    var collectionView: UICollectionView!
+    let noResultsView = NoResultsView()
+
+    var noItemsInLibrary = false {
+        didSet {
+            noResultsView.isHidden = !noItemsInLibrary
+        }
     }
 
     static func backButton() -> IconButton {
@@ -143,5 +134,20 @@ final class CollectionsView: UIView {
             resultsView.leftAnchor.constraint(equalTo: collectionView.leftAnchor),
             resultsView.rightAnchor.constraint(equalTo: collectionView.rightAnchor),
         ])
+    }
+
+    // MARK: Private
+
+    private func recreateLayout() {
+        let layout = CollectionViewLeftAlignedFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 1
+        layout.minimumInteritemSpacing = 1
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 16)
+        if CollectionsView.useAutolayout {
+            layout.estimatedItemSize = CGSize(width: 64, height: 64)
+        }
+
+        collectionViewLayout = layout
     }
 }

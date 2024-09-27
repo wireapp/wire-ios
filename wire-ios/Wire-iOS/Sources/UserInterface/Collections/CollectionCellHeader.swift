@@ -21,20 +21,7 @@ import WireDataModel
 import WireDesign
 
 final class CollectionCellHeader: UIView {
-    var message: ZMConversationMessage? {
-        didSet {
-            guard let message,
-                  let serverTimestamp = message.serverTimestamp,
-                  let sender = message.senderUser else {
-                return
-            }
-
-            nameLabel.textColor = sender.accentColor
-
-            nameLabel.text = sender.name
-            dateLabel.text = serverTimestamp.formattedDate
-        }
-    }
+    // MARK: Lifecycle
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -58,6 +45,8 @@ final class CollectionCellHeader: UIView {
         ])
     }
 
+    // MARK: Internal
+
     var nameLabel: UILabel = {
         let label = UILabel()
         label.isAccessibilityElement = false
@@ -74,4 +63,19 @@ final class CollectionCellHeader: UIView {
 
         return label
     }()
+
+    var message: ZMConversationMessage? {
+        didSet {
+            guard let message,
+                  let serverTimestamp = message.serverTimestamp,
+                  let sender = message.senderUser else {
+                return
+            }
+
+            nameLabel.textColor = sender.accentColor
+
+            nameLabel.text = sender.name
+            dateLabel.text = serverTimestamp.formattedDate
+        }
+    }
 }

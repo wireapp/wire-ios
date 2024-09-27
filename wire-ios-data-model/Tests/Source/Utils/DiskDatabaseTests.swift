@@ -24,21 +24,7 @@ import XCTest
 // MARK: - DiskDatabaseTest
 
 public class DiskDatabaseTest: ZMTBaseTest {
-    var cacheURL: URL!
-    var sharedContainerURL: URL!
-    var accountId: UUID!
-    var moc: NSManagedObjectContext {
-        coreDataStack.viewContext
-    }
-
-    var coreDataStack: CoreDataStack!
-
-    var storeURL: URL {
-        CoreDataStack.accountDataFolder(
-            accountIdentifier: accountId,
-            applicationContainer: sharedContainerURL
-        ).appendingPersistentStoreLocation()
-    }
+    // MARK: Public
 
     override public func setUp() {
         super.setUp()
@@ -64,6 +50,26 @@ public class DiskDatabaseTest: ZMTBaseTest {
         sharedContainerURL = nil
         super.tearDown()
     }
+
+    // MARK: Internal
+
+    var cacheURL: URL!
+    var sharedContainerURL: URL!
+    var accountId: UUID!
+    var coreDataStack: CoreDataStack!
+
+    var moc: NSManagedObjectContext {
+        coreDataStack.viewContext
+    }
+
+    var storeURL: URL {
+        CoreDataStack.accountDataFolder(
+            accountIdentifier: accountId,
+            applicationContainer: sharedContainerURL
+        ).appendingPersistentStoreLocation()
+    }
+
+    // MARK: Private
 
     private func setupCaches() {
         coreDataStack.viewContext.zm_userImageCache = UserImageLocalCache(location: nil)

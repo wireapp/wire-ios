@@ -23,10 +23,11 @@ import XCTest
 @testable import Wire
 
 final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     var sut: ConnectRequestsViewController!
     var mockConnectionRequest: SwiftMockConversation!
     var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -77,4 +78,8 @@ final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
 
         snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

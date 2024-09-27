@@ -21,16 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 final class UserStatusViewController: UIViewController {
-    weak var delegate: UserStatusViewControllerDelegate?
-
-    private lazy var feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-
-    private let options: UserStatusView.Options
-    private let settings: Settings
-
-    var userStatus = UserStatus() {
-        didSet { (viewIfLoaded as? UserStatusView)?.userStatus = userStatus }
-    }
+    // MARK: Lifecycle
 
     init(
         options: UserStatusView.Options,
@@ -46,6 +37,14 @@ final class UserStatusViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    weak var delegate: UserStatusViewControllerDelegate?
+
+    var userStatus = UserStatus() {
+        didSet { (viewIfLoaded as? UserStatusView)?.userStatus = userStatus }
+    }
+
     override func loadView() {
         let view = UserStatusView(options: options)
         view.userStatus = userStatus
@@ -54,6 +53,13 @@ final class UserStatusViewController: UIViewController {
         }
         self.view = view
     }
+
+    // MARK: Private
+
+    private lazy var feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+
+    private let options: UserStatusView.Options
+    private let settings: Settings
 
     private func presentAvailabilityPicker(_ sender: UIButton) {
         let availabilityChangedHandler = { [weak self] (availability: Availability) in

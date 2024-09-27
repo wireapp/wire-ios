@@ -23,11 +23,7 @@ import WireDataModel
 /// and for notifying them when a request is allowed.
 
 public final class MLSRequestStrategy: AbstractRequestStrategy {
-    // MARK: - Properties
-
-    private let entitySync: EntityActionSync
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -63,9 +59,17 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         ]
     }
 
+    // MARK: Public
+
     // MARK: - Requests
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         entitySync.nextRequest(for: apiVersion)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let entitySync: EntityActionSync
 }

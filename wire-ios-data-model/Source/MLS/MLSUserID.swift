@@ -21,11 +21,7 @@ import Foundation
 /// A qualified id for MLS users.
 
 public struct MLSUserID {
-    // MARK: - Properties
-
-    public let rawValue: String
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init?(rawValue: String) {
         let components = rawValue.split(
@@ -43,4 +39,10 @@ public struct MLSUserID {
         }
         self.rawValue = "\(userID.lowercased())@\(domain.lowercased())"
     }
+
+    // MARK: Public
+
+    // MARK: - Properties
+
+    public let rawValue: String
 }

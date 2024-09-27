@@ -31,18 +31,7 @@ protocol IconLabelButtonInput {
 // MARK: - IconLabelButton
 
 class IconLabelButton: ButtonWithLargerHitArea {
-    private static let width: CGFloat = 64
-
-    private(set) var iconButton = IconButton()
-    private(set) var subtitleTransformLabel = TransformLabel()
-    private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-    private var widthConstraint: NSLayoutConstraint!
-
-    var appearance: CallActionAppearance = .dark(blurred: false) {
-        didSet {
-            updateState()
-        }
-    }
+    // MARK: Lifecycle
 
     init(input: IconLabelButtonInput, iconSize: StyleKitIcon.Size = .tiny) {
         super.init()
@@ -58,10 +47,88 @@ class IconLabelButton: ButtonWithLargerHitArea {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    private(set) var iconButton = IconButton()
+    private(set) var subtitleTransformLabel = TransformLabel()
+
+    var appearance: CallActionAppearance = .dark(blurred: false) {
+        didSet {
+            updateState()
+        }
+    }
+
+    override var isHighlighted: Bool {
+        didSet {
+            iconButton.isHighlighted = isHighlighted
+            updateState()
+        }
+    }
+
+    override var isSelected: Bool {
+        didSet {
+            iconButton.isSelected = isSelected
+            updateState()
+        }
+    }
+
+    override var isEnabled: Bool {
+        didSet {
+            iconButton.isEnabled = isEnabled
+            updateState()
+        }
+    }
+
     override func didMoveToWindow() {
         super.didMoveToWindow()
         apply(appearance)
     }
+
+    func updateState() {
+        apply(appearance)
+        subtitleTransformLabel.font = titleLabel?.font
+        subtitleTransformLabel.textColor = titleColor(for: state)
+    }
+
+    func updateButtonWidth(width: CGFloat) {
+        widthConstraint.constant = width
+        blurView.layer.cornerRadius = width / 2
+    }
+
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: - [AGIS] Clean this up
+    // The content of this method needs to be deleted and replaced with
+    // what's in CallingActionButton
+    func apply(_ configuration: CallActionAppearance) {
+        setTitleColor(configuration.iconColorNormal, for: .normal)
+        iconButton.setIconColor(configuration.iconColorNormal, for: .normal)
+        iconButton.setBackgroundImageColor(configuration.backgroundColorNormal, for: .normal)
+
+        iconButton.setIconColor(configuration.iconColorSelected, for: .selected)
+        iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .selected)
+
+        setTitleColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabled)
+        iconButton.setIconColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabled)
+        iconButton.setBackgroundImageColor(configuration.backgroundColorNormal, for: .disabled)
+
+        setTitleColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabledAndSelected)
+        iconButton.setIconColor(configuration.iconColorSelected.withAlphaComponent(0.4), for: .disabledAndSelected)
+        iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .disabledAndSelected)
+
+        iconButton.setBackgroundImageColor(
+            configuration.backgroundColorSelectedAndHighlighted,
+            for: .selectedAndHighlighted
+        )
+
+        blurView.isHidden = !configuration.showBlur
+    }
+
+    // MARK: Private
+
+    private static let width: CGFloat = 64
+
+    private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+    private var widthConstraint: NSLayoutConstraint!
 
     private func setupViews() {
         iconButton.translatesAutoresizingMaskIntoConstraints = false
@@ -99,66 +166,6 @@ class IconLabelButton: ButtonWithLargerHitArea {
             subtitleTransformLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             subtitleTransformLabel.heightAnchor.constraint(equalToConstant: 16),
         ])
-    }
-
-    func updateState() {
-        apply(appearance)
-        subtitleTransformLabel.font = titleLabel?.font
-        subtitleTransformLabel.textColor = titleColor(for: state)
-    }
-
-    func updateButtonWidth(width: CGFloat) {
-        widthConstraint.constant = width
-        blurView.layer.cornerRadius = width / 2
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            iconButton.isHighlighted = isHighlighted
-            updateState()
-        }
-    }
-
-    override var isSelected: Bool {
-        didSet {
-            iconButton.isSelected = isSelected
-            updateState()
-        }
-    }
-
-    override var isEnabled: Bool {
-        didSet {
-            iconButton.isEnabled = isEnabled
-            updateState()
-        }
-    }
-
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: - [AGIS] Clean this up
-    // The content of this method needs to be deleted and replaced with
-    // what's in CallingActionButton
-    func apply(_ configuration: CallActionAppearance) {
-        setTitleColor(configuration.iconColorNormal, for: .normal)
-        iconButton.setIconColor(configuration.iconColorNormal, for: .normal)
-        iconButton.setBackgroundImageColor(configuration.backgroundColorNormal, for: .normal)
-
-        iconButton.setIconColor(configuration.iconColorSelected, for: .selected)
-        iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .selected)
-
-        setTitleColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabled)
-        iconButton.setIconColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabled)
-        iconButton.setBackgroundImageColor(configuration.backgroundColorNormal, for: .disabled)
-
-        setTitleColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabledAndSelected)
-        iconButton.setIconColor(configuration.iconColorSelected.withAlphaComponent(0.4), for: .disabledAndSelected)
-        iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .disabledAndSelected)
-
-        iconButton.setBackgroundImageColor(
-            configuration.backgroundColorSelectedAndHighlighted,
-            for: .selectedAndHighlighted
-        )
-
-        blurView.isHidden = !configuration.showBlur
     }
 }
 

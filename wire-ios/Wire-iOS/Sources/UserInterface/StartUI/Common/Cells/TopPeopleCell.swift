@@ -22,6 +22,26 @@ import WireDesign
 import WireSyncEngine
 
 final class TopPeopleCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        accessibilityIdentifier = "TopPeopleCell"
+        isAccessibilityElement = true
+
+        setupViews()
+        setNeedsUpdateConstraints()
+        updateForContext()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     // MARK: - Properties
 
     var user: UserType? {
@@ -45,33 +65,6 @@ final class TopPeopleCell: UICollectionViewCell {
         }
     }
 
-    private let badgeUserImageView = BadgeUserImageView()
-    private let conversationImageView = UIImageView()
-    private let nameLabel = UILabel()
-    private let avatarContainer = UIView()
-
-    private var avatarViewSizeConstraint: NSLayoutConstraint?
-    private var conversationImageViewSize: NSLayoutConstraint?
-    private var initialConstraintsCreated = false
-
-    // MARK: - Life Cycle
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        accessibilityIdentifier = "TopPeopleCell"
-        isAccessibilityElement = true
-
-        setupViews()
-        setNeedsUpdateConstraints()
-        updateForContext()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     // MARK: - Methods
 
     override func prepareForReuse() {
@@ -79,21 +72,6 @@ final class TopPeopleCell: UICollectionViewCell {
         conversationImageView.image = nil
         conversationImageView.isHidden = false
         badgeUserImageView.isHidden = false
-    }
-
-    private func setupViews() {
-        nameLabel.lineBreakMode = .byTruncatingTail
-        nameLabel.textAlignment = .center
-
-        badgeUserImageView.removeFromSuperview()
-        badgeUserImageView.initialsFont = .systemFont(ofSize: 11, weight: .light)
-        badgeUserImageView.userSession = ZMUserSession.shared()
-        badgeUserImageView.isUserInteractionEnabled = false
-        badgeUserImageView.wr_badgeIconSize = 16
-        badgeUserImageView.accessibilityIdentifier = "TopPeopleAvatar"
-        avatarContainer.addSubview(badgeUserImageView)
-
-        [avatarContainer, nameLabel, conversationImageView].forEach(contentView.addSubview)
     }
 
     override func updateConstraints() {
@@ -150,6 +128,32 @@ final class TopPeopleCell: UICollectionViewCell {
         }
 
         super.updateConstraints()
+    }
+
+    // MARK: Private
+
+    private let badgeUserImageView = BadgeUserImageView()
+    private let conversationImageView = UIImageView()
+    private let nameLabel = UILabel()
+    private let avatarContainer = UIView()
+
+    private var avatarViewSizeConstraint: NSLayoutConstraint?
+    private var conversationImageViewSize: NSLayoutConstraint?
+    private var initialConstraintsCreated = false
+
+    private func setupViews() {
+        nameLabel.lineBreakMode = .byTruncatingTail
+        nameLabel.textAlignment = .center
+
+        badgeUserImageView.removeFromSuperview()
+        badgeUserImageView.initialsFont = .systemFont(ofSize: 11, weight: .light)
+        badgeUserImageView.userSession = ZMUserSession.shared()
+        badgeUserImageView.isUserInteractionEnabled = false
+        badgeUserImageView.wr_badgeIconSize = 16
+        badgeUserImageView.accessibilityIdentifier = "TopPeopleAvatar"
+        avatarContainer.addSubview(badgeUserImageView)
+
+        [avatarContainer, nameLabel, conversationImageView].forEach(contentView.addSubview)
     }
 
     private func updateForContext() {

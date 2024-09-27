@@ -33,12 +33,7 @@ public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
 // MARK: - ObjectChangeInfo
 
 open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
-    let object: NSObject
-
-    open var changedKeys = Set<String>()
-    open var changeInfos = [String: NSObject?]()
-
-    var considerAllKeysChanged = false
+    // MARK: Lifecycle
 
     convenience init?(object: NSObject, changes: Changes) {
         guard changes.hasChangeInfo else { return nil }
@@ -52,9 +47,16 @@ open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
         self.object = object
     }
 
-    func changedKeysContain(keys: String...) -> Bool {
-        considerAllKeysChanged || !changedKeys.isDisjoint(with: keys)
-    }
+    // MARK: Open
+
+    open var changedKeys = Set<String>()
+    open var changeInfos = [String: NSObject?]()
+
+    // MARK: Internal
+
+    let object: NSObject
+
+    var considerAllKeysChanged = false
 
     var customDebugDescription: String {
         guard let managedObject = object as? NSManagedObject else {
@@ -62,6 +64,10 @@ open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
         }
 
         return "ChangeInfo for \(managedObject.objectID) with changedKeys: \(changedKeys), changeInfos: \(changeInfos)"
+    }
+
+    func changedKeysContain(keys: String...) -> Bool {
+        considerAllKeysChanged || !changedKeys.isDisjoint(with: keys)
     }
 }
 

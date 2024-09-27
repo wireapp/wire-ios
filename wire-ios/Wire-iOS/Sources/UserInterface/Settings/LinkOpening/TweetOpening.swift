@@ -26,9 +26,16 @@ private let log = ZMSLog(tag: "link opening")
 enum TweetOpeningOption: Int, LinkOpeningOption {
     case none, tweetbot, twitterrific
 
+    // MARK: Internal
+
     typealias ApplicationOptionEnum = TweetOpeningOption
+
     static var settingKey: SettingKey = .twitterOpeningRawValue
     static var defaultPreference: ApplicationOptionEnum = .none
+
+    static var allOptions: [TweetOpeningOption] {
+        [.none, .tweetbot, .twitterrific]
+    }
 
     var displayString: String {
         switch self {
@@ -36,10 +43,6 @@ enum TweetOpeningOption: Int, LinkOpeningOption {
         case .tweetbot: L10n.Localizable.OpenLink.Twitter.Option.tweetbot
         case .twitterrific: L10n.Localizable.OpenLink.Twitter.Option.twitterrific
         }
-    }
-
-    static var allOptions: [TweetOpeningOption] {
-        [.none, .tweetbot, .twitterrific]
     }
 
     var isAvailable: Bool {

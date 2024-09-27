@@ -33,12 +33,16 @@ public enum PushNotificationCategory: String, CaseIterable {
     case conversationUnderEncryptionAtRest = "conversationUnderEncryptionAtRestCategory"
     case conversationUnderEncryptionAtRestWithMute = "conversationUnderEncryptionAtRestWithMuteCategory"
 
+    // MARK: Public
+
     /// All the supported categories.
     public static var allCategories: Set<UNNotificationCategory> {
         let categories = PushNotificationCategory.allCases.map(\.userNotificationCategory)
 
         return Set(categories)
     }
+
+    // MARK: Internal
 
     /// The actions for notifications of this category.
     var actions: [NotificationAction] {

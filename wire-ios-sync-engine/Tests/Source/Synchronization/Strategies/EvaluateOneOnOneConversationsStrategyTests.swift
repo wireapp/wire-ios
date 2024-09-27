@@ -22,16 +22,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
-    private var coreDataHelper: CoreDataStackHelper!
-
-    // need to decide on some api version, even though it should be not relevant for this test.
-    private let apiVersion: APIVersion = .v5
-
-    private var mockApplicationStatus: MockApplicationStatus!
-    private var mockCoreDataStack: CoreDataStack!
-    private var mockSyncStatus: MockSyncProgress!
-
-    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -107,6 +98,19 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
         XCTAssert(mockSyncStatus.finishCurrentSyncPhasePhase_Invocations.isEmpty)
     }
+
+    // MARK: Private
+
+    private var coreDataHelper: CoreDataStackHelper!
+
+    // need to decide on some api version, even though it should be not relevant for this test.
+    private let apiVersion: APIVersion = .v5
+
+    private var mockApplicationStatus: MockApplicationStatus!
+    private var mockCoreDataStack: CoreDataStack!
+    private var mockSyncStatus: MockSyncProgress!
+
+    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
     // MARK: - Helpers
 

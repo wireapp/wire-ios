@@ -22,9 +22,13 @@ import XCTest
 // MARK: - MockStableRandomParticipantsConversation
 
 class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider {
-    var stableRandomParticipants: [UserType] = []
+    // MARK: Lifecycle
 
     override required init() {}
+
+    // MARK: Internal
+
+    var stableRandomParticipants: [UserType] = []
 
     static func createOneOnOneConversation<T: MockStableRandomParticipantsConversation>(otherUser: MockUserType) -> T {
         SelfUser.setupMockSelfUser()

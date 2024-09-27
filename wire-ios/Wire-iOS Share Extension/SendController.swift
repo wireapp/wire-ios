@@ -51,17 +51,7 @@ enum SendingState {
 /// `SendingCallState` in the `send` method. In comparison to the `PostContent` class, the `SendController`
 /// itself has no knowledge about conversation degradation.
 final class SendController {
-    typealias SendableCompletion = (Result<[Sendable], Error>) -> Void
-
-    private var observer: SendableBatchObserver?
-    private var isCancelled = false
-    private var unsentSendables: [UnsentSendable]
-    private weak var sharingSession: SharingSession?
-    private var progress: SendingStateCallback?
-    private var timeoutWorkItem: DispatchWorkItem?
-    private var timedOut = false
-
-    var sentAllSendables = false
+    // MARK: Lifecycle
 
     init(
         text: String,
@@ -110,12 +100,11 @@ final class SendController {
         )
     }
 
-    @objc
-    private func networkStatusDidChange(_ notification: Notification) {
-        if let status = notification.object as? NetworkStatus, status.reachability == .ok {
-            tryToTimeout()
-        }
-    }
+    // MARK: Internal
+
+    typealias SendableCompletion = (Result<[Sendable], Error>) -> Void
+
+    var sentAllSendables = false
 
     /// Send (and prepare if needed) the text and attachment items passed into the initializer.
     /// The passed in `SendingStateCallback` closure will be called multiple times with the current state of the
@@ -180,14 +169,6 @@ final class SendController {
         timeoutWorkItem = nil
     }
 
-    private func timeout() {
-        cancel { [weak self] in
-            self?.cancelTimeout()
-            self?.timedOut = true
-            self?.progress?(.timedOut)
-        }
-    }
-
     /// Cancels the sending operation. In case the current state is preparing,
     /// a flag will be set to abort sending after the preparation is done.
     func cancel(completion: @escaping () -> Void) {
@@ -200,6 +181,31 @@ final class SendController {
                 $0.cancel()
             }
         }, completionHandler: completion)
+    }
+
+    // MARK: Private
+
+    private var observer: SendableBatchObserver?
+    private var isCancelled = false
+    private var unsentSendables: [UnsentSendable]
+    private weak var sharingSession: SharingSession?
+    private var progress: SendingStateCallback?
+    private var timeoutWorkItem: DispatchWorkItem?
+    private var timedOut = false
+
+    @objc
+    private func networkStatusDidChange(_ notification: Notification) {
+        if let status = notification.object as? NetworkStatus, status.reachability == .ok {
+            tryToTimeout()
+        }
+    }
+
+    private func timeout() {
+        cancel { [weak self] in
+            self?.cancelTimeout()
+            self?.timedOut = true
+            self?.progress?(.timedOut)
+        }
     }
 
     private func prepare(unsentSendables: [UnsentSendable], completion: @escaping () -> Void) {

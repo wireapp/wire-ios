@@ -24,12 +24,7 @@ import XCTest
 @testable import Wire
 
 final class ProfileViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var userSession: UserSessionMock!
-    private var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
-    private var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -139,4 +134,13 @@ final class ProfileViewTests: XCTestCase {
         sut.overrideUserInterfaceStyle = .dark
         return sut
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var userSession: UserSessionMock!
+    private var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
+    private var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 }

@@ -82,15 +82,7 @@ protocol UpdateEventsRepositoryProtocol {
 // MARK: - UpdateEventsRepository
 
 final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
-    private let selfClientID: String
-    private let updateEventsAPI: any UpdateEventsAPI
-    private let pushChannel: any PushChannelProtocol
-    private let updateEventDecryptor: any UpdateEventDecryptorProtocol
-    private let eventContext: NSManagedObjectContext
-    private let lastEventIDRepository: any LastEventIDRepositoryInterface
-
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
+    // MARK: Lifecycle
 
     init(
         selfClientID: String,
@@ -107,6 +99,8 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         self.eventContext = eventContext
         self.lastEventIDRepository = lastEventIDRepository
     }
+
+    // MARK: Internal
 
     // MARK: - Pull pending events
 
@@ -165,57 +159,11 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         }
     }
 
-    private func indexOfLastEventEnvelope() async throws -> Int64 {
-        try await eventContext.perform { [eventContext] in
-            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: false)
-            request.fetchBatchSize = 1
-            let lastEnvelope = try eventContext.fetch(request).first
-            return lastEnvelope?.sortIndex ?? 0
-        }
-    }
-
-    private func persistEventEnvelope(
-        _ eventEnvelope: UpdateEventEnvelope,
-        index: Int64
-    ) async throws {
-        try await eventContext.perform { [eventContext, encoder] in
-            let data = try encoder.encode(eventEnvelope)
-            let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-            storedEventEnvelope.data = data
-            storedEventEnvelope.sortIndex = index
-            try eventContext.save()
-        }
-    }
-
     // MARK: - Fetch pending events
 
     func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope] {
         let payloads = try await fetchStoredEventEnvelopePayloads(limit: limit)
         return try decodeEventEnvelopes(payloads)
-    }
-
-    private func fetchStoredEventEnvelopePayloads(limit: UInt) async throws -> [Data] {
-        try await eventContext.perform { [eventContext] in
-            do {
-                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-                request.fetchLimit = Int(limit)
-                request.returnsObjectsAsFaults = false
-                let storedEventEnvelopes = try eventContext.fetch(request)
-                return storedEventEnvelopes.map(\.data)
-            } catch {
-                throw UpdateEventsRepositoryError.failedToFetchStoredEvents(error)
-            }
-        }
-    }
-
-    private func decodeEventEnvelopes(_ payloads: [Data]) throws -> [UpdateEventEnvelope] {
-        try payloads.map {
-            do {
-                return try decoder.decode(UpdateEventEnvelope.self, from: $0)
-            } catch {
-                throw UpdateEventsRepositoryError.failedToDecodeStoredEvent(error)
-            }
-        }
     }
 
     // MARK: - Delete pending events
@@ -267,5 +215,63 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             attributes: [.eventEnvelopeID: id]
         )
         lastEventIDRepository.storeLastEventID(id)
+    }
+
+    // MARK: Private
+
+    private let selfClientID: String
+    private let updateEventsAPI: any UpdateEventsAPI
+    private let pushChannel: any PushChannelProtocol
+    private let updateEventDecryptor: any UpdateEventDecryptorProtocol
+    private let eventContext: NSManagedObjectContext
+    private let lastEventIDRepository: any LastEventIDRepositoryInterface
+
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
+
+    private func indexOfLastEventEnvelope() async throws -> Int64 {
+        try await eventContext.perform { [eventContext] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: false)
+            request.fetchBatchSize = 1
+            let lastEnvelope = try eventContext.fetch(request).first
+            return lastEnvelope?.sortIndex ?? 0
+        }
+    }
+
+    private func persistEventEnvelope(
+        _ eventEnvelope: UpdateEventEnvelope,
+        index: Int64
+    ) async throws {
+        try await eventContext.perform { [eventContext, encoder] in
+            let data = try encoder.encode(eventEnvelope)
+            let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
+            storedEventEnvelope.data = data
+            storedEventEnvelope.sortIndex = index
+            try eventContext.save()
+        }
+    }
+
+    private func fetchStoredEventEnvelopePayloads(limit: UInt) async throws -> [Data] {
+        try await eventContext.perform { [eventContext] in
+            do {
+                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+                request.fetchLimit = Int(limit)
+                request.returnsObjectsAsFaults = false
+                let storedEventEnvelopes = try eventContext.fetch(request)
+                return storedEventEnvelopes.map(\.data)
+            } catch {
+                throw UpdateEventsRepositoryError.failedToFetchStoredEvents(error)
+            }
+        }
+    }
+
+    private func decodeEventEnvelopes(_ payloads: [Data]) throws -> [UpdateEventEnvelope] {
+        try payloads.map {
+            do {
+                return try decoder.decode(UpdateEventEnvelope.self, from: $0)
+            } catch {
+                throw UpdateEventsRepositoryError.failedToDecodeStoredEvent(error)
+            }
+        }
     }
 }

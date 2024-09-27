@@ -69,8 +69,7 @@ public typealias InviteCompletionHandler = (InviteResult) -> Void
 // MARK: - TeamInvitationStatus
 
 public class TeamInvitationStatus: NSObject {
-    fileprivate var pendingInvitations: [String: InviteCompletionHandler] = [:]
-    fileprivate var processedInvitations: [String: InviteCompletionHandler] = [:]
+    // MARK: Internal
 
     func invite(_ email: String, completionHandler: @escaping InviteCompletionHandler) {
         pendingInvitations[email] = completionHandler
@@ -96,4 +95,9 @@ public class TeamInvitationStatus: NSObject {
         processedInvitations[email]?(result)
         processedInvitations.removeValue(forKey: email)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var pendingInvitations: [String: InviteCompletionHandler] = [:]
+    fileprivate var processedInvitations: [String: InviteCompletionHandler] = [:]
 }

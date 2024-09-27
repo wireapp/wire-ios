@@ -30,6 +30,14 @@ final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
         }
     }
 
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
+        }
+    }
+
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "cell.groupdetails.servicesoptions"
@@ -42,13 +50,5 @@ final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
 
     func configure(with conversation: GroupDetailsConversationType) {
         isOn = conversation.allowServices
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted
-                ? SemanticColors.View.backgroundUserCellHightLighted
-                : SemanticColors.View.backgroundUserCell
-        }
     }
 }

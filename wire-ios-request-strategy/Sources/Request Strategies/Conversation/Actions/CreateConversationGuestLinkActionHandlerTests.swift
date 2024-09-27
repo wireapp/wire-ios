@@ -24,15 +24,7 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
     CreateConversationGuestLinkAction,
     CreateConversationGuestLinkActionHandler
 > {
-    // MARK: - Properties
-
-    private var stack: CoreDataStack!
-    private let coreDataStackHelper = CoreDataStackHelper()
-    private var conversationID: UUID!
-
-    private var syncContext: NSManagedObjectContext {
-        stack.syncContext
-    }
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -152,5 +144,17 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
 
         // WHEN && THEN
         test_itHandlesFailure(.failure(status: statusCode, error: .invalidRequest))
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var stack: CoreDataStack!
+    private let coreDataStackHelper = CoreDataStackHelper()
+    private var conversationID: UUID!
+
+    private var syncContext: NSManagedObjectContext {
+        stack.syncContext
     }
 }

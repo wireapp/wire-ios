@@ -21,24 +21,7 @@ import WireDataModel
 import WireDesign
 
 final class ConversationRenamedSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationRenamedSystemMessageCell
-    typealias LabelColors = SemanticColors.Label
-
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer = false
-    var topMargin: Float = 0
-
-    let isFullWidth = true
-    let supportsActions = false
-    let containsHighlightableContent = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
+    // MARK: Lifecycle
 
     init(
         message: ZMConversationMessage,
@@ -62,4 +45,25 @@ final class ConversationRenamedSystemMessageCellDescription: ConversationMessage
         self.actionController = nil
         self.accessibilityLabel = "\(titleString), \(newName)"
     }
+
+    // MARK: Internal
+
+    typealias View = ConversationRenamedSystemMessageCell
+    typealias LabelColors = SemanticColors.Label
+
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer = false
+    var topMargin: Float = 0
+
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String?
 }

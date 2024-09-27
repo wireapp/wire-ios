@@ -22,13 +22,7 @@ import XCTest
 @testable import Wire
 
 final class UserSearchResultsViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: UserSearchResultsViewController!
-    private var serviceUser: MockServiceUserType!
-    private var selfUser: MockUserType!
-    private var otherUser: MockUserType!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: setUp
 
@@ -193,4 +187,14 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         // when
         sut.users = users.searchForMentions(withQuery: "362D00AE-B606-4680-BD47-F17749229E64")
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: UserSearchResultsViewController!
+    private var serviceUser: MockServiceUserType!
+    private var selfUser: MockUserType!
+    private var otherUser: MockUserType!
+    private var snapshotHelper: SnapshotHelper!
 }

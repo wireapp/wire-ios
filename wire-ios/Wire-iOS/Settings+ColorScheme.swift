@@ -26,6 +26,27 @@ enum SettingsColorScheme: Int, CaseIterable {
     case dark = 1
     case system = 2
 
+    // MARK: Lifecycle
+
+    init(from string: String?) {
+        switch string {
+        case "dark":
+            self = .dark
+        case "light":
+            self = .light
+        case "system":
+            self = .system
+        default:
+            self = SettingsColorScheme.defaultPreference
+        }
+    }
+
+    // MARK: Internal
+
+    static var defaultPreference: SettingsColorScheme {
+        .system
+    }
+
     var colorSchemeVariant: ColorSchemeVariant {
         switch self {
         case .light:
@@ -46,23 +67,6 @@ enum SettingsColorScheme: Int, CaseIterable {
         case .system:
             .unspecified
         }
-    }
-
-    init(from string: String?) {
-        switch string {
-        case "dark":
-            self = .dark
-        case "light":
-            self = .light
-        case "system":
-            self = .system
-        default:
-            self = SettingsColorScheme.defaultPreference
-        }
-    }
-
-    static var defaultPreference: SettingsColorScheme {
-        .system
     }
 
     var keyValueString: String {

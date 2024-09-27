@@ -37,6 +37,12 @@ final class TestLabelObserver: NSObject, LabelObserver {
 final class LabelObserverTests: NotificationDispatcherTestBase {
     var labelObserver: TestLabelObserver!
 
+    var userInfoKeys: Set<String> {
+        [
+            #keyPath(LabelChangeInfo.nameChanged),
+        ]
+    }
+
     override func setUp() {
         super.setUp()
         labelObserver = TestLabelObserver()
@@ -45,12 +51,6 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
     override func tearDown() {
         labelObserver = nil
         super.tearDown()
-    }
-
-    var userInfoKeys: Set<String> {
-        [
-            #keyPath(LabelChangeInfo.nameChanged),
-        ]
     }
 
     func checkThatItNotifiesTheObserverOfAChange(

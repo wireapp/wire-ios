@@ -20,14 +20,14 @@ import Foundation
 
 /// Used to map keys
 struct DependentObjectsKeysForObservedObjectKeysCache {
+    static var cachedValues: [AnyClassTuple<KeySet>: DependentObjectsKeysForObservedObjectKeysCache] = [:]
+
     // keyPathsOnDependentObjectForKeyOnObservedObject : [displayName : [userDefinedName, user.name, connection.status]]
     // affectedKeysOnObservedObjectForChangedKeysOnDependentObject : [connection.status : [displayName,
     // relatedConnectionStatus, etc.]]
     //
     let keyPathsOnDependentObjectForKeyOnObservedObject: [StringKeyPath: KeySet]
     let affectedKeysOnObservedObjectForChangedKeysOnDependentObject: [StringKeyPath: KeySet]
-
-    static var cachedValues: [AnyClassTuple<KeySet>: DependentObjectsKeysForObservedObjectKeysCache] = [:]
 
     static func mappingForObject(
         _ observedObject: NSObject,

@@ -46,6 +46,10 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
     var sut: LinkAttachmentsPreprocessor!
     var mockDetector: MockAttachmentDetector!
 
+    var thumbnailURL: URL {
+        URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!
+    }
+
     override func setUp() {
         super.setUp()
         mockDetector = MockAttachmentDetector()
@@ -74,10 +78,6 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
         let message = try! conversation.appendText(content: text, mentions: mentions) as! ZMClientMessage
         message.needsLinkAttachmentsUpdate = needsUpdate
         return message
-    }
-
-    var thumbnailURL: URL {
-        URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!
     }
 
     func createAttachment(withCachedImage: Bool = true) -> LinkAttachment {

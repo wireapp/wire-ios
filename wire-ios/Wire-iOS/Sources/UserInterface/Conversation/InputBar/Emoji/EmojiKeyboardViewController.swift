@@ -29,12 +29,7 @@ protocol EmojiPickerViewControllerDelegate: AnyObject {
 // MARK: - EmojiKeyboardViewController
 
 final class EmojiKeyboardViewController: UIViewController {
-    weak var delegate: EmojiPickerViewControllerDelegate?
-    fileprivate var emojiDataSource: EmojiDataSource!
-    fileprivate let collectionView = EmojiCollectionView()
-    let sectionViewController = EmojiSectionViewController(types: EmojiSectionType.allCases)
-
-    private var deleting = false
+    // MARK: Lifecycle
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -51,6 +46,11 @@ final class EmojiKeyboardViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    weak var delegate: EmojiPickerViewControllerDelegate?
+    let sectionViewController = EmojiSectionViewController(types: EmojiSectionType.allCases)
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -69,35 +69,6 @@ final class EmojiKeyboardViewController: UIViewController {
         addChild(sectionViewController)
         view.addSubview(sectionViewController.view)
         sectionViewController.didMove(toParent: self)
-    }
-
-    private func createConstraints() {
-        guard let sectionViewControllerView = sectionViewController.view else { return }
-
-        for item in [collectionView, sectionViewControllerView] {
-            item.translatesAutoresizingMaskIntoConstraints = false
-        }
-
-        let sectionViewControllerViewTrailing = sectionViewControllerView.trailingAnchor.constraint(
-            equalTo: view.trailingAnchor,
-            constant: -32
-        )
-
-        sectionViewControllerViewTrailing.priority = .defaultHigh
-
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: sectionViewControllerView.topAnchor),
-            sectionViewControllerView.bottomAnchor.constraint(
-                equalTo: view.bottomAnchor,
-                constant: -UIScreen.safeArea.bottom
-            ),
-            sectionViewControllerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            sectionViewControllerViewTrailing,
-            sectionViewControllerView.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
-        ])
     }
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
@@ -137,6 +108,44 @@ final class EmojiKeyboardViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
             self.delete()
         }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var emojiDataSource: EmojiDataSource!
+    fileprivate let collectionView = EmojiCollectionView()
+
+    // MARK: Private
+
+    private var deleting = false
+
+    private func createConstraints() {
+        guard let sectionViewControllerView = sectionViewController.view else { return }
+
+        for item in [collectionView, sectionViewControllerView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
+        }
+
+        let sectionViewControllerViewTrailing = sectionViewControllerView.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor,
+            constant: -32
+        )
+
+        sectionViewControllerViewTrailing.priority = .defaultHigh
+
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: sectionViewControllerView.topAnchor),
+            sectionViewControllerView.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -UIScreen.safeArea.bottom
+            ),
+            sectionViewControllerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            sectionViewControllerViewTrailing,
+            sectionViewControllerView.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
+        ])
     }
 }
 
@@ -185,7 +194,7 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - EmojiCollectionViewCell
 
 final class EmojiCollectionViewCell: UICollectionViewCell {
-    let titleLabel = UILabel()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -197,6 +206,10 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let titleLabel = UILabel()
 
     override var isHighlighted: Bool {
         didSet {
@@ -230,6 +243,8 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
         addSubview(titleLabel)
     }
 
+    // MARK: Private
+
     private func createConstraints() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -244,7 +259,7 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
 // MARK: - EmojiCollectionView
 
 final class EmojiCollectionView: UICollectionView {
-    private let layout = UICollectionViewFlowLayout()
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero, collectionViewLayout: layout)
@@ -254,6 +269,13 @@ final class EmojiCollectionView: UICollectionView {
         setupLayout()
         contentInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
     }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -267,8 +289,7 @@ final class EmojiCollectionView: UICollectionView {
         layout.minimumInteritemSpacing = 0
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // MARK: Private
+
+    private let layout = UICollectionViewFlowLayout()
 }

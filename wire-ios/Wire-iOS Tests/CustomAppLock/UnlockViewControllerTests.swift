@@ -22,8 +22,9 @@ import XCTest
 @testable import Wire
 
 final class UnlockViewControllerTests: XCTestCase {
+    // MARK: Internal
+
     var sut: UnlockViewController!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -36,11 +37,6 @@ final class UnlockViewControllerTests: XCTestCase {
         snapshotHelper = nil
         sut = nil
         super.tearDown()
-    }
-
-    private func fillPasscode() {
-        sut.validatedTextField.text = "Passcode"
-        sut.validationUpdated(sender: sut.validatedTextField, error: nil)
     }
 
     func testForInitState() {
@@ -75,5 +71,14 @@ final class UnlockViewControllerTests: XCTestCase {
 
         // THEN
         snapshotHelper.verify(matching: sut)
+    }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
+
+    private func fillPasscode() {
+        sut.validatedTextField.text = "Passcode"
+        sut.validationUpdated(sender: sut.validatedTextField, error: nil)
     }
 }

@@ -28,13 +28,7 @@ struct HTTPClientMockError: Error {
 // MARK: - HTTPClientMock
 
 final class HTTPClientMock: HTTPClient {
-    private(set) var receivedRequests: [HTTPRequest] = []
-
-    var receivedRequest: HTTPRequest? {
-        receivedRequests.first
-    }
-
-    var executeRequestMock: (HTTPRequest) async throws -> HTTPResponse
+    // MARK: Lifecycle
 
     convenience init() {
         self.init { request in
@@ -110,6 +104,16 @@ final class HTTPClientMock: HTTPClient {
 
     init(executeRequestMock: @escaping (HTTPRequest) async throws -> HTTPResponse) {
         self.executeRequestMock = executeRequestMock
+    }
+
+    // MARK: Internal
+
+    private(set) var receivedRequests: [HTTPRequest] = []
+
+    var executeRequestMock: (HTTPRequest) async throws -> HTTPResponse
+
+    var receivedRequest: HTTPRequest? {
+        receivedRequests.first
     }
 
     func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse {

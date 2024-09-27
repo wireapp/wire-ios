@@ -19,10 +19,7 @@
 import Foundation
 
 public final class MockEnvironment: NSObject, BackendEnvironmentProvider {
-    var isServerTrusted = true
-    public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        isServerTrusted
-    }
+    // MARK: Public
 
     public var title = "Example"
     public var backendURL = URL(string: "http://example.com")!
@@ -38,4 +35,12 @@ public final class MockEnvironment: NSObject, BackendEnvironmentProvider {
         needsAuthentication: true
     )
     public var environmentType = EnvironmentTypeProvider(environmentType: .production)
+
+    public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
+        isServerTrusted
+    }
+
+    // MARK: Internal
+
+    var isServerTrusted = true
 }

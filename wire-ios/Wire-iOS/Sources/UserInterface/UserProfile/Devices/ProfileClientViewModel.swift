@@ -20,16 +20,19 @@ import Foundation
 import WireSyncEngine
 
 final class ProfileClientViewModel {
-    let userClient: UserClient
-    private let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
-    private(set) var fingerprintData: Data?
-
-    var fingerprintDataClosure: ((Data?) -> Void)?
+    // MARK: Lifecycle
 
     init(userClient: UserClient, getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol) {
         self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
     }
+
+    // MARK: Internal
+
+    let userClient: UserClient
+    private(set) var fingerprintData: Data?
+
+    var fingerprintDataClosure: ((Data?) -> Void)?
 
     func loadData() {
         Task {
@@ -40,4 +43,8 @@ final class ProfileClientViewModel {
             }
         }
     }
+
+    // MARK: Private
+
+    private let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
 }

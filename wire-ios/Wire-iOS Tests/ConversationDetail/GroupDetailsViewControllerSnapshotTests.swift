@@ -21,13 +21,7 @@ import XCTest
 @testable import Wire
 
 final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
-    private var mockMainCoordinator: MockMainCoordinator!
-    private var sut: GroupDetailsViewController!
-    private var mockConversation: MockGroupDetailsConversation!
-    private var mockSelfUser: MockUserType!
-    private var otherUser: MockUserType!
-    private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -62,17 +56,6 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockMainCoordinator = nil
 
         super.tearDown()
-    }
-
-    private func setSelfUserInTeam() {
-        mockSelfUser.hasTeam = true
-        mockSelfUser.teamIdentifier = UUID()
-        mockSelfUser.isGroupAdminInConversation = true
-        mockSelfUser.canModifyNotificationSettingsInConversation = true
-    }
-
-    private func createGroupConversation() {
-        mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
     }
 
     func testForOptionsForTeamUserInNonTeamConversation() {
@@ -265,5 +248,26 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
         // THEN
         snapshotHelper.verify(matching: sut.wrapInNavigationController())
+    }
+
+    // MARK: Private
+
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: GroupDetailsViewController!
+    private var mockConversation: MockGroupDetailsConversation!
+    private var mockSelfUser: MockUserType!
+    private var otherUser: MockUserType!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
+
+    private func setSelfUserInTeam() {
+        mockSelfUser.hasTeam = true
+        mockSelfUser.teamIdentifier = UUID()
+        mockSelfUser.isGroupAdminInConversation = true
+        mockSelfUser.canModifyNotificationSettingsInConversation = true
+    }
+
+    private func createGroupConversation() {
+        mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
     }
 }

@@ -52,11 +52,99 @@ extension UILabel {
 /// A view that displays information about a message.
 
 final class MessageToolboxView: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        clipsToBounds = true
+
+        setupViews()
+        createConstraints()
+
+        self.tapGestureRecogniser = UITapGestureRecognizer(
+            target: self,
+            action: #selector(MessageToolboxView.onTapContent(_:))
+        )
+        tapGestureRecogniser.delegate = self
+        addGestureRecognizer(tapGestureRecogniser)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     /// The object receiving events.
     weak var delegate: MessageToolboxViewDelegate?
 
     ///
     fileprivate(set) var dataSource: MessageToolboxDataSource?
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        guard let message = dataSource?.message else { return }
+        guard !bounds.equalTo(previousLayoutBounds) else {
+            return
+        }
+
+        previousLayoutBounds = bounds
+        configureForMessage(message)
+    }
+
+    override func willMove(toWindow newWindow: UIWindow?) {
+        super.willMove(toWindow: newWindow)
+
+        if newWindow == nil {
+            stopCountdownTimer()
+        }
+    }
+
+    func configureForMessage(
+        _ message: ZMConversationMessage,
+        animated: Bool = false
+    ) {
+        if let message = message as? ConversationMessage,
+           dataSource?.message.nonce != message.nonce {
+            dataSource = MessageToolboxDataSource(message: message)
+        }
+
+        reloadContent(animated: animated)
+    }
+
+    // MARK: - Timer
+
+    /// Starts the countdown timer.
+    func startCountdownTimer() {
+        stopCountdownTimer()
+
+        guard let message = dataSource?.message else { return }
+        guard message.isEphemeral, !message.hasBeenDeleted, !message.isObfuscated else { return }
+
+        timestampTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            self?.reloadContent(animated: false)
+        }
+    }
+
+    /// Stops the countdown timer.
+    func stopCountdownTimer() {
+        timestampTimer?.invalidate()
+        timestampTimer = nil
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var tapGestureRecogniser: UITapGestureRecognizer!
+
+    fileprivate let separatorView = UIView()
+    fileprivate var heightConstraint: NSLayoutConstraint!
+    fileprivate var previousLayoutBounds = CGRect.zero
+
+    // MARK: Private
 
     // MARK: - UI Elements
 
@@ -108,33 +196,10 @@ final class MessageToolboxView: UIView {
         return label
     }()
 
-    fileprivate var tapGestureRecogniser: UITapGestureRecognizer!
+    // MARK: - Configuration
 
-    fileprivate let separatorView = UIView()
-    fileprivate var heightConstraint: NSLayoutConstraint!
-    fileprivate var previousLayoutBounds = CGRect.zero
-
-    // MARK: - Initialization
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        clipsToBounds = true
-
-        setupViews()
-        createConstraints()
-
-        self.tapGestureRecogniser = UITapGestureRecognizer(
-            target: self,
-            action: #selector(MessageToolboxView.onTapContent(_:))
-        )
-        tapGestureRecogniser.delegate = self
-        addGestureRecognizer(tapGestureRecogniser)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private var contentWidth: CGFloat {
+        bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
     }
 
     private func setupViews() {
@@ -183,45 +248,6 @@ final class MessageToolboxView: UIView {
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
             messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
-    }
-
-    // MARK: - Lifecycle
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        guard let message = dataSource?.message else { return }
-        guard !bounds.equalTo(previousLayoutBounds) else {
-            return
-        }
-
-        previousLayoutBounds = bounds
-        configureForMessage(message)
-    }
-
-    override func willMove(toWindow newWindow: UIWindow?) {
-        super.willMove(toWindow: newWindow)
-
-        if newWindow == nil {
-            stopCountdownTimer()
-        }
-    }
-
-    // MARK: - Configuration
-
-    private var contentWidth: CGFloat {
-        bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
-    }
-
-    func configureForMessage(
-        _ message: ZMConversationMessage,
-        animated: Bool = false
-    ) {
-        if let message = message as? ConversationMessage,
-           dataSource?.message.nonce != message.nonce {
-            dataSource = MessageToolboxDataSource(message: message)
-        }
-
-        reloadContent(animated: animated)
     }
 
     private func hideAndCleanStatusLabel() {
@@ -277,26 +303,6 @@ final class MessageToolboxView: UIView {
         }
 
         layoutIfNeeded()
-    }
-
-    // MARK: - Timer
-
-    /// Starts the countdown timer.
-    func startCountdownTimer() {
-        stopCountdownTimer()
-
-        guard let message = dataSource?.message else { return }
-        guard message.isEphemeral, !message.hasBeenDeleted, !message.isObfuscated else { return }
-
-        timestampTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            self?.reloadContent(animated: false)
-        }
-    }
-
-    /// Stops the countdown timer.
-    func stopCountdownTimer() {
-        timestampTimer?.invalidate()
-        timestampTimer = nil
     }
 
     // MARK: - Actions

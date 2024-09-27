@@ -19,15 +19,7 @@
 import Foundation
 
 final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
-    private func assertDictionaryHasKeys(a1: NSDictionary, a2: NSArray) {
-        let _k1: NSArray = (a1.allKeys as NSArray).sortedArray(using: NSSelectorFromString("compare:")) as NSArray
-        let _k2: NSArray = a2.sortedArray(using: NSSelectorFromString("compare:")) as NSArray
-        if _k1 != _k2 {
-            let expectedKeys = (_k2 as? [String])?.joined(separator: "\", \"") ?? ""
-            let actualKeys = String(describing: (_k1 as? [String])?.joined(separator: "\", \""))
-            XCTFail("'\(a1)' should have keys \"\(expectedKeys)\", has \"\(actualKeys)\"")
-        }
-    }
+    // MARK: Internal
 
     func testThatItReturnsUserClientsKeys() {
         var selfUser: MockUser!
@@ -195,5 +187,17 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
 
         // then
         XCTAssertEqual(response.httpStatus, 403)
+    }
+
+    // MARK: Private
+
+    private func assertDictionaryHasKeys(a1: NSDictionary, a2: NSArray) {
+        let _k1: NSArray = (a1.allKeys as NSArray).sortedArray(using: NSSelectorFromString("compare:")) as NSArray
+        let _k2: NSArray = a2.sortedArray(using: NSSelectorFromString("compare:")) as NSArray
+        if _k1 != _k2 {
+            let expectedKeys = (_k2 as? [String])?.joined(separator: "\", \"") ?? ""
+            let actualKeys = String(describing: (_k1 as? [String])?.joined(separator: "\", \""))
+            XCTFail("'\(a1)' should have keys \"\(expectedKeys)\", has \"\(actualKeys)\"")
+        }
     }
 }

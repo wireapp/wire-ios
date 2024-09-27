@@ -31,12 +31,12 @@ protocol TestableAbstractRequestStrategy: AnyObject {
 class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractRequestStrategy {
     var mutableConfiguration: ZMStrategyConfigurationOption = []
 
-    override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        ZMTransportRequest(getFromPath: "dummy/request", apiVersion: APIVersion.v0.rawValue)
-    }
-
     override var configuration: ZMStrategyConfigurationOption {
         mutableConfiguration
+    }
+
+    override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        ZMTransportRequest(getFromPath: "dummy/request", apiVersion: APIVersion.v0.rawValue)
     }
 }
 
@@ -45,13 +45,13 @@ class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractReques
 class TestRequestStrategy: AbstractRequestStrategy, TestableAbstractRequestStrategy {
     var mutableConfiguration: ZMStrategyConfigurationOption = []
 
-    override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        ZMTransportRequest(getFromPath: "dummy/request", apiVersion: APIVersion.v0.rawValue)
-    }
-
     override var configuration: ZMStrategyConfigurationOption {
         get { mutableConfiguration }
         set { mutableConfiguration = newValue }
+    }
+
+    override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        ZMTransportRequest(getFromPath: "dummy/request", apiVersion: APIVersion.v0.rawValue)
     }
 }
 

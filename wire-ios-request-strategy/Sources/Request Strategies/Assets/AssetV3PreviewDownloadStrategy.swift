@@ -26,10 +26,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 @objcMembers
 public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy,
     ZMContextChangeTrackerSource {
-    private let requestFactory = AssetDownloadRequestFactory()
-
-    fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
-    private var token: Any?
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -53,6 +50,20 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
         registerForWhitelistingNotification()
     }
 
+    // MARK: Public
+
+    // MARK: - ZMContextChangeTrackerSource
+
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        [downstreamSync]
+    }
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        downstreamSync.nextRequest(for: apiVersion)
+    }
+
+    // MARK: Internal
+
     func registerForWhitelistingNotification() {
         token = NotificationInContext.addObserver(
             name: ZMAssetClientMessage.imageDownloadNotificationName,
@@ -74,9 +85,9 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
         }
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        downstreamSync.nextRequest(for: apiVersion)
-    }
+    // MARK: Fileprivate
+
+    fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
 
     fileprivate func handleResponse(
         _ response: ZMTransportResponse,
@@ -118,11 +129,11 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
         )
     }
 
-    // MARK: - ZMContextChangeTrackerSource
+    // MARK: Private
 
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [downstreamSync]
-    }
+    private let requestFactory = AssetDownloadRequestFactory()
+
+    private var token: Any?
 }
 
 // MARK: ZMDownstreamTranscoder

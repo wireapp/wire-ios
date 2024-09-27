@@ -28,11 +28,7 @@ protocol ImageDownloaderType {
 // MARK: - ImageDownloader
 
 final class ImageDownloader: NSObject, ImageDownloaderType {
-    typealias ImageData = Data
-
-    let workerQueue: OperationQueue
-    let resultsQueue: OperationQueue
-    let session: URLSessionType
+    // MARK: Lifecycle
 
     init(
         resultsQueue: OperationQueue,
@@ -47,6 +43,14 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
         self.session = session ?? URLSession(configuration: .ephemeral)
         super.init()
     }
+
+    // MARK: Internal
+
+    typealias ImageData = Data
+
+    let workerQueue: OperationQueue
+    let resultsQueue: OperationQueue
+    let session: URLSessionType
 
     func downloadImage(fromURL url: URL, completion: @escaping (Data?) -> Void) {
         downloadImages(fromURLs: [url]) { imagesByURL in

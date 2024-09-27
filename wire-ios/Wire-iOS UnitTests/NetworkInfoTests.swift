@@ -22,7 +22,7 @@ import XCTest
 @testable import Wire
 
 final class NetworkInfoTests: XCTestCase {
-    private var mockServerConnection: MockServerConnection!
+    // MARK: Internal
 
     // MARK: - Init
 
@@ -143,6 +143,10 @@ final class NetworkInfoTests: XCTestCase {
         // then
         XCTAssertEqual(qualityType, .unknown)
     }
+
+    // MARK: Private
+
+    private var mockServerConnection: MockServerConnection!
 
     // MARK: - Helpers
 

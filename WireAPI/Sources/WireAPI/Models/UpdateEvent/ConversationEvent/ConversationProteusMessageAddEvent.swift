@@ -21,33 +21,7 @@ import Foundation
 /// An event where a proteus message was received in a conversation.
 
 public struct ConversationProteusMessageAddEvent: Equatable, Codable {
-    /// The id of the conversation.
-
-    public let conversationID: ConversationID
-
-    /// The id of the user who sent the message.
-
-    public let senderID: UserID
-
-    /// When the message was sent.
-
-    public let timestamp: Date
-
-    /// The base 64 encoded message.
-
-    public var message: MessageContent
-
-    /// The base 64 encoded external data.
-
-    public var externalData: MessageContent?
-
-    /// The id of the user client who sent the message.
-
-    public let messageSenderClientID: String
-
-    /// The id of the user client who should receive the message.
-
-    public let messageRecipientClientID: String
+    // MARK: Lifecycle
 
     /// Create a new `ConversationProteusMessageAddEvent`.
     ///
@@ -77,4 +51,34 @@ public struct ConversationProteusMessageAddEvent: Equatable, Codable {
         self.messageSenderClientID = messageSenderClientID
         self.messageRecipientClientID = messageRecipientClientID
     }
+
+    // MARK: Public
+
+    /// The id of the conversation.
+
+    public let conversationID: ConversationID
+
+    /// The id of the user who sent the message.
+
+    public let senderID: UserID
+
+    /// When the message was sent.
+
+    public let timestamp: Date
+
+    /// The base 64 encoded message.
+
+    public var message: MessageContent
+
+    /// The base 64 encoded external data.
+
+    public var externalData: MessageContent?
+
+    /// The id of the user client who sent the message.
+
+    public let messageSenderClientID: String
+
+    /// The id of the user client who should receive the message.
+
+    public let messageRecipientClientID: String
 }

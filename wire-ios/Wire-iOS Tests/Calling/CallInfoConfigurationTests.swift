@@ -27,6 +27,8 @@ func == (lhs: CallInfoViewControllerInput, rhs: CallInfoViewControllerInput) -> 
 // MARK: - CallInfoConfigurationTests
 
 final class CallInfoConfigurationTests: ZMSnapshotTestCase {
+    // MARK: Internal
+
     var mockUsers: [MockUserType]!
     var selfUser: ZMUser!
     var otherUser: ZMUser!
@@ -86,22 +88,6 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
             file: file,
             line: line
         )
-    }
-
-    private func mockCallParticipants(
-        mockUsers: [MockUserType],
-        count: Int,
-        state: CallParticipantState
-    ) -> [CallParticipant] {
-        mockUsers[0 ..< count].map {
-            CallParticipant(
-                user: $0,
-                userId: AVSIdentifier.stub,
-                clientId: "123",
-                state: state,
-                activeSpeakerState: .inactive
-            )
-        }
     }
 
     // MARK: - OneToOne Audio
@@ -1180,6 +1166,24 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
         // then
         XCTAssertEqual(configuration.videoPlaceholderState, .hidden)
+    }
+
+    // MARK: Private
+
+    private func mockCallParticipants(
+        mockUsers: [MockUserType],
+        count: Int,
+        state: CallParticipantState
+    ) -> [CallParticipant] {
+        mockUsers[0 ..< count].map {
+            CallParticipant(
+                user: $0,
+                userId: AVSIdentifier.stub,
+                clientId: "123",
+                state: state,
+                activeSpeakerState: .inactive
+            )
+        }
     }
 
     // MARK: - Mock ZMConversation

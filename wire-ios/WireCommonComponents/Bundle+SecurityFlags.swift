@@ -38,6 +38,23 @@ public enum SecurityFlags {
 
     case minTLSVersion
 
+    // MARK: Public
+
+    public var intValue: Int? {
+        guard let string = stringValue else { return nil }
+        return Int(string)
+    }
+
+    public var stringValue: String? {
+        Bundle.appMainBundle.infoForKey(bundleKey)
+    }
+
+    public var isEnabled: Bool {
+        stringValue == "1"
+    }
+
+    // MARK: Internal
+
     var bundleKey: String {
         switch self {
         case .maxNumberAccounts:
@@ -65,18 +82,5 @@ public enum SecurityFlags {
         case .clipboard:
             "ClipboardEnabled"
         }
-    }
-
-    public var intValue: Int? {
-        guard let string = stringValue else { return nil }
-        return Int(string)
-    }
-
-    public var stringValue: String? {
-        Bundle.appMainBundle.infoForKey(bundleKey)
-    }
-
-    public var isEnabled: Bool {
-        stringValue == "1"
     }
 }

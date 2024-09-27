@@ -31,8 +31,7 @@ class MockRequestCancellation: NSObject, ZMRequestCancellation {
 // MARK: - ProxiedRequestsStatusTests
 
 class ProxiedRequestsStatusTests: MessagingTest {
-    fileprivate var sut: ProxiedRequestsStatus!
-    fileprivate var mockRequestCancellation: MockRequestCancellation!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -76,4 +75,9 @@ class ProxiedRequestsStatusTests: MessagingTest {
         // then
         XCTAssertEqual(mockRequestCancellation.canceledTasks.first, taskIdentifier)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var sut: ProxiedRequestsStatus!
+    fileprivate var mockRequestCancellation: MockRequestCancellation!
 }

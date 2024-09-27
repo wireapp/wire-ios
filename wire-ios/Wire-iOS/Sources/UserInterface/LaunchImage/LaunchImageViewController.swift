@@ -21,11 +21,15 @@ import WireReusableUIComponents
 
 /// Replicates the launch screen to prevent the black screen being visible, cause of later UI initialization
 class LaunchImageViewController: UIViewController {
-    private var shouldShowLoadingScreenOnViewDidLoad = false
+    // MARK: Internal
 
-    private weak var contentView: UIView!
-    private let loadingScreenLabel = UILabel()
-    private let activityIndicator = ProgressSpinner()
+    override var prefersStatusBarHidden: Bool {
+        true
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
 
     /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning
     /// animation
@@ -61,6 +65,14 @@ class LaunchImageViewController: UIViewController {
         }
     }
 
+    // MARK: Private
+
+    private var shouldShowLoadingScreenOnViewDidLoad = false
+
+    private weak var contentView: UIView!
+    private let loadingScreenLabel = UILabel()
+    private let activityIndicator = ProgressSpinner()
+
     private func createConstraints() {
         NSLayoutConstraint.activate(
             [
@@ -76,13 +88,5 @@ class LaunchImageViewController: UIViewController {
                 activityIndicator.bottomAnchor.constraint(equalTo: loadingScreenLabel.topAnchor, constant: -24),
             ]
         )
-    }
-
-    override var prefersStatusBarHidden: Bool {
-        true
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
     }
 }

@@ -56,9 +56,7 @@ public protocol LinkAttachmentDetectorType {
 /// A concrete implementation of the `LinkAttachmentDetectorType` protocol to detect link attachments using OpenGraph.
 
 public final class LinkAttachmentDetector: NSObject, LinkAttachmentDetectorType {
-    private let linkDetector: NSDataDetector? = NSDataDetector.linkDetector
-    private let previewDownloader: PreviewDownloaderType
-    private let workerQueue: OperationQueue
+    // MARK: Lifecycle
 
     deinit {
         previewDownloader.tearDown()
@@ -78,6 +76,8 @@ public final class LinkAttachmentDetector: NSObject, LinkAttachmentDetectorType 
         super.init()
     }
 
+    // MARK: Public
+
     public func downloadLinkAttachments(
         inText text: String,
         excluding excludedRanges: [NSRange] = [],
@@ -93,4 +93,10 @@ public final class LinkAttachmentDetector: NSObject, LinkAttachmentDetectorType 
             completion([linkAttachment])
         }
     }
+
+    // MARK: Private
+
+    private let linkDetector: NSDataDetector? = NSDataDetector.linkDetector
+    private let previewDownloader: PreviewDownloaderType
+    private let workerQueue: OperationQueue
 }

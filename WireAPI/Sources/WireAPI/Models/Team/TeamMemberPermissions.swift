@@ -26,11 +26,7 @@ import Foundation
 /// 1587 (member), 5951 (admin), 8191 (owner).
 
 public struct TeamMemberPermissions: Equatable {
-    public let copyPermissions: Int64
-
-    /// The permissions of the member.
-
-    public let selfPermissions: Int64
+    // MARK: Lifecycle
 
     /// Create a new `TeamMemberPermissions`.
     ///
@@ -44,4 +40,12 @@ public struct TeamMemberPermissions: Equatable {
         self.copyPermissions = copyPermissions
         self.selfPermissions = selfPermissions
     }
+
+    // MARK: Public
+
+    public let copyPermissions: Int64
+
+    /// The permissions of the member.
+
+    public let selfPermissions: Int64
 }

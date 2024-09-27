@@ -61,26 +61,7 @@ struct IconDefinition: Equatable {
 // MARK: - IconButton
 
 class IconButton: ButtonWithLargerHitArea {
-    var circular = false {
-        didSet {
-            updateCircular()
-        }
-    }
-
-    var borderWidth: CGFloat = 0.5 {
-        didSet {
-            updateCircular()
-        }
-    }
-
-    var adjustsTitleWhenHighlighted = false
-    var adjustsBorderColorWhenHighlighted = false
-    var adjustBackgroundImageWhenHighlighted = false
-
-    private var iconColorsByState: [UIControl.State.RawValue: UIColor] = [:]
-    private var borderColorByState: [UIControl.State.RawValue: UIColor] = [:]
-    private var iconDefinitionsByState: [UIControl.State.RawValue: IconDefinition] = [:]
-    private var priorState: UIControl.State?
+    // MARK: Lifecycle
 
     override init(fontSpec: FontSpec = .smallLightFont) {
         super.init(fontSpec: fontSpec)
@@ -124,10 +105,22 @@ class IconButton: ButtonWithLargerHitArea {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    // MARK: Internal
 
-        updateCircularCornerRadius()
+    var adjustsTitleWhenHighlighted = false
+    var adjustsBorderColorWhenHighlighted = false
+    var adjustBackgroundImageWhenHighlighted = false
+
+    var circular = false {
+        didSet {
+            updateCircular()
+        }
+    }
+
+    var borderWidth: CGFloat = 0.5 {
+        didSet {
+            updateCircular()
+        }
     }
 
     // MARK: - Observing state
@@ -150,23 +143,17 @@ class IconButton: ButtonWithLargerHitArea {
         }
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        updateCircularCornerRadius()
+    }
+
     override func setTitleColor(_ color: UIColor?, for state: UIControl.State) {
         super.setTitleColor(color, for: state)
 
         if adjustsTitleWhenHighlighted, state.contains(.normal) {
             super.setTitleColor(titleColor(for: .highlighted)?.mix(UIColor.black, amount: 0.4), for: .highlighted)
-        }
-    }
-
-    private func updateCircular() {
-        if circular {
-            layer.masksToBounds = true
-            layer.borderWidth = borderWidth
-            updateCircularCornerRadius()
-        } else {
-            layer.masksToBounds = false
-            layer.borderWidth = 0.0
-            layer.cornerRadius = 0
         }
     }
 
@@ -301,12 +288,50 @@ class IconButton: ButtonWithLargerHitArea {
         borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
-    private func updateBorderColor() {
-        layer.borderColor = borderColor(for: state)?.cgColor
-    }
-
     func updateTintColor() {
         tintColor = iconColor(for: state)
+    }
+
+    func icon(for state: UIControl.State) -> StyleKitIcon? {
+        iconDefinition(for: state)?.type
+    }
+
+    func setBorderColor(_ color: UIColor?, for state: UIControl.State) {
+        for expandedState in state.expanded {
+            if color != nil {
+                borderColorByState[expandedState.rawValue] = color
+
+                if adjustsBorderColorWhenHighlighted,
+                   expandedState == .normal {
+                    borderColorByState[UIControl.State.highlighted.rawValue] = color?.mix(.black, amount: 0.4)
+                }
+            }
+        }
+
+        updateBorderColor()
+    }
+
+    // MARK: Private
+
+    private var iconColorsByState: [UIControl.State.RawValue: UIColor] = [:]
+    private var borderColorByState: [UIControl.State.RawValue: UIColor] = [:]
+    private var iconDefinitionsByState: [UIControl.State.RawValue: IconDefinition] = [:]
+    private var priorState: UIControl.State?
+
+    private func updateCircular() {
+        if circular {
+            layer.masksToBounds = true
+            layer.borderWidth = borderWidth
+            updateCircularCornerRadius()
+        } else {
+            layer.masksToBounds = false
+            layer.borderWidth = 0.0
+            layer.cornerRadius = 0
+        }
+    }
+
+    private func updateBorderColor() {
+        layer.borderColor = borderColor(for: state)?.cgColor
     }
 
     private func updateCircularCornerRadius() {
@@ -337,25 +362,6 @@ class IconButton: ButtonWithLargerHitArea {
         priorState = state
         // Update for new state (selected, highlighted, disabled) here if needed
         updateTintColor()
-        updateBorderColor()
-    }
-
-    func icon(for state: UIControl.State) -> StyleKitIcon? {
-        iconDefinition(for: state)?.type
-    }
-
-    func setBorderColor(_ color: UIColor?, for state: UIControl.State) {
-        for expandedState in state.expanded {
-            if color != nil {
-                borderColorByState[expandedState.rawValue] = color
-
-                if adjustsBorderColorWhenHighlighted,
-                   expandedState == .normal {
-                    borderColorByState[UIControl.State.highlighted.rawValue] = color?.mix(.black, amount: 0.4)
-                }
-            }
-        }
-
         updateBorderColor()
     }
 }

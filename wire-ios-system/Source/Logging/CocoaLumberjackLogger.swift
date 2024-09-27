@@ -21,7 +21,7 @@ import Foundation
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
 final class CocoaLumberjackLogger: LoggerProtocol {
-    private let fileLogger = DDFileLogger() // File Logger
+    // MARK: Lifecycle
 
     init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
@@ -29,6 +29,14 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
     }
+
+    // MARK: Public
+
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        // do nothing
+    }
+
+    // MARK: Internal
 
     var logFiles: [URL] {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
@@ -58,6 +66,18 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         log(message, attributes: attributes, level: .error)
     }
 
+    // MARK: Private
+
+    private let fileLogger = DDFileLogger() // File Logger
+
+    private var isDebug: Bool {
+        #if DEBUG
+            return true
+        #else
+            return false
+        #endif
+    }
+
     private func log(_ message: LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
         var mergedAttributes: LogAttributes = [:]
         for attribute in attributes {
@@ -82,10 +102,6 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         DDLog.log(asynchronous: true, message: formatedMessage)
     }
 
-    public func addTag(_ key: LogAttributesKey, value: String?) {
-        // do nothing
-    }
-
     private func formattedLevel(_ level: DDLogLevel) -> String {
         switch level {
         case .error:
@@ -99,13 +115,5 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         default:
             "VERBOSE"
         }
-    }
-
-    private var isDebug: Bool {
-        #if DEBUG
-            return true
-        #else
-            return false
-        #endif
     }
 }

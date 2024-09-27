@@ -20,6 +20,19 @@ import Foundation
 
 @objcMembers
 public class MockTeamMemberEvent: NSObject {
+    // MARK: Lifecycle
+
+    public init(kind: Kind, team: MockTeam, user: MockUser) {
+        self.kind = kind
+        self.teamIdentifier = team.identifier
+        self.userIdentifier = team.identifier
+        self.data = [
+            "user": user.identifier,
+        ]
+    }
+
+    // MARK: Public
+
     public enum Kind: String {
         case leave = "team.member-leave"
     }
@@ -29,6 +42,19 @@ public class MockTeamMemberEvent: NSObject {
     public let userIdentifier: String
     public let kind: Kind
     public let timestamp = Date()
+
+    public var payload: ZMTransportData {
+        [
+            "team": teamIdentifier,
+            "time": timestamp.transportString(),
+            "type": kind.rawValue,
+            "data": data,
+        ] as ZMTransportData
+    }
+
+    override public var debugDescription: String {
+        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
+    }
 
     public static func createIfNeeded(
         team: MockTeam,
@@ -49,27 +75,5 @@ public class MockTeamMemberEvent: NSObject {
             .map { MockTeamMemberEvent(kind: .leave, team: team, user: $0.user) }
 
         return removedMembersEvents
-    }
-
-    public init(kind: Kind, team: MockTeam, user: MockUser) {
-        self.kind = kind
-        self.teamIdentifier = team.identifier
-        self.userIdentifier = team.identifier
-        self.data = [
-            "user": user.identifier,
-        ]
-    }
-
-    public var payload: ZMTransportData {
-        [
-            "team": teamIdentifier,
-            "time": timestamp.transportString(),
-            "type": kind.rawValue,
-            "data": data,
-        ] as ZMTransportData
-    }
-
-    override public var debugDescription: String {
-        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
     }
 }

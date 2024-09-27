@@ -32,28 +32,15 @@ extension UIColor {
 
 /// A button with spinner at the trailing side. Title text is non truncated.
 final class SpinnerButton: LegacyButton {
-    private lazy var spinner = {
-        let spinner = Spinner()
+    // MARK: Lifecycle
 
-        // the spinner covers the text with alpha BG
-        spinner.backgroundColor = UIColor.from(scheme: .contentBackground)
-            .withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
-        spinner.color = UIColor.AlarmButton.alarmRed
-        spinner.iconSize = CGFloat.SpinnerButton.iconSize
+    override init(fontSpec: FontSpec) {
+        super.init(fontSpec: fontSpec)
 
-        addSubview(spinner)
+        configureTitleLabel()
+    }
 
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
-            spinner.trailingAnchor.constraint(equalTo: trailingAnchor),
-            spinner.widthAnchor.constraint(equalToConstant: 48),
-            spinner.topAnchor.constraint(equalTo: topAnchor),
-            spinner.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
-
-        return spinner
-    }()
+    // MARK: Internal
 
     var isLoading = false {
         didSet {
@@ -66,32 +53,10 @@ final class SpinnerButton: LegacyButton {
         }
     }
 
-    override init(fontSpec: FontSpec) {
-        super.init(fontSpec: fontSpec)
+    // MARK: - factory method
 
-        configureTitleLabel()
-    }
-
-    /// multi line support of titleLabel
-    private func configureTitleLabel() {
-        guard let titleLabel else { return }
-
-        // title is always align to left
-        contentHorizontalAlignment = .left
-
-        titleLabel.lineBreakMode = .byWordWrapping
-        titleLabel.numberOfLines = 0
-
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(
-                greaterThanOrEqualTo: topAnchor,
-                constant: CGFloat.SpinnerButton.contentInset
-            ),
-            titleLabel.leadingAnchor.constraint(
-                greaterThanOrEqualTo: leadingAnchor,
-                constant: CGFloat.SpinnerButton.contentInset
-            ),
-        ])
+    static func alarmButton() -> SpinnerButton {
+        SpinnerButton(legacyStyle: .empty, cornerRadius: 6, fontSpec: .smallSemiboldFont)
     }
 
     /// custom full style with accent color for disabled state.
@@ -128,9 +93,50 @@ final class SpinnerButton: LegacyButton {
         }
     }
 
-    // MARK: - factory method
+    // MARK: Private
 
-    static func alarmButton() -> SpinnerButton {
-        SpinnerButton(legacyStyle: .empty, cornerRadius: 6, fontSpec: .smallSemiboldFont)
+    private lazy var spinner = {
+        let spinner = Spinner()
+
+        // the spinner covers the text with alpha BG
+        spinner.backgroundColor = UIColor.from(scheme: .contentBackground)
+            .withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
+        spinner.color = UIColor.AlarmButton.alarmRed
+        spinner.iconSize = CGFloat.SpinnerButton.iconSize
+
+        addSubview(spinner)
+
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
+            spinner.trailingAnchor.constraint(equalTo: trailingAnchor),
+            spinner.widthAnchor.constraint(equalToConstant: 48),
+            spinner.topAnchor.constraint(equalTo: topAnchor),
+            spinner.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+
+        return spinner
+    }()
+
+    /// multi line support of titleLabel
+    private func configureTitleLabel() {
+        guard let titleLabel else { return }
+
+        // title is always align to left
+        contentHorizontalAlignment = .left
+
+        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.numberOfLines = 0
+
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(
+                greaterThanOrEqualTo: topAnchor,
+                constant: CGFloat.SpinnerButton.contentInset
+            ),
+            titleLabel.leadingAnchor.constraint(
+                greaterThanOrEqualTo: leadingAnchor,
+                constant: CGFloat.SpinnerButton.contentInset
+            ),
+        ])
     }
 }

@@ -19,7 +19,7 @@
 import UIKit
 
 final class AudioMessageRestrictionView: BaseMessageRestrictionView {
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {
         super.init(messageType: .audio)
@@ -29,6 +29,8 @@ final class AudioMessageRestrictionView: BaseMessageRestrictionView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
 
     // MARK: - Helpers
 

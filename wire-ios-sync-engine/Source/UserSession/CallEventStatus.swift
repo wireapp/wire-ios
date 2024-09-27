@@ -27,29 +27,18 @@ private let zmLog = ZMSLog(tag: "calling")
 /// call events.
 @objcMembers
 public class CallEventStatus: NSObject, ZMTimerClient {
-    var eventProcessingTimoutInterval: TimeInterval = 2
+    // MARK: Lifecycle
 
-    fileprivate var observers: [() -> Void] = []
-    fileprivate var eventProcessingTimer: ZMTimer?
-
-    fileprivate var callEventsWaitingToBeProcessed = 0 {
-        didSet {
-            if callEventsWaitingToBeProcessed == 0 {
-                zmLog.debug("CallEventStatus: all events processed, starting timer")
-                eventProcessingTimer = ZMTimer(target: self, operationQueue: .main)
-                eventProcessingTimer?.fire(afterTimeInterval: eventProcessingTimoutInterval)
-            }
-        }
+    deinit {
+        eventProcessingTimer = nil
     }
+
+    // MARK: Public
 
     public func timerDidFire(_: ZMTimer!) {
         zmLog.debug("CallEventStatus: finished timer")
         observers.forEach { $0() }
         observers = []
-        eventProcessingTimer = nil
-    }
-
-    deinit {
         eventProcessingTimer = nil
     }
 
@@ -76,5 +65,24 @@ public class CallEventStatus: NSObject, ZMTimerClient {
 
     public func finishedProcessingCallEvent() {
         callEventsWaitingToBeProcessed -= 1
+    }
+
+    // MARK: Internal
+
+    var eventProcessingTimoutInterval: TimeInterval = 2
+
+    // MARK: Fileprivate
+
+    fileprivate var observers: [() -> Void] = []
+    fileprivate var eventProcessingTimer: ZMTimer?
+
+    fileprivate var callEventsWaitingToBeProcessed = 0 {
+        didSet {
+            if callEventsWaitingToBeProcessed == 0 {
+                zmLog.debug("CallEventStatus: all events processed, starting timer")
+                eventProcessingTimer = ZMTimer(target: self, operationQueue: .main)
+                eventProcessingTimer?.fire(afterTimeInterval: eventProcessingTimoutInterval)
+            }
+        }
     }
 }

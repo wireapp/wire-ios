@@ -21,12 +21,7 @@ import Foundation
 // MARK: - PrivateUserDefaults
 
 public final class PrivateUserDefaults<Key: DefaultsKey> {
-    // MARK: - Properties
-
-    let userID: UUID
-    let storage: UserDefaults
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         userID: UUID,
@@ -35,6 +30,15 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
         self.userID = userID
         self.storage = storage
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let userID: UUID
+    let storage: UserDefaults
+
+    // MARK: Private
 
     // MARK: - Methods
 

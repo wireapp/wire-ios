@@ -33,7 +33,20 @@ struct DeveloperToolsContext {
 // MARK: - DeveloperToolsViewModel
 
 final class DeveloperToolsViewModel: ObservableObject {
-    static var context = DeveloperToolsContext()
+    // MARK: Lifecycle
+
+    init(
+        router: AppRootRouter? = nil,
+        onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
+    ) {
+        self.router = router
+        self.onDismiss = onDismiss
+        self.sections = []
+
+        setupSections()
+    }
+
+    // MARK: Internal
 
     // MARK: - Models
 
@@ -47,6 +60,8 @@ final class DeveloperToolsViewModel: ObservableObject {
         case button(ButtonItem)
         case text(TextItem)
         case destination(DestinationItem)
+
+        // MARK: Internal
 
         var id: UUID {
             switch self {
@@ -86,6 +101,8 @@ final class DeveloperToolsViewModel: ObservableObject {
         case itemCopyRequested(Item)
     }
 
+    static var context = DeveloperToolsContext()
+
     // MARK: - Properties
 
     let router: AppRootRouter?
@@ -100,23 +117,110 @@ final class DeveloperToolsViewModel: ObservableObject {
     var alertTitle: String?
     var alertBody: String?
 
+    // MARK: - Events
+
+    func handleEvent(_ event: Event) {
+        switch event {
+        case .dismissButtonTapped:
+            onDismiss {}
+
+        case let .itemCopyRequested(.text(textItem)):
+            UIPasteboard.general.string = textItem.value
+
+        case let .itemTapped(.button(buttonItem)):
+            buttonItem.action()
+
+        default:
+            break
+        }
+    }
+
+    // MARK: Private
+
+    private lazy var backendInfoSection: Section = {
+        let header = "Backend info"
+        var items = [Item]()
+
+        items.append(.text(TextItem(title: "Name", value: backendName)))
+
+        if canSwitchBackend {
+            items.append(.destination(DestinationItem(title: "Switch backend", makeView: {
+                AnyView(SwitchBackendView(viewModel: SwitchBackendViewModel()))
+            })))
+        }
+
+        items.append(.text(TextItem(title: "Domain", value: backendDomain)))
+        items.append(.text(TextItem(title: "API version", value: apiVersion)))
+        items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
+            AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
+        })))
+
+        items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
+        items.append(.button(ButtonItem(title: "Stop federating with Foma", action: { [weak self] in
+            self?.stopFederatingFoma()
+        })))
+        items.append(.button(ButtonItem(title: "Stop federating with Bella", action: { [weak self] in
+            self?.stopFederatingBella()
+        })))
+        items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: { [weak self] in
+            self?.stopBellaFomaFederating()
+        })))
+        return Section(
+            header: header,
+            items: items
+        )
+    }()
+
     // MARK: - Computed
 
     private var userSession: ZMUserSession? {
         ZMUserSession.shared()
     }
 
-    // MARK: - Life cycle
+    private var canSwitchBackend: Bool {
+        guard let sessionManager = SessionManager.shared else { return false }
+        return sessionManager.canSwitchBackend() == nil
+    }
 
-    init(
-        router: AppRootRouter? = nil,
-        onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
-    ) {
-        self.router = router
-        self.onDismiss = onDismiss
-        self.sections = []
+    // MARK: - Helpers
 
-        setupSections()
+    private var appVersion: String {
+        Bundle.main.shortVersionString ?? "Unknown"
+    }
+
+    private var bundleIdentifier: String {
+        Bundle.main.bundleIdentifier ?? "Unknown"
+    }
+
+    private var buildNumber: String {
+        Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
+    }
+
+    private var backendName: String {
+        BackendEnvironment.shared.title
+    }
+
+    private var backendDomain: String {
+        BackendInfo.domain ?? "None"
+    }
+
+    private var apiVersion: String {
+        guard let version = BackendInfo.apiVersion else { return "None" }
+        return String(describing: version.rawValue)
+    }
+
+    private var isFederationEnabled: String {
+        String(describing: BackendInfo.isFederationEnabled)
+    }
+
+    private var selfUser: ZMUser? {
+        guard let userSession else { return nil }
+        return ZMUser.selfUser(inUserSession: userSession)
+    }
+
+    private var selfClient: UserClient? {
+        guard let userSession else { return nil }
+        return userSession.selfUserClient
     }
 
     private func setupSections() {
@@ -241,63 +345,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         ))
     }
 
-    private lazy var backendInfoSection: Section = {
-        let header = "Backend info"
-        var items = [Item]()
-
-        items.append(.text(TextItem(title: "Name", value: backendName)))
-
-        if canSwitchBackend {
-            items.append(.destination(DestinationItem(title: "Switch backend", makeView: {
-                AnyView(SwitchBackendView(viewModel: SwitchBackendViewModel()))
-            })))
-        }
-
-        items.append(.text(TextItem(title: "Domain", value: backendDomain)))
-        items.append(.text(TextItem(title: "API version", value: apiVersion)))
-        items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
-            AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
-        })))
-
-        items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
-        items.append(.button(ButtonItem(title: "Stop federating with Foma", action: { [weak self] in
-            self?.stopFederatingFoma()
-        })))
-        items.append(.button(ButtonItem(title: "Stop federating with Bella", action: { [weak self] in
-            self?.stopFederatingBella()
-        })))
-        items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: { [weak self] in
-            self?.stopBellaFomaFederating()
-        })))
-        return Section(
-            header: header,
-            items: items
-        )
-    }()
-
-    private var canSwitchBackend: Bool {
-        guard let sessionManager = SessionManager.shared else { return false }
-        return sessionManager.canSwitchBackend() == nil
-    }
-
-    // MARK: - Events
-
-    func handleEvent(_ event: Event) {
-        switch event {
-        case .dismissButtonTapped:
-            onDismiss {}
-
-        case let .itemCopyRequested(.text(textItem)):
-            UIPasteboard.general.string = textItem.value
-
-        case let .itemTapped(.button(buttonItem)):
-            buttonItem.action()
-
-        default:
-            break
-        }
-    }
-
     // MARK: - Actions
 
     private func checkRegisteredTokens() {
@@ -327,47 +374,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
 
         action.send(in: context)
-    }
-
-    // MARK: - Helpers
-
-    private var appVersion: String {
-        Bundle.main.shortVersionString ?? "Unknown"
-    }
-
-    private var bundleIdentifier: String {
-        Bundle.main.bundleIdentifier ?? "Unknown"
-    }
-
-    private var buildNumber: String {
-        Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
-    }
-
-    private var backendName: String {
-        BackendEnvironment.shared.title
-    }
-
-    private var backendDomain: String {
-        BackendInfo.domain ?? "None"
-    }
-
-    private var apiVersion: String {
-        guard let version = BackendInfo.apiVersion else { return "None" }
-        return String(describing: version.rawValue)
-    }
-
-    private var isFederationEnabled: String {
-        String(describing: BackendInfo.isFederationEnabled)
-    }
-
-    private var selfUser: ZMUser? {
-        guard let userSession else { return nil }
-        return ZMUser.selfUser(inUserSession: userSession)
-    }
-
-    private var selfClient: UserClient? {
-        guard let userSession else { return nil }
-        return userSession.selfUserClient
     }
 
     private func stopFederatingBella() {

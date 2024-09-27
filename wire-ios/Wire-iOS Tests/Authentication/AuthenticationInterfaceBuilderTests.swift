@@ -22,10 +22,11 @@ import XCTest
 @testable import Wire
 
 final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTestHelper {
+    // MARK: Internal
+
     var coreDataFixture: CoreDataFixture!
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -197,6 +198,10 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     func testReauthenticate_NoCredentials() {
         runSnapshotTest(for: .reauthenticate(credentials: nil, numberOfAccounts: 1, isSignedOut: true))
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - Helpers
 

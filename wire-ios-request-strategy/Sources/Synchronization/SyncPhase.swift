@@ -38,7 +38,7 @@ public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
     case fetchingMissedEvents
     case done
 
-    static let lastSlowSyncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
+    // MARK: Public
 
     public var isLastSlowSyncPhase: Bool {
         self == Self.lastSlowSyncPhase
@@ -86,4 +86,8 @@ public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
             "done"
         }
     }
+
+    // MARK: Internal
+
+    static let lastSlowSyncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
 }

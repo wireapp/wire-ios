@@ -24,17 +24,9 @@ import Foundation
 
 @objcMembers
 public class MLSGroup: ZMManagedObject {
-    override public static func entityName() -> String {
-        "MLSGroup"
-    }
+    // MARK: Public
 
-    override public class func sortKey() -> String? {
-        nil
-    }
-
-    override public class func isTrackingLocalModifications() -> Bool {
-        false
-    }
+    @NSManaged public var lastKeyMaterialUpdate: Date?
 
     // MARK: - Properties
 
@@ -58,11 +50,17 @@ public class MLSGroup: ZMManagedObject {
         }
     }
 
-    static let idKey = "id"
+    override public static func entityName() -> String {
+        "MLSGroup"
+    }
 
-    @NSManaged private var primitiveId: Data?
+    override public class func sortKey() -> String? {
+        nil
+    }
 
-    @NSManaged public var lastKeyMaterialUpdate: Date?
+    override public class func isTrackingLocalModifications() -> Bool {
+        false
+    }
 
     // MARK: - Methods
 
@@ -89,6 +87,10 @@ public class MLSGroup: ZMManagedObject {
         }
     }
 
+    // MARK: Internal
+
+    static let idKey = "id"
+
     class func fetch(id: MLSGroupID, in context: NSManagedObjectContext) -> MLSGroup? {
         let request = NSFetchRequest<MLSGroup>(entityName: entityName())
         request.predicate = NSPredicate(format: "\(idKey) == %@", argumentArray: [id.data])
@@ -104,4 +106,8 @@ public class MLSGroup: ZMManagedObject {
         let result = context.fetchOrAssert(request: request)
         return Set(result)
     }
+
+    // MARK: Private
+
+    @NSManaged private var primitiveId: Data?
 }

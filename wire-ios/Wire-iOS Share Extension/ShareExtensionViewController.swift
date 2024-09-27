@@ -45,6 +45,22 @@ private enum LocalAuthenticationStatus {
 // MARK: - ShareExtensionViewController
 
 final class ShareExtensionViewController: SLComposeServiceViewController {
+    // MARK: Lifecycle
+
+    // MARK: - Configuration
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        setup()
+    }
+
+    // MARK: Internal
+
     // MARK: - Elements
 
     typealias ShareExtensionConversationLocale = L10n.ShareExtension.ConversationSelection
@@ -82,65 +98,10 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         return imageView
     }()
 
-    private var postContent: PostContent?
-    private var sharingSession: SharingSession?
-
-    /// stores extensionContext?.attachments
-    private var attachments: [AttachmentType: [NSItemProvider]] = [:]
-
-    private var currentAccount: Account? {
-        didSet {
-            localAuthenticationStatus = .denied
-        }
-    }
-
-    private var localAuthenticationStatus: LocalAuthenticationStatus = .denied
-    private var observer: SendableBatchObserver?
-    private let networkStatusObservable: any NetworkStatusObservable = NetworkStatus.shared
-    private weak var progressViewController: SendingProgressViewController?
-
     var dispatchQueue = DispatchQueue.main
     let stateAccessoryView = ConversationStateAccessoryView()
 
     lazy var unlockViewController = UnlockViewController()
-
-    // MARK: - Host App State
-
-    private var accountManager: AccountManager? {
-        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
-        let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        return AccountManager(sharedDirectory: sharedContainerURL)
-    }
-
-    // MARK: - Configuration
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
-    }
-
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        setup()
-    }
-
-    private func setup() {
-        setUpObserver()
-        setUpDatadog()
-    }
-
-    private func setUpObserver() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(extensionHostDidEnterBackground),
-            name: .NSExtensionHostDidEnterBackground,
-            object: nil
-        )
-    }
-
-    private func setUpDatadog() {
-        WireAnalytics.Datadog.enable()
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -165,56 +126,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         placeholder = L10n.ShareExtension.Input.placeholder
     }
 
-    private func setupNavigationBar() {
-        let iconSize = CGSize(width: 32, height: 26.3)
-        guard let item = navigationController?.navigationBar.items?.first else { return }
-        item.rightBarButtonItem?.action = #selector(appendPostTapped)
-        item.rightBarButtonItem?.title = L10n.ShareExtension.SendButton.title
-        item
-            .titleView = UIImageView(
-                image: WireStyleKit.imageOfLogo(color: UIColor.Wire.primaryLabel)
-                    .downscaling(to: iconSize)
-            )
-    }
-
-    private var authenticatedAccounts: [Account] {
-        guard let accountManager else { return [] }
-        return accountManager.accounts.filter { BackendEnvironment.shared.isAuthenticated($0) }
-    }
-
-    private func recreateSharingSession(account: Account?) throws {
-        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
-              let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
-              let accountIdentifier = account?.userIdentifier
-        else { return }
-
-        let legacyConfig = AppLockController.LegacyConfig.fromBundle()
-
-        sharingSession = try SharingSession(
-            applicationGroupIdentifier: applicationGroupIdentifier,
-            accountIdentifier: accountIdentifier,
-            hostBundleIdentifier: hostBundleIdentifier,
-            environment: BackendEnvironment.shared,
-            appLockConfig: legacyConfig,
-            sharedUserDefaults: .applicationGroup,
-            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-        )
-    }
-
     override func configurationItems() -> [Any]! {
         if let count = accountManager?.accounts.count, count > 1 {
             [accountItem, conversationItem]
         } else {
             [conversationItem]
-        }
-    }
-
-    // MARK: - Events
-
-    @objc
-    private func extensionHostDidEnterBackground() {
-        postContent?.cancel { [weak self] in
-            self?.cancel()
         }
     }
 
@@ -240,6 +156,210 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
         let conditions = sharingSession != nil && postContent?.target != nil
         return charactersRemaining == nil ? conditions : conditions && charactersRemaining.intValue >= 0
+    }
+
+    // MARK: - Preview
+
+    /// Display a preview image.
+    override func loadPreviewView() -> UIView! {
+        preview
+    }
+
+    func updatePreview() {
+        fetchMainAttachmentPreview { previewItem, displayMode in
+            DispatchQueue.main.async {
+                guard let previewItem else {
+                    self.preview?.image = nil
+                    self.preview?.isHidden = true
+                    return
+                }
+
+                switch previewItem {
+                case let .image(image):
+                    self.preview?.image = image
+                    self.preview?.displayMode = displayMode
+
+                case let .placeholder(iconType):
+                    self.preview?.setIcon(iconType, size: .medium, color: UIColor.Wire.secondaryLabel)
+
+                case let .remoteURL(url):
+                    self.preview?.setIcon(.browser, size: .medium, color: UIColor.Wire.secondaryLabel)
+                    self.fetchWebsitePreview(for: url)
+                }
+
+                self.preview?.displayMode = displayMode
+                self.preview?.isHidden = false
+            }
+        }
+    }
+
+    func updateState(conversation: WireShareEngine.Conversation?) {
+        conversationItem.value = conversation?.name ?? L10n.ShareExtension.ConversationSelection.Empty.value
+        postContent?.target = conversation
+    }
+
+    func updateAccount(_ account: Account?) {
+        var account = account
+        let authenticated = authenticatedAccounts
+
+        // If the current account is not authenticated (e.g. device removed from another client)
+        // and there are other accounts authenticated, it switches to the first available.
+
+        let accountAuthenticated = account.flatMap(BackendEnvironment.shared.isAuthenticated) ?? false
+
+        if let firstLogged = authenticated.first, account == currentAccount, accountAuthenticated == false {
+            account = firstLogged
+        }
+
+        do {
+            try recreateSharingSession(account: account)
+        } catch let error as SharingSession.InitializationError {
+            guard error == .loggedOut else { return }
+
+            let alert = UIAlertController(
+                title: L10n.ShareExtension.LoggedOut.title,
+                message: L10n.ShareExtension.LoggedOut.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.General.ok,
+                style: .cancel
+            ))
+
+            self.present(alert, animated: true)
+            return
+        } catch { // any other error
+            return
+        }
+
+        currentAccount = account
+        accountItem.value = account?.shareExtensionDisplayName ?? ""
+        conversationItem.value = L10n.ShareExtension.ConversationSelection.Empty.value
+
+        guard account != currentAccount else { return }
+        postContent?.target = nil
+    }
+
+    func showChooseConversation() {
+        guard let sharingSession else { return }
+
+        let allConversations = sharingSession.writeableNonArchivedConversations + sharingSession
+            .writebleArchivedConversations
+        let conversationSelectionViewController = ConversationSelectionViewController(conversations: allConversations)
+
+        conversationSelectionViewController.selectionHandler = { [weak self] conversation in
+            self?.updateState(conversation: conversation)
+            self?.popConfigurationViewController()
+            self?.validateContent()
+        }
+
+        pushConfigurationViewController(conversationSelectionViewController)
+    }
+
+    func showChooseAccount() {
+        guard let accountManager else { return }
+        let accountSelectionViewController = AccountSelectionViewController(
+            accounts: accountManager.accounts,
+            current: currentAccount
+        )
+
+        accountSelectionViewController.selectionHandler = { [weak self] account in
+            self?.updateAccount(account)
+            self?.popConfigurationViewController()
+            self?.validateContent()
+        }
+
+        pushConfigurationViewController(accountSelectionViewController)
+    }
+
+    // MARK: Private
+
+    private var postContent: PostContent?
+    private var sharingSession: SharingSession?
+
+    /// stores extensionContext?.attachments
+    private var attachments: [AttachmentType: [NSItemProvider]] = [:]
+
+    private var localAuthenticationStatus: LocalAuthenticationStatus = .denied
+    private var observer: SendableBatchObserver?
+    private let networkStatusObservable: any NetworkStatusObservable = NetworkStatus.shared
+    private weak var progressViewController: SendingProgressViewController?
+
+    private var currentAccount: Account? {
+        didSet {
+            localAuthenticationStatus = .denied
+        }
+    }
+
+    // MARK: - Host App State
+
+    private var accountManager: AccountManager? {
+        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
+        let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+        return AccountManager(sharedDirectory: sharedContainerURL)
+    }
+
+    private var authenticatedAccounts: [Account] {
+        guard let accountManager else { return [] }
+        return accountManager.accounts.filter { BackendEnvironment.shared.isAuthenticated($0) }
+    }
+
+    private func setup() {
+        setUpObserver()
+        setUpDatadog()
+    }
+
+    private func setUpObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(extensionHostDidEnterBackground),
+            name: .NSExtensionHostDidEnterBackground,
+            object: nil
+        )
+    }
+
+    private func setUpDatadog() {
+        WireAnalytics.Datadog.enable()
+    }
+
+    private func setupNavigationBar() {
+        let iconSize = CGSize(width: 32, height: 26.3)
+        guard let item = navigationController?.navigationBar.items?.first else { return }
+        item.rightBarButtonItem?.action = #selector(appendPostTapped)
+        item.rightBarButtonItem?.title = L10n.ShareExtension.SendButton.title
+        item
+            .titleView = UIImageView(
+                image: WireStyleKit.imageOfLogo(color: UIColor.Wire.primaryLabel)
+                    .downscaling(to: iconSize)
+            )
+    }
+
+    private func recreateSharingSession(account: Account?) throws {
+        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+              let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
+              let accountIdentifier = account?.userIdentifier
+        else { return }
+
+        let legacyConfig = AppLockController.LegacyConfig.fromBundle()
+
+        sharingSession = try SharingSession(
+            applicationGroupIdentifier: applicationGroupIdentifier,
+            accountIdentifier: accountIdentifier,
+            hostBundleIdentifier: hostBundleIdentifier,
+            environment: BackendEnvironment.shared,
+            appLockConfig: legacyConfig,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
+    }
+
+    // MARK: - Events
+
+    @objc
+    private func extensionHostDidEnterBackground() {
+        postContent?.cancel { [weak self] in
+            self?.cancel()
+        }
     }
 
     /// If there is a URL attachment, copy the text of the URL attachment into the text field
@@ -391,41 +511,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         }
     }
 
-    // MARK: - Preview
-
-    /// Display a preview image.
-    override func loadPreviewView() -> UIView! {
-        preview
-    }
-
-    func updatePreview() {
-        fetchMainAttachmentPreview { previewItem, displayMode in
-            DispatchQueue.main.async {
-                guard let previewItem else {
-                    self.preview?.image = nil
-                    self.preview?.isHidden = true
-                    return
-                }
-
-                switch previewItem {
-                case let .image(image):
-                    self.preview?.image = image
-                    self.preview?.displayMode = displayMode
-
-                case let .placeholder(iconType):
-                    self.preview?.setIcon(iconType, size: .medium, color: UIColor.Wire.secondaryLabel)
-
-                case let .remoteURL(url):
-                    self.preview?.setIcon(.browser, size: .medium, color: UIColor.Wire.secondaryLabel)
-                    self.fetchWebsitePreview(for: url)
-                }
-
-                self.preview?.displayMode = displayMode
-                self.preview?.isHidden = false
-            }
-        }
-    }
-
     /// Fetches the preview image for the given website.
     private func fetchWebsitePreview(for url: URL) {
         sharingSession?.downloadLinkPreviews(inText: url.absoluteString, excluding: []) { previews in
@@ -474,53 +559,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         pushConfigurationViewController(notSignedInViewController)
     }
 
-    func updateState(conversation: WireShareEngine.Conversation?) {
-        conversationItem.value = conversation?.name ?? L10n.ShareExtension.ConversationSelection.Empty.value
-        postContent?.target = conversation
-    }
-
-    func updateAccount(_ account: Account?) {
-        var account = account
-        let authenticated = authenticatedAccounts
-
-        // If the current account is not authenticated (e.g. device removed from another client)
-        // and there are other accounts authenticated, it switches to the first available.
-
-        let accountAuthenticated = account.flatMap(BackendEnvironment.shared.isAuthenticated) ?? false
-
-        if let firstLogged = authenticated.first, account == currentAccount, accountAuthenticated == false {
-            account = firstLogged
-        }
-
-        do {
-            try recreateSharingSession(account: account)
-        } catch let error as SharingSession.InitializationError {
-            guard error == .loggedOut else { return }
-
-            let alert = UIAlertController(
-                title: L10n.ShareExtension.LoggedOut.title,
-                message: L10n.ShareExtension.LoggedOut.message,
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(
-                title: L10n.General.ok,
-                style: .cancel
-            ))
-
-            self.present(alert, animated: true)
-            return
-        } catch { // any other error
-            return
-        }
-
-        currentAccount = account
-        accountItem.value = account?.shareExtensionDisplayName ?? ""
-        conversationItem.value = L10n.ShareExtension.ConversationSelection.Empty.value
-
-        guard account != currentAccount else { return }
-        postContent?.target = nil
-    }
-
     private func presentChooseAccount() {
         showChooseAccount()
     }
@@ -532,38 +570,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             showChooseConversation()
         }
-    }
-
-    func showChooseConversation() {
-        guard let sharingSession else { return }
-
-        let allConversations = sharingSession.writeableNonArchivedConversations + sharingSession
-            .writebleArchivedConversations
-        let conversationSelectionViewController = ConversationSelectionViewController(conversations: allConversations)
-
-        conversationSelectionViewController.selectionHandler = { [weak self] conversation in
-            self?.updateState(conversation: conversation)
-            self?.popConfigurationViewController()
-            self?.validateContent()
-        }
-
-        pushConfigurationViewController(conversationSelectionViewController)
-    }
-
-    func showChooseAccount() {
-        guard let accountManager else { return }
-        let accountSelectionViewController = AccountSelectionViewController(
-            accounts: accountManager.accounts,
-            current: currentAccount
-        )
-
-        accountSelectionViewController.selectionHandler = { [weak self] account in
-            self?.updateAccount(account)
-            self?.popConfigurationViewController()
-            self?.validateContent()
-        }
-
-        pushConfigurationViewController(accountSelectionViewController)
     }
 
     private func conversationDidDegrade(

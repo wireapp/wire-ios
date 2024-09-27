@@ -32,6 +32,14 @@ extension CryptoError: Error {}
 // MARK: - MLSServiceTests
 
 final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
+    // MARK: Internal
+
+    typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
+
+    enum TestError: Error {
+        case failedToUploadKeyPackages
+    }
+
     var sut: MLSService!
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
@@ -50,6 +58,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     let groupID = MLSGroupID(.init([1, 2, 3]))
     let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+
+    // MARK: - mlsServiceDelegate
+
+    var pendingProposalCommitExpectations = [MLSGroupID: XCTestExpectation]()
+    var keyMaterialUpdatedExpectation: XCTestExpectation?
 
     override func setUp() {
         BackendInfo.domain = "example.com"
@@ -88,26 +101,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         createSut()
-    }
-
-    private func createSut() {
-        sut = MLSService(
-            context: uiMOC,
-            notificationContext: uiMOC.notificationContext,
-            coreCryptoProvider: mockCoreCryptoProvider,
-            encryptionService: mockEncryptionService,
-            decryptionService: mockDecryptionService,
-            mlsActionExecutor: mockMLSActionExecutor,
-            conversationEventProcessor: mockConversationEventProcessor,
-            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
-            userDefaults: userDefaultsTestSuite,
-            actionsProvider: mockActionsProvider,
-            delegate: self,
-            syncStatus: mockSyncStatus,
-            userID: userIdentifier,
-            featureRepository: mockFeatureRepository,
-            subconversationGroupIDRepository: mockSubconversationGroupIDRepository
-        )
     }
 
     override func tearDown() {
@@ -156,11 +149,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             userID: userID
         )
     }
-
-    // MARK: - mlsServiceDelegate
-
-    var pendingProposalCommitExpectations = [MLSGroupID: XCTestExpectation]()
-    var keyMaterialUpdatedExpectation: XCTestExpectation?
 
     // Since SUT may schedule timers to commit pending proposals, we create expectations
     // and fulfill them when SUT informs us the commit was made.
@@ -237,8 +225,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         XCTAssertEqual(conferenceInfo, expectedConferenceInfo)
     }
-
-    typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
 
     func test_GenerateConferenceInfo_Fails() async {
         // Given
@@ -1291,79 +1277,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         try await test_PerformPendingJoinsRecovery(.giveUp, cause: .mlsCommitMissingReferences)
     }
 
-    private func test_PerformPendingJoinsRecovery(
-        _ recovery: ExternalCommitError.RecoveryStrategy,
-        cause: SendCommitBundleAction.Failure,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) async throws {
-        // Given
-        let shouldRetry = recovery == .retry
-        let groupID = MLSGroupID.random()
-        let conversationID = UUID.create()
-        let domain = "example.domain.com"
-        let groupInfo = Data()
-        let conversation = await uiMOC.perform { [uiMOC] in
-            let conversation = ZMConversation.insertNewObject(in: uiMOC)
-            conversation.remoteIdentifier = conversationID
-            conversation.domain = domain
-            conversation.mlsGroupID = groupID
-            conversation.mlsStatus = .pendingJoin
-            conversation.messageProtocol = .mls
-            return conversation
-        }
-
-        // set up expectations
-        let expectation = XCTestExpectation(description: "Send Message")
-        expectation.isInverted = !shouldRetry
-
-        // mock fetching group info
-        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = groupInfo
-
-        // mock joining group
-        var joinGroupCount = 0
-        mockMLSActionExecutor.mockJoinGroup = { _, _ in
-            joinGroupCount += 1
-
-            if joinGroupCount == 1 {
-                throw ExternalCommitError.failedToSendCommit(
-                    recovery: recovery,
-                    cause: cause
-                )
-            }
-
-            return []
-        }
-
-        // mock processing conversation events
-        var processConversationEventsCount = 0
-        mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in
-            processConversationEventsCount += 1
-            expectation.fulfill()
-        }
-
-        // When
-        try await sut.performPendingJoins()
-
-        // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
-
-        // it fetches group info
-        let groupInfoInvocations = mockActionsProvider
-            .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
-        XCTAssertEqual(groupInfoInvocations.count, shouldRetry ? 2 : 1, file: file, line: line)
-
-        // it asks executor to join group
-        XCTAssertEqual(joinGroupCount, shouldRetry ? 2 : 1, file: file, line: line)
-
-        // it sets conversation state to ready
-        let conversationMLSStatus = await uiMOC.perform { conversation.mlsStatus }
-        XCTAssertEqual(conversationMLSStatus, shouldRetry ? .ready : .pendingJoin, file: file, line: line)
-
-        // it processes conversation events
-        XCTAssertEqual(processConversationEventsCount, shouldRetry ? 1 : 0, file: file, line: line)
-    }
-
     func test_PerformPendingJoins_DoesntJoinGroupNotPending() async throws {
         // Given
         let groupID = MLSGroupID.random()
@@ -1587,66 +1500,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await fulfillment(of: [expectation], timeout: 0.5)
     }
 
-    private func setMocksForConversationRepair(
-        parentGroupID: MLSGroupID,
-        epoch: UInt64,
-        subgroup: MLSSubgroup? = nil,
-        onJoinGroup: @escaping (MLSGroupID) -> Void
-    ) {
-        // mock conversation epoch
-        mockCoreCrypto.conversationEpochConversationId_MockMethod = { _ in
-            epoch
-        }
-
-        if let subgroup {
-            // mock fetching subgroup
-            mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockValue = subgroup
-            // mock finding parent of subgroup on subconversation repository
-            mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockValue = (parentGroupID, .conference)
-        } else {
-            // mock conversation sync
-            mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in
-                // do nothing
-            }
-            // mock finding parent of subgroup on subconversation repository
-            mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockValue = .some(nil)
-        }
-
-        // mock fetching group info
-        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
-
-        // mock join group
-        mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
-            onJoinGroup(groupID)
-            return []
-        }
-    }
-
-    private typealias ConversationAndOutOfSyncTuple = (conversation: ZMConversation, isOutOfSync: Bool)
-
-    private func createConversation(outOfSync: Bool) -> ConversationAndOutOfSyncTuple {
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.mlsGroupID = .random()
-        conversation.remoteIdentifier = UUID()
-        conversation.domain = "domain.com"
-        conversation.messageProtocol = .mls
-        conversation.epoch = 1
-
-        return (conversation, outOfSync)
-    }
-
-    private func expectations(from tuples: [ConversationAndOutOfSyncTuple]) -> [MLSGroupID: XCTestExpectation] {
-        tuples.reduce(into: [MLSGroupID: XCTestExpectation]()) { expectations, tuple in
-            guard let groupID = tuple.conversation.mlsGroupID else {
-                return
-            }
-
-            let expectation = XCTestExpectation(description: "joined group")
-            expectation.isInverted = !tuple.isOutOfSync
-            expectations[groupID] = expectation
-        }
-    }
-
     // MARK: - Wipe Groups
 
     func test_WipeGroup_IsSuccessfull() async throws {
@@ -1757,10 +1610,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         await fulfillment(of: [countUnclaimedKeyPackages], timeout: 0.5)
-    }
-
-    enum TestError: Error {
-        case failedToUploadKeyPackages
     }
 
     func test_UploadKeyPackages_DoesNotSetKeyPackageQueriedTime_IfItFails() async {
@@ -2646,61 +2495,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
-    private func assertConferenceInfoIsReceivedWhenEpochChanges(
-        parentGroupID: MLSGroupID,
-        subconversationGroupID: MLSGroupID,
-        epochChangeSequence: MLSGroupID...
-    ) async throws {
-        // Mock epoch changes
-        let epochChangedFromDecryptionSerivce = PassthroughSubject<MLSGroupID, Never>()
-        mockDecryptionService.onEpochChanged_MockValue = epochChangedFromDecryptionSerivce.eraseToAnyPublisher()
-
-        let epochChangedFromActionExecutor = PassthroughSubject<MLSGroupID, Never>()
-        mockMLSActionExecutor.mockOnEpochChanged = epochChangedFromActionExecutor.eraseToAnyPublisher
-
-        // Mock conference info
-        let epoch: UInt64 = 42
-        let key = Data.random(byteCount: 32)
-        let clientID = MLSClientID.random()
-        let clientIDData = try XCTUnwrap(clientID.rawValue.utf8Data)
-
-        mockCoreCrypto.conversationEpochConversationId_MockMethod = { groupID in
-            XCTAssertEqual(groupID, subconversationGroupID.data)
-            return epoch
-        }
-
-        mockCoreCrypto.exportSecretKeyConversationIdKeyLength_MockMethod = { groupID, _ in
-            XCTAssertEqual(groupID, subconversationGroupID.data)
-            return key
-        }
-
-        mockCoreCrypto.getClientIdsConversationId_MockMethod = { groupID in
-            XCTAssertTrue(groupID.isOne(of: parentGroupID.data, subconversationGroupID.data))
-            return [clientIDData]
-        }
-
-        // Collect the received conference infos
-        let conferenceInfoChanges = sut.onConferenceInfoChange(
-            parentGroupID: parentGroupID,
-            subConversationGroupID: subconversationGroupID
-        )
-
-        // When
-        for groupID in epochChangeSequence {
-            epochChangedFromDecryptionSerivce.send(groupID)
-        }
-
-        // Then
-        let receivedConferenceInfo = try await conferenceInfoChanges.first(where: { _ in true })
-        let expectedConferenceInfo = MLSConferenceInfo(
-            epoch: epoch,
-            keyData: key,
-            members: [.init(id: clientID, isInSubconversation: true)]
-        )
-
-        XCTAssertEqual(receivedConferenceInfo, expectedConferenceInfo)
-    }
-
     // MARK: - On new distribution points
 
     func test_OnNewDistributionPoints_InterleavesSources() throws {
@@ -3059,5 +2853,215 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             timeout: 0.5,
             enforceOrder: true
         )
+    }
+
+    // MARK: Private
+
+    private typealias ConversationAndOutOfSyncTuple = (conversation: ZMConversation, isOutOfSync: Bool)
+
+    private func createSut() {
+        sut = MLSService(
+            context: uiMOC,
+            notificationContext: uiMOC.notificationContext,
+            coreCryptoProvider: mockCoreCryptoProvider,
+            encryptionService: mockEncryptionService,
+            decryptionService: mockDecryptionService,
+            mlsActionExecutor: mockMLSActionExecutor,
+            conversationEventProcessor: mockConversationEventProcessor,
+            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
+            userDefaults: userDefaultsTestSuite,
+            actionsProvider: mockActionsProvider,
+            delegate: self,
+            syncStatus: mockSyncStatus,
+            userID: userIdentifier,
+            featureRepository: mockFeatureRepository,
+            subconversationGroupIDRepository: mockSubconversationGroupIDRepository
+        )
+    }
+
+    private func test_PerformPendingJoinsRecovery(
+        _ recovery: ExternalCommitError.RecoveryStrategy,
+        cause: SendCommitBundleAction.Failure,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        // Given
+        let shouldRetry = recovery == .retry
+        let groupID = MLSGroupID.random()
+        let conversationID = UUID.create()
+        let domain = "example.domain.com"
+        let groupInfo = Data()
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+            conversation.domain = domain
+            conversation.mlsGroupID = groupID
+            conversation.mlsStatus = .pendingJoin
+            conversation.messageProtocol = .mls
+            return conversation
+        }
+
+        // set up expectations
+        let expectation = XCTestExpectation(description: "Send Message")
+        expectation.isInverted = !shouldRetry
+
+        // mock fetching group info
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = groupInfo
+
+        // mock joining group
+        var joinGroupCount = 0
+        mockMLSActionExecutor.mockJoinGroup = { _, _ in
+            joinGroupCount += 1
+
+            if joinGroupCount == 1 {
+                throw ExternalCommitError.failedToSendCommit(
+                    recovery: recovery,
+                    cause: cause
+                )
+            }
+
+            return []
+        }
+
+        // mock processing conversation events
+        var processConversationEventsCount = 0
+        mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in
+            processConversationEventsCount += 1
+            expectation.fulfill()
+        }
+
+        // When
+        try await sut.performPendingJoins()
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 0.5)
+
+        // it fetches group info
+        let groupInfoInvocations = mockActionsProvider
+            .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
+        XCTAssertEqual(groupInfoInvocations.count, shouldRetry ? 2 : 1, file: file, line: line)
+
+        // it asks executor to join group
+        XCTAssertEqual(joinGroupCount, shouldRetry ? 2 : 1, file: file, line: line)
+
+        // it sets conversation state to ready
+        let conversationMLSStatus = await uiMOC.perform { conversation.mlsStatus }
+        XCTAssertEqual(conversationMLSStatus, shouldRetry ? .ready : .pendingJoin, file: file, line: line)
+
+        // it processes conversation events
+        XCTAssertEqual(processConversationEventsCount, shouldRetry ? 1 : 0, file: file, line: line)
+    }
+
+    private func setMocksForConversationRepair(
+        parentGroupID: MLSGroupID,
+        epoch: UInt64,
+        subgroup: MLSSubgroup? = nil,
+        onJoinGroup: @escaping (MLSGroupID) -> Void
+    ) {
+        // mock conversation epoch
+        mockCoreCrypto.conversationEpochConversationId_MockMethod = { _ in
+            epoch
+        }
+
+        if let subgroup {
+            // mock fetching subgroup
+            mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockValue = subgroup
+            // mock finding parent of subgroup on subconversation repository
+            mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockValue = (parentGroupID, .conference)
+        } else {
+            // mock conversation sync
+            mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in
+                // do nothing
+            }
+            // mock finding parent of subgroup on subconversation repository
+            mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockValue = .some(nil)
+        }
+
+        // mock fetching group info
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
+
+        // mock join group
+        mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
+            onJoinGroup(groupID)
+            return []
+        }
+    }
+
+    private func createConversation(outOfSync: Bool) -> ConversationAndOutOfSyncTuple {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.mlsGroupID = .random()
+        conversation.remoteIdentifier = UUID()
+        conversation.domain = "domain.com"
+        conversation.messageProtocol = .mls
+        conversation.epoch = 1
+
+        return (conversation, outOfSync)
+    }
+
+    private func expectations(from tuples: [ConversationAndOutOfSyncTuple]) -> [MLSGroupID: XCTestExpectation] {
+        tuples.reduce(into: [MLSGroupID: XCTestExpectation]()) { expectations, tuple in
+            guard let groupID = tuple.conversation.mlsGroupID else {
+                return
+            }
+
+            let expectation = XCTestExpectation(description: "joined group")
+            expectation.isInverted = !tuple.isOutOfSync
+            expectations[groupID] = expectation
+        }
+    }
+
+    private func assertConferenceInfoIsReceivedWhenEpochChanges(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID,
+        epochChangeSequence: MLSGroupID...
+    ) async throws {
+        // Mock epoch changes
+        let epochChangedFromDecryptionSerivce = PassthroughSubject<MLSGroupID, Never>()
+        mockDecryptionService.onEpochChanged_MockValue = epochChangedFromDecryptionSerivce.eraseToAnyPublisher()
+
+        let epochChangedFromActionExecutor = PassthroughSubject<MLSGroupID, Never>()
+        mockMLSActionExecutor.mockOnEpochChanged = epochChangedFromActionExecutor.eraseToAnyPublisher
+
+        // Mock conference info
+        let epoch: UInt64 = 42
+        let key = Data.random(byteCount: 32)
+        let clientID = MLSClientID.random()
+        let clientIDData = try XCTUnwrap(clientID.rawValue.utf8Data)
+
+        mockCoreCrypto.conversationEpochConversationId_MockMethod = { groupID in
+            XCTAssertEqual(groupID, subconversationGroupID.data)
+            return epoch
+        }
+
+        mockCoreCrypto.exportSecretKeyConversationIdKeyLength_MockMethod = { groupID, _ in
+            XCTAssertEqual(groupID, subconversationGroupID.data)
+            return key
+        }
+
+        mockCoreCrypto.getClientIdsConversationId_MockMethod = { groupID in
+            XCTAssertTrue(groupID.isOne(of: parentGroupID.data, subconversationGroupID.data))
+            return [clientIDData]
+        }
+
+        // Collect the received conference infos
+        let conferenceInfoChanges = sut.onConferenceInfoChange(
+            parentGroupID: parentGroupID,
+            subConversationGroupID: subconversationGroupID
+        )
+
+        // When
+        for groupID in epochChangeSequence {
+            epochChangedFromDecryptionSerivce.send(groupID)
+        }
+
+        // Then
+        let receivedConferenceInfo = try await conferenceInfoChanges.first(where: { _ in true })
+        let expectedConferenceInfo = MLSConferenceInfo(
+            epoch: epoch,
+            keyData: key,
+            members: [.init(id: clientID, isInSubconversation: true)]
+        )
+
+        XCTAssertEqual(receivedConferenceInfo, expectedConferenceInfo)
     }
 }

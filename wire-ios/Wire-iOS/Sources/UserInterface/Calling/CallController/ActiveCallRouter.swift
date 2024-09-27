@@ -62,31 +62,7 @@ typealias PostCallAction = (@escaping Completion) -> Void
 
 final class ActiveCallRouter<TopOverlayPresenter>
     where TopOverlayPresenter: TopOverlayPresenting {
-    // MARK: - Public Property
-
-    var isActiveCallShown = false {
-        didSet {
-            if isActiveCallShown {
-                isPresentingActiveCall = false
-            }
-        }
-    }
-
-    var isPresentingActiveCall = false
-
-    // MARK: - Private Properties
-
-    private let userSession: UserSession
-    private let topOverlayPresenter: TopOverlayPresenter
-    private let mainWindow: UIWindow
-    private let callController: CallController
-    private let callQualityController: CallQualityController
-    private var transitioningDelegate: CallQualityAnimator
-
-    private var isCallQualityShown = false
-    private var isCallTopOverlayShown = false
-    private(set) var scheduledPostCallAction: PostCallAction?
-    private(set) weak var presentedDegradedAlert: UIAlertController?
+    // MARK: Lifecycle
 
     init(
         mainWindow: UIWindow,
@@ -106,11 +82,42 @@ final class ActiveCallRouter<TopOverlayPresenter>
         callQualityController.router = self
     }
 
+    // MARK: Internal
+
+    var isPresentingActiveCall = false
+
+    private(set) var scheduledPostCallAction: PostCallAction?
+    private(set) weak var presentedDegradedAlert: UIAlertController?
+
+    // MARK: - Public Property
+
+    var isActiveCallShown = false {
+        didSet {
+            if isActiveCallShown {
+                isPresentingActiveCall = false
+            }
+        }
+    }
+
     // MARK: - Public Implementation
 
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
+
+    // MARK: Private
+
+    // MARK: - Private Properties
+
+    private let userSession: UserSession
+    private let topOverlayPresenter: TopOverlayPresenter
+    private let mainWindow: UIWindow
+    private let callController: CallController
+    private let callQualityController: CallQualityController
+    private var transitioningDelegate: CallQualityAnimator
+
+    private var isCallQualityShown = false
+    private var isCallTopOverlayShown = false
 }
 
 // MARK: ActiveCallRouterProtocol

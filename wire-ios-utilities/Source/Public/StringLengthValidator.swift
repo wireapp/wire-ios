@@ -20,11 +20,7 @@ import Foundation
 
 @objcMembers
 open class StringLengthValidator: NSObject {
-    private static let controlSet: CharacterSet = {
-        var controlSet = CharacterSet.controlCharacters
-        controlSet.remove(Unicode.Scalar(0x200D)!)
-        return controlSet
-    }()
+    // MARK: Public
 
     public final class StringLengthError: NSError {
         static let tooShort = StringLengthError(
@@ -94,4 +90,12 @@ open class StringLengthValidator: NSObject {
 
         return true
     }
+
+    // MARK: Private
+
+    private static let controlSet: CharacterSet = {
+        var controlSet = CharacterSet.controlCharacters
+        controlSet.remove(Unicode.Scalar(0x200D)!)
+        return controlSet
+    }()
 }

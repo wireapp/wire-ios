@@ -20,9 +20,7 @@ import Foundation
 import WireRequestStrategy
 
 class DeepLinkURLActionProcessor: URLActionProcessor {
-    var contextProvider: ContextProvider
-    var transportSession: TransportSessionType
-    var eventProcessor: ConversationEventProcessorProtocol
+    // MARK: Lifecycle
 
     init(
         contextProvider: ContextProvider,
@@ -33,6 +31,12 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
     }
+
+    // MARK: Internal
+
+    var contextProvider: ContextProvider
+    var transportSession: TransportSessionType
+    var eventProcessor: ConversationEventProcessorProtocol
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         switch urlAction {
@@ -49,6 +53,8 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             delegate?.completedURLAction(urlAction)
         }
     }
+
+    // MARK: Private
 
     private func handleJoinConversation(
         key: String,

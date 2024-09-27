@@ -20,7 +20,11 @@ import Foundation
 import LocalAuthentication
 
 public struct EARKeyGenerator {
+    // MARK: Lifecycle
+
     public init() {}
+
+    // MARK: Public
 
     public func generatePrimaryPublicPrivateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
         let keys = try KeychainManager.generatePublicPrivateKeyPair(

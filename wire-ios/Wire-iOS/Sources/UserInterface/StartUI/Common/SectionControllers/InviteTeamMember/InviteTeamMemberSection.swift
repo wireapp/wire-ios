@@ -28,12 +28,24 @@ protocol InviteTeamMemberSectionDelegate: AnyObject {
 // MARK: - InviteTeamMemberSection
 
 final class InviteTeamMemberSection: NSObject, CollectionViewSectionController {
-    var team: Team?
-    weak var delegate: InviteTeamMemberSectionDelegate?
+    // MARK: Lifecycle
 
     init(team: Team?) {
         super.init()
         self.team = team
+    }
+
+    // MARK: Internal
+
+    var team: Team?
+    weak var delegate: InviteTeamMemberSectionDelegate?
+
+    var isHidden: Bool {
+        if let count = team?.members.count {
+            return count > 1
+        }
+
+        return false
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
@@ -45,14 +57,6 @@ final class InviteTeamMemberSection: NSObject, CollectionViewSectionController {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         1
-    }
-
-    var isHidden: Bool {
-        if let count = team?.members.count {
-            return count > 1
-        }
-
-        return false
     }
 
     func collectionView(

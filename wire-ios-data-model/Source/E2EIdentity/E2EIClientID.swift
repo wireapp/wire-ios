@@ -19,17 +19,7 @@
 import Foundation
 
 public struct E2EIClientID: Equatable, Hashable {
-    // MARK: - Properties
-
-    public let userID: String
-    public let clientID: String
-    public let domain: String
-
-    // The string representation of the id.
-
-    public var rawValue: String {
-        "\(userID):\(clientID)@\(domain)"
-    }
+    // MARK: Lifecycle
 
     public init(
         userID: String,
@@ -54,5 +44,19 @@ public struct E2EIClientID: Equatable, Hashable {
             clientID: clientID,
             domain: domain
         )
+    }
+
+    // MARK: Public
+
+    // MARK: - Properties
+
+    public let userID: String
+    public let clientID: String
+    public let domain: String
+
+    // The string representation of the id.
+
+    public var rawValue: String {
+        "\(userID):\(clientID)@\(domain)"
     }
 }

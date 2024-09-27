@@ -24,13 +24,11 @@ import XCTest
 // MARK: - MockAddressBookHelper
 
 final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
+    static var sharedHelper: AddressBookHelperProtocol = MockAddressBookHelper()
+
     var isAddressBookAccessDisabled = false
 
     var accessStatusDidChangeToGranted = true
-
-    static var sharedHelper: AddressBookHelperProtocol = MockAddressBookHelper()
-
-    func persistCurrentAccessStatus() {}
 
     var isAddressBookAccessGranted: Bool {
         false
@@ -39,6 +37,8 @@ final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
     var isAddressBookAccessUnknown: Bool {
         true
     }
+
+    func persistCurrentAccessStatus() {}
 
     func requestPermissions(_ callback: ((Bool) -> Void)?) {
         // no-op
@@ -49,13 +49,7 @@ final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
 // MARK: - StartUIViewControllerSnapshotTests
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var mockMainCoordinator: MockMainCoordinator!
-    private var sut: StartUIViewController!
-    private var mockAddressBookHelper: MockAddressBookHelper!
-    private var userSession: UserSessionMock!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -146,4 +140,14 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
                 .verify(matching: sut.view)
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: StartUIViewController!
+    private var mockAddressBookHelper: MockAddressBookHelper!
+    private var userSession: UserSessionMock!
 }

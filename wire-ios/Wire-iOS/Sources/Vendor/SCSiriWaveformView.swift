@@ -59,6 +59,20 @@ private let kDefaultSecondaryLineWidth: CGFloat = 1
 // MARK: - SCSiriWaveformView
 
 final class SCSiriWaveformView: UIView {
+    // MARK: Lifecycle
+
+    init() {
+        super.init(frame: .zero)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     // The total number of waves
     // Default: 5
     var numberOfWaves: UInt = 0
@@ -87,32 +101,6 @@ final class SCSiriWaveformView: UIView {
     // Change this to modify the animation speed or direction
     // Default: -0.15
     var phaseShift: Float = 0
-
-    private var phase: Float = 0
-
-    init() {
-        super.init(frame: .zero)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setup() {
-        frequency = kDefaultFrequency
-
-        amplitude = kDefaultAmplitude
-        idleAmplitude = kDefaultIdleAmplitude
-
-        numberOfWaves = kDefaultNumberOfWaves
-        phaseShift = kDefaultPhaseShift
-        density = kDefaultDensity
-
-        primaryWaveLineWidth = kDefaultPrimaryLineWidth
-        secondaryWaveLineWidth = kDefaultSecondaryLineWidth
-    }
 
     // Tells the waveform to redraw itself using the given level (normalized value)
     func update(withLevel level: Float) {
@@ -171,5 +159,23 @@ final class SCSiriWaveformView: UIView {
 
             context?.strokePath()
         }
+    }
+
+    // MARK: Private
+
+    private var phase: Float = 0
+
+    private func setup() {
+        frequency = kDefaultFrequency
+
+        amplitude = kDefaultAmplitude
+        idleAmplitude = kDefaultIdleAmplitude
+
+        numberOfWaves = kDefaultNumberOfWaves
+        phaseShift = kDefaultPhaseShift
+        density = kDefaultDensity
+
+        primaryWaveLineWidth = kDefaultPrimaryLineWidth
+        secondaryWaveLineWidth = kDefaultSecondaryLineWidth
     }
 }

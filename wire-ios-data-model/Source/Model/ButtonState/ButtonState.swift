@@ -21,10 +21,25 @@ import Foundation
 // MARK: - ButtonState
 
 class ButtonState: ZMManagedObject {
+    enum State: Int16 {
+        case unselected
+        case selected
+        case confirmed
+    }
+
     @NSManaged var stateValue: Int16
     @NSManaged var message: ZMMessage?
     @NSManaged var remoteIdentifier: String?
     @NSManaged var isExpired: Bool
+
+    var state: State {
+        get {
+            State(rawValue: stateValue) ?? .unselected
+        }
+        set {
+            stateValue = newValue.rawValue
+        }
+    }
 
     @discardableResult
     static func insert(with id: String, message: ZMMessage, inContext moc: NSManagedObjectContext) -> ButtonState {
@@ -41,21 +56,6 @@ class ButtonState: ZMManagedObject {
 
     override static func isTrackingLocalModifications() -> Bool {
         false
-    }
-
-    enum State: Int16 {
-        case unselected
-        case selected
-        case confirmed
-    }
-
-    var state: State {
-        get {
-            State(rawValue: stateValue) ?? .unselected
-        }
-        set {
-            stateValue = newValue.rawValue
-        }
     }
 }
 

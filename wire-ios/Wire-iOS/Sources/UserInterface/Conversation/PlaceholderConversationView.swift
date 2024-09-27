@@ -21,10 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class PlaceholderConversationView: UIView {
-    // MARK: - Properties
-
-    var shieldImageView: UIImageView!
-    let imageColor = SemanticColors.Label.textDefault
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -38,6 +35,15 @@ final class PlaceholderConversationView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    var shieldImageView: UIImageView!
+    let imageColor = SemanticColors.Label.textDefault
+
+    // MARK: Private
 
     // MARK: Configure Subviews and layout
 

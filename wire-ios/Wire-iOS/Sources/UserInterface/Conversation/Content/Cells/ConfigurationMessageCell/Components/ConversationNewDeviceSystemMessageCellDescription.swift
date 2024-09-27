@@ -23,8 +23,41 @@ import WireDesign
 import WireSyncEngine
 
 final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init(
+        message: ZMConversationMessage,
+        systemMessageData: ZMSystemMessageData,
+        conversation: ZMConversation
+    ) {
+        self.configuration = ConversationNewDeviceSystemMessageCellDescription.configuration(
+            for: systemMessageData,
+            in: conversation
+        )
+        self.accessibilityLabel = configuration.attributedText?.string
+        self.actionController = nil
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationNewDeviceSystemMessageCell
     typealias LabelColors = SemanticColors.Label
+
+    struct TextAttributes {
+        // MARK: Lifecycle
+
+        init(boldFont: UIFont, normalFont: UIFont, textColor: UIColor, link: URL) {
+            self.senderAttributes = [.font: boldFont, .foregroundColor: textColor]
+            self.startedUsingAttributes = [.font: normalFont, .foregroundColor: textColor]
+            self.linkAttributes = [.font: normalFont, .link: link as AnyObject]
+        }
+
+        // MARK: Internal
+
+        let senderAttributes: [NSAttributedString.Key: AnyObject]
+        let startedUsingAttributes: [NSAttributedString.Key: AnyObject]
+        let linkAttributes: [NSAttributedString.Key: AnyObject]
+    }
 
     let configuration: View.Configuration
 
@@ -42,29 +75,10 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(
-        message: ZMConversationMessage,
-        systemMessageData: ZMSystemMessageData,
-        conversation: ZMConversation
-    ) {
-        self.configuration = ConversationNewDeviceSystemMessageCellDescription.configuration(
-            for: systemMessageData,
-            in: conversation
-        )
-        self.accessibilityLabel = configuration.attributedText?.string
-        self.actionController = nil
-    }
+    // MARK: Private
 
-    struct TextAttributes {
-        let senderAttributes: [NSAttributedString.Key: AnyObject]
-        let startedUsingAttributes: [NSAttributedString.Key: AnyObject]
-        let linkAttributes: [NSAttributedString.Key: AnyObject]
-
-        init(boldFont: UIFont, normalFont: UIFont, textColor: UIColor, link: URL) {
-            self.senderAttributes = [.font: boldFont, .foregroundColor: textColor]
-            self.startedUsingAttributes = [.font: normalFont, .foregroundColor: textColor]
-            self.linkAttributes = [.font: normalFont, .link: link as AnyObject]
-        }
+    private static var verifiedIcon: UIImage {
+        WireStyleKit.imageOfShieldnotverified
     }
 
     private static func configuration(
@@ -96,10 +110,6 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
                 attributes: textAttributes
             )
         }
-    }
-
-    private static var verifiedIcon: UIImage {
-        WireStyleKit.imageOfShieldnotverified
     }
 
     private static func configureForNewClientOfSelfUser(

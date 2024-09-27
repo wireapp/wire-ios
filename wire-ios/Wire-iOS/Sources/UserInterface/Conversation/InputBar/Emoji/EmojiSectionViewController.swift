@@ -29,21 +29,7 @@ protocol EmojiSectionViewControllerDelegate: AnyObject {
 // MARK: - EmojiSectionViewController
 
 final class EmojiSectionViewController: UIViewController {
-    private var typesByButton = [IconButton: EmojiSectionType]()
-    private var sectionButtons = [IconButton]()
-    private let iconSize = StyleKitIcon.Size.tiny.rawValue
-    private var ignoreSelectionUpdates = false
-
-    private var selectedType: EmojiSectionType? {
-        willSet(value) {
-            guard let type = value else { return }
-            for (button, sectionType) in typesByButton {
-                button.isSelected = type == sectionType
-            }
-        }
-    }
-
-    weak var sectionDelegate: EmojiSectionViewControllerDelegate?
+    // MARK: Lifecycle
 
     init(types: [EmojiSectionType]) {
         super.init(nibName: nil, bundle: nil)
@@ -58,6 +44,44 @@ final class EmojiSectionViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    weak var sectionDelegate: EmojiSectionViewControllerDelegate?
+
+    func didSelectSection(_ type: EmojiSectionType) {
+        guard let selected = selectedType, type != selected, !ignoreSelectionUpdates else { return }
+        selectedType = type
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        for sectionButton in sectionButtons {
+            sectionButton.removeFromSuperview()
+            view.addSubview(sectionButton)
+        }
+
+        createConstraints()
+        for sectionButton in sectionButtons {
+            sectionButton.hitAreaPadding = CGSize(width: 5, height: view.bounds.height / 2)
+        }
+    }
+
+    // MARK: Private
+
+    private var typesByButton = [IconButton: EmojiSectionType]()
+    private var sectionButtons = [IconButton]()
+    private let iconSize = StyleKitIcon.Size.tiny.rawValue
+    private var ignoreSelectionUpdates = false
+
+    private var selectedType: EmojiSectionType? {
+        willSet(value) {
+            guard let type = value else { return }
+            for (button, sectionType) in typesByButton {
+                button.isSelected = type == sectionType
+            }
+        }
     }
 
     private func createButtons(_ types: [EmojiSectionType]) {
@@ -91,11 +115,6 @@ final class EmojiSectionViewController: UIViewController {
         return button
     }
 
-    func didSelectSection(_ type: EmojiSectionType) {
-        guard let selected = selectedType, type != selected, !ignoreSelectionUpdates else { return }
-        selectedType = type
-    }
-
     @objc
     private func didTappButton(_ sender: IconButton) {
         guard let type = typesByButton[sender] else { return }
@@ -123,19 +142,6 @@ final class EmojiSectionViewController: UIViewController {
 
         @unknown default:
             break
-        }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        for sectionButton in sectionButtons {
-            sectionButton.removeFromSuperview()
-            view.addSubview(sectionButton)
-        }
-
-        createConstraints()
-        for sectionButton in sectionButtons {
-            sectionButton.hitAreaPadding = CGSize(width: 5, height: view.bounds.height / 2)
         }
     }
 

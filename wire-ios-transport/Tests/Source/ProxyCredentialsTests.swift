@@ -84,15 +84,19 @@ final class ProxyCredentialsTests: ZMTBaseTest {
 // MARK: - MockProxy
 
 final class MockProxy: NSObject, ProxySettingsProvider {
-    var host: String
-    var port: Int
-    var needsAuthentication: Bool
+    // MARK: Lifecycle
 
     init(host: String, port: Int, needsAuthentication: Bool) {
         self.host = host
         self.port = port
         self.needsAuthentication = needsAuthentication
     }
+
+    // MARK: Internal
+
+    var host: String
+    var port: Int
+    var needsAuthentication: Bool
 
     func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable: Any]? {
         nil

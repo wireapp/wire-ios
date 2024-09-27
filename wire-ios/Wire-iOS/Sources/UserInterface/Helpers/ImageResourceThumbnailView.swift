@@ -21,9 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class ImageResourceThumbnailView: RoundedView {
-    private let imageView = ImageContentView()
-    private let coverView = UIView()
-    private let assetTypeBadge = UIImageView()
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -37,6 +35,33 @@ final class ImageResourceThumbnailView: RoundedView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Content
+
+    override var intrinsicContentSize: CGSize {
+        imageView.intrinsicContentSize
+    }
+
+    func setResource(_ resource: PreviewableImageResource, isVideoPreview: Bool) {
+        imageView.configure(with: resource) {
+            DispatchQueue.main.async {
+                let needsVideoCoverView = isVideoPreview && self.imageView.mediaAsset != nil
+                self.coverView.isHidden = !needsVideoCoverView
+                self.assetTypeBadge.image = needsVideoCoverView ? StyleKitIcon.camera.makeImage(
+                    size: .tiny,
+                    color: .white
+                ) : nil
+            }
+        }
+    }
+
+    // MARK: Private
+
+    private let imageView = ImageContentView()
+    private let coverView = UIView()
+    private let assetTypeBadge = UIImageView()
 
     private func configureSubviews() {
         addSubview(imageView)
@@ -72,24 +97,5 @@ final class ImageResourceThumbnailView: RoundedView {
             assetTypeBadge.leadingAnchor.constraint(equalTo: coverView.leadingAnchor, constant: 8),
             assetTypeBadge.bottomAnchor.constraint(equalTo: coverView.bottomAnchor, constant: -6),
         ])
-    }
-
-    // MARK: - Content
-
-    override var intrinsicContentSize: CGSize {
-        imageView.intrinsicContentSize
-    }
-
-    func setResource(_ resource: PreviewableImageResource, isVideoPreview: Bool) {
-        imageView.configure(with: resource) {
-            DispatchQueue.main.async {
-                let needsVideoCoverView = isVideoPreview && self.imageView.mediaAsset != nil
-                self.coverView.isHidden = !needsVideoCoverView
-                self.assetTypeBadge.image = needsVideoCoverView ? StyleKitIcon.camera.makeImage(
-                    size: .tiny,
-                    color: .white
-                ) : nil
-            }
-        }
     }
 }

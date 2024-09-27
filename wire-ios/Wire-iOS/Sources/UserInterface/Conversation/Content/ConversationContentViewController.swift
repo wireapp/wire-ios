@@ -30,84 +30,7 @@ private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
 /// The main conversation view controller
 final class ConversationContentViewController: UIViewController {
-    weak var delegate: ConversationContentViewControllerDelegate?
-    let conversation: ZMConversation
-    var bottomMargin: CGFloat = 0 {
-        didSet {
-            setTableViewBottomMargin(bottomMargin)
-        }
-    }
-
-    let scrollToBottomButtonTrailingMargin: CGFloat = 10
-    let scrollToBottomButtonBottomMargin: CGFloat = 10
-    let scrollToBottomButtonWidth: CGFloat = 44
-    let scrollToBottomButtonHeight: CGFloat = 44
-
-    /// A button that, when tapped, scrolls the conversation view to the latest messages.
-    /// It appears when the user has scrolled up past a certain point in the conversation.
-    lazy var scrollToBottomButton = {
-        let button = ZMButton(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
-        let icon = UIImage(resource: .downArrow)
-
-        button.setImage(icon, for: .normal)
-        button.setImage(icon, for: .highlighted)
-
-        button.tintColor = SemanticColors.Icon.foregroundDefaultWhite
-
-        button.translatesAutoresizingMaskIntoConstraints = false
-
-        button.accessibilityLabel = L10n.Accessibility.Conversation.ScrollToBottomButton.description
-        button.accessibilityHint = L10n.Accessibility.Conversation.ScrollToBottomButton.hint
-
-        let action = UIAction { [weak self] _ in
-            self?.handleScrollToBottomTapped()
-        }
-
-        button.addAction(action, for: .touchUpInside)
-
-        button.imageView?.contentMode = .center
-
-        return button
-    }()
-
-    let tableView = UpsideDownTableView(frame: .zero, style: .plain)
-    let bottomContainer = UIView(frame: .zero)
-    var searchQueries: [String]? {
-        didSet {
-            guard let searchQueries,
-                  !searchQueries.isEmpty else { return }
-
-            dataSource.searchQueries = searchQueries
-        }
-    }
-
-    let mentionsSearchResultsViewController = UserSearchResultsViewController()
-
-    lazy var dataSource = ConversationTableViewDataSource(
-        conversation: conversation,
-        tableView: tableView,
-        actionResponder: self,
-        cellDelegate: self,
-        userSession: userSession
-    )
-
-    let messagePresenter: MessagePresenter
-    var deletionDialogPresenter: DeletionDialogPresenter?
-    let userSession: UserSession
-    let mainCoordinator: MainCoordinating
-    var connectionViewController: UserConnectionViewController?
-    var digitalSignatureToken: Any?
-    var userClientToken: Any?
-    var isDigitalSignatureVerificationShown = false
-
-    private var mediaPlaybackManager: MediaPlaybackManager?
-    private var cachedRowHeights: [IndexPath: CGFloat] = [:]
-    private var hasDoneInitialLayout = false
-    private var onScreen = false
-    private weak var messageVisibleOnLoad: ZMConversationMessage?
-    private var token: NSObjectProtocol?
-
-    private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
+    // MARK: Lifecycle
 
     init(
         conversation: ZMConversation,
@@ -162,6 +85,93 @@ final class ConversationContentViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    weak var delegate: ConversationContentViewControllerDelegate?
+    let conversation: ZMConversation
+    let scrollToBottomButtonTrailingMargin: CGFloat = 10
+    let scrollToBottomButtonBottomMargin: CGFloat = 10
+    let scrollToBottomButtonWidth: CGFloat = 44
+    let scrollToBottomButtonHeight: CGFloat = 44
+
+    /// A button that, when tapped, scrolls the conversation view to the latest messages.
+    /// It appears when the user has scrolled up past a certain point in the conversation.
+    lazy var scrollToBottomButton = {
+        let button = ZMButton(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
+        let icon = UIImage(resource: .downArrow)
+
+        button.setImage(icon, for: .normal)
+        button.setImage(icon, for: .highlighted)
+
+        button.tintColor = SemanticColors.Icon.foregroundDefaultWhite
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        button.accessibilityLabel = L10n.Accessibility.Conversation.ScrollToBottomButton.description
+        button.accessibilityHint = L10n.Accessibility.Conversation.ScrollToBottomButton.hint
+
+        let action = UIAction { [weak self] _ in
+            self?.handleScrollToBottomTapped()
+        }
+
+        button.addAction(action, for: .touchUpInside)
+
+        button.imageView?.contentMode = .center
+
+        return button
+    }()
+
+    let tableView = UpsideDownTableView(frame: .zero, style: .plain)
+    let bottomContainer = UIView(frame: .zero)
+    let mentionsSearchResultsViewController = UserSearchResultsViewController()
+
+    lazy var dataSource = ConversationTableViewDataSource(
+        conversation: conversation,
+        tableView: tableView,
+        actionResponder: self,
+        cellDelegate: self,
+        userSession: userSession
+    )
+
+    let messagePresenter: MessagePresenter
+    var deletionDialogPresenter: DeletionDialogPresenter?
+    let userSession: UserSession
+    let mainCoordinator: MainCoordinating
+    var connectionViewController: UserConnectionViewController?
+    var digitalSignatureToken: Any?
+    var userClientToken: Any?
+    var isDigitalSignatureVerificationShown = false
+
+    private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
+    var bottomMargin: CGFloat = 0 {
+        didSet {
+            setTableViewBottomMargin(bottomMargin)
+        }
+    }
+
+    var searchQueries: [String]? {
+        didSet {
+            guard let searchQueries,
+                  !searchQueries.isEmpty else { return }
+
+            dataSource.searchQueries = searchQueries
+        }
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
+    override var shouldAutorotate: Bool {
+        true
+    }
+
+    var isScrolledToBottom: Bool {
+        !dataSource.hasNewerMessagesToLoad &&
+            tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
     }
 
     override func loadView() {
@@ -234,25 +244,6 @@ final class ConversationContentViewController: UIViewController {
         )
     }
 
-    @objc
-    private func applicationDidBecomeActive(_: Notification) {
-        dataSource.resetSectionControllers()
-        tableView.reloadData()
-    }
-
-    private func handleScrollToBottomTapped() {
-        scrollToBottomIfNeeded()
-    }
-
-    @objc
-    private func showErrorAlertToSendMessage(_: Notification) {
-        typealias MessageSendError = L10n.Localizable.Error.Message.Send
-        UIAlertController.showErrorAlertWithLink(
-            title: MessageSendError.title,
-            message: MessageSendError.missingLegalholdConsent
-        )
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         updateVisibleMessagesWindow()
@@ -296,10 +287,6 @@ final class ConversationContentViewController: UIViewController {
         scrollToFirstUnreadMessageIfNeeded()
     }
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
-
     func setupMentionsResultsView() {
         mentionsSearchResultsViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
@@ -314,10 +301,6 @@ final class ConversationContentViewController: UIViewController {
             hasDoneInitialLayout = true
             scroll(to: messageVisibleOnLoad)
         }
-    }
-
-    override var shouldAutorotate: Bool {
-        true
     }
 
     override func didReceiveMemoryWarning() {
@@ -369,15 +352,48 @@ final class ConversationContentViewController: UIViewController {
         tableView.contentOffset = CGPoint(x: tableView.contentOffset.x, y: -bottomMargin)
     }
 
-    var isScrolledToBottom: Bool {
-        !dataSource.hasNewerMessagesToLoad &&
-            tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
-    }
-
     // MARK: - Actions
 
     func highlight(_ message: ZMConversationMessage) {
         dataSource.highlight(message: message)
+    }
+
+    // MARK: - Custom UI, utilities
+
+    func removeHighlightsAndMenu() {
+        UIMenuController.shared.hideMenu()
+    }
+
+    func didFinishEditing(_: ZMConversationMessage?) {
+        dataSource.editingMessage = nil
+    }
+
+    // MARK: Private
+
+    private var mediaPlaybackManager: MediaPlaybackManager?
+    private var cachedRowHeights: [IndexPath: CGFloat] = [:]
+    private var hasDoneInitialLayout = false
+    private var onScreen = false
+    private weak var messageVisibleOnLoad: ZMConversationMessage?
+    private var token: NSObjectProtocol?
+
+    @objc
+    private func applicationDidBecomeActive(_: Notification) {
+        dataSource.resetSectionControllers()
+        tableView.reloadData()
+    }
+
+    private func handleScrollToBottomTapped() {
+        scrollToBottomIfNeeded()
+    }
+
+    @objc
+    private func showErrorAlertToSendMessage(_: Notification) {
+        typealias MessageSendError = L10n.Localizable.Error.Message.Send
+        UIAlertController.showErrorAlertWithLink(
+            title: MessageSendError.title,
+            message: MessageSendError.missingLegalholdConsent
+        )
     }
 
     private func updateVisibleMessagesWindow() {
@@ -409,16 +425,6 @@ final class ConversationContentViewController: UIViewController {
 
         // Update media bar visiblity
         updateMediaBar()
-    }
-
-    // MARK: - Custom UI, utilities
-
-    func removeHighlightsAndMenu() {
-        UIMenuController.shared.hideMenu()
-    }
-
-    func didFinishEditing(_: ZMConversationMessage?) {
-        dataSource.editingMessage = nil
     }
 
     // MARK: - MediaPlayer

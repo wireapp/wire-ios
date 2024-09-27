@@ -36,11 +36,7 @@ extension UIView {
 // MARK: - UserConnectionViewSnapshotTests
 
 final class UserConnectionViewSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var mockUser: MockUserType!
-    private var sut: UserConnectionView!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -97,4 +93,12 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
         sut.layoutForTest()
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var mockUser: MockUserType!
+    private var sut: UserConnectionView!
 }

@@ -20,9 +20,7 @@ import WireDataModel
 import WireTesting
 
 final class DiskDatabaseTest: DatabaseTest {
-    override var useInMemoryDatabase: Bool {
-        false
-    }
+    // MARK: Public
 
     override public func setUp() {
         super.setUp()
@@ -31,5 +29,11 @@ final class DiskDatabaseTest: DatabaseTest {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountId
         }
+    }
+
+    // MARK: Internal
+
+    override var useInMemoryDatabase: Bool {
+        false
     }
 }

@@ -20,6 +20,15 @@ import Foundation
 import WireDataModel
 
 public class RemovePushTokenAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(deviceToken: String, resultHandler: ResultHandler? = nil) {
+        self.deviceToken = deviceToken
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = Void
@@ -27,6 +36,8 @@ public class RemovePushTokenAction: EntityAction {
     public enum Failure: LocalizedError, SafeForLoggingStringConvertible {
         case tokenDoesNotExist
         case unknown(status: Int)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -48,11 +59,4 @@ public class RemovePushTokenAction: EntityAction {
     public var resultHandler: ResultHandler?
 
     public let deviceToken: String
-
-    // MARK: - Life cycle
-
-    public init(deviceToken: String, resultHandler: ResultHandler? = nil) {
-        self.deviceToken = deviceToken
-        self.resultHandler = resultHandler
-    }
 }

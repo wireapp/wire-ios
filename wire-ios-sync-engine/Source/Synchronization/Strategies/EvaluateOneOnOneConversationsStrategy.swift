@@ -20,13 +20,7 @@ import Foundation
 import WireRequestStrategy
 
 final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
-    let syncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
-
-    private unowned var syncProgress: SyncProgress
-
-    private var isSyncing: Bool { syncProgress.currentSyncPhase == syncPhase }
-
-    private var task: Task<Void, Never>?
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -41,6 +35,10 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
     deinit {
         task?.cancel()
     }
+
+    // MARK: Internal
+
+    let syncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
 
     override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard isSyncing, task == nil else {
@@ -82,6 +80,14 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
         return nil
     }
+
+    // MARK: Private
+
+    private unowned var syncProgress: SyncProgress
+
+    private var task: Task<Void, Never>?
+
+    private var isSyncing: Bool { syncProgress.currentSyncPhase == syncPhase }
 
     private func failCurrentSyncPhase(errorMessage: String) {
         WireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: \(errorMessage)!")

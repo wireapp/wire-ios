@@ -19,17 +19,7 @@
 import Foundation
 
 struct EARStorage {
-    // MARK: - Properties
-
-    private let storage: PrivateUserDefaults<Key>
-
-    // MARK: - Types
-
-    private enum Key: String, DefaultsKey {
-        case enabledEAR = "com.wire.ear.enabled"
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         userID: UUID,
@@ -41,6 +31,8 @@ struct EARStorage {
         )
     }
 
+    // MARK: Internal
+
     // MARK: - Methods
 
     func earEnabled() -> Bool {
@@ -50,4 +42,16 @@ struct EARStorage {
     func enableEAR(_ enabled: Bool) {
         storage.set(enabled, forKey: .enabledEAR)
     }
+
+    // MARK: Private
+
+    // MARK: - Types
+
+    private enum Key: String, DefaultsKey {
+        case enabledEAR = "com.wire.ear.enabled"
+    }
+
+    // MARK: - Properties
+
+    private let storage: PrivateUserDefaults<Key>
 }

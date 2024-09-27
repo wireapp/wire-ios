@@ -21,41 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class AudioButtonOverlay: UIView {
-    // MARK: - AudioButtonOverlayButtonType
-
-    enum AudioButtonOverlayButtonType {
-        case play, send, stop
-    }
-
-    // MARK: - Properties
-
-    typealias ButtonPressHandler = (AudioButtonOverlayButtonType) -> Void
-    typealias ViewColors = SemanticColors.View
-
-    var recordingState: AudioRecordState = .recording {
-        didSet { updateWithRecordingState(recordingState) }
-    }
-
-    var playingState: PlayingState = .idle {
-        didSet { updateWithPlayingState(playingState) }
-    }
-
-    private let initialViewWidth: CGFloat = 40
-
-    fileprivate lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 96)
-    fileprivate lazy var widthConstraint: NSLayoutConstraint = widthAnchor.constraint(equalToConstant: initialViewWidth)
-
-    let darkColor = SemanticColors.Icon.foregroundAudio
-    let brightColor = ViewColors.backgroundAudioViewOverlay
-    let greenColor = SemanticColors.Button.backgroundAudioMessageOverlay
-    let grayColor = ViewColors.backgroundAudioViewOverlayActive
-    let superviewColor = ViewColors.backgroundAudioViewOverlay
-
-    let audioButton = IconButton()
-    let playButton = IconButton()
-    let sendButton = IconButton()
-    let backgroundView = UIView()
-    var buttonHandler: ButtonPressHandler?
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -69,6 +35,39 @@ final class AudioButtonOverlay: UIView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    // MARK: - AudioButtonOverlayButtonType
+
+    enum AudioButtonOverlayButtonType {
+        case play, send, stop
+    }
+
+    // MARK: - Properties
+
+    typealias ButtonPressHandler = (AudioButtonOverlayButtonType) -> Void
+    typealias ViewColors = SemanticColors.View
+
+    let darkColor = SemanticColors.Icon.foregroundAudio
+    let brightColor = ViewColors.backgroundAudioViewOverlay
+    let greenColor = SemanticColors.Button.backgroundAudioMessageOverlay
+    let grayColor = ViewColors.backgroundAudioViewOverlayActive
+    let superviewColor = ViewColors.backgroundAudioViewOverlay
+
+    let audioButton = IconButton()
+    let playButton = IconButton()
+    let sendButton = IconButton()
+    let backgroundView = UIView()
+    var buttonHandler: ButtonPressHandler?
+
+    var recordingState: AudioRecordState = .recording {
+        didSet { updateWithRecordingState(recordingState) }
+    }
+
+    var playingState: PlayingState = .idle {
+        didSet { updateWithPlayingState(playingState) }
     }
 
     // MARK: - Override Methods
@@ -97,29 +96,6 @@ final class AudioButtonOverlay: UIView {
 
         playButton.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)
         sendButton.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)
-    }
-
-    private func createConstraints() {
-        for item in [audioButton, playButton, sendButton, backgroundView] {
-            item.translatesAutoresizingMaskIntoConstraints = false
-        }
-        NSLayoutConstraint.activate([
-            audioButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -initialViewWidth / 2),
-            audioButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-
-            playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            playButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -initialViewWidth / 2),
-
-            sendButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            sendButton.centerYAnchor.constraint(equalTo: topAnchor, constant: initialViewWidth / 2),
-
-            widthConstraint,
-            heightConstraint,
-            backgroundView.topAnchor.constraint(equalTo: topAnchor),
-            backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            backgroundView.leftAnchor.constraint(equalTo: leftAnchor),
-            backgroundView.rightAnchor.constraint(equalTo: rightAnchor),
-        ])
     }
 
     // MARK: - Methods
@@ -161,5 +137,37 @@ final class AudioButtonOverlay: UIView {
         }
 
         buttonHandler?(type)
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 96)
+    fileprivate lazy var widthConstraint: NSLayoutConstraint = widthAnchor.constraint(equalToConstant: initialViewWidth)
+
+    // MARK: Private
+
+    private let initialViewWidth: CGFloat = 40
+
+    private func createConstraints() {
+        for item in [audioButton, playButton, sendButton, backgroundView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
+        }
+        NSLayoutConstraint.activate([
+            audioButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -initialViewWidth / 2),
+            audioButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+
+            playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            playButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -initialViewWidth / 2),
+
+            sendButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            sendButton.centerYAnchor.constraint(equalTo: topAnchor, constant: initialViewWidth / 2),
+
+            widthConstraint,
+            heightConstraint,
+            backgroundView.topAnchor.constraint(equalTo: topAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            backgroundView.leftAnchor.constraint(equalTo: leftAnchor),
+            backgroundView.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
     }
 }

@@ -27,15 +27,7 @@ import Foundation
 /// It reports the flow events via a `WireLogger` instance using a specified tag.
 
 open class Flow {
-    // MARK: - Properties
-
-    /// The name used to identify the flow in logs.
-
-    public let name: String
-
-    private let logger: WireLogger
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     /// Create a new flow.
     ///
@@ -50,6 +42,14 @@ open class Flow {
         self.name = name
         self.logger = WireLogger(tag: tag)
     }
+
+    // MARK: Public
+
+    // MARK: - Properties
+
+    /// The name used to identify the flow in logs.
+
+    public let name: String
 
     // MARK: - Methods
 
@@ -101,9 +101,15 @@ open class Flow {
         ))
     }
 
+    // MARK: Internal
+
     struct GenericError: Error {
         let reason: String
     }
+
+    // MARK: Private
+
+    private let logger: WireLogger
 }
 
 // MARK: - FlowLog

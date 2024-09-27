@@ -19,6 +19,12 @@
 import Foundation
 
 final class MockAppLock: AppLockType {
+    // MARK: - Types
+
+    struct MethodCalls {
+        var beginTimer: [Void] = []
+    }
+
     // MARK: - Metrics
 
     var methodCalls = MethodCalls()
@@ -64,11 +70,5 @@ final class MockAppLock: AppLockType {
 
     func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult {
         fatalError("Not implemented")
-    }
-
-    // MARK: - Types
-
-    struct MethodCalls {
-        var beginTimer: [Void] = []
     }
 }

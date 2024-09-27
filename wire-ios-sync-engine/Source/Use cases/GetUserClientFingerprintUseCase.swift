@@ -29,9 +29,7 @@ public protocol GetUserClientFingerprintUseCaseProtocol {
 // MARK: - GetUserClientFingerprintUseCase
 
 public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
-    let proteusProvider: ProteusProviding
-    let context: NSManagedObjectContext
-    let sessionEstablisher: SessionEstablisherInterface
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -66,6 +64,8 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         self.context = managedObjectContext
         self.sessionEstablisher = sessionEstablisher
     }
+
+    // MARK: Public
 
     // MARK: - Methods
 
@@ -113,6 +113,12 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         }
     }
 
+    // MARK: Internal
+
+    let proteusProvider: ProteusProviding
+    let context: NSManagedObjectContext
+    let sessionEstablisher: SessionEstablisherInterface
+
     func localFingerprint() async -> Data? {
         var fingerprintData: Data?
 
@@ -159,6 +165,8 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
 
         return fingerprintData
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

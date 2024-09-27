@@ -20,6 +20,8 @@ import WireTesting
 @testable import WireDataModel
 
 class ZMConversationTests_Teams: ZMConversationTestsBase {
+    // MARK: Internal
+
     var team: Team!
     var conversation: ZMConversation!
 
@@ -52,6 +54,8 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
         XCTAssertEqual(conversation.teamRemoteIdentifier, teamId)
         XCTAssert(ZMUser.selfUser(in: uiMOC).isGuest(in: conversation))
     }
+
+    // MARK: Private
 
     // MARK: - Helper
 

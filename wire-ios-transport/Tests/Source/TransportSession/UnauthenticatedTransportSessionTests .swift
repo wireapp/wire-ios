@@ -79,9 +79,7 @@ final class MockCertificateTrust: NSObject, BackendTrustProvider {
 // MARK: - UnauthenticatedTransportSessionTests
 
 final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
-    private var sut: UnauthenticatedTransportSession!
-    private var sessionMock: MockURLSession!
-    private let url = URL(string: "http://base.example.com")!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -92,36 +90,6 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         sessionMock = nil
         sut = nil
         super.tearDown()
-    }
-
-    private func setupSut(readyForRequests: Bool) {
-        sessionMock = MockURLSession()
-        let endpoints = BackendEndpoints(
-            backendURL: url,
-            backendWSURL: url,
-            blackListURL: url,
-            teamsURL: url,
-            accountsURL: url,
-            websiteURL: url,
-            countlyURL: url
-        )
-        let trust = MockCertificateTrust()
-        let environment = BackendEnvironment(
-            title: name,
-            environmentType: .production,
-            endpoints: endpoints,
-            proxySettings: nil,
-            certificateTrust: trust
-        )
-        sut = UnauthenticatedTransportSession(
-            environment: environment,
-            proxyUsername: nil,
-            proxyPassword: nil,
-            urlSession: sessionMock,
-            reachability: MockReachability(),
-            applicationVersion: "1.0",
-            readyForRequests: readyForRequests
-        )
     }
 
     func testThatEnqueueOneTime_IncrementsTheRequestCounter() {
@@ -298,6 +266,42 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
         // THEN
         XCTAssertEqual(task.resumeCallCount, 0)
+    }
+
+    // MARK: Private
+
+    private var sut: UnauthenticatedTransportSession!
+    private var sessionMock: MockURLSession!
+    private let url = URL(string: "http://base.example.com")!
+
+    private func setupSut(readyForRequests: Bool) {
+        sessionMock = MockURLSession()
+        let endpoints = BackendEndpoints(
+            backendURL: url,
+            backendWSURL: url,
+            blackListURL: url,
+            teamsURL: url,
+            accountsURL: url,
+            websiteURL: url,
+            countlyURL: url
+        )
+        let trust = MockCertificateTrust()
+        let environment = BackendEnvironment(
+            title: name,
+            environmentType: .production,
+            endpoints: endpoints,
+            proxySettings: nil,
+            certificateTrust: trust
+        )
+        sut = UnauthenticatedTransportSession(
+            environment: environment,
+            proxyUsername: nil,
+            proxyPassword: nil,
+            urlSession: sessionMock,
+            reachability: MockReachability(),
+            applicationVersion: "1.0",
+            readyForRequests: readyForRequests
+        )
     }
 }
 

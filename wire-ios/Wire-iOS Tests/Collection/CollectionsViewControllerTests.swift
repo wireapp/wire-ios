@@ -24,30 +24,7 @@ import XCTest
 // MARK: - CollectionsViewControllerTests
 
 final class CollectionsViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-
-    private var emptyCollection: AssetCollectionWrapper!
-    private var imageMessage: ZMConversationMessage!
-    private var videoMessage: ZMConversationMessage!
-    private var audioMessage: ZMConversationMessage!
-    private var fileMessage: ZMConversationMessage!
-    private var linkMessage: ZMConversationMessage!
-
-    private var expiredImageMessage: ZMConversationMessage!
-    private var expiredVideoMessage: ZMConversationMessage!
-    private var expiredAudioMessage: ZMConversationMessage!
-    private var expiredFileMessage: ZMConversationMessage!
-    private var expiredLinkMessage: ZMConversationMessage!
-
-    private var deletedImageMessage: ZMConversationMessage!
-    private var deletedVideoMessage: ZMConversationMessage!
-    private var deletedAudioMessage: ZMConversationMessage!
-    private var deletedFileMessage: ZMConversationMessage!
-    private var deletedLinkMessage: ZMConversationMessage!
-
-    private var userSession: UserSessionMock!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -217,6 +194,33 @@ final class CollectionsViewControllerTests: XCTestCase {
         let controller = createController(showingCollection: assetCollection)
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+
+    private var emptyCollection: AssetCollectionWrapper!
+    private var imageMessage: ZMConversationMessage!
+    private var videoMessage: ZMConversationMessage!
+    private var audioMessage: ZMConversationMessage!
+    private var fileMessage: ZMConversationMessage!
+    private var linkMessage: ZMConversationMessage!
+
+    private var expiredImageMessage: ZMConversationMessage!
+    private var expiredVideoMessage: ZMConversationMessage!
+    private var expiredAudioMessage: ZMConversationMessage!
+    private var expiredFileMessage: ZMConversationMessage!
+    private var expiredLinkMessage: ZMConversationMessage!
+
+    private var deletedImageMessage: ZMConversationMessage!
+    private var deletedVideoMessage: ZMConversationMessage!
+    private var deletedAudioMessage: ZMConversationMessage!
+    private var deletedFileMessage: ZMConversationMessage!
+    private var deletedLinkMessage: ZMConversationMessage!
+
+    private var userSession: UserSessionMock!
 }
 
 extension CollectionsViewControllerTests {

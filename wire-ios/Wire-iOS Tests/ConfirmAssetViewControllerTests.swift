@@ -22,10 +22,7 @@ import XCTest
 @testable import Wire
 
 final class ConfirmAssetViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: ConfirmAssetViewController!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -107,4 +104,11 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
         // THEN
         XCTAssertFalse(sut.showEditingOptions)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ConfirmAssetViewController!
+    private var snapshotHelper: SnapshotHelper!
 }

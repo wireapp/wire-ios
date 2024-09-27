@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 
 class ZMGenericMessageDataTests: ModelObjectsTests {
+    // MARK: Internal
+
     // MARK: - Set Up
 
     override func setUp() {
@@ -133,6 +135,8 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         // Then
         XCTAssertNil(sut.underlyingMessage)
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

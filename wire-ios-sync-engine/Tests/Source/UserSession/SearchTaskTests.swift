@@ -21,10 +21,9 @@ import XCTest
 @testable import WireSyncEngine
 
 final class SearchTaskTests: DatabaseTest {
-    var teamIdentifier: UUID!
+    // MARK: Internal
 
-    private var mockTransportSession: MockTransportSession!
-    private var mockCache: SearchUsersCache!
+    var teamIdentifier: UUID!
 
     override func setUp() {
         super.setUp()
@@ -1341,6 +1340,11 @@ final class SearchTaskTests: DatabaseTest {
         task.start()
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
+
+    // MARK: Private
+
+    private var mockTransportSession: MockTransportSession!
+    private var mockCache: SearchUsersCache!
 
     // MARK: - Helpers
 

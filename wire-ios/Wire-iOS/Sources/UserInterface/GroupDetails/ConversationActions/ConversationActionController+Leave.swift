@@ -24,6 +24,16 @@ import WireDataModel
 enum LeaveResult: AlertResultConfiguration {
     case leave(delete: Bool), cancel
 
+    // MARK: Internal
+
+    static var title: String {
+        L10n.Localizable.Meta.leaveConversationDialogMessage
+    }
+
+    static var all: [LeaveResult] {
+        [.leave(delete: true), .leave(delete: false), .cancel]
+    }
+
     var title: String {
         switch self {
         case .cancel: L10n.Localizable.General.cancel
@@ -32,21 +42,15 @@ enum LeaveResult: AlertResultConfiguration {
         }
     }
 
-    private var style: UIAlertAction.Style {
-        guard case .cancel = self else { return .destructive }
-        return .cancel
-    }
-
     func action(_ handler: @escaping (LeaveResult) -> Void) -> UIAlertAction {
         .init(title: title, style: style) { _ in handler(self) }
     }
 
-    static var title: String {
-        L10n.Localizable.Meta.leaveConversationDialogMessage
-    }
+    // MARK: Private
 
-    static var all: [LeaveResult] {
-        [.leave(delete: true), .leave(delete: false), .cancel]
+    private var style: UIAlertAction.Style {
+        guard case .cancel = self else { return .destructive }
+        return .cancel
     }
 }
 

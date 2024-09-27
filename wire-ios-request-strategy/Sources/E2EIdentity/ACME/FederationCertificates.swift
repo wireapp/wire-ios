@@ -19,9 +19,9 @@
 import Foundation
 
 struct FederationCertificates: Codable {
-    let certificates: [String]
-
     enum CodingKeys: String, CodingKey {
         case certificates = "crts"
     }
+
+    let certificates: [String]
 }

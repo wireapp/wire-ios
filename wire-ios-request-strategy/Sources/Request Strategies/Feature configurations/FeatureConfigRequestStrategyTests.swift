@@ -29,8 +29,6 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var featureRepository: FeatureRepository!
 
-    // MARK: - Life cycle
-
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()

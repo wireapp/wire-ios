@@ -28,15 +28,13 @@ protocol AccessAPIClientProtocol {
 // MARK: - AccessAPIClient
 
 final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
-    // MARK: - Properties
-
-    private let networkSession: NetworkSessionProtocol
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(networkSession: NetworkSessionProtocol) {
         self.networkSession = networkSession
     }
+
+    // MARK: Internal
 
     // MARK: - Methods
 
@@ -50,11 +48,19 @@ final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
             throw error
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let networkSession: NetworkSessionProtocol
 }
 
 // MARK: - AccessTokenEndpoint
 
 struct AccessTokenEndpoint: Endpoint, Loggable {
+    // MARK: Internal
+
     // MARK: - Types
 
     typealias Output = AccessToken
@@ -74,14 +80,6 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
         contentType: .json,
         acceptType: .json
     )
-
-    // MARK: - Response
-
-    private struct ResponsePayload: Codable {
-        let access_token: String
-        let expires_in: Int
-        let token_type: String
-    }
 
     func parseResponse(_ response: NetworkResponse) -> Result<Output, Failure> {
         logger.trace("parsing reponse: \(response, privacy: .public)")
@@ -113,5 +111,15 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
         default:
             return .failure(.invalidResponse)
         }
+    }
+
+    // MARK: Private
+
+    // MARK: - Response
+
+    private struct ResponsePayload: Codable {
+        let access_token: String
+        let expires_in: Int
+        let token_type: String
     }
 }

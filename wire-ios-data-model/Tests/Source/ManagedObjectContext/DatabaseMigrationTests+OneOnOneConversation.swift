@@ -21,9 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
-    private let bundle = Bundle(for: ZMManagedObject.self)
-    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
-    private let helper = DatabaseMigrationHelper()
+    // MARK: Internal
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -127,6 +125,12 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
             for: self
         )
     }
+
+    // MARK: Private
+
+    private let bundle = Bundle(for: ZMManagedObject.self)
+    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
+    private let helper = DatabaseMigrationHelper()
 
     private func addUser(
         _ user: ZMUser,

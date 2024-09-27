@@ -19,11 +19,11 @@
 import SwiftUI
 
 struct DeepLinksView: View {
+    // MARK: Internal
+
     // MARK: - Properties
 
     @StateObject var viewModel: DeepLinksViewModel
-
-    @State private var urlString = ""
 
     // MARK: - Views
 
@@ -43,6 +43,10 @@ struct DeepLinksView: View {
             actions: {}
         )
     }
+
+    // MARK: Private
+
+    @State private var urlString = ""
 }
 
 // MARK: - Previews

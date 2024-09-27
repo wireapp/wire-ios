@@ -33,12 +33,7 @@ extension UIImage {
 // MARK: - ImagePickerManager
 
 class ImagePickerManager: NSObject {
-    // MARK: - Properties
-
-    private weak var viewController: UIViewController?
-    private var sourceType: UIImagePickerController.SourceType?
-    private var completion: ((UIImage) -> Void)?
-    private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+    // MARK: Internal
 
     // MARK: - Methods
 
@@ -53,6 +48,15 @@ class ImagePickerManager: NSObject {
         let actionSheet = imagePickerAlert()
         return actionSheet
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private weak var viewController: UIViewController?
+    private var sourceType: UIImagePickerController.SourceType?
+    private var completion: ((UIImage) -> Void)?
+    private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
     private func imagePickerAlert() -> UIAlertController {
         typealias Alert = L10n.Localizable.Self.Settings.AccountPictureGroup.Alert

@@ -23,22 +23,7 @@ import WireSyncEngine
 // MARK: - DeviceDetailsViewActionsHandler
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
-    let logger = WireLogger.e2ei
-    var userClient: UserClient
-    var userSession: UserSession
-    var clientRemovalObserver: ClientRemovalObserver?
-    var credentials: UserEmailCredentials?
-    let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
-    private let contextProvider: ContextProvider
-    private let e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
-
-    var isProcessing: ((Bool) -> Void)?
-
-    var isSelfClient: Bool {
-        userClient.isSelfClient()
-    }
-
-    private var saveFileManager: SaveFileActions
+    // MARK: Lifecycle
 
     init(
         userClient: UserClient,
@@ -56,6 +41,20 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.getProteusFingerprint = getProteusFingerprint
         self.contextProvider = contextProvider
         self.e2eiCertificateEnrollment = e2eiCertificateEnrollment
+    }
+
+    // MARK: Internal
+
+    let logger = WireLogger.e2ei
+    var userClient: UserClient
+    var userSession: UserSession
+    var clientRemovalObserver: ClientRemovalObserver?
+    var credentials: UserEmailCredentials?
+    let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
+    var isProcessing: ((Bool) -> Void)?
+
+    var isSelfClient: Bool {
+        userClient.isSelfClient()
     }
 
     @MainActor
@@ -132,6 +131,13 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         let fingerPrint = String(decoding: data, as: UTF8.self)
         return fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
     }
+
+    // MARK: Private
+
+    private let contextProvider: ContextProvider
+    private let e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
+
+    private var saveFileManager: SaveFileActions
 
     @MainActor
     private func startE2EIdentityEnrollment() async throws -> String {

@@ -25,16 +25,7 @@ import Foundation
 /// In order to receive notifications a strong reference to the token maintained.
 
 public class ManagedObjectObserverToken: NSObject {
-    // MARK: - Properties
-
-    let token: Any
-
-    // We keep strong reference to `object` because the notifications would not get delivered
-    // if no one has references to it anymore. This could happen with faulted NSManagedObject.
-
-    private let object: AnyObject?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         name: Notification.Name,
@@ -52,4 +43,17 @@ public class ManagedObjectObserverToken: NSObject {
             using: block
         )
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let token: Any
+
+    // MARK: Private
+
+    // We keep strong reference to `object` because the notifications would not get delivered
+    // if no one has references to it anymore. This could happen with faulted NSManagedObject.
+
+    private let object: AnyObject?
 }

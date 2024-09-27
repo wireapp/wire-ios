@@ -23,17 +23,7 @@ import WireDesign
 
 /// Displays the preview of a location message.
 final class LocationPreviewController: UIViewController {
-    let message: ZMConversationMessage
-    private var actionController: ConversationMessageActionController!
-
-    private var mapView = MKMapView()
-    private let containerView = UIView()
-    private let addressContainerView = UIView()
-    private let addressLabel = UILabel()
-
-    let labelFont = UIFont.normalFont
-    let labelTextColor = SemanticColors.Label.textDefault
-    let containerColor = SemanticColors.View.backgroundCollectionCell
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -57,6 +47,53 @@ final class LocationPreviewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let message: ZMConversationMessage
+    let labelFont = UIFont.normalFont
+    let labelTextColor = SemanticColors.Label.textDefault
+    let containerColor = SemanticColors.View.backgroundCollectionCell
+
+    // MARK: - Preview
+
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
+    override var previewActionItems: [UIPreviewActionItem] {
+        actionController.previewActionItems
+    }
+
+    // MARK: - Map
+
+    func updateMapLocation(withLocationData locationData: LocationMessageData) {
+        let region: MKCoordinateRegion
+
+        if locationData.zoomLevel != 0 {
+            let span = MKCoordinateSpan(zoomLevel: Int(locationData.zoomLevel), viewSize: Float(view.frame.size.height))
+            region = MKCoordinateRegion(center: locationData.coordinate, span: span)
+        } else {
+            region = MKCoordinateRegion(
+                center: locationData.coordinate,
+                latitudinalMeters: 250,
+                longitudinalMeters: 250
+            )
+        }
+
+        mapView.setRegion(region, animated: false)
+    }
+
+    // MARK: Private
+
+    private var actionController: ConversationMessageActionController!
+
+    private var mapView = MKMapView()
+    private let containerView = UIView()
+    private let addressContainerView = UIView()
+    private let addressLabel = UILabel()
 
     // MARK: - Configuration
 
@@ -118,36 +155,5 @@ final class LocationPreviewController: UIViewController {
             addressLabel.leftAnchor.constraint(equalTo: addressContainerView.leftAnchor, constant: 12),
             addressLabel.rightAnchor.constraint(equalTo: addressContainerView.rightAnchor, constant: -12),
         ])
-    }
-
-    // MARK: - Map
-
-    func updateMapLocation(withLocationData locationData: LocationMessageData) {
-        let region: MKCoordinateRegion
-
-        if locationData.zoomLevel != 0 {
-            let span = MKCoordinateSpan(zoomLevel: Int(locationData.zoomLevel), viewSize: Float(view.frame.size.height))
-            region = MKCoordinateRegion(center: locationData.coordinate, span: span)
-        } else {
-            region = MKCoordinateRegion(
-                center: locationData.coordinate,
-                latitudinalMeters: 250,
-                longitudinalMeters: 250
-            )
-        }
-
-        mapView.setRegion(region, animated: false)
-    }
-
-    // MARK: - Preview
-
-    @available(
-        iOS,
-        introduced: 9.0,
-        deprecated: 13.0,
-        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
-    )
-    override var previewActionItems: [UIPreviewActionItem] {
-        actionController.previewActionItems
     }
 }

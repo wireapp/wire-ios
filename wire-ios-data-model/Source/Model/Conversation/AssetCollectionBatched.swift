@@ -19,13 +19,17 @@
 // MARK: - CategoryMatch
 
 public struct CategoryMatch: Hashable {
-    public let including: MessageCategory
-    public let excluding: MessageCategory
+    // MARK: Lifecycle
 
     public init(including: MessageCategory, excluding: MessageCategory) {
         self.including = including
         self.excluding = excluding
     }
+
+    // MARK: Public
+
+    public let including: MessageCategory
+    public let excluding: MessageCategory
 }
 
 public func == (lhs: CategoryMatch, rhs: CategoryMatch) -> Bool {
@@ -41,36 +45,7 @@ public func == (lhs: CategoryMatch, rhs: CategoryMatch) -> Bool {
 /// For every categorized batch it will call the delegate with the newly categorized objects and then once again when it
 /// finished categorizing all objects
 public class AssetCollectionBatched: NSObject, ZMCollection {
-    private unowned var delegate: AssetCollectionDelegate
-    private var assets: [CategoryMatch: [ZMMessage]]?
-    private let conversation: ZMConversation?
-    private let matchingCategories: [CategoryMatch]
-    private var assetMessageOffset = 0
-    private var clientMessageOffset = 0
-    private var assetMessagesDone = false
-    private var clientMessagesDone = false
-
-    enum MessagesToFetch {
-        case client, asset
-    }
-
-    public static let defaultFetchCount = 200
-
-    private var tornDown = false
-
-    private var syncMOC: NSManagedObjectContext? {
-        conversation?.managedObjectContext?.zm_sync
-    }
-
-    private var uiMOC: NSManagedObjectContext? {
-        conversation?.managedObjectContext
-    }
-
-    /// Returns true when there are no assets to fetch OR when all assets have been processed OR the collection has been
-    /// tornDown
-    public var fetchingDone: Bool {
-        tornDown || (assetMessagesDone && clientMessagesDone)
-    }
+    // MARK: Lifecycle
 
     /// Returns a collection that automatically fetches the assets in batches
     /// @param matchingCategories: The AssetCollection only returns and calls the delegate for these categories
@@ -115,13 +90,23 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         }
     }
 
+    deinit {
+        precondition(tornDown, "Call tearDown to avoid continued fetch requests")
+    }
+
+    // MARK: Public
+
+    public static let defaultFetchCount = 200
+
+    /// Returns true when there are no assets to fetch OR when all assets have been processed OR the collection has been
+    /// tornDown
+    public var fetchingDone: Bool {
+        tornDown || (assetMessagesDone && clientMessagesDone)
+    }
+
     /// Cancels further fetch requests
     public func tearDown() {
         tornDown = true
-    }
-
-    deinit {
-        precondition(tornDown, "Call tearDown to avoid continued fetch requests")
     }
 
     /// Returns all assets that have been fetched thus far
@@ -133,6 +118,86 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             return withoutZombie
         }
         return []
+    }
+
+    // MARK: Internal
+
+    enum MessagesToFetch {
+        case client, asset
+    }
+
+    static func categorizedMessages<T: ZMMessage>(
+        for conversation: ZMConversation,
+        matchPairs: [CategoryMatch]
+    ) -> [T] {
+        precondition(
+            conversation.managedObjectContext!.zm_isSyncContext,
+            "Fetch should only be performed on the sync context"
+        )
+        let request = T.fetchRequestMatching(matchPairs: matchPairs, conversation: conversation)
+        let excludedCategoryPredicate = NSPredicate(
+            format: "%K & %d == 0",
+            ZMMessageCachedCategoryKey,
+            MessageCategory.excludedFromCollection.rawValue
+        )
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            request.predicate!,
+            excludedCategoryPredicate,
+        ])
+        request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
+
+        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request as! NSFetchRequest<T>)
+        else { return [] }
+        return result
+    }
+
+    static func fetchRequestForUnCategorizedMessages<T: ZMMessage>(in conversation: ZMConversation)
+        -> NSFetchRequest<T> {
+        let request = NSFetchRequest<T>(entityName: T.entityName())
+        request.predicate = NSPredicate(
+            format: "visibleInConversation == %@ && (%K == NULL || %K == %d)",
+            conversation,
+            ZMMessageCachedCategoryKey,
+            ZMMessageCachedCategoryKey,
+            MessageCategory.none.rawValue
+        )
+        request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
+        request.relationshipKeyPathsForPrefetching = ["dataSet"]
+        return request
+    }
+
+    func unCategorizedMessages<T: ZMMessage>(for conversation: ZMConversation) -> [T] {
+        precondition(
+            conversation.managedObjectContext!.zm_isSyncContext,
+            "Fetch should only be performed on the sync context"
+        )
+
+        let request: NSFetchRequest<T> = AssetCollectionBatched.fetchRequestForUnCategorizedMessages(in: conversation)
+        request.fetchBatchSize = AssetCollectionBatched.defaultFetchCount
+
+        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else { return [] }
+        return result
+    }
+
+    // MARK: Private
+
+    private unowned var delegate: AssetCollectionDelegate
+    private var assets: [CategoryMatch: [ZMMessage]]?
+    private let conversation: ZMConversation?
+    private let matchingCategories: [CategoryMatch]
+    private var assetMessageOffset = 0
+    private var clientMessageOffset = 0
+    private var assetMessagesDone = false
+    private var clientMessagesDone = false
+
+    private var tornDown = false
+
+    private var syncMOC: NSManagedObjectContext? {
+        conversation?.managedObjectContext?.zm_sync
+    }
+
+    private var uiMOC: NSManagedObjectContext? {
+        conversation?.managedObjectContext
     }
 
     private func setFetchingCompleteFor(type: MessagesToFetch) {
@@ -237,59 +302,6 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             }
             delegate.assetCollectionDidFinishFetching(collection: self, result: result)
         }
-    }
-
-    static func categorizedMessages<T: ZMMessage>(
-        for conversation: ZMConversation,
-        matchPairs: [CategoryMatch]
-    ) -> [T] {
-        precondition(
-            conversation.managedObjectContext!.zm_isSyncContext,
-            "Fetch should only be performed on the sync context"
-        )
-        let request = T.fetchRequestMatching(matchPairs: matchPairs, conversation: conversation)
-        let excludedCategoryPredicate = NSPredicate(
-            format: "%K & %d == 0",
-            ZMMessageCachedCategoryKey,
-            MessageCategory.excludedFromCollection.rawValue
-        )
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            request.predicate!,
-            excludedCategoryPredicate,
-        ])
-        request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
-
-        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request as! NSFetchRequest<T>)
-        else { return [] }
-        return result
-    }
-
-    func unCategorizedMessages<T: ZMMessage>(for conversation: ZMConversation) -> [T] {
-        precondition(
-            conversation.managedObjectContext!.zm_isSyncContext,
-            "Fetch should only be performed on the sync context"
-        )
-
-        let request: NSFetchRequest<T> = AssetCollectionBatched.fetchRequestForUnCategorizedMessages(in: conversation)
-        request.fetchBatchSize = AssetCollectionBatched.defaultFetchCount
-
-        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else { return [] }
-        return result
-    }
-
-    static func fetchRequestForUnCategorizedMessages<T: ZMMessage>(in conversation: ZMConversation)
-        -> NSFetchRequest<T> {
-        let request = NSFetchRequest<T>(entityName: T.entityName())
-        request.predicate = NSPredicate(
-            format: "visibleInConversation == %@ && (%K == NULL || %K == %d)",
-            conversation,
-            ZMMessageCachedCategoryKey,
-            ZMMessageCachedCategoryKey,
-            MessageCategory.none.rawValue
-        )
-        request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
-        request.relationshipKeyPathsForPrefetching = ["dataSet"]
-        return request
     }
 }
 

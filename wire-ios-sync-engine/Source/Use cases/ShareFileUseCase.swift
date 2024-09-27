@@ -38,11 +38,13 @@ public protocol ShareFileUseCaseProtocol {
 // MARK: - ShareFileUseCase
 
 public struct ShareFileUseCase: ShareFileUseCaseProtocol {
-    private let contextProvider: ContextProvider
+    // MARK: Lifecycle
 
     public init(contextProvider: ContextProvider) {
         self.contextProvider = contextProvider
     }
+
+    // MARK: Public
 
     public func invoke(
         fileMetadata: ZMFileMetadata,
@@ -58,4 +60,8 @@ public struct ShareFileUseCase: ShareFileUseCaseProtocol {
             }
         }
     }
+
+    // MARK: Private
+
+    private let contextProvider: ContextProvider
 }

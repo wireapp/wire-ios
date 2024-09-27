@@ -22,10 +22,7 @@ import XCTest
 @testable import Wire
 
 class AppLockChangeWarningViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -100,4 +97,11 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
                 line: #line
             )
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 }

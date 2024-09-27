@@ -42,30 +42,7 @@ protocol CallInfoConfigurationObserver: AnyObject {
 // MARK: - CallingBottomSheetViewController
 
 final class CallingBottomSheetViewController: BottomSheetContainerViewController {
-    private let bottomSheetMaxHeight = UIScreen.main.bounds.height * 0.7
-
-    weak var delegate: ActiveCallViewControllerDelegate?
-    private var participantsObserverToken: Any?
-    private var voiceChannel: VoiceChannel
-    private let headerBar = CallHeaderBar()
-    private let overlay = PassThroughOpaqueView()
-    private var callStateObserverToken: Any?
-    private weak var callDurationTimer: Timer?
-    private var callInfoConfiguration: CallInfoConfiguration?
-    private let callDegradationController = CallDegradationController()
-
-    var bottomSheetMinimalOffset: CGFloat {
-        callingActionsInfoViewController.actionsViewHeightConstraint.constant
-    }
-
-    let userSession: UserSession
-
-    let callingActionsInfoViewController: CallingActionsInfoViewController
-    var visibleVoiceChannelViewController: CallViewController {
-        didSet {
-            transition(to: visibleVoiceChannelViewController, from: oldValue)
-        }
-    }
+    // MARK: Lifecycle
 
     init(voiceChannel: VoiceChannel, userSession: UserSession) {
         self.voiceChannel = voiceChannel
@@ -110,6 +87,23 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         stopCallDurationTimer()
     }
 
+    // MARK: Internal
+
+    weak var delegate: ActiveCallViewControllerDelegate?
+    let userSession: UserSession
+
+    let callingActionsInfoViewController: CallingActionsInfoViewController
+
+    var bottomSheetMinimalOffset: CGFloat {
+        callingActionsInfoViewController.actionsViewHeightConstraint.constant
+    }
+
+    var visibleVoiceChannelViewController: CallViewController {
+        didSet {
+            transition(to: visibleVoiceChannelViewController, from: oldValue)
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -125,52 +119,10 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         visibleVoiceChannelViewController.reloadGrid()
     }
 
-    private func setupViews() {
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-        headerBar.minimalizeButton.addTarget(self, action: #selector(hideCallView), for: .touchUpInside)
-        overlay.alpha = 0.0
-        overlay.backgroundColor = SemanticColors.View.backgroundCallOverlay
-        addToSelf(callDegradationController)
-        callDegradationController.delegate = self
-    }
-
-    private func addConstraints() {
-        headerBar.translatesAutoresizingMaskIntoConstraints = false
-        overlay.translatesAutoresizingMaskIntoConstraints = false
-        callDegradationController.view.fitIn(view: view)
-
-        NSLayoutConstraint.activate([
-            headerBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            headerBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            headerBar.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            headerBar.bottomAnchor.constraint(equalTo: visibleVoiceChannelViewController.view.topAnchor)
-                .withPriority(.required),
-            overlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            overlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            overlay.topAnchor.constraint(equalTo: view.topAnchor),
-            overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-    }
-
     // after rotating device recalculate bottom sheet max height
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         updateConstraints(forHeight: size.height)
-    }
-
-    private func updateConstraints(forHeight height: CGFloat) {
-        let isLandscape = UIDevice.current.twoDimensionOrientation.isLandscape
-        // if landscape then bottom sheet should take whole screen (without headerBar)
-        let bottomSheetMaxHeight = isLandscape ? (height - headerBar.bounds.height) : bottomSheetMaxHeight
-        let newConfiguration = BottomSheetConfiguration(
-            height: bottomSheetMaxHeight,
-            initialOffset: bottomSheetMinimalOffset
-        )
-        guard configuration != newConfiguration else { return }
-        configuration = newConfiguration
-        callingActionsInfoViewController.updateActionViewHeight()
-        callingActionsInfoViewController.actionsView.viewWillRotate(toPortrait: !isLandscape)
-        hideBottomSheet()
     }
 
     override func didChangeState() {
@@ -235,6 +187,61 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
 
     override func bottomSheetChangedOffset(fullHeightPercentage: CGFloat) {
         overlay.alpha = fullHeightPercentage * 0.7
+    }
+
+    // MARK: Private
+
+    private let bottomSheetMaxHeight = UIScreen.main.bounds.height * 0.7
+
+    private var participantsObserverToken: Any?
+    private var voiceChannel: VoiceChannel
+    private let headerBar = CallHeaderBar()
+    private let overlay = PassThroughOpaqueView()
+    private var callStateObserverToken: Any?
+    private weak var callDurationTimer: Timer?
+    private var callInfoConfiguration: CallInfoConfiguration?
+    private let callDegradationController = CallDegradationController()
+
+    private func setupViews() {
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+        headerBar.minimalizeButton.addTarget(self, action: #selector(hideCallView), for: .touchUpInside)
+        overlay.alpha = 0.0
+        overlay.backgroundColor = SemanticColors.View.backgroundCallOverlay
+        addToSelf(callDegradationController)
+        callDegradationController.delegate = self
+    }
+
+    private func addConstraints() {
+        headerBar.translatesAutoresizingMaskIntoConstraints = false
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+        callDegradationController.view.fitIn(view: view)
+
+        NSLayoutConstraint.activate([
+            headerBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            headerBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            headerBar.topAnchor.constraint(equalTo: view.safeTopAnchor),
+            headerBar.bottomAnchor.constraint(equalTo: visibleVoiceChannelViewController.view.topAnchor)
+                .withPriority(.required),
+            overlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            overlay.topAnchor.constraint(equalTo: view.topAnchor),
+            overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+
+    private func updateConstraints(forHeight height: CGFloat) {
+        let isLandscape = UIDevice.current.twoDimensionOrientation.isLandscape
+        // if landscape then bottom sheet should take whole screen (without headerBar)
+        let bottomSheetMaxHeight = isLandscape ? (height - headerBar.bounds.height) : bottomSheetMaxHeight
+        let newConfiguration = BottomSheetConfiguration(
+            height: bottomSheetMaxHeight,
+            initialOffset: bottomSheetMinimalOffset
+        )
+        guard configuration != newConfiguration else { return }
+        configuration = newConfiguration
+        callingActionsInfoViewController.updateActionViewHeight()
+        callingActionsInfoViewController.actionsView.viewWillRotate(toPortrait: !isLandscape)
+        hideBottomSheet()
     }
 
     private func updateState() {

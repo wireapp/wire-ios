@@ -33,6 +33,20 @@ private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
 /// Displays the image of a user account plus optional availability.
 public final class AccountImageView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupSubviews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    // MARK: Public
+
     // MARK: - Public Properties
 
     public var accountImage = UIImage() {
@@ -47,28 +61,11 @@ public final class AccountImageView: UIView {
         didSet { updateAvailabilityIndicator() }
     }
 
-    // MARK: - Private Properties
-
-    private let accountImageView = UIImageView()
-    private let availabilityIndicatorView = AvailabilityIndicatorView()
-
     override public var intrinsicContentSize: CGSize {
         .init(
             width: accountImageBorderWidth * 2 + accountImageHeight,
             height: accountImageBorderWidth * 2 + accountImageHeight
         )
-    }
-
-    // MARK: - Life Cycle
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupSubviews()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
     }
 
     override public func layoutSubviews() {
@@ -84,6 +81,13 @@ public final class AccountImageView: UIView {
             updateAvailabilityIndicator()
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Private Properties
+
+    private let accountImageView = UIImageView()
+    private let availabilityIndicatorView = AvailabilityIndicatorView()
 
     // MARK: - Methods
 

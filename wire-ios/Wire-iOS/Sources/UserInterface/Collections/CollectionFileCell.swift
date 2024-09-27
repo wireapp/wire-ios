@@ -24,10 +24,24 @@ import WireDesign
 // MARK: - CollectionFileCell
 
 final class CollectionFileCell: CollectionCell {
-    private var containerView = UIView()
-    private let fileTransferView = FileTransferView()
-    private let restrictionView = FileMessageRestrictionView()
-    private let headerView = CollectionCellHeader()
+    // MARK: Lifecycle
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        loadView()
+        setupAccessibility()
+    }
+
+    // MARK: Internal
+
+    override var obfuscationIcon: StyleKitIcon {
+        .document
+    }
 
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
         typealias ConversationSearch = L10n.Accessibility.ConversationSearch
@@ -54,17 +68,6 @@ final class CollectionFileCell: CollectionCell {
         accessibilityHint = ConversationSearch.Item.hint
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        loadView()
-        setupAccessibility()
-    }
-
     func loadView() {
         headerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -86,9 +89,12 @@ final class CollectionFileCell: CollectionCell {
         ])
     }
 
-    override var obfuscationIcon: StyleKitIcon {
-        .document
-    }
+    // MARK: Private
+
+    private var containerView = UIView()
+    private let fileTransferView = FileTransferView()
+    private let restrictionView = FileMessageRestrictionView()
+    private let headerView = CollectionCellHeader()
 
     private func setup(_ view: UIView) {
         containerView.removeSubviews()

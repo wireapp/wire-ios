@@ -21,11 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
-    private let bundle = Bundle(for: ZMManagedObject.self)
-    private let userId = UUID()
-    private let domain = "example.com"
-    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())DatabaseMigrationTests_UserUniqueness/")
-    private let helper = DatabaseMigrationHelper()
+    // MARK: Internal
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -133,6 +129,14 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
             for: self
         )
     }
+
+    // MARK: Private
+
+    private let bundle = Bundle(for: ZMManagedObject.self)
+    private let userId = UUID()
+    private let domain = "example.com"
+    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())DatabaseMigrationTests_UserUniqueness/")
+    private let helper = DatabaseMigrationHelper()
 
     // MARK: - Fetch / Insert Helpers
 

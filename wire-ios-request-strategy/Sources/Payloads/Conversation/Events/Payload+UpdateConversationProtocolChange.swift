@@ -25,10 +25,10 @@ extension Payload {
             case messageProtocol = "protocol"
         }
 
-        let messageProtocol: String
-
         // MARK: EventData Protocol
 
         static var eventType: ZMUpdateEventType { .conversationProtocolUpdate }
+
+        let messageProtocol: String
     }
 }

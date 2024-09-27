@@ -23,9 +23,7 @@ import WireDesign
 /// A helper class that provides the label with Dynamic Type Support
 /// by conforming to the DynamicTypeCapable Protocol.
 class DynamicFontLabel: UILabel, DynamicTypeCapable {
-    // MARK: - Properties
-
-    private let onRedrawFont: () -> UIFont?
+    // MARK: Lifecycle
 
     // MARK: - initialization
 
@@ -63,10 +61,18 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     // MARK: Methods
 
     func redrawFont() {
         guard let newFont = onRedrawFont() else { return }
         font = newFont
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let onRedrawFont: () -> UIFont?
 }

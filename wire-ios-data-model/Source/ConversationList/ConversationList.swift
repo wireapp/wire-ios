@@ -21,14 +21,7 @@ import CoreData
 /// A collection of conversation instances with additional infos.
 @objc(ZMConversationList) @objcMembers
 public final class ConversationList: NSObject {
-    public weak var managedObjectContext: NSManagedObjectContext?
-
-    let identifier: String
-    let label: Label?
-    public private(set) var items: [ZMConversation]
-    private let conversationKeysAffectingSorting: NSSet
-    private var filteringPredicate: NSPredicate
-    private let sortDescriptors: [NSSortDescriptor]
+    // MARK: Lifecycle
 
     public convenience init(
         allConversations: [ZMConversation],
@@ -76,24 +69,57 @@ public final class ConversationList: NSObject {
         }
     }
 
-    private static func createItems(
-        _ conversations: [ZMConversation],
-        _ filteringPredicate: NSPredicate,
-        _ sortDescriptors: [NSSortDescriptor]
-    ) -> [ZMConversation] {
-        let filtered = (conversations as NSArray).filtered(using: filteringPredicate)
-        return NSSet(array: filtered).sortedArray(using: sortDescriptors) as! [ZMConversation]
+    // MARK: Public
+
+    public weak var managedObjectContext: NSManagedObjectContext?
+
+    public private(set) var items: [ZMConversation]
+
+    override public var description: String {
+        shortDescription() + "\n" + super.description
     }
 
-    private static func calculateKeysAffectingPredicateAndSort(_ sortDescriptors: [NSSortDescriptor]) -> NSSet {
-        let keysAffectingSorting = NSMutableSet()
-        for sd in sortDescriptors {
-            if let key = sd.key {
-                keysAffectingSorting.add(key)
-            }
-        }
-        return keysAffectingSorting.adding(ZMConversationListIndicatorKey) as NSSet
+    // MARK: - UserSession
+
+    public static func refetchAllLists(inUserSession session: ContextProvider) {
+        session.viewContext.conversationListDirectory().refetchAllLists(in: session.viewContext)
     }
+
+    public static func conversationsIncludingArchived(inUserSession session: ContextProvider?) -> ConversationList! {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().conversationsIncludingArchived
+    }
+
+    public static func conversations(inUserSession session: ContextProvider?) -> ConversationList! {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().unarchivedConversations
+    }
+
+    public static func archivedConversations(inUserSession session: ContextProvider?) -> ConversationList! {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().archivedConversations
+    }
+
+    public static func pendingConnectionConversations(inUserSession session: ContextProvider?) -> ConversationList! {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().pendingConnectionConversations
+    }
+
+    public static func clearedConversations(inUserSession session: ContextProvider?) -> ConversationList! {
+        guard let session else { return nil }
+        return session.viewContext.conversationListDirectory().clearedConversations
+    }
+
+    public func resort() {
+        let items = NSMutableArray(array: items)
+        items.sort(comparator: comparator)
+        self.items = items as! [ZMConversation]
+    }
+
+    // MARK: Internal
+
+    let identifier: String
+    let label: Label?
 
     func recreate(
         allConversations: [ZMConversation],
@@ -105,38 +131,6 @@ public final class ConversationList: NSObject {
         let managedObjectContext = managedObjectContext
         managedObjectContext?.performAndWait {
             managedObjectContext?.conversationListObserverCenter.startObservingList(self)
-        }
-    }
-
-    private func sortInsertConversation(_ conversation: ZMConversation) {
-        let index = (items as NSArray).index(
-            of: conversation,
-            inSortedRange: NSRange(location: 0, length: items.count),
-            options: .insertionIndex,
-            usingComparator: comparator
-        )
-        items.insert(conversation, at: index)
-    }
-
-    private var comparator: Comparator {
-        let sortDescriptors = sortDescriptors
-        return {
-            let c0 = $0 as! ZMConversation
-            let c1 = $1 as! ZMConversation
-
-            if c0.conversationListIndicator == .activeCall, c1.conversationListIndicator != .activeCall {
-                return .orderedAscending
-            } else if c1.conversationListIndicator == .activeCall, c0.conversationListIndicator != .activeCall {
-                return .orderedDescending
-            }
-
-            for sd in sortDescriptors {
-                let result = sd.compare(c0, to: c1)
-                if result != .orderedSame {
-                    return result
-                }
-            }
-            return .orderedSame
         }
     }
 
@@ -160,16 +154,6 @@ public final class ConversationList: NSObject {
             identifier,
             filteringPredicate
         )
-    }
-
-    override public var description: String {
-        shortDescription() + "\n" + super.description
-    }
-
-    public func resort() {
-        let items = NSMutableArray(array: items)
-        items.sort(comparator: comparator)
-        self.items = items as! [ZMConversation]
     }
 
     // MARK: - ZMUpdates
@@ -205,34 +189,60 @@ public final class ConversationList: NSObject {
         }
     }
 
-    // MARK: - UserSession
+    // MARK: Private
 
-    public static func refetchAllLists(inUserSession session: ContextProvider) {
-        session.viewContext.conversationListDirectory().refetchAllLists(in: session.viewContext)
+    private let conversationKeysAffectingSorting: NSSet
+    private var filteringPredicate: NSPredicate
+    private let sortDescriptors: [NSSortDescriptor]
+
+    private var comparator: Comparator {
+        let sortDescriptors = sortDescriptors
+        return {
+            let c0 = $0 as! ZMConversation
+            let c1 = $1 as! ZMConversation
+
+            if c0.conversationListIndicator == .activeCall, c1.conversationListIndicator != .activeCall {
+                return .orderedAscending
+            } else if c1.conversationListIndicator == .activeCall, c0.conversationListIndicator != .activeCall {
+                return .orderedDescending
+            }
+
+            for sd in sortDescriptors {
+                let result = sd.compare(c0, to: c1)
+                if result != .orderedSame {
+                    return result
+                }
+            }
+            return .orderedSame
+        }
     }
 
-    public static func conversationsIncludingArchived(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
-        return session.viewContext.conversationListDirectory().conversationsIncludingArchived
+    private static func createItems(
+        _ conversations: [ZMConversation],
+        _ filteringPredicate: NSPredicate,
+        _ sortDescriptors: [NSSortDescriptor]
+    ) -> [ZMConversation] {
+        let filtered = (conversations as NSArray).filtered(using: filteringPredicate)
+        return NSSet(array: filtered).sortedArray(using: sortDescriptors) as! [ZMConversation]
     }
 
-    public static func conversations(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
-        return session.viewContext.conversationListDirectory().unarchivedConversations
+    private static func calculateKeysAffectingPredicateAndSort(_ sortDescriptors: [NSSortDescriptor]) -> NSSet {
+        let keysAffectingSorting = NSMutableSet()
+        for sd in sortDescriptors {
+            if let key = sd.key {
+                keysAffectingSorting.add(key)
+            }
+        }
+        return keysAffectingSorting.adding(ZMConversationListIndicatorKey) as NSSet
     }
 
-    public static func archivedConversations(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
-        return session.viewContext.conversationListDirectory().archivedConversations
-    }
-
-    public static func pendingConnectionConversations(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
-        return session.viewContext.conversationListDirectory().pendingConnectionConversations
-    }
-
-    public static func clearedConversations(inUserSession session: ContextProvider?) -> ConversationList! {
-        guard let session else { return nil }
-        return session.viewContext.conversationListDirectory().clearedConversations
+    private func sortInsertConversation(_ conversation: ZMConversation) {
+        let index = (items as NSArray).index(
+            of: conversation,
+            inSortedRange: NSRange(location: 0, length: items.count),
+            options: .insertionIndex,
+            usingComparator: comparator
+        )
+        items.insert(conversation, at: index)
     }
 }

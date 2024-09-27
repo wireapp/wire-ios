@@ -19,10 +19,7 @@
 import Foundation
 
 class RemoveDuplicatePreAction: CoreDataMigrationAction {
-    private enum Keys: String {
-        case needsToBeUpdatedFromBackend
-        case primaryKey
-    }
+    // MARK: Internal
 
     let entityNames = [ZMUser.entityName(), ZMConversation.entityName(), Team.entityName()]
 
@@ -31,6 +28,13 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
             removeNilPrimaryKey(for: entityName, context: context)
             removeDuplicates(for: entityName, context: context)
         }
+    }
+
+    // MARK: Private
+
+    private enum Keys: String {
+        case needsToBeUpdatedFromBackend
+        case primaryKey
     }
 
     // Method to cleanup objects without remoteIdentifierDataKey before removeDuplicates

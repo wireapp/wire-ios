@@ -33,7 +33,7 @@ import Foundation
 /// decoding is provided by `UpdateEventDecodingProxy`.
 
 struct UpdateEventDecodingProxy: Decodable {
-    let updateEvent: UpdateEvent
+    // MARK: Lifecycle
 
     init(updateEvent: UpdateEvent) {
         self.updateEvent = updateEvent
@@ -70,6 +70,12 @@ struct UpdateEventDecodingProxy: Decodable {
             )
         }
     }
+
+    // MARK: Internal
+
+    let updateEvent: UpdateEvent
+
+    // MARK: Private
 
     private enum CodingKeys: String, CodingKey {
         case eventType = "type"

@@ -20,6 +20,8 @@ import XCTest
 @testable import WireDataModel
 
 class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
+    // MARK: Internal
+
     var message: ZMOTRMessage?
 
     override func setUp() {
@@ -86,6 +88,8 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         assert(reasonCode: 0, expectedReason: .unknown)
         assert(reasonCode: 1, expectedReason: .federationRemoteError)
     }
+
+    // MARK: Private
 
     // MARK: - Helper
 

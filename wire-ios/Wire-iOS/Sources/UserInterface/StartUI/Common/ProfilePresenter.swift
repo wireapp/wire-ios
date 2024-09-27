@@ -21,14 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 final class ProfilePresenter: NSObject, ViewControllerDismisser {
-    var profileOpenedFromPeoplePicker = false
-    var keyboardPersistedAfterOpeningProfile = false
-
-    let mainCoordinator: MainCoordinating
-    private var presentedFrame: CGRect = .zero
-    private weak var viewToPresentOn: UIView?
-    private weak var controllerToPresentOn: UIViewController?
-    private var onDismiss: (() -> Void)?
+    // MARK: Lifecycle
 
     init(mainCoordinator: MainCoordinating) {
         self.mainCoordinator = mainCoordinator
@@ -41,6 +34,13 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
             object: nil
         )
     }
+
+    // MARK: Internal
+
+    var profileOpenedFromPeoplePicker = false
+    var keyboardPersistedAfterOpeningProfile = false
+
+    let mainCoordinator: MainCoordinating
 
     @objc
     func deviceOrientationChanged(_: Notification?) {
@@ -106,4 +106,11 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
             self.onDismiss = nil
         }
     }
+
+    // MARK: Private
+
+    private var presentedFrame: CGRect = .zero
+    private weak var viewToPresentOn: UIView?
+    private weak var controllerToPresentOn: UIViewController?
+    private var onDismiss: (() -> Void)?
 }

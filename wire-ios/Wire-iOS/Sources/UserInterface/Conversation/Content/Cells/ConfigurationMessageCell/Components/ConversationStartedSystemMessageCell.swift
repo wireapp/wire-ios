@@ -22,15 +22,14 @@ import WireDataModel
 // MARK: - ConversationStartedSystemMessageCell
 
 final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+    // MARK: Internal
+
     struct Configuration {
         let title: NSAttributedString?
         let message: NSAttributedString
         let selectedUsers: [UserType]
         let icon: UIImage?
     }
-
-    private let titleLabel = UILabel()
-    private var selectedUsers: [UserType] = []
 
     override func configureSubviews() {
         super.configureSubviews()
@@ -54,6 +53,11 @@ final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, Con
         selectedUsers = object.selectedUsers
         accessibilityLabel = object.title?.string
     }
+
+    // MARK: Private
+
+    private let titleLabel = UILabel()
+    private var selectedUsers: [UserType] = []
 }
 
 // MARK: - UITextViewDelegate

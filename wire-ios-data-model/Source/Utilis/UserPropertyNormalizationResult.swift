@@ -18,6 +18,16 @@
 
 /// The result of a property normalization operation.
 public struct UserPropertyNormalizationResult<Value> {
+    // MARK: Lifecycle
+
+    public init(isValid: Bool, normalizedValue: Value, validationError: Error?) {
+        self.isValid = isValid
+        self.normalizedValue = normalizedValue
+        self.validationError = validationError
+    }
+
+    // MARK: Public
+
     /// Whether the value is valid.
     public var isValid: Bool
 
@@ -26,10 +36,4 @@ public struct UserPropertyNormalizationResult<Value> {
 
     /// The error that reprsents the reason why the property is not valid.
     public var validationError: Error?
-
-    public init(isValid: Bool, normalizedValue: Value, validationError: Error?) {
-        self.isValid = isValid
-        self.normalizedValue = normalizedValue
-        self.validationError = validationError
-    }
 }

@@ -22,9 +22,7 @@ import XCTest
 @testable import WireRequestStrategy
 
 class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
-    fileprivate var applicationStatus: MockApplicationStatus!
-
-    fileprivate var sut: ImageV2DownloadRequestStrategy!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -296,4 +294,10 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             XCTAssertTrue(message.hasDownloadedFile)
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var applicationStatus: MockApplicationStatus!
+
+    fileprivate var sut: ImageV2DownloadRequestStrategy!
 }

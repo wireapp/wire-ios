@@ -20,12 +20,14 @@ import Foundation
 
 @objc
 public final class ConversationPredicateFactory: NSObject {
-    private let selfTeam: Team?
+    // MARK: Lifecycle
 
     @objc
     init(selfTeam: Team? = nil) {
         self.selfTeam = selfTeam
     }
+
+    // MARK: Public
 
     @objc(predicateForConversationsExcludingArchived)
     public func predicateForConversationsExcludingArchived() -> NSPredicate {
@@ -120,6 +122,10 @@ public final class ConversationPredicateFactory: NSObject {
             labelPredicate,
         ])
     }
+
+    // MARK: Private
+
+    private let selfTeam: Team?
 
     private func predicateForValidConversations() -> NSPredicate {
         let basePredicate = ZMConversation.predicateForFilteringResults()

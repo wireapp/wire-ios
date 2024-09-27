@@ -26,32 +26,7 @@ import WireRequestStrategy
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,
     ZMContextChangeTrackerSource, ZMEventConsumer {
-    // MARK: - Private Properties
-
-    private static let logger = Logger(subsystem: "VoIP Push", category: "CallingRequestStrategy")
-
-    private let zmLog = ZMSLog(tag: "calling")
-
-    private let messageSender: MessageSenderInterface
-    private let flowManager: FlowManagerType
-    private let decoder = JSONDecoder()
-
-    private let callEventStatus: CallEventStatus
-
-    private var callConfigRequestSync: ZMSingleRequestSync! = nil
-    private var callConfigCompletion: CallConfigRequestCompletion?
-
-    private var clientDiscoverySync: ZMSingleRequestSync! = nil
-    private var clientDiscoveryRequest: ClientDiscoveryRequest?
-
-    private let ephemeralURLSession = URLSession(configuration: .ephemeral)
-    private let fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol
-
-    private var cancellables = Set<AnyCancellable>()
-
-    // MARK: - Internal Properties
-
-    var callCenter: WireCallCenterV3?
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -100,18 +75,12 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         setupEventProcessingNotifications()
     }
 
-    private func setupEventProcessingNotifications() {
-        NotificationCenter.default
-            .publisher(for: .eventProcessorDidStartProcessingEventsNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: true) }
-            .store(in: &cancellables)
+    // MARK: Public
 
-        NotificationCenter.default
-            .publisher(for: .eventProcessorDidFinishProcessingEventsNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: false) }
-            .store(in: &cancellables)
+    // MARK: - Context Change Tracker
+
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        [self]
     }
 
     // MARK: - Methods
@@ -210,12 +179,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         }
     }
 
-    // MARK: - Context Change Tracker
-
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [self]
-    }
-
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         nil
     }
@@ -255,45 +218,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         events.forEach(processEvent)
     }
 
-    private func processEvent(_ event: ZMUpdateEvent) {
-        let serverTimeDelta = managedObjectContext.serverTimeDelta
-        guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
+    // MARK: Internal
 
-        if let genericMessage = GenericMessage(from: event), genericMessage.hasCalling {
-            guard
-                let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
+    // MARK: - Internal Properties
 
-                let callEventContent = CallEventContent(from: payload, with: decoder),
-                let senderUUID = event.senderUUID,
-                let conversationUUID = event.conversationUUID,
-                let eventTimestamp = event.timestamp
-            else {
-                zmLog.error("ignoring calling message: \(genericMessage)")
-                return
-            }
-
-            zmLog
-                .debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
-
-            guard !callEventContent.isRemoteMute else {
-                callCenter?.isMuted = true
-                zmLog.debug("muted remotely from calling message")
-                return
-            }
-
-            processCallEvent(
-                callingConversationId: genericMessage.calling.qualifiedConversationID,
-                conversationUUID: conversationUUID,
-                senderUUID: senderUUID,
-                clientId: event.senderClientID ?? callEventContent.callerClientID,
-                conversationDomain: event.conversationDomain,
-                senderDomain: event.senderDomain,
-                payload: payload,
-                currentTimestamp: serverTimeDelta,
-                eventTimestamp: eventTimestamp
-            )
-        }
-    }
+    var callCenter: WireCallCenterV3?
 
     func processCallEvent(
         callingConversationId: QualifiedConversationId,
@@ -334,6 +263,85 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             self?.zmLog.debug("processed calling message")
             self?.callEventStatus.finishedProcessingCallEvent()
         })
+    }
+
+    // MARK: Private
+
+    // MARK: - Private Properties
+
+    private static let logger = Logger(subsystem: "VoIP Push", category: "CallingRequestStrategy")
+
+    private let zmLog = ZMSLog(tag: "calling")
+
+    private let messageSender: MessageSenderInterface
+    private let flowManager: FlowManagerType
+    private let decoder = JSONDecoder()
+
+    private let callEventStatus: CallEventStatus
+
+    private var callConfigRequestSync: ZMSingleRequestSync! = nil
+    private var callConfigCompletion: CallConfigRequestCompletion?
+
+    private var clientDiscoverySync: ZMSingleRequestSync! = nil
+    private var clientDiscoveryRequest: ClientDiscoveryRequest?
+
+    private let ephemeralURLSession = URLSession(configuration: .ephemeral)
+    private let fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol
+
+    private var cancellables = Set<AnyCancellable>()
+
+    private func setupEventProcessingNotifications() {
+        NotificationCenter.default
+            .publisher(for: .eventProcessorDidStartProcessingEventsNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: true) }
+            .store(in: &cancellables)
+
+        NotificationCenter.default
+            .publisher(for: .eventProcessorDidFinishProcessingEventsNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: false) }
+            .store(in: &cancellables)
+    }
+
+    private func processEvent(_ event: ZMUpdateEvent) {
+        let serverTimeDelta = managedObjectContext.serverTimeDelta
+        guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
+
+        if let genericMessage = GenericMessage(from: event), genericMessage.hasCalling {
+            guard
+                let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
+
+                let callEventContent = CallEventContent(from: payload, with: decoder),
+                let senderUUID = event.senderUUID,
+                let conversationUUID = event.conversationUUID,
+                let eventTimestamp = event.timestamp
+            else {
+                zmLog.error("ignoring calling message: \(genericMessage)")
+                return
+            }
+
+            zmLog
+                .debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
+
+            guard !callEventContent.isRemoteMute else {
+                callCenter?.isMuted = true
+                zmLog.debug("muted remotely from calling message")
+                return
+            }
+
+            processCallEvent(
+                callingConversationId: genericMessage.calling.qualifiedConversationID,
+                conversationUUID: conversationUUID,
+                senderUUID: senderUUID,
+                clientId: event.senderClientID ?? callEventContent.callerClientID,
+                conversationDomain: event.conversationDomain,
+                senderDomain: event.senderDomain,
+                payload: payload,
+                currentTimestamp: serverTimeDelta,
+                eventTimestamp: eventTimestamp
+            )
+        }
     }
 }
 
@@ -510,6 +518,8 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         case transport(error: Error)
         case missingData
 
+        // MARK: Internal
+
         var errorDescription: String? {
             switch self {
             case let .server(status: status):
@@ -545,9 +555,7 @@ extension CallingRequestStrategy {
     }
 
     struct ClientDiscoveryResponsePayload: Decodable {
-        static let apiVersionKey = CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptions")!
-
-        let clients: [AVSClient]
+        // MARK: Lifecycle
 
         /// This can decode the two types of responses listed below given that v0 uses legacy endpoints and v1 uses
         /// federation endpoints
@@ -630,23 +638,33 @@ extension CallingRequestStrategy {
             clients = allClients
         }
 
+        // MARK: Internal
+
         enum CodingKeys: String, CodingKey {
             case missing
         }
+
+        static let apiVersionKey = CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptions")!
+
+        let clients: [AVSClient]
     }
 
     private struct DynamicKey: CodingKey {
-        var stringValue: String
+        // MARK: Lifecycle
 
         init?(stringValue: String) {
             self.stringValue = stringValue
         }
 
-        var intValue: Int?
-
         init?(intValue: Int) {
             nil
         }
+
+        // MARK: Internal
+
+        var stringValue: String
+
+        var intValue: Int?
     }
 }
 

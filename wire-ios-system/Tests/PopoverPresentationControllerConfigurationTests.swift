@@ -20,7 +20,7 @@ import XCTest
 @testable import WireSystem
 
 final class PopoverPresentationControllerConfigurationTests: XCTestCase {
-    private typealias SUT = PopoverPresentationControllerConfiguration
+    // MARK: Internal
 
     @MainActor
     func testConfiguringBarButtonItem() throws {
@@ -87,4 +87,8 @@ final class PopoverPresentationControllerConfigurationTests: XCTestCase {
         XCTAssertEqual(popoverPresentationController.sourceRect, .init(x: 3, y: 3, width: 4, height: 4))
         XCTAssertNil(popoverPresentationController.barButtonItem)
     }
+
+    // MARK: Private
+
+    private typealias SUT = PopoverPresentationControllerConfiguration
 }

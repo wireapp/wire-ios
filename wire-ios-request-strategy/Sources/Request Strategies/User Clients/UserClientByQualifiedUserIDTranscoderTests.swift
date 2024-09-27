@@ -20,6 +20,16 @@ import Foundation
 @testable import WireRequestStrategy
 
 class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
+    // MARK: - Helpers
+
+    typealias RequestPayload = UserClientByQualifiedUserIDTranscoder.RequestPayload
+
+    typealias ResponsePayload = UserClientByQualifiedUserIDTranscoder.ResponsePayload
+
+    // MARK: - Response processing
+
+    typealias ReponsePayload = UserClientByQualifiedUserIDTranscoder.ResponsePayload
+
     var sut: UserClientByQualifiedUserIDTranscoder!
     let id1 = QualifiedID(uuid: .create(), domain: "foo.com")
     let id2 = QualifiedID(uuid: .create(), domain: "bar.com")
@@ -34,17 +44,11 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
         super.tearDown()
     }
 
-    // MARK: - Helpers
-
-    typealias RequestPayload = UserClientByQualifiedUserIDTranscoder.RequestPayload
-
     func payload(from request: ZMTransportRequest) throws -> RequestPayload? {
         let payloadString = try XCTUnwrap(request.payload as? String)
         let payloadData = try XCTUnwrap(payloadString.data(using: .utf8))
         return RequestPayload(payloadData)
     }
-
-    typealias ResponsePayload = UserClientByQualifiedUserIDTranscoder.ResponsePayload
 
     func payload(from response: ZMTransportResponse) throws -> ResponsePayload? {
         ResponsePayload(response)
@@ -94,10 +98,6 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
         let payload = try payload(from: request)
         XCTAssertEqual(payload, RequestPayload(qualifiedIDs: [id1, id2]))
     }
-
-    // MARK: - Response processing
-
-    typealias ReponsePayload = UserClientByQualifiedUserIDTranscoder.ResponsePayload
 
     func test_responseProcessing_EmptyResults() throws {
         try syncMOC.performAndWait {

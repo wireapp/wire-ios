@@ -20,6 +20,22 @@ import Foundation
 import WireDataModel
 
 public class RegisterPushTokenAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        token: PushToken,
+        clientID: String,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.appID = token.appIdentifier
+        self.token = token.deviceTokenString
+        self.tokenType = token.transportType
+        self.clientID = clientID
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = Void
@@ -27,6 +43,8 @@ public class RegisterPushTokenAction: EntityAction {
     public enum Failure: LocalizedError, SafeForLoggingStringConvertible {
         case appDoesNotExist
         case unknown(status: Int)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -51,18 +69,4 @@ public class RegisterPushTokenAction: EntityAction {
     public let token: String
     public let tokenType: String
     public let clientID: String
-
-    // MARK: - Life cycle
-
-    public init(
-        token: PushToken,
-        clientID: String,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.appID = token.appIdentifier
-        self.token = token.deviceTokenString
-        self.tokenType = token.transportType
-        self.clientID = clientID
-        self.resultHandler = resultHandler
-    }
 }

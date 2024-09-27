@@ -19,15 +19,18 @@
 import UIKit
 
 final class KeyboardBlockObserver: NSObject {
-    struct ChangeInfo {
-        enum Kind {
-            case show, hide, change
-        }
+    // MARK: Lifecycle
 
-        let frame: CGRect
-        let animationDuration: TimeInterval
-        let kind: Kind
-        let isKeyboardCollapsed: Bool?
+    init(block: @escaping ChangeBlock) {
+        self.changeBlock = block
+        super.init()
+        registerKeyboardObservers()
+    }
+
+    // MARK: Internal
+
+    struct ChangeInfo {
+        // MARK: Lifecycle
 
         init?(_ note: Notification, kind: Kind) {
             guard let info = note.userInfo else { return nil }
@@ -55,17 +58,24 @@ final class KeyboardBlockObserver: NSObject {
                 self.isKeyboardCollapsed = nil
             }
         }
+
+        // MARK: Internal
+
+        enum Kind {
+            case show, hide, change
+        }
+
+        let frame: CGRect
+        let animationDuration: TimeInterval
+        let kind: Kind
+        let isKeyboardCollapsed: Bool?
     }
 
     typealias ChangeBlock = (ChangeInfo) -> Void
 
-    private let changeBlock: ChangeBlock
+    // MARK: Private
 
-    init(block: @escaping ChangeBlock) {
-        self.changeBlock = block
-        super.init()
-        registerKeyboardObservers()
-    }
+    private let changeBlock: ChangeBlock
 
     private func registerKeyboardObservers() {
         let center = NotificationCenter.default

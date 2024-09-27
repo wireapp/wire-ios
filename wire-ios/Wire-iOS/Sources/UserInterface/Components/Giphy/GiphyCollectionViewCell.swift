@@ -21,11 +21,7 @@ import UIKit
 import Ziphy
 
 final class GiphyCollectionViewCell: UICollectionViewCell {
-    static let CellIdentifier = "GiphyCollectionViewCell"
-
-    let imageView = FLAnimatedImageView()
-    var ziph: Ziph?
-    var representation: ZiphyAnimatedImage?
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -47,6 +43,14 @@ final class GiphyCollectionViewCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    static let CellIdentifier = "GiphyCollectionViewCell"
+
+    let imageView = FLAnimatedImageView()
+    var ziph: Ziph?
+    var representation: ZiphyAnimatedImage?
 
     override func prepareForReuse() {
         imageView.animatedImage = nil

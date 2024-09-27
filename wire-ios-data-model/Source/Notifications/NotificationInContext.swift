@@ -32,29 +32,7 @@ import WireUtilities
 
 @objcMembers
 public class NotificationInContext: NSObject {
-    static let objectInNotificationKey = "objectInNotification"
-
-    /// Name of the notification
-    public var name: Notification.Name {
-        notification.name
-    }
-
-    /// The object of the notification
-    public var object: AnyObject? {
-        userInfo[NotificationInContext.objectInNotificationKey] as AnyObject?
-    }
-
-    /// The context in which the notification is valid
-    public var context: NotificationContext {
-        notification.object! as! NotificationContext
-    }
-
-    public var userInfo: [AnyHashable: Any] {
-        notification.userInfo ?? [:]
-    }
-
-    /// Internal notification
-    private let notification: Notification
+    // MARK: Lifecycle
 
     public init(
         name: Notification.Name,
@@ -77,9 +55,25 @@ public class NotificationInContext: NSObject {
         self.notification = notification
     }
 
-    /// Post notification in default notification center
-    public func post() {
-        NotificationCenter.default.post(notification)
+    // MARK: Public
+
+    /// Name of the notification
+    public var name: Notification.Name {
+        notification.name
+    }
+
+    /// The object of the notification
+    public var object: AnyObject? {
+        userInfo[NotificationInContext.objectInNotificationKey] as AnyObject?
+    }
+
+    /// The context in which the notification is valid
+    public var context: NotificationContext {
+        notification.object! as! NotificationContext
+    }
+
+    public var userInfo: [AnyHashable: Any] {
+        notification.userInfo ?? [:]
     }
 
     /// Register for observer
@@ -110,6 +104,20 @@ public class NotificationInContext: NSObject {
             using(notificationInContext)
         })
     }
+
+    /// Post notification in default notification center
+    public func post() {
+        NotificationCenter.default.post(notification)
+    }
+
+    // MARK: Internal
+
+    static let objectInNotificationKey = "objectInNotification"
+
+    // MARK: Private
+
+    /// Internal notification
+    private let notification: Notification
 }
 
 extension NotificationInContext {

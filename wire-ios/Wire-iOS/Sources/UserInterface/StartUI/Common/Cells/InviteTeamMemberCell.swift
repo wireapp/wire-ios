@@ -23,8 +23,31 @@ import WireDesign
 // MARK: - StartUIIconCell
 
 class StartUIIconCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupViews()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     typealias CellColors = SemanticColors.View
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
+
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted ? CellColors.backgroundUserCellHightLighted : CellColors.backgroundUserCell
+        }
+    }
+
+    // MARK: Fileprivate
 
     fileprivate let iconView = UIImageView()
     fileprivate let titleLabel = DynamicFontLabel(
@@ -45,23 +68,6 @@ class StartUIIconCell: UICollectionViewCell {
         didSet {
             titleLabel.text = title
         }
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted ? CellColors.backgroundUserCellHightLighted : CellColors.backgroundUserCell
-        }
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupViews()
-        createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     fileprivate func setupViews() {

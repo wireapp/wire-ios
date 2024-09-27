@@ -20,15 +20,19 @@ import Foundation
 
 extension AppLockController {
     public struct Config {
-        public let isAvailable: Bool
-        public let isForced: Bool
-        public let timeout: UInt
+        // MARK: Lifecycle
 
         public init(isAvailable: Bool, isForced: Bool, timeout: UInt) {
             self.isAvailable = isAvailable
             self.isForced = isForced
             self.timeout = timeout
         }
+
+        // MARK: Public
+
+        public let isAvailable: Bool
+        public let isForced: Bool
+        public let timeout: UInt
     }
 
     /// The legacy config is determined at compile time through the SessionManagerConfiguration, which
@@ -36,14 +40,18 @@ extension AppLockController {
     /// the 'features' endpoint.
 
     public struct LegacyConfig: Codable {
-        public let isForced: Bool
-        public let timeout: UInt
-        public let requireCustomPasscode: Bool
+        // MARK: Lifecycle
 
         public init(isForced: Bool = false, timeout: UInt = 10, requireCustomPasscode: Bool = false) {
             self.isForced = isForced
             self.timeout = timeout
             self.requireCustomPasscode = requireCustomPasscode
         }
+
+        // MARK: Public
+
+        public let isForced: Bool
+        public let timeout: UInt
+        public let requireCustomPasscode: Bool
     }
 }

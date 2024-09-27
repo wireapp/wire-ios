@@ -28,13 +28,7 @@ public protocol IsE2EICertificateEnrollmentRequiredProtocol {
 // MARK: - IsE2EICertificateEnrollmentRequiredUseCase
 
 public final class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificateEnrollmentRequiredProtocol {
-    // MARK: - Properties
-
-    private let isE2EIdentityEnabled: Bool
-    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private let gracePeriodEndDate: Date?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         isE2EIdentityEnabled: Bool,
@@ -46,6 +40,8 @@ public final class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificate
         self.gracePeriodEndDate = gracePeriodEndDate
     }
 
+    // MARK: Public
+
     // MARK: - Methods
 
     public func invoke() async throws -> Bool {
@@ -54,4 +50,12 @@ public final class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificate
         let hasCertificate = await selfClientCertificateProvider.hasCertificate
         return isE2EIdentityEnabled && !hasCertificate && gracePeriodEndDate.isInThePast
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let isE2EIdentityEnabled: Bool
+    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
+    private let gracePeriodEndDate: Date?
 }

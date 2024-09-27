@@ -26,62 +26,7 @@ import XCTest
 /// This class provides a `NSManagedObjectContext` in order to test views with real data instead
 /// of mock objects.
 final class CoreDataFixture {
-    private var selfUserInTeam = false
-    var selfUser: ZMUser!
-    var otherUser: ZMUser!
-    var otherUserConversation: ZMConversation!
-    var team: Team?
-    var teamMember: Member?
-    let usernames = [
-        "Anna",
-        "Claire",
-        "Dean",
-        "Erik",
-        "Frank",
-        "Gregor",
-        "Hanna",
-        "Inge",
-        "James",
-        "Laura",
-        "Klaus",
-        "Lena",
-        "Linea",
-        "Lara",
-        "Elliot",
-        "Francois",
-        "Felix",
-        "Brian",
-        "Brett",
-        "Hannah",
-        "Ana",
-        "Paula",
-    ]
-
-    // The provider to use when configuring `SelfUser.provider`, needed only when tested code
-    // invokes `SelfUser.current`. As we slowly migrate to `UserType`, we will use this more
-    // and the `var selfUser: ZMUser!` less.
-    //
-    var selfUserProvider: SelfUserProvider!
-
-    /// From ZMSnapshot
-
-    typealias ConfigurationWithDeviceType = (_ view: UIView, _ isPad: Bool) -> Void
-    typealias Configuration = (_ view: UIView) -> Void
-
-    let dispatchGroup = DispatchGroup()
-    var uiMOC: NSManagedObjectContext!
-    var coreDataStack: CoreDataStack!
-
-    /// The color of the container view in which the view to
-    /// be snapshot will be placed, defaults to UIColor.lightGrayColor
-    var snapshotBackgroundColor: UIColor?
-
-    /// If YES the uiMOC will have image and file caches. Defaults to NO.
-    var needsCaches: Bool {
-        false
-    }
-
-    var documentsDirectory: URL?
+    // MARK: Lifecycle
 
     init() {
         /// From ZMSnapshotTestCase
@@ -145,11 +90,106 @@ final class CoreDataFixture {
         MockUser.setMockSelf(nil)
     }
 
+    // MARK: Internal
+
+    /// From ZMSnapshot
+
+    typealias ConfigurationWithDeviceType = (_ view: UIView, _ isPad: Bool) -> Void
+    typealias Configuration = (_ view: UIView) -> Void
+
+    var selfUser: ZMUser!
+    var otherUser: ZMUser!
+    var otherUserConversation: ZMConversation!
+    var team: Team?
+    var teamMember: Member?
+    let usernames = [
+        "Anna",
+        "Claire",
+        "Dean",
+        "Erik",
+        "Frank",
+        "Gregor",
+        "Hanna",
+        "Inge",
+        "James",
+        "Laura",
+        "Klaus",
+        "Lena",
+        "Linea",
+        "Lara",
+        "Elliot",
+        "Francois",
+        "Felix",
+        "Brian",
+        "Brett",
+        "Hannah",
+        "Ana",
+        "Paula",
+    ]
+
+    // The provider to use when configuring `SelfUser.provider`, needed only when tested code
+    // invokes `SelfUser.current`. As we slowly migrate to `UserType`, we will use this more
+    // and the `var selfUser: ZMUser!` less.
+    //
+    var selfUserProvider: SelfUserProvider!
+
+    let dispatchGroup = DispatchGroup()
+    var uiMOC: NSManagedObjectContext!
+    var coreDataStack: CoreDataStack!
+
+    /// The color of the container view in which the view to
+    /// be snapshot will be placed, defaults to UIColor.lightGrayColor
+    var snapshotBackgroundColor: UIColor?
+
+    var documentsDirectory: URL?
+
+    /// If YES the uiMOC will have image and file caches. Defaults to NO.
+    var needsCaches: Bool {
+        false
+    }
+
     func setUpCaches() {
         let cacheLocation = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         uiMOC.zm_userImageCache = UserImageLocalCache(location: nil)
         uiMOC.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
     }
+
+    func createUser(name: String) -> ZMUser {
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.name = name
+        user.remoteIdentifier = UUID()
+        return user
+    }
+
+    func createService(name: String) -> ZMUser {
+        let user = createUser(name: name)
+        user.serviceIdentifier = UUID.create().transportString()
+        user.providerIdentifier = UUID.create().transportString()
+        return user
+    }
+
+    func nonTeamTest(_ block: () throws -> Void) rethrows {
+        let wasInTeam = selfUserInTeam
+        selfUserInTeam = false
+        updateTeamStatus(wasInTeam: wasInTeam)
+        try block()
+    }
+
+    func teamTest(_ block: () throws -> Void) rethrows {
+        let wasInTeam = selfUserInTeam
+        selfUserInTeam = true
+        updateTeamStatus(wasInTeam: wasInTeam)
+        try block()
+    }
+
+    func markAllMessagesAsUnread(in conversation: ZMConversation) {
+        conversation.lastReadServerTimeStamp = Date.distantPast
+        conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
+    }
+
+    // MARK: Private
+
+    private var selfUserInTeam = false
 
     // MARK: – Setup
 
@@ -199,39 +239,6 @@ final class CoreDataFixture {
             teamMember = nil
             team = nil
         }
-    }
-
-    func createUser(name: String) -> ZMUser {
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        user.name = name
-        user.remoteIdentifier = UUID()
-        return user
-    }
-
-    func createService(name: String) -> ZMUser {
-        let user = createUser(name: name)
-        user.serviceIdentifier = UUID.create().transportString()
-        user.providerIdentifier = UUID.create().transportString()
-        return user
-    }
-
-    func nonTeamTest(_ block: () throws -> Void) rethrows {
-        let wasInTeam = selfUserInTeam
-        selfUserInTeam = false
-        updateTeamStatus(wasInTeam: wasInTeam)
-        try block()
-    }
-
-    func teamTest(_ block: () throws -> Void) rethrows {
-        let wasInTeam = selfUserInTeam
-        selfUserInTeam = true
-        updateTeamStatus(wasInTeam: wasInTeam)
-        try block()
-    }
-
-    func markAllMessagesAsUnread(in conversation: ZMConversation) {
-        conversation.lastReadServerTimeStamp = Date.distantPast
-        conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
     }
 }
 

@@ -19,6 +19,22 @@
 import Foundation
 
 public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        clientID: String,
+        keyPackages: [String],
+        ciphersuite: MLSCipherSuite,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.clientID = clientID
+        self.keyPackages = keyPackages
+        self.ciphersuite = ciphersuite
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = Void
@@ -30,6 +46,8 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
         case mlsProtocolError
         case mlsIdentityMismatch
         case unknown(status: Int)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -55,18 +73,4 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
     public var clientID: String
     public var keyPackages: [String]
     public let ciphersuite: MLSCipherSuite
-
-    // MARK: - Life cycle
-
-    public init(
-        clientID: String,
-        keyPackages: [String],
-        ciphersuite: MLSCipherSuite,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.clientID = clientID
-        self.keyPackages = keyPackages
-        self.ciphersuite = ciphersuite
-        self.resultHandler = resultHandler
-    }
 }

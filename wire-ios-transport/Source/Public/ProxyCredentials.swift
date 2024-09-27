@@ -21,9 +21,7 @@ import Foundation
 // MARK: - ProxyCredentials
 
 public final class ProxyCredentials: NSObject {
-    public var username: String
-    public var password: String
-    public var proxy: ProxySettingsProvider
+    // MARK: Lifecycle
 
     init(proxy: ProxySettingsProvider, username: String, password: String) {
         self.username = username
@@ -39,18 +37,11 @@ public final class ProxyCredentials: NSObject {
         self.init(proxy: proxy, username: username, password: password)
     }
 
-    public func persist() throws {
-        guard
-            let usernameData = username.data(using: .utf8),
-            let passwordData = password.data(using: .utf8)
-        else { return }
+    // MARK: Public
 
-        try? Keychain.deleteItem(.usernameItem(for: proxy))
-        try? Keychain.deleteItem(.passwordItem(for: proxy))
-
-        try Keychain.storeItem(.usernameItem(for: proxy), value: usernameData)
-        try Keychain.storeItem(.passwordItem(for: proxy), value: passwordData)
-    }
+    public var username: String
+    public var password: String
+    public var proxy: ProxySettingsProvider
 
     public static func retrieve(for proxy: ProxySettingsProvider) -> ProxyCredentials? {
         do {
@@ -79,20 +70,31 @@ public final class ProxyCredentials: NSObject {
         }
         return true
     }
+
+    public func persist() throws {
+        guard
+            let usernameData = username.data(using: .utf8),
+            let passwordData = password.data(using: .utf8)
+        else { return }
+
+        try? Keychain.deleteItem(.usernameItem(for: proxy))
+        try? Keychain.deleteItem(.passwordItem(for: proxy))
+
+        try Keychain.storeItem(.usernameItem(for: proxy), value: usernameData)
+        try Keychain.storeItem(.passwordItem(for: proxy), value: passwordData)
+    }
 }
 
 // MARK: - GenericPasswordKeychainItem
 
 struct GenericPasswordKeychainItem: KeychainItem {
-    // MARK: - Properties
-
-    private let itemIdentifier: String
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(itemIdentifier: String) {
         self.itemIdentifier = itemIdentifier
     }
+
+    // MARK: Internal
 
     // MARK: - Methods
 
@@ -111,6 +113,12 @@ struct GenericPasswordKeychainItem: KeychainItem {
             kSecValueData: value,
         ]
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let itemIdentifier: String
 }
 
 extension KeychainItem where Self == GenericPasswordKeychainItem {

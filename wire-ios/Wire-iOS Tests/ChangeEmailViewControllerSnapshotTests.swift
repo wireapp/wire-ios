@@ -22,10 +22,7 @@ import XCTest
 @testable import Wire
 
 final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -40,23 +37,6 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
         snapshotHelper = nil
         userSession = nil
         super.tearDown()
-    }
-
-    // MARK: - Helper method
-
-    private func createSut(emailAddress: String?) -> UIViewController {
-        let mockUser = MockUserType.createSelfUser(name: "User")
-        let userProfile = MockUserProfile()
-        userSession = UserSessionMock(mockUser: mockUser)
-        userSession.userProfile = userProfile
-        mockUser.emailAddress = emailAddress
-
-        userProfile.addObserver_MockMethod = { _ in }
-
-        let sut = ChangeEmailViewController(user: mockUser, userSession: userSession)
-        let viewController = sut.wrapInNavigationController()
-
-        return viewController
     }
 
     // MARK: Snapshot Tests
@@ -75,5 +55,29 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
                 testName: #function,
                 line: #line
             )
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - Helper method
+
+    private func createSut(emailAddress: String?) -> UIViewController {
+        let mockUser = MockUserType.createSelfUser(name: "User")
+        let userProfile = MockUserProfile()
+        userSession = UserSessionMock(mockUser: mockUser)
+        userSession.userProfile = userProfile
+        mockUser.emailAddress = emailAddress
+
+        userProfile.addObserver_MockMethod = { _ in }
+
+        let sut = ChangeEmailViewController(user: mockUser, userSession: userSession)
+        let viewController = sut.wrapInNavigationController()
+
+        return viewController
     }
 }

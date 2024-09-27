@@ -24,11 +24,7 @@ import Foundation
 /// after they've been preprocessed (downscaled & encrypted). After all the assets have been uploaded
 /// transfer state is changed to .uploaded which is the signal that the asset message is ready to be sent.
 public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
-    let requestFactory = AssetRequestFactory()
-    var upstreamSync: ZMUpstreamModifiedObjectSync!
-    var preprocessor: AssetsPreprocessor
-
-    public var shouldUseBackgroundSession = true
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -49,6 +45,10 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
         )
     }
 
+    // MARK: Public
+
+    public var shouldUseBackgroundSession = true
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [preprocessor, upstreamSync, self]
     }
@@ -56,6 +56,14 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         upstreamSync.nextRequest(for: apiVersion)
     }
+
+    // MARK: Internal
+
+    let requestFactory = AssetRequestFactory()
+    var upstreamSync: ZMUpstreamModifiedObjectSync!
+    var preprocessor: AssetsPreprocessor
+
+    // MARK: Private
 
     private static var updatePredicate: NSPredicate {
         NSPredicate(

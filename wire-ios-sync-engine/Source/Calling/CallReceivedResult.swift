@@ -25,6 +25,8 @@ public enum CallError: Int32 {
     /// Impossible to receive a call due to incompatible protocol (e.g. older versions)
     case unknownProtocol
 
+    // MARK: Lifecycle
+
     /// Creates the call error from the AVS flag.
     /// - parameter wcall_error: The flag
     /// - returns: The decoded error, or `nil` if the flag couldn't be processed.
@@ -37,6 +39,8 @@ public enum CallError: Int32 {
             return nil
         }
     }
+
+    // MARK: Internal
 
     /// The raw flag for the call error
     var wcall_error: Int32 {

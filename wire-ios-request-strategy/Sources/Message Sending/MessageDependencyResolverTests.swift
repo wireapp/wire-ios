@@ -20,6 +20,24 @@ import XCTest
 @testable import WireDataModel
 
 final class MessageDependencyResolverTests: MessagingTestBase {
+    struct Arrangement {
+        enum Scaffolding {
+            static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
+            static let prekey = Payload.Prekey(key: "prekey123", id: nil)
+            static let prekeyByQualifiedUserID =
+                [clientID.domain: [clientID.userID.transportString(): [clientID.clientID: prekey]]]
+        }
+
+        let coreDataStack: CoreDataStack
+
+        func arrange() -> (Arrangement, MessageDependencyResolver) {
+            (
+                self,
+                MessageDependencyResolver(context: coreDataStack.syncContext)
+            )
+        }
+    }
+
     func testThatGivenMessageWithoutDependencies_thenDontWait() async throws {
         // given
         let message = GenericMessageEntity(
@@ -116,24 +134,6 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             // should pass here
         } catch {
             XCTFail(String(reflecting: error))
-        }
-    }
-
-    struct Arrangement {
-        enum Scaffolding {
-            static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
-            static let prekey = Payload.Prekey(key: "prekey123", id: nil)
-            static let prekeyByQualifiedUserID =
-                [clientID.domain: [clientID.userID.transportString(): [clientID.clientID: prekey]]]
-        }
-
-        let coreDataStack: CoreDataStack
-
-        func arrange() -> (Arrangement, MessageDependencyResolver) {
-            (
-                self,
-                MessageDependencyResolver(context: coreDataStack.syncContext)
-            )
         }
     }
 }

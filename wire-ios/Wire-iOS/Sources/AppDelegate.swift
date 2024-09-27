@@ -42,30 +42,13 @@ extension Notification.Name {
 // MARK: - AppDelegate
 
 final class AppDelegate: UIResponder, UIApplicationDelegate {
-    // MARK: - Private Property
+    // MARK: Internal
 
-    private lazy var voIPPushManager = VoIPPushManager(
-        application: UIApplication.shared,
-        requiredPushTokenType: requiredPushTokenType,
-        pushTokenService: pushTokenService
-    )
-
-    private let pushTokenService = PushTokenService()
-
-    private var launchOperations: [LaunchSequenceOperation] = [
-        DeveloperFlagOperation(),
-        BackendEnvironmentOperation(),
-        TrackingOperation(),
-        PerformanceDebuggerOperation(),
-        AVSLoggingOperation(),
-        AutomationHelperOperation(),
-        MediaManagerOperation(),
-        FileBackupExcluderOperation(),
-        BackendInfoOperation(),
-        FontSchemeOperation(),
-        CleanUpDebugStateOperation(),
-    ]
-    private var appStateCalculator = AppStateCalculator()
+    // TODO: [WPB-8778] remove this property
+    @available(*, deprecated, message: "Will be removed")
+    static var shared: AppDelegate {
+        UIApplication.shared.delegate as! AppDelegate
+    }
 
     // MARK: - Private Set Property
 
@@ -76,17 +59,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private(set) var mainWindow: UIWindow!
 
+    var launchOptions: LaunchOptions = [:]
+
+    var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
+
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
         SessionManager.shared?.unauthenticatedSession
-    }
-
-    var launchOptions: LaunchOptions = [:]
-
-    // TODO: [WPB-8778] remove this property
-    @available(*, deprecated, message: "Will be removed")
-    static var shared: AppDelegate {
-        UIApplication.shared.delegate as! AppDelegate
     }
 
     // TODO: [WPB-9867]: remove this property
@@ -102,8 +81,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     var shouldConfigureSelfUserProvider: Bool {
         true
     }
-
-    var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
 
     func application(
         _ application: UIApplication,
@@ -325,6 +302,33 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         guard appRootRouter == nil else { return }
         createAppRootRouterAndInitialiazeOperations(launchOptions)
     }
+
+    // MARK: Private
+
+    // MARK: - Private Property
+
+    private lazy var voIPPushManager = VoIPPushManager(
+        application: UIApplication.shared,
+        requiredPushTokenType: requiredPushTokenType,
+        pushTokenService: pushTokenService
+    )
+
+    private let pushTokenService = PushTokenService()
+
+    private var launchOperations: [LaunchSequenceOperation] = [
+        DeveloperFlagOperation(),
+        BackendEnvironmentOperation(),
+        TrackingOperation(),
+        PerformanceDebuggerOperation(),
+        AVSLoggingOperation(),
+        AutomationHelperOperation(),
+        MediaManagerOperation(),
+        FileBackupExcluderOperation(),
+        BackendInfoOperation(),
+        FontSchemeOperation(),
+        CleanUpDebugStateOperation(),
+    ]
+    private var appStateCalculator = AppStateCalculator()
 }
 
 // MARK: - Private Helpers

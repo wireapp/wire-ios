@@ -29,7 +29,6 @@ protocol CellConfigurationConfigurable: Reusable {
 // MARK: - CellConfiguration
 
 enum CellConfiguration {
-    typealias Action = (UIView) -> Void
     case linkHeader
     case secureLinkHeader
     case leadingButton(
@@ -61,6 +60,26 @@ enum CellConfiguration {
         set: (Bool, UIView) -> Void
     )
 
+    // MARK: Internal
+
+    typealias Action = (UIView) -> Void
+
+    // MARK: - Convenience
+
+    static var allCellTypes: [UITableViewCell.Type] {
+        [
+            IconToggleSubtitleCell.self,
+            LinkHeaderCell.self,
+            SecureLinkHeaderCell.self,
+            ActionCell.self,
+            LoadingIndicatorCell.self,
+            TextCell.self,
+            GuestLinkInfoCell.self,
+            IconActionCell.self,
+            SettingsAppearanceCell.self,
+        ]
+    }
+
     var cellType: CellConfigurationConfigurable.Type {
         switch self {
         case .iconToggle: IconToggleSubtitleCell.self
@@ -87,22 +106,6 @@ enum CellConfiguration {
         case let .leadingButton(_, _, action: action): action
         case let .iconAction(_, _, _, action: action): action
         }
-    }
-
-    // MARK: - Convenience
-
-    static var allCellTypes: [UITableViewCell.Type] {
-        [
-            IconToggleSubtitleCell.self,
-            LinkHeaderCell.self,
-            SecureLinkHeaderCell.self,
-            ActionCell.self,
-            LoadingIndicatorCell.self,
-            TextCell.self,
-            GuestLinkInfoCell.self,
-            IconActionCell.self,
-            SettingsAppearanceCell.self,
-        ]
     }
 
     static func prepare(_ tableView: UITableView) {

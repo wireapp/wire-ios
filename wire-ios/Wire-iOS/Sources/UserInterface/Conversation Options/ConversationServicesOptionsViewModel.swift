@@ -51,20 +51,7 @@ protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
 // MARK: - ConversationServicesOptionsViewModel
 
 final class ConversationServicesOptionsViewModel {
-    struct State {
-        var rows = [CellConfiguration]()
-        var isLoading = false
-    }
-
-    var state = State() {
-        didSet {
-            delegate?.conversationServicesOptionsViewModel(self, didUpdateState: state)
-        }
-    }
-
-    weak var delegate: ConversationServicesOptionsViewModelDelegate?
-
-    private let configuration: ConversationServicesOptionsViewModelConfiguration
+    // MARK: Lifecycle
 
     init(configuration: ConversationServicesOptionsViewModelConfiguration) {
         self.configuration = configuration
@@ -75,11 +62,19 @@ final class ConversationServicesOptionsViewModel {
         }
     }
 
-    private func updateRows() {
-        state.rows = [.allowServicesToggle(
-            get: { [unowned self] in configuration.allowServices },
-            set: { [unowned self] in setAllowServices($0, sender: $1) }
-        )]
+    // MARK: Internal
+
+    struct State {
+        var rows = [CellConfiguration]()
+        var isLoading = false
+    }
+
+    weak var delegate: ConversationServicesOptionsViewModelDelegate?
+
+    var state = State() {
+        didSet {
+            delegate?.conversationServicesOptionsViewModel(self, didUpdateState: state)
+        }
     }
 
     /// set conversation option AllowServices
@@ -134,5 +129,16 @@ final class ConversationServicesOptionsViewModel {
         }
 
         return nil
+    }
+
+    // MARK: Private
+
+    private let configuration: ConversationServicesOptionsViewModelConfiguration
+
+    private func updateRows() {
+        state.rows = [.allowServicesToggle(
+            get: { [unowned self] in configuration.allowServices },
+            set: { [unowned self] in setAllowServices($0, sender: $1) }
+        )]
     }
 }

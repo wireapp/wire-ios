@@ -19,6 +19,8 @@
 import Foundation
 
 struct UserContactJoinEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserContactJoinEvent {
@@ -29,6 +31,8 @@ struct UserContactJoinEventDecoder {
 
         return UserContactJoinEvent(name: user.name)
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let name: String

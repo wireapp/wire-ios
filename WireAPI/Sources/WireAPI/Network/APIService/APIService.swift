@@ -50,10 +50,7 @@ public protocol APIServiceProtocol {
 /// headers if needed.
 
 public final class APIService: APIServiceProtocol {
-    private let backendURL: URL
-    private let authenticationStorage: any AuthenticationStorage
-    private let urlSession: URLSession
-    private let minTLSVersion: TLSVersion
+    // MARK: Lifecycle
 
     /// Create a new `APIService`.
     ///
@@ -90,6 +87,8 @@ public final class APIService: APIServiceProtocol {
         self.urlSession = urlSession
         self.minTLSVersion = minTLSVersion
     }
+
+    // MARK: Public
 
     /// Execute a request to the backend.
     ///
@@ -129,4 +128,11 @@ public final class APIService: APIServiceProtocol {
 
         return (data, httpURLResponse)
     }
+
+    // MARK: Private
+
+    private let backendURL: URL
+    private let authenticationStorage: any AuthenticationStorage
+    private let urlSession: URLSession
+    private let minTLSVersion: TLSVersion
 }

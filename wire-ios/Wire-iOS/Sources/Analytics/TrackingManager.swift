@@ -22,7 +22,7 @@ import WireCommonComponents
 import WireSyncEngine
 
 final class TrackingManager: NSObject, TrackingInterface {
-    private let flowManagerObserver: NSObjectProtocol
+    // MARK: Lifecycle
 
     override private init() {
         AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
@@ -37,6 +37,8 @@ final class TrackingManager: NSObject, TrackingInterface {
         )
     }
 
+    // MARK: Internal
+
     static let shared = TrackingManager()
 
     var disableAnalyticsSharing: Bool {
@@ -47,4 +49,8 @@ final class TrackingManager: NSObject, TrackingInterface {
             ExtensionSettings.shared.disableAnalyticsSharing = newValue
         }
     }
+
+    // MARK: Private
+
+    private let flowManagerObserver: NSObjectProtocol
 }

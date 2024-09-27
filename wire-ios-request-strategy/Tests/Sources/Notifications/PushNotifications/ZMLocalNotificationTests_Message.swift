@@ -698,6 +698,8 @@ extension ZMLocalNotificationTests_Message {
 enum FileType {
     case txt, video, audio
 
+    // MARK: Internal
+
     var testURL: URL {
         var name: String
         var fileExtension: String

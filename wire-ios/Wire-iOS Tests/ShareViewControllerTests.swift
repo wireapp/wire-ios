@@ -45,10 +45,7 @@ extension MockShareViewControllerConversation: StableRandomParticipantsProvider 
 
 // TODO: [WPB-10223] Fix the snapshots
 final class ShareViewControllerTests: XCTestCase {
-    private var groupConversation: MockShareViewControllerConversation!
-    private var oneToOneConversation: MockShareViewControllerConversation!
-    private var sut: ShareViewController<MockShareViewControllerConversation, MockShareableMessage>!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -72,18 +69,6 @@ final class ShareViewControllerTests: XCTestCase {
         oneToOneConversation = nil
         sut = nil
         super.tearDown()
-    }
-
-    private func activateDarkColorScheme() {
-        sut.overrideUserInterfaceStyle = .dark
-        NSAttributedString.invalidateMarkdownStyle()
-        NSAttributedString.invalidateParagraphStyle()
-    }
-
-    private func disableDarkColorScheme() {
-        sut.overrideUserInterfaceStyle = .light
-        NSAttributedString.invalidateMarkdownStyle()
-        NSAttributedString.invalidateParagraphStyle()
     }
 
     func testForAllowMultipleSelectionDisabled() {
@@ -112,16 +97,6 @@ final class ShareViewControllerTests: XCTestCase {
         makeTestForShareViewController(message: message)
     }
 
-    private func verifyLocation(
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        let message: MockShareableMessage = MockMessageFactory.locationMessage()
-        message.backingLocationMessageData.name = "Stranger Place"
-        makeTestForShareViewController(message: message, file: file, testName: testName, line: line)
-    }
-
     func testThatItRendersCorrectlyShareViewController_LocationMessage() {
         verifyLocation()
     }
@@ -129,21 +104,6 @@ final class ShareViewControllerTests: XCTestCase {
     func testThatItRendersCorrectlyShareViewController_FileMessage() {
         let message: MockShareableMessage = MockMessageFactory.fileTransferMessage()
         makeTestForShareViewController(message: message)
-    }
-
-    private func verifyImage(
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        let img = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
-
-        let message: MockShareableMessage = MockMessageFactory.imageMessage(with: img)
-        createSut(message: message)
-
-        XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
-
-        snapshotHelper.verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
     }
 
     func testThatItRendersCorrectlyShareViewController_Photos() {
@@ -159,6 +119,50 @@ final class ShareViewControllerTests: XCTestCase {
 
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
         snapshotHelper.verifyInAllDeviceSizes(matching: sut)
+    }
+
+    // MARK: Private
+
+    private var groupConversation: MockShareViewControllerConversation!
+    private var oneToOneConversation: MockShareViewControllerConversation!
+    private var sut: ShareViewController<MockShareViewControllerConversation, MockShareableMessage>!
+    private var snapshotHelper: SnapshotHelper!
+
+    private func activateDarkColorScheme() {
+        sut.overrideUserInterfaceStyle = .dark
+        NSAttributedString.invalidateMarkdownStyle()
+        NSAttributedString.invalidateParagraphStyle()
+    }
+
+    private func disableDarkColorScheme() {
+        sut.overrideUserInterfaceStyle = .light
+        NSAttributedString.invalidateMarkdownStyle()
+        NSAttributedString.invalidateParagraphStyle()
+    }
+
+    private func verifyLocation(
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let message: MockShareableMessage = MockMessageFactory.locationMessage()
+        message.backingLocationMessageData.name = "Stranger Place"
+        makeTestForShareViewController(message: message, file: file, testName: testName, line: line)
+    }
+
+    private func verifyImage(
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let img = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+
+        let message: MockShareableMessage = MockMessageFactory.imageMessage(with: img)
+        createSut(message: message)
+
+        XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
+
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
     }
 
     private func createSut(
@@ -190,11 +194,11 @@ final class ShareViewControllerTests: XCTestCase {
 // MARK: - MockShareableMessage
 
 final class MockShareableMessage: MockMessage, Shareable {
+    typealias I = MockShareViewControllerConversation
+
     func previewView() -> UIView? {
         nil
     }
-
-    typealias I = MockShareViewControllerConversation
 
     func share(to: [some Any]) {
         // no-op

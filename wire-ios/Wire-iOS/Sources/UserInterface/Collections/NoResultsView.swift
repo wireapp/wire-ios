@@ -22,30 +22,7 @@ import WireDesign
 import WireSystem
 
 final class NoResultsView: UIView {
-    let label = DynamicFontLabel(
-        fontSpec: .body,
-        color: SemanticColors.Label.textCollectionSecondary
-    )
-    private let iconView = UIImageView()
-
-    var placeholderText: String? {
-        get {
-            label.text
-        }
-        set {
-            label.text = newValue
-            label.accessibilityLabel = newValue
-        }
-    }
-
-    var icon: StyleKitIcon? {
-        didSet {
-            if let icon {
-                iconView.setTemplateIcon(icon, size: .custom(160))
-                iconView.tintColor = SemanticColors.Icon.foregroundPlaceholder
-            }
-        }
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -75,4 +52,34 @@ final class NoResultsView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatal("init?(coder:) is not implemented")
     }
+
+    // MARK: Internal
+
+    let label = DynamicFontLabel(
+        fontSpec: .body,
+        color: SemanticColors.Label.textCollectionSecondary
+    )
+
+    var placeholderText: String? {
+        get {
+            label.text
+        }
+        set {
+            label.text = newValue
+            label.accessibilityLabel = newValue
+        }
+    }
+
+    var icon: StyleKitIcon? {
+        didSet {
+            if let icon {
+                iconView.setTemplateIcon(icon, size: .custom(160))
+                iconView.tintColor = SemanticColors.Icon.foregroundPlaceholder
+            }
+        }
+    }
+
+    // MARK: Private
+
+    private let iconView = UIImageView()
 }

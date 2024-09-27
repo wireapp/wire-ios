@@ -23,23 +23,7 @@ import WireSyncEngine
 // MARK: - TextSearchResultCell
 
 final class TextSearchResultCell: UITableViewCell {
-    private let messageTextLabel = SearchResultLabel()
-    private let footerView = TextSearchResultFooter()
-    private let userImageViewContainer = UIView()
-    private let userImageView = UserImageView()
-    private let separatorView: UIView = {
-        let view = UIView()
-        view.backgroundColor = SemanticColors.View.backgroundSeparatorCell
-        return view
-    }()
-
-    private var observerToken: Any?
-    let resultCountView: RoundedTextBadge = {
-        let roundedTextBadge = RoundedTextBadge()
-        roundedTextBadge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
-
-        return roundedTextBadge
-    }()
+    // MARK: Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -71,6 +55,65 @@ final class TextSearchResultCell: UITableViewCell {
         textLabel?.textColor = SemanticColors.Label.textDefaultWhite
         textLabel?.font = .smallSemiboldFont
     }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let resultCountView: RoundedTextBadge = {
+        let roundedTextBadge = RoundedTextBadge()
+        roundedTextBadge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
+
+        return roundedTextBadge
+    }()
+
+    var message: ZMConversationMessage? = .none
+    var queries: [String] = []
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        message = .none
+        queries = []
+    }
+
+    func configure(with newMessage: ZMConversationMessage, queries newQueries: [String], userSession: UserSession) {
+        message = newMessage
+        queries = newQueries
+        userImageView.userSession = userSession
+        userImageView.user = newMessage.senderUser
+        footerView.message = newMessage
+        if !ProcessInfo.processInfo.isRunningTests {
+            observerToken = userSession.addMessageObserver(self, for: newMessage)
+        }
+
+        updateTextView()
+    }
+
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+
+        let backgroundColor = SemanticColors.View.backgroundDefault
+        let backgroundIsHighlighted = SemanticColors.View.backgroundUserCellHightLighted
+
+        contentView.backgroundColor = highlighted ? backgroundIsHighlighted : backgroundColor
+    }
+
+    // MARK: Private
+
+    private let messageTextLabel = SearchResultLabel()
+    private let footerView = TextSearchResultFooter()
+    private let userImageViewContainer = UIView()
+    private let userImageView = UserImageView()
+    private let separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = SemanticColors.View.backgroundSeparatorCell
+        return view
+    }()
+
+    private var observerToken: Any?
 
     private func createConstraints() {
         for item in [
@@ -115,17 +158,6 @@ final class TextSearchResultCell: UITableViewCell {
         ])
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        message = .none
-        queries = []
-    }
-
     private func updateTextView() {
         guard let message else {
             return
@@ -149,31 +181,6 @@ final class TextSearchResultCell: UITableViewCell {
         resultCountView.isHidden = totalMatches <= 1
         resultCountView.textLabel.text = "\(totalMatches)"
         resultCountView.updateCollapseConstraints(isCollapsed: false)
-    }
-
-    func configure(with newMessage: ZMConversationMessage, queries newQueries: [String], userSession: UserSession) {
-        message = newMessage
-        queries = newQueries
-        userImageView.userSession = userSession
-        userImageView.user = newMessage.senderUser
-        footerView.message = newMessage
-        if !ProcessInfo.processInfo.isRunningTests {
-            observerToken = userSession.addMessageObserver(self, for: newMessage)
-        }
-
-        updateTextView()
-    }
-
-    var message: ZMConversationMessage? = .none
-    var queries: [String] = []
-
-    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        super.setHighlighted(highlighted, animated: animated)
-
-        let backgroundColor = SemanticColors.View.backgroundDefault
-        let backgroundIsHighlighted = SemanticColors.View.backgroundUserCellHightLighted
-
-        contentView.backgroundColor = highlighted ? backgroundIsHighlighted : backgroundColor
     }
 }
 

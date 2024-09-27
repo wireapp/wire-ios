@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 
 final class DeveloperDebugActionsViewModelTests: XCTestCase {
+    // MARK: Internal
+
     func testButtonsCount() throws {
         // given
         let viewModel = makeViewModel()
@@ -28,6 +30,8 @@ final class DeveloperDebugActionsViewModelTests: XCTestCase {
         // then
         XCTAssertEqual(viewModel.buttons.count, 6)
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

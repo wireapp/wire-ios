@@ -19,8 +19,7 @@
 import Foundation
 
 public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMEventConsumer {
-    fileprivate let syncStatus: SyncStatus
-    fileprivate var singleRequstSync: ZMSingleRequestSync!
+    // MARK: Lifecycle
 
     @objc
     public init(
@@ -35,6 +34,8 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
         configuration = [.allowsRequestsDuringSlowSync]
         self.singleRequstSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
+
+    // MARK: Public
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard syncStatus.currentSyncPhase == .fetchingLegalHoldStatus else { return nil }
@@ -79,6 +80,14 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
         singleRequstSync.readyForNextRequestIfNotBusy()
     }
 
+    // MARK: - ZMEventConsumer
+
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+        events.forEach(processUpdateEvent)
+    }
+
+    // MARK: Internal
+
     func deleteLegalHoldRequest() {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         selfUser.legalHoldRequestWasCancelled()
@@ -98,11 +107,10 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
         }
     }
 
-    // MARK: - ZMEventConsumer
+    // MARK: Fileprivate
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        events.forEach(processUpdateEvent)
-    }
+    fileprivate let syncStatus: SyncStatus
+    fileprivate var singleRequstSync: ZMSingleRequestSync!
 
     fileprivate func processUpdateEvent(_ event: ZMUpdateEvent) {
         switch event.type {

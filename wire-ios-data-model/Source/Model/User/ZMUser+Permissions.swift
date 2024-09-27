@@ -31,6 +31,8 @@ enum ConversationAction {
     case leaveConversation
     case deleteConvesation
 
+    // MARK: Internal
+
     var name: String {
         switch self {
         case .addConversationMember: "add_conversation_member"

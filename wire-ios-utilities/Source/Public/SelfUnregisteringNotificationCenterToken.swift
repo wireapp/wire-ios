@@ -20,8 +20,7 @@ import Foundation
 
 @objcMembers
 public final class SelfUnregisteringNotificationCenterToken: NSObject {
-    private let notificationCenter: NotificationCenter
-    private let token: NSObjectProtocol
+    // MARK: Lifecycle
 
     public init(_ token: NSObjectProtocol) {
         self.notificationCenter = .default
@@ -39,4 +38,9 @@ public final class SelfUnregisteringNotificationCenterToken: NSObject {
     deinit {
         notificationCenter.removeObserver(token)
     }
+
+    // MARK: Private
+
+    private let notificationCenter: NotificationCenter
+    private let token: NSObjectProtocol
 }

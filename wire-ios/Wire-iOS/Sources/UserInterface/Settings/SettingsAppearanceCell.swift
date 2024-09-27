@@ -24,6 +24,55 @@ import WireUtilities
 // MARK: - SettingsAppearanceCell
 
 final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
+    // MARK: Lifecycle
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+
+        setupView()
+        createConstraints()
+    }
+
+    // MARK: Internal
+
+    var isAccessoryIconHidden = true {
+        didSet {
+            accessoryIconView.isHidden = isAccessoryIconHidden
+        }
+    }
+
+    var type: SettingsCellPreview = .none {
+        didSet {
+            switch type {
+            case let .image(image):
+                iconImageView.image = image
+                iconImageView.backgroundColor = UIColor.clear
+                subtitleLabel.text = nil
+                titleLabelToIconInset.isActive = true
+
+            case let .color(color):
+                iconImageView.backgroundColor = color
+                iconImageView.image = .none
+                subtitleLabel.text = AccentColor.current.name
+                titleLabelToIconInset.isActive = true
+
+            default:
+                subtitleLabel.text = nil
+                iconImageView.backgroundColor = UIColor.clear
+                iconImageView.image = .none
+                titleLabelToIconInset.isActive = false
+            }
+            layoutIfNeeded()
+        }
+    }
+
+    func configure(with configuration: CellConfiguration) {
+        guard case let .appearance(title) = configuration else { preconditionFailure() }
+        titleLabel.text = title
+    }
+
+    // MARK: Private
+
     // MARK: - Properties
 
     private let titleLabel: UILabel = {
@@ -68,51 +117,6 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
         equalTo: iconImageView.trailingAnchor,
         constant: 22
     )
-
-    var isAccessoryIconHidden = true {
-        didSet {
-            accessoryIconView.isHidden = isAccessoryIconHidden
-        }
-    }
-
-    var type: SettingsCellPreview = .none {
-        didSet {
-            switch type {
-            case let .image(image):
-                iconImageView.image = image
-                iconImageView.backgroundColor = UIColor.clear
-                subtitleLabel.text = nil
-                titleLabelToIconInset.isActive = true
-
-            case let .color(color):
-                iconImageView.backgroundColor = color
-                iconImageView.image = .none
-                subtitleLabel.text = AccentColor.current.name
-                titleLabelToIconInset.isActive = true
-
-            default:
-                subtitleLabel.text = nil
-                iconImageView.backgroundColor = UIColor.clear
-                iconImageView.image = .none
-                titleLabelToIconInset.isActive = false
-            }
-            layoutIfNeeded()
-        }
-    }
-
-    // MARK: - Life Cycle
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        setupView()
-        createConstraints()
-    }
-
-    func configure(with configuration: CellConfiguration) {
-        guard case let .appearance(title) = configuration else { preconditionFailure() }
-        titleLabel.text = title
-    }
 
     // MARK: - Helpers
 

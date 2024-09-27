@@ -22,30 +22,9 @@ import WireDesign
 /// A cell that displays a user property as part of the rich profile data.
 
 final class UserPropertyCell: SeparatorTableViewCell {
-    private let contentStack = UIStackView()
+    // MARK: Internal
+
     typealias LabelColors = SemanticColors.Label
-
-    private let propertyNameLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(
-            fontSpec: .smallRegularFont,
-            color: LabelColors.textUserPropertyCellName
-        )
-        label.numberOfLines = 1
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.setContentHuggingPriority(.defaultLow, for: .vertical)
-        return label
-    }()
-
-    private let propertyValueLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(
-            fontSpec: .normalLightFont,
-            color: LabelColors.textDefault
-        )
-        label.numberOfLines = 0
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.setContentHuggingPriority(.defaultLow, for: .vertical)
-        return label
-    }()
 
     // MARK: - Contents
 
@@ -79,6 +58,31 @@ final class UserPropertyCell: SeparatorTableViewCell {
         configureSubviews()
         configureConstraints()
     }
+
+    // MARK: Private
+
+    private let contentStack = UIStackView()
+    private let propertyNameLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(
+            fontSpec: .smallRegularFont,
+            color: LabelColors.textUserPropertyCellName
+        )
+        label.numberOfLines = 1
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.setContentHuggingPriority(.defaultLow, for: .vertical)
+        return label
+    }()
+
+    private let propertyValueLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(
+            fontSpec: .normalLightFont,
+            color: LabelColors.textDefault
+        )
+        label.numberOfLines = 0
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.setContentHuggingPriority(.defaultLow, for: .vertical)
+        return label
+    }()
 
     private func configureSubviews() {
         backgroundColor = SemanticColors.View.backgroundUserCell

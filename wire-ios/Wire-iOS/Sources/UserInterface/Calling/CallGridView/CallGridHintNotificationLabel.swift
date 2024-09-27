@@ -21,12 +21,12 @@ import UIKit
 // MARK: - CallGridHintKind
 
 enum CallGridHintKind {
-    private typealias HintString = L10n.Localizable.Call.Grid.Hints
-
     case fullscreen
     case zoom
     case goBackOrZoom
     case goBack
+
+    // MARK: Internal
 
     var message: String {
         switch self {
@@ -40,6 +40,10 @@ enum CallGridHintKind {
             HintString.goBack
         }
     }
+
+    // MARK: Private
+
+    private typealias HintString = L10n.Localizable.Call.Grid.Hints
 }
 
 // MARK: - CallGridHintNotificationLabel

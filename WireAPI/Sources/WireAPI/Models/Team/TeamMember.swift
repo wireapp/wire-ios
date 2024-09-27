@@ -21,25 +21,7 @@ import Foundation
 /// Represents the membership of a user to a particular team.
 
 public struct TeamMember: Equatable {
-    /// The id of the member.
-
-    public let userID: UUID
-
-    /// When the member was created.
-
-    public let creationDate: Date?
-
-    /// The id of user who created this member.
-
-    public let creatorID: UUID?
-
-    /// The legalhold status of the member.
-
-    public let legalholdStatus: LegalholdStatus?
-
-    /// The member's permissions.
-
-    public let permissions: TeamMemberPermissions?
+    // MARK: Lifecycle
 
     /// Create a new `TeamMember`.
     ///
@@ -63,4 +45,26 @@ public struct TeamMember: Equatable {
         self.legalholdStatus = legalholdStatus
         self.permissions = permissions
     }
+
+    // MARK: Public
+
+    /// The id of the member.
+
+    public let userID: UUID
+
+    /// When the member was created.
+
+    public let creationDate: Date?
+
+    /// The id of user who created this member.
+
+    public let creatorID: UUID?
+
+    /// The legalhold status of the member.
+
+    public let legalholdStatus: LegalholdStatus?
+
+    /// The member's permissions.
+
+    public let permissions: TeamMemberPermissions?
 }

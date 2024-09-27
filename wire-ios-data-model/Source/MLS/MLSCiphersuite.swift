@@ -28,6 +28,8 @@ public enum MLSCipherSuite: Int, Codable, CustomStringConvertible {
     case MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448 = 6
     case MLS_256_DHKEMP384_AES256GCM_SHA384_P384 = 7
 
+    // MARK: Public
+
     public var description: String {
         switch self {
         case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:

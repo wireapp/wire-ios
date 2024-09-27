@@ -19,11 +19,7 @@
 import Foundation
 
 public final class SelfUserRequestStrategy: AbstractRequestStrategy {
-    // MARK: - Properties
-
-    private let actionSync: EntityActionSync
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -38,9 +34,17 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
         )
     }
 
+    // MARK: Public
+
     // MARK: - Request
 
     override public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         actionSync.nextRequest(for: apiVersion)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let actionSync: EntityActionSync
 }

@@ -22,7 +22,11 @@ import WireSystem
 // MARK: - CoreCryptoKeyProvider
 
 public class CoreCryptoKeyProvider {
+    // MARK: Lifecycle
+
     public init() {}
+
+    // MARK: Public
 
     public func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
         removeLegacyKeyIfNeeded()
@@ -37,6 +41,8 @@ public class CoreCryptoKeyProvider {
             }
         }
     }
+
+    // MARK: Private
 
     private func fetchCoreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()

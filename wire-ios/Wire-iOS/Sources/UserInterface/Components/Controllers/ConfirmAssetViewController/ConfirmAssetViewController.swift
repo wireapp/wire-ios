@@ -25,6 +25,20 @@ import WireDesign
 // MARK: - ConfirmAssetViewController
 
 final class ConfirmAssetViewController: UIViewController {
+    // MARK: Lifecycle
+
+    init(context: Context) {
+        self.context = context
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     enum Asset {
         /// Can either be UIImage or FLAnimatedImage
         case image(mediaAsset: MediaAsset)
@@ -33,22 +47,26 @@ final class ConfirmAssetViewController: UIViewController {
 
     typealias Confirm = (_ editedImage: UIImage?) -> Void
     struct Context {
-        let asset: Asset
-        let onConfirm: Confirm?
-        let onCancel: Completion?
+        // MARK: Lifecycle
 
         init(asset: Asset, onConfirm: Confirm? = nil, onCancel: Completion? = nil) {
             self.asset = asset
             self.onConfirm = onConfirm
             self.onCancel = onCancel
         }
+
+        // MARK: Internal
+
+        let asset: Asset
+        let onConfirm: Confirm?
+        let onCancel: Completion?
     }
+
+    let context: Context
 
     var asset: Asset {
         context.asset
     }
-
-    let context: Context
 
     var previewTitle: String? {
         didSet {
@@ -56,6 +74,44 @@ final class ConfirmAssetViewController: UIViewController {
             view.setNeedsUpdateConstraints()
         }
     }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        false
+    }
+
+    /// Show editing options only if the image is not animated
+    var showEditingOptions: Bool {
+        switch asset {
+        case let .image(mediaAsset):
+            mediaAsset is UIImage
+        case .video:
+            false
+        }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        switch asset {
+        case let .image(mediaAsset):
+            createPreviewPanel(image: mediaAsset)
+        case let .video(url):
+            createVideoPanel(videoURL: url)
+        }
+
+        createTopPanel()
+        createBottomPanel()
+        createContentLayoutGuide()
+        createConstraints()
+
+        setupStyle()
+    }
+
+    // MARK: Private
 
     private var playerViewController: AVPlayerViewController?
     private var imagePreviewView: FLAnimatedImageView?
@@ -83,40 +139,13 @@ final class ConfirmAssetViewController: UIViewController {
     private let contentLayoutGuide = UILayoutGuide()
     private let imageToolbarSeparatorView = UIView()
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
-
-    init(context: Context) {
-        self.context = context
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
+    private var imageToolbarFitsInsideImage: Bool {
         switch asset {
-        case let .image(mediaAsset):
-            createPreviewPanel(image: mediaAsset)
-        case let .video(url):
-            createVideoPanel(videoURL: url)
+        case let .image(image):
+            image.size.width > 192 && image.size.height > 96
+        case .video:
+            false
         }
-
-        createTopPanel()
-        createBottomPanel()
-        createContentLayoutGuide()
-        createConstraints()
-
-        setupStyle()
-    }
-
-    override var prefersStatusBarHidden: Bool {
-        false
     }
 
     // MARK: - View Creation
@@ -141,25 +170,6 @@ final class ConfirmAssetViewController: UIViewController {
         topPanel.backgroundColor = SemanticColors.View.backgroundDefault
 
         titleLabel.textColor = SemanticColors.Label.textDefault
-    }
-
-    /// Show editing options only if the image is not animated
-    var showEditingOptions: Bool {
-        switch asset {
-        case let .image(mediaAsset):
-            mediaAsset is UIImage
-        case .video:
-            false
-        }
-    }
-
-    private var imageToolbarFitsInsideImage: Bool {
-        switch asset {
-        case let .image(image):
-            image.size.width > 192 && image.size.height > 96
-        case .video:
-            false
-        }
     }
 
     private func createVideoPanel(videoURL: URL) {

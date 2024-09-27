@@ -20,9 +20,7 @@ import Foundation
 import WireSyncEngine
 
 class ProxiedRequestStrategyTests: MessagingTest {
-    fileprivate var sut: ProxiedRequestStrategy!
-    fileprivate var requestsStatus: ProxiedRequestsStatus!
-    fileprivate var mockApplicationStatus: MockApplicationStatus!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -217,4 +215,10 @@ class ProxiedRequestStrategyTests: MessagingTest {
         XCTAssertEqual(taskIdentifier.identifier, 1)
         XCTAssertEqual(taskIdentifier.sessionIdentifier, "123")
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var sut: ProxiedRequestStrategy!
+    fileprivate var requestsStatus: ProxiedRequestsStatus!
+    fileprivate var mockApplicationStatus: MockApplicationStatus!
 }

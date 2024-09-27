@@ -25,7 +25,15 @@ final class LastEventIDRepositoryTests: XCTestCase {
     var userID: UUID!
     var userDefaults: UserDefaults!
 
-    // MARK: - Life cycle
+    // MARK: - Helper
+
+    var userDefaultsKey: String {
+        "\(userID.uuidString)_lastEventID"
+    }
+
+    var getStoredValue: String? {
+        userDefaults.string(forKey: userDefaultsKey)
+    }
 
     override func setUp() {
         super.setUp()
@@ -41,16 +49,6 @@ final class LastEventIDRepositoryTests: XCTestCase {
         userDefaults = nil
 
         super.tearDown()
-    }
-
-    // MARK: - Helper
-
-    var userDefaultsKey: String {
-        "\(userID.uuidString)_lastEventID"
-    }
-
-    var getStoredValue: String? {
-        userDefaults.string(forKey: userDefaultsKey)
     }
 
     func storeValue(_ string: String) {

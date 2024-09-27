@@ -25,12 +25,7 @@ private let cellReuseIdentifier = "ConversationCell"
 // MARK: - ConversationSelectionViewController
 
 final class ConversationSelectionViewController: UITableViewController {
-    private var allConversations: [Conversation]
-    private var visibleConversations: [Conversation]
-
-    var selectionHandler: ((_ conversation: Conversation) -> Void)?
-
-    private let searchController = UISearchController(searchResultsController: nil)
+    // MARK: Lifecycle
 
     init(conversations: [Conversation]) {
         self.allConversations = conversations
@@ -54,6 +49,10 @@ final class ConversationSelectionViewController: UITableViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var selectionHandler: ((_ conversation: Conversation) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,6 +85,13 @@ final class ConversationSelectionViewController: UITableViewController {
             selectionHandler(visibleConversations[indexPath.row])
         }
     }
+
+    // MARK: Private
+
+    private var allConversations: [Conversation]
+    private var visibleConversations: [Conversation]
+
+    private let searchController = UISearchController(searchResultsController: nil)
 }
 
 // MARK: UISearchResultsUpdating

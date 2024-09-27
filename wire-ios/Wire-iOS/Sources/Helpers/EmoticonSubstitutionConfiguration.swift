@@ -23,22 +23,7 @@ private let zmLog = ZMSLog(tag: "EmoticonSubstitutionConfiguration")
 // MARK: - EmoticonSubstitutionConfiguration
 
 final class EmoticonSubstitutionConfiguration {
-    // Sorting keys is important. Longer keys should be resolved first,
-    // In order to make 'O:-)' to be resolved as '😇', not a 'O😊'.
-    lazy var shortcuts: [String] = substitutionRules.keys.sorted(by: {
-        $0.count >= $1.count
-    })
-
-    // key is substitution string like ':)', value is smile string 😊
-    let substitutionRules: [String: String]
-
-    static var sharedInstance: EmoticonSubstitutionConfiguration {
-        guard let filePath = Bundle.main.path(forResource: "emoticons.min", ofType: "json") else {
-            fatal("emoticons.min does not exist!")
-        }
-
-        return EmoticonSubstitutionConfiguration(configurationFile: filePath)
-    }
+    // MARK: Lifecycle
 
     init(configurationFile filePath: String) {
         let jsonResult: [String: String]?
@@ -60,4 +45,23 @@ final class EmoticonSubstitutionConfiguration {
             fatal("invalid value in dictionary")
         } ?? [:]
     }
+
+    // MARK: Internal
+
+    static var sharedInstance: EmoticonSubstitutionConfiguration {
+        guard let filePath = Bundle.main.path(forResource: "emoticons.min", ofType: "json") else {
+            fatal("emoticons.min does not exist!")
+        }
+
+        return EmoticonSubstitutionConfiguration(configurationFile: filePath)
+    }
+
+    // Sorting keys is important. Longer keys should be resolved first,
+    // In order to make 'O:-)' to be resolved as '😇', not a 'O😊'.
+    lazy var shortcuts: [String] = substitutionRules.keys.sorted(by: {
+        $0.count >= $1.count
+    })
+
+    // key is substitution string like ':)', value is smile string 😊
+    let substitutionRules: [String: String]
 }

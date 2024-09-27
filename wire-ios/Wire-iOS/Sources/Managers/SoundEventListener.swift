@@ -48,17 +48,7 @@ extension ZMConversationMessage {
 // MARK: - SoundEventListener
 
 final class SoundEventListener: NSObject {
-    weak var userSession: ZMUserSession?
-
-    static let SoundEventListenerIgnoreTimeForPushStart = 2.0
-
-    let soundEventWatchDog = SoundEventRulesWatchDog(ignoreTime: SoundEventListenerIgnoreTimeForPushStart)
-    var previousCallStates: [AVSIdentifier: CallState] = [:]
-
-    var unreadMessageObserverToken: NSObjectProtocol?
-    var unreadKnockMessageObserverToken: NSObjectProtocol?
-    var callStateObserverToken: Any?
-    var networkAvailabilityObserverToken: Any?
+    // MARK: Lifecycle
 
     init(userSession: ZMUserSession) {
         self.userSession = userSession
@@ -87,6 +77,20 @@ final class SoundEventListener: NSObject {
         soundEventWatchDog.startIgnoreDate = Date()
         soundEventWatchDog.isMuted = UIApplication.shared.applicationState == .background
     }
+
+    // MARK: Internal
+
+    static let SoundEventListenerIgnoreTimeForPushStart = 2.0
+
+    weak var userSession: ZMUserSession?
+
+    let soundEventWatchDog = SoundEventRulesWatchDog(ignoreTime: SoundEventListenerIgnoreTimeForPushStart)
+    var previousCallStates: [AVSIdentifier: CallState] = [:]
+
+    var unreadMessageObserverToken: NSObjectProtocol?
+    var unreadKnockMessageObserverToken: NSObjectProtocol?
+    var callStateObserverToken: Any?
+    var networkAvailabilityObserverToken: Any?
 
     func playSoundIfAllowed(_ mediaManagerSound: MediaManagerSound) {
         guard soundEventWatchDog.outputAllowed else { return }

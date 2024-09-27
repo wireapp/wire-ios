@@ -36,24 +36,7 @@ protocol InputBarEditViewDelegate: AnyObject {
 // MARK: - InputBarEditView
 
 final class InputBarEditView: UIView {
-    typealias IconColors = SemanticColors.Icon
-
-    private static var iconButtonTemplate: IconButton {
-        let iconButton = IconButton()
-        iconButton.setIconColor(IconColors.foregroundDefaultBlack, for: .normal)
-        iconButton.setIconColor(IconColors.foregroundDefaultBlack.withAlphaComponent(0.6), for: .highlighted)
-
-        return iconButton
-    }
-
-    let undoButton = InputBarEditView.iconButtonTemplate
-    let confirmButton = InputBarEditView.iconButtonTemplate
-    let cancelButton = InputBarEditView.iconButtonTemplate
-    let iconSize: CGFloat = StyleKitIcon.Size.tiny.rawValue
-    private let margin: CGFloat = 16
-    private lazy var buttonMargin: CGFloat = margin + iconSize / 2
-
-    weak var delegate: InputBarEditViewDelegate?
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero)
@@ -65,6 +48,31 @@ final class InputBarEditView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    typealias IconColors = SemanticColors.Icon
+
+    let undoButton = InputBarEditView.iconButtonTemplate
+    let confirmButton = InputBarEditView.iconButtonTemplate
+    let cancelButton = InputBarEditView.iconButtonTemplate
+    let iconSize: CGFloat = StyleKitIcon.Size.tiny.rawValue
+    weak var delegate: InputBarEditViewDelegate?
+
+    @objc
+    func buttonTapped(_ sender: IconButton) {
+        let typeBySender = [undoButton: EditButtonType.undo, confirmButton: .confirm, cancelButton: .cancel]
+        guard let type = typeBySender[sender] else { return }
+        delegate?.inputBarEditView(self, didTapButtonWithType: type)
+    }
+
+    @objc
+    func didLongPressUndoButton(_ sender: UILongPressGestureRecognizer) {
+        guard sender.state == .began else { return }
+        delegate?.inputBarEditViewDidLongPressUndoButton(self)
+    }
+
+    // MARK: Fileprivate
 
     fileprivate func configureViews() {
         for item in [undoButton, confirmButton, cancelButton] {
@@ -109,16 +117,16 @@ final class InputBarEditView: UIView {
         ])
     }
 
-    @objc
-    func buttonTapped(_ sender: IconButton) {
-        let typeBySender = [undoButton: EditButtonType.undo, confirmButton: .confirm, cancelButton: .cancel]
-        guard let type = typeBySender[sender] else { return }
-        delegate?.inputBarEditView(self, didTapButtonWithType: type)
+    // MARK: Private
+
+    private static var iconButtonTemplate: IconButton {
+        let iconButton = IconButton()
+        iconButton.setIconColor(IconColors.foregroundDefaultBlack, for: .normal)
+        iconButton.setIconColor(IconColors.foregroundDefaultBlack.withAlphaComponent(0.6), for: .highlighted)
+
+        return iconButton
     }
 
-    @objc
-    func didLongPressUndoButton(_ sender: UILongPressGestureRecognizer) {
-        guard sender.state == .began else { return }
-        delegate?.inputBarEditViewDidLongPressUndoButton(self)
-    }
+    private let margin: CGFloat = 16
+    private lazy var buttonMargin: CGFloat = margin + iconSize / 2
 }

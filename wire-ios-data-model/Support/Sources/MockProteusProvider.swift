@@ -20,9 +20,7 @@ import Foundation
 import WireDataModel
 
 public class MockProteusProvider: ProteusProviding {
-    public let mockProteusService: MockProteusServiceInterface
-    public let mockKeyStore: SpyUserClientKeyStore
-    public var useProteusService: Bool
+    // MARK: Lifecycle
 
     public init(
         mockProteusService: MockProteusServiceInterface = MockProteusServiceInterface(),
@@ -32,6 +30,30 @@ public class MockProteusProvider: ProteusProviding {
         self.mockProteusService = mockProteusService
         self.mockKeyStore = mockKeyStore
         self.useProteusService = useProteusService
+    }
+
+    // MARK: Public
+
+    public let mockProteusService: MockProteusServiceInterface
+    public let mockKeyStore: SpyUserClientKeyStore
+    public var useProteusService: Bool
+
+    public var mockCanPerform = true
+
+    public var canPerform: Bool {
+        mockCanPerform
+    }
+
+    public static func spyForTests() -> SpyUserClientKeyStore {
+        let url = Self.createTempFolder()
+        return SpyUserClientKeyStore(accountDirectory: url, applicationContainer: url)
+    }
+
+    // FIXME: [WPB-5867] this is defined in WireTesting, somehow it is not possible to import here for now - [Francois]
+    public static func createTempFolder() -> URL {
+        let url = URL(fileURLWithPath: [NSTemporaryDirectory(), UUID().uuidString].joined(separator: "/"))
+        try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
+        return url
     }
 
     public func perform<T>(
@@ -56,22 +78,5 @@ public class MockProteusProvider: ProteusProviding {
         } else {
             try await keyStoreBlock(mockKeyStore)
         }
-    }
-
-    public var mockCanPerform = true
-    public var canPerform: Bool {
-        mockCanPerform
-    }
-
-    public static func spyForTests() -> SpyUserClientKeyStore {
-        let url = Self.createTempFolder()
-        return SpyUserClientKeyStore(accountDirectory: url, applicationContainer: url)
-    }
-
-    // FIXME: [WPB-5867] this is defined in WireTesting, somehow it is not possible to import here for now - [Francois]
-    public static func createTempFolder() -> URL {
-        let url = URL(fileURLWithPath: [NSTemporaryDirectory(), UUID().uuidString].joined(separator: "/"))
-        try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
-        return url
     }
 }

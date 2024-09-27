@@ -22,34 +22,13 @@ import WireRequestStrategy
 import WireUtilities
 
 struct ZMUserSessionBuilder {
-    // MARK: - Properties
-
-    private var analytics: (any AnalyticsType)?
-    private var appVersion: String?
-    private var appLock: (any AppLockType)?
-    private var application: (any ZMApplication)?
-    private var applicationStatusDirectory: ApplicationStatusDirectory?
-    private var contextStorage: (any LAContextStorable)?
-    private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
-    private var coreDataStack: CoreDataStack?
-    private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
-    private var dependencies: UserSessionDependencies?
-    private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
-    private var earService: (any EARServiceInterface)?
-    private var flowManager: (any FlowManagerType)?
-    private var lastE2EIUpdateDateRepository: (any LastE2EIdentityUpdateDateRepositoryInterface)?
-    private var lastEventIDRepository: (any LastEventIDRepositoryInterface)?
-    private var mediaManager: (any MediaManagerType)?
-    private var mlsService: (any MLSServiceInterface)?
-    private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
-    private var recurringActionService: (any RecurringActionServiceInterface)?
-    private var sharedUserDefaults: UserDefaults?
-    private var transportSession: (any TransportSessionType)?
-    private var userId: UUID?
+    // MARK: Lifecycle
 
     // MARK: - Initialize
 
     init() {}
+
+    // MARK: Internal
 
     // MARK: - Build
 
@@ -221,6 +200,33 @@ struct ZMUserSessionBuilder {
         self.transportSession = transportSession
         self.userId = userId
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var analytics: (any AnalyticsType)?
+    private var appVersion: String?
+    private var appLock: (any AppLockType)?
+    private var application: (any ZMApplication)?
+    private var applicationStatusDirectory: ApplicationStatusDirectory?
+    private var contextStorage: (any LAContextStorable)?
+    private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
+    private var coreDataStack: CoreDataStack?
+    private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
+    private var dependencies: UserSessionDependencies?
+    private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
+    private var earService: (any EARServiceInterface)?
+    private var flowManager: (any FlowManagerType)?
+    private var lastE2EIUpdateDateRepository: (any LastE2EIdentityUpdateDateRepositoryInterface)?
+    private var lastEventIDRepository: (any LastEventIDRepositoryInterface)?
+    private var mediaManager: (any MediaManagerType)?
+    private var mlsService: (any MLSServiceInterface)?
+    private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
+    private var recurringActionService: (any RecurringActionServiceInterface)?
+    private var sharedUserDefaults: UserDefaults?
+    private var transportSession: (any TransportSessionType)?
+    private var userId: UUID?
 
     // MARK: UserSesssionDependencies
 

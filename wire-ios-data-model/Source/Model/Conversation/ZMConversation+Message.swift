@@ -33,6 +33,8 @@ extension ZMConversation {
         case invalidFileUrl
         case fileSharingIsRestricted
 
+        // MARK: Public
+
         public var errorDescription: String? {
             switch self {
             case .missingManagedObjectContext:

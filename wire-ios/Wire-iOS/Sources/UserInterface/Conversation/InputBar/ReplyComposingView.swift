@@ -64,15 +64,7 @@ extension ZMConversationMessage {
 // MARK: - ReplyComposingView
 
 final class ReplyComposingView: UIView {
-    // MARK: - Properties
-
-    let message: ZMConversationMessage
-    let closeButton = IconButton()
-    private let leftSideView = UIView(frame: .zero)
-    private var messagePreviewContainer: ReplyRoundCornersView!
-    private var previewView: UIView!
-    weak var delegate: ReplyComposingViewDelegate?
-    private var observerToken: Any?
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -92,6 +84,28 @@ final class ReplyComposingView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let message: ZMConversationMessage
+    let closeButton = IconButton()
+    weak var delegate: ReplyComposingViewDelegate?
+
+    // MARK: - Actions
+
+    @objc
+    func onTap() {
+        delegate?.composingViewWantsToShowMessage(composingView: self, message: message)
+    }
+
+    // MARK: Private
+
+    private let leftSideView = UIView(frame: .zero)
+    private var messagePreviewContainer: ReplyRoundCornersView!
+    private var previewView: UIView!
+    private var observerToken: Any?
 
     // MARK: - Setup Message Observer
 
@@ -155,13 +169,6 @@ final class ReplyComposingView: UIView {
         ]
 
         NSLayoutConstraint.activate(constraints)
-    }
-
-    // MARK: - Actions
-
-    @objc
-    func onTap() {
-        delegate?.composingViewWantsToShowMessage(composingView: self, message: message)
     }
 }
 

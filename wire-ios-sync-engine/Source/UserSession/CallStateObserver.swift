@@ -24,16 +24,7 @@ import WireDataModel
 
 @objc(ZMCallStateObserver)
 public final class CallStateObserver: NSObject {
-    @objc public static let CallInProgressNotification = Notification.Name(rawValue: "ZMCallInProgressNotification")
-    @objc public static let CallInProgressKey = "callInProgress"
-
-    fileprivate weak var notificationStyleProvider: CallNotificationStyleProvider?
-    fileprivate let localNotificationDispatcher: LocalNotificationDispatcher
-    fileprivate let uiContext: NSManagedObjectContext
-    fileprivate let syncContext: NSManagedObjectContext
-    fileprivate var callStateToken: Any?
-    fileprivate var missedCalltoken: Any?
-    fileprivate let systemMessageGenerator = CallSystemMessageGenerator()
+    // MARK: Lifecycle
 
     @objc
     public init(
@@ -51,6 +42,21 @@ public final class CallStateObserver: NSObject {
         self.callStateToken = WireCallCenterV3.addCallStateObserver(observer: self, context: uiContext)
         self.missedCalltoken = WireCallCenterV3.addMissedCallObserver(observer: self, context: uiContext)
     }
+
+    // MARK: Public
+
+    @objc public static let CallInProgressNotification = Notification.Name(rawValue: "ZMCallInProgressNotification")
+    @objc public static let CallInProgressKey = "callInProgress"
+
+    // MARK: Fileprivate
+
+    fileprivate weak var notificationStyleProvider: CallNotificationStyleProvider?
+    fileprivate let localNotificationDispatcher: LocalNotificationDispatcher
+    fileprivate let uiContext: NSManagedObjectContext
+    fileprivate let syncContext: NSManagedObjectContext
+    fileprivate var callStateToken: Any?
+    fileprivate var missedCalltoken: Any?
+    fileprivate let systemMessageGenerator = CallSystemMessageGenerator()
 
     fileprivate var callInProgress = false {
         didSet {

@@ -24,18 +24,7 @@ import WireSyncEngine
 // MARK: - PersonalAccountView
 
 final class PersonalAccountView: BaseAccountView {
-    let userImageView = {
-        let avatarImageView = AvatarImageView(frame: .zero)
-        avatarImageView.container.backgroundColor = SemanticColors.View.backgroundDefaultWhite
-
-        avatarImageView.initialsFont = .smallSemiboldFont
-        avatarImageView.initialsColor = SemanticColors.Label.textDefault
-
-        return avatarImageView
-    }()
-
-    private var conversationListObserver: NSObjectProtocol!
-    private var connectionRequestObserver: NSObjectProtocol!
+    // MARK: Lifecycle
 
     override init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         super.init(account: account, user: user, displayContext: displayContext)
@@ -74,6 +63,18 @@ final class PersonalAccountView: BaseAccountView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let userImageView = {
+        let avatarImageView = AvatarImageView(frame: .zero)
+        avatarImageView.container.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+
+        avatarImageView.initialsFont = .smallSemiboldFont
+        avatarImageView.initialsColor = SemanticColors.Label.textDefault
+
+        return avatarImageView
+    }()
+
     override func update() {
         super.update()
 
@@ -98,6 +99,11 @@ final class PersonalAccountView: BaseAccountView {
             dotView.widthAnchor.constraint(equalToConstant: dotSize),
         ]
     }
+
+    // MARK: Private
+
+    private var conversationListObserver: NSObjectProtocol!
+    private var connectionRequestObserver: NSObjectProtocol!
 }
 
 extension PersonalAccountView {

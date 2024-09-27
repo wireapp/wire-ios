@@ -24,47 +24,57 @@ import XCTest
 // MARK: - CodableAPIVersionAwareObject
 
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
-    enum CodingKeys: CodingKey {}
-
-    typealias InitCall = (Decoder, APIVersion)
-
-    var initCalls = [InitCall]()
+    // MARK: Lifecycle
 
     init(from decoder: Decoder, apiVersion: APIVersion) throws {
         initCalls.append((decoder, apiVersion))
     }
 
+    init() {}
+
+    // MARK: Internal
+
+    enum CodingKeys: CodingKey {}
+
+    typealias InitCall = (Decoder, APIVersion)
+
     // `encode(to:apiVersion:)` is non-mutable so we need to set up a mock
     typealias MockEncode = (Encoder, APIVersion) -> Void
+
+    var initCalls = [InitCall]()
+
     var mockEncode: MockEncode?
 
     func encode(to encoder: Encoder, apiVersion: APIVersion) throws {
         mockEncode?(encoder, apiVersion)
     }
-
-    init() {}
 }
 
 // MARK: - CodableObject
 
 private struct CodableObject: Codable {
-    enum CodingKeys: CodingKey {}
-
-    var initCalls = [Decoder]()
+    // MARK: Lifecycle
 
     init(from decoder: Decoder) throws {
         initCalls.append(decoder)
     }
 
+    init() {}
+
+    // MARK: Internal
+
+    enum CodingKeys: CodingKey {}
+
     // `encode(to encoder: Encoder)` is non-mutable so we need to set up a mock
     typealias MockEncode = (Encoder) -> Void
+
+    var initCalls = [Decoder]()
+
     var mockEncode: MockEncode?
 
     func encode(to encoder: Encoder) throws {
         mockEncode?(encoder)
     }
-
-    init() {}
 }
 
 // MARK: - Payload_CodingTests

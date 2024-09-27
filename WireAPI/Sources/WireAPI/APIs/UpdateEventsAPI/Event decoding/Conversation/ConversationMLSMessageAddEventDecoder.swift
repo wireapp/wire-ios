@@ -19,6 +19,8 @@
 import Foundation
 
 struct ConversationMLSMessageAddEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMLSMessageAddEvent {
@@ -49,6 +51,8 @@ struct ConversationMLSMessageAddEventDecoder {
             message: payload.text
         )
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let text: String

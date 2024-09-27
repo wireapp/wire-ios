@@ -36,29 +36,7 @@ protocol CallInfoRootViewControllerDelegate: CallingActionsViewDelegate {
 final class CallInfoRootViewController: UIViewController, UINavigationControllerDelegate,
     CallInfoViewControllerDelegate,
     CallDegradationControllerDelegate {
-    enum Context {
-        case overview, participants
-    }
-
-    weak var delegate: CallInfoRootViewControllerDelegate?
-    private let contentController: CallInfoViewController
-    private let contentNavigationController: UINavigationController
-    private let callDegradationController: CallDegradationController
-
-    private weak var participantsViewController: CallParticipantsListViewController?
-
-    var context: Context = .overview {
-        didSet {
-            delegate?.infoRootViewController(self, contextDidChange: context)
-        }
-    }
-
-    var configuration: CallInfoViewControllerInput {
-        didSet {
-            guard !configuration.isEqual(toConfiguration: oldValue) else { return }
-            updateConfiguration(animated: true)
-        }
-    }
+    // MARK: Lifecycle
 
     init(
         configuration: CallInfoViewControllerInput,
@@ -86,12 +64,68 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    enum Context {
+        case overview, participants
+    }
+
+    weak var delegate: CallInfoRootViewControllerDelegate?
+
+    var context: Context = .overview {
+        didSet {
+            delegate?.infoRootViewController(self, contextDidChange: context)
+        }
+    }
+
+    var configuration: CallInfoViewControllerInput {
+        didSet {
+            guard !configuration.isEqual(toConfiguration: oldValue) else { return }
+            updateConfiguration(animated: true)
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         createConstraints()
         updateConfiguration()
     }
+
+    // MARK: - Delegates
+
+    func infoViewController(_ viewController: CallInfoViewController, perform action: CallAction) {
+        switch (action, configuration.degradationState) {
+        case (.showParticipantsList, _): presentParticipantsList()
+        case (.acceptCall, .incoming): delegate?.callingActionsViewPerformAction(.acceptDegradedCall)
+        default: delegate?.callingActionsViewPerformAction(action)
+        }
+    }
+
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        guard viewController is CallInfoViewController else { return }
+        context = .overview
+    }
+
+    func continueDegradedCall() {
+        delegate?.callingActionsViewPerformAction(.continueDegradedCall)
+    }
+
+    func cancelDegradedCall() {
+        delegate?.callingActionsViewPerformAction(.terminateDegradedCall)
+    }
+
+    // MARK: Private
+
+    private let contentController: CallInfoViewController
+    private let contentNavigationController: UINavigationController
+    private let callDegradationController: CallDegradationController
+
+    private weak var participantsViewController: CallParticipantsListViewController?
 
     private func setupViews() {
         addToSelf(contentNavigationController)
@@ -144,32 +178,5 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     private func updatePresentedParticipantsListIfNeeded() {
         guard case let .participantsList(participants) = configuration.accessoryType else { return }
         participantsViewController?.participants = participants
-    }
-
-    // MARK: - Delegates
-
-    func infoViewController(_ viewController: CallInfoViewController, perform action: CallAction) {
-        switch (action, configuration.degradationState) {
-        case (.showParticipantsList, _): presentParticipantsList()
-        case (.acceptCall, .incoming): delegate?.callingActionsViewPerformAction(.acceptDegradedCall)
-        default: delegate?.callingActionsViewPerformAction(action)
-        }
-    }
-
-    func navigationController(
-        _ navigationController: UINavigationController,
-        didShow viewController: UIViewController,
-        animated: Bool
-    ) {
-        guard viewController is CallInfoViewController else { return }
-        context = .overview
-    }
-
-    func continueDegradedCall() {
-        delegate?.callingActionsViewPerformAction(.continueDegradedCall)
-    }
-
-    func cancelDegradedCall() {
-        delegate?.callingActionsViewPerformAction(.terminateDegradedCall)
     }
 }

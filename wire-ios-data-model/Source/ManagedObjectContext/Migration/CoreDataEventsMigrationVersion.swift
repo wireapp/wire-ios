@@ -19,12 +19,6 @@
 import Foundation
 
 enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
-    private enum Constant {
-        static let dataModelPrefix = "ZMEventModel"
-        static let modelDirectory = "ZMEventModel.momd"
-        static let resourceExtension = "mom"
-    }
-
     // Note: add new versions here in first position!
     case v06 = "ZMEventModel6.0"
     case v05 = "ZMEventModel5.0"
@@ -32,6 +26,17 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
     case v03 = "ZMEventModel3.0"
     case v02 = "ZMEventModel2.0"
     case v01 = "ZMEventModel"
+
+    // MARK: Internal
+
+    // MARK: Current
+
+    static let current: Self = {
+        guard let current = allCases.first else {
+            fatalError("no model versions found")
+        }
+        return current
+    }()
 
     var nextVersion: Self? {
         switch self {
@@ -51,15 +56,6 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
         rawValue.replacingOccurrences(of: Constant.dataModelPrefix, with: "")
     }
 
-    // MARK: Current
-
-    static let current: Self = {
-        guard let current = allCases.first else {
-            fatalError("no model versions found")
-        }
-        return current
-    }()
-
     // MARK: Store URL
 
     func managedObjectModelURL() -> URL? {
@@ -68,5 +64,13 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
             withExtension: Constant.resourceExtension,
             subdirectory: Constant.modelDirectory
         )
+    }
+
+    // MARK: Private
+
+    private enum Constant {
+        static let dataModelPrefix = "ZMEventModel"
+        static let modelDirectory = "ZMEventModel.momd"
+        static let resourceExtension = "mom"
     }
 }

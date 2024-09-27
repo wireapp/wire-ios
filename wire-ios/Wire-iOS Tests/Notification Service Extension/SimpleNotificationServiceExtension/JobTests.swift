@@ -27,6 +27,24 @@ class JobTests: XCTestCase {
     var mockNotificationsAPIClient: MockNotificationsAPIClient!
     var sut: Job!
 
+    let userID = UUID.create()
+    let eventID = UUID.create()
+
+    lazy var notificationRequest: UNNotificationRequest = {
+        let content = UNMutableNotificationContent()
+
+        content.userInfo["data"] = [
+            "user": userID.uuidString,
+            "data": ["id": eventID.uuidString],
+        ]
+
+        return UNNotificationRequest(
+            identifier: "request",
+            content: content,
+            trigger: nil
+        )
+    }()
+
     override func setUpWithError() throws {
         try super.setUpWithError()
 
@@ -48,24 +66,6 @@ class JobTests: XCTestCase {
         mockNotificationsAPIClient = nil
         super.tearDown()
     }
-
-    let userID = UUID.create()
-    let eventID = UUID.create()
-
-    lazy var notificationRequest: UNNotificationRequest = {
-        let content = UNMutableNotificationContent()
-
-        content.userInfo["data"] = [
-            "user": userID.uuidString,
-            "data": ["id": eventID.uuidString],
-        ]
-
-        return UNNotificationRequest(
-            identifier: "request",
-            content: content,
-            trigger: nil
-        )
-    }()
 
     // MARK: - Execute
 

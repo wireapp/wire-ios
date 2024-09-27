@@ -22,10 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class GroupDetailsRenameCell: UICollectionViewCell {
-    let verifiedIconView = UIImageView()
-    let accessoryIconView = UIImageView()
-    let titleTextField = SimpleTextField()
-    var contentStackView: UIStackView!
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -37,6 +34,23 @@ final class GroupDetailsRenameCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    let verifiedIconView = UIImageView()
+    let accessoryIconView = UIImageView()
+    let titleTextField = SimpleTextField()
+    var contentStackView: UIStackView!
+
+    func configure(for conversation: GroupDetailsConversationType, editable: Bool) {
+        titleTextField.text = conversation.displayName
+        verifiedIconView.isHidden = conversation.securityLevel != .secure
+
+        titleTextField.isUserInteractionEnabled = editable
+        accessoryIconView.isHidden = !editable
+    }
+
+    // MARK: Fileprivate
 
     fileprivate func setup() {
         verifiedIconView.image = WireStyleKit.imageOfShieldverified
@@ -74,13 +88,7 @@ final class GroupDetailsRenameCell: UICollectionViewCell {
         configureColors()
     }
 
-    func configure(for conversation: GroupDetailsConversationType, editable: Bool) {
-        titleTextField.text = conversation.displayName
-        verifiedIconView.isHidden = conversation.securityLevel != .secure
-
-        titleTextField.isUserInteractionEnabled = editable
-        accessoryIconView.isHidden = !editable
-    }
+    // MARK: Private
 
     private func configureColors() {
         backgroundColor = SemanticColors.View.backgroundUserCell

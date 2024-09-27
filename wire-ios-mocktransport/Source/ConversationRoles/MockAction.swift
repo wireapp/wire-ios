@@ -23,10 +23,10 @@ import Foundation
 
 @objc
 public final class MockAction: NSManagedObject, EntityNamedProtocol {
+    public static var entityName = "Action"
+
     @NSManaged public var name: String
     @NSManaged public var roles: Set<MockRole>
-
-    public static var entityName = "Action"
 }
 
 extension MockAction {

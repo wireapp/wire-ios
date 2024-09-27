@@ -22,12 +22,7 @@ import XCTest
 @testable import Wire
 
 final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var message: MockMessage!
-    private var sut: MessageToolboxView!
-    private let backgroundColor = SemanticColors.View.backgroundConversationView
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -160,4 +155,13 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var message: MockMessage!
+    private var sut: MessageToolboxView!
+    private let backgroundColor = SemanticColors.View.backgroundConversationView
 }

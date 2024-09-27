@@ -69,13 +69,11 @@ public protocol SubconversationGroupIDRepositoryInterface {
 /// It is used to keep track of which subconversation is associated with which conversation.
 
 public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface {
-    // MARK: - Properties
-
-    private var storage = [MLSGroupID: [SubgroupType: MLSGroupID]]()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init() {}
+
+    // MARK: Public
 
     // MARK: - Store
 
@@ -111,4 +109,10 @@ public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepos
 
         return nil
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var storage = [MLSGroupID: [SubgroupType: MLSGroupID]]()
 }

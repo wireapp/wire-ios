@@ -20,17 +20,14 @@ import Foundation
 import WireImages
 
 public final class UserProfileImageOwner: NSObject, ZMImageOwner {
-    static var imageFormats: [ZMImageFormat] {
-        [.medium, .profile]
-    }
-
-    let imageData: Data
-    var processedImages = [ZMImageFormat: Data]()
+    // MARK: Lifecycle
 
     init(imageData: Data) {
         self.imageData = imageData
         super.init()
     }
+
+    // MARK: Public
 
     public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
         processedImages[format] = imageData
@@ -65,4 +62,13 @@ public final class UserProfileImageOwner: NSObject, ZMImageOwner {
     }
 
     public func processingDidFinish() {}
+
+    // MARK: Internal
+
+    static var imageFormats: [ZMImageFormat] {
+        [.medium, .profile]
+    }
+
+    let imageData: Data
+    var processedImages = [ZMImageFormat: Data]()
 }

@@ -27,8 +27,6 @@ class CRLExpirationDatesRepositoryTests: XCTestCase {
     var sut: CRLExpirationDatesRepository!
     var storage: PrivateUserDefaults<CRLExpirationDatesRepository.Key>!
 
-    // MARK: - Life cycle
-
     override func setUp() {
         super.setUp()
 

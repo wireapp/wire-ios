@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationCreateErrorCell: UICollectionViewCell {
-    let label = UILabel()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,6 +32,12 @@ final class ConversationCreateErrorCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    let label = UILabel()
+
+    // MARK: Fileprivate
 
     fileprivate func setup() {
         label.translatesAutoresizingMaskIntoConstraints = false

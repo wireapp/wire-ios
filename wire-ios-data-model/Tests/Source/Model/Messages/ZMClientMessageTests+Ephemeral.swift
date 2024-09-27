@@ -24,6 +24,14 @@ import WireLinkPreview
 // MARK: - ZMClientMessageTests_Ephemeral
 
 class ZMClientMessageTests_Ephemeral: BaseZMClientMessageTests {
+    var obfuscationTimer: ZMMessageDestructionTimer? {
+        syncMOC.zm_messageObfuscationTimer
+    }
+
+    var deletionTimer: ZMMessageDestructionTimer? {
+        uiMOC.zm_messageDeletionTimer
+    }
+
     override func setUp() {
         super.setUp()
         deletionTimer?.isTesting = true
@@ -44,14 +52,6 @@ class ZMClientMessageTests_Ephemeral: BaseZMClientMessageTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         super.tearDown()
-    }
-
-    var obfuscationTimer: ZMMessageDestructionTimer? {
-        syncMOC.zm_messageObfuscationTimer
-    }
-
-    var deletionTimer: ZMMessageDestructionTimer? {
-        uiMOC.zm_messageDeletionTimer
     }
 }
 

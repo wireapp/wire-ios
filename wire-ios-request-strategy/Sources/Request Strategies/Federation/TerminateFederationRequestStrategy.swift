@@ -24,11 +24,7 @@ private let zmLog = ZMSLog(tag: "terminate federation")
 
 @objcMembers
 public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
-    // MARK: - Properties
-
-    var federationTerminationManager: FederationTerminationManagerInterface
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -49,11 +45,19 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
         ]
     }
 
+    // MARK: Public
+
     // MARK: - Request
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         nil
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    var federationTerminationManager: FederationTerminationManagerInterface
 }
 
 // MARK: ZMEventConsumer

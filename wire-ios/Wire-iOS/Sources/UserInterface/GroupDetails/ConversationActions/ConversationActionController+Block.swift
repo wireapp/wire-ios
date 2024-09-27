@@ -24,21 +24,14 @@ import WireDataModel
 enum BlockResult {
     case block(isBlocked: Bool), cancel
 
+    // MARK: Internal
+
     var title: String {
         switch self {
         case .cancel: L10n.Localizable.Profile.BlockDialog.buttonCancel
         case .block(isBlocked: false): L10n.Localizable.Profile.blockButtonTitleAction
         case .block(isBlocked: true): L10n.Localizable.Profile.unblockButtonTitleAction
         }
-    }
-
-    private var style: UIAlertAction.Style {
-        guard case .cancel = self else { return .destructive }
-        return .cancel
-    }
-
-    func action(_ handler: @escaping (BlockResult) -> Void) -> UIAlertAction {
-        .init(title: title, style: style) { _ in handler(self) }
     }
 
     static func title(for user: UserType) -> String? {
@@ -52,6 +45,17 @@ enum BlockResult {
 
     static func all(isBlocked: Bool) -> [BlockResult] {
         [.block(isBlocked: isBlocked), .cancel]
+    }
+
+    func action(_ handler: @escaping (BlockResult) -> Void) -> UIAlertAction {
+        .init(title: title, style: style) { _ in handler(self) }
+    }
+
+    // MARK: Private
+
+    private var style: UIAlertAction.Style {
+        guard case .cancel = self else { return .destructive }
+        return .cancel
     }
 }
 

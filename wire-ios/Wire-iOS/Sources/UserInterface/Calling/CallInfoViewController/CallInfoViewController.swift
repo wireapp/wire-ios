@@ -68,18 +68,7 @@ extension CallInfoViewControllerInput {
 // MARK: - CallInfoViewController
 
 final class CallInfoViewController: UIViewController, CallActionsViewDelegate, CallAccessoryViewControllerDelegate {
-    weak var delegate: CallInfoViewControllerDelegate?
-
-    private let stackView = UIStackView(axis: .vertical)
-    private let statusViewController: CallStatusViewController
-    private let accessoryViewController: CallAccessoryViewController
-    private let actionsView = CallActionsView()
-
-    var configuration: CallInfoViewControllerInput {
-        didSet {
-            updateState()
-        }
-    }
+    // MARK: Lifecycle
 
     init(
         configuration: CallInfoViewControllerInput,
@@ -106,6 +95,16 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    weak var delegate: CallInfoViewControllerDelegate?
+
+    var configuration: CallInfoViewControllerInput {
+        didSet {
+            updateState()
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -124,6 +123,21 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
 
         updateAccessoryView()
     }
+
+    func callActionsView(_ callActionsView: CallActionsView, perform action: CallAction) {
+        delegate?.infoViewController(self, perform: action)
+    }
+
+    func callAccessoryViewControllerDidSelectShowMore(viewController: CallAccessoryViewController) {
+        delegate?.infoViewController(self, perform: .showParticipantsList)
+    }
+
+    // MARK: Private
+
+    private let stackView = UIStackView(axis: .vertical)
+    private let statusViewController: CallStatusViewController
+    private let accessoryViewController: CallAccessoryViewController
+    private let actionsView = CallActionsView()
 
     private func setupViews() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -183,13 +197,5 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     @objc
     private func minimizeCallOverlay(_: UIBarButtonItem) {
         delegate?.infoViewController(self, perform: .minimizeOverlay)
-    }
-
-    func callActionsView(_ callActionsView: CallActionsView, perform action: CallAction) {
-        delegate?.infoViewController(self, perform: action)
-    }
-
-    func callAccessoryViewControllerDidSelectShowMore(viewController: CallAccessoryViewController) {
-        delegate?.infoViewController(self, perform: .showParticipantsList)
     }
 }

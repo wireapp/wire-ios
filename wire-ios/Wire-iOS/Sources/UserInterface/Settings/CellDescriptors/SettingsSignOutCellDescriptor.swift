@@ -22,12 +22,7 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
-    var requestPasswordController: RequestPasswordController?
-
-    private lazy var activityIndicator = {
-        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)!
-        return BlockingActivityIndicator(view: topMostViewController.view)
-    }()
+    // MARK: Lifecycle
 
     init() {
         super.init(
@@ -43,29 +38,9 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
         )
     }
 
-    private func logout(password: String? = nil) {
-        guard let selfUser = ZMUser.selfUser() else { return }
+    // MARK: Internal
 
-        if selfUser.usesCompanyLogin || password != nil {
-            Task { @MainActor in activityIndicator.start() }
-            let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
-            AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
-            AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
-            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(
-                email: "",
-                password: password ?? ""
-            )) { [weak topMostViewController] result in
-                Task { @MainActor in self.activityIndicator.stop() }
-                TrackingManager.shared.disableAnalyticsSharing = false
-                if case let .failure(error) = result {
-                    topMostViewController?.showAlert(for: error)
-                }
-            }
-        } else {
-            guard let account = SessionManager.shared?.accountManager.selectedAccount else { return }
-            SessionManager.shared?.delete(account: account)
-        }
-    }
+    var requestPasswordController: RequestPasswordController?
 
     override func generateViewController() -> UIViewController? {
         guard let selfUser = ZMUser.selfUser() else { return nil }
@@ -101,5 +76,36 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
         }
 
         return viewController
+    }
+
+    // MARK: Private
+
+    private lazy var activityIndicator = {
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)!
+        return BlockingActivityIndicator(view: topMostViewController.view)
+    }()
+
+    private func logout(password: String? = nil) {
+        guard let selfUser = ZMUser.selfUser() else { return }
+
+        if selfUser.usesCompanyLogin || password != nil {
+            Task { @MainActor in activityIndicator.start() }
+            let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+            AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
+            AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
+            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(
+                email: "",
+                password: password ?? ""
+            )) { [weak topMostViewController] result in
+                Task { @MainActor in self.activityIndicator.stop() }
+                TrackingManager.shared.disableAnalyticsSharing = false
+                if case let .failure(error) = result {
+                    topMostViewController?.showAlert(for: error)
+                }
+            }
+        } else {
+            guard let account = SessionManager.shared?.accountManager.selectedAccount else { return }
+            SessionManager.shared?.delete(account: account)
+        }
     }
 }

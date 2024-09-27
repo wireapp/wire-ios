@@ -62,10 +62,7 @@ extension CallStateMock {
 // MARK: - CallActionsViewSnapshotTests
 
 final class CallActionsViewSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: CallActionsView!
-    private var widthConstraint: NSLayoutConstraint!
+    // MARK: Internal
 
     // MARK: - tearDown
 
@@ -73,24 +70,6 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut = nil
         widthConstraint = nil
         super.tearDown()
-    }
-
-    // MARK: - Helper method
-
-    private func createSut(for layoutSize: CallActionsView.LayoutSize) {
-        sut = CallActionsView()
-        sut.backgroundColor = .black
-
-        switch layoutSize {
-        case .compact:
-            sut.frame = CGRect(origin: .zero, size: CGSize(width: 800, height: 150))
-        case .regular:
-            sut.translatesAutoresizingMaskIntoConstraints = false
-            widthConstraint = sut.widthAnchor.constraint(equalToConstant: 340)
-            widthConstraint.isActive = true
-            sut.setNeedsLayout()
-            sut.layoutIfNeeded()
-        }
     }
 
     // MARK: - Snapshot Tests
@@ -463,5 +442,30 @@ final class CallActionsViewSnapshotTests: XCTestCase {
 
         // THEN
         verify(matching: sut)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: CallActionsView!
+    private var widthConstraint: NSLayoutConstraint!
+
+    // MARK: - Helper method
+
+    private func createSut(for layoutSize: CallActionsView.LayoutSize) {
+        sut = CallActionsView()
+        sut.backgroundColor = .black
+
+        switch layoutSize {
+        case .compact:
+            sut.frame = CGRect(origin: .zero, size: CGSize(width: 800, height: 150))
+        case .regular:
+            sut.translatesAutoresizingMaskIntoConstraints = false
+            widthConstraint = sut.widthAnchor.constraint(equalToConstant: 340)
+            widthConstraint.isActive = true
+            sut.setNeedsLayout()
+            sut.layoutIfNeeded()
+        }
     }
 }

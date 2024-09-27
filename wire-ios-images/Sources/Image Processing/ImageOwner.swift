@@ -20,17 +20,21 @@ import Foundation
 
 /// Implementation of ZMImageOwner protocol. Used to store and access processed image data.
 public final class ImageOwner: NSObject, ZMImageOwner {
-    var previewData: Data?
-    var mediumData: Data?
-    var imageData: Data?
-
-    public let imageSize: CGSize
-    public let nonce: UUID
+    // MARK: Lifecycle
 
     public init(data: Data, size: CGSize, nonce: UUID) {
         self.imageData = data
         self.imageSize = size
         self.nonce = nonce
+    }
+
+    // MARK: Public
+
+    public let imageSize: CGSize
+    public let nonce: UUID
+
+    override public var hash: Int {
+        (nonce as NSUUID).hash ^ imageSize.width.hashValue ^ imageSize.height.hashValue
     }
 
     public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
@@ -90,7 +94,9 @@ public final class ImageOwner: NSObject, ZMImageOwner {
         }
     }
 
-    override public var hash: Int {
-        (nonce as NSUUID).hash ^ imageSize.width.hashValue ^ imageSize.height.hashValue
-    }
+    // MARK: Internal
+
+    var previewData: Data?
+    var mediumData: Data?
+    var imageData: Data?
 }

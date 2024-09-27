@@ -24,6 +24,14 @@ import WireDesign
 // MARK: - GroupDetailsReceiptOptionsCell
 
 final class GroupDetailsReceiptOptionsCell: IconToggleCell {
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
+        }
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -34,14 +42,6 @@ final class GroupDetailsReceiptOptionsCell: IconToggleCell {
 
         icon = .init(resource: .readReceipts).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted
-                ? SemanticColors.View.backgroundUserCellHightLighted
-                : SemanticColors.View.backgroundUserCell
-        }
     }
 }
 

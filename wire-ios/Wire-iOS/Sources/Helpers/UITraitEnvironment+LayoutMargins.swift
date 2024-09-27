@@ -21,8 +21,7 @@ import UIKit
 // MARK: - HorizontalMargins
 
 struct HorizontalMargins {
-    var left: CGFloat
-    var right: CGFloat
+    // MARK: Lifecycle
 
     init(left: CGFloat, right: CGFloat) {
         self.left = left
@@ -40,6 +39,11 @@ struct HorizontalMargins {
             self.right = 16
         }
     }
+
+    // MARK: Internal
+
+    var left: CGFloat
+    var right: CGFloat
 }
 
 extension UITraitEnvironment {

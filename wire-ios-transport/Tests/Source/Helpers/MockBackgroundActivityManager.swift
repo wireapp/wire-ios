@@ -24,6 +24,8 @@ import WireTransport
 
 @objc
 final class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
+    // MARK: Internal
+
     var backgroundTimeRemaining: TimeInterval = 10
 
     var applicationState: UIApplication.State = .active
@@ -44,17 +46,6 @@ final class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
     @objc var numberOfTasks: Int {
         tasks.count
     }
-
-    // MARK: - Data
-
-    private var lastIdentifier = ZMAtomicInteger(integer: 1)
-
-    private struct Task {
-        let name: String?
-        let expirationHandler: (() -> Void)?
-    }
-
-    private var tasks: [UIBackgroundTaskIdentifier: Task] = [:]
 
     // MARK: - BackgroundActivityManager
 
@@ -98,4 +89,17 @@ final class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
         isExpiring = false
         tasks.removeAll()
     }
+
+    // MARK: Private
+
+    private struct Task {
+        let name: String?
+        let expirationHandler: (() -> Void)?
+    }
+
+    // MARK: - Data
+
+    private var lastIdentifier = ZMAtomicInteger(integer: 1)
+
+    private var tasks: [UIBackgroundTaskIdentifier: Task] = [:]
 }

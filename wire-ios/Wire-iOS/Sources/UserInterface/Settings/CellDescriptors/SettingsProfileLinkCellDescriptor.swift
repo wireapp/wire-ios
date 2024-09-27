@@ -19,16 +19,13 @@
 import UIKit
 
 final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
+    // MARK: Internal
+
     static let cellType: SettingsTableCellProtocol.Type = SettingsLinkTableCell.self
 
-    // MARK: - Configuration
-
-    func featureCell(_ cell: SettingsCellType) {
-        guard let linkCell = cell as? SettingsLinkTableCell else { return }
-
-        linkCell.linkText = link && .lineSpacing(8)
-        linkCell.titleText = title
-    }
+    var identifier: String?
+    weak var group: SettingsGroupCellDescriptorType?
+    var previewGenerator: PreviewGeneratorType?
 
     // MARK: - SettingsCellDescriptorType
 
@@ -40,15 +37,22 @@ final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
         L10n.Localizable.Self.Settings.AccountSection.ProfileLink.title
     }
 
-    private var link: String {
-        URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
-    }
+    // MARK: - Configuration
 
-    var identifier: String?
-    weak var group: SettingsGroupCellDescriptorType?
-    var previewGenerator: PreviewGeneratorType?
+    func featureCell(_ cell: SettingsCellType) {
+        guard let linkCell = cell as? SettingsLinkTableCell else { return }
+
+        linkCell.linkText = link && .lineSpacing(8)
+        linkCell.titleText = title
+    }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
         // no-op
+    }
+
+    // MARK: Private
+
+    private var link: String {
+        URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
     }
 }

@@ -19,14 +19,18 @@ import UIKit
 
 extension UIColor {
     public struct Components: Equatable {
-        public var red: CGFloat = 0
-        public var green: CGFloat = 0
-        public var blue: CGFloat = 0
-        public var alpha: CGFloat = 0
+        // MARK: Lifecycle
 
         public init(color: UIColor) {
             color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         }
+
+        // MARK: Public
+
+        public var red: CGFloat = 0
+        public var green: CGFloat = 0
+        public var blue: CGFloat = 0
+        public var alpha: CGFloat = 0
     }
 
     public var components: Components {

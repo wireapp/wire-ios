@@ -28,12 +28,14 @@ enum SwizzleTransitionDirection {
 // MARK: - SwizzleTransition
 
 final class SwizzleTransition: NSObject, UIViewControllerAnimatedTransitioning {
-    private let direction: SwizzleTransitionDirection
+    // MARK: Lifecycle
 
     init(direction: SwizzleTransitionDirection) {
         self.direction = direction
         super.init()
     }
+
+    // MARK: Internal
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         0.5
@@ -88,4 +90,8 @@ final class SwizzleTransition: NSObject, UIViewControllerAnimatedTransitioning {
             })
         })
     }
+
+    // MARK: Private
+
+    private let direction: SwizzleTransitionDirection
 }

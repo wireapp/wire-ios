@@ -22,27 +22,6 @@ import WireDataModel
 import WireDesign
 
 enum MessageAction: CaseIterable, Equatable {
-    static var allCases: [MessageAction] = [
-        .visitLink,
-        .digitallySign,
-        .copy,
-        .reply,
-        .openDetails,
-        .edit,
-        .save,
-        .cancel,
-        .download,
-        .resend,
-        .showInConversation,
-        .sketchDraw,
-        .sketchEmoji,
-        .present,
-        .openQuote,
-        .resetSession,
-        .delete,
-        .react("❤️"),
-    ]
-
     case
         digitallySign,
         copy,
@@ -63,6 +42,29 @@ enum MessageAction: CaseIterable, Equatable {
         resetSession,
         react(Emoji.ID),
         visitLink
+
+    // MARK: Internal
+
+    static var allCases: [MessageAction] = [
+        .visitLink,
+        .digitallySign,
+        .copy,
+        .reply,
+        .openDetails,
+        .edit,
+        .save,
+        .cancel,
+        .download,
+        .resend,
+        .showInConversation,
+        .sketchDraw,
+        .sketchEmoji,
+        .present,
+        .openQuote,
+        .resetSession,
+        .delete,
+        .react("❤️"),
+    ]
 
     var title: String? {
         typealias MessageActionLocale = L10n.Localizable.Content.Message
@@ -140,48 +142,6 @@ enum MessageAction: CaseIterable, Equatable {
         }
     }
 
-    func systemIcon() -> UIImage? {
-        imageSystemName().flatMap(UIImage.init(systemName:))
-    }
-
-    private func imageSystemName() -> String? {
-        let imageName: String? = switch self {
-        case .copy:
-            "doc.on.doc"
-        case .reply:
-            "arrow.uturn.left"
-        case .openDetails:
-            "info.circle"
-        case .edit:
-            "pencil"
-        case .delete:
-            "trash"
-        case .save:
-            "arrow.down.to.line"
-        case .cancel:
-            "xmark"
-        case .download:
-            "chevron.down"
-        case .resend:
-            "arrow.clockwise"
-        case .showInConversation:
-            "eye.fill"
-        case .sketchDraw:
-            "scribble"
-        case .sketchEmoji:
-            "smiley.fill"
-        case .present,
-             .openQuote,
-             .digitallySign,
-             .resetSession,
-             .react,
-             .visitLink:
-            nil
-        }
-
-        return imageName
-    }
-
     var selector: Selector? {
         switch self {
         case .copy:
@@ -239,5 +199,49 @@ enum MessageAction: CaseIterable, Equatable {
         default:
             return nil
         }
+    }
+
+    func systemIcon() -> UIImage? {
+        imageSystemName().flatMap(UIImage.init(systemName:))
+    }
+
+    // MARK: Private
+
+    private func imageSystemName() -> String? {
+        let imageName: String? = switch self {
+        case .copy:
+            "doc.on.doc"
+        case .reply:
+            "arrow.uturn.left"
+        case .openDetails:
+            "info.circle"
+        case .edit:
+            "pencil"
+        case .delete:
+            "trash"
+        case .save:
+            "arrow.down.to.line"
+        case .cancel:
+            "xmark"
+        case .download:
+            "chevron.down"
+        case .resend:
+            "arrow.clockwise"
+        case .showInConversation:
+            "eye.fill"
+        case .sketchDraw:
+            "scribble"
+        case .sketchEmoji:
+            "smiley.fill"
+        case .present,
+             .openQuote,
+             .digitallySign,
+             .resetSession,
+             .react,
+             .visitLink:
+            nil
+        }
+
+        return imageName
     }
 }

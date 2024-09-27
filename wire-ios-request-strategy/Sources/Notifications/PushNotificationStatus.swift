@@ -25,6 +25,18 @@ private let zmLog = ZMSLog(tag: "PushNotificationStatus")
 
 @objcMembers
 open class PushNotificationStatus: NSObject {
+    // MARK: Lifecycle
+
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        lastEventIDRepository: LastEventIDRepositoryInterface
+    ) {
+        self.managedObjectContext = managedObjectContext
+        self.lastEventIDRepository = lastEventIDRepository
+    }
+
+    // MARK: Public
+
     public enum FetchError: Error {
         case invalidEventID
         case alreadyFetchedEvent
@@ -33,23 +45,9 @@ open class PushNotificationStatus: NSObject {
 
     public typealias FetchCompletion = (Result<Void, FetchError>) -> Void
 
-    private var eventIdRanking = NSMutableOrderedSet()
-    private var completionHandlers: [UUID: FetchCompletion] = [:]
-    private let managedObjectContext: NSManagedObjectContext
-    private let lastEventIDRepository: LastEventIDRepositoryInterface
-    private var isFetching = false
-
     public var hasEventsToFetch: Bool {
         // swiftformat:disable:next isEmpty
         eventIdRanking.count > 0 && !isFetching
-    }
-
-    public init(
-        managedObjectContext: NSManagedObjectContext,
-        lastEventIDRepository: LastEventIDRepositoryInterface
-    ) {
-        self.managedObjectContext = managedObjectContext
-        self.lastEventIDRepository = lastEventIDRepository
     }
 
     /// Schedule to fetch an event with a given UUID
@@ -149,6 +147,14 @@ open class PushNotificationStatus: NSObject {
         eventIdRanking.removeAllObjects()
         completionHandlers.removeAll()
     }
+
+    // MARK: Private
+
+    private var eventIdRanking = NSMutableOrderedSet()
+    private var completionHandlers: [UUID: FetchCompletion] = [:]
+    private let managedObjectContext: NSManagedObjectContext
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
+    private var isFetching = false
 
     private func lastEventIdIsNewerThan(lastEventId: UUID?, eventId: UUID) -> Bool {
         guard let order = lastEventId?.compare(withType1: eventId) else { return false }

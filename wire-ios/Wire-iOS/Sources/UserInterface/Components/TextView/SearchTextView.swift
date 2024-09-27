@@ -20,6 +20,32 @@ import UIKit
 
 // A custom UITextView with applied styles for the search bar.
 final class SearchTextView: TokenizedTextView {
+    // MARK: Lifecycle
+
+    // MARK: - initialization
+
+    convenience init(style: SearchBarStyle) {
+        self.init(frame: .zero)
+
+        self.style = style
+        applyStyle(style)
+        configureObservers()
+    }
+
+    // MARK: Internal
+
+    @objc
+    func textViewDidBeginEditing(_: Notification?) {
+        isEditing = true
+    }
+
+    @objc
+    func textViewDidEndEditing(_: Notification?) {
+        isEditing = false
+    }
+
+    // MARK: Private
+
     // MARK: - Properties
 
     private var style: SearchBarStyle?
@@ -35,16 +61,6 @@ final class SearchTextView: TokenizedTextView {
         }
     }
 
-    // MARK: - initialization
-
-    convenience init(style: SearchBarStyle) {
-        self.init(frame: .zero)
-
-        self.style = style
-        applyStyle(style)
-        configureObservers()
-    }
-
     private func configureObservers() {
         NotificationCenter.default.addObserver(
             self,
@@ -58,15 +74,5 @@ final class SearchTextView: TokenizedTextView {
             name: UITextView.textDidEndEditingNotification,
             object: self
         )
-    }
-
-    @objc
-    func textViewDidBeginEditing(_: Notification?) {
-        isEditing = true
-    }
-
-    @objc
-    func textViewDidEndEditing(_: Notification?) {
-        isEditing = false
     }
 }

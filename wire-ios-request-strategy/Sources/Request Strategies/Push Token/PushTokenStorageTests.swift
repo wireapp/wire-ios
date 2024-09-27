@@ -21,7 +21,7 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class PushTokenStorageTests: MessagingTestBase {
-    private let userDefaultsSuiteName = "PushTokenStorageTests"
+    // MARK: Internal
 
     // MARK: - Set up
 
@@ -56,4 +56,8 @@ final class PushTokenStorageTests: MessagingTestBase {
         // Then
         XCTAssertEqual(PushTokenStorage.pushToken, pushToken)
     }
+
+    // MARK: Private
+
+    private let userDefaultsSuiteName = "PushTokenStorageTests"
 }

@@ -92,15 +92,20 @@ final class SharedPreviewGenerator: NSObject {
 // MARK: - AggregateFilePreviewGenerator
 
 final class AggregateFilePreviewGenerator: NSObject, FilePreviewGenerator {
-    let subGenerators: [FilePreviewGenerator]
-    let thumbnailSize: CGSize
-    let callbackQueue: OperationQueue
+    // MARK: Lifecycle
+
     init(subGenerators: [FilePreviewGenerator], callbackQueue: OperationQueue, thumbnailSize: CGSize) {
         self.callbackQueue = callbackQueue
         self.thumbnailSize = thumbnailSize
         self.subGenerators = subGenerators
         super.init()
     }
+
+    // MARK: Internal
+
+    let subGenerators: [FilePreviewGenerator]
+    let thumbnailSize: CGSize
+    let callbackQueue: OperationQueue
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         !subGenerators.filter {
@@ -122,13 +127,18 @@ final class AggregateFilePreviewGenerator: NSObject, FilePreviewGenerator {
 // MARK: - ImageFilePreviewGenerator
 
 final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
-    let thumbnailSize: CGSize
-    let callbackQueue: OperationQueue
+    // MARK: Lifecycle
+
     init(callbackQueue: OperationQueue, thumbnailSize: CGSize) {
         self.thumbnailSize = thumbnailSize
         self.callbackQueue = callbackQueue
         super.init()
     }
+
+    // MARK: Internal
+
+    let thumbnailSize: CGSize
+    let callbackQueue: OperationQueue
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         UTType(uti)?.conforms(to: UTType.image) ?? false
@@ -162,13 +172,18 @@ final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
 // MARK: - MovieFilePreviewGenerator
 
 final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
-    let thumbnailSize: CGSize
-    let callbackQueue: OperationQueue
+    // MARK: Lifecycle
+
     init(callbackQueue: OperationQueue, thumbnailSize: CGSize) {
         self.thumbnailSize = thumbnailSize
         self.callbackQueue = callbackQueue
         super.init()
     }
+
+    // MARK: Internal
+
+    let thumbnailSize: CGSize
+    let callbackQueue: OperationQueue
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         AVURLAsset.wr_isAudioVisualUTI(uti)
@@ -227,13 +242,18 @@ final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
 // MARK: - PDFFilePreviewGenerator
 
 public final class PDFFilePreviewGenerator: NSObject, FilePreviewGenerator {
-    let thumbnailSize: CGSize
-    let callbackQueue: OperationQueue
+    // MARK: Lifecycle
+
     public init(callbackQueue: OperationQueue, thumbnailSize: CGSize) {
         self.thumbnailSize = thumbnailSize
         self.callbackQueue = callbackQueue
         super.init()
     }
+
+    // MARK: Internal
+
+    let thumbnailSize: CGSize
+    let callbackQueue: OperationQueue
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         UTTypeConformsTo(uti as CFString, kUTTypePDF)

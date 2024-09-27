@@ -67,6 +67,8 @@ protocol RegistrationStatusProtocol: AnyObject {
 /// Handles regisitration of users and teams.
 
 public class RegistrationStatus: RegistrationStatusProtocol {
+    // MARK: Public
+
     /// The current phase of registration.
     public var phase: RegistrationPhase? = .none
 
@@ -110,6 +112,8 @@ public class RegistrationStatus: RegistrationStatusProtocol {
         phase = .createTeam(team: team)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
+
+    // MARK: Internal
 
     // MARK: - Event Handling
 

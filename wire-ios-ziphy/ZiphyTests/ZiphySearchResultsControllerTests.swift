@@ -20,6 +20,8 @@ import XCTest
 @testable import Ziphy
 
 class ZiphySearchResultsControllerTests: XCTestCase {
+    // MARK: Internal
+
     var requester: MockPaginatedRequester!
     var downloadRequester: MockZiphyRequester!
     var searchController: ZiphySearchResultsController!
@@ -225,6 +227,8 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         // THEN
         XCTAssertNil(fetchResult)
     }
+
+    // MARK: Private
 
     // MARK: - Utilities
 

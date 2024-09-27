@@ -23,19 +23,7 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 final class SearchUserViewController: UIViewController {
-    // MARK: - Properties
-
-    private var searchDirectory: SearchDirectory!
-    private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?
-    private let userId: UUID
-    private var pendingSearchTask: SearchTask?
-    private let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
-
-    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
-
-    /// flag for handleSearchResult. Only allow to display the result once
-    private var resultHandled = false
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -68,6 +56,8 @@ final class SearchUserViewController: UIViewController {
         searchDirectory?.tearDown()
     }
 
+    // MARK: Internal
+
     // MARK: - Override Methods
 
     override func viewDidLoad() {
@@ -96,6 +86,22 @@ final class SearchUserViewController: UIViewController {
 
         navigationItem.rightBarButtonItem = closeItem
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var searchDirectory: SearchDirectory!
+    private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?
+    private let userId: UUID
+    private var pendingSearchTask: SearchTask?
+    private let userSession: UserSession
+    private let mainCoordinator: MainCoordinating
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
+    /// flag for handleSearchResult. Only allow to display the result once
+    private var resultHandled = false
 
     // MARK: - Methods
 

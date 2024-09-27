@@ -166,14 +166,6 @@ private enum Scaffolding {
         isTransient: false
     )
 
-    static func fractionalDate(from string: String) -> Date {
-        ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
-    }
-
-    static func date(from string: String) -> Date {
-        ISO8601DateFormatter.internetDateTime.date(from: string)!
-    }
-
     static let conversationID = ConversationID(
         uuid: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
         domain: "example.com"
@@ -226,4 +218,12 @@ private enum Scaffolding {
         senderID: senderID,
         timestamp: timestamp
     )
+
+    static func fractionalDate(from string: String) -> Date {
+        ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+    }
+
+    static func date(from string: String) -> Date {
+        ISO8601DateFormatter.internetDateTime.date(from: string)!
+    }
 }

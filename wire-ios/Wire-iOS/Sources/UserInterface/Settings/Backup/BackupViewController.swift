@@ -22,10 +22,7 @@ import WireReusableUIComponents
 // MARK: - BackupViewController
 
 final class BackupViewController: UIViewController {
-    private let tableView = UITableView(frame: .zero)
-    private var cells: [UITableViewCell.Type] = []
-    private let backupSource: BackupSource
-    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
+    // MARK: Lifecycle
 
     init(backupSource: BackupSource) {
         self.backupSource = backupSource
@@ -37,6 +34,8 @@ final class BackupViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -47,6 +46,13 @@ final class BackupViewController: UIViewController {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title.capitalized)
     }
+
+    // MARK: Private
+
+    private let tableView = UITableView(frame: .zero)
+    private var cells: [UITableViewCell.Type] = []
+    private let backupSource: BackupSource
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     private func setupViews() {
         view.backgroundColor = .clear

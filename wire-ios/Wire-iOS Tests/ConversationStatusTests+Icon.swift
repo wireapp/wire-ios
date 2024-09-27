@@ -21,18 +21,18 @@ import XCTest
 @testable import Wire
 
 final class ConversationStatusTests_Icon: CoreDataSnapshotTestCase {
-    override func setUp() {
-        selfUserInTeam = true
-        super.setUp()
+    enum UnreadMessageType {
+        case text
+        case mention
     }
 
     override var needsCaches: Bool {
         true
     }
 
-    enum UnreadMessageType {
-        case text
-        case mention
+    override func setUp() {
+        selfUserInTeam = true
+        super.setUp()
     }
 
     func conversationWithUnread(_ messageType: UnreadMessageType, muted: MutedMessageTypes) -> ZMConversation {

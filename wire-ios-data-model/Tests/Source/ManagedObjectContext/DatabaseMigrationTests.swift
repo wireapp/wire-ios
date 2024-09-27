@@ -21,17 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 final class DatabaseMigrationTests: DatabaseBaseTest {
-    private let helper = DatabaseMigrationHelper()
-
-    private let userPropertiesToFetch = [
-        "accentColorValue",
-        "emailAddress",
-        "modifiedKeys",
-        "name",
-        "normalizedEmailAddress",
-        "normalizedName",
-        "handle",
-    ]
+    // MARK: Internal
 
     func testEventsLatestModelHasMigrationVersion() throws {
         // given
@@ -221,4 +211,18 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                 processedVersions.insert(version)
             }
     }
+
+    // MARK: Private
+
+    private let helper = DatabaseMigrationHelper()
+
+    private let userPropertiesToFetch = [
+        "accentColorValue",
+        "emailAddress",
+        "modifiedKeys",
+        "name",
+        "normalizedEmailAddress",
+        "normalizedName",
+        "handle",
+    ]
 }

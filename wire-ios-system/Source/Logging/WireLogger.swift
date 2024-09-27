@@ -17,12 +17,7 @@
 //
 
 public struct WireLogger: LoggerProtocol {
-    private static var provider = AggregatedLogger(loggers: [
-        SystemLogger(),
-        CocoaLumberjackLogger(),
-    ])
-
-    public let tag: String
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -30,10 +25,24 @@ public struct WireLogger: LoggerProtocol {
         self.tag = tag
     }
 
+    // MARK: Public
+
+    // MARK: Static Functions
+
+    public static var logFiles: [URL] {
+        provider.logFiles
+    }
+
+    public let tag: String
+
     // MARK: - LoggerProtocol
 
     public var logFiles: [URL] {
         Self.provider.logFiles
+    }
+
+    public static func addLogger(_ logger: LoggerProtocol) {
+        provider.addLogger(logger)
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
@@ -70,6 +79,13 @@ public struct WireLogger: LoggerProtocol {
         Self.provider.critical(message, attributes: finalizedAttributes(attributes))
     }
 
+    // MARK: Private
+
+    private static var provider = AggregatedLogger(loggers: [
+        SystemLogger(),
+        CocoaLumberjackLogger(),
+    ])
+
     // MARK: - Private Helpers
 
     private func shouldLogMessage(_ message: LogConvertible) -> Bool {
@@ -84,15 +100,5 @@ public struct WireLogger: LoggerProtocol {
         }
 
         return finalizedAttributes
-    }
-
-    // MARK: Static Functions
-
-    public static var logFiles: [URL] {
-        provider.logFiles
-    }
-
-    public static func addLogger(_ logger: LoggerProtocol) {
-        provider.addLogger(logger)
     }
 }

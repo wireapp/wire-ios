@@ -23,6 +23,8 @@ import WireDesign
 // MARK: - ConversationCreateServicesCell
 
 final class ConversationCreateServicesCell: IconToggleCell {
+    // MARK: Internal
+
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "toggle.newgroup.allowservices"
@@ -30,6 +32,8 @@ final class ConversationCreateServicesCell: IconToggleCell {
         setupIconForCell()
         showSeparator = false
     }
+
+    // MARK: Private
 
     private func setupIconForCell() {
         icon = .init(resource: .services).withRenderingMode(.alwaysTemplate)

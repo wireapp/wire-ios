@@ -33,32 +33,7 @@ public enum EnvironmentType: Equatable {
     case foma
     case custom(url: URL)
 
-    var stringValue: String {
-        switch self {
-        case .production:
-            "production"
-        case .staging:
-            "staging"
-        case .qaDemo:
-            "qa-demo"
-        case .qaDemo2:
-            "qa-demo-2"
-        case .anta:
-            "anta"
-        case .bella:
-            "bella"
-        case .chala:
-            "chala"
-        case .diya:
-            "diya"
-        case .elna:
-            "elna"
-        case .foma:
-            "foma"
-        case let .custom(url: url):
-            "custom-\(url.absoluteString)"
-        }
-    }
+    // MARK: Lifecycle
 
     public init(stringValue: String) {
         switch stringValue {
@@ -101,6 +76,35 @@ public enum EnvironmentType: Equatable {
             self = .production
         }
     }
+
+    // MARK: Internal
+
+    var stringValue: String {
+        switch self {
+        case .production:
+            "production"
+        case .staging:
+            "staging"
+        case .qaDemo:
+            "qa-demo"
+        case .qaDemo2:
+            "qa-demo-2"
+        case .anta:
+            "anta"
+        case .bella:
+            "bella"
+        case .chala:
+            "chala"
+        case .diya:
+            "diya"
+        case .elna:
+            "elna"
+        case .foma:
+            "foma"
+        case let .custom(url: url):
+            "custom-\(url.absoluteString)"
+        }
+    }
 }
 
 extension EnvironmentType {
@@ -124,11 +128,7 @@ extension EnvironmentType {
 // MARK: - BackendEnvironment
 
 public final class BackendEnvironment: NSObject {
-    public let title: String
-    let endpoints: BackendEndpointsProvider
-    let proxySettings: ProxySettingsProvider?
-    let certificateTrust: BackendTrustProvider
-    let type: EnvironmentType
+    // MARK: Lifecycle
 
     init(
         title: String,
@@ -170,6 +170,17 @@ public final class BackendEnvironment: NSObject {
             return nil
         }
     }
+
+    // MARK: Public
+
+    public let title: String
+
+    // MARK: Internal
+
+    let endpoints: BackendEndpointsProvider
+    let proxySettings: ProxySettingsProvider?
+    let certificateTrust: BackendTrustProvider
+    let type: EnvironmentType
 }
 
 // MARK: BackendEnvironmentProvider

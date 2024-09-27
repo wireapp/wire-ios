@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ConversationListAccessoryViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationListAccessoryView!
-    private var userSession: UserSessionMock!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -152,4 +148,12 @@ final class ConversationListAccessoryViewTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationListAccessoryView!
+    private var userSession: UserSessionMock!
 }

@@ -20,6 +20,36 @@ import Foundation
 
 extension Feature {
     public struct ConferenceCalling: Codable {
+        // MARK: Lifecycle
+
+        public init(status: Feature.Status = .enabled, config: Config? = nil) {
+            self.status = status
+            self.config = config
+        }
+
+        // MARK: Public
+
+        // MARK: - Types
+
+        // WARNING: This config is encoded and stored in the database, so any changes
+        // to it will require some migration code.
+
+        public struct Config: Codable, Equatable {
+            // MARK: Lifecycle
+
+            public init(
+                useSFTForOneToOneCalls: Bool = false
+            ) {
+                self.useSFTForOneToOneCalls = useSFTForOneToOneCalls
+            }
+
+            // MARK: Public
+
+            /// If set to `true`, clients will use SFTs for 1:1 calls
+
+            public let useSFTForOneToOneCalls: Bool
+        }
+
         // MARK: - Properties
 
         /// If `enabled` then the feature is available to the user.
@@ -29,29 +59,5 @@ extension Feature {
         /// The configuration used to control how the feature behaves.
 
         public let config: Config?
-
-        // MARK: - Life cycle
-
-        public init(status: Feature.Status = .enabled, config: Config? = nil) {
-            self.status = status
-            self.config = config
-        }
-
-        // MARK: - Types
-
-        // WARNING: This config is encoded and stored in the database, so any changes
-        // to it will require some migration code.
-
-        public struct Config: Codable, Equatable {
-            /// If set to `true`, clients will use SFTs for 1:1 calls
-
-            public let useSFTForOneToOneCalls: Bool
-
-            public init(
-                useSFTForOneToOneCalls: Bool = false
-            ) {
-                self.useSFTForOneToOneCalls = useSFTForOneToOneCalls
-            }
-        }
     }
 }

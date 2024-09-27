@@ -24,19 +24,7 @@ import WireDesign
 // MARK: - ShowAllParticipantsCell
 
 final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
-    // MARK: - Properties
-
-    typealias Participants = L10n.Localizable.Call.Participants
-    typealias ViewColors = SemanticColors.View
-
-    private let participantIconView = UIImageView()
-    private let titleLabel = UILabel()
-    private let accessoryIconView = UIImageView()
-    private var contentStackView: UIStackView!
-
-    var sectionName: String?
-    var obfuscatedSectionName: String?
-    var cellIdentifier: String?
+    // MARK: Lifecycle
 
     // MARK: - Init and overrides
 
@@ -50,6 +38,17 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    typealias Participants = L10n.Localizable.Call.Participants
+    typealias ViewColors = SemanticColors.View
+
+    var sectionName: String?
+    var obfuscatedSectionName: String?
+    var cellIdentifier: String?
+
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
@@ -57,6 +56,13 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
                 : ViewColors.backgroundUserCell
         }
     }
+
+    // MARK: Private
+
+    private let participantIconView = UIImageView()
+    private let titleLabel = UILabel()
+    private let accessoryIconView = UIImageView()
+    private var contentStackView: UIStackView!
 
     // MARK: - Setup and configure colors
 

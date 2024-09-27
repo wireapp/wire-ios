@@ -29,6 +29,8 @@ enum TransferStateMigration {
         case failedDownloaded
         case unavailable
 
+        // MARK: Internal
+
         // This mapping describes how to migrate from the legacy transferState to the new transferState,
         // which only contains a subset of the legacy cases. This means that we will have a many-to-one mapping.
         //

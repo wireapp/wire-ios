@@ -22,10 +22,7 @@ import XCTest
 @testable import Wire
 
 final class WipeDatabaseViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: WipeDatabaseViewController!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -77,4 +74,11 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
         // THEN
         try verify(matching: sut.confirmController!.alertController)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: WipeDatabaseViewController!
+    private var snapshotHelper: SnapshotHelper!
 }

@@ -24,13 +24,7 @@ import XCTest
 // MARK: - IsSelfUserE2EICertifiedUseCaseTests
 
 final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
-    private var selfUser: ZMUser!
-    private var selfMLSConversation: ZMConversation!
-    private var mockIsUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var sut: IsSelfUserE2EICertifiedUseCase!
-
-    private var context: NSManagedObjectContext { syncMOC }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -102,6 +96,16 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             // okay
         }
     }
+
+    // MARK: Private
+
+    private var selfUser: ZMUser!
+    private var selfMLSConversation: ZMConversation!
+    private var mockIsUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var sut: IsSelfUserE2EICertifiedUseCase!
+
+    private var context: NSManagedObjectContext { syncMOC }
 }
 
 // MARK: - MockError

@@ -18,8 +18,7 @@
 
 @objcMembers
 public class ZMMovedIndex: NSObject {
-    public let from: UInt
-    public let to: UInt
+    // MARK: Lifecycle
 
     public init(from: UInt, to: UInt) {
         self.from = from
@@ -27,13 +26,18 @@ public class ZMMovedIndex: NSObject {
         super.init()
     }
 
-    override public func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? ZMMovedIndex else { return false }
-        return other.from == from && other.to == to
-    }
+    // MARK: Public
+
+    public let from: UInt
+    public let to: UInt
 
     /// - seealso: https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function
     override public var hash: Int {
         Int(((from + to) * (from + to + 1) / 2) + to)
+    }
+
+    override public func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? ZMMovedIndex else { return false }
+        return other.from == from && other.to == to
     }
 }

@@ -32,7 +32,7 @@ extension ConversationRemoveParticipantError {
 // MARK: - RemoveParticipantActionHandler
 
 class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
-    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+    // MARK: Internal
 
     override func request(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
@@ -119,4 +119,8 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             action.notifyResult(.failure(ConversationRemoveParticipantError(response: response) ?? .unknown))
         }
     }
+
+    // MARK: Private
+
+    private lazy var eventProcessor = ConversationEventProcessor(context: context)
 }

@@ -38,6 +38,12 @@ final class TestParticipantRoleObserver: NSObject, ParticipantRoleObserver {
 final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
     var observer: TestParticipantRoleObserver!
 
+    var userInfoKeys: Set<String> {
+        [
+            #keyPath(ParticipantRoleChangeInfo.roleChanged),
+        ]
+    }
+
     override func setUp() {
         super.setUp()
         observer = TestParticipantRoleObserver()
@@ -46,12 +52,6 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
     override func tearDown() {
         observer = nil
         super.tearDown()
-    }
-
-    var userInfoKeys: Set<String> {
-        [
-            #keyPath(ParticipantRoleChangeInfo.roleChanged),
-        ]
     }
 
     func checkThatItNotifiesTheObserverOfAChange(

@@ -25,6 +25,8 @@ import WireDataModelSupport
 
 final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
     var prepareForMigration_Invocations = [Account]()
+    var calleduserDidLogout: (Bool, UUID)?
+
     func prepareForMigration(
         for account: WireDataModel.Account,
         onReady: @escaping (NSManagedObjectContext) throws -> Void
@@ -40,7 +42,6 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 
     func clientCompletedInitialSync(accountId: UUID) {}
 
-    var calleduserDidLogout: (Bool, UUID)?
     func userDidLogout(accountId: UUID) {
         calleduserDidLogout = (true, accountId)
     }
@@ -51,12 +52,7 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 // MARK: - ZMUserSessionTests_EncryptionAtRest
 
 final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
-    private var activityManager: MockBackgroundActivityManager!
-    private var factory: BackgroundActivityFactory!
-
-    private var account: Account {
-        coreDataStack.account
-    }
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -92,11 +88,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         try? sut.setEncryptionAtRest(enabled: false, skipMigration: true)
 
         super.tearDown()
-    }
-
-    private func setEncryptionAtRest(enabled: Bool, file: StaticString = #file, line: UInt = #line) {
-        try? sut.setEncryptionAtRest(enabled: true, skipMigration: true)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }
 
     // MARK: - Database migration
@@ -362,5 +353,19 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
         // then
         XCTAssertNotEqual(sut.lock, .database)
+    }
+
+    // MARK: Private
+
+    private var activityManager: MockBackgroundActivityManager!
+    private var factory: BackgroundActivityFactory!
+
+    private var account: Account {
+        coreDataStack.account
+    }
+
+    private func setEncryptionAtRest(enabled: Bool, file: StaticString = #file, line: UInt = #line) {
+        try? sut.setEncryptionAtRest(enabled: true, skipMigration: true)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }
 }

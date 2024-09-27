@@ -115,6 +115,8 @@ public enum ProteusError: Int, Error, Equatable {
 
     case unknown = 999
 
+    // MARK: Lifecycle
+
     /// Initialise from a proteus code.
     /// See: https://github.com/wireapp/proteus/blob/2.x/crates/proteus-traits/src/lib.rs
 

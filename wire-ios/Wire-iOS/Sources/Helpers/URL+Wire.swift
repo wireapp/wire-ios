@@ -33,6 +33,8 @@ private enum WebsitePages {
 enum TeamSource: Int {
     case onboarding, settings
 
+    // MARK: Internal
+
     var parameterValue: String {
         switch self {
         case .onboarding: "client_landing"

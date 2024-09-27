@@ -36,12 +36,7 @@ public protocol HistorySynchronizationStatus: NSObjectProtocol {
 
 @objc
 public final class ForegroundOnlyHistorySynchronizationStatus: NSObject, HistorySynchronizationStatus {
-    fileprivate var isSyncing = false
-    fileprivate var isInBackground = false
-    fileprivate let application: ZMApplication
-
-    /// Managed object context used to execute on the right thread
-    fileprivate var moc: NSManagedObjectContext
+    // MARK: Lifecycle
 
     public init(
         managedObjectContext: NSManagedObjectContext,
@@ -58,6 +53,13 @@ public final class ForegroundOnlyHistorySynchronizationStatus: NSObject, History
 
     deinit {
         self.application.unregisterObserverForStateChange(self)
+    }
+
+    // MARK: Public
+
+    /// Returns whether history should be downloaded now
+    public var shouldDownloadFullHistory: Bool {
+        !isSyncing && !isInBackground
     }
 
     @objc
@@ -84,8 +86,12 @@ public final class ForegroundOnlyHistorySynchronizationStatus: NSObject, History
         isSyncing = true
     }
 
-    /// Returns whether history should be downloaded now
-    public var shouldDownloadFullHistory: Bool {
-        !isSyncing && !isInBackground
-    }
+    // MARK: Fileprivate
+
+    fileprivate var isSyncing = false
+    fileprivate var isInBackground = false
+    fileprivate let application: ZMApplication
+
+    /// Managed object context used to execute on the right thread
+    fileprivate var moc: NSManagedObjectContext
 }

@@ -20,6 +20,42 @@ import Foundation
 
 extension Feature {
     public struct MLSMigration: Codable {
+        // MARK: Lifecycle
+
+        public init(status: Feature.Status = .disabled, config: Config = .init()) {
+            self.status = status
+            self.config = config
+        }
+
+        // MARK: Public
+
+        // MARK: - Types
+
+        // WARNING: This config is encoded and stored in the database, so any changes
+        // to it will require some migration code.
+
+        public struct Config: Codable, Equatable {
+            // MARK: Lifecycle
+
+            public init(
+                startTime: Date? = nil,
+                finaliseRegardlessAfter: Date? = nil
+            ) {
+                self.startTime = startTime
+                self.finaliseRegardlessAfter = finaliseRegardlessAfter
+            }
+
+            // MARK: Public
+
+            /// The starting time of the migration
+
+            public let startTime: Date?
+
+            /// The date until the migration has to finalise
+
+            public let finaliseRegardlessAfter: Date?
+        }
+
         // MARK: - Properties
 
         /// Whether MLS Migration is enabled.
@@ -29,35 +65,5 @@ extension Feature {
         /// The configuration used to control how the MLS Migration behaves.
 
         public let config: Config
-
-        // MARK: - Life cycle
-
-        public init(status: Feature.Status = .disabled, config: Config = .init()) {
-            self.status = status
-            self.config = config
-        }
-
-        // MARK: - Types
-
-        // WARNING: This config is encoded and stored in the database, so any changes
-        // to it will require some migration code.
-
-        public struct Config: Codable, Equatable {
-            /// The starting time of the migration
-
-            public let startTime: Date?
-
-            /// The date until the migration has to finalise
-
-            public let finaliseRegardlessAfter: Date?
-
-            public init(
-                startTime: Date? = nil,
-                finaliseRegardlessAfter: Date? = nil
-            ) {
-                self.startTime = startTime
-                self.finaliseRegardlessAfter = finaliseRegardlessAfter
-            }
-        }
     }
 }

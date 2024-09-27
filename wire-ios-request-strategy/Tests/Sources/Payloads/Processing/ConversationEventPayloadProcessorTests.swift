@@ -23,6 +23,8 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 final class ConversationEventPayloadProcessorTests: MessagingTestBase {
+    // MARK: Internal
+
     var sut: ConversationEventPayloadProcessor!
     var mockMLSService: MockMLSServiceInterface!
     var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
@@ -1466,6 +1468,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
         }
     }
+
+    // MARK: Private
 
     private func setupForProcessingConverationMemberLeaveTests(
         selfUserLeaves: Bool

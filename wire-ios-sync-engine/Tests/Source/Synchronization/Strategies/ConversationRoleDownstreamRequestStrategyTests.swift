@@ -19,6 +19,8 @@
 @testable import WireSyncEngine
 
 final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
+    // MARK: Internal
+
     var sut: ConversationRoleDownstreamRequestStrategy!
     var mockSyncStatus: MockSyncStatus!
     var mockApplicationStatus: MockApplicationStatus!
@@ -42,15 +44,6 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
         mockSyncStatus = nil
         mockApplicationStatus = nil
         super.tearDown()
-    }
-
-    private func createConversationToDownload() -> ZMConversation {
-        let convoToDownload = ZMConversation.insertNewObject(in: syncMOC)
-        convoToDownload.conversationType = .group
-        convoToDownload.remoteIdentifier = .create()
-        convoToDownload.needsToDownloadRoles = true
-        convoToDownload.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: syncMOC), role: nil)
-        return convoToDownload
     }
 
     func testThatPredicateIsCorrect() {
@@ -177,6 +170,8 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
         }
     }
 
+    // MARK: Private
+
     private let sampleRolesPayload: [String: Any] = [
         "conversation_roles": [
             [
@@ -194,6 +189,15 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             ],
         ],
     ]
+
+    private func createConversationToDownload() -> ZMConversation {
+        let convoToDownload = ZMConversation.insertNewObject(in: syncMOC)
+        convoToDownload.conversationType = .group
+        convoToDownload.remoteIdentifier = .create()
+        convoToDownload.needsToDownloadRoles = true
+        convoToDownload.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: syncMOC), role: nil)
+        return convoToDownload
+    }
 
     private func boostrapChangeTrackers(with objects: ZMManagedObject...) {
         for contextChangeTracker in sut.contextChangeTrackers {

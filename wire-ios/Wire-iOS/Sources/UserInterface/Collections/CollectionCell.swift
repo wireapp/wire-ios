@@ -36,11 +36,39 @@ protocol CollectionCellMessageChangeDelegate: AnyObject {
 // MARK: - CollectionCell
 
 class CollectionCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        loadContents()
+    }
+
+    // MARK: Internal
+
     var actionController: ConversationMessageActionController?
     var messageObserverToken: NSObjectProtocol? = .none
     weak var delegate: CollectionCellDelegate?
     // Cell forwards the message changes to the delegate
     weak var messageChangeDelegate: CollectionCellMessageChangeDelegate?
+
+    var desiredWidth: CGFloat? = .none
+    var desiredHeight: CGFloat? = .none
+
+    // MARK: - Obfuscation
+
+    let secureContentsView: UIView = {
+        let view = UIView()
+        view.backgroundColor = SemanticColors.View.backgroundCollectionCell
+
+        return view
+    }()
+
+    lazy var obfuscationView = ObfuscationView(icon: self.obfuscationIcon)
 
     var message: ZMConversationMessage? = .none {
         didSet {
@@ -61,26 +89,19 @@ class CollectionCell: UICollectionViewCell {
         }
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        loadContents()
-    }
-
-    var desiredWidth: CGFloat? = .none
-    var desiredHeight: CGFloat? = .none
-
     override var intrinsicContentSize: CGSize {
         let width = desiredWidth ?? UIView.noIntrinsicMetric
         let height = desiredHeight ?? UIView.noIntrinsicMetric
         return CGSize(width: width, height: height)
     }
 
-    private var cachedSize: CGSize? = .none
+    var obfuscationIcon: StyleKitIcon {
+        .exclamationMarkCircle
+    }
+
+    override var canBecomeFirstResponder: Bool {
+        true
+    }
 
     func flushCachedSize() {
         cachedSize = .none
@@ -157,28 +178,6 @@ class CollectionCell: UICollectionViewCell {
         }
     }
 
-    // MARK: - Obfuscation
-
-    let secureContentsView: UIView = {
-        let view = UIView()
-        view.backgroundColor = SemanticColors.View.backgroundCollectionCell
-
-        return view
-    }()
-
-    var obfuscationIcon: StyleKitIcon {
-        .exclamationMarkCircle
-    }
-
-    lazy var obfuscationView = ObfuscationView(icon: self.obfuscationIcon)
-
-    fileprivate func updateMessageVisibility() {
-        let isObfuscated = message?.isObfuscated == true || message?.hasBeenDeleted == true
-        secureContentsView.isHidden = isObfuscated
-        obfuscationView.isHidden = !isObfuscated
-        obfuscationView.backgroundColor = .accentDimmedFlat
-    }
-
     // MARK: - Menu
 
     func menuConfigurationProperties() -> MenuConfigurationProperties? {
@@ -210,10 +209,6 @@ class CollectionCell: UICollectionViewCell {
         )
     }
 
-    override var canBecomeFirstResponder: Bool {
-        true
-    }
-
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         actionController?.canPerformAction(action) == true
     }
@@ -235,6 +230,19 @@ class CollectionCell: UICollectionViewCell {
     func copyDisplayedContent(in pasteboard: UIPasteboard) {
         message?.copy(in: pasteboard)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate func updateMessageVisibility() {
+        let isObfuscated = message?.isObfuscated == true || message?.hasBeenDeleted == true
+        secureContentsView.isHidden = isObfuscated
+        obfuscationView.isHidden = !isObfuscated
+        obfuscationView.backgroundColor = .accentDimmedFlat
+    }
+
+    // MARK: Private
+
+    private var cachedSize: CGSize? = .none
 }
 
 // MARK: ZMMessageObserver

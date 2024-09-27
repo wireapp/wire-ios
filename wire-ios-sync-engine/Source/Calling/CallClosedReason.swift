@@ -55,6 +55,8 @@ public enum CallClosedReason: Int32 {
     /// Call was closed for an unknown reason. This is most likely a bug.
     case unknown
 
+    // MARK: Lifecycle
+
     // MARK: - Briding
 
     /// Creates the call closed reason from the AVS flag.
@@ -95,6 +97,8 @@ public enum CallClosedReason: Int32 {
             self = .unknown
         }
     }
+
+    // MARK: Internal
 
     /// The raw flag for the call end.
     var wcall_reason: Int32 {

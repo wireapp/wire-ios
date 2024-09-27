@@ -19,6 +19,8 @@
 import Foundation
 
 struct UserClientAddEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserClientAddEvent {
@@ -43,18 +45,9 @@ struct UserClientAddEventDecoder {
         )
     }
 
-    private struct Payload: Decodable {
-        let id: String
-        let type: UserClientType
-        let activationDate: UTCTimeMillis
-        let label: String?
-        let model: String?
-        let deviceClass: DeviceClass?
-        let lastActiveDate: UTCTime?
-        let mlsPublicKeys: MLSPublicKeys?
-        let cookie: String?
-        let capabilities: CapabilitiesList?
+    // MARK: Private
 
+    private struct Payload: Decodable {
         enum CodingKeys: String, CodingKey {
             case id
             case type
@@ -67,6 +60,17 @@ struct UserClientAddEventDecoder {
             case cookie
             case capabilities
         }
+
+        let id: String
+        let type: UserClientType
+        let activationDate: UTCTimeMillis
+        let label: String?
+        let model: String?
+        let deviceClass: DeviceClass?
+        let lastActiveDate: UTCTime?
+        let mlsPublicKeys: MLSPublicKeys?
+        let cookie: String?
+        let capabilities: CapabilitiesList?
     }
 
     private struct CapabilitiesList: Decodable {

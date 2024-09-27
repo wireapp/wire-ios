@@ -23,21 +23,7 @@ import WireUtilities
 // MARK: - EventProcessor
 
 actor EventProcessor: UpdateEventProcessor {
-    private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
-
-    private let syncContext: NSManagedObjectContext
-    private let eventContext: NSManagedObjectContext
-    private var bufferedEvents: [ZMUpdateEvent]
-    private let eventDecoder: any EventDecoderProtocol
-    private let eventProcessingTracker: EventProcessingTrackerProtocol
-    private let earService: EARServiceInterface
-    private var processingTask: Task<Void, Error>?
-    private let eventConsumers: [ZMEventConsumer]
-    private let eventAsyncConsumers: [ZMEventAsyncConsumer]
-
-    private let processedEventList = ProcessedEventList()
-
-    // MARK: Life Cycle
+    // MARK: Lifecycle
 
     init(
         storeProvider: CoreDataStack,
@@ -81,6 +67,33 @@ actor EventProcessor: UpdateEventProcessor {
         self.eventAsyncConsumers = eventAsyncConsumers
     }
 
+    // MARK: Public
+
+    @objc(prefetchRequestForUpdateEvents:completion:)
+    public func prefetchRequest(updateEvents: [ZMUpdateEvent]) async -> ZMFetchRequestBatch {
+        var messageNounces: Set<UUID> = Set()
+        var conversationNounces: Set<UUID> = Set()
+
+        for eventConsumer in eventConsumers {
+            if let messageNoncesToPrefetch = eventConsumer.messageNoncesToPrefetch?(toProcessEvents: updateEvents) {
+                messageNounces.formUnion(messageNoncesToPrefetch)
+            }
+
+            if let conversationRemoteIdentifiersToPrefetch = eventConsumer
+                .conversationRemoteIdentifiersToPrefetch?(toProcessEvents: updateEvents) {
+                conversationNounces.formUnion(conversationRemoteIdentifiersToPrefetch)
+            }
+        }
+
+        let fetchRequest = ZMFetchRequestBatch()
+        fetchRequest.addNonces(toPrefetchMessages: messageNounces)
+        fetchRequest.addConversationRemoteIdentifiers(toPrefetchConversations: conversationNounces)
+
+        return fetchRequest
+    }
+
+    // MARK: Internal
+
     // MARK: Methods
 
     func bufferEvents(_ events: [ZMUpdateEvent]) async {
@@ -114,53 +127,6 @@ actor EventProcessor: UpdateEventProcessor {
         let events = bufferedEvents
         bufferedEvents.removeAll()
         try await processEvents(events)
-    }
-
-    private func enqueueTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
-        defer { processingTask = nil }
-
-        processingTask = Task { [processingTask] in
-            _ = try await processingTask?.value
-            return try await block()
-        }
-
-        // throw error if any
-        _ = try await processingTask?.value
-    }
-
-    private func processBackgroundEvents(_ events: [ZMUpdateEvent]) async {
-        await syncContext.perform {
-            for eventConsumer in self.eventConsumers {
-                eventConsumer.processEventsWhileInBackground?(events)
-            }
-        }
-    }
-
-    private func requestToCalculateBadgeCount() async {
-        await syncContext.perform {
-            self.syncContext.saveOrRollback()
-            NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
-        }
-    }
-
-    private func processEvents(callEventsOnly: Bool) async throws {
-        WireLogger.updateEvent.info("process pending events: callEventsOnly=\(callEventsOnly)")
-
-        let encryptMessagesAtRest = await syncContext.perform {
-            self.syncContext.encryptMessagesAtRest
-        }
-        if encryptMessagesAtRest {
-            do {
-                WireLogger.updateEvent.info("trying to get EAR keys")
-                let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
-                await processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
-            } catch {
-                WireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
-                throw error
-            }
-        } else {
-            await processStoredUpdateEvents(callEventsOnly: callEventsOnly)
-        }
     }
 
     func processStoredUpdateEvents(
@@ -237,27 +203,67 @@ actor EventProcessor: UpdateEventProcessor {
         }
     }
 
-    @objc(prefetchRequestForUpdateEvents:completion:)
-    public func prefetchRequest(updateEvents: [ZMUpdateEvent]) async -> ZMFetchRequestBatch {
-        var messageNounces: Set<UUID> = Set()
-        var conversationNounces: Set<UUID> = Set()
+    // MARK: Private
 
-        for eventConsumer in eventConsumers {
-            if let messageNoncesToPrefetch = eventConsumer.messageNoncesToPrefetch?(toProcessEvents: updateEvents) {
-                messageNounces.formUnion(messageNoncesToPrefetch)
-            }
+    private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
 
-            if let conversationRemoteIdentifiersToPrefetch = eventConsumer
-                .conversationRemoteIdentifiersToPrefetch?(toProcessEvents: updateEvents) {
-                conversationNounces.formUnion(conversationRemoteIdentifiersToPrefetch)
-            }
+    private let syncContext: NSManagedObjectContext
+    private let eventContext: NSManagedObjectContext
+    private var bufferedEvents: [ZMUpdateEvent]
+    private let eventDecoder: any EventDecoderProtocol
+    private let eventProcessingTracker: EventProcessingTrackerProtocol
+    private let earService: EARServiceInterface
+    private var processingTask: Task<Void, Error>?
+    private let eventConsumers: [ZMEventConsumer]
+    private let eventAsyncConsumers: [ZMEventAsyncConsumer]
+
+    private let processedEventList = ProcessedEventList()
+
+    private func enqueueTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
+        defer { processingTask = nil }
+
+        processingTask = Task { [processingTask] in
+            _ = try await processingTask?.value
+            return try await block()
         }
 
-        let fetchRequest = ZMFetchRequestBatch()
-        fetchRequest.addNonces(toPrefetchMessages: messageNounces)
-        fetchRequest.addConversationRemoteIdentifiers(toPrefetchConversations: conversationNounces)
+        // throw error if any
+        _ = try await processingTask?.value
+    }
 
-        return fetchRequest
+    private func processBackgroundEvents(_ events: [ZMUpdateEvent]) async {
+        await syncContext.perform {
+            for eventConsumer in self.eventConsumers {
+                eventConsumer.processEventsWhileInBackground?(events)
+            }
+        }
+    }
+
+    private func requestToCalculateBadgeCount() async {
+        await syncContext.perform {
+            self.syncContext.saveOrRollback()
+            NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
+        }
+    }
+
+    private func processEvents(callEventsOnly: Bool) async throws {
+        WireLogger.updateEvent.info("process pending events: callEventsOnly=\(callEventsOnly)")
+
+        let encryptMessagesAtRest = await syncContext.perform {
+            self.syncContext.encryptMessagesAtRest
+        }
+        if encryptMessagesAtRest {
+            do {
+                WireLogger.updateEvent.info("trying to get EAR keys")
+                let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
+                await processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
+            } catch {
+                WireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
+                throw error
+            }
+        } else {
+            await processStoredUpdateEvents(callEventsOnly: callEventsOnly)
+        }
     }
 }
 
@@ -274,10 +280,7 @@ extension Notification.Name {
 // MARK: - ProcessedEventList
 
 private actor ProcessedEventList {
-    private var hashes = Set<Int64>()
-
-    // A full list would contain approx 80kB.
-    private let capacity = 10000
+    // MARK: Internal
 
     func addEvent(_ event: ZMUpdateEvent) {
         guard let hash = event.contentHash else {
@@ -300,4 +303,11 @@ private actor ProcessedEventList {
 
         return hashes.contains(hash)
     }
+
+    // MARK: Private
+
+    private var hashes = Set<Int64>()
+
+    // A full list would contain approx 80kB.
+    private let capacity = 10000
 }

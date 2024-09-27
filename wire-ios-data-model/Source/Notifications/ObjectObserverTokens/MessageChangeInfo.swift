@@ -104,18 +104,16 @@ extension ZMSystemMessage {
 
 @objcMembers
 public final class MessageChangeInfo: ObjectChangeInfo {
-    static let UserChangeInfoKey = "userChanges"
-    static let ReactionChangeInfoKey = "reactionChanges"
-    static let ButtonStateChangeInfoKey = "buttonStateChanges"
-
-    static func changeInfo(for message: ZMMessage, changes: Changes) -> MessageChangeInfo? {
-        MessageChangeInfo(object: message, changes: changes)
-    }
+    // MARK: Lifecycle
 
     public required init(object: NSObject) {
         self.message = object as! ZMMessage
         super.init(object: object)
     }
+
+    // MARK: Public
+
+    public let message: ZMMessage
 
     override public var debugDescription: String {
         [
@@ -215,7 +213,15 @@ public final class MessageChangeInfo: ObjectChangeInfo {
         changeInfos[MessageChangeInfo.UserChangeInfoKey] as? UserChangeInfo
     }
 
-    public let message: ZMMessage
+    // MARK: Internal
+
+    static let UserChangeInfoKey = "userChanges"
+    static let ReactionChangeInfoKey = "reactionChanges"
+    static let ButtonStateChangeInfoKey = "buttonStateChanges"
+
+    static func changeInfo(for message: ZMMessage, changes: Changes) -> MessageChangeInfo? {
+        MessageChangeInfo(object: message, changes: changes)
+    }
 }
 
 // MARK: - ZMMessageObserver

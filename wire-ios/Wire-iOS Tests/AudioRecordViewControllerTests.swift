@@ -42,8 +42,9 @@ private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecord
 // MARK: - AudioRecordViewControllerTests
 
 final class AudioRecordViewControllerTests: XCTestCase {
+    // MARK: Internal
+
     var sut: AudioRecordViewController!
-    fileprivate var delegate: MockAudioRecordViewControllerDelegate!
     var userSession: UserSessionMock!
 
     override func setUp() {
@@ -141,6 +142,10 @@ final class AudioRecordViewControllerTests: XCTestCase {
         // then
         XCTAssertEqual(delegate.cancelCallCount, 1)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var delegate: MockAudioRecordViewControllerDelegate!
 }
 
 extension UIViewController {

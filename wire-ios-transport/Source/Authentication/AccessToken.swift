@@ -21,9 +21,7 @@ import Foundation
 // TODO-SWIFT: convert to struct
 @objc(ZMAccessToken) @objcMembers
 public final class AccessToken: NSObject {
-    public let token: String
-    public let type: String
-    public let expirationDate: Date
+    // MARK: Lifecycle
 
     @objc(initWithToken:type:expiresInSeconds:)
     public init(token: String, type: String, expiresInSeconds: UInt) {
@@ -32,6 +30,12 @@ public final class AccessToken: NSObject {
         self.expirationDate = Date(timeIntervalSinceNow: Double(expiresInSeconds))
     }
 
+
+    // MARK: Public
+
+    public let token: String
+    public let type: String
+    public let expirationDate: Date
 
     public var httpHeaders: [String: String] {
         ["Authorization": "\(type) \(token)"]

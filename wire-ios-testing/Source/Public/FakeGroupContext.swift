@@ -21,19 +21,7 @@ import WireSystem
 
 @objcMembers
 public class FakeGroupContext: NSObject, GroupQueue {
-    public let dispatchGroup: ZMSDispatchGroup?
-    fileprivate let queue: DispatchQueue!
-
-    public static var main: FakeGroupContext {
-        FakeGroupContext(queue: DispatchQueue.main, group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
-    }
-
-    public static var sync: FakeGroupContext {
-        FakeGroupContext(
-            queue: DispatchQueue(label: "FakeGroupContext syncContext"),
-            group: ZMSDispatchGroup(label: "FakeSyncContext")
-        )
-    }
+    // MARK: Lifecycle
 
     public init(queue: DispatchQueue, group: ZMSDispatchGroup) {
         self.queue = queue
@@ -47,7 +35,26 @@ public class FakeGroupContext: NSObject, GroupQueue {
         ) // swiftlint:disable:this legacy_random
     }
 
+    // MARK: Public
+
+    public static var main: FakeGroupContext {
+        FakeGroupContext(queue: DispatchQueue.main, group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
+    }
+
+    public static var sync: FakeGroupContext {
+        FakeGroupContext(
+            queue: DispatchQueue(label: "FakeGroupContext syncContext"),
+            group: ZMSDispatchGroup(label: "FakeSyncContext")
+        )
+    }
+
+    public let dispatchGroup: ZMSDispatchGroup?
+
     public func performGroupedBlock(_ block: @escaping () -> Void) {
         dispatchGroup?.async(on: queue, block: block)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate let queue: DispatchQueue!
 }

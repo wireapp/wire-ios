@@ -35,8 +35,7 @@ final class FakeGroupQueue: NSObject, GroupQueue {
 // MARK: - AssetDeletionStatusTests
 
 final class AssetDeletionStatusTests: MessagingTest {
-    private var sut: AssetDeletionStatus!
-    fileprivate var identifierProvider: DeletableAssetIdentifierProvider!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -147,6 +146,14 @@ final class AssetDeletionStatusTests: MessagingTest {
         XCTAssertNotEqual(first, second)
         XCTAssertNil(sut.nextIdentifierToDelete())
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var identifierProvider: DeletableAssetIdentifierProvider!
+
+    // MARK: Private
+
+    private var sut: AssetDeletionStatus!
 }
 
 // MARK: - IdentifierProvider
@@ -158,7 +165,7 @@ private final class IdentifierProvider: NSObject, DeletableAssetIdentifierProvid
 // MARK: - MockRequestAvailableObserver
 
 private final class MockRequestAvailableObserver: NSObject, RequestAvailableObserver {
-    private let requestAvailable: () -> Void
+    // MARK: Lifecycle
 
     init(requestAvailable: @escaping () -> Void) {
         self.requestAvailable = requestAvailable
@@ -170,7 +177,13 @@ private final class MockRequestAvailableObserver: NSObject, RequestAvailableObse
         RequestAvailableNotification.removeObserver(self)
     }
 
+    // MARK: Internal
+
     func newRequestsAvailable() {
         requestAvailable()
     }
+
+    // MARK: Private
+
+    private let requestAvailable: () -> Void
 }

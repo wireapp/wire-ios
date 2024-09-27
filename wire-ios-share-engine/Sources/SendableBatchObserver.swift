@@ -19,11 +19,7 @@
 import Foundation
 
 public final class SendableBatchObserver {
-    public let sendables: [Sendable]
-
-    public var sentHandler: (() -> Void)?
-    public var progressHandler: ((Float) -> Void)?
-    private var observerToken: Any?
+    // MARK: Lifecycle
 
     public init(sendables: [Sendable]) {
         self.sendables = sendables
@@ -44,6 +40,13 @@ public final class SendableBatchObserver {
         }
     }
 
+    // MARK: Public
+
+    public let sendables: [Sendable]
+
+    public var sentHandler: (() -> Void)?
+    public var progressHandler: ((Float) -> Void)?
+
     public var allSendablesSent: Bool {
         !sendables.contains { !$0.isSent }
     }
@@ -57,6 +60,10 @@ public final class SendableBatchObserver {
 
         updateProgress()
     }
+
+    // MARK: Private
+
+    private var observerToken: Any?
 
     private func updateProgress() {
         var totalProgress: Float = 0

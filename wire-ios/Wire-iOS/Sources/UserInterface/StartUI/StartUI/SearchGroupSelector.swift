@@ -20,18 +20,7 @@ import UIKit
 import WireDesign
 
 final class SearchGroupSelector: UIView, TabBarDelegate {
-    var onGroupSelected: ((SearchGroup) -> Void)?
-
-    var group: SearchGroup = .people {
-        didSet {
-            onGroupSelected?(group)
-        }
-    }
-
-    // MARK: - Views
-
-    private let tabBar: TabBar
-    private let groups: [SearchGroup]
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -54,6 +43,29 @@ final class SearchGroupSelector: UIView, TabBarDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var onGroupSelected: ((SearchGroup) -> Void)?
+
+    var group: SearchGroup = .people {
+        didSet {
+            onGroupSelected?(group)
+        }
+    }
+
+    // MARK: - Tab Bar Delegate
+
+    func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int) {
+        group = groups[index]
+    }
+
+    // MARK: Private
+
+    // MARK: - Views
+
+    private let tabBar: TabBar
+    private let groups: [SearchGroup]
+
     private func configureViews() {
         tabBar.delegate = self
         backgroundColor = SemanticColors.View.backgroundDefault
@@ -62,11 +74,5 @@ final class SearchGroupSelector: UIView, TabBarDelegate {
 
     private func configureConstraints() {
         tabBar.fitIn(view: self)
-    }
-
-    // MARK: - Tab Bar Delegate
-
-    func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int) {
-        group = groups[index]
     }
 }

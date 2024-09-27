@@ -27,10 +27,7 @@ enum OrientationDelta: Int, CaseIterable {
     case upsideDown
     case rotatedRight
 
-    static func + (lhs: OrientationDelta, rhs: OrientationDelta) -> OrientationDelta? {
-        let value = (lhs.rawValue + rhs.rawValue) % OrientationDelta.allCases.count
-        return OrientationDelta(rawValue: value)
-    }
+    // MARK: Lifecycle
 
     init(
         interfaceOrientation: UIInterfaceOrientation = UIWindow.interfaceOrientation ?? .unknown,
@@ -42,6 +39,8 @@ enum OrientationDelta: Int, CaseIterable {
         }
         self = delta
     }
+
+    // MARK: Internal
 
     var radians: CGFloat {
         switch self {
@@ -68,6 +67,11 @@ enum OrientationDelta: Int, CaseIterable {
             0
         }
     }
+
+    static func + (lhs: OrientationDelta, rhs: OrientationDelta) -> OrientationDelta? {
+        let value = (lhs.rawValue + rhs.rawValue) % OrientationDelta.allCases.count
+        return OrientationDelta(rawValue: value)
+    }
 }
 
 // MARK: - OrientationAngle
@@ -76,6 +80,8 @@ enum OrientationAngle {
     case none // 0°
     case right // 90°
     case straight // 180°
+
+    // MARK: Internal
 
     var radians: CGFloat {
         switch self {

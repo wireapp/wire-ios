@@ -46,6 +46,19 @@ typealias URLRequestSuccessHandler = (_ data: Data) throws -> Void
 /// fails sliently.
 
 final class URLRequestPromise: CancelableTask {
+    // MARK: Lifecycle
+
+    /// Creates a new promise for a request, before it is scheduled.
+    ///
+    /// - parameter requester: The object that will perform the request whose
+    /// result is represented by this promise.
+
+    init(requester: ZiphyURLRequester) {
+        self.requester = requester
+    }
+
+    // MARK: Internal
+
     let requester: ZiphyURLRequester
 
     /// The unique identifier of the request in the requester. You need to
@@ -70,20 +83,6 @@ final class URLRequestPromise: CancelableTask {
                 failureHandler?(error)
             }
         }
-    }
-
-    private var isCancelled = false
-    private var isResolved = false
-    private var result: (Data?, URLResponse?, Error?)?
-    private var failureError: ZiphyError?
-
-    /// Creates a new promise for a request, before it is scheduled.
-    ///
-    /// - parameter requester: The object that will perform the request whose
-    /// result is represented by this promise.
-
-    init(requester: ZiphyURLRequester) {
-        self.requester = requester
     }
 
     // MARK: - Response Handling
@@ -124,6 +123,13 @@ final class URLRequestPromise: CancelableTask {
         requestIdentifier.map(requester.cancelZiphyRequest)
         isCancelled = true
     }
+
+    // MARK: Private
+
+    private var isCancelled = false
+    private var isResolved = false
+    private var result: (Data?, URLResponse?, Error?)?
+    private var failureError: ZiphyError?
 
     // MARK: - Utilities
 

@@ -21,21 +21,7 @@ import WireDomain
 import WireRequestStrategy
 
 public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-    // MARK: - Properties
-
-    // Slow Sync
-
-    private unowned var syncProgress: SyncProgress
-
-    private let syncPhase: SyncPhase = .updateSelfSupportedProtocols
-
-    private var isSlowSyncing: Bool { syncProgress.currentSyncPhase == syncPhase }
-
-    // Requests
-
-    private lazy var requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
-
-    private let selfUserProvider: SelfUserProviderProtocol
+    // MARK: Lifecycle
 
     // MARK: - Initializers
 
@@ -52,6 +38,8 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
         configuration = [.allowsRequestsDuringSlowSync]
     }
+
+    // MARK: Public
 
     // MARK: - Functions
 
@@ -125,6 +113,24 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             failSlowSync()
         }
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    // Slow Sync
+
+    private unowned var syncProgress: SyncProgress
+
+    private let syncPhase: SyncPhase = .updateSelfSupportedProtocols
+
+    // Requests
+
+    private lazy var requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
+
+    private let selfUserProvider: SelfUserProviderProtocol
+
+    private var isSlowSyncing: Bool { syncProgress.currentSyncPhase == syncPhase }
 
     // MARK: Sync Progress
 

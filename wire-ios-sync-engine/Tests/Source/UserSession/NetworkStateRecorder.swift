@@ -20,26 +20,7 @@
 
 @objc
 public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver {
-    // MARK: Properties
-
-    private var _stateChanges: [NetworkState] = []
-
-    private let queue = DispatchQueue(label: "NetworkStateRecorder.queue", qos: .userInitiated)
-
-    private let notificationCenter: NotificationCenter = .default
-    private var selfUnregisteringToken: SelfUnregisteringNotificationCenterToken?
-
-    var stateChanges: [NetworkState] {
-        queue.sync {
-            _stateChanges
-        }
-    }
-
-    @objc var stateChanges_objc: [NSNumber] {
-        queue.sync {
-            _stateChanges.map { NSNumber(value: $0.rawValue) }
-        }
-    }
+    // MARK: Public
 
     // MARK: Methods
 
@@ -69,4 +50,29 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
             self._stateChanges.append(newState)
         }
     }
+
+    // MARK: Internal
+
+    var stateChanges: [NetworkState] {
+        queue.sync {
+            _stateChanges
+        }
+    }
+
+    @objc var stateChanges_objc: [NSNumber] {
+        queue.sync {
+            _stateChanges.map { NSNumber(value: $0.rawValue) }
+        }
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private var _stateChanges: [NetworkState] = []
+
+    private let queue = DispatchQueue(label: "NetworkStateRecorder.queue", qos: .userInitiated)
+
+    private let notificationCenter: NotificationCenter = .default
+    private var selfUnregisteringToken: SelfUnregisteringNotificationCenterToken?
 }

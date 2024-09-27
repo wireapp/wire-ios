@@ -35,14 +35,17 @@ public struct CoreCryptoConfiguration {
 // MARK: - CoreCryptoConfigProvider
 
 public class CoreCryptoConfigProvider {
-    // MARK: - Properties
-
-    private let coreCryptoKeyProvider: CoreCryptoKeyProvider
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(coreCryptoKeyProvider: CoreCryptoKeyProvider = .init()) {
         self.coreCryptoKeyProvider = coreCryptoKeyProvider
+    }
+
+    // MARK: Public
+
+    public enum ConfigurationSetupFailure: Error, Equatable {
+        case failedToGetClientId
+        case failedToGetCoreCryptoKey
     }
 
     // MARK: - Configuration
@@ -103,10 +106,11 @@ public class CoreCryptoConfigProvider {
         return clientID
     }
 
-    public enum ConfigurationSetupFailure: Error, Equatable {
-        case failedToGetClientId
-        case failedToGetCoreCryptoKey
-    }
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let coreCryptoKeyProvider: CoreCryptoKeyProvider
 }
 
 extension ClientId {

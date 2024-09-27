@@ -25,25 +25,6 @@ final class NetworkSessionTests: XCTestCase {
     var mockURLSession: URLSessionMock!
     var mockNetworkRequest: NetworkRequest!
 
-    override func setUp() {
-        super.setUp()
-
-        mockURLSession = URLSessionMock()
-
-        mockNetworkRequest = NetworkRequest(
-            path: "test",
-            httpMethod: .get,
-            contentType: .json,
-            acceptType: .json
-        )
-    }
-
-    override func tearDown() {
-        mockURLSession = nil
-        mockNetworkRequest = nil
-        super.tearDown()
-    }
-
     // MARK: - Send request
 
     var invalidResponse: (Data, URLResponse) {
@@ -78,6 +59,25 @@ final class NetworkSessionTests: XCTestCase {
         )!
 
         return (Data([1, 2, 3]), response)
+    }
+
+    override func setUp() {
+        super.setUp()
+
+        mockURLSession = URLSessionMock()
+
+        mockNetworkRequest = NetworkRequest(
+            path: "test",
+            httpMethod: .get,
+            contentType: .json,
+            acceptType: .json
+        )
+    }
+
+    override func tearDown() {
+        mockURLSession = nil
+        mockNetworkRequest = nil
+        super.tearDown()
     }
 
     func test_SendRequest_InvalidRequestURL() async throws {

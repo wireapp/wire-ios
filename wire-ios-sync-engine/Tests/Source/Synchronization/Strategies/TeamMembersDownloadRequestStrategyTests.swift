@@ -24,32 +24,6 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
 
-    override func setUp() {
-        super.setUp()
-        mockApplicationStatus = MockApplicationStatus()
-        mockSyncStatus = MockSyncStatus(
-            managedObjectContext: syncMOC,
-            lastEventIDRepository: lastEventIDRepository
-        )
-        sut = TeamMembersDownloadRequestStrategy(
-            withManagedObjectContext: syncMOC,
-            applicationStatus: mockApplicationStatus,
-            syncStatus: mockSyncStatus
-        )
-
-        syncMOC.performGroupedAndWait {
-            let user = ZMUser.selfUser(in: self.syncMOC)
-            user.remoteIdentifier = UUID()
-        }
-    }
-
-    override func tearDown() {
-        mockApplicationStatus = nil
-        mockSyncStatus = nil
-        sut = nil
-        super.tearDown()
-    }
-
     let sampleResponseForSmallTeam: [String: Any] = [
         "hasMore": false,
         "members": [
@@ -75,6 +49,32 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
             ],
         ],
     ]
+
+    override func setUp() {
+        super.setUp()
+        mockApplicationStatus = MockApplicationStatus()
+        mockSyncStatus = MockSyncStatus(
+            managedObjectContext: syncMOC,
+            lastEventIDRepository: lastEventIDRepository
+        )
+        sut = TeamMembersDownloadRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncStatus: mockSyncStatus
+        )
+
+        syncMOC.performGroupedAndWait {
+            let user = ZMUser.selfUser(in: self.syncMOC)
+            user.remoteIdentifier = UUID()
+        }
+    }
+
+    override func tearDown() {
+        mockApplicationStatus = nil
+        mockSyncStatus = nil
+        sut = nil
+        super.tearDown()
+    }
 
     func createTeam() -> Team {
         let selfUser = ZMUser.selfUser(in: syncMOC)

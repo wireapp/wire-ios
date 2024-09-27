@@ -20,7 +20,7 @@ import XCTest
 @testable import WireDataModel
 
 final class DatabaseMigrationTests_Conversations: XCTestCase {
-    private let helper = DatabaseMigrationHelper()
+    // MARK: Internal
 
     func testThatItPerformsMigrationFrom106_deleteConversationCascadesToParticipantRole() throws {
         try migrateStoreToCurrentVersion(
@@ -135,6 +135,10 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
             }
         )
     }
+
+    // MARK: Private
+
+    private let helper = DatabaseMigrationHelper()
 
     // MARK: -
 

@@ -27,15 +27,26 @@ import WireDataModel
 
 @objcMembers
 public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrationDelegate, ZMRequestCancellation {
+    public var mockSynchronizationState = SynchronizationState.unauthenticated
+    public var mockOperationState = OperationState.foreground
+
+    // MARK: ZMRequestCancellation
+
+    public var cancelledIdentifiers = [ZMTaskIdentifier]()
+
+    // MARK: ClientRegistrationDelegate
+
+    public var deletionCalls = 0
+
+    public var didRequestResyncResources = false
+
     public var taskCancellationDelegate: ZMRequestCancellation { self }
     public var clientRegistrationDelegate: ClientRegistrationDelegate { self }
 
-    public var mockSynchronizationState = SynchronizationState.unauthenticated
     public var synchronizationState: SynchronizationState {
         mockSynchronizationState
     }
 
-    public var mockOperationState = OperationState.foreground
     public var operationState: OperationState {
         mockOperationState
     }
@@ -44,29 +55,20 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
         self
     }
 
-    // MARK: ZMRequestCancellation
-
-    public var cancelledIdentifiers = [ZMTaskIdentifier]()
+    /// Returns true if the client is registered
+    public var clientIsReadyForRequests: Bool {
+        true
+    }
 
     public func cancelTask(with identifier: ZMTaskIdentifier) {
         cancelledIdentifiers.append(identifier)
     }
-
-    // MARK: ClientRegistrationDelegate
-
-    public var deletionCalls = 0
 
     /// Notify that the current client was deleted remotely
     public func didDetectCurrentClientDeletion() {
         deletionCalls += 1
     }
 
-    /// Returns true if the client is registered
-    public var clientIsReadyForRequests: Bool {
-        true
-    }
-
-    public var didRequestResyncResources = false
     public func requestResyncResources() {
         didRequestResyncResources = true
     }
@@ -75,7 +77,7 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
 // MARK: - MockAuthenticationStatus
 
 class MockAuthenticationStatus: ZMAuthenticationStatus {
-    var mockPhase: ZMAuthenticationPhase
+    // MARK: Lifecycle
 
     init(
         delegate: ZMAuthenticationStatusDelegate,
@@ -90,6 +92,10 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
         )
     }
 
+    // MARK: Internal
+
+    var mockPhase: ZMAuthenticationPhase
+
     override var currentPhase: ZMAuthenticationPhase {
         mockPhase
     }
@@ -99,8 +105,7 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
 
 @objcMembers
 class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
-    var mockPhase: ClientRegistrationPhase?
-    var mockReadiness = true
+    // MARK: Lifecycle
 
     convenience init(managedObjectContext: NSManagedObjectContext) {
         self.init(context: managedObjectContext, cookieProvider: nil, coreCryptoProvider: nil)
@@ -114,6 +119,14 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
         super.init(context: moc, cookieProvider: cookieProvider, coreCryptoProvider: coreCryptoProvider)
         self.emailCredentials = UserEmailCredentials(email: "bla@example.com", password: "secret")
     }
+
+    // MARK: Internal
+
+    var mockPhase: ClientRegistrationPhase?
+    var mockReadiness = true
+
+    var isWaitingForLoginValue = false
+    var isAddingEmailNecessaryValue = false
 
     override var currentPhase: ClientRegistrationPhase {
         if let phase = mockPhase {
@@ -130,12 +143,10 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
         mockReadiness
     }
 
-    var isWaitingForLoginValue = false
     override var isWaitingForLogin: Bool {
         isWaitingForLoginValue
     }
 
-    var isAddingEmailNecessaryValue = false
     override var isAddingEmailNecessary: Bool {
         isAddingEmailNecessaryValue
     }
@@ -154,6 +165,13 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
         mockCredentials
     }
 
+    override var currentPhase: ClientUpdatePhase {
+        if let mockPhase {
+            return mockPhase
+        }
+        return super.currentPhase
+    }
+
     override func didFetchClients(_ clients: [UserClient]) {
         fetchedClients = clients
         fetchCallCount += 1
@@ -161,13 +179,6 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
 
     override func didDeleteClient() {
         deleteCallCount += 1
-    }
-
-    override var currentPhase: ClientUpdatePhase {
-        if let mockPhase {
-            return mockPhase
-        }
-        return super.currentPhase
     }
 }
 
@@ -194,8 +205,7 @@ class FakeCookieStorage: ZMPersistentCookieStorage {}
 // MARK: - MockSyncStatus
 
 public class MockSyncStatus: SyncStatus {
-    var didCallFailCurrentSyncPhase = false
-    var didCallFinishCurrentSyncPhase = false
+    // MARK: Public
 
     public var mockPhase: SyncPhase = .done {
         didSet {
@@ -214,14 +224,19 @@ public class MockSyncStatus: SyncStatus {
 
         super.finishCurrentSyncPhase(phase: phase)
     }
+
+    // MARK: Internal
+
+    var didCallFailCurrentSyncPhase = false
+    var didCallFinishCurrentSyncPhase = false
 }
 
 // MARK: - MockSyncStateDelegate
 
 @objc
 public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
-    var registeredUserClient: UserClient?
-    var registeredMLSClient: UserClient?
+    // MARK: Public
+
     @objc public var didCallStartSlowSync = false
     @objc public var didCallFinishSlowSync = false
     @objc public var didCallStartQuickSync = false
@@ -260,15 +275,24 @@ public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
     public func didDeleteSelfUserClient(error: Error) {
         didCallDeleteUserClient = true
     }
+
+    // MARK: Internal
+
+    var registeredUserClient: UserClient?
+    var registeredMLSClient: UserClient?
 }
 
 // MARK: - MockPushMessageHandler
 
 @objc
 public class MockPushMessageHandler: NSObject, PushMessageHandler {
+    // MARK: Public
+
     public func didFailToSend(_ message: ZMMessage) {
         failedToSend.append(message)
     }
+
+    // MARK: Internal
 
     fileprivate(set) var failedToSend: [ZMMessage] = []
 }
@@ -279,26 +303,27 @@ public class MockPushMessageHandler: NSObject, PushMessageHandler {
 public class MockEventConsumer: NSObject, ZMEventConsumer {
     public var eventsProcessed: [ZMUpdateEvent] = []
     public var processEventsCalled = false
+    public var eventsProcessedWhileInBackground: [ZMUpdateEvent] = []
+    public var processEventsWhileInBackgroundCalled = false
+    public var messageNoncesToPrefetchCalled = false
+    public var conversationRemoteIdentifiersToPrefetchCalled = false
+
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         processEventsCalled = true
         eventsProcessed.append(contentsOf: events)
     }
 
-    public var eventsProcessedWhileInBackground: [ZMUpdateEvent] = []
-    public var processEventsWhileInBackgroundCalled = false
     public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
         processEventsWhileInBackgroundCalled = true
         eventsProcessedWhileInBackground.append(contentsOf: events)
     }
 
-    public var messageNoncesToPrefetchCalled = false
     public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
         messageNoncesToPrefetchCalled = true
 
         return Set(events.compactMap(\.messageNonce))
     }
 
-    public var conversationRemoteIdentifiersToPrefetchCalled = false
     public func conversationRemoteIdentifiersToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
         conversationRemoteIdentifiersToPrefetchCalled = true
 
@@ -311,18 +336,19 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 @objcMembers
 public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
     public var objectsDidChangeCalled = false
+    public var fetchRequest: NSFetchRequest<NSFetchRequestResult>?
+    public var fetchRequestForTrackedObjectsCalled = false
+    public var addTrackedObjectsCalled = false
+
     public func objectsDidChange(_: Set<NSManagedObject>) {
         objectsDidChangeCalled = true
     }
 
-    public var fetchRequest: NSFetchRequest<NSFetchRequestResult>?
-    public var fetchRequestForTrackedObjectsCalled = false
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         fetchRequestForTrackedObjectsCalled = true
         return fetchRequest
     }
 
-    public var addTrackedObjectsCalled = false
     public func addTrackedObjects(_: Set<NSManagedObject>) {
         addTrackedObjectsCalled = true
     }
@@ -334,6 +360,7 @@ public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
 public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
     public var eventsProcessed: [ZMUpdateEvent] = []
     public var processEventsCalled = false
+
     public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         processEventsCalled = true
         eventsProcessed.append(contentsOf: events)
@@ -345,6 +372,8 @@ public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
 @objcMembers
 public class MockRequestStrategy: NSObject, RequestStrategy {
     public var mockRequestQueue: [ZMTransportRequest] = []
+    public var nextRequestCalled = false
+
     public var mockRequest: ZMTransportRequest? {
         get {
             mockRequestQueue.last
@@ -358,7 +387,6 @@ public class MockRequestStrategy: NSObject, RequestStrategy {
         }
     }
 
-    public var nextRequestCalled = false
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         nextRequestCalled = true
         return mockRequestQueue.popLast()

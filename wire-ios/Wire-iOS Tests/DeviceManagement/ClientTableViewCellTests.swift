@@ -23,11 +23,7 @@ import XCTest
 // MARK: - ClientTableViewCellTests
 
 final class ClientTableViewCellTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: ClientTableViewCell!
-    private var container: UIView!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -238,6 +234,14 @@ final class ClientTableViewCellTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: container)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: ClientTableViewCell!
+    private var container: UIView!
+    private var snapshotHelper: SnapshotHelper!
 }
 
 extension ClientTableViewCellModel {

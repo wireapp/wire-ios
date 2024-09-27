@@ -19,25 +19,7 @@
 import Foundation
 
 struct ModifiedObjects {
-    let updated: Set<ZMManagedObject>
-    let refreshed: Set<ZMManagedObject>
-    let inserted: Set<ZMManagedObject>
-    let deleted: Set<ZMManagedObject>
-
-    var updatedAndRefreshed: Set<ZMManagedObject> {
-        updated.union(refreshed)
-    }
-
-    var allObjects: Set<ZMManagedObject> {
-        [
-            updated,
-            refreshed,
-            inserted,
-            deleted,
-        ].reduce(into: .init()) { partialResult, set in
-            partialResult.formUnion(set)
-        }
-    }
+    // MARK: Lifecycle
 
     init?(notification: Notification) {
         guard let userInfo = notification.userInfo as? [String: Any] else { return nil }
@@ -61,6 +43,30 @@ struct ModifiedObjects {
         self.inserted = inserted
         self.deleted = deleted
     }
+
+    // MARK: Internal
+
+    let updated: Set<ZMManagedObject>
+    let refreshed: Set<ZMManagedObject>
+    let inserted: Set<ZMManagedObject>
+    let deleted: Set<ZMManagedObject>
+
+    var updatedAndRefreshed: Set<ZMManagedObject> {
+        updated.union(refreshed)
+    }
+
+    var allObjects: Set<ZMManagedObject> {
+        [
+            updated,
+            refreshed,
+            inserted,
+            deleted,
+        ].reduce(into: .init()) { partialResult, set in
+            partialResult.formUnion(set)
+        }
+    }
+
+    // MARK: Private
 
     private static func extractObjects(for key: String, from userInfo: [String: Any]) -> Set<ZMManagedObject> {
         guard let objects = userInfo[key] else { return Set() }

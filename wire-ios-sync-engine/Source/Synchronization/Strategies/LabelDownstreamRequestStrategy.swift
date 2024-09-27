@@ -21,10 +21,7 @@ import Foundation
 // MARK: - LabelUpdate
 
 struct LabelUpdate: Codable, Equatable {
-    let id: UUID
-    let type: Int16
-    let name: String?
-    let conversations: [UUID]
+    // MARK: Lifecycle
 
     init(id: UUID, type: Int16, name: String?, conversations: [UUID]) {
         self.id = id
@@ -43,6 +40,13 @@ struct LabelUpdate: Codable, Equatable {
             conversations: label.conversations.compactMap(\.remoteIdentifier)
         )
     }
+
+    // MARK: Internal
+
+    let id: UUID
+    let type: Int16
+    let name: String?
+    let conversations: [UUID]
 }
 
 // MARK: - LabelPayload
@@ -54,10 +58,7 @@ struct LabelPayload: Codable, Equatable {
 // MARK: - LabelDownstreamRequestStrategy
 
 public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventConsumer, ZMSingleRequestTranscoder {
-    fileprivate let syncStatus: SyncStatus
-
-    fileprivate var slowSync: ZMSingleRequestSync!
-    fileprivate let jsonDecoder = JSONDecoder()
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -77,6 +78,8 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
         self.slowSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
+    // MARK: Public
+
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard syncStatus.currentSyncPhase == .fetchingLabels || ZMUser.selfUser(in: managedObjectContext)
             .needsToRefetchLabels else { return nil }
@@ -84,59 +87,6 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
         slowSync.readyForNextRequestIfNotBusy()
 
         return slowSync.nextRequest(for: apiVersion)
-    }
-
-    func update(with transportData: Data) {
-        guard let labelResponse = try? jsonDecoder.decode(LabelPayload.self, from: transportData) else {
-            WireLogger.eventProcessing.error("Can't apply label update due to malformed JSON")
-            return
-        }
-
-        update(with: labelResponse)
-    }
-
-    func update(with response: LabelPayload) {
-        updateLabels(with: response)
-        deleteLabels(with: response)
-    }
-
-    fileprivate func updateLabels(with response: LabelPayload) {
-        for labelUpdate in response.labels {
-            var created = false
-
-            let label: Label? = if labelUpdate.type == Label.Kind.favorite.rawValue {
-                Label.fetchFavoriteLabel(in: managedObjectContext)
-            } else {
-                Label.fetchOrCreate(
-                    remoteIdentifier: labelUpdate.id,
-                    create: true,
-                    in: managedObjectContext,
-                    created: &created
-                )
-            }
-
-            label?.kind = Label.Kind(rawValue: labelUpdate.type) ?? .folder
-            label?.name = labelUpdate.name
-            label?.conversations = ZMConversation.fetchObjects(
-                withRemoteIdentifiers: Set(labelUpdate.conversations),
-                in: managedObjectContext
-            ) as? Set<ZMConversation> ?? Set()
-            label?.modifiedKeys = nil
-        }
-    }
-
-    fileprivate func deleteLabels(with response: LabelPayload) {
-        let uuids: [NSData] = response.labels.map { $0.id.uuidData as NSData }
-        let predicate = NSPredicate(
-            format: "type == \(Label.Kind.folder.rawValue) AND NOT remoteIdentifier_data IN %@",
-            uuids as CVarArg
-        )
-        let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
-        fetchRequest.predicate = predicate
-
-        let deletedLabels = managedObjectContext.fetchOrAssert(request: fetchRequest)
-        deletedLabels.forEach { managedObjectContext.delete($0) } // TODO: jacob consider doing a batch delete
-        managedObjectContext.saveOrRollback()
     }
 
     // MARK: - ZMEventConsumer
@@ -175,5 +125,67 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
         }
 
         ZMUser.selfUser(in: managedObjectContext).needsToRefetchLabels = false
+    }
+
+    // MARK: Internal
+
+    func update(with transportData: Data) {
+        guard let labelResponse = try? jsonDecoder.decode(LabelPayload.self, from: transportData) else {
+            WireLogger.eventProcessing.error("Can't apply label update due to malformed JSON")
+            return
+        }
+
+        update(with: labelResponse)
+    }
+
+    func update(with response: LabelPayload) {
+        updateLabels(with: response)
+        deleteLabels(with: response)
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let syncStatus: SyncStatus
+
+    fileprivate var slowSync: ZMSingleRequestSync!
+    fileprivate let jsonDecoder = JSONDecoder()
+
+    fileprivate func updateLabels(with response: LabelPayload) {
+        for labelUpdate in response.labels {
+            var created = false
+
+            let label: Label? = if labelUpdate.type == Label.Kind.favorite.rawValue {
+                Label.fetchFavoriteLabel(in: managedObjectContext)
+            } else {
+                Label.fetchOrCreate(
+                    remoteIdentifier: labelUpdate.id,
+                    create: true,
+                    in: managedObjectContext,
+                    created: &created
+                )
+            }
+
+            label?.kind = Label.Kind(rawValue: labelUpdate.type) ?? .folder
+            label?.name = labelUpdate.name
+            label?.conversations = ZMConversation.fetchObjects(
+                withRemoteIdentifiers: Set(labelUpdate.conversations),
+                in: managedObjectContext
+            ) as? Set<ZMConversation> ?? Set()
+            label?.modifiedKeys = nil
+        }
+    }
+
+    fileprivate func deleteLabels(with response: LabelPayload) {
+        let uuids: [NSData] = response.labels.map { $0.id.uuidData as NSData }
+        let predicate = NSPredicate(
+            format: "type == \(Label.Kind.folder.rawValue) AND NOT remoteIdentifier_data IN %@",
+            uuids as CVarArg
+        )
+        let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
+        fetchRequest.predicate = predicate
+
+        let deletedLabels = managedObjectContext.fetchOrAssert(request: fetchRequest)
+        deletedLabels.forEach { managedObjectContext.delete($0) } // TODO: jacob consider doing a batch delete
+        managedObjectContext.saveOrRollback()
     }
 }

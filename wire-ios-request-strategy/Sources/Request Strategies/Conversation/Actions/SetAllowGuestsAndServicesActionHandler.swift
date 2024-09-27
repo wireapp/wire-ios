@@ -19,7 +19,7 @@
 import WireDataModel
 
 final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndServicesAction> {
-    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+    // MARK: Internal
 
     // MARK: - Request Generation
 
@@ -100,4 +100,8 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
             success()
         }
     }
+
+    // MARK: Private
+
+    private lazy var eventProcessor = ConversationEventProcessor(context: context)
 }

@@ -21,32 +21,7 @@ import Foundation
 
 @objc(StoredUpdateEvent)
 public final class StoredUpdateEvent: NSManagedObject {
-    private static let entityName = "StoredUpdateEvent"
-    private static let SortIndexKey = "sortIndex"
-
-    /// The key under which the event payload is encrypted by the public key.
-
-    static let encryptedPayloadKey = "encryptedPayload"
-
-    // MARK: - Properties
-
-    @NSManaged var eventHash: Int64
-
-    @NSManaged var uuidString: String?
-
-    @NSManaged var debugInformation: String?
-
-    @NSManaged var isTransient: Bool
-
-    @NSManaged var payload: NSDictionary?
-
-    @NSManaged var isEncrypted: Bool
-
-    @NSManaged var isCallEvent: Bool
-
-    @NSManaged var source: Int16
-
-    @NSManaged var sortIndex: Int64
+    // MARK: Public
 
     // MARK: - Creation
 
@@ -97,6 +72,59 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
+    /// Returns the highest index of all stored events
+
+    public static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: false)]
+        fetchRequest.fetchBatchSize = 1
+        let result = context.fetchOrAssert(request: fetchRequest)
+        return result.first?.sortIndex ?? 0
+    }
+
+    // MARK: Internal
+
+    struct EventBatch {
+        var eventsToProcess = [ZMUpdateEvent]()
+        var eventsToDelete = [StoredUpdateEvent]()
+    }
+
+    enum ExtractionFailure: Error {
+        case temporary
+        case permanent
+    }
+
+    enum DecryptionFailure: Error {
+        case payloadMissing
+        case privateKeyUnavailable
+        case decryptionError
+        case serializationError
+    }
+
+    /// The key under which the event payload is encrypted by the public key.
+
+    static let encryptedPayloadKey = "encryptedPayload"
+
+    // MARK: - Properties
+
+    @NSManaged var eventHash: Int64
+
+    @NSManaged var uuidString: String?
+
+    @NSManaged var debugInformation: String?
+
+    @NSManaged var isTransient: Bool
+
+    @NSManaged var payload: NSDictionary?
+
+    @NSManaged var isEncrypted: Bool
+
+    @NSManaged var isCallEvent: Bool
+
+    @NSManaged var source: Int16
+
+    @NSManaged var sortIndex: Int64
+
     static func create(
         from event: ZMUpdateEvent,
         eventId: String,
@@ -118,6 +146,82 @@ public final class StoredUpdateEvent: NSManagedObject {
 
         return storedEvent
     }
+
+    static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
+        NSEntityDescription.insertNewObject(
+            forEntityName: entityName,
+            into: context
+        ) as? StoredUpdateEvent
+    }
+
+    // MARK: - Retrieving
+
+    /// Returns stored events sorted by and up until (including) the defined `stopIndex`
+    /// Returns a maximum of `batchSize` events at a time
+
+    static func nextEvents(
+        _ context: NSManagedObjectContext,
+        batchSize: Int,
+        callEventsOnly: Bool
+    ) -> [StoredUpdateEvent] {
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: true)]
+        fetchRequest.fetchLimit = batchSize
+        fetchRequest.returnsObjectsAsFaults = false
+
+        if callEventsOnly {
+            fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(StoredUpdateEvent.isCallEvent))
+        }
+
+        let result = context.fetchOrAssert(request: fetchRequest)
+        return result
+    }
+
+    static func nextEventBatch(
+        size: Int,
+        privateKeys: EARPrivateKeys?,
+        context: NSManagedObjectContext,
+        callEventsOnly: Bool
+    ) -> EventBatch {
+        let storedEvents = nextEvents(context, batchSize: size, callEventsOnly: callEventsOnly)
+        return eventsFromStoredEvents(
+            storedEvents,
+            privateKeys: privateKeys
+        )
+    }
+
+    static func eventsFromStoredEvents(
+        _ storedEvents: [StoredUpdateEvent],
+        privateKeys: EARPrivateKeys?
+    ) -> EventBatch {
+        var result = EventBatch()
+
+        for storedEvent in storedEvents {
+            switch extractUpdateEvent(
+                from: storedEvent,
+                privateKeys: privateKeys
+            ) {
+            case let .success(updateEvent):
+                result.eventsToProcess.append(updateEvent)
+                result.eventsToDelete.append(storedEvent)
+
+            case .failure(.permanent):
+                WireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure permanent")
+                result.eventsToDelete.append(storedEvent)
+
+            case .failure(.temporary):
+                WireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure temporary, continue")
+                continue
+            }
+        }
+
+        return result
+    }
+
+    // MARK: Private
+
+    private static let entityName = "StoredUpdateEvent"
+    private static let SortIndexKey = "sortIndex"
 
     private static func storedEventExists(
         for eventId: String,
@@ -166,92 +270,6 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent.isEncrypted = true
     }
 
-    static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
-        NSEntityDescription.insertNewObject(
-            forEntityName: entityName,
-            into: context
-        ) as? StoredUpdateEvent
-    }
-
-    // MARK: - Retrieving
-
-    /// Returns stored events sorted by and up until (including) the defined `stopIndex`
-    /// Returns a maximum of `batchSize` events at a time
-
-    static func nextEvents(
-        _ context: NSManagedObjectContext,
-        batchSize: Int,
-        callEventsOnly: Bool
-    ) -> [StoredUpdateEvent] {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: true)]
-        fetchRequest.fetchLimit = batchSize
-        fetchRequest.returnsObjectsAsFaults = false
-
-        if callEventsOnly {
-            fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(StoredUpdateEvent.isCallEvent))
-        }
-
-        let result = context.fetchOrAssert(request: fetchRequest)
-        return result
-    }
-
-    /// Returns the highest index of all stored events
-
-    public static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: false)]
-        fetchRequest.fetchBatchSize = 1
-        let result = context.fetchOrAssert(request: fetchRequest)
-        return result.first?.sortIndex ?? 0
-    }
-
-    static func nextEventBatch(
-        size: Int,
-        privateKeys: EARPrivateKeys?,
-        context: NSManagedObjectContext,
-        callEventsOnly: Bool
-    ) -> EventBatch {
-        let storedEvents = nextEvents(context, batchSize: size, callEventsOnly: callEventsOnly)
-        return eventsFromStoredEvents(
-            storedEvents,
-            privateKeys: privateKeys
-        )
-    }
-
-    static func eventsFromStoredEvents(
-        _ storedEvents: [StoredUpdateEvent],
-        privateKeys: EARPrivateKeys?
-    ) -> EventBatch {
-        var result = EventBatch()
-
-        for storedEvent in storedEvents {
-            switch extractUpdateEvent(
-                from: storedEvent,
-                privateKeys: privateKeys
-            ) {
-            case let .success(updateEvent):
-                result.eventsToProcess.append(updateEvent)
-                result.eventsToDelete.append(storedEvent)
-
-            case .failure(.permanent):
-                WireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure permanent")
-                result.eventsToDelete.append(storedEvent)
-
-            case .failure(.temporary):
-                WireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure temporary, continue")
-                continue
-            }
-        }
-
-        return result
-    }
-
-    struct EventBatch {
-        var eventsToProcess = [ZMUpdateEvent]()
-        var eventsToDelete = [StoredUpdateEvent]()
-    }
-
     private static func extractUpdateEvent(
         from storedEvent: StoredUpdateEvent,
         privateKeys: EARPrivateKeys?
@@ -290,11 +308,6 @@ public final class StoredUpdateEvent: NSManagedObject {
             WireLogger.updateEvent.error("StoreUpdateEvent: decryption failed permanently", attributes: .safePublic)
             return .failure(.permanent)
         }
-    }
-
-    enum ExtractionFailure: Error {
-        case temporary
-        case permanent
     }
 
     // MARK: - Encryption at Rest
@@ -385,12 +398,5 @@ public final class StoredUpdateEvent: NSManagedObject {
         }
 
         return decryptedPayload
-    }
-
-    enum DecryptionFailure: Error {
-        case payloadMissing
-        case privateKeyUnavailable
-        case decryptionError
-        case serializationError
     }
 }

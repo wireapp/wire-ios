@@ -21,6 +21,8 @@ import SwiftUI
 // MARK: - PreferredAPIVersionView
 
 struct PreferredAPIVersionView: View {
+    // MARK: Internal
+
     // MARK: - Properties
 
     @StateObject var viewModel: PreferredAPIVersionViewModel
@@ -32,6 +34,8 @@ struct PreferredAPIVersionView: View {
             .navigationTitle("Preferred API version")
             .navigationBarTitleDisplayMode(.inline)
     }
+
+    // MARK: Private
 
     private func sectionView(for section: PreferredAPIVersionViewModel.Section) -> some View {
         Section {

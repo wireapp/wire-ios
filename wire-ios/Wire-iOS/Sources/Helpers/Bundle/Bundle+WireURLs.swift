@@ -25,6 +25,53 @@ import WireSystem
 /// link with the same key in the existing URL configuration files.
 /// Failure to do so may cause the application to crash.
 struct WireURLs: Codable {
+    // MARK: Lifecycle
+
+    private init(forResource resource: String, withExtension fileExtension: String) throws {
+        guard let fileURL = Bundle.fileURL(for: resource, with: fileExtension) else {
+            throw WireURLsError.fileNotFound
+        }
+
+        self = try fileURL.decode(WireURLs.self)
+    }
+
+    // MARK: Internal
+
+    enum CodingKeys: String, CodingKey, CaseIterable {
+        case appOnItunes
+        case support
+        case searchSupport
+        case website
+        case emailAlreadyInUse
+        case whyToVerifyFingerprintArticle
+        case howToVerifyFingerprintArticle
+        case privacyPolicy
+        case legal
+        case licenseInformation
+        case passwordReset
+        case askSupportArticle
+        case reportAbuse
+        case wireEnterpriseInfo
+        case legalHoldInfo
+        case guestLinksInfo
+        case unreachableBackendInfo
+        case federationInfo
+        case mlsInfo
+        case endToEndIdentityInfo
+    }
+
+    enum WireURLsError: Error {
+        case fileNotFound
+    }
+
+    static var shared: WireURLs = {
+        do {
+            return try WireURLs(forResource: "url", withExtension: "json")
+        } catch {
+            fatalError("\(error)")
+        }
+    }()
+
     /// Link to the app on the App store.
     let appOnItunes: URL
 
@@ -89,47 +136,4 @@ struct WireURLs: Codable {
     /// Link to the article about end-to-end identity.
     /// Shown in various places (e.g. system messages, warnings, error messages).
     let endToEndIdentityInfo: URL
-
-    static var shared: WireURLs = {
-        do {
-            return try WireURLs(forResource: "url", withExtension: "json")
-        } catch {
-            fatalError("\(error)")
-        }
-    }()
-
-    private init(forResource resource: String, withExtension fileExtension: String) throws {
-        guard let fileURL = Bundle.fileURL(for: resource, with: fileExtension) else {
-            throw WireURLsError.fileNotFound
-        }
-
-        self = try fileURL.decode(WireURLs.self)
-    }
-
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case appOnItunes
-        case support
-        case searchSupport
-        case website
-        case emailAlreadyInUse
-        case whyToVerifyFingerprintArticle
-        case howToVerifyFingerprintArticle
-        case privacyPolicy
-        case legal
-        case licenseInformation
-        case passwordReset
-        case askSupportArticle
-        case reportAbuse
-        case wireEnterpriseInfo
-        case legalHoldInfo
-        case guestLinksInfo
-        case unreachableBackendInfo
-        case federationInfo
-        case mlsInfo
-        case endToEndIdentityInfo
-    }
-
-    enum WireURLsError: Error {
-        case fileNotFound
-    }
 }

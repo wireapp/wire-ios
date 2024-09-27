@@ -43,22 +43,7 @@ public protocol EventDecoderProtocol {
 
 /// Decodes and stores events from various sources to be processed later
 public final class EventDecoder: NSObject, EventDecoderProtocol {
-    public typealias ConsumeBlock = ([ZMUpdateEvent]) async -> Void
-
-    static var BatchSize: Int {
-        if let testingBatchSize {
-            return testingBatchSize
-        }
-        return 500
-    }
-
-    /// Set this for testing purposes only
-    public static var testingBatchSize: Int?
-
-    unowned let eventMOC: NSManagedObjectContext
-    unowned let syncMOC: NSManagedObjectContext
-
-    fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
+    // MARK: Lifecycle
 
     public init(
         eventMOC: NSManagedObjectContext,
@@ -71,6 +56,33 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
         super.init()
     }
 
+    // MARK: Public
+
+    public typealias ConsumeBlock = ([ZMUpdateEvent]) async -> Void
+
+    /// Set this for testing purposes only
+    public static var testingBatchSize: Int?
+
+    // MARK: Internal
+
+    static var BatchSize: Int {
+        if let testingBatchSize {
+            return testingBatchSize
+        }
+        return 500
+    }
+
+    unowned let eventMOC: NSManagedObjectContext
+    unowned let syncMOC: NSManagedObjectContext
+
+    // MARK: Fileprivate
+
+    fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
+
+    // MARK: Private
+
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
+
     /// Guarantee to get proteusProvider from correct context
     /// - Note: to be replaced when proteusProvider is not attached to context 🤞
     private var proteusProvider: ProteusProviding {
@@ -78,8 +90,6 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
             syncMOC.proteusProvider
         }
     }
-
-    private let lastEventIDRepository: LastEventIDRepositoryInterface
 }
 
 // MARK: - Process events

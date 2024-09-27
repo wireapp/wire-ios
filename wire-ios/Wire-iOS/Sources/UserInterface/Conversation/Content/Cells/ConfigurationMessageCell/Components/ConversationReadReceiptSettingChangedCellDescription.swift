@@ -24,15 +24,12 @@ import WireDesign
 // MARK: - ReadReceiptViewModel
 
 struct ReadReceiptViewModel {
+    // MARK: Internal
+
     let icon: StyleKitIcon
     let iconColor: UIColor?
     let systemMessageType: ZMSystemMessageType
     let sender: UserType
-
-    private let baseAttributes: [NSAttributedString.Key: Any] = [
-        .font: UIFont.mediumFont,
-        .foregroundColor: SemanticColors.Label.textDefault,
-    ]
 
     func image() -> UIImage? {
         iconColor.map { icon.makeImage(size: .tiny, color: $0) }
@@ -82,27 +79,19 @@ struct ReadReceiptViewModel {
 
         return updateText
     }
+
+    // MARK: Private
+
+    private let baseAttributes: [NSAttributedString.Key: Any] = [
+        .font: UIFont.mediumFont,
+        .foregroundColor: SemanticColors.Label.textDefault,
+    ]
 }
 
 // MARK: - ConversationReadReceiptSettingChangedCellDescription
 
 final class ConversationReadReceiptSettingChangedCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationSystemMessageCell
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer = false
-    var topMargin: Float = 0
-
-    let isFullWidth = true
-    let supportsActions = false
-    let containsHighlightableContent = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
+    // MARK: Lifecycle
 
     init(
         sender: UserType,
@@ -123,4 +112,24 @@ final class ConversationReadReceiptSettingChangedCellDescription: ConversationMe
         self.accessibilityLabel = viewModel.attributedTitle()?.string
         self.actionController = nil
     }
+
+    // MARK: Internal
+
+    typealias View = ConversationSystemMessageCell
+
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer = false
+    var topMargin: Float = 0
+
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String?
 }

@@ -24,12 +24,7 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
 
 @objcMembers
 open class AbstractRequestStrategy: NSObject, RequestStrategy {
-    public weak var applicationStatus: ApplicationStatus?
-
-    public let managedObjectContext: NSManagedObjectContext
-    public var configuration: ZMStrategyConfigurationOption = [
-        .allowsRequestsWhileOnline,
-    ]
+    // MARK: Lifecycle
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -40,6 +35,8 @@ open class AbstractRequestStrategy: NSObject, RequestStrategy {
 
         super.init()
     }
+
+    // MARK: Open
 
     /// Subclasses should override this method.
     open func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -65,6 +62,15 @@ open class AbstractRequestStrategy: NSObject, RequestStrategy {
 
         return nil
     }
+
+    // MARK: Public
+
+    public weak var applicationStatus: ApplicationStatus?
+
+    public let managedObjectContext: NSManagedObjectContext
+    public var configuration: ZMStrategyConfigurationOption = [
+        .allowsRequestsWhileOnline,
+    ]
 
     public class func prerequisites(forApplicationStatus applicationStatus: ApplicationStatus)
         -> ZMStrategyConfigurationOption {

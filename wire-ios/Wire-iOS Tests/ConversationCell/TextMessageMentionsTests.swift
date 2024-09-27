@@ -23,13 +23,15 @@ import XCTest
 // MARK: - Mentions
 
 final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
+    // MARK: Internal
+
+    /// "Saturday, February 14, 2009 at 12:20:30 AM Central European Standard Time"
+    static let dummyServerTimestamp = Date(timeIntervalSince1970: 1_234_567_230)
+
     // MARK: - Properties
 
     var otherUser: MockUserType!
     var selfUser: MockUserType!
-
-    /// "Saturday, February 14, 2009 at 12:20:30 AM Central European Standard Time"
-    static let dummyServerTimestamp = Date(timeIntervalSince1970: 1_234_567_230)
 
     // MARK: - setUp
 
@@ -47,19 +49,6 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
         selfUser = nil
         setColorScheme(.light)
         super.tearDown()
-    }
-
-    // MARK: Helper method
-
-    private func createMessage(messageText: String, mentions: [Mention]) -> MockMessage {
-        let message = MockMessageFactory.messageTemplate(sender: selfUser)
-        let textMessageData = MockTextMessageData()
-        textMessageData.messageText = messageText
-        message.backingTextMessageData = textMessageData
-
-        textMessageData.mentions = mentions
-
-        return message
     }
 
     // MARK: - Snapshot Tests
@@ -170,5 +159,20 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
         let messageText = "@current"
         let mention = Mention(range: NSRange(location: 0, length: 8), user: selfUser)
         verify(message: createMessage(messageText: messageText, mentions: [mention]))
+    }
+
+    // MARK: Private
+
+    // MARK: Helper method
+
+    private func createMessage(messageText: String, mentions: [Mention]) -> MockMessage {
+        let message = MockMessageFactory.messageTemplate(sender: selfUser)
+        let textMessageData = MockTextMessageData()
+        textMessageData.messageText = messageText
+        message.backingTextMessageData = textMessageData
+
+        textMessageData.mentions = mentions
+
+        return message
     }
 }

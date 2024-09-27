@@ -123,6 +123,8 @@ enum ColorSchemeColor: Int {
     case backgroundSecurityNotClassified
     case white
 
+    // MARK: Fileprivate
+
     fileprivate func colorPair(accentColor: UIColor) -> ColorPair {
         switch self {
         case .textForeground:
@@ -302,12 +304,13 @@ enum ColorSchemeColor: Int {
 // MARK: - ColorScheme
 
 final class ColorScheme: NSObject {
+    static let `default` = ColorScheme()
+
     private(set) var colors: [AnyHashable: Any]?
     var variant: ColorSchemeVariant = .light
     private(set) var defaultColorScheme: ColorScheme?
     var accentColor: UIColor = .red
 
-    static let `default` = ColorScheme()
     func color(named: ColorSchemeColor, variant: ColorSchemeVariant? = nil) -> UIColor {
         let colorSchemeVariant = variant ?? self.variant
         let colorPair = named.colorPair(accentColor: accentColor)

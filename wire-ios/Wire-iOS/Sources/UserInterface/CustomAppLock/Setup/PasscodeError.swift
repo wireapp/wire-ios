@@ -27,6 +27,8 @@ enum PasscodeError: CaseIterable {
     case noNumber
     case noSpecialChar
 
+    // MARK: Internal
+
     var message: String {
         switch self {
         case .tooShort:
@@ -42,6 +44,16 @@ enum PasscodeError: CaseIterable {
         }
     }
 
+    var descriptionWithInvalidIcon: NSAttributedString {
+        description(icon: .circleCross, color: SemanticColors.Icon.backgroundPasswordRuleCheck, font: .smallRegularFont)
+    }
+
+    var descriptionWithPassedIcon: NSAttributedString {
+        description(icon: .circleTick, color: SemanticColors.Icon.backgroundJoinCall, font: .smallSemiboldFont)
+    }
+
+    // MARK: Private
+
     private func description(icon: StyleKitIcon, color: UIColor, font: UIFont) -> NSAttributedString {
         let textAttachment = NSTextAttachment.textAttachment(
             for: icon,
@@ -54,13 +66,5 @@ enum PasscodeError: CaseIterable {
         let attributedString = NSAttributedString(string: message) && font
 
         return NSAttributedString(attachment: textAttachment) + attributedString
-    }
-
-    var descriptionWithInvalidIcon: NSAttributedString {
-        description(icon: .circleCross, color: SemanticColors.Icon.backgroundPasswordRuleCheck, font: .smallRegularFont)
-    }
-
-    var descriptionWithPassedIcon: NSAttributedString {
-        description(icon: .circleTick, color: SemanticColors.Icon.backgroundJoinCall, font: .smallSemiboldFont)
     }
 }

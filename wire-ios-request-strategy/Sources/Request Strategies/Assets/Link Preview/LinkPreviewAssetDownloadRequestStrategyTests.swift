@@ -25,6 +25,8 @@ import XCTest
 // MARK: - LinkPreviewAssetDownloadRequestStrategyTests
 
 class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
+    // MARK: Internal
+
     var sut: LinkPreviewAssetDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var oneToOneconversationOnSync: ZMConversation!
@@ -62,6 +64,8 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
         try? uiMOC.zm_fileAssetCache.wipeCaches()
         super.tearDown()
     }
+
+    // MARK: Fileprivate
 
     // MARK: - Helper
 

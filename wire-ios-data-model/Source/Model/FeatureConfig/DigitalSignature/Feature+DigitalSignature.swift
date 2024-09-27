@@ -20,16 +20,18 @@ import Foundation
 
 extension Feature {
     public struct DigitalSignature: Codable {
+        // MARK: Lifecycle
+
+        public init(status: Feature.Status = .disabled) {
+            self.status = status
+        }
+
+        // MARK: Public
+
         // MARK: - Properties
 
         /// Whether the digital signature feature is available to the user.
 
         public let status: Status
-
-        // MARK: - Life cycle
-
-        public init(status: Feature.Status = .disabled) {
-            self.status = status
-        }
     }
 }

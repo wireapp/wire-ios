@@ -20,16 +20,14 @@ import Foundation
 
 @objcMembers
 public class LinkPreprocessor<Result>: NSObject, ZMContextChangeTracker {
-    let managedObjectContext: NSManagedObjectContext
-    let zmLog: ZMSLog
-
-    /// List of objects currently being processed
-    fileprivate var objectsBeingProcessed = Set<ZMClientMessage>()
+    // MARK: Lifecycle
 
     init(managedObjectContext: NSManagedObjectContext, zmLog: ZMSLog) {
         self.managedObjectContext = managedObjectContext
         self.zmLog = zmLog
     }
+
+    // MARK: Public
 
     // MARK: - ZMContextChangeTracker
 
@@ -44,6 +42,11 @@ public class LinkPreprocessor<Result>: NSObject, ZMContextChangeTracker {
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
         processObjects(objects)
     }
+
+    // MARK: Internal
+
+    let managedObjectContext: NSManagedObjectContext
+    let zmLog: ZMSLog
 
     // MARK: - Processing
 
@@ -89,6 +92,11 @@ public class LinkPreprocessor<Result>: NSObject, ZMContextChangeTracker {
     func didProcessMessage(_ message: ZMClientMessage, result: [Result]) {
         fatalError("Subclasses need to override didProcessMessage(_:result:)")
     }
+
+    // MARK: Fileprivate
+
+    /// List of objects currently being processed
+    fileprivate var objectsBeingProcessed = Set<ZMClientMessage>()
 
     fileprivate func markdownLinkRanges(in text: String) -> [NSRange] {
         guard let regex = try? NSRegularExpression(pattern: "\\[.+\\]\\((.+)\\)", options: []) else { return [] }

@@ -31,15 +31,7 @@ protocol ContactsDataSourceDelegate: AnyObject {
 // MARK: - ContactsDataSource
 
 final class ContactsDataSource: NSObject {
-    static let MinimumNumberOfContactsToDisplaySections: UInt = 15
-
-    weak var delegate: ContactsDataSourceDelegate?
-
-    private(set) var searchDirectory: SearchDirectory?
-    private var sections = [[UserType]]()
-    private var collation: UILocalizedIndexedCollation { .current() }
-
-    // MARK: - Life Cycle
+    // MARK: Lifecycle
 
     override init() {
         super.init()
@@ -50,6 +42,14 @@ final class ContactsDataSource: NSObject {
     deinit {
         searchDirectory?.tearDown()
     }
+
+    // MARK: Internal
+
+    static let MinimumNumberOfContactsToDisplaySections: UInt = 15
+
+    weak var delegate: ContactsDataSourceDelegate?
+
+    private(set) var searchDirectory: SearchDirectory?
 
     // MARK: - Getters / Setters
 
@@ -69,6 +69,16 @@ final class ContactsDataSource: NSObject {
         ungroupedSearchResults.count >= type(of: self).MinimumNumberOfContactsToDisplaySections
     }
 
+    func user(at indexPath: IndexPath) -> UserType {
+        section(at: indexPath.section)[indexPath.row]
+    }
+
+    // MARK: Private
+
+    private var sections = [[UserType]]()
+
+    private var collation: UILocalizedIndexedCollation { .current() }
+
     // MARK: - Methods
 
     private func performSearch() {
@@ -84,10 +94,6 @@ final class ContactsDataSource: NSObject {
         }
 
         task.start()
-    }
-
-    func user(at indexPath: IndexPath) -> UserType {
-        section(at: indexPath.section)[indexPath.row]
     }
 
     private func section(at index: Int) -> [UserType] {

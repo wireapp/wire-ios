@@ -21,11 +21,7 @@ import XCTest
 @testable import Wire
 
 class CallParticipantViewTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
-    private var size = XCTestCase.DeviceSizeIPhone5
-    private var sut: CallParticipantView!
-    private var stubProvider = StreamStubProvider()
-    private var unmutedStream = StreamStubProvider().stream(muted: false)
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -36,23 +32,6 @@ class CallParticipantViewTests: XCTestCase {
         snapshotHelper = nil
         sut = nil
         super.tearDown()
-    }
-
-    private func createView(
-        from stream: Wire.Stream,
-        isCovered: Bool,
-        pinchToZoomRule: PinchToZoomRule = .enableWhenMaximized
-    ) -> CallParticipantView {
-        let view = CallParticipantView(
-            stream: stream,
-            isCovered: isCovered,
-            shouldShowActiveSpeakerFrame: true,
-            shouldShowBorderWhenVideoIsStopped: true,
-            pinchToZoomRule: pinchToZoomRule
-        )
-        view.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
-        view.backgroundColor = .graphite
-        return view
     }
 
     func testThatItShouldNotFill_WhenMaximized() {
@@ -185,5 +164,30 @@ class CallParticipantViewTests: XCTestCase {
 
         // then
         XCTAssertTrue(sut.scalableView!.isScalingEnabled)
+    }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
+    private var size = XCTestCase.DeviceSizeIPhone5
+    private var sut: CallParticipantView!
+    private var stubProvider = StreamStubProvider()
+    private var unmutedStream = StreamStubProvider().stream(muted: false)
+
+    private func createView(
+        from stream: Wire.Stream,
+        isCovered: Bool,
+        pinchToZoomRule: PinchToZoomRule = .enableWhenMaximized
+    ) -> CallParticipantView {
+        let view = CallParticipantView(
+            stream: stream,
+            isCovered: isCovered,
+            shouldShowActiveSpeakerFrame: true,
+            shouldShowBorderWhenVideoIsStopped: true,
+            pinchToZoomRule: pinchToZoomRule
+        )
+        view.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
+        view.backgroundColor = .graphite
+        return view
     }
 }

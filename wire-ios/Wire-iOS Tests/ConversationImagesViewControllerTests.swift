@@ -33,12 +33,7 @@ extension SelfUser {
 // MARK: - ConversationImagesViewControllerTests
 
 final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationImagesViewController! = nil
-    private var navigatorController: UINavigationController! = nil
-    private var userSession: UserSessionMock!
+    // MARK: Internal
 
     override var needsCaches: Bool { true }
 
@@ -156,4 +151,13 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         // THEN
         XCTAssertEqual(sut.buttonsBar.buttons.count, 1)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationImagesViewController! = nil
+    private var navigatorController: UINavigationController! = nil
+    private var userSession: UserSessionMock!
 }

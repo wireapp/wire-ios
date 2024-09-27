@@ -23,23 +23,7 @@ import WireDesign
 // MARK: - BaseMessageRestrictionView
 
 class BaseMessageRestrictionView: UIView {
-    // MARK: - Properties
-
-    let topLabel = UILabel()
-    let bottomLabel = UILabel()
-    let iconView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.tintColor = SemanticColors.Icon.foregroundDefault
-        return imageView
-    }()
-
-    private var messageType: RestrictedMessageType {
-        didSet {
-            configure()
-        }
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(messageType: RestrictedMessageType) {
         self.messageType = messageType
@@ -53,6 +37,18 @@ class BaseMessageRestrictionView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let topLabel = UILabel()
+    let bottomLabel = UILabel()
+    let iconView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.tintColor = SemanticColors.Icon.foregroundDefault
+        return imageView
+    }()
 
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: 56)
@@ -87,8 +83,6 @@ class BaseMessageRestrictionView: UIView {
         iconView.translatesAutoresizingMaskIntoConstraints = false
     }
 
-    // MARK: - Public
-
     func configure() {
         iconView.setTemplateIcon(messageType.icon, size: messageType.iconSize)
 
@@ -97,6 +91,14 @@ class BaseMessageRestrictionView: UIView {
             .textCollectionSecondary
         topLabel.attributedText = titleString
         bottomLabel.attributedText = subtitleString
+    }
+
+    // MARK: Private
+
+    private var messageType: RestrictedMessageType {
+        didSet {
+            configure()
+        }
     }
 }
 
@@ -107,6 +109,8 @@ enum RestrictedMessageType: String {
     case video
     case image
     case file
+
+    // MARK: Internal
 
     var icon: StyleKitIcon {
         switch self {

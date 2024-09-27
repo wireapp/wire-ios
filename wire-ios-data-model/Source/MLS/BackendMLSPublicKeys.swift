@@ -19,11 +19,43 @@
 import Foundation
 
 public struct BackendMLSPublicKeys: Equatable {
-    let removal: MLSPublicKeys
+    // MARK: Lifecycle
 
     public init(removal: MLSPublicKeys = .init()) {
         self.removal = removal
     }
+
+    // MARK: Public
+
+    public struct MLSPublicKeys: Equatable {
+        // MARK: Lifecycle
+
+        public init(
+            ed25519: Data? = nil,
+            ed448: Data? = nil,
+            p256: Data? = nil,
+            p384: Data? = nil,
+            p521: Data? = nil
+        ) {
+            self.ed25519 = ed25519
+            self.ed448 = ed448
+            self.p256 = p256
+            self.p384 = p384
+            self.p521 = p521
+        }
+
+        // MARK: Internal
+
+        let ed25519: Data?
+        let ed448: Data?
+        let p256: Data?
+        let p384: Data?
+        let p521: Data?
+    }
+
+    // MARK: Internal
+
+    let removal: MLSPublicKeys
 
     func externalSenderKey(for ciphersuite: MLSCipherSuite) -> [Data] {
         let externalSender = switch ciphersuite.signature {
@@ -41,27 +73,5 @@ public struct BackendMLSPublicKeys: Equatable {
 
         return [externalSender]
             .compactMap { $0 }
-    }
-
-    public struct MLSPublicKeys: Equatable {
-        let ed25519: Data?
-        let ed448: Data?
-        let p256: Data?
-        let p384: Data?
-        let p521: Data?
-
-        public init(
-            ed25519: Data? = nil,
-            ed448: Data? = nil,
-            p256: Data? = nil,
-            p384: Data? = nil,
-            p521: Data? = nil
-        ) {
-            self.ed25519 = ed25519
-            self.ed448 = ed448
-            self.p256 = p256
-            self.p384 = p384
-            self.p521 = p521
-        }
     }
 }

@@ -22,11 +22,13 @@ import Foundation
 
 /// Defines how users can join a conversation.
 public struct ConversationAccessMode: OptionSet {
-    public let rawValue: Int
+    // MARK: Lifecycle
 
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
+
+    // MARK: Public
 
     /// Allowed user can be added by an existing conv member.
     public static let invite    = ConversationAccessMode(rawValue: 1 << 0)
@@ -40,6 +42,8 @@ public struct ConversationAccessMode: OptionSet {
     public static let legacy    = invite
     public static let teamOnly  = ConversationAccessMode()
     public static let allowGuests: ConversationAccessMode = [.invite, .code]
+
+    public let rawValue: Int
 }
 
 // MARK: Hashable
@@ -92,6 +96,8 @@ public enum ConversationAccessRole: String {
     // 1:1 conversation
     case `private`
 
+    // MARK: Public
+
     public static func fromAccessRoleV2(_ accessRoles: Set<ConversationAccessRoleV2>) -> ConversationAccessRole {
         if accessRoles.contains(.guest) {
             .nonActivated
@@ -131,6 +137,8 @@ public enum ConversationAccessRoleV2: String {
     case guest
     /// A service pseudo-user, aka a non-human bot.
     case service
+
+    // MARK: Public
 
     public static func fromLegacyAccessRole(_ accessRole: ConversationAccessRole) -> Set<Self> {
         switch accessRole {

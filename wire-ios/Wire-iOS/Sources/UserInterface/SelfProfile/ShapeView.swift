@@ -21,15 +21,10 @@ import UIKit
 // MARK: - ShapeView
 
 final class ShapeView: LayerHostView<CAShapeLayer> {
+    // MARK: Internal
+
     var pathGenerator: ((CGSize) -> (UIBezierPath))? {
         didSet { updatePath() }
-    }
-
-    private var lastBounds: CGRect = .zero
-
-    private func updatePath() {
-        guard let generator = pathGenerator else { return }
-        hostedLayer.path = generator(bounds.size).cgPath
     }
 
     override func layoutSubviews() {
@@ -40,16 +35,25 @@ final class ShapeView: LayerHostView<CAShapeLayer> {
             updatePath()
         }
     }
+
+    // MARK: Private
+
+    private var lastBounds: CGRect = .zero
+
+    private func updatePath() {
+        guard let generator = pathGenerator else { return }
+        hostedLayer.path = generator(bounds.size).cgPath
+    }
 }
 
 // MARK: - LayerHostView
 
 class LayerHostView<LayerType: CALayer>: UIView {
-    var hostedLayer: LayerType {
-        layer as! LayerType
-    }
-
     override class var layerClass: AnyClass {
         LayerType.self
+    }
+
+    var hostedLayer: LayerType {
+        layer as! LayerType
     }
 }

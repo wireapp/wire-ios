@@ -20,18 +20,7 @@ import Foundation
 import WireSyncEngine
 
 final class AccentColorChangeHandler: UserObserving {
-    typealias AccentColorChangeHandlerBlock = (_ newColor: UIColor?, _ observer: NSObjectProtocol?) -> Void
-    private var handlerBlock: AccentColorChangeHandlerBlock?
-    private var observer: NSObjectProtocol?
-    private var userObserverToken: NSObjectProtocol?
-
-    static func addObserver(
-        _ observer: NSObjectProtocol?,
-        userSession: UserSession,
-        handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock
-    ) -> Self {
-        self.init(observer: observer, handlerBlock: changeHandler, userSession: userSession)
-    }
+    // MARK: Lifecycle
 
     init(
         observer: NSObjectProtocol?,
@@ -46,9 +35,27 @@ final class AccentColorChangeHandler: UserObserving {
         }
     }
 
+    // MARK: Internal
+
+    typealias AccentColorChangeHandlerBlock = (_ newColor: UIColor?, _ observer: NSObjectProtocol?) -> Void
+
+    static func addObserver(
+        _ observer: NSObjectProtocol?,
+        userSession: UserSession,
+        handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock
+    ) -> Self {
+        self.init(observer: observer, handlerBlock: changeHandler, userSession: userSession)
+    }
+
     func userDidChange(_ change: UserChangeInfo) {
         if change.accentColorValueChanged {
             handlerBlock?(change.user.accentColor, observer)
         }
     }
+
+    // MARK: Private
+
+    private var handlerBlock: AccentColorChangeHandlerBlock?
+    private var observer: NSObjectProtocol?
+    private var userObserverToken: NSObjectProtocol?
 }

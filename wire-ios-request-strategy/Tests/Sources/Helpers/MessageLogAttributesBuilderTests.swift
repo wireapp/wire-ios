@@ -23,12 +23,7 @@ import XCTest
 // MARK: - MessageLogAttributesBuilderTests
 
 final class MessageLogAttributesBuilderTests: XCTestCase {
-    // add more tests for supported types, but some are difficult to mock.
-
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var coreDataStack: CoreDataStack!
-
-    private var context: NSManagedObjectContext { coreDataStack.viewContext }
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -71,6 +66,15 @@ final class MessageLogAttributesBuilderTests: XCTestCase {
         XCTAssertEqual(attributes[.conversationId] as? String, "f4d0b09*** - wire***")
         XCTAssertEqual(attributes[.public] as? Bool, true)
     }
+
+    // MARK: Private
+
+    // add more tests for supported types, but some are difficult to mock.
+
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var coreDataStack: CoreDataStack!
+
+    private var context: NSManagedObjectContext { coreDataStack.viewContext }
 
     // MARK: Helpers
 

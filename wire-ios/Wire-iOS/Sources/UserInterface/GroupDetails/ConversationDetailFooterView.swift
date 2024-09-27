@@ -24,11 +24,28 @@ import WireSystem
 /// A footer view to use to display a bar of actions to perform for a conversation.
 
 class ConversationDetailFooterView: UIView {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    init() {
+        self.leftButton = IconButton(fontSpec: .normalSemiboldFont)
+        super.init(frame: .zero)
+        setupViews()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     // MARK: - Properties
 
     let rightButton = IconButton()
     var leftButton: IconButton
-    private let containerView = UIView()
 
     var leftIcon: StyleKitIcon? {
         get {
@@ -54,19 +71,25 @@ class ConversationDetailFooterView: UIView {
         }
     }
 
-    // MARK: - Initialization
+    // MARK: - Events
 
-    init() {
-        self.leftButton = IconButton(fontSpec: .normalSemiboldFont)
-        super.init(frame: .zero)
-        setupViews()
-        createConstraints()
+    func setupButtons() {
+        fatal("Should be overridden in subclasses")
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    @objc
+    func leftButtonTapped(_: IconButton) {
+        fatal("Should be overridden in subclasses")
     }
+
+    @objc
+    func rightButtonTapped(_: IconButton) {
+        fatal("Should be overridden in subclasses")
+    }
+
+    // MARK: Private
+
+    private let containerView = UIView()
 
     // MARK: - Layout
 
@@ -118,21 +141,5 @@ class ConversationDetailFooterView: UIView {
             rightButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             rightButton.leadingAnchor.constraint(greaterThanOrEqualTo: leftButton.leadingAnchor, constant: 16),
         ])
-    }
-
-    // MARK: - Events
-
-    func setupButtons() {
-        fatal("Should be overridden in subclasses")
-    }
-
-    @objc
-    func leftButtonTapped(_: IconButton) {
-        fatal("Should be overridden in subclasses")
-    }
-
-    @objc
-    func rightButtonTapped(_: IconButton) {
-        fatal("Should be overridden in subclasses")
     }
 }

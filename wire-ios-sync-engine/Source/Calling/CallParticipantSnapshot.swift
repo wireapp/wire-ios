@@ -22,10 +22,15 @@ import WireUtilities
 // MARK: - CallParticipantsSnapshot
 
 final class CallParticipantsSnapshot {
-    // MARK: - Properties
+    // MARK: Lifecycle
 
-    private unowned var callCenter: WireCallCenterV3
-    private let conversationId: AVSIdentifier
+    init(conversationId: AVSIdentifier, members: [AVSCallMember], callCenter: WireCallCenterV3) {
+        self.callCenter = callCenter
+        self.conversationId = conversationId
+        self.members = type(of: self).removeDuplicateMembers(members)
+    }
+
+    // MARK: Internal
 
     private(set) var members: OrderedSetState<AVSCallMember> {
         didSet {
@@ -44,7 +49,25 @@ final class CallParticipantsSnapshot {
         }
     }
 
+    // MARK: - Updates
+
+    func callParticipantsChanged(participants: [AVSCallMember]) {
+        members = type(of: self).removeDuplicateMembers(participants)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private unowned var callCenter: WireCallCenterV3
+    private let conversationId: AVSIdentifier
+
     private var userVerifiedMap = [ZMUser: Bool]()
+
+    private var selfUser: ZMUser? {
+        guard let moc = callCenter.uiMOC else { return nil }
+        return ZMUser.selfUser(in: moc)
+    }
 
     private func updateUserVerifiedMap() {
         for user in participants.map(\.user) {
@@ -61,25 +84,6 @@ final class CallParticipantsSnapshot {
                 break
             }
         }
-    }
-
-    private var selfUser: ZMUser? {
-        guard let moc = callCenter.uiMOC else { return nil }
-        return ZMUser.selfUser(in: moc)
-    }
-
-    // MARK: - Life Cycle
-
-    init(conversationId: AVSIdentifier, members: [AVSCallMember], callCenter: WireCallCenterV3) {
-        self.callCenter = callCenter
-        self.conversationId = conversationId
-        self.members = type(of: self).removeDuplicateMembers(members)
-    }
-
-    // MARK: - Updates
-
-    func callParticipantsChanged(participants: [AVSCallMember]) {
-        members = type(of: self).removeDuplicateMembers(participants)
     }
 
     // MARK: - Helpers

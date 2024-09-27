@@ -28,8 +28,7 @@ import Foundation
 /// When you want to access the value, call the `getter()` block.
 
 public struct AnyConstantProperty<Value> {
-    /// The block that returns the value from the erased object.
-    public let getter: () -> Value
+    // MARK: Lifecycle
 
     /// Creates the type-erased accessor for a property inside another object.
     /// - parameter base: The object that contains the property.
@@ -41,6 +40,11 @@ public struct AnyConstantProperty<Value> {
             base[keyPath: keyPath]
         }
     }
+
+    // MARK: Public
+
+    /// The block that returns the value from the erased object.
+    public let getter: () -> Value
 }
 
 // MARK: - AnyMutableProperty
@@ -54,11 +58,7 @@ public struct AnyConstantProperty<Value> {
 /// the value in the type-erased value, call the `setter()` block with the new value.
 
 public struct AnyMutableProperty<Value> {
-    /// The block that returns the value from the erased object.
-    public let getter: () -> Value
-
-    /// The block that changes the value inside the erased object.
-    public let setter: (Value) -> Void
+    // MARK: Lifecycle
 
     /// Creates the type-erased accessor for a mutable property inside another object.
     /// - parameter base: The object that contains the property.
@@ -74,4 +74,12 @@ public struct AnyMutableProperty<Value> {
             base[keyPath: keyPath] = newValue
         }
     }
+
+    // MARK: Public
+
+    /// The block that returns the value from the erased object.
+    public let getter: () -> Value
+
+    /// The block that changes the value inside the erased object.
+    public let setter: (Value) -> Void
 }

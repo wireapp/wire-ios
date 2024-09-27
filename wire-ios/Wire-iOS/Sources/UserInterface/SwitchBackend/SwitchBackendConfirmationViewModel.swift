@@ -21,19 +21,7 @@ import SwiftUI
 import WireSyncEngine
 
 final class SwitchBackendConfirmationViewModel {
-    // MARK: - State
-
-    let backendName: String
-    let backendURL: String
-    let backendWSURL: String
-    let blacklistURL: String
-    let teamsURL: String
-    let accountsURL: String
-    let websiteURL: String
-
-    // MARK: - Life cycle
-
-    private let didConfirm: (Bool) -> Void
+    // MARK: Lifecycle
 
     convenience init(
         environment: BackendEnvironment,
@@ -71,12 +59,24 @@ final class SwitchBackendConfirmationViewModel {
         self.didConfirm = didConfirm
     }
 
+    // MARK: Internal
+
     // MARK: - Events
 
     enum Event {
         case userDidCancel
         case userDidConfirm
     }
+
+    // MARK: - State
+
+    let backendName: String
+    let backendURL: String
+    let backendWSURL: String
+    let blacklistURL: String
+    let teamsURL: String
+    let accountsURL: String
+    let websiteURL: String
 
     func handleEvent(_ event: Event) {
         switch event {
@@ -87,4 +87,8 @@ final class SwitchBackendConfirmationViewModel {
             didConfirm(true)
         }
     }
+
+    // MARK: Private
+
+    private let didConfirm: (Bool) -> Void
 }

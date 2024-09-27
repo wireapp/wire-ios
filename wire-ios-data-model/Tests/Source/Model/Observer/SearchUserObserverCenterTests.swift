@@ -19,6 +19,8 @@
 @testable import WireDataModel
 
 final class SearchUserObserverCenterTests: ModelObjectsTests {
+    // MARK: Internal
+
     var sut: SearchUserObserverCenter!
 
     override func setUp() {
@@ -158,6 +160,8 @@ final class SearchUserObserverCenterTests: ModelObjectsTests {
             XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

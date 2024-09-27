@@ -58,18 +58,13 @@ public protocol FeatureRepositoryInterface {
 /// take place on the sync context.
 
 public class FeatureRepository: FeatureRepositoryInterface {
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-    private let logger = WireLogger(tag: "FeatureRepository")
-    private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: Public
 
     // MARK: - App lock
 
@@ -326,22 +321,6 @@ public class FeatureRepository: FeatureRepositoryInterface {
         return makeMLS(status: status, configData: configData)
     }
 
-    private func makeMLS(status: Feature.Status?, configData: Data?) -> Feature.MLS {
-        guard let status, let configData else {
-            return .init()
-        }
-
-        var config = Feature.MLS.Config()
-
-        do {
-            config = try decoder.decode(Feature.MLS.Config.self, from: configData)
-        } catch {
-            logger.error("failed to decode Feature.MLS.Config: \(error)")
-        }
-
-        return .init(status: status, config: config)
-    }
-
     public func storeMLS(_ mls: Feature.MLS) {
         do {
             let config = try encoder.encode(mls.config)
@@ -425,6 +404,15 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
+    public func setNeedsToNotifyUser(_ notifyUser: Bool, for featureName: Feature.Name) {
+        context.performGroupedAndWait {
+            let feature = Feature.fetch(name: featureName, context: context)
+            feature?.needsToNotifyUser = notifyUser
+        }
+    }
+
+    // MARK: Internal
+
     // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {
@@ -474,11 +462,29 @@ public class FeatureRepository: FeatureRepositoryInterface {
         return result
     }
 
-    public func setNeedsToNotifyUser(_ notifyUser: Bool, for featureName: Feature.Name) {
-        context.performGroupedAndWait {
-            let feature = Feature.fetch(name: featureName, context: context)
-            feature?.needsToNotifyUser = notifyUser
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+    private let logger = WireLogger(tag: "FeatureRepository")
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
+
+    private func makeMLS(status: Feature.Status?, configData: Data?) -> Feature.MLS {
+        guard let status, let configData else {
+            return .init()
         }
+
+        var config = Feature.MLS.Config()
+
+        do {
+            config = try decoder.decode(Feature.MLS.Config.self, from: configData)
+        } catch {
+            logger.error("failed to decode Feature.MLS.Config: \(error)")
+        }
+
+        return .init(status: status, config: config)
     }
 
     private func notifyChange(_ change: FeatureChange) {
@@ -503,6 +509,8 @@ extension FeatureRepository {
         case conversationGuestLinksEnabled
         case conversationGuestLinksDisabled
         case e2eIEnabled
+
+        // MARK: Public
 
         public var hasFurtherActions: Bool {
             switch self {

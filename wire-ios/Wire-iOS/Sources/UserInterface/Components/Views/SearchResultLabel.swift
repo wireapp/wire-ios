@@ -21,6 +21,8 @@ import WireDesign
 import WireSystem
 
 final class SearchResultLabel: UILabel, Copyable {
+    // MARK: Lifecycle
+
     convenience init(instance: SearchResultLabel) {
         self.init()
         self.font = instance.font
@@ -29,10 +31,23 @@ final class SearchResultLabel: UILabel, Copyable {
         self.queries = instance.queries
     }
 
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.lineBreakMode = .byTruncatingTail
+        self.textColor = SemanticColors.Label.textDefault
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatal("init?(coder:) is not implemented")
+    }
+
+    // MARK: Internal
+
     var resultText: String? = .none
     var queries: [String] = []
 
-    private let redactedFont = UIFont(name: "RedactedScript-Regular", size: 16)!
+    var estimatedMatchesCount = 0
 
     var isObfuscated = false {
         didSet {
@@ -50,21 +65,6 @@ final class SearchResultLabel: UILabel, Copyable {
         didSet {
             updateText()
         }
-    }
-
-    var estimatedMatchesCount = 0
-
-    fileprivate var previousLayoutBounds: CGRect = .zero
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.lineBreakMode = .byTruncatingTail
-        self.textColor = SemanticColors.Label.textDefault
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatal("init?(coder:) is not implemented")
     }
 
     override func layoutSubviews() {
@@ -131,13 +131,9 @@ final class SearchResultLabel: UILabel, Copyable {
         }
     }
 
-    private func updateText() {
-        guard let text = resultText else {
-            attributedText = .none
-            return
-        }
-        configure(with: text, queries: queries)
-    }
+    // MARK: Fileprivate
+
+    fileprivate var previousLayoutBounds: CGRect = .zero
 
     fileprivate func fits(attributedText: NSAttributedString, fromRange: NSRange) -> Bool {
         let textCutToRange = attributedText.attributedSubstring(from: NSRange(
@@ -149,5 +145,17 @@ final class SearchResultLabel: UILabel, Copyable {
         let labelSize = textCutToRange.layoutSize()
 
         return labelSize.height <= bounds.height && labelSize.width <= bounds.width
+    }
+
+    // MARK: Private
+
+    private let redactedFont = UIFont(name: "RedactedScript-Regular", size: 16)!
+
+    private func updateText() {
+        guard let text = resultText else {
+            attributedText = .none
+            return
+        }
+        configure(with: text, queries: queries)
     }
 }

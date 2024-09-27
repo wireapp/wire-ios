@@ -23,12 +23,7 @@ import WireFoundation
 
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
 public final class BlockingActivityIndicator {
-    // MARK: - Private Properties
-
-    private weak var view: UIView?
-    private let accessibilityAnnouncement: String?
-
-    // MARK: - Life Cycle
+    // MARK: Lifecycle
 
     public init(
         view: UIView,
@@ -46,6 +41,8 @@ public final class BlockingActivityIndicator {
             }
         }
     }
+
+    // MARK: Public
 
     // MARK: - Methods
 
@@ -70,6 +67,13 @@ public final class BlockingActivityIndicator {
     public func stop() {
         view?.unblockAndStopAnimatingIfNeeded(blockingActivityIndicator: self)
     }
+
+    // MARK: Private
+
+    // MARK: - Private Properties
+
+    private weak var view: UIView?
+    private let accessibilityAnnouncement: String?
 }
 
 // MARK: - BlockingActivityIndicatorState

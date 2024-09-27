@@ -27,6 +27,20 @@ import XCTest
 // MARK: - MockOptionsViewModelConfiguration
 
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
+    // MARK: Lifecycle
+
+    init(
+        allowGuests: Bool,
+        guestLinkFeatureStatus: GuestLinkFeatureStatus = .enabled,
+        setAllowGuests: SetHandler? = nil
+    ) {
+        self.allowGuests = allowGuests
+        self.guestLinkFeatureStatus = guestLinkFeatureStatus
+        self.setAllowGuests = setAllowGuests
+    }
+
+    // MARK: Internal
+
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
 
     var allowGuests: Bool
@@ -40,16 +54,6 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     var isCodeEnabled = true
     var areGuestPresent = true
     var isConversationFromSelfTeam = true
-
-    init(
-        allowGuests: Bool,
-        guestLinkFeatureStatus: GuestLinkFeatureStatus = .enabled,
-        setAllowGuests: SetHandler? = nil
-    ) {
-        self.allowGuests = allowGuests
-        self.guestLinkFeatureStatus = guestLinkFeatureStatus
-        self.setAllowGuests = setAllowGuests
-    }
 
     func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         setAllowGuests?(allowGuests, completion)
@@ -67,12 +71,7 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
 // MARK: - ConversationOptionsViewControllerTests
 
 final class ConversationOptionsViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var mockConversation: MockConversation!
-    private var mockUserSession: UserSessionMock!
-    private var mockCreateSecuredGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp method
 
@@ -93,16 +92,6 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         mockCreateSecuredGuestLinkUseCase = nil
 
         super.tearDown()
-    }
-
-    // MARK: - Helper methods
-
-    private func makeViewModel(config: MockOptionsViewModelConfiguration) -> ConversationGuestOptionsViewModel {
-        ConversationGuestOptionsViewModel(
-            configuration: config,
-            conversation: mockConversation.convertToRegularConversation(),
-            createSecureGuestLinkUseCase: mockCreateSecuredGuestLinkUseCase
-        )
     }
 
     // MARK: Renders Guests Screen when AllowGuests is either enabled or disabled
@@ -506,6 +495,25 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         XCTAssertEqual(
             mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count,
             0
+        )
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var mockConversation: MockConversation!
+    private var mockUserSession: UserSessionMock!
+    private var mockCreateSecuredGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - Helper methods
+
+    private func makeViewModel(config: MockOptionsViewModelConfiguration) -> ConversationGuestOptionsViewModel {
+        ConversationGuestOptionsViewModel(
+            configuration: config,
+            conversation: mockConversation.convertToRegularConversation(),
+            createSecureGuestLinkUseCase: mockCreateSecuredGuestLinkUseCase
         )
     }
 }

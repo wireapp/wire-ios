@@ -25,13 +25,11 @@ import XCTest
 /// Create variations of the snapshot behavior using the "with" methods.
 
 public struct SnapshotHelper {
-    private var perceptualPrecision: Float = 0.98
-    private var traits = UITraitCollection()
-    private var layout: SwiftUISnapshotLayout = .sizeThatFits
-    /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
-    private var snapshotReferenceDirectory = ""
+    // MARK: Lifecycle
 
     public init() {}
+
+    // MARK: Public
 
     // MARK: - Create variations
 
@@ -243,21 +241,6 @@ public struct SnapshotHelper {
         XCTAssertNil(failure, file: file, line: line)
     }
 
-    /// Shared configuration for phone sizes
-    private static let phoneConfigs: [(ViewImageConfig, String)] = [
-        (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
-        (.iPhone8(.portrait), "iPhone-4_7_Inch"),
-        (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
-        (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
-        (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch"),
-    ]
-
-    /// Shared configuration for iPad sizes
-    private static let iPadConfigs: [(ViewImageConfig, String)] = [
-        (.iPadMini(.landscape), "iPad-landscape"),
-        (.iPadMini(.portrait), "iPad-portrait"),
-    ]
-
     /// Verify a `UIViewController`, in all device sizes
     ///
     /// - Parameters:
@@ -396,6 +379,29 @@ public struct SnapshotHelper {
             XCTAssertNil(failure, file: file, line: line)
         }
     }
+
+    // MARK: Private
+
+    /// Shared configuration for phone sizes
+    private static let phoneConfigs: [(ViewImageConfig, String)] = [
+        (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
+        (.iPhone8(.portrait), "iPhone-4_7_Inch"),
+        (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
+        (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
+        (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch"),
+    ]
+
+    /// Shared configuration for iPad sizes
+    private static let iPadConfigs: [(ViewImageConfig, String)] = [
+        (.iPadMini(.landscape), "iPad-landscape"),
+        (.iPadMini(.portrait), "iPad-portrait"),
+    ]
+
+    private var perceptualPrecision: Float = 0.98
+    private var traits = UITraitCollection()
+    private var layout: SwiftUISnapshotLayout = .sizeThatFits
+    /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
+    private var snapshotReferenceDirectory = ""
 
     private func snapshotDirectory(file: StaticString = #file) -> String {
         var snapshotReferenceDirectory = snapshotReferenceDirectory

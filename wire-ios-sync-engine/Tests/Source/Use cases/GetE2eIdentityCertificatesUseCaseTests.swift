@@ -24,14 +24,7 @@ import XCTest
 // MARK: - GetE2eIdentityCertificatesUseCaseTests
 
 final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
-    private let coreDataStackHelper = CoreDataStackHelper()
-    private var stack: CoreDataStack!
-    private let modelHelper = ModelHelper()
-
-    private var sut: GetE2eIdentityCertificatesUseCase!
-    private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var safeCoreCrypto: MockSafeCoreCrypto!
-    private var coreCrypto: MockCoreCryptoProtocol!
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -182,6 +175,17 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         // Status is revoked, further validation inrelevant.
         XCTAssertEqual(certificate4.status, .revoked)
     }
+
+    // MARK: Private
+
+    private let coreDataStackHelper = CoreDataStackHelper()
+    private var stack: CoreDataStack!
+    private let modelHelper = ModelHelper()
+
+    private var sut: GetE2eIdentityCertificatesUseCase!
+    private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var safeCoreCrypto: MockSafeCoreCrypto!
+    private var coreCrypto: MockCoreCryptoProtocol!
 }
 
 private let mockCertificate =

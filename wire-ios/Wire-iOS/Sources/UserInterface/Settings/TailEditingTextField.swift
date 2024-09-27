@@ -23,6 +23,8 @@ import UIKit
 /// with spaces. Default implementation collapses the trailing spaces as you type, which looks confusing. This control
 /// can be used "as-is" without any additional configuration.
 class TailEditingTextField: UITextField {
+    // MARK: Lifecycle
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -33,6 +35,8 @@ class TailEditingTextField: UITextField {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
 
     func setup() {
         addTarget(

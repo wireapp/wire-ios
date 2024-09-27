@@ -20,6 +20,8 @@ import XCTest
 @testable import WireSyncEngine
 
 final class CompanyLoginActionTests: XCTestCase {
+    // MARK: Internal
+
     var userDefaults: UserDefaults!
     var currentToken: CompanyLoginVerificationToken!
 
@@ -93,6 +95,8 @@ final class CompanyLoginActionTests: XCTestCase {
             XCTAssertEqual(error as? CompanyLoginError, .unknownLabel)
         }
     }
+
+    // MARK: Private
 
     // MARK: - Utilities
 

@@ -20,6 +20,35 @@ import Foundation
 
 extension Feature {
     public struct ClassifiedDomains: Codable {
+        // MARK: Lifecycle
+
+        public init(status: Feature.Status = .disabled, config: Config = .init()) {
+            self.status = status
+            self.config = config
+        }
+
+        // MARK: Public
+
+        // MARK: - Types
+
+        // WARNING: This config is encoded and stored in the database, so any changes
+        // to it will require some migration code.
+
+        public struct Config: Codable, Equatable {
+            // MARK: Lifecycle
+
+            public init(domains: [String] = []) {
+                self.domains = domains
+            }
+
+            // MARK: Public
+
+            /// The list of domains that are trusted by the self backend and are considered
+            /// to be safe for classified communication.
+
+            public let domains: [String]
+        }
+
         // MARK: - Properties
 
         /// If `enabled` then the user must consider classified domains.
@@ -29,28 +58,5 @@ extension Feature {
         /// The configuration used to control how the feature behaves.
 
         public let config: Config
-
-        // MARK: - Life cycle
-
-        public init(status: Feature.Status = .disabled, config: Config = .init()) {
-            self.status = status
-            self.config = config
-        }
-
-        // MARK: - Types
-
-        // WARNING: This config is encoded and stored in the database, so any changes
-        // to it will require some migration code.
-
-        public struct Config: Codable, Equatable {
-            /// The list of domains that are trusted by the self backend and are considered
-            /// to be safe for classified communication.
-
-            public let domains: [String]
-
-            public init(domains: [String] = []) {
-                self.domains = domains
-            }
-        }
     }
 }

@@ -22,6 +22,8 @@ enum DebugCommand {
     /// Update accessRoles for existing conversations where the team is nil and accessRoles == [.teamMember]
     case repairInvalidAccessRoles
 
+    // MARK: Lifecycle
+
     init?(string: String) {
         // We may want to have commands that accept arguments, which means
         // we'd have to do the parsing of the command here.

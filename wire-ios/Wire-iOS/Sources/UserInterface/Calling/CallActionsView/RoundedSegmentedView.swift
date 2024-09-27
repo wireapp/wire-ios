@@ -19,16 +19,7 @@
 import UIKit
 
 class RoundedSegmentedView: UIView {
-    typealias ActionHandler = () -> Void
-
-    private let stackView: UIStackView = {
-        let view = UIStackView(axis: .horizontal)
-        view.distribution = .fillProportionally
-        return view
-    }()
-
-    private var buttons = [UIButton]()
-    private var actionHandlers = [UIButton: ActionHandler]()
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero)
@@ -41,17 +32,14 @@ class RoundedSegmentedView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    typealias ActionHandler = () -> Void
+
     func setSelected(_ selected: Bool, forItemAt index: Int) {
         for (i, button) in buttons.enumerated() {
             button.isSelected = i == index && selected
         }
-    }
-
-    private func setupViews() {
-        layer.cornerRadius = 12
-        layer.masksToBounds = true
-        backgroundColor = .whiteAlpha16
-        addSubview(stackView)
     }
 
     func addButton(withTitle title: String, actionHandler: @escaping ActionHandler) {
@@ -66,6 +54,24 @@ class RoundedSegmentedView: UIView {
         stackView.addArrangedSubview(button)
         buttons.append(button)
         actionHandlers[button] = actionHandler
+    }
+
+    // MARK: Private
+
+    private let stackView: UIStackView = {
+        let view = UIStackView(axis: .horizontal)
+        view.distribution = .fillProportionally
+        return view
+    }()
+
+    private var buttons = [UIButton]()
+    private var actionHandlers = [UIButton: ActionHandler]()
+
+    private func setupViews() {
+        layer.cornerRadius = 12
+        layer.masksToBounds = true
+        backgroundColor = .whiteAlpha16
+        addSubview(stackView)
     }
 
     private func setupConstraints() {

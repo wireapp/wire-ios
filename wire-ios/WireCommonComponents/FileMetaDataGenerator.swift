@@ -38,10 +38,14 @@ public protocol FileMetaDataGenerating {
 // MARK: - FileMetaDataGenerator
 
 public final class FileMetaDataGenerator: FileMetaDataGenerating {
-    @available(*, deprecated, message: "This shared instance supports legacy static usage. Don't use it.")
-    public static var shared = FileMetaDataGenerator()
+    // MARK: Lifecycle
 
     public init() {}
+
+    // MARK: Public
+
+    @available(*, deprecated, message: "This shared instance supports legacy static usage. Don't use it.")
+    public static var shared = FileMetaDataGenerator()
 
     public func metadataForFileAtURL(
         _ url: URL,

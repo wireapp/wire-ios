@@ -21,14 +21,7 @@ import WireTransport
 
 @objcMembers
 class RecordingMockTransportSession: NSObject, TransportSessionType {
-    var pushChannel: ZMPushChannel
-    var cookieStorage: ZMPersistentCookieStorage
-    var requestLoopDetectionCallback: ((String) -> Void)?
-
-    let mockReachability = MockReachability()
-    var reachability: ReachabilityProvider & TearDownCapable {
-        mockReachability
-    }
+    // MARK: Lifecycle
 
     init(cookieStorage: ZMPersistentCookieStorage, pushChannel: ZMPushChannel) {
         self.pushChannel = pushChannel
@@ -37,14 +30,30 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
         super.init()
     }
 
+    // MARK: Internal
+
+    var pushChannel: ZMPushChannel
+    var cookieStorage: ZMPersistentCookieStorage
+    var requestLoopDetectionCallback: ((String) -> Void)?
+
+    let mockReachability = MockReachability()
+    var didCallEnterBackground = false
+    var didCallEnterForeground = false
+    var lastEnqueuedRequest: ZMTransportRequest?
+    var didCallSetNetworkStateDelegate = false
+    var didCallConfigurePushChannel = false
+    var renewAccessTokenCalls = [String]()
+
+    var reachability: ReachabilityProvider & TearDownCapable {
+        mockReachability
+    }
+
     func tearDown() {}
 
-    var didCallEnterBackground = false
     func enterBackground() {
         didCallEnterBackground = true
     }
 
-    var didCallEnterForeground = false
     func enterForeground() {
         didCallEnterForeground = true
     }
@@ -58,7 +67,6 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
         return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
     }
 
-    var lastEnqueuedRequest: ZMTransportRequest?
     func enqueueOneTime(_ request: ZMTransportRequest) {
         lastEnqueuedRequest = request
     }
@@ -79,19 +87,16 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
 
     func setAccessTokenRenewalSuccessHandler(handler: @escaping ZMAccessTokenHandlerBlock) {}
 
-    var didCallSetNetworkStateDelegate = false
     func setNetworkStateDelegate(_: ZMNetworkStateDelegate?) {
         didCallSetNetworkStateDelegate = true
     }
 
     func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {}
 
-    var didCallConfigurePushChannel = false
     func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: GroupQueue) {
         didCallConfigurePushChannel = true
     }
 
-    var renewAccessTokenCalls = [String]()
     func renewAccessToken(with clientID: String) {
         renewAccessTokenCalls.append(clientID)
     }

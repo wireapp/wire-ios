@@ -22,22 +22,14 @@ import Foundation
 
 extension Feature {
     public struct E2EI: Codable {
-        // MARK: - Properties
-
-        /// If `enabled` then the feature is available to the user.
-
-        public let status: Status
-
-        /// The configuration used to control how the feature behaves.
-
-        public let config: Config
-
-        // MARK: - Life cycle
+        // MARK: Lifecycle
 
         public init(status: Feature.Status = .disabled, config: Config = .init()) {
             self.status = status
             self.config = config
         }
+
+        // MARK: Public
 
         // MARK: - Types
 
@@ -45,10 +37,7 @@ extension Feature {
         // to it will require some migration code.
 
         public struct Config: Codable, Equatable {
-            public let acmeDiscoveryUrl: String?
-            public let verificationExpiration: UInt
-            public let crlProxy: String?
-            public let useProxyOnMobile: Bool?
+            // MARK: Lifecycle
 
             public init(
                 acmeDiscoveryUrl: String? = nil,
@@ -61,7 +50,24 @@ extension Feature {
                 self.crlProxy = crlProxy
                 self.useProxyOnMobile = useProxyOnMobile
             }
+
+            // MARK: Public
+
+            public let acmeDiscoveryUrl: String?
+            public let verificationExpiration: UInt
+            public let crlProxy: String?
+            public let useProxyOnMobile: Bool?
         }
+
+        // MARK: - Properties
+
+        /// If `enabled` then the feature is available to the user.
+
+        public let status: Status
+
+        /// The configuration used to control how the feature behaves.
+
+        public let config: Config
     }
 }
 

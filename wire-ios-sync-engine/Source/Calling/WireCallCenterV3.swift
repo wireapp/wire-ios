@@ -30,6 +30,47 @@ private let zmLog = ZMSLog(tag: "calling")
 /// Thread safety: WireCallCenter instance methods should only be called from the main thread, class method can be
 /// called from any thread.
 public class WireCallCenterV3: NSObject {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    deinit {
+        avsWrapper.close()
+    }
+
+    /// Creates a call center with the required details.
+    /// - parameter userId: The identifier of the current signed-in user.
+    /// - parameter clientId: The identifier of the current client on the user's account.
+    /// - parameter avsWrapper: The bridge to use to communicate with and receive events from AVS.
+    /// If you don't specify one, a default object will be created. Defaults to `nil`.
+    /// - parameter uiMOC: The Core Data context to use to coordinate events.
+    /// - parameter flowManager: The object that controls media flow.
+    /// - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
+    /// - parameter transport: The object that performs network requests when the call center requests them.
+
+    public required init(
+        userId: AVSIdentifier,
+        clientId: String,
+        avsWrapper: AVSWrapperType? = nil,
+        uiMOC: NSManagedObjectContext,
+        flowManager: FlowManagerType,
+        analytics: AnalyticsType? = nil,
+        transport: WireCallCenterTransport
+    ) {
+        self.selfUserId = userId
+        self.uiMOC = uiMOC
+        self.flowManager = flowManager
+        self.analytics = analytics
+        self.transport = transport
+
+        super.init()
+
+        let observer = Unmanaged.passUnretained(self).toOpaque()
+        self.avsWrapper = avsWrapper ?? AVSWrapper(userId: userId, clientId: clientId, observer: observer)
+    }
+
+    // MARK: Internal
+
     static let logger = WireLogger.calling
 
     /// The maximum number of participants for a legacy video call.
@@ -70,16 +111,25 @@ public class WireCallCenterV3: NSObject {
 
     var usePackagingFeatureConfig = false
 
-    var isMuted: Bool {
-        get { avsWrapper.isMuted }
-        set { avsWrapper.isMuted = newValue }
-    }
-
     /// The snaphot of the call state for each non-idle conversation.
     var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
 
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
     var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)] = []
+
+    /// Used to store AVS completions for the clients requests. AVS will only request the list of clients
+    /// once, but we may need to provide AVS with an updated list during the call.
+    var clientsRequestCompletionsByConversationId = [AVSIdentifier: (String) -> Void]()
+
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+
+    private(set) var isEnabled = true
+
+    var isMuted: Bool {
+        get { avsWrapper.isMuted }
+        set { avsWrapper.isMuted = newValue }
+    }
 
     /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to
     /// AVS.
@@ -97,57 +147,13 @@ public class WireCallCenterV3: NSObject {
         }
     }
 
-    /// Used to store AVS completions for the clients requests. AVS will only request the list of clients
-    /// once, but we may need to provide AVS with an updated list during the call.
-    var clientsRequestCompletionsByConversationId = [AVSIdentifier: (String) -> Void]()
-
-    private let onParticipantsChangedSubject = PassthroughSubject<ConferenceParticipantsInfo, Never>()
-
-    let encoder = JSONEncoder()
-    let decoder = JSONDecoder()
-
-    private(set) var isEnabled = true
-
-    // MARK: - Initialization
-
-    deinit {
-        avsWrapper.close()
-    }
-
-    /// Creates a call center with the required details.
-    /// - parameter userId: The identifier of the current signed-in user.
-    /// - parameter clientId: The identifier of the current client on the user's account.
-    /// - parameter avsWrapper: The bridge to use to communicate with and receive events from AVS.
-    /// If you don't specify one, a default object will be created. Defaults to `nil`.
-    /// - parameter uiMOC: The Core Data context to use to coordinate events.
-    /// - parameter flowManager: The object that controls media flow.
-    /// - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
-    /// - parameter transport: The object that performs network requests when the call center requests them.
-
-    public required init(
-        userId: AVSIdentifier,
-        clientId: String,
-        avsWrapper: AVSWrapperType? = nil,
-        uiMOC: NSManagedObjectContext,
-        flowManager: FlowManagerType,
-        analytics: AnalyticsType? = nil,
-        transport: WireCallCenterTransport
-    ) {
-        self.selfUserId = userId
-        self.uiMOC = uiMOC
-        self.flowManager = flowManager
-        self.analytics = analytics
-        self.transport = transport
-
-        super.init()
-
-        let observer = Unmanaged.passUnretained(self).toOpaque()
-        self.avsWrapper = avsWrapper ?? AVSWrapper(userId: userId, clientId: clientId, observer: observer)
-    }
-
     func tearDown() {
         isEnabled = false
     }
+
+    // MARK: Private
+
+    private let onParticipantsChangedSubject = PassthroughSubject<ConferenceParticipantsInfo, Never>()
 }
 
 // MARK: - Snapshots

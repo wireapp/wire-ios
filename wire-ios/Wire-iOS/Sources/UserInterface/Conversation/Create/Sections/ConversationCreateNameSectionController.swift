@@ -20,6 +20,18 @@ import Foundation
 import WireDataModel
 
 final class ConversationCreateNameSectionController: NSObject, CollectionViewSectionController {
+    // MARK: Lifecycle
+
+    init(
+        selfUser: UserType,
+        delegate: SimpleTextFieldDelegate? = nil
+    ) {
+        self.textFieldDelegate = delegate
+        self.selfUser = selfUser
+    }
+
+    // MARK: Internal
+
     typealias Cell = ConversationCreateNameCell
 
     var isHidden: Bool {
@@ -28,22 +40,6 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
 
     var value: SimpleTextField.Value? {
         nameCell?.textField.value
-    }
-
-    private weak var nameCell: Cell?
-    private weak var textFieldDelegate: SimpleTextFieldDelegate?
-    private var footer = SectionFooter(frame: .zero)
-    private let selfUser: UserType
-
-    private lazy var footerText: String = L10n.Localizable.Participants.Section.Name
-        .footer(ZMConversation.maxParticipants)
-
-    init(
-        selfUser: UserType,
-        delegate: SimpleTextFieldDelegate? = nil
-    ) {
-        self.textFieldDelegate = delegate
-        self.selfUser = selfUser
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
@@ -118,4 +114,14 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         nameCell?.textField.becomeFirstResponder()
     }
+
+    // MARK: Private
+
+    private weak var nameCell: Cell?
+    private weak var textFieldDelegate: SimpleTextFieldDelegate?
+    private var footer = SectionFooter(frame: .zero)
+    private let selfUser: UserType
+
+    private lazy var footerText: String = L10n.Localizable.Participants.Section.Name
+        .footer(ZMConversation.maxParticipants)
 }

@@ -25,16 +25,7 @@ import WireSyncEngine
 // MARK: - ArchivedListViewController
 
 final class ArchivedListViewController: UIViewController {
-    private var collectionView: UICollectionView!
-    private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
-    private let swipeIdentifier = "ArchivedList"
-    private let viewModel: ArchivedListViewModel
-    private let layoutCell = ConversationListCell()
-    private var actionController: ConversationActionController?
-    private var startCallController: ConversationCallController?
-    private let userSession: UserSession
-
-    weak var delegate: ArchivedListViewControllerDelegate?
+    // MARK: Lifecycle
 
     init(userSession: UserSession) {
         self.userSession = userSession
@@ -47,6 +38,10 @@ final class ArchivedListViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
+
+    // MARK: Internal
+
+    weak var delegate: ArchivedListViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,6 +59,24 @@ final class ArchivedListViewController: UIViewController {
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
     }
+
+    // MARK: - Accessibility
+
+    override func accessibilityPerformEscape() -> Bool {
+        delegate?.archivedListViewControllerWantsToDismiss(self)
+        return true
+    }
+
+    // MARK: Private
+
+    private var collectionView: UICollectionView!
+    private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
+    private let swipeIdentifier = "ArchivedList"
+    private let viewModel: ArchivedListViewModel
+    private let layoutCell = ConversationListCell()
+    private var actionController: ConversationActionController?
+    private var startCallController: ConversationCallController?
+    private let userSession: UserSession
 
     private func setupNavigationItem() {
         let titleLabel = UILabel()
@@ -154,13 +167,6 @@ final class ArchivedListViewController: UIViewController {
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
         ])
         stackView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
-    }
-
-    // MARK: - Accessibility
-
-    override func accessibilityPerformEscape() -> Bool {
-        delegate?.archivedListViewControllerWantsToDismiss(self)
-        return true
     }
 }
 

@@ -22,6 +22,26 @@ import WireDataModel
 import WireDesign
 
 final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
+    // MARK: Lifecycle
+
+    init() {
+        let title = NSAttributedString.markdown(
+            from: L10n.Localizable.Content.System.Mls.conversationIsVerified(WireURLs.shared.endToEndIdentityInfo),
+            style: .systemMessage
+        )
+
+        self.configuration = View.Configuration(
+            icon: .init(resource: .certificateValid),
+            attributedText: title,
+            showLine: true
+        )
+
+        self.accessibilityLabel = title.string
+        self.actionController = nil
+    }
+
+    // MARK: Internal
+
     typealias View = ConversationSystemMessageCell
 
     let configuration: View.Configuration
@@ -39,20 +59,4 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
-
-    init() {
-        let title = NSAttributedString.markdown(
-            from: L10n.Localizable.Content.System.Mls.conversationIsVerified(WireURLs.shared.endToEndIdentityInfo),
-            style: .systemMessage
-        )
-
-        self.configuration = View.Configuration(
-            icon: .init(resource: .certificateValid),
-            attributedText: title,
-            showLine: true
-        )
-
-        self.accessibilityLabel = title.string
-        self.actionController = nil
-    }
 }

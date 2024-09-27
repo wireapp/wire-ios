@@ -27,32 +27,7 @@ import WireSyncEngine
 /// The first page of the user settings.
 
 final class SelfProfileViewController: UIViewController {
-    var userRightInterfaceType: UserRightInterface.Type
-    var settingsCellDescriptorFactory: SettingsCellDescriptorFactory?
-    var rootGroup: (SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
-
-    // MARK: - Views
-
-    private let settingsController: SettingsTableViewController
-    private weak var accountSelectorView: AccountSelectorView?
-    private let profileContainerView = UIView()
-    private let profileHeaderViewController: ProfileHeaderViewController
-    private let profileImagePicker = ProfileImagePickerManager()
-
-    let userSession: UserSession
-    private let accountSelector: AccountSelector?
-
-    private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
-
-    // MARK: - AppLock
-
-    private var callback: ResultHandler?
-
-    // MARK: - Configuration
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        [.portrait]
-    }
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -119,6 +94,20 @@ final class SelfProfileViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    var userRightInterfaceType: UserRightInterface.Type
+    var settingsCellDescriptorFactory: SettingsCellDescriptorFactory?
+    var rootGroup: (SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
+
+    let userSession: UserSession
+
+    // MARK: - Configuration
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        [.portrait]
+    }
+
     // MARK: - View Lifecycle
 
     override func viewDidLoad() {
@@ -159,6 +148,29 @@ final class SelfProfileViewController: UIViewController {
             presentUserSettingChangeControllerIfNeeded()
         }
     }
+
+    override func accessibilityPerformEscape() -> Bool {
+        dismiss(animated: true)
+        return true
+    }
+
+    // MARK: Private
+
+    // MARK: - Views
+
+    private let settingsController: SettingsTableViewController
+    private weak var accountSelectorView: AccountSelectorView?
+    private let profileContainerView = UIView()
+    private let profileHeaderViewController: ProfileHeaderViewController
+    private let profileImagePicker = ProfileImagePickerManager()
+
+    private let accountSelector: AccountSelector?
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
+
+    // MARK: - AppLock
+
+    private var callback: ResultHandler?
 
     private func configureAccountTitle() {
         if let accounts = SessionManager.shared?.accountManager.accounts, accounts.count > 1 {
@@ -221,11 +233,6 @@ final class SelfProfileViewController: UIViewController {
             )
         }
         present(alertController, animated: true)
-    }
-
-    override func accessibilityPerformEscape() -> Bool {
-        dismiss(animated: true)
-        return true
     }
 }
 

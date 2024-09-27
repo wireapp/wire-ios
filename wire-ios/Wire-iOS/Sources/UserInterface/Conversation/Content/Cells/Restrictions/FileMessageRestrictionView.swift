@@ -23,15 +23,7 @@ import WireDesign
 // MARK: - FileMessageRestrictionView
 
 final class FileMessageRestrictionView: BaseMessageRestrictionView {
-    // MARK: - Properties
-
-    let fileBlockView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.tintColor = SemanticColors.Icon.foregroundDefaultWhite
-        return imageView
-    }()
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init() {
         super.init(messageType: .file)
@@ -41,6 +33,16 @@ final class FileMessageRestrictionView: BaseMessageRestrictionView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let fileBlockView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.tintColor = SemanticColors.Icon.foregroundDefaultWhite
+        return imageView
+    }()
 
     func configure(for message: ZMConversationMessage?) {
         super.configure()

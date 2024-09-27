@@ -25,12 +25,7 @@ import WireSyncEngine
 /// Observes call state to prompt the user for call quality feedback when appropriate.
 
 class CallQualityController: NSObject {
-    weak var router: CallQualityRouterProtocol?
-
-    fileprivate var answeredCalls: [UUID: Date] = [:]
-    fileprivate var token: Any?
-
-    private let mainWindow: UIWindow
+    // MARK: Lifecycle
 
     init(mainWindow: UIWindow) {
         self.mainWindow = mainWindow
@@ -40,6 +35,10 @@ class CallQualityController: NSObject {
             self.token = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
         }
     }
+
+    // MARK: Internal
+
+    weak var router: CallQualityRouterProtocol?
 
     // MARK: - Configuration
 
@@ -64,6 +63,15 @@ class CallQualityController: NSObject {
                 && AppDelegate.shared.launchType != .unknown
         #endif
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var answeredCalls: [UUID: Date] = [:]
+    fileprivate var token: Any?
+
+    // MARK: Private
+
+    private let mainWindow: UIWindow
 
     // MARK: - Events
 

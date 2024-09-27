@@ -27,6 +27,8 @@ enum ConversationActionType {
     case none, started(withName: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left,
          teamMemberLeave
 
+    // MARK: Internal
+
     /// Some actions only involve the sender, others involve other users too.
     var involvesUsersOtherThanSender: Bool {
         switch self {
@@ -77,35 +79,29 @@ extension ZMConversationMessage {
 // MARK: - ParticipantsCellViewModel
 
 final class ParticipantsCellViewModel {
-    private typealias NameList = ParticipantsStringFormatter.NameList
+    // MARK: Lifecycle
+
+    init(
+        font: UIFont?,
+        largeFont: UIFont?,
+        textColor: UIColor,
+        iconColor: UIColor,
+        message: ZMConversationMessage
+    ) {
+        self.font = font
+        self.largeFont = largeFont
+        self.textColor = textColor
+        self.iconColor = iconColor
+        self.message = message
+    }
+
+    // MARK: Internal
+
     static let showMoreLinkURL = NSURL(string: "action://show-all")!
 
     let font, largeFont: UIFont?
     let textColor, iconColor: UIColor
     let message: ZMConversationMessage
-
-    private var action: ConversationActionType {
-        message.actionType
-    }
-
-    private var maxShownUsers: Int {
-        isSelfIncludedInUsers ? 16 : 17
-    }
-
-    private var maxShownUsersWhenCollapsed: Int {
-        isSelfIncludedInUsers ? 14 : 15
-    }
-
-    private var showServiceUserWarning: Bool {
-        guard case .added = action,
-              let messageData = message.systemMessageData,
-              let conversation = message.conversationLike else { return false }
-        guard let users = Array(messageData.userTypes) as? [UserType] else { return false }
-
-        let selfAddedToServiceConversation = users.any(\.isSelfUser) && conversation.areServicesPresent
-        let serviceAdded = users.any(\.isServiceUser)
-        return selfAddedToServiceConversation || serviceAdded
-    }
 
     /// Users displayed in the system message, up to 17 when not collapsed
     /// but only 15 when there are more than 15 users and we collapse them.
@@ -119,22 +115,6 @@ final class ParticipantsCellViewModel {
         }
         return result + [selfUser]
     }()
-
-    /// Users not displayed in the system message but collapsed into a link.
-    /// E.g. `and 5 others`.
-    private lazy var collapsedUsers: [UserType] = {
-        let users = sortedUsersWithoutSelf
-        guard users.count > maxShownUsers, action.allowsCollapsing else { return [] }
-        return Array(users.dropFirst(maxShownUsersWhenCollapsed))
-    }()
-
-    /// The users to display when opening the participants details screen.
-    var selectedUsers: [UserType] {
-        switch action {
-        case .added: sortedUsers
-        default: []
-        }
-    }
 
     lazy var isSelfIncludedInUsers: Bool = sortedUsers.any(\.isSelfUser)
 
@@ -158,56 +138,14 @@ final class ParticipantsCellViewModel {
         return users.sorted { name(for: $0) < name(for: $1) }
     }()
 
-    init(
-        font: UIFont?,
-        largeFont: UIFont?,
-        textColor: UIColor,
-        iconColor: UIColor,
-        message: ZMConversationMessage
-    ) {
-        self.font = font
-        self.largeFont = largeFont
-        self.textColor = textColor
-        self.iconColor = iconColor
-        self.message = message
-    }
-
     lazy var sortedUsersWithoutSelf: [UserType] = sortedUsers.filter { !$0.isSelfUser }
 
-    private func name(for user: UserType) -> String {
-        if user.isSelfUser {
-            "content.system.you_\(grammaticalCase(for: user))".localized
-        } else {
-            user.name ?? L10n.Localizable.Conversation.Status.someone
+    /// The users to display when opening the participants details screen.
+    var selectedUsers: [UserType] {
+        switch action {
+        case .added: sortedUsers
+        default: []
         }
-    }
-
-    private var nameList: NameList {
-        var userNames = shownUsers.map { name(for: $0) }
-        /// If users were removed due to legal hold policy conflict and there is a selfUser in that list, we should only
-        /// display selfUser
-        if case .removed(reason: .legalHoldPolicyConflict) = action,
-           let selfUser = sortedUsers.first(where: \.isSelfUser),
-           !sortedUsersWithoutSelf.isEmpty {
-            userNames = [name(for: selfUser)]
-        }
-
-        return NameList(names: userNames, collapsed: collapsedUsers.count, selfIncluded: isSelfIncludedInUsers)
-    }
-
-    /// The user will, depending on the context, be in a specific case within the
-    /// sentence. This is important for localization of "you".
-    private func grammaticalCase(for user: UserType) -> String {
-        // user is always the subject
-        if message.isUserSender(user) { return "nominative" }
-        // "started with ... user"
-        if case .started = action { return "dative" }
-
-        // If there is selfUser in the list, we should only display selfUser as "You"
-        if case .removed(reason: .legalHoldPolicyConflict) = action,
-           !sortedUsers.filter(\.isSelfUser).isEmpty { return "started" }
-
-        return "accusative"
     }
 
     // ------------------------------------------------------------
@@ -250,6 +188,77 @@ final class ParticipantsCellViewModel {
     func warning() -> String? {
         guard showServiceUserWarning else { return nil }
         return L10n.Localizable.Content.System.Services.warning
+    }
+
+    // MARK: Private
+
+    private typealias NameList = ParticipantsStringFormatter.NameList
+
+    /// Users not displayed in the system message but collapsed into a link.
+    /// E.g. `and 5 others`.
+    private lazy var collapsedUsers: [UserType] = {
+        let users = sortedUsersWithoutSelf
+        guard users.count > maxShownUsers, action.allowsCollapsing else { return [] }
+        return Array(users.dropFirst(maxShownUsersWhenCollapsed))
+    }()
+
+    private var action: ConversationActionType {
+        message.actionType
+    }
+
+    private var maxShownUsers: Int {
+        isSelfIncludedInUsers ? 16 : 17
+    }
+
+    private var maxShownUsersWhenCollapsed: Int {
+        isSelfIncludedInUsers ? 14 : 15
+    }
+
+    private var showServiceUserWarning: Bool {
+        guard case .added = action,
+              let messageData = message.systemMessageData,
+              let conversation = message.conversationLike else { return false }
+        guard let users = Array(messageData.userTypes) as? [UserType] else { return false }
+
+        let selfAddedToServiceConversation = users.any(\.isSelfUser) && conversation.areServicesPresent
+        let serviceAdded = users.any(\.isServiceUser)
+        return selfAddedToServiceConversation || serviceAdded
+    }
+
+    private var nameList: NameList {
+        var userNames = shownUsers.map { name(for: $0) }
+        /// If users were removed due to legal hold policy conflict and there is a selfUser in that list, we should only
+        /// display selfUser
+        if case .removed(reason: .legalHoldPolicyConflict) = action,
+           let selfUser = sortedUsers.first(where: \.isSelfUser),
+           !sortedUsersWithoutSelf.isEmpty {
+            userNames = [name(for: selfUser)]
+        }
+
+        return NameList(names: userNames, collapsed: collapsedUsers.count, selfIncluded: isSelfIncludedInUsers)
+    }
+
+    private func name(for user: UserType) -> String {
+        if user.isSelfUser {
+            "content.system.you_\(grammaticalCase(for: user))".localized
+        } else {
+            user.name ?? L10n.Localizable.Conversation.Status.someone
+        }
+    }
+
+    /// The user will, depending on the context, be in a specific case within the
+    /// sentence. This is important for localization of "you".
+    private func grammaticalCase(for user: UserType) -> String {
+        // user is always the subject
+        if message.isUserSender(user) { return "nominative" }
+        // "started with ... user"
+        if case .started = action { return "dative" }
+
+        // If there is selfUser in the list, we should only display selfUser as "You"
+        if case .removed(reason: .legalHoldPolicyConflict) = action,
+           !sortedUsers.filter(\.isSelfUser).isEmpty { return "started" }
+
+        return "accusative"
     }
 
     private func formatter(for message: ZMConversationMessage) -> ParticipantsStringFormatter? {

@@ -31,7 +31,45 @@ typealias TapHandler = (_ collapsed: Bool) -> Void
 // MARK: - ConversationListHeaderView
 
 final class ConversationListHeaderView: UICollectionReusableView {
-    private let spacing: CGFloat = 8
+    // MARK: Lifecycle
+
+    override required init(frame: CGRect) {
+        super.init(frame: frame)
+
+        [titleLabel, arrowIconImageView, badgeView].forEach(addSubview)
+
+        createConstraints()
+
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggledCollapsed)))
+
+        isAccessibilityElement = true
+        shouldGroupAccessibilityChildren = true
+        backgroundColor = SemanticColors.View.backgroundConversationList
+        addBorder(for: .bottom)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    var tapHandler: TapHandler?
+
+    let badgeView: RoundedTextBadge = {
+        let margin: CGFloat = 12
+        let roundedTextBadge = RoundedTextBadge(
+            contentInset: UIEdgeInsets(top: 2, left: margin, bottom: 2, right: margin),
+            font: FontSpec(.medium, .semibold).font!
+        )
+
+        roundedTextBadge.textLabel.textColor = SemanticColors.Label.textDefaultWhite
+        roundedTextBadge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
+        roundedTextBadge.isHidden = true
+
+        return roundedTextBadge
+    }()
 
     var folderBadge = 0 {
         didSet {
@@ -66,35 +104,6 @@ final class ConversationListHeaderView: UICollectionReusableView {
             }
         }
     }
-
-    var tapHandler: TapHandler?
-
-    private var badgeMarginConstraint: NSLayoutConstraint?
-    private var badgeWidthConstraint: NSLayoutConstraint?
-
-    private let titleLabel: UILabel = {
-        let label = DynamicFontLabel(
-            fontSpec: .smallRegularFont,
-            color: .white
-        )
-        label.textColor = SemanticColors.Label.textDefault
-        label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        return label
-    }()
-
-    let badgeView: RoundedTextBadge = {
-        let margin: CGFloat = 12
-        let roundedTextBadge = RoundedTextBadge(
-            contentInset: UIEdgeInsets(top: 2, left: margin, bottom: 2, right: margin),
-            font: FontSpec(.medium, .semibold).font!
-        )
-
-        roundedTextBadge.textLabel.textColor = SemanticColors.Label.textDefaultWhite
-        roundedTextBadge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
-        roundedTextBadge.isHidden = true
-
-        return roundedTextBadge
-    }()
 
     /// display title of the header
     var title: String? {
@@ -136,27 +145,29 @@ final class ConversationListHeaderView: UICollectionReusableView {
         }
     }
 
+    // MARK: Private
+
+    private let spacing: CGFloat = 8
+
+    private var badgeMarginConstraint: NSLayoutConstraint?
+    private var badgeWidthConstraint: NSLayoutConstraint?
+
+    private let titleLabel: UILabel = {
+        let label = DynamicFontLabel(
+            fontSpec: .smallRegularFont,
+            color: .white
+        )
+        label.textColor = SemanticColors.Label.textDefault
+        label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        return label
+    }()
+
     private let arrowIconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.setTemplateIcon(.downArrow, size: .tiny)
         imageView.tintColor = SemanticColors.Label.textDefault
         return imageView
     }()
-
-    override required init(frame: CGRect) {
-        super.init(frame: frame)
-
-        [titleLabel, arrowIconImageView, badgeView].forEach(addSubview)
-
-        createConstraints()
-
-        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggledCollapsed)))
-
-        isAccessibilityElement = true
-        shouldGroupAccessibilityChildren = true
-        backgroundColor = SemanticColors.View.backgroundConversationList
-        addBorder(for: .bottom)
-    }
 
     @objc
     private func toggledCollapsed() {
@@ -166,11 +177,6 @@ final class ConversationListHeaderView: UICollectionReusableView {
             self.collapsed = newCollaped
         })
         tapHandler?(newCollaped)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     private func createConstraints() {

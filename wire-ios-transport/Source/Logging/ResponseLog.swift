@@ -19,12 +19,16 @@
 import Foundation
 
 struct ResponseLog: Codable {
-    var endpoint: String
-    var status: Int
+    // MARK: Lifecycle
 
     init?(_ response: HTTPURLResponse) {
         guard let url = response.url else { return nil }
         self.endpoint = url.endpointRemoteLogDescription
         self.status = response.statusCode
     }
+
+    // MARK: Internal
+
+    var endpoint: String
+    var status: Int
 }

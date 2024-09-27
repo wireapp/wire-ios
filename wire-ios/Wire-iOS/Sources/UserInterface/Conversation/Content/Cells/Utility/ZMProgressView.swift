@@ -19,10 +19,7 @@
 import UIKit
 
 final class ZMProgressView: UIView {
-    fileprivate var deterministic: Bool? = .none
-    fileprivate var progress: Float = 0
-    fileprivate var progressView = UIView()
-    fileprivate var spinner = BreathLoadingBar(animationDuration: 3.0)
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,21 +32,7 @@ final class ZMProgressView: UIView {
         setup()
     }
 
-    fileprivate func setup() {
-        progressView.autoresizingMask = [.flexibleHeight, .flexibleRightMargin]
-        spinner.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
-        progressView.frame = bounds
-        spinner.frame = bounds
-
-        addSubview(progressView)
-        addSubview(spinner)
-
-        updateForStateAnimated(false)
-        updateProgress(false)
-        progressView.backgroundColor = tintColor
-        spinner.backgroundColor = tintColor
-    }
+    // MARK: Internal
 
     override var tintColor: UIColor? {
         didSet {
@@ -75,6 +58,29 @@ final class ZMProgressView: UIView {
     func setProgress(_ progress: Float, animated: Bool) {
         self.progress = progress
         updateProgress(animated)
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var deterministic: Bool? = .none
+    fileprivate var progress: Float = 0
+    fileprivate var progressView = UIView()
+    fileprivate var spinner = BreathLoadingBar(animationDuration: 3.0)
+
+    fileprivate func setup() {
+        progressView.autoresizingMask = [.flexibleHeight, .flexibleRightMargin]
+        spinner.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        progressView.frame = bounds
+        spinner.frame = bounds
+
+        addSubview(progressView)
+        addSubview(spinner)
+
+        updateForStateAnimated(false)
+        updateProgress(false)
+        progressView.backgroundColor = tintColor
+        spinner.backgroundColor = tintColor
     }
 
     fileprivate func updateProgress(_ animated: Bool) {

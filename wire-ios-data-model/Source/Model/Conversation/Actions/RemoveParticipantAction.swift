@@ -30,16 +30,20 @@ public enum ConversationRemoveParticipantError: Error {
 // MARK: - RemoveParticipantAction
 
 public class RemoveParticipantAction: EntityAction {
-    public var resultHandler: ResultHandler?
-
-    public typealias Result = Void
-    public typealias Failure = ConversationRemoveParticipantError
-
-    public let userID: NSManagedObjectID
-    public let conversationID: NSManagedObjectID
+    // MARK: Lifecycle
 
     public required init(user: ZMUser, conversation: ZMConversation) {
         self.userID = user.objectID
         self.conversationID = conversation.objectID
     }
+
+    // MARK: Public
+
+    public typealias Result = Void
+    public typealias Failure = ConversationRemoveParticipantError
+
+    public var resultHandler: ResultHandler?
+
+    public let userID: NSManagedObjectID
+    public let conversationID: NSManagedObjectID
 }

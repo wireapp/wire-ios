@@ -34,10 +34,6 @@ public class AddressBookEntry: ZMManagedObject {
     @NSManaged public var user: ZMUser?
     @NSManaged public var cachedName: String?
 
-    override public func keysTrackedForLocalModifications() -> Set<String> {
-        []
-    }
-
     override public static func entityName() -> String {
         "AddressBookEntry"
     }
@@ -48,6 +44,10 @@ public class AddressBookEntry: ZMManagedObject {
 
     override public static func isTrackingLocalModifications() -> Bool {
         false
+    }
+
+    override public func keysTrackedForLocalModifications() -> Set<String> {
+        []
     }
 }
 

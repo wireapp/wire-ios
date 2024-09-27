@@ -36,8 +36,7 @@ protocol UpdateEventDecryptorProtocol {
 // MARK: - UpdateEventDecryptor
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
-    private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
-    private let context: NSManagedObjectContext
+    // MARK: Lifecycle
 
     init(
         proteusService: any ProteusServiceInterface,
@@ -57,6 +56,8 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         self.proteusMessageDecryptor = proteusMessageDecryptor
         self.context = context
     }
+
+    // MARK: Internal
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
         let logAttributes: LogAttributes = [
@@ -103,6 +104,11 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         return decryptedEvents
     }
+
+    // MARK: Private
+
+    private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
+    private let context: NSManagedObjectContext
 
     private func appendFailedToDecryptProteusMessage(
         eventData: ConversationProteusMessageAddEvent,

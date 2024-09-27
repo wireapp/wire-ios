@@ -21,21 +21,21 @@ import UIKit
 import WireSyncEngine
 
 final class SelfCallParticipantView: BaseCallParticipantView {
-    weak var previewView: AVSVideoPreview?
+    // MARK: Lifecycle
 
-    private weak var videoContainerView: AVSVideoContainerView?
+    deinit {
+        stopCapture()
+    }
+
+    // MARK: Internal
+
+    weak var previewView: AVSVideoPreview?
 
     override var stream: Stream {
         didSet {
             guard stream.callParticipantState.videoState != videoState else { return }
             updateCaptureState(with: stream.callParticipantState.videoState)
         }
-    }
-
-    private var videoState: VideoState?
-
-    deinit {
-        stopCapture()
     }
 
     override func setupViews() {
@@ -124,4 +124,10 @@ final class SelfCallParticipantView: BaseCallParticipantView {
 
         return previewView
     }
+
+    // MARK: Private
+
+    private weak var videoContainerView: AVSVideoContainerView?
+
+    private var videoState: VideoState?
 }

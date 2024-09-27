@@ -31,38 +31,7 @@ typealias GroupParticipantsDetailConversation = GroupDetailsConversationType & S
 // MARK: - GroupParticipantsDetailViewModel
 
 final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControllerDelegate, ZMConversationObserver {
-    private var internalParticipants: [UserType]
-    private var filterQuery: String?
-
-    let selectedParticipants: [UserType]
-    let conversation: GroupParticipantsDetailConversation
-    var participantsDidChange: (() -> Void)?
-
-    let userSession: UserSession
-    let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
-
-    private(set) var userStatuses = [UUID: UserStatus]()
-
-    fileprivate var token: NSObjectProtocol?
-
-    var indexPathOfFirstSelectedParticipant: IndexPath? {
-        guard let user = selectedParticipants.first as? ZMUser else { return nil }
-        guard let row = (internalParticipants.firstIndex {
-            ($0 as? ZMUser)?.remoteIdentifier == user.remoteIdentifier
-        }) else { return nil }
-        let section = user.isGroupAdmin(in: conversation) ? 0 : 1
-        return IndexPath(row: row, section: section)
-    }
-
-    var participants = [UserType]() {
-        didSet {
-            computeParticipantGroups()
-            participantsDidChange?()
-        }
-    }
-
-    var admins = [UserType]()
-    var members = [UserType]()
+    // MARK: Lifecycle
 
     init(
         selectedParticipants: [UserType],
@@ -83,6 +52,65 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         computeVisibleParticipants()
         updateUserE2EICertificationStatuses()
     }
+
+    // MARK: Internal
+
+    let selectedParticipants: [UserType]
+    let conversation: GroupParticipantsDetailConversation
+    var participantsDidChange: (() -> Void)?
+
+    let userSession: UserSession
+    let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+
+    private(set) var userStatuses = [UUID: UserStatus]()
+
+    var admins = [UserType]()
+    var members = [UserType]()
+
+    var indexPathOfFirstSelectedParticipant: IndexPath? {
+        guard let user = selectedParticipants.first as? ZMUser else { return nil }
+        guard let row = (internalParticipants.firstIndex {
+            ($0 as? ZMUser)?.remoteIdentifier == user.remoteIdentifier
+        }) else { return nil }
+        let section = user.isGroupAdmin(in: conversation) ? 0 : 1
+        return IndexPath(row: row, section: section)
+    }
+
+    var participants = [UserType]() {
+        didSet {
+            computeParticipantGroups()
+            participantsDidChange?()
+        }
+    }
+
+    func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
+        guard changeInfo.participantsChanged else { return }
+        internalParticipants = conversation.sortedOtherParticipants
+        computeVisibleParticipants()
+    }
+
+    // MARK: - SearchHeaderViewControllerDelegate
+
+    func searchHeaderViewController(
+        _ searchHeaderViewController: SearchHeaderViewController,
+        updatedSearchQuery query: String
+    ) {
+        filterQuery = query
+        computeVisibleParticipants()
+    }
+
+    func searchHeaderViewControllerDidConfirmAction(_: SearchHeaderViewController) {
+        // no-op
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var token: NSObjectProtocol?
+
+    // MARK: Private
+
+    private var internalParticipants: [UserType]
+    private var filterQuery: String?
 
     private func computeVisibleParticipants() {
         guard let query = filterQuery,
@@ -109,26 +137,6 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         }
 
         return NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
-    }
-
-    func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
-        guard changeInfo.participantsChanged else { return }
-        internalParticipants = conversation.sortedOtherParticipants
-        computeVisibleParticipants()
-    }
-
-    // MARK: - SearchHeaderViewControllerDelegate
-
-    func searchHeaderViewController(
-        _ searchHeaderViewController: SearchHeaderViewController,
-        updatedSearchQuery query: String
-    ) {
-        filterQuery = query
-        computeVisibleParticipants()
-    }
-
-    func searchHeaderViewControllerDidConfirmAction(_: SearchHeaderViewController) {
-        // no-op
     }
 
     // MARK: - UserStatuses

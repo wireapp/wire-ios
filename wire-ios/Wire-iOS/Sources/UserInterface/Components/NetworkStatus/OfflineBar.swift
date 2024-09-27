@@ -21,16 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class OfflineBar: UIView {
-    private let offlineLabel: UILabel
-    private lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 0)
-
-    var state: NetworkStatusViewState = .online {
-        didSet {
-            if oldValue != state {
-                updateView()
-            }
-        }
-    }
+    // MARK: Lifecycle
 
     convenience init() {
         self.init(frame: .zero)
@@ -59,6 +50,21 @@ final class OfflineBar: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var state: NetworkStatusViewState = .online {
+        didSet {
+            if oldValue != state {
+                updateView()
+            }
+        }
+    }
+
+    // MARK: Private
+
+    private let offlineLabel: UILabel
+    private lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 0)
 
     private func createConstraints() {
         offlineLabel.translatesAutoresizingMaskIntoConstraints = false

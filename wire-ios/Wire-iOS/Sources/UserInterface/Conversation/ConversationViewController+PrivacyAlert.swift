@@ -28,6 +28,8 @@ extension ConversationViewController {
         case cancelWithAction((Bool) -> Void)
         case cancel
 
+        // MARK: Internal
+
         var localizedTitle: String {
             switch self {
             case .verifyDevices:

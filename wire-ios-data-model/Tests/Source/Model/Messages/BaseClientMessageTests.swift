@@ -20,6 +20,8 @@ import Foundation
 @testable import WireDataModel
 
 class BaseZMClientMessageTests: BaseZMMessageTests {
+    // MARK: Internal
+
     var syncSelfUser: ZMUser!
     var syncUser1: ZMUser!
     var syncUser2: ZMUser!
@@ -242,6 +244,8 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
             eventSource: eventSource
         )
     }
+
+    // MARK: Private
 
     private func createUpdateEvent(
         _ nonce: UUID,

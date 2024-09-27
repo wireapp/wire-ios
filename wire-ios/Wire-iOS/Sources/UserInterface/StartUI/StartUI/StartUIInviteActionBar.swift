@@ -20,11 +20,7 @@ import UIKit
 import WireDesign
 
 final class StartUIInviteActionBar: UIView {
-    var bottomEdgeConstraint: NSLayoutConstraint!
-
-    private(set) var inviteButton: ZMButton!
-
-    private let padding: CGFloat = 12
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero)
@@ -46,16 +42,11 @@ final class StartUIInviteActionBar: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func createInviteButton() {
-        inviteButton = .init(
-            style: .accentColorTextButtonStyle,
-            cornerRadius: 16,
-            fontSpec: .normalSemiboldFont
-        )
-        inviteButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 3, right: 8)
-        inviteButton.setTitle(L10n.Localizable.Peoplepicker.inviteMorePeople.capitalized, for: .normal)
-        addSubview(inviteButton)
-    }
+    // MARK: Internal
+
+    var bottomEdgeConstraint: NSLayoutConstraint!
+
+    private(set) var inviteButton: ZMButton!
 
     override var isHidden: Bool {
         didSet {
@@ -65,6 +56,21 @@ final class StartUIInviteActionBar: UIView {
 
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: isHidden ? 0 : 56.0)
+    }
+
+    // MARK: Private
+
+    private let padding: CGFloat = 12
+
+    private func createInviteButton() {
+        inviteButton = .init(
+            style: .accentColorTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .normalSemiboldFont
+        )
+        inviteButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 3, right: 8)
+        inviteButton.setTitle(L10n.Localizable.Peoplepicker.inviteMorePeople.capitalized, for: .normal)
+        addSubview(inviteButton)
     }
 
     private func createConstraints() {

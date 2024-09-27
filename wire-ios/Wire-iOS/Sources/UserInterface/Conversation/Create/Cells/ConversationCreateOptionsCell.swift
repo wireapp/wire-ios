@@ -23,6 +23,8 @@ import WireDesign
 // MARK: - ConversationCreateOptionsCell
 
 final class ConversationCreateOptionsCell: RightIconDetailsCell {
+    // MARK: Internal
+
     // MARK: - Properties
 
     var expanded = false
@@ -71,6 +73,8 @@ final class ConversationCreateOptionsCell: RightIconDetailsCell {
         setupIcon()
         setupAccessibility()
     }
+
+    // MARK: Private
 
     // MARK: Methods
 

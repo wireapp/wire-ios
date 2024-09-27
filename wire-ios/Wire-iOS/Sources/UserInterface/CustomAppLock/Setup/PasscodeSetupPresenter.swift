@@ -21,25 +21,7 @@ import Foundation
 // MARK: - PasscodeSetupPresenter
 
 final class PasscodeSetupPresenter {
-    private weak var userInterface: PasscodeSetupUserInterface?
-    private var interactorInput: PasscodeSetupInteractorInput
-
-    private var passcodeValidationResult: PasswordValidationResult?
-    private let passcodeCharacterClasses: [PasswordCharacterClass] = [
-        .uppercase,
-        .lowercase,
-        .special,
-        .digits,
-    ]
-
-    var isPasscodeValid: Bool {
-        switch passcodeValidationResult {
-        case .valid:
-            true
-        default:
-            false
-        }
-    }
+    // MARK: Lifecycle
 
     convenience init(userInterface: PasscodeSetupUserInterface) {
         let interactor = PasscodeSetupInteractor()
@@ -55,6 +37,17 @@ final class PasscodeSetupPresenter {
         self.interactorInput = interactorInput
     }
 
+    // MARK: Internal
+
+    var isPasscodeValid: Bool {
+        switch passcodeValidationResult {
+        case .valid:
+            true
+        default:
+            false
+        }
+    }
+
     func validate(error: TextFieldValidator.ValidationError?) {
         interactorInput.validate(error: error)
     }
@@ -67,6 +60,19 @@ final class PasscodeSetupPresenter {
             callback?(false)
         }
     }
+
+    // MARK: Private
+
+    private weak var userInterface: PasscodeSetupUserInterface?
+    private var interactorInput: PasscodeSetupInteractorInput
+
+    private var passcodeValidationResult: PasswordValidationResult?
+    private let passcodeCharacterClasses: [PasswordCharacterClass] = [
+        .uppercase,
+        .lowercase,
+        .special,
+        .digits,
+    ]
 }
 
 // MARK: PasscodeSetupInteractorOutput

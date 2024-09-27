@@ -104,29 +104,7 @@ extension VoiceChannel {
 // MARK: - CallInfoConfiguration
 
 struct CallInfoConfiguration: CallInfoViewControllerInput {
-    static let maxActiveSpeakers = 4
-
-    let permissions: CallPermissionsConfiguration
-    let isConstantBitRate: Bool
-    let title: String
-    let isVideoCall: Bool
-    let canToggleMediaType: Bool
-    let isMuted: Bool
-    let mediaState: MediaState
-    let accessoryType: CallInfoViewControllerAccessoryType
-    let degradationState: CallDegradationState
-    let videoPlaceholderState: CallVideoPlaceholderState
-    let disableIdleTimer: Bool
-    let cameraType: CaptureDevice
-    let mediaManager: AVSMediaManagerInterface
-    let userEnabledCBR: Bool
-    let isForcedCBR: Bool
-    let callState: CallStateExtending
-    let videoGridPresentationMode: VideoGridPresentationMode
-    let allowPresentationModeUpdates: Bool
-    let classification: SecurityClassification?
-
-    private let voiceChannelSnapshot: VoiceChannelSnapshot
+    // MARK: Lifecycle
 
     @MainActor
     init(
@@ -161,6 +139,30 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         self.allowPresentationModeUpdates = voiceChannel.allowPresentationModeUpdates
     }
 
+    // MARK: Internal
+
+    static let maxActiveSpeakers = 4
+
+    let permissions: CallPermissionsConfiguration
+    let isConstantBitRate: Bool
+    let title: String
+    let isVideoCall: Bool
+    let canToggleMediaType: Bool
+    let isMuted: Bool
+    let mediaState: MediaState
+    let accessoryType: CallInfoViewControllerAccessoryType
+    let degradationState: CallDegradationState
+    let videoPlaceholderState: CallVideoPlaceholderState
+    let disableIdleTimer: Bool
+    let cameraType: CaptureDevice
+    let mediaManager: AVSMediaManagerInterface
+    let userEnabledCBR: Bool
+    let isForcedCBR: Bool
+    let callState: CallStateExtending
+    let videoGridPresentationMode: VideoGridPresentationMode
+    let allowPresentationModeUpdates: Bool
+    let classification: SecurityClassification?
+
     // This property has to be computed in order to return the correct call duration
     var state: CallStatusViewState {
         switch voiceChannelSnapshot.state {
@@ -172,14 +174,16 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         case .none, .unknown: .none
         }
     }
+
+    // MARK: Private
+
+    private let voiceChannelSnapshot: VoiceChannelSnapshot
 }
 
 // MARK: - VoiceChannelSnapshot
 
 private struct VoiceChannelSnapshot {
-    let callerName: String?
-    let state: CallState
-    let callStartDate: Date
+    // MARK: Lifecycle
 
     init(_ voiceChannel: VoiceChannel) {
         self.callerName = {
@@ -189,6 +193,12 @@ private struct VoiceChannelSnapshot {
         self.state = voiceChannel.state
         self.callStartDate = voiceChannel.callStartDate ?? .init()
     }
+
+    // MARK: Internal
+
+    let callerName: String?
+    let state: CallState
+    let callStartDate: Date
 }
 
 // MARK: - Helper

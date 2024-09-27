@@ -21,6 +21,25 @@ import WireCommonComponents
 import WireDesign
 
 final class WireLogoInfoView: UIView {
+    // MARK: Lifecycle
+
+    init(title: String, subtitle: String) {
+        super.init(frame: .zero)
+
+        titleLabel.text = title
+        subtitleLabel.text = subtitle
+
+        configureSubviews()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     let contentView = UIView()
 
     let headerView: UIView = {
@@ -68,20 +87,7 @@ final class WireLogoInfoView: UIView {
         return label
     }()
 
-    init(title: String, subtitle: String) {
-        super.init(frame: .zero)
-
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
-
-        configureSubviews()
-        createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // MARK: Private
 
     private func configureSubviews() {
         addSubview(headerView)

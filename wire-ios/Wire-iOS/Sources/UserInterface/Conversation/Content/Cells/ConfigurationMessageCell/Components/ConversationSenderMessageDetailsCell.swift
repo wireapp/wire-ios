@@ -41,6 +41,23 @@ enum TeamRoleIndicator {
 // MARK: - ConversationSenderMessageDetailsCell
 
 final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
+    // MARK: Lifecycle
+
+    // MARK: - Init
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     struct Configuration {
         let user: UserType
         let indicator: Indicator?
@@ -54,9 +71,44 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     weak var message: ZMConversationMessage?
 
-    private var trailingDateLabelConstraint: NSLayoutConstraint?
-
     var isSelected = false
+
+    // MARK: - configure
+
+    func configure(with object: Configuration, animated: Bool) {
+        let user = object.user
+        avatar.user = user
+
+        configureAuthorLabel(object: object)
+
+        dateLabel.isHidden = object.timestamp == nil
+        dateLabel.text = object.timestamp
+
+        // We need to call that method here to restraint the authorLabel moving
+        // outside of the view and then back to its position. For more information
+        // check the ticket: https://wearezeta.atlassian.net/browse/WPB-1955
+        layoutIfNeeded()
+    }
+
+    // MARK: - Tap gesture of avatar
+
+    @objc
+    func tappedOnAvatar() {
+        guard let user = avatar.user else { return }
+
+        SessionManager.shared?.showUserProfile(user: user)
+    }
+
+    // MARK: - Override method
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        trailingDateLabelConstraint?.constant = -conversationHorizontalMargins.right
+    }
+
+    // MARK: Private
+
+    private var trailingDateLabelConstraint: NSLayoutConstraint?
 
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
@@ -99,36 +151,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         return label
     }()
-
-    // MARK: - Init
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
-    // MARK: - configure
-
-    func configure(with object: Configuration, animated: Bool) {
-        let user = object.user
-        avatar.user = user
-
-        configureAuthorLabel(object: object)
-
-        dateLabel.isHidden = object.timestamp == nil
-        dateLabel.text = object.timestamp
-
-        // We need to call that method here to restraint the authorLabel moving
-        // outside of the view and then back to its position. For more information
-        // check the ticket: https://wearezeta.atlassian.net/browse/WPB-1955
-        layoutIfNeeded()
-    }
 
     // MARK: - Configure subviews and setup constraints
 
@@ -256,46 +278,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         return NSAttributedString(attachment: attachment)
     }
-
-    // MARK: - Tap gesture of avatar
-
-    @objc
-    func tappedOnAvatar() {
-        guard let user = avatar.user else { return }
-
-        SessionManager.shared?.showUserProfile(user: user)
-    }
-
-    // MARK: - Override method
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        trailingDateLabelConstraint?.constant = -conversationHorizontalMargins.right
-    }
 }
 
 // MARK: - ConversationSenderMessageCellDescription
 
 final class ConversationSenderMessageCellDescription: ConversationMessageCellDescription {
-    // MARK: - Properties
-
-    typealias View = ConversationSenderMessageDetailsCell
-    typealias ConversationAnnouncement = L10n.Accessibility.ConversationAnnouncement
-    let configuration: View.Configuration
-
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer = false
-    var topMargin: Float = 16
-
-    let isFullWidth = true
-    let supportsActions = false
-    let containsHighlightableContent = false
-
-    let accessibilityIdentifier: String? = nil
-    var accessibilityLabel: String?
+    // MARK: Lifecycle
 
     /// Creates a cell description for the given sender and message
     /// - Parameters:
@@ -324,6 +312,31 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
         setupAccessibility(sender)
         self.actionController = nil
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    typealias View = ConversationSenderMessageDetailsCell
+    typealias ConversationAnnouncement = L10n.Accessibility.ConversationAnnouncement
+
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer = false
+    var topMargin: Float = 16
+
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
+
+    let accessibilityIdentifier: String? = nil
+    var accessibilityLabel: String?
+
+    // MARK: Private
 
     // MARK: - Accessibility
 

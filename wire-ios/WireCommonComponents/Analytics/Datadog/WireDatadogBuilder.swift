@@ -23,17 +23,7 @@
     import class WireTransport.BackendEnvironment
 
     struct WireDatadogBuilder {
-        private enum Constants {
-            static let keyAppId = "DatadogAppId"
-            static let keyBundleVersion = "CFBundleVersion"
-            static let keyBundleShortVersion = "CFBundleShortVersionString"
-            static let keyClientToken = "DatadogClientToken"
-        }
-
-        private let device: UIDevice = .current
-        private let environment: BackendEnvironment = .shared
-        private let bundle: Bundle = .wireCommonComponents
-        private let mainBundle: Bundle = .appMainBundle
+        // MARK: Internal
 
         // MARK: - Build
 
@@ -56,6 +46,20 @@
                 environmentName: environment.title
             )
         }
+
+        // MARK: Private
+
+        private enum Constants {
+            static let keyAppId = "DatadogAppId"
+            static let keyBundleVersion = "CFBundleVersion"
+            static let keyBundleShortVersion = "CFBundleShortVersionString"
+            static let keyClientToken = "DatadogClientToken"
+        }
+
+        private let device: UIDevice = .current
+        private let environment: BackendEnvironment = .shared
+        private let bundle: Bundle = .wireCommonComponents
+        private let mainBundle: Bundle = .appMainBundle
     }
 
 #endif

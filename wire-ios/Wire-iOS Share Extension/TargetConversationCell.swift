@@ -20,8 +20,7 @@ import UIKit
 import WireShareEngine
 
 final class TargetConversationCell: UITableViewCell {
-    let conversationNameLabel = UILabel()
-    let stateAccessoryView = ConversationStateAccessoryView()
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -35,6 +34,31 @@ final class TargetConversationCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+
+    // MARK: Internal
+
+    let conversationNameLabel = UILabel()
+    let stateAccessoryView = ConversationStateAccessoryView()
+
+    // MARK: - Configuration
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        accessibilityLabel = nil
+        conversationNameLabel.text = nil
+        stateAccessoryView.prepareForReuse()
+    }
+
+    func configure(for conversation: Conversation) {
+        // Subviews
+        conversationNameLabel.text = conversation.name
+        stateAccessoryView.configure(for: conversation)
+
+        // Accessibility
+        updateAccessibility(for: conversation)
+    }
+
+    // MARK: Private
 
     private func configureSubviews() {
         isAccessibilityElement = true
@@ -63,24 +87,6 @@ final class TargetConversationCell: UITableViewCell {
             conversationNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             conversationNameLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
         ])
-    }
-
-    // MARK: - Configuration
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        accessibilityLabel = nil
-        conversationNameLabel.text = nil
-        stateAccessoryView.prepareForReuse()
-    }
-
-    func configure(for conversation: Conversation) {
-        // Subviews
-        conversationNameLabel.text = conversation.name
-        stateAccessoryView.configure(for: conversation)
-
-        // Accessibility
-        updateAccessibility(for: conversation)
     }
 
     private func updateAccessibility(for conversation: Conversation) {

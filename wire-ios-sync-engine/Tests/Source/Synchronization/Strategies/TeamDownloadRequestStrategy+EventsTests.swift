@@ -20,6 +20,8 @@ import WireTesting
 @testable import WireSyncEngine
 
 final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
+    // MARK: Internal
+
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
@@ -386,37 +388,6 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         }
     }
 
-    private func checkLastMessage(
-        in conversation: ZMConversation,
-        isLeaveMessageFor user: ZMUser,
-        at timestamp: Date,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else { XCTFail(
-            "Last message is not system message",
-            file: file,
-            line: line
-        ); return }
-        guard lastMessage.systemMessageType == .teamMemberLeave else { XCTFail(
-            "System message is not teamMemberLeave: but '\(lastMessage.systemMessageType.rawValue)'",
-            file: file,
-            line: line
-        ); return }
-        guard let serverTimestamp = lastMessage.serverTimestamp else { XCTFail(
-            "System message should have timestamp",
-            file: file,
-            line: line
-        ); return }
-        XCTAssertEqual(
-            serverTimestamp.timeIntervalSince1970,
-            timestamp.timeIntervalSince1970,
-            accuracy: 0.1,
-            file: file,
-            line: line
-        )
-    }
-
     // MARK: - Team Member-Update
 
     func testThatItFlagsAmemberTobeUpdatedFromTheBackendWhenReceivingTeamMemberUpdateEvent() {
@@ -489,6 +460,39 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         syncMOC.performGroupedAndWait {
             XCTAssertNil(ZMConversation.fetch(with: conversationId, in: self.syncMOC))
         }
+    }
+
+    // MARK: Private
+
+    private func checkLastMessage(
+        in conversation: ZMConversation,
+        isLeaveMessageFor user: ZMUser,
+        at timestamp: Date,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else { XCTFail(
+            "Last message is not system message",
+            file: file,
+            line: line
+        ); return }
+        guard lastMessage.systemMessageType == .teamMemberLeave else { XCTFail(
+            "System message is not teamMemberLeave: but '\(lastMessage.systemMessageType.rawValue)'",
+            file: file,
+            line: line
+        ); return }
+        guard let serverTimestamp = lastMessage.serverTimestamp else { XCTFail(
+            "System message should have timestamp",
+            file: file,
+            line: line
+        ); return }
+        XCTAssertEqual(
+            serverTimestamp.timeIntervalSince1970,
+            timestamp.timeIntervalSince1970,
+            accuracy: 0.1,
+            file: file,
+            line: line
+        )
     }
 
     // MARK: - Helper

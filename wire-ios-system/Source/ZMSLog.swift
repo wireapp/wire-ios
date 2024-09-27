@@ -25,13 +25,17 @@ import ZipArchive
 /// Represents an entry to be logged.
 @objcMembers
 public final class ZMSLogEntry: NSObject {
-    public let text: String
-    public let timestamp: Date
+    // MARK: Lifecycle
 
     init(text: String, timestamp: Date) {
         self.text = text
         self.timestamp = timestamp
     }
+
+    // MARK: Public
+
+    public let text: String
+    public let timestamp: Date
 }
 
 // MARK: - ZMSLog
@@ -52,22 +56,7 @@ public final class ZMSLogEntry: NSObject {
 ///
 @objc
 public final class ZMSLog: NSObject {
-    public typealias LogHook = (_ level: ZMLogLevel, _ tag: String?, _ message: String) -> Void
-    public typealias LogEntryHook = (
-        _ level: ZMLogLevel,
-        _ tag: String?,
-        _ message: ZMSLogEntry,
-        _ isSafe: Bool
-    ) -> Void
-
-    /// Tag to use for this logging facility
-    fileprivate let tag: String
-
-    /// FileHandle instance used for updating the log
-    fileprivate static var updatingHandle: FileHandle?
-
-    /// Log observers
-    fileprivate static var logHooks: [UUID: LogEntryHook] = [:]
+    // MARK: Lifecycle
 
     @objc
     public init(tag: String) {
@@ -77,6 +66,16 @@ public final class ZMSLog: NSObject {
         }
     }
 
+    // MARK: Public
+
+    public typealias LogHook = (_ level: ZMLogLevel, _ tag: String?, _ message: String) -> Void
+    public typealias LogEntryHook = (
+        _ level: ZMLogLevel,
+        _ tag: String?,
+        _ message: ZMSLogEntry,
+        _ isSafe: Bool
+    ) -> Void
+
     /// Wait for all log operations to be completed
     @objc
     public static func sync() {
@@ -84,6 +83,17 @@ public final class ZMSLog: NSObject {
             // no op
         }
     }
+
+    // MARK: Fileprivate
+
+    /// FileHandle instance used for updating the log
+    fileprivate static var updatingHandle: FileHandle?
+
+    /// Log observers
+    fileprivate static var logHooks: [UUID: LogEntryHook] = [:]
+
+    /// Tag to use for this logging facility
+    fileprivate let tag: String
 }
 
 // MARK: - Emit logs
@@ -159,13 +169,17 @@ extension ZMSLog {
 /// Opaque token to unregister observers
 @objc(ZMSLogLogHookToken)
 public final class LogHookToken: NSObject {
-    /// Internal identifier
-    fileprivate let token: UUID
+    // MARK: Lifecycle
 
     override init() {
         self.token = UUID()
         super.init()
     }
+
+    // MARK: Fileprivate
+
+    /// Internal identifier
+    fileprivate let token: UUID
 }
 
 // MARK: - Hooks (log observing)

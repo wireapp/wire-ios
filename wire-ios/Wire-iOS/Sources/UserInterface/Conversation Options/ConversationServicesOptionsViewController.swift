@@ -26,14 +26,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
     UITableViewDelegate,
     UITableViewDataSource,
     ConversationServicesOptionsViewModelDelegate {
-    private let tableView = UITableView()
-    private var viewModel: ConversationServicesOptionsViewModel
-
-    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
-    }
+    // MARK: Lifecycle
 
     convenience init(conversation: ZMConversation, userSession: ZMUserSession) {
         let configuration = ZMConversation.OptionsConfigurationContainer(
@@ -53,6 +46,17 @@ final class ConversationServicesOptionsViewController: UIViewController,
         viewModel.delegate = self
     }
 
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -60,34 +64,6 @@ final class ConversationServicesOptionsViewController: UIViewController,
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ServiceConversationSettings.CloseButton.description)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupViews() {
-        view.addSubview(tableView)
-        CellConfiguration.prepare(tableView)
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.contentInset = UIEdgeInsets(top: 32, left: 0, bottom: 0, right: 0)
-        tableView.estimatedRowHeight = 80
-        tableView.separatorStyle = .none
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.backgroundColor = SemanticColors.View.backgroundDefault
-        tableView.contentInsetAdjustmentBehavior = .never
-    }
-
-    private func createConstraints() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
     }
 
     // MARK: – ConversationOptionsViewModelDelegate
@@ -147,5 +123,35 @@ final class ConversationServicesOptionsViewController: UIViewController,
         tableView.deselectRow(at: indexPath, animated: true)
         let cell = tableView.cellForRow(at: indexPath)!
         viewModel.state.rows[indexPath.row].action?(cell)
+    }
+
+    // MARK: Private
+
+    private let tableView = UITableView()
+    private var viewModel: ConversationServicesOptionsViewModel
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
+
+    private func setupViews() {
+        view.addSubview(tableView)
+        CellConfiguration.prepare(tableView)
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.contentInset = UIEdgeInsets(top: 32, left: 0, bottom: 0, right: 0)
+        tableView.estimatedRowHeight = 80
+        tableView.separatorStyle = .none
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.backgroundColor = SemanticColors.View.backgroundDefault
+        tableView.contentInsetAdjustmentBehavior = .never
+    }
+
+    private func createConstraints() {
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
 }

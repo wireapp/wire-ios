@@ -23,12 +23,13 @@ private let zmLog = ZMSLog(tag: "Dependencies")
 // MARK: - DependentObjects
 
 public class DependentObjects<Object: Hashable, Dependency: Hashable> {
+    // MARK: Lifecycle
+
     public init() {
         zmLog.debug("Initialized DependentObject for \(Object.self), \(Dependency.self)")
     }
 
-    private var dependenciesToDependents: [Dependency: Set<Object>] = [:]
-    private var dependentsToDependencies: [Object: Set<Dependency>] = [:] // inverse of the previous one
+    // MARK: Public
 
     /// Adds a Dependency to an
     public func add(dependency: Dependency, for dependent: Object) {
@@ -76,6 +77,11 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
         }
     }
 
+    // MARK: Private
+
+    private var dependenciesToDependents: [Dependency: Set<Object>] = [:]
+    private var dependentsToDependencies: [Object: Set<Dependency>] = [:] // inverse of the previous one
+
     private func updateDependencies(dependency: Dependency, removing dependent: Object) {
         guard let currentSet = dependenciesToDependents[dependency] else { return }
         if currentSet.contains(dependent) {
@@ -110,12 +116,14 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
 /// We will remove it as soon as all the clients of this class are ported to Swift
 @objc
 public class DependentObjectsObjc: NSObject {
-    let dependentObjects: DependentObjects<ZMManagedObject, ZMManagedObject>
+    // MARK: Lifecycle
 
     override public init() {
         self.dependentObjects = DependentObjects()
         super.init()
     }
+
+    // MARK: Public
 
     @objc(addDependentObject:dependency:)
     public func add(dependent: ZMManagedObject, dependency: ZMManagedObject) {
@@ -131,6 +139,10 @@ public class DependentObjectsObjc: NSObject {
     public func enumerateAndRemoveObjects(for dependency: ZMManagedObject, block: (ZMManagedObject) -> Bool) {
         dependentObjects.enumerateAndRemoveObjects(for: dependency, block: block)
     }
+
+    // MARK: Internal
+
+    let dependentObjects: DependentObjects<ZMManagedObject, ZMManagedObject>
 }
 
 /// Returns a string representing the pointer

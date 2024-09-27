@@ -20,12 +20,7 @@ import Foundation
 
 /// An authentication step to ask the user to log in again.
 final class ReauthenticateStepDescription: AuthenticationStepDescription {
-    let backButton: BackButtonDescription?
-    let mainView: ViewDescriptor & ValueSubmission
-    let headline: String
-    let subtext: NSAttributedString?
-    let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription?
+    // MARK: Lifecycle
 
     init(prefilledCredentials: AuthenticationPrefilledCredentials?) {
         self.backButton = BackButtonDescription()
@@ -41,4 +36,13 @@ final class ReauthenticateStepDescription: AuthenticationStepDescription {
         self.secondaryView = nil
         self.footerView = nil
     }
+
+    // MARK: Internal
+
+    let backButton: BackButtonDescription?
+    let mainView: ViewDescriptor & ValueSubmission
+    let headline: String
+    let subtext: NSAttributedString?
+    let secondaryView: AuthenticationSecondaryViewDescription?
+    let footerView: AuthenticationFooterViewDescription?
 }

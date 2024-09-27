@@ -20,7 +20,7 @@ import XCTest
 @testable import WireAPI
 
 final class UserEventDecodingTests: XCTestCase {
-    private var decoder: JSONDecoder!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -270,15 +270,9 @@ final class UserEventDecodingTests: XCTestCase {
         )
     }
 
+    // MARK: Private
+
     private enum Scaffolding {
-        static func fractionalDate(from string: String) -> Date {
-            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
-        }
-
-        static func date(from string: String) -> Date {
-            ISO8601DateFormatter.internetDateTime.date(from: string)!
-        }
-
         static let clientAddEvent = UserClientAddEvent(
             client: UserClient(
                 id: "2a1fd72806d84e26",
@@ -405,5 +399,15 @@ final class UserEventDecodingTests: XCTestCase {
                 .mls,
             ]
         )
+
+        static func fractionalDate(from string: String) -> Date {
+            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
+        }
     }
+
+    private var decoder: JSONDecoder!
 }

@@ -19,6 +19,26 @@
 import Foundation
 
 public final class DeleteSubgroupAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(
+        conversationID: UUID,
+        domain: String,
+        subgroupType: SubgroupType,
+        epoch: Int,
+        groupID: MLSGroupID,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.conversationID = conversationID
+        self.domain = domain
+        self.subgroupType = subgroupType
+        self.epoch = epoch
+        self.groupID = groupID
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
@@ -39,22 +59,4 @@ public final class DeleteSubgroupAction: EntityAction {
     public let epoch: Int
     public let groupID: MLSGroupID
     public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(
-        conversationID: UUID,
-        domain: String,
-        subgroupType: SubgroupType,
-        epoch: Int,
-        groupID: MLSGroupID,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.conversationID = conversationID
-        self.domain = domain
-        self.subgroupType = subgroupType
-        self.epoch = epoch
-        self.groupID = groupID
-        self.resultHandler = resultHandler
-    }
 }

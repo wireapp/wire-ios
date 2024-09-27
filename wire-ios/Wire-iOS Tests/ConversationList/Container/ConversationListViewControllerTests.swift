@@ -26,16 +26,7 @@ import XCTest
 // MARK: - ConversationListViewControllerTests
 
 final class ConversationListViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var mockMainCoordinator: MockMainCoordinator!
-    private var sut: ConversationListViewController!
-    private var window: UIWindow!
-    private var tabBarController: MainTabBarController!
-    private var userSession: UserSessionMock!
-    private var coreDataFixture: CoreDataFixture!
-    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -119,6 +110,19 @@ final class ConversationListViewControllerTests: XCTestCase {
         window.rootViewController = nil
         snapshotHelper.verify(matching: tabBarController)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: ConversationListViewController!
+    private var window: UIWindow!
+    private var tabBarController: MainTabBarController!
+    private var userSession: UserSessionMock!
+    private var coreDataFixture: CoreDataFixture!
+    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - Helpers
 

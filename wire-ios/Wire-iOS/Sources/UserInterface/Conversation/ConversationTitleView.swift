@@ -24,8 +24,7 @@ import WireDesign
 // MARK: - ConversationTitleView
 
 final class ConversationTitleView: TitleView {
-    var conversation: GroupDetailsConversationType
-    var interactive = true
+    // MARK: Lifecycle
 
     init(conversation: GroupDetailsConversationType, interactive: Bool = true) {
         self.conversation = conversation
@@ -38,6 +37,11 @@ final class ConversationTitleView: TitleView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var conversation: GroupDetailsConversationType
+    var interactive = true
 
     func configure() {
         titleColor = SemanticColors.Label.textDefault
@@ -72,6 +76,8 @@ final class ConversationTitleView: TitleView {
 
         setupAccessibility()
     }
+
+    // MARK: Private
 
     private var verifiedShield: NSTextAttachment {
         switch conversation.messageProtocol {

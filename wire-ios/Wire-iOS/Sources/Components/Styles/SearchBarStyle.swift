@@ -24,9 +24,11 @@ import WireDesign
 struct SearchBarStyle {
     typealias SearchBarColors = SemanticColors.SearchBar
 
-    var borderColorSelected: UIColor {
-        .accent()
-    }
+    static let `default` = SearchBarStyle(
+        borderColorNotSelected: SemanticColors.SearchBar.borderInputView,
+        textColor: SemanticColors.SearchBar.textInputView,
+        backgroundColor: SemanticColors.SearchBar.backgroundInputView
+    )
 
     var borderColorNotSelected: UIColor
     var textColor: UIColor
@@ -35,11 +37,9 @@ struct SearchBarStyle {
     var cornerRadius: CGFloat = 12
     var borderWidth: CGFloat = 1
 
-    static let `default` = SearchBarStyle(
-        borderColorNotSelected: SemanticColors.SearchBar.borderInputView,
-        textColor: SemanticColors.SearchBar.textInputView,
-        backgroundColor: SemanticColors.SearchBar.backgroundInputView
-    )
+    var borderColorSelected: UIColor {
+        .accent()
+    }
 }
 
 // MARK: - UITextView + Stylable

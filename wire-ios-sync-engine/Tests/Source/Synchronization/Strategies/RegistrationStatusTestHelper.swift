@@ -24,17 +24,17 @@ import Foundation
 class TestRegistrationStatus: WireSyncEngine.RegistrationStatusProtocol {
     var handleErrorCalled = 0
     var handleErrorError: Error?
+    var successCalled = 0
+    var phase: RegistrationPhase? = .none
+
     func handleError(_ error: Error) {
         handleErrorCalled += 1
         handleErrorError = error
     }
 
-    var successCalled = 0
     func success() {
         successCalled += 1
     }
-
-    var phase: RegistrationPhase? = .none
 }
 
 // MARK: - RegistrationStatusStrategyTestHelper

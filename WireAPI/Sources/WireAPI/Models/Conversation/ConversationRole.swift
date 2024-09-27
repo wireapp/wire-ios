@@ -24,13 +24,7 @@ import Foundation
 /// to perform a specific set of actions in that conversation.
 
 public struct ConversationRole: Equatable {
-    /// The name of the role.
-
-    public let name: String
-
-    /// The actions that can be performed in the role.
-
-    public let actions: Set<ConversationAction>
+    // MARK: Lifecycle
 
     /// Create a new `ConversationRole`.
     ///
@@ -45,4 +39,14 @@ public struct ConversationRole: Equatable {
         self.name = name
         self.actions = actions
     }
+
+    // MARK: Public
+
+    /// The name of the role.
+
+    public let name: String
+
+    /// The actions that can be performed in the role.
+
+    public let actions: Set<ConversationAction>
 }

@@ -20,7 +20,8 @@ import XCTest
 @testable import Wire
 
 final class SoundEventRulesWatchDogTests: XCTestCase {
-    private let IgnoreTime: TimeInterval = 60
+    // MARK: Internal
+
     var watchDog: SoundEventRulesWatchDog!
 
     override func setUp() {
@@ -62,4 +63,8 @@ final class SoundEventRulesWatchDogTests: XCTestCase {
         // then
         XCTAssertFalse(watchDog.outputAllowed)
     }
+
+    // MARK: Private
+
+    private let IgnoreTime: TimeInterval = 60
 }

@@ -65,6 +65,8 @@ extension ZMConversationType {
 public enum ConversationMediaAction: UInt {
     case text, photo, audioCall, videoCall, gif, ping, fileTransfer, videoMessage, audioMessage, location
 
+    // MARK: Public
+
     public var attributeValue: String {
         switch self {
         case .text:         "text"

@@ -20,6 +20,22 @@ import UIKit
 import WireDesign
 
 class SeparatorTableViewCell: UITableViewCell, SeparatorViewProtocol {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        configureSubviews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     typealias CellColors = SemanticColors.View
 
     let separator = UIView()
@@ -40,17 +56,19 @@ class SeparatorTableViewCell: UITableViewCell, SeparatorViewProtocol {
         set { separator.isHidden = !newValue }
     }
 
-    // MARK: - Initialization
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        configureSubviews()
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted
+                ? CellColors.backgroundUserCellHightLighted
+                : CellColors.backgroundUserCell
+        }
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    func setUp() {
+        // can be overriden to customize interface
     }
+
+    // MARK: Private
 
     private func configureSubviews() {
         setUp()
@@ -62,17 +80,5 @@ class SeparatorTableViewCell: UITableViewCell, SeparatorViewProtocol {
         contentView.addSubview(separator)
 
         createSeparatorConstraints()
-    }
-
-    func setUp() {
-        // can be overriden to customize interface
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted
-                ? CellColors.backgroundUserCellHightLighted
-                : CellColors.backgroundUserCell
-        }
     }
 }

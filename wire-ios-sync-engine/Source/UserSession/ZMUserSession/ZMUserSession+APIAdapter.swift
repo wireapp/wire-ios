@@ -26,8 +26,7 @@ import WireSystem
 // purposes and should eventually be removed.
 
 private class HTTPClientImpl: HTTPClient {
-    let transportSession: TransportSessionType
-    let queue: GroupQueue
+    // MARK: Lifecycle
 
     public init(
         transportSession: TransportSessionType,
@@ -36,6 +35,8 @@ private class HTTPClientImpl: HTTPClient {
         self.transportSession = transportSession
         self.queue = queue
     }
+
+    // MARK: Public
 
     public func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse {
         await withCheckedContinuation { continuation in
@@ -49,6 +50,11 @@ private class HTTPClientImpl: HTTPClient {
             transportSession.enqueueOneTime(request)
         }
     }
+
+    // MARK: Internal
+
+    let transportSession: TransportSessionType
+    let queue: GroupQueue
 }
 
 extension HTTPRequest {

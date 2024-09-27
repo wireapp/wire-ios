@@ -21,6 +21,8 @@ import UIKit
 // MARK: - MenuDotView
 
 private final class MenuDotView: UIView {
+    // MARK: Lifecycle
+
     init() {
         super.init(frame: .zero)
 
@@ -33,6 +35,8 @@ private final class MenuDotView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     override func layoutSubviews() {
         super.layoutSubviews()
 
@@ -43,21 +47,7 @@ private final class MenuDotView: UIView {
 // MARK: - AnimatedListMenuView
 
 final class AnimatedListMenuView: UIView {
-    /// Animation progress. Value from 0 to 1.0
-    var progress: CGFloat = 0 {
-        didSet {
-            guard !(0 ... 1 ~= progress) else { return }
-            progress = min(1, max(0, progress))
-        }
-    }
-
-    private let leftDotView = MenuDotView()
-    private let centerDotView = MenuDotView()
-    private let rightDotView = MenuDotView()
-
-    private var initialConstraintsCreated = false
-    private var centerToRightDistanceConstraint: NSLayoutConstraint?
-    private var leftToCenterDistanceConstraint: NSLayoutConstraint?
+    // MARK: Lifecycle
 
     convenience init() {
         self.init(frame: .zero)
@@ -74,6 +64,16 @@ final class AnimatedListMenuView: UIView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    /// Animation progress. Value from 0 to 1.0
+    var progress: CGFloat = 0 {
+        didSet {
+            guard !(0 ... 1 ~= progress) else { return }
+            progress = min(1, max(0, progress))
+        }
     }
 
     func setProgress(_ progress: CGFloat, animated: Bool) {
@@ -146,4 +146,14 @@ final class AnimatedListMenuView: UIView {
     func leftToCenterDistance(forProgress progress: CGFloat) -> CGFloat {
         -(4 + (20 * (1 - progress)))
     }
+
+    // MARK: Private
+
+    private let leftDotView = MenuDotView()
+    private let centerDotView = MenuDotView()
+    private let rightDotView = MenuDotView()
+
+    private var initialConstraintsCreated = false
+    private var centerToRightDistanceConstraint: NSLayoutConstraint?
+    private var leftToCenterDistanceConstraint: NSLayoutConstraint?
 }

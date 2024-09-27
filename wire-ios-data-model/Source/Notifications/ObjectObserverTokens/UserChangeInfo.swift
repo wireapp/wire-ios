@@ -68,30 +68,14 @@ extension ZMUser: ObjectInSnapshot {
 
 @objcMembers
 open class UserChangeInfo: ObjectChangeInfo {
-    static let UserClientChangeInfoKey = "clientChanges"
-
-    static func changeInfo(for user: ZMUser, changes: Changes) -> UserChangeInfo? {
-        var originalChanges = changes.originalChanges
-        let clientChanges = originalChanges.removeValue(forKey: UserClientChangeInfoKey) as? [NSObject: [String: Any]]
-
-        if let clientChanges {
-            var userClientChangeInfos = [UserClientChangeInfo]()
-            clientChanges.forEach {
-                let changeInfo = UserClientChangeInfo(object: $0)
-                changeInfo.changedKeys = Set($1.keys)
-                userClientChangeInfos.append(changeInfo)
-            }
-            originalChanges[UserClientChangeInfoKey] = userClientChangeInfos as NSObject?
-        }
-
-        let modifiedChanges = changes.merged(with: Changes(originalChanges: originalChanges))
-        return UserChangeInfo(object: user, changes: modifiedChanges)
-    }
+    // MARK: Lifecycle
 
     public required init(object: NSObject) {
         self.user = object as! UserType
         super.init(object: object)
     }
+
+    // MARK: Open
 
     open var nameChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMUser.name))
@@ -129,6 +113,14 @@ open class UserChangeInfo: ObjectChangeInfo {
     open var clientsChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMUser.clients))
     }
+
+    open var userClientChangeInfos: [UserClientChangeInfo] {
+        changeInfos[UserChangeInfo.UserClientChangeInfoKey] as? [UserClientChangeInfo] ?? []
+    }
+
+    // MARK: Public
+
+    public let user: UserType
 
     public var handleChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMUser.handle))
@@ -170,9 +162,26 @@ open class UserChangeInfo: ObjectChangeInfo {
         changedKeys.contains(#keyPath(ZMUser.analyticsIdentifier))
     }
 
-    public let user: UserType
-    open var userClientChangeInfos: [UserClientChangeInfo] {
-        changeInfos[UserChangeInfo.UserClientChangeInfoKey] as? [UserClientChangeInfo] ?? []
+    // MARK: Internal
+
+    static let UserClientChangeInfoKey = "clientChanges"
+
+    static func changeInfo(for user: ZMUser, changes: Changes) -> UserChangeInfo? {
+        var originalChanges = changes.originalChanges
+        let clientChanges = originalChanges.removeValue(forKey: UserClientChangeInfoKey) as? [NSObject: [String: Any]]
+
+        if let clientChanges {
+            var userClientChangeInfos = [UserClientChangeInfo]()
+            clientChanges.forEach {
+                let changeInfo = UserClientChangeInfo(object: $0)
+                changeInfo.changedKeys = Set($1.keys)
+                userClientChangeInfos.append(changeInfo)
+            }
+            originalChanges[UserClientChangeInfoKey] = userClientChangeInfos as NSObject?
+        }
+
+        let modifiedChanges = changes.merged(with: Changes(originalChanges: originalChanges))
+        return UserChangeInfo(object: user, changes: modifiedChanges)
     }
 }
 

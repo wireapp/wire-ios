@@ -27,9 +27,7 @@ private let zmLog = ZMSLog(tag: "ZMFileMetadata")
 
 @objcMembers
 open class ZMFileMetadata: NSObject {
-    public let fileURL: URL
-    public let thumbnail: Data?
-    public let filename: String
+    // MARK: Lifecycle
 
     public required init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
         self.fileURL = fileURL
@@ -48,6 +46,14 @@ open class ZMFileMetadata: NSObject {
         self.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
 
+    // MARK: Public
+
+    public let fileURL: URL
+    public let thumbnail: Data?
+    public let filename: String
+
+    // MARK: Internal
+
     var asset: WireProtos.Asset {
         WireProtos.Asset(self)
     }
@@ -56,8 +62,7 @@ open class ZMFileMetadata: NSObject {
 // MARK: - ZMAudioMetadata
 
 open class ZMAudioMetadata: ZMFileMetadata {
-    public let duration: TimeInterval
-    public let normalizedLoudness: [Float]
+    // MARK: Lifecycle
 
     public required init(
         fileURL: URL,
@@ -77,6 +82,13 @@ open class ZMAudioMetadata: ZMFileMetadata {
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
 
+    // MARK: Public
+
+    public let duration: TimeInterval
+    public let normalizedLoudness: [Float]
+
+    // MARK: Internal
+
     override var asset: WireProtos.Asset {
         WireProtos.Asset(self)
     }
@@ -85,8 +97,7 @@ open class ZMAudioMetadata: ZMFileMetadata {
 // MARK: - ZMVideoMetadata
 
 open class ZMVideoMetadata: ZMFileMetadata {
-    public let duration: TimeInterval
-    public let dimensions: CGSize
+    // MARK: Lifecycle
 
     public required init(fileURL: URL, duration: TimeInterval, dimensions: CGSize, thumbnail: Data? = nil) {
         self.duration = duration
@@ -101,6 +112,13 @@ open class ZMVideoMetadata: ZMFileMetadata {
 
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
+
+    // MARK: Public
+
+    public let duration: TimeInterval
+    public let dimensions: CGSize
+
+    // MARK: Internal
 
     override var asset: WireProtos.Asset {
         WireProtos.Asset(self)

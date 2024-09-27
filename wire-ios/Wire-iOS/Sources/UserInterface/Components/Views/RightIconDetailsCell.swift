@@ -19,7 +19,7 @@
 import UIKit
 
 class RightIconDetailsCell: DetailsCollectionViewCell {
-    private let accessoryIconView = UIImageView()
+    // MARK: Internal
 
     var accessory: UIImage? {
         get { accessoryIconView.image }
@@ -31,15 +31,6 @@ class RightIconDetailsCell: DetailsCollectionViewCell {
         set { accessoryIconView.tintColor = newValue }
     }
 
-    private func updateAccessory(_ newValue: UIImage?) {
-        if let value = newValue {
-            accessoryIconView.image = value
-            accessoryIconView.isHidden = false
-        } else {
-            accessoryIconView.isHidden = true
-        }
-    }
-
     override func setUp() {
         super.setUp()
 
@@ -47,5 +38,18 @@ class RightIconDetailsCell: DetailsCollectionViewCell {
         accessoryIconView.contentMode = .center
 
         contentStackView.insertArrangedSubview(accessoryIconView, at: contentStackView.arrangedSubviews.count)
+    }
+
+    // MARK: Private
+
+    private let accessoryIconView = UIImageView()
+
+    private func updateAccessory(_ newValue: UIImage?) {
+        if let value = newValue {
+            accessoryIconView.image = value
+            accessoryIconView.isHidden = false
+        } else {
+            accessoryIconView.isHidden = true
+        }
     }
 }

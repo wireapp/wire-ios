@@ -42,8 +42,7 @@ struct AdaptiveColumnCount {
 /// You must implement the `collectionView(_:, sizeOfItemAt:)` method in your subclasses.
 
 class VerticalColumnCollectionViewController: UICollectionViewController, VerticalColumnCollectionViewLayoutDelegate {
-    fileprivate let layout: VerticalColumnCollectionViewLayout
-    fileprivate let columnCount: AdaptiveColumnCount
+    // MARK: Lifecycle
 
     /// Creates the view controller.
     /// - parameter interItemSpacing: The spacing between items in the same column.
@@ -67,6 +66,19 @@ class VerticalColumnCollectionViewController: UICollectionViewController, Vertic
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    // MARK: - Size Changes
+
+    /// Whether the current layout is in regular mode.
+    ///
+    /// The default implementation returns `true` if the horizontal size class of the view
+    /// is regular. You can override this method for testing purposes.
+
+    var isRegularLayout: Bool {
+        view.traitCollection.horizontalSizeClass == .regular
+    }
+
     // MARK: - View lifecycle
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -78,17 +90,6 @@ class VerticalColumnCollectionViewController: UICollectionViewController, Vertic
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateLayout()
-    }
-
-    // MARK: - Size Changes
-
-    /// Whether the current layout is in regular mode.
-    ///
-    /// The default implementation returns `true` if the horizontal size class of the view
-    /// is regular. You can override this method for testing purposes.
-
-    var isRegularLayout: Bool {
-        view.traitCollection.horizontalSizeClass == .regular
     }
 
     /// Updates the layout of the view in response to a size change.
@@ -104,16 +105,23 @@ class VerticalColumnCollectionViewController: UICollectionViewController, Vertic
         navigationItem.titleView?.setNeedsLayout()
     }
 
+    // MARK: - Sizing
+
+    func collectionView(_ collectionView: UICollectionView, sizeOfItemAt indexPath: IndexPath) -> CGSize {
+        fatalError("Subclasses of 'VerticalColumnCollectionViewController' must implement this method.")
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let layout: VerticalColumnCollectionViewLayout
+    fileprivate let columnCount: AdaptiveColumnCount
+
+    // MARK: Private
+
     private func numberOfColumns(inContainer width: CGFloat) -> Int {
         if isRegularLayout {
             return width < 1024 ? columnCount.regular : columnCount.large
         }
         return columnCount.compact
-    }
-
-    // MARK: - Sizing
-
-    func collectionView(_ collectionView: UICollectionView, sizeOfItemAt indexPath: IndexPath) -> CGSize {
-        fatalError("Subclasses of 'VerticalColumnCollectionViewController' must implement this method.")
     }
 }

@@ -20,18 +20,7 @@ import XCTest
 @testable import Wire
 
 final class SwitchBackendConfirmationViewModelTests: XCTestCase {
-    private func createSUT(didConfirm: @escaping (Bool) -> Void) -> SwitchBackendConfirmationViewModel {
-        SwitchBackendConfirmationViewModel(
-            backendName: "www.backendName.com",
-            backendURL: "www.backendURL.com",
-            backendWSURL: "www.backendWSURL.com",
-            blacklistURL: "www.blacklistURL.com",
-            teamsURL: "www.teamsURL.com",
-            accountsURL: "www.accountsURL.com",
-            websiteURL: "www.websiteURL.com",
-            didConfirm: didConfirm
-        )
-    }
+    // MARK: Internal
 
     func testItConfirmsWhenUserDidConfirm() async throws {
         // Given
@@ -67,5 +56,20 @@ final class SwitchBackendConfirmationViewModelTests: XCTestCase {
         // Then
         await fulfillment(of: [done], timeout: 0.5)
         XCTAssertFalse(didConfirm)
+    }
+
+    // MARK: Private
+
+    private func createSUT(didConfirm: @escaping (Bool) -> Void) -> SwitchBackendConfirmationViewModel {
+        SwitchBackendConfirmationViewModel(
+            backendName: "www.backendName.com",
+            backendURL: "www.backendURL.com",
+            backendWSURL: "www.backendWSURL.com",
+            blacklistURL: "www.blacklistURL.com",
+            teamsURL: "www.teamsURL.com",
+            accountsURL: "www.accountsURL.com",
+            websiteURL: "www.websiteURL.com",
+            didConfirm: didConfirm
+        )
     }
 }

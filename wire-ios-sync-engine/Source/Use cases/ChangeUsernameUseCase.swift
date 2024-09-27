@@ -36,13 +36,17 @@ public protocol ChangeUsernameUseCaseProtocol {
 // MARK: - ChangeUsernameUseCase
 
 class ChangeUsernameUseCase: NSObject, ChangeUsernameUseCaseProtocol {
-    let userProfile: UserProfile
-    var continuation: CheckedContinuation<Void, Error>?
-    var token: Any?
+    // MARK: Lifecycle
 
     init(userProfile: UserProfile) {
         self.userProfile = userProfile
     }
+
+    // MARK: Internal
+
+    let userProfile: UserProfile
+    var continuation: CheckedContinuation<Void, Error>?
+    var token: Any?
 
     func invoke(username: String) async throws {
         _ = try await withCheckedThrowingContinuation { continuation in

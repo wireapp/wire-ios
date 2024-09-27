@@ -23,9 +23,7 @@ import WireDesign
 /// A helper class that provides the Button with Dynamic Type Support
 /// by conforming to the DynamicTypeCapable protocol
 class DynamicFontButton: StylableButton, DynamicTypeCapable {
-    // MARK: - Properties
-
-    private let onRedrawFont: () -> UIFont?
+    // MARK: Lifecycle
 
     init(style: WireTextStyle = .body1) {
         // Not needed when we use a font style.
@@ -48,10 +46,18 @@ class DynamicFontButton: StylableButton, DynamicTypeCapable {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     // MARK: - Methods
 
     func redrawFont() {
         guard let newFont = onRedrawFont() else { return }
         titleLabel?.font = newFont
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let onRedrawFont: () -> UIFont?
 }

@@ -19,7 +19,7 @@
 import SwiftUI
 
 struct SwitchBackendConfirmationView: View {
-    private typealias Strings = L10n.Localizable.UrlAction.SwitchBackendConfirmation
+    // MARK: Internal
 
     let viewModel: SwitchBackendConfirmationViewModel
 
@@ -34,6 +34,10 @@ struct SwitchBackendConfirmationView: View {
         .padding()
         .interactiveDismissDisabled()
     }
+
+    // MARK: Private
+
+    private typealias Strings = L10n.Localizable.UrlAction.SwitchBackendConfirmation
 
     @ViewBuilder private var title: some View {
         Text(Strings.title)
@@ -91,22 +95,6 @@ struct SwitchBackendConfirmationView: View {
         }
     }
 
-    @ViewBuilder
-    private func itemView(
-        title: String,
-        value: String,
-        isURL: Bool = false
-    ) -> some View {
-        VStack {
-            Text(title)
-                .foregroundStyle(Color.secondaryText)
-            Text(value)
-                .foregroundStyle(Color.primaryText)
-                // Helps VoiceOver read the URLs better.
-                .accessibilityTextContentType(isURL ? .fileSystem : .plain)
-        }
-    }
-
     @ViewBuilder private var buttons: some View {
         VStack(spacing: 6) {
             cancelButton
@@ -134,6 +122,22 @@ struct SwitchBackendConfirmationView: View {
                 .font(.textStyle(.buttonBig))
         }
         .buttonStyle(PrimaryButtonStyle())
+    }
+
+    @ViewBuilder
+    private func itemView(
+        title: String,
+        value: String,
+        isURL: Bool = false
+    ) -> some View {
+        VStack {
+            Text(title)
+                .foregroundStyle(Color.secondaryText)
+            Text(value)
+                .foregroundStyle(Color.primaryText)
+                // Helps VoiceOver read the URLs better.
+                .accessibilityTextContentType(isURL ? .fileSystem : .plain)
+        }
     }
 }
 

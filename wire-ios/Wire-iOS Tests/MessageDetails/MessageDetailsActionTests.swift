@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 
 final class MessageDetailsActionTests: XCTestCase {
+    // MARK: Internal
+
     override func setUp() {
         super.setUp()
         SelfUser.setupMockSelfUser()
@@ -99,6 +101,8 @@ final class MessageDetailsActionTests: XCTestCase {
             XCTAssertTrue(message.areReadReceiptsDetailsAvailable)
         }
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

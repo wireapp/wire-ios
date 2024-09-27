@@ -30,6 +30,10 @@ class TestEntity: NSManagedObject {
 // MARK: - BatchDeleteTests
 
 class BatchDeleteTests: ZMTBaseTest {
+    let storagePath = NSTemporaryDirectory().appending("test.sqlite")
+    var mom: NSManagedObjectModel!
+    var moc: NSManagedObjectContext!
+
     var model: NSManagedObjectModel {
         let model = NSManagedObjectModel()
 
@@ -77,10 +81,6 @@ class BatchDeleteTests: ZMTBaseTest {
         managedObjectContext.persistentStoreCoordinator = persistentStoreCoordinator
         return (model, managedObjectContext)
     }
-
-    let storagePath = NSTemporaryDirectory().appending("test.sqlite")
-    var mom: NSManagedObjectModel!
-    var moc: NSManagedObjectContext!
 
     override func setUp() {
         super.setUp()

@@ -20,6 +20,8 @@ import Foundation
 @testable import WireDataModel
 
 class ParticipantRoleTests: ZMBaseManagedObjectTest {
+    // MARK: Internal
+
     var user: ZMUser!
     var conversation: ZMConversation!
     var role: Role!
@@ -29,14 +31,6 @@ class ParticipantRoleTests: ZMBaseManagedObjectTest {
         user = ZMUser.insertNewObject(in: uiMOC)
         conversation = ZMConversation.insertNewObject(in: uiMOC)
         role = Role.insertNewObject(in: uiMOC)
-    }
-
-    private func createParticipantRole() -> ParticipantRole {
-        let pr = ParticipantRole.insertNewObject(in: uiMOC)
-        pr.user = user
-        pr.conversation = conversation
-        pr.role = role
-        return pr
     }
 
     func testThatServicesBelongToOneToOneConversations() throws {
@@ -62,5 +56,15 @@ class ParticipantRoleTests: ZMBaseManagedObjectTest {
         // THEN
         let factory = ConversationPredicateFactory(selfTeam: team)
         XCTAssertTrue(factory.predicateForOneToOneConversations().evaluate(with: conversation))
+    }
+
+    // MARK: Private
+
+    private func createParticipantRole() -> ParticipantRole {
+        let pr = ParticipantRole.insertNewObject(in: uiMOC)
+        pr.user = user
+        pr.conversation = conversation
+        pr.role = role
+        return pr
     }
 }

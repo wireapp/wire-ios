@@ -36,9 +36,7 @@ extension ConversationAddParticipantsError {
 // MARK: - AddParticipantActionHandler
 
 class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
-    let decoder: JSONDecoder = .defaultDecoder
-
-    private let eventProcessor: ConversationEventProcessorProtocol
+    // MARK: Lifecycle
 
     override convenience init(context: NSManagedObjectContext) {
         self.init(
@@ -55,6 +53,10 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         super.init(context: context)
     }
 
+    // MARK: Internal
+
+    let decoder: JSONDecoder = .defaultDecoder
+
     override func request(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
@@ -65,6 +67,75 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             v2Request(for: action, apiVersion: apiVersion)
         }
     }
+
+    override func handleResponse(_ response: ZMTransportResponse, action: AddParticipantAction) {
+        var action = action
+
+        switch response.httpStatus {
+        case 200:
+            guard
+                let payload = response.payload,
+                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
+            else {
+                Logging.network.warn("Can't process response, aborting.")
+                action.fail(with: .unknown)
+                return
+            }
+            let success = {
+                action.succeed()
+            }
+            Task {
+                await eventProcessor.processAndSaveConversationEvents([updateEvent])
+                success()
+            }
+
+        case 204:
+            action.succeed()
+
+        case 403:
+            // Refresh user data since this operation might have failed
+            // due to a team member being removed/deleted from the team.
+            let users: [ZMUser]? = action.userIDs.existingObjects(in: context)
+            users?.filter(\.isTeamMember).forEach { $0.refreshData() }
+
+            action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
+
+        case 409:
+            guard
+                let payload = ErrorResponse(response),
+                let nonFederatingDomains = payload.non_federating_backends
+            else {
+                return action.fail(with: .unknown)
+            }
+
+            if nonFederatingDomains.isEmpty {
+                action.succeed()
+            } else {
+                action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
+            }
+
+        case 533:
+            guard
+                let payload = ErrorResponse(response),
+                let unreachableDomains = payload.unreachable_backends
+            else {
+                return action.fail(with: .unknown)
+            }
+
+            if unreachableDomains.isEmpty {
+                action.succeed()
+            } else {
+                action.fail(with: .unreachableDomains(Set(unreachableDomains)))
+            }
+
+        default:
+            action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
+        }
+    }
+
+    // MARK: Private
+
+    private let eventProcessor: ConversationEventProcessorProtocol
 
     private func v0Request(for action: AddParticipantAction) -> ZMTransportRequest? {
         var action = action
@@ -132,71 +203,6 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
 
         return payloadAsString as ZMTransportData
-    }
-
-    override func handleResponse(_ response: ZMTransportResponse, action: AddParticipantAction) {
-        var action = action
-
-        switch response.httpStatus {
-        case 200:
-            guard
-                let payload = response.payload,
-                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
-            else {
-                Logging.network.warn("Can't process response, aborting.")
-                action.fail(with: .unknown)
-                return
-            }
-            let success = {
-                action.succeed()
-            }
-            Task {
-                await eventProcessor.processAndSaveConversationEvents([updateEvent])
-                success()
-            }
-
-        case 204:
-            action.succeed()
-
-        case 403:
-            // Refresh user data since this operation might have failed
-            // due to a team member being removed/deleted from the team.
-            let users: [ZMUser]? = action.userIDs.existingObjects(in: context)
-            users?.filter(\.isTeamMember).forEach { $0.refreshData() }
-
-            action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
-
-        case 409:
-            guard
-                let payload = ErrorResponse(response),
-                let nonFederatingDomains = payload.non_federating_backends
-            else {
-                return action.fail(with: .unknown)
-            }
-
-            if nonFederatingDomains.isEmpty {
-                action.succeed()
-            } else {
-                action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
-            }
-
-        case 533:
-            guard
-                let payload = ErrorResponse(response),
-                let unreachableDomains = payload.unreachable_backends
-            else {
-                return action.fail(with: .unknown)
-            }
-
-            if unreachableDomains.isEmpty {
-                action.succeed()
-            } else {
-                action.fail(with: .unreachableDomains(Set(unreachableDomains)))
-            }
-
-        default:
-            action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
-        }
     }
 }
 

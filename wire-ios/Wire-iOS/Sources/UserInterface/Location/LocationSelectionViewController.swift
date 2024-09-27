@@ -36,6 +36,8 @@ protocol LocationSelectionViewControllerDelegate: AnyObject {
 // MARK: - LocationSelectionViewController
 
 final class LocationSelectionViewController: UIViewController {
+    // MARK: Internal
+
     // MARK: - Constants
 
     enum LayoutConstants {
@@ -65,18 +67,17 @@ final class LocationSelectionViewController: UIViewController {
 
     var sendControllerHeightConstraint: NSLayoutConstraint?
 
-    private let mapViewController = MapViewController()
-    private let toolBar = ModalTopBar()
-    private let geocoder = CLGeocoder()
-    private let sendViewController = LocationSendViewController()
-    private var userShowedInitially = false
-    private var mapDidRender = false
-
     lazy var appLocationManager: AppLocationManagerProtocol = {
         let manager = AppLocationManager()
         manager.delegate = self
         return manager
     }()
+
+    // MARK: - Helpers
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
+    }
 
     // MARK: - Lifecycle Methods
 
@@ -105,6 +106,15 @@ final class LocationSelectionViewController: UIViewController {
         appLocationManager.stopUpdatingLocation()
         mapViewController.mapView.storeLocation()
     }
+
+    // MARK: Private
+
+    private let mapViewController = MapViewController()
+    private let toolBar = ModalTopBar()
+    private let geocoder = CLGeocoder()
+    private let sendViewController = LocationSendViewController()
+    private var userShowedInitially = false
+    private var mapDidRender = false
 
     // MARK: - Configuration
 
@@ -170,12 +180,6 @@ final class LocationSelectionViewController: UIViewController {
 
     private func locationButtonTapped() {
         mapViewController.zoomToUserLocation(animated: true)
-    }
-
-    // MARK: - Helpers
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        wr_supportedInterfaceOrientations
     }
 
     private func presentUnauthorizedAlert() {

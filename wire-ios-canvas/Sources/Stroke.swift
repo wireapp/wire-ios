@@ -21,13 +21,14 @@ import UIKit
 // MARK: - Brush
 
 public struct Brush {
+    // MARK: Lifecycle
+
     public init(size: Float, color: UIColor) {
         self.size = size
         self.color = color
     }
 
-    let size: Float
-    let color: UIColor
+    // MARK: Public
 
     public func change(toColor color: UIColor) -> Brush {
         Brush(size: size, color: color)
@@ -36,22 +37,27 @@ public struct Brush {
     public func change(toSize size: Float) -> Brush {
         Brush(size: size, color: color)
     }
+
+    // MARK: Internal
+
+    let size: Float
+    let color: UIColor
 }
 
 // MARK: - Stroke
 
 final class Stroke: Renderable {
-    private var points: [CGPoint]
-    private let minimumStrokeDistance = 0.1
-    private let brush: Brush
-
-    var bounds: CGRect {
-        bounds(from: 0)
-    }
+    // MARK: Lifecycle
 
     public init(at position: CGPoint, brush: Brush) {
         self.brush = brush
         self.points = [position]
+    }
+
+    // MARK: Internal
+
+    var bounds: CGRect {
+        bounds(from: 0)
     }
 
     func move(to point: CGPoint) -> CGRect {
@@ -159,4 +165,10 @@ final class Stroke: Renderable {
 
         return controlPoints
     }
+
+    // MARK: Private
+
+    private var points: [CGPoint]
+    private let minimumStrokeDistance = 0.1
+    private let brush: Brush
 }

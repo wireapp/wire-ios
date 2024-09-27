@@ -20,51 +20,7 @@ import Foundation
 
 extension Payload {
     struct Conversation: CodableAPIVersionAware, EventData {
-        enum CodingKeys: String, CodingKey {
-            case qualifiedID = "qualified_id"
-            case id
-            case type
-            case creator
-            case cipherSuite = "cipher_suite"
-            case access
-            case accessRole = "access_role"
-            case accessRoleV2 = "access_role_v2"
-            case name
-            case members
-            case lastEvent = "last_event"
-            case lastEventTime = "last_event_time"
-            case teamID = "team"
-            case messageTimer = "message_timer"
-            case readReceiptMode = "receipt_mode"
-            case messageProtocol = "protocol"
-            case mlsGroupID = "group_id"
-            case epoch
-            case epochTimestamp = "epoch_timestamp"
-        }
-
-        static var eventType: ZMUpdateEventType {
-            .conversationCreate
-        }
-
-        var qualifiedID: QualifiedID?
-        var id: UUID?
-        var type: Int?
-        var creator: UUID?
-        var cipherSuite: UInt16?
-        var access: [String]?
-        var accessRoles: [String]?
-        var legacyAccessRole: String?
-        var name: String?
-        var members: ConversationMembers?
-        var lastEvent: String?
-        var lastEventTime: String?
-        var teamID: UUID?
-        var messageTimer: TimeInterval?
-        var readReceiptMode: Int?
-        var messageProtocol: String?
-        var mlsGroupID: String?
-        var epoch: UInt?
-        var epochTimestamp: Date?
+        // MARK: Lifecycle
 
         init(
             qualifiedID: QualifiedID? = nil,
@@ -158,6 +114,54 @@ extension Payload {
                 self.epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
             }
         }
+
+        // MARK: Internal
+
+        enum CodingKeys: String, CodingKey {
+            case qualifiedID = "qualified_id"
+            case id
+            case type
+            case creator
+            case cipherSuite = "cipher_suite"
+            case access
+            case accessRole = "access_role"
+            case accessRoleV2 = "access_role_v2"
+            case name
+            case members
+            case lastEvent = "last_event"
+            case lastEventTime = "last_event_time"
+            case teamID = "team"
+            case messageTimer = "message_timer"
+            case readReceiptMode = "receipt_mode"
+            case messageProtocol = "protocol"
+            case mlsGroupID = "group_id"
+            case epoch
+            case epochTimestamp = "epoch_timestamp"
+        }
+
+        static var eventType: ZMUpdateEventType {
+            .conversationCreate
+        }
+
+        var qualifiedID: QualifiedID?
+        var id: UUID?
+        var type: Int?
+        var creator: UUID?
+        var cipherSuite: UInt16?
+        var access: [String]?
+        var accessRoles: [String]?
+        var legacyAccessRole: String?
+        var name: String?
+        var members: ConversationMembers?
+        var lastEvent: String?
+        var lastEventTime: String?
+        var teamID: UUID?
+        var messageTimer: TimeInterval?
+        var readReceiptMode: Int?
+        var messageProtocol: String?
+        var mlsGroupID: String?
+        var epoch: UInt?
+        var epochTimestamp: Date?
 
         func encode(to encoder: Encoder, apiVersion: APIVersion) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)

@@ -19,11 +19,15 @@
 import Foundation
 
 class EntityActionSync: NSObject, ZMRequestGenerator {
-    let actionHandlers: [ZMRequestGenerator]
+    // MARK: Lifecycle
 
     init(actionHandlers: [ZMRequestGenerator]) {
         self.actionHandlers = actionHandlers
     }
+
+    // MARK: Internal
+
+    let actionHandlers: [ZMRequestGenerator]
 
     func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         actionHandlers.nextRequest(for: apiVersion)

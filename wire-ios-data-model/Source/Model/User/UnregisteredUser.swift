@@ -28,6 +28,14 @@ import WireFoundation
 ///
 /// You then use it to register the user with the backend.
 public class UnregisteredUser {
+    // MARK: Lifecycle
+
+    /// Creates an empty unregistered user.
+
+    public init() {}
+
+    // MARK: Public
+
     public var unverifiedEmail = ""
     public var verificationCode: String?
     public var name: String?
@@ -45,10 +53,6 @@ public class UnregisteredUser {
             accentColorValue = newValue?.rawValue
         }
     }
-
-    /// Creates an empty unregistered user.
-
-    public init() {}
 
     /// Whether the user is complete and can be registered.
     public var isComplete: Bool {

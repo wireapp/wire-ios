@@ -33,48 +33,7 @@ protocol CallViewControllerDelegate: AnyObject {
 // MARK: - CallViewController
 
 final class CallViewController: UIViewController {
-    weak var delegate: CallViewControllerDelegate?
-    private var tapRecognizer: UITapGestureRecognizer!
-    private let mediaManager: AVSMediaManagerInterface
-    private let voiceChannel: VoiceChannel
-    private var callInfoConfiguration: CallInfoConfiguration
-    private var preferedVideoPlaceholderState: CallVideoPlaceholderState = .statusTextHidden
-    private let callInfoRootViewController: CallInfoRootViewController
-    private weak var overlayTimer: Timer?
-    private let hapticsController = CallHapticsController()
-    private let isOverlayEnabled: Bool
-
-    private var classification: SecurityClassification? = .none {
-        didSet { updateConfiguration() }
-    }
-
-    private var voiceChannelObserverTokens: [Any] = []
-    private var conversationObserverToken: Any?
-    private var callGridConfiguration: CallGridConfiguration
-    private let callGridViewController: CallGridViewController
-    private var cameraType: CaptureDevice = .front
-    private var singleTapRecognizer: UITapGestureRecognizer!
-    private var doubleTapRecognizer: UITapGestureRecognizer!
-
-    private var isInteractiveDismissal = false
-
-    let userSession: UserSession
-
-    var conversation: ZMConversation? {
-        voiceChannel.conversation
-    }
-
-    private var proximityMonitorManager: ProximityMonitorManager?
-
-    private var permissions: CallPermissionsConfiguration {
-        callInfoConfiguration.permissions
-    }
-
-    private static var userEnabledCBR: Bool {
-        Settings.shared[.callingConstantBitRate] == true
-    }
-
-    weak var configurationObserver: CallInfoConfigurationObserver?
+    // MARK: Lifecycle
 
     init(
         voiceChannel: VoiceChannel,
@@ -149,15 +108,30 @@ final class CallViewController: UIViewController {
         singleTapRecognizer.require(toFail: doubleTapRecognizer)
     }
 
-    @objc
-    private func handleSingleTap(_ sender: UITapGestureRecognizer) {
-        guard canHideOverlay else { return }
+    deinit {
+        AVSMediaManagerClientChangeNotification.remove(self)
+        NotificationCenter.default.removeObserver(self)
+        stopOverlayTimer()
+    }
 
-        if let overlay = callGridViewController.previewOverlay,
-           overlay.point(inside: sender.location(in: overlay), with: nil), !isOverlayVisible {
-            return
-        }
-        toggleOverlayVisibility()
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    weak var delegate: CallViewControllerDelegate?
+    let userSession: UserSession
+
+    weak var configurationObserver: CallInfoConfigurationObserver?
+
+    var conversation: ZMConversation? {
+        voiceChannel.conversation
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        !isOverlayVisible
     }
 
     @objc
@@ -165,32 +139,6 @@ final class CallViewController: UIViewController {
         guard !isOverlayVisible else { return }
 
         callGridViewController.handleDoubleTap(gesture: sender)
-    }
-
-    deinit {
-        AVSMediaManagerClientChangeNotification.remove(self)
-        NotificationCenter.default.removeObserver(self)
-        stopOverlayTimer()
-    }
-
-    private func setupApplicationStateObservers() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(
-                resumeVideoIfNeeded
-            ),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(
-                pauseVideoIfNeeded
-            ),
-            name: UIApplication.willResignActiveNotification,
-            object: nil
-        )
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -229,8 +177,89 @@ final class CallViewController: UIViewController {
         return true
     }
 
-    override var prefersStatusBarHidden: Bool {
-        !isOverlayVisible
+    func toggleVideoState() {
+        if !permissions.canAcceptVideoCalls {
+            permissions.requestOrWarnAboutVideoPermission { isVideoPermissionGranted in
+                self.disableVideoIfNeeded()
+                self.updateVideoStatusPlaceholder()
+                guard isVideoPermissionGranted else { return }
+            }
+        }
+
+        let newState = voiceChannel.videoState.toggledState
+        preferedVideoPlaceholderState = newState == .stopped ? .statusTextHidden : .hidden
+        voiceChannel.videoState = newState
+        updateConfiguration()
+        AnalyticsCallingTracker.userToggledVideo(in: voiceChannel)
+    }
+
+    // MARK: Private
+
+    private static var userEnabledCBR: Bool {
+        Settings.shared[.callingConstantBitRate] == true
+    }
+
+    private var tapRecognizer: UITapGestureRecognizer!
+    private let mediaManager: AVSMediaManagerInterface
+    private let voiceChannel: VoiceChannel
+    private var callInfoConfiguration: CallInfoConfiguration
+    private var preferedVideoPlaceholderState: CallVideoPlaceholderState = .statusTextHidden
+    private let callInfoRootViewController: CallInfoRootViewController
+    private weak var overlayTimer: Timer?
+    private let hapticsController = CallHapticsController()
+    private let isOverlayEnabled: Bool
+
+    private var voiceChannelObserverTokens: [Any] = []
+    private var conversationObserverToken: Any?
+    private var callGridConfiguration: CallGridConfiguration
+    private let callGridViewController: CallGridViewController
+    private var cameraType: CaptureDevice = .front
+    private var singleTapRecognizer: UITapGestureRecognizer!
+    private var doubleTapRecognizer: UITapGestureRecognizer!
+
+    private var isInteractiveDismissal = false
+
+    private var proximityMonitorManager: ProximityMonitorManager?
+
+    private lazy var establishingCallStatusView = EstablishingCallStatusView()
+
+    private var classification: SecurityClassification? = .none {
+        didSet { updateConfiguration() }
+    }
+
+    private var permissions: CallPermissionsConfiguration {
+        callInfoConfiguration.permissions
+    }
+
+    @objc
+    private func handleSingleTap(_ sender: UITapGestureRecognizer) {
+        guard canHideOverlay else { return }
+
+        if let overlay = callGridViewController.previewOverlay,
+           overlay.point(inside: sender.location(in: overlay), with: nil), !isOverlayVisible {
+            return
+        }
+        toggleOverlayVisibility()
+    }
+
+    private func setupApplicationStateObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(
+                resumeVideoIfNeeded
+            ),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(
+                pauseVideoIfNeeded
+            ),
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
     }
 
     @objc
@@ -289,8 +318,6 @@ final class CallViewController: UIViewController {
         delegate?.callViewControllerDidDisappear(self, for: conversation)
     }
 
-    private lazy var establishingCallStatusView = EstablishingCallStatusView()
-
     private func acceptDegradedCall() {
         guard let userSession = userSession as? ZMUserSession else { return }
 
@@ -299,11 +326,6 @@ final class CallViewController: UIViewController {
         }, completionHandler: {
             self.conversation?.joinCall()
         })
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     private func updateConfiguration() {
@@ -391,22 +413,6 @@ final class CallViewController: UIViewController {
         ))
 
         present(alert, animated: true)
-    }
-
-    func toggleVideoState() {
-        if !permissions.canAcceptVideoCalls {
-            permissions.requestOrWarnAboutVideoPermission { isVideoPermissionGranted in
-                self.disableVideoIfNeeded()
-                self.updateVideoStatusPlaceholder()
-                guard isVideoPermissionGranted else { return }
-            }
-        }
-
-        let newState = voiceChannel.videoState.toggledState
-        preferedVideoPlaceholderState = newState == .stopped ? .statusTextHidden : .hidden
-        voiceChannel.videoState = newState
-        updateConfiguration()
-        AnalyticsCallingTracker.userToggledVideo(in: voiceChannel)
     }
 
     private func toggleCameraAnimated() {

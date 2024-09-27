@@ -19,6 +19,14 @@
 import Foundation
 
 public class FetchBackendMLSPublicKeysAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(resultHandler: ResultHandler? = nil) {
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = BackendMLSPublicKeys
@@ -28,6 +36,8 @@ public class FetchBackendMLSPublicKeysAction: EntityAction {
         case malformedResponse
         case mlsNotEnabled
         case unknown(status: Int, label: String, message: String)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -49,10 +59,4 @@ public class FetchBackendMLSPublicKeysAction: EntityAction {
     // MARK: - Properties
 
     public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(resultHandler: ResultHandler? = nil) {
-        self.resultHandler = resultHandler
-    }
 }

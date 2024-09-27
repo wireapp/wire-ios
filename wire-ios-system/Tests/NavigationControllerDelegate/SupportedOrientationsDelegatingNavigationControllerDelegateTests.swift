@@ -23,7 +23,7 @@ import XCTest
 // MARK: - SupportedOrientationsDelegatingNavigationControllerDelegateTests
 
 final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XCTestCase {
-    private var sut: SupportedOrientationsDelegatingNavigationControllerDelegate!
+    // MARK: Internal
 
     override func setUp() async throws {
         sut = await MainActor.run { .init() }
@@ -112,13 +112,16 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
             XCTAssertNotNil(weakSut)
         }
     }
+
+    // MARK: Private
+
+    private var sut: SupportedOrientationsDelegatingNavigationControllerDelegate!
 }
 
 // MARK: - ViewController
 
 private final class ViewController: UIViewController {
-    private var interfaceOrientations: UIInterfaceOrientationMask
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { interfaceOrientations }
+    // MARK: Lifecycle
 
     init(_ interfaceOrientations: UIInterfaceOrientationMask = .all) {
         self.interfaceOrientations = interfaceOrientations
@@ -129,6 +132,14 @@ private final class ViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
+
+    // MARK: Internal
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { interfaceOrientations }
+
+    // MARK: Private
+
+    private var interfaceOrientations: UIInterfaceOrientationMask
 }
 
 // MARK: - SupportedOrientationsDelegatingNavigationControllerDelegate + Sendable

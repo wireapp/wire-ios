@@ -20,23 +20,7 @@ import Foundation
 import WireRequestStrategy
 
 final class ApplicationStatusDirectory: ApplicationStatus {
-    // MARK: - Properties
-
-    let transportSession: ZMTransportSession
-
-    /// The authentication status used to verify a user is authenticated.
-
-    public let authenticationStatus: AuthenticationStatusProvider
-
-    /// The client registration status used to lookup if a user has registered a self client.
-
-    public let clientRegistrationStatus: ClientRegistrationDelegate
-
-    public let linkPreviewDetector: LinkPreviewDetectorType
-
-    public var pushNotificationStatus: PushNotificationStatus
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public convenience init(
         syncContext: NSManagedObjectContext,
@@ -75,6 +59,20 @@ final class ApplicationStatusDirectory: ApplicationStatus {
         )
     }
 
+    // MARK: Public
+
+    /// The authentication status used to verify a user is authenticated.
+
+    public let authenticationStatus: AuthenticationStatusProvider
+
+    /// The client registration status used to lookup if a user has registered a self client.
+
+    public let clientRegistrationStatus: ClientRegistrationDelegate
+
+    public let linkPreviewDetector: LinkPreviewDetectorType
+
+    public var pushNotificationStatus: PushNotificationStatus
+
     // MARK: - Methods
 
     public var synchronizationState: SynchronizationState {
@@ -96,6 +94,12 @@ final class ApplicationStatusDirectory: ApplicationStatus {
     public var requestCancellation: ZMRequestCancellation {
         transportSession
     }
+
+    // MARK: Internal
+
+    // MARK: - Properties
+
+    let transportSession: ZMTransportSession
 
     func requestResyncResources() {
         // We don't resync Resources in the notification engine.

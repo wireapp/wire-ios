@@ -19,7 +19,7 @@
 /// A wrapper around a `weak` object reference.
 /// An example use case would be to have a non-retaining array of references.
 public struct WeakReference<T: AnyObject> {
-    public weak var reference: T?
+    // MARK: Lifecycle
 
     public init(reference: T) {
         self.reference = reference
@@ -28,4 +28,8 @@ public struct WeakReference<T: AnyObject> {
     public init(_ reference: T) {
         self.init(reference: reference)
     }
+
+    // MARK: Public
+
+    public weak var reference: T?
 }

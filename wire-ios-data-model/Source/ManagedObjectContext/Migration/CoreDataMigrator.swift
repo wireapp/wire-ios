@@ -75,15 +75,13 @@ extension CoreDataMigratorError: LocalizedError {
 // MARK: - CoreDataMigrator
 
 final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigratorProtocol {
-    private let isInMemoryStore: Bool
-
-    private var persistentStoreType: NSPersistentStore.StoreType {
-        isInMemoryStore ? .inMemory : .sqlite
-    }
+    // MARK: Lifecycle
 
     init(isInMemoryStore: Bool) {
         self.isInMemoryStore = isInMemoryStore
     }
+
+    // MARK: Internal
 
     func requiresMigration(at storeURL: URL, toVersion version: Version) -> Bool {
         guard let metadata = try? metadataForPersistentStore(at: storeURL) else {
@@ -157,37 +155,6 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
         }
     }
 
-    private func migrationStepsForStore(
-        at storeURL: URL,
-        to destinationVersion: Version
-    ) throws -> [CoreDataMigrationStep<Version>] {
-        guard
-            let metadata = try? metadataForPersistentStore(at: storeURL),
-            let sourceVersion = compatibleVersionForStoreMetadata(metadata)
-        else {
-            throw CoreDataMigratorError.unknownVersion
-        }
-
-        return try migrationSteps(fromSourceVersion: sourceVersion, toDestinationVersion: destinationVersion)
-    }
-
-    private func migrationSteps(
-        fromSourceVersion sourceVersion: Version,
-        toDestinationVersion destinationVersion: Version
-    ) throws -> [CoreDataMigrationStep<Version>] {
-        var sourceVersion = sourceVersion
-        var migrationSteps: [CoreDataMigrationStep<Version>] = []
-
-        while sourceVersion != destinationVersion, let nextVersion = sourceVersion.nextVersion {
-            let step = try CoreDataMigrationStep(sourceVersion: sourceVersion, destinationVersion: nextVersion)
-            migrationSteps.append(step)
-
-            sourceVersion = nextVersion
-        }
-
-        return migrationSteps
-    }
-
     // MARK: - Write-Ahead Logging (WAL)
 
     // Taken from https://williamboles.com/progressive-core-data-migration/
@@ -219,6 +186,69 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
         } catch {
             throw CoreDataMigratorError.failedToForceWALCheckpointing
         }
+    }
+
+    // MARK: - CoreDataMigration Actions
+
+    func runPreMigrationStep(_ step: CoreDataMigrationStep<Version>, for storeURL: URL) throws {
+        guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else {
+            return
+        }
+        WireLogger.localStorage.debug("run preMigration step \(step.destinationVersion)", attributes: .safePublic)
+        try action.perform(
+            on: storeURL,
+            with: step.sourceModel
+        )
+    }
+
+    func runPostMigrationStep(_ step: CoreDataMigrationStep<Version>, for storeURL: URL) throws {
+        guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion)
+        else { return }
+
+        WireLogger.localStorage.debug("run postMigration step \(step.destinationVersion)", attributes: .safePublic)
+        try action.perform(
+            on: storeURL,
+            with: step.destinationModel
+        )
+    }
+
+    // MARK: Private
+
+    private let isInMemoryStore: Bool
+
+    private var persistentStoreType: NSPersistentStore.StoreType {
+        isInMemoryStore ? .inMemory : .sqlite
+    }
+
+    private func migrationStepsForStore(
+        at storeURL: URL,
+        to destinationVersion: Version
+    ) throws -> [CoreDataMigrationStep<Version>] {
+        guard
+            let metadata = try? metadataForPersistentStore(at: storeURL),
+            let sourceVersion = compatibleVersionForStoreMetadata(metadata)
+        else {
+            throw CoreDataMigratorError.unknownVersion
+        }
+
+        return try migrationSteps(fromSourceVersion: sourceVersion, toDestinationVersion: destinationVersion)
+    }
+
+    private func migrationSteps(
+        fromSourceVersion sourceVersion: Version,
+        toDestinationVersion destinationVersion: Version
+    ) throws -> [CoreDataMigrationStep<Version>] {
+        var sourceVersion = sourceVersion
+        var migrationSteps: [CoreDataMigrationStep<Version>] = []
+
+        while sourceVersion != destinationVersion, let nextVersion = sourceVersion.nextVersion {
+            let step = try CoreDataMigrationStep(sourceVersion: sourceVersion, destinationVersion: nextVersion)
+            migrationSteps.append(step)
+
+            sourceVersion = nextVersion
+        }
+
+        return migrationSteps
     }
 
     // MARK: - Helpers
@@ -278,29 +308,5 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
         } catch {
             throw CoreDataMigratorError.failedToDestroyPersistentStore(storeURL: storeURL)
         }
-    }
-
-    // MARK: - CoreDataMigration Actions
-
-    func runPreMigrationStep(_ step: CoreDataMigrationStep<Version>, for storeURL: URL) throws {
-        guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else {
-            return
-        }
-        WireLogger.localStorage.debug("run preMigration step \(step.destinationVersion)", attributes: .safePublic)
-        try action.perform(
-            on: storeURL,
-            with: step.sourceModel
-        )
-    }
-
-    func runPostMigrationStep(_ step: CoreDataMigrationStep<Version>, for storeURL: URL) throws {
-        guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion)
-        else { return }
-
-        WireLogger.localStorage.debug("run postMigration step \(step.destinationVersion)", attributes: .safePublic)
-        try action.perform(
-            on: storeURL,
-            with: step.destinationModel
-        )
     }
 }

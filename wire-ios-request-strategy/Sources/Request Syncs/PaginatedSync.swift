@@ -28,6 +28,17 @@ protocol Paginatable: Decodable {
 // MARK: - PaginatedSync
 
 class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
+    // MARK: Lifecycle
+
+    init(basePath: String, pageSize: Int, method: PaginationMehod = .get, context: NSManagedObjectContext) {
+        self.basePath = basePath
+        self.pageSize = pageSize
+        self.context = context
+        self.method = method
+    }
+
+    // MARK: Internal
+
     typealias CompletionHandler = (Result<PayloadType, PaginatedSyncError>) -> Void
 
     enum Status: Equatable {
@@ -51,13 +62,6 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
     var status: Status = .done
     var request: ZMTransportRequest?
     var completionHandler: CompletionHandler?
-
-    init(basePath: String, pageSize: Int, method: PaginationMehod = .get, context: NSManagedObjectContext) {
-        self.basePath = basePath
-        self.pageSize = pageSize
-        self.context = context
-        self.method = method
-    }
 
     func fetch(_ completionHandler: @escaping CompletionHandler) {
         self.completionHandler = completionHandler
@@ -98,6 +102,8 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
 
         return request
     }
+
+    // MARK: Private
 
     private func getRequest(startReference: String, apiVersion: APIVersion) -> ZMTransportRequest? {
         var queryItems = [URLQueryItem(name: "size", value: String(pageSize))]

@@ -22,9 +22,7 @@ import XCTest
 // MARK: - TeamMetadataRefresherTests
 
 final class TeamMetadataRefresherTests: XCTestCase {
-    private var mockSelfUser: MockUserType!
-
-    private var mockSelfUserProvider: MockSelfUserProvider!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -126,6 +124,12 @@ final class TeamMetadataRefresherTests: XCTestCase {
         // Then
         XCTAssertEqual(mockSelfUser.refreshTeamDataCount, 1)
     }
+
+    // MARK: Private
+
+    private var mockSelfUser: MockUserType!
+
+    private var mockSelfUserProvider: MockSelfUserProvider!
 }
 
 // MARK: - MockSelfUserProvider

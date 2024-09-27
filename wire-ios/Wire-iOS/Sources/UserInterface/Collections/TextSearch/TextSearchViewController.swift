@@ -22,32 +22,43 @@ import WireSyncEngine
 // MARK: - TextSearchViewController
 
 final class TextSearchViewController: NSObject {
-    let resultsView = TextSearchResultsView()
-    let searchBar = TextSearchInputView()
-
-    weak var delegate: MessageActionResponder? = .none
-    let conversation: ConversationLike
-    var searchQuery: String? {
-        searchBar.query
-    }
-
-    private var textSearchQuery: TextSearchQuery?
-
-    private var results: [ZMConversationMessage] = [] {
-        didSet {
-            reloadResults()
-        }
-    }
-
-    private let userSession: UserSession
-
-    private var searchStartedDate: Date?
+    // MARK: Lifecycle
 
     init(conversation: ConversationLike, userSession: UserSession) {
         self.conversation = conversation
         self.userSession = userSession
         super.init()
         loadViews()
+    }
+
+    // MARK: Internal
+
+    let resultsView = TextSearchResultsView()
+    let searchBar = TextSearchInputView()
+
+    weak var delegate: MessageActionResponder? = .none
+    let conversation: ConversationLike
+
+    var searchQuery: String? {
+        searchBar.query
+    }
+
+    func teardown() {
+        textSearchQuery?.cancel()
+    }
+
+    // MARK: Private
+
+    private var textSearchQuery: TextSearchQuery?
+
+    private let userSession: UserSession
+
+    private var searchStartedDate: Date?
+
+    private var results: [ZMConversationMessage] = [] {
+        didSet {
+            reloadResults()
+        }
     }
 
     private func loadViews() {
@@ -60,10 +71,6 @@ final class TextSearchViewController: NSObject {
 
         searchBar.delegate = self
         searchBar.placeholderString = L10n.Localizable.Collections.Search.Field.placeholder
-    }
-
-    func teardown() {
-        textSearchQuery?.cancel()
     }
 
     private func scheduleSearch() {

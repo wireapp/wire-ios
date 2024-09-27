@@ -94,19 +94,7 @@ extension UserClient {
 
 extension UserClient {
     public struct MLSPublicKeys: Codable, Equatable {
-        enum CodingKeys: String, CodingKey {
-            case ed25519
-            case ed448
-            case p256 = "ecdsa_secp256r1_sha256"
-            case p384 = "ecdsa_secp384r1_sha384"
-            case p521 = "ecdsa_secp521r1_sha512"
-        }
-
-        public internal(set) var ed25519: String?
-        public internal(set) var ed448: String?
-        public internal(set) var p256: String?
-        public internal(set) var p384: String?
-        public internal(set) var p521: String?
+        // MARK: Lifecycle
 
         public init(
             ed25519: String? = nil,
@@ -122,12 +110,30 @@ extension UserClient {
             self.p521 = p521
         }
 
+        // MARK: Public
+
+        public internal(set) var ed25519: String?
+        public internal(set) var ed448: String?
+        public internal(set) var p256: String?
+        public internal(set) var p384: String?
+        public internal(set) var p521: String?
+
         public var isEmpty: Bool {
             allKeys.isEmpty
         }
 
         public var allKeys: [String] {
             [ed25519, ed448, p256, p384, p521].compactMap { $0 }
+        }
+
+        // MARK: Internal
+
+        enum CodingKeys: String, CodingKey {
+            case ed25519
+            case ed448
+            case p256 = "ecdsa_secp256r1_sha256"
+            case p384 = "ecdsa_secp384r1_sha384"
+            case p521 = "ecdsa_secp521r1_sha512"
         }
     }
 }

@@ -20,6 +20,15 @@ import Foundation
 import WireDataModel
 
 public class GetPushTokensAction: EntityAction {
+    // MARK: Lifecycle
+
+    public init(clientID: String, resultHandler: ResultHandler? = nil) {
+        self.clientID = clientID
+        self.resultHandler = resultHandler
+    }
+
+    // MARK: Public
+
     // MARK: - Types
 
     public typealias Result = [PushToken]
@@ -27,6 +36,8 @@ public class GetPushTokensAction: EntityAction {
     public enum Failure: LocalizedError, SafeForLoggingStringConvertible {
         case malformedResponse
         case unknown(status: Int)
+
+        // MARK: Public
 
         public var errorDescription: String? {
             switch self {
@@ -47,11 +58,4 @@ public class GetPushTokensAction: EntityAction {
 
     public var resultHandler: ResultHandler?
     public let clientID: String
-
-    // MARK: - Life cycle
-
-    public init(clientID: String, resultHandler: ResultHandler? = nil) {
-        self.clientID = clientID
-        self.resultHandler = resultHandler
-    }
 }

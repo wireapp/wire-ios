@@ -21,8 +21,7 @@ import Foundation
 public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTracker,
     ZMContextChangeTrackerSource,
     ZMSingleRequestTranscoder {
-    fileprivate let jsonEncoder = JSONEncoder()
-    fileprivate var upstreamSync: ZMSingleRequestSync!
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -34,14 +33,16 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         self.upstreamSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        upstreamSync.nextRequest(for: apiVersion)
-    }
+    // MARK: Public
 
     // MARK: - ZMContextChangeTracker, ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [self]
+    }
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        upstreamSync.nextRequest(for: apiVersion)
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
@@ -98,6 +99,20 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         return request
     }
 
+    public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
+        if let labelsWithModifications = try? managedObjectContext.count(for: fetchRequestForTrackedObjects()!),
+           labelsWithModifications > 0 {
+            upstreamSync.readyForNextRequestIfNotBusy()
+        }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let jsonEncoder = JSONEncoder()
+    fileprivate var upstreamSync: ZMSingleRequestSync!
+
+    // MARK: Private
+
     private func didReceive(_ response: ZMTransportResponse, updatedKeys: [(Label, Set<AnyHashable>?)]) {
         guard response.result == .permanentError || response.result == .success else {
             return
@@ -111,13 +126,6 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
             } else {
                 label.resetLocallyModifiedKeys(updatedKeys)
             }
-        }
-    }
-
-    public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        if let labelsWithModifications = try? managedObjectContext.count(for: fetchRequestForTrackedObjects()!),
-           labelsWithModifications > 0 {
-            upstreamSync.readyForNextRequestIfNotBusy()
         }
     }
 }

@@ -19,9 +19,7 @@
 import UIKit
 
 final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitioning {
-    let reverse: Bool
-    let visualEffectView: UIVisualEffectView
-    let crossfadingViews: [UIView]
+    // MARK: Lifecycle
 
     init(visualEffectView: UIVisualEffectView, crossfadingViews: [UIView], reverse: Bool) {
         self.reverse = reverse
@@ -30,6 +28,12 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
 
         super.init()
     }
+
+    // MARK: Internal
+
+    let reverse: Bool
+    let visualEffectView: UIVisualEffectView
+    let crossfadingViews: [UIView]
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         0.35

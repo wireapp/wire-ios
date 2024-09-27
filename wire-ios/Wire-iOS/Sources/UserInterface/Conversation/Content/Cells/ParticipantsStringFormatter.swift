@@ -65,6 +65,7 @@ extension ConversationActionType {
 /// applied to their corresponding component.
 private final class FormatSequence {
     typealias SubstringAttrs = (substring: String, attrs: Attributes)
+
     var string = String()
     var componentAttributes = [SubstringAttrs]()
 
@@ -91,31 +92,7 @@ private final class FormatSequence {
 // MARK: - ParticipantsStringFormatter
 
 final class ParticipantsStringFormatter {
-    struct NameList {
-        let names: [String]
-        let collapsed: Int
-        let selfIncluded: Bool
-
-        var totalUsers: Int {
-            names.count + collapsed
-        }
-    }
-
-    private let message: ZMConversationMessage
-    private let font, largeFont: UIFont
-    private let textColor: UIColor
-
-    private var normalAttributes: Attributes {
-        [.font: font, .foregroundColor: textColor]
-    }
-
-    private var boldAttributes: Attributes {
-        [.font: font, .foregroundColor: textColor]
-    }
-
-    private var linkAttributes: Attributes {
-        [.link: ParticipantsCellViewModel.showMoreLinkURL]
-    }
+    // MARK: Lifecycle
 
     init(
         message: ZMConversationMessage,
@@ -127,6 +104,18 @@ final class ParticipantsStringFormatter {
         self.font = font
         self.largeFont = largeFont
         self.textColor = textColor
+    }
+
+    // MARK: Internal
+
+    struct NameList {
+        let names: [String]
+        let collapsed: Int
+        let selfIncluded: Bool
+
+        var totalUsers: Int {
+            names.count + collapsed
+        }
     }
 
     /// This is only used when a conversation (with a name) is started.
@@ -215,6 +204,24 @@ final class ParticipantsStringFormatter {
         }
 
         return nameSequence.applyComponentAttributes(to: result)
+    }
+
+    // MARK: Private
+
+    private let message: ZMConversationMessage
+    private let font, largeFont: UIFont
+    private let textColor: UIColor
+
+    private var normalAttributes: Attributes {
+        [.font: font, .foregroundColor: textColor]
+    }
+
+    private var boldAttributes: Attributes {
+        [.font: font, .foregroundColor: textColor]
+    }
+
+    private var linkAttributes: Attributes {
+        [.link: ParticipantsCellViewModel.showMoreLinkURL]
     }
 
     /// Returns a `FormatSequence` describing a list of names. The list is comprised

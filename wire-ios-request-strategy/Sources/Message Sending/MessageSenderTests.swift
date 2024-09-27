@@ -22,6 +22,165 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 final class MessageSenderTests: MessagingTestBase {
+    struct Arrangement {
+        // MARK: Lifecycle
+
+        init(coreDataStack: CoreDataStack) {
+            self.coreDataStack = coreDataStack
+
+            apiProvider.messageAPIApiVersion_MockValue = messageApi
+        }
+
+        // MARK: Internal
+
+        enum Scaffolding {
+            static let groupID = MLSGroupID(.init([1, 2, 3]))
+            static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
+            static let responseSuccess = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: 0
+            )
+            static let messageSendingStatusSuccess = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: [:],
+                redundant: [:],
+                deleted: [:],
+                failedToSend: [:],
+                failedToConfirm: [:]
+            )
+            static let messageSendingStatusMissingClients = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: [clientID.domain: [clientID.userID.transportString(): [clientID.clientID]]],
+                redundant: [:],
+                deleted: [:],
+                failedToSend: [:],
+                failedToConfirm: [:]
+            )
+        }
+
+        let selfUserId = UUID()
+        let apiProvider = MockAPIProviderInterface()
+        let messageApi = MockMessageAPI()
+        let processor = MockPrekeyPayloadProcessorInterface()
+        let clientRegistrationDelegate = MockClientRegistrationStatus()
+        let sessionEstablisher = MockSessionEstablisherInterface()
+        let messageDependencyResolver = MockMessageDependencyResolverInterface()
+        let quickSyncObserver = MockQuickSyncObserverInterface()
+        let mlsService = MockMLSServiceInterface()
+        let coreDataStack: CoreDataStack
+
+        func withApiVersionResolving(to apiVersion: APIVersion?) -> Arrangement {
+            BackendInfo.apiVersion = apiVersion
+            return self
+        }
+
+        func withQuickSyncObserverCompleting() -> Arrangement {
+            quickSyncObserver.waitForQuickSyncToFinish_MockMethod = {}
+            return self
+        }
+
+        func withMessageDependencyResolverReturning(result: Result<Void, MessageDependencyResolverError>)
+            -> Arrangement {
+            messageDependencyResolver.waitForDependenciesToResolveFor_MockMethod = { _ in
+                if case let .failure(error) = result {
+                    throw error
+                }
+            }
+            return self
+        }
+
+        func withBroadcastProteusMessageFailing(with error: NetworkError) -> Arrangement {
+            messageApi.broadcastProteusMessageMessage_MockMethod = { [weak messageApi] _ in
+                if let count = messageApi?.broadcastProteusMessageMessage_Invocations.count, count > 1 {
+                    return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
+                } else {
+                    throw error
+                }
+            }
+            return self
+        }
+
+        func withSendProteusMessageFailing(with error: NetworkError) -> Arrangement {
+            messageApi.sendProteusMessageMessageConversationID_MockMethod = { [weak messageApi] _, _ in
+                if let count = messageApi?.sendProteusMessageMessageConversationID_Invocations.count, count > 1 {
+                    return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
+                } else {
+                    throw error
+                }
+            }
+            return self
+        }
+
+        func withMLServiceConfigured() -> Arrangement {
+            coreDataStack.syncContext.performAndWait {
+                coreDataStack.syncContext.mlsService = mlsService
+            }
+            return self
+        }
+
+        func withEstablishSessions(returning result: Result<Void, SessionEstablisherError>) -> Arrangement {
+            switch result {
+            case .success:
+                sessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in }
+            case let .failure(error):
+                sessionEstablisher.establishSessionWithApiVersion_MockError = error
+            }
+            return self
+        }
+
+        func withBroadcastProteusMessage(returning result: Result<
+            (Payload.MessageSendingStatus, ZMTransportResponse),
+            NetworkError
+        >) -> Arrangement {
+            switch result {
+            case let .success(value):
+                messageApi.broadcastProteusMessageMessage_MockValue = value
+            case let .failure(error):
+                messageApi.broadcastProteusMessageMessage_MockError = error
+            }
+            return self
+        }
+
+        func withSendProteusMessage(returning result: Result<
+            (Payload.MessageSendingStatus, ZMTransportResponse),
+            NetworkError
+        >) -> Arrangement {
+            switch result {
+            case let .success(value):
+                messageApi.sendProteusMessageMessageConversationID_MockValue = value
+            case let .failure(error):
+                messageApi.sendProteusMessageMessageConversationID_MockError = error
+            }
+            return self
+        }
+
+        func withSendMlsMessage(returning result: Result<
+            (Payload.MLSMessageSendingStatus, ZMTransportResponse),
+            NetworkError
+        >) -> Arrangement {
+            switch result {
+            case let .success(value):
+                messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockValue = value
+            case let .failure(error):
+                messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockError = error
+            }
+            return self
+        }
+
+        func arrange() -> (Arrangement, MessageSender) {
+            (self, MessageSender(
+                apiProvider: apiProvider,
+                clientRegistrationDelegate: clientRegistrationDelegate,
+                sessionEstablisher: sessionEstablisher,
+                messageDependencyResolver: messageDependencyResolver,
+                quickSyncObserver: quickSyncObserver,
+                context: coreDataStack.syncContext
+            ))
+        }
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -573,161 +732,6 @@ final class MessageSenderTests: MessagingTestBase {
         // then
         await assertItThrows(error: MessageSendError.missingGroupID) {
             try await messageSender.sendMessage(message: message)
-        }
-    }
-
-    struct Arrangement {
-        enum Scaffolding {
-            static let groupID = MLSGroupID(.init([1, 2, 3]))
-            static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
-            static let responseSuccess = ZMTransportResponse(
-                payload: nil,
-                httpStatus: 201,
-                transportSessionError: nil,
-                apiVersion: 0
-            )
-            static let messageSendingStatusSuccess = Payload.MessageSendingStatus(
-                time: Date(),
-                missing: [:],
-                redundant: [:],
-                deleted: [:],
-                failedToSend: [:],
-                failedToConfirm: [:]
-            )
-            static let messageSendingStatusMissingClients = Payload.MessageSendingStatus(
-                time: Date(),
-                missing: [clientID.domain: [clientID.userID.transportString(): [clientID.clientID]]],
-                redundant: [:],
-                deleted: [:],
-                failedToSend: [:],
-                failedToConfirm: [:]
-            )
-        }
-
-        let selfUserId = UUID()
-        let apiProvider = MockAPIProviderInterface()
-        let messageApi = MockMessageAPI()
-        let processor = MockPrekeyPayloadProcessorInterface()
-        let clientRegistrationDelegate = MockClientRegistrationStatus()
-        let sessionEstablisher = MockSessionEstablisherInterface()
-        let messageDependencyResolver = MockMessageDependencyResolverInterface()
-        let quickSyncObserver = MockQuickSyncObserverInterface()
-        let mlsService = MockMLSServiceInterface()
-        let coreDataStack: CoreDataStack
-
-        init(coreDataStack: CoreDataStack) {
-            self.coreDataStack = coreDataStack
-
-            apiProvider.messageAPIApiVersion_MockValue = messageApi
-        }
-
-        func withApiVersionResolving(to apiVersion: APIVersion?) -> Arrangement {
-            BackendInfo.apiVersion = apiVersion
-            return self
-        }
-
-        func withQuickSyncObserverCompleting() -> Arrangement {
-            quickSyncObserver.waitForQuickSyncToFinish_MockMethod = {}
-            return self
-        }
-
-        func withMessageDependencyResolverReturning(result: Result<Void, MessageDependencyResolverError>)
-            -> Arrangement {
-            messageDependencyResolver.waitForDependenciesToResolveFor_MockMethod = { _ in
-                if case let .failure(error) = result {
-                    throw error
-                }
-            }
-            return self
-        }
-
-        func withBroadcastProteusMessageFailing(with error: NetworkError) -> Arrangement {
-            messageApi.broadcastProteusMessageMessage_MockMethod = { [weak messageApi] _ in
-                if let count = messageApi?.broadcastProteusMessageMessage_Invocations.count, count > 1 {
-                    return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
-                } else {
-                    throw error
-                }
-            }
-            return self
-        }
-
-        func withSendProteusMessageFailing(with error: NetworkError) -> Arrangement {
-            messageApi.sendProteusMessageMessageConversationID_MockMethod = { [weak messageApi] _, _ in
-                if let count = messageApi?.sendProteusMessageMessageConversationID_Invocations.count, count > 1 {
-                    return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
-                } else {
-                    throw error
-                }
-            }
-            return self
-        }
-
-        func withMLServiceConfigured() -> Arrangement {
-            coreDataStack.syncContext.performAndWait {
-                coreDataStack.syncContext.mlsService = mlsService
-            }
-            return self
-        }
-
-        func withEstablishSessions(returning result: Result<Void, SessionEstablisherError>) -> Arrangement {
-            switch result {
-            case .success:
-                sessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in }
-            case let .failure(error):
-                sessionEstablisher.establishSessionWithApiVersion_MockError = error
-            }
-            return self
-        }
-
-        func withBroadcastProteusMessage(returning result: Result<
-            (Payload.MessageSendingStatus, ZMTransportResponse),
-            NetworkError
-        >) -> Arrangement {
-            switch result {
-            case let .success(value):
-                messageApi.broadcastProteusMessageMessage_MockValue = value
-            case let .failure(error):
-                messageApi.broadcastProteusMessageMessage_MockError = error
-            }
-            return self
-        }
-
-        func withSendProteusMessage(returning result: Result<
-            (Payload.MessageSendingStatus, ZMTransportResponse),
-            NetworkError
-        >) -> Arrangement {
-            switch result {
-            case let .success(value):
-                messageApi.sendProteusMessageMessageConversationID_MockValue = value
-            case let .failure(error):
-                messageApi.sendProteusMessageMessageConversationID_MockError = error
-            }
-            return self
-        }
-
-        func withSendMlsMessage(returning result: Result<
-            (Payload.MLSMessageSendingStatus, ZMTransportResponse),
-            NetworkError
-        >) -> Arrangement {
-            switch result {
-            case let .success(value):
-                messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockValue = value
-            case let .failure(error):
-                messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockError = error
-            }
-            return self
-        }
-
-        func arrange() -> (Arrangement, MessageSender) {
-            (self, MessageSender(
-                apiProvider: apiProvider,
-                clientRegistrationDelegate: clientRegistrationDelegate,
-                sessionEstablisher: sessionEstablisher,
-                messageDependencyResolver: messageDependencyResolver,
-                quickSyncObserver: quickSyncObserver,
-                context: coreDataStack.syncContext
-            ))
         }
     }
 }

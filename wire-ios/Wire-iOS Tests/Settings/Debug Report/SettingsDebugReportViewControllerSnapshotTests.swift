@@ -22,10 +22,7 @@ import XCTest
 @testable import Wire
 
 final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: SettingsDebugReportViewController!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -51,4 +48,11 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: SettingsDebugReportViewController!
 }

@@ -20,20 +20,24 @@ import WireTesting
 @testable import WireRequestStrategy
 
 final class StoreUpdateEventTests: MessagingTestBase {
+    // MARK: Internal
+
     struct Failure: Error {
-        var description: String
+        // MARK: Lifecycle
 
         init(_ description: String) {
             self.description = description
         }
+
+        // MARK: Internal
+
+        var description: String
     }
 
     var account: Account!
     var publicKey: SecKey?
     var publicKeys: EARPublicKeys!
     var privateKeys: EARPrivateKeys!
-
-    // MARK: - Life cycle
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -64,163 +68,6 @@ final class StoreUpdateEventTests: MessagingTestBase {
         publicKey = nil
         privateKeys = nil
         super.tearDown()
-    }
-
-    // MARK: - Helpers
-
-    private func createConversation(
-        id: UUID = .create(),
-        in context: NSManagedObjectContext
-    ) -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = id
-        return conversation
-    }
-
-    private func createNewConversationEvent(for conversation: ZMConversation, uuid: UUID = .create()) -> ZMUpdateEvent {
-        let payload = payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)!
-        event.appendDebugInformation("Highly informative description")
-        return event
-    }
-
-    private func createNewCallEvent(for conversation: ZMConversation, uuid: UUID = .create()) throws -> ZMUpdateEvent {
-        let callEventContent = CallEventContent(
-            type: "CONFSTART",
-            properties: nil,
-            callerUserID: nil,
-            callerClientID: "",
-            resp: false
-        )
-
-        let calling = try Calling(content: callEventContent.encodeToJSONString(), conversationId: .random())
-        let genericMessage = GenericMessage(content: calling)
-        let serializedData = try genericMessage.serializedData()
-
-        let payload = payloadForMessage(
-            in: conversation,
-            type: EventConversation.addOTRMessage,
-            data: ["text": serializedData.base64String()]
-        )!
-
-        let event = ZMUpdateEvent(
-            fromEventStreamPayload: payload,
-            uuid: uuid
-        )!
-
-        event.appendDebugInformation("Highly informative description")
-        return event
-    }
-
-    private func createStoredEvent(index: UInt) throws -> StoredUpdateEvent {
-        try createStoredEvents(indices: [index])[0]
-    }
-
-    private func createStoredEvents(indices: [UInt]) throws -> [StoredUpdateEvent] {
-        let conversation = createConversation(in: uiMOC)
-        let eventsAndIndices = indices.map { index in
-            (createNewConversationEvent(for: conversation), index)
-        }
-
-        return try createStoredEvents(eventsAndIndices: eventsAndIndices)
-    }
-
-    private func createStoredEvent(
-        from event: ZMUpdateEvent,
-        index: UInt
-    ) throws -> StoredUpdateEvent {
-        try createStoredEvents(eventsAndIndices: [(event, index)])[0]
-    }
-
-    private func createStoredEvents(eventsAndIndices: [(ZMUpdateEvent, UInt)]) throws -> [StoredUpdateEvent] {
-        try eventsAndIndices.map { event, index in
-            guard let storedEvent = StoredUpdateEvent.encryptAndCreate(
-                event,
-                context: eventMOC,
-                index: Int64(index)
-            ) else {
-                throw Failure("Could not create storedEvents")
-            }
-
-            return storedEvent
-        }
-    }
-
-    private func createStoredEvents(encrypt: Bool) throws -> ([ZMUpdateEvent], [StoredUpdateEvent]) {
-        let conversation = createConversation(in: uiMOC)
-        let event1 = createNewConversationEvent(for: conversation)
-        let event2 = try createNewCallEvent(for: conversation)
-
-        guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
-            event1,
-            context: eventMOC,
-            index: 2,
-            publicKeys: encrypt ? publicKeys : nil
-        ) else {
-            throw Failure("Did not create storedEvent")
-        }
-
-        guard let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
-            event2,
-            context: eventMOC,
-            index: 3,
-            publicKeys: encrypt ? publicKeys : nil
-        ) else {
-            throw Failure("Did not create storedEvent")
-        }
-
-        // Then first event is encrypted and not a call event
-        assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
-        XCTAssertEqual(storedEvent1.sortIndex, 2)
-        XCTAssertNotNil(storedEvent1.payload)
-        XCTAssertFalse(storedEvent1.isCallEvent)
-        XCTAssertEqual(storedEvent1.isEncrypted, encrypt)
-
-        // Then second event is encrypted and a call event
-        assertStoredEventProperties(storedEvent: storedEvent2, event: event2)
-        XCTAssertEqual(storedEvent2.sortIndex, 3)
-        XCTAssertNotNil(storedEvent2.payload)
-        XCTAssertTrue(storedEvent2.isCallEvent)
-        XCTAssertEqual(storedEvent2.isEncrypted, encrypt)
-
-        return ([event1, event2], [storedEvent1, storedEvent2])
-    }
-
-    private func decryptStoredEvent(
-        event: StoredUpdateEvent,
-        privateKey: SecKey
-    ) throws -> NSDictionary {
-        guard let encryptedPayload = event.payload?[StoredUpdateEvent.encryptedPayloadKey] else {
-            throw Failure("expected encrypted payload")
-        }
-
-        guard let decryptedData = SecKeyCreateDecryptedData(
-            privateKey,
-            .eciesEncryptionCofactorX963SHA256AESGCM,
-            encryptedPayload as! CFData,
-            nil
-        ) else {
-            throw Failure("failed to decrypt payload")
-        }
-
-        guard let payload = try JSONSerialization.jsonObject(
-            with: decryptedData as Data,
-            options: []
-        ) as? NSDictionary else {
-            throw Failure("failed to serialize payload")
-        }
-
-        return payload
-    }
-
-    private func assertStoredEventProperties(
-        storedEvent: StoredUpdateEvent,
-        event: ZMUpdateEvent
-    ) {
-        XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
-        XCTAssertEqual(storedEvent.isTransient, event.isTransient)
-        XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
-        XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
     }
 
     // MARK: - Encrypt and create
@@ -634,5 +481,164 @@ final class StoreUpdateEventTests: MessagingTestBase {
             XCTAssertTrue(convertedEvents.eventsToProcess.isEmpty)
             XCTAssertTrue(convertedEvents.eventsToDelete.isEmpty)
         }
+    }
+
+    // MARK: Private
+
+    // MARK: - Helpers
+
+    private func createConversation(
+        id: UUID = .create(),
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = id
+        return conversation
+    }
+
+    private func createNewConversationEvent(for conversation: ZMConversation, uuid: UUID = .create()) -> ZMUpdateEvent {
+        let payload = payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
+        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)!
+        event.appendDebugInformation("Highly informative description")
+        return event
+    }
+
+    private func createNewCallEvent(for conversation: ZMConversation, uuid: UUID = .create()) throws -> ZMUpdateEvent {
+        let callEventContent = CallEventContent(
+            type: "CONFSTART",
+            properties: nil,
+            callerUserID: nil,
+            callerClientID: "",
+            resp: false
+        )
+
+        let calling = try Calling(content: callEventContent.encodeToJSONString(), conversationId: .random())
+        let genericMessage = GenericMessage(content: calling)
+        let serializedData = try genericMessage.serializedData()
+
+        let payload = payloadForMessage(
+            in: conversation,
+            type: EventConversation.addOTRMessage,
+            data: ["text": serializedData.base64String()]
+        )!
+
+        let event = ZMUpdateEvent(
+            fromEventStreamPayload: payload,
+            uuid: uuid
+        )!
+
+        event.appendDebugInformation("Highly informative description")
+        return event
+    }
+
+    private func createStoredEvent(index: UInt) throws -> StoredUpdateEvent {
+        try createStoredEvents(indices: [index])[0]
+    }
+
+    private func createStoredEvents(indices: [UInt]) throws -> [StoredUpdateEvent] {
+        let conversation = createConversation(in: uiMOC)
+        let eventsAndIndices = indices.map { index in
+            (createNewConversationEvent(for: conversation), index)
+        }
+
+        return try createStoredEvents(eventsAndIndices: eventsAndIndices)
+    }
+
+    private func createStoredEvent(
+        from event: ZMUpdateEvent,
+        index: UInt
+    ) throws -> StoredUpdateEvent {
+        try createStoredEvents(eventsAndIndices: [(event, index)])[0]
+    }
+
+    private func createStoredEvents(eventsAndIndices: [(ZMUpdateEvent, UInt)]) throws -> [StoredUpdateEvent] {
+        try eventsAndIndices.map { event, index in
+            guard let storedEvent = StoredUpdateEvent.encryptAndCreate(
+                event,
+                context: eventMOC,
+                index: Int64(index)
+            ) else {
+                throw Failure("Could not create storedEvents")
+            }
+
+            return storedEvent
+        }
+    }
+
+    private func createStoredEvents(encrypt: Bool) throws -> ([ZMUpdateEvent], [StoredUpdateEvent]) {
+        let conversation = createConversation(in: uiMOC)
+        let event1 = createNewConversationEvent(for: conversation)
+        let event2 = try createNewCallEvent(for: conversation)
+
+        guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+            event1,
+            context: eventMOC,
+            index: 2,
+            publicKeys: encrypt ? publicKeys : nil
+        ) else {
+            throw Failure("Did not create storedEvent")
+        }
+
+        guard let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
+            event2,
+            context: eventMOC,
+            index: 3,
+            publicKeys: encrypt ? publicKeys : nil
+        ) else {
+            throw Failure("Did not create storedEvent")
+        }
+
+        // Then first event is encrypted and not a call event
+        assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
+        XCTAssertEqual(storedEvent1.sortIndex, 2)
+        XCTAssertNotNil(storedEvent1.payload)
+        XCTAssertFalse(storedEvent1.isCallEvent)
+        XCTAssertEqual(storedEvent1.isEncrypted, encrypt)
+
+        // Then second event is encrypted and a call event
+        assertStoredEventProperties(storedEvent: storedEvent2, event: event2)
+        XCTAssertEqual(storedEvent2.sortIndex, 3)
+        XCTAssertNotNil(storedEvent2.payload)
+        XCTAssertTrue(storedEvent2.isCallEvent)
+        XCTAssertEqual(storedEvent2.isEncrypted, encrypt)
+
+        return ([event1, event2], [storedEvent1, storedEvent2])
+    }
+
+    private func decryptStoredEvent(
+        event: StoredUpdateEvent,
+        privateKey: SecKey
+    ) throws -> NSDictionary {
+        guard let encryptedPayload = event.payload?[StoredUpdateEvent.encryptedPayloadKey] else {
+            throw Failure("expected encrypted payload")
+        }
+
+        guard let decryptedData = SecKeyCreateDecryptedData(
+            privateKey,
+            .eciesEncryptionCofactorX963SHA256AESGCM,
+            encryptedPayload as! CFData,
+            nil
+        ) else {
+            throw Failure("failed to decrypt payload")
+        }
+
+        guard let payload = try JSONSerialization.jsonObject(
+            with: decryptedData as Data,
+            options: []
+        ) as? NSDictionary else {
+            throw Failure("failed to serialize payload")
+        }
+
+        return payload
+    }
+
+    private func assertStoredEventProperties(
+        storedEvent: StoredUpdateEvent,
+        event: ZMUpdateEvent
+    ) {
+        XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
+        XCTAssertEqual(storedEvent.isTransient, event.isTransient)
+        XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
+        XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
     }
 }

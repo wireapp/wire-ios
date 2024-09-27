@@ -116,31 +116,7 @@ public protocol MLSActionExecutorProtocol {
 /// An actor responsible for performing commits on MLS groups and decrypting messages in a non-reentrant manner.
 
 public actor MLSActionExecutor: MLSActionExecutorProtocol {
-    // MARK: - Types
-
-    enum Action {
-        case addMembers([KeyPackage])
-        case removeClients([ClientId])
-        case updateKeyMaterial
-        case proposal
-        case joinGroup(Data)
-    }
-
-    // MARK: - Properties
-
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let commitSender: CommitSending
-    private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
-    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
-    private let featureRepository: FeatureRepositoryInterface
-
-    private var coreCrypto: SafeCoreCryptoProtocol {
-        get async throws {
-            try await coreCryptoProvider.coreCrypto()
-        }
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
@@ -152,52 +128,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         self.featureRepository = featureRepository
     }
 
-    // MARK: - Non-reentrant
-
-    /// Perform an non-rentrant operation on an MLS group.
-    ///
-    /// That is only one operation is allowed execute concurrently, if multiple operations for the same group is
-    /// scheduled
-    /// they will be queued and executed in sequence.
-    ///
-    /// This is used for operations where ordering is important. For example when sending a commit to add client to a
-    /// group, this is a two-step operations:
-    ///
-    /// 1. Create pending commit and send to distribution server
-    /// 2. Merge pending commit when accepted by distribution server
-    ///
-    /// Here's it's critical that no other operation like `decryptMessage` is performed
-    /// between step 1 and 2. We enforce this by wrapping all `decrypt` and `commit` operations
-    /// inside `performNonReentrant`
-
-    func performNonReentrant<T>(groupID: MLSGroupID, operation: () async throws -> T) async rethrows -> T {
-        if continuationsByGroupID.keys.contains(groupID) {
-            await withCheckedContinuation { continuation in
-                continuationsByGroupID[groupID]?.append(continuation)
-            }
-        }
-
-        if !continuationsByGroupID.keys.contains(groupID) {
-            // an empty entry means an operation is currently executing, a non-empty
-            // entry are queued operations.
-            continuationsByGroupID[groupID] = []
-        }
-
-        defer {
-            if var continuations = continuationsByGroupID[groupID] {
-                if !continuations.isEmpty {
-                    continuations.removeFirst().resume()
-                    continuationsByGroupID[groupID] = continuations
-                }
-
-                if continuations.isEmpty {
-                    continuationsByGroupID.removeValue(forKey: groupID)
-                }
-            }
-        }
-
-        return try await operation()
-    }
+    // MARK: Public
 
     // MARK: - Actions
 
@@ -321,6 +252,95 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
+    // MARK: - Epoch publisher
+
+    public nonisolated
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        commitSender.onEpochChanged()
+    }
+
+    // MARK: - CRLs distribution points publisher
+
+    public nonisolated
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
+    }
+
+    // MARK: Internal
+
+    // MARK: - Types
+
+    enum Action {
+        case addMembers([KeyPackage])
+        case removeClients([ClientId])
+        case updateKeyMaterial
+        case proposal
+        case joinGroup(Data)
+    }
+
+    // MARK: - Non-reentrant
+
+    /// Perform an non-rentrant operation on an MLS group.
+    ///
+    /// That is only one operation is allowed execute concurrently, if multiple operations for the same group is
+    /// scheduled
+    /// they will be queued and executed in sequence.
+    ///
+    /// This is used for operations where ordering is important. For example when sending a commit to add client to a
+    /// group, this is a two-step operations:
+    ///
+    /// 1. Create pending commit and send to distribution server
+    /// 2. Merge pending commit when accepted by distribution server
+    ///
+    /// Here's it's critical that no other operation like `decryptMessage` is performed
+    /// between step 1 and 2. We enforce this by wrapping all `decrypt` and `commit` operations
+    /// inside `performNonReentrant`
+
+    func performNonReentrant<T>(groupID: MLSGroupID, operation: () async throws -> T) async rethrows -> T {
+        if continuationsByGroupID.keys.contains(groupID) {
+            await withCheckedContinuation { continuation in
+                continuationsByGroupID[groupID]?.append(continuation)
+            }
+        }
+
+        if !continuationsByGroupID.keys.contains(groupID) {
+            // an empty entry means an operation is currently executing, a non-empty
+            // entry are queued operations.
+            continuationsByGroupID[groupID] = []
+        }
+
+        defer {
+            if var continuations = continuationsByGroupID[groupID] {
+                if !continuations.isEmpty {
+                    continuations.removeFirst().resume()
+                    continuationsByGroupID[groupID] = continuations
+                }
+
+                if continuations.isEmpty {
+                    continuationsByGroupID.removeValue(forKey: groupID)
+                }
+            }
+        }
+
+        return try await operation()
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let commitSender: CommitSending
+    private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
+    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
+    private let featureRepository: FeatureRepositoryInterface
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto()
+        }
+    }
+
     // MARK: - Commit generation
 
     private func commitBundle(for action: Action, in groupID: MLSGroupID) async throws -> CommitBundle {
@@ -411,20 +431,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 )
             throw CommitError.failedToGenerateCommit
         }
-    }
-
-    // MARK: - Epoch publisher
-
-    public nonisolated
-    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        commitSender.onEpochChanged()
-    }
-
-    // MARK: - CRLs distribution points publisher
-
-    public nonisolated
-    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
 }
 

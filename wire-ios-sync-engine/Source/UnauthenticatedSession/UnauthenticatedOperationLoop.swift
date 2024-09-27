@@ -25,11 +25,7 @@ private let log = ZMSLog(tag: "Network")
 // MARK: - UnauthenticatedOperationLoop
 
 class UnauthenticatedOperationLoop: NSObject {
-    let transportSession: UnauthenticatedTransportSessionProtocol
-    let requestStrategies: [RequestStrategy]
-    weak var operationQueue: GroupQueue?
-    fileprivate var tornDown = false
-    fileprivate var shouldEnqueue = true
+    // MARK: Lifecycle
 
     init(
         transportSession: UnauthenticatedTransportSessionProtocol,
@@ -46,6 +42,17 @@ class UnauthenticatedOperationLoop: NSObject {
     deinit {
         precondition(tornDown, "Need to call tearDown before deinit")
     }
+
+    // MARK: Internal
+
+    let transportSession: UnauthenticatedTransportSessionProtocol
+    let requestStrategies: [RequestStrategy]
+    weak var operationQueue: GroupQueue?
+
+    // MARK: Fileprivate
+
+    fileprivate var tornDown = false
+    fileprivate var shouldEnqueue = true
 }
 
 // MARK: TearDownCapable

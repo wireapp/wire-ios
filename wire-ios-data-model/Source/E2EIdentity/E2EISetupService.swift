@@ -52,22 +52,14 @@ public protocol E2EISetupServiceInterface {
 
 /// This class setups e2eIdentity object from CoreCrypto.
 public final class E2EISetupService: E2EISetupServiceInterface {
-    // MARK: - Properties
-
-    private let featureRepository: FeatureRepositoryInterface
-    private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
-        get async throws {
-            try await coreCryptoProvider.coreCrypto()
-        }
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: FeatureRepositoryInterface) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
     }
+
+    // MARK: Public
 
     // MARK: - Public interface
 
@@ -108,6 +100,25 @@ public final class E2EISetupService: E2EISetupServiceInterface {
             )
         } catch {
             throw Failure.failedToSetupE2eIClient(error)
+        }
+    }
+
+    // MARK: Internal
+
+    enum Failure: Error {
+        case failedToSetupE2eIClient(_ underlyingError: Error)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let featureRepository: FeatureRepositoryInterface
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get async throws {
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 
@@ -153,9 +164,5 @@ public final class E2EISetupService: E2EISetupServiceInterface {
                 )
             }
         }
-    }
-
-    enum Failure: Error {
-        case failedToSetupE2eIClient(_ underlyingError: Error)
     }
 }

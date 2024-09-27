@@ -43,12 +43,7 @@ class GridViewDelegateMock: GridViewDelegate {
 // MARK: - GridViewTests
 
 final class GridViewTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: GridView!
-    private var gridViewDelegateMock: GridViewDelegateMock!
-    private var tiles = [OrientableView]()
+    // MARK: Internal
 
     let frame = CGRect(origin: CGPoint(x: 0, y: 0), size: XCTestCase.DeviceSizeIPhone5)
 
@@ -89,35 +84,6 @@ final class GridViewTests: XCTestCase {
         gridViewDelegateMock = nil
         tiles.removeAll()
         super.tearDown()
-    }
-
-    // MARK: - Helper Methods
-
-    private func setupSut(maxItemsPerPage: Int = 8) {
-        sut = GridView(maxItemsPerPage: maxItemsPerPage)
-        sut.frame = frame
-        sut.dataSource = self
-    }
-
-    private func testGrid(
-        withAmount amount: Int,
-        maxItemsPerPage: Int = 8,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        // Given
-        tiles = Array(views.prefix(amount))
-        setupSut(maxItemsPerPage: maxItemsPerPage)
-        sut.reloadData()
-
-        // Then
-        snapshotHelper.verify(
-            matching: sut,
-            file: file,
-            testName: testName,
-            line: line
-        )
     }
 
     // MARK: - Snapshot Tests
@@ -164,6 +130,44 @@ final class GridViewTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(gridViewDelegateMock.page, 1)
+    }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: GridView!
+    private var gridViewDelegateMock: GridViewDelegateMock!
+    private var tiles = [OrientableView]()
+
+    // MARK: - Helper Methods
+
+    private func setupSut(maxItemsPerPage: Int = 8) {
+        sut = GridView(maxItemsPerPage: maxItemsPerPage)
+        sut.frame = frame
+        sut.dataSource = self
+    }
+
+    private func testGrid(
+        withAmount amount: Int,
+        maxItemsPerPage: Int = 8,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        // Given
+        tiles = Array(views.prefix(amount))
+        setupSut(maxItemsPerPage: maxItemsPerPage)
+        sut.reloadData()
+
+        // Then
+        snapshotHelper.verify(
+            matching: sut,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 }
 

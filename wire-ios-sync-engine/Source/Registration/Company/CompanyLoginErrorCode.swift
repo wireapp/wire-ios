@@ -50,6 +50,8 @@ public enum CompanyLoginError: Error, Equatable {
     case noMatchingAuthReq
     case insufficientPermissions
 
+    // MARK: Lifecycle
+
     // MARK: - Metadata
 
     /// Parses the error label, or fallbacks to the default error if it is not known.
@@ -89,6 +91,8 @@ public enum CompanyLoginError: Error, Equatable {
             self = .unknownLabel
         }
     }
+
+    // MARK: Public
 
     /// The code to display to the user inside alerts.
     public var displayCode: String {

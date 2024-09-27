@@ -48,7 +48,7 @@ final class MockUserObserver: UserObserving {
 // MARK: - MessageObserver
 
 class MessageObserver: NSObject, ZMMessageObserver {
-    var token: NSObjectProtocol?
+    // MARK: Lifecycle
 
     override init() {}
 
@@ -61,6 +61,10 @@ class MessageObserver: NSObject, ZMMessageObserver {
         )
     }
 
+    // MARK: Internal
+
+    var token: NSObjectProtocol?
+
     var notifications: [MessageChangeInfo] = []
 
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
@@ -71,8 +75,7 @@ class MessageObserver: NSObject, ZMMessageObserver {
 // MARK: - NewUnreadMessageObserver
 
 class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
-    var token: NSObjectProtocol?
-    var notifications: [NewUnreadMessagesChangeInfo] = []
+    // MARK: Lifecycle
 
     override init() {}
 
@@ -80,6 +83,11 @@ class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
         super.init()
         self.token = NewUnreadMessagesChangeInfo.add(observer: self, managedObjectContext: context)
     }
+
+    // MARK: Internal
+
+    var token: NSObjectProtocol?
+    var notifications: [NewUnreadMessagesChangeInfo] = []
 
     func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo) {
         notifications.append(changeInfo)
@@ -89,11 +97,7 @@ class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
 // MARK: - ConversationObserver
 
 final class ConversationObserver: NSObject, ZMConversationObserver {
-    var token: NSObjectProtocol?
-
-    func clearNotifications() {
-        notifications = []
-    }
+    // MARK: Lifecycle
 
     override init() {}
 
@@ -102,7 +106,15 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
         self.token = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
+    // MARK: Internal
+
+    var token: NSObjectProtocol?
+
     var notifications = [ConversationChangeInfo]()
+
+    func clearNotifications() {
+        notifications = []
+    }
 
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         notifications.append(changeInfo)
@@ -113,10 +125,7 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
 
 @objcMembers
 class ConversationListChangeObserver: NSObject, ZMConversationListObserver {
-    public var notifications = [ConversationListChangeInfo]()
-    public var observerCallback: ((ConversationListChangeInfo) -> Void)?
-    unowned var conversationList: ConversationList
-    var token: NSObjectProtocol?
+    // MARK: Lifecycle
 
     init(conversationList: ConversationList, managedObjectContext: NSManagedObjectContext) {
         self.conversationList = conversationList
@@ -127,6 +136,16 @@ class ConversationListChangeObserver: NSObject, ZMConversationListObserver {
             managedObjectContext: managedObjectContext
         )
     }
+
+    // MARK: Public
+
+    public var notifications = [ConversationListChangeInfo]()
+    public var observerCallback: ((ConversationListChangeInfo) -> Void)?
+
+    // MARK: Internal
+
+    unowned var conversationList: ConversationList
+    var token: NSObjectProtocol?
 
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         notifications.append(changeInfo)

@@ -19,6 +19,8 @@
 import Foundation
 
 struct ConversationTypingEventDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationTypingEvent {
@@ -43,6 +45,8 @@ struct ConversationTypingEventDecoder {
             isTyping: payload.status == .started
         )
     }
+
+    // MARK: Private
 
     private struct Payload: Decodable {
         let status: TypingStatus

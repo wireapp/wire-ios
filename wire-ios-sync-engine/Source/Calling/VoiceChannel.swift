@@ -25,6 +25,8 @@ public enum CaptureDevice: Int {
     case front
     case back
 
+    // MARK: Internal
+
     var deviceIdentifier: String {
         switch  self {
         case .front:

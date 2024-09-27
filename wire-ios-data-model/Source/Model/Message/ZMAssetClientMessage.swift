@@ -23,8 +23,7 @@ import Foundation
 /// An asset message (image, file, ...)
 @objcMembers
 public class ZMAssetClientMessage: ZMOTRMessage {
-    /// In memory cache
-    var cachedUnderlyingAssetMessage: GenericMessage?
+    // MARK: Lifecycle
 
     convenience init(
         asset: WireProtos.Asset,
@@ -41,6 +40,21 @@ public class ZMAssetClientMessage: ZMOTRMessage {
         try mergeWithExistingData(message: genericMessage)
     }
 
+    // MARK: Public
+
+    /// Current download / upload progress
+    @NSManaged public var progress: Float
+
+    /// True if we are current in the process of downloading the asset
+    @NSManaged public var isDownloading: Bool
+
+    /// State of the file transfer from the uploader's perspective
+    @NSManaged public internal(set) var transferState: AssetTransferState
+
+    /// The asset endpoint version used to generate this message
+    /// values lower than 3 represent an enpoint version of 2
+    @NSManaged public var version: Int16
+
     override public var hashOfContent: Data? {
         guard let serverTimestamp else {
             return nil
@@ -55,18 +69,10 @@ public class ZMAssetClientMessage: ZMOTRMessage {
         set { setTransientUUID(newValue, forKey: #keyPath(ZMAssetClientMessage.assetId)) }
     }
 
-    public static func keyPathsForValuesAffectingAssetID() -> Set<String> {
-        [#keyPath(ZMAssetClientMessage.assetID_data)]
-    }
-
     /// Preprocessed size of image
     public var preprocessedSize: CGSize {
         get { transientCGSize(forKey: #keyPath(ZMAssetClientMessage.preprocessedSize)) }
         set { setTransientCGSize(newValue, forKey: #keyPath(ZMAssetClientMessage.preprocessedSize)) }
-    }
-
-    public static func keyPathsForValuesPreprocessedSize() -> Set<String> {
-        [#keyPath(ZMAssetClientMessage.assetID_data)]
     }
 
     /// Original file size
@@ -79,23 +85,6 @@ public class ZMAssetClientMessage: ZMOTRMessage {
             return previewSize
         }
         return originalSize
-    }
-
-    /// Current download / upload progress
-    @NSManaged public var progress: Float
-
-    /// True if we are current in the process of downloading the asset
-    @NSManaged public var isDownloading: Bool
-
-    /// State of the file transfer from the uploader's perspective
-    @NSManaged public internal(set) var transferState: AssetTransferState
-
-    public func updateTransferState(_ transferState: AssetTransferState, synchronize: Bool) {
-        self.transferState = transferState
-
-        if synchronize {
-            setLocallyModifiedKeys([#keyPath(ZMAssetClientMessage.transferState)])
-        }
     }
 
     /// Download state
@@ -136,10 +125,6 @@ public class ZMAssetClientMessage: ZMOTRMessage {
         return hasEncryptionKeys
     }
 
-    /// The asset endpoint version used to generate this message
-    /// values lower than 3 represent an enpoint version of 2
-    @NSManaged public var version: Int16
-
     /// Used to associate and persist the task identifier of the `NSURLSessionTask`
     /// with the upload or download of the file data. Can be used to verify that the
     /// data of a `FileMessage` is being down- or uploaded after a termination event
@@ -160,35 +145,6 @@ public class ZMAssetClientMessage: ZMOTRMessage {
         }
     }
 
-    static func keyPathsForValuesAffectingAssociatedTaskIdentifier() -> Set<String> {
-        [#keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)]
-    }
-
-    var v2Asset: V2Asset? {
-        V2Asset(with: self)
-    }
-
-    var v3Asset: V3Asset? {
-        V3Asset(with: self)
-    }
-
-    var asset: AssetProxyType? {
-        v2Asset ?? v3Asset
-    }
-
-    override public func expire() {
-        super.expire()
-
-        if transferState != .uploaded {
-            transferState = .uploadingFailed
-        }
-    }
-
-    override public func markAsSent() {
-        super.markAsSent()
-        setObfuscationTimerIfNeeded()
-    }
-
     override public var isUpdatingExistingMessage: Bool {
         guard let genericMessage = underlyingMessage,
               let content = genericMessage.content else {
@@ -202,12 +158,37 @@ public class ZMAssetClientMessage: ZMOTRMessage {
         }
     }
 
-    func setObfuscationTimerIfNeeded() {
-        guard isEphemeral else {
-            return
-        }
+    override public var isSilenced: Bool {
+        conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
+    }
 
-        startDestructionIfNeeded()
+    public static func keyPathsForValuesAffectingAssetID() -> Set<String> {
+        [#keyPath(ZMAssetClientMessage.assetID_data)]
+    }
+
+    public static func keyPathsForValuesPreprocessedSize() -> Set<String> {
+        [#keyPath(ZMAssetClientMessage.assetID_data)]
+    }
+
+    public func updateTransferState(_ transferState: AssetTransferState, synchronize: Bool) {
+        self.transferState = transferState
+
+        if synchronize {
+            setLocallyModifiedKeys([#keyPath(ZMAssetClientMessage.transferState)])
+        }
+    }
+
+    override public func expire() {
+        super.expire()
+
+        if transferState != .uploaded {
+            transferState = .uploadingFailed
+        }
+    }
+
+    override public func markAsSent() {
+        super.markAsSent()
+        setObfuscationTimerIfNeeded()
     }
 
     override public func resend() {
@@ -233,9 +214,36 @@ public class ZMAssetClientMessage: ZMOTRMessage {
         super.startDestructionIfNeeded()
     }
 
-    override public var isSilenced: Bool {
-        conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
+    // MARK: Internal
+
+    /// In memory cache
+    var cachedUnderlyingAssetMessage: GenericMessage?
+
+    var v2Asset: V2Asset? {
+        V2Asset(with: self)
     }
+
+    var v3Asset: V3Asset? {
+        V3Asset(with: self)
+    }
+
+    var asset: AssetProxyType? {
+        v2Asset ?? v3Asset
+    }
+
+    static func keyPathsForValuesAffectingAssociatedTaskIdentifier() -> Set<String> {
+        [#keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)]
+    }
+
+    func setObfuscationTimerIfNeeded() {
+        guard isEphemeral else {
+            return
+        }
+
+        startDestructionIfNeeded()
+    }
+
+    // MARK: Fileprivate
 
     // Private implementation
     @NSManaged fileprivate var assetID_data: Data
@@ -330,6 +338,16 @@ public enum AssetProcessingState: Int16 {
 // MARK: - CacheAsset
 
 struct CacheAsset: AssetType {
+    // MARK: Lifecycle
+
+    init(owner: ZMAssetClientMessage, type: AssetType, cache: FileAssetCache) {
+        self.owner = owner
+        self.type = type
+        self.cache = cache
+    }
+
+    // MARK: Internal
+
     enum AssetType {
         case image, file, thumbnail
     }
@@ -337,12 +355,6 @@ struct CacheAsset: AssetType {
     var owner: ZMAssetClientMessage
     var type: AssetType
     var cache: FileAssetCache
-
-    init(owner: ZMAssetClientMessage, type: AssetType, cache: FileAssetCache) {
-        self.owner = owner
-        self.type = type
-        self.cache = cache
-    }
 
     var needsPreprocessing: Bool {
         switch type {

@@ -23,14 +23,18 @@ import WireSyncEngine
 
 extension AppLockModule {
     final class Router: RouterInterface {
-        // MARK: - Properties
-
-        weak var view: View!
-        let userSession: UserSession
+        // MARK: Lifecycle
 
         init(userSession: UserSession) {
             self.userSession = userSession
         }
+
+        // MARK: Internal
+
+        // MARK: - Properties
+
+        weak var view: View!
+        let userSession: UserSession
     }
 }
 

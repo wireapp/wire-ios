@@ -24,6 +24,8 @@ import XCTest
 // MARK: - FileAssetCacheTests
 
 class FileAssetCacheTests: XCTestCase {
+    // MARK: Internal
+
     var sut: FileAssetCache!
     var location: URL!
     var coreDataStack: CoreDataStack!
@@ -64,16 +66,6 @@ class FileAssetCacheTests: XCTestCase {
         coreDataStackHelper = nil
         modelHelper = nil
         try await super.tearDown()
-    }
-
-    private func createMessageForCaching() -> ZMConversationMessage {
-        let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = UUID()
-        return try! conversation.appendText(content: "123")
-    }
-
-    private func testData() -> Data {
-        Data.secureRandomData(ofLength: 2000)
     }
 
     // MARK: - Storing and retrieving image assets
@@ -484,6 +476,18 @@ class FileAssetCacheTests: XCTestCase {
             // then
             XCTAssertFalse(self.sut.hasImageData(for: team))
         }
+    }
+
+    // MARK: Private
+
+    private func createMessageForCaching() -> ZMConversationMessage {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = UUID()
+        return try! conversation.appendText(content: "123")
+    }
+
+    private func testData() -> Data {
+        Data.secureRandomData(ofLength: 2000)
     }
 }
 

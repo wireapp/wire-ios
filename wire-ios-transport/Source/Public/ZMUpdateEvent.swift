@@ -223,36 +223,7 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
 
 @objcMembers
 open class ZMUpdateEvent: NSObject {
-    open var payload: [AnyHashable: Any]
-    open var type: ZMUpdateEventType
-    open var source: ZMUpdateEventSource
-    open var uuid: UUID?
-
-    // A hash of the event content. This is used to keep track of events
-    // that we have already processed.
-    public var contentHash: Int64?
-
-    var debugInformationArray: [String] = []
-    /// True if the event will not appear in the notification stream
-    open var isTransient: Bool
-    /// True if the event had encrypted payload but now it has decrypted payload
-    open var wasDecrypted: Bool
-
-    /// True if the event is encoded with ZMGenericMessage
-    open var isGenericMessageEvent: Bool {
-        switch type {
-        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd,
-             .conversationMLSMessageAdd:
-            true
-        default:
-            false
-        }
-    }
-
-    /// Debug information
-    open var debugInformation: String {
-        debugInformationArray.joined(separator: "\n")
-    }
+    // MARK: Lifecycle
 
     public init?(
         uuid: UUID?,
@@ -276,6 +247,44 @@ open class ZMUpdateEvent: NSObject {
         self.wasDecrypted = false
     }
 
+    /// Creates an update event
+    public convenience init?(fromEventStreamPayload payload: ZMTransportData, uuid: UUID?) {
+        let dictionary = payload.asDictionary()
+        // Some payloads are wrapped inside "event" key (e.g. removing bot from conversation)
+        // Check for this before
+        let innerPayload = (dictionary?["event"] as? [AnyHashable: Any]) ?? dictionary
+
+        self.init(uuid: uuid, payload: innerPayload, transient: false, decrypted: false, source: .download)
+    }
+
+    // MARK: Open
+
+    open var payload: [AnyHashable: Any]
+    open var type: ZMUpdateEventType
+    open var source: ZMUpdateEventSource
+    open var uuid: UUID?
+
+    /// True if the event will not appear in the notification stream
+    open var isTransient: Bool
+    /// True if the event had encrypted payload but now it has decrypted payload
+    open var wasDecrypted: Bool
+
+    /// True if the event is encoded with ZMGenericMessage
+    open var isGenericMessageEvent: Bool {
+        switch type {
+        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd,
+             .conversationMLSMessageAdd:
+            true
+        default:
+            false
+        }
+    }
+
+    /// Debug information
+    open var debugInformation: String {
+        debugInformationArray.joined(separator: "\n")
+    }
+
     open class func eventsArray(fromPushChannelData transportData: ZMTransportData) -> [ZMUpdateEvent]? {
         eventsArray(from: transportData, source: .webSocket)
     }
@@ -288,54 +297,6 @@ open class ZMUpdateEvent: NSObject {
         pushStartingAt threshold: UUID?
     ) -> [Any]? {
         eventsArray(from: transportData, source: .webSocket, pushStartingAt: threshold)
-    }
-
-    class func eventsArray(
-        with uuid: UUID,
-        payloadArray: [Any]?,
-        transient: Bool,
-        source: ZMUpdateEventSource,
-        pushStartingAt sourceThreshold: UUID?
-    ) -> [ZMUpdateEvent] {
-        guard let payloads = payloadArray as? [[AnyHashable: AnyHashable]] else {
-            WireLogger.updateEvent.error(
-                "Push event payload is invalid",
-                attributes: [.eventId: uuid.transportString().redactedAndTruncated()],
-                .safePublic
-            )
-            return []
-        }
-
-        let events = payloads.compactMap { payload -> ZMUpdateEvent? in
-            var actualSource = source
-            if let thresholdUUID = sourceThreshold, thresholdUUID.isType1UUID, uuid.isType1UUID,
-               (thresholdUUID as NSUUID).compare(withType1UUID: uuid as NSUUID) != .orderedDescending {
-                actualSource = .pushNotification
-            }
-            return ZMUpdateEvent(
-                uuid: uuid,
-                payload: payload,
-                transient: transient,
-                decrypted: false,
-                source: actualSource
-            )
-        }
-        return events
-    }
-
-    @objc(eventFromEventStreamPayload:uuid:)
-    public static func eventFromEventStreamPayload(_ payload: ZMTransportData, uuid: UUID?) -> ZMUpdateEvent? {
-        ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)
-    }
-
-    /// Creates an update event
-    public convenience init?(fromEventStreamPayload payload: ZMTransportData, uuid: UUID?) {
-        let dictionary = payload.asDictionary()
-        // Some payloads are wrapped inside "event" key (e.g. removing bot from conversation)
-        // Check for this before
-        let innerPayload = (dictionary?["event"] as? [AnyHashable: Any]) ?? dictionary
-
-        self.init(uuid: uuid, payload: innerPayload, transient: false, decrypted: false, source: .download)
     }
 
     /// Creates an update event that was encrypted and it's now decrypted
@@ -381,6 +342,54 @@ open class ZMUpdateEvent: NSObject {
     /// Adds debug information
     open func appendDebugInformation(_ debugInformation: String) {
         debugInformationArray.append(debugInformation)
+    }
+
+    // MARK: Public
+
+    // A hash of the event content. This is used to keep track of events
+    // that we have already processed.
+    public var contentHash: Int64?
+
+    @objc(eventFromEventStreamPayload:uuid:)
+    public static func eventFromEventStreamPayload(_ payload: ZMTransportData, uuid: UUID?) -> ZMUpdateEvent? {
+        ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)
+    }
+
+    // MARK: Internal
+
+    var debugInformationArray: [String] = []
+
+    class func eventsArray(
+        with uuid: UUID,
+        payloadArray: [Any]?,
+        transient: Bool,
+        source: ZMUpdateEventSource,
+        pushStartingAt sourceThreshold: UUID?
+    ) -> [ZMUpdateEvent] {
+        guard let payloads = payloadArray as? [[AnyHashable: AnyHashable]] else {
+            WireLogger.updateEvent.error(
+                "Push event payload is invalid",
+                attributes: [.eventId: uuid.transportString().redactedAndTruncated()],
+                .safePublic
+            )
+            return []
+        }
+
+        let events = payloads.compactMap { payload -> ZMUpdateEvent? in
+            var actualSource = source
+            if let thresholdUUID = sourceThreshold, thresholdUUID.isType1UUID, uuid.isType1UUID,
+               (thresholdUUID as NSUUID).compare(withType1UUID: uuid as NSUUID) != .orderedDescending {
+                actualSource = .pushNotification
+            }
+            return ZMUpdateEvent(
+                uuid: uuid,
+                payload: payload,
+                transient: transient,
+                decrypted: false,
+                source: actualSource
+            )
+        }
+        return events
     }
 }
 

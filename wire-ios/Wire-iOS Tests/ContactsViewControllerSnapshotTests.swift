@@ -22,6 +22,8 @@ import XCTest
 @testable import Wire
 
 final class ContactsViewControllerSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: - Properties
 
     var sut: ContactsViewController!
@@ -97,6 +99,8 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         wrapInNavigationController()
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
 
     // MARK: - Helper Methods
 

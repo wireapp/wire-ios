@@ -22,11 +22,13 @@ import Foundation
 
 /// Describes how the user should be notified about a change.
 public struct NotificationMethod: OptionSet {
-    public let rawValue: Int
+    // MARK: Lifecycle
 
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
+
+    // MARK: Public
 
     /// Alert user by local notification
     public static let notification = NotificationMethod(rawValue: 1 << 0)
@@ -34,6 +36,8 @@ public struct NotificationMethod: OptionSet {
     public static let alert = NotificationMethod(rawValue: 1 << 1)
 
     public static let all: NotificationMethod = [.notification, .alert]
+
+    public let rawValue: Int
 }
 
 extension ZMUser {

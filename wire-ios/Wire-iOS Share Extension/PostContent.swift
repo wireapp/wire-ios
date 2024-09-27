@@ -25,21 +25,23 @@ import WireShareEngine
 
 /// Content that is shared on a share extension post attempt
 final class PostContent {
+    // MARK: Lifecycle
+
+    init(attachments: [NSItemProvider]) {
+        self.attachments = attachments
+    }
+
+    // MARK: Internal
+
     /// Conversation to post to
     var target: Conversation?
-
-    private var sendController: SendController?
-
-    var sentAllSendables: Bool {
-        guard let sendController else { return false }
-        return sendController.sentAllSendables
-    }
 
     /// List of attachments to post
     var attachments: [NSItemProvider]
 
-    init(attachments: [NSItemProvider]) {
-        self.attachments = attachments
+    var sentAllSendables: Bool {
+        guard let sendController else { return false }
+        return sendController.sentAllSendables
     }
 
     // MARK: - Send attachments
@@ -103,6 +105,10 @@ final class PostContent {
     func cancel(completion: @escaping () -> Void) {
         sendController?.cancel(completion: completion)
     }
+
+    // MARK: Private
+
+    private var sendController: SendController?
 }
 
 // MARK: - DegradationStrategy

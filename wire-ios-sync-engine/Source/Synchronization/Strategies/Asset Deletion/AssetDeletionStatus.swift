@@ -32,13 +32,7 @@ public protocol AssetDeletionIdentifierProviderType: AnyObject {
 // MARK: - AssetDeletionStatus
 
 public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProviderType {
-    private var provider: DeletableAssetIdentifierProvider
-    private var identifiersInProgress = Set<String>()
-    private let queue: GroupQueue
-
-    private var remainingIdentifiersToDelete: Set<String> {
-        provider.assetIdentifiersToBeDeleted.subtracting(identifiersInProgress)
-    }
+    // MARK: Lifecycle
 
     @objc(initWithProvider:queue:)
     public init(provider: DeletableAssetIdentifierProvider, queue: GroupQueue) {
@@ -51,6 +45,36 @@ public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProvide
             name: .deleteAssetNotification,
             object: nil
         )
+    }
+
+    // MARK: Public
+
+    // MARK: - AssetDeletionIdentifierProviderType
+
+    public func nextIdentifierToDelete() -> String? {
+        guard let first = remainingIdentifiersToDelete.first else { return nil }
+        identifiersInProgress.insert(first)
+        return first
+    }
+
+    public func didDelete(identifier: String) {
+        remove(identifier)
+        log.debug("Successfully deleted identifier: \(identifier)")
+    }
+
+    public func didFailToDelete(identifier: String) {
+        remove(identifier)
+        log.debug("Failed to delete identifier: \(identifier)")
+    }
+
+    // MARK: Private
+
+    private var provider: DeletableAssetIdentifierProvider
+    private var identifiersInProgress = Set<String>()
+    private let queue: GroupQueue
+
+    private var remainingIdentifiersToDelete: Set<String> {
+        provider.assetIdentifiersToBeDeleted.subtracting(identifiersInProgress)
     }
 
     @objc
@@ -71,23 +95,5 @@ public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProvide
     private func remove(_ identifier: String) {
         identifiersInProgress.remove(identifier)
         provider.assetIdentifiersToBeDeleted.remove(identifier)
-    }
-
-    // MARK: - AssetDeletionIdentifierProviderType
-
-    public func nextIdentifierToDelete() -> String? {
-        guard let first = remainingIdentifiersToDelete.first else { return nil }
-        identifiersInProgress.insert(first)
-        return first
-    }
-
-    public func didDelete(identifier: String) {
-        remove(identifier)
-        log.debug("Successfully deleted identifier: \(identifier)")
-    }
-
-    public func didFailToDelete(identifier: String) {
-        remove(identifier)
-        log.debug("Failed to delete identifier: \(identifier)")
     }
 }

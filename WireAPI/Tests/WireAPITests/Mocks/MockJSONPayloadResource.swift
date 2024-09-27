@@ -19,7 +19,7 @@
 import Foundation
 
 struct MockJSONPayloadResource {
-    let jsonData: Data
+    // MARK: Lifecycle
 
     init(name: String) throws {
         guard let url = Bundle.module.url(
@@ -35,4 +35,8 @@ struct MockJSONPayloadResource {
             throw "unable to load data from resource: \(error)"
         }
     }
+
+    // MARK: Internal
+
+    let jsonData: Data
 }

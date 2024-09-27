@@ -19,7 +19,7 @@
 import UIKit
 
 class RoundedBlurView: RoundedView {
-    let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+    // MARK: Lifecycle
 
     init() {
         super.init(frame: .zero)
@@ -31,6 +31,10 @@ class RoundedBlurView: RoundedView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
 
     func setupViews() {
         addSubview(blurView)

@@ -28,6 +28,8 @@ enum LabelIndicatorContext {
          external,
          federated
 
+    // MARK: Internal
+
     var icon: StyleKitIcon {
         switch self {
         case .guest:
@@ -58,13 +60,7 @@ enum LabelIndicatorContext {
 // MARK: - LabelIndicator
 
 final class LabelIndicator: UIView {
-    private let indicatorIcon = UIImageView()
-    private let titleLabel = DynamicFontLabel(
-        fontSpec: .mediumSemiboldInputText,
-        color: SemanticColors.Label.textDefault
-    )
-    private let containerView = UIView()
-    private let context: LabelIndicatorContext
+    // MARK: Lifecycle
 
     init(context: LabelIndicatorContext) {
         self.context = context
@@ -77,6 +73,16 @@ final class LabelIndicator: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Private
+
+    private let indicatorIcon = UIImageView()
+    private let titleLabel = DynamicFontLabel(
+        fontSpec: .mediumSemiboldInputText,
+        color: SemanticColors.Label.textDefault
+    )
+    private let containerView = UIView()
+    private let context: LabelIndicatorContext
 
     private func setupViews() {
         var accessibilityString = switch context {

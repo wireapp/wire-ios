@@ -36,16 +36,20 @@ public enum ConversationAddParticipantsError: Error, Equatable {
 // MARK: - AddParticipantAction
 
 public class AddParticipantAction: EntityAction {
-    public var resultHandler: ResultHandler?
-
-    public typealias Result = Void
-    public typealias Failure = ConversationAddParticipantsError
-
-    public let userIDs: [NSManagedObjectID]
-    public let conversationID: NSManagedObjectID
+    // MARK: Lifecycle
 
     public required init(users: [ZMUser], conversation: ZMConversation) {
         self.userIDs = users.map(\.objectID)
         self.conversationID = conversation.objectID
     }
+
+    // MARK: Public
+
+    public typealias Result = Void
+    public typealias Failure = ConversationAddParticipantsError
+
+    public var resultHandler: ResultHandler?
+
+    public let userIDs: [NSManagedObjectID]
+    public let conversationID: NSManagedObjectID
 }

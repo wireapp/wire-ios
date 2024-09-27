@@ -28,15 +28,21 @@ public protocol UserClientAPI {
 // MARK: - UserClientAPIV0
 
 class UserClientAPIV0: UserClientAPI {
-    let httpClient: HttpClient
+    // MARK: Lifecycle
 
     init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }
 
+    // MARK: Open
+
     open var apiVersion: APIVersion {
         .v0
     }
+
+    // MARK: Internal
+
+    let httpClient: HttpClient
 
     func deleteUserClient(clientId: String, password: String) async throws {
         let requestsFactory = UserClientRequestFactory()

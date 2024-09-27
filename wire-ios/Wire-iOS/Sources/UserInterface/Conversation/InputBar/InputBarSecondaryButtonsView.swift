@@ -22,8 +22,7 @@ import UIKit
 // only one of the views will be in the view hierarchy at a time.
 //
 final class InputBarSecondaryButtonsView: UIView {
-    let editBarView: InputBarEditView
-    let markdownBarView: MarkdownBarView
+    // MARK: Lifecycle
 
     init(editBarView: InputBarEditView, markdownBarView: MarkdownBarView) {
         self.editBarView = editBarView
@@ -35,6 +34,22 @@ final class InputBarSecondaryButtonsView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    let editBarView: InputBarEditView
+    let markdownBarView: MarkdownBarView
+
+    func setEditBarView() {
+        setView(editBarView)
+    }
+
+    func setMarkdownBarView() {
+        setView(markdownBarView)
+        markdownBarView.setupViews()
+    }
+
+    // MARK: Private
 
     private func setView(_ newView: UIView) {
         // only if newView isnt already a subview
@@ -50,14 +65,5 @@ final class InputBarSecondaryButtonsView: UIView {
             newView.leftAnchor.constraint(equalTo: leftAnchor),
             newView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
-    }
-
-    func setEditBarView() {
-        setView(editBarView)
-    }
-
-    func setMarkdownBarView() {
-        setView(markdownBarView)
-        markdownBarView.setupViews()
     }
 }

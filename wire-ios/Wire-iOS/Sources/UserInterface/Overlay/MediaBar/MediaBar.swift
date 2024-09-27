@@ -20,13 +20,7 @@ import UIKit
 import WireDesign
 
 final class MediaBar: UIView {
-    private(set) var titleLabel: UILabel!
-    private(set) var playPauseButton: IconButton!
-    private(set) var closeButton: IconButton!
-
-    private var bottomSeparatorLine: UIView!
-    private let contentView = UIView()
-    private var initialConstraintsCreated = false
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,40 +38,11 @@ final class MediaBar: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func createTitleLabel() {
-        titleLabel = UILabel()
-        titleLabel.backgroundColor = UIColor.clear
-        titleLabel.textAlignment = .center
-        titleLabel.lineBreakMode = .byTruncatingMiddle
-        titleLabel.accessibilityIdentifier = "playingMediaTitle"
-        titleLabel.font = UIFont.smallRegularFont
-        titleLabel.textColor = SemanticColors.Label.textDefault
+    // MARK: Internal
 
-        contentView.addSubview(titleLabel)
-    }
-
-    private func createPlayPauseButton() {
-        playPauseButton = IconButton(style: .default)
-        playPauseButton.setIcon(.play, size: .tiny, for: UIControl.State.normal)
-        playPauseButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
-
-        contentView.addSubview(playPauseButton)
-    }
-
-    private func createCloseButton() {
-        closeButton = IconButton(style: .default)
-        closeButton.setIcon(.cross, size: .tiny, for: UIControl.State.normal)
-        closeButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
-        contentView.addSubview(closeButton)
-        closeButton.accessibilityIdentifier = "mediabarCloseButton"
-    }
-
-    private func createBorderView() {
-        bottomSeparatorLine = UIView()
-        bottomSeparatorLine.backgroundColor = SemanticColors.View.backgroundSeparatorCell
-
-        addSubview(bottomSeparatorLine)
-    }
+    private(set) var titleLabel: UILabel!
+    private(set) var playPauseButton: IconButton!
+    private(set) var closeButton: IconButton!
 
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: 44)
@@ -128,5 +93,46 @@ final class MediaBar: UIView {
             bottomSeparatorLine.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomSeparatorLine.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
+    }
+
+    // MARK: Private
+
+    private var bottomSeparatorLine: UIView!
+    private let contentView = UIView()
+    private var initialConstraintsCreated = false
+
+    private func createTitleLabel() {
+        titleLabel = UILabel()
+        titleLabel.backgroundColor = UIColor.clear
+        titleLabel.textAlignment = .center
+        titleLabel.lineBreakMode = .byTruncatingMiddle
+        titleLabel.accessibilityIdentifier = "playingMediaTitle"
+        titleLabel.font = UIFont.smallRegularFont
+        titleLabel.textColor = SemanticColors.Label.textDefault
+
+        contentView.addSubview(titleLabel)
+    }
+
+    private func createPlayPauseButton() {
+        playPauseButton = IconButton(style: .default)
+        playPauseButton.setIcon(.play, size: .tiny, for: UIControl.State.normal)
+        playPauseButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
+
+        contentView.addSubview(playPauseButton)
+    }
+
+    private func createCloseButton() {
+        closeButton = IconButton(style: .default)
+        closeButton.setIcon(.cross, size: .tiny, for: UIControl.State.normal)
+        closeButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
+        contentView.addSubview(closeButton)
+        closeButton.accessibilityIdentifier = "mediabarCloseButton"
+    }
+
+    private func createBorderView() {
+        bottomSeparatorLine = UIView()
+        bottomSeparatorLine.backgroundColor = SemanticColors.View.backgroundSeparatorCell
+
+        addSubview(bottomSeparatorLine)
     }
 }

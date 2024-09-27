@@ -39,22 +39,18 @@ enum MockURLSessionError: Error {
 /// You provide responses for given URLs by calling `scheduleResponseForURL`.
 
 class MockURLSession: DataTaskSession {
-    enum SessionError: Swift.Error {
-        case noRequest, noScheduledResponse
-    }
-
-    // MARK: - State
-
-    private var cache: URLCache?
-    private var delegateQueue = OperationQueue()
-
-    private var tasks: [MockDataTask] = []
-    private var scheduledResponses: [URL: MockURLResponse] = [:]
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
     init(cache: URLCache?) {
         self.cache = cache
+    }
+
+    // MARK: Internal
+
+    enum SessionError: Swift.Error {
+        case noRequest, noScheduledResponse
     }
 
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
@@ -101,6 +97,16 @@ class MockURLSession: DataTaskSession {
             failTask(mockTask, with: error)
         }
     }
+
+    // MARK: Private
+
+    // MARK: - State
+
+    private var cache: URLCache?
+    private var delegateQueue = OperationQueue()
+
+    private var tasks: [MockDataTask] = []
+    private var scheduledResponses: [URL: MockURLResponse] = [:]
 
     // MARK: - Response
 

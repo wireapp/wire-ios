@@ -30,21 +30,7 @@ protocol LocationSendViewControllerDelegate: AnyObject {
 // MARK: - LocationSendViewController
 
 final class LocationSendViewController: UIViewController {
-    // MARK: - Properties
-
-    private let sendButton = ZMButton(
-        style: .accentColorTextButtonStyle,
-        cornerRadius: 12,
-        fontSpec: .normalSemiboldFont
-    )
-
-    private let addressLabel: UILabel = {
-        let label = DynamicFontLabel(style: .body1, color: SemanticColors.Label.textDefault)
-        label.numberOfLines = 0
-        return label
-    }()
-
-    private let containerView = UIView()
+    // MARK: Internal
 
     weak var delegate: LocationSendViewControllerDelegate?
 
@@ -67,6 +53,24 @@ final class LocationSendViewController: UIViewController {
         createConstraints()
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private let sendButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 12,
+        fontSpec: .normalSemiboldFont
+    )
+
+    private let addressLabel: UILabel = {
+        let label = DynamicFontLabel(style: .body1, color: SemanticColors.Label.textDefault)
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private let containerView = UIView()
 
     // MARK: - Setup UI and constraints
 

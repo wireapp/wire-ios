@@ -31,17 +31,7 @@ public protocol LastEventIDRepositoryInterface {
 
 @objc
 public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterface {
-    // MARK: - Properties
-
-    private let storage: PrivateUserDefaults<Key>
-
-    // MARK: - Types
-
-    private enum Key: String, DefaultsKey {
-        case lastEventID
-    }
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     @objc
     public init(
@@ -56,6 +46,8 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
         super.init()
     }
 
+    // MARK: Public
+
     // MARK: - Methods
 
     public func fetchLastEventID() -> UUID? {
@@ -69,4 +61,16 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
         )
         storage.setUUID(id, forKey: .lastEventID)
     }
+
+    // MARK: Private
+
+    // MARK: - Types
+
+    private enum Key: String, DefaultsKey {
+        case lastEventID
+    }
+
+    // MARK: - Properties
+
+    private let storage: PrivateUserDefaults<Key>
 }

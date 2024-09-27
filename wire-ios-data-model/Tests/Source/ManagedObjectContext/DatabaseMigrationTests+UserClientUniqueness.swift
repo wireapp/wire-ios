@@ -20,12 +20,9 @@ import XCTest
 @testable import WireDataModel
 
 final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
-    typealias MigrationAction = (NSManagedObjectContext) throws -> Void
+    // MARK: Internal
 
-    private let bundle = Bundle(for: ZMManagedObject.self)
-    private let clientID = "abc123"
-    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
-    private let helper = DatabaseMigrationHelper()
+    typealias MigrationAction = (NSManagedObjectContext) throws -> Void
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -76,6 +73,13 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
             try? FileManager.default.removeItem(at: tmpStoreURL)
         }
     }
+
+    // MARK: Private
+
+    private let bundle = Bundle(for: ZMManagedObject.self)
+    private let clientID = "abc123"
+    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
+    private let helper = DatabaseMigrationHelper()
 
     // MARK: - Fetch / Insert Helpers
 

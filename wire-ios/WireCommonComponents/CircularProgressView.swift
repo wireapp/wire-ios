@@ -21,6 +21,8 @@ import UIKit
 // MARK: - CircularProgressView
 
 public class CircularProgressView: UIView {
+    // MARK: Lifecycle
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -31,29 +33,10 @@ public class CircularProgressView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setup() {
-        setupShapeLayer()
+    // MARK: Public
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(CircularProgressView.applicationDidBecomeActive(_:)),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
-    }
-
-    private func setupShapeLayer() {
-        createPath()
-        shapeLayer.lineWidth = CGFloat(lineWidth)
-        shapeLayer.lineCap = lineCap
-        shapeLayer.strokeStart = 0.0
-        shapeLayer.strokeEnd = CGFloat(progress)
-        shapeLayer.fillColor = UIColor.clear.cgColor
-        shapeLayer.strokeColor = tintColor.cgColor
-    }
-
-    override public func didMoveToWindow() {
-        updateSpinningAnimation()
+    override public class var layerClass: AnyClass {
+        CAShapeLayer.self
     }
 
     override public var tintColor: UIColor! {
@@ -80,22 +63,9 @@ public class CircularProgressView: UIView {
         }
     }
 
-    private func createPath() {
-        shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: bounds.width / 2).cgPath
+    override public func didMoveToWindow() {
+        updateSpinningAnimation()
     }
-
-    override public class var layerClass: AnyClass {
-        CAShapeLayer.self
-    }
-
-    var shapeLayer: CAShapeLayer {
-        if let shapeLayer = layer as? CAShapeLayer {
-            return shapeLayer
-        }
-        fatalError("shapeLayer is missing: \(layer)")
-    }
-
-    private(set) var progress: Float = 0.0
 
     public func setProgress(_ progress: Float, animated: Bool) {
         self.progress = progress
@@ -124,9 +94,47 @@ public class CircularProgressView: UIView {
         setupShapeLayer()
     }
 
+    // MARK: Internal
+
+    private(set) var progress: Float = 0.0
+
     // MARK: - Spinning animation
 
     let SpinningAnimationKey = "com.wire.animations.spin"
+
+    var shapeLayer: CAShapeLayer {
+        if let shapeLayer = layer as? CAShapeLayer {
+            return shapeLayer
+        }
+        fatalError("shapeLayer is missing: \(layer)")
+    }
+
+    // MARK: Private
+
+    private func setup() {
+        setupShapeLayer()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(CircularProgressView.applicationDidBecomeActive(_:)),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+
+    private func setupShapeLayer() {
+        createPath()
+        shapeLayer.lineWidth = CGFloat(lineWidth)
+        shapeLayer.lineCap = lineCap
+        shapeLayer.strokeStart = 0.0
+        shapeLayer.strokeEnd = CGFloat(progress)
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        shapeLayer.strokeColor = tintColor.cgColor
+    }
+
+    private func createPath() {
+        shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: bounds.width / 2).cgPath
+    }
 
     private func updateSpinningAnimation() {
         if !deterministic {

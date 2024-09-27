@@ -20,38 +20,7 @@ import WireSyncEngine
 
 /// A view that displays the avatar for a remote user.
 class UserImageView: AvatarImageView, UserObserving {
-    // MARK: - Interface Properties
-
-    /// The size of the avatar.
-    var size: Size {
-        didSet { updateUserImage() }
-    }
-
-    /// Whether the image should be desaturated, e.g. for unconnected users.
-    var shouldDesaturate = true {
-        didSet { updateUserImage() }
-    }
-
-    /// Whether the badge indicator is enabled.
-    var indicatorEnabled = false {
-        didSet { badgeIndicator.isHidden = !indicatorEnabled }
-    }
-
-    private let badgeIndicator = RoundedView()
-
-    // MARK: - Remote User
-
-    /// The user session to use to download images.
-    var userSession: UserSession? {
-        didSet { updateUser() }
-    }
-
-    /// The user to display the avatar of.
-    var user: UserType? {
-        didSet { updateUser() }
-    }
-
-    private var userObserverToken: NSObjectProtocol?
+    // MARK: Lifecycle
 
     // MARK: - Initialization
 
@@ -74,9 +43,148 @@ class UserImageView: AvatarImageView, UserObserving {
         fatalError("init(coder:) is not supported")
     }
 
+    // MARK: Internal
+
+    // MARK: - Nested Types
+
+    /// The different sizes for the avatar image.
+    enum Size: Int {
+        case tiny = 16
+        case badge = 24
+        case small = 32
+        case normal = 64
+        case big = 320
+    }
+
+    // MARK: - Interface Properties
+
+    /// The size of the avatar.
+    var size: Size {
+        didSet { updateUserImage() }
+    }
+
+    /// Whether the image should be desaturated, e.g. for unconnected users.
+    var shouldDesaturate = true {
+        didSet { updateUserImage() }
+    }
+
+    /// Whether the badge indicator is enabled.
+    var indicatorEnabled = false {
+        didSet { badgeIndicator.isHidden = !indicatorEnabled }
+    }
+
+    // MARK: - Remote User
+
+    /// The user session to use to download images.
+    var userSession: UserSession? {
+        didSet { updateUser() }
+    }
+
+    /// The user to display the avatar of.
+    var user: UserType? {
+        didSet { updateUser() }
+    }
+
     override var intrinsicContentSize: CGSize {
         .init(width: size.rawValue, height: size.rawValue)
     }
+
+    // MARK: - Changing the Content
+
+    /// Sets the avatar for the user with an optional animation.
+    /// - parameter avatar: The avatar of the user.
+    /// - parameter user: The currently displayed user.
+    /// - parameter animated: Whether to animate the change.
+    func setAvatar(_ avatar: Avatar, user: UserType, animated: Bool) {
+        let updateBlock = {
+            self.avatar = avatar
+            self.container.backgroundColor = self.containerBackgroundColor(for: user)
+        }
+
+        if animated, !ProcessInfo.processInfo.isRunningTests {
+            UIView.transition(
+                with: self,
+                duration: 0.15,
+                options: .transitionCrossDissolve,
+                animations: updateBlock,
+                completion: nil
+            )
+        } else {
+            updateBlock()
+        }
+    }
+
+    // MARK: - Updates
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        // Check for potential image changes
+        if size == .big {
+            if changeInfo.imageMediumDataChanged || changeInfo.connectionStateChanged {
+                updateUserImage()
+            }
+        } else {
+            if changeInfo.imageSmallProfileDataChanged || changeInfo.connectionStateChanged || changeInfo.teamsChanged {
+                updateUserImage()
+            }
+        }
+
+        // Change for accent color changes
+        if changeInfo.accentColorValueChanged {
+            updateIndicatorColor()
+        }
+    }
+
+    /// Called when the user or user session changes.
+    func updateUser() {
+        guard let user, let initials = user.initials else {
+            return
+        }
+
+        let defaultAvatar: Avatar = initials.isEmpty ? .init() : .text(initials.localizedUppercase)
+        setAvatar(defaultAvatar, user: user, animated: false)
+        if !ProcessInfo.processInfo.isRunningTests,
+           let userSession = userSession as? ZMUserSession {
+            userObserverToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
+        }
+
+        updateForServiceUserIfNeeded(user)
+        updateIndicatorColor()
+        updateUserImage()
+    }
+
+    // MARK: Fileprivate
+
+    /// Updates the image for the user.
+    fileprivate func updateUserImage() {
+        guard
+            let user,
+            let userSession
+        else {
+            return
+        }
+
+        var desaturate = false
+        if shouldDesaturate {
+            desaturate = !user.isConnected && !user.isSelfUser && !user.isTeamMember && !user.isServiceUser
+        }
+
+        user.fetchProfileImage(
+            session: userSession,
+            imageCache: UIImage.defaultUserImageCache,
+            sizeLimit: size.rawValue,
+            isDesaturated: desaturate
+        ) { [weak self] image, cacheHit in
+            // Don't set image if nil or if user has changed during fetch
+            guard let image, user.isEqual(self?.user) else { return }
+            self?.setAvatar(.image(image), user: user, animated: !cacheHit)
+        }
+    }
+
+    // MARK: Private
+
+    private let badgeIndicator = RoundedView()
+
+    private var userObserverToken: NSObjectProtocol?
 
     private func configureSubviews() {
         accessibilityElementsHidden = true
@@ -132,95 +240,6 @@ class UserImageView: AvatarImageView, UserObserving {
         user.isServiceUser ? .relative : .circle
     }
 
-    // MARK: - Changing the Content
-
-    /// Sets the avatar for the user with an optional animation.
-    /// - parameter avatar: The avatar of the user.
-    /// - parameter user: The currently displayed user.
-    /// - parameter animated: Whether to animate the change.
-    func setAvatar(_ avatar: Avatar, user: UserType, animated: Bool) {
-        let updateBlock = {
-            self.avatar = avatar
-            self.container.backgroundColor = self.containerBackgroundColor(for: user)
-        }
-
-        if animated, !ProcessInfo.processInfo.isRunningTests {
-            UIView.transition(
-                with: self,
-                duration: 0.15,
-                options: .transitionCrossDissolve,
-                animations: updateBlock,
-                completion: nil
-            )
-        } else {
-            updateBlock()
-        }
-    }
-
-    /// Updates the image for the user.
-    fileprivate func updateUserImage() {
-        guard
-            let user,
-            let userSession
-        else {
-            return
-        }
-
-        var desaturate = false
-        if shouldDesaturate {
-            desaturate = !user.isConnected && !user.isSelfUser && !user.isTeamMember && !user.isServiceUser
-        }
-
-        user.fetchProfileImage(
-            session: userSession,
-            imageCache: UIImage.defaultUserImageCache,
-            sizeLimit: size.rawValue,
-            isDesaturated: desaturate
-        ) { [weak self] image, cacheHit in
-            // Don't set image if nil or if user has changed during fetch
-            guard let image, user.isEqual(self?.user) else { return }
-            self?.setAvatar(.image(image), user: user, animated: !cacheHit)
-        }
-    }
-
-    // MARK: - Updates
-
-    func userDidChange(_ changeInfo: UserChangeInfo) {
-        // Check for potential image changes
-        if size == .big {
-            if changeInfo.imageMediumDataChanged || changeInfo.connectionStateChanged {
-                updateUserImage()
-            }
-        } else {
-            if changeInfo.imageSmallProfileDataChanged || changeInfo.connectionStateChanged || changeInfo.teamsChanged {
-                updateUserImage()
-            }
-        }
-
-        // Change for accent color changes
-        if changeInfo.accentColorValueChanged {
-            updateIndicatorColor()
-        }
-    }
-
-    /// Called when the user or user session changes.
-    func updateUser() {
-        guard let user, let initials = user.initials else {
-            return
-        }
-
-        let defaultAvatar: Avatar = initials.isEmpty ? .init() : .text(initials.localizedUppercase)
-        setAvatar(defaultAvatar, user: user, animated: false)
-        if !ProcessInfo.processInfo.isRunningTests,
-           let userSession = userSession as? ZMUserSession {
-            userObserverToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
-        }
-
-        updateForServiceUserIfNeeded(user)
-        updateIndicatorColor()
-        updateUserImage()
-    }
-
     /// Updates the color of the badge indicator.
     private func updateIndicatorColor() {
         badgeIndicator.backgroundColor = user?.accentColor
@@ -235,16 +254,5 @@ class UserImageView: AvatarImageView, UserObserving {
             container.layer.borderWidth = borderWidth(for: user)
             container.backgroundColor = containerBackgroundColor(for: user)
         }
-    }
-
-    // MARK: - Nested Types
-
-    /// The different sizes for the avatar image.
-    enum Size: Int {
-        case tiny = 16
-        case badge = 24
-        case small = 32
-        case normal = 64
-        case big = 320
     }
 }

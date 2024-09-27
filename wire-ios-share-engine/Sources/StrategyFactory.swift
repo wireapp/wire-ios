@@ -22,13 +22,7 @@ import WireRequestStrategy
 import WireTransport.ZMRequestCancellation
 
 final class StrategyFactory {
-    unowned let syncContext: NSManagedObjectContext
-    let applicationStatus: ApplicationStatus
-    let linkPreviewPreprocessor: LinkPreviewPreprocessor
-    let messageSender: MessageSenderInterface
-    private(set) var strategies = [AnyObject]()
-
-    private var tornDown = false
+    // MARK: Lifecycle
 
     init(
         syncContext: NSManagedObjectContext,
@@ -63,6 +57,14 @@ final class StrategyFactory {
         precondition(tornDown, "Need to call `tearDown` before `deinit`")
     }
 
+    // MARK: Internal
+
+    unowned let syncContext: NSManagedObjectContext
+    let applicationStatus: ApplicationStatus
+    let linkPreviewPreprocessor: LinkPreviewPreprocessor
+    let messageSender: MessageSenderInterface
+    private(set) var strategies = [AnyObject]()
+
     func tearDown() {
         for strategy in strategies {
             if strategy.responds(to: #selector(ZMObjectSyncStrategy.tearDown)) {
@@ -71,6 +73,10 @@ final class StrategyFactory {
         }
         tornDown = true
     }
+
+    // MARK: Private
+
+    private var tornDown = false
 
     private func createStrategies(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> [AnyObject] {
         [

@@ -21,14 +21,18 @@ import Foundation
 // MARK: - RegistationCredentialVerificationStrategy
 
 final class RegistationCredentialVerificationStrategy: NSObject {
-    let registrationStatus: RegistrationStatusProtocol
-    var codeSendingSync: ZMSingleRequestSync!
+    // MARK: Lifecycle
 
     init(groupQueue: GroupQueue, status: RegistrationStatusProtocol) {
         self.registrationStatus = status
         super.init()
         self.codeSendingSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
     }
+
+    // MARK: Internal
+
+    let registrationStatus: RegistrationStatusProtocol
+    var codeSendingSync: ZMSingleRequestSync!
 }
 
 // MARK: ZMSingleRequestTranscoder

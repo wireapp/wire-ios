@@ -21,7 +21,7 @@ import XCTest
 @testable import WireUIFoundation
 
 final class MainTabBarControllerTests: XCTestCase {
-    private var snapshotHelper: SnapshotHelper!
+    // MARK: Internal
 
     override func setUp() {
         snapshotHelper = .init()
@@ -43,4 +43,8 @@ final class MainTabBarControllerTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut, named: "dark", testName: "dark")
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

@@ -68,7 +68,33 @@ protocol UserProfileImageUploadStateChangeDelegate: AnyObject {
 // MARK: - UserProfileImageUpdateStatus
 
 public final class UserProfileImageUpdateStatus: NSObject {
-    fileprivate var log = ZMSLog(tag: "UserProfileImageUpdateStatus")
+    // MARK: Lifecycle
+
+    public convenience init(managedObjectContext: NSManagedObjectContext) {
+        self.init(
+            managedObjectContext: managedObjectContext,
+            preprocessor: ZMAssetsPreprocessor(delegate: nil),
+            queue: ZMImagePreprocessor.createSuitableImagePreprocessingQueue(),
+            delegate: nil
+        )
+    }
+
+    init(
+        managedObjectContext: NSManagedObjectContext,
+        preprocessor: ZMAssetsPreprocessorProtocol,
+        queue: OperationQueue,
+        delegate: UserProfileImageUploadStateChangeDelegate?
+    ) {
+        log.debug("Created")
+        self.queue = queue
+        self.preprocessor = preprocessor
+        self.syncMOC = managedObjectContext
+        self.changeDelegate = delegate
+        super.init()
+        self.preprocessor?.delegate = self
+    }
+
+    // MARK: Internal
 
     enum ImageState {
         case ready
@@ -77,6 +103,8 @@ public final class UserProfileImageUpdateStatus: NSObject {
         case uploading
         case uploaded(assetId: String)
         case failed(UserProfileImageUpdateError)
+
+        // MARK: Internal
 
         func canTransition(to newState: ImageState) -> Bool {
             switch (self, newState) {
@@ -109,6 +137,8 @@ public final class UserProfileImageUpdateStatus: NSObject {
         case update(previewAssetId: String, completeAssetId: String)
         case failed(UserProfileImageUpdateError)
 
+        // MARK: Internal
+
         func canTransition(to newState: ProfileUpdateState) -> Bool {
             switch (self, newState) {
             case (.ready, .preprocess),
@@ -136,38 +166,19 @@ public final class UserProfileImageUpdateStatus: NSObject {
     let queue: OperationQueue
     weak var changeDelegate: UserProfileImageUploadStateChangeDelegate?
 
+    fileprivate(set) var state: ProfileUpdateState = .ready
+    fileprivate(set) var assetsToDelete = Set<String>()
+
+    // MARK: Fileprivate
+
+    fileprivate var log = ZMSLog(tag: "UserProfileImageUpdateStatus")
+
     fileprivate var changeDelegates: [UserProfileImageUpdateStateDelegate] = []
     fileprivate var imageOwner: ImageOwner?
     fileprivate let syncMOC: NSManagedObjectContext
 
     fileprivate var imageState = [ProfileImageSize: ImageState]()
     fileprivate var resizedImages = [ProfileImageSize: Data]()
-    fileprivate(set) var state: ProfileUpdateState = .ready
-    fileprivate(set) var assetsToDelete = Set<String>()
-
-    public convenience init(managedObjectContext: NSManagedObjectContext) {
-        self.init(
-            managedObjectContext: managedObjectContext,
-            preprocessor: ZMAssetsPreprocessor(delegate: nil),
-            queue: ZMImagePreprocessor.createSuitableImagePreprocessingQueue(),
-            delegate: nil
-        )
-    }
-
-    init(
-        managedObjectContext: NSManagedObjectContext,
-        preprocessor: ZMAssetsPreprocessorProtocol,
-        queue: OperationQueue,
-        delegate: UserProfileImageUploadStateChangeDelegate?
-    ) {
-        log.debug("Created")
-        self.queue = queue
-        self.preprocessor = preprocessor
-        self.syncMOC = managedObjectContext
-        self.changeDelegate = delegate
-        super.init()
-        self.preprocessor?.delegate = self
-    }
 }
 
 // MARK: Main state transitions

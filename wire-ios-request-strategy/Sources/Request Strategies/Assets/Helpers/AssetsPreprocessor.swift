@@ -27,17 +27,7 @@ import Foundation
 ///
 @objcMembers
 public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
-    /// Group to track preprocessing operations
-    fileprivate let processingGroup: ZMSDispatchGroup
-
-    /// List of objects currently being processed
-    fileprivate var objectsBeingProcessed = Set<ZMAssetClientMessage>()
-    fileprivate let imageProcessingQueue: OperationQueue
-    fileprivate var imageAssetPreprocessor: ZMAssetsPreprocessor?
-
-    /// Managed object context. Is is assumed that all methods of this class
-    /// are called from the thread of this managed object context
-    let managedObjectContext: NSManagedObjectContext
+    // MARK: Lifecycle
 
     /// Creates a file processor
     /// - note: All methods of this object should be called from the thread associated with the passed
@@ -52,6 +42,8 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
         self.imageAssetPreprocessor = ZMAssetsPreprocessor(delegate: self)
     }
 
+    // MARK: Public
+
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
         processObjects(object)
     }
@@ -65,12 +57,21 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
         processObjects(objects)
     }
 
-    private func processObjects(_ objects: Set<NSManagedObject>) {
-        objects
-            .compactMap(needsPreprocessing)
-            .filter(!objectsBeingProcessed.contains)
-            .forEach(startProcessing)
-    }
+    // MARK: Internal
+
+    /// Managed object context. Is is assumed that all methods of this class
+    /// are called from the thread of this managed object context
+    let managedObjectContext: NSManagedObjectContext
+
+    // MARK: Fileprivate
+
+    /// Group to track preprocessing operations
+    fileprivate let processingGroup: ZMSDispatchGroup
+
+    /// List of objects currently being processed
+    fileprivate var objectsBeingProcessed = Set<ZMAssetClientMessage>()
+    fileprivate let imageProcessingQueue: OperationQueue
+    fileprivate var imageAssetPreprocessor: ZMAssetsPreprocessor?
 
     /// Starts processing the asset client message
     fileprivate func startProcessing(_ message: ZMAssetClientMessage) {
@@ -104,6 +105,15 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
                 self?.managedObjectContext.leaveAllGroups(self!.managedObjectContext.allGroups)
             }
         }
+    }
+
+    // MARK: Private
+
+    private func processObjects(_ objects: Set<NSManagedObject>) {
+        objects
+            .compactMap(needsPreprocessing)
+            .filter(!objectsBeingProcessed.contains)
+            .forEach(startProcessing)
     }
 
     /// Returns the object as a ZMAssetClientMessage if it is asset that needs preprocessing
@@ -151,13 +161,17 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
 
 /// Adapter which implements the ZMImageOwner protcol because it requires an NSObject
 class AssetImageOwnerAdapter: NSObject, ZMImageOwner {
-    let asset: AssetType
+    // MARK: Lifecycle
 
     init(asset: AssetType) {
         self.asset = asset
 
         super.init()
     }
+
+    // MARK: Internal
+
+    let asset: AssetType
 
     func requiredImageFormats() -> NSOrderedSet {
         NSOrderedSet(array: [ZMImageFormat.medium.rawValue])

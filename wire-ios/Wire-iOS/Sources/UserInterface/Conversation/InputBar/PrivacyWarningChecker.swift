@@ -42,6 +42,24 @@ struct PrivacyWarningChecker {
     // set if need to present differently the alert without notification: `.presentE2EIPrivacyWarningAlert`
     var showAlert: (() -> Void)?
 
+    // Notifies all MLSConversationChecker about user's choice following e2eiPrivacyWarningAlert
+    static func privacyWarningConfirm(sendAnyway: Bool) {
+        NotificationCenter.default.post(.privacyWarningConfirm(sendAnyway: sendAnyway))
+    }
+
+    // add object in charge to present e2eiPrivacyWarningAlert
+    static func addPresenter(_ observer: PrivacyWarningPresenter) -> SelfUnregisteringNotificationCenterToken {
+        let token = NotificationCenter.default.addObserver(
+            forName: .presentPrivacyWarningAlert,
+            object: nil,
+            queue: .main
+        ) { [weak observer] note in
+            observer?.presentPrivacyWarningAlert(note)
+        }
+
+        return SelfUnregisteringNotificationCenterToken(token)
+    }
+
     func performAction() {
         guard conversation.isMLSConversationDegraded || conversation.isProteusConversationDegraded else {
             continueAction()
@@ -71,24 +89,6 @@ struct PrivacyWarningChecker {
                 }
             }
         }
-    }
-
-    // Notifies all MLSConversationChecker about user's choice following e2eiPrivacyWarningAlert
-    static func privacyWarningConfirm(sendAnyway: Bool) {
-        NotificationCenter.default.post(.privacyWarningConfirm(sendAnyway: sendAnyway))
-    }
-
-    // add object in charge to present e2eiPrivacyWarningAlert
-    static func addPresenter(_ observer: PrivacyWarningPresenter) -> SelfUnregisteringNotificationCenterToken {
-        let token = NotificationCenter.default.addObserver(
-            forName: .presentPrivacyWarningAlert,
-            object: nil,
-            queue: .main
-        ) { [weak observer] note in
-            observer?.presentPrivacyWarningAlert(note)
-        }
-
-        return SelfUnregisteringNotificationCenterToken(token)
     }
 }
 

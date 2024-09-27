@@ -20,16 +20,13 @@ import XCTest
 @testable import Ziphy
 
 final class ZiphTests: XCTestCase {
+    // MARK: Internal
+
     var sut: Ziph!
 
     override func tearDown() {
         sut = nil
         super.tearDown()
-    }
-
-    /// Example checker method which can be reused in different tests
-    fileprivate func checkerExample(file: StaticString = #file, line: UInt = #line) {
-        XCTAssert(true, file: file, line: line)
     }
 
     func testThatPreviewImageReturnsPreviewValue() {
@@ -89,5 +86,12 @@ final class ZiphTests: XCTestCase {
         // WHEN & THEN
         let nilImage: ZiphyAnimatedImage? = nil
         XCTAssertEqual(sut.previewImage?.description, nilImage?.description)
+    }
+
+    // MARK: Fileprivate
+
+    /// Example checker method which can be reused in different tests
+    fileprivate func checkerExample(file: StaticString = #file, line: UInt = #line) {
+        XCTAssert(true, file: file, line: line)
     }
 }

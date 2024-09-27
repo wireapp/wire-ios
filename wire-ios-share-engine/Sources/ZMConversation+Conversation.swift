@@ -76,21 +76,23 @@ extension ZMConversation: Conversation {
 // MARK: - ConversationDegradationInfo
 
 public struct ConversationDegradationInfo {
-    public let conversation: Conversation
-    public let users: Set<ZMUser>
+    // MARK: Lifecycle
 
     public init(conversation: Conversation, users: Set<ZMUser>) {
         self.users = users
         self.conversation = conversation
     }
+
+    // MARK: Public
+
+    public let conversation: Conversation
+    public let users: Set<ZMUser>
 }
 
 // MARK: - DegradationObserver
 
 final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapable {
-    let callback: (ConversationDegradationInfo) -> Void
-    let conversation: ZMConversation
-    private var observer: Any?
+    // MARK: Lifecycle
 
     init(conversation: ZMConversation, callback: @escaping (ConversationDegradationInfo) -> Void) {
         self.callback = callback
@@ -111,12 +113,30 @@ final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapab
         tearDown()
     }
 
+    // MARK: Internal
+
+    let callback: (ConversationDegradationInfo) -> Void
+    let conversation: ZMConversation
+
     func tearDown() {
         if let observer {
             NotificationCenter.default.removeObserver(observer)
             self.observer = nil
         }
     }
+
+    func conversationDidChange(_ note: ConversationChangeInfo) {
+        if note.causedByConversationPrivacyChange {
+            callback(ConversationDegradationInfo(
+                conversation: note.conversation,
+                users: Set(note.usersThatCausedConversationToDegrade)
+            ))
+        }
+    }
+
+    // MARK: Private
+
+    private var observer: Any?
 
     private func processSaveNotification() {
         if !conversation.messagesThatCausedSecurityLevelDegradation.isEmpty {
@@ -127,15 +147,6 @@ final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapab
             callback(ConversationDegradationInfo(
                 conversation: conversation,
                 users: untrustedUsers
-            ))
-        }
-    }
-
-    func conversationDidChange(_ note: ConversationChangeInfo) {
-        if note.causedByConversationPrivacyChange {
-            callback(ConversationDegradationInfo(
-                conversation: note.conversation,
-                users: Set(note.usersThatCausedConversationToDegrade)
             ))
         }
     }

@@ -20,15 +20,26 @@ import Foundation
 import WireDataModel
 
 public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     public init() {}
+
+    // MARK: Public
 
     // MARK: - isMigrationNeeded
 
     public var isMigrationNeededAccountDirectory_Invocations: [URL] = []
     public var isMigrationNeededAccountDirectory_MockMethod: ((URL) -> Bool)?
     public var isMigrationNeededAccountDirectory_MockValue: Bool?
+
+    // MARK: - performMigration
+
+    public var performMigrationAccountDirectorySyncContext_Invocations: [(
+        accountDirectory: URL,
+        coreCrypto: SafeCoreCryptoProtocol
+    )] = []
+    public var performMigrationAccountDirectorySyncContext_MockError: Error?
+    public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, SafeCoreCryptoProtocol) throws -> Void)?
 
     public func isMigrationNeeded(accountDirectory: URL) -> Bool {
         isMigrationNeededAccountDirectory_Invocations.append(accountDirectory)
@@ -41,15 +52,6 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
             fatalError("no mock for `isMigrationNeededAccountDirectory`")
         }
     }
-
-    // MARK: - performMigration
-
-    public var performMigrationAccountDirectorySyncContext_Invocations: [(
-        accountDirectory: URL,
-        coreCrypto: SafeCoreCryptoProtocol
-    )] = []
-    public var performMigrationAccountDirectorySyncContext_MockError: Error?
-    public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, SafeCoreCryptoProtocol) throws -> Void)?
 
     public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) throws {
         performMigrationAccountDirectorySyncContext_Invocations.append((

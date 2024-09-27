@@ -20,11 +20,11 @@ import UIKit
 import WireDesign
 
 class CreateSecureGuestLinkPasswordValidatorHelper {
+    // MARK: Internal
+
     // MARK: - Properties
 
     typealias LabelColors = SemanticColors.Label
-    private var validationErrorTextColor: UIColor = LabelColors.textErrorDefault
-    private var defaultTextColor: UIColor = LabelColors.textFieldFloatingLabel
 
     /// Displays the elements such as text fields and/or labels on their error state
     /// - Parameters:
@@ -54,4 +54,9 @@ class CreateSecureGuestLinkPasswordValidatorHelper {
             label.textColor = defaultTextColor
         }
     }
+
+    // MARK: Private
+
+    private var validationErrorTextColor: UIColor = LabelColors.textErrorDefault
+    private var defaultTextColor: UIColor = LabelColors.textFieldFloatingLabel
 }

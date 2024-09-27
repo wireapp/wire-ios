@@ -20,6 +20,22 @@ import UIKit
 import WireDesign
 
 class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
+    // MARK: Lifecycle
+
+    // MARK: - Initialization
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureSubviews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: Internal
+
     let separator = UIView()
     var separatorInsetConstraint: NSLayoutConstraint!
 
@@ -34,18 +50,6 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
         set { separator.isHidden = !newValue }
     }
 
-    // MARK: - Initialization
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubviews()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
@@ -53,6 +57,12 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
                 : SemanticColors.View.backgroundUserCell
         }
     }
+
+    func setUp() {
+        // can be overriden to customize interface
+    }
+
+    // MARK: Private
 
     private func configureSubviews() {
         backgroundColor = SemanticColors.View.backgroundUserCell
@@ -64,9 +74,5 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
         contentView.addSubview(separator)
 
         createSeparatorConstraints()
-    }
-
-    func setUp() {
-        // can be overriden to customize interface
     }
 }

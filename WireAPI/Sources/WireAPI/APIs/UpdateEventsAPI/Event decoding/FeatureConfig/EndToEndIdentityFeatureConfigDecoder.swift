@@ -19,6 +19,8 @@
 import Foundation
 
 struct EndToEndIdentityFeatureConfigDecoder {
+    // MARK: Internal
+
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> EndToEndIdentityFeatureConfig {
@@ -36,13 +38,15 @@ struct EndToEndIdentityFeatureConfigDecoder {
         )
     }
 
-    private struct Payload: Decodable {
-        let acmeDiscoveryURL: String?
-        let verificationExpiration: UInt
+    // MARK: Private
 
+    private struct Payload: Decodable {
         enum CodingKeys: String, CodingKey {
             case acmeDiscoveryURL = "acmeDiscoveryUrl"
             case verificationExpiration
         }
+
+        let acmeDiscoveryURL: String?
+        let verificationExpiration: UInt
     }
 }

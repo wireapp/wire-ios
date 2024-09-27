@@ -24,21 +24,14 @@ import WireSyncEngine
 // MARK: - UserCell
 
 final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
-    // MARK: - Properties
-
-    // This property should in the long run replace the `user: UserType` property
-    // provided in the `configure` method. Unfortunately, currently there is still code
-    // which depends on the actual `UserType`/`ZMUser` instance, like the `BadgeUserImageView`.
-    var userStatus = UserStatus() {
-        didSet { updateTitleLabel() }
-    }
-
-    private var userIsSelfUser = false
-    private var isSelfUserPartOfATeam = false
-    private var userIsServiceUser = false
+    // MARK: Internal
 
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
+
+    static let boldFont: FontSpec = .smallRegularFont
+    static let lightFont: FontSpec = .smallLightFont
+    static let defaultAvatarSpacing: CGFloat = 64
 
     var hidesSubtitle = false
     let avatarSpacer = UIView()
@@ -73,22 +66,25 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     var iconStackView: UIStackView!
     var unconnectedStateOverlay = UIView()
 
-    fileprivate var avatarSpacerWidthConstraint: NSLayoutConstraint?
+    var sectionName: String?
+    var obfuscatedSectionName: String?
+    var cellIdentifier: String?
+    let iconColor = IconColors.foregroundDefault
 
-    static let boldFont: FontSpec = .smallRegularFont
-    static let lightFont: FontSpec = .smallLightFont
-    static let defaultAvatarSpacing: CGFloat = 64
+    // MARK: - Properties
+
+    // This property should in the long run replace the `user: UserType` property
+    // provided in the `configure` method. Unfortunately, currently there is still code
+    // which depends on the actual `UserType`/`ZMUser` instance, like the `BadgeUserImageView`.
+    var userStatus = UserStatus() {
+        didSet { updateTitleLabel() }
+    }
 
     /// Specify a custom avatar spacing
     var avatarSpacing: CGFloat? {
         get { avatarSpacerWidthConstraint?.constant }
         set { avatarSpacerWidthConstraint?.constant = newValue ?? UserCell.defaultAvatarSpacing }
     }
-
-    var sectionName: String?
-    var obfuscatedSectionName: String?
-    var cellIdentifier: String?
-    let iconColor = IconColors.foregroundDefault
 
     // MARK: - Override properties
 
@@ -253,33 +249,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         createConstraints()
     }
 
-    // MARK: - Set up constraints
-
-    private func createConstraints() {
-        let avatarSpacerWidthConstraint = avatarSpacer.widthAnchor
-            .constraint(equalToConstant: UserCell.defaultAvatarSpacing)
-        self.avatarSpacerWidthConstraint = avatarSpacerWidthConstraint
-
-        NSLayoutConstraint.activate([
-            checkmarkIconView.widthAnchor.constraint(equalToConstant: 24),
-            checkmarkIconView.heightAnchor.constraint(equalToConstant: 24),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 28),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 28),
-            avatarSpacerWidthConstraint,
-            avatarSpacer.heightAnchor.constraint(equalTo: avatarImageView.heightAnchor),
-            avatarSpacer.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
-            avatarSpacer.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
-            contentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            unconnectedStateOverlay.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            unconnectedStateOverlay.topAnchor.constraint(equalTo: contentView.topAnchor),
-            unconnectedStateOverlay.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            unconnectedStateOverlay.trailingAnchor.constraint(equalTo: titleStackView.trailingAnchor),
-        ])
-    }
-
     // MARK: - setup Accessibility
 
     func setupAccessibility() {
@@ -341,6 +310,43 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
 
         accessibilityLabel = content
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var avatarSpacerWidthConstraint: NSLayoutConstraint?
+
+    // MARK: Private
+
+    private var userIsSelfUser = false
+    private var isSelfUserPartOfATeam = false
+    private var userIsServiceUser = false
+
+    // MARK: - Set up constraints
+
+    private func createConstraints() {
+        let avatarSpacerWidthConstraint = avatarSpacer.widthAnchor
+            .constraint(equalToConstant: UserCell.defaultAvatarSpacing)
+        self.avatarSpacerWidthConstraint = avatarSpacerWidthConstraint
+
+        NSLayoutConstraint.activate([
+            checkmarkIconView.widthAnchor.constraint(equalToConstant: 24),
+            checkmarkIconView.heightAnchor.constraint(equalToConstant: 24),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 28),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 28),
+            avatarSpacerWidthConstraint,
+            avatarSpacer.heightAnchor.constraint(equalTo: avatarImageView.heightAnchor),
+            avatarSpacer.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
+            avatarSpacer.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
+            contentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            unconnectedStateOverlay.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            unconnectedStateOverlay.topAnchor.constraint(equalTo: contentView.topAnchor),
+            unconnectedStateOverlay.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            unconnectedStateOverlay.trailingAnchor.constraint(equalTo: titleStackView.trailingAnchor),
+        ])
     }
 
     private func setupAccessibilityHint() {

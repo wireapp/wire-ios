@@ -22,10 +22,7 @@ import Foundation
 
 @objcMembers
 public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy {
-    private let requestFactory = AssetDownloadRequestFactory()
-
-    fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
-    private var notificationToken: Any?
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -60,6 +57,14 @@ public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrat
         registerForWhitelistingNotification()
     }
 
+    // MARK: Public
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        assetDownstreamObjectSync.nextRequest(for: apiVersion)
+    }
+
+    // MARK: Internal
+
     func registerForWhitelistingNotification() {
         notificationToken = NotificationInContext.addObserver(
             name: ZMClientMessage.linkPreviewImageDownloadNotification,
@@ -79,10 +84,6 @@ public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrat
             assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
-    }
-
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
     func handleResponse(
@@ -127,6 +128,16 @@ public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrat
             uiContext: uiMOC
         )
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
+
+    // MARK: Private
+
+    private let requestFactory = AssetDownloadRequestFactory()
+
+    private var notificationToken: Any?
 }
 
 // MARK: ZMContextChangeTrackerSource

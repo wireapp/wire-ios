@@ -22,8 +22,7 @@ import WireTransport
 @objcMembers
 public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
     ZMContextChangeTrackerSource {
-    fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
-    private var notificationTokens: [Any] = []
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -51,106 +50,16 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
         registerForWhitelistingNotification()
     }
 
-    func registerForCancellationNotification() {
-        notificationTokens.append(NotificationInContext.addObserver(
-            name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
-            context: managedObjectContext.notificationContext,
-            object: nil
-        ) { [weak self] note in
-            guard let objectID = note.object as? NSManagedObjectID else { return }
-            self?.cancelOngoingRequestForAssetClientMessage(objectID)
-        })
-    }
-
-    func registerForWhitelistingNotification() {
-        notificationTokens.append(NotificationInContext.addObserver(
-            name: ZMAssetClientMessage.assetDownloadNotificationName,
-            context: managedObjectContext.notificationContext,
-            object: nil
-        ) { [weak self] note in
-            guard let objectID = note.object as? NSManagedObjectID else { return }
-            self?.didRequestToDownloadAsset(objectID)
-        })
-    }
-
-    func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
-        managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
-            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
-            guard let message = object as? ZMAssetClientMessage else { return }
-            message.isDownloading = true
-            assetDownstreamObjectSync.whiteListObject(message)
-            RequestAvailableNotification.notifyNewRequestsAvailable(self)
-        }
-    }
-
-    func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
-        managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
-            guard let message = managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage
-            else { return }
-            guard message.version < 3 else { return }
-            guard let identifier = message.associatedTaskIdentifier else { return }
-            applicationStatus?.requestCancellation.cancelTask(with: identifier)
-            message.associatedTaskIdentifier = nil
-        }
-    }
-
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        assetDownstreamObjectSync.nextRequest(for: apiVersion)
-    }
-
-    fileprivate func handleResponse(
-        _ response: ZMTransportResponse,
-        forMessage assetClientMessage: ZMAssetClientMessage
-    ) {
-        assetClientMessage.isDownloading = false
-
-        guard response.result == .success else {
-            return
-        }
-
-        guard
-            let asset = assetClientMessage.underlyingMessage?.assetData,
-            let data = response.rawData,
-            let fileCache = managedObjectContext.zm_fileAssetCache
-        else {
-            return
-        }
-
-        guard assetClientMessage.visibleInConversation != nil else {
-            // If the assetClientMessage was "deleted" (e.g. due to ephemeral) before the download finished,
-            // we don't want to update the message
-            return
-        }
-
-        guard data.zmSHA256Digest() == asset.uploaded.sha256 else {
-            // Digest doesn't match, ignore
-            return
-        }
-
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
-        fileCache.storeEncryptedFile(
-            data: data,
-            for: assetClientMessage
-        )
-
-        guard let viewcontext = managedObjectContext.zm_userInterface else {
-            return
-        }
-
-        NotificationDispatcher.notifyNonCoreDataChanges(
-            objectID: assetClientMessage.objectID,
-            changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
-            uiContext: viewcontext
-        )
-    }
+    // MARK: Public
 
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [assetDownstreamObjectSync]
+    }
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMDownstreamTranscoder
@@ -201,4 +110,106 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         // no-op
     }
+
+    // MARK: Internal
+
+    func registerForCancellationNotification() {
+        notificationTokens.append(NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
+            context: managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
+            guard let objectID = note.object as? NSManagedObjectID else { return }
+            self?.cancelOngoingRequestForAssetClientMessage(objectID)
+        })
+    }
+
+    func registerForWhitelistingNotification() {
+        notificationTokens.append(NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.assetDownloadNotificationName,
+            context: managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
+            guard let objectID = note.object as? NSManagedObjectID else { return }
+            self?.didRequestToDownloadAsset(objectID)
+        })
+    }
+
+    func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
+        managedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
+            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
+            guard let message = object as? ZMAssetClientMessage else { return }
+            message.isDownloading = true
+            assetDownstreamObjectSync.whiteListObject(message)
+            RequestAvailableNotification.notifyNewRequestsAvailable(self)
+        }
+    }
+
+    func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
+        managedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
+            guard let message = managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage
+            else { return }
+            guard message.version < 3 else { return }
+            guard let identifier = message.associatedTaskIdentifier else { return }
+            applicationStatus?.requestCancellation.cancelTask(with: identifier)
+            message.associatedTaskIdentifier = nil
+        }
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
+
+    fileprivate func handleResponse(
+        _ response: ZMTransportResponse,
+        forMessage assetClientMessage: ZMAssetClientMessage
+    ) {
+        assetClientMessage.isDownloading = false
+
+        guard response.result == .success else {
+            return
+        }
+
+        guard
+            let asset = assetClientMessage.underlyingMessage?.assetData,
+            let data = response.rawData,
+            let fileCache = managedObjectContext.zm_fileAssetCache
+        else {
+            return
+        }
+
+        guard assetClientMessage.visibleInConversation != nil else {
+            // If the assetClientMessage was "deleted" (e.g. due to ephemeral) before the download finished,
+            // we don't want to update the message
+            return
+        }
+
+        guard data.zmSHA256Digest() == asset.uploaded.sha256 else {
+            // Digest doesn't match, ignore
+            return
+        }
+
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
+        fileCache.storeEncryptedFile(
+            data: data,
+            for: assetClientMessage
+        )
+
+        guard let viewcontext = managedObjectContext.zm_userInterface else {
+            return
+        }
+
+        NotificationDispatcher.notifyNonCoreDataChanges(
+            objectID: assetClientMessage.objectID,
+            changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
+            uiContext: viewcontext
+        )
+    }
+
+    // MARK: Private
+
+    private var notificationTokens: [Any] = []
 }

@@ -24,17 +24,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
-    // the api version is just required to build and not influence the tests
-    private let defaultAPIVersion: APIVersion = .v5
-
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var mockCoreDataStack: CoreDataStack!
-
-    private var mockSelfUserProvider: MockSelfUserProviderProtocol!
-
-    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
-
-    // MARK: - Life cycle
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -112,6 +102,18 @@ final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
         // then
         XCTAssertNotNil(request)
     }
+
+    // MARK: Private
+
+    // the api version is just required to build and not influence the tests
+    private let defaultAPIVersion: APIVersion = .v5
+
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var mockCoreDataStack: CoreDataStack!
+
+    private var mockSelfUserProvider: MockSelfUserProviderProtocol!
+
+    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
     // MARK: Helpers
 

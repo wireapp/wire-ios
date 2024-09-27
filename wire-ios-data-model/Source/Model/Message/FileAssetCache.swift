@@ -43,12 +43,7 @@ extension NSManagedObjectContext {
 
 @objcMembers
 public final class FileAssetCache: NSObject {
-    private let fileCache: FileCache
-    private let tempCache: FileCache
-
-    var cache: Cache {
-        fileCache
-    }
+    // MARK: Lifecycle
 
     /// Creates an asset cache.
 
@@ -59,22 +54,38 @@ public final class FileAssetCache: NSObject {
         super.init()
     }
 
-    // MARK: - Team logo
+    // MARK: Public
 
-    private func cacheKey(
-        for team: Team,
-        format: ZMImageFormat
+    public static func cacheKeyForAsset(
+        _ message: ZMConversationMessage,
+        format: ZMImageFormat,
+        encrypted: Bool = false
+    ) -> String? {
+        cacheKeyForAsset(
+            message,
+            identifier: format.stringValue,
+            encrypted: encrypted
+        )
+    }
+
+    public static func cacheKeyForAsset(
+        _ message: ZMConversationMessage,
+        identifier: String? = nil,
+        encrypted: Bool = false
     ) -> String? {
         guard
-            let teamID = team.remoteIdentifier?.uuidString,
-            let assetID = team.pictureAssetId
+            let messageId = message.nonce?.transportString(),
+            let senderId = message.sender?.remoteIdentifier?.transportString(),
+            let conversationId = message.conversation?.remoteIdentifier?.transportString()
         else {
             return nil
         }
 
-        return [teamID, assetID, format.stringValue]
+        let key = [messageId, senderId, conversationId, identifier, encrypted ? "encrypted" : nil]
+            .compactMap { $0 }
             .joined(separator: "_")
-            .data(using: .utf8)?
+
+        return key.data(using: .utf8)?
             .zmSHA256Digest()
             .zmHexEncodedString()
     }
@@ -591,101 +602,6 @@ public final class FileAssetCache: NSObject {
         cache.deleteAssetData(key)
     }
 
-    // MARK: - Encryption
-
-    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
-    /// of the encrypted entry.
-
-    func encryptImageAndComputeSHA256Digest(
-        _ message: ZMConversationMessage,
-        format: ZMImageFormat
-    ) -> ZMImageAssetEncryptionKeys? {
-        guard
-            let plaintextCacheKey = Self.cacheKeyForAsset(
-                message,
-                format: format,
-                encrypted: false
-            ),
-            let encryptedCacheKey = Self.cacheKeyForAsset(
-                message,
-                format: format,
-                encrypted: true
-            )
-        else {
-            return nil
-        }
-
-        let keys = encryptFileAndComputeSHA256Digest(
-            plaintextCacheKey,
-            encryptedEntryKey: encryptedCacheKey
-        )
-
-        cache.deleteAssetData(plaintextCacheKey)
-
-        return keys
-    }
-
-    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
-    /// of the encrypted entry.
-
-    func encryptFileAndComputeSHA256Digest(
-        _ message: ZMConversationMessage
-    ) -> ZMImageAssetEncryptionKeys? {
-        guard
-            let plaintextCacheKey = Self.cacheKeyForAsset(
-                message,
-                encrypted: false
-            ),
-            let encryptedCacheKey = Self.cacheKeyForAsset(
-                message,
-                encrypted: true
-            )
-        else {
-            return nil
-        }
-
-        let keys = encryptFileAndComputeSHA256Digest(
-            plaintextCacheKey,
-            encryptedEntryKey: encryptedCacheKey
-        )
-
-        cache.deleteAssetData(plaintextCacheKey)
-
-        return keys
-    }
-
-    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
-    /// of the encrypted entry.
-
-    private func encryptFileAndComputeSHA256Digest(
-        _ plaintextEntryKey: String,
-        encryptedEntryKey: String
-    ) -> ZMImageAssetEncryptionKeys? {
-        guard let plainData = assetData(plaintextEntryKey) else {
-            return nil
-        }
-
-        let encryptionKey = Data.randomEncryptionKey()
-
-        do {
-            let encryptedData = try plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
-            let hash = encryptedData.zmSHA256Digest()
-
-            cache.storeAssetData(
-                encryptedData,
-                key: encryptedEntryKey,
-                createdAt: Date()
-            )
-
-            return ZMImageAssetEncryptionKeys(
-                otrKey: encryptionKey,
-                sha256: hash
-            )
-        } catch {
-            return nil
-        }
-    }
-
     // MARK: - Decryption
 
     public func decryptData(
@@ -806,38 +722,130 @@ public final class FileAssetCache: NSObject {
         }
     }
 
-    public static func cacheKeyForAsset(
-        _ message: ZMConversationMessage,
-        format: ZMImageFormat,
-        encrypted: Bool = false
-    ) -> String? {
-        cacheKeyForAsset(
-            message,
-            identifier: format.stringValue,
-            encrypted: encrypted
-        )
+    // MARK: Internal
+
+    var cache: Cache {
+        fileCache
     }
 
-    public static func cacheKeyForAsset(
+    // MARK: - Encryption
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
+    /// of the encrypted entry.
+
+    func encryptImageAndComputeSHA256Digest(
         _ message: ZMConversationMessage,
-        identifier: String? = nil,
-        encrypted: Bool = false
-    ) -> String? {
+        format: ZMImageFormat
+    ) -> ZMImageAssetEncryptionKeys? {
         guard
-            let messageId = message.nonce?.transportString(),
-            let senderId = message.sender?.remoteIdentifier?.transportString(),
-            let conversationId = message.conversation?.remoteIdentifier?.transportString()
+            let plaintextCacheKey = Self.cacheKeyForAsset(
+                message,
+                format: format,
+                encrypted: false
+            ),
+            let encryptedCacheKey = Self.cacheKeyForAsset(
+                message,
+                format: format,
+                encrypted: true
+            )
         else {
             return nil
         }
 
-        let key = [messageId, senderId, conversationId, identifier, encrypted ? "encrypted" : nil]
-            .compactMap { $0 }
-            .joined(separator: "_")
+        let keys = encryptFileAndComputeSHA256Digest(
+            plaintextCacheKey,
+            encryptedEntryKey: encryptedCacheKey
+        )
 
-        return key.data(using: .utf8)?
+        cache.deleteAssetData(plaintextCacheKey)
+
+        return keys
+    }
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
+    /// of the encrypted entry.
+
+    func encryptFileAndComputeSHA256Digest(
+        _ message: ZMConversationMessage
+    ) -> ZMImageAssetEncryptionKeys? {
+        guard
+            let plaintextCacheKey = Self.cacheKeyForAsset(
+                message,
+                encrypted: false
+            ),
+            let encryptedCacheKey = Self.cacheKeyForAsset(
+                message,
+                encrypted: true
+            )
+        else {
+            return nil
+        }
+
+        let keys = encryptFileAndComputeSHA256Digest(
+            plaintextCacheKey,
+            encryptedEntryKey: encryptedCacheKey
+        )
+
+        cache.deleteAssetData(plaintextCacheKey)
+
+        return keys
+    }
+
+    // MARK: Private
+
+    private let fileCache: FileCache
+    private let tempCache: FileCache
+
+    // MARK: - Team logo
+
+    private func cacheKey(
+        for team: Team,
+        format: ZMImageFormat
+    ) -> String? {
+        guard
+            let teamID = team.remoteIdentifier?.uuidString,
+            let assetID = team.pictureAssetId
+        else {
+            return nil
+        }
+
+        return [teamID, assetID, format.stringValue]
+            .joined(separator: "_")
+            .data(using: .utf8)?
             .zmSHA256Digest()
             .zmHexEncodedString()
+    }
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
+    /// of the encrypted entry.
+
+    private func encryptFileAndComputeSHA256Digest(
+        _ plaintextEntryKey: String,
+        encryptedEntryKey: String
+    ) -> ZMImageAssetEncryptionKeys? {
+        guard let plainData = assetData(plaintextEntryKey) else {
+            return nil
+        }
+
+        let encryptionKey = Data.randomEncryptionKey()
+
+        do {
+            let encryptedData = try plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
+            let hash = encryptedData.zmSHA256Digest()
+
+            cache.storeAssetData(
+                encryptedData,
+                key: encryptedEntryKey,
+                createdAt: Date()
+            )
+
+            return ZMImageAssetEncryptionKeys(
+                otrKey: encryptionKey,
+                sha256: hash
+            )
+        } catch {
+            return nil
+        }
     }
 }
 
@@ -866,7 +874,7 @@ private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?
 /// Objects purged from the cache folder by the OS are not a problem as the
 /// OS will terminate the app before purging the cache.
 private struct FileCache: Cache {
-    private let cacheFolderURL: URL
+    // MARK: Lifecycle
 
     /// Create FileCahe
     /// - parameter location: where cache is persisted on disk.
@@ -875,6 +883,8 @@ private struct FileCache: Cache {
         self.cacheFolderURL = location
         try! FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
     }
+
+    // MARK: Internal
 
     func assetData(_ key: String) -> Data? {
         let url = URLForKey(key)
@@ -983,16 +993,6 @@ private struct FileCache: Cache {
         assetURL(key) != nil
     }
 
-    /// Returns the expected URL of a cache entry
-    fileprivate func URLForKey(_ key: String) -> URL {
-        guard key != ".", key != ".." else { fatal("Can't use \(key) as cache key") }
-        var safeKey = key
-        for c in ":\\/%\"" { // see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
-            safeKey = safeKey.replacingOccurrences(of: "\(c)", with: "_")
-        }
-        return cacheFolderURL.appendingPathComponent(safeKey)
-    }
-
     /// Deletes the contents of the cache.
 
     func wipeCaches() throws {
@@ -1031,4 +1031,20 @@ private struct FileCache: Cache {
             return creationDate < date
         }
     }
+
+    // MARK: Fileprivate
+
+    /// Returns the expected URL of a cache entry
+    fileprivate func URLForKey(_ key: String) -> URL {
+        guard key != ".", key != ".." else { fatal("Can't use \(key) as cache key") }
+        var safeKey = key
+        for c in ":\\/%\"" { // see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+            safeKey = safeKey.replacingOccurrences(of: "\(c)", with: "_")
+        }
+        return cacheFolderURL.appendingPathComponent(safeKey)
+    }
+
+    // MARK: Private
+
+    private let cacheFolderURL: URL
 }

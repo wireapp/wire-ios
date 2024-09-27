@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ConversationReactionMessageTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var sut: MessageReactionsCell!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -105,4 +102,11 @@ final class ConversationReactionMessageTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: MessageReactionsCell!
 }

@@ -42,55 +42,7 @@ protocol DeviceDetailsViewActions {
 // MARK: - DeviceInfoViewModel
 
 final class DeviceInfoViewModel: ObservableObject {
-    let addedDate: String
-    let proteusID: String
-    let gracePeriod: TimeInterval
-    let isFromConversation: Bool
-    let mlsCiphersuite: MLSCipherSuite?
-
-    let title: String
-    var isSelfClient: Bool
-    var userClient: UserClientType
-
-    var isCopyEnabled: Bool {
-        Settings.isClipboardEnabled
-    }
-
-    var isCertificateExpiringSoon: Bool? {
-        guard let certificate = e2eIdentityCertificate else {
-            return nil
-        }
-        return certificate.shouldUpdate(with: gracePeriod)
-    }
-
-    var isE2eIdentityEnabled: Bool {
-        e2eIdentityCertificate != nil && mlsThumbprint != nil
-    }
-
-    var mlsThumbprint: String? {
-        e2eIdentityCertificate?
-            .mlsThumbprint
-            .splitStringIntoLines(charactersPerLine: 16)
-    }
-
-    var serialNumber: String? {
-        e2eIdentityCertificate?.serialNumber
-            .uppercased()
-            .splitStringIntoLines(charactersPerLine: 16)
-            .replacingOccurrences(of: " ", with: ":")
-    }
-
-    var showCertificateUpdateSuccess: ((String) -> Void)?
-
-    @Published var e2eIdentityCertificate: E2eIdentityCertificate?
-    @Published var shouldDismiss = false
-    @Published var isProteusVerificationEnabled = false
-    @Published var isActionInProgress = false
-    @Published var proteusKeyFingerprint = ""
-    @Published var showEnrollmentCertificateError = false
-
-    var actionsHandler: DeviceDetailsViewActions
-    var conversationClientDetailsActions: ConversationUserClientDetailsActions
+    // MARK: Lifecycle
 
     init(
         title: String,
@@ -123,6 +75,58 @@ final class DeviceInfoViewModel: ObservableObject {
 
         self.e2eIdentityCertificate = userClient.e2eIdentityCertificate
         self.isProteusVerificationEnabled = userClient.verified
+    }
+
+    // MARK: Internal
+
+    let addedDate: String
+    let proteusID: String
+    let gracePeriod: TimeInterval
+    let isFromConversation: Bool
+    let mlsCiphersuite: MLSCipherSuite?
+
+    let title: String
+    var isSelfClient: Bool
+    var userClient: UserClientType
+
+    var showCertificateUpdateSuccess: ((String) -> Void)?
+
+    @Published var e2eIdentityCertificate: E2eIdentityCertificate?
+    @Published var shouldDismiss = false
+    @Published var isProteusVerificationEnabled = false
+    @Published var isActionInProgress = false
+    @Published var proteusKeyFingerprint = ""
+    @Published var showEnrollmentCertificateError = false
+
+    var actionsHandler: DeviceDetailsViewActions
+    var conversationClientDetailsActions: ConversationUserClientDetailsActions
+
+    var isCopyEnabled: Bool {
+        Settings.isClipboardEnabled
+    }
+
+    var isCertificateExpiringSoon: Bool? {
+        guard let certificate = e2eIdentityCertificate else {
+            return nil
+        }
+        return certificate.shouldUpdate(with: gracePeriod)
+    }
+
+    var isE2eIdentityEnabled: Bool {
+        e2eIdentityCertificate != nil && mlsThumbprint != nil
+    }
+
+    var mlsThumbprint: String? {
+        e2eIdentityCertificate?
+            .mlsThumbprint
+            .splitStringIntoLines(charactersPerLine: 16)
+    }
+
+    var serialNumber: String? {
+        e2eIdentityCertificate?.serialNumber
+            .uppercased()
+            .splitStringIntoLines(charactersPerLine: 16)
+            .replacingOccurrences(of: " ", with: ":")
     }
 
     func update(from userClient: UserClientType) {

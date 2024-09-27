@@ -22,6 +22,8 @@ import XCTest
 @testable import Wire
 
 final class SettingsTableViewControllerSnapshotTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: - Properties
 
     var sut: SettingsTableViewController!
@@ -29,7 +31,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     var settingsPropertyFactory: SettingsPropertyFactory!
     var userSession: UserSessionMock!
     var selfUser: MockZMEditableUser!
-    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
@@ -81,20 +82,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         Analytics.shared = Analytics(optedOut: true)
         let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession)
         try verify(group: group)
-    }
-
-    private func testForAccountGroup(
-        federated: Bool,
-        disabledEditing: Bool = false,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) throws {
-        BackendInfo.isFederationEnabled = federated
-
-        MockUserRight.isPermitted = !disabledEditing
-        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession)
-        try verify(group: group, file: file, testName: testName, line: line)
     }
 
     func testForAccountGroup_Federated() throws {
@@ -178,6 +165,38 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         try verify(group: group)
     }
 
+    // MARK: - advanced
+
+    func testForAdvancedGroup() throws {
+        let group = settingsCellDescriptorFactory.advancedGroup(userSession: userSession)
+        try verify(group: group)
+    }
+
+    // MARK: - data usage permissions
+
+    func testForDataUsagePermissionsForTeamMember() throws {
+        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isTeamMember: true)
+        try verify(group: group)
+    }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
+
+    private func testForAccountGroup(
+        federated: Bool,
+        disabledEditing: Bool = false,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) throws {
+        BackendInfo.isFederationEnabled = federated
+
+        MockUserRight.isPermitted = !disabledEditing
+        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession)
+        try verify(group: group, file: file, testName: testName, line: line)
+    }
+
     private func verify(
         group: Any,
         file: StaticString = #file,
@@ -191,19 +210,5 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut, file: file, testName: testName, line: line)
-    }
-
-    // MARK: - advanced
-
-    func testForAdvancedGroup() throws {
-        let group = settingsCellDescriptorFactory.advancedGroup(userSession: userSession)
-        try verify(group: group)
-    }
-
-    // MARK: - data usage permissions
-
-    func testForDataUsagePermissionsForTeamMember() throws {
-        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isTeamMember: true)
-        try verify(group: group)
     }
 }

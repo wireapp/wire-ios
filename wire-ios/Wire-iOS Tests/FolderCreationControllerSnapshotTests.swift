@@ -22,9 +22,10 @@ import XCTest
 @testable import Wire
 
 final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
+    // MARK: Internal
+
     var sut: FolderCreationController!
     var coreDataFixture: CoreDataFixture!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -53,4 +54,8 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
 
         snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
 }

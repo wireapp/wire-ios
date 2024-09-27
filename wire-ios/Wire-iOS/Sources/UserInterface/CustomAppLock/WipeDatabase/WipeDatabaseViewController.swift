@@ -44,13 +44,44 @@ extension WipeDatabaseViewController: WipeDatabaseUserInterface {
 // MARK: - WipeDatabaseViewController
 
 final class WipeDatabaseViewController: UIViewController {
+    // MARK: Lifecycle
+
+    convenience init() {
+        self.init(nibName: nil, bundle: nil)
+
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        [
+            stackView,
+            confirmButton,
+        ].forEach {
+            view.addSubview($0)
+        }
+
+        stackView.distribution = .fillProportionally
+
+        [
+            titleLabel,
+            SpacingView(25),
+            infoLabel,
+        ].forEach {
+            stackView.addArrangedSubview($0)
+        }
+
+        createConstraints()
+    }
+
+    // MARK: Internal
+
+    typealias WipeDatabase = L10n.Localizable.WipeDatabase
+
     var presenter: WipeDatabasePresenter!
 
     var confirmController: RequestPasswordController?
 
-    private let stackView = UIStackView.verticalStackView()
+    // MARK: Private
 
-    typealias WipeDatabase = L10n.Localizable.WipeDatabase
+    private let stackView = UIStackView.verticalStackView()
 
     private let titleLabel: UILabel = {
         let label = UILabel.createMultiLineCenterdLabel()
@@ -96,31 +127,6 @@ final class WipeDatabaseViewController: UIViewController {
     @objc
     private func onConfirmButtonPressed(sender: LegacyButton?) {
         presentConfirmAlert()
-    }
-
-    convenience init() {
-        self.init(nibName: nil, bundle: nil)
-
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        [
-            stackView,
-            confirmButton,
-        ].forEach {
-            view.addSubview($0)
-        }
-
-        stackView.distribution = .fillProportionally
-
-        [
-            titleLabel,
-            SpacingView(25),
-            infoLabel,
-        ].forEach {
-            stackView.addArrangedSubview($0)
-        }
-
-        createConstraints()
     }
 
     private func createConstraints() {

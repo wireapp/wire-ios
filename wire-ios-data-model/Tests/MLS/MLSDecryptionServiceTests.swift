@@ -27,6 +27,10 @@ import XCTest
 // MARK: - MLSDecryptionServiceTests
 
 final class MLSDecryptionServiceTests: ZMConversationTestsBase {
+    // MARK: - Message Decryption
+
+    typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
+
     var sut: MLSDecryptionService!
     var mockMLSActionExecutor: MockMLSActionExecutor!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
@@ -51,10 +55,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         mockSubconversationGroupIDRepository = nil
         super.tearDown()
     }
-
-    // MARK: - Message Decryption
-
-    typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
     func test_Decrypt_ThrowsFailedToConvertMessageToBytes() async {
         // Given

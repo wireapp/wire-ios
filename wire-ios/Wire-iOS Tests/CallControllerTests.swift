@@ -192,38 +192,42 @@ extension CallControllerTests {
 
 final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
     var dismissSecurityDegradedAlertIfNeededIsCalled = false
+    var presentActiveCallIsCalled = false
+    var dismissActiveCallIsCalled = false
+    var minimizeCallIsCalled = false
+    var showCallTopOverlayIsCalled = false
+    var hideCallTopOverlayIsCalled = false
+    var expectedEndedAlertChoice: AlertChoice?
+    var presentEndingSecurityDegradedAlertIsCalled = false
+    var expectedIncomingAlertChoice: AlertChoice?
+    var presentIncomingSecurityDegradedAlertIsCalled = false
+    var presentUnsupportedVersionAlertIsCalled = false
+
     func dismissSecurityDegradedAlertIfNeeded() {
         dismissSecurityDegradedAlertIfNeededIsCalled = true
     }
 
-    var presentActiveCallIsCalled = false
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         presentActiveCallIsCalled = true
     }
 
-    var dismissActiveCallIsCalled = false
     func dismissActiveCall(animated: Bool, completion: Completion?) {
         dismissActiveCallIsCalled = true
         hideCallTopOverlay()
     }
 
-    var minimizeCallIsCalled = false
     func minimizeCall(animated: Bool, completion: (() -> Void)?) {
         minimizeCallIsCalled = true
     }
 
-    var showCallTopOverlayIsCalled = false
     func showCallTopOverlay(for conversation: ZMConversation) {
         showCallTopOverlayIsCalled = true
     }
 
-    var hideCallTopOverlayIsCalled = false
     func hideCallTopOverlay() {
         hideCallTopOverlayIsCalled = true
     }
 
-    var expectedEndedAlertChoice: AlertChoice?
-    var presentEndingSecurityDegradedAlertIsCalled = false
     func presentEndingSecurityDegradedAlert(
         for reason: CallDegradationReason,
         completion: @escaping (AlertChoice) -> Void
@@ -234,8 +238,6 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
         }
     }
 
-    var expectedIncomingAlertChoice: AlertChoice?
-    var presentIncomingSecurityDegradedAlertIsCalled = false
     func presentIncomingSecurityDegradedAlert(
         for reason: CallDegradationReason,
         completion: @escaping (AlertChoice) -> Void
@@ -246,7 +248,6 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
         }
     }
 
-    var presentUnsupportedVersionAlertIsCalled = false
     func presentUnsupportedVersionAlert() {
         presentUnsupportedVersionAlertIsCalled = true
     }

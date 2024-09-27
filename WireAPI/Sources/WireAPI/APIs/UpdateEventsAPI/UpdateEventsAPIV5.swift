@@ -19,12 +19,10 @@
 import Foundation
 
 class UpdateEventsAPIV5: UpdateEventsAPIV4 {
+    // MARK: Internal
+
     override var apiVersion: APIVersion {
         .v5
-    }
-
-    private var basePath: String {
-        "/notifications"
     }
 
     override func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope {
@@ -84,5 +82,11 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
                 .failure(code: .notFound, error: UpdateEventsAPIError.notFound)
                 .parse(response)
         }
+    }
+
+    // MARK: Private
+
+    private var basePath: String {
+        "/notifications"
     }
 }

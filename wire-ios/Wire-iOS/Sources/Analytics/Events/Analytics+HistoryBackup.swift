@@ -23,6 +23,8 @@ enum BackupEvent: Event {
     case importFailed
     case exportFailed
 
+    // MARK: Internal
+
     var name: String {
         switch self {
         case .importSucceeded: "history.restore_succeeded"

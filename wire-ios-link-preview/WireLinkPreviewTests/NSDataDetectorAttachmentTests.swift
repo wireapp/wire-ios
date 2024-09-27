@@ -20,6 +20,8 @@ import WireLinkPreview
 import XCTest
 
 class NSDataDetectorAttachmentTests: XCTestCase {
+    // MARK: Internal
+
     var detector: NSDataDetector!
 
     override func setUp() {
@@ -108,6 +110,8 @@ class NSDataDetectorAttachmentTests: XCTestCase {
         let text = "Check out my playlist for the party: https://scamsoundcloud.com/example/sets/example"
         checkAttachments(in: text, expectation: nil)
     }
+
+    // MARK: Private
 
     // MARK: - Helpers
 

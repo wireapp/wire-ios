@@ -21,13 +21,7 @@ import XCTest
 @testable import WireSyncEngine
 
 class FetchShareableConversationUseCaseTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sut: FetchShareableConversationsUseCase!
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var coreDataStack: CoreDataStack!
-
-    // MARK: - Life cycle
+    // MARK: Internal
 
     override func setUp() async throws {
         try await super.setUp()
@@ -63,6 +57,14 @@ class FetchShareableConversationUseCaseTests: XCTestCase {
         // Then
         XCTAssertEqual(result, [shareable])
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var sut: FetchShareableConversationsUseCase!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var coreDataStack: CoreDataStack!
 
     // MARK: - Helpers
 

@@ -27,15 +27,19 @@ public enum ConversationListType {
 // MARK: - ConversationDirectoryChangeInfo
 
 public struct ConversationDirectoryChangeInfo {
-    public var reloaded: Bool
-    public var updatedLists: [ConversationListType]
-    public var updatedFolders: Bool
+    // MARK: Lifecycle
 
     public init(reloaded: Bool, updatedLists: [ConversationListType], updatedFolders: Bool) {
         self.reloaded = reloaded
         self.updatedLists = updatedLists
         self.updatedFolders = updatedFolders
     }
+
+    // MARK: Public
+
+    public var reloaded: Bool
+    public var updatedLists: [ConversationListType]
+    public var updatedFolders: Bool
 }
 
 // MARK: - ConversationDirectoryObserver
@@ -123,13 +127,17 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
 
 private class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver,
     ZMConversationListFolderObserver {
-    weak var observer: ConversationDirectoryObserver?
-    var directory: ZMConversationListDirectory
+    // MARK: Lifecycle
 
     init(observer: ConversationDirectoryObserver, directory: ZMConversationListDirectory) {
         self.observer = observer
         self.directory = directory
     }
+
+    // MARK: Internal
+
+    weak var observer: ConversationDirectoryObserver?
+    var directory: ZMConversationListDirectory
 
     func conversationListsDidReload() {
         observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(

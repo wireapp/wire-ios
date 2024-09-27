@@ -19,13 +19,19 @@
 import WireSyncEngine
 
 final class ChangeEmailViewModel {
-    // MARK: - Properties
+    // MARK: Lifecycle
 
-    private weak var userProfile: UserProfile?
+    // MARK: - Initialization
 
-    private let currentEmail: String?
+    init(currentEmail: String?, userProfile: UserProfile?) {
+        self.currentEmail = currentEmail
+        self.userProfile = userProfile
+        self.emailValidationError = nil
+    }
+
+    // MARK: Internal
+
     var newEmail: String?
-    private var emailValidationError: TextFieldValidator.ValidationError?
 
     // MARK: - Computed Properties
 
@@ -45,14 +51,6 @@ final class ChangeEmailViewModel {
         validatedEmail != nil
     }
 
-    // MARK: - Initialization
-
-    init(currentEmail: String?, userProfile: UserProfile?) {
-        self.currentEmail = currentEmail
-        self.userProfile = userProfile
-        self.emailValidationError = nil
-    }
-
     // MARK: - Methods
 
     func updateNewEmail(_ newEmail: String) {
@@ -70,4 +68,13 @@ final class ChangeEmailViewModel {
 
         try userProfile?.requestEmailChange(email: email)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private weak var userProfile: UserProfile?
+
+    private let currentEmail: String?
+    private var emailValidationError: TextFieldValidator.ValidationError?
 }

@@ -20,21 +20,27 @@ import Foundation
 
 extension Feature {
     public struct AppLock: Codable {
-        // MARK: - Properties
-
-        public let status: Status
-        public let config: Config
-
-        // MARK: - Life cycle
+        // MARK: Lifecycle
 
         public init(status: Feature.Status = .enabled, config: Config = .init()) {
             self.status = status
             self.config = config
         }
 
+        // MARK: Public
+
         // MARK: - Types
 
         public struct Config: Codable, Equatable {
+            // MARK: Lifecycle
+
+            public init(enforceAppLock: Bool = false, inactivityTimeoutSecs: UInt = 60) {
+                self.enforceAppLock = enforceAppLock
+                self.inactivityTimeoutSecs = inactivityTimeoutSecs
+            }
+
+            // MARK: Public
+
             /// If `true` then app lock is mandatory and can not
             /// be disabled by by the user.
 
@@ -44,11 +50,11 @@ extension Feature {
             /// app should relock.
 
             public let inactivityTimeoutSecs: UInt
-
-            public init(enforceAppLock: Bool = false, inactivityTimeoutSecs: UInt = 60) {
-                self.enforceAppLock = enforceAppLock
-                self.inactivityTimeoutSecs = inactivityTimeoutSecs
-            }
         }
+
+        // MARK: - Properties
+
+        public let status: Status
+        public let config: Config
     }
 }

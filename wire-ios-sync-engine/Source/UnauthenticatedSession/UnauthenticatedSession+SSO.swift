@@ -29,11 +29,7 @@ public enum SSOSettingsError: Error, Equatable {
 // MARK: - SSOSettings
 
 public struct SSOSettings: Codable, Equatable {
-    public let ssoCode: UUID?
-
-    private enum CodingKeys: String, CodingKey {
-        case ssoCode = "default_sso_code"
-    }
+    // MARK: Lifecycle
 
     init(ssoCode: UUID?) {
         self.ssoCode = ssoCode
@@ -47,6 +43,16 @@ public struct SSOSettings: Codable, Equatable {
         } catch {
             return nil
         }
+    }
+
+    // MARK: Public
+
+    public let ssoCode: UUID?
+
+    // MARK: Private
+
+    private enum CodingKeys: String, CodingKey {
+        case ssoCode = "default_sso_code"
     }
 }
 

@@ -39,23 +39,7 @@ enum AccessoryViewMode: Int {
 // MARK: - SettingsExternalScreenCellDescriptor
 
 class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptorType, SettingsControllerGeneratorType {
-    static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
-    var visible = true
-    let title: String
-    let destructive: Bool
-    let presentationStyle: PresentationStyle
-    let identifier: String?
-    let icon: StyleKitIcon?
-    var copiableText: String?
-
-    private let accessoryViewMode: AccessoryViewMode
-
-    weak var group: SettingsGroupCellDescriptorType?
-    weak var viewController: UIViewController?
-
-    let previewGenerator: PreviewGeneratorType?
-
-    let presentationAction: () -> (UIViewController?)
+    // MARK: Lifecycle
 
     convenience init(title: String, presentationAction: @escaping () -> (UIViewController?)) {
         self.init(
@@ -114,6 +98,25 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.accessoryViewMode = accessoryViewMode
         self.copiableText = copiableText
     }
+
+    // MARK: Internal
+
+    static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
+
+    var visible = true
+    let title: String
+    let destructive: Bool
+    let presentationStyle: PresentationStyle
+    let identifier: String?
+    let icon: StyleKitIcon?
+    var copiableText: String?
+
+    weak var group: SettingsGroupCellDescriptorType?
+    weak var viewController: UIViewController?
+
+    let previewGenerator: PreviewGeneratorType?
+
+    let presentationAction: () -> (UIViewController?)
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
         guard let controllerToShow = generateViewController() else {
@@ -174,4 +177,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     func generateViewController() -> UIViewController? {
         presentationAction()
     }
+
+    // MARK: Private
+
+    private let accessoryViewMode: AccessoryViewMode
 }

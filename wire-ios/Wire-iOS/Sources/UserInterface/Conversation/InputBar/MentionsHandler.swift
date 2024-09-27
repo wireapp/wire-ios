@@ -28,13 +28,7 @@ extension String {
 // MARK: - MentionsHandler
 
 final class MentionsHandler: NSObject {
-    fileprivate var mentionRegex: NSRegularExpression = try! NSRegularExpression(
-        pattern: "([\\s]|^)(@(\\S*))",
-        options: [.anchorsMatchLines]
-    )
-
-    let mentionMatchRange: NSRange
-    let searchQueryMatchRange: NSRange
+    // MARK: Lifecycle
 
     init?(text: String?, cursorPosition: Int) {
         guard let text, !text.isEmpty else { return nil }
@@ -56,6 +50,11 @@ final class MentionsHandler: NSObject {
         guard mentionMatchRange.contains(characterPosition) else { return nil }
     }
 
+    // MARK: Internal
+
+    let mentionMatchRange: NSRange
+    let searchQueryMatchRange: NSRange
+
     func searchString(in text: String?) -> String? {
         guard let text else { return nil }
         guard let range = Range(searchQueryMatchRange, in: text) else { return nil }
@@ -75,4 +74,11 @@ final class MentionsHandler: NSObject {
 
         return (mentionMatchRange, mentionString + suffix)
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var mentionRegex: NSRegularExpression = try! NSRegularExpression(
+        pattern: "([\\s]|^)(@(\\S*))",
+        options: [.anchorsMatchLines]
+    )
 }

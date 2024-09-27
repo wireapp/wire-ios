@@ -23,12 +23,11 @@ import XCTest
 // MARK: - SessionManagerBackupTests
 
 final class SessionManagerBackupTests: IntegrationTest {
+    // MARK: Internal
+
     override var useInMemoryStore: Bool {
         false
     }
-
-    private var backupURL: URL!
-    private var unzippedURL: URL!
 
     override func setUp() {
         super.setUp()
@@ -60,10 +59,6 @@ final class SessionManagerBackupTests: IntegrationTest {
         backupURL = nil
         unzippedURL = nil
         super.tearDown()
-    }
-
-    private func createTemporaryURL() -> URL {
-        backupURL.appendingPathComponent(UUID().uuidString)
     }
 
     func testThatItReturnsAnErrorWhenThereIsNoSelectedAccount() {
@@ -287,6 +282,15 @@ final class SessionManagerBackupTests: IntegrationTest {
             return message?.textMessageData?.messageText == nil && message?.sender == nil
         }(), timeout: 5)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    // MARK: Private
+
+    private var backupURL: URL!
+    private var unzippedURL: URL!
+
+    private func createTemporaryURL() -> URL {
+        backupURL.appendingPathComponent(UUID().uuidString)
     }
 
     // MARK: - Helper

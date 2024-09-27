@@ -20,6 +20,8 @@ import XCTest
 @testable import WireSystem
 
 final class DispatchGroupTests: XCTestCase {
+    // MARK: Internal
+
     func testThatItNotifiesWhenEnteringAndLeavingAGroupOnce() {
         // Given
         var notified = false
@@ -213,6 +215,8 @@ final class DispatchGroupTests: XCTestCase {
         // then
         XCTAssertEqual(result, 0)
     }
+
+    // MARK: Private
 
     // MARK: - Helper
 

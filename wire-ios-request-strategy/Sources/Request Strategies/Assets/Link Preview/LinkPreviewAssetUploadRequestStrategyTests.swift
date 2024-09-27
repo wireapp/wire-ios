@@ -25,8 +25,7 @@ import XCTest
 // MARK: - LinkPreviewAssetUploadRequestStrategyTests
 
 class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
-    fileprivate var sut: LinkPreviewAssetUploadRequestStrategy!
-    fileprivate var mockApplicationStatus: MockApplicationStatus!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -156,6 +155,11 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
             keysToParse: [ZMClientMessage.linkPreviewStateKey]
         )
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var sut: LinkPreviewAssetUploadRequestStrategy!
+    fileprivate var mockApplicationStatus: MockApplicationStatus!
 }
 
 // MARK: - Tests

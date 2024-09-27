@@ -25,13 +25,7 @@ import WireCoreCrypto
 /// self-user and the self-mls-conversation from a managed object context in order to pass it to
 /// the wrapped use case and provide an argument-less `invoke` method.
 public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
-    private let context: NSManagedObjectContext
-    private let featureRepository: FeatureRepositoryInterface
-    /// The `featureRepository` operates on a context, so every operation must be dispatched
-    /// on that context's queue. Since `FeatureRepositoryInterface` doesn't contain any
-    /// `context` property, we inject the context here.
-    private let featureRepositoryContext: NSManagedObjectContext
-    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+    // MARK: Lifecycle
 
     /// - Parameters:
     ///   - context: A managed object context to retrieve the self-user and the self-mls-conversation from.
@@ -47,6 +41,8 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
         self.featureRepositoryContext = featureRepositoryContext
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
     }
+
+    // MARK: Public
 
     public func invoke() async throws -> Bool {
         let isE2EIEnabled = await featureRepositoryContext.perform {
@@ -66,6 +62,16 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
             user: selfUser
         )
     }
+
+    // MARK: Private
+
+    private let context: NSManagedObjectContext
+    private let featureRepository: FeatureRepositoryInterface
+    /// The `featureRepository` operates on a context, so every operation must be dispatched
+    /// on that context's queue. Since `FeatureRepositoryInterface` doesn't contain any
+    /// `context` property, we inject the context here.
+    private let featureRepositoryContext: NSManagedObjectContext
+    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
 }
 
 // MARK: IsSelfUserE2EICertifiedUseCase.Error

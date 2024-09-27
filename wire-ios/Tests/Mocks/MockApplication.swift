@@ -20,9 +20,9 @@ import UIKit
 @testable import Wire
 
 final class MockApplication: ApplicationProtocol {
+    var statusBarOrientation: UIInterfaceOrientation = .unknown
+
     static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void) {
         grantedHandler(true)
     }
-
-    var statusBarOrientation: UIInterfaceOrientation = .unknown
 }

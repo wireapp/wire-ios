@@ -23,10 +23,7 @@ import XCTest
 // MARK: - ChangeHandleViewControllerTests
 
 final class ChangeHandleViewControllerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var snapshotHelper: SnapshotHelper!
-    private var mockSelfUser: MockUserType!
+    // MARK: Internal
 
     // MARK: - setUp
 
@@ -71,6 +68,13 @@ final class ChangeHandleViewControllerTests: XCTestCase {
     func testThatItRendersCorrectNewHandleNotYetChecked() {
         verify(newHandle: "vanessa92", availability: .unknown)
     }
+
+    // MARK: Private
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var mockSelfUser: MockUserType!
 
     // MARK: - Helper methods
 

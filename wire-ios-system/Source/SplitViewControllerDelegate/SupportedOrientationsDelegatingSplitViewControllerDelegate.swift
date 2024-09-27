@@ -27,7 +27,11 @@ import UIKit
 /// `supportedInterfaceOrientations`
 /// property isn't read and therefore in this project this class is only relevant when running on phones.
 public final class SupportedOrientationsDelegatingSplitViewControllerDelegate: UISplitViewControllerDelegate {
+    // MARK: Lifecycle
+
     public init() {}
+
+    // MARK: Public
 
     public func splitViewControllerSupportedInterfaceOrientations(
         _ splitViewController: UISplitViewController

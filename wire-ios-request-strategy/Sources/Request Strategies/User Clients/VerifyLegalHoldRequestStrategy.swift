@@ -26,12 +26,7 @@ import Foundation
 
 @objc
 public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
-    fileprivate let requestFactory = ClientMessageRequestFactory()
-    fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
-
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        conversationSync.nextRequest(for: apiVersion)
-    }
+    // MARK: Lifecycle
 
     override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -47,6 +42,17 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
         ]
         self.conversationSync = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: self)
     }
+
+    // MARK: Public
+
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        conversationSync.nextRequest(for: apiVersion)
+    }
+
+    // MARK: Fileprivate
+
+    fileprivate let requestFactory = ClientMessageRequestFactory()
+    fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
 }
 
 // MARK: ZMContextChangeTracker, ZMContextChangeTrackerSource
@@ -140,13 +146,27 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
 // MARK: - VerifyClientsParser
 
 private class VerifyClientsParser: OTREntity {
-    var context: NSManagedObjectContext
-    let conversation: ZMConversation?
+    // MARK: Lifecycle
 
     init(context: NSManagedObjectContext, conversation: ZMConversation) {
         self.context = context
         self.conversation = conversation
     }
+
+    // MARK: Internal
+
+    var context: NSManagedObjectContext
+    let conversation: ZMConversation?
+
+    var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
+
+    var isExpired = false
+
+    var shouldIgnoreTheSecurityLevelCheck = false
+
+    var expirationDate: Date?
+
+    var expirationReasonCode: NSNumber?
 
     func missesRecipients(_: Set<UserClient>!) {
         // no-op
@@ -163,16 +183,6 @@ private class VerifyClientsParser: OTREntity {
     func delivered(with response: ZMTransportResponse) {
         // no-op
     }
-
-    var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
-
-    var isExpired = false
-
-    var shouldIgnoreTheSecurityLevelCheck = false
-
-    var expirationDate: Date?
-
-    var expirationReasonCode: NSNumber?
 
     func expire() {
         // no-op

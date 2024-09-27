@@ -24,10 +24,7 @@ public typealias ProxyRequestCallback = (Data?, HTTPURLResponse?, NSError?) -> V
 
 @objc(ZMProxyRequest)
 public class ProxyRequest: NSObject {
-    @objc public let type: ProxiedRequestType
-    @objc public let path: String
-    @objc public let method: ZMTransportRequestMethod
-    @objc public private(set) var callback: ProxyRequestCallback?
+    // MARK: Lifecycle
 
     @objc
     public init(
@@ -41,6 +38,13 @@ public class ProxyRequest: NSObject {
         self.method = method
         self.callback = callback
     }
+
+    // MARK: Public
+
+    @objc public let type: ProxiedRequestType
+    @objc public let path: String
+    @objc public let method: ZMTransportRequestMethod
+    @objc public private(set) var callback: ProxyRequestCallback?
 }
 
 // MARK: - ProxiedRequestsStatus
@@ -48,6 +52,14 @@ public class ProxyRequest: NSObject {
 /// Keeps track of which requests to send to the backend
 @objcMembers
 public final class ProxiedRequestsStatus: NSObject {
+    // MARK: Lifecycle
+
+    public init(requestCancellation: ZMRequestCancellation) {
+        self.requestCancellation = requestCancellation
+    }
+
+    // MARK: Public
+
     public typealias Request = (
         type: ProxiedRequestType,
         path: String,
@@ -55,15 +67,9 @@ public final class ProxiedRequestsStatus: NSObject {
         callback: ((Data?, HTTPURLResponse?, NSError?) -> Void)?
     )
 
-    private let requestCancellation: ZMRequestCancellation
-
     /// List of requests to be sent to backend
     public var pendingRequests: Set<ProxyRequest> = Set()
     public var executedRequests: [ProxyRequest: ZMTaskIdentifier] = [:]
-
-    public init(requestCancellation: ZMRequestCancellation) {
-        self.requestCancellation = requestCancellation
-    }
 
     public func add(request: ProxyRequest) {
         pendingRequests.insert(request)
@@ -76,4 +82,8 @@ public final class ProxiedRequestsStatus: NSObject {
             requestCancellation.cancelTask(with: taskIdentifier)
         }
     }
+
+    // MARK: Private
+
+    private let requestCancellation: ZMRequestCancellation
 }

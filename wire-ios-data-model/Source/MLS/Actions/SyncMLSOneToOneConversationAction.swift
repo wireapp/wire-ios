@@ -21,12 +21,7 @@ import Foundation
 // MARK: - SyncMLSOneToOneConversationAction
 
 public struct SyncMLSOneToOneConversationAction: EntityAction {
-    public typealias Result = MLSGroupID
-    public typealias Failure = SyncMLSOneToOneConversationActionError
-
-    public let userID: UUID
-    public let domain: String
-    public var resultHandler: ResultHandler?
+    // MARK: Lifecycle
 
     public init(
         userID: UUID,
@@ -37,6 +32,15 @@ public struct SyncMLSOneToOneConversationAction: EntityAction {
         self.domain = domain
         self.resultHandler = resultHandler
     }
+
+    // MARK: Public
+
+    public typealias Result = MLSGroupID
+    public typealias Failure = SyncMLSOneToOneConversationActionError
+
+    public let userID: UUID
+    public let domain: String
+    public var resultHandler: ResultHandler?
 }
 
 // MARK: - SyncMLSOneToOneConversationActionError

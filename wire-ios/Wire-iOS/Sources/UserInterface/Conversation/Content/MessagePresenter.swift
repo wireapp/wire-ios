@@ -26,6 +26,19 @@ private let zmLog = ZMSLog(tag: "MessagePresenter")
 // MARK: - MessagePresenter
 
 final class MessagePresenter: NSObject {
+    // MARK: Lifecycle
+
+    /// init method for injecting MediaPlaybackManager for testing
+    ///
+    /// - Parameter mediaPlaybackManager: for testing only
+    convenience init(mediaPlaybackManager: MediaPlaybackManager? = AppDelegate.shared.mediaPlaybackManager) {
+        self.init()
+
+        self.mediaPlaybackManager = mediaPlaybackManager
+    }
+
+    // MARK: Internal
+
     enum MessagePresenterError: Error {
         case missingFileURL
         case failedInitializingViewController
@@ -42,17 +55,6 @@ final class MessagePresenter: NSObject {
     var mediaPlaybackManager: MediaPlaybackManager?
     var videoPlayerObserver: NSObjectProtocol?
     var fileAvailabilityObserver: MessageKeyPathObserver?
-
-    private var documentInteractionController: UIDocumentInteractionController?
-
-    /// init method for injecting MediaPlaybackManager for testing
-    ///
-    /// - Parameter mediaPlaybackManager: for testing only
-    convenience init(mediaPlaybackManager: MediaPlaybackManager? = AppDelegate.shared.mediaPlaybackManager) {
-        self.init()
-
-        self.mediaPlaybackManager = mediaPlaybackManager
-    }
 
     func openDocumentController(
         for message: ZMConversationMessage,
@@ -103,25 +105,6 @@ final class MessagePresenter: NSObject {
             try FileManager.default.removeItem(at: url)
         } catch let linkDeleteError {
             zmLog.error("Cannot delete temporary link \(url): \(linkDeleteError)")
-        }
-    }
-
-    // MARK: - AVPlayerViewController dismissial
-
-    fileprivate func observePlayerDismissial() {
-        videoPlayerObserver = NotificationCenter.default.addObserver(
-            forName: .dismissingAVPlayer,
-            object: nil,
-            queue: OperationQueue.main
-        ) { _ in
-            self.mediaPlayerController?.tearDown()
-
-            UIViewController.attemptRotationToDeviceOrientation()
-
-            if let videoPlayerObserver = self.videoPlayerObserver {
-                NotificationCenter.default.removeObserver(videoPlayerObserver)
-                self.videoPlayerObserver = nil
-            }
         }
     }
 
@@ -308,6 +291,31 @@ final class MessagePresenter: NSObject {
 
         return viewController
     }
+
+    // MARK: Fileprivate
+
+    // MARK: - AVPlayerViewController dismissial
+
+    fileprivate func observePlayerDismissial() {
+        videoPlayerObserver = NotificationCenter.default.addObserver(
+            forName: .dismissingAVPlayer,
+            object: nil,
+            queue: OperationQueue.main
+        ) { _ in
+            self.mediaPlayerController?.tearDown()
+
+            UIViewController.attemptRotationToDeviceOrientation()
+
+            if let videoPlayerObserver = self.videoPlayerObserver {
+                NotificationCenter.default.removeObserver(videoPlayerObserver)
+                self.videoPlayerObserver = nil
+            }
+        }
+    }
+
+    // MARK: Private
+
+    private var documentInteractionController: UIDocumentInteractionController?
 }
 
 // MARK: UIDocumentInteractionControllerDelegate

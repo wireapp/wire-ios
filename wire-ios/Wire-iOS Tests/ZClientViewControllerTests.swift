@@ -21,10 +21,7 @@ import XCTest
 @testable import Wire
 
 final class ZClientViewControllerTests: XCTestCase {
-    private var coreDataFixture: CoreDataFixture!
-    private var imageTransformer: MockImageTransformer!
-    private var sut: ZClientViewController!
-    private var userSession: UserSessionMock!
+    // MARK: Internal
 
     override func setUp() {
         super.setUp()
@@ -54,4 +51,11 @@ final class ZClientViewControllerTests: XCTestCase {
         // Then
         XCTAssertEqual(userSession.deleteAppLockPasscodeCalls, 1)
     }
+
+    // MARK: Private
+
+    private var coreDataFixture: CoreDataFixture!
+    private var imageTransformer: MockImageTransformer!
+    private var sut: ZClientViewController!
+    private var userSession: UserSessionMock!
 }

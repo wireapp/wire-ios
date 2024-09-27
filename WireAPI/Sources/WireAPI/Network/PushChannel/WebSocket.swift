@@ -19,10 +19,7 @@
 import Foundation
 
 final class WebSocket: WebSocketProtocol {
-    typealias Stream = AsyncThrowingStream<URLSessionWebSocketTask.Message, any Error>
-
-    private let connection: any URLSessionWebSocketTaskProtocol
-    private var continuation: Stream.Continuation?
+    // MARK: Lifecycle
 
     init(connection: any URLSessionWebSocketTaskProtocol) {
         self.connection = connection
@@ -31,6 +28,10 @@ final class WebSocket: WebSocketProtocol {
     deinit {
         close()
     }
+
+    // MARK: Internal
+
+    typealias Stream = AsyncThrowingStream<URLSessionWebSocketTask.Message, any Error>
 
     func open() throws -> Stream {
         connection.resume()
@@ -88,4 +89,9 @@ final class WebSocket: WebSocketProtocol {
         connection.cancel(with: .goingAway, reason: nil)
         continuation?.finish()
     }
+
+    // MARK: Private
+
+    private let connection: any URLSessionWebSocketTaskProtocol
+    private var continuation: Stream.Continuation?
 }

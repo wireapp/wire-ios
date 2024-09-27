@@ -22,10 +22,11 @@ import XCTest
 @testable import Wire
 
 final class PasscodeSetupViewControllerTests: XCTestCase {
+    // MARK: Internal
+
     // MARK: Properties
 
     var sut: PasscodeSetupViewController!
-    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
@@ -40,13 +41,6 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-    }
-
-    // MARK: Helper method
-
-    private func fillPasscode() {
-        sut.passcodeTextField.text = "P@ssc0de"
-        sut.validationUpdated(sender: sut.passcodeTextField, error: nil)
     }
 
     // MARK: - Snapshot Tests
@@ -109,5 +103,16 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
 
         // THEN
         snapshotHelper.verify(matching: sut)
+    }
+
+    // MARK: Private
+
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: Helper method
+
+    private func fillPasscode() {
+        sut.passcodeTextField.text = "P@ssc0de"
+        sut.validationUpdated(sender: sut.passcodeTextField, error: nil)
     }
 }

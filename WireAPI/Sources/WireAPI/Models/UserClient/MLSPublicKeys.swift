@@ -21,6 +21,8 @@ import Foundation
 /// A container of MLS public keys.
 
 public struct MLSPublicKeys: Equatable, Codable {
+    // MARK: Public
+
     /// The ed25519 signature key.
 
     public let ed25519: String?
@@ -40,6 +42,8 @@ public struct MLSPublicKeys: Equatable, Codable {
     /// The p512 signature key.
 
     public let p512: String?
+
+    // MARK: Internal
 
     enum CodingKeys: String, CodingKey {
         case ed25519

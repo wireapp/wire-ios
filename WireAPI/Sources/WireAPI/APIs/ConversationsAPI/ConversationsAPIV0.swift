@@ -21,23 +21,27 @@ import Foundation
 // MARK: - ConversationsAPIV0
 
 class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
-    // MARK: - Constants
-
-    enum Constants {
-        static let batchSize = 500
-    }
-
-    // MARK: - Properties
-
-    var apiVersion: APIVersion { .v0 }
-
-    let httpClient: any HTTPClient
+    // MARK: Lifecycle
 
     // MARK: - Initialize
 
     init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
+
+    // MARK: Internal
+
+    // MARK: - Constants
+
+    enum Constants {
+        static let batchSize = 500
+    }
+
+    let httpClient: any HTTPClient
+
+    // MARK: - Properties
+
+    var apiVersion: APIVersion { .v0 }
 
     func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID> {
         // This function needs to be used in APIVersion.v0 instead of `getConversationIdentifiers`,

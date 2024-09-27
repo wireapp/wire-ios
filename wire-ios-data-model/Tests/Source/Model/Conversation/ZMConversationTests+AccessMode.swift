@@ -21,12 +21,25 @@ import XCTest
 @testable import WireDataModel
 
 class ZMConversationAccessModeTests: ZMConversationTestsBase {
+    var sut: ZMConversation!
+    var team: Team!
+
+    let testSetAccessMode: [(ConversationAccessMode?, [String]?)] = [
+        (nil, nil),
+        (ConversationAccessMode.teamOnly, []),
+        (ConversationAccessMode.code, ["code"]),
+        (ConversationAccessMode.private, ["private"]),
+        (ConversationAccessMode.invite, ["invite"]),
+        (ConversationAccessMode.legacy, ["invite"]),
+        (
+            ConversationAccessMode.allowGuests,
+            ["code", "invite"]
+        ),
+    ]
+
     func conversation() -> ZMConversation {
         ZMConversation.insertNewObject(in: uiMOC)
     }
-
-    var sut: ZMConversation!
-    var team: Team!
 
     override func setUp() {
         super.setUp()
@@ -152,19 +165,6 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
         // then
         XCTAssertFalse(sut.keysThatHaveLocalModifications.contains("accessRoleStringsV2"))
     }
-
-    let testSetAccessMode: [(ConversationAccessMode?, [String]?)] = [
-        (nil, nil),
-        (ConversationAccessMode.teamOnly, []),
-        (ConversationAccessMode.code, ["code"]),
-        (ConversationAccessMode.private, ["private"]),
-        (ConversationAccessMode.invite, ["invite"]),
-        (ConversationAccessMode.legacy, ["invite"]),
-        (
-            ConversationAccessMode.allowGuests,
-            ["code", "invite"]
-        ),
-    ]
 
     func testThatModeSetWithOptionSetReflectedInStrings() {
         testSetAccessMode.forEach {

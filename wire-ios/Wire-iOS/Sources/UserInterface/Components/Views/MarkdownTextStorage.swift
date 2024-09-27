@@ -26,12 +26,11 @@ extension NSAttributedString.Key {
 // MARK: - MarkdownTextStorage
 
 class MarkdownTextStorage: NSTextStorage {
-    private let storage = NSTextStorage()
-
-    override var string: String { storage.string }
+    // MARK: Internal
 
     var currentMarkdown: Markdown = .none
-    private var needsCheck = false
+
+    override var string: String { storage.string }
 
     override func attributes(at location: Int, effectiveRange range: NSRangePointer?) -> [NSAttributedString.Key: Any] {
         storage.attributes(at: location, effectiveRange: range)
@@ -80,4 +79,10 @@ class MarkdownTextStorage: NSTextStorage {
         // see setAttributes(_ :range:)
         needsCheck = true
     }
+
+    // MARK: Private
+
+    private let storage = NSTextStorage()
+
+    private var needsCheck = false
 }

@@ -32,22 +32,7 @@ struct BurstTimestampSenderMessageCellConfiguration {
 // MARK: - BurstTimestampSenderMessageCellDescription
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = BurstTimestampSenderMessageCell
-    let configuration: View.Configuration
-
-    weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-
-    var showEphemeralTimer = false
-    var topMargin: Float = 0
-
-    let isFullWidth = true
-    let supportsActions = false
-    let containsHighlightableContent = false
-
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String? = nil
+    // MARK: Lifecycle
 
     init(
         message: ZMConversationMessage,
@@ -66,17 +51,32 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     init(configuration: View.Configuration) {
         self.configuration = configuration
     }
+
+    // MARK: Internal
+
+    typealias View = BurstTimestampSenderMessageCell
+
+    let configuration: View.Configuration
+
+    weak var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer = false
+    var topMargin: Float = 0
+
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String? = nil
 }
 
 // MARK: - BurstTimestampSenderMessageCell
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
-    private let timestampView: ConversationCellBurstTimestampView
-    private var configuration: BurstTimestampSenderMessageCellConfiguration?
-    private var timer: Timer?
-
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         self.timestampView = ConversationCellBurstTimestampView()
@@ -90,20 +90,14 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    private func configureSubviews() {
-        addSubview(timestampView)
-    }
+    // MARK: Internal
 
-    private func configureConstraints() {
-        timestampView.translatesAutoresizingMaskIntoConstraints = false
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage?
 
-        NSLayoutConstraint.activate([
-            timestampView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            timestampView.topAnchor.constraint(equalTo: topAnchor),
-            timestampView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            timestampView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
-    }
+    // MARK: - Cell
+
+    var isSelected = false
 
     override func willMove(toWindow newWindow: UIWindow?) {
         super.willMove(toWindow: newWindow)
@@ -119,6 +113,38 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
     func didEndDisplaying() {
         stopTimer()
+    }
+
+    func configure(with object: BurstTimestampSenderMessageCellConfiguration, animated: Bool) {
+        configuration = object
+
+        timestampView.configure(
+            with: object.date,
+            includeDayOfWeek: object.includeDayOfWeek,
+            showUnreadDot: object.showUnreadDot,
+            accentColor: object.accentColor
+        )
+    }
+
+    // MARK: Private
+
+    private let timestampView: ConversationCellBurstTimestampView
+    private var configuration: BurstTimestampSenderMessageCellConfiguration?
+    private var timer: Timer?
+
+    private func configureSubviews() {
+        addSubview(timestampView)
+    }
+
+    private func configureConstraints() {
+        timestampView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            timestampView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            timestampView.topAnchor.constraint(equalTo: topAnchor),
+            timestampView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            timestampView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
     }
 
     private func reconfigure() {
@@ -138,20 +164,5 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     private func stopTimer() {
         timer?.invalidate()
         timer = nil
-    }
-
-    // MARK: - Cell
-
-    var isSelected = false
-
-    func configure(with object: BurstTimestampSenderMessageCellConfiguration, animated: Bool) {
-        configuration = object
-
-        timestampView.configure(
-            with: object.date,
-            includeDayOfWeek: object.includeDayOfWeek,
-            showUnreadDot: object.showUnreadDot,
-            accentColor: object.accentColor
-        )
     }
 }

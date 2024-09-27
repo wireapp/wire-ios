@@ -28,6 +28,10 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     var patchCountByVersion = [Int: Int]()
     var sut: PatchApplicator<TestPatch>!
 
+    var previousVersion: Int? {
+        syncMOC.persistentStoreMetadata(forKey: sut.lastRunVersionKey) as? Int
+    }
+
     override func setUp() {
         super.setUp()
         patchCountByVersion = [:]
@@ -48,10 +52,6 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
             self.syncMOC.setPersistentStoreMetadata(version, key: self.sut.lastRunVersionKey)
             self.syncMOC.saveOrRollback()
         }
-    }
-
-    var previousVersion: Int? {
-        syncMOC.persistentStoreMetadata(forKey: sut.lastRunVersionKey) as? Int
     }
 
     func createTestPatches(forVersions versions: ClosedRange<Int>) -> [TestPatch] {

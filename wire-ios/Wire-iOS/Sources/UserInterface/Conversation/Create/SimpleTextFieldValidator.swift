@@ -31,12 +31,12 @@ protocol SimpleTextFieldValidatorDelegate: AnyObject {
 // MARK: - SimpleTextFieldValidator
 
 final class SimpleTextFieldValidator: NSObject {
-    weak var delegate: SimpleTextFieldValidatorDelegate?
-
     enum ValidationError {
         case empty
         case tooLong
     }
+
+    weak var delegate: SimpleTextFieldValidatorDelegate?
 
     func validate(text: String) -> SimpleTextFieldValidator.ValidationError? {
         let stringToValidate = text.trimmingCharacters(in: .whitespacesAndNewlines)

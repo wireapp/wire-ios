@@ -49,6 +49,8 @@ func XCTAssertArrayEqual(
 // MARK: - ConversationMessageSnapshotTestCase
 
 class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
+    // MARK: Internal
+
     var userSession: UserSessionMock!
 
     override func setUp() {
@@ -121,6 +123,8 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             )
         }
     }
+
+    // MARK: Private
 
     private func verify(
         createSut: () -> UIView,

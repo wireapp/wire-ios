@@ -25,14 +25,7 @@ import LocalAuthentication
 /// with the corresponding public EAR key.
 
 public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
-    private enum Constant {
-        static let labelPrivatePrimary = "private"
-        static let labelPrivateSecondary = "secondary-private"
-    }
-
-    private let context: AuthenticationContextProtocol?
-
-    // MARK: - Life cycle
+    // MARK: Lifecycle
 
     init(
         accountID: UUID,
@@ -46,6 +39,8 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
             label: label
         )
     }
+
+    // MARK: Internal
 
     // MARK: - Keychain item
 
@@ -65,11 +60,6 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
         #endif
 
         return query
-    }
-
-    func setQuery(value: some Any) -> [CFString: Any] {
-        // Private keys are stored in the Secure Enclave.
-        [:]
     }
 
     // MARK: - Static Access
@@ -92,4 +82,18 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
             context: nil
         )
     }
+
+    func setQuery(value: some Any) -> [CFString: Any] {
+        // Private keys are stored in the Secure Enclave.
+        [:]
+    }
+
+    // MARK: Private
+
+    private enum Constant {
+        static let labelPrivatePrimary = "private"
+        static let labelPrivateSecondary = "secondary-private"
+    }
+
+    private let context: AuthenticationContextProtocol?
 }
