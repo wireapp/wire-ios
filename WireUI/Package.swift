@@ -15,7 +15,8 @@ let package = Package(
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
         .library(name: "WireSidebar", targets: ["WireSidebar"]),
-        .library(name: "WireMainNavigation", targets: ["WireMainNavigation"])
+        .library(name: "WireMainNavigation", targets: ["WireMainNavigation"]),
+        .library(name: "WireConversationListNavigation", targets: ["WireConversationListNavigation"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -28,8 +29,11 @@ let package = Package(
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
 
-        .target(name: "WireMainNavigation", dependencies: ["WireDesign"]),
-        .testTarget(name: "WireMainNavigationTests", dependencies: ["WireMainNavigation"]),
+            .target(name: "WireMainNavigation", dependencies: ["WireDesign"]),
+            .testTarget(name: "WireMainNavigationTests", dependencies: ["WireMainNavigation"]),
+
+            .target(name: "WireConversationListNavigation"),
+            .testTarget(name: "WireConversationListNavigationTests", dependencies: ["WireConversationListNavigation"]),
 
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage"]),
