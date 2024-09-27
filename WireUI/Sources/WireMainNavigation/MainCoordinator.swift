@@ -35,7 +35,6 @@ public final class MainCoordinator<
 
     SplitViewController: MainSplitViewControllerProtocol,
     TabBarController: MainTabBarControllerProtocol,
-    ConversationID: Sendable,
     ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder,
     SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder
 
@@ -47,6 +46,8 @@ public final class MainCoordinator<
     SplitViewController.Settings == TabBarController.Settings
 {
     // swiftlint:enable opening_brace
+
+    public typealias ConversationList = SplitViewController.ConversationList
 
     // MARK: - Private Properties
 
@@ -107,7 +108,11 @@ public final class MainCoordinator<
 
     // MARK: - Public Methods
 
-    public func showConversationList<ConversationFilter, ConversationID, MessageID>(conversationFilter: ConversationFilter?, conversationID: ConversationID?, messageID: MessageID?) async where ConversationFilter : MainConversationFilterRepresentable, ConversationID : Sendable, MessageID : Sendable {
+    public func showConversationList(
+        conversationFilter: ConversationList.ConversationFilter?,
+        conversationID: ConversationList.ConversationID?,
+        messageID: ConversationList.MessageID?
+    ) {
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
@@ -207,10 +212,6 @@ public final class MainCoordinator<
             // navigationController.modalPresentationStyle = .formSheet
             splitViewController.present(navigationController, animated: true)
         }
-    }
-
-    public func openConversation(conversationID: ConversationID) async { // TODO: remove
-        fatalError()
     }
 
     private func dismissConversationListIfNeeded() {

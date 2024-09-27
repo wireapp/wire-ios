@@ -16,43 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import WireMainNavigation
 
-final class MockConversationListViewController: UIViewController, MainConversationListProtocol {
-    struct ConversationID: Sendable {}
-    struct MessageID: Sendable {}
-
-    enum ConversationFilter {
-        case groups
-    }
-
-    var conversationFilter: ConversationFilter? {
-        didSet {
-            print("didset \(conversationFilter)")
-        }
-    }
-
-    var splitViewInterface: MainSplitViewState = .expanded
-}
-
-extension MockConversationListViewController.ConversationFilter: MainConversationFilterRepresentable {
+enum MockConversationFilter: MainConversationFilterRepresentable {
 
     init(_ mainConversationFilter: MainConversationFilter) {
-        switch mainConversationFilter {
-        case .groups:
-            self = .groups
-        case .favorites:
-            fatalError("not supported")
-        case .oneOnOne:
-            fatalError("not supported")
-        }
+        fatalError("not implemented")
     }
-
+    
     func mapToMainConversationFilter() -> MainConversationFilter {
-        switch self {
-        case .groups:
-            .groups
-        }
+        fatalError("not implemented")
     }
 }

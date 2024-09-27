@@ -16,18 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainCoordinatorProtocol: AnyObject {
-    associatedtype ConversationList: MainConversationListProtocol
-
-    func showConversationList(
-        conversationFilter: ConversationList.ConversationFilter?,
-        conversationID: ConversationList.ConversationID?,
-        messageID: ConversationList.MessageID?
-    ) async
-
-    func showArchivedConversations() async
-    func showSettings<SettingsContent: MainSettingsContentRepresentable>(content: SettingsContent?) async
-
-    func showSelfProfile() async
-    func showConnect() async
-}
+struct MockConversationID: Sendable {}
