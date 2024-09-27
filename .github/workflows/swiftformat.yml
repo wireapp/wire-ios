@@ -15,13 +15,13 @@ jobs:
   SwiftFormat:
     runs-on: ubuntu-latest
     if: >
-    github.event.action != 'edited' || (
-      github.event.changes.title == null &&
-      github.event.changes.body == null &&
-      github.event.changes.assignees == null &&
-      github.event.changes.reviewers == null &&
-      github.event.changes.labels == null
-    )
+      github.event.action != 'edited' || (
+        github.event.changes.title == null &&
+        github.event.changes.body == null &&
+        github.event.changes.assignees == null &&
+        github.event.changes.reviewers == null &&
+        github.event.changes.labels == null
+      )
     container:
       image: ghcr.io/nicklockwood/swiftformat:0.54.0
 
