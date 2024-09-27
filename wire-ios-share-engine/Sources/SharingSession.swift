@@ -427,7 +427,10 @@ public final class SharingSession {
     /// - LoggedOut: No user is logged in
     /// - missingSharedContainer: The shared container is missing
     public enum InitializationError: Error {
-        case needsMigration, loggedOut, missingSharedContainer, pendingCryptoboxMigration
+        case needsMigration
+        case loggedOut
+        case missingSharedContainer
+        case pendingCryptoboxMigration
     }
 
     public let analyticsEventPersistence: ShareExtensionAnalyticsPersistence

@@ -41,7 +41,8 @@ enum ParticipantsRowType {
 // MARK: - ConversationRole
 
 enum ConversationRole {
-    case admin, member
+    case admin
+    case member
 
     // MARK: Internal
 

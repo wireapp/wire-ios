@@ -21,10 +21,10 @@ import Foundation
 // MARK: - ConversationRemoveParticipantError
 
 public enum ConversationRemoveParticipantError: Error {
-    case unknown,
-         invalidOperation,
-         conversationNotFound,
-         failedToRemoveMLSMembers
+    case unknown
+    case invalidOperation
+    case conversationNotFound
+    case failedToRemoveMLSMembers
 }
 
 // MARK: - RemoveParticipantAction

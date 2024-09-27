@@ -66,7 +66,9 @@ final class KeyboardBlockObserver: NSObject {
         // MARK: Internal
 
         enum Kind {
-            case show, hide, change
+            case show
+            case hide
+            case change
         }
 
         let frame: CGRect

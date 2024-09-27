@@ -24,8 +24,12 @@ import WireDesign
 // MARK: - ConversationActionType
 
 enum ConversationActionType {
-    case none, started(withName: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left,
-         teamMemberLeave
+    case none
+    case started(withName: String?)
+    case added(herself: Bool)
+    case removed(reason: ZMParticipantsRemovedReason)
+    case left
+    case teamMemberLeave
 
     // MARK: Internal
 

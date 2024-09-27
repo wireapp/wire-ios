@@ -147,7 +147,8 @@ final class DeletionDialogPresenter: NSObject {
 // MARK: - AlertAction
 
 private enum AlertAction {
-    case delete(DeletionType), cancel
+    case delete(DeletionType)
+    case cancel
 
     // MARK: Internal
 
@@ -163,7 +164,9 @@ private enum AlertAction {
 // Unfortunately this can not be done with an `OptionSetType`
 // as there is no way to enforce a non-empty option set.
 private enum DeletionConfiguration {
-    case hide, delete, hideAndDelete
+    case hide
+    case delete
+    case hideAndDelete
 
     // MARK: Internal
 

@@ -23,7 +23,10 @@ import WireSyncEngine
 // MARK: - AlertChoice
 
 enum AlertChoice {
-    case cancel, confirm, alreadyPresented, ok
+    case cancel
+    case confirm
+    case alreadyPresented
+    case ok
 }
 
 // MARK: - ActiveCallRouterProtocol

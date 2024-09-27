@@ -24,7 +24,8 @@ import WireSyncEngine
 // MARK: - PlayingState
 
 enum PlayingState: UInt, CustomStringConvertible {
-    case idle, playing
+    case idle
+    case playing
 
     // MARK: Internal
 
@@ -41,7 +42,8 @@ typealias RecordingLevel = Float
 // MARK: - AudioRecorderFormat
 
 enum AudioRecorderFormat {
-    case m4A, wav
+    case m4A
+    case wav
 
     // MARK: Internal
 
@@ -67,13 +69,16 @@ enum AudioRecorderFormat {
 // MARK: - AudioRecorderState
 
 enum AudioRecorderState: Equatable {
-    case initializing, recording(start: TimeInterval), stopped
+    case initializing
+    case recording(start: TimeInterval)
+    case stopped
 }
 
 // MARK: - RecordingError
 
 enum RecordingError: Error {
-    case toMaxDuration, toMaxSize
+    case toMaxDuration
+    case toMaxSize
 }
 
 // MARK: - AudioRecorderType

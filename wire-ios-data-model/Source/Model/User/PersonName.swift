@@ -79,7 +79,9 @@ public class PersonName: NSObject {
     // MARK: Internal
 
     enum NameOrder {
-        case givenNameFirst, givenNameLast, arabicGivenName
+        case givenNameFirst
+        case givenNameLast
+        case arabicGivenName
     }
 
     static let stringsToPersonNames = NSCache<NSString, PersonName>()

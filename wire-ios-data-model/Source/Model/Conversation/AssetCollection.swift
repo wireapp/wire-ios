@@ -22,7 +22,9 @@ import WireUtilities
 // MARK: - AssetFetchResult
 
 public enum AssetFetchResult: Int {
-    case success, failed, noAssetsToFetch
+    case success
+    case failed
+    case noAssetsToFetch
 }
 
 // MARK: - ZMCollection
@@ -145,7 +147,8 @@ public class AssetCollection: NSObject, ZMCollection {
     // MARK: Internal
 
     enum MessagesToFetch {
-        case client, asset
+        case client
+        case asset
     }
 
     func messages<T: ZMMessage>(

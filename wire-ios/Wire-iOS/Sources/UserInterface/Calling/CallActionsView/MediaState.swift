@@ -19,7 +19,8 @@
 import Foundation
 
 enum MediaState: Equatable {
-    case sendingVideo(speakerState: SpeakerState), notSendingVideo(speakerState: SpeakerState)
+    case sendingVideo(speakerState: SpeakerState)
+    case notSendingVideo(speakerState: SpeakerState)
 
     // MARK: Internal
 

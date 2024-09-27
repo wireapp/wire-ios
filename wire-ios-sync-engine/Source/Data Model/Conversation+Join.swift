@@ -21,7 +21,12 @@ import Foundation
 // MARK: - ConversationJoinError
 
 public enum ConversationJoinError: Error {
-    case unknown, tooManyMembers, invalidCode, noConversation, guestLinksDisabled, invalidConversationPassword
+    case unknown
+    case tooManyMembers
+    case invalidCode
+    case noConversation
+    case guestLinksDisabled
+    case invalidConversationPassword
 
     // MARK: Lifecycle
 
@@ -40,7 +45,12 @@ public enum ConversationJoinError: Error {
 // MARK: - ConversationFetchError
 
 public enum ConversationFetchError: Error {
-    case unknown, noTeamMember, accessDenied, invalidCode, noConversation, guestLinksDisabled
+    case unknown
+    case noTeamMember
+    case accessDenied
+    case invalidCode
+    case noConversation
+    case guestLinksDisabled
 
     // MARK: Lifecycle
 

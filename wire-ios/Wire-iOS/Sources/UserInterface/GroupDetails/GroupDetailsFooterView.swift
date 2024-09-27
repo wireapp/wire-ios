@@ -29,7 +29,8 @@ protocol GroupDetailsFooterViewDelegate: AnyObject {
 
 final class GroupDetailsFooterView: ConversationDetailFooterView {
     enum Action {
-        case more, invite
+        case more
+        case invite
     }
 
     weak var delegate: GroupDetailsFooterViewDelegate?

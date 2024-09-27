@@ -350,7 +350,9 @@ struct CacheAsset: AssetType {
     // MARK: Internal
 
     enum AssetType {
-        case image, file, thumbnail
+        case image
+        case file
+        case thumbnail
     }
 
     var owner: ZMAssetClientMessage

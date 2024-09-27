@@ -97,6 +97,7 @@
     redundantProperty, \
     sortSwitchCases, \
     wrapConditionalBodies, \
+    wrapEnumCases, \ # In rare cases this messes up enums that fail the rule and has to be manually fixed - affected 4 enums over the entire project
 
 # Options
 

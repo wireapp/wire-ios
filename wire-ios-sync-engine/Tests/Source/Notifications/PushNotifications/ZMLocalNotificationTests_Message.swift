@@ -560,7 +560,9 @@ extension ZMLocalNotificationTests_Message {
 // MARK: - FileType
 
 enum FileType {
-    case txt, video, audio
+    case txt
+    case video
+    case audio
 
     // MARK: Internal
 

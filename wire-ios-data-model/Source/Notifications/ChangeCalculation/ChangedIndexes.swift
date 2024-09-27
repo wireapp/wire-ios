@@ -82,7 +82,8 @@ public struct OrderedSetState<T: Hashable>: Equatable {
 // MARK: - SetChangeMoveType
 
 public enum SetChangeMoveType {
-    case uiTableView, uiCollectionView
+    case uiTableView
+    case uiCollectionView
 }
 
 // MARK: - MovedIndex

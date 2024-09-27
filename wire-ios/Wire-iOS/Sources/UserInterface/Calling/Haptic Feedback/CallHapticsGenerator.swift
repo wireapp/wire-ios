@@ -38,7 +38,9 @@ enum CallHapticsEvent: String {
     // MARK: Internal
 
     enum FeedbackType {
-        case success, warning, impact
+        case success
+        case warning
+        case impact
     }
 
     var feedbackType: FeedbackType {

@@ -62,7 +62,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: Internal
 
     enum State {
-        case ready, recording, effects
+        case ready
+        case recording
+        case effects
     }
 
     let recorder: AudioRecorderType

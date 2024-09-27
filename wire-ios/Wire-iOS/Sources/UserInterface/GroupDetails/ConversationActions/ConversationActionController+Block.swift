@@ -22,7 +22,8 @@ import WireDataModel
 // MARK: - BlockResult
 
 enum BlockResult {
-    case block(isBlocked: Bool), cancel
+    case block(isBlocked: Bool)
+    case cancel
 
     // MARK: Internal
 

@@ -38,7 +38,8 @@ final class ConversationMessageActionController {
     // MARK: Internal
 
     enum Context: Int {
-        case content, collection
+        case content
+        case collection
     }
 
     // MARK: - UI menu

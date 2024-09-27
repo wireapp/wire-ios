@@ -23,7 +23,8 @@ import WireSystem
 
 /// The dimension to use when calculating relative radii.
 enum MaskDimension: Int {
-    case width, height
+    case width
+    case height
 }
 
 // MARK: - MaskShape

@@ -41,7 +41,9 @@ struct ZiphyPaginatedResponse<Object>: Codable where Object: Codable {
 
 struct ZiphyPagination: Codable {
     enum CodingKeys: String, CodingKey {
-        case count, offset, totalCount = "total_count"
+        case count
+        case offset
+        case totalCount = "total_count"
     }
 
     let count: Int

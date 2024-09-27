@@ -24,7 +24,9 @@ import WireSyncEngine
 
 /// The way the details are displayed.
 enum MessageDetailsDisplayMode: Int {
-    case reactions, receipts, combined
+    case reactions
+    case receipts
+    case combined
 }
 
 // MARK: - MessageDetailsDataSourceObserver

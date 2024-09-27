@@ -67,7 +67,8 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     // MARK: Internal
 
     enum Context {
-        case overview, participants
+        case overview
+        case participants
     }
 
     weak var delegate: CallInfoRootViewControllerDelegate?

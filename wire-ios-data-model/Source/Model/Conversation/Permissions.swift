@@ -113,7 +113,11 @@ extension Permissions: Hashable {
 ///
 @objc
 public enum TeamRole: Int {
-    case none, partner, member, admin, owner
+    case none
+    case partner
+    case member
+    case admin
+    case owner
 
     // MARK: Lifecycle
 

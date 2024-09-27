@@ -23,7 +23,8 @@ import WireDesign
 // MARK: - PopUpIconButtonExpandDirection
 
 enum PopUpIconButtonExpandDirection {
-    case left, right
+    case left
+    case right
 }
 
 // MARK: - PopUpIconButtonDelegate

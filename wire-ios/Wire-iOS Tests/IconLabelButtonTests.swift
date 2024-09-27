@@ -128,7 +128,8 @@ struct IconLabelButtonTestCase {
     }
 
     enum BlurState: String, CaseIterable {
-        case blurred, notBlurred
+        case blurred
+        case notBlurred
 
         // MARK: Internal
 
@@ -141,7 +142,8 @@ struct IconLabelButtonTestCase {
     }
 
     enum SelectionState: String, CaseIterable {
-        case selected, unselected
+        case selected
+        case unselected
 
         // MARK: Internal
 
@@ -154,7 +156,8 @@ struct IconLabelButtonTestCase {
     }
 
     enum InteractionState: String, CaseIterable {
-        case enabled, disabled
+        case enabled
+        case disabled
 
         // MARK: Internal
 

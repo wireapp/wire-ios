@@ -18,5 +18,9 @@
 
 @frozen @objc(ZMLogLevel)
 public enum ZMLogLevel: Int8 {
-    case `public`, error, warn, info, debug
+    case `public`
+    case error
+    case warn
+    case info
+    case debug
 }

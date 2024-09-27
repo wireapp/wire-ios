@@ -37,7 +37,8 @@ final class ConversationActionController {
     // MARK: Internal
 
     enum Context {
-        case list, details
+        case list
+        case details
     }
 
     private(set) weak var sourceView: UIView?

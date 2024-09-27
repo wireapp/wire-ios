@@ -125,7 +125,8 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
     // MARK: Internal
 
     enum MessagesToFetch {
-        case client, asset
+        case client
+        case asset
     }
 
     static func categorizedMessages<T: ZMMessage>(

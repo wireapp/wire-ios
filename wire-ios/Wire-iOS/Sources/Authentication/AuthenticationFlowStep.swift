@@ -114,7 +114,10 @@ indirect enum AuthenticationFlowStep: Equatable {
 
 /// Intermediate steps required for user registration.
 enum IntermediateRegistrationStep: Equatable {
-    case start, provideMarketingConsent, setName, setPassword
+    case start
+    case provideMarketingConsent
+    case setName
+    case setPassword
 
     // MARK: Internal
 

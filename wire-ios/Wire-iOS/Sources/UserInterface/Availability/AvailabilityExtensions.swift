@@ -24,7 +24,8 @@ import WireDesign
 // MARK: - AvailabilityLabelStyle
 
 enum AvailabilityLabelStyle: Int {
-    case list, participants
+    case list
+    case participants
 }
 
 extension Availability {

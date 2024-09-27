@@ -230,5 +230,12 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
 // MARK: - Users
 
 private enum Users {
-    case none, sender, one, some, many, justYou, youAndAnother, overflow
+    case none
+    case sender
+    case one
+    case some
+    case many
+    case justYou
+    case youAndAnother
+    case overflow
 }

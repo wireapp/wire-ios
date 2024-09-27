@@ -102,7 +102,9 @@ final class ServiceDetailViewController: UIViewController {
     typealias Completion = (AddBotResult?) -> Void
 
     enum ActionType {
-        case addService(ZMConversation), removeService(ZMConversation), openConversation
+        case addService(ZMConversation)
+        case removeService(ZMConversation)
+        case openConversation
     }
 
     let completion: Completion?

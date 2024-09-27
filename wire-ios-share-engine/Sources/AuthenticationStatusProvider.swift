@@ -21,7 +21,8 @@ import Foundation
 // MARK: - AuthenticationState
 
 enum AuthenticationState {
-    case authenticated, unauthenticated
+    case authenticated
+    case unauthenticated
 }
 
 // MARK: - AuthenticationStatusProvider

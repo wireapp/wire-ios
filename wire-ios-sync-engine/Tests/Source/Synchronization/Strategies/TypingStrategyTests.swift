@@ -70,7 +70,10 @@ class MockClientRegistrationDelegate: NSObject, ClientRegistrationDelegate {
 // MARK: - TestTyping
 
 enum TestTyping {
-    case noDelay, delay, clearTranscoder, appendMessage
+    case noDelay
+    case delay
+    case clearTranscoder
+    case appendMessage
 }
 
 // MARK: - TypingStrategyTests

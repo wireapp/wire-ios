@@ -22,7 +22,11 @@ import WireCoreCrypto
 // MARK: - E2EIdentityCertificateStatus
 
 public enum E2EIdentityCertificateStatus: CaseIterable {
-    case notActivated, revoked, expired, invalid, valid
+    case notActivated
+    case revoked
+    case expired
+    case invalid
+    case valid
 }
 
 // MARK: - E2eIdentityCertificateConstants

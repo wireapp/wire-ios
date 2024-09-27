@@ -39,7 +39,8 @@ final class SendingProgressViewController: UIViewController {
     // MARK: Internal
 
     enum ProgressMode {
-        case preparing, sending
+        case preparing
+        case sending
     }
 
     var cancelHandler: (() -> Void)?

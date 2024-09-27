@@ -172,7 +172,9 @@ extension ContactsViewController {
         // MARK: Internal
 
         enum MessageType {
-            case email, sms, any
+            case email
+            case sms
+            case any
 
             // MARK: Internal
 

@@ -22,12 +22,12 @@ import WireDataModel
 // MARK: - CallEvent
 
 enum CallEvent {
-    case initiated,
-         received,
-         answered,
-         established,
-         ended(reason: String),
-         screenSharing(duration: TimeInterval)
+    case initiated
+    case received
+    case answered
+    case established
+    case ended(reason: String)
+    case screenSharing(duration: TimeInterval)
 }
 
 extension CallEvent {

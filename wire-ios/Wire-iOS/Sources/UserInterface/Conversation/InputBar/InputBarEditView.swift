@@ -23,7 +23,9 @@ import WireDesign
 // MARK: - EditButtonType
 
 enum EditButtonType {
-    case undo, confirm, cancel
+    case undo
+    case confirm
+    case cancel
 }
 
 // MARK: - InputBarEditViewDelegate

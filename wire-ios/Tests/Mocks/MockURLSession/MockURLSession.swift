@@ -50,7 +50,8 @@ class MockURLSession: DataTaskSession {
     // MARK: Internal
 
     enum SessionError: Swift.Error {
-        case noRequest, noScheduledResponse
+        case noRequest
+        case noScheduledResponse
     }
 
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {

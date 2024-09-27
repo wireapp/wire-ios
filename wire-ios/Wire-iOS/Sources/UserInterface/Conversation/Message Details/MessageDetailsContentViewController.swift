@@ -67,7 +67,8 @@ final class MessageDetailsContentViewController: UIViewController {
 
     /// The type of the displayed content.
     enum ContentType {
-        case reactions, receipts(enabled: Bool)
+        case reactions
+        case receipts(enabled: Bool)
     }
 
     // MARK: - Configuration

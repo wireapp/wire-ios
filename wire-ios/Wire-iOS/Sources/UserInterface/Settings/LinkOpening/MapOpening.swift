@@ -24,7 +24,8 @@ private let log = ZMSLog(tag: "link opening")
 // MARK: - MapsOpeningOption
 
 enum MapsOpeningOption: Int, LinkOpeningOption {
-    case apple, google
+    case apple
+    case google
 
     // MARK: Internal
 

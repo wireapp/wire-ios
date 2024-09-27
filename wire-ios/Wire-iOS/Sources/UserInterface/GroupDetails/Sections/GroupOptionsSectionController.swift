@@ -110,7 +110,10 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     // MARK: Private
 
     private enum Option: Int, CaseIterable {
-        case notifications = 0, guests, services, timeout
+        case notifications = 0
+        case guests
+        case services
+        case timeout
 
         // MARK: Internal
 

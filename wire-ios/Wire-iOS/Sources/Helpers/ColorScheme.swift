@@ -24,7 +24,8 @@ import WireUtilities
 
 @objc
 enum ColorSchemeVariant: UInt {
-    case light, dark
+    case light
+    case dark
 }
 
 extension UIColor {

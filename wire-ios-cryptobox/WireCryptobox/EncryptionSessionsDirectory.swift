@@ -24,7 +24,9 @@ import WireUtilities
 
 @objc
 enum EncryptionSessionError: Int {
-    case unknown, encryptionFailed, decryptionFailed
+    case unknown
+    case encryptionFailed
+    case decryptionFailed
 
     // MARK: Internal
 

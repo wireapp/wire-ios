@@ -23,7 +23,8 @@ import WireDesign
 // MARK: - OutgoingConnectionBottomBarAction
 
 enum OutgoingConnectionBottomBarAction: UInt {
-    case cancel, archive
+    case cancel
+    case archive
 }
 
 // MARK: - OutgoingConnectionViewController

@@ -21,7 +21,13 @@ import Foundation
 // MARK: - ConversationListType
 
 public enum ConversationListType {
-    case archived, unarchived, pending, contacts, groups, favorites, folder(_ folder: LabelType)
+    case archived
+    case unarchived
+    case pending
+    case contacts
+    case groups
+    case favorites
+    case folder(_ folder: LabelType)
 }
 
 // MARK: - ConversationDirectoryChangeInfo

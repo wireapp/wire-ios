@@ -61,7 +61,10 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
     // MARK: Internal
 
     enum Corner: Int {
-        case topLeft, topRight, bottomLeft, bottomRight
+        case topLeft
+        case topRight
+        case bottomLeft
+        case bottomRight
     }
 
     // MARK: - Behavior

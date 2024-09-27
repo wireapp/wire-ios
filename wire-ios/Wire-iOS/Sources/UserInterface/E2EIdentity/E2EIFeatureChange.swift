@@ -23,7 +23,9 @@ import WireSyncEngine
 // MARK: - E2EIChangeAction
 
 enum E2EIChangeAction: CaseIterable {
-    case getCertificate, remindLater, learnMore
+    case getCertificate
+    case remindLater
+    case learnMore
 }
 
 extension UIAlertController {

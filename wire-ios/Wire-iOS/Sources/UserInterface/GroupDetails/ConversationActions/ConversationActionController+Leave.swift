@@ -22,7 +22,8 @@ import WireDataModel
 // MARK: - LeaveResult
 
 enum LeaveResult: AlertResultConfiguration {
-    case leave(delete: Bool), cancel
+    case leave(delete: Bool)
+    case cancel
 
     // MARK: Internal
 

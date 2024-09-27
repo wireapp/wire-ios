@@ -23,7 +23,8 @@ import Foundation
 
 @objc
 public enum MessageConfirmationType: Int16 {
-    case delivered, read
+    case delivered
+    case read
 
     // MARK: Internal
 

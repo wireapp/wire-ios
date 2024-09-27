@@ -69,7 +69,8 @@ final class MarkdownTextView: NextResponderTextView {
     // MARK: Internal
 
     enum ListType {
-        case number, bullet
+        case number
+        case bullet
 
         // MARK: Internal
 

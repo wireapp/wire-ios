@@ -48,7 +48,8 @@ protocol AudioRecordViewControllerDelegate: AnyObject {
 // MARK: - AudioRecordState
 
 enum AudioRecordState {
-    case recording, finishedRecording
+    case recording
+    case finishedRecording
 }
 
 // MARK: - AudioRecordViewController

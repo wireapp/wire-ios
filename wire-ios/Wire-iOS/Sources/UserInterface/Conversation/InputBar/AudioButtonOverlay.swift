@@ -42,7 +42,9 @@ final class AudioButtonOverlay: UIView {
     // MARK: - AudioButtonOverlayButtonType
 
     enum AudioButtonOverlayButtonType {
-        case play, send, stop
+        case play
+        case send
+        case stop
     }
 
     // MARK: - Properties

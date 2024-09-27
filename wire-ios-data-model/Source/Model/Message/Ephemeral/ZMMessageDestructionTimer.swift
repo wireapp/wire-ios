@@ -89,7 +89,8 @@ extension NSManagedObjectContext {
 // MARK: - MessageDestructionType
 
 enum MessageDestructionType: String {
-    case obfuscation, deletion
+    case obfuscation
+    case deletion
 
     // MARK: Internal
 

@@ -39,7 +39,10 @@ public final class MainTabBarController: UITabBarController {
     // MARK: Public
 
     public enum Tab: Int, CaseIterable {
-        case contacts, conversations, folders, archive
+        case contacts
+        case conversations
+        case folders
+        case archive
     }
 
     public var selectedTab: Tab {

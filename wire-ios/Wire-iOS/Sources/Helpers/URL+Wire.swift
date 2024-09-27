@@ -31,7 +31,8 @@ private enum WebsitePages {
 // MARK: - TeamSource
 
 enum TeamSource: Int {
-    case onboarding, settings
+    case onboarding
+    case settings
 
     // MARK: Internal
 

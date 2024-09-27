@@ -60,7 +60,9 @@ class AvatarImageView: UIView {
 
     /// The different shapes of avatars.
     enum Shape {
-        case rectangle, circle, relative
+        case rectangle
+        case circle
+        case relative
     }
 
     /// The view that contains the avatar.

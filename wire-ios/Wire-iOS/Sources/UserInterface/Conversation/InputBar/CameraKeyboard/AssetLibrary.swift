@@ -47,7 +47,8 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     // MARK: Internal
 
     enum AssetError: Error {
-        case outOfRange, notLoadedError
+        case outOfRange
+        case notLoadedError
     }
 
     weak var delegate: AssetLibraryDelegate?

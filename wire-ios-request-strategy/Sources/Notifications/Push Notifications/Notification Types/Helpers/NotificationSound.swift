@@ -20,7 +20,9 @@ import Foundation
 
 /// Represents the sound for types of notifications.
 public enum NotificationSound {
-    case call, ping, newMessage
+    case call
+    case ping
+    case newMessage
 
     // MARK: Public
 

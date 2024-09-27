@@ -23,25 +23,25 @@ import WireDesign
 
 enum MessageAction: CaseIterable, Equatable {
     case
-        digitallySign,
-        copy,
-        reply,
-        openDetails,
-        edit,
-        delete,
-        save,
-        cancel,
-        download,
-        resend,
-        showInConversation,
-        sketchDraw,
-        sketchEmoji,
-        // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
-        present,
-        openQuote,
-        resetSession,
-        react(Emoji.ID),
-        visitLink
+        digitallySign
+    case copy
+    case reply
+    case openDetails
+    case edit
+    case delete
+    case save
+    case cancel
+    case download
+    case resend
+    case showInConversation
+    case sketchDraw
+    case sketchEmoji
+    case // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
+        present
+    case openQuote
+    case resetSession
+    case react(Emoji.ID)
+    case visitLink
 
     // MARK: Internal
 

@@ -23,7 +23,9 @@ import WireSystem
 // MARK: - ConversationDeletionError
 
 public enum ConversationDeletionError: Error {
-    case unknown, invalidOperation, conversationNotFound
+    case unknown
+    case invalidOperation
+    case conversationNotFound
 
     // MARK: Lifecycle
 

@@ -22,7 +22,8 @@ import WireDataModel
 // MARK: - CancelConnectionRequestResult
 
 enum CancelConnectionRequestResult {
-    case cancelRequest, cancel
+    case cancelRequest
+    case cancel
 
     // MARK: Internal
 

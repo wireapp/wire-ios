@@ -23,7 +23,8 @@ import WireLinkPreview
 // MARK: - ContentType
 
 enum ContentType {
-    case textMessage, editMessage
+    case textMessage
+    case editMessage
 }
 
 // MARK: - ClientMessageTests_ZMImageOwner

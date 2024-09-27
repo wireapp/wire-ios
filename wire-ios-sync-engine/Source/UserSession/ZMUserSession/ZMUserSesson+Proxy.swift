@@ -22,7 +22,9 @@ import Foundation
 
 @objc
 public enum ProxiedRequestType: Int {
-    case giphy, soundcloud, youTube
+    case giphy
+    case soundcloud
+    case youTube
 }
 
 extension ZMUserSession {

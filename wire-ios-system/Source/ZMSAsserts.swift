@@ -55,7 +55,10 @@ public func require(_ condition: Bool, _ message: String = "", file: StaticStrin
 
 @objc
 public enum AppBuild: UInt8 {
-    case appStore, debug, develop, unknown
+    case appStore
+    case debug
+    case develop
+    case unknown
 
     // MARK: Internal
 

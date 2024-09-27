@@ -22,7 +22,8 @@ import WireDataModel
 // MARK: - ClearContentResult
 
 enum ClearContentResult {
-    case delete(leave: Bool), cancel
+    case delete(leave: Bool)
+    case cancel
 
     // MARK: Internal
 

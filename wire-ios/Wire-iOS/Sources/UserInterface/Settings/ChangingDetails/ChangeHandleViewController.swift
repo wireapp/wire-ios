@@ -184,11 +184,16 @@ struct HandleChangeState {
     // MARK: Internal
 
     enum ValidationError: Error {
-        case tooShort, tooLong, invalidCharacter, sameAsPrevious
+        case tooShort
+        case tooLong
+        case invalidCharacter
+        case sameAsPrevious
     }
 
     enum HandleAvailability {
-        case unknown, available, taken
+        case unknown
+        case available
+        case taken
     }
 
     let currentHandle: String?

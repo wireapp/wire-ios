@@ -23,10 +23,10 @@ import WireDesign
 // MARK: - LabelIndicatorContext
 
 enum LabelIndicatorContext {
-    case guest,
-         groupRole,
-         external,
-         federated
+    case guest
+    case groupRole
+    case external
+    case federated
 
     // MARK: Internal
 

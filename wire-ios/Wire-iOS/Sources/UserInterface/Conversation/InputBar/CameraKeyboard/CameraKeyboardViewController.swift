@@ -174,7 +174,8 @@ class CameraKeyboardViewController: UIViewController {
     // MARK: Private
 
     private enum CameraKeyboardSection: UInt {
-        case camera = 0, photos = 1
+        case camera = 0
+        case photos = 1
     }
 
     // MARK: - Properties

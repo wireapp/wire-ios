@@ -24,7 +24,9 @@ private let log = ZMSLog(tag: "link opening")
 // MARK: - TweetOpeningOption
 
 enum TweetOpeningOption: Int, LinkOpeningOption {
-    case none, tweetbot, twitterrific
+    case none
+    case tweetbot
+    case twitterrific
 
     // MARK: Internal
 

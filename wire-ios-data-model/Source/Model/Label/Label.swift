@@ -35,7 +35,8 @@ public class Label: ZMManagedObject, LabelType {
 
     @objc
     public enum Kind: Int16 {
-        case folder, favorite
+        case folder
+        case favorite
     }
 
     @NSManaged public var name: String?

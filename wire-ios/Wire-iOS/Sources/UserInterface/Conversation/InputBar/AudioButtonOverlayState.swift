@@ -21,7 +21,9 @@ import UIKit
 // MARK: - AudioButtonOverlayState
 
 enum AudioButtonOverlayState {
-    case hidden, expanded(CGFloat), `default`
+    case hidden
+    case expanded(CGFloat)
+    case `default`
 
     // MARK: Internal
 

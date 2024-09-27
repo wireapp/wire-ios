@@ -30,7 +30,9 @@ protocol PrivacyWarningPresenter: AnyObject {
 // Checks if PrivacyWarningAlert needs to be presented before given action
 struct PrivacyWarningChecker {
     enum AlertType: Int {
-        case message, outgoingCall, incomingCall
+        case message
+        case outgoingCall
+        case incomingCall
     }
 
     var conversation: ConversationLike

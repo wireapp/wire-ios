@@ -22,7 +22,10 @@ import WireSystem
 // MARK: - AuthenticationType
 
 enum AuthenticationType: CaseIterable {
-    case faceID, touchID, passcode, unavailable
+    case faceID
+    case touchID
+    case passcode
+    case unavailable
 
     // MARK: Internal
 

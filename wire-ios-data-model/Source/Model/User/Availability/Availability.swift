@@ -20,7 +20,10 @@
 
 @objc(ZMAvailability)
 public enum Availability: Int, CaseIterable {
-    case none, available, busy, away
+    case none
+    case available
+    case busy
+    case away
 }
 
 // MARK: CustomStringConvertible

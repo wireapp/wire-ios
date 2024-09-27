@@ -22,7 +22,8 @@ import WireSyncEngine
 // MARK: - IncomingConnectionAction
 
 enum IncomingConnectionAction: UInt {
-    case ignore, accept
+    case ignore
+    case accept
 }
 
 // MARK: - IncomingConnectionViewController

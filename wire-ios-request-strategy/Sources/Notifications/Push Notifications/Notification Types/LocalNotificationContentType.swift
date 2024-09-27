@@ -22,7 +22,11 @@ import WireDataModel
 // MARK: - LocalNotificationEventType
 
 public enum LocalNotificationEventType {
-    case connectionRequestAccepted, connectionRequestPending, newConnection, conversationCreated, conversationDeleted
+    case connectionRequestAccepted
+    case connectionRequestPending
+    case newConnection
+    case conversationCreated
+    case conversationDeleted
 }
 
 // MARK: - LocalNotificationContentType

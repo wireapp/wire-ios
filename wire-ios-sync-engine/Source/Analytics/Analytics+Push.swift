@@ -65,7 +65,16 @@ extension ZMConversationType {
 // MARK: - ConversationMediaAction
 
 public enum ConversationMediaAction: UInt {
-    case text, photo, audioCall, videoCall, gif, ping, fileTransfer, videoMessage, audioMessage, location
+    case text
+    case photo
+    case audioCall
+    case videoCall
+    case gif
+    case ping
+    case fileTransfer
+    case videoMessage
+    case audioMessage
+    case location
 
     // MARK: Public
 

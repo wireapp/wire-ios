@@ -34,7 +34,9 @@ public struct Ziph: Codable {
     // MARK: Public
 
     public enum CodingKeys: String, CodingKey {
-        case title, images, identifier = "id"
+        case title
+        case images
+        case identifier = "id"
     }
 
     public let identifier: String

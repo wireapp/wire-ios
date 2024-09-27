@@ -22,7 +22,9 @@ import Security
 // MARK: - EnqueueResult
 
 public enum EnqueueResult {
-    case success, nilRequest, maximumNumberOfRequests
+    case success
+    case nilRequest
+    case maximumNumberOfRequests
 }
 
 // MARK: - UnauthenticatedTransportSessionProtocol
@@ -275,7 +277,8 @@ private enum HeaderKey: String {
 // MARK: - UserKey
 
 private enum UserKey: String {
-    case user, id
+    case user
+    case id
 }
 
 extension ZMTransportResponse {
