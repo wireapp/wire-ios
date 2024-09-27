@@ -20,6 +20,7 @@ import DifferenceKit
 import UIKit
 import WireDataModel
 import WireDesign
+import WireConversationListNavigation
 import WireMainNavigation
 import WireSyncEngine
 
@@ -28,7 +29,8 @@ private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController {
 
-    private let mainCoordinator: any MainCoordinatorProtocol
+    private let conversationListCoordinator: ConversationListCoordinator<ConversationListParentCoordinator>
+    private let mainCoordinator: any MainCoordinatorProtocol // TODO: is it needed?
 
     private(set) weak var zClientViewController: ZClientViewController?
 
@@ -46,10 +48,12 @@ final class ConversationListContentController: UICollectionViewController {
 
     init(
         userSession: UserSession,
-        mainCoordinator: any MainCoordinatorProtocol,
+        conversationListCoordinator: ConversationListCoordinator<ConversationListParentCoordinator>, // TODO: ConversationListCoordinatorProtocol insteads?
+        mainCoordinator: any MainCoordinatorProtocol, // TODO: is it needed?
         zClientViewController: ZClientViewController?
     ) {
         self.userSession = userSession
+        self.conversationListCoordinator = conversationListCoordinator
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
 
@@ -383,13 +387,13 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         }
 
         if let conversation = item as? ZMConversation {
-            if let scrollToMessageOnNextSelection {
-                fatalError("TODO")
+            if let message = scrollToMessageOnNextSelection {
                 // TODO: fix
+                conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier, messageID: message.nonce)
                 // mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             } else {
-                fatalError("TODO")
                 // TODO: fix
+                conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier)
                 // mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             }
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)

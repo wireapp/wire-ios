@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireFoundation
 
 // swiftlint:disable opening_brace
 
@@ -37,7 +36,7 @@ public final class MainCoordinator<
     SplitViewController: MainSplitViewControllerProtocol,
     TabBarController: MainTabBarControllerProtocol,
     ConversationID: Sendable,
-    NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder,
+    ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder,
     SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder
 
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
@@ -54,8 +53,8 @@ public final class MainCoordinator<
     private weak var splitViewController: SplitViewController!
     private weak var tabBarController: TabBarController!
 
-    private let newConversationBuilder: NewConversationBuilder
-    private weak var newConversation: UIViewController?
+    private let connectBuilder: ConnectBuilder
+    private weak var connect: UIViewController?
 
     private var selfProfileBuilder: SelfProfileBuilder
     private weak var selfProfile: UIViewController?
@@ -94,12 +93,12 @@ public final class MainCoordinator<
     public init(
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
-        newConversationBuilder: NewConversationBuilder,
+        connectBuilder: ConnectBuilder,
         selfProfileBuilder: SelfProfileBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
-        self.newConversationBuilder = newConversationBuilder
+        self.connectBuilder = connectBuilder
         self.selfProfileBuilder = selfProfileBuilder
         super.init()
         mainSplitViewController.delegate = self
@@ -108,7 +107,7 @@ public final class MainCoordinator<
 
     // MARK: - Public Methods
 
-    public func showConversationList(conversationFilter: (some MainConversationFilterRepresentable)?) {
+    public func showConversationList<ConversationFilter, ConversationID, MessageID>(conversationFilter: ConversationFilter?, conversationID: ConversationID?, messageID: MessageID?) async where ConversationFilter : MainConversationFilterRepresentable, ConversationID : Sendable, MessageID : Sendable {
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
@@ -126,7 +125,7 @@ public final class MainCoordinator<
         guard mainSplitViewState == .expanded else { return }
 
         dismissArchiveIfNeeded()
-        dismissNewConversationIfNeeded()
+        dismissConnectIfNeeded()
         dismissSettingsIfNeeded()
         dismissSelfProfileIfNeeded()
 
@@ -145,7 +144,7 @@ public final class MainCoordinator<
         guard mainSplitViewState == .expanded else { return }
 
         dismissConversationListIfNeeded()
-        dismissNewConversationIfNeeded()
+        dismissConnectIfNeeded()
         dismissSettingsIfNeeded()
         dismissSelfProfileIfNeeded()
 
@@ -156,7 +155,7 @@ public final class MainCoordinator<
         }
     }
 
-    public func showSettings() {
+    public func showSettings<SettingsContent>(content: SettingsContent?) async where SettingsContent : MainSettingsContentRepresentable {
         tabBarController.selectedContent = .settings
 
         // In collapsed state switching the tab was all we needed to do.
@@ -164,7 +163,7 @@ public final class MainCoordinator<
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
-        dismissNewConversationIfNeeded()
+        dismissConnectIfNeeded()
         dismissSelfProfileIfNeeded()
 
         // move the settings from the tab bar controller to the split view controller
@@ -187,24 +186,24 @@ public final class MainCoordinator<
         splitViewController.present(selfProfile, animated: true)
     }
 
-    public func showNewConversation() {
-        guard newConversation == nil else {
+    public func showConnect() {
+        guard connect == nil else {
             return assertionFailure() // TODO: inject logger instead
         }
 
         sidebar.selectedMenuItem = .init(.connect)
 
-        let newConversation = newConversationBuilder.build(mainCoordinator: self)
-        self.newConversation = newConversation
+        let connect = connectBuilder.build(mainCoordinator: self)
+        self.connect = connect
 
         if mainSplitViewState == .expanded {
             dismissConversationListIfNeeded()
             dismissArchiveIfNeeded()
             dismissSettingsIfNeeded()
             dismissSelfProfileIfNeeded()
-            splitViewController.newConversation = newConversation
+            splitViewController.connect = connect
         } else {
-            let navigationController = UINavigationController(rootViewController: newConversation)
+            let navigationController = UINavigationController(rootViewController: connect)
             // navigationController.modalPresentationStyle = .formSheet
             splitViewController.present(navigationController, animated: true)
         }
@@ -231,11 +230,11 @@ public final class MainCoordinator<
         }
     }
 
-    private func dismissNewConversationIfNeeded() {
+    private func dismissConnectIfNeeded() {
         // Dismiss the new conversation view controller if it's visible in the split view controller.
-        if let newConversation = splitViewController.newConversation {
-            splitViewController.newConversation = nil
-            newConversation.navigationController?.presentingViewController?.dismiss(animated: true)
+        if let connect = splitViewController.connect {
+            splitViewController.connect = nil
+            connect.navigationController?.presentingViewController?.dismiss(animated: true)
         }
     }
 
@@ -280,9 +279,9 @@ public final class MainCoordinator<
 
         // take out the new conversation controller from the supplementary column's navigation
         // controller and put it into a separate one for modal presentation
-        if let newConversation = splitViewController.newConversation {
-            splitViewController.newConversation = nil
-            let navigationController = UINavigationController(rootViewController: newConversation)
+        if let connect = splitViewController.connect {
+            splitViewController.connect = nil
+            let navigationController = UINavigationController(rootViewController: connect)
             // navigationController.modalPresentationStyle = .fullScreen
             splitViewController.present(navigationController, animated: false)
         }
@@ -320,12 +319,12 @@ public final class MainCoordinator<
 
         // the new conversation view controller in collapsed mode is
         // presented in a separate navigation controller
-        if let newConversation {
-            let navigationController = newConversation.navigationController!
+        if let connect {
+            let navigationController = connect.navigationController!
             navigationController.presentingViewController!.dismiss(animated: false)
             navigationController.viewControllers = []
             navigationController.view.layoutIfNeeded()
-            splitViewController.newConversation = newConversation
+            splitViewController.connect = connect
         }
 
         mainSplitViewState = .expanded

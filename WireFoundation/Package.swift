@@ -32,7 +32,6 @@ let package = Package(
         .target(
             name: "WireTestingPackage",
             dependencies: [
-                "WireFoundation",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"

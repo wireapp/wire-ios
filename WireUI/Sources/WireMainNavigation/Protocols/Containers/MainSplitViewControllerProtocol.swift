@@ -25,7 +25,7 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController {
     associatedtype ConversationList: MainConversationListProtocol
 
     typealias Archive = UIViewController
-    typealias NewConversation = UIViewController
+    typealias Connect = UIViewController
     typealias Settings = UIViewController
     typealias Conversation = UIViewController
     typealias TabContainer = UIViewController
@@ -40,7 +40,7 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController {
     var archive: Archive? { get set }
 
     /// Assigning a view controller instance to this property will present the instance in the supplementary column.
-    var newConversation: NewConversation? { get set }
+    var connect: Connect? { get set }
 
     /// Assigning a view controller instance to this property will present the instance in the supplementary column.
     var settings: Settings? { get set }

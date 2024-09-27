@@ -17,15 +17,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireReusableUIComponentsTests",
-        "name" : "WireReusableUIComponentsTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireMainNavigationTests",
-        "name" : "WireMainNavigationTests"
+        "identifier" : "WireAccountImageTests",
+        "name" : "WireAccountImageTests"
       }
     },
     {
@@ -38,8 +31,15 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireAccountImageTests",
-        "name" : "WireAccountImageTests"
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireConversationListNavigationTests",
+        "name" : "WireConversationListNavigationTests"
       }
     },
     {
@@ -47,6 +47,13 @@
         "containerPath" : "container:",
         "identifier" : "WireDesignTests",
         "name" : "WireDesignTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireMainNavigationTests",
+        "name" : "WireMainNavigationTests"
       }
     }
   ],

@@ -17,14 +17,9 @@
 //
 
 import UIKit
-import WireMainNavigation
 
-final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
-    var sidebar: MockSidebarViewController!
-    var conversationList: MockConversationListViewController?
-    var archive: UIViewController?
-    var connect: UIViewController?
-    var settings: UIViewController?
-    var conversation: UIViewController?
-    var tabContainer: UIViewController!
+public protocol ConversationListParentCoordinatorProtocol {
+    associatedtype Conversation: UIViewController
+
+    func showConversation(conversation: Conversation) async
 }

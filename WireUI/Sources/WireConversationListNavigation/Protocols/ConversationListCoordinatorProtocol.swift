@@ -16,15 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigation
+public protocol ConversationListCoordinatorProtocol: AnyObject {
+    func showConversation<ConversationID: Sendable>(conversationID: ConversationID) async
+    func showConversation<ConversationID: Sendable, MessageID: Sendable>(conversationID: ConversationID, messageID: MessageID?) async
+}
 
-final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
-    var sidebar: MockSidebarViewController!
-    var conversationList: MockConversationListViewController?
-    var archive: UIViewController?
-    var connect: UIViewController?
-    var settings: UIViewController?
-    var conversation: UIViewController?
-    var tabContainer: UIViewController!
+public extension ConversationListCoordinatorProtocol {
+//    func showConversation<ConversationID: Sendable>(conversationID: ConversationID) async {
+//        showConversation(conversationID: conversationID, messageID: nil)
+//    }
 }
