@@ -19,6 +19,20 @@
 public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype ConversationList: MainConversationListProtocol
 
+    /// Make the conversation list visible. Don't show any conversation content.
+    func showConversationList(
+        conversationFilter: ConversationList.ConversationFilter?
+    ) async
+
+    /// In the expanded split view layout make the conversation list visible and show the conversation with the provided id.
+    /// In collapsed layout show the conversation content.
+    func showConversationList(
+        conversationFilter: ConversationList.ConversationFilter?,
+        conversationID: ConversationList.ConversationID?
+    ) async
+
+    /// In the expanded split view layout make the conversation list visible and show the conversation with the provided id and scroll to the message with the provided id.
+    /// In collapsed layout show the conversation content and scroll to the message with the provided id.
     func showConversationList(
         conversationFilter: ConversationList.ConversationFilter?,
         conversationID: ConversationList.ConversationID?,
@@ -27,7 +41,38 @@ public protocol MainCoordinatorProtocol: AnyObject {
 
     func showArchivedConversations() async
     func showSettings<SettingsContent: MainSettingsContentRepresentable>(content: SettingsContent?) async
+    // func showSettings() async
 
     func showSelfProfile() async
     func showConnect() async
 }
+
+// TODO: remove
+/*
+public extension MainCoordinatorProtocol {
+
+    func showConversationList(
+        conversationFilter: ConversationList.ConversationFilter?
+    ) async {
+        await showConversationList(
+            conversationFilter: conversationFilter,
+            conversationID: .none
+        )
+    }
+
+    func showConversationList(
+        conversationFilter: ConversationList.ConversationFilter?,
+        conversationID: ConversationList.ConversationID?
+    ) async {
+        await showConversationList(
+            conversationFilter: conversationFilter,
+            conversationID: conversationID,
+            messageID: .none
+        )
+    }
+
+    // func showSettings() async {
+    //     await showSettings(content: .none)
+    // }
+}
+ */

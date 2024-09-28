@@ -22,9 +22,17 @@ import WireMainNavigation
 @testable import Wire
 
 final class MockMainCoordinator: MainCoordinatorProtocol {
-    typealias ConversationID = MockConversationID // TODO: remove
+    typealias ConversationList = ConversationListViewController
 
-    func showConversationList<ConversationFilter: MainConversationFilterRepresentable>(conversationFilter: ConversationFilter?) async {
+    func showConversationList(conversationFilter: ConversationFilter?) async {
+        fatalError("Mock method not implemented")
+    }
+
+    func showConversationList(conversationFilter: ConversationFilter?, conversationID: UUID?) async {
+        fatalError("Mock method not implemented")
+    }
+
+    func showConversationList(conversationFilter: ConversationFilter?, conversationID: UUID?, messageID: String?) async {
         fatalError("Mock method not implemented")
     }
 
@@ -36,11 +44,12 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
-    func showSettings() async {
+    func showSettings<SettingsContent>(content: SettingsContent?) async
+    where SettingsContent : MainSettingsContentRepresentable {
         fatalError("Mock method not implemented")
     }
 
-    func showNewConversation() async {
+    func showConnect() async {
         fatalError("Mock method not implemented")
     }
 }

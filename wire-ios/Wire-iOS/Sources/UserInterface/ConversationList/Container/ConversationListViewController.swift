@@ -26,6 +26,14 @@ import WireReusableUIComponents
 import WireSyncEngine
 import WireConversationListNavigation
 
+// TODO: remove
+struct ConversationListParentCoordinator: ConversationListParentCoordinatorProtocol {
+
+    func showConversation(conversation: ConversationViewController) async {
+        fatalError()
+    }
+}
+
 final class ConversationListViewController: UIViewController {
 
     // MARK: - Properties

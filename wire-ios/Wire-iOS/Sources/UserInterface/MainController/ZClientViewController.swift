@@ -31,6 +31,10 @@ struct MockConversationID: Sendable {} // TODO: remove
 
 final class ZClientViewController: UIViewController {
 
+    typealias MainTabBarController = WireMainNavigation.MainTabBarController<ConversationListViewController, UIViewController, UIViewController, UIViewController, UIViewController>
+    typealias MainSplitViewController = WireMainNavigation.MainSplitViewController<SidebarViewController, MainTabBarController>
+    typealias MainCoordinator = WireMainNavigation.MainCoordinator<MainSplitViewController, MainTabBarController, StartUIViewControllerBuilder, SelfProfileViewControllerBuilder>
+
     // MARK: - Private Members
 
     let account: Account
@@ -53,7 +57,7 @@ final class ZClientViewController: UIViewController {
         return sidebarViewController
     }()
 
-    private(set) lazy var mainSplitViewController = MainSplitViewController<SidebarViewController, ConversationListViewController>(
+    private(set) lazy var mainSplitViewController = MainSplitViewController(
         sidebar: sidebarViewController,
         noConversationPlaceholder: NoConversationPlaceholderViewController(),
         tabContainer: mainTabBarController
@@ -63,7 +67,7 @@ final class ZClientViewController: UIViewController {
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
     let mainTabBarController = {
-        let tabBarController = MainTabBarController<ConversationListViewController>()
+        let tabBarController = MainTabBarController()
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
     }()
@@ -100,12 +104,11 @@ final class ZClientViewController: UIViewController {
     private var networkAvailabilityObserverToken: NSObjectProtocol?
 
     private(set) lazy var mainCoordinator = {
-
         var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
-        let mainCoordinator = MainCoordinator<MainSplitViewController<SidebarViewController, ConversationListViewController>, MainTabBarController<ConversationListViewController>, MockConversationID, StartUIViewControllerBuilder, SelfProfileViewControllerBuilder>(
+        let mainCoordinator = MainCoordinator(
             mainSplitViewController: mainSplitViewController,
             mainTabBarController: mainTabBarController,
-            newConversationBuilder: newConversationBuilder,
+            connectBuilder: newConversationBuilder,
             selfProfileBuilder: selfProfileViewControllerBuilder
         )
         newConversationBuilder.delegate = mainCoordinator
@@ -283,7 +286,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        mainCoordinator.showNewConversation()
+        mainCoordinator.showConnect()
     }
 
     // MARK: Status bar

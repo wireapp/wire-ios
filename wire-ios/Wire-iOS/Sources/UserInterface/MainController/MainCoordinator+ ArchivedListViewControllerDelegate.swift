@@ -25,7 +25,7 @@ extension MainCoordinator: ArchivedListViewControllerDelegate {
         _ viewController: ArchivedListViewController,
         didSelectConversation conversation: ZMConversation
     ) {
-        showConversationList(conversationFilter: ConversationFilter?.none)
+        showConversationList(conversationFilter: .none, conversationID: .none, messageID: .none)
         fatalError("TODO") // TODO: open conversation
     }
 }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@MainActor
 public protocol SidebarViewControllerDelegate: AnyObject {
     func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController)
     func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarMenuItem)

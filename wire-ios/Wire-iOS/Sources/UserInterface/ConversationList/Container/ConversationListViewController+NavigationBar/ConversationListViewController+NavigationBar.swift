@@ -142,7 +142,7 @@ extension ConversationListViewController {
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
             Task {
-                await self?.mainCoordinator.showNewConversation()
+                await self?.mainCoordinator.showConnect()
             }
         }
         // TODO: accessibility
@@ -216,7 +216,7 @@ extension ConversationListViewController {
         newConversationBarButton.accessibilityLabel = "" // TODO: accessibilityLabel
         newConversationBarButton.addAction(.init { [weak self] _ in
             Task {
-                await self?.mainCoordinator.showNewConversation()
+                await self?.mainCoordinator.showConnect()
             }
         }, for: .primaryActionTriggered)
         newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem

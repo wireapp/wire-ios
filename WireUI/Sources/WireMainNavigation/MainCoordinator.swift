@@ -42,9 +42,6 @@ public final class MainCoordinator<
 
     SplitViewController.Sidebar: MainSidebarProtocol,
 SplitViewController.TabContainer == TabBarController,
-//    SplitViewController.ConversationList == TabBarController.ConversationList,
-//    SplitViewController.Archive == TabBarController.Archive,
-//    SplitViewController.Settings == TabBarController.Settings, // TODO: can some of these be removed?
 ConnectBuilder.ViewController == TabBarController.Connect
 {
     // swiftlint:enable opening_brace
@@ -110,6 +107,16 @@ ConnectBuilder.ViewController == TabBarController.Connect
     }
 
     // MARK: - Public Methods
+
+    @MainActor
+    public func showConversationList(conversationFilter: ConversationList.ConversationFilter?) {
+        showConversationList(conversationFilter: conversationFilter, conversationID: .none)
+    }
+
+    @MainActor
+    public func showConversationList(conversationFilter: ConversationList.ConversationFilter?, conversationID: ConversationList.ConversationID?) {
+        showConversationList(conversationFilter: conversationFilter, conversationID: conversationID, messageID: .none)
+    }
 
     public func showConversationList(
         conversationFilter: ConversationList.ConversationFilter?,
