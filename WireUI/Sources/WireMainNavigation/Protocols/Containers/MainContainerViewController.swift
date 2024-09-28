@@ -17,19 +17,12 @@
 //
 
 import UIKit
-import WireMainNavigation
 
-final class MockTabBarController: UITabBarController, MainTabBarControllerProtocol {
-
-    typealias ConversationList = MockConversationListViewController
-    typealias Conversation = UIViewController
-    typealias Archive = UIViewController
-    typealias Connect = UIViewController
-    typealias Settings = UIViewController
-
-    var contacts: UIViewController?
-    var conversations: (conversationList: MockConversationListViewController, conversation: UIViewController?)?
-    var archive: UIViewController?
-    var settings: UIViewController?
-    var selectedContent: MainTabBarControllerContent = .conversations
+@MainActor
+public protocol MainContainerViewController: UIViewController {
+    associatedtype ConversationList: MainConversationListProtocol
+    associatedtype Conversation: UIViewController
+    associatedtype Archive: UIViewController
+    associatedtype Connect: UIViewController
+    associatedtype Settings: UIViewController
 }

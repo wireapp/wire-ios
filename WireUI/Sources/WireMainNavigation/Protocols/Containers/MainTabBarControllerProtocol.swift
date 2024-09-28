@@ -26,16 +26,7 @@ import UIKit
 /// that a conforming tab bar controller must manage.
 
 @MainActor
-public protocol MainTabBarControllerProtocol: UITabBarController {
-
-    /// Requires any conversation list view controller to offer a
-    /// ``MainConversationListProtocol/conversationFilter-swift.property``
-    /// as well as a ``MainConversationListProtocol/splitViewInterface`` property.
-    associatedtype ConversationList: MainConversationListProtocol
-
-    typealias Conversation = UIViewController
-    typealias Archive = UIViewController
-    typealias Settings = UIViewController
+public protocol MainTabBarControllerProtocol: UITabBarController, MainContainerViewController {
 
     /// The selected content (tab).
     var selectedContent: MainTabBarControllerContent { get set }

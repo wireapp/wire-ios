@@ -21,7 +21,7 @@ import SwiftUI
 public final class MainSplitViewController<
 
     Sidebar: MainSidebarProtocol,
-    ConversationList: MainConversationListProtocol
+    TabContainer: MainTabBarControllerProtocol
 
 >: UISplitViewController, MainSplitViewControllerProtocol {
 
@@ -44,21 +44,21 @@ public final class MainSplitViewController<
         }
     }
 
-    public weak var archive: UIViewController? {
+    public weak var archive: Archive? {
         didSet {
             supplementaryNavigationController?.viewControllers = [archive].compactMap { $0 }
             supplementaryNavigationController?.view.layoutIfNeeded()
         }
     }
 
-    public weak var connect: UIViewController? {
+    public weak var connect: Connect? {
         didSet {
             supplementaryNavigationController?.viewControllers = [connect].compactMap { $0 }
             supplementaryNavigationController?.view.layoutIfNeeded()
         }
     }
 
-    public weak var settings: UIViewController? {
+    public weak var settings: Settings? {
         didSet {
             supplementaryNavigationController?.viewControllers = [settings].compactMap { $0 }
             supplementaryNavigationController?.view.layoutIfNeeded()
@@ -67,7 +67,7 @@ public final class MainSplitViewController<
 
     // MARK: - Secondary Column
 
-    public weak var conversation: UIViewController? {
+    public weak var conversation: Conversation? {
         didSet {
             secondaryNavigationController?.viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
             secondaryNavigationController?.view.layoutIfNeeded()
@@ -76,7 +76,7 @@ public final class MainSplitViewController<
 
     // MARK: - Compact/Collapsed
 
-    public private(set) weak var tabContainer: UIViewController!
+    public private(set) weak var tabContainer: TabContainer!
 
     // MARK: - Private Properties
 
@@ -91,7 +91,7 @@ public final class MainSplitViewController<
     public init(
         sidebar: @autoclosure () -> Sidebar,
         noConversationPlaceholder: @autoclosure NoConversationPlaceholderBuilder,
-        tabContainer: @autoclosure () -> UIViewController
+        tabContainer: @autoclosure () -> TabContainer
     ) {
         let sidebar = sidebar()
         let noConversationPlaceholder = noConversationPlaceholder()

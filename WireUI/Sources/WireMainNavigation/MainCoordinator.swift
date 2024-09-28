@@ -41,13 +41,16 @@ public final class MainCoordinator<
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
     SplitViewController.Sidebar: MainSidebarProtocol,
-    SplitViewController.ConversationList == TabBarController.ConversationList,
-    SplitViewController.Archive == TabBarController.Archive,
-    SplitViewController.Settings == TabBarController.Settings
+SplitViewController.TabContainer == TabBarController,
+//    SplitViewController.ConversationList == TabBarController.ConversationList,
+//    SplitViewController.Archive == TabBarController.Archive,
+//    SplitViewController.Settings == TabBarController.Settings, // TODO: can some of these be removed?
+ConnectBuilder.ViewController == TabBarController.Connect
 {
     // swiftlint:enable opening_brace
 
     public typealias ConversationList = SplitViewController.ConversationList
+    public typealias Connect = SplitViewController.Connect
 
     // MARK: - Private Properties
 
@@ -55,7 +58,7 @@ public final class MainCoordinator<
     private weak var tabBarController: TabBarController!
 
     private let connectBuilder: ConnectBuilder
-    private weak var connect: UIViewController?
+    private weak var connect: Connect?
 
     private var selfProfileBuilder: SelfProfileBuilder
     private weak var selfProfile: UIViewController?

@@ -19,16 +19,15 @@
 import UIKit
 
 @MainActor
-public protocol MainSplitViewControllerProtocol: UISplitViewController {
+public protocol MainSplitViewControllerProtocol: UISplitViewController, MainContainerViewController {
 
     associatedtype Sidebar: MainSidebarProtocol
-    associatedtype ConversationList: MainConversationListProtocol
-
-    typealias Archive = UIViewController
-    typealias Connect = UIViewController
-    typealias Settings = UIViewController
-    typealias Conversation = UIViewController
-    typealias TabContainer = UIViewController
+    associatedtype TabContainer: MainTabBarControllerProtocol where
+    TabContainer.ConversationList == ConversationList,
+    TabContainer.Conversation == Conversation,
+    TabContainer.Archive == Archive,
+    TabContainer.Connect == Connect,
+    TabContainer.Settings == Settings
 
     /// Contains the reference to the view controller shown in the primary column.
     var sidebar: Sidebar! { get }

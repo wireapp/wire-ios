@@ -20,11 +20,18 @@ import UIKit
 import WireMainNavigation
 
 final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
+
+    typealias ConversationList = MockConversationListViewController
+    typealias Conversation = UIViewController
+    typealias Archive = UIViewController
+    typealias Connect = UIViewController
+    typealias Settings = UIViewController
+
     var sidebar: MockSidebarViewController!
     var conversationList: MockConversationListViewController?
     var archive: UIViewController?
     var connect: UIViewController?
     var settings: UIViewController?
     var conversation: UIViewController?
-    var tabContainer: UIViewController!
+    var tabContainer: MockTabBarController!
 }

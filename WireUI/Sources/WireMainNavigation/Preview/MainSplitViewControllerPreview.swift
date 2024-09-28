@@ -20,10 +20,10 @@ import SwiftUI
 
 @MainActor
 func MainSplitViewControllerPreview() -> UISplitViewController {
-    let splitViewController = MainSplitViewController<PreviewSidebarViewController, PreviewConversationListViewController>(
+    let splitViewController = MainSplitViewController<PreviewSidebarViewController, PreviewTabBarController>(
         sidebar: PreviewSidebarViewController("sidebar"),
         noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
-        tabContainer: UIHostingController(rootView: Text(verbatim: "tab bar controller"))
+        tabContainer: .init()
     )
     splitViewController.conversationList = PreviewConversationListViewController("conversation list")
     return splitViewController

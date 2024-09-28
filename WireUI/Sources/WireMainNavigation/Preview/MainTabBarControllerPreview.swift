@@ -20,7 +20,7 @@ import SwiftUI
 
 @MainActor
 func MainTabBarControllerPreview() -> some MainTabBarControllerProtocol {
-    let tabBarController = MainTabBarController<PreviewConversationListViewController>()
+    let tabBarController = PreviewTabBarController()
     tabBarController.conversations = (
         .init("conversationList"),
         .none
@@ -29,6 +29,20 @@ func MainTabBarControllerPreview() -> some MainTabBarControllerProtocol {
     tabBarController.settings = PlaceholderViewController()
     tabBarController.selectedContent = .conversations
     return tabBarController
+}
+
+final class PreviewTabBarController: UITabBarController, MainTabBarControllerProtocol {
+
+    typealias ConversationList = PreviewConversationListViewController
+    typealias Conversation = UIViewController
+    typealias Archive = UIViewController
+    typealias Connect = UIViewController
+    typealias Settings = UIViewController
+
+    var selectedContent: MainTabBarControllerContent = .conversations
+    var conversations: (conversationList: PreviewConversationListViewController, conversation: UIViewController?)?
+    var archive: UIViewController?
+    var settings: UIViewController?
 }
 
 private final class PlaceholderViewController: UIViewController {

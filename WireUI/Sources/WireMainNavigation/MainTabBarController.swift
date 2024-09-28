@@ -24,7 +24,11 @@ import SwiftUI
 /// ``MainTabBarControllerContent``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController<
 
-    ConversationList: MainConversationListProtocol
+    ConversationList: MainConversationListProtocol,
+    Conversation: UIViewController,
+    Archive: UIViewController,
+    Connect: UIViewController,
+    Settings: UIViewController
 
 >: UITabBarController, MainTabBarControllerProtocol {
 
@@ -33,12 +37,12 @@ public final class MainTabBarController<
     // MARK: - Public Properties
 
     /// There's only a tab for the conversation list. Opening a conversation will push a view controller onto the stack of the conversation list's navigation controller.
-    public var conversations: (conversationList: ConversationList, conversation: UIViewController?)? {
+    public var conversations: (conversationList: ConversationList, conversation: Conversation?)? {
         get {
             guard !conversationsNavigationController.viewControllers.isEmpty else { return nil }
             var viewControllers = conversationsNavigationController.viewControllers
             let conversationList = viewControllers.removeFirst() as! ConversationList
-            let conversation = viewControllers.first
+            let conversation = viewControllers.first.map { $0 as! Conversation }
             return (conversationList, conversation)
         }
         set {
@@ -51,16 +55,16 @@ public final class MainTabBarController<
         }
     }
 
-    public var archive: UIViewController? {
-        get { archiveNavigationController.viewControllers.first }
+    public var archive: Archive? {
+        get { archiveNavigationController.viewControllers.first.map { $0 as! Archive } }
         set {
             archiveNavigationController.viewControllers = [newValue].compactMap { $0 }
             archiveNavigationController.view.layoutIfNeeded()
         }
     }
 
-    public var settings: UIViewController? {
-        get { settingsNavigationController.viewControllers.first }
+    public var settings: Settings? {
+        get { settingsNavigationController.viewControllers.first.map { $0 as! Settings } }
         set {
             settingsNavigationController.viewControllers = [newValue].compactMap { $0 }
             settingsNavigationController.view.layoutIfNeeded()
