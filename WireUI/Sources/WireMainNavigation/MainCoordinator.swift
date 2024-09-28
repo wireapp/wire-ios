@@ -34,26 +34,30 @@ import UIKit
 public final class MainCoordinator<
 
     SplitViewController: MainSplitViewControllerProtocol,
-    TabBarController: MainTabBarControllerProtocol,
+    ConversationBuilder: MainConversationBuilderProtocol, // TODO: provide init extensions with types
     ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder,
     SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder
 
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
     SplitViewController.Sidebar: MainSidebarProtocol,
-SplitViewController.TabContainer == TabBarController,
-ConnectBuilder.ViewController == TabBarController.Connect
+    ConversationBuilder.Conversation == SplitViewController.Conversation,
+    ConversationBuilder.Conversation.ConversationID == SplitViewController.ConversationList.ConversationID,
+    ConnectBuilder.ViewController == SplitViewController.Connect
 {
     // swiftlint:enable opening_brace
 
     public typealias ConversationList = SplitViewController.ConversationList
     public typealias Settings = SplitViewController.Settings
+    public typealias TabBarController = SplitViewController.TabContainer
     public typealias Connect = SplitViewController.Connect
 
     // MARK: - Private Properties
 
     private weak var splitViewController: SplitViewController!
     private weak var tabBarController: TabBarController!
+
+    private let conversationBuilder: ConversationBuilder
 
     private let connectBuilder: ConnectBuilder
     private weak var connect: Connect?
@@ -95,11 +99,13 @@ ConnectBuilder.ViewController == TabBarController.Connect
     public init(
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
+        conversationBuilder: ConversationBuilder,
         connectBuilder: ConnectBuilder,
         selfProfileBuilder: SelfProfileBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
+        self.conversationBuilder = conversationBuilder
         self.connectBuilder = connectBuilder
         self.selfProfileBuilder = selfProfileBuilder
         super.init()
@@ -149,6 +155,22 @@ ConnectBuilder.ViewController == TabBarController.Connect
         if let conversationList = tabBarController.conversationList {
             tabBarController.conversationList = nil
             splitViewController.conversationList = conversationList
+        }
+    }
+
+    public func showConversation(conversationID: ConversationList.ConversationID) async {
+        // TODO: do we have to change the filter?
+
+        let conversation = await conversationBuilder.build(
+            conversationID: conversationID,
+            mainCoordinator: self
+        )
+        if mainSplitViewState == .collapsed {
+            tabBarController.selectedContent = .conversations
+            tabBarController.conversation = conversation
+        } else {
+            splitViewController.conversation = conversation
+            // TODO: is there anything else to do for `.expanded`?
         }
     }
 

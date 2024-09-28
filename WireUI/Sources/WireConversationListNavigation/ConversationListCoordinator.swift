@@ -21,13 +21,13 @@ public final class ConversationListCoordinator<ParentCoordinator: ConversationLi
 
     let parentCoordinator: ParentCoordinator
 
-    public init(
-        parentCoordinator: ParentCoordinator
-    ) {
+    public init(parentCoordinator: ParentCoordinator) {
         self.parentCoordinator = parentCoordinator
     }
 
     public func showConversation<ConversationID: Sendable>(conversationID: ConversationID) {
+        // conversation has an isArchived flag
+        // what about the filter?
         fatalError("TODO")
         
     }

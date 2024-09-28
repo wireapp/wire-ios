@@ -25,7 +25,8 @@ import SwiftUI
 public final class MainTabBarController<
 
     ConversationList: MainConversationListProtocol,
-    Conversation: UIViewController,
+    Conversation: MainConversationProtocol,
+    // TODO: change order, settings first etc.
     Archive: UIViewController,
     Connect: UIViewController,
     Settings: MainSettingsProtocol
@@ -43,17 +44,25 @@ public final class MainTabBarController<
         }
     }
 
-    public var archive: Archive? {
+    public weak var archive: Archive? {
         didSet {
             archiveNavigationController?.viewControllers = [archive].compactMap { $0 }
             archiveNavigationController?.view.layoutIfNeeded()
         }
     }
 
-    public var settings: Settings? {
+    public weak var settings: Settings? {
         didSet {
             settingsNavigationController?.viewControllers = [settings].compactMap { $0 }
             settingsNavigationController?.view.layoutIfNeeded()
+        }
+    }
+
+    public weak var conversation: Conversation? {
+        didSet {
+            fatalError("TODO")
+//            settingsNavigationController?.viewControllers = [conversation].compactMap { $0 }
+//            settingsNavigationController?.view.layoutIfNeeded()
         }
     }
 

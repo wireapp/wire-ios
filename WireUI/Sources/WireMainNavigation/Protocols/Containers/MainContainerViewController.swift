@@ -23,7 +23,7 @@ import UIKit
 public protocol MainContainerViewController: UIViewController {
 
     associatedtype ConversationList: MainConversationListProtocol
-    associatedtype Conversation: UIViewController
+    associatedtype Conversation: MainConversationProtocol
     associatedtype Archive: UIViewController
     associatedtype Connect: UIViewController
     associatedtype Settings: MainSettingsProtocol
@@ -31,4 +31,5 @@ public protocol MainContainerViewController: UIViewController {
     var conversationList: ConversationList? { get set }
     var archive: Archive? { get set }
     var settings: Settings? { get set }
+    var conversation: Conversation? { get set }
 }

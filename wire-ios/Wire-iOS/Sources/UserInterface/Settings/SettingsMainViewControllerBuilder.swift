@@ -36,10 +36,11 @@ struct SettingsMainViewControllerBuilder: MainCoordinatorInjectingViewController
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self
         )
-        return settingsCellDescriptorFactory.settingsGroup(
+        let group = settingsCellDescriptorFactory.settingsGroup(
             isTeamMember: userSession.selfUser.isTeamMember,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false
-        ).generateViewController()! as! SettingsMainViewController // TODO: fix, create correct instance
+        )
+        return SettingsMainViewController(group: group)
     }
 }

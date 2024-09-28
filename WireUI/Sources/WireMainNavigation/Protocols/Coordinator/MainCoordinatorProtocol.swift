@@ -19,6 +19,9 @@
 public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype ConversationList: MainConversationListProtocol
     associatedtype Settings: MainSettingsProtocol
+    associatedtype ConversationBuilder: MainConversationBuilderProtocol
+
+    // TODO: probably better to have `showConversationList` (without conversation/message) and `showConversation`
 
     /// Make the conversation list visible. Don't show any conversation content.
     func showConversationList(
@@ -40,7 +43,9 @@ public protocol MainCoordinatorProtocol: AnyObject {
         messageID: ConversationList.MessageID?
     ) async
 
-    func showArchivedConversations() async
+    func showConversation(conversationID: ConversationList.ConversationID) async
+
+    func showArchivedConversations() async // TODO: rename showArchive
     func showSettings() async
     func showSettings(content: Settings.Content?) async
 

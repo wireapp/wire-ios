@@ -33,7 +33,7 @@ final class ZClientViewController: UIViewController {
 
     typealias MainTabBarController = WireMainNavigation.MainTabBarController<
         ConversationListViewController,
-        UIViewController,
+        ConversationRootViewController,
         UIViewController,
         UIViewController,
         SettingsMainViewController
@@ -44,7 +44,7 @@ final class ZClientViewController: UIViewController {
     >
     typealias MainCoordinator = WireMainNavigation.MainCoordinator<
         MainSplitViewController,
-        MainTabBarController,
+        ConversationViewControllerBuilder,
         StartUIViewControllerBuilder,
         SelfProfileViewControllerBuilder
     >
@@ -86,6 +86,15 @@ final class ZClientViewController: UIViewController {
         return tabBarController
     }()
 
+    private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
+            userSession: userSession,
+            mediaPlaybackManager: mediaPlaybackManager,
+            conversationLoader: { conversationID in
+                await Task.yield()
+                fatalError("TODO")
+            }
+        )
+
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
             selfUser: userSession.editableSelfUser,
@@ -118,14 +127,15 @@ final class ZClientViewController: UIViewController {
     private var networkAvailabilityObserverToken: NSObjectProtocol?
 
     private(set) lazy var mainCoordinator = {
-        var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
+        var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
         let mainCoordinator = MainCoordinator(
             mainSplitViewController: mainSplitViewController,
             mainTabBarController: mainTabBarController,
-            connectBuilder: newConversationBuilder,
+            conversationBuilder: conversationViewControllerBuilder,
+            connectBuilder: connectBuilder,
             selfProfileBuilder: selfProfileViewControllerBuilder
         )
-        newConversationBuilder.delegate = mainCoordinator
+        connectBuilder.delegate = mainCoordinator
         return mainCoordinator
     }()
 
@@ -393,7 +403,8 @@ final class ZClientViewController: UIViewController {
     ///   - focus: focus on view or not
     ///   - animated: animated or not
     ///   - completion: optional completion handler
-    func load(
+    @available(*, deprecated, message: "Use coordinator")
+    func load( // TODO: delete
         _ conversation: ZMConversation,
         scrollTo message: ZMConversationMessage?,
         focusOnView focus: Bool,

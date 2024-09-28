@@ -16,7 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A sub screen of the settings.
-public enum MainSettingsContent {
-    case account, todo
+import UIKit
+
+public protocol MainConversationBuilderProtocol {
+    associatedtype Conversation: MainConversationProtocol
+
+    func build(
+        conversationID: Conversation.ConversationID,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) async -> Conversation
 }
