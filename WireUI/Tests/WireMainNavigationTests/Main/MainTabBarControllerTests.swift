@@ -39,32 +39,34 @@ final class MainTabBarControllerTests: XCTestCase {
     }
 
     @MainActor
-    func testConversationListAndConversationIsInstalled() throws {
+    func testConversationListIsInstalled() throws {
         // Given
         let conversationList = MockConversationListViewController()
-        let conversation = UIViewController()
 
         // When
-        sut.conversations = (conversationList, conversation)
+        sut.conversationList = conversationList
 
         // Then
         let navigationController = try XCTUnwrap(sut.viewControllers?[0] as? UINavigationController)
-        XCTAssertEqual(navigationController.viewControllers, [conversationList, conversation])
+        XCTAssertEqual(navigationController.viewControllers, [conversationList])
     }
 
     @MainActor
-    func testConversationIsReleased() throws {
+    func testConversationIsReleased() async throws {
         // Given
-        sut.conversations = (.init(), .init())
-        let navigationController = try XCTUnwrap(sut.viewControllers?[0] as? UINavigationController)
+        weak var weakConversationList: MockConversationListViewController?
+        sut.conversationList = {
+            let conversationList = MockConversationListViewController()
+            weakConversationList = conversationList
+            return conversationList
+        }()
 
         // When
-        navigationController.popViewController(animated: false)
+        sut.conversationList = nil
 
         // Then
-        let (conversationList, conversation) = try XCTUnwrap(sut.conversations)
-        XCTAssertNotNil(conversationList)
-        XCTAssertNil(conversation)
+        await Task.yield()
+        XCTAssertNil(weakConversationList)
     }
 
     @MainActor

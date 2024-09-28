@@ -73,7 +73,7 @@ ConnectBuilder.ViewController == TabBarController.Connect
 
     private var conversationList: TabBarController.ConversationList! {
         switch mainSplitViewState {
-        case .collapsed: tabBarController.conversations?.conversationList
+        case .collapsed: tabBarController.conversationList
         case .expanded: splitViewController.conversationList
         }
     }
@@ -138,8 +138,8 @@ ConnectBuilder.ViewController == TabBarController.Connect
         dismissSelfProfileIfNeeded()
 
         // Move the conversation list from the tab bar controller to the split view controller if needed.
-        if let conversationList = tabBarController.conversations?.conversationList {
-            tabBarController.conversations = nil
+        if let conversationList = tabBarController.conversationList {
+            tabBarController.conversationList = nil
             splitViewController.conversationList = conversationList
         }
     }
@@ -221,8 +221,7 @@ ConnectBuilder.ViewController == TabBarController.Connect
         // if the conversation list is currently visible, move it back to the tab bar controller
         if let conversationList = splitViewController.conversationList {
             splitViewController.conversationList = nil
-            let conversation = tabBarController.conversations?.conversation
-            tabBarController.conversations = (conversationList, conversation)
+            tabBarController.conversationList = conversationList
         }
     }
 
@@ -265,7 +264,7 @@ ConnectBuilder.ViewController == TabBarController.Connect
         // move view controllers from the split view controller's columns to the tab bar controller
         if let conversationListViewController = splitViewController.conversationList {
             splitViewController.conversationList = nil
-            tabBarController.conversations = (conversationListViewController, nil)
+            tabBarController.conversationList = conversationListViewController
             // TODO: conversations
         }
 
@@ -301,8 +300,8 @@ ConnectBuilder.ViewController == TabBarController.Connect
 
         // move view controllers from the tab bar controller to the supplementary column
         if tabBarController.selectedContent == .conversations {
-            let conversationViewController = tabBarController.conversations!.conversationList
-            tabBarController.conversations = nil
+            let conversationViewController = tabBarController.conversationList
+            tabBarController.conversationList = nil
             splitViewController.conversationList = conversationViewController
             // TODO: conversations
         }
@@ -332,7 +331,7 @@ ConnectBuilder.ViewController == TabBarController.Connect
         }
 
         mainSplitViewState = .expanded
-        let conversationList = (tabBarController.conversations?.conversationList ?? splitViewController.conversationList)
+        let conversationList = tabBarController.conversationList ?? splitViewController.conversationList
         conversationList!.splitViewInterface = .expanded
     }
 

@@ -30,7 +30,4 @@ public protocol MainTabBarControllerProtocol: UITabBarController, MainContainerV
 
     /// The selected content (tab).
     var selectedContent: MainTabBarControllerContent { get set }
-
-    /// In the compact layout any conversation view controller will be pushed onto the navigation controller of the conversation list.
-    var conversations: (conversationList: ConversationList, conversation: Conversation?)? { get set }
 }
