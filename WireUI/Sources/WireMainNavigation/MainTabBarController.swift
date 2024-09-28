@@ -36,6 +36,11 @@ public final class MainTabBarController<
 
     // MARK: - Public Properties
 
+    public var conversationList: ConversationList? {
+        get { conversations?.conversationList }
+        set { conversations = newValue.map { ($0, conversations?.conversation) } }
+    }
+
     /// There's only a tab for the conversation list. Opening a conversation will push a view controller onto the stack of the conversation list's navigation controller.
     public var conversations: (conversationList: ConversationList, conversation: Conversation?)? {
         get {

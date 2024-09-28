@@ -18,12 +18,8 @@
 
 import SwiftUI
 
-public final class MainSplitViewController<
-
-    Sidebar: MainSidebarProtocol,
-    TabContainer: MainTabBarControllerProtocol
-
->: UISplitViewController, MainSplitViewControllerProtocol {
+public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
+Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
 
     public typealias Settings = TabContainer.Settings
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController

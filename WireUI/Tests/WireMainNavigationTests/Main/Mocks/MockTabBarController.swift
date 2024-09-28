@@ -27,7 +27,10 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
     typealias Connect = UIViewController
     typealias Settings = UIViewController
 
-    var contacts: UIViewController?
+    var conversationList: MockConversationListViewController? {
+        get { conversations?.conversationList }
+        set { conversations = newValue.map { ($0, conversations?.conversation) } }
+    }
     var conversations: (conversationList: MockConversationListViewController, conversation: UIViewController?)?
     var archive: UIViewController?
     var settings: UIViewController?

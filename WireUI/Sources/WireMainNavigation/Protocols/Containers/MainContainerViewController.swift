@@ -28,9 +28,7 @@ public protocol MainContainerViewController: UIViewController {
     associatedtype Connect: UIViewController
     associatedtype Settings: UIViewController
 
-    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
+    var conversationList: ConversationList? { get set }
     var archive: Archive? { get set }
-
-    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
     var settings: Settings? { get set }
 }
