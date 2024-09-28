@@ -40,7 +40,6 @@ public final class MainCoordinator<
 
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
-    SplitViewController.Sidebar: MainSidebarProtocol,
     ConversationBuilder.Conversation == SplitViewController.Conversation,
     ConversationBuilder.Conversation.ConversationID == SplitViewController.ConversationList.ConversationID,
     ConnectBuilder.ViewController == SplitViewController.Connect

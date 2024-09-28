@@ -392,11 +392,13 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
                 conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier, messageID: message.nonce)
                 // mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             } else {
-                // TODO: fix
-                conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier)
-                // mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                Task {
+                    // TODO: fix
+                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier)
+                    // mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                }
             }
-            contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
+            contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection) // TODO: check what happens here, should it be within the Task { ... } ?
         } else if item is ConversationListConnectRequestsItem {
             zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
         } else {

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@MainActor
 public final class ConversationListCoordinator<ParentCoordinator: ConversationListParentCoordinatorProtocol>: ConversationListCoordinatorProtocol {
 
     let parentCoordinator: ParentCoordinator
@@ -25,14 +24,11 @@ public final class ConversationListCoordinator<ParentCoordinator: ConversationLi
         self.parentCoordinator = parentCoordinator
     }
 
-    public func showConversation<ConversationID: Sendable>(conversationID: ConversationID) {
-        // conversation has an isArchived flag
-        // what about the filter?
-        fatalError("TODO")
-        
+    public func showConversation(conversationID: ParentCoordinator.ConversationID) async {
+        await parentCoordinator.showConversation(conversationID: conversationID)
     }
 
-    public func showConversation<ConversationID, MessageID>(conversationID: ConversationID, messageID: MessageID?) where ConversationID : Sendable, MessageID : Sendable {
+    public func showConversation<MessageID>(conversationID: ParentCoordinator.ConversationID, messageID: MessageID?) where MessageID : Sendable {
         fatalError("TODO")
     }
 }

@@ -28,8 +28,9 @@ import WireConversationListNavigation
 
 // TODO: remove
 struct ConversationListParentCoordinator: ConversationListParentCoordinatorProtocol {
+    typealias ConversationID = UUID // TODO: define in ZMConversation
 
-    func showConversation(conversation: ConversationViewController) async {
+    func showConversation(conversationID: ConversationID) async {
         fatalError()
     }
 }

@@ -19,7 +19,7 @@
 import UIKit
 
 public protocol ConversationListParentCoordinatorProtocol {
-    associatedtype Conversation: UIViewController
+    associatedtype ConversationID: Sendable
 
-    func showConversation(conversation: Conversation) async
+    func showConversation(conversationID: ConversationID) async
 }
