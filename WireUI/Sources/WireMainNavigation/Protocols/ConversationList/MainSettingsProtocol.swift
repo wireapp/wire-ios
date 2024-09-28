@@ -22,5 +22,5 @@ import UIKit
 
 @MainActor
 public protocol MainSettingsProtocol: UIViewController {
-    associatedtype SettingsContent: MainSettingsContentRepresentable
+    associatedtype Content: MainSettingsContentRepresentable
 }

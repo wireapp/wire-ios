@@ -32,7 +32,7 @@ let package = Package(
         .target(name: "WireMainNavigation"),
         .testTarget(name: "WireMainNavigationTests", dependencies: ["WireMainNavigation"]),
 
-        .target(name: "WireConversationListNavigation"),
+        .target(name: "WireConversationListNavigation"), // TODO: rename `WireConversationList`
         .testTarget(name: "WireConversationListNavigationTests", dependencies: ["WireConversationListNavigation"]),
 
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),

@@ -47,6 +47,7 @@ ConnectBuilder.ViewController == TabBarController.Connect
     // swiftlint:enable opening_brace
 
     public typealias ConversationList = SplitViewController.ConversationList
+    public typealias Settings = SplitViewController.Settings
     public typealias Connect = SplitViewController.Connect
 
     // MARK: - Private Properties
@@ -170,7 +171,11 @@ ConnectBuilder.ViewController == TabBarController.Connect
         }
     }
 
-    public func showSettings<SettingsContent>(content: SettingsContent?) async where SettingsContent : MainSettingsContentRepresentable {
+    public func showSettings() {
+        showSettings(content: .none)
+    }
+
+    public func showSettings(content: Settings.Content?) {
         tabBarController.selectedContent = .settings
 
         // In collapsed state switching the tab was all we needed to do.

@@ -16,18 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import XCTest
 
-final class PreviewSettingsViewController: UIViewController, MainSettingsProtocol {
-    enum Content: MainSettingsContentRepresentable {
-        case account, todo
+@testable import WireUtilitiesPackage
 
-        init(_ mainSettingsContent: MainSettingsContent) {
-            fatalError()
-        }
+final class PlaceholderTests: XCTestCase {
 
-        func mapToMainSettingsContent() -> MainSettingsContent {
-            fatalError()
-        }
-    }
+    func testNothing() {}
 }

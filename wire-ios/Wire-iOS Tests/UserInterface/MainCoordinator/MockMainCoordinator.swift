@@ -23,6 +23,7 @@ import WireMainNavigation
 
 final class MockMainCoordinator: MainCoordinatorProtocol {
     typealias ConversationList = ConversationListViewController
+    typealias Settings = SettingsMainViewController
 
     func showConversationList(conversationFilter: ConversationFilter?) async {
         fatalError("Mock method not implemented")
@@ -44,8 +45,11 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
-    func showSettings<SettingsContent>(content: SettingsContent?) async
-    where SettingsContent : MainSettingsContentRepresentable {
+    func showSettings() async {
+        fatalError("Mock method not implemented")
+    }
+
+    func showSettings(content: Settings.Content?) async {
         fatalError("Mock method not implemented")
     }
 

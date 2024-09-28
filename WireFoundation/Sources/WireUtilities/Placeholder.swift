@@ -15,19 +15,3 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
-import UIKit
-
-final class PreviewSettingsViewController: UIViewController, MainSettingsProtocol {
-    enum Content: MainSettingsContentRepresentable {
-        case account, todo
-
-        init(_ mainSettingsContent: MainSettingsContent) {
-            fatalError()
-        }
-
-        func mapToMainSettingsContent() -> MainSettingsContent {
-            fatalError()
-        }
-    }
-}

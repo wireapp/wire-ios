@@ -17,17 +17,23 @@
 //
 
 import UIKit
+import WireMainNavigation
 
-final class PreviewSettingsViewController: UIViewController, MainSettingsProtocol {
-    enum Content: MainSettingsContentRepresentable {
-        case account, todo
+final class SettingsMainViewController: SettingsTableViewController, MainSettingsProtocol {
+    enum Content {
+        case todo
+    }
+}
 
-        init(_ mainSettingsContent: MainSettingsContent) {
-            fatalError()
-        }
+// MARK: -
 
-        func mapToMainSettingsContent() -> MainSettingsContent {
-            fatalError()
-        }
+extension SettingsMainViewController.Content: MainSettingsContentRepresentable {
+
+    init(_ mainSettingsContent: MainSettingsContent) {
+        fatalError("TODO")
+    }
+
+    func mapToMainSettingsContent() -> MainSettingsContent {
+        fatalError("TODO")
     }
 }

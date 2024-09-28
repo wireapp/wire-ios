@@ -18,6 +18,7 @@
 
 public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype ConversationList: MainConversationListProtocol
+    associatedtype Settings: MainSettingsProtocol
 
     /// Make the conversation list visible. Don't show any conversation content.
     func showConversationList(
@@ -40,39 +41,9 @@ public protocol MainCoordinatorProtocol: AnyObject {
     ) async
 
     func showArchivedConversations() async
-    func showSettings<SettingsContent: MainSettingsContentRepresentable>(content: SettingsContent?) async
-    // func showSettings() async
+    func showSettings() async
+    func showSettings(content: Settings.Content?) async
 
     func showSelfProfile() async
     func showConnect() async
 }
-
-// TODO: remove
-/*
-public extension MainCoordinatorProtocol {
-
-    func showConversationList(
-        conversationFilter: ConversationList.ConversationFilter?
-    ) async {
-        await showConversationList(
-            conversationFilter: conversationFilter,
-            conversationID: .none
-        )
-    }
-
-    func showConversationList(
-        conversationFilter: ConversationList.ConversationFilter?,
-        conversationID: ConversationList.ConversationID?
-    ) async {
-        await showConversationList(
-            conversationFilter: conversationFilter,
-            conversationID: conversationID,
-            messageID: .none
-        )
-    }
-
-    // func showSettings() async {
-    //     await showSettings(content: .none)
-    // }
-}
- */

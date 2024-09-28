@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "D125F0F6-776C-4A64-9AC7-FEA6C6571756",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireFoundationTests",
+        "name" : "WireFoundationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireUtilitiesPackageTests",
+        "name" : "WireUtilitiesPackageTests"
+      }
+    }
+  ],
+  "version" : 1
+}

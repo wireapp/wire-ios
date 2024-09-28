@@ -31,9 +31,23 @@ struct MockConversationID: Sendable {} // TODO: remove
 
 final class ZClientViewController: UIViewController {
 
-    typealias MainTabBarController = WireMainNavigation.MainTabBarController<ConversationListViewController, UIViewController, UIViewController, UIViewController, UIViewController>
-    typealias MainSplitViewController = WireMainNavigation.MainSplitViewController<SidebarViewController, MainTabBarController>
-    typealias MainCoordinator = WireMainNavigation.MainCoordinator<MainSplitViewController, MainTabBarController, StartUIViewControllerBuilder, SelfProfileViewControllerBuilder>
+    typealias MainTabBarController = WireMainNavigation.MainTabBarController<
+        ConversationListViewController,
+        UIViewController,
+        UIViewController,
+        UIViewController,
+        SettingsMainViewController
+    >
+    typealias MainSplitViewController = WireMainNavigation.MainSplitViewController<
+        SidebarViewController,
+        MainTabBarController
+    >
+    typealias MainCoordinator = WireMainNavigation.MainCoordinator<
+        MainSplitViewController,
+        MainTabBarController,
+        StartUIViewControllerBuilder,
+        SelfProfileViewControllerBuilder
+    >
 
     // MARK: - Private Members
 

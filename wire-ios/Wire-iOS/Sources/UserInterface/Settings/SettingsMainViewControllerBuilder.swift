@@ -27,7 +27,7 @@ struct SettingsMainViewControllerBuilder: MainCoordinatorInjectingViewController
     var userSession: UserSession
     var selfUser: SettingsSelfUser
 
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsMainViewController {
         let settingsPropertyFactory = SettingsPropertyFactory(
             userSession: userSession,
             selfUser: selfUser
@@ -40,6 +40,6 @@ struct SettingsMainViewControllerBuilder: MainCoordinatorInjectingViewController
             isTeamMember: userSession.selfUser.isTeamMember,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false
-        ).generateViewController()!
+        ).generateViewController()! as! SettingsMainViewController // TODO: fix, create correct instance
     }
 }
