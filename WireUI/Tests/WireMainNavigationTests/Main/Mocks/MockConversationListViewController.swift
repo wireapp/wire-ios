@@ -29,7 +29,7 @@ final class MockConversationListViewController: UIViewController, MainConversati
 
     var conversationFilter: ConversationFilter? {
         didSet {
-            print("didset \(conversationFilter)")
+            print("didset \(String(describing: conversationFilter))")
         }
     }
 

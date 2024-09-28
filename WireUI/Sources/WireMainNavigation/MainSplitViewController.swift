@@ -25,6 +25,7 @@ public final class MainSplitViewController<
 
 >: UISplitViewController, MainSplitViewControllerProtocol {
 
+    public typealias Settings = TabContainer.Settings
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
     /// If the width of the view is lower than this value, the `preferredDisplayMode` property

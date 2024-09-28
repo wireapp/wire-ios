@@ -18,11 +18,19 @@
 
 import UIKit
 
+/// A common base for the split view controller and the tab bar controller.
 @MainActor
 public protocol MainContainerViewController: UIViewController {
+
     associatedtype ConversationList: MainConversationListProtocol
     associatedtype Conversation: UIViewController
     associatedtype Archive: UIViewController
     associatedtype Connect: UIViewController
     associatedtype Settings: UIViewController
+
+    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
+    var archive: Archive? { get set }
+
+    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
+    var settings: Settings? { get set }
 }

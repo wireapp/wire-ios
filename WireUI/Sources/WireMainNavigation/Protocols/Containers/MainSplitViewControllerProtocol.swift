@@ -36,13 +36,7 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController, MainCont
     var conversationList: ConversationList? { get set }
 
     /// Assigning a view controller instance to this property will present the instance in the supplementary column.
-    var archive: Archive? { get set }
-
-    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
     var connect: Connect? { get set }
-
-    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
-    var settings: Settings? { get set }
 
     /// Assigning a view controller instance to this property will present it in the secondary column.
     var conversation: Conversation? { get set }
