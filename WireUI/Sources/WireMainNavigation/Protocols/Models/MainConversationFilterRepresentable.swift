@@ -16,22 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigation
+public protocol MainConversationFilterRepresentable: Sendable {
 
-final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
+    init(_ mainConversationFilter: MainConversationFilter)
+    init?<ConversationFilter: MainConversationFilterRepresentable>(mappingFrom conversationFilter: ConversationFilter?)
 
-    typealias ConversationList = MockConversationListViewController
-    typealias Archive = UIViewController
-    typealias Settings = MockSettingsViewController
-    typealias Conversation = UIViewController
-    typealias Connect = UIViewController
+    func mapToMainConversationFilter() -> MainConversationFilter
+}
 
-    var sidebar: MockSidebarViewController!
-    var conversationList: ConversationList?
-    var archive: Archive?
-    var connect: Connect?
-    var settings: Settings?
-    var conversation: Conversation?
-    var tabContainer: MockTabBarController!
+public extension MainConversationFilterRepresentable {
+
+    init?(mappingFrom conversationFilter: (some MainConversationFilterRepresentable)?) {
+        guard let conversationFilter else { return nil }
+        self.init(conversationFilter.mapToMainConversationFilter())
+    }
 }

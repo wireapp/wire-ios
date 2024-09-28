@@ -23,7 +23,7 @@ import XCTest
 
 final class MainTabBarControllerTests: XCTestCase {
 
-    private var sut: MainTabBarController<MockConversationListViewController, UIViewController, UIViewController, UIViewController, UIViewController>!
+    private var sut: MainTabBarController<MockConversationListViewController, UIViewController, UIViewController, UIViewController, MockSettingsViewController>!
     private var snapshotHelper: SnapshotHelper!
 
     @MainActor
@@ -103,7 +103,7 @@ final class MainTabBarControllerTests: XCTestCase {
     @MainActor
     func testSettingsIsInstalled() throws {
         // Given
-        let settings = UIViewController()
+        let settings = MockSettingsViewController()
 
         // When
         sut.settings = settings
@@ -118,7 +118,7 @@ final class MainTabBarControllerTests: XCTestCase {
         // Given
         weak var weakSettings: UIViewController?
         sut.settings = {
-            let settings = UIViewController()
+            let settings = MockSettingsViewController()
             weakSettings = settings
             return settings
         }()

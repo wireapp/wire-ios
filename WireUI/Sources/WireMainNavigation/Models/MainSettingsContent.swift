@@ -19,19 +19,3 @@
 public enum MainSettingsContent {
     case account, todo
 }
-
-public protocol MainSettingsContentRepresentable: Sendable {
-
-    init(_ mainSettingsContent: MainSettingsContent)
-    init?<SettingsContent: MainSettingsContentRepresentable>(mappingFrom settingsContent: SettingsContent?)
-
-    func mapToMainSettingsContent() -> MainSettingsContent
-}
-
-public extension MainSettingsContentRepresentable {
-
-    init?(mappingFrom settingsContent: (some MainSettingsContentRepresentable)?) {
-        guard let settingsContent else { return nil }
-        self.init(settingsContent.mapToMainSettingsContent())
-    }
-}

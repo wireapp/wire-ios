@@ -16,22 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigation
+public protocol MainSettingsContentRepresentable: Sendable {
 
-final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
+    init(_ mainSettingsContent: MainSettingsContent)
+    init?<SettingsContent: MainSettingsContentRepresentable>(mappingFrom settingsContent: SettingsContent?)
 
-    typealias ConversationList = MockConversationListViewController
-    typealias Archive = UIViewController
-    typealias Settings = MockSettingsViewController
-    typealias Conversation = UIViewController
-    typealias Connect = UIViewController
+    func mapToMainSettingsContent() -> MainSettingsContent
+}
 
-    var sidebar: MockSidebarViewController!
-    var conversationList: ConversationList?
-    var archive: Archive?
-    var connect: Connect?
-    var settings: Settings?
-    var conversation: Conversation?
-    var tabContainer: MockTabBarController!
+public extension MainSettingsContentRepresentable {
+
+    init?(mappingFrom settingsContent: (some MainSettingsContentRepresentable)?) {
+        guard let settingsContent else { return nil }
+        self.init(settingsContent.mapToMainSettingsContent())
+    }
 }

@@ -63,8 +63,7 @@ extension MainCoordinator: SidebarViewControllerDelegate {
         case .connect:
             showConnect()
         case .settings:
-            fatalError()
-            //showSettings(content: SettingsContent?.none)
+            showSettings(content: .none)
         }
     }
 

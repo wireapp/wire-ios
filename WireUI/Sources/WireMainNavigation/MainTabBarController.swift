@@ -28,7 +28,7 @@ public final class MainTabBarController<
     Conversation: UIViewController,
     Archive: UIViewController,
     Connect: UIViewController,
-    Settings: UIViewController
+    Settings: MainSettingsProtocol
 
 >: UITabBarController, MainTabBarControllerProtocol {
 

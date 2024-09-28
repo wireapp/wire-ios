@@ -26,7 +26,7 @@ public protocol MainContainerViewController: UIViewController {
     associatedtype Conversation: UIViewController
     associatedtype Archive: UIViewController
     associatedtype Connect: UIViewController
-    associatedtype Settings: UIViewController
+    associatedtype Settings: MainSettingsProtocol
 
     var conversationList: ConversationList? { get set }
     var archive: Archive? { get set }

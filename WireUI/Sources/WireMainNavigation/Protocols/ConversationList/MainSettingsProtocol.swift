@@ -17,21 +17,10 @@
 //
 
 import UIKit
-import WireMainNavigation
 
-final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
+/// Defines the contract for any settings view controller.
 
-    typealias ConversationList = MockConversationListViewController
-    typealias Archive = UIViewController
-    typealias Settings = MockSettingsViewController
-    typealias Conversation = UIViewController
-    typealias Connect = UIViewController
-
-    var sidebar: MockSidebarViewController!
-    var conversationList: ConversationList?
-    var archive: Archive?
-    var connect: Connect?
-    var settings: Settings?
-    var conversation: Conversation?
-    var tabContainer: MockTabBarController!
+@MainActor
+public protocol MainSettingsProtocol: UIViewController {
+    associatedtype SettingsContent: MainSettingsContentRepresentable
 }

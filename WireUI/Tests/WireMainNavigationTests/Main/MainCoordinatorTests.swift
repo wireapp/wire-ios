@@ -73,7 +73,7 @@ final class MainCoordinatorTests: XCTestCase {
 
         // Then
         XCTAssertNotNil(splitViewController.conversationList)
-        XCTAssertNil(tabBarController.conversations?.conversationList)
+        XCTAssertNil(tabBarController.conversationList)
         XCTAssertEqual(conversationList.conversationFilter, .groups)
         XCTAssertEqual(sidebar.selectedMenuItem, .groups)
     }
@@ -94,7 +94,7 @@ final class MainCoordinatorTests: XCTestCase {
 
         // Then
         XCTAssertNil(splitViewController.conversationList)
-        XCTAssertNotNil(tabBarController.conversations?.conversationList)
+        XCTAssertNotNil(tabBarController.conversationList)
     }
 
     @MainActor
@@ -104,7 +104,7 @@ final class MainCoordinatorTests: XCTestCase {
 
         // Then
         XCTAssertNil(splitViewController.conversationList)
-        XCTAssertNotNil(tabBarController.conversations?.conversationList)
+        XCTAssertNotNil(tabBarController.conversationList)
         XCTAssertNotNil(splitViewController.archive)
         XCTAssertNil(tabBarController.archive)
     }
