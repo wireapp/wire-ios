@@ -48,7 +48,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.conversations = (conversationList, conversation)
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
+        let navigationController = try XCTUnwrap(sut.viewControllers?[0] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [conversationList, conversation])
     }
 
@@ -56,7 +56,7 @@ final class MainTabBarControllerTests: XCTestCase {
     func testConversationIsReleased() throws {
         // Given
         sut.conversations = (.init(), .init())
-        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
+        let navigationController = try XCTUnwrap(sut.viewControllers?[0] as? UINavigationController)
 
         // When
         navigationController.popViewController(animated: false)
@@ -76,7 +76,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.archive = archive
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[3] as? UINavigationController)
+        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [archive])
     }
 
@@ -100,8 +100,6 @@ final class MainTabBarControllerTests: XCTestCase {
 
     @MainActor
     func testSettingsIsInstalled() throws {
-        throw XCTSkip() // test will be activated with navigation overhaul
-
         // Given
         let settings = UIViewController()
 
@@ -114,9 +112,7 @@ final class MainTabBarControllerTests: XCTestCase {
     }
 
     @MainActor
-    func testSettingsIsReleased() throws {
-        throw XCTSkip() // test will be activated with navigation overhaul
-
+    func testSettingsIsReleased() async throws {
         // Given
         weak var weakSettings: UIViewController?
         sut.settings = {
@@ -127,6 +123,7 @@ final class MainTabBarControllerTests: XCTestCase {
 
         // When
         sut.settings = nil
+        await Task.yield()
 
         // Then
         XCTAssertNil(weakSettings)
