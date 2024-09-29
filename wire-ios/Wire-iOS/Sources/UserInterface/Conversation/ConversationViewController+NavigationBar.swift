@@ -135,14 +135,12 @@ extension ConversationViewController {
             arrowIcon = hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
         }
 
-        // TODO: fix
-        fatalError("TODO")
-        /*
-        let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact
+        // TODO: check if correct
+        // let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact
+        let isLayoutSizeCompact = traitCollection.horizontalSizeClass == .compact
         let icon: StyleKitIcon = isLayoutSizeCompact ? arrowIcon : .hamburger
 
         return icon
-         */
     }
 
     var shouldShowCollectionsButton: Bool {
@@ -186,15 +184,13 @@ extension ConversationViewController {
         var items: [UIBarButtonItem] = []
 
         // TODO: fix
-        /*
-        if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
+        // if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
             items.append(createBackButton(hasUnread: hasUnread))
-        }
+        //}
 
         if shouldShowCollectionsButton {
             items.append(searchBarButtonItem)
         }
-         */
 
         return items
     }

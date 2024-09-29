@@ -63,7 +63,6 @@ public final class MainTabBarController<
             if conversationList == nil, conversation != nil {
                 return assertionFailure("conversationList == nil, conversation != nil")
             }
-            // conversationListNavigationController.isNavigationBarHidden = conversation != nil // TODO: fix
             conversationListNavigationController.viewControllers = [conversationList, conversation].compactMap { $0 }
             conversationListNavigationController.view.layoutIfNeeded()
         }
