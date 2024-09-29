@@ -65,25 +65,11 @@ final class ProfileHeaderViewController: UIViewController {
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         label.accessibilityTraits.insert(.header)
-        label.lineBreakMode = .byTruncatingTail
+        label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 2
         label.textAlignment = .center
 
         return label
-    }()
-
-    private let e2eiCertifiedImageView = {
-        let imageView = UIImageView(image: .init(resource: .certificateValid))
-        imageView.contentMode = .center
-        imageView.isHidden = true
-        return imageView
-    }()
-
-    private let proteusVerifiedImageView = {
-        let imageView = UIImageView(image: .init(resource: .verifiedShield))
-        imageView.contentMode = .center
-        imageView.isHidden = true
-        return imageView
     }()
 
     private let qrCodeButton = {
@@ -175,11 +161,7 @@ final class ProfileHeaderViewController: UIViewController {
         handleLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         handleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        let nameShieldStackView = UIStackView(arrangedSubviews: [nameLabel, e2eiCertifiedImageView, proteusVerifiedImageView])
-        nameShieldStackView.axis = .horizontal
-        nameShieldStackView.spacing = 4
-
-        let nameHandleStack = UIStackView(arrangedSubviews: [nameShieldStackView, handleLabel])
+        let nameHandleStack = UIStackView(arrangedSubviews: [nameLabel, handleLabel])
         nameHandleStack.axis = .vertical
         nameHandleStack.alignment = .center
         nameHandleStack.spacing = 8
@@ -278,10 +260,33 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func applyUserStatus() {
-        nameLabel.text = userStatus.name
+        nameLabel.attributedText = combineUserNameWithIcons()
         userStatusViewController.userStatus = userStatus
-        e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
-        proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
+    }
+
+    private func combineUserNameWithIcons() -> NSAttributedString {
+        var userNameWithIcons: [NSAttributedString] = []
+
+        let userName = NSAttributedString(string: userStatus.name)
+        userNameWithIcons.append(userName)
+
+        if userStatus.isProteusVerified {
+            let verifiedShieldAttachment = NSTextAttachment()
+            verifiedShieldAttachment.image = UIImage.init(resource: .verifiedShield)
+            let verifiedShieldIconString = NSAttributedString(attachment: verifiedShieldAttachment)
+
+            userNameWithIcons.append(verifiedShieldIconString)
+        }
+
+        if userStatus.isE2EICertified {
+            let certificateValidAttachment = NSTextAttachment()
+            certificateValidAttachment.image = UIImage.init(resource: .certificateValid)
+            let certificateValidIconString = NSAttributedString(attachment: certificateValidAttachment)
+
+            userNameWithIcons.append(certificateValidIconString)
+        }
+
+        return userNameWithIcons.joined(separator: NSAttributedString(string: " "))
     }
 
     private func updateGuestIndicator() {
