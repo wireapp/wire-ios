@@ -25,19 +25,21 @@ struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
 
     var userSession: UserSession
     var mediaPlaybackManager: MediaPlaybackManager?
-    var conversationLoader: (_ conversationID: UUID) async -> ZMConversation
+    var conversationLoader: (_ conversationID: UUID) async -> ZMConversation?
 
     @MainActor
     func build(
         conversationID: UUID,
         mainCoordinator: some MainCoordinatorProtocol
     ) async -> ConversationRootViewController {
-        .init(
-            conversation: await conversationLoader(conversationID),
+        let viewController = ConversationRootViewController(
+            conversation: await conversationLoader(conversationID)!,
             message: nil, // TODO: use `scroll(to:)`
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             mediaPlaybackManager: mediaPlaybackManager
         )
+        viewController.hidesBottomBarWhenPushed = true
+        return viewController
     }
 }

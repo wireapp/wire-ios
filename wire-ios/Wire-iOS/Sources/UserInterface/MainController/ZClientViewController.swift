@@ -87,13 +87,15 @@ final class ZClientViewController: UIViewController {
     }()
 
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
-            userSession: userSession,
-            mediaPlaybackManager: mediaPlaybackManager,
-            conversationLoader: { conversationID in
-                await Task.yield()
-                fatalError("TODO")
+        userSession: userSession,
+        mediaPlaybackManager: mediaPlaybackManager,
+        conversationLoader: { [weak userSession] conversationID in
+            let viewContext = userSession?.contextProvider.viewContext
+            return await viewContext?.perform {
+                ZMConversation.fetch(with: conversationID, domain: nil, in: viewContext!)
             }
-        )
+        }
+    )
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(

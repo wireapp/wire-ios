@@ -186,7 +186,6 @@ extension ConversationViewController {
         var items: [UIBarButtonItem] = []
 
         // TODO: fix
-        fatalError("TODO")
         /*
         if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
             items.append(createBackButton(hasUnread: hasUnread))
@@ -195,9 +194,9 @@ extension ConversationViewController {
         if shouldShowCollectionsButton {
             items.append(searchBarButtonItem)
         }
+         */
 
         return items
-         */
     }
 
     func updateRightNavigationItemsButtons() {
