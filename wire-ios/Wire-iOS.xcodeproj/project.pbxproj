@@ -357,6 +357,7 @@
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
 		595BFD7D2CA9365800D02361 /* ConversationListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595BFD7C2CA9365200D02361 /* ConversationListCoordinator.swift */; };
 		595C49362CA93D7200F8F881 /* AnyConversationListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595C49352CA93D6D00F8F881 /* AnyConversationListCoordinator.swift */; };
+		595C49692CA995E900F8F881 /* WireSettings in Frameworks */ = {isa = PBXBuildFile; productRef = 595C49682CA995E900F8F881 /* WireSettings */; };
 		5965B4792C57BF59000DBF91 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B4782C57BF59000DBF91 /* WireAnalytics */; };
 		5965E9732C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965E9722C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift */; };
 		5965E9902C9B1F8C001D8AE1 /* MockMainConversationListProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965E98F2C9B1F8C001D8AE1 /* MockMainConversationListProtocol.swift */; };
@@ -3944,6 +3945,7 @@
 			files = (
 				EEE25B4129719C750008B894 /* WireRequestStrategy.framework in Frameworks */,
 				EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */,
+				595C49692CA995E900F8F881 /* WireSettings in Frameworks */,
 				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
 				A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */,
 				592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */,
@@ -8612,6 +8614,7 @@
 				59076F942C934A9800AE7529 /* WireAccountImage */,
 				590DCA072C971A56002D0A2C /* WireSidebar */,
 				5929CB212CA6C9C800070488 /* WireConversationListNavigation */,
+				595C49682CA995E900F8F881 /* WireSettings */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11702,6 +11705,10 @@
 		5945D0292C219F7200D039E3 /* WireDesign */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDesign;
+		};
+		595C49682CA995E900F8F881 /* WireSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSettings;
 		};
 		5965B4782C57BF59000DBF91 /* WireAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
