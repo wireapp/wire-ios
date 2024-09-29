@@ -39,30 +39,32 @@ public final class MainTabBarController<
 
     public weak var conversationList: ConversationList? {
         didSet {
-            conversationListNavigationController?.viewControllers = [conversationList].compactMap { $0 }
-            conversationListNavigationController?.view.layoutIfNeeded()
+            conversationListNavigationController.viewControllers = [conversationList, conversation].compactMap { $0 }
+            conversationListNavigationController.view.layoutIfNeeded()
         }
     }
 
     public weak var archive: Archive? {
         didSet {
-            archiveNavigationController?.viewControllers = [archive].compactMap { $0 }
-            archiveNavigationController?.view.layoutIfNeeded()
+            archiveNavigationController.viewControllers = [archive].compactMap { $0 }
+            archiveNavigationController.view.layoutIfNeeded()
         }
     }
 
     public weak var settings: Settings? {
         didSet {
-            settingsNavigationController?.viewControllers = [settings].compactMap { $0 }
-            settingsNavigationController?.view.layoutIfNeeded()
+            settingsNavigationController.viewControllers = [settings].compactMap { $0 }
+            settingsNavigationController.view.layoutIfNeeded()
         }
     }
 
     public weak var conversation: Conversation? {
         didSet {
-            fatalError("TODO")
-//            settingsNavigationController?.viewControllers = [conversation].compactMap { $0 }
-//            settingsNavigationController?.view.layoutIfNeeded()
+            if conversationList == nil, conversation != nil {
+                return assertionFailure("conversationList == nil, conversation != nil")
+            }
+            conversationListNavigationController.viewControllers = [conversationList, conversation].compactMap { $0 }
+            conversationListNavigationController.view.layoutIfNeeded()
         }
     }
 
@@ -73,9 +75,9 @@ public final class MainTabBarController<
 
     // MARK: - Private Properties
 
-    private weak var conversationListNavigationController: UINavigationController?
-    private weak var archiveNavigationController: UINavigationController?
-    private weak var settingsNavigationController: UINavigationController?
+    private weak var conversationListNavigationController: UINavigationController!
+    private weak var archiveNavigationController: UINavigationController!
+    private weak var settingsNavigationController: UINavigationController!
 
     // MARK: - Life Cycle
 

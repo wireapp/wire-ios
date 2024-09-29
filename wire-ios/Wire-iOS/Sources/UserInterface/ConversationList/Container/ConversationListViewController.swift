@@ -26,22 +26,13 @@ import WireReusableUIComponents
 import WireSyncEngine
 import WireConversationListNavigation
 
-// TODO: remove
-struct ConversationListParentCoordinator: ConversationListParentCoordinatorProtocol {
-    typealias ConversationID = UUID // TODO: define in ZMConversation
-
-    func showConversation(conversationID: ConversationID) async {
-        fatalError()
-    }
-}
-
 final class ConversationListViewController: UIViewController {
 
     // MARK: - Properties
 
     let viewModel: ViewModel
     let mainCoordinator: any MainCoordinatorProtocol
-    let conversationListCoordinator: ConversationListCoordinator<ConversationListParentCoordinator>
+    let conversationListCoordinator: any ConversationListCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
@@ -119,15 +110,15 @@ final class ConversationListViewController: UIViewController {
 
     // MARK: - Init
 
-    convenience init(
+    convenience init<MainCoordinator>(
         account: Account,
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
-        mainCoordinator: any MainCoordinatorProtocol,
+        mainCoordinator: MainCoordinator,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) {
+    ) where MainCoordinator: MainCoordinatorProtocol, MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
@@ -144,19 +135,18 @@ final class ConversationListViewController: UIViewController {
         )
     }
 
-    required init(
+    required init<MainCoordinator>(
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
-        mainCoordinator: any MainCoordinatorProtocol,
+        mainCoordinator: MainCoordinator,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) {
+    ) where MainCoordinator: MainCoordinatorProtocol, MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
-        self.conversationListCoordinator = ConversationListCoordinator( // TODO: inject?
-            parentCoordinator: ConversationListParentCoordinator() // TODO: use mainCoordinator
-        )
+        let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
+        self.conversationListCoordinator = conversationListCoordinator
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(

@@ -29,7 +29,7 @@ private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController {
 
-    private let conversationListCoordinator: ConversationListCoordinator<ConversationListParentCoordinator>
+    private let conversationListCoordinator: AnyConversationListCoordinator<ZMConversation.ConversationID>
     private let mainCoordinator: any MainCoordinatorProtocol // TODO: is it needed?
 
     private(set) weak var zClientViewController: ZClientViewController?
@@ -46,14 +46,16 @@ final class ConversationListContentController: UICollectionViewController {
 
     let userSession: UserSession
 
-    init(
+    init<ConversationListCoordinator>(
         userSession: UserSession,
-        conversationListCoordinator: ConversationListCoordinator<ConversationListParentCoordinator>, // TODO: ConversationListCoordinatorProtocol insteads?
+        conversationListCoordinator: ConversationListCoordinator,
         mainCoordinator: any MainCoordinatorProtocol, // TODO: is it needed?
         zClientViewController: ZClientViewController?
-    ) {
+    ) where
+    ConversationListCoordinator: ConversationListCoordinatorProtocol,
+    ConversationListCoordinator.ConversationID == ZMConversation.ConversationID {
         self.userSession = userSession
-        self.conversationListCoordinator = conversationListCoordinator
+        self.conversationListCoordinator = .init(conversationListCoordinator: conversationListCoordinator)
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
 
@@ -389,7 +391,9 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         if let conversation = item as? ZMConversation {
             if let message = scrollToMessageOnNextSelection {
                 // TODO: fix
-                conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier, messageID: message.nonce)
+                Task {
+                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier, messageID: message.nonce)
+                }
                 // mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             } else {
                 Task {

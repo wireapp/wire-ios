@@ -32,12 +32,8 @@ struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
         conversationID: UUID,
         mainCoordinator: some MainCoordinatorProtocol
     ) async -> ConversationRootViewController {
-        fatalError()
-
-        let conversation = await conversationLoader(conversationID)
-
-        return ConversationRootViewController(
-            conversation: conversation,
+        .init(
+            conversation: await conversationLoader(conversationID),
             message: nil, // TODO: use `scroll(to:)`
             userSession: userSession,
             mainCoordinator: mainCoordinator,
