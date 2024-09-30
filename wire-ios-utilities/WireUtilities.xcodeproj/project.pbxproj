@@ -70,6 +70,7 @@
 		591B6E7C2C8B0A1E009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		591B6E7E2C8B0A23009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; };
 		591B6E812C8B0A27009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
+		594FFC3D2C989681008182FD /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 594FFC3C2C989681008182FD /* WireFoundation */; };
 		5966D83E2BD6C20700305BBC /* AccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83D2BD6C20700305BBC /* AccentColorTests.swift */; };
 		5966D8432BD7DF3100305BBC /* ZMAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */; };
 		596C4DCE2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */; };
@@ -406,6 +407,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				594FFC3D2C989681008182FD /* WireFoundation in Frameworks */,
 				591B6E7C2C8B0A1E009F8A7B /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -904,6 +906,7 @@
 			);
 			name = "WireUtilities-Tests";
 			packageProductDependencies = (
+				594FFC3C2C989681008182FD /* WireFoundation */,
 			);
 			productName = WireUtilitiesTests;
 			productReference = 3E88BD431B1F3EA300232589 /* WireUtilities-Tests.xctest */;
@@ -1560,6 +1563,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		594FFC3C2C989681008182FD /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
 		59B48C592C89CB1F00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 import Starscream
 
 @objcMembers

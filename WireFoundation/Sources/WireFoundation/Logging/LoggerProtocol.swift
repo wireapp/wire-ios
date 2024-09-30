@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 public protocol LoggerProtocol {
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...)
@@ -57,8 +59,8 @@ extension LoggerProtocol {
     /// - note: if same key is contained accross multiple attributes, the latest one is taken
     public func flattenArray(_ attributes: [LogAttributes]) -> LogAttributes {
         var mergedAttributes: LogAttributes = [:]
-        attributes.forEach {
-            mergedAttributes.merge($0) { _, new in new }
+        for attribute in attributes {
+            mergedAttributes.merge(attribute) { _, new in new }
         }
         return mergedAttributes
     }

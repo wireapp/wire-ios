@@ -22,7 +22,7 @@ import Foundation
 /// Logger to write logs to fileSystem via CocoaLumberjack
 final class CocoaLumberjackLogger: LoggerProtocol {
 
-    private let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+    private let fileLogger: DDFileLogger = .init() // File Logger
 
     init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
@@ -35,43 +35,42 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
-    func debug(_ message: LogConvertible, attributes: LogAttributes...) {
+    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
     }
 
-    func info(_ message: LogConvertible, attributes: LogAttributes...) {
+    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    func notice(_ message: LogConvertible, attributes: LogAttributes...) {
+    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    func warn(_ message: LogConvertible, attributes: LogAttributes...) {
+    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .warning)
     }
 
-    func error(_ message: LogConvertible, attributes: LogAttributes...) {
+    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    func critical(_ message: LogConvertible, attributes: LogAttributes...) {
+    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    private func log(_ message: LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
-
+    private func log(_ message: any LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
         var mergedAttributes: LogAttributes = [:]
-        attributes.forEach {
-            mergedAttributes.merge($0) { _, new in new }
+        for attribute in attributes {
+            mergedAttributes.merge(attribute) { _, new in new }
         }
 
         // TODO: [WPB-6432] enable when ZMSLog is cleaned up
         /* let isSafe = mergedAttributes[.public] as? Bool == true
-        guard isDebug || isSafe else {
-            // skips logs in production builds with non redacted info
-            return
-        }*/
+         guard isDebug || isSafe else {
+             // skips logs in production builds with non redacted info
+             return
+         }*/
 
         var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
@@ -103,10 +102,10 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     private var isDebug: Bool {
-        #if DEBUG
-            return true
-        #else
-            return false
-        #endif
+#if DEBUG
+        return true
+#else
+        return false
+#endif
     }
 }

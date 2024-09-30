@@ -18,6 +18,7 @@
 
 import Foundation
 import WireUtilities
+import WireFoundation
 
 @objc public enum ZMUpdateEventsPolicy: Int {
     case buffer /// store live events in a buffer, to be processed later

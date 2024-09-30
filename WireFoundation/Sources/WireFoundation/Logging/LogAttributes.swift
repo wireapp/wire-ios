@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public typealias LogAttributes = [LogAttributesKey: Encodable]
+public typealias LogAttributes = [LogAttributesKey: any Encodable]
 
 public enum LogAttributesKey: String, Comparable {
 

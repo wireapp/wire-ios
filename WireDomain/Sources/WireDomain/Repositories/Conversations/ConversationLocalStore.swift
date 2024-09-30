@@ -19,6 +19,7 @@
 import CoreData
 import WireAPI
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 /// A local store dedicated to conversations.

@@ -18,6 +18,7 @@
 
 import CoreFoundation
 import Security
+import WireFoundation
 
 public enum EnqueueResult {
     case success, nilRequest, maximumNumberOfRequests
