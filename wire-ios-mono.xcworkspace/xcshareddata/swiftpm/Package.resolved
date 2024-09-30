@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "Datadog",
+        "repositoryURL": "https://github.com/DataDog/dd-sdk-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "c4cb52b90dbddde8e0ffc7d89f2b6e5680acce7e",
+          "version": "2.16.0"
+        }
+      },
+      {
         "package": "DifferenceKit",
         "repositoryURL": "https://github.com/wireapp/DifferenceKit/",
         "state": {
@@ -47,6 +56,15 @@
         }
       },
       {
+        "package": "opentelemetry-swift",
+        "repositoryURL": "https://github.com/DataDog/opentelemetry-swift-packages.git",
+        "state": {
+          "branch": null,
+          "revision": "adcfc3d7fc6ad411bb576cfa4512c2d3f8b2dbc7",
+          "version": "1.6.0"
+        }
+      },
+      {
         "package": "PINCache",
         "repositoryURL": "https://github.com/pinterest/PINCache",
         "state": {
@@ -62,6 +80,15 @@
           "branch": null,
           "revision": "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
           "version": "1.2.3"
+        }
+      },
+      {
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
+        "state": {
+          "branch": null,
+          "revision": "6752f71de206f6a53fa6a758c3660fd9a7fe7527",
+          "version": "1.11.2"
         }
       },
       {

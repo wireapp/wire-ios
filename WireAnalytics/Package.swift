@@ -10,10 +10,14 @@ let package = Package(
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.16.0")
+    ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies()
+            dependencies: resolveWireAnalyticsDependencies(),
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "WireDatadog",
@@ -23,14 +27,9 @@ let package = Package(
                 .product(name: "DatadogLogs", package: "dd-sdk-ios"),
                 .product(name: "DatadogRUM", package: "dd-sdk-ios"),
                 .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ]
+            ],
+            swiftSettings: swiftSettings
         )
-     
-//            .target(name: "DatadogCore", dependencies: ["Datadog"], packageAccess: <#T##Bool#>),
-//        .target(name: "DatadogCrashReporting", dependencies: ["Datadog"]),
-//        .target(name: "DatadogLogs", dependencies: ["Datadog"]),
-//        .target(name: "DatadogRUM", dependencies: ["Datadog"]),
-//        .target(name: "DatadogTrace", dependencies: ["Datadog"])
     ]
 )
 

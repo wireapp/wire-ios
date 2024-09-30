@@ -10,33 +10,26 @@ let package = Package(
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.16.0")
+    ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies()
+            dependencies: resolveWireAnalyticsDependencies(),
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "WireDatadog",
             dependencies: [
-                .target(name: "Datadog")
-//                .product(name: "DatadogCore", package: "Datadog"),
-//                .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
-//                .product(name: "DatadogLogs", package: "dd-sdk-ios"),
-//                .product(name: "DatadogRUM", package: "dd-sdk-ios"),
-//                .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ]
-        ),
-        .binaryTarget(
-            name: "Datadog",
-            url: "https://github.com/DataDog/dd-sdk-ios/releases/download/2.18.0/Datadog.xcframework.zip",
-            checksum: "f912efbb162e822f830dd5f82de15b444af564b4df2c23cf3a08621c63252e0b"
+                .product(name: "DatadogCore", package: "dd-sdk-ios"),
+                .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
+                .product(name: "DatadogLogs", package: "dd-sdk-ios"),
+                .product(name: "DatadogRUM", package: "dd-sdk-ios"),
+                .product(name: "DatadogTrace", package: "dd-sdk-ios")
+            ],
+            swiftSettings: swiftSettings
         )
-     
-//            .target(name: "DatadogCore", dependencies: ["Datadog"], packageAccess: <#T##Bool#>),
-//        .target(name: "DatadogCrashReporting", dependencies: ["Datadog"]),
-//        .target(name: "DatadogLogs", dependencies: ["Datadog"]),
-//        .target(name: "DatadogRUM", dependencies: ["Datadog"]),
-//        .target(name: "DatadogTrace", dependencies: ["Datadog"])
     ]
 )
 
