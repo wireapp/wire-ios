@@ -18,6 +18,7 @@
 
 import WireDataModel
 import WireMainNavigation
+import WireSettings
 
 @testable import Wire
 
@@ -47,7 +48,7 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
-    func showSettings() async {
+    func showSettings(content: SettingsTopLevelContent?) {
         fatalError("Mock method not implemented")
     }
 

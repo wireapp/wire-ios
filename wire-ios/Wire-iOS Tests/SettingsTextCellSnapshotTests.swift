@@ -27,8 +27,10 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
     private var sut: SettingsTextCell!
     private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+
         snapshotHelper = .init()
         sut = SettingsTextCell()
 
@@ -37,13 +39,15 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
 
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: UserRight.self
+            userRightInterfaceType: UserRight.self,
+            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
         )
     }
 
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
 

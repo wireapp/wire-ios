@@ -401,6 +401,10 @@
 		59B404632CAABD9A00CC33BF /* SettingsContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404622CAABD9200CC33BF /* SettingsContentViewController.swift */; };
 		59B404652CAAC3AC00CC33BF /* SettingsContentViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404642CAAC3A700CC33BF /* SettingsContentViewControllerBuilder.swift */; };
 		59B404672CAB05CA00CC33BF /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */; };
+		59B404692CAB13D400CC33BF /* MockSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */; };
+		59B4046A2CAB13D400CC33BF /* MockSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */; };
+		59B4046C2CAB140A00CC33BF /* WireSettings in Frameworks */ = {isa = PBXBuildFile; productRef = 59B4046B2CAB140A00CC33BF /* WireSettings */; };
+		59B4046E2CAB141000CC33BF /* WireSettings in Frameworks */ = {isa = PBXBuildFile; productRef = 59B4046D2CAB141000CC33BF /* WireSettings */; };
 		59B48C5E2C89CCAB00EA7999 /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5D2C89CCAB00EA7999 /* WireFoundationSupport */; };
 		59B48C602C89CCCC00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5F2C89CCCC00EA7999 /* WireFoundation */; };
 		59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C612C89CD3D00EA7999 /* WireTestingPackage */; };
@@ -2399,6 +2403,7 @@
 		59B404622CAABD9200CC33BF /* SettingsContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsContentViewController.swift; sourceTree = "<group>"; };
 		59B404642CAAC3A700CC33BF /* SettingsContentViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsContentViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
+		59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSettingsCoordinator.swift; sourceTree = "<group>"; };
 		59B8A1EB2CA848E600618340 /* SettingsMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMainViewController.swift; sourceTree = "<group>"; };
 		59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
 		59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
@@ -3996,6 +4001,7 @@
 			files = (
 				59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */,
 				59076F972C934AA100AE7529 /* WireAccountImage in Frameworks */,
+				59B4046E2CAB141000CC33BF /* WireSettings in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
 				CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
@@ -4016,6 +4022,7 @@
 			files = (
 				59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */,
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
+				59B4046C2CAB140A00CC33BF /* WireSettings in Frameworks */,
 				59B48C602C89CCCC00EA7999 /* WireFoundation in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
@@ -6027,6 +6034,7 @@
 				5501FFA922B28D210050D8FC /* MockSelfLegalHoldSubject.swift */,
 				EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */,
 				EE52379023F557B900D4FE79 /* MockServiceUserType+Creation.swift */,
+				59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */,
 				EF6251D321392FFE00943708 /* MockTapGestureRecognizer.swift */,
 				5EF7BA70221C74D200815625 /* MockUser+Convenience.swift */,
 				EF1EA4611FB0934D00B53063 /* MockUser+filename.swift */,
@@ -8653,6 +8661,7 @@
 				59076F962C934AA100AE7529 /* WireAccountImage */,
 				590DCA092C971AFF002D0A2C /* WireFoundation */,
 				59C2F09E2CA54E4900B25E5D /* WireMainNavigation */,
+				59B4046D2CAB141000CC33BF /* WireSettings */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -8674,6 +8683,7 @@
 			name = "Wire-iOS UnitTests";
 			packageProductDependencies = (
 				59B48C5F2C89CCCC00EA7999 /* WireFoundation */,
+				59B4046B2CAB140A00CC33BF /* WireSettings */,
 			);
 			productName = "Wire-iOS UnitTests";
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
@@ -10394,6 +10404,7 @@
 				F127BD5A1E2667170093B2F1 /* MockCollection.swift in Sources */,
 				EFD43FF821B82BC70050ABC5 /* XCTestCase+DeviceSize.swift in Sources */,
 				EF6E3C7E208A0355003F6752 /* MockConversation+factory.swift in Sources */,
+				59B404692CAB13D400CC33BF /* MockSettingsCoordinator.swift in Sources */,
 				EF63528D209C4A9300F5E950 /* ConversationInputBarViewControllerTests.swift in Sources */,
 				7C440E8123473F8500D91B5F /* FolderCreationControllerSnapshotTests.swift in Sources */,
 				5EBF47C621B2FA6D0021CFFC /* MockReadReceipt.swift in Sources */,
@@ -10701,6 +10712,7 @@
 				E6579E772AFFA36D004E7FD8 /* AppLockModule.MockSession.swift in Sources */,
 				E6579E4C2AFFA024004E7FD8 /* MockServiceUserType+Creation.swift in Sources */,
 				E6C25FDB2AFFAFB100406A1C /* NSAttributedString+Attachments.swift in Sources */,
+				59B4046A2CAB13D400CC33BF /* MockSettingsCoordinator.swift in Sources */,
 				E6C25FCF2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */,
 				E6579E5D2AFFA024004E7FD8 /* MockUserClient.swift in Sources */,
 				6321E1632C3EDD1C00D20D14 /* MockContextProvider.swift in Sources */,
@@ -11725,6 +11737,14 @@
 		5965B4782C57BF59000DBF91 /* WireAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAnalytics;
+		};
+		59B4046B2CAB140A00CC33BF /* WireSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSettings;
+		};
+		59B4046D2CAB141000CC33BF /* WireSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSettings;
 		};
 		59B48C5D2C89CCAB00EA7999 /* WireFoundationSupport */ = {
 			isa = XCSwiftPackageProductDependency;
