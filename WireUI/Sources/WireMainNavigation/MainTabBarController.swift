@@ -29,11 +29,10 @@ public final class MainTabBarController<
     // TODO: change order, settings first etc.
     Archive: UIViewController,
     Connect: UIViewController,
-    Settings: MainSettingsProtocol
+    Settings: MainSettingsProtocol,
+    SettingsContent: MainSettingsContentProtocol
 
 >: UITabBarController, MainTabBarControllerProtocol {
-
-    public typealias Content = MainTabBarControllerContent
 
     // MARK: - Public Properties
 
@@ -66,6 +65,12 @@ public final class MainTabBarController<
             // TODO: use setViewControllers(animated)
             conversationListNavigationController.viewControllers = [conversationList, conversation].compactMap { $0 }
             conversationListNavigationController.view.layoutIfNeeded()
+        }
+    }
+
+    public weak var settingsContent: SettingsContent? {
+        didSet {
+            fatalError()
         }
     }
 
@@ -109,7 +114,7 @@ public final class MainTabBarController<
             settingsNavigationController
         ]
 
-        for content in Content.allCases {
+        for content in MainTabBarControllerContent.allCases {
             switch content {
             case .conversations:
                 let tabBarItem = UITabBarItem(

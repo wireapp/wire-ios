@@ -17,12 +17,18 @@
 //
 
 import UIKit
+import WireMainNavigation
 
-typealias PreviewTabBarController = MainTabBarController<
-    PreviewConversationListViewController,
-    PreviewConversationViewController,
-    UIViewController,
-    UIViewController,
-    PreviewSettingsViewController,
-    PreviewSettingsContentViewController
->
+final class MockSettingsContentViewController: UIViewController, MainSettingsContentProtocol {
+    enum SettingsContent: MainSettingsContentRepresentable {
+        case todo
+
+        init(_ mainSettingsContent: MainSettingsContent) {
+            fatalError()
+        }
+
+        func mapToMainSettingsContent() -> MainSettingsContent {
+            fatalError()
+        }
+    }
+}

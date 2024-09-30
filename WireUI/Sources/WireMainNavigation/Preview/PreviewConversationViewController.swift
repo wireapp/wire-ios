@@ -16,8 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
-final class PreviewConversationViewController: UIViewController, MainConversationProtocol {
+final class PreviewConversationViewController: UIHostingController<LabelView>, MainConversationProtocol {
     typealias ConversationID = UUID
+
+    // MARK: - Life Cycle
+
+    convenience init() {
+        self.init(rootView: .init(content: "Conversation", backgroundColor: .blue))
+    }
 }

@@ -18,8 +18,9 @@
 
 public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype ConversationList: MainConversationListProtocol
-    associatedtype Settings: MainSettingsProtocol
     associatedtype ConversationBuilder: MainConversationBuilderProtocol
+    associatedtype Settings: MainSettingsProtocol
+    associatedtype SettingsContent: MainSettingsContentProtocol
 
     // TODO: probably better to have `showConversationList` (without conversation/message) and `showConversation`
 
@@ -56,7 +57,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     ///
     /// In collapsed layout when `content` is nil, this method presents the main settings menu.
     /// If `content` is non-nil, this method presents the main settings and navigates into the settings content.
-    func showSettings(content: Settings.Content?) async
+    func showSettings(content: SettingsContent.SettingsContent?) async
 
     func showSelfProfile() async
     func showConnect() async

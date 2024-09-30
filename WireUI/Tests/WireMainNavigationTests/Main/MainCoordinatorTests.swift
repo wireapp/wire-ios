@@ -24,7 +24,7 @@ final class MainCoordinatorTests: XCTestCase {
 
     typealias SUT = MainCoordinator<
         MockSplitViewController,
-        MockTabBarController,
+        MockConversationBuilder<MockConversationID>,
         MockViewControllerBuilder,
         MockViewControllerBuilder
     >
@@ -52,6 +52,7 @@ final class MainCoordinatorTests: XCTestCase {
         sut = .init(
             mainSplitViewController: splitViewController,
             mainTabBarController: tabBarController,
+            conversationBuilder: .init(),
             connectBuilder: .init(),
             selfProfileBuilder: .init()
         )

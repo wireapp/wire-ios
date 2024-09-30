@@ -18,9 +18,5 @@
 
 import UIKit
 
-/// Defines the contract for any settings view controller.
-
 @MainActor
-public protocol MainSettingsProtocol: UIViewController {
-    associatedtype Content: MainSettingsContentRepresentable
-}
+public protocol MainSettingsProtocol: UIViewController {} // TODO: remove if not needed

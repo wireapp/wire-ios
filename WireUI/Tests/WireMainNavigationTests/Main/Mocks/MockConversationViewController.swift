@@ -17,12 +17,6 @@
 //
 
 import UIKit
+import WireMainNavigation
 
-typealias PreviewTabBarController = MainTabBarController<
-    PreviewConversationListViewController,
-    PreviewConversationViewController,
-    UIViewController,
-    UIViewController,
-    PreviewSettingsViewController,
-    PreviewSettingsContentViewController
->
+final class MockConversationViewController<ConversationID: Sendable>: UIViewController, MainConversationProtocol {}

@@ -17,12 +17,16 @@
 //
 
 import UIKit
+import WireMainNavigation
 
-typealias PreviewTabBarController = MainTabBarController<
-    PreviewConversationListViewController,
-    PreviewConversationViewController,
-    UIViewController,
-    UIViewController,
-    PreviewSettingsViewController,
-    PreviewSettingsContentViewController
->
+struct MockConversationBuilder<ConversationID: Sendable>: MainConversationBuilderProtocol {
+    typealias Conversation = MockConversationViewController<ConversationID>
+
+    @MainActor
+    func build(
+        conversationID: ConversationID,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> MockConversationViewController<ConversationID> {
+        .init()
+    }
+}

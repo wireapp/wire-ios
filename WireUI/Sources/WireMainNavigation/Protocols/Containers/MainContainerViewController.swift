@@ -23,13 +23,20 @@ import UIKit
 public protocol MainContainerViewController: UIViewController {
 
     associatedtype ConversationList: MainConversationListProtocol
-    associatedtype Conversation: MainConversationProtocol
     associatedtype Archive: UIViewController
-    associatedtype Connect: UIViewController
     associatedtype Settings: MainSettingsProtocol
 
+    associatedtype Conversation: MainConversationProtocol
+    associatedtype SettingsContent: MainSettingsContentProtocol
+
+    associatedtype Connect: UIViewController // TODO: is it needed?
+
+    // These three properties represent the tabs of the main tab bar controller.
     var conversationList: ConversationList? { get set }
     var archive: Archive? { get set }
     var settings: Settings? { get set }
+
+    // These two represent the content, which will be pushed on the three main screens.
     var conversation: Conversation? { get set }
+    var settingsContent: SettingsContent? { get set }
 }

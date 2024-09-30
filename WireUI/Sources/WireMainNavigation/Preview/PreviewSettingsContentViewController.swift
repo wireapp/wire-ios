@@ -18,11 +18,16 @@
 
 import UIKit
 
-typealias PreviewTabBarController = MainTabBarController<
-    PreviewConversationListViewController,
-    PreviewConversationViewController,
-    UIViewController,
-    UIViewController,
-    PreviewSettingsViewController,
-    PreviewSettingsContentViewController
->
+final class PreviewSettingsContentViewController: UIViewController, MainSettingsContentProtocol {
+    enum SettingsContent: MainSettingsContentRepresentable {
+        case account, todo
+
+        init(_ mainSettingsContent: MainSettingsContent) {
+            fatalError()
+        }
+
+        func mapToMainSettingsContent() -> MainSettingsContent {
+            fatalError()
+        }
+    }
+}

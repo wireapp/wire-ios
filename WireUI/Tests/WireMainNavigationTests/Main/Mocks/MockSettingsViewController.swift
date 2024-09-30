@@ -19,16 +19,4 @@
 import UIKit
 import WireMainNavigation
 
-final class MockSettingsViewController: UIViewController, MainSettingsProtocol {
-    enum SettingsContent: MainSettingsContentRepresentable {
-        case todo
-
-        init(_ mainSettingsContent: MainSettingsContent) {
-            fatalError()
-        }
-
-        func mapToMainSettingsContent() -> MainSettingsContent {
-            fatalError()
-        }
-    }
-}
+final class MockSettingsViewController: UIViewController, MainSettingsProtocol {} // TODO: consider deleting

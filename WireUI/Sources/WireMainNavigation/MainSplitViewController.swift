@@ -62,6 +62,12 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
         }
     }
 
+    public var settingsContent: SettingsContent? {
+        didSet {
+            fatalError()
+        }
+    }
+
     // MARK: - Secondary Column
 
     public weak var conversation: Conversation? {

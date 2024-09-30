@@ -22,21 +22,26 @@ import UIKit
 public protocol MainSplitViewControllerProtocol: UISplitViewController, MainContainerViewController {
 
     associatedtype Sidebar: MainSidebarProtocol
+
     associatedtype TabContainer: MainTabBarControllerProtocol where
     TabContainer.ConversationList == ConversationList,
     TabContainer.Conversation == Conversation,
     TabContainer.Archive == Archive,
     TabContainer.Connect == Connect,
-    TabContainer.Settings == Settings
+    TabContainer.Settings == Settings,
+    TabContainer.SettingsContent == SettingsContent
 
     /// Contains the reference to the view controller shown in the primary column.
     var sidebar: Sidebar! { get }
 
-    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
-    var connect: Connect? { get set }
-
     /// Assigning a view controller instance to this property will present it in the secondary column.
     var conversation: Conversation? { get set }
+
+    /// Assigning a view controller instance to this property will present it in the secondary column.
+    var settingsContent: SettingsContent? { get set }
+
+    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
+    var connect: Connect? { get set }
 
     /// Contains the reference to the view controller which will be visible in collapsed mode.
     var tabContainer: TabContainer! { get }

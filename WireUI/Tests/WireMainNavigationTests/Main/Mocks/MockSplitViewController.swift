@@ -24,7 +24,10 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     typealias ConversationList = MockConversationListViewController
     typealias Archive = UIViewController
     typealias Settings = MockSettingsViewController
-    typealias Conversation = UIViewController
+
+    typealias Conversation = MockConversationViewController<MockConversationID>
+    typealias SettingsContent = MockSettingsContentViewController
+
     typealias Connect = UIViewController
 
     var sidebar: MockSidebarViewController!
@@ -33,5 +36,6 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     var connect: Connect?
     var settings: Settings?
     var conversation: Conversation?
+    var settingsContent: SettingsContent?
     var tabContainer: MockTabBarController!
 }

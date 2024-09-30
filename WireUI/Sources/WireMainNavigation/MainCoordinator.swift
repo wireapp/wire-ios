@@ -48,8 +48,9 @@ public final class MainCoordinator<
 
     public typealias ConversationList = SplitViewController.ConversationList
     public typealias Settings = SplitViewController.Settings
-    public typealias TabBarController = SplitViewController.TabContainer
+    public typealias SettingsContent = SplitViewController.SettingsContent
     public typealias Connect = SplitViewController.Connect
+    public typealias TabBarController = SplitViewController.TabContainer
 
     // MARK: - Private Properties
 
@@ -197,7 +198,7 @@ public final class MainCoordinator<
         }
     }
 
-    public func showSettings(content: Settings.Content?) {
+    public func showSettings(content: SettingsContent.SettingsContent?) {
         tabBarController.selectedContent = .settings
 
         // In collapsed state switching the tab was all we needed to do.
@@ -212,6 +213,8 @@ public final class MainCoordinator<
         if let settings = tabBarController.settings {
             tabBarController.settings = nil
             splitViewController.settings = settings
+
+            // TODO: settings content
         }
     }
 

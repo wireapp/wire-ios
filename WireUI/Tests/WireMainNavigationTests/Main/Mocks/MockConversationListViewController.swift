@@ -20,7 +20,7 @@ import UIKit
 import WireMainNavigation
 
 final class MockConversationListViewController: UIViewController, MainConversationListProtocol {
-    struct ConversationID: Sendable {}
+    typealias ConversationID = MockConversationID
     struct MessageID: Sendable {}
 
     enum ConversationFilter {

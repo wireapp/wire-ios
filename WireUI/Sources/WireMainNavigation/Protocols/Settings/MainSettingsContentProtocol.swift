@@ -18,11 +18,7 @@
 
 import UIKit
 
-typealias PreviewTabBarController = MainTabBarController<
-    PreviewConversationListViewController,
-    PreviewConversationViewController,
-    UIViewController,
-    UIViewController,
-    PreviewSettingsViewController,
-    PreviewSettingsContentViewController
->
+@MainActor
+public protocol MainSettingsContentProtocol: UIViewController {
+    associatedtype SettingsContent: MainSettingsContentRepresentable
+}
