@@ -4,6 +4,7 @@
 import PackageDescription
 
 let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
+let SnapshotTestReferenceDirectoryPlugin = Target.PluginUsage.plugin(name: "SnapshotTestReferenceDirectoryPlugin", package: "WireFoundation")
 
 let package = Package(
     name: "WireUI",
@@ -14,7 +15,7 @@ let package = Package(
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
         .library(name: "WireSidebar", targets: ["WireSidebar"]),
-        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"])
+        .library(name: "WireMainNavigation", targets: ["WireMainNavigation"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -27,8 +28,8 @@ let package = Package(
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage]),
 
-        .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
-        .testTarget(name: "WireUIFoundationTests", dependencies: ["WireUIFoundation", WireTestingPackage]),
+        .target(name: "WireMainNavigation", dependencies: ["WireDesign"]),
+        .testTarget(name: "WireMainNavigationTests", dependencies: ["WireMainNavigation", WireTestingPackage]),
 
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage", WireTestingPackage]),
@@ -39,7 +40,8 @@ let package = Package(
 )
 
 for target in package.targets {
-    target.swiftSettings = [
+    target.plugins = (target.plugins ?? []) + [SnapshotTestReferenceDirectoryPlugin]
+    target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
         .enableExperimentalFeature("StrictConcurrency")
