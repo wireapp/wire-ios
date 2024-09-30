@@ -16,11 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigation
-import WireSettings
-
-final class SettingsMainViewController: SettingsTableViewController, MainSettingsProtocol {
-    typealias Content = SettingsContent
+public enum SettingsContent: Sendable {
+    case account, devices, options, advanced, support, about, developerOptions
 }
-

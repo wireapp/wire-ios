@@ -197,10 +197,6 @@ public final class MainCoordinator<
         }
     }
 
-    public func showSettings() {
-        showSettings(content: .none)
-    }
-
     public func showSettings(content: Settings.Content?) {
         tabBarController.selectedContent = .settings
 

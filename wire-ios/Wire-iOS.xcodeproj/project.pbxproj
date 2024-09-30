@@ -398,6 +398,7 @@
 		59AADE212BB4287200D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
 		59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
+		59B404512CAA937400CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */; };
 		59B48C5E2C89CCAB00EA7999 /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5D2C89CCAB00EA7999 /* WireFoundationSupport */; };
 		59B48C602C89CCCC00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5F2C89CCCC00EA7999 /* WireFoundation */; };
 		59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C612C89CD3D00EA7999 /* WireTestingPackage */; };
@@ -2393,6 +2394,7 @@
 		59A27BB92C2ADC2900195393 /* MainCoordinator+SidebarViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainCoordinator+SidebarViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsContent+MainSettingsContentRepresentable.swift"; sourceTree = "<group>"; };
 		59B8A1EB2CA848E600618340 /* SettingsMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMainViewController.swift; sourceTree = "<group>"; };
 		59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
 		59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
@@ -6790,6 +6792,7 @@
 				873C5FE21C10426A00D5132A /* DeviceManagement */,
 				871067351C0DC5570035603B /* CellDescriptors */,
 				870815851BF4E76A00D321BC /* SettingsCell.swift */,
+				59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */,
 				E5337CF028CF48DE00C3F8A3 /* SettingsLinkTableCell.swift */,
 				E591D01028C7220800C1469C /* SettingsAppearanceCell.swift */,
 				59B8A1EB2CA848E600618340 /* SettingsMainViewController.swift */,
@@ -9122,6 +9125,7 @@
 				EEF6E3C428D86408001C1799 /* MessageProtocolSectionController.swift in Sources */,
 				A9CBBEBE24CF09ED006543D4 /* PasscodeSetupInteractor.swift in Sources */,
 				1648EEF12049A69800CC6B37 /* GroupConversationSectionController.swift in Sources */,
+				59B404512CAA937400CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift in Sources */,
 				BF515F941D9D1C1900C786FB /* EmojiSectionViewController.swift in Sources */,
 				EF42658B2333DB9800DDAD0A /* ConversationListViewModelDelegate.swift in Sources */,
 				BFE3FEEA209747D6003D9AB5 /* CallStatusView.swift in Sources */,

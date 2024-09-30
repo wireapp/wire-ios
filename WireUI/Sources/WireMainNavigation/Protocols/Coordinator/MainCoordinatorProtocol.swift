@@ -47,7 +47,15 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func hideConversation() async
 
     func showArchivedConversations() async // TODO: rename showArchive
-    func showSettings() async
+
+    /// Present the app settings at the specified content.
+    ///
+    /// In expanded layout this method presents the main settings menu in the supplementary column.
+    /// If a non-nil `content` argument is provided, additionally the specified settings content is displayed
+    /// in th secondary column.
+    ///
+    /// In collapsed layout when `content` is nil, this method presents the main settings menu.
+    /// If `content` is non-nil, this method presents the main settings and navigates into the settings content.
     func showSettings(content: Settings.Content?) async
 
     func showSelfProfile() async

@@ -18,5 +18,5 @@
 
 /// A sub screen of the settings.
 public enum MainSettingsContent {
-    case account, todo
+    case account, devices, options, advanced, support, about, developerOptions
 }
