@@ -41,14 +41,10 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
     ) throws {
         try conversation.appendImage(from: imageData, nonce: UUID())
         analyticsSession?.trackEvent(
-            ConversationContributionAnalyticsEvent(
-                contributionType: .imageMessage,
-                conversationType: .init(
-                    conversation.conversationType
-                ),
-                conversationSize: UInt(
-                    conversation.localParticipants.count
-                )
+            .conversationContribution(
+                .imageMessage,
+                conversationType: .init(conversation.conversationType),
+                conversationSize: UInt(conversation.localParticipants.count)
             )
         )
     }

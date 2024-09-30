@@ -33,6 +33,7 @@ public struct AnalyticsEvent: Sendable {
     /// - Parameters:
     ///   - name: A unique name.
     ///   - segmentation: Additional metadata.
+
     init(
         name: String,
         segmentation: Set<SegmentationEntry> = []

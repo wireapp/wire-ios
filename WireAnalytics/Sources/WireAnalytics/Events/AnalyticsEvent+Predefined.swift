@@ -19,36 +19,20 @@
 public extension AnalyticsEvent {
 
     /// An event tracking when the user opens the app.
-    ///
-    /// - Returns: An app open analytics event.
 
-    static func appOpen() -> AnalyticsEvent {
-        self.init(name: "app.open")
-    }
+    static let appOpen = AnalyticsEvent(name: "app.open")
 
     /// An event tracking when the user fails to export a backup.
-    ///
-    /// - Returns: A backup export failure analytics event.
 
-    static func backupExportFailed() -> AnalyticsEvent {
-        self.init(name: "backup.export_failed")
-    }
+    static let backupExportFailed = AnalyticsEvent(name: "backup.export_failed")
 
     /// An event tracking when the user successuflly restores a backup.
-    ///
-    /// - Returns: A backup restored analytics event.
 
-    static func backupRestored() -> AnalyticsEvent {
-        self.init(name: "backup.restore_succeeded")
-    }
+    static let backupRestored = AnalyticsEvent(name: "backup.restore_succeeded")
 
     /// An event tracking when the user fails to restores a backup.
-    ///
-    /// - Returns: A backup restore failure analytics event.
 
-    static func backupRestoredFailed() -> AnalyticsEvent {
-        self.init(name: "backup.restore_failed")
-    }
+    static let backupRestoredFailed = AnalyticsEvent(name: "backup.restore_failed")
 
     /// An event tracking when the user initiates a call.
     ///

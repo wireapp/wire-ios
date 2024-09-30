@@ -53,15 +53,12 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
         }
 
         analyticsSession?.trackEvent(
-            ConversationContributionAnalyticsEvent(
-                contributionType: contributionType,
-                conversationType: .init(
-                    conversation.conversationType
-                ),
-                conversationSize: UInt(
-                    conversation.localParticipants.count
-                )
+            .conversationContribution(
+                contributionType,
+                conversationType: .init(conversation.conversationType),
+                conversationSize: UInt(conversation.localParticipants.count)
             )
         )
     }
+
 }

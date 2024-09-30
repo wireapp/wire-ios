@@ -44,12 +44,10 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
         try conversation.appendLocation(with: locationData, nonce: UUID())
 
         analyticsSession?.trackEvent(
-            ConversationContributionAnalyticsEvent(
-                contributionType: .locationMessage,
+            .conversationContribution(
+                .locationMessage,
                 conversationType: .init(conversation.conversationType),
-                conversationSize: UInt(
-                    conversation.localParticipants.count
-                )
+                conversationSize: UInt(conversation.localParticipants.count)
             )
         )
     }
