@@ -21,7 +21,7 @@ import Countly
 /// Struct responsible for managing analytics operations.
 public struct AnalyticsManager: AnalyticsManagerProtocol {
     /// The underlying analytics service.
-    private let analyticsService: any AnalyticsService
+    private let analyticsService: any CountlyProtocol
 
     /// Initializes a new AnalyticsManager with the given app key and host.
     ///
@@ -45,7 +45,7 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     init(
         appKey: String,
         host: URL,
-        analyticsService: any AnalyticsService
+        analyticsService: any CountlyProtocol
     ) {
         self.analyticsService = analyticsService
         self.analyticsService.start(appKey: appKey, host: host)

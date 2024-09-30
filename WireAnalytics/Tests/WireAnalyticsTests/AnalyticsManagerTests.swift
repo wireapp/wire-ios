@@ -25,14 +25,14 @@ class AnalyticsManagerTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsService: MockAnalyticsService!
+    private var analyticsService: MockCountlyProtocol!
     private var sut: AnalyticsManager!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        analyticsService = MockAnalyticsService()
+        analyticsService = MockCountlyProtocol()
 
         analyticsService.startAppKeyHost_MockMethod = { _, _ in }
         analyticsService.beginSession_MockMethod = {}

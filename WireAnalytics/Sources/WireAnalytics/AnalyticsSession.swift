@@ -33,7 +33,7 @@ public protocol AnalyticsSessionProtocol {
 struct AnalyticsSession: AnalyticsSessionProtocol {
 
     let isSelfTeamMember: Bool
-    let service: any AnalyticsService
+    let service: any CountlyProtocol
 
     func trackEvent(_ event: AnalyticsEvent) {
         var segmentation = event.segmentation
@@ -45,8 +45,8 @@ struct AnalyticsSession: AnalyticsSessionProtocol {
             ($0.key, $0.value)
         })
 
-        service.trackEvent(
-            name: event.name,
+        service.recordEvent(
+            event.name,
             segmentation: rawSegmentation
         )
     }
