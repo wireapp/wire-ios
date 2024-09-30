@@ -43,3 +43,11 @@ public struct AnalyticsEvent: Sendable {
     }
 
 }
+
+extension AnalyticsEvent: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        "event: \(name), segmentation: \(segmentation)"
+    }
+
+}
