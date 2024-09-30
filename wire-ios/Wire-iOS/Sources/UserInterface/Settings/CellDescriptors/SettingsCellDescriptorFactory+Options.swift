@@ -20,6 +20,7 @@ import LocalAuthentication
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
+import WireSettings
 
 extension SettingsCellDescriptorFactory {
 
@@ -48,7 +49,8 @@ extension SettingsCellDescriptorFactory {
             title: L10n.Localizable.Self.Settings.OptionsMenu.title,
             icon: .settingsOptions,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: .options
+            settingsTopLevelContent: .options,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -235,8 +237,10 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var popularDemandDarkThemeSection: SettingsSectionDescriptorType {
-        let darkThemeSection = SettingsCellDescriptorFactory.darkThemeGroup(for: settingsPropertyFactory.property(.darkMode))
-
+        let darkThemeSection = SettingsCellDescriptorFactory.darkThemeGroup(
+            for: settingsPropertyFactory.property(.darkMode),
+            settingsCoordinator: settingsCoordinator
+        )
         return SettingsSectionDescriptor(
             cellDescriptors: [darkThemeSection],
             footer: L10n.Localizable.Self.Settings.PopularDemand.DarkMode.footer
@@ -270,7 +274,10 @@ extension SettingsCellDescriptorFactory {
 
     // MARK: - Helpers
 
-    static func darkThemeGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
+    static func darkThemeGroup(
+        for property: SettingsProperty,
+        settingsCoordinator: AnySettingsCoordinator
+    ) -> SettingsCellDescriptorType {
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
 
             return SettingsPropertySelectValueCellDescriptor(
@@ -292,7 +299,8 @@ extension SettingsCellDescriptorFactory {
             identifier: nil,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil
+            settingsTopLevelContent: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -318,7 +326,8 @@ extension SettingsCellDescriptorFactory {
             identifier: nil,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil
+            settingsTopLevelContent: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -344,7 +353,8 @@ extension SettingsCellDescriptorFactory {
             identifier: nil,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil
+            settingsTopLevelContent: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -370,7 +380,8 @@ extension SettingsCellDescriptorFactory {
             identifier: nil,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil
+            settingsTopLevelContent: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 

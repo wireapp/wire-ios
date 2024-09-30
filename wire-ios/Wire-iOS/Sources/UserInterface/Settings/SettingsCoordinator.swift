@@ -16,25 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
+import WireSettings
 import WireMainNavigation
-import WireSyncEngine
 
-struct SelfProfileViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+@MainActor
+final class SettingsCoordinator: SettingsCoordinatorProtocol {
 
-    var selfUser: SettingsSelfUser
-    var userRightInterfaceType: UserRightInterface.Type
-    var userSession: UserSession
-    var accountSelector: AccountSelector?
+    let showSettings: (SettingsTopLevelContent) -> Void
 
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> SelfProfileViewController {
-        .init(
-            selfUser: selfUser,
-            userRightInterfaceType: userRightInterfaceType,
-            userSession: userSession,
-            accountSelector: accountSelector,
-            mainCoordinator: mainCoordinator
-        )
+    init(mainCoordinator: some MainCoordinatorProtocol) {
+        showSettings = { content in
+            mainCoordinator.showSettings(content: .init(content.mapToMainSettingsContent()))
+        }
+    }
+
+    func showSettings(content: SettingsTopLevelContent) {
+        showSettings(content)
     }
 }

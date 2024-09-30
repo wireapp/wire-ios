@@ -119,7 +119,8 @@ extension SettingsCellDescriptorFactory {
             title: L10n.Localizable.`Self`.Settings.DeveloperOptions.title,
             icon: .robot,
             accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description,
-            settingsTopLevelContent: .developerOptions
+            settingsTopLevelContent: .developerOptions,
+            settingsCoordinator: settingsCoordinator
         )
     }
 

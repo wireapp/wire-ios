@@ -35,7 +35,8 @@ extension SettingsCellDescriptorFactory {
             items: items,
             title: L10n.Localizable.Self.Settings.Account.DataUsagePermissions.title,
             accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
-            settingsTopLevelContent: nil
+            settingsTopLevelContent: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 }

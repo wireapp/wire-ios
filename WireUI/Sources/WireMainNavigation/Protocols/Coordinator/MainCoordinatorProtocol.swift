@@ -55,7 +55,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
     ///
     /// In collapsed layout when `content` is nil, this method presents the main settings menu.
     /// If `content` is non-nil, this method presents the main settings and navigates into the settings content.
-    func showSettings(content: SettingsContent.SettingsContent?) async
+    @MainActor
+    func showSettings(content: SettingsContent.SettingsContent?)
 
     func showSelfProfile() async
     func showConnect() async

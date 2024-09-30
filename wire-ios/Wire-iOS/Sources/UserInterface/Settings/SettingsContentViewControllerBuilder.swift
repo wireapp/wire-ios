@@ -33,21 +33,24 @@ struct SettingsViewControllerBuilder: MainCoordinatorInjectingViewControllerBuil
         )
     }
 
-    private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory {
+    private func settingsCellDescriptorFactory(settingsCoordinator: AnySettingsCoordinator) -> SettingsCellDescriptorFactory {
         .init(
             settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: UserRight.self
+            userRightInterfaceType: UserRight.self,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
     @MainActor
-    func build(mainCoordinator _: some MainCoordinatorProtocol) -> SettingsMainViewController {
-        let group = settingsCellDescriptorFactory.settingsGroup(
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsMainViewController {
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
+        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let group = factory.settingsGroup(
             isTeamMember: userSession.selfUser.isTeamMember,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false
         )
-        return .init(group: group)
+        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
     }
 
     @MainActor

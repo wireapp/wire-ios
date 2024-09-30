@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireSyncEngine
+import WireSettings
 
 class SettingsBaseTableViewController: UIViewController {
 
@@ -27,6 +28,8 @@ class SettingsBaseTableViewController: UIViewController {
     let topSeparator = OverflowSeparatorView()
     let footerSeparator = OverflowSeparatorView()
     private let footerContainer = UIView()
+
+    let settingsCoordinator: AnySettingsCoordinator
 
     final fileprivate class IntrinsicSizeTableView: UITableView {
         override var contentSize: CGSize {
@@ -43,9 +46,11 @@ class SettingsBaseTableViewController: UIViewController {
 
     init(
         style: UITableView.Style,
-        useTypeIntrinsicSizeTableView: Bool
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
     ) {
         self.useTypeIntrinsicSizeTableView = useTypeIntrinsicSizeTableView
+        self.settingsCoordinator = settingsCoordinator
         tableView = if useTypeIntrinsicSizeTableView {
             IntrinsicSizeTableView(frame: .zero, style: style)
         } else {
@@ -152,12 +157,16 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
         setupNavigationBarTitle(group.title)
     }
 
-    required init(group: SettingsInternalGroupCellDescriptorType) {
+    required init(
+        group: SettingsInternalGroupCellDescriptorType,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.group = group
         self.sections = group.visibleItems
         super.init(
             style: group.style == .plain ? .plain : .grouped,
-            useTypeIntrinsicSizeTableView: true
+            useTypeIntrinsicSizeTableView: true,
+            settingsCoordinator: settingsCoordinator
         )
 
         self.group.items.flatMap { $0.cellDescriptors }.forEach {
@@ -271,7 +280,7 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
         let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
 
         if let content = property.settingsTopLevelContent {
-            //mainCoordinator.showSettings(content: content)
+            settingsCoordinator.showSettings(content: content)
         } else {
             property.select(SettingsPropertyValue.none, sender: cell)
         }

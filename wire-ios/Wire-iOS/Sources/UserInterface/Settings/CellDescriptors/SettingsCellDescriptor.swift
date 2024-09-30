@@ -182,6 +182,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     }
 
     let settingsTopLevelContent: SettingsTopLevelContent?
+    let settingsCoordinator: AnySettingsCoordinator
 
     weak var viewController: UIViewController?
 
@@ -193,7 +194,8 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
         accessibilityBackButtonText: String,
-        settingsTopLevelContent: SettingsTopLevelContent?
+        settingsTopLevelContent: SettingsTopLevelContent?,
+        settingsCoordinator: AnySettingsCoordinator
     ) {
         self.items = items
         self.title = title
@@ -203,6 +205,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         self.icon = icon
         self.accessibilityBackButtonText = accessibilityBackButtonText
         self.settingsTopLevelContent = settingsTopLevelContent
+        self.settingsCoordinator = settingsCoordinator
     }
 
     func featureCell(_ cell: SettingsCellType) {
@@ -226,7 +229,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     }
 
     func generateViewController() -> UIViewController? {
-        SettingsTableViewController(group: self)
+        SettingsTableViewController(group: self, settingsCoordinator: settingsCoordinator)
     }
 }
 

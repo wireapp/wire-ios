@@ -42,7 +42,8 @@ extension SelfProfileViewController {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
         let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { _ in
-            self.openControllerForCellWithIdentifier(SettingsCellDescriptorFactory.settingsDevicesCellIdentifier)
+            //self.openControllerForCellWithIdentifier(SettingsCellDescriptorFactory.settingsDevicesCellIdentifier)
+            fatalError("TODO: mainCoordinator.showSettings(content: .devices)")
         }
 
         newLoginAlertController.addAction(actionManageDevices)
@@ -62,6 +63,8 @@ extension SelfProfileViewController {
         }
     }
 
+    // TODO: delete commented code
+    /*
     @discardableResult
     func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
 
@@ -112,6 +115,7 @@ extension SelfProfileViewController {
 
         return resultViewController
     }
+     */
 }
 
 extension UIAlertController {

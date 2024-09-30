@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireSyncEngine
+import WireSettings
 
 // MARK: - ConfirmEmailDelegate
 
@@ -74,12 +75,17 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         newEmail: String,
         delegate: ConfirmEmailDelegate?,
         userSession: UserSession,
-        useTypeIntrinsicSizeTableView: Bool
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
     ) {
         self.newEmail = newEmail
         self.delegate = delegate
         self.userSession = userSession
-        super.init(style: .grouped, useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView)
+        super.init(
+            style: .grouped,
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
+        )
         setupViews()
     }
 

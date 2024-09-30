@@ -17,12 +17,28 @@
 //
 
 public protocol SettingsCoordinatorProtocol: AnyObject {
-
-    func showSettings() async // TODO: settings content
+    @MainActor
+    func showSettings(content: SettingsTopLevelContent)
 }
 
 public extension SettingsCoordinatorProtocol {
 //    func showConversation<ConversationID: Sendable>(conversationID: ConversationID) async {
 //        showConversation(conversationID: conversationID, messageID: nil)
 //    }
+}
+
+@MainActor
+public final class AnySettingsCoordinator: SettingsCoordinatorProtocol {
+
+    private let showSettings: (_ content: SettingsTopLevelContent) -> Void
+
+    public init<SettingsCoordinator: SettingsCoordinatorProtocol>(
+        settingsCoordinator: SettingsCoordinator
+    ) {
+        showSettings = settingsCoordinator.showSettings
+    }
+
+    public func showSettings(content: SettingsTopLevelContent) {
+        showSettings(content)
+    }
 }

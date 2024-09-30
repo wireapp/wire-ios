@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireSettings
+import WireMainNavigation
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
@@ -57,17 +59,19 @@ final class SelfProfileViewController: UIViewController {
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
-        accountSelector: AccountSelector?
+        accountSelector: AccountSelector?,
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
-
         self.accountSelector = accountSelector
 
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
 
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: userRightInterfaceType
+            userRightInterfaceType: userRightInterfaceType,
+            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup()

@@ -37,7 +37,8 @@ extension SettingsCellDescriptorFactory {
             title: SelfSettingsAdvancedLocale.title,
             icon: .settingsAdvanced,
             accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
-            settingsTopLevelContent: .advanced
+            settingsTopLevelContent: .advanced,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -106,7 +107,8 @@ extension SettingsCellDescriptorFactory {
             items: [findUnreadConversationSection],
             title: L10n.Localizable.Self.Settings.Advanced.DebuggingTools.title,
             accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
-            settingsTopLevelContent: nil
+            settingsTopLevelContent: nil,
+            settingsCoordinator: settingsCoordinator
         )
 
         // Section

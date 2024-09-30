@@ -20,6 +20,7 @@ import avs
 import Foundation
 import SafariServices
 import WireSyncEngine
+import WireSettings
 
 struct SettingsCellDescriptorFactory {
 
@@ -27,6 +28,7 @@ struct SettingsCellDescriptorFactory {
 
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
+    var settingsCoordinator: AnySettingsCoordinator
 
     func rootGroup() -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var rootElements: [SettingsCellDescriptorType] = []
@@ -47,12 +49,13 @@ struct SettingsCellDescriptorFactory {
             title: L10n.Localizable.Self.profile,
             style: .plain,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
-            settingsTopLevelContent: nil
+            settingsTopLevelContent: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
     func manageTeamCell() -> SettingsCellDescriptorType {
-        return SettingsExternalScreenCellDescriptor(
+        SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.ManageTeam.title,
             isDestructive: false,
             presentationStyle: PresentationStyle.modal,
@@ -142,7 +145,8 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: .none,
             icon: .gear,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
-            settingsTopLevelContent: nil
+            settingsTopLevelContent: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -208,7 +212,8 @@ struct SettingsCellDescriptorFactory {
             identifier: .none,
             previewGenerator: previewGenerator,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil
+            settingsTopLevelContent: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -236,7 +241,8 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: .none,
             icon: .settingsSupport,
             accessibilityBackButtonText: L10n.Accessibility.SupportSettings.BackButton.description,
-            settingsTopLevelContent: .support
+            settingsTopLevelContent: .support,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -282,7 +288,8 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: .none,
             icon: .about,
             accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description,
-            settingsTopLevelContent: .about
+            settingsTopLevelContent: .about,
+            settingsCoordinator: settingsCoordinator
         )
     }
 }

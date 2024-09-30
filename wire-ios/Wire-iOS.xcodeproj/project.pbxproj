@@ -400,6 +400,7 @@
 		59B404512CAA937400CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */; };
 		59B404632CAABD9A00CC33BF /* SettingsContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404622CAABD9200CC33BF /* SettingsContentViewController.swift */; };
 		59B404652CAAC3AC00CC33BF /* SettingsContentViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404642CAAC3A700CC33BF /* SettingsContentViewControllerBuilder.swift */; };
+		59B404672CAB05CA00CC33BF /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */; };
 		59B48C5E2C89CCAB00EA7999 /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5D2C89CCAB00EA7999 /* WireFoundationSupport */; };
 		59B48C602C89CCCC00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5F2C89CCCC00EA7999 /* WireFoundation */; };
 		59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C612C89CD3D00EA7999 /* WireTestingPackage */; };
@@ -2397,6 +2398,7 @@
 		59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsContent+MainSettingsContentRepresentable.swift"; sourceTree = "<group>"; };
 		59B404622CAABD9200CC33BF /* SettingsContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsContentViewController.swift; sourceTree = "<group>"; };
 		59B404642CAAC3A700CC33BF /* SettingsContentViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsContentViewControllerBuilder.swift; sourceTree = "<group>"; };
+		59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
 		59B8A1EB2CA848E600618340 /* SettingsMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMainViewController.swift; sourceTree = "<group>"; };
 		59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
 		59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
@@ -6797,6 +6799,7 @@
 				59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */,
 				E5337CF028CF48DE00C3F8A3 /* SettingsLinkTableCell.swift */,
 				E591D01028C7220800C1469C /* SettingsAppearanceCell.swift */,
+				59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */,
 				59B404622CAABD9200CC33BF /* SettingsContentViewController.swift */,
 				59B404642CAAC3A700CC33BF /* SettingsContentViewControllerBuilder.swift */,
 				59B8A1EB2CA848E600618340 /* SettingsMainViewController.swift */,
@@ -9586,6 +9589,7 @@
 				D36E027829374EEA006C3E5A /* NSLayoutConstraint+Helper.swift in Sources */,
 				54D355E025559BFC0004DAC7 /* ActiveCallRouter.swift in Sources */,
 				EF266C612003B75C00A8C136 /* BreathLoadingBar.swift in Sources */,
+				59B404672CAB05CA00CC33BF /* SettingsCoordinator.swift in Sources */,
 				5E21344F21E3628F00273D0D /* AuthenticationLoginCredentialsInputHandler.swift in Sources */,
 				BFE4186F209B706600503C7C /* CallInfoViewControllerAccessoryType.swift in Sources */,
 				EE997A1A2507A851008336D2 /* Logging.swift in Sources */,
