@@ -22,8 +22,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype Settings: MainSettingsProtocol
     associatedtype SettingsContent: MainSettingsContentProtocol
 
-    // TODO: probably better to have `showConversationList` (without conversation/message) and `showConversation`
-
     /// Make the conversation list visible. Don't show any conversation content.
     func showConversationList(
         conversationFilter: ConversationList.ConversationFilter?
@@ -31,18 +29,18 @@ public protocol MainCoordinatorProtocol: AnyObject {
 
     /// In the expanded split view layout make the conversation list visible and show the conversation with the provided id.
     /// In collapsed layout show the conversation content.
-    func showConversationList(
-        conversationFilter: ConversationList.ConversationFilter?,
-        conversationID: ConversationList.ConversationID?
-    ) async
+//    func showConversationList(
+//        conversationFilter: ConversationList.ConversationFilter?,
+//        conversationID: ConversationList.ConversationID?
+//    ) async
 
     /// In the expanded split view layout make the conversation list visible and show the conversation with the provided id and scroll to the message with the provided id.
     /// In collapsed layout show the conversation content and scroll to the message with the provided id.
-    func showConversationList(
-        conversationFilter: ConversationList.ConversationFilter?,
-        conversationID: ConversationList.ConversationID?,
-        messageID: ConversationList.MessageID?
-    ) async
+//    func showConversationList(
+//        conversationFilter: ConversationList.ConversationFilter?,
+//        conversationID: ConversationList.ConversationID?,
+//        messageID: ConversationList.MessageID?
+//    ) async
 
     func showConversation(conversationID: ConversationList.ConversationID) async
     func hideConversation() async

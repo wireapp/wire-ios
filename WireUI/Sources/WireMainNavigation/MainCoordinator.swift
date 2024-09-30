@@ -44,7 +44,8 @@ public final class MainCoordinator<
 
     ConversationBuilder.Conversation == SplitViewController.Conversation,
     ConversationBuilder.Conversation.ConversationID == SplitViewController.ConversationList.ConversationID,
-    ConnectBuilder.ViewController == SplitViewController.Connect
+    ConnectBuilder.ViewController == SplitViewController.Connect,
+    SettingsContentBuilder.SettingsContentViewController == SplitViewController.SettingsContent
 {
     // swiftlint:enable opening_brace
 
@@ -113,32 +114,20 @@ public final class MainCoordinator<
         self.settingsContentBuilder = settingsContentBuilder
         self.connectBuilder = connectBuilder
         self.selfProfileBuilder = selfProfileBuilder
+
         super.init()
+
         mainSplitViewController.delegate = self
         mainTabBarController.delegate = self
     }
 
     // MARK: - Public Methods
 
-    @MainActor
     public func showConversationList(conversationFilter: ConversationList.ConversationFilter?) {
-        showConversationList(conversationFilter: conversationFilter, conversationID: .none)
-    }
-
-    @MainActor
-    public func showConversationList(conversationFilter: ConversationList.ConversationFilter?, conversationID: ConversationList.ConversationID?) {
-        showConversationList(conversationFilter: conversationFilter, conversationID: conversationID, messageID: .none)
-    }
-
-    public func showConversationList(
-        conversationFilter: ConversationList.ConversationFilter?,
-        conversationID: ConversationList.ConversationID?,
-        messageID: ConversationList.MessageID?
-    ) {
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
-            // TODO: maybe navigationcontroller pop is needed
+            // TODO: maybe navigationcontroller pop is needed?
 
             // apply the filter to the conversation list
             conversationList.conversationFilter = .init(mappingFrom: conversationFilter)
@@ -222,14 +211,12 @@ public final class MainCoordinator<
 
         // show the content in the secondary column or push it on the settings navigation controller
         if let content {
-            //let contentViewController = settingsContentBuilder.build()
+            let contentViewController = settingsContentBuilder.build(content: content)
             switch mainSplitViewState {
             case .collapsed:
-                //tabBarController.settingsContent = contentViewController
-                fatalError("TODO")
+                tabBarController.settingsContent = contentViewController
             case .expanded:
-                fatalError("TODO")
-                //splitViewController.settingsContent = contentViewController
+                splitViewController.settingsContent = contentViewController
             }
         }
     }

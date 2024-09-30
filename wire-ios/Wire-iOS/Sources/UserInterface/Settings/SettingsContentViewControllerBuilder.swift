@@ -40,6 +40,7 @@ struct SettingsViewControllerBuilder: MainCoordinatorInjectingViewControllerBuil
         )
     }
 
+    @MainActor
     func build(mainCoordinator _: some MainCoordinatorProtocol) -> SettingsMainViewController {
         let group = settingsCellDescriptorFactory.settingsGroup(
             isTeamMember: userSession.selfUser.isTeamMember,
@@ -49,6 +50,7 @@ struct SettingsViewControllerBuilder: MainCoordinatorInjectingViewControllerBuil
         return .init(group: group)
     }
 
+    @MainActor
     func build(content: SettingsContent) -> SettingsContentViewController {
         switch content {
         case .account:

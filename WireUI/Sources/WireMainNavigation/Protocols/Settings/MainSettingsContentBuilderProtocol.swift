@@ -19,5 +19,6 @@
 public protocol MainSettingsContentBuilderProtocol {
     associatedtype SettingsContentViewController: MainSettingsContentProtocol
 
-    func build(content: SettingsContentViewController.SettingsContent) async -> SettingsContentViewController
+    @MainActor
+    func build(content: SettingsContentViewController.SettingsContent) -> SettingsContentViewController
 }

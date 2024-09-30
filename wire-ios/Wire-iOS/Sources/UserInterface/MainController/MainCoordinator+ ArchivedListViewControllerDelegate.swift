@@ -25,7 +25,7 @@ extension MainCoordinator: ArchivedListViewControllerDelegate where MainCoordina
         _ viewController: ArchivedListViewController,
         didSelectConversation conversation: ZMConversation
     ) {
-        showConversationList(conversationFilter: .none, conversationID: .none, messageID: .none)
+        showConversationList(conversationFilter: .none)
         Task { @MainActor in
             await showConversation(conversationID: conversation.remoteIdentifier)
         }

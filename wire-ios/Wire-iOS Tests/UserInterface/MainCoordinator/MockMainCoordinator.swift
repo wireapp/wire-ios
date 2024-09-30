@@ -31,14 +31,6 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
-    func showConversationList(conversationFilter: ConversationFilter?, conversationID: UUID?) async {
-        fatalError("Mock method not implemented")
-    }
-
-    func showConversationList(conversationFilter: ConversationFilter?, conversationID: UUID?, messageID: String?) async {
-        fatalError("Mock method not implemented")
-    }
-
     func showArchivedConversations() async {
         fatalError("Mock method not implemented")
     }
