@@ -26,8 +26,6 @@ struct QRCodeView: View {
     @State private var isShareTextSheetPresented = false
     @State private var isShareImageSheetPresented = false
 
-    @Environment(\.sizeCategory) var sizeCategory
-
     // MARK: - View
 
     var body: some View {
@@ -37,9 +35,6 @@ struct QRCodeView: View {
                     shareView
                         .frame(minHeight: geometry.size.height)
                 }
-                /// By using 'sizeCategory' value of the environment,
-                /// we can read the defined font size and decide whether to disable or enable scrolling.
-                .scrollDisabled(!sizeCategory.isAccessibilityCategory)
             } else {
                 ScrollView(showsIndicators: false) {
                     shareView
