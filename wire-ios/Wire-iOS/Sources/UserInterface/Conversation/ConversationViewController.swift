@@ -235,7 +235,9 @@ final class ConversationViewController: UIViewController {
                     self?.conversation.isArchived = true
                 })
             }
-            self?.openConversationList()
+            Task {
+                await self?.mainCoordinator.hideConversation()
+            }
         }
     }
 
@@ -301,23 +303,20 @@ final class ConversationViewController: UIViewController {
         }
     }
 
-    func openConversationList() {
-        // TODO: fix
-        fatalError("TODO")
-        // guard let leftControllerRevealed = wr_splitViewController?.isLeftViewControllerRevealed else { return }
-        // wr_splitViewController?.setLeftViewControllerRevealed(!leftControllerRevealed, animated: true, completion: nil)
-    }
-
     // MARK: - Application Events & Notifications
 
     override func accessibilityPerformEscape() -> Bool {
-        openConversationList()
+        Task {
+            await mainCoordinator.hideConversation()
+        }
         return true
     }
 
     @objc
     func onBackButtonPressed(_ backButton: UIButton?) {
-        openConversationList()
+        Task {
+            await mainCoordinator.hideConversation()
+        }
     }
 
     private func setupContentViewController() {

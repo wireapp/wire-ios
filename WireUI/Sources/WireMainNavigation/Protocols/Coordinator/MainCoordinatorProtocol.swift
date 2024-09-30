@@ -44,6 +44,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     ) async
 
     func showConversation(conversationID: ConversationList.ConversationID) async
+    func hideConversation() async
 
     func showArchivedConversations() async // TODO: rename showArchive
     func showSettings() async

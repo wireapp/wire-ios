@@ -63,6 +63,7 @@ public final class MainTabBarController<
             if conversationList == nil, conversation != nil {
                 return assertionFailure("conversationList == nil, conversation != nil")
             }
+            // TODO: use setViewControllers(animated)
             conversationListNavigationController.viewControllers = [conversationList, conversation].compactMap { $0 }
             conversationListNavigationController.view.layoutIfNeeded()
         }
