@@ -18,34 +18,12 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// Abstraction around `Countly`.
-protocol CountlyProtocol {
+/// Errors originating from `AnalyticsService`.
 
-    static func resetInstance()
+public enum AnalyticsServiceError: Error {
 
-    func start(
-        appKey: String,
-        host: URL
-    )
+    /// The analytics service has not been configured.
 
-    func setUserValue(
-        _ value: String?,
-        forKey key: String
-    )
-
-    func changeDeviceID(
-        _ id: String,
-        mergeData: Bool
-    )
-
-    func beginSession()
-
-    func endSession()
-
-    func recordEvent(
-        _ key: String,
-        segmentation: [String: String]?
-    )
+    case serviceIsNotConfigured
 
 }
