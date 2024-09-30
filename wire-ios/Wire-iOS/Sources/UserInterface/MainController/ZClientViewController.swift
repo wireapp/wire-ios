@@ -36,7 +36,8 @@ final class ZClientViewController: UIViewController {
         ConversationRootViewController,
         UIViewController,
         UIViewController,
-        SettingsMainViewController
+        SettingsMainViewController,
+        SettingsContentViewController
     >
     typealias MainSplitViewController = WireMainNavigation.MainSplitViewController<
         SidebarViewController,
@@ -45,6 +46,7 @@ final class ZClientViewController: UIViewController {
     typealias MainCoordinator = WireMainNavigation.MainCoordinator<
         MainSplitViewController,
         ConversationViewControllerBuilder,
+        SettingsViewControllerBuilder,
         StartUIViewControllerBuilder,
         SelfProfileViewControllerBuilder
     >
@@ -97,6 +99,11 @@ final class ZClientViewController: UIViewController {
         }
     )
 
+    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
+        userSession: userSession,
+        selfUser: userSession.editableSelfUser
+    )
+
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
             selfUser: userSession.editableSelfUser,
@@ -105,6 +112,7 @@ final class ZClientViewController: UIViewController {
             accountSelector: SessionManager.shared
         )
     }
+
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
@@ -134,6 +142,7 @@ final class ZClientViewController: UIViewController {
             mainSplitViewController: mainSplitViewController,
             mainTabBarController: mainTabBarController,
             conversationBuilder: conversationViewControllerBuilder,
+            settingsContentBuilder: settingsViewControllerBuilder,
             connectBuilder: connectBuilder,
             selfProfileBuilder: selfProfileViewControllerBuilder
         )
@@ -254,7 +263,7 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.conversationList = conversationListViewController
 
         mainTabBarController.archive = archive
-        mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser)
+        mainTabBarController.settings = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
 
         mainTabBarController.delegate = mainCoordinator

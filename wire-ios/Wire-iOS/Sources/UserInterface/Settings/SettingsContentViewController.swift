@@ -18,5 +18,8 @@
 
 import UIKit
 import WireMainNavigation
+import WireSettings
 
-final class SettingsMainViewController: SettingsTableViewController, MainSettingsProtocol {} // TODO: delete
+final class SettingsContentViewController: UIViewController, MainSettingsContentProtocol {
+    typealias SettingsContent = WireSettings.SettingsContent
+}

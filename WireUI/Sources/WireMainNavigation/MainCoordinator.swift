@@ -33,8 +33,10 @@ import UIKit
 @MainActor
 public final class MainCoordinator<
 
+    // TODO: provide init extensions with types
     SplitViewController: MainSplitViewControllerProtocol,
-    ConversationBuilder: MainConversationBuilderProtocol, // TODO: provide init extensions with types
+    ConversationBuilder: MainConversationBuilderProtocol,
+    SettingsContentBuilder: MainSettingsContentBuilderProtocol,
     ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder,
     SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder
 
@@ -58,6 +60,7 @@ public final class MainCoordinator<
     private weak var tabBarController: TabBarController!
 
     private let conversationBuilder: ConversationBuilder
+    private let settingsContentBuilder: SettingsContentBuilder
 
     private let connectBuilder: ConnectBuilder
     private weak var connect: Connect?
@@ -100,12 +103,14 @@ public final class MainCoordinator<
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
         conversationBuilder: ConversationBuilder,
+        settingsContentBuilder: SettingsContentBuilder,
         connectBuilder: ConnectBuilder,
         selfProfileBuilder: SelfProfileBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
         self.conversationBuilder = conversationBuilder
+        self.settingsContentBuilder = settingsContentBuilder
         self.connectBuilder = connectBuilder
         self.selfProfileBuilder = selfProfileBuilder
         super.init()
@@ -213,8 +218,19 @@ public final class MainCoordinator<
         if let settings = tabBarController.settings {
             tabBarController.settings = nil
             splitViewController.settings = settings
+        }
 
-            // TODO: settings content
+        // show the content in the secondary column or push it on the settings navigation controller
+        if let content {
+            //let contentViewController = settingsContentBuilder.build()
+            switch mainSplitViewState {
+            case .collapsed:
+                //tabBarController.settingsContent = contentViewController
+                fatalError("TODO")
+            case .expanded:
+                fatalError("TODO")
+                //splitViewController.settingsContent = contentViewController
+            }
         }
     }
 

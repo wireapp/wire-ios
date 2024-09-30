@@ -26,6 +26,7 @@ final class MainCoordinatorTests: XCTestCase {
         MockSplitViewController,
         MockConversationBuilder<MockConversationID>,
         MockViewControllerBuilder,
+        MockViewControllerBuilder,
         MockViewControllerBuilder
     >
 
@@ -53,6 +54,7 @@ final class MainCoordinatorTests: XCTestCase {
             mainSplitViewController: splitViewController,
             mainTabBarController: tabBarController,
             conversationBuilder: .init(),
+            settingsContentBuilder: .init(),
             connectBuilder: .init(),
             selfProfileBuilder: .init()
         )

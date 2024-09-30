@@ -19,7 +19,13 @@
 import UIKit
 import WireMainNavigation
 
-struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder, MainSettingsContentBuilderProtocol {
+
     @MainActor
     func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
+
+    @MainActor
+    func build(
+        content: MockSettingsContentViewController.SettingsContent
+    ) async -> MockSettingsContentViewController { .init() }
 }

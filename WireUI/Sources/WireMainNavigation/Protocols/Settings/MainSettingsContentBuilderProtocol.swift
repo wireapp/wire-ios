@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigation
+public protocol MainSettingsContentBuilderProtocol {
+    associatedtype SettingsContentViewController: MainSettingsContentProtocol
 
-final class SettingsMainViewController: SettingsTableViewController, MainSettingsProtocol {} // TODO: delete
+    func build(content: SettingsContentViewController.SettingsContent) async -> SettingsContentViewController
+}

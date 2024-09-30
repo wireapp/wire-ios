@@ -16,31 +16,55 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
 import WireMainNavigation
 import WireSyncEngine
+import WireSettings
 
-struct SettingsMainViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+struct SettingsViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder, MainSettingsContentBuilderProtocol {
 
     // TODO: can selfUser be taken from the userSession?
     var userSession: UserSession
     var selfUser: SettingsSelfUser
 
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsMainViewController {
-        let settingsPropertyFactory = SettingsPropertyFactory(
+    private var settingsPropertyFactory: SettingsPropertyFactory {
+        .init(
             userSession: userSession,
             selfUser: selfUser
         )
-        let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
+    }
+
+    private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory {
+        .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self
         )
+    }
+
+    func build(mainCoordinator _: some MainCoordinatorProtocol) -> SettingsMainViewController {
         let group = settingsCellDescriptorFactory.settingsGroup(
             isTeamMember: userSession.selfUser.isTeamMember,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false
         )
-        return SettingsMainViewController(group: group)
+        return .init(group: group)
+    }
+
+    func build(content: SettingsContent) -> SettingsContentViewController {
+        switch content {
+        case .account:
+            fatalError("TODO")
+        case .devices:
+            fatalError("TODO")
+        case .options:
+            fatalError("TODO")
+        case .advanced:
+            fatalError("TODO")
+        case .support:
+            fatalError("TODO")
+        case .about:
+            fatalError("TODO")
+        case .developerOptions:
+            fatalError("TODO")
+        }
     }
 }
