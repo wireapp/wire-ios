@@ -16,13 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol defining the structure of an analytics event.
-public protocol AnalyticsEvent {
+/// An event that can be tracked..
 
-    /// The name of the event.
-    var eventName: String { get }
+public struct AnalyticsEvent: Sendable {
 
-    /// Additional segmentation data for the event.
-    var segmentation: Set<SegmentationEntry> { get }
+    /// A unique name.
+
+    let name: String
+
+    /// Additional metadata.
+
+    let segmentation: Set<SegmentationEntry>
+    
+    /// Create a new `AnalyticsEvent`.
+    ///
+    /// - Parameters:
+    ///   - name: A unique name.
+    ///   - segmentation: Additional metadata.
+    init(
+        name: String,
+        segmentation: Set<SegmentationEntry> = []
+    ) {
+        self.name = name
+        self.segmentation = segmentation
+    }
 
 }

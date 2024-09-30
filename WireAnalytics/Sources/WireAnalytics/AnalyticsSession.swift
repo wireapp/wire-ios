@@ -35,7 +35,7 @@ struct AnalyticsSession: AnalyticsSessionProtocol {
     let isSelfTeamMember: Bool
     let service: any AnalyticsService
 
-    func trackEvent(_ event: any AnalyticsEvent) {
+    func trackEvent(_ event: AnalyticsEvent) {
         var segmentation = event.segmentation
         segmentation.insert(.isSelfTeamMember(isSelfTeamMember))
         segmentation.insert(.deviceModel(UIDevice.current.model))
@@ -46,7 +46,7 @@ struct AnalyticsSession: AnalyticsSessionProtocol {
         })
 
         service.trackEvent(
-            name: event.eventName,
+            name: event.name,
             segmentation: rawSegmentation
         )
     }

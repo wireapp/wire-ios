@@ -22,7 +22,7 @@
 /// Each `SegmentationEntry` consists of a key (identifying the type of information) and a value
 /// (the actual data point).
 
-public struct SegmentationEntry: Hashable {
+public struct SegmentationEntry: Hashable, Sendable {
 
     let key: String
     let value: String
