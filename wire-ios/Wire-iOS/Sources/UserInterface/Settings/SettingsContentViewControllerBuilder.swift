@@ -51,7 +51,7 @@ struct SettingsViewControllerBuilder: MainCoordinatorInjectingViewControllerBuil
     }
 
     @MainActor
-    func build(content: SettingsContent) -> SettingsContentViewController {
+    func build(content: SettingsTopLevelContent) -> SettingsContentViewController {
         switch content {
         case .account:
             fatalError("TODO")

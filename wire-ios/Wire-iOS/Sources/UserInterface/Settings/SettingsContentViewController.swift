@@ -21,5 +21,5 @@ import WireMainNavigation
 import WireSettings
 
 final class SettingsContentViewController: UIViewController, MainSettingsContentProtocol {
-    typealias SettingsContent = WireSettings.SettingsContent
+    typealias SettingsContent = WireSettings.SettingsTopLevelContent
 }

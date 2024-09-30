@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSettings
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains
@@ -44,6 +45,10 @@ protocol SettingsCellDescriptorType: AnyObject {
     var group: SettingsGroupCellDescriptorType? {get}
     var copiableText: String? { get }
 
+    /// If non-nil the item is a top-level item of the main settings menu.
+    /// For presenting the content the main coordinator is called.
+    var settingsTopLevelContent: SettingsTopLevelContent? { get }
+
     func select(_ value: SettingsPropertyValue, sender: UIView)
     func featureCell(_: SettingsCellType)
 }
@@ -51,6 +56,10 @@ protocol SettingsCellDescriptorType: AnyObject {
 extension SettingsCellDescriptorType {
     var copiableText: String? {
         return nil
+    }
+
+    var settingsTopLevelContent: SettingsTopLevelContent? {
+        .none
     }
 }
 
@@ -109,7 +118,7 @@ protocol SettingsExternalScreenCellDescriptorType: SettingsGroupCellDescriptorTy
 }
 
 protocol SettingsPropertyCellDescriptorType: SettingsCellDescriptorType {
-    var settingsProperty: SettingsProperty {get}
+    var settingsProperty: SettingsProperty { get }
 }
 
 protocol SettingsControllerGeneratorType {
@@ -172,9 +181,20 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
     }
 
+    let settingsTopLevelContent: SettingsTopLevelContent?
+
     weak var viewController: UIViewController?
 
-    init(items: [SettingsSectionDescriptorType], title: String, style: InternalScreenStyle = .grouped, identifier: String? = .none, previewGenerator: PreviewGeneratorType? = .none, icon: StyleKitIcon? = nil, accessibilityBackButtonText: String) {
+    init(
+        items: [SettingsSectionDescriptorType],
+        title: String,
+        style: InternalScreenStyle = .grouped,
+        identifier: String? = .none,
+        previewGenerator: PreviewGeneratorType? = .none,
+        icon: StyleKitIcon? = nil,
+        accessibilityBackButtonText: String,
+        settingsTopLevelContent: SettingsTopLevelContent?
+    ) {
         self.items = items
         self.title = title
         self.style = style
@@ -182,6 +202,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         self.previewGenerator = previewGenerator
         self.icon = icon
         self.accessibilityBackButtonText = accessibilityBackButtonText
+        self.settingsTopLevelContent = settingsTopLevelContent
     }
 
     func featureCell(_ cell: SettingsCellType) {

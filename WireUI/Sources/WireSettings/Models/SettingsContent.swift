@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum SettingsContent: Sendable {
+public enum SettingsTopLevelContent: Sendable {
     case account, devices, options, advanced, support, about, developerOptions
 }

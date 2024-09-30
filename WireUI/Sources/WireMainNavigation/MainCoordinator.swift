@@ -252,7 +252,6 @@ public final class MainCoordinator<
             splitViewController.connect = connect
         } else {
             let navigationController = UINavigationController(rootViewController: connect)
-            // navigationController.modalPresentationStyle = .formSheet
             splitViewController.present(navigationController, animated: true)
         }
     }

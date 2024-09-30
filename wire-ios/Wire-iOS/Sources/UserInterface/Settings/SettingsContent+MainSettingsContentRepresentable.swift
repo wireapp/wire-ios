@@ -19,7 +19,7 @@
 import WireSettings
 import WireMainNavigation
 
-extension SettingsContent: MainSettingsContentRepresentable {
+extension SettingsTopLevelContent: MainSettingsContentRepresentable {
 
     public init(_ mainSettingsContent: MainSettingsContent) {
         switch mainSettingsContent {

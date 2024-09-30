@@ -42,24 +42,30 @@ struct SettingsCellDescriptorFactory {
         #endif
         let topSection = SettingsSectionDescriptor(cellDescriptors: rootElements)
 
-        return SettingsGroupCellDescriptor(items: [topSection],
-                                           title: L10n.Localizable.Self.profile,
-                                           style: .plain,
-                                           accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [topSection],
+            title: L10n.Localizable.Self.profile,
+            style: .plain,
+            accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
+            settingsTopLevelContent: nil
+        )
     }
 
     func manageTeamCell() -> SettingsCellDescriptorType {
-        return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.Settings.ManageTeam.title,
-                                                    isDestructive: false,
-                                                    presentationStyle: PresentationStyle.modal,
-                                                    identifier: nil,
-                                                    presentationAction: { () -> (UIViewController?) in
-                                                        return BrowserViewController(url: URL.manageTeam(source: .settings))
-                                                    },
-                                                    previewGenerator: nil,
-                                                    icon: .team,
-                                                    accessoryViewMode: .alwaysHide,
-                                                    copiableText: nil)
+        return SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.Settings.ManageTeam.title,
+            isDestructive: false,
+            presentationStyle: PresentationStyle.modal,
+            identifier: nil,
+            presentationAction: { () -> (UIViewController?) in
+                return BrowserViewController(url: URL.manageTeam(source: .settings))
+            },
+            previewGenerator: nil,
+            icon: .team,
+            accessoryViewMode: .alwaysHide,
+            copiableText: nil,
+            settingsTopLevelContent: nil
+        )
     }
 
     func addAccountOrTeamCell() -> SettingsCellDescriptorType {
@@ -91,15 +97,18 @@ struct SettingsCellDescriptorFactory {
             return nil
         }
 
-        return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.Settings.AddTeamOrAccount.title,
-                                                    isDestructive: false,
-                                                    presentationStyle: PresentationStyle.modal,
-                                                    identifier: nil,
-                                                    presentationAction: presentationAction,
-                                                    previewGenerator: nil,
-                                                    icon: .plus,
-                                                    accessoryViewMode: .alwaysHide,
-                                                    copiableText: nil)
+        return SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.Settings.AddTeamOrAccount.title,
+            isDestructive: false,
+            presentationStyle: PresentationStyle.modal,
+            identifier: nil,
+            presentationAction: presentationAction,
+            previewGenerator: nil,
+            icon: .plus,
+            accessoryViewMode: .alwaysHide,
+            copiableText: nil,
+            settingsTopLevelContent: nil
+        )
     }
 
     func settingsGroup(
@@ -126,16 +135,20 @@ struct SettingsCellDescriptorFactory {
 
         let topSection = SettingsSectionDescriptor(cellDescriptors: topLevelElements)
 
-        return SettingsGroupCellDescriptor(items: [topSection],
-                                           title: L10n.Localizable.Self.settings,
-                                           style: .plain,
-                                           previewGenerator: .none,
-                                           icon: .gear,
-                                           accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [topSection],
+            title: L10n.Localizable.Self.settings,
+            style: .plain,
+            previewGenerator: .none,
+            icon: .gear,
+            accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
+            settingsTopLevelContent: nil
+        )
     }
 
     func devicesCell() -> SettingsCellDescriptorType {
-        return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Devices.title,
+        SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Devices.title,
             isDestructive: false,
             presentationStyle: PresentationStyle.navigation,
             identifier: type(of: self).settingsDevicesCellIdentifier,
@@ -147,7 +160,10 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: { _ -> SettingsCellPreview in
                 return SettingsCellPreview.badge(ZMUser.selfUser()?.clients.count ?? 0)
             },
-           icon: .devices, copiableText: nil)
+            icon: .devices,
+            copiableText: nil,
+            settingsTopLevelContent: .devices
+        )
     }
 
     func soundGroupForSetting(_ settingsProperty: SettingsProperty, title: String, customSounds: [ZMSound], defaultSound: ZMSound) -> SettingsCellDescriptorType {
@@ -186,11 +202,14 @@ struct SettingsCellDescriptorFactory {
             }
         }
 
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: title,
-                                           identifier: .none,
-                                           previewGenerator: previewGenerator,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: title,
+            identifier: .none,
+            previewGenerator: previewGenerator,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelContent: nil
+        )
     }
 
     func helpSection() -> SettingsCellDescriptorType {
@@ -210,12 +229,15 @@ struct SettingsCellDescriptorFactory {
 
         let reportSection = SettingsSectionDescriptor(cellDescriptors: [reportButton])
 
-        return SettingsGroupCellDescriptor(items: [helpSection, reportSection],
-                                           title: L10n.Localizable.Self.helpCenter,
-                                           style: .grouped, identifier: .none,
-                                           previewGenerator: .none,
-                                           icon: .settingsSupport,
-                                           accessibilityBackButtonText: L10n.Accessibility.SupportSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [helpSection, reportSection],
+            title: L10n.Localizable.Self.helpCenter,
+            style: .grouped, identifier: .none,
+            previewGenerator: .none,
+            icon: .settingsSupport,
+            accessibilityBackButtonText: L10n.Accessibility.SupportSettings.BackButton.description,
+            settingsTopLevelContent: .support
+        )
     }
 
     func aboutSection() -> SettingsCellDescriptorType {
@@ -259,7 +281,8 @@ struct SettingsCellDescriptorFactory {
             identifier: .none,
             previewGenerator: .none,
             icon: .about,
-            accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description,
+            settingsTopLevelContent: .about
         )
     }
 }
