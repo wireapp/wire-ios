@@ -17,7 +17,7 @@
 //
 
 import XCTest
-
+import WireTestingPackage
 @testable import WireAPI
 
 final class ConversationsAPITests: XCTestCase {
@@ -75,6 +75,22 @@ final class ConversationsAPITests: XCTestCase {
             for try await _ in pager {
                 // trigger fetching data
             }
+        }
+    }
+    
+    func testGetMLSOneToOneConversationRequest() async throws {
+        // Given
+        
+        let apiVersions = APIVersion.v5.andNextVersions
+        
+        // Then
+        
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
+            _ = try await sut.getMLSOneToOneConversation(
+                userID: Scaffolding.userID,
+                in: Scaffolding.domain
+            )
         }
     }
 
@@ -464,5 +480,120 @@ final class ConversationsAPITests: XCTestCase {
         } catch {
             XCTFail("expected error 'FailureResponse'")
         }
+    }
+    
+    func testGetMLSOneToOneConversation_Success_Response_V5_And_Next_Versions() async throws {
+         // Given
+        
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "testGetMLSOneOnOneConversationV5SuccessResponse200"
+        )
+        
+        let supportedVersions = APIVersion.v5.andNextVersions
+        
+        let suts = supportedVersions.map { $0.buildAPI(client: httpClient) }
+        
+        // When
+        
+        try await withThrowingTaskGroup(of: Conversation.self) { taskGroup in
+            for sut in suts {
+                taskGroup.addTask {
+                    try await sut.getMLSOneToOneConversation(
+                        userID: Scaffolding.userID,
+                        in: Scaffolding.domain
+                    )
+                }
+            }
+            
+            for try await value in taskGroup {
+                // Then
+                XCTAssertEqual(value.id, Scaffolding.mlsConversationID)
+            }
+        }
+    }
+    
+    func testGetMLSOneToOneConversation_UnsupportedVersionError_V0_to_V4() async throws {
+        // Given
+        let httpClient = HTTPClientMock(
+            code: .ok,
+            payload: nil
+        )
+
+        let unsupportedVersions: [APIVersion] = [.v0, .v1, .v2, .v3, .v4]
+        let suts = unsupportedVersions.map { $0.buildAPI(client: httpClient) }
+
+        try await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            for sut in suts {
+                taskGroup.addTask {
+                    // Then
+                    await self.XCTAssertThrowsError(ConversationsAPIError.unsupportedEndpointForAPIVersion) {
+                        // When
+                        try await sut.getMLSOneToOneConversation(
+                            userID: Scaffolding.userID,
+                            in: Scaffolding.domain
+                        )
+                    }
+                }
+
+                try await taskGroup.waitForAll()
+            }
+        }
+    }
+    
+    func testGetMLSOneToOneConversation_Failure_Response_MLS_Not_Enabled() async throws {
+         // Given
+        
+        let httpClient = try HTTPClientMock(
+            code: .badRequest,
+            errorLabel: "mls-not-enabled"
+        )
+        
+        let sut = APIVersion.v5.buildAPI(client: httpClient)
+        
+        // Then
+        
+        await XCTAssertThrowsError(ConversationsAPIError.mlsNotEnabled) {
+            // When
+            try await sut.getMLSOneToOneConversation(
+                userID: Scaffolding.userID,
+                in: Scaffolding.domain
+            )
+        }
+    }
+    
+    func testGetMLSOneToOneConversation_Failure_Response_Not_Connected() async throws {
+         // Given
+
+        let httpClient = try HTTPClientMock(
+            code: .forbidden,
+            errorLabel: "not-connected"
+        )
+        
+        let sut = APIVersion.v5.buildAPI(client: httpClient)
+        
+        // Then
+        
+        await XCTAssertThrowsError(ConversationsAPIError.usersNotConnected) {
+            // When
+            try await sut.getMLSOneToOneConversation(
+                userID: Scaffolding.userID,
+                in: Scaffolding.domain
+            )
+        }
+    }
+    
+    private enum Scaffolding {
+        static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+        static let domain = "domain.com"
+        static let mlsConversationID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
+    }
+
+}
+
+private extension APIVersion {
+    func buildAPI(client: any HTTPClient) -> any ConversationsAPI {
+        let builder = ConversationsAPIBuilder(httpClient: client)
+        return builder.makeAPI(for: self)
     }
 }
