@@ -46,6 +46,7 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 # SETUP
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
+PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
 
 if [[ -n "${CI-}" ]]; then
     echo "Running on CI, skipping git lfs install"
@@ -69,8 +70,9 @@ fi
 echo ""
 
 echo "ℹ️  Resolve Swift Packages for Scripts..."
-xcrun --sdk macosx swift package --package-path scripts resolve
-xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
+cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR"
+#xcrun --sdk macosx swift package --package-path scripts resolve
+#xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
 echo ""
 
 echo "ℹ️  Installing ImageMagick..."
