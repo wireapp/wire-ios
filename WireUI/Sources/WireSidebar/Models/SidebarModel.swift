@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireFoundation
 
 /// A class which serves as bridge between the `SidebarView` and the `SidebarViewController`.
@@ -25,6 +25,7 @@ final class SidebarModel: ObservableObject {
 
     @Published var wireAccentColor: WireAccentColor = .default
     @Published var wireTextStyleMapping: WireTextStyleMapping?
+    @Published var sidebarBackgroundColor: UIColor = .systemGray5
     @Published var accountInfo = SidebarAccountInfo()
     @Published var selectedMenuItem: SidebarMenuItem = .all {
         didSet { menuItemAction(selectedMenuItem) }

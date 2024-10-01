@@ -49,6 +49,11 @@ public final class SidebarViewController: UIViewController {
         set { model.wireTextStyleMapping = newValue }
     }
 
+    public var sidebarBackgroundColor: UIColor {
+        get { model.sidebarBackgroundColor }
+        set { model.sidebarBackgroundColor = newValue }
+    }
+
     // MARK: - Private Properties
 
     private var model: SidebarModel!
@@ -127,6 +132,7 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
             supportAction: model.supportAction,
             accountImageView: accountImageView
         )
+        .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
         .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
         .environment(\.wireAccentColor, model.wireAccentColor)
     }
