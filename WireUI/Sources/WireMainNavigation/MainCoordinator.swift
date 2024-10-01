@@ -127,7 +127,11 @@ public final class MainCoordinator<
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
-            // TODO: maybe navigationcontroller pop is needed?
+            if mainSplitViewState == .collapsed, tabBarController.conversation != nil {
+                tabBarController.setConversation(nil, animated: true)
+            } else {
+                splitViewController.conversation = tabBarController.conversation
+            }
 
             // apply the filter to the conversation list
             conversationList.conversationFilter = .init(mappingFrom: conversationFilter)
@@ -157,6 +161,11 @@ public final class MainCoordinator<
     public func showArchive() {
         // switch to the archive tab
         tabBarController.selectedContent = .archive
+        if mainSplitViewState == .collapsed, tabBarController.conversation != nil {
+            tabBarController.setConversation(nil, animated: true)
+        } else {
+            splitViewController.conversation = tabBarController.conversation
+        }
 
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
