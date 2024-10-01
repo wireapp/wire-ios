@@ -168,11 +168,6 @@ jobs:
           path: scripts/.build
           key: ${{ runner.os }}-swiftpm-${{ hashFiles('scripts/Package.resolved') }}
 
-      # Resolve the dependencies if no cash
-      - name: Bootstrap Swift Package Dependencies if no cache
-        #if: steps.cache-swift-package.outputs.cache-hit != 'true'
-      - run: xcrun swift package --package-path scripts resolve
-
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -181,6 +176,11 @@ jobs:
       - name: Setup workspace
         run: |
           ./setup.sh
+
+     # Resolve the dependencies if no cash
+      - name: Bootstrap Swift Package Dependencies if no cache
+        if: steps.cache-swift-package.outputs.cache-hit != 'true'
+      - run: xcrun swift package --package-path scripts resolve
 
       - name: Setup simulator
         run: |
