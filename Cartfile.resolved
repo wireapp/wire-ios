@@ -1,4 +1,4 @@
-binary "wire-avs.json" "9.8.19"
+binary "wire-avs.json" "9.9.5"
 github "wireapp/ZipArchive" "v2.4.2"
 github "wireapp/core-crypto" "v1.0.2"
 github "wireapp/countly-sdk-ios" "23.02.3"
