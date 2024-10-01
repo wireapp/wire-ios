@@ -18,6 +18,8 @@
 
 import UIKit
 
+// TODO: when a conversation is shown, an entry in the conversationList must be selected, same for settings
+
 // swiftlint:disable opening_brace
 
 /// Manages the main navigation and the layout changes of the application after a successful login.
@@ -127,10 +129,16 @@ public final class MainCoordinator<
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
-            if mainSplitViewState == .collapsed, tabBarController.conversation != nil {
+
+            switch mainSplitViewState {
+            case .collapsed:
+                // if `showConversationList` is called while in collapsed mode, pop the conversation view controller
                 tabBarController.setConversation(nil, animated: true)
-            } else {
-                splitViewController.conversation = tabBarController.conversation
+            case .expanded:
+                if splitViewController.conversation == nil {
+                    // this line ensures that the no conversation placeholder is shown in case we switch from settings
+                    splitViewController.conversation = tabBarController.conversation
+                }
             }
 
             // apply the filter to the conversation list
@@ -154,16 +162,17 @@ public final class MainCoordinator<
             tabBarController.conversationList = nil
             splitViewController.conversationList = conversationList
         }
-
-        // TODO: display conversation (must be in the tabbarcontroller)
     }
 
     public func showArchive() {
         // switch to the archive tab
         tabBarController.selectedContent = .archive
+
         if mainSplitViewState == .collapsed, tabBarController.conversation != nil {
-            tabBarController.setConversation(nil, animated: true)
-        } else {
+            // if the method is called while in collapsed mode, pop the conversation view controller
+            tabBarController.setConversation(nil, animated: false)
+        } else if splitViewController.conversation == nil {
+            // display either the conversation or the placeholder in the secondary column
             splitViewController.conversation = tabBarController.conversation
         }
 
@@ -218,12 +227,19 @@ public final class MainCoordinator<
         }
     }
 
+    // TODO: doc comment, when/why is this needed/called from outside
     public func hideConversation() {
         tabBarController.setConversation(nil, animated: true)
         splitViewController.conversation = nil
     }
 
     public func showSettingsContent(_ topLevelMenuItem: SettingsContentBuilder.TopLevelMenuItem) {
+
+        if let conversation = splitViewController.conversation {
+            splitViewController.conversation = nil
+            tabBarController.conversation = conversation
+        }
+
         let contentViewController = settingsContentBuilder.build(topLevelMenuItem: topLevelMenuItem, mainCoordinator: self)
         switch mainSplitViewState {
         case .collapsed:
@@ -321,7 +337,15 @@ public final class MainCoordinator<
         if let conversationListViewController = splitViewController.conversationList {
             splitViewController.conversationList = nil
             tabBarController.conversationList = conversationListViewController
-            // TODO: conversations
+
+            if let conversation = splitViewController.conversation {
+                splitViewController.conversation = nil
+                tabBarController.conversation = conversation
+            }
+        } else {
+            // dismiss the conversation if archive or connect has been visible
+            // and there is still a conversation presented in the secondary column
+            splitViewController.conversation = nil
         }
 
         // move the archived conversations list back to the tab bar controller if needed
@@ -334,6 +358,11 @@ public final class MainCoordinator<
         if let settings = splitViewController.settings {
             splitViewController.settings = nil
             tabBarController.settings = settings
+
+            if let settingsContent = splitViewController.settingsContent {
+                splitViewController.settingsContent = nil
+                tabBarController.settingsContent = settingsContent
+            }
         }
 
         // take out the new conversation controller from the supplementary column's navigation
@@ -359,7 +388,11 @@ public final class MainCoordinator<
             let conversationViewController = tabBarController.conversationList
             tabBarController.conversationList = nil
             splitViewController.conversationList = conversationViewController
-            // TODO: conversations
+
+            if let conversation = tabBarController.conversation {
+                tabBarController.conversation = nil
+                splitViewController.conversation = conversation
+            }
         }
 
         // if the archived conversations view controller was visible, present it
@@ -370,10 +403,18 @@ public final class MainCoordinator<
         }
 
         // if the settings were visible, present it
+        var settingsContentToSelect: SettingsContentBuilder.TopLevelMenuItem?
         if tabBarController.selectedContent == .settings {
             let settings = tabBarController.settings
             tabBarController.settings = nil
             splitViewController.settings = settings
+
+            if let settingsContent = tabBarController.settingsContent {
+                tabBarController.settingsContent = nil
+                splitViewController.settingsContent = settingsContent
+            } else {
+                settingsContentToSelect = .init(.account)
+            }
         }
 
         // the new conversation view controller in collapsed mode is
@@ -389,6 +430,9 @@ public final class MainCoordinator<
         mainSplitViewState = .expanded
         let conversationList = tabBarController.conversationList ?? splitViewController.conversationList
         conversationList!.splitViewInterface = .expanded
+        if let settingsContentToSelect {
+            showSettingsContent(settingsContentToSelect)
+        }
     }
 
     // MARK: - UITabBarControllerDelegate
