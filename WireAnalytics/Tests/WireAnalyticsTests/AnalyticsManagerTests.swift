@@ -67,7 +67,7 @@ class AnalyticsManagerTests: XCTestCase {
 
     func testSwitchUser() {
         // GIVEN
-        let userProfile = AnalyticsUserProfile(
+        let userProfile = AnalyticsUser(
             analyticsIdentifier: "testUser123",
             teamInfo: .init(id: "team1", role: "admin", size: 10)
         )
@@ -102,7 +102,7 @@ class AnalyticsManagerTests: XCTestCase {
 
     func testSwitchUserWithNilTeamInfo() {
         // GIVEN
-        let userProfile = AnalyticsUserProfile(
+        let userProfile = AnalyticsUser(
             analyticsIdentifier: "testUser456",
             teamInfo: nil
         )

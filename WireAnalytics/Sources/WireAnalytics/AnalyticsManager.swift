@@ -51,7 +51,7 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
         self.analyticsService.start(appKey: appKey, host: host)
     }
 
-    public func updateUserAnalyticsIdentifier(_ userProfile: AnalyticsUserProfile, mergeData: Bool) {
+    public func updateUserAnalyticsIdentifier(_ userProfile: AnalyticsUser, mergeData: Bool) {
         analyticsService.changeDeviceID(userProfile.analyticsIdentifier, mergeData: mergeData)
         updateUserProfile(userProfile)
     }
@@ -60,7 +60,7 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     ///
     /// - Parameter userProfile: The profile of the user to switch to.
     /// - Returns: An object conforming to AnalyticsSessionProtocol for the new session.
-    public func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
+    public func switchUser(_ userProfile: AnalyticsUser) -> any AnalyticsSessionProtocol {
         analyticsService.endSession()
         updateUserProfile(userProfile)
         analyticsService.changeDeviceID(userProfile.analyticsIdentifier, mergeData: false)
@@ -82,13 +82,13 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     ///
     /// - Parameter userProfile: The profile of the user to enable tracking for.
     /// - Returns: An object conforming to AnalyticsSessionProtocol for the new session.
-    public func enableTracking(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
+    public func enableTracking(_ userProfile: AnalyticsUser) -> any AnalyticsSessionProtocol {
         switchUser(userProfile)
     }
 
     // MARK: - Private Helper Methods
 
-    private func updateUserProfile(_ userProfile: AnalyticsUserProfile) {
+    private func updateUserProfile(_ userProfile: AnalyticsUser) {
         analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: AnalyticsUserKey.teamID.rawValue)
         analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: AnalyticsUserKey.teamRole.rawValue)
         analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: AnalyticsUserKey.teamSize.rawValue)

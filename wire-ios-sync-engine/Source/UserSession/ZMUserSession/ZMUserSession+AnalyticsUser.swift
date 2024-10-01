@@ -21,7 +21,7 @@ import WireAnalytics
 
 extension ZMUserSession {
 
-    var analyticsUser: AnalyticsUserProfile {
+    var analyticsUser: AnalyticsUser {
         let selfUser = ZMUser.selfUser(inUserSession: self)
 
         // TODO: replace with user repository or something
@@ -38,7 +38,7 @@ extension ZMUserSession {
             )
         }
 
-        return AnalyticsUserProfile(
+        return AnalyticsUser(
             analyticsIdentifier: analyticsID,
             teamInfo: teamInfo
         )

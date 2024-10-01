@@ -31,7 +31,7 @@ final class EnableAnalyticsUseCaseTests: XCTestCase {
     private var mockAnalyticsManagerProvider: MockAnalyticsManagerProviding!
     private var mockAnalyticsManager: MockAnalyticsManagerProtocol!
     private var sessionConfiguration: AnalyticsSessionConfiguration!
-    private var userProfile: AnalyticsUserProfile!
+    private var userProfile: AnalyticsUser!
     private var mockUserSession: MockEnableAnalyticsUseCaseAnalyticsSessionProviding!
 
     // MARK: - setUp

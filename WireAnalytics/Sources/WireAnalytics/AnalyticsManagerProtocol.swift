@@ -23,12 +23,12 @@ public protocol AnalyticsManagerProtocol {
     /// - Parameters:
     ///   - userProfile: The updated profile of the user.
     ///   - mergeData: A Boolean indicating whether to merge data from the previous identifier.
-    func updateUserAnalyticsIdentifier(_ userProfile: AnalyticsUserProfile, mergeData: Bool)
+    func updateUserAnalyticsIdentifier(_ userProfile: AnalyticsUser, mergeData: Bool)
 
     /// Switches the current analytics user and starts a new session.
     /// - Parameter userProfile: The profile of the user to switch to.
     /// - Returns: A new analytics session for the switched user.
-    func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
+    func switchUser(_ userProfile: AnalyticsUser) -> any AnalyticsSessionProtocol
 
     /// Disables analytics tracking and reporting.
     /// This method should be used when analytics tracking needs to be disables, such as for privacy reasons.
@@ -38,6 +38,6 @@ public protocol AnalyticsManagerProtocol {
     /// This method should be used to re-enable analytics tracking after it has been disabled.
     /// - Parameter userProfile: The profile of the user to enable analytics for.
     /// - Returns: A new analytics session for the user.
-    func enableTracking(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
+    func enableTracking(_ userProfile: AnalyticsUser) -> any AnalyticsSessionProtocol
 
 }

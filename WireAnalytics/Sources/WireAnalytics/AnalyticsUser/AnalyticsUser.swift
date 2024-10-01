@@ -16,14 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A structure representing a user's profile for analytics purposes.
-public struct AnalyticsUserProfile: Equatable {
+/// The subject of analytics tracking.
 
-    /// The unique identifier for the user's analytics profile.
+public struct AnalyticsUser: Equatable {
+
+    /// A unique id.
+
     public let analyticsIdentifier: String
 
-    /// The team information for the user.
+    /// The user's team information.
+
     public let teamInfo: TeamInfo?
+    
+    /// Create a new `AnalyticsUser`.
+    ///
+    /// - Parameters:
+    ///   - analyticsIdentifier: A uniqe id.
+    ///   - teamInfo: The user's team information.
 
     public init(
         analyticsIdentifier: String,

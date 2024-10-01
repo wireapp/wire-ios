@@ -28,7 +28,7 @@ public final class AnalyticsService {
     private let config: Config?
     private let countlyProvider: () -> any CountlyProtocol
     private var countly: (any CountlyProtocol)?
-    private var currentUser: AnalyticsUserProfile?
+    private var currentUser: AnalyticsUser?
 
     // MARK: - Life cycle
 
@@ -95,7 +95,7 @@ public final class AnalyticsService {
     ///
     /// - Parameter user: The user to switch to.
 
-    public func switchUser(_ user: AnalyticsUserProfile) {
+    public func switchUser(_ user: AnalyticsUser) {
         guard 
             let countly,
             user != currentUser
@@ -122,7 +122,7 @@ public final class AnalyticsService {
     ///
     /// - Parameter user: The updated current user.
 
-    public func updateCurrentUser(_ user: AnalyticsUserProfile) {
+    public func updateCurrentUser(_ user: AnalyticsUser) {
         print("[ANALYTICS] updating current user")
 
         pushUser(
@@ -132,7 +132,7 @@ public final class AnalyticsService {
     }
 
     private func pushUser(
-        _ user: AnalyticsUserProfile?,
+        _ user: AnalyticsUser?,
         mergeData: Bool
     ) {
         guard let countly else {

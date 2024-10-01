@@ -36,7 +36,7 @@ public protocol EnableAnalyticsUseCaseProtocol {
 
 struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
-    let currentUser: AnalyticsUserProfile?
+    let currentUser: AnalyticsUser?
     let service: AnalyticsService
 
     func invoke() throws {
