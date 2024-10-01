@@ -32,10 +32,10 @@ public protocol AppendTextMessageUseCaseProtocol {
 
 public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
 
-    let analyticsSession: AnalyticsSessionProtocol?
+    let analyticsService: AnalyticsService?
 
-    public init(analyticsSession: AnalyticsSessionProtocol?) {
-        self.analyticsSession = analyticsSession
+    public init(analyticsService: AnalyticsService?) {
+        self.analyticsService = analyticsService
     }
 
     public func invoke<Conversation: MessageAppendableConversation>(
@@ -53,7 +53,7 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
             nonce: UUID()
         )
         conversation.draftMessage = nil
-        analyticsSession?.trackEvent(
+        analyticsService?.trackEvent(
             .conversationContribution(
                 .textMessage,
                 conversationType: .init(conversation.conversationType),

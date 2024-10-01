@@ -79,7 +79,8 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    var analyticsSession: (any AnalyticsSessionProtocol)?
+    // TODO: make this some protocol for tracking
+    weak var analyticsService: AnalyticsService?
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
@@ -395,7 +396,7 @@ public final class ZMUserSession: NSObject {
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
-        analyticsSession?.trackEvent(.appOpen)
+        analyticsService?.trackEvent(.appOpen)
     }
 
     func setup(

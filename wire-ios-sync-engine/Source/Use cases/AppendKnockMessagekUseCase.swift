@@ -26,10 +26,10 @@ public protocol AppendKnockMessageUseCaseProtocol {
 
 public struct AppendKnockMessageUseCase: AppendKnockMessageUseCaseProtocol {
 
-    let analyticsSession: AnalyticsSessionProtocol?
+    let analyticsService: AnalyticsService?
 
-    public init(analyticsSession: AnalyticsSessionProtocol?) {
-        self.analyticsSession = analyticsSession
+    public init(analyticsService: AnalyticsService?) {
+        self.analyticsService = analyticsService
     }
 
     public func invoke<Conversation: MessageAppendableConversation>(
@@ -38,7 +38,7 @@ public struct AppendKnockMessageUseCase: AppendKnockMessageUseCaseProtocol {
 
         try conversation.appendKnock(nonce: UUID())
 
-        analyticsSession?.trackEvent(
+        analyticsService?.trackEvent(
             .conversationContribution(
                 .pingMessage,
                 conversationType: .init(conversation.conversationType),
