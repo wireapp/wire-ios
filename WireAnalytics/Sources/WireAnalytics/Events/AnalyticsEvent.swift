@@ -18,7 +18,7 @@
 
 /// An event that can be tracked..
 
-public struct AnalyticsEvent: Sendable {
+public struct AnalyticsEvent: Sendable, Equatable {
 
     /// A unique name.
 

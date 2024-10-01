@@ -29,16 +29,16 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var mockAnalyticsSessionProtocol: MockAnalyticsSessionProtocol!
+    private var analyticsEventTracker: MockAnalyticsEventTracker!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendImageMessageUseCase!
 
     // MARK: - setUp
 
     override func setUp() {
-        mockAnalyticsSessionProtocol = .init()
+        analyticsEventTracker = .init()
         mockConversation = .init()
-        sut = AppendImageMessageUseCase(analyticsSession: mockAnalyticsSessionProtocol)
+        sut = AppendImageMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     // MARK: - tearDown
@@ -46,7 +46,7 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
     override func tearDown() {
         sut = nil
         mockConversation = nil
-        mockAnalyticsSessionProtocol = nil
+        analyticsEventTracker = nil
     }
 
     // MARK: - Unit Tests
@@ -58,7 +58,7 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
         mockConversation.appendImage_MockMethod = { _, _ in
             MockZMConversationMessage()
         }
-        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEvent_MockMethod = { _ in }
 
         let testImageData = Data("test image data".utf8)
 
@@ -71,10 +71,15 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
         XCTAssertEqual(appendImageInvocation.imageData, testImageData)
         XCTAssertNotNil(appendImageInvocation.nonce)
 
-        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
-        let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ConversationContributionAnalyticsEvent)
-        XCTAssertEqual(trackEventInvocation.contributionType, .imageMessage)
-        XCTAssertEqual(trackEventInvocation.conversationType, .group)
-        XCTAssertEqual(trackEventInvocation.conversationSize, UInt(mockConversation.localParticipants.count))
+        let expectedEvent = AnalyticsEvent.conversationContribution(
+            .imageMessage,
+            conversationType: .group,
+            conversationSize: 0
+        )
+
+        XCTAssertEqual(
+            analyticsEventTracker.trackEvent_Invocations,
+            [expectedEvent]
+        )
     }
 }

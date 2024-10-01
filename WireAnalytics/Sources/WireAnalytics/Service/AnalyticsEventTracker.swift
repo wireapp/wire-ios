@@ -18,8 +18,8 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// An object that tracks analytic events.
-
 public protocol AnalyticsEventTracker: AnyObject {
 
     /// Track an event.
