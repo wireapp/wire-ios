@@ -18,7 +18,7 @@
 
 /// A struct representing information about the user's team.
 
-public struct TeamInfo {
+public struct TeamInfo: Equatable {
 
     /// The identifier for the team the user belongs to.
     public let id: String
@@ -34,4 +34,5 @@ public struct TeamInfo {
         self.role = role
         self.size = size
     }
+
 }

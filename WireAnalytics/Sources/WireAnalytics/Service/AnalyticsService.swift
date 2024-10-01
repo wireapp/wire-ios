@@ -99,7 +99,10 @@ public final class AnalyticsService {
     /// - Parameter user: The user to switch to.
 
     public func switchUser(_ user: AnalyticsUserProfile) {
-        guard let countly else {
+        guard 
+            let countly,
+            user != currentUser
+        else {
             return
         }
 

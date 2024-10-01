@@ -17,7 +17,7 @@
 //
 
 /// A structure representing a user's profile for analytics purposes.
-public struct AnalyticsUserProfile {
+public struct AnalyticsUserProfile: Equatable {
 
     /// The unique identifier for the user's analytics profile.
     public let analyticsIdentifier: String
@@ -32,4 +32,5 @@ public struct AnalyticsUserProfile {
         self.analyticsIdentifier = analyticsIdentifier
         self.teamInfo = teamInfo
     }
+
 }
