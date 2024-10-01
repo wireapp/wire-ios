@@ -70,8 +70,8 @@ fi
 echo ""
 
 echo "ℹ️  Resolve Swift Packages for Scripts..."
-( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
-#xcrun --sdk macosx swift package --package-path scripts resolve
+#( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+xcrun --sdk macosx swift package --package-path scripts resolve
 #xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
 echo ""
 
