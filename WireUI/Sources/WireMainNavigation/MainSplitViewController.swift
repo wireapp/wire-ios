@@ -42,47 +42,36 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
 
     // MARK: - Supplementary Column
 
-    public weak var conversationList: ConversationList? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [conversationList].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var conversationList: ConversationList? {
+        get { _conversationList }
+        set { setConversationList(newValue, animated: false) }
     }
 
-    public weak var archive: Archive? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [archive].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var archive: Archive? {
+        get { _archive }
+        set { setArchive(newValue, animated: false) }
     }
 
-    public weak var connect: Connect? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [connect].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var connect: Connect? {
+        get { _connect }
+        set { setConnect(newValue, animated: false) }
     }
 
-    public weak var settings: Settings? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [settings].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
-    }
-
-    public var settingsContent: SettingsContent? {
-        didSet {
-            fatalError()
-        }
+    public var settings: Settings? {
+        get { _settings }
+        set { setSettings(newValue, animated: false) }
     }
 
     // MARK: - Secondary Column
 
-    public weak var conversation: Conversation? {
-        didSet {
-            secondaryNavigationController?.viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
-            secondaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var conversation: Conversation? {
+        get { _conversation }
+        set { setConversation(newValue, animated: false) }
+    }
+
+    public var settingsContent: SettingsContent? {
+        get { _settingsContent }
+        set { setSettingsContent(newValue, animated: false) }
     }
 
     // MARK: - Compact/Collapsed
@@ -94,8 +83,17 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
     /// This view controller is displayed when no conversation in the list is selected.
     private let noConversationPlaceholder: UIViewController
 
-    private weak var supplementaryNavigationController: UINavigationController?
-    private weak var secondaryNavigationController: UINavigationController?
+    private weak var supplementaryNavigationController: UINavigationController!
+    private weak var secondaryNavigationController: UINavigationController!
+
+    private weak var _conversationList: ConversationList?
+    private weak var _archive: Archive?
+    private weak var _settings: Settings?
+
+    private weak var _conversation: Conversation?
+    private weak var _settingsContent: SettingsContent?
+
+    private weak var _connect: Connect?
 
     // MARK: - Initialization
 
@@ -151,6 +149,54 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
         } else {
             .oneBesideSecondary
         }
+    }
+
+    // MARK: - Accessors
+
+    public func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+        _conversationList = conversationList
+
+        let viewControllers = [conversationList].compactMap { $0 }
+        supplementaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        supplementaryNavigationController.view.layoutIfNeeded()
+    }
+
+    public func setArchive(_ archive: Archive?, animated: Bool) {
+        _archive = archive
+
+        let viewControllers = [archive].compactMap { $0 }
+        supplementaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        supplementaryNavigationController.view.layoutIfNeeded()
+    }
+
+    public func setConnect(_ connect: Connect?, animated: Bool) {
+        _connect = connect
+
+        let viewControllers = [connect].compactMap { $0 }
+        supplementaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        supplementaryNavigationController.view.layoutIfNeeded()
+    }
+
+    public func setSettings(_ settings: Settings?, animated: Bool) {
+        _settings = settings
+
+        let viewControllers = [settings].compactMap { $0 }
+        supplementaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        supplementaryNavigationController.view.layoutIfNeeded()
+    }
+
+    public func setConversation(_ conversation: Conversation?, animated: Bool) {
+        _conversation = conversation
+
+        let viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
+        secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        secondaryNavigationController.view.layoutIfNeeded()
+    }
+
+    public func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+        _settingsContent = settingsContent
+
+        fatalError()
     }
 }
 

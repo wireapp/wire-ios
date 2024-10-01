@@ -36,42 +36,29 @@ public final class MainTabBarController<
 
     // MARK: - Public Properties
 
-    public weak var conversationList: ConversationList? {
-        didSet {
-            conversationListNavigationController.viewControllers = [conversationList, conversation].compactMap { $0 }
-            conversationListNavigationController.view.layoutIfNeeded()
-        }
+    public var conversationList: ConversationList? {
+        get { _conversationList }
+        set { setConversationList(newValue, animated: false) }
     }
 
-    public weak var archive: Archive? {
-        didSet {
-            archiveNavigationController.viewControllers = [archive].compactMap { $0 }
-            archiveNavigationController.view.layoutIfNeeded()
-        }
+    public var archive: Archive? {
+        get { _archive }
+        set { setArchive(newValue, animated: false) }
     }
 
-    public weak var settings: Settings? {
-        didSet {
-            settingsNavigationController.viewControllers = [settings].compactMap { $0 }
-            settingsNavigationController.view.layoutIfNeeded()
-        }
+    public var settings: Settings? {
+        get { _settings }
+        set { setSettings(newValue, animated: false) }
     }
 
-    public weak var conversation: Conversation? {
-        didSet {
-            if conversationList == nil, conversation != nil {
-                return assertionFailure("conversationList == nil, conversation != nil")
-            }
-            // TODO: use setViewControllers(animated)
-            conversationListNavigationController.viewControllers = [conversationList, conversation].compactMap { $0 }
-            conversationListNavigationController.view.layoutIfNeeded()
-        }
+    public var conversation: Conversation? {
+        get { _conversation }
+        set { setConversation(newValue, animated: false) }
     }
 
-    public weak var settingsContent: SettingsContent? {
-        didSet {
-            fatalError()
-        }
+    public var settingsContent: SettingsContent? {
+        get { _settingsContent }
+        set { setSettingsContent(newValue, animated: false) }
     }
 
     public var selectedContent: MainTabBarControllerContent {
@@ -84,6 +71,12 @@ public final class MainTabBarController<
     private weak var conversationListNavigationController: UINavigationController!
     private weak var archiveNavigationController: UINavigationController!
     private weak var settingsNavigationController: UINavigationController!
+
+    private weak var _conversationList: ConversationList?
+    private weak var _archive: Archive?
+    private weak var _settings: Settings?
+    private weak var _conversation: Conversation?
+    private weak var _settingsContent: SettingsContent?
 
     // MARK: - Life Cycle
 
@@ -172,6 +165,50 @@ public final class MainTabBarController<
         if #available(iOS 18.0, *) {
             traitOverrides.horizontalSizeClass = .compact
         }
+    }
+
+    // MARK: - Accessors
+
+    public func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+        _conversationList = conversationList
+
+        let viewControllers = [conversationList, conversation].compactMap { $0 }
+        conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
+        conversationListNavigationController.view.layoutIfNeeded()
+    }
+
+    public func setArchive(_ archive: Archive?, animated: Bool) {
+        _archive = archive
+
+        let viewControllers = [archive].compactMap { $0 }
+        archiveNavigationController.setViewControllers(viewControllers, animated: animated)
+        archiveNavigationController.view.layoutIfNeeded()
+    }
+
+    public func setSettings(_ settings: Settings?, animated: Bool) {
+        _settings = settings
+
+        let viewControllers = [settings].compactMap { $0 }
+        settingsNavigationController.setViewControllers(viewControllers, animated: animated)
+        settingsNavigationController.view.layoutIfNeeded()
+    }
+
+    public func setConversation(_ conversation: Conversation?, animated: Bool) {
+        _conversation = conversation
+
+        if conversationList == nil, conversation != nil {
+            return assertionFailure("conversationList == nil, conversation != nil")
+        }
+
+        let viewControllers = [conversationList, conversation].compactMap { $0 }
+        conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
+        conversationListNavigationController.view.layoutIfNeeded()
+    }
+
+    public func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+        _settingsContent = settingsContent
+
+        fatalError()
     }
 }
 

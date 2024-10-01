@@ -38,4 +38,28 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     var conversation: Conversation?
     var settingsContent: SettingsContent?
     var tabContainer: MockTabBarController!
+
+    func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setArchive(_ archive: UIViewController?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setSettings(_ settings: Settings?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setConversation(_ conversation: Conversation?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setConnect(_ connect: Connect?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
 }
