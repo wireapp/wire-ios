@@ -18,4 +18,4 @@
 
 import UIKit
 
-final class PreviewSettingsViewController: UIViewController, MainSettingsProtocol {} // TODO: consider deleting
+typealias PreviewSettingsViewController = UIViewController // TODO: consider deleting

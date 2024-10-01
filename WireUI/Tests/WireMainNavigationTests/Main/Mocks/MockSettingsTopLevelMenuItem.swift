@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A sub screen of the settings.
-public enum MainSettingsContent {
-    case account, devices, options, advanced, support, about, developerOptions
+import WireMainNavigation
+
+enum MockSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable {
+    init(_ mainSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItem) { fatalError() }
+    func mapToMainSettingsContent() -> MainSettingsTopLevelMenuItem { fatalError() }
 }

@@ -22,12 +22,11 @@ import UIKit
 public protocol MainSplitViewControllerProtocol: UISplitViewController, MainContainerViewController {
 
     associatedtype Sidebar: MainSidebarProtocol
-
+    associatedtype Connect: UIViewController
     associatedtype TabContainer: MainTabBarControllerProtocol where
     TabContainer.ConversationList == ConversationList,
     TabContainer.Conversation == Conversation,
     TabContainer.Archive == Archive,
-    TabContainer.Connect == Connect,
     TabContainer.Settings == Settings,
     TabContainer.SettingsContent == SettingsContent
 

@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum SettingsTopLevelContent: Sendable {
-    case account, devices, options, advanced, support, about, developerOptions
+import UIKit
+
+public protocol MainSettingsBuilderProtocol {
+    @MainActor
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController
 }

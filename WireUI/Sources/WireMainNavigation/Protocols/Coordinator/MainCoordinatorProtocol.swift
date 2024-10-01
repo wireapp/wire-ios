@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+
 public protocol MainCoordinatorProtocol: AnyObject {
+
     associatedtype ConversationList: MainConversationListProtocol
     associatedtype ConversationBuilder: MainConversationBuilderProtocol
-    associatedtype Settings: MainSettingsProtocol
-    associatedtype SettingsContent: MainSettingsContentProtocol
+    associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
+    associatedtype Settings: UIViewController // TODO: needed?
 
     @MainActor
     func showConversationList(conversationFilter: ConversationList.ConversationFilter?)
@@ -35,7 +38,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func hideConversation()
 
     @MainActor
-    func showSettingsContent(_ settingsContent: SettingsContent.SettingsContent)
+    func showSettingsContent(_ topLevelMenuItem: SettingsContentBuilder.TopLevelMenuItem)
     @MainActor
     func hideSettingsContent()
 

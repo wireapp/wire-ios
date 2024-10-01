@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+// TODO: delete
+public typealias SettingsTopLevelContent = SettingsTopLevelMenuItem
 
-@MainActor
-public protocol MainSettingsContentProtocol: UIViewController {
-    associatedtype SettingsContent: MainSettingsContentRepresentable
+public enum SettingsTopLevelMenuItem: Sendable {
+    case account, devices, options, advanced, support, about, developerOptions
 }

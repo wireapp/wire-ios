@@ -24,12 +24,10 @@ public protocol MainContainerViewController: UIViewController {
 
     associatedtype ConversationList: MainConversationListProtocol
     associatedtype Archive: UIViewController
-    associatedtype Settings: MainSettingsProtocol
+    associatedtype Settings: UIViewController
 
     associatedtype Conversation: MainConversationProtocol
-    associatedtype SettingsContent: MainSettingsContentProtocol
-
-    associatedtype Connect: UIViewController // TODO: is it needed?
+    associatedtype SettingsContent: UIViewController
 
     // These three properties represent the tabs of the main tab bar controller.
     var conversationList: ConversationList? { get set }

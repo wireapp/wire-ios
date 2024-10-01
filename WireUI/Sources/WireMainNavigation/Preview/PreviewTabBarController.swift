@@ -20,9 +20,5 @@ import UIKit
 
 typealias PreviewTabBarController = MainTabBarController<
     PreviewConversationListViewController,
-    PreviewConversationViewController,
-    UIViewController,
-    UIViewController,
-    PreviewSettingsViewController,
-    PreviewSettingsContentViewController
+    PreviewConversationViewController
 >

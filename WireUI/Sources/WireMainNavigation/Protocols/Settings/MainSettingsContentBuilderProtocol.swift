@@ -16,12 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+
 public protocol MainSettingsContentBuilderProtocol {
-    associatedtype SettingsContent: MainSettingsContentRepresentable
+    associatedtype SettingsContent: UIViewController
+    associatedtype TopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
 
     @MainActor
     func build(
-        content: SettingsContent,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) -> any MainSettingsContentProtocol
+        topLevelMenuItem: TopLevelMenuItem?,
+        mainCoordinator: some MainCoordinatorProtocol // TODO: needed?
+    ) -> SettingsContent
 }

@@ -20,7 +20,7 @@ import WireMainNavigation
 import WireSyncEngine
 import WireSettings
 
-struct SettingsViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder, MainSettingsContentBuilderProtocol {
+struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsContentBuilderProtocol {
 
     // TODO: can selfUser be taken from the userSession?
     var userSession: UserSession
@@ -41,28 +41,17 @@ struct SettingsViewControllerBuilder: MainCoordinatorInjectingViewControllerBuil
         )
     }
 
-    @MainActor
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsMainViewController {
-        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
-        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-        let group = factory.settingsGroup(
-            isTeamMember: userSession.selfUser.isTeamMember,
-            userSession: userSession,
-            useTypeIntrinsicSizeTableView: false
-        )
-        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-    }
-
-    @MainActor
     func build(
-        content: SettingsTopLevelContent,
-        mainCoordinator _: some MainCoordinatorProtocol // TODO: not needed?
-    ) -> any MainSettingsContentProtocol {
+        content: SettingsTopLevelMenuItem?,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> UIViewController {
         switch content {
+        case .none:
+           build(mainCoordinator: mainCoordinator)
         case .account:
             fatalError("TODO")
         case .devices:
-            return ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
+            buildDevicesSettings()
         case .options:
             fatalError("TODO")
         case .advanced:
@@ -74,5 +63,21 @@ struct SettingsViewControllerBuilder: MainCoordinatorInjectingViewControllerBuil
         case .developerOptions:
             fatalError("TODO")
         }
+    }
+
+    @MainActor
+    private func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsMainViewController {
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
+        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let group = factory.settingsGroup(
+            isTeamMember: userSession.selfUser.isTeamMember,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: false
+        )
+        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+    }
+
+    private func buildDevicesSettings() -> UIViewController {
+        ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
     }
 }

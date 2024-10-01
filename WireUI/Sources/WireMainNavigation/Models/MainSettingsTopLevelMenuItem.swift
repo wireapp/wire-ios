@@ -16,18 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainSettingsContentRepresentable: Sendable {
-
-    init(_ mainSettingsContent: MainSettingsContent)
-    init?<SettingsContent: MainSettingsContentRepresentable>(mappingFrom settingsContent: SettingsContent?)
-
-    func mapToMainSettingsContent() -> MainSettingsContent
-}
-
-public extension MainSettingsContentRepresentable {
-
-    init?(mappingFrom settingsContent: (some MainSettingsContentRepresentable)?) {
-        guard let settingsContent else { return nil }
-        self.init(settingsContent.mapToMainSettingsContent())
-    }
+/// A sub screen of the settings.
+public enum MainSettingsTopLevelMenuItem {
+    case account, devices, options, advanced, support, about, developerOptions
 }

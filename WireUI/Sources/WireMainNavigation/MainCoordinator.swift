@@ -45,7 +45,7 @@ public final class MainCoordinator<
     ConversationBuilder.Conversation == SplitViewController.Conversation,
     ConversationBuilder.Conversation.ConversationID == SplitViewController.ConversationList.ConversationID,
     ConnectBuilder.ViewController == SplitViewController.Connect,
-    SettingsContentBuilder.SettingsContent == SplitViewController.SettingsContent.SettingsContent
+    SettingsContentBuilder.SettingsContent == SplitViewController.SettingsContent
 {
     // swiftlint:enable opening_brace
 
@@ -210,8 +210,8 @@ public final class MainCoordinator<
         splitViewController.conversation = nil
     }
 
-    public func showSettingsContent(_ content: SettingsContent.SettingsContent) {
-        let contentViewController = settingsContentBuilder.build(content: content, mainCoordinator: self)
+    public func showSettingsContent(_ topLevelMenuItem: SettingsContentBuilder.TopLevelMenuItem) {
+        let contentViewController = settingsContentBuilder.build(topLevelMenuItem: topLevelMenuItem, mainCoordinator: self)
         switch mainSplitViewState {
         case .collapsed:
             tabBarController.setSettingsContent(contentViewController, animated: true)

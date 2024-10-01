@@ -25,7 +25,7 @@ final class MainCoordinatorTests: XCTestCase {
     typealias SUT = MainCoordinator<
         MockSplitViewController,
         MockConversationBuilder<MockConversationID>,
-        MockViewControllerBuilder,
+        MockSettingsViewControllerBuilder,
         MockViewControllerBuilder,
         MockViewControllerBuilder
     >

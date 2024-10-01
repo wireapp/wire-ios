@@ -19,15 +19,6 @@
 import UIKit
 import WireMainNavigation
 
-struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder, MainSettingsContentBuilderProtocol {
-
-    typealias SettingsContentViewController = MockSettingsContentViewController
-
-    @MainActor
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
-
-    @MainActor
-    func build(
-        content: MockSettingsContentViewController.SettingsContent
-    ) -> MockSettingsContentViewController { .init() }
+struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { fatalError() }
 }

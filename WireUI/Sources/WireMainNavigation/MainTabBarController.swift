@@ -25,14 +25,13 @@ import SwiftUI
 public final class MainTabBarController<
 
     ConversationList: MainConversationListProtocol,
-    Conversation: MainConversationProtocol,
-    // TODO: change order, settings first etc.
-    Archive: UIViewController,
-    Connect: UIViewController,
-    Settings: MainSettingsProtocol,
-    SettingsContent: MainSettingsContentProtocol
+    Conversation: MainConversationProtocol
 
 >: UITabBarController, MainTabBarControllerProtocol {
+
+    public typealias Archive = UIViewController
+    public typealias Settings = UIViewController
+    public typealias SettingsContent = UIViewController
 
     // MARK: - Public Properties
 

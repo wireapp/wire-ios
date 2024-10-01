@@ -28,7 +28,7 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
     public typealias Conversation = TabContainer.Conversation
     public typealias SettingsContent = TabContainer.SettingsContent
 
-    public typealias Connect = TabContainer.Connect
+    public typealias Connect = UIViewController
 
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 

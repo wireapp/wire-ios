@@ -18,16 +18,4 @@
 
 import UIKit
 
-final class PreviewSettingsContentViewController: UIViewController, MainSettingsContentProtocol {
-    enum SettingsContent: MainSettingsContentRepresentable {
-        case account, todo
-
-        init(_ mainSettingsContent: MainSettingsContent) {
-            fatalError()
-        }
-
-        func mapToMainSettingsContent() -> MainSettingsContent {
-            fatalError()
-        }
-    }
-}
+public typealias PreviewSettingsContentViewController = UIViewController // TODO: delete

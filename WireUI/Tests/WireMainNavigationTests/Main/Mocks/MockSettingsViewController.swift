@@ -19,4 +19,4 @@
 import UIKit
 import WireMainNavigation
 
-final class MockSettingsViewController: UIViewController, MainSettingsProtocol {} // TODO: consider deleting
+typealias MockSettingsViewController = UIViewController // TODO: consider deleting
