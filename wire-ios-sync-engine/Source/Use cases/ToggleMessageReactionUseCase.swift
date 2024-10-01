@@ -29,6 +29,7 @@ public protocol ToggleMessageReactionUseCaseProtocol {
 }
 
 public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol {
+
     private let analyticsSession: AnalyticsSessionProtocol?
 
     public init(analyticsSession: AnalyticsSessionProtocol?) {
