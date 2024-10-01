@@ -30,4 +30,7 @@ public protocol MainTabBarControllerProtocol: UITabBarController, MainContainerV
 
     /// The selected content (tab).
     var selectedContent: MainTabBarControllerContent { get set }
+
+    func setConversation(_ conversation: Conversation?, animated: Bool)
+    func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool)
 }

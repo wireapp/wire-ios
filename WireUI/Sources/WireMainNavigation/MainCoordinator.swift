@@ -161,7 +161,7 @@ public final class MainCoordinator<
         )
         if mainSplitViewState == .collapsed {
             tabBarController.selectedContent = .conversations
-            tabBarController.conversation = conversation
+            tabBarController.setConversation(conversation, animated: true)
         } else {
             splitViewController.conversation = conversation
             // TODO: is there anything else to do for `.expanded`?
@@ -214,7 +214,7 @@ public final class MainCoordinator<
             let contentViewController = settingsContentBuilder.build(content: content)
             switch mainSplitViewState {
             case .collapsed:
-                tabBarController.settingsContent = contentViewController
+                tabBarController.setSettingsContent(contentViewController, animated: true)
             case .expanded:
                 splitViewController.settingsContent = contentViewController
             }

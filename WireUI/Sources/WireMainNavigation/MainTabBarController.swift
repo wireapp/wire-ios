@@ -169,7 +169,7 @@ public final class MainTabBarController<
 
     // MARK: - Accessors
 
-    public func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+    private func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
         _conversationList = conversationList
 
         let viewControllers = [conversationList, conversation].compactMap { $0 }
@@ -177,7 +177,7 @@ public final class MainTabBarController<
         conversationListNavigationController.view.layoutIfNeeded()
     }
 
-    public func setArchive(_ archive: Archive?, animated: Bool) {
+    private func setArchive(_ archive: Archive?, animated: Bool) {
         _archive = archive
 
         let viewControllers = [archive].compactMap { $0 }
@@ -185,7 +185,7 @@ public final class MainTabBarController<
         archiveNavigationController.view.layoutIfNeeded()
     }
 
-    public func setSettings(_ settings: Settings?, animated: Bool) {
+    private func setSettings(_ settings: Settings?, animated: Bool) {
         _settings = settings
 
         let viewControllers = [settings].compactMap { $0 }

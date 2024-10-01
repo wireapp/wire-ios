@@ -153,7 +153,7 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
 
     // MARK: - Accessors
 
-    public func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+    private func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
         _conversationList = conversationList
 
         let viewControllers = [conversationList].compactMap { $0 }
@@ -161,7 +161,7 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
         supplementaryNavigationController.view.layoutIfNeeded()
     }
 
-    public func setArchive(_ archive: Archive?, animated: Bool) {
+    private func setArchive(_ archive: Archive?, animated: Bool) {
         _archive = archive
 
         let viewControllers = [archive].compactMap { $0 }
@@ -169,7 +169,7 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
         supplementaryNavigationController.view.layoutIfNeeded()
     }
 
-    public func setConnect(_ connect: Connect?, animated: Bool) {
+    private func setConnect(_ connect: Connect?, animated: Bool) {
         _connect = connect
 
         let viewControllers = [connect].compactMap { $0 }
@@ -177,7 +177,7 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
         supplementaryNavigationController.view.layoutIfNeeded()
     }
 
-    public func setSettings(_ settings: Settings?, animated: Bool) {
+    private func setSettings(_ settings: Settings?, animated: Bool) {
         _settings = settings
 
         let viewControllers = [settings].compactMap { $0 }
@@ -185,7 +185,7 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
         supplementaryNavigationController.view.layoutIfNeeded()
     }
 
-    public func setConversation(_ conversation: Conversation?, animated: Bool) {
+    private func setConversation(_ conversation: Conversation?, animated: Bool) {
         _conversation = conversation
 
         let viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
@@ -193,7 +193,7 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
         secondaryNavigationController.view.layoutIfNeeded()
     }
 
-    public func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+    private func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
         _settingsContent = settingsContent
 
         fatalError()

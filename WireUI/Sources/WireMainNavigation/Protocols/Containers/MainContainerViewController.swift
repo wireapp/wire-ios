@@ -39,11 +39,4 @@ public protocol MainContainerViewController: UIViewController {
     // These two represent the content, which will be pushed on the three main screens.
     var conversation: Conversation? { get set }
     var settingsContent: SettingsContent? { get set }
-
-    func setConversationList(_ conversationList: ConversationList?, animated: Bool)
-    func setArchive(_ archive: Archive?, animated: Bool)
-    func setSettings(_ settings: Settings?, animated: Bool)
-
-    func setConversation(_ conversation: Conversation?, animated: Bool)
-    func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool)
 }
