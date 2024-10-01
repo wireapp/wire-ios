@@ -55,7 +55,7 @@ struct SidebarMenuItemView: View {
     // MARK: -
 
     var body: some View {
-        let accentColor = wireAccentColorMapping.uiColor(for: wireAccentColor)
+        let accentColor = wireAccentColorMapping?.uiColor(for: wireAccentColor) ?? .black.withAlphaComponent(0.8)
         Button(action: action) {
             HStack {
                 Label {

@@ -77,6 +77,7 @@ final class ZClientViewController: UIViewController {
             .availabilityIndicatorBackgroundViewColor(availabilityIndicatorDesign.backgroundViewColor)
         }
         sidebarViewController.wireTextStyleMapping = .init()
+        sidebarViewController.wireAccentColorMapping = WireAccentColorMapping()
         sidebarViewController.sidebarBackgroundColor = SidebarViewDesign().backgroundColor
         return sidebarViewController
     }()

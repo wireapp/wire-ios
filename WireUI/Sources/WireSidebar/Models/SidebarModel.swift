@@ -24,6 +24,7 @@ import WireFoundation
 final class SidebarModel: ObservableObject {
 
     @Published var wireAccentColor: WireAccentColor = .default
+    @Published var wireAccentColorMapping: WireAccentColorMapping?
     @Published var wireTextStyleMapping: WireTextStyleMapping?
     @Published var sidebarBackgroundColor: UIColor = .systemGray5
     @Published var accountInfo = SidebarAccountInfo()
