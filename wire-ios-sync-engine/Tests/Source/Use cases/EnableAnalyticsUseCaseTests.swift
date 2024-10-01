@@ -25,52 +25,33 @@ import XCTest
 
 final class EnableAnalyticsUseCaseTests: XCTestCase {
 
-    // MARK: - Properties
-
     private var sut: EnableAnalyticsUseCase!
-    private var mockAnalyticsManagerProvider: MockAnalyticsManagerProviding!
-    private var mockAnalyticsManager: MockAnalyticsManagerProtocol!
-    private var sessionConfiguration: AnalyticsSessionConfiguration!
-    private var userProfile: AnalyticsUser!
-    private var mockUserSession: MockEnableAnalyticsUseCaseAnalyticsSessionProviding!
-
-    // MARK: - setUp
+    private var currentUser: AnalyticsUser!
+    private var service: MockAnalyticsServiceProtocol!
 
     override func setUp() {
-        sessionConfiguration = .init(countlyKey: "testKey", host: .init(fileURLWithPath: "/testPath"))
-        userProfile = .init(analyticsIdentifier: "testIdentifier")
-        mockAnalyticsManager = MockAnalyticsManagerProtocol()
-        mockAnalyticsManager.stubbedEnableTrackingResult = MockAnalyticsSessionProtocol()
-        mockAnalyticsManagerProvider = MockAnalyticsManagerProviding()
-        mockUserSession = .init()
-
-        sut = .init(
-            analyticsManagerBuilder: { _, _ in self.mockAnalyticsManager },
-            sessionManager: mockAnalyticsManagerProvider,
-            analyticsSessionConfiguration: sessionConfiguration,
-            analyticsUserProfile: userProfile,
-            analyticsSessionProvider: mockUserSession
-        )
+        super.setUp()
+        currentUser = AnalyticsUser(analyticsIdentifier: UUID().transportString())
+        service = MockAnalyticsServiceProtocol()
+        sut = EnableAnalyticsUseCase(currentUser: currentUser, service: service)
     }
-
-    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
-        mockAnalyticsManagerProvider = nil
-        mockAnalyticsManager = nil
-        sessionConfiguration = nil
-        userProfile = nil
-        mockUserSession = nil
+        currentUser = nil
+        service = nil
+        super.tearDown()
     }
 
-    func testInvoke_CallsEnableTrackingOnAnalyticsManager() throws {
-        // WHEN
-        sut.invoke()
+    func testInvoke_enables_and_switches_user_via_service() throws {
+        // Mock
+        service.enableTracking_MockMethod = { }
 
-        // THEN
-        XCTAssertNotNil(mockAnalyticsManagerProvider.analyticsManager, "Analytics manager should not be nil after invoke")
-        XCTAssertTrue(mockAnalyticsManager.invokedEnableTracking, "enableTracking should be called on the analytics manager")
-        XCTAssertEqual(mockAnalyticsManager.invokedEnableTrackingCount, 1, "enableTracking should be called exactly once")
+        // When
+        try sut.invoke()
+
+        // Then
+        XCTAssertEqual(service.enableTracking_Invocations.count, 1)
+        XCTAssertEqual(service.switchUser_Invocations, [currentUser])
     }
 }
