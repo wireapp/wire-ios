@@ -84,7 +84,7 @@ final class MainCoordinatorTests: XCTestCase {
     @MainActor
     func testShowingGroupConversationsFromArchive() {
         // When
-        sut.showArchivedConversations()
+        sut.showArchive()
 
         // Then
         testShowingGroupConversations()
@@ -103,7 +103,7 @@ final class MainCoordinatorTests: XCTestCase {
     @MainActor
     func testShowingArchivedConversations() {
         // When
-        sut.showArchivedConversations()
+        sut.showArchive()
 
         // Then
         XCTAssertNil(splitViewController.conversationList)

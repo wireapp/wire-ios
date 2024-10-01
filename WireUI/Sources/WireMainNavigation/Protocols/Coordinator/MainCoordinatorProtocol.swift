@@ -22,43 +22,20 @@ public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype Settings: MainSettingsProtocol
     associatedtype SettingsContent: MainSettingsContentProtocol
 
-    /// Make the conversation list visible. Don't show any conversation content.
-    func showConversationList(
-        conversationFilter: ConversationList.ConversationFilter?
-    ) async
+    @MainActor
+    func showConversationList(conversationFilter: ConversationList.ConversationFilter?)
+    @MainActor
+    func showArchive()
+    @MainActor
+    func showSettings()
 
-    /// In the expanded split view layout make the conversation list visible and show the conversation with the provided id.
-    /// In collapsed layout show the conversation content.
-//    func showConversationList(
-//        conversationFilter: ConversationList.ConversationFilter?,
-//        conversationID: ConversationList.ConversationID?
-//    ) async
-
-    /// In the expanded split view layout make the conversation list visible and show the conversation with the provided id and scroll to the message with the provided id.
-    /// In collapsed layout show the conversation content and scroll to the message with the provided id.
-//    func showConversationList(
-//        conversationFilter: ConversationList.ConversationFilter?,
-//        conversationID: ConversationList.ConversationID?,
-//        messageID: ConversationList.MessageID?
-//    ) async
-
+    @MainActor
     func showConversation(conversationID: ConversationList.ConversationID) async
     @MainActor
     func hideConversation()
 
     @MainActor
-    func showArchive()
-
-    /// Present the app settings at the specified content.
-    ///
-    /// In expanded layout this method presents the main settings menu in the supplementary column.
-    /// If a non-nil `content` argument is provided, additionally the specified settings content is displayed
-    /// in th secondary column.
-    ///
-    /// In collapsed layout when `content` is nil, this method presents the main settings menu.
-    /// If `content` is non-nil, this method presents the main settings and navigates into the settings content.
-    @MainActor
-    func showSettings(content: SettingsContent.SettingsContent?)
+    func showSettingsContent(_ settingsContent: SettingsContent.SettingsContent)
     @MainActor
     func hideSettingsContent()
 

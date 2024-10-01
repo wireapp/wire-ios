@@ -37,7 +37,7 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
-    func showSettings(content: SettingsContent.SettingsContent?) {
+    func showSettings() {
         fatalError("Mock method not implemented")
     }
 
@@ -46,6 +46,10 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
     }
 
     func hideConversation() {
+        fatalError("Mock method not implemented")
+    }
+
+    func showSettingsContent(_ settingsContent: SettingsContent.SettingsContent) {
         fatalError("Mock method not implemented")
     }
 

@@ -22,7 +22,7 @@ import WireSettings
 
 final class MockSettingsCoordinator: SettingsCoordinatorProtocol {
 
-    func showSettings(content: SettingsTopLevelContent) {
+    func showSettingsContent(_ content: SettingsTopLevelContent) {
         fatalError("mock method not implemented")
     }
 }

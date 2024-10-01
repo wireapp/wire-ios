@@ -152,6 +152,43 @@ public final class MainCoordinator<
         }
     }
 
+    public func showArchive() {
+        // switch to the archive tab
+        tabBarController.selectedContent = .archive
+
+        // In collapsed state switching the tab was all we needed to do.
+        guard mainSplitViewState == .expanded else { return }
+
+        dismissConversationListIfNeeded()
+        dismissConnectIfNeeded()
+        dismissSettingsIfNeeded()
+        dismissSelfProfileIfNeeded()
+
+        // move the archive from the tab bar controller to the split view controller
+        if let archive = tabBarController.archive {
+            tabBarController.archive = nil
+            splitViewController.archive = archive
+        }
+    }
+
+    public func showSettings() {
+        tabBarController.selectedContent = .settings
+
+        // In collapsed state switching the tab was all we needed to do.
+        guard mainSplitViewState == .expanded else { return }
+
+        dismissConversationListIfNeeded()
+        dismissArchiveIfNeeded()
+        dismissConnectIfNeeded()
+        dismissSelfProfileIfNeeded()
+
+        // move the settings from the tab bar controller to the split view controller
+        if let settings = tabBarController.settings {
+            tabBarController.settings = nil
+            splitViewController.settings = settings
+        }
+    }
+
     public func showConversation(conversationID: ConversationList.ConversationID) async {
         // TODO: do we have to change the filter?
 
@@ -173,51 +210,13 @@ public final class MainCoordinator<
         splitViewController.conversation = nil
     }
 
-    public func showArchive() {
-        // switch to the archive tab
-        tabBarController.selectedContent = .archive
-
-        // In collapsed state switching the tab was all we needed to do.
-        guard mainSplitViewState == .expanded else { return }
-
-        dismissConversationListIfNeeded()
-        dismissConnectIfNeeded()
-        dismissSettingsIfNeeded()
-        dismissSelfProfileIfNeeded()
-
-        // move the archive from the tab bar controller to the split view controller
-        if let archive = tabBarController.archive {
-            tabBarController.archive = nil
-            splitViewController.archive = archive
-        }
-    }
-
-    public func showSettings(content: SettingsContent.SettingsContent?) {
-        tabBarController.selectedContent = .settings
-
-        // In collapsed state switching the tab was all we needed to do.
-        guard mainSplitViewState == .expanded else { return }
-
-        dismissConversationListIfNeeded()
-        dismissArchiveIfNeeded()
-        dismissConnectIfNeeded()
-        dismissSelfProfileIfNeeded()
-
-        // move the settings from the tab bar controller to the split view controller
-        if let settings = tabBarController.settings {
-            tabBarController.settings = nil
-            splitViewController.settings = settings
-        }
-
-        // show the content in the secondary column or push it on the settings navigation controller
-        if let content {
-            let contentViewController = settingsContentBuilder.build(content: content)
-            switch mainSplitViewState {
-            case .collapsed:
-                tabBarController.setSettingsContent(contentViewController, animated: true)
-            case .expanded:
-                splitViewController.settingsContent = contentViewController
-            }
+    public func showSettingsContent(_ content: SettingsContent.SettingsContent) {
+        let contentViewController = settingsContentBuilder.build(content: content)
+        switch mainSplitViewState {
+        case .collapsed:
+            tabBarController.setSettingsContent(contentViewController, animated: true)
+        case .expanded:
+            splitViewController.settingsContent = contentViewController
         }
     }
 

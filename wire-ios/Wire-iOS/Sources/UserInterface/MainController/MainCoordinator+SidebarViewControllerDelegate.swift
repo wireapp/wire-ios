@@ -63,7 +63,7 @@ extension MainCoordinator: SidebarViewControllerDelegate {
         case .connect:
             showConnect()
         case .settings:
-            showSettings(content: .none)
+            showSettings()
         }
     }
 

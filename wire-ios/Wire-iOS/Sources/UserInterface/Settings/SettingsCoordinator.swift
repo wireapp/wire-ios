@@ -22,15 +22,15 @@ import WireMainNavigation
 @MainActor
 final class SettingsCoordinator: SettingsCoordinatorProtocol {
 
-    let showSettings: (SettingsTopLevelContent) -> Void
+    let _showSettingsContent: (SettingsTopLevelContent) -> Void
 
     init(mainCoordinator: some MainCoordinatorProtocol) {
-        showSettings = { content in
-            mainCoordinator.showSettings(content: .init(content.mapToMainSettingsContent()))
+        _showSettingsContent = { content in
+            mainCoordinator.showSettingsContent(.init(content.mapToMainSettingsContent()))
         }
     }
 
-    func showSettings(content: SettingsTopLevelContent) {
-        showSettings(content)
+    func showSettingsContent(_ content: SettingsTopLevelContent) {
+        _showSettingsContent(content)
     }
 }
