@@ -64,17 +64,16 @@ final class TrackingManager: NSObject, TrackingInterface {
             self.updateAnalyticsSharing(disabled: true)
             resultHandler(.success(()))
         }
-
     }
 
     private func updateAnalyticsSharing(disabled: Bool) {
         do {
             if disabled {
                 let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()
-                disableUseCase.invoke()
+                try disableUseCase.invoke()
             } else {
                 let enableUseCase = try sessionManager.makeEnableAnalyticsUseCase()
-                enableUseCase.invoke()
+                try enableUseCase.invoke()
             }
         } catch {
             WireLogger.analytics.error("Failed to toggle analytics sharing: \(error)")

@@ -59,10 +59,8 @@ public final class AnalyticsService {
     // MARK: - Enable / disable
 
     /// Start sending analytics data.
-    ///
-    /// - Parameter user: The current analytics user.
 
-    public func enableTracking(for user: AnalyticsUserProfile) throws {
+    public func enableTracking() throws {
         guard let config else {
             throw AnalyticsServiceError.serviceIsNotConfigured
         }
@@ -72,12 +70,11 @@ public final class AnalyticsService {
         let countly = countlyProvider()
         self.countly = countly
 
+
         countly.start(
             appKey: config.secretKey,
             host: config.serverHost
         )
-
-        switchUser(user)
     }
 
     /// Stop sending analytics data.
@@ -91,7 +88,7 @@ public final class AnalyticsService {
 
         countly.endSession()
         clearCurrentUser()
-        type(of: countly).resetInstance()
+        countly.resetInstance()
         self.countly = nil
     }
 

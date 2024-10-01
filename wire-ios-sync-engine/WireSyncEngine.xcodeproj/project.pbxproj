@@ -634,6 +634,7 @@
 		EE4E6A262B714490007C476D /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4E6A252B714490007C476D /* WireRequestStrategySupport.framework */; };
 		EE51FBEE2AE1305B002B503B /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE51FBED2AE1305B002B503B /* UserSession.swift */; };
 		EE5AAF3A2874E8C70018FA01 /* BackendEnvironmentProvider+Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5AAF392874E8C70018FA01 /* BackendEnvironmentProvider+Reachability.swift */; };
+		EE5B85202CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5B851F2CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift */; };
 		EE5BF6351F8F907C00B49D06 /* ZMLocalNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5BF6341F8F907C00B49D06 /* ZMLocalNotificationTests.swift */; };
 		EE5D9B60290A7CEE007D78D6 /* VoIPPushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5D9B5F290A7CEE007D78D6 /* VoIPPushManager.swift */; };
 		EE5D9B62290A8557007D78D6 /* SessionManager+VoIPPushManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5D9B61290A8557007D78D6 /* SessionManager+VoIPPushManagerDelegate.swift */; };
@@ -1501,6 +1502,7 @@
 		EE4E6A252B714490007C476D /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE51FBED2AE1305B002B503B /* UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
 		EE5AAF392874E8C70018FA01 /* BackendEnvironmentProvider+Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackendEnvironmentProvider+Reachability.swift"; sourceTree = "<group>"; };
+		EE5B851F2CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+AnalyticsUser.swift"; sourceTree = "<group>"; };
 		EE5BF6341F8F907C00B49D06 /* ZMLocalNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZMLocalNotificationTests.swift; path = Tests/Source/Notifications/PushNotifications/ZMLocalNotificationTests.swift; sourceTree = SOURCE_ROOT; };
 		EE5D9B5F290A7CEE007D78D6 /* VoIPPushManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushManager.swift; sourceTree = "<group>"; };
 		EE5D9B61290A8557007D78D6 /* SessionManager+VoIPPushManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+VoIPPushManagerDelegate.swift"; sourceTree = "<group>"; };
@@ -2906,6 +2908,7 @@
 				E6BD767E2BDBAAE300FB1F8B /* CoreDataStack+Caches.swift */,
 				EE419B57256FEA3D004618E2 /* ZMUserSession.Configuration.swift */,
 				166B2B5D23E86522003E8581 /* ZMUserSession.swift */,
+				EE5B851F2CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift */,
 				EE13BD8A2BC948FC006561F8 /* ZMUserSession+APIAdapter.swift */,
 				63CD59562964346400385037 /* ZMUserSession+AccessToken.swift */,
 				164EAF9B1F4455FA00B628C4 /* ZMUserSession+Actions.swift */,
@@ -4045,6 +4048,7 @@
 				1659114F1DEF1F6E007FA847 /* LocalNotificationDispatcher+Calling.swift in Sources */,
 				E623B63A2BD68DAE00F91B37 /* UserSessionDependencies.swift in Sources */,
 				16DABFAE1DCF98D3001973E3 /* CallingRequestStrategy.swift in Sources */,
+				EE5B85202CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift in Sources */,
 				54DE9BEB1DE74FFB00EFFB9C /* RandomHandleGenerator.swift in Sources */,
 				63CDCA772BCD8AB500DA0F0A /* CheckOneOnOneConversationIsReadyUseCase.swift in Sources */,
 				F1C51FE91FB4A9C7009C2269 /* RegistrationStrategy.swift in Sources */,

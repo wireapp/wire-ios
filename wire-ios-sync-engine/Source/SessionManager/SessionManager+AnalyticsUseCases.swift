@@ -20,51 +20,15 @@ import WireAnalytics
 
 extension SessionManager {
 
-    enum AnalyticsSessionError: Error {
-
-        case analyticsNotAvailable
-        case analyticsConfigurationNotAvailable
-        case missingAnalyticsUserProfile
-        case missingActiveUserSession
-
-    }
-
     public func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
-
-        guard let userSession = self.activeUserSession else {
-            throw AnalyticsSessionError.missingActiveUserSession
-        }
-
-        return DisableAnalyticsUseCase(
-            sessionManager: self,
-            analyticsSessionProvider: userSession
-        )
+        DisableAnalyticsUseCase(service: analyticsService)
     }
 
     public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
-
-        guard let analyticsSessionConfiguration else {
-            throw AnalyticsSessionError.analyticsConfigurationNotAvailable
-        }
-
-        guard let userSession = self.activeUserSession else {
-            throw AnalyticsSessionError.missingActiveUserSession
-        }
-
-        guard let analyticsUserProfile = getUserAnalyticsProfile(for: userSession) else {
-            throw AnalyticsSessionError.missingAnalyticsUserProfile
-        }
-
-        return EnableAnalyticsUseCase(
-            analyticsManagerBuilder: { AnalyticsManager(appKey: $0, host: $1) },
-            sessionManager: self,
-            analyticsSessionConfiguration: analyticsSessionConfiguration,
-            analyticsUserProfile: analyticsUserProfile,
-            analyticsSessionProvider: userSession
+        EnableAnalyticsUseCase(
+            currentUser: activeUserSession?.analyticsUser,
+            service: analyticsService
         )
     }
 
 }
-
-extension ZMUserSession: EnableAnalyticsUseCaseAnalyticsSessionProviding {}
-extension ZMUserSession: DisableAnalyticsUseCaseAnalyticsSessionProviding {}

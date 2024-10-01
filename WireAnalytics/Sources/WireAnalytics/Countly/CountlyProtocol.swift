@@ -22,7 +22,7 @@ import Foundation
 /// Abstraction around `Countly`.
 protocol CountlyProtocol {
 
-    static func resetInstance()
+    func resetInstance()
 
     func start(
         appKey: String,

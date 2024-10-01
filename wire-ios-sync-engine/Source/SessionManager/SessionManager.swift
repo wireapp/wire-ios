@@ -207,6 +207,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         willSet {
             guard activeUserSession != newValue else { return }
             activeUserSession?.appLockController.beginTimer()
+            activeUserSession?.analyticsService = nil
         }
     }
 
@@ -311,6 +312,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     private let minTLSVersion: String?
 
     public var analyticsManager: (any AnalyticsManagerProtocol)?
+    let analyticsService: AnalyticsService
 
     public override init() {
         fatal("init() not implemented")
@@ -480,7 +482,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             preconditionFailure("Unable to get shared container URL")
         }
 
-        self.analyticsSessionConfiguration = analyticsSessionConfiguration
 
         self.sharedContainerURL = sharedContainerURL
         self.accountManager = AccountManager(sharedDirectory: sharedContainerURL)
@@ -520,6 +521,18 @@ public final class SessionManager: NSObject, SessionManagerType {
         } else {
             self.notificationsTracker = nil
         }
+
+        // TODO: delete
+        self.analyticsSessionConfiguration = analyticsSessionConfiguration
+        var analyticsConfig: AnalyticsService.Config?
+        if let analyticsSessionConfiguration {
+            analyticsConfig = (
+                secretKey: analyticsSessionConfiguration.countlyKey,
+                serverHost: analyticsSessionConfiguration.host
+            )
+        }
+
+        analyticsService = AnalyticsService(config: analyticsConfig)
 
         super.init()
 
@@ -892,7 +905,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
-                self.switchAnalyticsUser(to: session)
+                self.configureAnalytics(for: session)
 
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()
@@ -901,41 +914,14 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func switchAnalyticsUser(to userSession: ZMUserSession) {
-        guard
-            let analyticsManager,
-            let userProfile = getUserAnalyticsProfile(for: userSession)
-        else {
-            return
-        }
-
-        let analyticsSession = analyticsManager.switchUser(userProfile)
-        userSession.analyticsSession = analyticsSession
+    private func configureAnalytics(for userSession: ZMUserSession) {
+        analyticsService.switchUser(userSession.analyticsUser)
+        userSession.analyticsService = analyticsService
     }
 
     func getUserAnalyticsProfile(for userSession: ZMUserSession) -> AnalyticsUserProfile? {
-        let selfUser = ZMUser.selfUser(inUserSession: userSession)
-
-        // Set the analytics identifier if it's not present
-        if selfUser.analyticsIdentifier == nil {
-            let idProvider = AnalyticsIdentifierProvider(selfUser: selfUser)
-            idProvider.setIdentifierIfNeeded()
-        }
-
-        guard let analyticsID = selfUser.analyticsIdentifier else {
-            return nil
-        }
-
-        var teamInfo: TeamInfo?
-        if let team = selfUser.team, let teamID = team.remoteIdentifier {
-            teamInfo = TeamInfo(
-                id: teamID.uuidString,
-                role: selfUser.teamRole.analyticsValue,
-                size: UInt(team.members.count)
-            )
-        }
-
-        return AnalyticsUserProfile(analyticsIdentifier: analyticsID, teamInfo: teamInfo)
+        // TODO: delete
+        return nil
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {
@@ -1356,9 +1342,10 @@ extension SessionManager: UserObserving {
                 return
             }
 
-            if let userProfile = getUserAnalyticsProfile(for: userSession) {
-                analyticsManager?.updateUserAnalyticsIdentifier(userProfile, mergeData: true)
-            }
+            // TODO: delete
+//            if let userProfile = getUserAnalyticsProfile(for: userSession) {
+//                analyticsManager?.updateUserAnalyticsIdentifier(userProfile, mergeData: true)
+//            }
         }
     }
 }

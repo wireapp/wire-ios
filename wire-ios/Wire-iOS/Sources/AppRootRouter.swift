@@ -276,12 +276,13 @@ extension AppRootRouter {
                     return
                 }
 
-                if !trackingManager.disableAnalyticsSharing, let analyticsConfig = sessionManager.analyticsSessionConfiguration {
+                if !trackingManager.disableAnalyticsSharing {
                     do {
+                        WireLogger.analytics.debug("setting up analytics service")
                         let useCase = try sessionManager.makeEnableAnalyticsUseCase()
-                        useCase.invoke()
+                        try useCase.invoke()
                     } catch {
-                        WireLogger.analytics.error("Failed to create the use case")
+                        WireLogger.analytics.error("failed to set up analytics service: \(error)")
                     }
                 }
             }
