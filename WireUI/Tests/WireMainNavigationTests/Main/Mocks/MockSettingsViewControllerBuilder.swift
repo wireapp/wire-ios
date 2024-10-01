@@ -20,6 +20,7 @@ import UIKit
 import WireMainNavigation
 
 struct MockSettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsContentBuilderProtocol {
+    
     typealias SettingsContent = UIViewController
     typealias TopLevelMenuItem = MockSettingsTopLevelMenuItem
 
@@ -27,5 +28,8 @@ struct MockSettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSetti
     func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
 
     @MainActor
-    func build(topLevelMenuItem _: MockSettingsTopLevelMenuItem?, mainCoordinator _: some MainCoordinatorProtocol) -> SettingsContent { .init() }
+    func build(
+        topLevelMenuItem _: MockSettingsTopLevelMenuItem,
+        mainCoordinator _: some MainCoordinatorProtocol
+    ) -> SettingsContent { .init() }
 }
