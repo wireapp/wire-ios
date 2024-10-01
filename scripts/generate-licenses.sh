@@ -43,8 +43,11 @@ rm -rf "$TMP_DIR"
 # Resolve Dependencies
 echo ""
 echo "ℹ️  Resolve Dependencies"
-#( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
+echo ""
+echo "ℹ️  Licenses list"
+echo "LicensePlist binary path: $LICENSEPLIST"
 
 # Copy Dependencies
 echo ""
