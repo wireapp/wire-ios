@@ -919,11 +919,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         userSession.analyticsService = analyticsService
     }
 
-    func getUserAnalyticsProfile(for userSession: ZMUserSession) -> AnalyticsUserProfile? {
-        // TODO: delete
-        return nil
-    }
-
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {
         guard session.lock == .none else { return }
         processPendingURLActionRequiresAuthentication()
@@ -1338,14 +1333,14 @@ extension SessionManager: UserObserving {
         }
 
         if changeInfo.analyticsIdentifierChanged {
-            guard changeInfo.user.isSelfUser, let userSession = activeUserSession else {
+            guard 
+                changeInfo.user.isSelfUser,
+                let userSession = activeUserSession
+            else {
                 return
             }
 
-            // TODO: delete
-//            if let userProfile = getUserAnalyticsProfile(for: userSession) {
-//                analyticsManager?.updateUserAnalyticsIdentifier(userProfile, mergeData: true)
-//            }
+            analyticsService.updateCurrentUser(userSession.analyticsUser)
         }
     }
 }
