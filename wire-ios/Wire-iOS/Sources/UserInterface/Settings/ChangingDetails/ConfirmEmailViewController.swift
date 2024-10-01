@@ -18,8 +18,8 @@
 
 import UIKit
 import WireDataModel
-import WireSyncEngine
 import WireSettings
+import WireSyncEngine
 
 // MARK: - ConfirmEmailDelegate
 

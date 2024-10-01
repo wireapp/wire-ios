@@ -18,8 +18,8 @@
 
 import UIKit
 import WireDesign
-import WireSyncEngine
 import WireSettings
+import WireSyncEngine
 
 class SettingsBaseTableViewController: UIViewController {
 

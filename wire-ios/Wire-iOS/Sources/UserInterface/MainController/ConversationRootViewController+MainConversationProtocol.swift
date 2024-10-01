@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMainNavigation
 import Foundation
+import WireMainNavigation
 
 extension ConversationRootViewController: MainConversationProtocol {
     typealias ConversationID = UUID

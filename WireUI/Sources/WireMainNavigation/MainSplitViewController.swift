@@ -19,7 +19,7 @@
 import SwiftUI
 
 public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
-Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
+    Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
 
     public typealias ConversationList = TabContainer.ConversationList
     public typealias Archive = TabContainer.Archive

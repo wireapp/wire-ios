@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireMainNavigation
 import WireDataModel
+import WireMainNavigation
 import WireSyncEngine
 
 struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {

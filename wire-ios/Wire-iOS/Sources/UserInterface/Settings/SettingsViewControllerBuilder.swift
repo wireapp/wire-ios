@@ -17,8 +17,8 @@
 //
 
 import WireMainNavigation
-import WireSyncEngine
 import WireSettings
+import WireSyncEngine
 
 @MainActor
 struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsContentBuilderProtocol {

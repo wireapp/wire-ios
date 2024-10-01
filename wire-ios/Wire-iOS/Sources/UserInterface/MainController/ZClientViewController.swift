@@ -22,8 +22,8 @@ import UIKit
 import WireAccountImage
 import WireCommonComponents
 import WireDesign
-import WireMainNavigation
 import WireFoundation
+import WireMainNavigation
 import WireSidebar
 import WireSyncEngine
 

@@ -19,8 +19,8 @@
 import LocalAuthentication
 import UIKit
 import WireCommonComponents
-import WireSyncEngine
 import WireSettings
+import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
 

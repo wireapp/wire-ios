@@ -24,11 +24,11 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController, MainCont
     associatedtype Sidebar: MainSidebarProtocol
     associatedtype Connect: UIViewController
     associatedtype TabContainer: MainTabBarControllerProtocol where
-    TabContainer.ConversationList == ConversationList,
-    TabContainer.Conversation == Conversation,
-    TabContainer.Archive == Archive,
-    TabContainer.Settings == Settings,
-    TabContainer.SettingsContent == SettingsContent
+        TabContainer.ConversationList == ConversationList,
+        TabContainer.Conversation == Conversation,
+        TabContainer.Archive == Archive,
+        TabContainer.Settings == Settings,
+        TabContainer.SettingsContent == SettingsContent
 
     /// Contains the reference to the view controller shown in the primary column.
     var sidebar: Sidebar! { get }

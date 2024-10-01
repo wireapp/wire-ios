@@ -22,7 +22,7 @@ import WireMainNavigation
 extension ConversationListViewController: MainConversationListProtocol {
     typealias ConversationID = UUID
     typealias MessageID = String
-    
+
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
         set { listContentController.listViewModel.selectedFilter = newValue }

@@ -187,6 +187,8 @@ public final class MainCoordinator<
             tabBarController.settings = nil
             splitViewController.settings = settings
         }
+
+        showSettingsContent(.init(.account))
     }
 
     public func showConversation(conversationID: ConversationList.ConversationID) async {

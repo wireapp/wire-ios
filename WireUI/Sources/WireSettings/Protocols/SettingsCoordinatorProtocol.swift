@@ -28,8 +28,8 @@ public final class AnySettingsCoordinator: SettingsCoordinatorProtocol {
 
     private let _showSettingsContent: (_ content: SettingsTopLevelContent) -> Void
 
-    public init<SettingsCoordinator: SettingsCoordinatorProtocol>(
-        settingsCoordinator: SettingsCoordinator
+    public init(
+        settingsCoordinator: some SettingsCoordinatorProtocol
     ) {
         _showSettingsContent = settingsCoordinator.showSettingsContent(_:)
     }

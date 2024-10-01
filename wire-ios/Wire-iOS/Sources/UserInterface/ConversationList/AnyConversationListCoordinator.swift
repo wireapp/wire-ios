@@ -35,7 +35,7 @@ final class AnyConversationListCoordinator<ConversationID: Sendable>: Conversati
     }
 
     // TODO: remove
-    func showConversation<MessageID>(conversationID: ConversationID, messageID: MessageID?) async where MessageID : Sendable {
+    func showConversation<MessageID>(conversationID: ConversationID, messageID: MessageID?) async where MessageID: Sendable {
         fatalError()
     }
 }

@@ -19,8 +19,8 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
-import WireSyncEngine
 import WireSettings
+import WireSyncEngine
 
 fileprivate extension UIView {
 

@@ -23,7 +23,7 @@ enum MockConversationFilter: MainConversationFilterRepresentable {
     init(_ mainConversationFilter: MainConversationFilter) {
         fatalError("not implemented")
     }
-    
+
     func mapToMainConversationFilter() -> MainConversationFilter {
         fatalError("not implemented")
     }

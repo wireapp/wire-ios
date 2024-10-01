@@ -17,8 +17,8 @@
 //
 
 import WireTestingPackage
-import XCTest
 import WireTransport
+import XCTest
 
 @testable import Wire
 

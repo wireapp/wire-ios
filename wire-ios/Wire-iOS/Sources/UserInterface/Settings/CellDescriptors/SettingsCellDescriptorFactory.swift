@@ -19,8 +19,8 @@
 import avs
 import Foundation
 import SafariServices
-import WireSyncEngine
 import WireSettings
+import WireSyncEngine
 
 struct SettingsCellDescriptorFactory {
 

@@ -186,7 +186,7 @@ extension ConversationViewController {
         // TODO: fix
         // if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
             items.append(createBackButton(hasUnread: hasUnread))
-        //}
+        // }
 
         if shouldShowCollectionsButton {
             items.append(searchBarButtonItem)

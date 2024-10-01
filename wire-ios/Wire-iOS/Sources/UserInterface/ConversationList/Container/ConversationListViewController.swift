@@ -19,12 +19,12 @@
 import UIKit
 import WireAccountImage
 import WireCommonComponents
+import WireConversationListNavigation
 import WireDataModel
 import WireDesign
 import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
-import WireConversationListNavigation
 
 final class ConversationListViewController: UIViewController {
 

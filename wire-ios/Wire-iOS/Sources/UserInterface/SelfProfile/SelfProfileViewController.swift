@@ -19,10 +19,10 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireReusableUIComponents
-import WireSyncEngine
-import WireSettings
 import WireMainNavigation
+import WireReusableUIComponents
+import WireSettings
+import WireSyncEngine
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
