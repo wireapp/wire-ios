@@ -150,6 +150,8 @@ public final class MainCoordinator<
             tabBarController.conversationList = nil
             splitViewController.conversationList = conversationList
         }
+
+        // TODO: display conversation (must be in the tabbarcontroller)
     }
 
     public func showArchive() {
@@ -188,7 +190,7 @@ public final class MainCoordinator<
             splitViewController.settings = settings
         }
 
-        showSettingsContent(.init(.account))
+        showSettingsContent(.init(.account)) // TODO: the selection must be visible
     }
 
     public func showConversation(conversationID: ConversationList.ConversationID) async {
