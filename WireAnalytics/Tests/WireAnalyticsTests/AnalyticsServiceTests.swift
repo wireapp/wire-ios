@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+import XCTest
 
-final class MockAnalyticsManagerProviding: AnalyticsManagerProviding {
+@testable import WireAnalytics
+@testable import WireAnalyticsSupport
 
-    // MARK: - Life cycle
+class AnalyticsServiceTests: XCTestCase {
 
-    init() {}
-
-    // MARK: - analyticsManager
-
-    var analyticsManager: (any AnalyticsManagerProtocol)?
+    func testSomething() {
+        
+    }
 
 }

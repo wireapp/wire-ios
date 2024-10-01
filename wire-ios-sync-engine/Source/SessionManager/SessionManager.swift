@@ -310,7 +310,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
-    public var analyticsManager: (any AnalyticsManagerProtocol)?
     let analyticsService: AnalyticsService
 
     public override init() {

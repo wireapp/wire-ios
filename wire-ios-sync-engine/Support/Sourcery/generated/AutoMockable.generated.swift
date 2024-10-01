@@ -159,16 +159,21 @@ public class MockDisableAnalyticsUseCaseProtocol: DisableAnalyticsUseCaseProtoco
     // MARK: - invoke
 
     public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() -> Void)?
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() throws -> Void)?
 
-    public func invoke() {
+    public func invoke() throws {
         invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
 
         guard let mock = invoke_MockMethod else {
             fatalError("no mock for `invoke`")
         }
 
-        mock()
+        try mock()
     }
 
 }
@@ -215,16 +220,21 @@ public class MockEnableAnalyticsUseCaseProtocol: EnableAnalyticsUseCaseProtocol 
     // MARK: - invoke
 
     public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() -> Void)?
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() throws -> Void)?
 
-    public func invoke() {
+    public func invoke() throws {
         invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
 
         guard let mock = invoke_MockMethod else {
             fatalError("no mock for `invoke`")
         }
 
-        mock()
+        try mock()
     }
 
 }
