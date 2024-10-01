@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 extension XCTestCase {
     func doubleTap(fullscreenImageViewController: FullscreenImageViewController) {
@@ -27,6 +28,7 @@ extension XCTestCase {
         fullscreenImageViewController.view.layoutIfNeeded()
     }
 
+    @MainActor
     func createFullscreenImageViewControllerForTest(imageFileName: String, userSession: UserSessionMock) -> FullscreenImageViewController {
         let image = self.image(inTestBundleNamed: imageFileName)
 

@@ -47,8 +47,10 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+
         snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()

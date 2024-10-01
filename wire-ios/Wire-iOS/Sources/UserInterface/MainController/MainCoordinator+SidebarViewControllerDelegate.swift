@@ -59,7 +59,7 @@ extension MainCoordinator: SidebarViewControllerDelegate {
         case .oneOnOne:
             showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.oneOnOne)) // TODO: try to write .oneOnOne
         case .archive:
-            showArchivedConversations()
+            showArchive()
         case .connect:
             showConnect()
         case .settings:

@@ -22,41 +22,42 @@ import WireSettings
 
 @testable import Wire
 
+@MainActor
 final class MockMainCoordinator: MainCoordinatorProtocol {
     typealias ConversationList = ConversationListViewController
     typealias ConversationBuilder = ConversationViewControllerBuilder
     typealias Settings = SettingsMainViewController
     typealias SettingsContent = SettingsContentViewController
 
-    func showConversationList(conversationFilter: ConversationFilter?) async {
+    func showConversationList(conversationFilter: ConversationFilter?) {
         fatalError("Mock method not implemented")
     }
 
-    func showArchivedConversations() async {
+    func showArchive() {
         fatalError("Mock method not implemented")
     }
 
-    func showConversation(conversationID: UUID) async {
+    func showSettings(content: SettingsContent.SettingsContent?) {
         fatalError("Mock method not implemented")
     }
 
-    func hideConversation() async {
+    func showConversation(conversationID: UUID) {
         fatalError("Mock method not implemented")
     }
 
-    func showSelfProfile() async {
+    func hideConversation() {
         fatalError("Mock method not implemented")
     }
 
-    func showSettings(content: SettingsTopLevelContent?) {
+    func hideSettingsContent() {
         fatalError("Mock method not implemented")
     }
 
-    func showSettings(content: SettingsContent.SettingsContent?) async {
+    func showSelfProfile() {
         fatalError("Mock method not implemented")
     }
 
-    func showConnect() async {
+    func showConnect() {
         fatalError("Mock method not implemented")
     }
 }
@@ -64,5 +65,6 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
 // MARK: - MainCoordinatorProtocol + MockMainCoordinator
 
 extension MainCoordinatorProtocol where Self == MockMainCoordinator {
+    @MainActor
     static var mock: Self { .init() }
 }

@@ -46,7 +46,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
     @MainActor
     func hideConversation()
 
-    func showArchivedConversations() async // TODO: rename showArchive
+    @MainActor
+    func showArchive()
 
     /// Present the app settings at the specified content.
     ///

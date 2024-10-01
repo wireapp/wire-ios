@@ -173,7 +173,7 @@ public final class MainCoordinator<
         splitViewController.conversation = nil
     }
 
-    public func showArchivedConversations() {
+    public func showArchive() {
         // switch to the archive tab
         tabBarController.selectedContent = .archive
 
