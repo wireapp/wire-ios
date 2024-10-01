@@ -48,7 +48,7 @@ echo "ℹ️  Resolve Dependencies"
 echo ""
 echo "ℹ️  Licenses list"
 echo "LicensePlist binary path: $LICENSEPLIST"
-ls -l "$PACKAGES_DIR"
+ls -l "$LICENSEPLIST"
 
 # Copy Dependencies
 echo ""
