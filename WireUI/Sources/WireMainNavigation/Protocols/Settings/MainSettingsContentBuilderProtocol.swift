@@ -24,7 +24,7 @@ public protocol MainSettingsContentBuilderProtocol {
 
     @MainActor
     func build(
-        topLevelMenuItem: TopLevelMenuItem?,
+        topLevelMenuItem: TopLevelMenuItem,
         mainCoordinator: some MainCoordinatorProtocol // TODO: needed?
     ) -> SettingsContent
 }

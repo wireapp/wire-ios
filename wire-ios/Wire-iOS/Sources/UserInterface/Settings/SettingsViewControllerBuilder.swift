@@ -20,6 +20,7 @@ import WireMainNavigation
 import WireSyncEngine
 import WireSettings
 
+@MainActor
 struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsContentBuilderProtocol {
 
     // TODO: can selfUser be taken from the userSession?
@@ -41,17 +42,26 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
         )
     }
 
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsTableViewController {
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
+        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let group = factory.settingsGroup(
+            isTeamMember: userSession.selfUser.isTeamMember,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: false
+        )
+        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+    }
+
     func build(
-        content: SettingsTopLevelMenuItem?,
+        topLevelMenuItem: SettingsTopLevelMenuItem,
         mainCoordinator: some MainCoordinatorProtocol
     ) -> UIViewController {
-        switch content {
-        case .none:
-           build(mainCoordinator: mainCoordinator)
+        switch topLevelMenuItem {
         case .account:
             fatalError("TODO")
         case .devices:
-            buildDevicesSettings()
+            ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
         case .options:
             fatalError("TODO")
         case .advanced:
@@ -63,21 +73,5 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
         case .developerOptions:
             fatalError("TODO")
         }
-    }
-
-    @MainActor
-    private func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsMainViewController {
-        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
-        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-        let group = factory.settingsGroup(
-            isTeamMember: userSession.selfUser.isTeamMember,
-            userSession: userSession,
-            useTypeIntrinsicSizeTableView: false
-        )
-        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-    }
-
-    private func buildDevicesSettings() -> UIViewController {
-        ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
     }
 }

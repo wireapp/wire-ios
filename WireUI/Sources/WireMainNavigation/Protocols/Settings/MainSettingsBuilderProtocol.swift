@@ -19,6 +19,8 @@
 import UIKit
 
 public protocol MainSettingsBuilderProtocol {
+    associatedtype Settings: UIViewController
+
     @MainActor
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> Settings
 }

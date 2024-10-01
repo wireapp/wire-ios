@@ -616,7 +616,3 @@ extension ClientListViewController: UserObserving {
     }
 
 }
-
-extension ClientListViewController: MainSettingsContentProtocol {
-    typealias SettingsContent = SettingsTopLevelContent
-}

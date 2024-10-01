@@ -33,11 +33,7 @@ final class ZClientViewController: UIViewController {
 
     typealias MainTabBarController = WireMainNavigation.MainTabBarController<
         ConversationListViewController,
-        ConversationRootViewController,
-        UIViewController,
-        UIViewController,
-        SettingsMainViewController,
-        SettingsContentViewController
+        ConversationRootViewController
     >
     typealias MainSplitViewController = WireMainNavigation.MainSplitViewController<
         SidebarViewController,

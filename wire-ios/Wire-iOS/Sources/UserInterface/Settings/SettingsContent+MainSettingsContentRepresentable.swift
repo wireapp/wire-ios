@@ -19,10 +19,10 @@
 import WireSettings
 import WireMainNavigation
 
-extension SettingsTopLevelContent: MainSettingsContentRepresentable {
+extension SettingsTopLevelContent: MainSettingsTopLevelMenuItemRepresentable {
 
-    public init(_ mainSettingsContent: MainSettingsContent) {
-        switch mainSettingsContent {
+    public init(_ mainSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItem) {
+        switch mainSettingsTopLevelMenuItem {
         case .account:
             self = .account
         case .devices:
@@ -40,7 +40,7 @@ extension SettingsTopLevelContent: MainSettingsContentRepresentable {
         }
     }
 
-    public func mapToMainSettingsContent() -> MainSettingsContent {
+    public func mapToMainSettingsContent() -> MainSettingsTopLevelMenuItem {
         switch self {
         case .account:
                 .account
