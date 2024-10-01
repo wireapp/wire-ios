@@ -171,7 +171,7 @@ jobs:
       # Resolve the dependencies if no cash
       - name: Bootstrap Swift Package Dependencies if no cache
         #if: steps.cache-swift-package.outputs.cache-hit != 'true'
-      - run: xcrun --sdk macosx swift package --package-path scripts resolve
+      - run: xcrun swift package --package-path scripts resolve
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
