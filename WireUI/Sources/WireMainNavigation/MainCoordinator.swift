@@ -45,7 +45,7 @@ public final class MainCoordinator<
     ConversationBuilder.Conversation == SplitViewController.Conversation,
     ConversationBuilder.Conversation.ConversationID == SplitViewController.ConversationList.ConversationID,
     ConnectBuilder.ViewController == SplitViewController.Connect,
-    SettingsContentBuilder.SettingsContentViewController == SplitViewController.SettingsContent
+    SettingsContentBuilder.SettingsContent == SplitViewController.SettingsContent.SettingsContent
 {
     // swiftlint:enable opening_brace
 
@@ -211,7 +211,7 @@ public final class MainCoordinator<
     }
 
     public func showSettingsContent(_ content: SettingsContent.SettingsContent) {
-        let contentViewController = settingsContentBuilder.build(content: content)
+        let contentViewController = settingsContentBuilder.build(content: content, mainCoordinator: self)
         switch mainSplitViewState {
         case .collapsed:
             tabBarController.setSettingsContent(contentViewController, animated: true)
@@ -221,7 +221,8 @@ public final class MainCoordinator<
     }
 
     public func hideSettingsContent() {
-        fatalError("TODO")
+        tabBarController.setSettingsContent(nil, animated: true)
+        splitViewController.settingsContent = nil
     }
 
     public func showSelfProfile() {

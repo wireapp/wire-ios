@@ -54,12 +54,15 @@ struct SettingsViewControllerBuilder: MainCoordinatorInjectingViewControllerBuil
     }
 
     @MainActor
-    func build(content: SettingsTopLevelContent) -> SettingsContentViewController {
+    func build(
+        content: SettingsTopLevelContent,
+        mainCoordinator _: some MainCoordinatorProtocol // TODO: not needed?
+    ) -> any MainSettingsContentProtocol {
         switch content {
         case .account:
             fatalError("TODO")
         case .devices:
-            fatalError("TODO")
+            return ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
         case .options:
             fatalError("TODO")
         case .advanced:

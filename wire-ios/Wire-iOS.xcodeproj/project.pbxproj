@@ -399,7 +399,7 @@
 		59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59B404512CAA937400CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */; };
 		59B404632CAABD9A00CC33BF /* SettingsContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404622CAABD9200CC33BF /* SettingsContentViewController.swift */; };
-		59B404652CAAC3AC00CC33BF /* SettingsContentViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404642CAAC3A700CC33BF /* SettingsContentViewControllerBuilder.swift */; };
+		59B404652CAAC3AC00CC33BF /* SettingsViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */; };
 		59B404672CAB05CA00CC33BF /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */; };
 		59B404692CAB13D400CC33BF /* MockSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */; };
 		59B4046A2CAB13D400CC33BF /* MockSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */; };
@@ -2401,7 +2401,7 @@
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsContent+MainSettingsContentRepresentable.swift"; sourceTree = "<group>"; };
 		59B404622CAABD9200CC33BF /* SettingsContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsContentViewController.swift; sourceTree = "<group>"; };
-		59B404642CAAC3A700CC33BF /* SettingsContentViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsContentViewControllerBuilder.swift; sourceTree = "<group>"; };
+		59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
 		59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSettingsCoordinator.swift; sourceTree = "<group>"; };
 		59B8A1EB2CA848E600618340 /* SettingsMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMainViewController.swift; sourceTree = "<group>"; };
@@ -6809,8 +6809,8 @@
 				E591D01028C7220800C1469C /* SettingsAppearanceCell.swift */,
 				59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */,
 				59B404622CAABD9200CC33BF /* SettingsContentViewController.swift */,
-				59B404642CAAC3A700CC33BF /* SettingsContentViewControllerBuilder.swift */,
 				59B8A1EB2CA848E600618340 /* SettingsMainViewController.swift */,
+				59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */,
 				870815871BF4EAD100D321BC /* SettingsTableViewController.swift */,
 				87AB6DB51D9AB47400ADAD38 /* SettingsStyleNavigationController.swift */,
 				87AC9F551C0749FB00E1ED6F /* TailEditingTextField.swift */,
@@ -10221,7 +10221,7 @@
 				87BEB0441D3E478500DE9575 /* AssetLibrary.swift in Sources */,
 				D30880FE292E521D00DDEAB0 /* CallingActionsInfoViewController.swift in Sources */,
 				16D74BEA2B5895C900160298 /* AuthenticationMissingUsernameErrorHandler.swift in Sources */,
-				59B404652CAAC3AC00CC33BF /* SettingsContentViewControllerBuilder.swift in Sources */,
+				59B404652CAAC3AC00CC33BF /* SettingsViewControllerBuilder.swift in Sources */,
 				EE593F9C2B73C3F0008D1109 /* DeepLinksView.swift in Sources */,
 				E90B7DB628117DED001831FB /* DynamicFontLabel.swift in Sources */,
 				EECA90AA287449EC0024B301 /* DeveloperFlagsView.swift in Sources */,

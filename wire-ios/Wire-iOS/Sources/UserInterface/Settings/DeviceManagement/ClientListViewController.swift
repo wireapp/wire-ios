@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireMainNavigation
+import WireSettings
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -613,4 +615,8 @@ extension ClientListViewController: UserObserving {
         }
     }
 
+}
+
+extension ClientListViewController: MainSettingsContentProtocol {
+    typealias SettingsContent = SettingsTopLevelContent
 }

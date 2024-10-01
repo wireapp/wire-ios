@@ -17,8 +17,11 @@
 //
 
 public protocol MainSettingsContentBuilderProtocol {
-    associatedtype SettingsContentViewController: MainSettingsContentProtocol
+    associatedtype SettingsContent: MainSettingsContentRepresentable
 
     @MainActor
-    func build(content: SettingsContentViewController.SettingsContent) -> SettingsContentViewController
+    func build(
+        content: SettingsContent,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> any MainSettingsContentProtocol
 }
