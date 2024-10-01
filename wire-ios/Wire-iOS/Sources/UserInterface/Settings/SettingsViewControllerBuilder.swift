@@ -63,15 +63,15 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
         case .devices:
             buildDevices()
         case .options:
-            buildOptions()
+            buildOptions(mainCoordinator)
         case .advanced:
-            buildAdvanced()
+            buildAdvanced(mainCoordinator)
         case .support:
-            buildSupport()
+            buildSupport(mainCoordinator)
         case .about:
-            buildAbout()
+            buildAbout(mainCoordinator)
         case .developerOptions:
-            buildDeveloperOptions()
+            buildDeveloperOptions(mainCoordinator)
         }
         viewController.hidesBottomBarWhenPushed = true
         return viewController
@@ -95,23 +95,53 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
         ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
     }
 
-    private func buildOptions() -> UIViewController {
-        fatalError("TODO")
+    private func buildOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
+        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let group = factory.optionsGroup as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
+        return SettingsTableViewController(
+            group: group,
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+        )
     }
 
-    private func buildAdvanced() -> UIViewController {
-        fatalError("TODO")
+    private func buildAdvanced(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
+        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let group = factory.advancedGroup(userSession: userSession) as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
+        return SettingsTableViewController(
+            group: group,
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+        )
     }
 
-    private func buildSupport() -> UIViewController {
-        fatalError("TODO")
+    private func buildSupport(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
+        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let group = factory.helpSection() as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
+        return SettingsTableViewController(
+            group: group,
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+        )
     }
 
-    private func buildAbout() -> UIViewController {
-        fatalError("TODO")
+    private func buildAbout(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
+        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let group = factory.aboutSection() as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
+        return SettingsTableViewController(
+            group: group,
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+        )
     }
 
-    private func buildDeveloperOptions() -> UIViewController {
-        fatalError("TODO")
+    private func buildDeveloperOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
+        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let group = factory.developerGroup as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
+        return SettingsTableViewController(
+            group: group,
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+        )
     }
 }
