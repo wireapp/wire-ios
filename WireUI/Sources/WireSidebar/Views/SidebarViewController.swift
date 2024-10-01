@@ -65,7 +65,9 @@ public final class SidebarViewController: UIViewController {
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
 
-    public init(accountImageView: @escaping AccountImageViewBuilder<some View>) {
+    public init(
+        accountImageView: @escaping AccountImageViewBuilder<some View>
+    ) {
         super.init(nibName: nil, bundle: nil)
 
         model = .init(accountImageAction: { [weak self] in

@@ -61,9 +61,22 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let sidebarViewController = {
+    // private let accountImageView
+
+    private let sidebarViewController = {
+        let accountImageViewDesign = AccountImageViewDesign()
+        let availabilityIndicatorDesign = accountImageViewDesign.availabilityIndicator
         let sidebarViewController = SidebarViewController { accountImage, availability in
-            AnyView(AccountImageViewRepresentable(accountImage: accountImage, availability: availability?.map()))
+            AccountImageViewRepresentable(
+                accountImage: accountImage,
+                availability: availability?.map() // TODO: .map() is not clear
+            )
+            .accountImageBorderWidth(accountImageViewDesign.borderWidth)
+            .accountImageViewBorderColor(accountImageViewDesign.borderColor)
+            .availabilityIndicatorAvailableColor(availabilityIndicatorDesign.availableColor)
+            .availabilityIndicatorAwayColor(availabilityIndicatorDesign.awayColor)
+            .availabilityIndicatorBusyColor(availabilityIndicatorDesign.busyColor)
+            .availabilityIndicatorBackgroundViewColor(availabilityIndicatorDesign.backgroundViewColor)
         }
         sidebarViewController.wireTextStyleMapping = .init()
         return sidebarViewController

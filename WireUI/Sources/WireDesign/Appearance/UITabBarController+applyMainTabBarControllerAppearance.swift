@@ -18,9 +18,6 @@
 
 import UIKit
 
-// TODO: move file to WireDesign/Appearance/...
-// TODO: create method for AccountImageView
-
 public extension UITabBarController {
 
     /// Sets colors so that this instance looks like the `MainTabBarController` should look like.
