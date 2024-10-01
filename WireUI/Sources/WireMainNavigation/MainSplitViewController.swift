@@ -21,7 +21,15 @@ import SwiftUI
 public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
 Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
 
+    public typealias ConversationList = TabContainer.ConversationList
+    public typealias Archive = TabContainer.Archive
     public typealias Settings = TabContainer.Settings
+
+    public typealias Conversation = TabContainer.Conversation
+    public typealias SettingsContent = TabContainer.SettingsContent
+
+    public typealias Connect = TabContainer.Connect
+
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
     /// If the width of the view is lower than this value, the `preferredDisplayMode` property
