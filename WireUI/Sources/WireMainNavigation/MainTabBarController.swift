@@ -207,7 +207,13 @@ public final class MainTabBarController<
     public func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
         _settingsContent = settingsContent
 
-        fatalError()
+        if settings == nil, settingsContent != nil {
+            return assertionFailure("settings == nil, settingsContent != nil")
+        }
+
+        let viewControllers = [settings, settingsContent].compactMap { $0 }
+        settingsNavigationController.setViewControllers(viewControllers, animated: animated)
+        settingsNavigationController.view.layoutIfNeeded()
     }
 }
 

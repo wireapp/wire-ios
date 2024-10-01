@@ -57,21 +57,61 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
         topLevelMenuItem: SettingsTopLevelMenuItem,
         mainCoordinator: some MainCoordinatorProtocol
     ) -> UIViewController {
-        switch topLevelMenuItem {
+        let viewController = switch topLevelMenuItem {
         case .account:
-            fatalError("TODO")
+            buildAccount(mainCoordinator)
         case .devices:
-            ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
+            buildDevices()
         case .options:
-            fatalError("TODO")
+            buildOptions()
         case .advanced:
-            fatalError("TODO")
+            buildAdvanced()
         case .support:
-            fatalError("TODO")
+            buildSupport()
         case .about:
-            fatalError("TODO")
+            buildAbout()
         case .developerOptions:
-            fatalError("TODO")
+            buildDeveloperOptions()
         }
+        viewController.hidesBottomBarWhenPushed = true
+        return viewController
+    }
+
+    private func buildAccount(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
+        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let group = factory.accountGroup(
+            isTeamMember: userSession.selfUser.isTeamMember,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: false
+        ) as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
+        return SettingsTableViewController(
+            group: group,
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+        )
+    }
+
+    private func buildDevices() -> UIViewController {
+        ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
+    }
+
+    private func buildOptions() -> UIViewController {
+        fatalError("TODO")
+    }
+
+    private func buildAdvanced() -> UIViewController {
+        fatalError("TODO")
+    }
+
+    private func buildSupport() -> UIViewController {
+        fatalError("TODO")
+    }
+
+    private func buildAbout() -> UIViewController {
+        fatalError("TODO")
+    }
+
+    private func buildDeveloperOptions() -> UIViewController {
+        fatalError("TODO")
     }
 }

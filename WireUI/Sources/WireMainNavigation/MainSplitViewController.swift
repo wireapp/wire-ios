@@ -196,7 +196,9 @@ Sidebar: MainSidebarProtocol, TabContainer: MainTabBarControllerProtocol {
     private func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
         _settingsContent = settingsContent
 
-        fatalError()
+        let viewControllers = [settingsContent ?? noConversationPlaceholder].compactMap { $0 } // TODO: noConversationPlaceholder is not properly named
+        secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        secondaryNavigationController.view.layoutIfNeeded()
     }
 }
 
