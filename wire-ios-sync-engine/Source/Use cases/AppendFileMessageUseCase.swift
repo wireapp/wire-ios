@@ -28,10 +28,10 @@ public protocol AppendFileMessageUseCaseProtocol {
 
 public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
     
-    let analyticsService: AnalyticsService?
+    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
 
-    public init(analyticsService: AnalyticsService?) {
-        self.analyticsService = analyticsService
+    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     public func invoke<Conversation: MessageAppendableConversation>(
@@ -53,7 +53,7 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
 
         }
 
-        analyticsService?.trackEvent(
+        analyticsEventTracker?.trackEvent(
             .conversationContribution(
                 contributionType,
                 conversationType: .init(conversation.conversationType),

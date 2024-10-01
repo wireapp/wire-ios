@@ -29,10 +29,10 @@ public protocol AppendImageMessageUseCaseProtocol {
 
 public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
 
-    let analyticsService: AnalyticsService?
+    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
 
-    public init(analyticsService: AnalyticsService?) {
-        self.analyticsService = analyticsService
+    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     public func invoke<Conversation: MessageAppendableConversation>(
@@ -40,7 +40,7 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
         in conversation: Conversation
     ) throws {
         try conversation.appendImage(from: imageData, nonce: UUID())
-        analyticsService?.trackEvent(
+        analyticsEventTracker?.trackEvent(
             .conversationContribution(
                 .imageMessage,
                 conversationType: .init(conversation.conversationType),

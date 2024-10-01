@@ -356,23 +356,23 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol {
-        return AppendTextMessageUseCase(analyticsService: analyticsService)
+        return AppendTextMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {
-        return AppendImageMessageUseCase(analyticsService: analyticsService)
+        return AppendImageMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeAppendKnockMessageUseCase() -> AppendKnockMessageUseCaseProtocol {
-        return AppendKnockMessageUseCase(analyticsService: analyticsService)
+        return AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
-        return AppendLocationMessageUseCase(analyticsService: analyticsService)
+        return AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeAppendFileMessageUseCase() -> AppendFileMessageUseCaseProtocol {
-        return AppendFileMessageUseCase(analyticsService: analyticsService)
+        return AppendFileMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
 }

@@ -206,7 +206,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         willSet {
             guard activeUserSession != newValue else { return }
             activeUserSession?.appLockController.beginTimer()
-            activeUserSession?.analyticsService = nil
+            activeUserSession?.analyticsEventTracker = nil
         }
     }
 
@@ -913,7 +913,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private func configureAnalytics(for userSession: ZMUserSession) {
         analyticsService.switchUser(userSession.analyticsUser)
-        userSession.analyticsService = analyticsService
+        userSession.analyticsEventTracker = analyticsService
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {

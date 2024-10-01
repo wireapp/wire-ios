@@ -30,10 +30,10 @@ public protocol AppendLocationMessagekUseCaseProtocol {
 
 public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtocol {
 
-    let analyticsService: AnalyticsService?
+    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
 
-    public init(analyticsService: AnalyticsService?) {
-        self.analyticsService = analyticsService
+    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     public func invoke<Conversation: MessageAppendableConversation>(
@@ -43,7 +43,7 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
 
         try conversation.appendLocation(with: locationData, nonce: UUID())
 
-        analyticsService?.trackEvent(
+        analyticsEventTracker?.trackEvent(
             .conversationContribution(
                 .locationMessage,
                 conversationType: .init(conversation.conversationType),
