@@ -72,7 +72,7 @@ final class MainCoordinatorTests: XCTestCase {
     func testShowingGroupConversations() {
         // When
         let conversationFilter: MockConversationListViewController.ConversationFilter = .groups
-        sut.showConversationList(conversationFilter: conversationFilter, conversationID: nil, messageID: nil)
+        sut.showConversationList(conversationFilter: conversationFilter)
 
         // Then
         XCTAssertNotNil(splitViewController.conversationList)

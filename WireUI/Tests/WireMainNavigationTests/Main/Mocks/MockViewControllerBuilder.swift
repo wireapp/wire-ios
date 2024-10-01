@@ -21,11 +21,13 @@ import WireMainNavigation
 
 struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder, MainSettingsContentBuilderProtocol {
 
+    typealias SettingsContentViewController = MockSettingsContentViewController
+
     @MainActor
     func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
 
     @MainActor
     func build(
         content: MockSettingsContentViewController.SettingsContent
-    ) async -> MockSettingsContentViewController { .init() }
+    ) -> MockSettingsContentViewController { .init() }
 }

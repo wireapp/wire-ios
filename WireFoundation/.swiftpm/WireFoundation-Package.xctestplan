@@ -9,7 +9,9 @@
     }
   ],
   "defaultOptions" : {
-
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {
