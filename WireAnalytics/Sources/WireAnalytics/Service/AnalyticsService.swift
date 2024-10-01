@@ -67,7 +67,6 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         let countly = countlyProvider()
         self.countly = countly
 
-
         countly.start(
             appKey: config.secretKey,
             host: config.serverHost
@@ -181,11 +180,10 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// - Parameter event: The event to track.
 
     public func trackEvent(_ event: AnalyticsEvent) {
-        guard let countly else {
-            return
-        }
-
-        guard let currentUser else {
+        guard 
+            let countly,
+            let currentUser
+        else {
             return
         }
 
