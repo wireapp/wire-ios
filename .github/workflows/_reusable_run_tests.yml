@@ -160,6 +160,19 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
+        # Restore the cached .build directory
+      - name: Cache Swift Package Dependencies
+        uses: actions/cache@v2
+        id: cache-swift-package
+        with:
+          path: scripts/.build
+          key: ${{ runner.os }}-swiftpm-${{ hashFiles('scripts/Package.resolved') }}
+
+      # Resolve the dependencies if no cash
+      - name: Bootstrap Swift Package Dependencies if no cache
+        if: steps.cache-swift-package.outputs.cache-hit != 'true'
+      - run: xcrun --sdk macosx swift package --package-path scripts resolve
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
