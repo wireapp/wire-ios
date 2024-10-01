@@ -306,17 +306,13 @@ final class ConversationViewController: UIViewController {
     // MARK: - Application Events & Notifications
 
     override func accessibilityPerformEscape() -> Bool {
-        Task {
-            await mainCoordinator.hideConversation()
-        }
+        mainCoordinator.hideConversation()
         return true
     }
 
     @objc
     func onBackButtonPressed(_ backButton: UIButton?) {
-        Task {
-            await mainCoordinator.hideConversation()
-        }
+        mainCoordinator.hideConversation()
     }
 
     private func setupContentViewController() {

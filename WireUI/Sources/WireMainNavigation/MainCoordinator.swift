@@ -169,7 +169,7 @@ public final class MainCoordinator<
     }
 
     public func hideConversation() {
-        tabBarController.conversation = nil
+        tabBarController.setConversation(nil, animated: true)
         splitViewController.conversation = nil
     }
 
@@ -219,6 +219,10 @@ public final class MainCoordinator<
                 splitViewController.settingsContent = contentViewController
             }
         }
+    }
+
+    public func hideSettingsContent() {
+        fatalError("TODO")
     }
 
     public func showSelfProfile() {

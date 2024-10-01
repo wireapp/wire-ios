@@ -43,7 +43,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
 //    ) async
 
     func showConversation(conversationID: ConversationList.ConversationID) async
-    func hideConversation() async
+    @MainActor
+    func hideConversation()
 
     func showArchivedConversations() async // TODO: rename showArchive
 
@@ -57,6 +58,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
     /// If `content` is non-nil, this method presents the main settings and navigates into the settings content.
     @MainActor
     func showSettings(content: SettingsContent.SettingsContent?)
+    @MainActor
+    func hideSettingsContent()
 
     func showSelfProfile() async
     func showConnect() async
