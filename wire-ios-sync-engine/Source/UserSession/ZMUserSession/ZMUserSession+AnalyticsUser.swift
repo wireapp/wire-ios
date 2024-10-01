@@ -18,18 +18,32 @@
 
 import Foundation
 import WireAnalytics
+import WireDataModel
 
 extension ZMUserSession {
 
     var analyticsUser: AnalyticsUser {
         let selfUser = ZMUser.selfUser(inUserSession: self)
-
-        // TODO: replace with user repository or something
-        let idProvider = AnalyticsIdentifierProvider(selfUser: selfUser)
-        idProvider.setIdentifierIfNeeded()
-        let analyticsID = selfUser.analyticsIdentifier!
-
+        let analyticsID: String
         var teamInfo: TeamInfo?
+
+        if let existingID = selfUser.analyticsIdentifier {
+            analyticsID = existingID
+        } else {
+            let newID = UUID()
+            analyticsID = newID.transportString()
+            selfUser.analyticsIdentifier = analyticsID
+
+            syncContext.performGroupedBlock { [syncContext] in
+                do {
+                    let message = DataTransfer(trackingIdentifier: newID)
+                    try ZMConversation.sendMessageToSelfClients(message, in: syncContext)
+                } catch let error {
+                    WireLogger.analytics.error("Failed to broadcast new analytics ID: \(newID.safeForLoggingDescription) \(error)")
+                }
+            }
+        }
+
         if let team = selfUser.team, let teamID = team.remoteIdentifier {
             teamInfo = TeamInfo(
                 id: teamID.uuidString,
