@@ -46,7 +46,7 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 # SETUP
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
+#PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
 
 if [[ -n "${CI-}" ]]; then
     echo "Running on CI, skipping git lfs install"

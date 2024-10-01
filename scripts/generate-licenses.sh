@@ -57,8 +57,8 @@ echo "ℹ️  Copy Dependencies"
 ### Swift Packages
 cp -R "$PACKAGES_DIR" "$TMP_DIR"
 
-echo "DerivedData-Generate-Licenses path: $TMP_DIR"
-ls -l "$TMP_DIRR"
+#echo "DerivedData-Generate-Licenses path: $TMP_DIR"
+#ls -l "$TMP_DIRR"
 
 ### Carthage
 cp -Rf "$REPO_ROOT"/Carthage/Checkouts/* "$TMP_DIR/checkouts"
