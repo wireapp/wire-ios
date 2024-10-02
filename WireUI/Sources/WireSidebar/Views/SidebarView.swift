@@ -24,7 +24,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     @Environment(\.sidebarBackgroundColor) private var sidebarBackgroundColor
 
     public var accountInfo: SidebarAccountInfo?
-    @Binding public var selectedMenuItem: SidebarMenuItem
+    @Binding public var selectedMenuItem: SidebarSelectableMenuItem
 
     private(set) var accountImageAction: () -> Void
     private(set) var connectAction: () -> Void
@@ -77,13 +77,8 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
                 // bottom menu items
                 Group {
-                    menuItem(.settings)
-
-                    SidebarMenuItemView(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
-                        Text("sidebar.support.title", bundle: .module)
-                    } action: {
-                        supportAction()
-                    }
+                    selectableMenuItem(.settings)
+                    nonselectableMenuItem(.support)
                 }
                 .padding(.horizontal, 16)
             }
@@ -116,15 +111,11 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             menuItemHeader("sidebar.conversation_filter.title", addTopPadding: false)
             let conversationFilters = [SidebarMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
             ForEach(conversationFilters, id: \.self) { conversationFilter in
-                menuItem(conversationFilter)
+                selectableMenuItem(conversationFilter)
             }
 
             menuItemHeader("sidebar.contacts.title")
-            SidebarMenuItemView(icon: "person.badge.plus", iconSize: iconSize) {
-                Text("sidebar.contacts.connect.title", bundle: .module)
-            } action: {
-                connectAction()
-            }
+            nonselectableMenuItem(.connect)
         }
         .padding(.horizontal, 16)
     }
@@ -143,7 +134,35 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         }
     }
 
-    private func menuItem(_ menuItem: SidebarMenuItem) -> some View {
+    private func nonselectableMenuItem(_ menuItem: SidebarNonselectableMenuItem) -> some View {
+        let text: Text
+        let icon: String
+        let isLink: Bool
+        let action: () -> Void
+        switch menuItem {
+        case .connect:
+            text = Text("sidebar.contacts.connect.title", bundle: .module)
+            icon = "person.badge.plus"
+            isLink = false
+            action = connectAction
+
+        case .support:
+            text = Text("sidebar.support.title", bundle: .module)
+            icon = "questionmark.circle"
+            isLink = true
+            action = supportAction
+        }
+
+        return SidebarMenuItemView(
+            icon: icon,
+            iconSize: iconSize,
+            isLink: isLink,
+            title: { text },
+            action: action
+        )
+    }
+
+    private func selectableMenuItem(_ menuItem: SidebarSelectableMenuItem) -> some View {
         let text: Text
         let icon: String
         switch menuItem {
