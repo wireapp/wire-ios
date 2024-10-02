@@ -30,8 +30,6 @@ import UIKit
 /// Both, the split view controller as well as the tab view controller actually install `UINavigationController`
 /// instances and then put or remove the content view controllers into/from `viewControllers` array.
 
-// TODO: try double column container
-
 @MainActor
 public final class MainCoordinator<
 
