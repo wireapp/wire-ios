@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Доставлено";
 "content.system.message_read_timestamp" = "Прочитано";
 "content.system.failedtosend_message.general_reason" = "Не удалось отправить сообщение из-за проблем с подключением.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Сообщение не отправлено после отмены отправки.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Сообщение не может быть отправлено, поскольку бэкэнд **%@** недоступен. [Узнать больше](%@)";
 "content.system.failedtosend_message.retry" = "Повторить";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Отправка анонимных данных об использовании";
 "self.settings.privacy_analytics_menu.description.title" = "Данные об использовании позволяют Wire определить, как используется приложение и как его можно улучшить. Эти данные анонимны и не включают в себя содержимое вашего общения (такое как, сообщения, файлы или звонки).";
-
-"self.settings.receiveNews_and_offers.title" = "Получать рассылку";
-"self.settings.receiveNews_and_offers.description.title" = "Получайте новости и обновления от Wire по электронной почте.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Недействительная ссылка.";
 "url_action.invalid_link.message" = "Открытая вами ссылка недействительна.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Вы хотите получать новости и обновления от Wire по электронной почте?";
-"news_offers.consent.message" = "Вы сможете отписаться в любое время.";
-"news_offers.consent.button.privacy_policy.title" = "Политика конфиденциальности";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

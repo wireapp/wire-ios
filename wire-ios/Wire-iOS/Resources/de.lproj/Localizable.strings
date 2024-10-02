@@ -521,6 +521,7 @@
 "content.system.message_delivered_timestamp" = "Zugestellt";
 "content.system.message_read_timestamp" = "Gesehen";
 "content.system.failedtosend_message.general_reason" = "Nachricht konnte aufgrund von Verbindungsproblemen nicht gesendet werden.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Nachricht nicht gesendet, da Sie das Hochladen abgebrochen haben.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Nachricht nicht gesendet, da das Backend **%@**  nicht erreichbar ist. [Mehr erfahren](%@)";
 "content.system.failedtosend_message.retry" = "Wiederholen";
 
@@ -1165,11 +1166,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Anonyme Nutzungsdaten senden";
 "self.settings.privacy_analytics_menu.description.title" = "Anhand der Nutzungsdaten kann Wire verstehen, wie die App genutzt wird und wie sie verbessert werden kann. Die Daten sind anonym und umfassen nicht den Inhalt Ihrer Kommunikation (wie Nachrichten, Dateien oder Anrufe).";
-
-"self.settings.receiveNews_and_offers.title" = "Newsletter abonnieren";
-"self.settings.receiveNews_and_offers.description.title" = "Neuigkeiten und Informationen zu Produktaktualisierungen von Wire per E-Mail erhalten.";
-
-
 
 // Change Username
 
@@ -1931,13 +1927,6 @@
 
 "url_action.invalid_link.title" = "Ungültiger Link.";
 "url_action.invalid_link.message" = "Der geöffnete Link ist ungültig.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Möchten Sie Neuigkeiten und Informationen zu Produktaktualisierungen von Wire per E-Mail erhalten?";
-"news_offers.consent.message" = "Sie können sich jederzeit abmelden.";
-"news_offers.consent.button.privacy_policy.title" = "Datenschutzerklärung";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
