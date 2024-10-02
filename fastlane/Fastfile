@@ -105,8 +105,8 @@ platform :ios do
 
         folders = options[:folders].split(',')
         matching_frameworks = folders.map { |folder| frameworks[folder] }
-
-        unique_schemes = matching_frameworks.map do |framework|
+        
+        unique_schemes = matching_frameworks.compact.map do |framework|
             framework.schemes
         end.flatten.uniq
 
