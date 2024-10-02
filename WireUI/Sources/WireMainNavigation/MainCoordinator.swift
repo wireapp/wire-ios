@@ -211,7 +211,6 @@ public final class MainCoordinator<
     }
 
     public func showConversation(conversationID: ConversationList.ConversationID) async {
-
         let conversation = await conversationBuilder.build(
             conversationID: conversationID,
             mainCoordinator: self

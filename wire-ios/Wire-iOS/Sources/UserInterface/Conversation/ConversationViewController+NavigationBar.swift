@@ -135,8 +135,6 @@ extension ConversationViewController {
             arrowIcon = hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
         }
 
-        // TODO: check if correct
-        // let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact
         let isLayoutSizeCompact = traitCollection.horizontalSizeClass == .compact
         let icon: StyleKitIcon = isLayoutSizeCompact ? arrowIcon : .hamburger
 
