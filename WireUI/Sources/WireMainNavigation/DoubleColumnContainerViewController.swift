@@ -20,25 +20,13 @@ import SwiftUI
 
 final class DoubleColumnContainerViewController: UIViewController {
 
-    typealias Primary = UIViewController
-    typealias Secondary = UIViewController
-
-    var primary: Primary? {
-        get { primaryNavigationController.viewControllers.first }
-        set { primaryNavigationController.viewControllers = [newValue].compactMap { $0 } }
-    }
-
-    var secondary: Secondary? {
-        get { secondaryNavigationController.viewControllers.first }
-        set { secondaryNavigationController.viewControllers = [newValue].compactMap { $0 } }
-    }
+    let primaryNavigationController = UINavigationController()
+    let secondaryNavigationController = UINavigationController()
 
     var primaryColumnWidth: CGFloat = 100 {
         didSet { primaryColumnWidthConstraint?.constant = primaryColumnWidth }
     }
 
-    private let primaryNavigationController = UINavigationController()
-    private let secondaryNavigationController = UINavigationController()
     private var primaryColumnWidthConstraint: NSLayoutConstraint?
 
     // MARK: -
@@ -81,11 +69,14 @@ final class DoubleColumnContainerViewController: UIViewController {
 #Preview {
     {
         let sidebar = PreviewSidebarViewController("sidebar")
+        let primary = UIHostingController(rootView: LabelView(content: "Conversations", backgroundColor: .yellow))
+        primary.navigationItem.title = "Primary"
+        let secondary = UIHostingController(rootView: LabelView(content: "Conversation", backgroundColor: .green))
+        secondary.navigationItem.title = "Secondary"
+
         let container = DoubleColumnContainerViewController()
-        container.primary = UIHostingController(rootView: LabelView(content: "Conversations", backgroundColor: .yellow))
-        container.primary?.navigationItem.title = "Primary"
-        container.secondary = UIHostingController(rootView: LabelView(content: "Conversation", backgroundColor: .green))
-        container.secondary?.navigationItem.title = "Secondary"
+        container.primaryNavigationController.viewControllers = [primary]
+        container.secondaryNavigationController.viewControllers = [secondary]
         container.primaryColumnWidth = 400
 
         let splitViewController = UISplitViewController(style: .doubleColumn)

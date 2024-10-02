@@ -85,7 +85,8 @@ final class MainSplitViewControllerTests: XCTestCase {
 
         // Then
         XCTAssertNil(conversation)
-        let secondaryNavigationController = sut.viewController(for: .secondary) as! UINavigationController
+        let container = sut.viewController(for: .secondary) as! DoubleColumnContainerViewController
+        let secondaryNavigationController = container.secondaryNavigationController
         XCTAssert(secondaryNavigationController.viewControllers[0] === noConversationPlaceholder)
     }
 
