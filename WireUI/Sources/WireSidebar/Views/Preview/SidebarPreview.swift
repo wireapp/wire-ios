@@ -45,6 +45,7 @@ struct SidebarPreview: View {
                     accountInfo: accountInfo,
                     selectedMenuItem: $selectedMenuItem,
                     accountImageAction: {},
+                    connectAction: {},
                     supportAction: {},
                     accountImageView: { uiImage, availability in
                         MockAccountImageView(uiImage: uiImage, availability: availability)

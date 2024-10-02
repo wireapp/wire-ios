@@ -21,8 +21,6 @@ public enum SidebarMenuItem: CaseIterable, Comparable, Sendable {
     case all, favorites, groups, oneOnOne
     // archived conversations
     case archive
-    // contact
-    case connect
     // bottom
     case settings
 }

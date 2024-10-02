@@ -27,6 +27,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     @Binding public var selectedMenuItem: SidebarMenuItem
 
     private(set) var accountImageAction: () -> Void
+    private(set) var connectAction: () -> Void
     private(set) var supportAction: () -> Void
 
     private(set) var accountImageView: (
@@ -40,12 +41,14 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         accountInfo: SidebarAccountInfo,
         selectedMenuItem: Binding<SidebarMenuItem>,
         accountImageAction: @escaping () -> Void,
+        connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView
     ) {
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
         self.accountImageAction = accountImageAction
+        self.connectAction = connectAction
         self.supportAction = supportAction
         self.accountImageView = accountImageView
     }
@@ -117,7 +120,11 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             }
 
             menuItemHeader("sidebar.contacts.title")
-            menuItem(.connect)
+            SidebarMenuItemView(icon: "person.badge.plus", iconSize: iconSize) {
+                Text("sidebar.contacts.connect.title", bundle: .module)
+            } action: {
+                connectAction()
+            }
         }
         .padding(.horizontal, 16)
     }
@@ -159,10 +166,6 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         case .archive:
             text = Text("sidebar.conversation_filter.archived.title", bundle: .module)
             icon = "archivebox"
-
-        case .connect:
-            text = Text("sidebar.contacts.connect.title", bundle: .module)
-            icon = "person.badge.plus"
 
         case .settings:
             text = Text("sidebar.settings.title", bundle: .module)
