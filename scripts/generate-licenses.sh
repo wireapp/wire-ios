@@ -45,6 +45,7 @@ echo ""
 echo "ℹ️  Resolve Dependencies"
 ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
+
 # Copy Dependencies
 echo ""
 echo "ℹ️  Copy Dependencies"
