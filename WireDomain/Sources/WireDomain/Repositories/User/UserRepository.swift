@@ -123,6 +123,10 @@ public protocol UserRepositoryProtocol {
 }
 
 public final class UserRepository: UserRepositoryProtocol {
+    
+    enum DefaultsKeys: String {
+        case pushToken = "PushToken"
+    }
 
     // MARK: - Properties
 
@@ -130,8 +134,7 @@ public final class UserRepository: UserRepositoryProtocol {
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
     private let conversationRepository: any ConversationRepositoryProtocol
-
-    // MARK: - Object lifecycle
+    private let storage: UserDefaults
 
     // MARK: - Object lifecycle
 
@@ -139,12 +142,14 @@ public final class UserRepository: UserRepositoryProtocol {
         context: NSManagedObjectContext,
         usersAPI: any UsersAPI,
         selfUserAPI: any SelfUserAPI,
-        conversationRepository: ConversationRepositoryProtocol
+        conversationRepository: ConversationRepositoryProtocol,
+        sharedUserDefaults: UserDefaults = .standard
     ) {
         self.context = context
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
         self.conversationRepository = conversationRepository
+        self.storage = sharedUserDefaults
     }
 
     // MARK: - Public
@@ -190,8 +195,10 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func removePushToken() {
-        // TODO: [WPB-10199] use new propertyWrapper for UserDefaults when related PR is merged
-        UserDefaults.standard.set(nil, forKey: "PushToken")
+        storage.set(
+            nil,
+            forKey: DefaultsKeys.pushToken.rawValue
+        )
     }
 
     public func fetchUser(with id: UUID) async throws -> ZMUser {

@@ -36,6 +36,8 @@ class UserRepositoryTests: XCTestCase {
     var stack: CoreDataStack!
     var coreDataStackHelper: CoreDataStackHelper!
     var modelHelper: ModelHelper!
+    
+    var mockUserDefaults: UserDefaults!
 
     var context: NSManagedObjectContext {
         stack.syncContext
@@ -49,11 +51,15 @@ class UserRepositoryTests: XCTestCase {
         usersAPI = MockUsersAPI()
         selfUsersAPI = MockSelfUserAPI()
         conversationsRepository = MockConversationRepositoryProtocol()
+        mockUserDefaults = UserDefaults(
+            suiteName: Scaffolding.defaultsTestSuiteName
+        )
         sut = UserRepository(
             context: context,
             usersAPI: usersAPI,
             selfUserAPI: selfUsersAPI,
-            conversationRepository: conversationsRepository
+            conversationRepository: conversationsRepository,
+            sharedUserDefaults: mockUserDefaults
         )
     }
 
@@ -63,6 +69,10 @@ class UserRepositoryTests: XCTestCase {
         usersAPI = nil
         selfUsersAPI = nil
         sut = nil
+        mockUserDefaults.removePersistentDomain(
+            forName: Scaffolding.defaultsTestSuiteName
+        )
+        mockUserDefaults = nil
         conversationsRepository = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
@@ -148,10 +158,11 @@ class UserRepositoryTests: XCTestCase {
 
         func testRemovesPushToken() async throws {
             // Given
-
-            let defaults = UserDefaults.standard
+            
+            let key = "PushToken"
             let data = try JSONEncoder().encode(Scaffolding.pushToken)
-            defaults.set(data, forKey: "PushToken")
+            mockUserDefaults.set(data, forKey: key)
+            XCTAssertNotNil(mockUserDefaults.object(forKey: key))
 
             // When
 
@@ -159,7 +170,7 @@ class UserRepositoryTests: XCTestCase {
 
             // Then
 
-            let pushToken = defaults.object(forKey: "PushToken")
+            let pushToken = mockUserDefaults.object(forKey: key)
             XCTAssertNil(pushToken)
         }
     }
@@ -348,7 +359,7 @@ class UserRepositoryTests: XCTestCase {
         static let lastPrekeyId = 65_535
         static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
 
-        nonisolated(unsafe) static let remoteUserClient = WireAPI.UserClient(
+        static let remoteUserClient = WireAPI.UserClient(
             id: userClientID,
             type: .permanent,
             activationDate: .now,
@@ -368,7 +379,7 @@ class UserRepositoryTests: XCTestCase {
             )
         )
 
-        nonisolated(unsafe) static let user1 = User(
+        static let user1 = User(
             id: QualifiedID(uuid: UUID(), domain: "example.com"),
             name: "user1",
             handle: "handle1",
@@ -391,6 +402,8 @@ class UserRepositoryTests: XCTestCase {
             transportType: "APNS_VOIP",
             tokenType: .voip
         )
+        
+        static let defaultsTestSuiteName = UUID().uuidString
     }
 
 }

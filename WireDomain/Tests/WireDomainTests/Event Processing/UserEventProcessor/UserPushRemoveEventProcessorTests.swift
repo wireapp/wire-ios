@@ -17,10 +17,6 @@
 //
 
 import Foundation
-import WireAPI
-import WireAPISupport
-import WireDataModel
-import WireDataModelSupport
 import WireDomainSupport
 import XCTest
 
@@ -29,68 +25,36 @@ import XCTest
 final class UserPushRemoveEventProcessorTests: XCTestCase {
 
     var sut: UserPushRemoveEventProcessor!
-
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-
-    var context: NSManagedObjectContext {
-        coreDataStack.syncContext
-    }
-
+    var mockUserRepository: MockUserRepositoryProtocol!
+    
     override func setUp() async throws {
         try await super.setUp()
-        coreDataStackHelper = CoreDataStackHelper()
-        modelHelper = ModelHelper()
-        coreDataStack = try await coreDataStackHelper.createStack()
+        mockUserRepository = MockUserRepositoryProtocol()
         sut = UserPushRemoveEventProcessor(
-            repository: UserRepository(
-                context: context,
-                usersAPI: MockUsersAPI(),
-                selfUserAPI: MockSelfUserAPI(),
-                conversationRepository: MockConversationRepositoryProtocol()
-            )
+            repository: mockUserRepository
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        coreDataStack = nil
         sut = nil
-        try coreDataStackHelper.cleanupDirectory()
-        coreDataStackHelper = nil
-        modelHelper = nil
+        mockUserRepository = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Removes_Push_Token_From_Defaults() async throws {
-        // Given
-
-        let defaults = UserDefaults.standard
-        let data = try JSONEncoder().encode(Scaffolding.pushToken)
-        defaults.set(data, forKey: "PushToken")
-
+    func testProcessEvent_It_Invokes_Repo_Method() async throws {
+        // Mock
+        
+        mockUserRepository.removePushToken_MockMethod = { }
+        
         // When
 
         sut.processEvent()
 
         // Then
 
-        let pushToken = defaults.object(forKey: "PushToken")
-        XCTAssertNil(pushToken)
+        XCTAssertEqual(mockUserRepository.removePushToken_Invocations.count, 1)
     }
 
-}
-
-extension UserPushRemoveEventProcessorTests {
-    enum Scaffolding {
-        static let deviceToken = Data(repeating: 0x41, count: 10)
-        static let pushToken = PushToken(
-            deviceToken: deviceToken,
-            appIdentifier: "com.wire",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
-        )
-    }
 }
