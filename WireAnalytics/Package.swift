@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
-        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.16.0")
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.17.0")
     ],
     targets: [
         .target(

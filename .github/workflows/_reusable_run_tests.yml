@@ -189,7 +189,6 @@ jobs:
         run: xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
 
         # Restore Swift Package Dependencies Cache
-        # test
       - name: Restore Swift Package Dependencies Cache
         uses: actions/cache@v3
         id: cache-swift-package
@@ -201,7 +200,6 @@ jobs:
 
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
-        if: steps.cache-swift-package.outputs.cache-hit != 'true'
         run: |
           ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
