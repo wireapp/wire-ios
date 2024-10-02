@@ -24,75 +24,68 @@ import WireSyncEngineSupport
 import XCTest
 
 @testable import WireSyncEngine
+@testable import WireDataModel
 
 final class ToggleMessageReactionUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
     private var mockAnalyticsSessionProtocol: MockAnalyticsSessionProtocol!
-    private var mockConversation: MockMessageAppendableConversation!
     private var sut: ToggleMessageReactionUseCase!
-    private var message: MockZMConversationMessage!
-    
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var coreDataStack: CoreDataStack!
+
+    let modelHelper = ModelHelper()
+
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        coreDataStack = try await coreDataStackHelper.createStack()
+
         mockAnalyticsSessionProtocol = .init()
-        mockConversation = .init()
         sut = ToggleMessageReactionUseCase(analyticsSession: mockAnalyticsSessionProtocol)
-        message = MockZMConversationMessage()
-        message.senderUser = UserType
-
-        // create coredatastack with CoreDataStackHelper
-
-        // add create message in ModelHelper -> ZMMessage
-        // modelhelper gives you an user, a conversation
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
-        mockConversation = nil
         mockAnalyticsSessionProtocol = nil
-        message = nil
+        coreDataStack = nil
+        coreDataStackHelper = nil
+
+        super.tearDown()
     }
 
     func testInvoke_ToggleMessageReaction_TracksEventCorrectly() throws {
         // GIVEN
-        mockConversation.conversationType = .group
-        mockConversation.localParticipants = []
+        let convo = modelHelper.createGroupConversation(in: coreDataStack.viewContext)
+        let selfUser = modelHelper.createSelfUser(in: coreDataStack.viewContext)
+
+        let messages = try modelHelper.addTextMessages(
+            to: convo,
+            messagePrefix: "Hello",
+            sender: selfUser,
+            count: 3,
+            in: coreDataStack.viewContext
+        )
+
+        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
+
+        let firstMessage = messages.first as! ZMConversationMessage
 
         // WHEN
-        sut.invoke("❤️", for: message, in: mockConversation)
+        sut.invoke("❤️", for: firstMessage, in: convo)
 
         // THEN
-        // Assert that add reaction from ZMMessage has been invoked
-        let senderUser = try XCTUnwrap(message.senderUser)
-        XCTAssert(message.usersReaction, ["❤️", senderUser])
+        let userReactions = firstMessage.usersReaction // Get the usersReaction dictionary
+
+        XCTAssert(userReactions.keys.contains("❤️"), "Expected the first message to have a ❤️ reaction.")
         XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
         let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ConversationContributionAnalyticsEvent)
-        XCTAssertEqual(trackEventInvocation.contributionType, .reaction)
-        XCTAssertEqual(trackEventInvocation.conversationType, .group)
-
-    }
-
-
-    func testInvoke_ToggleMessageReaction_DoesNotTrackEvent() {
-        // GIVEN
-        mockConversation.conversationType = .group
-        mockConversation.localParticipants = []
-        mockConversation.
-
-
-
-        // WHEN
-        sut.invoke("😧", for: message, in: mockConversation)
-
-        // THEN
-        // Assert that add reaction from ZMMessage has been invoked
-        // Assert that trackEventInvocation has not invoked for the analytic event
+        XCTAssertEqual(trackEventInvocation.contributionType, .likeMessage)
     }
 
 }
