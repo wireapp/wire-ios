@@ -39,7 +39,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 
     // TODO: rename
     // also it now contains the remaining with next to sidebar and conversation list
-    private let sidebarVisibilityThreshold: CGFloat = 768
+    private let sidebarVisibilityThreshold: CGFloat = 360
 
     // MARK: - Primary Column
 
@@ -147,13 +147,15 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 
     private func setPreferredSplitBehaviorAndDisplayMode(basedOn width: CGFloat) {
         let remainingWidth = width - preferredPrimaryColumnWidth - splitLayoutContainer.primaryColumnWidth
-        print(remainingWidth)
+
+        // remember if the sidebar was visible or not
+        let isSidebarVisible = displayMode != .secondaryOnly
         if remainingWidth >= sidebarVisibilityThreshold {
             preferredSplitBehavior = .tile
-            preferredDisplayMode = .oneBesideSecondary
+            preferredDisplayMode = isSidebarVisible ? .oneBesideSecondary : .secondaryOnly
         } else {
             preferredSplitBehavior = .overlay
-            preferredDisplayMode = .oneOverSecondary
+            preferredDisplayMode = isSidebarVisible ? .oneOverSecondary : .secondaryOnly
         }
     }
 
