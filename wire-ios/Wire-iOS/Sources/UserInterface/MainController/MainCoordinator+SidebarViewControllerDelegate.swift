@@ -19,27 +19,6 @@
 import WireMainNavigation
 import WireSidebar
 
-/*
-    func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {
-        guard let zClientViewController else {
-            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
-        }
-        zClientViewController.load(conversation, scrollTo: nil, focusOnView: focus, animated: animated)
-    }
-
-    func openConversation<Message>(
-        _ conversation: ZMConversation,
-        scrollTo message: Message,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) where Message: ZMConversationMessage {
-        guard let zClientViewController else {
-            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
-        }
-        zClientViewController.load(conversation, scrollTo: message, focusOnView: focus, animated: animated)
-    }
- */
-
 extension MainCoordinator: SidebarViewControllerDelegate {
 
     @MainActor
@@ -60,11 +39,13 @@ extension MainCoordinator: SidebarViewControllerDelegate {
             showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.oneOnOne)) // TODO: try to write .oneOnOne
         case .archive:
             showArchive()
-        case .connect:
-            showConnect()
         case .settings:
             showSettings()
         }
+    }
+
+    public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
+        showConnect()
     }
 
     @MainActor

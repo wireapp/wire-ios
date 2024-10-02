@@ -30,7 +30,6 @@ extension SidebarMenuItem: MainSidebarMenuItemRepresentable {
         case .groups: self = .groups
         case .oneOnOne: self = .oneOnOne
         case .archive: self = .archive
-        case .connect: self = .connect
         case .settings: self = .settings
         }
     }
@@ -42,7 +41,6 @@ extension SidebarMenuItem: MainSidebarMenuItemRepresentable {
         case .groups: .groups
         case .oneOnOne: .oneOnOne
         case .archive: .archive
-        case .connect: .connect
         case .settings: .settings
         }
     }

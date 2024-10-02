@@ -51,7 +51,7 @@ public final class MainCoordinator<
     public typealias ConversationList = SplitViewController.ConversationList
     public typealias Settings = SplitViewController.Settings
     public typealias SettingsContent = SplitViewController.SettingsContent
-    public typealias Connect = SplitViewController.Connect
+    public typealias Connect = ConnectBuilder.ViewController
     public typealias TabBarController = SplitViewController.TabContainer
 
     // MARK: - Private Properties
@@ -265,8 +265,6 @@ public final class MainCoordinator<
             // Once WireLogger is available to Swift packages use it here instead.
             return assertionFailure()
         }
-
-        sidebar.selectedMenuItem = .init(.connect)
 
         let connect = connectBuilder.build(mainCoordinator: self)
         self.connect = connect
