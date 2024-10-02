@@ -40,7 +40,7 @@ extension ZMOTRMessage: OTREntity {
         // no-op
     }
 
-    public func missesRecipients(_ recipients: Set<WireDataModel.UserClient>!) {
+    public func missesRecipients(_ recipients: Set<WireDataModel.UserClient>) {
         // no-op
     }
 
