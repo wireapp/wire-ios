@@ -280,7 +280,7 @@ class UserRepositoryTests: XCTestCase {
         // When
 
         await sut.deleteUserProperty(
-            withKey: Scaffolding.userPropertyKey.rawValue
+            withKey: Scaffolding.userPropertyKey
         )
 
         // Then

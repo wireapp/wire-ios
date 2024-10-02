@@ -100,7 +100,7 @@ public protocol UserRepositoryProtocol {
     ///     - key: The user property key to delete.
 
     func deleteUserProperty(
-        withKey key: String
+        withKey key: UserProperty.Key
     ) async
 
 }
@@ -112,7 +112,6 @@ public final class UserRepository: UserRepositoryProtocol {
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
-    private let logger = WireLogger.eventProcessing
 
     // MARK: - Object lifecycle
 
@@ -231,7 +230,8 @@ public final class UserRepository: UserRepositoryProtocol {
             if let selfClient = selfUser.selfClient(),
                localClient.remoteIdentifier != selfClient.remoteIdentifier, isNewClient,
                let selfClientActivationDate = selfClient.activationDate,
-               localClientActivationDate?.compare(selfClientActivationDate) == .orderedDescending {
+               localClientActivationDate?.compare(selfClientActivationDate) == .orderedDescending
+            {
                 localClient.needsToNotifyUser = true
             }
 
@@ -277,11 +277,9 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func deleteUserProperty(
-        withKey key: String
+        withKey key: UserProperty.Key
     ) async {
-        let userPropertyKey = UserProperty.Key(rawValue: key)
-
-        switch userPropertyKey {
+        switch key {
         case .wireReceiptMode:
             let selfUser = fetchSelfUser()
 
@@ -298,9 +296,6 @@ public final class UserRepository: UserRepositoryProtocol {
             /// Already handled with `user.properties-set` event (adding new labels and removing old ones)
             /// see `ConversationLabelsRepository`
             break
-
-        case nil:
-            logger.error("Unknown user property key: \(key)")
         }
     }
 

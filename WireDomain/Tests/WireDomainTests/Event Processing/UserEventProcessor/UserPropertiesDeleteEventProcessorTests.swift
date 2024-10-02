@@ -56,6 +56,6 @@ final class UserPropertiesDeleteEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userRepository.deleteUserPropertyWithKey_Invocations, [key.rawValue])
+        XCTAssertEqual(userRepository.deleteUserPropertyWithKey_Invocations, [key])
     }
 }

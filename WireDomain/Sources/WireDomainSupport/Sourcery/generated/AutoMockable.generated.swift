@@ -545,10 +545,10 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - deleteUserProperty
 
-    public var deleteUserPropertyWithKey_Invocations: [String] = []
-    public var deleteUserPropertyWithKey_MockMethod: ((String) async -> Void)?
+    public var deleteUserPropertyWithKey_Invocations: [UserProperty.Key] = []
+    public var deleteUserPropertyWithKey_MockMethod: ((UserProperty.Key) async -> Void)?
 
-    public func deleteUserProperty(withKey key: String) async {
+    public func deleteUserProperty(withKey key: UserProperty.Key) async {
         deleteUserPropertyWithKey_Invocations.append(key)
 
         guard let mock = deleteUserPropertyWithKey_MockMethod else {
