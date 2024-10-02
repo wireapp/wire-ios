@@ -519,11 +519,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.notificationsTracker = nil
         }
 
-        var analyticsConfig: AnalyticsService.Config?
-        if let analyticsSessionConfiguration {
-            analyticsConfig = (
-                secretKey: analyticsSessionConfiguration.countlyKey,
-                serverHost: analyticsSessionConfiguration.host
+        let analyticsConfig = analyticsSessionConfiguration.map {
+            AnalyticsService.Config(
+                secretKey: $0.countlyKey,
+                serverHost: $0.host
             )
         }
 
