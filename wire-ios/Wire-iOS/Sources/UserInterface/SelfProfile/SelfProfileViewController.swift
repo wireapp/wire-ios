@@ -41,6 +41,7 @@ final class SelfProfileViewController: UIViewController {
     private let profileImagePicker = ProfileImagePickerManager()
 
     private let accountSelector: AccountSelector?
+    let openDevicesSettingsAction: () -> Void
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
 
@@ -63,6 +64,9 @@ final class SelfProfileViewController: UIViewController {
         mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.accountSelector = accountSelector
+        openDevicesSettingsAction = {
+            mainCoordinator.showSettingsContent(.init(.devices))
+        }
 
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)

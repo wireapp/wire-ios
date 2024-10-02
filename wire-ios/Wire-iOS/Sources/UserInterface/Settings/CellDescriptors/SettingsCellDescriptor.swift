@@ -47,7 +47,7 @@ protocol SettingsCellDescriptorType: AnyObject {
 
     /// If non-nil the item is a top-level item of the main settings menu.
     /// For presenting the content the main coordinator is called.
-    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? { get } // TODO: check again if needed
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? { get }
 
     func select(_ value: SettingsPropertyValue, sender: UIView)
     func featureCell(_: SettingsCellType)

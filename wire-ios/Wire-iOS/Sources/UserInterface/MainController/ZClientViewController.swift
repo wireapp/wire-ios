@@ -57,6 +57,7 @@ final class ZClientViewController: UIViewController {
 
     private(set) var conversationRootViewController: UIViewController?
     // TODO [WPB-8778]: Check if this property is still needed
+    @available(*, deprecated, message: "might be deleted")
     private(set) var currentConversation: ZMConversation?
 
     weak var router: AuthenticatedRouterProtocol?
@@ -348,24 +349,6 @@ final class ZClientViewController: UIViewController {
         return childForStatusBar
     }
 
-    // MARK: trait
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        // TODO: check if still needed
-        // if changing from compact width to regular width, make sure current conversation is loaded
-        if false, previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
-            if let currentConversation {
-                select(conversation: currentConversation)
-            } else {
-                attemptToLoadLastViewedConversation(withFocus: false, animated: false)
-            }
-        }
-
-        view.setNeedsLayout()
-    }
-
     // MARK: - Singleton
 
     @available(*, deprecated, message: "Please don't access this property, it will be deleted.")
@@ -405,51 +388,13 @@ final class ZClientViewController: UIViewController {
     }
 
     func loadPlaceholderConversationController(animated: Bool) {
+        // TODO: can this method be removed?
         currentConversation = nil
         pushContentViewController(focusOnView: false, animated: animated)
     }
 
-    /// Load and optionally show a conversation, but don't change the list selection.  This is the place to put
-    /// stuff if you definitely need it to happen when a conversation is selected and/or presented
-    ///
-    /// This method should only be called when the list selection changes, or internally by other zclientviewcontroller
-    ///
-    /// - Parameters:
-    ///   - conversation: conversation to load
-    ///   - message: scroll to a specific message
-    ///   - focus: focus on view or not
-    ///   - animated: animated or not
-    ///   - completion: optional completion handler
-    @available(*, deprecated, message: "Use coordinator")
-    func load( // TODO: delete
-        _ conversation: ZMConversation,
-        scrollTo message: ZMConversationMessage?,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
-        var conversationRootController: ConversationRootViewController?
-        if conversation === currentConversation,
-           conversationRootController != nil {
-            if let message {
-                conversationRootController?.scroll(to: message)
-            }
-        } else {
-            conversationRootController = ConversationRootViewController(
-                conversation: conversation,
-                message: message,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator,
-                mediaPlaybackManager: mediaPlaybackManager
-            )
-        }
-
-        currentConversation = conversation
-        conversationRootController?.conversationViewController?.isFocused = focus
-
-        pushContentViewController(conversationRootController, focusOnView: focus, animated: animated)
-    }
-
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
+        // TODO: can this method be removed?
         currentConversation = nil
 
         let inbox = ConnectRequestsViewController(userSession: userSession)
@@ -515,6 +460,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
 
     private func reloadCurrentConversation() {
+        // TODO: what is this method neede for?
         guard let currentConversation else { return }
 
         let currentConversationViewController = ConversationRootViewController(

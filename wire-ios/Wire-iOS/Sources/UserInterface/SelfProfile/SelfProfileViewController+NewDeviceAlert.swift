@@ -41,9 +41,8 @@ extension SelfProfileViewController {
     fileprivate func presentNewLoginAlertController(_ clients: [UserClientType]) {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
-        let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { _ in
-            // self.openControllerForCellWithIdentifier(SettingsCellDescriptorFactory.settingsDevicesCellIdentifier)
-            fatalError("TODO: mainCoordinator.showSettings(content: .devices)")
+        let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { [weak self] _ in
+            self?.openDevicesSettingsAction()
         }
 
         newLoginAlertController.addAction(actionManageDevices)
@@ -62,60 +61,6 @@ extension SelfProfileViewController {
             }
         }
     }
-
-    // TODO: delete commented code
-    /*
-    @discardableResult
-    func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
-
-        guard
-            let tabBarController = ZClientViewController.shared?.mainTabBarController,
-            let settingsViewController = tabBarController.viewControllers?
-                .compactMap({ $0 as? UINavigationController })
-                .compactMap({ $0.viewControllers.first as? SettingsTableViewController })
-                .first,
-            let navigationController = settingsViewController.navigationController
-        else { return nil }
-
-        var resultViewController: UIViewController? = .none
-        // Let's assume for the moment that menu is only 2 levels deep
-        let rootGroup = settingsViewController.group
-        settingsViewController.group.allCellDescriptors().forEach { topCellDescriptor in
-
-            if let cellIdentifier = topCellDescriptor.identifier,
-               let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,
-               let viewController = cellGroupDescriptor.generateViewController(),
-               cellIdentifier == identifier {
-
-                presentingViewController?.dismiss(animated: true) {
-                    tabBarController.selectedIndex = MainTabBarControllerContent.settings.rawValue
-                    navigationController.pushViewController(viewController, animated: true)
-                }
-                resultViewController = viewController
-            }
-
-            if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
-                topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: SettingsCellDescriptorType) in
-                    if let cellIdentifier = cellDescriptor.identifier,
-                       let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,
-                       let topViewController = topCellGroupDescriptor.generateViewController(),
-                       let viewController = cellGroupDescriptor.generateViewController(),
-                       cellIdentifier == identifier {
-
-                        presentingViewController?.dismiss(animated: true) {
-                            tabBarController.selectedIndex = MainTabBarControllerContent.settings.rawValue
-                            navigationController.pushViewController(topViewController, animated: true)
-                            navigationController.pushViewController(viewController, animated: true)
-                        }
-                        resultViewController = viewController
-                    }
-                })
-            }
-        }
-
-        return resultViewController
-    }
-     */
 }
 
 extension UIAlertController {
