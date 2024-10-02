@@ -108,10 +108,7 @@ final class ZClientViewController: UIViewController {
         }
     )
 
-    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
-        userSession: userSession,
-        selfUser: userSession.editableSelfUser
-    )
+    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(userSession: userSession)
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(

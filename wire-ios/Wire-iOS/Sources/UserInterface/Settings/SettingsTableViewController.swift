@@ -146,7 +146,7 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
 }
 
-/*final*/ class SettingsTableViewController: SettingsBaseTableViewController {
+final class SettingsTableViewController: SettingsBaseTableViewController {
 
     let group: SettingsInternalGroupCellDescriptorType
     fileprivate var sections: [SettingsSectionDescriptorType]

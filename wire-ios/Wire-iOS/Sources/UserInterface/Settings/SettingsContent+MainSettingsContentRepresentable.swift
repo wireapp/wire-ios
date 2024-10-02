@@ -43,19 +43,19 @@ extension SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable {
     public func mapToMainSettingsContent() -> MainSettingsTopLevelMenuItem {
         switch self {
         case .account:
-                .account
+            .account
         case .devices:
-                .devices
+            .devices
         case .options:
-                .options
+            .options
         case .advanced:
-                .advanced
+            .advanced
         case .support:
-                .support
+            .support
         case .about:
-                .about
+            .about
         case .developerOptions:
-                .developerOptions
+            .developerOptions
         }
     }
 }

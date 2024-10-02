@@ -23,15 +23,10 @@ import WireSyncEngine
 @MainActor
 struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsContentBuilderProtocol {
 
-    // TODO: can selfUser be taken from the userSession?
     var userSession: UserSession
-    var selfUser: SettingsSelfUser
 
     private var settingsPropertyFactory: SettingsPropertyFactory {
-        .init(
-            userSession: userSession,
-            selfUser: selfUser
-        )
+        .init(userSession: userSession, selfUser: userSession.editableSelfUser)
     }
 
     private func settingsCellDescriptorFactory(settingsCoordinator: AnySettingsCoordinator) -> SettingsCellDescriptorFactory {
