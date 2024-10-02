@@ -27,8 +27,6 @@ import WireMainNavigation
 import WireSidebar
 import WireSyncEngine
 
-struct MockConversationID: Sendable {} // TODO: remove
-
 final class ZClientViewController: UIViewController {
 
     typealias MainTabBarController = WireMainNavigation.MainTabBarController<
