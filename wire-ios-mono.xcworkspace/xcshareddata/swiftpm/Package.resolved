@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/DataDog/dd-sdk-ios.git",
         "state": {
           "branch": null,
-          "revision": "c4cb52b90dbddde8e0ffc7d89f2b6e5680acce7e",
-          "version": "2.16.0"
+          "revision": "e67af5e59678668acbe73e7d0e1c657b6cfeac6f",
+          "version": "2.18.0"
         }
       },
       {
