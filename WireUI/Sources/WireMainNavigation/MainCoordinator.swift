@@ -227,7 +227,6 @@ public final class MainCoordinator<
         }
     }
 
-    // TODO: doc comment, when/why is this needed/called from outside
     public func hideConversation() {
         tabBarController.setConversation(nil, animated: true)
         splitViewController.conversation = nil

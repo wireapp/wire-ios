@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireMainNavigation
 import WireDataModel
+import WireMainNavigation
 
 extension ConversationListViewController: MainConversationListProtocol {
     typealias ConversationID = ZMConversation.ConversationID

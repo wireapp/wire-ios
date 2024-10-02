@@ -34,6 +34,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
 
     @MainActor
     func showConversation(conversationID: ConversationList.ConversationID) async
+    /// This method will be called by the custom back button in the conversation content screen.
     @MainActor
     func hideConversation()
 

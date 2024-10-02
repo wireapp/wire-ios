@@ -235,9 +235,7 @@ final class ConversationViewController: UIViewController {
                     self?.conversation.isArchived = true
                 })
             }
-            Task {
-                await self?.mainCoordinator.hideConversation()
-            }
+            self?.mainCoordinator.hideConversation()
         }
     }
 

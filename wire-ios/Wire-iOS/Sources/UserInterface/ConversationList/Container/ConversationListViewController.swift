@@ -118,7 +118,7 @@ final class ConversationListViewController: UIViewController {
         mainCoordinator: MainCoordinator,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) where 
+    ) where
     MainCoordinator: MainCoordinatorProtocol,
     MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
     MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
@@ -144,7 +144,7 @@ final class ConversationListViewController: UIViewController {
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinator,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) where 
+    ) where
     MainCoordinator: MainCoordinatorProtocol,
     MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
     MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
