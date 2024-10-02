@@ -73,6 +73,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
         let (textMessage, notSelfClients, firstClient, secondClient, conversation) = await self.syncMOC.perform {
             // Given
+            ZMUser.selfUser(in: self.syncMOC).domain = .randomDomain()
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
 
@@ -279,8 +280,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         // Then
         await syncMOC.perform {
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, [self.syncSelfUser, self.syncUser1])
+            case .ignoreAllMissingClientsNotFromUsers(userIds: let userIds):
+                let syncQualifiedIds = [self.syncSelfUser, self.syncUser1].compactMap { $0.qualifiedID }
+                XCTAssertEqual(userIds, Set(syncQualifiedIds))
             default:
                 XCTFail()
             }
@@ -331,8 +333,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         await syncMOC.perform {
             guard let payloadAndStrategy = payload else { return XCTFail() }
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, [self.syncSelfUser])
+            case .ignoreAllMissingClientsNotFromUsers(userIds: let userIds):
+                let ids = [self.syncSelfUser].compactMap { $0?.qualifiedID }
+                XCTAssertEqual(userIds, Set(ids))
             default:
                 XCTFail()
             }
@@ -431,8 +434,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         await syncMOC.perform {
             // Then
             switch unWrappedPayloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(let users):
-                XCTAssertEqual(users, [self.syncUser1])
+            case .ignoreAllMissingClientsNotFromUsers(let userIds):
+                let ids = [self.syncUser1].compactMap { $0?.qualifiedID }
+                XCTAssertEqual(userIds, Set(ids))
             default:
                 XCTFail()
             }

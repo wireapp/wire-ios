@@ -309,7 +309,7 @@ jobs:
           compare_to_earlier_commit: false
             
       - name: Archiving DerivedData Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: derived-data-xcode

@@ -64,7 +64,7 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
                 WireLogger.calling.error("failed to send message: \(String(reflecting: error))")
             }
             await managedObjectContext.perform {
-                object.linkPreviewState = .done
+                object.markAsSent()
                 completion()
             }
             managedObjectContext.leaveAllGroups(groups)

@@ -98,6 +98,17 @@ extension WireCallCenterV3 {
     private func leaveStaleConferenceIfNeeded(conversationID: AVSIdentifier) {
         guard
             let viewContext = uiMOC,
+            let conversation = ZMConversation.fetch(
+                with: conversationID.identifier,
+                domain: conversationID.domain,
+                in: viewContext
+            ),
+            conversation.conversationType == .group
+        else {
+            return
+        }
+
+        guard
             let syncContext = viewContext.zm_sync,
             let selfClient = ZMUser.selfUser(in: viewContext).selfClient(),
             let selfClientID = MLSClientID(userClient: selfClient),

@@ -396,18 +396,4 @@ public extension FileManager {
 
         return try? Data(contentsOf: tmpURL, options: [.uncached])
     }
-
-    func zipData(from urls: [URL]) -> Data? {
-        var tmpURL = URL(fileURLWithPath: NSTemporaryDirectory(),
-                                        isDirectory: false)
-        tmpURL.appendPathComponent("\(UUID().uuidString).zip")
-
-        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: urls.map { $0.path })
-        defer {
-            // clean up
-            try? self.removeItem(at: tmpURL)
-        }
-
-        return try? Data(contentsOf: tmpURL, options: [.uncached])
-    }
 }

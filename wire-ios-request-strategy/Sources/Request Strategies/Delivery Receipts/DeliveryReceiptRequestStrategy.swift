@@ -79,11 +79,15 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         let senderUserSet: Set<ZMUser> = [deliveryReceipt.sender]
 
         WaitingGroupTask(context: managedObjectContext) { [self] in
-            try? await messageSender.sendMessage(message: GenericMessageEntity(message: GenericMessage(content: confirmation),
-                                                                               context: managedObjectContext,
-                                                                               conversation: deliveryReceipt.conversation,
-                                                                               targetRecipients: .users(senderUserSet),
-                                                                               completionHandler: nil))
+            do {
+                try await messageSender.sendMessage(message: GenericMessageEntity(message: GenericMessage(content: confirmation),
+                                                                                  context: managedObjectContext,
+                                                                                  conversation: deliveryReceipt.conversation,
+                                                                                  targetRecipients: .users(senderUserSet),
+                                                                                  completionHandler: nil))
+            } catch {
+                WireLogger.messaging.error("send delivery receipt: \(error.localizedDescription)")
+            }
         }
     }
 

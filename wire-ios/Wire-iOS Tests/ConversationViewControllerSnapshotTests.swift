@@ -39,6 +39,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
+        userSession.coreDataStack = coreDataStack
         userSession.mockConversationList = ZMConversationList(
             allConversations: [mockConversation!],
             filteringPredicate: NSPredicate(

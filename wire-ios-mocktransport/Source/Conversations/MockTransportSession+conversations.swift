@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ extension MockTransportSession {
     public func fetchConversation(with identifier: String) -> MockConversation? {
         let request = MockConversation.sortedFetchRequest()
         request.predicate = NSPredicate(format: "identifier == %@", identifier.lowercased())
-        let conversations = managedObjectContext.executeFetchRequestOrAssert(request) as? [MockConversation]
+        let conversations = try? managedObjectContext.fetch(request) as? [MockConversation]
         return conversations?.first
     }
 

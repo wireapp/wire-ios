@@ -20,7 +20,7 @@ import Foundation
 
 public struct SyncMLSOneToOneConversationAction: EntityAction {
 
-    public typealias Result = MLSGroupID
+    public typealias Result = (MLSGroupID, BackendMLSPublicKeys?)
     public typealias Failure = SyncMLSOneToOneConversationActionError
 
     public let userID: UUID

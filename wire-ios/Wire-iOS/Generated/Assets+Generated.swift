@@ -184,6 +184,7 @@ internal enum Asset {
     internal static let smileysPeople = ImageAsset(name: "Smileys & People")
     internal static let symbols = ImageAsset(name: "Symbols")
     internal static let travelPlaces = ImageAsset(name: "Travel & Places")
+    internal static let file = ImageAsset(name: "File")
     internal static let foldersFilled = ImageAsset(name: "Folders Filled")
     internal static let foldersOutline = ImageAsset(name: "Folders Outline")
     internal static let guest = ImageAsset(name: "Guest")

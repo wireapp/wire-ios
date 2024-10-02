@@ -32,17 +32,14 @@
         DeveloperFlag.storage = UserDefaults.standard
     }
 
- }
-
- // MARK: - Payload creation
-
-extension ClientMessageTests_OTR_Legacy {
+    // MARK: - Payload creation
 
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
         let (textMessage, notSelfClients, firstClient, secondClient, conversation) = await self.syncMOC.perform {
             // Given
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
+            ZMUser.selfUser(in: self.syncMOC).domain = .randomDomain()
 
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
@@ -67,8 +64,8 @@ extension ClientMessageTests_OTR_Legacy {
         let unwrappedDataAndStrategy = try XCTUnwrap(dataAndStrategy)
 
         // Then
-        let createdMessage = Proteus_NewOtrMessage.with {
-            try? $0.merge(serializedData: unwrappedDataAndStrategy.data)
+        let createdMessage = try Proteus_NewOtrMessage.with {
+            try $0.merge(serializedData: unwrappedDataAndStrategy.data)
         }
 
         XCTAssertEqual(createdMessage.hasBlob, true)
@@ -231,8 +228,8 @@ extension ClientMessageTests_OTR_Legacy {
         // Then
         await syncMOC.perform {
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, [self.syncSelfUser, self.syncUser1])
+            case .ignoreAllMissingClientsNotFromUsers(let userIds):
+                XCTAssertEqual(userIds, Set([self.syncSelfUser, self.syncUser1].compactMap { $0?.qualifiedID }))
             default:
                 XCTFail()
             }
@@ -283,8 +280,8 @@ extension ClientMessageTests_OTR_Legacy {
         await syncMOC.perform {
             guard let payloadAndStrategy = payload else { return XCTFail() }
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, [self.syncSelfUser])
+            case .ignoreAllMissingClientsNotFromUsers(let userIds):
+                XCTAssertEqual(userIds, Set([self.syncSelfUser].compactMap { $0?.qualifiedID }))
             default:
                 XCTFail()
             }
@@ -383,8 +380,8 @@ extension ClientMessageTests_OTR_Legacy {
         await syncMOC.perform {
             // Then
             switch unWrappedPayloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(let users):
-                XCTAssertEqual(users, [self.syncUser1])
+            case .ignoreAllMissingClientsNotFromUsers(let userIds):
+                XCTAssertEqual(userIds, Set([self.syncUser1].compactMap { $0?.qualifiedID }))
             default:
                 XCTFail()
             }
