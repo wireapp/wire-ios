@@ -29,6 +29,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     private let countlyProvider: () -> any CountlyProtocol
     private var countly: (any CountlyProtocol)?
     private var currentUser: AnalyticsUser?
+    private let baseSegmentation: Set<SegmentationEntry>
 
     // MARK: - Life cycle
 
@@ -40,16 +41,23 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     ///   - config: A config containing the authentication key and server host.
 
     public convenience init(config: Config?) {
-        self.init(config: config) {
-            Countly.sharedInstance()
-        }
+        self.init(
+            config: config,
+            baseSegmentation: [
+                .deviceModel(UIDevice.current.model),
+                .deviceOS(UIDevice.current.systemVersion)
+            ],
+            countlyProvider: { Countly.sharedInstance() }
+        )
     }
 
     init(
          config: Config?,
+         baseSegmentation: Set<SegmentationEntry>,
          countlyProvider: @escaping () -> any CountlyProtocol
     ) {
         self.config = config
+        self.baseSegmentation = baseSegmentation
         self.countlyProvider = countlyProvider
     }
 
@@ -122,6 +130,13 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// - Parameter user: The updated current user.
 
     public func updateCurrentUser(_ user: AnalyticsUser) {
+        guard 
+            let currentUser,
+            user != currentUser
+        else {
+            return
+        }
+
         print("[ANALYTICS] updating current user")
 
         pushUser(
@@ -187,10 +202,8 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
             return
         }
 
-        var segmentation = event.segmentation
+        var segmentation = event.segmentation.union(baseSegmentation)
         segmentation.insert(.isSelfTeamMember(currentUser.teamInfo != nil))
-        segmentation.insert(.deviceModel(UIDevice.current.model))
-        segmentation.insert(.deviceOS(UIDevice.current.systemVersion))
 
         let rawSegmentation = Dictionary(uniqueKeysWithValues: segmentation.map {
             ($0.key, $0.value)
