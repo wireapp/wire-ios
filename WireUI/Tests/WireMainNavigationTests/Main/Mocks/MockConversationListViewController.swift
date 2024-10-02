@@ -33,7 +33,7 @@ final class MockConversationListViewController: UIViewController, MainConversati
         }
     }
 
-    var splitViewInterface: MainSplitViewState = .expanded
+    var mainSplitViewState: MainSplitViewState = .expanded
 }
 
 extension MockConversationListViewController.ConversationFilter: MainConversationFilterRepresentable {

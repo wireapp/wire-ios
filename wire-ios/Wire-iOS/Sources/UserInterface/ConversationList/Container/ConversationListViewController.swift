@@ -99,8 +99,8 @@ final class ConversationListViewController: UIViewController {
 
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
-    let selfProfileViewControllerBuilder: any MainCoordinatorInjectingViewControllerBuilder // TODO: is it needed?
-    var splitViewInterface: MainSplitViewState = .expanded { // TODO: rename property `mainSplitViewState`
+    let selfProfileViewControllerBuilder: any MainCoordinatorInjectingViewControllerBuilder
+    var mainSplitViewState: MainSplitViewState = .expanded {
         didSet {
             setupTitleView()
             updateNavigationItem()
@@ -356,7 +356,7 @@ final class ConversationListViewController: UIViewController {
     }
 
     func applyColorTheme() {
-        view.backgroundColor = splitViewInterface == .expanded
+        view.backgroundColor = mainSplitViewState == .expanded
         ? ColorTheme.Backgrounds.backgroundVariant
         : ColorTheme.Backgrounds.surfaceVariant
     }
@@ -380,7 +380,7 @@ final class ConversationListViewController: UIViewController {
     /// For collapsed layouts the navigation bar should additionally show an account image and a filter button item.
     private func updateNavigationItem() {
 
-        switch splitViewInterface {
+        switch mainSplitViewState {
         case .collapsed:
             setupLeftNavigationBarButtons()
             setupRightNavigationBarButtons()

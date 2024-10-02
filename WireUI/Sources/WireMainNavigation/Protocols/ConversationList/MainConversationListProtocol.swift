@@ -31,5 +31,5 @@ public protocol MainConversationListProtocol: UIViewController {
     var conversationFilter: ConversationFilter? { get set }
 
     /// Allows the ``MainCoordinator`` to inform this instance about the current split view state.
-    var splitViewInterface: MainSplitViewState { get set }
+    var mainSplitViewState: MainSplitViewState { get set }
 }

@@ -359,7 +359,6 @@
 		595C49692CA995E900F8F881 /* WireSettings in Frameworks */ = {isa = PBXBuildFile; productRef = 595C49682CA995E900F8F881 /* WireSettings */; };
 		5965B4792C57BF59000DBF91 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B4782C57BF59000DBF91 /* WireAnalytics */; };
 		5965E9732C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965E9722C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift */; };
-		5965E9902C9B1F8C001D8AE1 /* MockMainConversationListProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965E98F2C9B1F8C001D8AE1 /* MockMainConversationListProtocol.swift */; };
 		5965E9922C9BE152001D8AE1 /* StartUIViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965E9912C9BE151001D8AE1 /* StartUIViewControllerBuilder.swift */; };
 		5965E9952C9C01F2001D8AE1 /* MainCoordinator+StartUIDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965E9932C9C01CC001D8AE1 /* MainCoordinator+StartUIDelegate.swift */; };
 		5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */; };
@@ -2367,7 +2366,6 @@
 		595BFD7C2CA9365200D02361 /* ConversationListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListCoordinator.swift; sourceTree = "<group>"; };
 		595C49352CA93D6D00F8F881 /* AnyConversationListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyConversationListCoordinator.swift; sourceTree = "<group>"; };
 		5965E9722C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+MainConversationListProtocol.swift"; sourceTree = "<group>"; };
-		5965E98F2C9B1F8C001D8AE1 /* MockMainConversationListProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMainConversationListProtocol.swift; sourceTree = "<group>"; };
 		5965E9912C9BE151001D8AE1 /* StartUIViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartUIViewControllerBuilder.swift; sourceTree = "<group>"; };
 		5965E9932C9C01CC001D8AE1 /* MainCoordinator+StartUIDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainCoordinator+StartUIDelegate.swift"; sourceTree = "<group>"; };
 		5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
@@ -4636,14 +4634,6 @@
 				594211CF2C90700200576053 /* FileMetaDataGeneratorProtocol.swift */,
 			);
 			path = FileMetaDataGenerator;
-			sourceTree = "<group>";
-		};
-		5965E98E2C9B1F7D001D8AE1 /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-				5965E98F2C9B1F8C001D8AE1 /* MockMainConversationListProtocol.swift */,
-			);
-			path = Mocks;
 			sourceTree = "<group>";
 		};
 		596841C72BD14D000009C6B8 /* ImageTransformer */ = {
@@ -8231,7 +8221,6 @@
 		EF4C5D4C23351D230092CA38 /* Container */ = {
 			isa = PBXGroup;
 			children = (
-				5965E98E2C9B1F7D001D8AE1 /* Mocks */,
 				A98ECDF2232A9564006A57FD /* MockConversationListContainer.swift */,
 				EFAFCA8C213433D6002B31A6 /* ConversationListViewControllerTests.swift */,
 				A98ECDF0232A94DD006A57FD /* ConversationListViewControllerViewModelSnapshotTests.swift */,
@@ -10655,7 +10644,6 @@
 				25A7E62C2B67FB55002451A4 /* ClientTableViewCellTests.swift in Sources */,
 				5E33F0D520ADA94B00414EA6 /* MockCallPermissions.swift in Sources */,
 				BFAF4CAF1CEB791B00780537 /* AudioRecordViewControllerTests.swift in Sources */,
-				5965E9902C9B1F8C001D8AE1 /* MockMainConversationListProtocol.swift in Sources */,
 				160D40F92410EC41002924A0 /* LoggingTest.swift in Sources */,
 				EF9FC3EF2142A77500033ED0 /* ColorSchemeControllerTests.swift in Sources */,
 				EE7F464B25B072A9001B3EE4 /* AppLockChangeWarningViewControllerTests.swift in Sources */,

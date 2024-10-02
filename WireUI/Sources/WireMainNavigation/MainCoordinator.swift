@@ -375,7 +375,7 @@ public final class MainCoordinator<
         }
 
         mainSplitViewState = .collapsed
-        conversationList.splitViewInterface = .collapsed
+        conversationList.mainSplitViewState = .collapsed
     }
 
     public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
@@ -432,7 +432,7 @@ public final class MainCoordinator<
 
         mainSplitViewState = .expanded
         let conversationList = tabBarController.conversationList ?? splitViewController.conversationList
-        conversationList!.splitViewInterface = .expanded
+        conversationList!.mainSplitViewState = .expanded
         if let settingsContentToSelect {
             showSettingsContent(settingsContentToSelect) // TODO: [WPB-11347] make the selection visible
         }
