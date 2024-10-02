@@ -37,9 +37,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
-    // TODO: rename
-    // also it now contains the remaining with next to sidebar and conversation list
-    private let sidebarVisibilityThreshold: CGFloat = 360
+    private let secondaryColumnMinWidth: CGFloat = 360
 
     // MARK: - Primary Column
 
@@ -153,7 +151,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 
         // remember if the sidebar was visible or not
         let isSidebarVisible = displayMode != .secondaryOnly
-        if remainingWidth >= sidebarVisibilityThreshold {
+        if remainingWidth >= secondaryColumnMinWidth {
             preferredSplitBehavior = .tile
             preferredDisplayMode = isSidebarVisible ? .oneBesideSecondary : .secondaryOnly
         } else {
