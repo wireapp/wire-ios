@@ -55,7 +55,7 @@ extension UInt: AnalyticsValue {
         guard self > 0 else {
             return 0
         }
-        
+
         return UInt(log2(Double(self)).rounded())
     }
 
