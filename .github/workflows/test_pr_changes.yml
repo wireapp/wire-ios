@@ -54,9 +54,12 @@ jobs:
               - 'WireAnalytics/Sources/WireAnalytics/**'
               - 'WireAnalytics/Sources/WireDatadog/**'
             WireDomain:
+              - 'WireDomain/Project/**'
               - 'WireDomain/*.*'
               - 'WireDomain/Sources/Package/**'
               - 'WireDomain/Sources/PackageSupport/**'
+              - 'WireDomain/Sources/WireDomain/**'
+              - 'WireDomain/Sources/WireDomainSupport/**'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
             wire-ios-transport:

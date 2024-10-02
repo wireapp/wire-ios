@@ -18,6 +18,13 @@
         "identifier" : "01D0DCAF2C1C8C880076CB1C",
         "name" : "WireDomainTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/WireDomain",
+        "identifier" : "WireDomainPkgTests",
+        "name" : "WireDomainPkgTests"
+      }
     }
   ],
   "version" : 1
