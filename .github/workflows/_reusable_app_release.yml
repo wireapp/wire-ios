@@ -122,6 +122,8 @@ jobs:
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       PR_S3_SUBFOLDER: ${{ inputs.pr_s3_path }}
+      REPO_ROOT: ${{ github.workspace }}
+      PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
       
     steps:
       - name: Add Masks
@@ -170,12 +172,12 @@ jobs:
           path: SourceryPlugin/.build
           key: ${{ runner.os }}-swiftpm-${{ hashFiles('SourceryPlugin/Package.resolved') }}
 
-        # Resolve dependencies if no cash for scripts
+        # Bootstrap dependencies if no cash for scripts
       - name: Bootstrap Swift Package Dependencies (scripts)
         if: steps.cache-scripts-package.outputs.cache-hit != 'true'
         run: xcrun --sdk macosx swift package --package-path scripts resolve
        
-        # Resolve dependencies if no cash for SourceryPlugin
+        # Bootstrap dependencies if no cash for SourceryPlugin
       - name: Bootstrap Swift Package Dependencies (SourceryPlugin)
         if: steps.cache-sourceryPlugin-package.outputs.cache-hit != 'true'
         run: xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
@@ -184,6 +186,34 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+          #dowland dep
+          #r
+
+        # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        uses: actions/cache@v3
+        id: cache-swift-package
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          #path: |
+          #  /Users/admin/actions-runner/_work/wire-ios/wire-ios/DerivedData/CachedSwiftPackages
+          key: ${{ runner.os }}-swiftpm-${{ hashFiles('Package.resolved') }}
+
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        if: steps.cache-swift-package.outputs.cache-hit != 'true'
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+
+        # Save Swift Package Dependencies Cache
+      - name: Save Swift Package Dependencies Cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          #path: |
+          #  /Users/admin/actions-runner/_work/wire-ios/wire-ios/DerivedData/CachedSwiftPackages
+          key: ${{ runner.os }}-swiftpm-${{ hashFiles('Package.resolved') }}
+
       - name: Run setup
         run: sh ./setup.sh
       - name: Configure AWS Credentials
