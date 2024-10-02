@@ -225,14 +225,18 @@ public final class UserRepository: UserRepositoryProtocol {
                 )
             }
 
+            let selfClient = selfUser.selfClient()
+            let isNotSameId = localClient.remoteIdentifier != selfClient?.remoteIdentifier
             let localClientActivationDate = localClient.activationDate
+            let selfClientActivationDate = selfClient?.activationDate
 
-            if let selfClient = selfUser.selfClient(),
-               localClient.remoteIdentifier != selfClient.remoteIdentifier, isNewClient,
-               let selfClientActivationDate = selfClient.activationDate,
-               localClientActivationDate?.compare(selfClientActivationDate) == .orderedDescending
-            {
-                localClient.needsToNotifyUser = true
+            if let selfClient, isNotSameId, let localClientActivationDate, let selfClientActivationDate {
+                let comparisonResult = localClientActivationDate
+                    .compare(selfClientActivationDate)
+
+                if comparisonResult == .orderedDescending {
+                    localClient.needsToNotifyUser = true
+                }
             }
 
             selfUser.selfClient()?.addNewClientToIgnored(localClient)
