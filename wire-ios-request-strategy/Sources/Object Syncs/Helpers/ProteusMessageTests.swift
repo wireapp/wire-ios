@@ -48,8 +48,8 @@ final class ProteusMessageTests: XCTestCase {
     }
 
     private func internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: Bool,
-                                                                    file: StaticString = #filePath,
-                                                                    line: UInt = #line) async throws {
+                                                                            file: StaticString = #filePath,
+                                                                            line: UInt = #line) async throws {
         // Given
         let message = try await coreDataStack.syncContext.perform {
             let conversation = ModelHelper().createGroupConversation(in: self.coreDataStack.syncContext)
@@ -64,7 +64,7 @@ final class ProteusMessageTests: XCTestCase {
         }
 
         // When
-         _ = try await message.prepareMessageForSending()
+        _ = try await message.prepareMessageForSending()
 
         // Then
         await coreDataStack.syncContext.perform {
