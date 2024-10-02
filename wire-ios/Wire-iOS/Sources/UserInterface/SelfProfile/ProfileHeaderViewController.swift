@@ -78,7 +78,6 @@ final class ProfileHeaderViewController: UIViewController {
         imageView.isHidden = true
         return imageView
     }()
-
     private let proteusVerifiedImageView = {
         let imageView = UIImageView(image: .init(resource: .verifiedShield))
         imageView.contentMode = .center

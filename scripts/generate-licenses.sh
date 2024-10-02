@@ -45,20 +45,12 @@ echo ""
 echo "ℹ️  Resolve Dependencies"
 ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
-#echo ""
-#echo "ℹ️  Licenses list"
-#echo "LicensePlist binary path: $LICENSEPLIST"
-#ls -l "$LICENSEPLIST"
-
 # Copy Dependencies
 echo ""
 echo "ℹ️  Copy Dependencies"
 
 ### Swift Packages
 cp -R "$PACKAGES_DIR" "$TMP_DIR"
-
-#echo "DerivedData-Generate-Licenses path: $TMP_DIR"
-#ls -l "$TMP_DIRR"
 
 ### Carthage
 cp -Rf "$REPO_ROOT"/Carthage/Checkouts/* "$TMP_DIR/checkouts"
