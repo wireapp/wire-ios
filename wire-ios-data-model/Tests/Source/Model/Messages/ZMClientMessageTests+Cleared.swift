@@ -22,19 +22,18 @@ import Foundation
 final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
 
     func testThatItCreatesPayloadForZMClearedMessages() async {
-        
+
         await self.syncMOC.perform {
             // given
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
             let message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation)
             let genericMessage = message?.underlyingMessage
-            
-            
+
             guard let message = genericMessage else { return XCTFail("missing message") }
             // when
             let result = message.recipientUsersForMessage(in: self.syncConversation, selfUser: self.syncSelfUser)
-                        
+
             // then
             switch result.strategy {
             case .doNotIgnoreAnyMissingClient:

@@ -202,7 +202,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         // WHEN / THEN
         try await internalTest_NativePush(expectedNativePush: true, message: message)
     }
-    
+
     func test_infoForSending_WithUserDeletedAccount() async throws {
         // GIVEN
         let expectedListClients: MessageInfo.ClientList = [
@@ -250,7 +250,7 @@ final class MessageInfoExtractorTests: XCTestCase {
     }
 
     // MARK: - Helpers
-    
+
     private func internalTest_NativePush(expectedNativePush: Bool, message: GenericMessage, file: StaticString = #file, line: UInt = #line) async throws {
         var conversation: ZMConversation!
 
@@ -273,7 +273,7 @@ final class MessageInfoExtractorTests: XCTestCase {
             return try XCTUnwrap(conversation.qualifiedID, file: file, line: line)
         }
         mockProteusMessage.underlyingMessage = message
-        
+
         // WHEN
         let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
 

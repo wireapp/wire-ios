@@ -22,41 +22,41 @@ import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
 final class ProteusMessagePayloadBuilderTests: XCTestCase {
-    
+
     var sut: ProteusMessagePayloadBuilder!
     var proteusService: MockProteusServiceInterface!
-    
+
     override func setUpWithError() throws {
         try super.setUpWithError()
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
         proteusService = MockProteusServiceInterface()
     }
-    
+
     override func tearDownWithError() throws {
         try super.tearDownWithError()
         proteusService = nil
         sut = nil
     }
-    
+
     func testEncryptForTransportUsingNonQualifiedIds() async throws {
         let message = GenericMessage(content: Text(content: "test"))
         try await internalTestEncryptForTransport(genericMessage: message, qualifiedIds: true)
     }
-    
+
     func testEncryptForTransportUsingQualifiedIds() async throws {
         let message = GenericMessage(content: Text(content: "test"))
         try await internalTestEncryptForTransport(genericMessage: message, qualifiedIds: true)
     }
-    
+
     func testEncryptForTransportEphemeralMessage() async throws {
         let message = GenericMessage(content: Ephemeral(content: Text(content: "test"), expiresAfter: .fiveMinutes))
         try await internalTestEncryptForTransport(genericMessage: message)
     }
-    
+
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
         // GIVEN
         let message = GenericMessage(content: Text(content: self.stringLargeEnoughToRequireExternal), nonce: UUID())
-        
+
         // WHEN
         let data = try await internalTestEncryptForTransport(genericMessage: message, qualifiedIds: false)
 
@@ -64,7 +64,7 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
         let createdMessage = try Proteus_NewOtrMessage.with {
             try $0.merge(serializedData: data)
         }
-        
+
         XCTAssertEqual(createdMessage.hasBlob, true)
         let clientIds = createdMessage.recipients.flatMap { userEntry -> [Proteus_ClientId] in
             return (userEntry.clients).map { clientEntry -> Proteus_ClientId in
@@ -74,9 +74,9 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
         let clientSet = Set(clientIds)
         XCTAssertEqual(clientSet.count, 1)
     }
-    
+
     func testThatCorruptedClientsReceiveBogusPayloadWhenSentAsExternal() async throws {
-        
+
         // GIVEN
         let userAID = QualifiedID.random()
         let userBID = QualifiedID.random()
@@ -86,7 +86,7 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
         let sessionAID: ProteusSessionID = .init(domain: domain,
                                                 userID: userAID.uuid.uuidString,
                                                 clientID: clientAID)
-        
+
         let sessionBID: ProteusSessionID = .init(domain: domain,
                                                 userID: userBID.uuid.uuidString,
                                                 clientID: clientBID)
@@ -96,44 +96,43 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
                 userAID.uuid: [
                     UserClientData(sessionID: sessionAID)
                 ],
-                
+
                 userBID.uuid: [
                     UserClientData(sessionID: sessionBID, data: ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!)
                 ]
             ]
         ]
-        
-        
+
         let message = GenericMessage(content: Text(content: self.stringLargeEnoughToRequireExternal), nonce: UUID())
-        
+
         // WHEN
         let data = try await internalTestEncryptForTransport(genericMessage: message,
                                                              qualifiedIds: false,
                                                              listClients: listClients)
-        
+
         // THEN
         let createdMessage = try Proteus_NewOtrMessage.with {
             try $0.merge(serializedData: data)
         }
         XCTAssertEqual(createdMessage.hasBlob, true)
-        
+
         guard let userEntry = createdMessage.recipients.first else {
             return XCTFail()
         }
-        
+
         XCTAssertEqual(userEntry.clients.count, 1)
         XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
     }
-    
+
     // MARK: - Helpers
-    
+
     @discardableResult
     private func internalTestEncryptForTransport(genericMessage: GenericMessage,
                                                  qualifiedIds: Bool = true,
                                                  listClients: MessageInfo.ClientList,
                                                  file: StaticString = #filePath,
                                                  line: UInt = #line) async throws -> Data {
-        
+
         proteusService.encryptBatchedDataForSessions_MockMethod = { data, sessions in
             var result = [String: Data]()
             sessions.forEach { session in
@@ -141,21 +140,21 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
             }
             return result
         }
-        
+
         sut = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: qualifiedIds)
         let messageInfo = MessageInfo(genericMessage: genericMessage,
                                       listClients: listClients,
                                       missingClientsStrategy: .doNotIgnoreAnyMissingClient,
                                       selfClientID: .randomClientIdentifier())
-        
+
         // WHEN
         let data = try await sut.encryptForTransport(with: messageInfo)
-        
+
         // THEN
         XCTAssertNotNil(data, file: file, line: line)
         return data
     }
-    
+
     @discardableResult
     private func internalTestEncryptForTransport(genericMessage: GenericMessage,
                                                  qualifiedIds: Bool = true,

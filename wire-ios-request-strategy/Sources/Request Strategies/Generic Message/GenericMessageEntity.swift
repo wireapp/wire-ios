@@ -75,7 +75,7 @@ public enum Recipients {
     public func prepareMessageForSending() async throws {
         // no-op
     }
-    
+
     public func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {
         self.message = message
     }

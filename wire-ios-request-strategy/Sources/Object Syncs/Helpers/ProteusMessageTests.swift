@@ -17,28 +17,28 @@
 //
 
 import Foundation
-import WireRequestStrategySupport
-import WireDataModelSupport
 @testable import WireDataModel
+import WireDataModelSupport
 @testable import WireRequestStrategy
+import WireRequestStrategySupport
 
 final class ProteusMessageTests: XCTestCase {
-    
+
     var coreDataStack: CoreDataStack!
     var coreDataHelper: CoreDataStackHelper!
-    
+
     override func setUp() async throws {
         try await super.setUp()
         coreDataHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataHelper.createStack()
     }
-    
+
     override func tearDown() async throws {
         try await super.tearDown()
         coreDataStack = nil
         coreDataHelper = nil
     }
-    
+
     func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsEnabled() async throws {
         try await internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: true)
     }
@@ -47,7 +47,7 @@ final class ProteusMessageTests: XCTestCase {
         try await internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: false)
     }
 
-    private func internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: Bool, 
+    private func internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: Bool,
                                                                     file: StaticString = #filePath,
                                                                     line: UInt = #line) async throws {
         // Given
@@ -71,7 +71,7 @@ final class ProteusMessageTests: XCTestCase {
             XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, enabled ? .enabled : .disabled, file: file, line: line)
         }
     }
-    
+
     private func createClientTextMessage(withText text: String, in context: NSManagedObjectContext) throws -> ZMClientMessage {
         let nonce = UUID.create()
         let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: context )

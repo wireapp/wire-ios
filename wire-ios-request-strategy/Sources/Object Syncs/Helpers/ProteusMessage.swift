@@ -31,13 +31,12 @@ public protocol ProteusMessage: OTREntity {
     var underlyingMessage: GenericMessage? { get }
 
     var targetRecipients: Recipients { get }
-    
+
     func setUnderlyingMessage(_ message: GenericMessage) throws
 }
 
-
 extension ProteusMessage {
-    
+
     public var debugInfo: String {
         guard let message = underlyingMessage else {
             return "\(self)"

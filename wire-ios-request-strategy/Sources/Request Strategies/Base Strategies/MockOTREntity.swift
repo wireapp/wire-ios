@@ -72,7 +72,7 @@ final class MockOTREntity: OTREntity {
 extension MockOTREntity: ProteusMessage {
     func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {
     }
-    
+
     var targetRecipients: WireRequestStrategy.Recipients {
         .conversationParticipants
     }
