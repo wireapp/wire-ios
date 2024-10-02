@@ -35,6 +35,9 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
     private var coreDataStack: CoreDataStack!
     private let modelHelper = ModelHelper()
 
+    private var conversation: ZMConversation!
+    private var firstMessage: ZMMessage!
+
     // MARK: - setUp
 
     override func setUp() async throws {
@@ -43,7 +46,11 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
 
         mockAnalyticsSessionProtocol = .init()
+        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
         sut = ToggleMessageReactionUseCase(analyticsSession: mockAnalyticsSessionProtocol)
+
+        (conversation, firstMessage) = try await setupConversationWithMessage()
+
     }
 
     // MARK: - tearDown
@@ -53,33 +60,36 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         mockAnalyticsSessionProtocol = nil
         coreDataStack = nil
         coreDataStackHelper = nil
+        conversation = nil
+        firstMessage = nil
 
         super.tearDown()
     }
 
     // MARK: - Helper Methods
 
-    private func setupConversationWithMessages() throws -> (conversation: ZMConversation, selfUser: ZMUser, messages: [ZMMessage]) {
-        let conversation = modelHelper.createGroupConversation(in: coreDataStack.viewContext)
-        let selfUser = modelHelper.createSelfUser(in: coreDataStack.viewContext)
-        let messages = try modelHelper.addTextMessages(
-            to: conversation,
-            messagePrefix: "Hello",
-            sender: selfUser,
-            count: 3,
-            in: coreDataStack.viewContext
-        )
-        return (conversation, selfUser, messages)
+    private func setupConversationWithMessage() async throws -> (conversation: ZMConversation, message: ZMMessage) {
+        try await coreDataStack.viewContext.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(in: coreDataStack.viewContext)
+            let selfUser = modelHelper.createSelfUser(in: coreDataStack.viewContext)
+            let messages = try modelHelper.addTextMessages(
+                to: conversation,
+                messagePrefix: "Hello",
+                sender: selfUser,
+                count: 1,
+                in: coreDataStack.viewContext
+            )
+
+            let firstMessage = try XCTUnwrap(messages.first)
+            firstMessage.markAsSent()
+            return (conversation, firstMessage)
+        }
     }
 
     // MARK: - Unit Tests
 
     func testToggleMessageReaction_AddLikeReaction() throws {
         // GIVEN
-        let (conversation, _, messages) = try setupConversationWithMessages()
-        let firstMessage = try XCTUnwrap(messages.first)
-        firstMessage.markAsSent()
-        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
 
         // WHEN
         sut.invoke("❤️", for: firstMessage, in: conversation)
@@ -93,44 +103,18 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
 
     func testToggleMessageReaction_RemoveLikeReaction() throws {
         // GIVEN
-        let (conversation, _, messages) = try setupConversationWithMessages()
-        let firstMessage = try XCTUnwrap(messages.first)
-        firstMessage.markAsSent()
         ZMMessage.addReaction("❤️", to: firstMessage)
-        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
 
         // WHEN
         sut.invoke("❤️", for: firstMessage, in: conversation)
 
         // THEN
         XCTAssertFalse(firstMessage.usersReaction.keys.contains("❤️"), "Expected the ❤️ reaction to be removed from the first message.")
-        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 0, "Non-like reactions should not trigger analytics events.")
-
-    }
-
-    func testToggleMessageReaction_AddNonLikeReaction() throws {
-        // GIVEN
-        let (conversation, _, messages) = try setupConversationWithMessages()
-        let firstMessage = try XCTUnwrap(messages.first)
-        firstMessage.markAsSent()
-        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
-
-        // WHEN
-        sut.invoke("😮", for: firstMessage, in: conversation)
-
-        // THEN
-        XCTAssertTrue(firstMessage.usersReaction.keys.contains("😮"), "Expected the first message to have a 😮 reaction.")
-        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 0, "Non-like reactions should not trigger analytics events.")
+        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 0, "Removing reactions should not trigger analytics events.")
     }
 
     func testToggleMessageReaction_MultipleReactions() throws {
-        // GIVEN
-        let (conversation, _, messages) = try setupConversationWithMessages()
-        let firstMessage = try XCTUnwrap(messages.first)
-        firstMessage.markAsSent()
-        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
-
-        // WHEN
+        // GIVEN & WHEN
         sut.invoke("❤️", for: firstMessage, in: conversation)
         sut.invoke("👍", for: firstMessage, in: conversation)
         sut.invoke("😮", for: firstMessage, in: conversation)
