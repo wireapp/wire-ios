@@ -106,7 +106,7 @@ final class MainTabBarControllerTests: XCTestCase {
     @MainActor
     func testSettingsIsInstalled() throws {
         // Given
-        let settings = MockSettingsViewController()
+        let settings = UIViewController()
 
         // When
         sut.settings = settings
@@ -121,7 +121,7 @@ final class MainTabBarControllerTests: XCTestCase {
         // Given
         weak var weakSettings: UIViewController?
         sut.settings = {
-            let settings = MockSettingsViewController()
+            let settings = UIViewController()
             weakSettings = settings
             return settings
         }()
