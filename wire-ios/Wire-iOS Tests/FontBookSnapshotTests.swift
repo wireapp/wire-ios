@@ -18,6 +18,7 @@
 
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireTestingPackage
 import XCTest
 

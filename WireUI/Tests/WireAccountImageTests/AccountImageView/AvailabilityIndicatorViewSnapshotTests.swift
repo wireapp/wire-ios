@@ -30,15 +30,14 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
     private var sut: SUT!
     private var snapshotHelper: SnapshotHelper!
 
+    @MainActor
     override func setUp() async throws {
-        (sut, container) = await MainActor.run {
-            let container = UIView(frame: .init(origin: .zero, size: .init(width: 26, height: 26)))
-            let sut = SUT(frame: .init(x: 3, y: 3, width: 20, height: 20))
-            container.addSubview(sut)
-            return (sut, container)
-        }
+        sut = SUT(frame: .init(x: 3, y: 3, width: 20, height: 20))
+        container = UIView(frame: .init(origin: .zero, size: .init(width: 26, height: 26)))
+        container.addSubview(sut)
+
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {

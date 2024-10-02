@@ -50,7 +50,7 @@ final class AppLockModuleViewTests: XCTestCase {
         sut.viewDidAppear(false)
 
         // Then
-        XCTAssertEqual(presenter.events, [.viewDidAppear])
+        XCTAssertEqual(presenter.events, [.viewDidFirstAppear])
     }
 
     // @SF.Locking @TSFI.FS-IOS @S0.1

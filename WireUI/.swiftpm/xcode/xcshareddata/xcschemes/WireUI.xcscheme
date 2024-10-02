@@ -57,9 +57,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireUIFoundation"
-               BuildableName = "WireUIFoundation"
-               BlueprintName = "WireUIFoundation"
+               BlueprintIdentifier = "WireMainNavigation"
+               BuildableName = "WireMainNavigation"
+               BlueprintName = "WireMainNavigation"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -74,9 +74,6 @@
          <TestPlanReference
             reference = "container:.swiftpm/WireUI.xctestplan"
             default = "YES">
-         </TestPlanReference>
-         <TestPlanReference
-            reference = "container:.swiftpm/WireUI.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
@@ -114,9 +111,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireUIFoundationTests"
-               BuildableName = "WireUIFoundationTests"
-               BlueprintName = "WireUIFoundationTests"
+               BlueprintIdentifier = "WireMainNavigationTests"
+               BuildableName = "WireMainNavigationTests"
+               BlueprintName = "WireMainNavigationTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
