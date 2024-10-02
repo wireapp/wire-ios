@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Pristatyta";
 "content.system.message_read_timestamp" = "Perskaityta";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Gaukite naujienlaiškį";
-"self.settings.receiveNews_and_offers.description.title" = "Gaukite naujienas ir produktų pakeitimo informaciją iš „Wire“ el. paštu.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Neteisinga nuoroda.";
 "url_action.invalid_link.message" = "Jūsų atverta nuoroda yra neteisinga.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Ar norite gauti naujienas ir produktų pakeitimus iš „Wire“ el. paštu?";
-"news_offers.consent.message" = "Atsisakyti galite bet kada.";
-"news_offers.consent.button.privacy_policy.title" = "Privatumo politika";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

@@ -469,7 +469,7 @@
 "content.system.mls_migration.finalized.done" = "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.";
 "content.system.mls_migration.join_afterwards" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
 "content.system.mls_migration.ongoing_call" = "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.";
-"content.system.mls_migration.learn_more" = "Learn more about MLS";
+"content.system.mls_migration.learn_more" = "Läs mer om MLS";
 "content.system.mls_migration.potentialGap" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
 "content.system.mls_migration.mls_not_supported_by_otherUser" = "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.";
 "content.system.mls_migration.mls_not_supported_by_you" = "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Levererat";
 "content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Försök igen";
 
@@ -745,7 +746,7 @@
 "call.participants.list.title" = "Deltagare";
 
 "call.overlay.switch_to.speakers" = "SPEAKERS";
-"call.overlay.switch_to.all" = "ALL";
+"call.overlay.switch_to.all" = "ALLA";
 
 "call.grid.no_active_speakers" = "No active video speakers...";
 "call.grid.connecting" = "Connecting";
@@ -837,7 +838,7 @@
 "meta.menu.archive" = "Arkiv";
 "meta.menu.unarchive" = "Hämta från Arkiv";
 "meta.menu.delete" = "Radera grupp…";
-"meta.menu.clear_content" = "Clear Content…";
+"meta.menu.clear_content" = "Rensa innehåll…";
 "meta.menu.move_to_folder" = "Flytta till…";
 "meta.menu.remove_from_folder" = "Remove from \"%@\"";
 "meta.menu.silence.mute" = "Tysta";
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Skicka anonyma användningsdata";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Ta emot nyheter och produkt-uppdateringar från Wire via e-post.";
-
-
 
 // Change Username
 
@@ -1638,7 +1634,7 @@
 "registration.email_invitation.hero.title" = "Hej, %@";
 "registration.email_invitation.hero.paragraph" = "Välj ett lösenord för att skapa ditt konto.";
 
-"registration.confirm" = "Sign Up";
+"registration.confirm" = "Registrera dig";
 
 "error.name_and_email" = "Ange ditt fullständiga namn och en giltig e-postadress";
 "error.full_name" = "Vänligen ange ditt fullständiga namn";
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Ogiltig länk.";
 "url_action.invalid_link.message" = "The link you opened is not valid.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Vill du ta emot nyheter och produkt-uppdateringar från Wire via e-post?";
-"news_offers.consent.message" = "Du kan avprenumerera när som helst.";
-"news_offers.consent.button.privacy_policy.title" = "Integritetspolicy";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Доставлене";
 "content.system.message_read_timestamp" = "Переглянуто";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Надсилати анонімну статистику про використання додатку";
 "self.settings.privacy_analytics_menu.description.title" = "Дані про використання додатку дозволяють Wire зрозуміти, як використовується програма, і як вона може бути вдосконалена. Дані анонімні та не містять даних з ваших розмов (наприклад, повідомлення, файли або дзвінки).";
-
-"self.settings.receiveNews_and_offers.title" = "Отримувати новини";
-"self.settings.receiveNews_and_offers.description.title" = "Отримувати новини та інформацію про оновлення Wire по електронній пошті.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Невалідний лінк.";
 "url_action.invalid_link.message" = "Ви відкрили невалідний лінк.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Ви хочете отримувати новини про Wire по електронній пошті?";
-"news_offers.consent.message" = "Ви можете будь-коли відмовитись від отримання новин.";
-"news_offers.consent.button.privacy_policy.title" = "Політика конфіденційності";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Gönderildi";
 "content.system.message_read_timestamp" = "Görüldü";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Anonim kullanım verileri gönder";
 "self.settings.privacy_analytics_menu.description.title" = "Kullanım verileri, Wire'ın uygulamanın nasıl kullanıldığını ve nasıl geliştirilebileceğini anlamasını sağlar. Veriler anonimdir ve iletişiminizin içeriğini (mesajlar, dosyalar veya aramalar gibi) içermez.";
-
-"self.settings.receiveNews_and_offers.title" = "Bülten Alın";
-"self.settings.receiveNews_and_offers.description.title" = "Wire'dan haberleri ve ürün güncellemelerini e-postayla alın.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Geçersiz Bağlantı.";
 "url_action.invalid_link.message" = "Açtığınız bağlantı geçerli değil.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Haber ve ürün güncellemeleri Wire e-posta yoluyla almak istiyor musunuz?";
-"news_offers.consent.message" = "İstediğiniz zaman abonelikten çıkabilirsiniz.";
-"news_offers.consent.button.privacy_policy.title" = "Gizlilik Politikası";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
