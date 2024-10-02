@@ -30,7 +30,7 @@ public struct UserConnectionEvent: Equatable, Codable, Sendable {
     /// The connection to the other user.
 
     public let connection: Connection
-    
+
     public init(
         userName: String,
         connection: Connection

@@ -30,12 +30,12 @@ public protocol ConversationsAPI {
 
     /// Fetch conversation list with qualified identifiers.
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
-    
+
     /// Fetches a user MLS one to one conversation.
     /// - parameters:
     ///     - userID: The user ID to fetch the MLS one to one conversation for.
     ///     - domain: The domain of the one to one conversation.
-    
+
     func getMLSOneToOneConversation(
         userID: String,
         in domain: String

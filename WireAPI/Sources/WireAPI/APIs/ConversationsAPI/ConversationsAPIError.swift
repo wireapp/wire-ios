@@ -24,13 +24,13 @@ public enum ConversationsAPIError: Error {
 
     /// Failure if http body is invalid.
     case invalidBody
-    
+
     /// Unsupported endpoint for API version
     case unsupportedEndpointForAPIVersion
-    
+
     /// MLS not enabled
     case mlsNotEnabled
-    
+
     /// Users not connected
     case usersNotConnected
 

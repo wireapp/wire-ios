@@ -90,7 +90,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
             .parse(response)
     }
-    
+
     func getMLSOneToOneConversation(
         userID: String,
         in domain: String

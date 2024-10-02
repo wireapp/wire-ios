@@ -47,7 +47,7 @@ public struct Connection: Equatable, Codable, Sendable {
     /// current status of connection
 
     public let status: ConnectionStatus
-    
+
     public init(
         senderID: UUID?,
         receiverID: UUID?,
