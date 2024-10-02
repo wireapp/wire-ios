@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import CoreData
+import WireAPI
 import WireDataModel
 
 /// Process federation delete events.
@@ -39,9 +39,9 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
     func processEvent(_ event: FederationDeleteEvent) async throws {
         try await deleteFederationConnection(with: event.domain)
     }
-    
+
     // MARK: - Private
-    
+
     /// Deletes a federation connection on a specific domain locally.
     /// - Parameter domain: The domain to delete the connection for.
 
@@ -176,7 +176,7 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
             return userDomains.isSubset(of: localParticipantDomains)
         }
     }
-    
+
     private func getParticipants(
         from conversation: ZMConversation,
         on domains: Set<String>
@@ -193,7 +193,7 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
 
         return participants
     }
-    
+
     private func removeConnectionRequests(with domain: String) {
         let sentAndPendingConnectionsPredicate = ZMUser.predicateForSentAndPendingConnections(hostedOnDomain: domain)
 

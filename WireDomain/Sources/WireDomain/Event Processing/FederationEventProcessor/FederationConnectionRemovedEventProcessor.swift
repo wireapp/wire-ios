@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import CoreData
+import WireAPI
 import WireDataModel
 
 /// Process federation connection removed events.
@@ -42,7 +42,7 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
 
     func processEvent(_ event: FederationConnectionRemovedEvent) async throws {
         let domains = Array(event.domains)
-        
+
         guard
             domains.count == 2,
             let domain = domains.first,
@@ -53,7 +53,7 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
 
         await removeFederationConnection(between: domain, and: otherDomain)
     }
-    
+
     // MARK: - Private
 
     /// Removes a federation connection between two specific domains locally.
@@ -187,7 +187,7 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
             return userDomains.isSubset(of: localParticipantDomains)
         }
     }
-    
+
     private func getParticipants(
         from conversation: ZMConversation,
         on domains: Set<String>
