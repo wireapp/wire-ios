@@ -270,7 +270,7 @@ final class MessageInfoExtractorTests: XCTestCase {
             conversation.remoteIdentifier = Scaffolding.conversationID.uuid
             conversation.domain = Scaffolding.conversationID.domain
             mockProteusMessage.conversation = conversation
-            return try XCTUnwrap(conversation.qualifiedID)
+            return try XCTUnwrap(conversation.qualifiedID, file: file, line: line)
         }
         mockProteusMessage.underlyingMessage = message
         

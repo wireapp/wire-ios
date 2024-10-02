@@ -55,7 +55,7 @@ final class ProteusMessageTests: XCTestCase {
             let conversation = ModelHelper().createGroupConversation(in: self.coreDataStack.syncContext)
             let message = try self.createClientTextMessage(withText: "test", in: self.coreDataStack.syncContext)
             conversation.append(message)
-            var genericMessage = try XCTUnwrap(message.underlyingMessage)
+            var genericMessage = try XCTUnwrap(message.underlyingMessage, file: file, line: line)
 
             genericMessage.setLegalHoldStatus(enabled ? .disabled : .enabled)
             try message.setUnderlyingMessage(genericMessage)
