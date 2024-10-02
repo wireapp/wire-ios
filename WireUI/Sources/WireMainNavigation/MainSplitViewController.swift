@@ -201,7 +201,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
     private func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
         _settingsContent = settingsContent
 
-        let viewControllers = [settingsContent ?? noConversationPlaceholder].compactMap { $0 } // TODO: noConversationPlaceholder is not properly named
+        let viewControllers = [settingsContent].compactMap { $0 }
         secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
         secondaryNavigationController.view.layoutIfNeeded()
     }

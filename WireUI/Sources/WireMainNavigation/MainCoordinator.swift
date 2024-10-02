@@ -207,11 +207,10 @@ public final class MainCoordinator<
             splitViewController.settings = settings
         }
 
-        showSettingsContent(.init(.account)) // TODO: make the selection visible
+        showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
     }
 
     public func showConversation(conversationID: ConversationList.ConversationID) async {
-        // TODO: do we have to change the filter?
 
         let conversation = await conversationBuilder.build(
             conversationID: conversationID,
@@ -222,7 +221,6 @@ public final class MainCoordinator<
             tabBarController.setConversation(conversation, animated: true)
         } else {
             splitViewController.conversation = conversation
-            // TODO: is there anything else to do for `.expanded`?
         }
     }
 
@@ -240,7 +238,7 @@ public final class MainCoordinator<
         let contentViewController = settingsContentBuilder.build(topLevelMenuItem: topLevelMenuItem, mainCoordinator: self)
         switch mainSplitViewState {
         case .collapsed:
-            tabBarController.setSettingsContent(contentViewController, animated: true) // TODO: make the selection visible
+            tabBarController.setSettingsContent(contentViewController, animated: true) // TODO: [WPB-11347] make the selection visible
         case .expanded:
             splitViewController.settingsContent = contentViewController
         }
@@ -253,7 +251,8 @@ public final class MainCoordinator<
 
     public func showSelfProfile() {
         guard selfProfile == nil else {
-            return assertionFailure() // TODO: inject logger instead
+            // Once WireLogger is available to Swift packages use it here instead.
+            return assertionFailure()
         }
 
         let rootViewController = selfProfileBuilder.build(mainCoordinator: self)
@@ -266,7 +265,8 @@ public final class MainCoordinator<
 
     public func showConnect() {
         guard connect == nil else {
-            return assertionFailure() // TODO: inject logger instead
+            // Once WireLogger is available to Swift packages use it here instead.
+            return assertionFailure()
         }
 
         sidebar.selectedMenuItem = .init(.connect)
@@ -328,7 +328,10 @@ public final class MainCoordinator<
     public func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
         guard let splitViewController = splitViewController as? SplitViewController,
               splitViewController === self.splitViewController
-        else { return assertionFailure() } // TODO: inject logger instead
+        else {
+            // Once WireLogger is available to Swift packages use it here instead.
+            return assertionFailure()
+        }
 
         // move view controllers from the split view controller's columns to the tab bar controller
         if let conversationListViewController = splitViewController.conversationList {
@@ -378,7 +381,10 @@ public final class MainCoordinator<
     public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
         guard let splitViewController = splitViewController as? SplitViewController,
               splitViewController === self.splitViewController
-        else { return assertionFailure() } // TODO: inject logger instead
+        else {
+            // Once WireLogger is available to Swift packages use it here instead.
+            return assertionFailure()
+        }
 
         // move view controllers from the tab bar controller to the supplementary column
         if tabBarController.selectedContent == .conversations {
@@ -428,7 +434,7 @@ public final class MainCoordinator<
         let conversationList = tabBarController.conversationList ?? splitViewController.conversationList
         conversationList!.splitViewInterface = .expanded
         if let settingsContentToSelect {
-            showSettingsContent(settingsContentToSelect) // TODO: make the selection visible
+            showSettingsContent(settingsContentToSelect) // TODO: [WPB-11347] make the selection visible
         }
     }
 
@@ -437,7 +443,10 @@ public final class MainCoordinator<
     public func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         guard let tabBarController = tabBarController as? TabBarController,
               tabBarController === self.tabBarController
-        else { return assertionFailure() } // TODO: inject logger instead
+        else {
+            // Once WireLogger is available to Swift packages use it here instead.
+            return assertionFailure()
+        }
 
         switch tabBarController.selectedContent {
         case .conversations:
