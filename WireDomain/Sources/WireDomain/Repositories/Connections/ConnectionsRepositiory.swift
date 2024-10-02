@@ -20,16 +20,26 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// sourcery: AutoMockable
 /// Facilitate access to connections related domain objects.
 ///
 /// A repository provides an abstraction for the access and storage
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
-protocol ConnectionsRepositoryProtocol {
+public protocol ConnectionsRepositoryProtocol {
 
-    /// Pull self team metadata frmo the server and store locally.
+    /// Pull self team metadata from the server and store locally.
 
     func pullConnections() async throws
+
+    /// Updates a connection locally.
+    ///
+    /// - parameters:
+    ///     - connection: The connection to update.
+
+    func updateConnection(
+        _ connection: Connection
+    ) async throws
 }
 
 struct ConnectionsRepository: ConnectionsRepositoryProtocol {
@@ -59,6 +69,12 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
                 }
             }
         }
+    }
+
+    func updateConnection(
+        _ connection: Connection
+    ) async throws {
+        try await storeConnection(connection)
     }
 
     /// Save connection and related objects to local storage.
@@ -115,31 +131,8 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             in: context
         )
 
-        storedConnection.status = status(from: connection.status)
+        storedConnection.status = connection.status.toDomainModel()
         storedConnection.lastUpdateDateInGMT = connection.lastUpdate
         return storedConnection
-    }
-
-    /// Converts ConnectionStatus to stored connectionStatus
-    /// - Parameter connectionStatus: WireAPI's ConnectionStatus
-    /// - Returns: stored ConnectionStatus
-
-    private func status(from connectionStatus: ConnectionStatus) -> ZMConnectionStatus {
-        switch connectionStatus {
-        case .sent:
-            .sent
-        case .accepted:
-            .accepted
-        case .pending:
-            .pending
-        case .blocked:
-            .blocked
-        case .cancelled:
-            .cancelled
-        case .ignored:
-            .ignored
-        case .missingLegalholdConsent:
-            .blockedMissingLegalholdConsent
-        }
     }
 }

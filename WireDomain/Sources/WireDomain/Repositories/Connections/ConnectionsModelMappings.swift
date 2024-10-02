@@ -16,18 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
+import WireDataModel
 
-/// Errors originating from `ConversationRepository`.
+extension WireAPI.ConnectionStatus {
 
-enum ConversationRepositoryError: Error {
-
-    /// Unable to delete conversation.
-
-    case failedToDeleteConversation(Error)
-
-    /// Missing MLS group ID
-
-    case mlsConversationShouldHaveAGroupID
+    func toDomainModel() -> WireDataModel.ZMConnectionStatus {
+        switch self {
+        case .accepted:
+            .accepted
+        case .blocked:
+            .blocked
+        case .pending:
+            .pending
+        case .ignored:
+            .ignored
+        case .sent:
+            .sent
+        case .cancelled:
+            .cancelled
+        case .missingLegalholdConsent:
+            .blockedMissingLegalholdConsent
+        }
+    }
 
 }

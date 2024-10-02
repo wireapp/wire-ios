@@ -55,6 +55,17 @@ public protocol ConversationLocalStoreProtocol {
     func storeFailedConversation(
         withQualifiedId qualifiedId: WireAPI.QualifiedID
     ) async
+
+    /// Fetches a MLS conversation locally.
+    ///
+    /// - parameters:
+    ///     - groupID: The MLS group ID object.
+    ///
+    /// - returns : A MLS conversation.
+
+    func fetchMLSConversation(
+        with groupID: WireDataModel.MLSGroupID
+    ) async -> ZMConversation?
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -170,6 +181,17 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             $0.needsToBeUpdatedFromBackend = true
 
             return ($0, $0.mlsGroupID)
+        }
+    }
+
+    public func fetchMLSConversation(
+        with groupID: WireDataModel.MLSGroupID
+    ) async -> ZMConversation? {
+        await context.perform { [context] in
+            ZMConversation.fetch(
+                with: groupID,
+                in: context
+            )
         }
     }
 
