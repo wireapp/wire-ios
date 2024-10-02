@@ -32,8 +32,8 @@ public final class AccountImageView: UIView {
     private let teamAccountImageCornerRadius: CGFloat = 6
 
     enum Defaults {
-        static let accountImageBorderWidth: CGFloat = 1
-        static let accountImageViewBorderColor: UIColor = .gray
+        static let imageViewBorderWidth: CGFloat = 1
+        static let imageViewBorderColor: UIColor = .gray
     }
 
     // MARK: - Public Properties
@@ -50,12 +50,32 @@ public final class AccountImageView: UIView {
         didSet { updateAvailabilityIndicator() }
     }
 
-    public var accountImageBorderWidth = Defaults.accountImageBorderWidth {
+    public var imageBorderWidth = Defaults.imageViewBorderWidth {
         didSet { updateAccountImageBorder() }
     }
 
-    public var accountImageViewBorderColor = Defaults.accountImageViewBorderColor {
+    public var imageBorderColor = Defaults.imageViewBorderColor {
         didSet { updateAccountImageBorder() }
+    }
+
+    public var availableColor: UIColor {
+        get { availabilityIndicatorView.availableColor }
+        set { availabilityIndicatorView.availableColor = newValue }
+    }
+
+    public var awayColor: UIColor {
+        get { availabilityIndicatorView.awayColor }
+        set { availabilityIndicatorView.awayColor = newValue }
+    }
+
+    public var busyColor: UIColor {
+        get { availabilityIndicatorView.busyColor }
+        set { availabilityIndicatorView.busyColor = newValue }
+    }
+
+    public var availabilityIndicatorBackgroundColor: UIColor {
+        get { availabilityIndicatorView.backgroundViewColor }
+        set { availabilityIndicatorView.backgroundViewColor = newValue }
     }
 
     // MARK: - Private Properties
@@ -65,8 +85,8 @@ public final class AccountImageView: UIView {
 
     override public var intrinsicContentSize: CGSize {
         .init(
-            width: accountImageBorderWidth * 2 + accountImageHeight,
-            height: accountImageBorderWidth * 2 + accountImageHeight
+            width: imageBorderWidth * 2 + accountImageHeight,
+            height: imageBorderWidth * 2 + accountImageHeight
         )
     }
 
@@ -131,10 +151,10 @@ public final class AccountImageView: UIView {
         constraints = [
             accountImageView.widthAnchor.constraint(equalToConstant: accountImageHeight), // fallback, lower priority
             accountImageView.heightAnchor.constraint(equalToConstant: accountImageHeight), // fallback, lower priority
-            accountImageView.leadingAnchor.constraint(equalTo: accountImageViewWrapper.leadingAnchor, constant: accountImageBorderWidth),
-            accountImageView.topAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: accountImageBorderWidth),
-            accountImageViewWrapper.trailingAnchor.constraint(equalTo: accountImageView.trailingAnchor, constant: accountImageBorderWidth),
-            accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: accountImageBorderWidth)
+            accountImageView.leadingAnchor.constraint(equalTo: accountImageViewWrapper.leadingAnchor, constant: imageBorderWidth),
+            accountImageView.topAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: imageBorderWidth),
+            accountImageViewWrapper.trailingAnchor.constraint(equalTo: accountImageView.trailingAnchor, constant: imageBorderWidth),
+            accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: imageBorderWidth)
         ]
         constraints[0 ... 1].forEach { $0.priority = .defaultLow }
         NSLayoutConstraint.activate(constraints)
@@ -163,8 +183,8 @@ public final class AccountImageView: UIView {
     private func updateAccountImageBorder() {
         guard let accountImageViewWrapper = accountImageView.superview else { return }
 
-        accountImageViewWrapper.layer.borderWidth = accountImageBorderWidth
-        accountImageViewWrapper.layer.borderColor = accountImageViewBorderColor.cgColor
+        accountImageViewWrapper.layer.borderWidth = imageBorderWidth
+        accountImageViewWrapper.layer.borderColor = imageBorderColor.cgColor
     }
 
     private func updateAccountImage() {
