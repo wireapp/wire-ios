@@ -20,7 +20,7 @@ import WireMainNavigation
 
 enum MockConversationFilter: MainConversationFilterRepresentable {
 
-    init(_ mainConversationFilter: MainConversationFilter) {
+    init(_: MainConversationFilter) {
         fatalError("not implemented")
     }
 

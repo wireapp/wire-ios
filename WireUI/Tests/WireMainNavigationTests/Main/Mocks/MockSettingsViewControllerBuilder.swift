@@ -20,7 +20,7 @@ import UIKit
 import WireMainNavigation
 
 struct MockSettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsContentBuilderProtocol {
-    
+
     typealias SettingsContent = UIViewController
     typealias TopLevelMenuItem = MockSettingsTopLevelMenuItem
 

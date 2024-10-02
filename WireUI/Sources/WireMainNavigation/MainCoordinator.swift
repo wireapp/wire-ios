@@ -18,8 +18,6 @@
 
 import UIKit
 
-// TODO: when a conversation is shown, an entry in the conversationList must be selected, same for settings
-
 // swiftlint:disable opening_brace
 
 /// Manages the main navigation and the layout changes of the application after a successful login.
@@ -31,6 +29,8 @@ import UIKit
 ///
 /// Both, the split view controller as well as the tab view controller actually install `UINavigationController`
 /// instances and then put or remove the content view controllers into/from `viewControllers` array.
+
+// TODO: try double column container
 
 @MainActor
 public final class MainCoordinator<
@@ -208,7 +208,7 @@ public final class MainCoordinator<
             splitViewController.settings = settings
         }
 
-        showSettingsContent(.init(.account)) // TODO: the selection must be visible
+        showSettingsContent(.init(.account)) // TODO: make the selection visible
     }
 
     public func showConversation(conversationID: ConversationList.ConversationID) async {
@@ -234,7 +234,6 @@ public final class MainCoordinator<
     }
 
     public func showSettingsContent(_ topLevelMenuItem: SettingsContentBuilder.TopLevelMenuItem) {
-
         if let conversation = splitViewController.conversation {
             splitViewController.conversation = nil
             tabBarController.conversation = conversation
@@ -243,7 +242,7 @@ public final class MainCoordinator<
         let contentViewController = settingsContentBuilder.build(topLevelMenuItem: topLevelMenuItem, mainCoordinator: self)
         switch mainSplitViewState {
         case .collapsed:
-            tabBarController.setSettingsContent(contentViewController, animated: true)
+            tabBarController.setSettingsContent(contentViewController, animated: true) // TODO: make the selection visible
         case .expanded:
             splitViewController.settingsContent = contentViewController
         }
@@ -431,7 +430,7 @@ public final class MainCoordinator<
         let conversationList = tabBarController.conversationList ?? splitViewController.conversationList
         conversationList!.splitViewInterface = .expanded
         if let settingsContentToSelect {
-            showSettingsContent(settingsContentToSelect)
+            showSettingsContent(settingsContentToSelect) // TODO: make the selection visible
         }
     }
 

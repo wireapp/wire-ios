@@ -19,6 +19,6 @@
 import WireMainNavigation
 
 enum MockSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable {
-    init(_ mainSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItem) { fatalError() }
+    init(_: MainSettingsTopLevelMenuItem) { fatalError() }
     func mapToMainSettingsContent() -> MainSettingsTopLevelMenuItem { fatalError() }
 }

@@ -1,6 +1,6 @@
 # ``WireUtilities``
 
-Provide various utility helpers.
+Provides various utility helpers.
 
 ## Overview
 
