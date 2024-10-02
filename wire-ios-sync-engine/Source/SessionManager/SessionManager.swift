@@ -480,7 +480,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             preconditionFailure("Unable to get shared container URL")
         }
 
-
         self.sharedContainerURL = sharedContainerURL
         self.accountManager = AccountManager(sharedDirectory: sharedContainerURL)
 
@@ -1329,7 +1328,7 @@ extension SessionManager: UserObserving {
         }
 
         if changeInfo.analyticsIdentifierChanged {
-            guard 
+            guard
                 changeInfo.user.isSelfUser,
                 let userSession = activeUserSession
             else {

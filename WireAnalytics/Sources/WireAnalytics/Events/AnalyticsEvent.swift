@@ -27,7 +27,7 @@ public struct AnalyticsEvent: Sendable, Equatable {
     /// Additional metadata.
 
     let segmentation: Set<SegmentationEntry>
-    
+
     /// Create a new `AnalyticsEvent`.
     ///
     /// - Parameters:

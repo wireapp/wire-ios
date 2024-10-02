@@ -52,9 +52,9 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     }
 
     init(
-         config: Config?,
-         baseSegmentation: Set<SegmentationEntry>,
-         countlyProvider: @escaping () -> any CountlyProtocol
+        config: Config?,
+        baseSegmentation: Set<SegmentationEntry>,
+        countlyProvider: @escaping () -> any CountlyProtocol
     ) {
         self.config = config
         self.baseSegmentation = baseSegmentation
@@ -103,7 +103,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// - Parameter user: The user to switch to.
 
     public func switchUser(_ user: AnalyticsUser) {
-        guard 
+        guard
             let countly,
             user != currentUser
         else {
@@ -113,7 +113,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         print("[ANALYTICS] switching user")
 
         countly.endSession()
-        
+
         pushUser(
             user,
             mergeData: false
@@ -121,7 +121,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
         countly.beginSession()
     }
-    
+
     /// Update the current user.
     ///
     /// If the user's id changed, all previously tracked data associated with
@@ -130,7 +130,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// - Parameter user: The updated current user.
 
     public func updateCurrentUser(_ user: AnalyticsUser) {
-        guard 
+        guard
             let currentUser,
             user != currentUser
         else {
@@ -187,7 +187,6 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         )
     }
 
-
     // MARK: - Event
 
     /// Track an event.
@@ -195,7 +194,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// - Parameter event: The event to track.
 
     public func trackEvent(_ event: AnalyticsEvent) {
-        guard 
+        guard
             let countly,
             let currentUser
         else {

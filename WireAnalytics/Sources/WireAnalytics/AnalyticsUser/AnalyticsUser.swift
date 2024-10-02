@@ -27,7 +27,7 @@ public struct AnalyticsUser: Equatable {
     /// The user's team information.
 
     public let teamInfo: TeamInfo?
-    
+
     /// Create a new `AnalyticsUser`.
     ///
     /// - Parameters:

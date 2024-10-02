@@ -36,7 +36,6 @@ extension Bool: AnalyticsValue {
 
 }
 
-
 extension UInt: AnalyticsValue {
 
     public var analyticsValue: String {

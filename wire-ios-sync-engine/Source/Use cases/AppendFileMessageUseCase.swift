@@ -27,7 +27,7 @@ public protocol AppendFileMessageUseCaseProtocol {
 }
 
 public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
-    
+
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
 
     public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {

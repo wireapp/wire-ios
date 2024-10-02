@@ -79,7 +79,7 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
             conversationType: .group,
             conversationSize: 0
         )
-        
+
         XCTAssertEqual(
             analyticsEventTracker.trackEvent_Invocations,
             [expectedEvent]

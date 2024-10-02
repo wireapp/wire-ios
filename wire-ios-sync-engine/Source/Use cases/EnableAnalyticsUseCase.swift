@@ -41,7 +41,7 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     func invoke() throws {
         try service.enableTracking()
-        
+
         if let currentUser {
             service.switchUser(currentUser)
         }

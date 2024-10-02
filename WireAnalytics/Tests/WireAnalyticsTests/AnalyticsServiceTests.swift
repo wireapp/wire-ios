@@ -81,7 +81,7 @@ class AnalyticsServiceTests: XCTestCase {
 
         // Then the service was started.
         let invocations = countly.startAppKeyHost_Invocations
-        
+
         guard invocations.count == 1 else {
             XCTFail("expected 1 invocation, got: \(invocations.count)")
             return
@@ -118,7 +118,7 @@ class AnalyticsServiceTests: XCTestCase {
         // Then any session was ended and the service was reset.
         XCTAssertEqual(countly.endSession_Invocations.count, 1)
         XCTAssertEqual(countly.resetInstance_Invocations.count, 1)
-        
+
         // Then the user was cleared.
         let setUserInvocations = countly.setUserValueForKey_Invocations
 
@@ -284,9 +284,8 @@ class AnalyticsServiceTests: XCTestCase {
 
         // Then no event was tracked.
         XCTAssertEqual(countly.recordEventSegmentation_Invocations.count, 0)
-
     }
-    
+
     func testTrackEvent_no_current_user() throws {
         // Given tracking is enabled.
         try sut.enableTracking()
@@ -318,7 +317,7 @@ class AnalyticsServiceTests: XCTestCase {
         }
 
         XCTAssertEqual(recordInvocations[0].key, Scaffolding.event.name)
-        
+
         XCTAssertEqual(
             recordInvocations[0].segmentation,
             Scaffolding.expectedSegmentation(for: Scaffolding.user)
