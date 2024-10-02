@@ -30,19 +30,6 @@ protocol ConnectionsRepositoryProtocol {
     /// Pull self team metadata frmo the server and store locally.
 
     func pullConnections() async throws
-
-    /// Deletes a federation connection with the specified domain.
-    ///
-    /// - Parameter domain: The domain to delete the connection for.
-
-    func deleteFederationConnection(with domain: String) async throws
-
-    /// Removes a federation connection between two domains.
-    ///
-    /// - Parameter domain : The domain for which the connection was removed.
-    /// - Parameter otherDomain: The other domain for which the connection was removed.
-
-    func removeFederationConnection(between domain: String, and otherDomain: String) async
 }
 
 struct ConnectionsRepository: ConnectionsRepositoryProtocol {
@@ -79,23 +66,4 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             }
         }
     }
-
-    public func removeFederationConnection(
-        between domain: String,
-        and otherDomain: String
-    ) async {
-        await connectionsLocalStore.removeFederationConnection(
-            between: domain,
-            and: otherDomain
-        )
-    }
-
-    public func deleteFederationConnection(
-        with domain: String
-    ) async throws {
-        try await connectionsLocalStore.deleteFederationConnection(
-            with: domain
-        )
-    }
-
 }

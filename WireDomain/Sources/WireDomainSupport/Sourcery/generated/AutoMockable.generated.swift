@@ -82,41 +82,6 @@ class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
         try await mock(connectionPayload)
     }
 
-    // MARK: - deleteFederationConnection
-
-    var deleteFederationConnectionWith_Invocations: [String] = []
-    var deleteFederationConnectionWith_MockError: Error?
-    var deleteFederationConnectionWith_MockMethod: ((String) async throws -> Void)?
-
-    func deleteFederationConnection(with domain: String) async throws {
-        deleteFederationConnectionWith_Invocations.append(domain)
-
-        if let error = deleteFederationConnectionWith_MockError {
-            throw error
-        }
-
-        guard let mock = deleteFederationConnectionWith_MockMethod else {
-            fatalError("no mock for `deleteFederationConnectionWith`")
-        }
-
-        try await mock(domain)
-    }
-
-    // MARK: - removeFederationConnection
-
-    var removeFederationConnectionBetweenAnd_Invocations: [(domain: String, otherDomain: String)] = []
-    var removeFederationConnectionBetweenAnd_MockMethod: ((String, String) async -> Void)?
-
-    func removeFederationConnection(between domain: String, and otherDomain: String) async {
-        removeFederationConnectionBetweenAnd_Invocations.append((domain: domain, otherDomain: otherDomain))
-
-        guard let mock = removeFederationConnectionBetweenAnd_MockMethod else {
-            fatalError("no mock for `removeFederationConnectionBetweenAnd`")
-        }
-
-        await mock(domain, otherDomain)
-    }
-
 }
 
 public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol {

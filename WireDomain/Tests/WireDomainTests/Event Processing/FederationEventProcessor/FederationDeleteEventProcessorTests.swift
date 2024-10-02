@@ -30,30 +30,30 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
     var sut: FederationDeleteEventProcessor!
 
     var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
-    let mockAPI = MockConnectionsAPI()
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
     override func setUp() async throws {
+        try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = FederationDeleteEventProcessor(
-            repository: ConnectionsRepository(
-                connectionsAPI: mockAPI,
-                connectionsLocalStore: ConnectionsLocalStore(context: context)
-            )
+            context: context
         )
-        try await super.setUp()
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         coreDataStack = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests

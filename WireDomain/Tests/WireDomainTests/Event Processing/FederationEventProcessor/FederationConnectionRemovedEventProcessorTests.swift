@@ -30,9 +30,8 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
     var sut: FederationConnectionRemovedEventProcessor!
 
     var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
-    let mockAPI = MockConnectionsAPI()
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -40,12 +39,11 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = FederationConnectionRemovedEventProcessor(
-            repository: ConnectionsRepository(
-                connectionsAPI: mockAPI,
-                connectionsLocalStore: ConnectionsLocalStore(context: context)
-            )
+            context: context
         )
     }
 
@@ -54,6 +52,8 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
         coreDataStack = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests

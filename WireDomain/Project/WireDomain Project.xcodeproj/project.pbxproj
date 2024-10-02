@@ -22,11 +22,11 @@
 		59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A6C2C5BC08B009C41DE /* WireAPISupport */; };
 		C91F111C2C9C4B2B00BA5BE2 /* ConnectionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F111A2C9C4B2B00BA5BE2 /* ConnectionsRepository.swift */; };
 		C91F111D2C9C4B2B00BA5BE2 /* ConnectionsLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F111B2C9C4B2B00BA5BE2 /* ConnectionsLocalStore.swift */; };
-		C91F11252C9C4B8B00BA5BE2 /* FederationConnectionRemovedEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F11232C9C4B8B00BA5BE2 /* FederationConnectionRemovedEventProcessorTests.swift */; };
-		C91F11262C9C4B8B00BA5BE2 /* FederationDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F11242C9C4B8B00BA5BE2 /* FederationDeleteEventProcessorTests.swift */; };
 		C93961922C91B12800EA971A /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
 		C93961932C91B15B00EA971A /* ConversationRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E72C7F6EA40093DD5C /* ConversationRepositoryTests.swift */; };
 		C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
+		C97C01392CAD4759000683C5 /* FederationDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01372CAD4759000683C5 /* FederationDeleteEventProcessorTests.swift */; };
+		C97C013A2CAD4759000683C5 /* FederationConnectionRemovedEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01362CAD4759000683C5 /* FederationConnectionRemovedEventProcessorTests.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
 		C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */; };
 		C99322D42C986E3A0065E10F /* SelfUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B52C986E3A0065E10F /* SelfUserProvider.swift */; };
@@ -140,8 +140,8 @@
 		1623564F2C2B223100C6666C /* UserRepositoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryTests.swift; sourceTree = "<group>"; };
 		C91F111A2C9C4B2B00BA5BE2 /* ConnectionsRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionsRepository.swift; sourceTree = "<group>"; };
 		C91F111B2C9C4B2B00BA5BE2 /* ConnectionsLocalStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionsLocalStore.swift; sourceTree = "<group>"; };
-		C91F11232C9C4B8B00BA5BE2 /* FederationConnectionRemovedEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FederationConnectionRemovedEventProcessorTests.swift; path = "../../Event Processing/FederationEventProcessor/FederationConnectionRemovedEventProcessorTests.swift"; sourceTree = "<group>"; };
-		C91F11242C9C4B8B00BA5BE2 /* FederationDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FederationDeleteEventProcessorTests.swift; path = "../../Event Processing/FederationEventProcessor/FederationDeleteEventProcessorTests.swift"; sourceTree = "<group>"; };
+		C97C01362CAD4759000683C5 /* FederationConnectionRemovedEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationConnectionRemovedEventProcessorTests.swift; sourceTree = "<group>"; };
+		C97C01372CAD4759000683C5 /* FederationDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
 		C99322B52C986E3A0065E10F /* SelfUserProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUserProvider.swift; sourceTree = "<group>"; };
@@ -393,20 +393,19 @@
 		C90E8B322C89EBA90017494F /* Event Processing */ = {
 			isa = PBXGroup;
 			children = (
-				C91F11202C9C4B6500BA5BE2 /* FederationEventProcessor */,
+				C97C01382CAD4759000683C5 /* FederationEventProcessor */,
 				C9F691182C987DC8008CC41F /* TeamEventProcessor */,
 			);
 			path = "Event Processing";
 			sourceTree = "<group>";
 		};
-		C91F11202C9C4B6500BA5BE2 /* FederationEventProcessor */ = {
+		C97C01382CAD4759000683C5 /* FederationEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
-				C91F11232C9C4B8B00BA5BE2 /* FederationConnectionRemovedEventProcessorTests.swift */,
-				C91F11242C9C4B8B00BA5BE2 /* FederationDeleteEventProcessorTests.swift */,
+				C97C01362CAD4759000683C5 /* FederationConnectionRemovedEventProcessorTests.swift */,
+				C97C01372CAD4759000683C5 /* FederationDeleteEventProcessorTests.swift */,
 			);
-			name = FederationEventProcessor;
-			path = "../Event Processor/FederationEventProcessor";
+			path = FederationEventProcessor;
 			sourceTree = "<group>";
 		};
 		C99322B42C986E3A0065E10F /* Team */ = {
@@ -888,7 +887,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9F6911A2C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift in Sources */,
-				C91F11252C9C4B8B00BA5BE2 /* FederationConnectionRemovedEventProcessorTests.swift in Sources */,
 				C93961932C91B15B00EA971A /* ConversationRepositoryTests.swift in Sources */,
 				C93961922C91B12800EA971A /* TestError.swift in Sources */,
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
@@ -897,10 +895,11 @@
 				CB7979162C738547006FBA58 /* TestSetup.swift in Sources */,
 				162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */,
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
+				C97C01392CAD4759000683C5 /* FederationDeleteEventProcessorTests.swift in Sources */,
+				C97C013A2CAD4759000683C5 /* FederationConnectionRemovedEventProcessorTests.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
-				C91F11262C9C4B8B00BA5BE2 /* FederationDeleteEventProcessorTests.swift in Sources */,
 				C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */,
 				C9F691192C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift in Sources */,
 			);
