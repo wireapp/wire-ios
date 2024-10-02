@@ -24,10 +24,11 @@ import WireSettings
 
 @MainActor
 final class MockMainCoordinator: MainCoordinatorProtocol {
+
     typealias ConversationList = ConversationListViewController
     typealias ConversationBuilder = ConversationViewControllerBuilder
-    typealias Settings = SettingsMainViewController
-    typealias SettingsContent = SettingsContentViewController
+    typealias Settings = UIViewController
+    typealias SettingsContentBuilder = SettingsViewControllerBuilder
 
     func showConversationList(conversationFilter: ConversationFilter?) {
         fatalError("Mock method not implemented")
@@ -49,7 +50,7 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
-    func showSettingsContent(_ settingsContent: SettingsContent.SettingsContent) {
+    func showSettingsContent(_: SettingsContentBuilder.TopLevelMenuItem) {
         fatalError("Mock method not implemented")
     }
 

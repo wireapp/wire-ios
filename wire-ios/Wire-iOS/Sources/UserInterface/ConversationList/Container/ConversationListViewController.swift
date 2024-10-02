@@ -118,7 +118,11 @@ final class ConversationListViewController: UIViewController {
         mainCoordinator: MainCoordinator,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) where MainCoordinator: MainCoordinatorProtocol, MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID {
+    ) where 
+    MainCoordinator: MainCoordinatorProtocol,
+    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
+    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
@@ -140,7 +144,11 @@ final class ConversationListViewController: UIViewController {
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinator,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) where MainCoordinator: MainCoordinatorProtocol, MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID {
+    ) where 
+    MainCoordinator: MainCoordinatorProtocol,
+    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
+    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController

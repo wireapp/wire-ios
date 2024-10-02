@@ -29,7 +29,11 @@ private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController {
 
-    private let conversationListCoordinator: AnyConversationListCoordinator<ZMConversation.ConversationID>
+    typealias ConversationListCoordinator = AnyConversationListCoordinator<
+        ZMConversation.ConversationID,
+        ZMConversationMessage.MessageID
+    >
+    private let conversationListCoordinator: ConversationListCoordinator
     private let mainCoordinator: any MainCoordinatorProtocol // TODO: is it needed?
 
     private(set) weak var zClientViewController: ZClientViewController?
@@ -53,7 +57,9 @@ final class ConversationListContentController: UICollectionViewController {
         zClientViewController: ZClientViewController?
     ) where
     ConversationListCoordinator: ConversationListCoordinatorProtocol,
-    ConversationListCoordinator.ConversationID == ZMConversation.ConversationID {
+    ConversationListCoordinator.ConversationID == ZMConversation.ConversationID,
+    ConversationListCoordinator.MessageID == ZMConversationMessage.MessageID {
+
         self.userSession = userSession
         self.conversationListCoordinator = .init(conversationListCoordinator: conversationListCoordinator)
         self.mainCoordinator = mainCoordinator
@@ -388,29 +394,22 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             return
         }
 
-        if let conversation = item as? ZMConversation {
-            if let message = scrollToMessageOnNextSelection {
-                // TODO: fix
-                Task {
-                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier, messageID: message.nonce)
-                }
-                // mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
-            } else {
-                Task {
-                    // TODO: fix
+        Task {
+            if let conversation = item as? ZMConversation {
+                if let message = scrollToMessageOnNextSelection, let messageID = message.nonce {
+                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier, scrolledToMessageWith: messageID)
+                } else {
                     await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier)
-                    // mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
                 }
+                contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection) // TODO: check what happens here, should it be within the Task { ... } ?
+            } else if item is ConversationListConnectRequestsItem {
+                zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
+            } else {
+                assertionFailure("Invalid item in conversation list view model!!")
             }
-            contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection) // TODO: check what happens here, should it be within the Task { ... } ?
-        } else if item is ConversationListConnectRequestsItem {
-            zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
-        } else {
-            assertionFailure("Invalid item in conversation list view model!!")
+            // Make sure the correct item is selected in the list, without triggering a collection view callback
+            ensureCurrentSelection()
         }
-        // Make sure the correct item is selected in the list, without triggering a collection view
-        // callback
-        ensureCurrentSelection()
     }
 
     func listViewModelShouldBeReloaded() {

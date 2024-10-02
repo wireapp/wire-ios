@@ -18,15 +18,23 @@
 
 import WireConversationList
 
-final class AnyConversationListCoordinator<ConversationID: Sendable>: ConversationListCoordinatorProtocol {
+final class AnyConversationListCoordinator<ConversationID, MessageID>: ConversationListCoordinatorProtocol where
+ConversationID: Sendable, MessageID: Sendable {
 
     let showConversation: (ConversationID) async -> Void
+    let showConversationScrolledToMessage: (ConversationID, MessageID) async -> Void
 
     init<ConversationListCoordinator: ConversationListCoordinatorProtocol>(
         conversationListCoordinator: ConversationListCoordinator
-    ) where ConversationListCoordinator.ConversationID == ConversationID {
+    ) where
+    ConversationListCoordinator.ConversationID == ConversationID,
+    ConversationListCoordinator.MessageID == MessageID {
+
         showConversation = { conversationID in
             await conversationListCoordinator.showConversation(conversationID: conversationID)
+        }
+        showConversationScrolledToMessage = { conversationID, messageID in
+            await conversationListCoordinator.showConversation(conversationID: conversationID, scrolledToMessageWith: messageID)
         }
     }
 
@@ -34,8 +42,7 @@ final class AnyConversationListCoordinator<ConversationID: Sendable>: Conversati
         await showConversation(conversationID)
     }
 
-    // TODO: remove
-    func showConversation<MessageID>(conversationID: ConversationID, messageID: MessageID?) async where MessageID: Sendable {
-        fatalError()
+    func showConversation(conversationID: ConversationID, scrolledToMessageWith messageID: MessageID) async {
+        await showConversationScrolledToMessage(conversationID, messageID)
     }
 }

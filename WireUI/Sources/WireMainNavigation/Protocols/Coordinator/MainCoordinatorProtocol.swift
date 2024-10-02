@@ -21,9 +21,9 @@ import UIKit
 public protocol MainCoordinatorProtocol: AnyObject {
 
     associatedtype ConversationList: MainConversationListProtocol
+    associatedtype Settings: UIViewController // TODO: needed?
     associatedtype ConversationBuilder: MainConversationBuilderProtocol
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
-    associatedtype Settings: UIViewController // TODO: needed?
 
     @MainActor
     func showConversationList(conversationFilter: ConversationList.ConversationFilter?)
@@ -42,6 +42,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
     @MainActor
     func hideSettingsContent()
 
-    func showSelfProfile() async
-    func showConnect() async
+    @MainActor
+    func showSelfProfile()
+    @MainActor
+    func showConnect()
 }

@@ -18,10 +18,11 @@
 
 import Foundation
 import WireMainNavigation
+import WireDataModel
 
 extension ConversationListViewController: MainConversationListProtocol {
-    typealias ConversationID = UUID
-    typealias MessageID = String
+    typealias ConversationID = ZMConversation.ConversationID
+    typealias MessageID = ZMConversationMessage.MessageID
 
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
