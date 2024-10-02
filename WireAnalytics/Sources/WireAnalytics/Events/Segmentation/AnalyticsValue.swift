@@ -52,7 +52,11 @@ extension UInt: AnalyticsValue {
     /// - Returns: A rounded integer value based on the base-2 logarithm of the original value.
 
     func logRound() -> UInt {
-        UInt(log2(Double(self)).rounded())
+        guard self > 0 else {
+            return 0
+        }
+        
+        return UInt(log2(Double(self)).rounded())
     }
 
 }
