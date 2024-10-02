@@ -50,7 +50,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         SelfUser.provider = SelfProvider(providedSelfUser: selfUser)
 
-        settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+        settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, trackingManager: nil, selfUser: selfUser)
 
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
@@ -80,9 +80,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForSettingGroup() throws {
-        // prevent app crash when checking Analytics.shared.isOptout
-        Analytics.shared = Analytics(optedOut: true)
-        let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession)
+        let group = settingsCellDescriptorFactory.settingsGroup(isPublicDomain: true, userSession: userSession)
         try verify(group: group)
     }
 
@@ -97,7 +95,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
-        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession)
+        let group = settingsCellDescriptorFactory.accountGroup(isPublicDomain: true, userSession: userSession)
         try verify(group: group, file: file, testName: testName, line: line)
     }
 
@@ -146,7 +144,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         // given
         userSession.isAppLockAvailable = true
 
-        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
+        settingsPropertyFactory = .init(userSession: userSession, trackingManager: nil, selfUser: selfUser)
         settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
                                               userRightInterfaceType: MockUserRight.self)
 
@@ -158,7 +156,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         // given
         userSession.isAppLockAvailable = false
 
-        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
+        settingsPropertyFactory = .init(userSession: userSession, trackingManager: nil, selfUser: selfUser)
         settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
                                               userRightInterfaceType: MockUserRight.self)
 
@@ -199,8 +197,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - data usage permissions
 
-    func testForDataUsagePermissionsForTeamMember() throws {
-        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isTeamMember: true)
+    func testForDataUsagePermissionsForPublicDomain() throws {
+        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isPublicDomain: true)
         try verify(group: group)
     }
 }

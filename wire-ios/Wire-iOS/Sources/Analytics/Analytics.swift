@@ -25,13 +25,12 @@ final class Analytics: NSObject {
     var provider: AnalyticsProvider?
 
     private var callingTracker: AnalyticsCallingTracker?
-    private var decryptionFailedObserver: AnalyticsDecryptionFailedObserver?
     private var userObserverToken: Any?
 
     static var shared: Analytics!
 
-    required init(optedOut: Bool) {
-        provider = optedOut ? nil : AnalyticsProviderFactory.shared.analyticsProvider()
+    required override init() {
+        provider = nil
 
         super.init()
 
@@ -46,8 +45,6 @@ final class Analytics: NSObject {
     private func userSessionDidBecomeAvailable(_ note: Notification?) {
         callingTracker = AnalyticsCallingTracker(analytics: self)
         selfUser = SelfUser.provider?.providedSelfUser
-
-        decryptionFailedObserver = AnalyticsDecryptionFailedObserver(analytics: self)
     }
 
     var selfUser: UserType? {
@@ -76,15 +73,6 @@ final class Analytics: NSObject {
         guard let attributes = attributes as? [String: NSObject] else { return }
 
         tagEvent(event, attributes: attributes)
-    }
-
-    // MARK: - OTREvents
-    func tagCannotDecryptMessage(withAttributes userInfo: [String: Any],
-                                 conversation: ZMConversation?) {
-        var attributes: [String: Any] = conversation?.attributesForConversation ?? [:]
-
-        attributes.merge(userInfo) { _, new in new }
-        tagEvent("e2ee.failed_message_decryption", attributes: attributes)
     }
 }
 

@@ -31,7 +31,7 @@ private enum ExtensionSettingsKey: String, CaseIterable {
         case .disableCrashSharing:
             return true
         case .disableAnalyticsSharing:
-            return false
+            return true
         case .disableLinkPreviews:
             return false
         }
@@ -67,7 +67,7 @@ public final class ExtensionSettings: NSObject {
     }
 
     public var disableAnalyticsSharing: Bool {
-        get { defaults.bool(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
+        get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool ?? true }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
     }
 

@@ -24,7 +24,7 @@ import WireSyncEngine
 extension SettingsCellDescriptorFactory {
 
     // MARK: - Options Group
-    var optionsGroup: SettingsCellDescriptorType {
+    var optionsGroup: any SettingsCellDescriptorType {
         let descriptors = [
             shareContactsDisabledSection,
             clearHistorySection,
@@ -197,7 +197,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var externalAppsSection: SettingsSectionDescriptorType? {
-        var descriptors = [SettingsCellDescriptorType]()
+        var descriptors = [any SettingsCellDescriptorType]()
 
         if BrowserOpeningOption.optionsAvailable {
             descriptors.append(browserOpeningGroup(for: settingsPropertyFactory.property(.browserOpeningOption)))
@@ -270,7 +270,7 @@ extension SettingsCellDescriptorFactory {
 
     // MARK: - Helpers
 
-    static func darkThemeGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
+    static func darkThemeGroup(for property: SettingsProperty) -> any SettingsCellDescriptorType {
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
 
             return SettingsPropertySelectValueCellDescriptor(
@@ -280,7 +280,7 @@ extension SettingsCellDescriptorFactory {
             )
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType })
+        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as any SettingsCellDescriptorType })
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
             guard let option = value.flatMap({ SettingsColorScheme(rawValue: $0) }) else { return .text(SettingsColorScheme.defaultPreference.displayString) }
@@ -293,7 +293,7 @@ extension SettingsCellDescriptorFactory {
                                            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
     }
 
-    func twitterOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
+    func twitterOpeningGroup(for property: SettingsProperty) -> any SettingsCellDescriptorType {
         let cells = TweetOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
 
             return SettingsPropertySelectValueCellDescriptor(
@@ -303,7 +303,7 @@ extension SettingsCellDescriptorFactory {
             )
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType })
+        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as any SettingsCellDescriptorType })
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
             guard let option = value.flatMap({ TweetOpeningOption(rawValue: $0) }) else { return .text(TweetOpeningOption.none.displayString) }
@@ -316,7 +316,7 @@ extension SettingsCellDescriptorFactory {
                                            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
     }
 
-    func mapsOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
+    func mapsOpeningGroup(for property: SettingsProperty) -> any SettingsCellDescriptorType {
         let cells = MapsOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
 
             return SettingsPropertySelectValueCellDescriptor(
@@ -339,7 +339,7 @@ extension SettingsCellDescriptorFactory {
                                            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
     }
 
-    func browserOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
+    func browserOpeningGroup(for property: SettingsProperty) -> any SettingsCellDescriptorType {
         let cells = BrowserOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
 
             return SettingsPropertySelectValueCellDescriptor(

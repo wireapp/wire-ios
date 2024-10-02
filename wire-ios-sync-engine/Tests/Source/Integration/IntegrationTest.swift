@@ -309,14 +309,17 @@ extension IntegrationTest {
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            analyticsSessionConfiguration: nil
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete
 
-        sessionManager?.start(launchOptions: [:])
+        sessionManager?.start(launchOptions: [:]) { _ in
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        }
 
     }
 

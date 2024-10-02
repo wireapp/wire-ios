@@ -67,14 +67,16 @@ final class SessionManagerProxyTests: IntegrationTest {
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: false,
             sharedUserDefaults: sharedUserDefaults,
-            deleteUserLogs: {}
+            deleteUserLogs: {},
+            analyticsSessionConfiguration: nil
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete
 
-        sessionManager?.start(launchOptions: [:])
+        sessionManager?.start(launchOptions: [:]) { _ in
+            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func test_markNetworkSessionsAsReady_createsUnauthenticatedSession() {

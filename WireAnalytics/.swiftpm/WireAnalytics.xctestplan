@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "1AD1FA32-0D55-4D7B-9E4B-C64035D0D3B3",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireAnalyticsTests",
+        "name" : "WireAnalyticsTests"
+      }
+    }
+  ],
+  "version" : 1
+}

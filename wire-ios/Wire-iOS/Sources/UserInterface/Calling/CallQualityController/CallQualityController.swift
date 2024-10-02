@@ -181,7 +181,6 @@ extension CallQualityController: CallQualityViewControllerDelegate {
 
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController) {
         CallQualityController.updateLastSurveyDate(Date())
-        Analytics.shared.tagCallQualityReview(.dismissed(duration: controller.callDuration))
         router?.dismissCallQualitySurvey(completion: nil)
     }
 }
