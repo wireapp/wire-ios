@@ -20,6 +20,7 @@ import Foundation
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireAPI
@@ -30,6 +31,7 @@ class UserRepositoryTests: XCTestCase {
     var sut: UserRepository!
     var usersAPI: MockUsersAPI!
     var selfUsersAPI: MockSelfUserAPI!
+    var conversationsRepository: MockConversationRepositoryProtocol!
 
     var stack: CoreDataStack!
     var coreDataStackHelper: CoreDataStackHelper!
@@ -46,10 +48,12 @@ class UserRepositoryTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         usersAPI = MockUsersAPI()
         selfUsersAPI = MockSelfUserAPI()
+        conversationsRepository = MockConversationRepositoryProtocol()
         sut = UserRepository(
             context: context,
             usersAPI: usersAPI,
-            selfUserAPI: selfUsersAPI
+            selfUserAPI: selfUsersAPI,
+            conversationRepository: conversationsRepository
         )
     }
 
@@ -59,6 +63,7 @@ class UserRepositoryTests: XCTestCase {
         usersAPI = nil
         selfUsersAPI = nil
         sut = nil
+        conversationsRepository = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
@@ -263,39 +268,91 @@ class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [expectedProtocols])
     }
 
-    func testDeleteUserProperty_It_Updates_Read_Receipts_Flags() async {
-        // Given
-
-        await context.perform { [self] in
-            let selfUser = modelHelper.createSelfUser(
+    func testDeleteUserAccountForSelfUser() async throws {
+        let selfUser = await context.perform { [self] in
+            modelHelper.createSelfUser(
                 id: Scaffolding.userID,
                 domain: nil,
                 in: context
             )
+        }
 
-            selfUser.readReceiptsEnabled = true
-            selfUser.readReceiptsEnabledChangedRemotely = false
+        let expectation = XCTestExpectation()
+        let notificationName = AccountDeletedNotification.notificationName
+
+        NotificationCenter.default.addObserver(
+            forName: notificationName,
+            object: nil,
+            queue: nil
+        ) { notification in
+
+            XCTAssertNotNil(notification.userInfo?[notificationName] as? AccountDeletedNotification)
+
+            expectation.fulfill()
         }
 
         // When
 
-        await sut.deleteUserProperty(
-            withKey: Scaffolding.userPropertyKey
-        )
+        await sut.deleteUserAccount(for: selfUser, at: .now)
 
         // Then
 
-        await context.perform { [self] in
-            let selfUser = sut.fetchSelfUser()
+        await fulfillment(of: [expectation], timeout: 1)
+    }
 
-            XCTAssertEqual(selfUser.readReceiptsEnabled, false)
-            XCTAssertEqual(selfUser.readReceiptsEnabledChangedRemotely, true)
+    func testDeleteUserAccountForNotSelfUser() async throws {
+        // Given
+
+        let user = await context.perform { [self] in
+            modelHelper.createUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
         }
+
+        // Mock
+        conversationsRepository.removeFromConversationsUserRemovalDate_MockMethod = { _, _ in }
+
+        // When
+
+        await sut.deleteUserAccount(for: user, at: .now)
+
+        // Then
+
+        XCTAssertEqual(user.isAccountDeleted, true)
+        XCTAssertEqual(conversationsRepository.removeFromConversationsUserRemovalDate_Invocations.count, 1)
     }
 
     private enum Scaffolding {
         static let userID = UUID()
         static let userPropertyKey = UserProperty.Key.wireReceiptMode
+        static let userClientID = UUID().uuidString
+        static let lastPrekeyId = 65_535
+        static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
+
+        nonisolated(unsafe) static let remoteUserClient = WireAPI.UserClient(
+            id: userClientID,
+            type: .permanent,
+            activationDate: .now,
+            label: "test",
+            model: "test",
+            deviceClass: .phone,
+            capabilities: []
+        )
+
+        nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(
+            target: userID,
+            requester: nil,
+            clientIdentifier: userClientID,
+            lastPrekey: .init(
+                id: lastPrekeyId,
+                key: Data(base64Encoded: base64encodedString)!
+            )
+        )
+
+        nonisolated(unsafe) static let user1 = User(
+        static let userID = UUID()
         static let userClientID = UUID().uuidString
         static let lastPrekeyId = 65_535
         static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="

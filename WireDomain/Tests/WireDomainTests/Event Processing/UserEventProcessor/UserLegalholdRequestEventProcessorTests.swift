@@ -21,6 +21,7 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireDomain
@@ -44,7 +45,8 @@ final class UserLegalholdRequestEventProcessorTests: XCTestCase {
             repository: UserRepository(
                 context: context,
                 usersAPI: MockUsersAPI(),
-                selfUserAPI: MockSelfUserAPI()
+                selfUserAPI: MockSelfUserAPI(),
+                conversationRepository: MockConversationRepositoryProtocol()
             )
         )
     }
