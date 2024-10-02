@@ -31,7 +31,7 @@ extension ConversationListViewController {
         _ viewModel: ViewModel,
         didUpdate selfUserStatus: UserStatus
     ) {
-        accountImageView?.availability = selfUserStatus.availability.map()
+        accountImageView?.availability = selfUserStatus.availability.mapToAccountImageAvailability()
     }
 
     func conversationListViewControllerViewModel(
@@ -63,7 +63,7 @@ extension ConversationListViewController {
 
         let accountImageView = AccountImageView()
         accountImageView.accountImage = viewModel.accountImage.image
-        accountImageView.availability = viewModel.selfUserStatus.availability.map()
+        accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityIdentifier = "bottomBarSettingsButton" // TODO: fix, can't be correct
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint

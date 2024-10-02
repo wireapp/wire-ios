@@ -35,7 +35,6 @@ import UIKit
 @MainActor
 public final class MainCoordinator<
 
-    // TODO: provide init extensions with types
     SplitViewController: MainSplitViewControllerProtocol,
     ConversationBuilder: MainConversationBuilderProtocol,
     SettingsContentBuilder: MainSettingsContentBuilderProtocol,

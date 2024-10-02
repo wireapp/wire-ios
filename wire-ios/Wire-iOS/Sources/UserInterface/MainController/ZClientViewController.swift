@@ -67,7 +67,7 @@ final class ZClientViewController: UIViewController {
         let sidebarViewController = SidebarViewController { accountImage, availability in
             AccountImageViewRepresentable(
                 accountImage: accountImage,
-                availability: availability?.map() // TODO: .map() is not clear
+                availability: availability?.mapToAccountImageAvailability()
             )
             .accountImageBorderWidth(accountImageViewDesign.borderWidth)
             .accountImageViewBorderColor(accountImageViewDesign.borderColor)

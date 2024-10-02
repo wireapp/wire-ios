@@ -27,7 +27,7 @@ extension SidebarAccountInfo {
             displayName: user.name ?? "",
             username: user.handle ?? "",
             accountImage: accountImage,
-            availability: user.availability.map()
+            availability: user.availability.mapToSidebarAccountInfoAvailability()
         )
     }
 }

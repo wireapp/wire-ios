@@ -25,7 +25,7 @@ extension WireDataModel.Availability {
     /// Since `WireAccountImage` does not know about the type `WireDataModel.Availability`,
     /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImage.Availability?`.
 
-    func map() -> WireAccountImage.Availability? {
+    func mapToAccountImageAvailability() -> WireAccountImage.Availability? {
         switch self {
         case .none: .none
         case .available: .available
@@ -40,7 +40,7 @@ extension WireDataModel.Availability {
     /// Since `WireSidebar` does not know about the type `WireDataModel.Availability`,
     /// this function serves as an adapter from `WireDataModel.Availability` to `WireSidebar.SidebarAccountInfo.Availability?`.
 
-    func map() -> WireSidebar.SidebarAccountInfo.Availability? {
+    func mapToSidebarAccountInfoAvailability() -> WireSidebar.SidebarAccountInfo.Availability? {
         switch self {
         case .none: .none
         case .available: .available
@@ -55,7 +55,7 @@ extension WireSidebar.SidebarAccountInfo.Availability {
     /// Since `WireAccountImage.Availability` does not know about the type `WireSidebar`,
     /// this function serves as an adapter from `WireSidebar.SidebarAccountInfo.Availability` to `WireAccountImage.Availability`.
 
-    func map() -> WireAccountImage.Availability {
+    func mapToAccountImageAvailability() -> WireAccountImage.Availability {
         switch self {
         case .available: .available
         case .busy: .busy
