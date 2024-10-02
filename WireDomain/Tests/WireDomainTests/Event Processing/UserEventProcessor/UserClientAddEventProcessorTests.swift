@@ -46,7 +46,7 @@ final class UserClientAddEventProcessorTests: XCTestCase {
         sut = UserClientAddEventProcessor(
             repository: UserRepository(
                 context: context,
-                usersAPI: MockUsersAPI(), 
+                usersAPI: MockUsersAPI(),
                 selfUserAPI: MockSelfUserAPI()
             )
         )
