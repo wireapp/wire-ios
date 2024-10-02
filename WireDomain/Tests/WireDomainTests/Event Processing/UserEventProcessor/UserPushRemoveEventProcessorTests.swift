@@ -21,6 +21,7 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireDomain
@@ -45,7 +46,9 @@ final class UserPushRemoveEventProcessorTests: XCTestCase {
         sut = UserPushRemoveEventProcessor(
             repository: UserRepository(
                 context: context,
-                usersAPI: MockUsersAPI()
+                usersAPI: MockUsersAPI(),
+                selfUserAPI: MockSelfUserAPI(),
+                conversationRepository: MockConversationRepositoryProtocol()
             )
         )
     }
