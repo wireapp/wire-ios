@@ -88,6 +88,9 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
     /// This view controller is displayed when no conversation in the list is selected.
     private let noConversationPlaceholder: UIViewController
 
+    /// The required behavior wasn't achievable with the native split view controller.
+    /// Therefore this simple split view container view controller combines conversation list and conversation
+    /// or settings menu and settings content.
     private weak var splitLayoutContainer: DoubleColumnContainerViewController!
 
     private weak var _conversationList: ConversationList?
@@ -110,11 +113,10 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         let noConversationPlaceholder = noConversationPlaceholder()
         let tabContainer = tabContainer()
         let splitLayoutContainer = DoubleColumnContainerViewController()
-        splitLayoutContainer.secondary = noConversationPlaceholder
-        splitLayoutContainer.primaryColumnWidth = 320
 
         self.noConversationPlaceholder = noConversationPlaceholder
         self.splitLayoutContainer = splitLayoutContainer
+        splitLayoutContainer.secondaryNavigationController.viewControllers = [noConversationPlaceholder]
 
         self.sidebar = sidebar
         self.tabContainer = tabContainer
@@ -124,6 +126,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         preferredSplitBehavior = .overlay
         preferredDisplayMode = .oneOverSecondary
         preferredPrimaryColumnWidth = 260
+        splitLayoutContainer.primaryColumnWidth = 320
 
         setViewController(sidebar, for: .primary)
         setViewController(splitLayoutContainer, for: .secondary)
