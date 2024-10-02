@@ -37,8 +37,8 @@ final class DoubleColumnContainerViewController: UIViewController {
         didSet { primaryColumnWidthConstraint?.constant = primaryColumnWidth }
     }
 
-    private let primaryNavigationController = UINavigationController()
-    private let secondaryNavigationController = UINavigationController()
+    /*private*/ let primaryNavigationController = UINavigationController()
+    /*private*/ let secondaryNavigationController = UINavigationController()
     private var primaryColumnWidthConstraint: NSLayoutConstraint?
 
     // MARK: -
