@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:WireAPI/.swiftpm/AllTests.xctestplan">
+   </FileRef>
+   <FileRef
       location = "group:WireFoundation/.swiftpm/AllTests.xctestplan">
    </FileRef>
    <FileRef
