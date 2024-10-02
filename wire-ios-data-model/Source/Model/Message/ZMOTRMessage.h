@@ -34,7 +34,7 @@ extern NSString * const DeliveredKey;
 @property (nonatomic, readonly) BOOL isUpdatingExistingMessage;
 
 - (void)missesRecipient:(UserClient *)recipient;
-- (void)missesRecipients:(NSSet<UserClient *> *)recipients;
+- (void)missesRecipients:(NSSet<UserClient *> * _Nonnull)recipients;
 - (void)doesNotMissRecipient:(UserClient *)recipient;
 - (void)doesNotMissRecipients:(NSSet<UserClient *> *)recipients;
 

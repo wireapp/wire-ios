@@ -708,26 +708,29 @@ class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotific
 
 }
 
-public class MockFileMetaDataGenerating: FileMetaDataGenerating {
+public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - metadataForFileAtURL
+    // MARK: - metadataForFile
 
-    public var metadataForFileAtURLUTINameCompletion_Invocations: [(url: URL, uti: String, name: String, completion: (ZMFileMetadata) -> Void)] = []
-    public var metadataForFileAtURLUTINameCompletion_MockMethod: ((URL, String, String, @escaping (ZMFileMetadata) -> Void) -> Void)?
+    public var metadataForFileAt_Invocations: [URL] = []
+    public var metadataForFileAt_MockMethod: ((URL) async -> ZMFileMetadata)?
+    public var metadataForFileAt_MockValue: ZMFileMetadata?
 
-    public func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
-        metadataForFileAtURLUTINameCompletion_Invocations.append((url: url, uti: uti, name: name, completion: completion))
+    public func metadataForFile(at url: URL) async -> ZMFileMetadata {
+        metadataForFileAt_Invocations.append(url)
 
-        guard let mock = metadataForFileAtURLUTINameCompletion_MockMethod else {
-            fatalError("no mock for `metadataForFileAtURLUTINameCompletion`")
+        if let mock = metadataForFileAt_MockMethod {
+            return await mock(url)
+        } else if let mock = metadataForFileAt_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `metadataForFileAt`")
         }
-
-        mock(url, uti, name, completion)
     }
 
 }
@@ -1441,16 +1444,16 @@ class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProt
     // MARK: - shareReport
 
     var shareReport_Invocations: [Void] = []
-    var shareReport_MockMethod: (() -> Void)?
+    var shareReport_MockMethod: (() async -> Void)?
 
-    func shareReport() {
+    func shareReport() async {
         shareReport_Invocations.append(())
 
         guard let mock = shareReport_MockMethod else {
             fatalError("no mock for `shareReport`")
         }
 
-        mock()
+        await mock()
     }
 
 }

@@ -49,7 +49,7 @@ public protocol OTREntity: AnyObject {
     /// Add clients as missing recipients for this entity. If we want to resend
     /// the entity, we need to make sure those missing recipients are fetched
     /// or sending the entity will fail again.
-    func missesRecipients(_ recipients: Set<WireDataModel.UserClient>!)
+    func missesRecipients(_ recipients: Set<WireDataModel.UserClient>)
 
     /// if the BE tells us that these users are not in the
     /// conversation anymore, it means that we are out of sync
@@ -62,7 +62,7 @@ public protocol OTREntity: AnyObject {
     func addFailedToSendRecipients(_ recipients: [ZMUser])
 
     /// Mark the message as expired
-    func expire()
+    func expire(withReason reason: ExpirationReason)
 }
 
 /// HTTP status of a request that has

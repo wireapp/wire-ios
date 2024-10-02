@@ -15,7 +15,14 @@ jobs:
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
-    if: github.event.pull_request.draft == false
+    if: >
+      github.event.action != 'edited' || (
+        github.event.changes.title == null &&
+        github.event.changes.body == null &&
+        github.event.changes.assignees == null &&
+        github.event.changes.reviewers == null &&
+        github.event.changes.labels == null
+      ) && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     # Set job outputs to values from filter step
     outputs:
@@ -23,21 +30,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+        with:
+          lfs: 'true'
+      - uses: dorny/paths-filter@v2
         id: filter
         with:
           filters: |
             wire-ios:
               - 'wire-ios/**'
-            wire-reusable-ui-components:
-              - 'WireUI/Sources/WireReusableUIComponents/**'
-              - 'WireUI/Tests/WireReusableUIComponentsTests/**'
-            wire-ui-foundation:
-              - 'WireUI/Sources/WireUIFoundation/**'
-              - 'WireUI/Tests/WireUIFoundationTests/**'
-            wire-design:
-              - 'WireUI/Sources/WireDesign/**'
-              - 'WireUI/Tests/WireDesignTests/**'
+            wire-ui:
+              - 'WireUI/**'
             wire-ios-share-engine:
               - 'wire-ios-share-engine/**'
             wire-ios-notification-engine:
