@@ -50,6 +50,4 @@ public protocol MessageAppendableConversation {
 
 extension ZMConversation: MessageAppendableConversation {
 
-    
-
 }

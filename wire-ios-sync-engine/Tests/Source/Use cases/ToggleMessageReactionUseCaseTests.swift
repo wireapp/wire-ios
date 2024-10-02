@@ -24,8 +24,6 @@ import WireSyncEngineSupport
 import XCTest
 
 @testable import WireSyncEngine
-@testable import WireDataModel
-
 final class ToggleMessageReactionUseCaseTests: XCTestCase {
 
     // MARK: - Properties
