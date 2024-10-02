@@ -43,7 +43,6 @@ public final class MainCoordinator<
 
     ConversationBuilder.Conversation == SplitViewController.Conversation,
     ConversationBuilder.Conversation.ConversationID == SplitViewController.ConversationList.ConversationID,
-    ConnectBuilder.ViewController == SplitViewController.Connect,
     SettingsContentBuilder.SettingsContent == SplitViewController.SettingsContent
 {
     // swiftlint:enable opening_brace
@@ -52,6 +51,7 @@ public final class MainCoordinator<
     public typealias Settings = SplitViewController.Settings
     public typealias SettingsContent = SplitViewController.SettingsContent
     public typealias Connect = ConnectBuilder.ViewController
+    public typealias SelfProfile = SelfProfileBuilder.ViewController
     public typealias TabBarController = SplitViewController.TabContainer
 
     // MARK: - Private Properties
@@ -66,7 +66,7 @@ public final class MainCoordinator<
     private weak var connect: Connect?
 
     private var selfProfileBuilder: SelfProfileBuilder
-    private weak var selfProfile: UIViewController?
+    private weak var selfProfile: SelfProfile?
 
     private var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -252,8 +252,7 @@ public final class MainCoordinator<
             return assertionFailure()
         }
 
-        let rootViewController = selfProfileBuilder.build(mainCoordinator: self)
-        let selfProfile = UINavigationController(rootViewController: rootViewController)
+        let selfProfile = selfProfileBuilder.build(mainCoordinator: self)
         selfProfile.modalPresentationStyle = .formSheet
         self.selfProfile = selfProfile
 
@@ -274,11 +273,10 @@ public final class MainCoordinator<
             dismissArchiveIfNeeded()
             dismissSettingsIfNeeded()
             dismissSelfProfileIfNeeded()
-            splitViewController.connect = connect
-        } else {
-            let navigationController = UINavigationController(rootViewController: connect)
-            splitViewController.present(navigationController, animated: true)
         }
+
+        let navigationController = UINavigationController(rootViewController: connect)
+        splitViewController.present(navigationController, animated: true)
     }
 
     private func dismissConversationListIfNeeded() {
@@ -298,11 +296,7 @@ public final class MainCoordinator<
     }
 
     private func dismissConnectIfNeeded() {
-        // Dismiss the new conversation view controller if it's visible in the split view controller.
-        if let connect = splitViewController.connect {
-            splitViewController.connect = nil
-            connect.navigationController?.presentingViewController?.dismiss(animated: true)
-        }
+        connect?.dismiss(animated: true)
     }
 
     private func dismissSettingsIfNeeded() {
@@ -314,7 +308,6 @@ public final class MainCoordinator<
     }
 
     private func dismissSelfProfileIfNeeded() {
-        // Dismiss the settings view controller if it's being presentd.
         selfProfile?.dismiss(animated: true)
     }
 
@@ -358,15 +351,6 @@ public final class MainCoordinator<
                 splitViewController.settingsContent = nil
                 tabBarController.settingsContent = settingsContent
             }
-        }
-
-        // take out the new conversation controller from the supplementary column's navigation
-        // controller and put it into a separate one for modal presentation
-        if let connect = splitViewController.connect {
-            splitViewController.connect = nil
-            let navigationController = UINavigationController(rootViewController: connect)
-            // navigationController.modalPresentationStyle = .fullScreen
-            splitViewController.present(navigationController, animated: false)
         }
 
         mainSplitViewState = .collapsed
@@ -413,16 +397,6 @@ public final class MainCoordinator<
             } else {
                 settingsContentToSelect = .init(.account)
             }
-        }
-
-        // the new conversation view controller in collapsed mode is
-        // presented in a separate navigation controller
-        if let connect {
-            let navigationController = connect.navigationController!
-            navigationController.presentingViewController!.dismiss(animated: false)
-            navigationController.viewControllers = []
-            navigationController.view.layoutIfNeeded()
-            splitViewController.connect = connect
         }
 
         mainSplitViewState = .expanded
