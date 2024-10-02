@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
@@ -24,15 +25,12 @@ extension SettingsCellDescriptorFactory {
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
-    var advancedGroup: SettingsCellDescriptorType {
-        var items = [SettingsSectionDescriptor]()
-
-        items.append(contentsOf: [
-            troubleshootingSection,
+    func advancedGroup(userSession: UserSession) -> SettingsCellDescriptorType {
+        let items = [
+            troubleshootingSection(userSession: userSession),
             debuggingToolsSection,
-            pushSection,
-            versionSection
-        ])
+            pushSection
+        ]
 
         return SettingsGroupCellDescriptor(
             items: items,
@@ -43,11 +41,22 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Sections
-    private var troubleshootingSection: SettingsSectionDescriptor {
+    private func troubleshootingSection(userSession: UserSession) -> SettingsSectionDescriptor {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
-                return SettingsTechnicalReportViewController()
+                let router = SettingsDebugReportRouter()
+                let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
+                let fetchShareableConversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider)
+                let viewModel = SettingsDebugReportViewModel(
+                    router: router,
+                    shareFile: shareFile,
+                    fetchShareableConversations: fetchShareableConversations,
+                    fileMetaDataGenerator: FileMetaDataGenerator()
+                )
+                let viewController = SettingsDebugReportViewController(viewModel: viewModel)
+                router.viewController = viewController
+                return viewController
         })
 
         return SettingsSectionDescriptor(
@@ -76,16 +85,6 @@ extension SettingsCellDescriptorFactory {
         })
     }
 
-    private var versionSection: SettingsSectionDescriptor {
-        let versionCell = SettingsButtonCellDescriptor(
-            title: SelfSettingsAdvancedLocale.VersionTechnicalDetails.title,
-            isDestructive: false,
-            selectAction: presentVersionAction
-        )
-
-        return SettingsSectionDescriptor(cellDescriptors: [versionCell])
-    }
-
     private var debuggingToolsSection: SettingsSectionDescriptor {
 
         let findUnreadConversationSection = SettingsSectionDescriptor(cellDescriptors: [
@@ -93,11 +92,6 @@ extension SettingsCellDescriptorFactory {
                 title: SelfSettingsAdvancedLocale.DebuggingTools.FirstUnreadConversation.title,
                 isDestructive: false,
                 selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
-            ),
-            SettingsButtonCellDescriptor(
-                title: SelfSettingsAdvancedLocale.DebuggingTools.ShowUserId.title,
-                isDestructive: false,
-                selectAction: DebugActions.showUserId
             ),
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.EnterDebugCommand.title,
@@ -136,20 +130,5 @@ extension SettingsCellDescriptorFactory {
         alert.addAction(action)
 
         return alert
-    }
-
-    private var presentVersionAction: (SettingsCellDescriptorType) -> Void {
-        return { _ in
-            let versionInfoViewController = VersionInfoViewController()
-            var superViewController = UIApplication.shared.firstKeyWindow?.rootViewController
-
-            if let presentedViewController = superViewController?.presentedViewController {
-                superViewController = presentedViewController
-                versionInfoViewController.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-                versionInfoViewController.navigationController?.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-            }
-
-            superViewController?.present(versionInfoViewController, animated: true, completion: .none)
-        }
     }
 }

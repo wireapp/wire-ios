@@ -13,13 +13,18 @@ dependencies: [
     .package(path: "../SourceryPlugin")
 ],
 targets: [
+
+    .target(name: "YourTarget"),
+    .testTarget(
+        name: "YourTargetTests",
+        dependencies: ["YourTarget"]
+    ),
+
     .target(
-        name: "YourTarget",
+        name: "YourTargetSupport",
+        dependencies: ["YourTarget"],
         plugins: [
-            .plugin(
-                name: "SourceryPlugin",
-                package: "SourceryPlugin"
-            )
+            .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
         ]
     )
 ]

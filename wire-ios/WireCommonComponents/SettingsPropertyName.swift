@@ -68,9 +68,7 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
 
     // Persoanl Information
     // Analytics
-    case disableCrashSharing = "DisableCrashSharing"
     case disableAnalyticsSharing = "DisableAnalyticsSharing"
-    case receiveNewsAndOffers = "ReceiveNewsAndOffers"
 
     // Debug
     case disableCallKit = "DisableCallKit"

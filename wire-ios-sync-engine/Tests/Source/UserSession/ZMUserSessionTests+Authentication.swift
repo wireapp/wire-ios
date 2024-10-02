@@ -16,28 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
 import XCTest
+
+@testable import WireSyncEngine
 
 final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
 
-    var previousApiVersion: APIVersion?
-
     override func setUp() {
         super.setUp()
-        previousApiVersion = BackendInfo.apiVersion
-        BackendInfo.apiVersion = .v0
 
         syncMOC.performGroupedAndWait {
             self.createSelfClient()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
-    override func tearDown() {
-        BackendInfo.apiVersion = previousApiVersion
-        super.tearDown()
     }
 
     func testThatIsLoggedInIsFalseAtStartup() {
@@ -133,7 +124,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         checkThatItCallsTheCompletionHandler(with: .invalidCredentials, for: ZMTransportResponse(payload: ["label": "bad-request"]  as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
     }
 
-    func checkThatItCallsTheCompletionHandler(with errorCode: ZMUserSessionErrorCode, for response: ZMTransportResponse) {
+    func checkThatItCallsTheCompletionHandler(with errorCode: UserSessionErrorCode, for response: ZMTransportResponse) {
         // given
         let credentials = UserEmailCredentials(email: "john.doe@domain.com", password: "123456")
 

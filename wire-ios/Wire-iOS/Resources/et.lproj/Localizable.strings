@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Külalistetuba";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
@@ -51,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Otsi nime või kasutajanime järgi";
 "peoplepicker.header.top_people" = "Aktiivsed vestlused";
-"peoplepicker.button.create_conversation" = "Loo grupivestlus";
+"peoplepicker.button.create_conversation" = "Loo grupp";
 "peoplepicker.button.add_to_conversation" = "Lisa osalejaid";
 "peoplepicker.header.conversations" = "Grupid";
 "peoplepicker.header.team_conversations" = "%@ grupid";
@@ -102,8 +102,8 @@
 "peoplepicker.invite_more_people" = "Kutsu rohkem inimesi";
 "peoplepicker.invite_team_members" = "Kutsu inimesi meeskonnaga liituma";
 "peoplepicker.quick-action.open-conversation" = "Ava";
-"peoplepicker.quick-action.create-conversation" = "Loo grupivestlus";
-"peoplepicker.quick-action.create-guest-room" = "Loo külalistetuba";
+"peoplepicker.quick-action.create-conversation" = "Loo grupp";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Halda teenuseid";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,18 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Vajuta aktiveerimiseks.";
 "conversation_list.header.self_team.accessibility_value.active" = "Praegu aktiivne.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "On uusi sõnumeid.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontaktid";
-"conversation_list.bottom_bar.conversations.title" = "Vestlused";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Arhiveeri";
-
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Aita meil Wire'i paremaks muuta";
-"conversation_list.data_usage_permission_alert.message" = "Nõustun, et Wire võib luua ja kasutada anonüümseid kasutus- ja veateateid, parandamaks Wire'i rakendust. Ma saan selle nõusoleku igal ajal tühistada.";
-"conversation_list.data_usage_permission_alert.disagree" = "Ei";
-"conversation_list.data_usage_permission_alert.agree" = "Nõustun";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "seadme kontaktides";
@@ -401,6 +389,9 @@
 "location.unauthorized_alert.cancel" = "Tühista";
 "location.unauthorized_alert.settings" = "Seaded";
 
+"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
+
 // Twitter
 "twitter_status.on_twitter" = "%@ Twitter’is";
 
@@ -515,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Kohale toimetatud";
 "content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -624,7 +616,6 @@
 
 "content.message.like" = "Meeldib";
 "content.message.unlike" = "Ei meeldi";
-"content.message.forward" = "Jaga";
 "content.message.go_to_conversation" = "Näita";
 "content.message.forward.to" = "Otsi…";
 "content.message.open" = "Ava";
@@ -1013,6 +1004,20 @@
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Create password secured link";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**";
+"secured_guest_link_with_password.generate_password_button.title" = "Generate password";
+"secured_guest_link_with_password.textfield.header" = "Määra parool";
+"secured_guest_link_with_password.textfield.footer" = "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"secured_guest_link_with_password.textfield.placeholder" = "Enter password";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Confirm password";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Confirm your password";
+"secured_guest_link_with_password.createLinkButton.title" = "Loo link";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Password copied";
+"secured_guest_link_with_password.alertController.message" = "The password was copied to your device clipboard.";
 "group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
 "group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
@@ -1046,14 +1051,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Kasutustingimused";
 "about.privacy.title" = "Privaatsuspoliitika";
-"about.license.title" = "Litsentsiteave";
 "about.website.title" = "Wire koduleht";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Üksikasjad";
-"about.license.open_project_button" = "Ava projekti leht";
-"about.license.license_header" = "Tunnustused";
 
 // Self new devices
 "self.new_device_alert.title" = "Sinu kontot kasutati:";
@@ -1148,18 +1147,10 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Kasutus- ja krahhiaruanded";
 
-// Crash
-"self.settings.privacy_crash.title" = "Send anonymous crash data";
-"self.settings.privacy_crash_menu.description.title" = "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Uudiskirja tellimine";
-"self.settings.receiveNews_and_offers.description.title" = "Soovin Wire'ilt uudiseid ja tooteuuendusi e-posti teel.";
-
-
 
 // Change Username
 
@@ -1296,16 +1287,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Kui sul on probleeme teavitustega, Wire kasutajatugi võib paluda sul see võti lähtestada.";
 "self.settings.advanced.reset_push_token_alert.title" = "Võti on lähtestatud";
 "self.settings.advanced.reset_push_token_alert.message" = "Teavitused taastuvad mõne sekundi pärast.";
-"self.settings.advanced.version_technical_details.title" = "Versiooni tehnilised andmed";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Andmekasutuse õigused";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "Tehniline aruanne";
-"self.settings.technical_report.send_report" = "Saada raport Wire’le";
+"self.settings.technical_report_section.title" = "Debug Report";
+"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "Wire Debug Report";
 "self.settings.technical_report.include_log" = "Lisa detailide logi";
+"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Detailsed logid võivad sisaldada personaalseid andmeid";
 "self.settings.technical_report.no_mail_alert" = "Meiliprogammi ei leitud. Vajuta “OK” ja saada logid käsitsi: ";
 
@@ -1420,6 +1412,12 @@
 
 "guest_room.link.button.title" = "Loo link";
 
+"guest_room.secure_link.header.title" = "Link is password secured";
+"guest_room.secure_link.header.subtitle" = "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.";
+
+"guest_room.create.link_with_password.action" = "Create password secured link";
+"guest_room.create.link_without_password.action" = "Create link without password";
+
 "guest_room.actions.copy_link" = "Kopeeri link";
 "guest_room.actions.copied_link" = "Link kopeeritud!";
 "guest_room.actions.share_link" = "Jaga linki";
@@ -1429,6 +1427,13 @@
 
 "guest_room.expiration.hours_left" = "%@h järel";
 "guest_room.expiration.less_than_minutes_left" = "Vähem kui %@min järel";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Enter Password";
+"join.group.conversation.alert.message" = "This conversation is password protected";
+"join.group.conversation.alert.textfield.placeholder" = "Enter conversation password";
+"join.group.conversation.alert.joinAction.title" = "Join conversation";
+"join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
 // Services Options
 
@@ -1788,7 +1793,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "rohkem gif’e pole";
-"giphy.error.no_result" = "gif’i ei leitud";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "saada";
 "giphy.cancel" = "katkesta";
@@ -1893,6 +1898,8 @@
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "The conversation link is invalid.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Learn more about guest links";
 
+"url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
+
 // Deep Link
 "url_action.invalid_user.title" = "Wire ei leia seda isikut.";
 "url_action.invalid_user.message" = "Sul ei pruugi olla selle kontoga luba või seda pole enam olemas.";
@@ -1905,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "Vigane link.";
 "url_action.invalid_link.message" = "Avatud link ei ole sobiv.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Kas soovid saada Wire'i uudiseid ja tooteuuendusi e-posti teel?";
-"news_offers.consent.message" = "Saad igal ajal tellimuse lõpetada.";
-"news_offers.consent.button.privacy_policy.title" = "Privaatsuspoliitika";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

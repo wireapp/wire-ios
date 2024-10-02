@@ -19,7 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationPreviewViewController: TintColorCorrectedViewController {
+final class ConversationPreviewViewController: UIViewController {
 
     let conversation: ZMConversation
     let actionController: ConversationActionController
@@ -28,7 +28,7 @@ final class ConversationPreviewViewController: TintColorCorrectedViewController 
     init(
         conversation: ZMConversation,
         presentingViewController: UIViewController,
-        sourceView: UIView?,
+        sourceView: UIView,
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) {

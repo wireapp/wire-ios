@@ -16,16 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class MediaPreviewViewSnapshotTests: XCTestCase {
 
-    var sut: MediaPreviewView!
+    private var sut: MediaPreviewView!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = .init()
         sut = MediaPreviewView()
         sut.titleLabel.text = "Demo Media"
         sut.previewImageView.image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
@@ -35,11 +38,12 @@ final class MediaPreviewViewSnapshotTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

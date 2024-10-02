@@ -30,13 +30,12 @@ extension ZMConversation: ShareDestination {
         }
         return selfUser.hasTeam &&
             self.conversationType == .oneOnOne &&
-            self.localParticipants.first {
-                $0.isGuest(in: self) } != nil
+            self.localParticipants.first { $0.isGuest(in: self) } != nil
     }
-
 }
 
 extension ShareDestination where Self: ConversationAvatarViewConversation {
+
     var avatarView: UIView? {
         let avatarView = ConversationAvatarView()
         avatarView.configure(context: .conversation(conversation: self))
@@ -90,21 +89,24 @@ extension ZMMessage: Shareable {
                     do {
                         try $0.appendImage(from: imageData)
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
-                ZMUserSession.shared()?.perform {
+            Task {
+                let fileMetadata = await FileMetaDataGenerator.shared.metadataForFile(at: url)
+                let userSession = ZMUserSession.shared()
+                await userSession?.managedObjectContext.perform {
                     conversations.forEachNonEphemeral {
                         do {
                             try $0.appendFile(with: fileMetadata)
                         } catch {
-                            Logging.messageProcessing.warn("Failed to append file message. Reason: \(error.localizedDescription)")
+                            WireLogger.messageProcessing.warn("Failed to append file message. Reason: \(error.localizedDescription)")
                         }
                     }
+                    userSession?.saveOrRollbackChanges()
                 }
             }
         } else if isLocation {
@@ -114,7 +116,7 @@ extension ZMMessage: Shareable {
                     do {
                         try $0.appendLocation(with: locationData)
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
@@ -134,18 +136,6 @@ extension ZMConversationMessage {
     }
 }
 
-// swiftlint:disable:next todo_requires_jira_link
-extension ConversationList { // TODO: mv to DM
-
-    func shareableConversations(excluding: ConversationLike? = nil) -> [ZMConversation] {
-        items.filter { conversation in
-            (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
-                conversation.isSelfAnActiveMember &&
-                !(conversation === excluding)
-        }
-    }
-}
-
 // MARK: - popover apperance update
 
 extension ConversationContentViewController {
@@ -159,62 +149,12 @@ extension ConversationContentViewController {
            let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<ZMConversation, ZMMessage> {
             shareViewController.showPreview = traitCollection.horizontalSizeClass != .regular
         }
-
-        updatePopoverSourceRect()
-    }
-
-    func updatePopover() {
-        guard let rootViewController = UIApplication.shared.firstKeyWindow?.rootViewController as? PopoverPresenterViewController else { return }
-
-        rootViewController.updatePopoverSourceRect()
     }
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
 
-    func showForwardFor(message: ZMConversationMessage?, from view: UIView?) {
-        guard let userSession = ZMUserSession.shared(),
-              let message else { return }
-
-        endEditing()
-
-        let conversations = ConversationList.conversationsIncludingArchived(inUserSession: userSession)
-            .shareableConversations(excluding: message.conversationLike)
-
-        let shareViewController = ShareViewController<ZMConversation, ZMMessage>(
-            shareable: message as! ZMMessage,
-            destinations: conversations,
-            showPreview: traitCollection.horizontalSizeClass != .regular
-        )
-
-        let keyboardAvoiding = KeyboardAvoidingViewController(viewController: shareViewController)
-        keyboardAvoiding.disabledWhenInsidePopover = true
-        keyboardAvoiding.preferredContentSize = CGSize.IPadPopover.preferredContentSize
-        keyboardAvoiding.modalPresentationCapturesStatusBarAppearance = true
-
-        let presenter: PopoverPresenterViewController? = (presentedViewController ?? UIApplication.shared.firstKeyWindow) as? PopoverPresenterViewController
-
-        if let presenter,
-           let pointToView = (view as? SelectableView)?.selectionView ?? view ?? self.view {
-            keyboardAvoiding.configPopover(pointToView: pointToView, popoverPresenter: presenter)
-        }
-
-        if let popoverPresentationController = keyboardAvoiding.popoverPresentationController {
-            popoverPresentationController.backgroundColor = UIColor(white: 0, alpha: 0.5)
-        }
-
-        keyboardAvoiding.presentationController?.delegate = self
-
-        shareViewController.onDismiss = { (shareController: ShareViewController<ZMConversation, ZMMessage>, _) in
-            weak var presentingViewController = shareController.presentingViewController
-
-            presentingViewController?.dismiss(animated: true)
-        }
-
-        (presenter ?? self).present(keyboardAvoiding, animated: true)
-    }
-
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-        return traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
+        traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }
 }

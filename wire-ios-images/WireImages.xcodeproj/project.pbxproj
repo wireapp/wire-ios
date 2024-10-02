@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -25,14 +25,14 @@
 		09BCDB591BC664DA0020DCC7 /* ImageOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */; };
 		5405B0091BCEBDBF00C0C3BD /* ZMIImageProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 5405B0071BCEBDBF00C0C3BD /* ZMIImageProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5405B00A1BCEBDBF00C0C3BD /* ZMIImageProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5405B0081BCEBDBF00C0C3BD /* ZMIImageProperties.m */; };
-		54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		54A5A6161E92A01100D56F2E /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
+		591B6E712C8B0A0D009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; };
+		591B6E742C8B0A10009F8A7B /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
+		591B6E772C8B0A17009F8A7B /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
 		870253E41DAB7AA00095D272 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E31DAB7AA00095D272 /* main.m */; };
 		870253E71DAB7AA00095D272 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E61DAB7AA00095D272 /* AppDelegate.m */; };
 		870253EA1DAB7AA00095D272 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E91DAB7AA00095D272 /* ViewController.m */; };
 		870253ED1DAB7AA00095D272 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 870253EB1DAB7AA00095D272 /* Main.storyboard */; };
 		870253EF1DAB7AA00095D272 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 870253EE1DAB7AA00095D272 /* Assets.xcassets */; };
-		870253F91DAB7B190095D272 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
 		87B91C041E5C586D00A5EC11 /* NSData+MediaMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B91C031E5C586D00A5EC11 /* NSData+MediaMetadata.swift */; };
 		87B91C061E5C5D8600A5EC11 /* NSDataMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B91C051E5C5D8600A5EC11 /* NSDataMetadataTests.swift */; };
 		87B91C2C1E5C7E5D00A5EC11 /* ceiling_recompressed_unrotated.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C091E5C7E5D00A5EC11 /* ceiling_recompressed_unrotated.jpg */; };
@@ -69,9 +69,7 @@
 		87B91C4D1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2A1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg */; };
 		87B91C4E1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */; };
 		A9626B4B26932BEA0043CC31 /* ZMImageDownsampleOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */; };
-		EE98A0B1296EFD2F0055E981 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; };
 		EE98A0B5296EFD3F0055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; };
-		EE98A0B6296EFD3F0055E981 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE9AEC8A2BD158D600F7853F /* WireImages.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC892BD158D600F7853F /* WireImages.docc */; };
 		EEB7138B2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB7138A2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift */; };
 		F1E148CF207CE68100F81833 /* ceiling_rotated_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C0C1E5C7E5D00A5EC11 /* ceiling_rotated_1.jpg */; };
@@ -93,20 +91,6 @@
 			remoteInfo = "WireImages-iosTestHost";
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		870253FE1DAB7B4E0095D272 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EE98A0B6296EFD3F0055E981 /* WireTesting.framework in CopyFiles */,
-				54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		01E8EC382BB7D267002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
@@ -138,7 +122,6 @@
 		5471F8201B73E6E000460C35 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		5471F8211B73E6E000460C35 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		5471F8251B73E6E000460C35 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		5471F8261B73E6E000460C35 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		5471F8271B73E6E000460C35 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		870253E01DAB7A9F0095D272 /* WireImages-iosTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WireImages-iosTestHost.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		870253E31DAB7AA00095D272 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -198,7 +181,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE98A0B1296EFD2F0055E981 /* WireUtilities.framework in Frameworks */,
+				591B6E712C8B0A0D009F8A7B /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,7 +189,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54A5A6161E92A01100D56F2E /* WireImages.framework in Frameworks */,
+				591B6E742C8B0A10009F8A7B /* WireImages.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,7 +198,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE98A0B5296EFD3F0055E981 /* WireTesting.framework in Frameworks */,
-				870253F91DAB7B190095D272 /* WireImages.framework in Frameworks */,
+				591B6E772C8B0A17009F8A7B /* WireImages.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,7 +315,6 @@
 				5471F8201B73E6E000460C35 /* project-debug.xcconfig */,
 				5471F8211B73E6E000460C35 /* project.xcconfig */,
 				5471F8251B73E6E000460C35 /* tests.xcconfig */,
-				5471F8261B73E6E000460C35 /* warnings-debug.xcconfig */,
 				5471F8271B73E6E000460C35 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -429,7 +411,6 @@
 				096960091B663E7B006DF53B /* Headers */,
 				096960071B663E7B006DF53B /* Sources */,
 				096960081B663E7B006DF53B /* Frameworks */,
-				AD4812A92AB9902400ED208C /* Run Swiftlint */,
 				0969600A1B663E7B006DF53B /* Resources */,
 			);
 			buildRules = (
@@ -467,7 +448,6 @@
 				870253DC1DAB7A9F0095D272 /* Sources */,
 				870253DD1DAB7A9F0095D272 /* Frameworks */,
 				870253DE1DAB7A9F0095D272 /* Resources */,
-				870253FE1DAB7B4E0095D272 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -585,29 +565,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		AD4812A92AB9902400ED208C /* Run Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run Swiftlint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		096960071B663E7B006DF53B /* Sources */ = {
@@ -744,11 +701,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
@@ -759,11 +712,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;

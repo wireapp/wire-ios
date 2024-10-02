@@ -84,7 +84,7 @@ final class CompleteReactionPickerViewController: UIViewController {
         topBar.delegate = self
         topBar.needsSeparator = false
         topBar.backgroundColor = SemanticColors.View.backgroundDefault
-        topBar.configure(title: Strings.title, subtitle: nil, topAnchor: safeTopAnchor)
+        topBar.configure(title: Strings.title, subtitle: nil, topAnchor: view.safeAreaLayoutGuide.topAnchor)
 
         addChild(sectionViewController)
         view.addSubview(sectionViewController.view)
@@ -110,23 +110,23 @@ final class CompleteReactionPickerViewController: UIViewController {
         }
 
         NSLayoutConstraint.activate([
-            topBar.topAnchor.constraint(equalTo: safeTopAnchor),
-            topBar.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            topBar.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            topBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            topBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            topBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 
-            searchBar.topAnchor.constraint(equalTo: topBar.safeBottomAnchor),
-            searchBar.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor, constant: 10.0),
-            searchBar.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -10.0),
+            searchBar.topAnchor.constraint(equalTo: topBar.safeAreaLayoutGuide.bottomAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10.0),
+            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10.0),
 
             sectionViewControllerView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: -8.0),
-            sectionViewControllerView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor, constant: 10.0),
-            sectionViewControllerView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -10.0),
+            sectionViewControllerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10.0),
+            sectionViewControllerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10.0),
             sectionViewControllerView.heightAnchor.constraint(equalToConstant: 44.0),
 
-            collectionView.topAnchor.constraint(equalTo: sectionViewControllerView.safeBottomAnchor, constant: 18.0),
-            collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: safeBottomAnchor)
+            collectionView.topAnchor.constraint(equalTo: sectionViewControllerView.safeAreaLayoutGuide.bottomAnchor, constant: 18.0),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 

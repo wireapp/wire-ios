@@ -25,7 +25,7 @@ final class MockCompositeMessageData: NSObject, CompositeMessageData {
     var items: [CompositeMessageItem] = []
 }
 
-final class MockTextMessageData: NSObject, ZMTextMessageData {
+final class MockTextMessageData: NSObject, TextMessageData {
 
     var messageText: String? = ""
     var backingLinkPreview: LinkMetadata?
@@ -53,7 +53,7 @@ final class MockTextMessageData: NSObject, ZMTextMessageData {
         return linkPreview
     }
 
-    func fetchLinkPreviewImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
+    func fetchLinkPreviewImageData(queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
         completionHandler(imageData)
     }
 
@@ -357,7 +357,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var conversationLike: ConversationLike? = .none
 
     var deliveryState: ZMDeliveryState = .delivered
-    var failedToSendReason: MessageSendFailure? = .unknown
+    var expirationReason: ExpirationReason? = .other
     var failedToSendUsers: [UserType] = []
 
     var imageMessageData: ZMImageMessageData? = .none
@@ -391,7 +391,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
         return backingLocationMessageData
     }
 
-    var textMessageData: ZMTextMessageData? {
+    var textMessageData: TextMessageData? {
         return backingTextMessageData
     }
 

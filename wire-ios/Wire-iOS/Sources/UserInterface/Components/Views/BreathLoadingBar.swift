@@ -25,9 +25,10 @@ protocol BreathLoadingBarDelegate: AnyObject {
 }
 
 final class BreathLoadingBar: UIView {
+
     weak var delegate: BreathLoadingBarDelegate?
 
-    lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 0)
+    private(set) lazy var heightConstraint = heightAnchor.constraint(equalToConstant: 0)
 
     var animating: Bool = false {
         didSet {
@@ -38,7 +39,6 @@ final class BreathLoadingBar: UIView {
             } else {
                 stopAnimation()
             }
-
         }
     }
 
@@ -104,7 +104,7 @@ final class BreathLoadingBar: UIView {
     private func createConstraints() {
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          heightConstraint
+            heightConstraint
         ])
     }
 

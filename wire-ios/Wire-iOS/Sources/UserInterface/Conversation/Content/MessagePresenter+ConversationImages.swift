@@ -75,10 +75,10 @@ extension MessagePresenter {
         }
         imagesController.modalTransitionStyle = .crossDissolve
 
-        let closeButton = CollectionsView.closeButton()
-        closeButton.addTarget(self, action: #selector(MessagePresenter.closeImagesButtonPressed(_:)), for: .touchUpInside)
+        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.modalTargetController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
 
-        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: closeButton)
         imagesController.messageActionDelegate = actionResponder
         imagesController.swipeToDismiss = true
         imagesController.dismissAction = { [weak self] completion in

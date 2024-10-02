@@ -20,7 +20,7 @@ import Foundation
 @testable import Ziphy
 
 final class ZiphHelper {
-    class func createZiph(id: String, url: URL) -> Ziph {
+    static func createZiph(id: String, url: URL) -> Ziph {
         let imagesList: [ZiphyImageType: ZiphyAnimatedImage] = [
             .preview: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 51200),
             .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204800),
@@ -31,7 +31,7 @@ final class ZiphHelper {
         return createZiph(id: id, url: url, imagesList: imagesList)
     }
 
-    class func createZiph(id: String, url: URL, imagesList: [ZiphyImageType: ZiphyAnimatedImage]) -> Ziph {
+    static func createZiph(id: String, url: URL, imagesList: [ZiphyImageType: ZiphyAnimatedImage]) -> Ziph {
 
         let ziph = Ziph(identifier: id, images: ZiphyAnimatedImageList(images: imagesList), title: id)
 

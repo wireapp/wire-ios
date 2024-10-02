@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Tap to activate.";
 "conversation_list.header.self_team.accessibility_value.active" = "Active now.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contacts";
-"conversation_list.bottom_bar.conversations.title" = "Conversations";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archive";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
@@ -512,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Delivered";
 "content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -621,7 +616,6 @@
 
 "content.message.like" = "Like";
 "content.message.unlike" = "Unlike";
-"content.message.forward" = "Share";
 "content.message.go_to_conversation" = "Reveal";
 "content.message.forward.to" = "Search…";
 "content.message.open" = "Open";
@@ -1057,14 +1051,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title"="Terms of Use";
 "about.privacy.title"="Privacy Policy";
-"about.license.title" = "License Information";
 "about.website.title"="Wire Website";
 "about.copyright.title"="© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Details";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "Your account was used on:";
@@ -1159,18 +1147,10 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Usage and Crash Reports";
 
-// Crash
-"self.settings.privacy_crash.title" = "Send anonymous crash data";
-"self.settings.privacy_crash_menu.description.title" = "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
-
-
 
 // Change Username
 
@@ -1307,16 +1287,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "If you experience problems with push notifications, Wire Support may ask you to reset this token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push token has been reset";
 "self.settings.advanced.reset_push_token_alert.message" = "Notifications will be restored in a few seconds.";
-"self.settings.advanced.version_technical_details.title" = "Version Technical Details";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Data Usage Permissions";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "Technical Report";
-"self.settings.technical_report.send_report" = "Send report to Wire";
+"self.settings.technical_report_section.title" = "Debug Report";
+"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "Wire Debug Report";
 "self.settings.technical_report.include_log" = "Include detailed log";
+"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Detailed logs could contain personal data";
 "self.settings.technical_report.no_mail_alert" = "No mail client detected. Tap \"OK\" and send logs manually to: ";
 
@@ -1813,7 +1794,7 @@ Enter your identity provider’s credentials in the next step to update the cert
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "no more gifs";
-"giphy.error.no_result" = "no gif found";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "send";
 "giphy.cancel" = "cancel";
@@ -1932,13 +1913,6 @@ Enter your identity provider’s credentials in the next step to update the cert
 
 "url_action.invalid_link.title" = "Invalid link.";
 "url_action.invalid_link.message" = "The link you opened is not valid.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Do you want to receive news and product updates from Wire via email?";
-"news_offers.consent.message" = "You can unsubscribe at any time.";
-"news_offers.consent.button.privacy_policy.title" = "Privacy Policy";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

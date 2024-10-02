@@ -90,14 +90,16 @@ final class CallViewController: UIViewController {
             classification = userSession.classification(users: participants, conversationDomain: nil)
         }
 
-        callInfoConfiguration = CallInfoConfiguration(voiceChannel: voiceChannel,
-                                                      preferedVideoPlaceholderState: preferedVideoPlaceholderState,
-                                                      permissions: permissionsConfiguration,
-                                                      cameraType: cameraType,
-                                                      mediaManager: mediaManager,
-                                                      userEnabledCBR: CallViewController.userEnabledCBR,
-                                                      classification: classification,
-                                                      selfUser: selfUser)
+        callInfoConfiguration = CallInfoConfiguration(
+            voiceChannel: voiceChannel,
+            preferedVideoPlaceholderState: preferedVideoPlaceholderState,
+            permissions: permissionsConfiguration,
+            cameraType: cameraType,
+            mediaManager: mediaManager,
+            userEnabledCBR: CallViewController.userEnabledCBR,
+            classification: classification,
+            selfUser: selfUser
+        )
 
         callInfoRootViewController = CallInfoRootViewController(
             configuration: callInfoConfiguration,
@@ -105,7 +107,10 @@ final class CallViewController: UIViewController {
             userSession: userSession
         )
 
-        callGridViewController = CallGridViewController(configuration: callGridConfiguration)
+        callGridViewController = CallGridViewController(
+            voiceChannel: voiceChannel,
+            configuration: callGridConfiguration
+        )
 
         super.init(nibName: nil, bundle: nil)
         callInfoRootViewController.delegate = self
@@ -248,20 +253,21 @@ final class CallViewController: UIViewController {
 
     private func createConstraints() {
         NSLayoutConstraint.activate([
-            callGridViewController.view.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            callGridViewController.view.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
-            callGridViewController.view.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            callGridViewController.view.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor)
+            callGridViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            callGridViewController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            callGridViewController.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            callGridViewController.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
     }
 
     private func setupObservers() {
-        voiceChannelObserverTokens += [voiceChannel.addCallStateObserver(self),
-                                       voiceChannel.addParticipantObserver(self),
-                                       voiceChannel.addConstantBitRateObserver(self),
-                                       voiceChannel.addNetworkQualityObserver(self),
-                                       voiceChannel.addMuteStateObserver(self),
-                                       voiceChannel.addActiveSpeakersObserver(self)]
+        voiceChannelObserverTokens += [
+            voiceChannel.addCallStateObserver(self),
+            voiceChannel.addParticipantObserver(self),
+            voiceChannel.addConstantBitRateObserver(self),
+            voiceChannel.addMuteStateObserver(self),
+            voiceChannel.addActiveSpeakersObserver(self)
+        ]
 
         guard
             let conversation,
@@ -294,20 +300,21 @@ final class CallViewController: UIViewController {
     }
 
     private func updateConfiguration() {
-        callInfoConfiguration = CallInfoConfiguration(voiceChannel: voiceChannel,
-                                                      preferedVideoPlaceholderState: preferedVideoPlaceholderState,
-                                                      permissions: permissions,
-                                                      cameraType: cameraType,
-                                                      mediaManager: mediaManager,
-                                                      userEnabledCBR: CallViewController.userEnabledCBR,
-                                                      classification: classification,
-                                                      selfUser: userSession.selfUser)
+        callInfoConfiguration = CallInfoConfiguration(
+            voiceChannel: voiceChannel,
+            preferedVideoPlaceholderState: preferedVideoPlaceholderState,
+            permissions: permissions,
+            cameraType: cameraType,
+            mediaManager: mediaManager,
+            userEnabledCBR: CallViewController.userEnabledCBR,
+            classification: classification,
+            selfUser: userSession.selfUser
+        )
 
         callInfoRootViewController.configuration = callInfoConfiguration
         callGridConfiguration = CallGridConfiguration(voiceChannel: voiceChannel)
         callGridViewController.configuration = callGridConfiguration
         updateOverlayAfterStateChanged()
-        updateAppearance()
         updateIdleTimer()
         configurationObserver?.didUpdateConfiguration(configuration: callInfoConfiguration)
         showIncomingCallStatusViewIfNeeded(forConfiguration: callInfoConfiguration)
@@ -343,9 +350,6 @@ final class CallViewController: UIViewController {
         let disabled = callInfoConfiguration.disableIdleTimer
         UIApplication.shared.isIdleTimerDisabled = disabled
         Log.calling.debug("Updated idle timer: \(disabled ? "disabled" : "enabled")")
-    }
-
-    private func updateAppearance() {
     }
 
     private func alertVideoUnavailable() {
@@ -532,12 +536,6 @@ extension CallViewController: ConstantBitRateAudioObserver {
         updateConfiguration()
     }
 
-}
-
-extension CallViewController: NetworkQualityObserver {
-    func callCenterDidChange(networkQuality: NetworkQuality) {
-        updateConfiguration()
-    }
 }
 
 extension CallViewController: CallInfoRootViewControllerDelegate {

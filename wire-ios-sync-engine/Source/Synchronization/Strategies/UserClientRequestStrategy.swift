@@ -179,9 +179,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                         clientRegistrationStatus.didGeneratePrekeys(prekeys, lastResortPrekey: lastResortPrekey)
                     }
                 } catch {
-                    // swiftlint:disable todo_requires_jira_link
+                    // swiftlint:disable:next todo_requires_jira_link
                     // TODO: [F] check if we need to propagate error
-                    // swiftlint:enable todo_requires_jira_link
                     WireLogger.proteus.error("prekeys: failed to generatePrekeys: \(error.localizedDescription)")
                 }
             }
@@ -324,7 +323,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             } else if clientUpdateStatus?.currentPhase == .waitingForPrekeys {
                 clientUpdateStatus?.willGeneratePrekeys()
                 let nextPrekeyIndex = UInt16(userClient.preKeysRangeMax) + 1
-                let groups = managedObjectContext?.enterAllGroupsExceptSecondary()
+                let groups = managedObjectContext?.enterAllGroupsExceptSecondary() ?? []
                 Task {
                     do {
                         let prekeys = try await prekeyGenerator.generatePrekeys(startIndex: nextPrekeyIndex)
@@ -332,9 +331,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                             self.clientUpdateStatus?.didGeneratePrekeys(prekeys)
                         }
                     } catch {
-                        // swiftlint:disable todo_requires_jira_link
-                        // TODO: [F] check if we need to propagate error
-                        // swiftlint:enable todo_requires_jira_link
+                        // swiftlint:disable:next todo_requires_jira_link
+                        // TODO: [F] check if we need to propagate error 
                         WireLogger.proteus.error("prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)")
                     }
                     managedObjectContext?.leaveAllGroups(groups)
@@ -393,7 +391,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             // first we try to register without password (credentials can be there, but they can not contain password)
             // if there is no password in credentials but it's required, we will recieve error from backend and only then will ask for password
             let error = errorFromFailedInsertResponse(response)
-            if error.code == Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue) {
+            if error.code == UserSessionErrorCode.canNotRegisterMoreClients.rawValue {
                 clientUpdateStatus?.needsToFetchClients(andVerifySelfClient: false)
             }
             clientRegistrationStatus?.didFail(toRegisterClient: error)
@@ -443,7 +441,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     public func errorFromFailedInsertResponse(_ response: ZMTransportResponse!) -> NSError {
-        var errorCode: ZMUserSessionErrorCode = .unknownError
+        var errorCode: UserSessionErrorCode = .unknownError
         if let moc = self.managedObjectContext, let response, response.result == .permanentError {
 
             if let errorLabel = response.payload?.asDictionary()?["label"] as? String {
@@ -465,7 +463,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 }
             }
         }
-        return NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(errorCode.rawValue), userInfo: nil)
+        return NSError(domain: NSError.userSessionErrorDomain, code: Int(errorCode.rawValue), userInfo: nil)
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
@@ -483,37 +481,35 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     private func received(clients: [[String: AnyObject]]) {
-        guard let moc = self.managedObjectContext else { return }
-        func createSelfUserClient(_ clientInfo: [String: AnyObject]) -> UserClient? {
-            let client = UserClient.createOrUpdateSelfUserClient(clientInfo, context: moc)
-            return client
-        }
+        guard let context = managedObjectContext else { return }
 
-        let clients = clients.compactMap(createSelfUserClient)
+        let clients = clients.compactMap { clientInfo in
+            UserClient.createOrUpdateSelfUserClient(clientInfo, context: context)
+        }
 
         // remove all clients that are not there, with the exception of the self client
         // in theory we should also remove the self client and log out, but this will happen
         // next time the user sends a message or when we will receive the "deleted" event
         // for that client
         let foundClientsIdentifier = Set(clients.compactMap { $0.remoteIdentifier })
-        let selfUser = ZMUser.selfUser(in: moc)
+        let selfUser = ZMUser.selfUser(in: context)
         let selfClient = selfUser.selfClient()
         let otherClients = selfUser.clients
         let deletedClients = otherClients.filter {
             return $0 != selfClient && $0.remoteIdentifier.map({ foundClientsIdentifier.contains($0) }) == false
         }
 
-        WaitingGroupTask(context: moc) {
+        WaitingGroupTask(context: context) {
             for deletedClient in deletedClients {
                 await deletedClient.deleteClientAndEndSession()
             }
-            await moc.perform {
-                moc.saveOrRollback()
+            await context.perform {
+                context.saveOrRollback()
                 self.clientUpdateStatus?.didFetchClients(clients)
             }
         }
 
-        moc.saveOrRollback()
+        context.saveOrRollback()
         clientUpdateStatus?.didFetchClients(clients)
     }
 

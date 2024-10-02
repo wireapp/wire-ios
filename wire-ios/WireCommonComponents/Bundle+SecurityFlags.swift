@@ -27,6 +27,7 @@ public enum SecurityFlags {
     case backup
     case maxNumberAccounts
     case fileSharing
+    case locationSharing
     case forceCallKitDisabled
     case clipboard
 
@@ -56,6 +57,8 @@ public enum SecurityFlags {
             return "ForceEncryptionAtRestEnabled"
         case .fileSharing:
             return "FileSharingEnabled"
+        case .locationSharing:
+            return "LocationSharingEnabled"
         case .forceCallKitDisabled:
             return "ForceCallKitDisabled"
         case .minTLSVersion:

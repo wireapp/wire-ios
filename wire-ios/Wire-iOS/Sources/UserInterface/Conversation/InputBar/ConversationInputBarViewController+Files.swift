@@ -70,29 +70,18 @@ extension ConversationInputBarViewController {
         guard let fileSize: UInt64 = url.fileSize else {
             zmLog.error("Cannot get file size on selected file:")
             parent?.dismiss(animated: true)
-            completion()
-
-            return
+            return completion()
         }
 
         guard fileSize <= maxUploadFileSize else {
             // file exceeds maximum allowed upload size
             parent?.dismiss(animated: false)
-
             showAlertForFileTooBig()
-
-            _ = completion()
-
-            return
+            return completion()
         }
 
-        FileMetaDataGenerator.metadataForFileAtURL(
-            url,
-            UTI: url.UTI(),
-            name: url.lastPathComponent
-        ) { [weak self] metadata in
-
-            guard let self else { return }
+        Task { @MainActor in
+            let metadata = await fileMetaDataGenerator.metadataForFile(at: url)
 
             impactFeedbackGenerator.prepare()
             ZMUserSession.shared()?.perform {
@@ -119,19 +108,20 @@ extension ConversationInputBarViewController {
                 completion()
             }
         }
+
         parent?.dismiss(animated: true)
     }
 
     func execute(videoPermissions toExecute: @escaping () -> Void) {
-        UIApplication.wr_requestOrWarnAboutVideoAccess({ granted in
+        UIApplication.wr_requestOrWarnAboutVideoAccess { granted in
             if granted {
-                UIApplication.wr_requestOrWarnAboutMicrophoneAccess({ granted in
+                UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
                     if granted {
                         toExecute()
                     }
-                })
+                }
             }
-        })
+        }
     }
 
     private func showAlertForFileTooBig() {

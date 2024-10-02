@@ -30,9 +30,6 @@
 
 static NSString * const InvitationToConnectBaseURL = @"https://www.wire.com/c/";
 
-static NSString *const ValidPhoneNumber = @"+491234567890";
-static NSString *const ShortPhoneNumber = @"+491";
-static NSString *const LongPhoneNumber = @"+4912345678901234567890";
 static NSString *const ValidPassword = @"pA$$W0Rd";
 static NSString *const ShortPassword = @"pa";
 static NSString *const LongPassword =
@@ -55,10 +52,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
 @interface ZMUserTests()
 
-@property (nonatomic) NSArray *validPhoneNumbers;
-@property (nonatomic) NSArray *shortPhoneNumbers;
-@property (nonatomic) NSArray *longPhoneNumbers;
-
 @end
 
 
@@ -67,10 +60,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 -(void)setUp
 {
     [super setUp];
-    self.validPhoneNumbers = @[@"+491621312533", @"+4901756698655", @"+49 152 22824948", @"+49 157 71898972", @"+49 176 35791100", @"+49 1721496444", @"+79263387698", @"+79160546401", @"+7(927)674-59-42", @"+71231234567", @"+491234567890123456", @"+49123456789012345678901", @"+49123456"];
-    self.shortPhoneNumbers = @[@"+", @"4", @"+4", @"+49", @"+491", @"+4912", @"+49123", @"+491234", @"+491235"];
-    self.longPhoneNumbers = @[@"+491234567890123456789015", @"+4912345678901234567890156"];
-    
+
     UserImageLocalCache *userImageCache = [[UserImageLocalCache alloc] initWithLocation:nil];
     
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -78,14 +68,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     }];
     
     self.uiMOC.zm_userImageCache = userImageCache;
-}
-
-- (void)tearDown
-{
-    self.validPhoneNumbers = nil;
-    self.shortPhoneNumbers = nil;
-    self.longPhoneNumbers = nil;
-    [super tearDown];
 }
 
 - (void)testThatItHasLocallyModifiedDataFields
@@ -102,7 +84,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [self checkUserAttributeForKey:@"name" value:@"Foo Bar"];
     [self checkUserAttributeForKey:@"handle" value:@"foo_bar"];
     [self checkUserAttributeForKey:@"managedBy" value:ManagedByWire];
-    [self checkUserAttributeForKey:@"phoneNumber" value:@"+123456789"];
     [self checkUserAttributeForKey:@"remoteIdentifier" value:[NSUUID createUUID]];
     [self checkUserAttributeForKey:@"richProfile" value:@[
         [[UserRichProfileField alloc] initWithType:@"Title" value:@"Software Engineer"],
@@ -117,7 +98,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
               @"id" : userID.transportString,
               @"handle" : @"el_manu",
               @"email" : @"mannie@example.com",
-              @"phone" : @"000-000-45789",
               @"accent_id" : @5,
               @"picture" : @[],
               @"managed_by" : ManagedByWire
@@ -173,37 +153,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         XCTAssertNotNil(created);
         XCTAssertEqualObjects(uuid, created.remoteIdentifier);
     }];
-}
-
-- (void)testThatItReturnsAnExistingUserByPhone
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *phoneNumber = @"+123456789";
-    user.phoneNumber = phoneNumber;
-    
-    // when
-    ZMUser *found = [ZMUser userWithPhoneNumber:phoneNumber inContext:self.uiMOC];
-    
-    // then
-    XCTAssertEqualObjects(found.phoneNumber, phoneNumber);
-    XCTAssertEqualObjects(found.objectID, user.objectID);
-}
-
-- (void)testThatItDoesNotReturnANonExistingUserByPhone
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *phoneNumber = @"+123456789";
-    user.phoneNumber = phoneNumber;
-    
-    NSString *otherPhoneNumber = @"+987654321";
-    
-    // when
-    ZMUser *found = [ZMUser userWithPhoneNumber:otherPhoneNumber inContext:self.uiMOC];
-    
-    // then
-    XCTAssertNil(found);
 }
 
 - (void)testThatItReturnsAnExistingUserByEmail
@@ -830,57 +779,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     // then
     XCTAssertEqual([self managedByString:user], ManagedByScim);
-}
-
-- (void)testThatItSetsPhoneToNilIfItIsNull
-{
-    // given
-    NSUUID *uuid = [NSUUID createUUID];
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user.remoteIdentifier = uuid;
-    user.phoneNumber =  @"555-fake-number";
-    
-    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
-    [payload setObject:[NSNull null] forKey:@"phone"];
-    
-    // when
-    [user updateWithTransportData:payload authoritative:NO];
-    
-    // then
-    XCTAssertNil(user.phoneNumber);
-}
-
-- (void)testThatItSetsPhoneToNilIfItIsMissing
-{
-    // given
-    NSUUID *uuid = [NSUUID createUUID];
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user.remoteIdentifier = uuid;
-    user.phoneNumber =  @"555-fake-number";
-    
-    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
-    [payload removeObjectForKey:@"phone"];
-    
-    // when
-    [user updateWithTransportData:payload authoritative:YES];
-    
-    // then
-    XCTAssertNil(user.phoneNumber);
-}
-
-- (void)testThatThePhoneNumberIsCopied
-{
-    // given
-    NSString *originalValue = @"+1-555-324545";
-    NSMutableString *mutableValue = [originalValue mutableCopy];
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    user.phoneNumber = mutableValue;
-    [mutableValue appendString:@"8"];
-    
-    // then
-    XCTAssertEqualObjects(user.phoneNumber, originalValue);
 }
 
 - (void)testThatItAssignsRemoteIdentifierIfTheUserDoesNotHaveOne
@@ -1839,138 +1737,6 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
         // then
         XCTAssertEqualObjects(user.emailAddress, @" tester\t  BLA \\\"");
     }];
-}
-
-- (void)testThatItAcceptsAValidPhoneNumber
-{
-    NSArray *validPhoneNumbers =
-    @[@"123456", // short
-      @"123456789012345678", // normal length
-      @"+4915233336668",
-      @"+49 152 3333 6668",
-      @"+49 (0) 152 3333 6668",
-      @"(152) 3333-6668",
-      @"415.456.456",
-      @"+1 415.456.456",
-      @"00 1 415.456.456"];
-    
-    
-    for (NSString *valid in validPhoneNumbers) {
-        // given
-        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-        NSString *original = @"12345678";
-        user.phoneNumber = original;
-        [self.uiMOC saveOrRollback];
-        XCTAssertEqualObjects(user.phoneNumber, original);
-        
-        // when
-        user.phoneNumber = valid;
-        [self.uiMOC saveOrRollback];
-        
-        // then
-        XCTAssertEqualObjects(user.phoneNumber, valid, @"Tried to set valid \'%@\'", valid);
-    }
-}
-
-- (void)testThatItDoesNotValidateThePhoneNumberOnTheSyncContext;
-{
-    [self.syncMOC performGroupedBlockAndWait:^{
-        // given
-        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        user.phoneNumber = @"12345678";
-        [self.syncMOC saveOrRollback];
-        
-        // when
-        user.phoneNumber = @" tester\t  BLA \\\"";
-        [self.syncMOC saveOrRollback];
-        
-        // then
-        XCTAssertEqualObjects(user.phoneNumber, @" tester\t  BLA \\\"");
-    }];
-}
-
-- (void)testThatItStaticallyDoesNotValidateAShortCode
-{
-    // given
-    NSString *code = ShortPhoneCode;
-    
-    // when
-    XCTAssertFalse([ZMUser validatePhoneVerificationCode:&code error:nil]);
-}
-
-- (void)testThatItStaticallyDoesNotValidateALongCode
-{
-    // given
-    NSString *code = LongPhoneCode;
-    
-    // when
-    XCTAssertFalse([ZMUser validatePhoneVerificationCode:&code error:nil]);
-}
-
-- (void)testThatItStaticallyValidatesACodeOfTheRightLength
-{
-    // given
-    NSString *phone = ValidPhoneCode;
-    
-    // when
-    XCTAssertTrue([ZMUser validatePhoneVerificationCode:&phone error:nil]);
-}
-
-- (void)testThatItStaticallyDoesNotValidateAnEmptyOrNilCode
-{
-    // given
-    NSString *phone = @"";
-    // when
-    XCTAssertFalse([ZMUser validatePhoneVerificationCode:&phone error:nil]);
-    
-    phone = nil;
-    XCTAssertFalse([ZMUser validatePhoneVerificationCode:&phone error:nil]);
-}
-
-- (void)testThatItStaticallyDoesNotValidateEmptyOrNilPhoneNumber
-{
-    //given
-    NSString *phoneNumber = @"";
-    
-    //when
-    XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil]);
-    
-    phoneNumber = nil;
-    XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil]);
-}
-
-- (void)testThatItStaticallyDoesValidateValidPhoneNumbers
-{
-    //given
-    for (NSString *number in self.validPhoneNumbers) {
-        NSString *phoneNumber = number;
-        XCTAssertTrue([ZMUser validatePhoneNumber:&phoneNumber error:nil], @"Phone number %@ should be valid", phoneNumber);
-    }
-}
-
-- (void)testThatItStaticallyDoesNotValidatePhoneNumberWithInvalidChars
-{
-    NSArray *invalidCharactes = @[@"*", @";", @"#", @"[", @"]", @"~"];
-    for (NSString *invalidChar in invalidCharactes) {
-        NSString *phoneNumber = [ValidPhoneNumber stringByAppendingString:invalidChar];
-        XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil], @"Phone number %@ should be invalid", phoneNumber);
-    }
-}
-
-- (void)testThatItStaticallyDoesNotValidateShortPhoneNumbers
-{
-    for (NSString *number in self.shortPhoneNumbers) {
-        NSString *phoneNumber = number;
-        XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil], @"Phone number %@ should be invalid", phoneNumber);
-    }
-}
-
-- (void)testThatItStaticallyDoesNotValidateLongPhoneNumbers
-{
-    for (NSString *number in self.longPhoneNumbers) {
-        NSString *phoneNumber = number;
-        XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil], @"Phone number %@ should be invalid", phoneNumber);
-    }
 }
 
 - (void)testThatItDoesNotValidateAShortPassword

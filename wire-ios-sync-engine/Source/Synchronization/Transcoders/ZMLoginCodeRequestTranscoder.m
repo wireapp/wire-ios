@@ -29,7 +29,6 @@
 @interface ZMLoginCodeRequestTranscoder() <ZMSingleRequestTranscoder>
 
 @property (nonatomic, strong) ZMAuthenticationStatus *authenticationStatus;
-@property (nonatomic) ZMSingleRequestSync *phoneVerificationCodeRequestSync;
 @property (nonatomic) ZMSingleRequestSync *emailVerificationCodeRequestSync;
 @property (nonatomic, weak) id<ZMSGroupQueue> groupQueue;
 
@@ -43,9 +42,8 @@
     if (self != nil) {
         self.groupQueue = groupQueue;
         self.authenticationStatus = authenticationStatus;
-        self.phoneVerificationCodeRequestSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:groupQueue];
+
         self.emailVerificationCodeRequestSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:groupQueue];
-        [self.phoneVerificationCodeRequestSync readyForNextRequest];
         [self.emailVerificationCodeRequestSync readyForNextRequest];
     }
     return self;
@@ -53,10 +51,7 @@
 
 - (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
 {
-    if (self.authenticationStatus.currentPhase == ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin) {
-        [self.phoneVerificationCodeRequestSync readyForNextRequestIfNotBusy];
-        return [self.phoneVerificationCodeRequestSync nextRequestForAPIVersion:apiVersion];
-    } else if (self.authenticationStatus.currentPhase == ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin) {
+    if (self.authenticationStatus.currentPhase == ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin) {
         [self.emailVerificationCodeRequestSync readyForNextRequestIfNotBusy];
         return [self.emailVerificationCodeRequestSync nextRequestForAPIVersion:apiVersion];
     }
@@ -76,14 +71,6 @@
                                                                                     authentication:ZMTransportRequestAuthNone
                                                                                         apiVersion:apiVersion];
         return emailVerficationCodeRequest;
-    } else if (sync == self.phoneVerificationCodeRequestSync) {
-
-        ZMTransportRequest *phoneVerificationCodeRequest = [[ZMTransportRequest alloc] initWithPath:@"/login/send"
-                                                                                             method:ZMTransportRequestMethodPost
-                                                                                            payload:@{@"phone": self.authenticationStatus.loginPhoneNumberThatNeedsAValidationCode}
-                                                                                     authentication:ZMTransportRequestAuthNone
-                                                                                         apiVersion:apiVersion];
-        return phoneVerificationCodeRequest;
     }
 
     return nil;
@@ -98,9 +85,7 @@
     else {
         NSError *error = {
             [NSError pendingLoginErrorWithResponse:response] ?:
-            [NSError unauthorizedErrorWithResponse:response] ?:
-            [NSError invalidPhoneNumberErrorWithReponse:response] ?:
-            [NSError userSessionErrorWithErrorCode:ZMUserSessionUnknownError userInfo:nil]
+            [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeUnknownError userInfo:nil]
         };
 
         [authStatus didFailRequestForLoginCode:error];

@@ -33,16 +33,9 @@ enum ConversationInputBarViewControllerMode {
 }
 
 final class ConversationInputBarViewController: UIViewController,
-                                                UIPopoverPresentationControllerDelegate,
-                                                PopoverPresenter {
+                                                UIPopoverPresentationControllerDelegate {
 
     let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
-
-    // MARK: PopoverPresenter
-    var presentedPopover: UIPopoverPresentationController?
-    var popoverPointToView: UIView?
-
-    typealias ButtonColors = SemanticColors.Button
 
     let conversation: InputBarConversationType
     weak var delegate: ConversationInputBarViewControllerDelegate?
@@ -219,6 +212,7 @@ final class ConversationInputBarViewController: UIViewController,
     private var userObserverToken: Any?
     private var typingObserverToken: Any?
     let userSession: UserSession
+    let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -256,7 +250,18 @@ final class ConversationInputBarViewController: UIViewController,
             buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
         }
 
+        if shouldExcludeLocationButton {
+            if let index = buttonsArray.firstIndex(of: locationButton) {
+                buttonsArray.remove(at: index)
+            }
+        }
+
         return buttonsArray
+    }
+
+    /// Remove locationButton if security flag does not allow it
+    private var shouldExcludeLocationButton: Bool {
+        !SecurityFlags.locationSharing.isEnabled
     }
 
     var mode: ConversationInputBarViewControllerMode = .textInput {
@@ -338,6 +343,7 @@ final class ConversationInputBarViewController: UIViewController,
         self.userSession = userSession
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
+        fileMetaDataGenerator = FileMetaDataGenerator.shared
 
         super.init(nibName: nil, bundle: nil)
 
@@ -378,7 +384,7 @@ final class ConversationInputBarViewController: UIViewController,
         photoButton.addTarget(self, action: #selector(cameraButtonPressed(_:)), for: .touchUpInside)
         videoButton.addTarget(self, action: #selector(videoButtonPressed(_:)), for: .touchUpInside)
         sketchButton.addTarget(self, action: #selector(sketchButtonPressed(_:)), for: .touchUpInside)
-        uploadFileButton.addTarget(self, action: #selector(docUploadPressed(_:)), for: .touchUpInside)
+        uploadFileButton.addTarget(self, action: #selector(fileUploadPressed(_:)), for: .touchUpInside)
         pingButton.addTarget(self, action: #selector(pingButtonPressed(_:)), for: .touchUpInside)
         gifButton.addTarget(self, action: #selector(giphyButtonPressed(_:)), for: .touchUpInside)
         locationButton.addTarget(self, action: #selector(locationButtonPressed(_:)), for: .touchUpInside)
@@ -456,7 +462,6 @@ final class ConversationInputBarViewController: UIViewController,
 
         coordinator.animate(alongsideTransition: nil) { _ in
             self.inRotation = false
-            self.updatePopoverSourceRect()
         }
     }
 
@@ -471,8 +476,6 @@ final class ConversationInputBarViewController: UIViewController,
         guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
 
         guard !inRotation else { return }
-
-        updatePopoverSourceRect()
     }
 
     // MARK: - setup
@@ -718,7 +721,11 @@ final class ConversationInputBarViewController: UIViewController,
         inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation, userSession: userSession)
         giphySearchViewController.delegate = self
-        ZClientViewController.shared?.present(giphySearchViewController.wrapInsideNavigationController(), animated: true)
+
+        let navigationController = UINavigationController(rootViewController: giphySearchViewController)
+        navigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.modalPresentationStyle = .formSheet
+        ZClientViewController.shared?.present(navigationController, animated: true)
     }
 
     // MARK: - Animations
@@ -824,9 +831,8 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
 
 extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: check this is still necessary on iOS 13?
-    // swiftlint:enable todo_requires_jira_link
     private func statusBarBlinksRedFix() {
         // Workaround http://stackoverflow.com/questions/26651355/
         do {
@@ -905,7 +911,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         inputBar.textView.resignFirstResponder()
         let viewController = CanvasViewController()
         viewController.delegate = self
-        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
+        viewController.setupNavigationBarTitle(conversation.displayNameWithFallback)
 
         parent?.present(viewController.wrapInNavigationController(), animated: true)
     }

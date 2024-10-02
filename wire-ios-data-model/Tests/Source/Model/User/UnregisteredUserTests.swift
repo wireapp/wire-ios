@@ -33,7 +33,6 @@ final class UnregisteredUserTests: XCTestCase {
         user.verificationCode = "123456"
         user.accentColor = .turquoise
         user.acceptedTermsOfService = true
-        user.marketingConsent = false
 
         // WHEN: we check if the user needs a password
         XCTAssertFalse(user.isComplete)

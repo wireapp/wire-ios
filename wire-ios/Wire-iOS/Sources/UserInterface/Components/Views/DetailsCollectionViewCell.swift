@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable {
 

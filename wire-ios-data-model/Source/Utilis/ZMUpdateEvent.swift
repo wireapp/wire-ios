@@ -16,6 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public enum UpdateEventSource: String {
+    case pushChannel
+    case notificationsStream
+}
+
 import Foundation
 
 extension ZMUpdateEvent {
@@ -37,6 +42,25 @@ extension ZMUpdateEvent {
         default:
             return nil
         }
+    }
+
+    /// Attributes that can be attached to logs safely
+    public var logAttributes: LogAttributes {
+        logAttributes(source: .notificationsStream)
+    }
+
+    public func logAttributes(source: UpdateEventSource) -> LogAttributes {
+        [
+            LogAttributesKey.messageType: safeType,
+            LogAttributesKey.eventId: safeUUID,
+            LogAttributesKey.nonce: messageNonce?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.conversationId: safeLoggingConversationId,
+            LogAttributesKey.eventSource: source.rawValue
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
+    }
+
+    public var safeLoggingConversationId: String {
+        conversationUUID.flatMap { QualifiedID(uuid: $0, domain: conversationDomain ?? "<nil>").safeForLoggingDescription } ?? "<nil>"
     }
 
     public var userIDs: [UUID] {

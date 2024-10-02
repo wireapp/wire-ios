@@ -20,7 +20,7 @@ import MobileCoreServices
 import Social
 import UIKit
 import UniformTypeIdentifiers
-import WireCommonComponents
+import WireDesign
 
 /**
  * The description of the preview that can be displayed for an attachment.
@@ -120,6 +120,7 @@ extension SLComposeServiceViewController {
 
     private func loadSystemPreviewForAttachment(_ item: NSItemProvider, type: AttachmentType, completionHandler: @escaping (PreviewItem, PreviewDisplayMode?) -> Void) {
         item.loadPreviewImage(options: [NSItemProviderPreferredImageSizeKey: PreviewDisplayMode.pixelSize]) { container, error in
+            @MainActor
             func useFallbackIcon() {
                 let fallbackIcon = self.fallbackIcon(forAttachment: item, ofType: type)
                 completionHandler(.placeholder(fallbackIcon), .placeholder)

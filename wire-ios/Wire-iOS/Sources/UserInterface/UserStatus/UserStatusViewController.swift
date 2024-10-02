@@ -50,16 +50,17 @@ final class UserStatusViewController: UIViewController {
     override func loadView() {
         let view = UserStatusView(options: options)
         view.userStatus = userStatus
-        view.tapHandler = { [weak self] _ in
-            self?.presentAvailabilityPicker()
+        view.tapHandler = { [weak self] button in
+            self?.presentAvailabilityPicker(button)
         }
         self.view = view
     }
 
-    func presentAvailabilityPicker() {
+    private func presentAvailabilityPicker(_ sender: UIButton) {
         let availabilityChangedHandler = { [weak self] (availability: Availability) in
             guard let self else { return }
 
+            userStatus.availability = availability
             delegate?.userStatusViewController(self, didSelect: availability)
             feedbackGenerator.impactOccurred()
 
@@ -69,7 +70,10 @@ final class UserStatusViewController: UIViewController {
         }
 
         let alertViewController = UIAlertController.availabilityPicker(availabilityChangedHandler)
-        alertViewController.configPopover(pointToView: view)
+        if let popoverPresentationController = alertViewController.popoverPresentationController {
+            popoverPresentationController.sourceView = sender.superview
+            popoverPresentationController.sourceRect = sender.frame
+        }
         present(alertViewController, animated: true)
     }
 }

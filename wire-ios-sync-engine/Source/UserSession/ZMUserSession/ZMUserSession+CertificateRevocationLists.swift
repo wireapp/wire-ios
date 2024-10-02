@@ -32,6 +32,12 @@ extension ZMUserSession {
             crlAPI: CertificateRevocationListAPI(),
             mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
+            fetchE2EIFeatureConfig: { [weak self] in
+                guard let self else { return nil }
+
+                let featureRepository = FeatureRepository(context: self.coreDataStack.syncContext)
+                return featureRepository.fetchE2EI().config
+            },
             coreCryptoProvider: coreCryptoProvider,
             context: coreDataStack.syncContext
         )
@@ -51,7 +57,10 @@ extension ZMUserSession {
         }
 
         Task {
-            await cRLsChecker.checkExpiredCRLs()
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                await cRLsChecker.checkExpiredCRLs()
+            }
         }
     }
 }

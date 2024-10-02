@@ -23,14 +23,14 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
 
     // MARK: Properties
 
-    private var _stateChanges: [ZMNetworkState] = []
+    private var _stateChanges: [NetworkState] = []
 
     private let queue = DispatchQueue(label: "NetworkStateRecorder.queue", qos: .userInitiated)
 
     private let notificationCenter: NotificationCenter = .default
     private var selfUnregisteringToken: SelfUnregisteringNotificationCenterToken?
 
-    var stateChanges: [ZMNetworkState] {
+    var stateChanges: [NetworkState] {
         queue.sync {
             _stateChanges
         }
@@ -52,7 +52,7 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
             object: nil,
             queue: nil
         ) { [weak self] notification in
-            let networkState = notification.userInfo![ZMNetworkAvailabilityChangeNotification.stateKey] as! ZMNetworkState
+            let networkState = notification.userInfo![ZMNetworkAvailabilityChangeNotification.stateKey] as! NetworkState
             self?.didChangeAvailability(newState: networkState)
         }
         selfUnregisteringToken = .init(token, notificationCenter: notificationCenter)
@@ -66,7 +66,7 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
         )
     }
 
-    public func didChangeAvailability(newState: ZMNetworkState) {
+    public func didChangeAvailability(newState: NetworkState) {
         queue.async {
             self._stateChanges.append(newState)
         }

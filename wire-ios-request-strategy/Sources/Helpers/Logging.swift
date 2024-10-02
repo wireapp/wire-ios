@@ -28,10 +28,6 @@ public enum Logging {
 
     public static let messageProcessing = ZMSLog(tag: "message-processing")
 
-    /// For logs related to processing update events.
-
-    public static let eventProcessing = ZMSLog(tag: "event-processing")
-
     /// For logs related to network requests.
 
     public static let network = ZMSLog(tag: "Network")

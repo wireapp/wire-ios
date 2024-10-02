@@ -276,10 +276,22 @@ extension ZMConversation {
         }
     }
 
-    private func append(asset: WireProtos.Asset,
-                        nonce: UUID,
-                        expires: Bool,
-                        prepareMessage: (ZMAssetClientMessage) -> Void) throws -> ZMAssetClientMessage {
+    private func append(
+        asset: WireProtos.Asset,
+        nonce: UUID,
+        expires: Bool,
+        prepareMessage: (ZMAssetClientMessage) -> Void
+    ) throws -> ZMAssetClientMessage {
+
+        let logAttributes: LogAttributes = [
+            LogAttributesKey.conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.messageType: "asset"
+        ]
+
+        WireLogger.messaging.debug(
+            "appending message to conversation",
+            attributes: logAttributes, .safePublic
+        )
 
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
@@ -301,10 +313,7 @@ extension ZMConversation {
         }
 
         message.sender = ZMUser.selfUser(in: moc)
-
-        if expires {
-            message.setExpirationDate()
-        }
+        message.shouldExpire = expires
 
         append(message)
         unarchiveIfNeeded()
@@ -370,18 +379,21 @@ extension ZMConversation {
     ///     - `AppendMessageError` if the message couldn't be appended.
 
     private func append(_ message: ZMClientMessage, expires: Bool, hidden: Bool) throws {
-        WireLogger.messaging.debug("appending message to conversation \(message.debugInfo)")
+        let logAttributes: LogAttributes = [
+            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: self.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ]
+
+        WireLogger.messaging.debug("appending message to conversation",
+                                   attributes: logAttributes, .safePublic)
 
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
         }
 
         message.sender = ZMUser.selfUser(in: moc)
-
-        if expires {
-            let expirationDate = message.setExpirationDate()
-            WireLogger.messaging.debug("set expiration date \(expirationDate)")
-        }
+        message.shouldExpire = expires
 
         if hidden {
             message.hiddenInConversation = self

@@ -21,7 +21,7 @@ import XCTest
 
 class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundleAction, SendCommitBundleActionHandler> {
 
-    let commitBundle = "bundle".data(using: .utf8)!
+    let commitBundle = Data("bundle".utf8)
 
     override func setUp() {
         super.setUp()

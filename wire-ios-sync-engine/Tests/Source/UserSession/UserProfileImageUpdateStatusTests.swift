@@ -392,8 +392,8 @@ extension UserProfileImageUpdateStatusTests {
             self.sut.setState(state: .preprocessing, for: .preview)
         }
 
-        let previewOperation = MockOperation(downsampleImageData: "preview".data(using: .utf8)!, format: ProfileImageSize.preview.imageFormat)
-        let completeOperation = MockOperation(downsampleImageData: "complete".data(using: .utf8)!, format: ProfileImageSize.complete.imageFormat)
+        let previewOperation = MockOperation(downsampleImageData: Data("preview".utf8), format: ProfileImageSize.preview.imageFormat)
+        let completeOperation = MockOperation(downsampleImageData: Data("complete".utf8), format: ProfileImageSize.complete.imageFormat)
 
         // WHEN
         self.sut.completedDownsampleOperation(previewOperation, imageOwner: self.imageOwner)
@@ -442,7 +442,7 @@ extension UserProfileImageUpdateStatusTests {
 
         // WHEN
         preprocessor.operations = [Operation()]
-        let imageData = "some".data(using: .utf8)!
+        let imageData = Data("some".utf8)
         self.sut.updateImage(imageData: imageData)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -472,7 +472,7 @@ extension UserProfileImageUpdateStatusTests {
     func testThatItAdvancesStateAfterConsumingImage() {
         syncMOC.performGroupedAndWait {
             // GIVEN
-            let data = "some".data(using: .utf8)!
+            let data = Data("some".utf8)
             self.sut.setState(state: .preprocessing, for: .preview)
             self.sut.setState(state: .upload(image: data), for: .preview)
 
@@ -559,8 +559,8 @@ extension UserProfileImageUpdateStatusTests {
 
     func testThatItSetsResizedImagesToSelfUserAfterCompletion() {
         // GIVEN
-        let previewData = "small".data(using: .utf8)!
-        let completeData = "laaaarge".data(using: .utf8)!
+        let previewData = Data("small".utf8)
+        let completeData = Data("laaaarge".utf8)
         let previewId = "foo"
         let completeId = "bar"
 

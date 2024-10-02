@@ -31,4 +31,16 @@ public extension NSManagedObjectContext {
             return []
         }
     }
+
+    /// Counts a fetch request and asserts in case of error
+    func countOrAssert<T>(request: NSFetchRequest<T>) -> Int {
+        do {
+            let result = try count(for: request)
+            return result
+        } catch let error {
+            WireLogger.localStorage.error("CoreData: Error in counting for request : \(request), \(error.localizedDescription)")
+            assertionFailure("Error in fetching \(error.localizedDescription)")
+            return 0
+        }
+    }
 }

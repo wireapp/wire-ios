@@ -35,7 +35,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
 
         // Removed in v5: remove handling of error code 400
         return try ResponseParser()
-            .success(code: 200, type: QualifiedConversationListV5.self) // Change in v5
+            .success(code: .ok, type: QualifiedConversationListV5.self) // Change in v5
             .parse(response)
     }
 }

@@ -25,10 +25,6 @@
 typedef NS_ENUM(NSUInteger, ZMUserSessionRegistrationNotificationType) {
     ZMRegistrationNotificationEmailVerificationDidSucceed,
     ZMRegistrationNotificationEmailVerificationDidFail,
-    ZMRegistrationNotificationPhoneNumberVerificationDidSucceed,
-    ZMRegistrationNotificationPhoneNumberVerificationDidFail,
-    ZMRegistrationNotificationPhoneNumberVerificationCodeRequestDidFail,
-    ZMRegistrationNotificationPhoneNumberVerificationCodeRequestDidSucceed,
     ZMRegistrationNotificationRegistrationDidFail
 };
 
@@ -41,12 +37,8 @@ typedef NS_ENUM(NSUInteger, ZMUserSessionRegistrationNotificationType) {
 
 /// Notifies all @c ZMAuthenticationObserver that the authentication failed
 + (void)notifyRegistrationDidFail:(NSError *)error context:(ZMAuthenticationStatus *)authenticationStatus;
-+ (void)notifyPhoneNumberVerificationDidFail:(NSError *)error context:(ZMAuthenticationStatus *)authenticationStatus;
-+ (void)notifyPhoneNumberVerificationCodeRequestDidFail:(NSError *)error context:(ZMAuthenticationStatus *)authenticationStatus;
 
 + (void)notifyEmailVerificationDidSucceedInContext:(ZMAuthenticationStatus *)authenticationStatus;
-+ (void)notifyPhoneNumberVerificationDidSucceedInContext:(ZMAuthenticationStatus *)authenticationStatus;
-+ (void)notifyPhoneNumberVerificationCodeRequestDidSucceedInContext:(ZMAuthenticationStatus *)authenticationStatus;
 
 + (id)addObserverInSession:(UnauthenticatedSession *)session withBlock:(void(^)(ZMUserSessionRegistrationNotificationType event, NSError *error))block ZM_MUST_USE_RETURN;
 + (id)addObserverInContext:(ZMAuthenticationStatus *)context withBlock:(void(^)(ZMUserSessionRegistrationNotificationType event, NSError *error))block ZM_MUST_USE_RETURN;

@@ -66,7 +66,7 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
         cell.titleText = self.title
     }
 
-    func select(_ value: SettingsPropertyValue?) {
-        self.selectAction(self)
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
+        selectAction(self)
     }
 }

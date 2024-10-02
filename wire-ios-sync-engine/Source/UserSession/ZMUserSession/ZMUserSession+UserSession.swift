@@ -260,27 +260,10 @@ extension ZMUserSession: UserSession {
         featureRepository.setNeedsToNotifyUser(false, for: feature)
     }
 
-    public func fetchMarketingConsent(
-        completion: @escaping (
-            Result<Bool, Error>
-        ) -> Void
-    ) {
-        ZMUser.selfUser(inUserSession: self).fetchConsent(
-            for: .marketing,
-            on: transportSession,
-            completion: completion
-        )
-    }
+    // MARK: Context provider
 
-    public func setMarketingConsent(
-        granted: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
-        ZMUser.selfUser(inUserSession: self).setMarketingConsent(
-            to: granted,
-            in: self,
-            completion: completion
-        )
+    public var contextProvider: any ContextProvider {
+        return self
     }
 
     // MARK: Use Cases

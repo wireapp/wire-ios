@@ -181,6 +181,33 @@ public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityC
 
 }
 
+public class MockFetchShareableConversationsUseCaseProtocol: FetchShareableConversationsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() -> [ZMConversation])?
+    public var invoke_MockValue: [ZMConversation]?
+
+    public func invoke() -> [ZMConversation] {
+        invoke_Invocations.append(())
+
+        if let mock = invoke_MockMethod {
+            return mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 public class MockGetE2eIdentityCertificatesUseCaseProtocol: GetE2eIdentityCertificatesUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -852,6 +879,30 @@ public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServic
 
 }
 
+public class MockShareFileUseCaseProtocol: ShareFileUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeFileMetadataConversations_Invocations: [(fileMetadata: ZMFileMetadata, conversations: [ZMConversation])] = []
+    public var invokeFileMetadataConversations_MockMethod: ((ZMFileMetadata, [ZMConversation]) -> Void)?
+
+    public func invoke(fileMetadata: ZMFileMetadata, conversations: [ZMConversation]) {
+        invokeFileMetadataConversations_Invocations.append((fileMetadata: fileMetadata, conversations: conversations))
+
+        guard let mock = invokeFileMetadataConversations_MockMethod else {
+            fatalError("no mock for `invokeFileMetadataConversations`")
+        }
+
+        mock(fileMetadata, conversations)
+    }
+
+}
+
 public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -937,51 +988,6 @@ public class MockUserProfile: UserProfile {
 
     public var lastSuggestedHandle: String?
 
-
-    // MARK: - requestPhoneVerificationCode
-
-    public var requestPhoneVerificationCodePhoneNumber_Invocations: [String] = []
-    public var requestPhoneVerificationCodePhoneNumber_MockMethod: ((String) -> Void)?
-
-    public func requestPhoneVerificationCode(phoneNumber: String) {
-        requestPhoneVerificationCodePhoneNumber_Invocations.append(phoneNumber)
-
-        guard let mock = requestPhoneVerificationCodePhoneNumber_MockMethod else {
-            fatalError("no mock for `requestPhoneVerificationCodePhoneNumber`")
-        }
-
-        mock(phoneNumber)
-    }
-
-    // MARK: - requestPhoneNumberChange
-
-    public var requestPhoneNumberChangeCredentials_Invocations: [UserPhoneCredentials] = []
-    public var requestPhoneNumberChangeCredentials_MockMethod: ((UserPhoneCredentials) -> Void)?
-
-    public func requestPhoneNumberChange(credentials: UserPhoneCredentials) {
-        requestPhoneNumberChangeCredentials_Invocations.append(credentials)
-
-        guard let mock = requestPhoneNumberChangeCredentials_MockMethod else {
-            fatalError("no mock for `requestPhoneNumberChangeCredentials`")
-        }
-
-        mock(credentials)
-    }
-
-    // MARK: - requestPhoneNumberRemoval
-
-    public var requestPhoneNumberRemoval_Invocations: [Void] = []
-    public var requestPhoneNumberRemoval_MockMethod: (() -> Void)?
-
-    public func requestPhoneNumberRemoval() {
-        requestPhoneNumberRemoval_Invocations.append(())
-
-        guard let mock = requestPhoneNumberRemoval_MockMethod else {
-            fatalError("no mock for `requestPhoneNumberRemoval`")
-        }
-
-        mock()
-    }
 
     // MARK: - requestEmailChange
 

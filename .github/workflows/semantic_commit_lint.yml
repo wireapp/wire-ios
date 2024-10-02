@@ -12,6 +12,7 @@ concurrency:
 jobs:
   semantic-commit-pr-title-lint:
     runs-on: ubuntu-latest
+    if: contains(fromJSON('["opened", "synchronize"]'), github.event.action) || github.event.changes.title != null
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CUSTOM_PR_LABEL: "Fix PR Title 🤦‍♂️"
@@ -19,8 +20,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       # Please look up the latest version from
       # https://github.com/amannn/action-semantic-pull-request/releases
       - name: Run Semantic Commint Linter
@@ -53,7 +52,7 @@ jobs:
           # will suggest using that commit message instead of the PR title for the
           # merge commit, and it's easy to commit this by mistake. Enable this option
           # to also validate the commit message for one commit PRs.
-          validateSingleCommit: true
+          validateSingleCommit: false
           
           subjectPattern: ^(.*) - ((WPB-\d+)|(no ticket))$
           # If `subjectPattern` is configured, you can use this property to override

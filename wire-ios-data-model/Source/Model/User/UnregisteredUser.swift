@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
+
 /// The representation of a user that is going through the registration process.
 ///
 /// Typically, you create this object once you start the registration flow and start asking
@@ -30,7 +32,6 @@ public class UnregisteredUser {
     public var name: String?
     public var accentColorValue: ZMAccentColorRawValue?
     public var acceptedTermsOfService: Bool?
-    public var marketingConsent: Bool?
     public var password: String?
 
     public var accentColor: AccentColor? {
@@ -58,7 +59,6 @@ public class UnregisteredUser {
             && name != nil
             && accentColor != nil
             && acceptedTermsOfService != nil
-            && marketingConsent != nil
             && passwordStepFinished
     }
 
@@ -79,7 +79,7 @@ extension UnregisteredUser: Equatable {
             && lhs.name == rhs.name
             && lhs.accentColor == rhs.accentColor
             && lhs.acceptedTermsOfService == rhs.acceptedTermsOfService
-            && lhs.marketingConsent == rhs.marketingConsent
             && lhs.password == rhs.password
     }
+
 }

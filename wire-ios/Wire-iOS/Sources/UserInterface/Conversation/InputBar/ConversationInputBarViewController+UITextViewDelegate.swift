@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireFoundation
 
 // MARK: SplitViewController reveal
 
@@ -27,7 +28,8 @@ extension CharacterSet {
 
 extension ConversationInputBarViewController {
     func hideLeftView() {
-        guard self.isIPadRegularPortrait(device: UIDevice.current, application: UIApplication.shared) else { return }
+        let currentDevice = DeviceWrapper(device: .current)
+        guard self.isIPadRegularPortrait(device: currentDevice) else { return }
         guard let splitViewController = wr_splitViewController, splitViewController.isLeftViewControllerRevealed else { return }
 
         splitViewController.setLeftViewControllerRevealed(false, animated: true)
@@ -64,9 +66,10 @@ extension ConversationInputBarViewController: UITextViewDelegate {
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         // send only if send key pressed
+        let currentDevice = DeviceWrapper(device: .current)
         if textView.returnKeyType == .send && (text == "\n") {
-            if UIDevice.current.type == .iPad,
-                canInsertMention {
+            if currentDevice.userInterfaceIdiom == .pad,
+               canInsertMention {
                 insertBestMatchMention()
             } else {
                 inputBar.textView.autocorrectLastWord()
@@ -77,9 +80,9 @@ extension ConversationInputBarViewController: UITextViewDelegate {
 
         // insert mention if return or tab key is pressed and mention view is visible
         if text.count == 1,
-            text.containsCharacters(from: CharacterSet.newlinesAndTabulation),
-            canInsertMention,
-            UIDevice.current.type == .iPad || isMentionsViewKeyboardCollapsed {
+           text.containsCharacters(from: CharacterSet.newlinesAndTabulation),
+           canInsertMention,
+           currentDevice.userInterfaceIdiom == .pad || isMentionsViewKeyboardCollapsed {
 
             insertBestMatchMention()
             return false

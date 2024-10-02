@@ -2,6 +2,7 @@ name: SwiftFormat
 
 on:
   pull_request:
+    types: [opened, synchronize, edited, ready_for_review]
   merge_group:
     types: [checks_requested]
 
@@ -12,12 +13,29 @@ concurrency:
 
 jobs:
   SwiftFormat:
-      runs-on: ubuntu-latest
-      container:
-        image: ghcr.io/nicklockwood/swiftformat:0.54.0
+    runs-on: ubuntu-latest
+    if: >
+      github.event.action != 'edited' || (
+        github.event.changes.title == null &&
+        github.event.changes.body == null &&
+        github.event.changes.assignees == null &&
+        github.event.changes.reviewers == null &&
+        github.event.changes.labels == null
+      )
+    container:
+      image: ghcr.io/nicklockwood/swiftformat:0.54.0
 
-      steps:
-        - uses: actions/checkout@v4
-        - name: GitHub Action for SwiftFormat
-          run: |
-            swiftformat --lint ./WireAPI --reporter github-actions-log
+    steps:
+      - uses: actions/checkout@v4
+      - name: GitHub Action for SwiftFormat
+        run: >
+          swiftformat --lint
+          ./SourceryPlugin
+          ./WireAPI
+          ./WireAnalytics
+          ./WireDomain
+          ./WireFoundation
+          ./WireUI
+          ./scripts
+          --reporter github-actions-log
+          --config .swiftformat

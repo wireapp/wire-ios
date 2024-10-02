@@ -40,9 +40,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     public convenience init(path: String, key: String) async throws {
         let coreCrypto = try await coreCryptoDeferredInit(
             path: path,
-            key: key,
-            ciphersuites: [],
-            nbKeyPackage: nil
+            key: key
         )
 
         try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
@@ -62,37 +60,25 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     }
 
     public func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
-        var result: T
-        WireLogger.coreCrypto.info("acquiring directory lock")
         safeContext.acquireDirectoryLock()
-        WireLogger.coreCrypto.info("acquired lock. performing restoreFromDisk()")
         await restoreFromDisk()
 
         defer {
-            WireLogger.coreCrypto.info("releasing directory lock")
             safeContext.releaseDirectoryLock()
-            WireLogger.coreCrypto.info("released lock")
         }
 
-        do {
-            result = try await block(coreCrypto)
-        } catch {
-            WireLogger.coreCrypto.error("failed to perform block on core crypto: \(error)")
-            throw error
-        }
-
-        return result
+        return try await block(coreCrypto)
     }
 
     public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        return try block(coreCrypto)
+        try block(coreCrypto)
     }
 
     private func restoreFromDisk() async {
         do {
             try await coreCrypto.restoreFromDisk()
         } catch {
-            WireLogger.coreCrypto.error("coreCrypto.restoreFromDisk() failed: \(error)")
+            WireLogger.coreCrypto.error("coreCrypto.restoreFromDisk() failed: \(error)", attributes: .safePublic)
         }
     }
 }

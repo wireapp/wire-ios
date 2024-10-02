@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains
@@ -43,7 +44,7 @@ protocol SettingsCellDescriptorType: AnyObject {
     var group: SettingsGroupCellDescriptorType? {get}
     var copiableText: String? { get }
 
-    func select(_: SettingsPropertyValue?)
+    func select(_ value: SettingsPropertyValue, sender: UIView)
     func featureCell(_: SettingsCellType)
 }
 
@@ -194,7 +195,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
     }
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         if let navigationController = viewController?.navigationController,
            let controllerToPush = generateViewController() {
             navigationController.pushViewController(controllerToPush, animated: true)
@@ -202,7 +203,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     }
 
     func generateViewController() -> UIViewController? {
-        return SettingsTableViewController(group: self)
+        SettingsTableViewController(group: self)
     }
 }
 
@@ -275,12 +276,8 @@ extension SettingsPropertyName {
             return Settings.PrivacySecurity.DisableLinkPreviews.title
 
             // personal information - Analytics
-        case .disableCrashSharing:
-            return Settings.PrivacyCrash.title
         case .disableAnalyticsSharing:
             return Settings.PrivacyAnalytics.title
-        case .receiveNewsAndOffers:
-            return Settings.ReceiveNewsAndOffers.title
         case .readReceiptsEnabled:
             return Settings.EnableReadReceipts.title
         case .encryptMessagesAtRest:

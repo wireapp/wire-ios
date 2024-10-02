@@ -52,7 +52,6 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
             }
         }
     }
-    private var query: String = ""
     private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
     private let rowHeight: CGFloat = 56.0
     private var isKeyboardCollapsedFirstCalled = true
@@ -96,6 +95,14 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
                                                object: nil)
 
         setupKeyboardObserver()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if collectionView.frame.size != view.bounds.size {
+            collectionView.frame = view.bounds
+            resizeTable()
+        }
     }
 
     private func setupKeyboardObserver() {
@@ -158,9 +165,17 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
     private func resizeTable() {
         let viewHeight = view.bounds.size.height
-        let minValue = min(viewHeight, CGFloat(searchResults.count) * rowHeight)
+        let contentHeight = CGFloat(searchResults.count) * rowHeight
+        let minValue = min(viewHeight, contentHeight)
         collectionViewHeight.constant = minValue
-        collectionView.isScrollEnabled = (minValue == viewHeight)
+        collectionView.isScrollEnabled = (contentHeight > viewHeight)
+
+        if searchResults.count == 1 {
+            let bottomInset = viewHeight - rowHeight
+            collectionView.contentInset = UIEdgeInsets(top: bottomInset, left: 0, bottom: 0, right: 0)
+        } else {
+            collectionView.contentInset = .zero
+        }
     }
 
     private func scrollToLastItem() {

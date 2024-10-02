@@ -30,6 +30,7 @@ final class AudioEffectsPickerViewController: UIViewController {
 
     let recordingPath: String
     private let duration: TimeInterval
+    private let fileMetadataGenerator = FileMetaDataGenerator()
     weak var delegate: AudioEffectsPickerDelegate?
 
     private var audioPlayerController: AudioPlayerController? {
@@ -187,13 +188,12 @@ final class AudioEffectsPickerViewController: UIViewController {
 
     private func loadLevels() {
         let url = URL(fileURLWithPath: recordingPath)
-        FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { metadata in
-            DispatchQueue.main.async(execute: {
-                if let audioMetadata = metadata as? ZMAudioMetadata {
-                    self.normalizedLoudness = audioMetadata.normalizedLoudness
-                    self.progressView.samples = audioMetadata.normalizedLoudness
-                }
-            })
+        Task { @MainActor in
+            let metadata = await fileMetadataGenerator.metadataForFile(at: url)
+            if let audioMetadata = metadata as? ZMAudioMetadata {
+                self.normalizedLoudness = audioMetadata.normalizedLoudness
+                self.progressView.samples = audioMetadata.normalizedLoudness
+            }
         }
     }
 
@@ -346,7 +346,7 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
 
     let player: AVAudioPlayer
     weak var delegate: AudioPlayerControllerDelegate?
-    weak var mediaManager: MediaPlayerDelegate? = AppDelegate.shared.mediaPlaybackManager
+    weak var mediaManager: MediaPlayerDelegate? = (UIApplication.shared.delegate as? AppDelegate)?.mediaPlaybackManager
 
     init(contentOf URL: URL) throws {
         player = try AVAudioPlayer(contentsOf: URL)
@@ -398,5 +398,4 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
             delegate?.audioPlayerControllerDidFinishPlaying()
         }
     }
-
 }

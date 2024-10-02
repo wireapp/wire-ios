@@ -18,13 +18,13 @@
 
 import Foundation
 
-@objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
+public enum Recipients {
+    case conversationParticipants
+    case users(Set<ZMUser>)
+    case clients([ZMUser: Set<UserClient>])
+}
 
-    public enum Recipients {
-        case conversationParticipants
-        case users(Set<ZMUser>)
-        case clients([ZMUser: Set<UserClient>])
-    }
+@objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
 
     public var context: NSManagedObjectContext
     public var message: GenericMessage
@@ -36,7 +36,11 @@ import Foundation
 
     public let targetRecipients: Recipients
 
-    public init(message: GenericMessage, context: NSManagedObjectContext, conversation: ZMConversation? = nil, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+    public init(message: GenericMessage,
+                context: NSManagedObjectContext,
+                conversation: ZMConversation? = nil,
+                targetRecipients: Recipients = .conversationParticipants,
+                completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
         self.context = context
         self.conversation = conversation
         self.message = message
@@ -52,7 +56,7 @@ import Foundation
 
     public var shouldIgnoreTheSecurityLevelCheck: Bool = false
 
-    public func missesRecipients(_ recipients: Set<UserClient>!) {
+    public func missesRecipients(_ recipients: Set<UserClient>) {
         // no-op
     }
 
@@ -68,8 +72,21 @@ import Foundation
         // no-op
     }
 
-    public func expire() {
+    public func prepareMessageForSending() async throws {
+        // no-op
+    }
+
+    public func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {
+        self.message = message
+    }
+
+    public var underlyingMessage: WireProtos.GenericMessage? {
+        message
+    }
+
+    public func expire(withReason reason: ExpirationReason) {
         isExpired = true
+        expirationReasonCode = NSNumber(value: reason.rawValue)
     }
 
     public override var hash: Int {
@@ -79,47 +96,4 @@ import Foundation
 
 public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
     return lhs === rhs
-}
-
-extension GenericMessageEntity: EncryptedPayloadGenerator {
-
-    public func encryptForTransport() async -> EncryptedPayloadGenerator.Payload? {
-
-        switch targetRecipients {
-        case .conversationParticipants:
-            guard let conversation else { return nil }
-            return await message.encryptForTransport(for: conversation, in: context)
-        case .users(let users):
-            return await message.encryptForTransport(forBroadcastRecipients: users, in: context)
-        case .clients(let clientsByUser):
-            return await message.encryptForTransport(for: clientsByUser, in: context)
-        }
-    }
-
-    public func encryptForTransportQualified() async -> EncryptedPayloadGenerator.Payload? {
-        switch targetRecipients {
-        case .conversationParticipants:
-            guard let conversation else { return nil }
-            return await message.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
-        case .users(let users):
-            return await message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: context)
-        case .clients(let clientsByUser):
-            return await message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: context)
-        }
-    }
-
-    public var debugInfo: String {
-        if case .confirmation = message.content {
-            return "Confirmation Message"
-        } else if case .calling? = message.content {
-            return "Calling Message"
-        } else if case .clientAction? = message.content {
-            switch message.clientAction {
-            case .resetSession: return "Reset Session Message"
-            }
-        }
-
-        return "\(self)"
-    }
-
 }

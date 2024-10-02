@@ -39,6 +39,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         case noSelfClient
         case invalidGroupID
         case invalidIdentity
+        case invalidCiphersuite
     }
 
     // MARK: - Properties
@@ -48,6 +49,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let context: NSManagedObjectContext
     private let commitSender: CommitSending
     private let newKeyPackageCount: UInt32 = 100
+    private let featureRepository: FeatureRepositoryInterface
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -63,7 +65,8 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         conversationEventProcessor: ConversationEventProcessorProtocol,
         context: NSManagedObjectContext,
         onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
-        commitSender: CommitSending? = nil
+        commitSender: CommitSending? = nil,
+        featureRepository: FeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.conversationEventProcessor = conversationEventProcessor
@@ -73,6 +76,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: context.notificationContext
         )
+        self.featureRepository = featureRepository
     }
 
     // MARK: - Interface
@@ -132,9 +136,14 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         }
 
         let newKeyPackages = rotateBundle.newKeyPackages.map { $0.base64String() }
+        let mlsConfig = await featureRepository.fetchMLS().config
+        guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
+            throw Error.invalidCiphersuite
+        }
         var action = ReplaceSelfMLSKeyPackagesAction(
             clientID: clientID,
-            keyPackages: newKeyPackages
+            keyPackages: newKeyPackages,
+            ciphersuite: ciphersuite
         )
         try await action.perform(in: context.notificationContext)
     }

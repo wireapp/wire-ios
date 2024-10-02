@@ -25,6 +25,6 @@ extension Encodable {
         }
         guard let data = try? encoder.encode(self) else { return nil }
 
-        return String(data: data, encoding: .utf8)
+        return String(decoding: data, as: UTF8.self)
     }
 }

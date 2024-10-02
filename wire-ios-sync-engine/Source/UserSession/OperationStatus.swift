@@ -157,6 +157,7 @@ public class OperationStatus: NSObject {
         backgroundFetchTimer?.invalidate()
         backgroundFetchTimer = nil
         DispatchQueue.main.async {
+            WireLogger.appState.info("end background fetch", attributes: .safePublic)
             self.backgroundFetchHandler?(result)
             self.backgroundFetchHandler = nil
         }

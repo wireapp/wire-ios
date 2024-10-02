@@ -95,8 +95,6 @@ final class MessageToolboxDataSource {
      * - Returns: A boolean to either update the content of the message toolbox or not
      */
     func shouldUpdateContent(widthConstraint: CGFloat) -> Bool {
-        typealias FailedToSendMessage = L10n.Localizable.Content.System.FailedtosendMessage
-
         // Compute the state
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
@@ -114,14 +112,19 @@ final class MessageToolboxDataSource {
         }
         // 2) Failed to send
         else if failedToSend && isSentBySelfUser {
-            var detailsString: String
+            typealias Message = L10n.Localizable.Content.System.FailedtosendMessage
 
-            switch message.failedToSendReason {
-            case .unknown, .none:
-                detailsString = FailedToSendMessage.generalReason
+            let detailsString: String
+            switch message.expirationReason {
+            case .none, .other, .timeout:
+                detailsString = Message.generalReason
             case .federationRemoteError:
-                detailsString = FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
-                                                                                URL.wr_unreachableBackendLearnMore.absoluteString)
+                detailsString = Message.federationRemoteErrorReason(
+                    message.conversationLike?.domain ?? "",
+                    WireURLs.shared.unreachableBackendInfo.absoluteString
+                )
+            case .cancelled:
+                detailsString = Message.userCancelledUploadReason
             }
 
             content = .sendFailure(detailsString && attributes)
@@ -270,11 +273,9 @@ final class MessageToolboxDataSource {
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if
-            let dateTimeString = message.formattedReceivedDate(),
+        } else if let dateTimeString = message.formattedReceivedDate(),
             let systemMessage = message as? ZMSystemMessage,
-            systemMessage.systemMessageType == .messageDeletedForEveryone
-        {
+            systemMessage.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
 

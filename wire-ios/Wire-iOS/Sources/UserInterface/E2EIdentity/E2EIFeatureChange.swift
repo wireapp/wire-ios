@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCommonComponents
 import WireSyncEngine
 
 enum E2EIChangeAction: CaseIterable {
@@ -43,7 +44,7 @@ extension UIAlertController {
 
             let learnMoreAction = UIAlertAction.link(
                 title: MLSE2EIStrings.Button.learnMore,
-                url: URL.wr_e2eiLearnMore,
+                url: WireURLs.shared.endToEndIdentityInfo,
                 presenter: topViewController) {
                     if !canRemindLater {
                         NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)

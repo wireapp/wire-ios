@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,11 +83,11 @@
 "conversationSearch.item.hint" = "Zum Öffnen doppeltippen";
 "conversationSearch.itemPlay.hint" = "Doppeltippen zum Abspielen";
 
-"conversation.scrollToBottomButton.description" = "Scroll to the bottom of the conversation";
-"conversation.scrollToBottomButton.hint" = "Tap to scroll to the bottom of the conversation";
+"conversation.scrollToBottomButton.description" = "Zum Ende dieser Unterhaltung scrollen";
+"conversation.scrollToBottomButton.hint" = "Tippen, um zum Ende der Unterhaltung zu scrollen";
 
 "sendLocation.address.description" = "Gewählte Adresse %@";
-"sendLocation.address.hint" = "It shows the currently selected address for sending.";
+"sendLocation.address.hint" = "Es zeigt die aktuell ausgewählte Adresse zum Senden an.";
 
 "audioRecord.stopButton.description" = "Aufnahme stoppen";
 "audioRecord.startButton.description" = "Aufnahme starten";
@@ -163,8 +163,6 @@
 "supportSettings.backButton.description" = "Zurück zum Support";
 
 "aboutSettings.backButton.description" = "Zurück zu Über Wire";
-"licenseInformationSettings.backButton.description" = "Zurück zu Lizenzen";
-"licenseDetailsSettings.backButton.description" = "Zurück zu Lizenzdetails";
 
 "developerOptionsSettings.backButton.description" = "Zurück zu Entwickleroptionen";
 
@@ -200,7 +198,7 @@
 "contactsList.memberIcon.description" = "Mitglied";
 "contactsList.userCell.hint" = "Doppeltippen, um Unterhaltung zu öffnen";
 "contactsList.pendingConnection.hint" = "Doppeltippen, um Profil zu öffnen";
-"contactsList.closeButton.description" = "Kontaktliste schließen";
+"contactsList.closeButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Doppeltippen, um Dienstdetails zu öffnen";
 
@@ -261,14 +259,6 @@
 "calling.headerBar.description" = "Anrufansicht verkleinern";
 "calling.status.connecting" = "Verbindung wird hergestellt";
 
-"tabBar.contacts.description" = "Kontakte";
-"tabBar.contacts.hint" = "Doppeltippen, um nach Personen zu suchen und Kontaktliste zu öffnen";
-"tabBar.conversations.description" = "Liste der letzten Unterhaltungen";
-"tabBar.conversations.hint" = "Doppeltippen, um Liste der letzten Unterhaltungen zu öffnen";
-"tabBar.folders.description" = "Liste der in Ordnern organisierten Unterhaltungen";
-"tabBar.folders.hint" = "Doppeltippen, um Liste der in Ordnern organisierten Unterhaltungen zu öffnen";
-"tabBar.archived.description" = "Archiv";
-"tabBar.archived.hint" = "Doppeltippen, um Liste archivierter Unterhaltungen zu öffnen";
 "tabBar.item.value" = "Ausgewählt";
 
 "landing.loginEnterpriseButton.description" = "Mit SSO anmelden";
@@ -283,3 +273,28 @@
 // MARK: - Reactions
 "reactionPicker.dismissButton.description" = "Emoji-Tastatur schließen";
 "reactionPicker.searchFieldPlaceholder.description" = "Nach Emoji suchen";
+
+// MARK: - Create Secure Guest Link with Password
+
+"createSecureGuestLink.closeButton.description" = "Close Secure guest link";
+
+"createSecureGuestLink.GeneratePasswordButton.description" = "Passwort generieren";
+"createSecureGuestLink.GeneratePasswordButton.hint" = "Tippen, um ein zufälliges Passwort zu generieren";
+
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Gäste-Link Passwort";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "Neues Passwort für sicheren Gäste-Link eingeben";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "Fehler bei der Passwortüberprüfung. Bitte stellen Sie sicher, dass das Passwort den Anforderungen entspricht.";
+
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "Gäste-Link Passwort bestätigen";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "Passwort zur Verifizierungen erneut eingeben";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Fehler bei der Passwortüberprüfung. Bitte stellen Sie sicher, dass beide Passwörter übereinstimmen.";
+
+"createSecureGuestLink.CreateLinkButton.description" = "Gäste-Link erstellen";
+"createSecureGuestLink.CreateLinkButton.hint" = "Tippen um sicheren Gäste-Link zu erstellen";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Text eingeben, um nach GIFs zu suchen";
+"searchGifs.norResultsLabel.description" = "Keine Gifs gefunden";
+"searchGifs.gifItem.accessibilityHint" = "Tippen um GIF auszuwählen";
+"searchGifs.gifItems_loaded.announcement" = "%@ neue GIFs geladen";

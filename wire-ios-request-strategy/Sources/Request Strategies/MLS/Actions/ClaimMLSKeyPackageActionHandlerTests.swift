@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireRequestStrategy
+import WireTransport
 
 class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPackageAction, ClaimMLSKeyPackageActionHandler> {
 

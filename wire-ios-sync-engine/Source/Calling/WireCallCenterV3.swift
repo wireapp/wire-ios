@@ -195,7 +195,7 @@ extension WireCallCenterV3 {
             callStarter: callStarter,
             isVideo: video,
             isGroup: group,
-            isConstantBitRate: false,
+            isConstantBitRate: useConstantBitRateAudio,
             videoState: video ? .started : .stopped,
             networkQuality: .normal,
             conversationType: conversationType,
@@ -433,6 +433,15 @@ extension WireCallCenterV3 {
     /// Call this method when the callParticipants changed and avs calls the handler `wcall_participant_changed_h`
     func callParticipantsChanged(conversationId: AVSIdentifier, participants: [AVSCallMember]) {
         guard isEnabled else { return }
+        let shouldEndCall = shouldEndCall(
+            conversationId: conversationId,
+            previousParticipants: callSnapshots[conversationId]?.callParticipants.members.array ?? [],
+            newParticipants: participants)
+        guard !shouldEndCall else {
+            endAllCalls()
+            return
+        }
+
         callSnapshots[conversationId]?.callParticipants.callParticipantsChanged(participants: participants)
 
         if let participants = callSnapshots[conversationId]?.callParticipants.participants {
@@ -445,16 +454,67 @@ extension WireCallCenterV3 {
         }
     }
 
-    /// Call this method when the network quality of a participant changes and avs calls the `wcall_network_quality_h`.
-    func callParticipantNetworkQualityChanged(conversationId: AVSIdentifier, client: AVSClient, quality: NetworkQuality) {
-        guard isEnabled else { return }
-
-        let snapshot = callSnapshots[conversationId]?.callParticipants
-        snapshot?.callParticipantNetworkQualityChanged(client: client, networkQuality: quality)
-    }
-
     func onParticipantsChanged() -> AnyPublisher<ConferenceParticipantsInfo, Never> {
         return onParticipantsChangedSubject.eraseToAnyPublisher()
+    }
+
+}
+
+// MARK: - Call ending for oneOnOne conversations
+
+extension WireCallCenterV3 {
+
+    /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is `true`.
+    /// If the other user hangs up, we should end the call for the self user.
+    /// More info (Option 1): https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
+    private func shouldEndCall(
+        conversationId: AVSIdentifier,
+        previousParticipants: [AVSCallMember],
+        newParticipants: [AVSCallMember]
+    ) -> Bool {
+        guard let context = uiMOC,
+              let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: context),
+              conversation.conversationType == .oneOnOne,
+              callSnapshots[conversationId]?.callState == .established
+        else {
+            return false
+        }
+
+        switch conversation.messageProtocol {
+        case .mls:
+            return shouldEndCallForMLS(
+                previousParticipants: previousParticipants,
+                newParticipants: newParticipants)
+        case .mixed, .proteus:
+            return shouldEndCallForProteus(
+                previousParticipants: previousParticipants,
+                newParticipants: newParticipants)
+        }
+    }
+
+    private func shouldEndCallForMLS(
+        previousParticipants: [AVSCallMember],
+        newParticipants: [AVSCallMember]
+    ) -> Bool {
+        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the call should end.
+        guard
+            previousParticipants.count == 2,
+            newParticipants.count == 2,
+            newParticipants[1].audioState == .connecting
+        else {
+            return false
+        }
+        return true
+    }
+
+    private func shouldEndCallForProteus(
+        previousParticipants: [AVSCallMember],
+        newParticipants: [AVSCallMember]
+    ) -> Bool {
+        return previousParticipants.count == 2 && newParticipants.count == 1
     }
 
 }
@@ -533,7 +593,12 @@ extension WireCallCenterV3 {
             break
 
         case .mls:
-            guard conversation.avsConversationType == .mlsConference else { return }
+            guard
+                let conversationType = getAVSConversationType(for: conversation),
+                conversationType == .mlsConference
+            else {
+                return
+            }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -558,7 +623,7 @@ extension WireCallCenterV3 {
         // Make sure we don't have an old state for this conversation.
         clearSnapshot(conversationId: conversationId)
 
-        guard let conversationType = conversation.avsConversationType else {
+        guard let conversationType = getAVSConversationType(for: conversation) else {
             throw Failure.missingAVSConversationType
         }
 
@@ -628,6 +693,13 @@ extension WireCallCenterV3 {
         return conferenceCalling.status == .enabled
     }
 
+    /// Sets up the MLS conference for a given conversation.
+    ///
+    /// - Parameter conversation: The conversation to set up the MLS conference for.
+    ///
+    /// See documentation:
+    /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/692027483/Use+case+Join+conference+sub-conversation+MLS
+
     private func setUpMLSConference(in conversation: ZMConversation) throws {
         guard let conversationID = conversation.avsIdentifier else {
             throw Failure.failedToSetupMLSConference
@@ -653,11 +725,13 @@ extension WireCallCenterV3 {
 
             Task {
                 do {
+                    // Join the subgroup or create it if it doesn't exist
                     let subgroupID = try await mlsService.createOrJoinSubgroup(
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
 
+                    // Generate and set the conference information for the subgroup
                     let initialConferenceInfo = try await mlsService.generateConferenceInfo(
                         parentGroupID: parentGroupID,
                         subconversationGroupID: subgroupID
@@ -668,6 +742,8 @@ extension WireCallCenterV3 {
                         info: initialConferenceInfo
                     )
 
+                    // Set up a task to observe changes in the conference information
+                    // and update AVS accordingly
                     let updateConferenceInfoTask = Task {
 
                         let onConferenceInfoChange = mlsService.onConferenceInfoChange(
@@ -688,6 +764,8 @@ extension WireCallCenterV3 {
                         }
                     }
 
+                    // Create the stale participants remover 
+                    // and subscribe to the publisher of participants changes
                     let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
                         mlsService: mlsService,
                         syncContext: syncContext
@@ -697,6 +775,7 @@ extension WireCallCenterV3 {
                         subconversationID: subgroupID
                     ).subscribe(staleParticipantsRemover)
 
+                    // Set up the call snapshot
                     if var snapshot = self.callSnapshots[conversationID] {
                         snapshot.qualifiedID = parentQualifiedID
                         snapshot.groupIDs = (parentGroupID, subgroupID)
@@ -745,6 +824,7 @@ extension WireCallCenterV3 {
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
+
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
@@ -948,61 +1028,16 @@ extension WireCallCenterV3 {
         var conversationType: AVSConversationType?
 
         context.performAndWait {
-            let conversation = ZMConversation.fetch(
+            if let conversation = ZMConversation.fetch(
                 with: conversationId.identifier,
                 domain: conversationId.domain,
                 in: context
-            )
-
-            conversationType = conversation?.avsConversationType
+            ) {
+                conversationType = getAVSConversationType(for: conversation)
+            }
         }
 
         return conversationType
-    }
-
-    /// Set MLSConferenceInfo to AVSWrapper in case this is a MLS conference
-    func setMLSConferenceInfoIfNeeded(for conversationId: AVSIdentifier) {
-        Task {
-            guard let syncContext = await self.uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
-
-            let result: (MLSServiceInterface?, QualifiedID?, MLSGroupID?) = await syncContext.perform {
-                let conversation = ZMConversation.fetch(
-                    with: conversationId.identifier,
-                    domain: conversationId.domain,
-                    in: syncContext
-                )
-                guard let conversation, conversation.avsConversationType == .mlsConference else {
-                    return (nil, nil, nil)
-                }
-                return (syncContext.mlsService,
-                        conversation.qualifiedID,
-                        conversation.mlsGroupID)
-            }
-
-            guard
-                let mlsService = result.0,
-                let parentQualifiedID = result.1,
-                let parentGroupID = result.2
-            else {
-                return
-            }
-
-            do {
-                let subgroupID = try await mlsService.createOrJoinSubgroup(
-                    parentQualifiedID: parentQualifiedID,
-                    parentID: parentGroupID
-                )
-
-                let conferenceInfo = try await mlsService.generateConferenceInfo(
-                    parentGroupID: parentGroupID,
-                    subconversationGroupID: subgroupID
-                )
-
-                self.avsWrapper.setMLSConferenceInfo(conversationId: conversationId, info: conferenceInfo)
-            } catch {
-                WireLogger.mls.error("error while setMLSConferenceInfo: \(error.localizedDescription)")
-            }
-        }
     }
 
     /// Handles a change in calling state.
@@ -1061,12 +1096,14 @@ extension WireCallCenterV3 {
 
 }
 
-private extension ZMConversation {
+// MARK: - Get AVS conversation type
 
-    var avsConversationType: AVSConversationType? {
-        switch (conversationType, messageProtocol) {
+extension WireCallCenterV3 {
+
+    private func getAVSConversationType(for conversation: ZMConversation) -> AVSConversationType? {
+        switch (conversation.conversationType, conversation.messageProtocol) {
         case (.oneOnOne, _):
-            return .oneToOne
+            return getAVSConversationTypeForOneOnOne(conversation)
 
         case (.group, .proteus), (.group, .mixed):
             return .conference
@@ -1076,6 +1113,23 @@ private extension ZMConversation {
 
         default:
             return nil
+        }
+    }
+
+    private func getAVSConversationTypeForOneOnOne(_ conversation: ZMConversation) -> AVSConversationType {
+        guard
+            let context = conversation.managedObjectContext,
+            let featureConfig = FeatureRepository(context: context).fetchConferenceCalling().config,
+            featureConfig.useSFTForOneToOneCalls
+        else {
+            return .oneToOne
+        }
+
+        switch conversation.messageProtocol {
+        case .mls:
+            return .mlsConference
+        case .proteus, .mixed:
+            return .conference
         }
     }
 

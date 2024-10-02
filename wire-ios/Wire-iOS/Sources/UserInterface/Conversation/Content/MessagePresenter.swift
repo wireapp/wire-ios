@@ -46,7 +46,7 @@ final class MessagePresenter: NSObject {
     /// init method for injecting MediaPlaybackManager for testing
     ///
     /// - Parameter mediaPlaybackManager: for testing only
-    convenience init(mediaPlaybackManager: MediaPlaybackManager? = AppDelegate.shared.mediaPlaybackManager) {
+    convenience init(mediaPlaybackManager: MediaPlaybackManager? = (UIApplication.shared.delegate as? AppDelegate)?.mediaPlaybackManager) {
         self.init()
 
         self.mediaPlaybackManager = mediaPlaybackManager
@@ -149,8 +149,7 @@ final class MessagePresenter: NSObject {
         } else if
             fileMessageData.isVideo,
             let fileURL = fileMessageData.temporaryURLToDecryptedFile(),
-            let mediaPlaybackManager
-        {
+            let mediaPlaybackManager {
             let player = AVPlayer(url: fileURL)
             mediaPlayerController = MediaPlayerController(player: player, message: message, delegate: mediaPlaybackManager)
             let playerViewController = AVPlayerViewController()

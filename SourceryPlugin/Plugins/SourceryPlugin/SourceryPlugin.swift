@@ -44,7 +44,6 @@ extension SourceryPlugin: BuildToolPlugin {
         context: PackagePlugin.PluginContext,
         target: PackagePlugin.Target
     ) async throws -> [PackagePlugin.Command] {
-
         Diagnostics.remark("SourceryPlugin work directory: \(context.pluginWorkDirectory)")
 
         // Find configuration from possible paths where there may be a config file:
@@ -54,11 +53,11 @@ extension SourceryPlugin: BuildToolPlugin {
         let configuration = [
             context.package.directory,
             target.directory,
-            target.directory.appending(subpath: "/Sourcery")
+            target.directory.appending(subpath: "Sourcery")
         ]
-            .map { $0.appending(Constant.configFileName) }
-            .filter { FileManager.default.fileExists(atPath: $0.string) }
-            .first
+        .map { $0.appending(Constant.configFileName) }
+        .filter { FileManager.default.fileExists(atPath: $0.string) }
+        .first
 
         guard let configuration else {
             Diagnostics.error("""

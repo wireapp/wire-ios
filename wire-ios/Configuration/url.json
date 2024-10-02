@@ -1,5 +1,22 @@
 {
-    "wireAppOnItunes": "https://geo.itunes.apple.com/us/app/wire/id930944768?mt=8",
+    "appOnItunes": "https://geo.itunes.apple.com/us/app/wire/id930944768?mt=8",
     "support": "https://support.wire.com",
-    "randomProfilePictureSource": "https://source.unsplash.com/800x800/?landscape"
+    "searchSupport": "https://support.wire.com/hc",
+    "website": "https://wire.com",
+    "emailAlreadyInUse": "https://support.wire.com/hc/articles/115004082129-My-email-address-is-already-in-use-and-I-cannot-create-an-account-What-can-I-do-",
+    "whyToVerifyFingerprintArticle": "https://support.wire.com/hc/articles/207859815-Why-should-I-verify-my-conversations",
+    "howToVerifyFingerprintArticle": "https://support.wire.com/hc/articles/207692235-How-can-I-compare-key-fingerprints-",
+    "privacyPolicy": "https://wire.com/privacy-policy",
+    "legal": "https://wire.com/legal",
+    "licenseInformation": "https://start.wire.com/en-us/en-us/terms-of-use-personal-0-0",
+    "passwordReset": "https://account.wire.com/forgot",
+    "askSupportArticle": "https://support.wire.com/hc/requests/new",
+    "reportAbuse": "https://support.wire.com/hc/requests/new",
+    "wireEnterpriseInfo": "https://wire.com/pricing",
+    "legalHoldInfo": "https://support.wire.com/hc/articles/360002018278-What-is-legal-hold-",
+    "guestLinksInfo": "https://support.wire.com/hc/articles/360000574069-Share-a-link-with-a-person-without-a-Wire-account-to-join-a-guest-room-conversation-in-my-team",
+    "unreachableBackendInfo": "https://support.wire.com/hc/articles/9357718008093-Backend",
+    "federationInfo": "https://support.wire.com/hc/categories/4719917054365-Federation",
+    "mlsInfo": "https://support.wire.com/hc/articles/12434725011485-Messaging-Layer-Security-MLS-",
+    "endToEndIdentityInfo": "https://support.wire.com/hc/articles/9211300150685-End-to-end-identity"
 }

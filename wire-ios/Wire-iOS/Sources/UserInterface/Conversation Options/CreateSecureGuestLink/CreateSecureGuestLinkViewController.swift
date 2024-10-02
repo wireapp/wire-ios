@@ -34,8 +34,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     let conversation: ZMConversation
     let conversationSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
-    weak var delegate: ValidatedTextFieldDelegate?
-
     private lazy var viewModel: CreateSecureConversationGuestLinkViewModel = {
         CreateSecureConversationGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: conversationSecureGuestLinkUseCase)
     }()
@@ -253,9 +251,12 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     private func setupNavigationBar() {
         navigationController?.navigationBar.backgroundColor = ViewColors.backgroundDefault
         navigationController?.navigationBar.tintColor = LabelColors.textDefault
-        navigationItem.setupNavigationBarTitle(title: SecuredGuestLinkWithPasswordLocale.Header.title)
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.CreateSecureGuestLink.CloseButton.description
+        setupNavigationBarTitle(SecuredGuestLinkWithPasswordLocale.Header.title)
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.CreateSecureGuestLink.CloseButton.description)
+
     }
 
     private func setupConstraints() {

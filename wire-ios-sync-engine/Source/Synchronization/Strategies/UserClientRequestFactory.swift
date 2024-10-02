@@ -25,9 +25,8 @@ enum UserClientRequestError: Error {
     case noLastPreKey
     case clientNotRegistered
 }
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: when we should update last pre key or signaling keys?
-// swiftlint:enable todo_requires_jira_link
 
 extension UserClientRequestFactory {
 
@@ -171,7 +170,7 @@ extension UserClientRequestFactory {
 
         let payload = MLSPublicKeyUploadPayload(keys: client.mlsPublicKeys)
         let payloadData = try JSONEncoder().encode(payload)
-        let payloadDataString = String(data: payloadData, encoding: .utf8)!
+        let payloadDataString = String(decoding: payloadData, as: UTF8.self)
 
         let request = ZMTransportRequest(
             path: "/clients/\(clientID)",

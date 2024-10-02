@@ -52,7 +52,7 @@ final class SimpleTextFieldValidator: NSObject {
         } catch let stringValidationError as NSError {
 
             switch stringValidationError.code {
-            case Int(ZMManagedObjectValidationErrorCode.tooLong.rawValue):
+            case ZMManagedObjectValidationErrorCode.tooLong.rawValue:
                 return .tooLong
             default: break
             }

@@ -29,6 +29,8 @@ public protocol UserSession: AnyObject {
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
 
+    var userProfile: UserProfile { get }
+
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }
@@ -185,17 +187,6 @@ public protocol UserSession: AnyObject {
 
     func acknowledgeFeatureChange(for feature: Feature.Name)
 
-    func fetchMarketingConsent(
-        completion: @escaping (
-            Result<Bool, Error>
-        ) -> Void
-    )
-
-    func setMarketingConsent(
-        granted: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
-    )
-
     func classification(
         users: [UserType],
         conversationDomain: String?
@@ -212,7 +203,7 @@ public protocol UserSession: AnyObject {
 
     func cancelProxiedRequest(_ request: ProxyRequest)
 
-    var networkState: ZMNetworkState { get }
+    var networkState: NetworkState { get }
 
     var selfUserClient: UserClient? { get }
 
@@ -235,6 +226,10 @@ public protocol UserSession: AnyObject {
 
     /// Provides a unique context to bind notifications this user session.
     var notificationContext: any NotificationContext { get }
+
+    // MARK: Context provider
+
+    var contextProvider: any ContextProvider { get }
 
     // MARK: Use Cases
 

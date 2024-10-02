@@ -418,14 +418,14 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 
         for event in events {
             if let callEventPayload = callEventPayloadForCallKit(from: event) {
-                WireLogger.calling.info("detected a call event")
+                WireLogger.calling.info("detected a call event", attributes: event.logAttributes)
                 // Only store the last call event.
                 callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
-                WireLogger.notifications.info("generated a notification from an event")
+                WireLogger.notifications.info("generated a notification from an event", attributes: event.logAttributes)
                 tempNotifications[notification.contentHashValue] = notification
             } else {
-                WireLogger.notifications.info("ignoring event")
+                WireLogger.notifications.info("ignoring event", attributes: event.logAttributes)
             }
         }
 
@@ -502,12 +502,10 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 
         // Should not handle a call if the caller is a self user and it's an incoming call or call end.
         // The caller can be the same as the self user if it's a rejected call or answered elsewhere.
-        if
-            let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier,
+        if let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier,
             let callerID = callContent.callerID,
             callerID == selfUserID,
-            callContent.isIncomingCall || callContent.isEndCall
-        {
+            callContent.isIncomingCall || callContent.isEndCall {
             WireLogger.calling.info("should not handle call event: self call")
             return nil
         }

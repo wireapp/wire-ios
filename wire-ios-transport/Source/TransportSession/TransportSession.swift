@@ -33,7 +33,7 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     func enqueueOneTime(_ request: ZMTransportRequest)
 
     @objc(enqueueRequest:queue:completionHandler:)
-    func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse
+    func enqueue(_ request: ZMTransportRequest, queue: GroupQueue) async -> ZMTransportResponse
 
     @objc(attemptToEnqueueSyncRequestWithGenerator:)
     func attemptToEnqueueSyncRequest(generator: ZMTransportRequestGenerator) -> ZMTransportEnqueueResult
@@ -50,7 +50,7 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void)
 
     @objc(configurePushChannelWithConsumer:groupQueue:)
-    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: ZMSGroupQueue)
+    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: GroupQueue)
 
     @objc(renewAccessTokenWithClientID:)
     func renewAccessToken(with clientID: String)
@@ -68,7 +68,7 @@ public extension ZMTransportSession {
         // If not data is transmitted for this amount of time for a request, it will time out.
         // <https://wearezeta.atlassian.net/browse/MEC-622>.
         // Note that it is ok for the request to take longer, we just require there to be _some_ data to be transmitted within this time window.
-        configuration.timeoutIntervalForRequest = 60
+        configuration.timeoutIntervalForRequest = 30
 
         // This is a conservative (!) upper bound for a requested resource:
         configuration.timeoutIntervalForResource = 12 * 60

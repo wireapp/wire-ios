@@ -149,7 +149,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 notificationsTracker: nil,
                 eventProcessor: updateEventProcessor,
-                previouslyReceivedEventIDsCollection: nil,
                 applicationStatus: applicationStatusDirectory,
                 pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus,
@@ -253,7 +252,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus) as Any,
             SelfUserRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
@@ -348,7 +347,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                userRepository: UserRepository(context: syncMOC)
+                selfUserProvider: WireDomain.SelfUserProvider(context: syncMOC)
             ),
             EvaluateOneOnOneConversationsStrategy(
                 withManagedObjectContext: syncMOC,

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -23,21 +24,29 @@ import XCTest
 
 final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
 
-    var selfUser: ZMUser!
-    var otherUser: ZMUser!
-    var userSession: UserSessionMock!
-    var sut: UserStatusView!
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var selfUser: ZMUser!
+    private var otherUser: ZMUser!
+    private var userSession: UserSessionMock!
+    private var sut: UserStatusView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         otherUser = ZMUser.insertNewObject(in: self.uiMOC)
         otherUser.name = "Giovanni"
         selfUser = ZMUser.selfUser()
         userSession = UserSessionMock()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         selfUser = nil
         otherUser = nil
         userSession = nil
@@ -45,6 +54,8 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     // MARK: - Self Profile
 
@@ -139,6 +150,8 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
             isE2EICertified: isE2EICertified,
             isProteusVerified: isProteusVerified
         )
-        verify(matching: sut, file: file, testName: testName, line: line)
+        snapshotHelper
+            .withUserInterfaceStyle(userInterfaceStyle)
+            .verify(matching: sut, file: file, testName: testName, line: line)
     }
 }

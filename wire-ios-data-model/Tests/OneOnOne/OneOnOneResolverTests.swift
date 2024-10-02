@@ -30,9 +30,13 @@ final class OneOnOneResolverTests: XCTestCase {
     private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
+    private var oldDeveloperFlagStorage: UserDefaults!
 
     override func setUp() async throws {
         try await super.setUp()
+
+        oldDeveloperFlagStorage = DeveloperFlag.storage
+        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
 
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
@@ -50,6 +54,7 @@ final class OneOnOneResolverTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
+        DeveloperFlag.storage = oldDeveloperFlagStorage
 
         try await super.tearDown()
     }

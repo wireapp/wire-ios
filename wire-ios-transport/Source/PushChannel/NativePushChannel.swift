@@ -54,7 +54,7 @@ final class NativePushChannel: NSObject, PushChannelType {
     let scheduler: ZMTransportRequestScheduler
     var websocketTask: URLSessionWebSocketTask?
     weak var consumer: ZMPushChannelConsumer?
-    var consumerQueue: ZMSGroupQueue?
+    var consumerQueue: GroupQueue?
     var workQueue: OperationQueue
     var pingTimer: ZMTimer?
     private let minTLSVersion: TLSVersion
@@ -103,7 +103,7 @@ final class NativePushChannel: NSObject, PushChannelType {
         scheduleOpen()
     }
 
-    func setPushChannelConsumer(_ consumer: ZMPushChannelConsumer?, queue: ZMSGroupQueue) {
+    func setPushChannelConsumer(_ consumer: ZMPushChannelConsumer?, queue: GroupQueue) {
         self.consumerQueue = queue
         self.consumer = consumer
 

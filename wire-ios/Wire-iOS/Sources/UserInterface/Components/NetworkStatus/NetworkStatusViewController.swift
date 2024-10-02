@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireFoundation
 import WireSyncEngine
 
 typealias NetworkStatusBarDelegate = NetworkStatusViewControllerDelegate & NetworkStatusViewDelegate
@@ -46,14 +47,17 @@ final class NetworkStatusViewController: UIViewController {
     private var state: NetworkStatusViewState = .online
     private var finishedViewWillAppear: Bool = false
 
-    private var device: DeviceProtocol = UIDevice.current
-    private var application: ApplicationProtocol = UIApplication.shared
+    private var device: DeviceAbstraction
+    private var application: ApplicationProtocol
 
     /// default init method with a parameter for injecting mock device and mock application
     ///
     /// - Parameter device: Provide this param for testing only
     /// - Parameter application: Provide this param for testing only
-    convenience init(device: DeviceProtocol = UIDevice.current, application: ApplicationProtocol = UIApplication.shared) {
+    convenience init(
+        device: DeviceAbstraction,
+        application: ApplicationProtocol
+    ) {
         self.init(nibName: nil, bundle: nil)
 
         self.device = device
@@ -61,6 +65,8 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        self.device = .current
+        self.application = UIApplication.shared
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(updateStateForIPad), name: UIDevice.orientationDidChangeNotification, object: .none)
@@ -131,7 +137,7 @@ final class NetworkStatusViewController: UIViewController {
         alert.presentTopmost()
     }
 
-    private func viewState(from networkState: ZMNetworkState) -> NetworkStatusViewState {
+    private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {
         switch networkState {
         case .offline:
             return .offlineExpanded
@@ -139,11 +145,6 @@ final class NetworkStatusViewController: UIViewController {
             return .online
         case .onlineSynchronizing:
             return .onlineSynchronizing
-        @unknown default:
-            // swiftlint:disable todo_requires_jira_link
-            // TODO: ZMNetworkState change to NS_CLOSED_ENUM
-            // swiftlint:enable todo_requires_jira_link
-            fatalError()
         }
     }
 
@@ -180,7 +181,7 @@ final class NetworkStatusViewController: UIViewController {
 
 extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
 
-    func didChangeAvailability(newState: ZMNetworkState) {
+    func didChangeAvailability(newState: NetworkState) {
         enqueue(state: viewState(from: newState))
     }
 
@@ -193,7 +194,11 @@ extension NetworkStatusViewController {
         guard isIPadRegular(device: device) else { return true }
         guard let delegate else { return true }
 
-        let newOrientation = application.statusBarOrientation
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+            return true
+        }
+
+        let newOrientation = windowScene.interfaceOrientation
 
         return delegate.showInIPad(networkStatusViewController: self, with: newOrientation)
     }

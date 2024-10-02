@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
 
-"general.guest-room-name" = "ゲストルーム";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (あなた)";
@@ -51,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "名前またはユーザーネームで検索する";
 "peoplepicker.header.top_people" = "Top people";
-"peoplepicker.button.create_conversation" = "グループを作成";
+"peoplepicker.button.create_conversation" = "グループを作成します";
 "peoplepicker.button.add_to_conversation" = "参加者を追加";
 "peoplepicker.header.conversations" = "グループ";
 "peoplepicker.header.team_conversations" = "%@ グループ";
@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "チームに招待する";
 "peoplepicker.quick-action.open-conversation" = "開く";
 "peoplepicker.quick-action.create-conversation" = "グループを作成します";
-"peoplepicker.quick-action.create-guest-room" = "ゲストルームを作成する";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "サービスを管理";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,18 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "タップしてアクティブにする";
 "conversation_list.header.self_team.accessibility_value.active" = "有効";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "新しいメッセージ";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "連絡先";
-"conversation_list.bottom_bar.conversations.title" = "会話";
-"conversation_list.bottom_bar.folders.title" = "フォルダ";
-"conversation_list.bottom_bar.archived.title" = "アーカイブ";
-
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Wire の改善にご協力を";
-"conversation_list.data_usage_permission_alert.message" = "私はWireに対して、匿名の利用状況およびアプリを改善するためのエラーレポートを提供することに同意します。私はこの同意をいつでも取り消すことができます。";
-"conversation_list.data_usage_permission_alert.disagree" = "いいえ";
-"conversation_list.data_usage_permission_alert.agree" = "同意する";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "連絡先";
@@ -401,6 +389,9 @@
 "location.unauthorized_alert.cancel" = "キャンセル";
 "location.unauthorized_alert.settings" = "設定";
 
+"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
+
 // Twitter
 "twitter_status.on_twitter" = "%@ はツイッターにいます";
 
@@ -515,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "配信済み";
 "content.system.message_read_timestamp" = "既読";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -624,7 +616,6 @@
 
 "content.message.like" = "いいね！";
 "content.message.unlike" = "いいね！を取消す";
-"content.message.forward" = "共有";
 "content.message.go_to_conversation" = "開く";
 "content.message.forward.to" = "検索...";
 "content.message.open" = "開く";
@@ -1013,6 +1004,20 @@
 "group_details.conversation_admins_header.title" = "グループ管理者";
 "group_details.conversation_members_header.title" = "グループメンバー";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Create password secured link";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**";
+"secured_guest_link_with_password.generate_password_button.title" = "Generate password";
+"secured_guest_link_with_password.textfield.header" = "パスワード設定";
+"secured_guest_link_with_password.textfield.footer" = "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"secured_guest_link_with_password.textfield.placeholder" = "Enter password";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Confirm password";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Confirm your password";
+"secured_guest_link_with_password.createLinkButton.title" = "リンクを作成";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Password copied";
+"secured_guest_link_with_password.alertController.message" = "The password was copied to your device clipboard.";
 "group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
 "group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
@@ -1046,14 +1051,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "利用規約";
 "about.privacy.title" = "プライバシーポリシー";
-"about.license.title" = "ライセンス情報";
 "about.website.title" = "Wire のウェブサイト";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "詳細";
-"about.license.open_project_button" = "プロジェクトページを表示する";
-"about.license.license_header" = "謝辞";
 
 // Self new devices
 "self.new_device_alert.title" = "あなたのアカウントの使用:";
@@ -1148,18 +1147,10 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "使用状況データと障害報告";
 
-// Crash
-"self.settings.privacy_crash.title" = "匿名のクラッシュ レポートを送信";
-"self.settings.privacy_crash_menu.description.title" = "匿名のクラッシュレポートとバージョン番号やオペレーティングシステムなどの基本的なデータを送信して、Wireがアプリ内の問題を特定して解決するのに役立てます。";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "利用状況に関する匿名のデータを送信";
 "self.settings.privacy_analytics_menu.description.title" = "使用データを使用すると、Wireはアプリがどのように使用されているかと、アプリがどのように改善されるかを理解することができます。 データは匿名であり、通信の内容(メッセージ、ファイル、通話など)は含まれません。";
-
-"self.settings.receiveNews_and_offers.title" = "ニュースレターを受け取る";
-"self.settings.receiveNews_and_offers.description.title" = "電子メールで Wireからニュースや製品アップデート情報を受け取る。";
-
-
 
 // Change Username
 
@@ -1296,16 +1287,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "プッシュ通知に関して問題があった場合、Wireサポートチームはあなたにトークンのリセットを求めることがあります。";
 "self.settings.advanced.reset_push_token_alert.title" = "プッシュトークンがリセットされました。";
 "self.settings.advanced.reset_push_token_alert.message" = "通知は数秒で復元されます。";
-"self.settings.advanced.version_technical_details.title" = "バージョンの技術的詳細";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "データ利用許可";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "テクニカルリポート";
-"self.settings.technical_report.send_report" = "Wireにレポートを送信する";
+"self.settings.technical_report_section.title" = "デバッグ報告";
+"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "デバッグ報告を送信";
 "self.settings.technical_report.include_log" = "詳細なログを含める";
+"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "詳細なログは個人情報を含む可能性があります";
 "self.settings.technical_report.no_mail_alert" = "メールクライアントがありません。\"OK\" をタップし、手動で以下にログを送信します: ";
 
@@ -1420,6 +1412,12 @@
 
 "guest_room.link.button.title" = "リンクを作成";
 
+"guest_room.secure_link.header.title" = "Link is password secured";
+"guest_room.secure_link.header.subtitle" = "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.";
+
+"guest_room.create.link_with_password.action" = "Create password secured link";
+"guest_room.create.link_without_password.action" = "Create link without password";
+
 "guest_room.actions.copy_link" = "リンクをコピー";
 "guest_room.actions.copied_link" = "リンクをコピーしました。";
 "guest_room.actions.share_link" = "リンクを共有";
@@ -1429,6 +1427,13 @@
 
 "guest_room.expiration.hours_left" = "%@ 時間経過";
 "guest_room.expiration.less_than_minutes_left" = "残り%@ 分未満";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Enter Password";
+"join.group.conversation.alert.message" = "This conversation is password protected";
+"join.group.conversation.alert.textfield.placeholder" = "Enter conversation password";
+"join.group.conversation.alert.joinAction.title" = "Join conversation";
+"join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
 // Services Options
 
@@ -1788,7 +1793,7 @@
 "giphy.conversation.message" = "%@ giphy.comから";
 "giphy.conversation.random_message" = "giphy.comから";
 "giphy.error.no_more_results" = "これ以上gifがありません。";
-"giphy.error.no_result" = "gifが見つかりませんでした。";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "送信する";
 "giphy.cancel" = "キャンセル";
@@ -1893,6 +1898,8 @@
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "会話へのリンクが無効です。";
 "url_action.join_conversation.error.alert.learn_more.action" = "Learn more about guest links";
 
+"url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
+
 // Deep Link
 "url_action.invalid_user.title" = "Wire は この人物を見つけられませんでした。";
 "url_action.invalid_user.message" = "このアカウントへの権限が無いか、アカウントは存在していません。";
@@ -1905,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "リンクが無効です";
 "url_action.invalid_link.message" = "あなたが開いたリンクは有効ではありません。";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "電子メールで Wireからニュースや製品アップデート情報を受け取りますか？";
-"news_offers.consent.message" = "購読解除はいつでもできます。";
-"news_offers.consent.button.privacy_policy.title" = "プライバシーポリシー";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

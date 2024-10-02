@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -54,21 +53,23 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForInitState() {
-        verifyAllIPhoneSizes(createSut: { size in
-            let vc = PasscodeSetupViewController(useCompactLayout: size.height <= CGFloat.iPhone4Inch.height,
-                                                 context: .createPasscode,
-                                                 callback: nil)
-            return vc
-        })
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .createPasscode,
+            callback: nil
+        )
+
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForInitState_ifForcedApplock() {
-        verifyAllIPhoneSizes(createSut: { size in
-            let vc = PasscodeSetupViewController(useCompactLayout: size.height <= CGFloat.iPhone4Inch.height,
-                                                 context: .forcedForTeam,
-                                                 callback: nil)
-            return vc
-        })
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .forcedForTeam,
+            callback: nil
+        )
+
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForInitStateInDarkTheme() {

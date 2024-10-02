@@ -22,7 +22,6 @@ import WireSyncEngine
 import WireUtilities
 
 protocol TrackingInterface {
-    var disableCrashSharing: Bool { get set }
     var disableAnalyticsSharing: Bool { get set }
 }
 
@@ -34,7 +33,7 @@ protocol AVSMediaManagerInterface {
 extension AVSMediaManager: AVSMediaManagerInterface {
 }
 
-typealias SettingsSelfUser = EditableUserType & UserType
+typealias SettingsSelfUser = UserType & EditableUserType
 
 enum SettingsPropertyError: Error {
     case WrongValue(String)
@@ -53,7 +52,6 @@ final class SettingsPropertyFactory {
     var mediaManager: AVSMediaManagerInterface?
     weak var userSession: UserSession?
     var selfUser: SettingsSelfUser?
-    var marketingConsent: SettingsPropertyValue = .none
     let userPropertyValidator: UserPropertyValidating
     weak var delegate: SettingsPropertyFactoryDelegate?
 
@@ -95,15 +93,6 @@ final class SettingsPropertyFactory {
         self.userSession = userSession
         self.selfUser = selfUser
         userPropertyValidator = UserPropertyValidator()
-
-        userSession?.fetchMarketingConsent { [weak self] result in
-            switch result {
-            case .failure:
-                self?.marketingConsent = .none
-            case .success(let result):
-                self?.marketingConsent = SettingsPropertyValue.bool(value: result)
-            }
-        }
     }
 
     private func getOnlyProperty(propertyName: SettingsPropertyName, value: String?) -> SettingsBlockProperty {
@@ -238,54 +227,6 @@ final class SettingsPropertyFactory {
                     }
                 }
             }
-            return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
-        case .disableCrashSharing:
-            let getAction: GetAction = { [unowned self] _ in
-                if let tracking = self.tracking {
-                    return SettingsPropertyValue(tracking.disableCrashSharing)
-                } else {
-                    return SettingsPropertyValue(false)
-                }
-            }
-
-            let setAction: SetAction = { [unowned self] _, value in
-                if var tracking = self.tracking {
-                    switch value {
-                    case .number(let number):
-                        tracking.disableCrashSharing = number.boolValue
-                    default:
-                        throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
-                    }
-                }
-            }
-            return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
-
-        case .receiveNewsAndOffers:
-
-            let getAction: GetAction = { [unowned self] _ in
-                return self.marketingConsent
-            }
-
-            let setAction: SetAction = { [unowned self] _, value in
-                switch value {
-                case .number(let number):
-                    guard let userSession = self.userSession else { return }
-
-                    userSession.perform {
-                        self.delegate?.asyncMethodDidStart(self)
-                        userSession.setMarketingConsent(granted: number.boolValue) { [weak self] _ in
-                            if let self {
-                                marketingConsent = SettingsPropertyValue.number(value: number)
-                                delegate?.asyncMethodDidComplete(self)
-                            }
-                        }
-                    }
-
-                default:
-                    throw SettingsPropertyError.WrongValue("Incorrect type: \(value) for key \(propertyName)")
-                }
-            }
-
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
 
         case .notificationContentVisible:

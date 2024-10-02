@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 
 @testable import Wire
@@ -29,6 +28,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }
@@ -76,7 +76,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Delete", "Cancel"])
     }
 
     func testMenuActionsForImageMessage() {
@@ -85,7 +85,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Save", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Save", "Delete", "Cancel"])
     }
 
     func testMenuActionsForAudioMessage() {
@@ -106,7 +106,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Delete", "Cancel"])
     }
 
     func testMenuActionsForLinkMessage() {
@@ -115,7 +115,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertEqual(actionsTitles, ["Visit Link", "Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Visit Link", "Copy", "Reply", "Details", "Delete", "Cancel"])
     }
 
     func testMenuActionsForPingMessage() {
@@ -134,7 +134,6 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
         return sut.actions.map { $0.title ?? "" }
     }
-
 }
 
 // MARK: - UIView extension
@@ -155,5 +154,4 @@ fileprivate extension UIView {
 
         return false
     }
-
 }

@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
+
 @testable import WireDataModel
 
-class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
+final class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
 
     func testThatMessagesAddedToDegradedConversationAreExpiredAndFlaggedAsCauseDegradation() {
         // GIVEN
@@ -63,7 +64,7 @@ class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.securityLevel = .secure
         let message = try! conversation.appendText(content: "Foo") as! ZMMessage
-        message.expire()
+        message.expire(withReason: .other)
         self.uiMOC.saveOrRollback()
 
         // WHEN

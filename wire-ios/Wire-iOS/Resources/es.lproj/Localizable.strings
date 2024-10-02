@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Habitación de invitados";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Tú)";
@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Invitar personas para unirse al equipo";
 "peoplepicker.quick-action.open-conversation" = "Abrir";
 "peoplepicker.quick-action.create-conversation" = "Crear grupo";
-"peoplepicker.quick-action.create-guest-room" = "Crear una sala de invitados";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Gestionar los servicios";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,18 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Toca para activar.";
 "conversation_list.header.self_team.accessibility_value.active" = "Activar ahora.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Tiene mensajes nuevos.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contactos";
-"conversation_list.bottom_bar.conversations.title" = "Chats";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archivar";
-
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "¡Ayúdanos a mejorar!";
-"conversation_list.data_usage_permission_alert.message" = "El envío anónimo de informes de uso y fallos nos ayuda a mejorar nuestros productos y servicios. No usamos esta información para nada más.";
-"conversation_list.data_usage_permission_alert.disagree" = "No";
-"conversation_list.data_usage_permission_alert.agree" = "Aceptar";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "en contactos";
@@ -209,7 +197,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // List (labels) - Needs to be revised with updated guidance
-"list.title" = "Chats";
+"list.title" = "Conversaciones";
 "list.archived_conversations" = "ARCHIVO";
 "list.archived_conversations_close" = "Cerrar archivo";
 
@@ -401,6 +389,9 @@
 "location.unauthorized_alert.cancel" = "Cancelar";
 "location.unauthorized_alert.settings" = "Ajustes";
 
+"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
+
 // Twitter
 "twitter_status.on_twitter" = "%@ en Twitter";
 
@@ -515,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Entregado";
 "content.system.message_read_timestamp" = "Leído";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -624,7 +616,6 @@
 
 "content.message.like" = "Me gusta";
 "content.message.unlike" = "Ya no me gusta";
-"content.message.forward" = "Compartir";
 "content.message.go_to_conversation" = "Mostrar en chat";
 "content.message.forward.to" = "Buscar ...";
 "content.message.open" = "Abrir";
@@ -1013,6 +1004,20 @@
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Create password secured link";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**";
+"secured_guest_link_with_password.generate_password_button.title" = "Generate password";
+"secured_guest_link_with_password.textfield.header" = "Establecer contraseña";
+"secured_guest_link_with_password.textfield.footer" = "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"secured_guest_link_with_password.textfield.placeholder" = "Enter password";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Confirm password";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Confirm your password";
+"secured_guest_link_with_password.createLinkButton.title" = "Crear Enlace";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Password copied";
+"secured_guest_link_with_password.alertController.message" = "The password was copied to your device clipboard.";
 "group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
 "group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
@@ -1046,14 +1051,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Términos de uso";
 "about.privacy.title" = "Política de privacidad";
-"about.license.title" = "Información de licencia";
 "about.website.title" = "Sitio web de Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Detalles";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "Tu cuenta fue usada en:";
@@ -1148,18 +1147,10 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Informes de uso y fallos";
 
-// Crash
-"self.settings.privacy_crash.title" = "Send anonymous crash data";
-"self.settings.privacy_crash_menu.description.title" = "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Enviar datos de uso anónimos";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Recibir boletín de noticias";
-"self.settings.receiveNews_and_offers.description.title" = "Reciba noticias y actualizaciones de productos de Wire por correo electrónico.";
-
-
 
 // Change Username
 
@@ -1296,16 +1287,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Si tienes problemas con las notificaciones 'push', el soporte de Wire puede pedirte de renueves este token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Se ha renovado el token de notificaciones";
 "self.settings.advanced.reset_push_token_alert.message" = "Las notificaciones se restaurarán en unos segundos.";
-"self.settings.advanced.version_technical_details.title" = "Detalles técnicos de la versión";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Permisos de uso de datos";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "Informe técnico";
-"self.settings.technical_report.send_report" = "Enviar informe a Wire";
+"self.settings.technical_report_section.title" = "Informe de depuración";
+"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "Informe de depuración de Wire";
 "self.settings.technical_report.include_log" = "Incluir el registro detallado";
+"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Registros detallados pueden contener datos personales";
 "self.settings.technical_report.no_mail_alert" = "No se ha reconocido cliente de correo electrónico. Pulse \"OK\" y envie manualmente a:";
 
@@ -1420,6 +1412,12 @@
 
 "guest_room.link.button.title" = "Crear Enlace";
 
+"guest_room.secure_link.header.title" = "Link is password secured";
+"guest_room.secure_link.header.subtitle" = "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.";
+
+"guest_room.create.link_with_password.action" = "Create password secured link";
+"guest_room.create.link_without_password.action" = "Create link without password";
+
 "guest_room.actions.copy_link" = "Copiar enlace";
 "guest_room.actions.copied_link" = "Enlace Copiado!";
 "guest_room.actions.share_link" = "Compartir enlace";
@@ -1429,6 +1427,13 @@
 
 "guest_room.expiration.hours_left" = "%@h restantes";
 "guest_room.expiration.less_than_minutes_left" = "Quedan %@m";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Enter Password";
+"join.group.conversation.alert.message" = "This conversation is password protected";
+"join.group.conversation.alert.textfield.placeholder" = "Enter conversation password";
+"join.group.conversation.alert.joinAction.title" = "Join conversation";
+"join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
 // Services Options
 
@@ -1788,7 +1793,7 @@
 "giphy.conversation.message" = "%@ · vía giphy.com";
 "giphy.conversation.random_message" = "vía giphy.com";
 "giphy.error.no_more_results" = "no hay más GIFs";
-"giphy.error.no_result" = "no se encontró ningún GIF";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "enviar";
 "giphy.cancel" = "cancelar";
@@ -1893,6 +1898,8 @@
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "The conversation link is invalid.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Learn more about guest links";
 
+"url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
+
 // Deep Link
 "url_action.invalid_user.title" = "Wire can't find this person.";
 "url_action.invalid_user.message" = "You may not have permission with this account or it no longer exists.";
@@ -1905,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "Enlace inválido.";
 "url_action.invalid_link.message" = "El enlace que abriste no es válido.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "¿Desea usted recibir noticias y actualizaciones de producto de WIRE vía email?";
-"news_offers.consent.message" = "Puede darse de baja en cualquier momento.";
-"news_offers.consent.button.privacy_policy.title" = "Política de Privacidad";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

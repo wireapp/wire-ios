@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -48,7 +47,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
@@ -149,6 +147,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         sut.participantsDidChange()
 
         // then
-        snapshotHelper.verify(matching: sut.wrapInNavigationController())
+        let wrapped = sut.wrapInNavigationController()
+        snapshotHelper.verify(matching: wrapped)
     }
 }

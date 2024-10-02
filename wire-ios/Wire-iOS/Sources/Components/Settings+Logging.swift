@@ -145,11 +145,9 @@ extension Settings {
             "UserImageCache",
             "FileLocation",
             "local-storage",
-            "safeFileContext",
             "UpdateEvents",
             "Push channel",
-            "SafeTypes",
-            "background-activity"
+            "SafeTypes"
         ]
 
         // NOTE: WPB-5754: force enable logs for now

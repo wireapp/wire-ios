@@ -18,6 +18,7 @@
 
 #import "MockTransportSession+OTR.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 @implementation MockTransportSession (OTR)
@@ -27,7 +28,7 @@
     NSString *senderClientId = payload[@"sender"];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
     request.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", senderClientId];
-    MockUserClient *client = [self.managedObjectContext executeFetchRequestOrAssert:request].firstObject;
+    MockUserClient *client = [self.managedObjectContext executeFetchRequestOrAssert_mt:request].firstObject;
     return client;
 }
 

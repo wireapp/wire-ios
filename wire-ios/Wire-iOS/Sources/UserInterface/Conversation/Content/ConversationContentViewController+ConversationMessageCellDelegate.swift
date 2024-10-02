@@ -57,12 +57,9 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         for message: ZMConversationMessage,
         view: UIView
     ) {
+
         let actionView = view.targetView(for: message, dataSource: dataSource)
-
-        // Do not dismiss Modal for forward since share VC is present in a popover
-        let shouldDismissModal = action != .delete && action != .copy &&
-            !(action == .forward && isIPadRegular())
-
+        let shouldDismissModal = action != .delete && action != .copy
         if messagePresenter.modalTargetController?.presentedViewController != nil &&
             shouldDismissModal {
             messagePresenter.modalTargetController?.dismiss(animated: true) {
@@ -79,10 +76,6 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
 
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect) {
         delegate?.didTap(onUserAvatar: user, view: sourceView, frame: frame)
-    }
-
-    func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool {
-        return delegate?.conversationContentViewController(self, shouldBecomeFirstResponderWhenShowMenuFromCell: cell) ?? false
     }
 
     func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {

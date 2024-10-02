@@ -122,7 +122,7 @@ static ZMReachability *sharedReachabilityMock = nil;
 - (void)setUp;
 {
     [super setUp];
-    [self setDefaults];
+    [self setBackendInfoDefaults];
     BackgroundActivityFactory.sharedFactory.activityManager = UIApplication.sharedApplication;
     [BackgroundActivityFactory.sharedFactory resume];
     
@@ -259,8 +259,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     _application = nil;
     self.groupIdentifier = nil;
     self.sharedContainerURL = nil;
-
-    [self unsetDefaultAPIVersion];
 
     [self.lastEventIDRepository storeLastEventID:nil];
 

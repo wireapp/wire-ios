@@ -90,13 +90,13 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(receivedTokens.count, 2)
+        guard receivedTokens.count == 2 else { return XCTFail("receivedTokens.count != 2") }
 
         let apns = PushToken(deviceToken: Data([0x01, 0x01, 0x01]), appIdentifier: "app", transportType: "APNS", tokenType: .standard)
-        XCTAssertEqual(receivedTokens.element(atIndex: 0), apns)
+        XCTAssertEqual(receivedTokens[0], apns)
 
         let voIP = PushToken(deviceToken: Data([0x03, 0x3, 0x03]), appIdentifier: "app", transportType: "APNS_VOIP", tokenType: .voip)
-        XCTAssertEqual(receivedTokens.element(atIndex: 1), voIP)
+        XCTAssertEqual(receivedTokens[1], voIP)
     }
 
     func test_itHandlesResponse_200_MalformedResponse() throws {

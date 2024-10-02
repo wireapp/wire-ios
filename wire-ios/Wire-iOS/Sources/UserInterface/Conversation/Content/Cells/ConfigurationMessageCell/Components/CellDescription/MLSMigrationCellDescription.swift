@@ -27,7 +27,7 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     private static let linkAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.mediumSemiboldFont,
-        .link: URL.wr_mlsLearnMore
+        .link: WireURLs.shared.mlsInfo
     ]
 
     let configuration: View.Configuration

@@ -86,7 +86,7 @@ final class BlockerViewController: LaunchImageViewController {
             title: L10n.Localizable.Force.Update.title,
             message: L10n.Localizable.Force.Update.message
         ) { _ in
-            UIApplication.shared.open(URL.wr_wireAppOnItunes)
+            UIApplication.shared.open(WireURLs.shared.appOnItunes)
         }
     }
 
@@ -129,7 +129,7 @@ final class BlockerViewController: LaunchImageViewController {
             title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
             style: .default,
             handler: { _ in
-                UIApplication.shared.open(URL.wr_e2eiLearnMore)
+                UIApplication.shared.open(WireURLs.shared.endToEndIdentityInfo)
             }
         )
 
@@ -159,33 +159,35 @@ final class BlockerViewController: LaunchImageViewController {
 
         let reportError = UIAlertAction(
             title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
-            style: .default,
-            handler: { [weak self] _ in
-                self?.presentMailComposer(withLogs: true)
-            }
-        )
+            style: .default
+        ) { [weak self] _ in
+            guard let self else { return }
+            let fallbackActivityPopoverConfiguration = PopoverPresentationControllerConfiguration.sourceView(
+                sourceView: view,
+                sourceRect: .init(origin: view.safeAreaLayoutGuide.layoutFrame.origin, size: .zero)
+            )
+            presentMailComposer(fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration)
+        }
 
         databaseFailureAlert.addAction(reportError)
 
         let retryAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
-            style: .default,
-            handler: { [weak self] _ in
-                self?.sessionManager?.retryStart()
-            }
-        )
+            style: .default
+        ) { [weak self] _ in
+            self?.sessionManager?.retryStart()
+        }
 
         databaseFailureAlert.addAction(retryAction)
 
         let deleteDatabaseAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.deleteDatabase,
-            style: .destructive,
-            handler: { [weak self] _ in
-                self?.dismiss(animated: true, completion: {
-                    self?.showConfirmationDatabaseDeletionAlert()
-                })
+            style: .destructive
+        ) { [weak self] _ in
+            self?.dismiss(animated: true) {
+                self?.showConfirmationDatabaseDeletionAlert()
             }
-        )
+        }
 
         databaseFailureAlert.addAction(deleteDatabaseAction)
         present(databaseFailureAlert, animated: true)
@@ -264,11 +266,13 @@ extension BlockerViewController {
     private func enrollCertificate() async throws {
         guard
             let activeUserSession = sessionManager?.activeUserSession,
-            let rootViewController = AppDelegate.shared.window?.rootViewController
+            let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+            let rootViewController = appDelegate.mainWindow?.rootViewController
         else {
             return
         }
-        let oauthUseCase = OAuthUseCase(targetViewController: rootViewController)
+
+        let oauthUseCase = OAuthUseCase(targetViewController: { rootViewController })
 
         let certificateChain = try await activeUserSession
             .enrollE2EICertificate

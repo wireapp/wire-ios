@@ -27,7 +27,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     let environment: BackendEnvironmentProvider
     let scheduler: ZMTransportRequestScheduler
     weak var consumer: ZMPushChannelConsumer?
-    var consumerQueue: ZMSGroupQueue?
+    var consumerQueue: GroupQueue?
     var pingTimer: ZMTimer?
     private let minTLSVersion: TLSVersion
 
@@ -89,12 +89,14 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         WireLogger.backend.debug("reachability did change. May be reachable: \(reachability.mayBeReachable), is mobile connection: \(reachability.isMobileConnection)")
 
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable
+
         guard didGoOnline else { return }
+        WireLogger.backend.debug("reachability did change. didGoOnline", attributes: .safePublic)
 
         scheduleOpen()
     }
 
-    func setPushChannelConsumer(_ consumer: ZMPushChannelConsumer?, queue: ZMSGroupQueue) {
+    func setPushChannelConsumer(_ consumer: ZMPushChannelConsumer?, queue: GroupQueue) {
         self.consumerQueue = queue
         self.consumer = consumer
 

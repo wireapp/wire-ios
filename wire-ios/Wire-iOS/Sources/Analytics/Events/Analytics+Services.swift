@@ -19,9 +19,8 @@
 import Foundation
 import WireDataModel
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: move to DM
-// swiftlint:enable todo_requires_jira_link
 fileprivate extension ZMConversation {
     var otherNonServiceParticipants: [UserType] {
         let users = Array(localParticipants)

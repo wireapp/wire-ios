@@ -90,23 +90,31 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
-        WireLogger.messaging.debug("inserting message \(object.debugInfo)")
+        let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
+        let logAttributes = logAttributesBuilder.syncLogAttributes(object)
+        WireLogger.messaging.debug("inserting message", attributes: logAttributes)
 
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = context.enterAllGroupsExceptSecondary()
         Task {
+            defer {
+                context.leaveAllGroups(groups)
+            }
             do {
                 try await messageSender.sendMessage(message: object)
+
+                let logAttributes = await logAttributesBuilder.logAttributes(object)
+                WireLogger.messaging.debug("successfully sent message", attributes: logAttributes)
+
                 await context.perform {
-                    WireLogger.messaging.debug("successfully sent message \(object.debugInfo)")
                     object.markAsSent()
                     self.deleteMessageIfNecessary(object)
                 }
             } catch {
+                let logAttributes = await logAttributesBuilder.logAttributes(object)
+                WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
                 await context.perform {
-                    WireLogger.messaging.error("failed to send message \(object.debugInfo): \(error)")
-
-                    object.expire()
+                    object.expire(withReason: .other)
                     self.localNotificationDispatcher.didFailToSend(object)
 
                     if case NetworkError.invalidRequestError(let responseFailure, _) = error,
@@ -127,8 +135,6 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 // make sure completion is called on same calling thread so syncContext
                 completion()
             }
-
-            context.leaveAllGroups(groups)
         }
     }
 
@@ -182,7 +188,10 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
     func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
         switch event.type {
         case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationMLSMessageAdd:
-            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult) else { return }
+            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult) else {
+                WireLogger.updateEvent.warn("message could not be created from event", attributes: event.logAttributes)
+                return
+            }
             message.markAsSent()
 
         default:

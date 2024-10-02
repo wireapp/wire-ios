@@ -48,12 +48,12 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
-        let mlsGroupID = try await syncMLSConversationFromBackend(
+        let (mlsGroupID, removalKeys) = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
         )
 
-        if await mlsService.conversationExists(groupID: mlsGroupID) {
+        if try await mlsService.conversationExists(groupID: mlsGroupID) {
             return mlsGroupID
         }
 
@@ -65,6 +65,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             try await establishMLSGroupIfNeeded(
                 userID: userID,
                 mlsGroupID: mlsGroupID,
+                removalKeys: removalKeys,
                 in: context
             )
         } else {
@@ -89,7 +90,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
     private func syncMLSConversationFromBackend(
         userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws -> MLSGroupID {
+    ) async throws -> (MLSGroupID, BackendMLSPublicKeys?) {
         var action = SyncMLSOneToOneConversationAction(
             userID: userID.uuid,
             domain: userID.domain
@@ -115,12 +116,13 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
     private func establishMLSGroupIfNeeded(
         userID: QualifiedID,
         mlsGroupID: MLSGroupID,
+        removalKeys: BackendMLSPublicKeys? = nil,
         in context: NSManagedObjectContext
     ) async throws {
         let users = [MLSUser(userID)]
 
         do {
-            let ciphersuite = try await mlsService.establishGroup(for: mlsGroupID, with: users)
+            let ciphersuite = try await mlsService.establishGroup(for: mlsGroupID, with: users, removalKeys: removalKeys)
             await context.perform {
                 let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
                 conversation?.ciphersuite = ciphersuite

@@ -25,7 +25,7 @@ final class SystemSettingsTests: XCTestCase {
     func test_internalBuild() throws {
         let url = try XCTUnwrap(Bundle.main.url(forResource: "Settings.bundle/Root", withExtension: "plist"))
         let data = try Data(contentsOf: url)
-        let string = try XCTUnwrap(String(data: data, encoding: .utf8))
+        let string = try XCTUnwrap(String(decoding: data, as: UTF8.self))
 
         XCTAssertTrue(string.contains("DEVELOPER SETTINGS"))
         XCTAssertTrue(string.contains("LICENSES"))

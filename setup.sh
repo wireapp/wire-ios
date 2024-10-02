@@ -47,20 +47,31 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
+if [[ -n "${CI-}" ]]; then
+    echo "Running on CI, skipping git lfs install"
+elif command -v git-lfs > /dev/null 2>&1; then
+    echo "ℹ️  Running git lfs install..."
+    git lfs install
+else
+    die "git-lfs is not installed."
+fi
+echo ""
+
 # Workaround for carthage "The file couldn’t be saved." error
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 
 echo "ℹ️  Carthage bootstrap. This might take a while..."
 if [[ -n "${CI-}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
-else 
+else
     "$REPO_ROOT/scripts/carthage.sh" bootstrap --cache-builds --platform ios --use-xcframeworks
 fi
 echo ""
 
 echo "ℹ️  Resolve Swift Packages for Scripts..."
 xcrun --sdk macosx swift package --package-path scripts resolve
-echo "" 
+xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
+echo ""
 
 echo "ℹ️  Installing ImageMagick..."
 if [[ -n "${CI-}" ]]; then
@@ -69,7 +80,7 @@ if [[ -n "${CI-}" ]]; then
 else
     # Local Machine
     echo "Skipping ImageMagick install because not running on CI"
-fi 
+fi
 echo ""
 
 echo "ℹ️  Installing AWS CLI..."
@@ -79,7 +90,7 @@ if [[ -n "${CI-}" ]]; then
 else
     # Local Machine
     echo "Skipping AWS CLI install because not running on CI"
-fi 
+fi
 echo ""
 
 echo "ℹ️  Fetching submodules..."
@@ -115,19 +126,11 @@ else
 fi
 echo ""
 
-echo "ℹ️ Install Git hook"
-scripts/githooks-install.sh
-echo ""
-
 (
     cd "$REPO_ROOT/wire-ios"
 
     echo "ℹ️  [CodeGen] Update StyleKit Icons..."
     swift run --package-path ./Scripts/updateStylekit
-    echo ""
-
-    echo "ℹ️ Update Licenses File..."
-    swift run --package-path ./Scripts/updateLicenses
     echo ""
 )
 

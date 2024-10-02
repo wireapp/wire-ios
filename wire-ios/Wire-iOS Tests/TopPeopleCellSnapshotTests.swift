@@ -17,28 +17,40 @@
 //
 
 import WireDesign
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class TopPeopleCellSnapshotTests: XCTestCase {
 
-    var sut: TopPeopleCell!
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TopPeopleCell!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = TopPeopleCell(frame: CGRect(x: 0, y: 0, width: 56, height: 78))
         sut.user = MockUserType.createDefaultOtherUser()
-        sut.overrideUserInterfaceStyle = .light
         sut.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
 
+    // MARK: - Snapshot Test
+
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

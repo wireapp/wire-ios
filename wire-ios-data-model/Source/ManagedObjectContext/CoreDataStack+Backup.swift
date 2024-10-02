@@ -180,7 +180,7 @@ extension CoreDataStack {
             from: backupDirectory,
             applicationContainer: applicationContainer,
             dispatchGroup: dispatchGroup,
-            messagingMigrator: CoreDataMessagingMigrator(isInMemoryStore: false),
+            messagingMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>(isInMemoryStore: false),
             completion: { result in
                 completion(result)
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)

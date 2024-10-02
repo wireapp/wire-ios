@@ -51,54 +51,48 @@ protocol HighlightableView {
 }
 
 extension CollectionCell: SelectableView {
-    var selectionView: UIView! {
-        return self
-    }
-
-    var selectionRect: CGRect {
-        return frame
-    }
+    var selectionView: UIView! { self }
+    var selectionRect: CGRect { frame }
 }
 
 final class DeletionDialogPresenter: NSObject {
 
     private weak var sourceViewController: UIViewController?
 
-    func deleteAlert(message: ZMConversationMessage,
-                     sourceView: UIView?,
-                     userSession: UserSession,
-                     completion: ResultHandler? = nil) -> UIAlertController {
-        let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, alert in
+    func deleteAlert(
+        message: ZMConversationMessage,
+        sourceView: UIView,
+        userSession: UserSession,
+        completion: @escaping (_ succeeded: Bool) -> Void
+    ) -> UIAlertController {
+        let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, _ in
 
             // Tracking needs to be called before performing the action, since the content of the message is cleared
             if case .delete(let type) = action {
 
-                userSession.enqueue({
+                userSession.enqueue {
                     switch type {
                     case .local:
                         ZMMessage.hideMessage(message)
                     case .everywhere:
                         ZMMessage.deleteForEveryone(message)
                     }
-                }, completionHandler: {
-                    completion?(true)
-                })
+                } completionHandler: {
+                    completion(true)
+                }
             } else {
-                completion?(false)
+                completion(false)
             }
-
-            alert.dismiss(animated: true, completion: nil)
         }
 
-        if let presentationController = alert.popoverPresentationController,
-            let source = sourceView {
-            if let selectableView = source as? SelectableView,
-                selectableView.selectionView != nil {
-                presentationController.sourceView = selectableView.selectionView
-                presentationController.sourceRect = selectableView.selectionRect
+        if let popoverPresentationController = alert.popoverPresentationController {
+            let sourceView = if let selectableView = sourceView as? SelectableView, let selectionView = selectableView.selectionView {
+                selectionView
             } else {
-                alert.configPopover(pointToView: source, popoverPresenter: sourceViewController as? PopoverPresenterViewController)
+                sourceView
             }
+            popoverPresentationController.sourceView = sourceView.superview
+            popoverPresentationController.sourceRect = sourceView.frame.insetBy(dx: -4, dy: -4)
         }
 
         return alert
@@ -118,18 +112,26 @@ final class DeletionDialogPresenter: NSObject {
      - parameter source: The source view used for a potential popover presentation of the dialog.
      - parameter completion: A completion closure which will be invoked with `true` if a deletion occured and `false` otherwise.
      */
-    func presentDeletionAlertController(forMessage message: ZMConversationMessage, source: UIView?, userSession: UserSession, completion: ResultHandler?) {
+    func presentDeletionAlertController(
+        forMessage message: ZMConversationMessage,
+        source: UIView,
+        userSession: UserSession,
+        completion: @escaping (_ succeeded: Bool) -> Void
+    ) {
         guard !message.hasBeenDeleted else { return }
 
-        let alert = deleteAlert(message: message,
-                                sourceView: source,
-                                userSession: userSession,
-                                completion: completion)
+        let alert = deleteAlert(
+            message: message,
+            sourceView: source,
+            userSession: userSession,
+            completion: completion
+        )
         sourceViewController?.present(alert, animated: true)
     }
 }
 
 private enum AlertAction {
+
     enum DeletionType {
         case local
         case everywhere
@@ -183,5 +185,4 @@ private extension UIAlertController {
 
         return alert
     }
-
 }

@@ -207,8 +207,12 @@ extension SoundEventListener {
         soundEventWatchDog.startIgnoreDate = Date()
         soundEventWatchDog.isMuted = userSession?.networkState == .onlineSynchronizing
 
-        if AppDelegate.shared.launchType == .push {
-            soundEventWatchDog.ignoreTime = SoundEventListener.SoundEventListenerIgnoreTimeForPushStart
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            if appDelegate.launchType == .push {
+                soundEventWatchDog.ignoreTime = SoundEventListener.SoundEventListenerIgnoreTimeForPushStart
+            } else {
+                soundEventWatchDog.ignoreTime = 0.0
+            }
         } else {
             soundEventWatchDog.ignoreTime = 0.0
         }
@@ -222,7 +226,7 @@ extension SoundEventListener {
 
 extension SoundEventListener: ZMNetworkAvailabilityObserver {
 
-    func didChangeAvailability(newState: ZMNetworkState) {
+    func didChangeAvailability(newState: NetworkState) {
         guard UIApplication.shared.applicationState != .background else { return }
 
         if newState == .online {

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 extension IconLabelButton {
 
@@ -78,10 +79,6 @@ extension EndCallButton {
 }
 
 extension PickUpButton {
-    static func pickUpButton() -> PickUpButton {
-        .init(callActionIcon: .pickUp)
-    }
-
     static func bigPickUpButton() -> PickUpButton {
         .init(callActionIcon: .pickUp, iconSize: .medium)
     }

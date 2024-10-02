@@ -26,3 +26,11 @@ _Optional: attachments like images, videos, etc._
 - [ ] Description is filled and free of optional paragraphs.
 - [ ] Adds/updates automated tests.
 
+---
+
+### UI accessibility checklist
+
+_If your PR includes UI changes, please utilize this checklist:_
+- [ ] Make sure you use the API for UI elements that support large fonts.
+- [ ] All colors are taken from WireDesign.ColorTheme or constructed using WireDesign.BaseColorPalette.
+- [ ] New UI elements have Accessibility strings for VoiceOver.

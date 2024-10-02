@@ -216,7 +216,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
 
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
-        let malformedMessageData = "".data(using: .utf8)!
+        let malformedMessageData = Data("".utf8)
         var outputBuffer = [UInt8](repeating: 0, count: 256)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
         let inputStream = InputStream(data: malformedMessageData)
@@ -237,7 +237,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
 
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
-        let malformedMessageData = "malformed12345678901234567890123456789012345678901234567890".data(using: .utf8)!
+        let malformedMessageData = Data("malformed12345678901234567890123456789012345678901234567890".utf8)
         var outputBuffer = [UInt8](repeating: 0, count: 256)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
         let inputStream = InputStream(data: malformedMessageData)
@@ -258,7 +258,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
 
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
-        let message = "123456789".data(using: .utf8)!
+        let message = Data("123456789".utf8)
         let encryptedData = try! encrypt(message, passphrase: passphrase)
 
         let inputStream = InputStream(data: encryptedData)
@@ -281,7 +281,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         let uuid1 = UUID()
         let uuid2 = UUID()
         let password = "1235678"
-        let message = "123456789".data(using: .utf8)!
+        let message = Data("123456789".utf8)
 
         // then when
         do {
@@ -300,7 +300,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         let uuid1 = UUID()
         let uuid2 = UUID()
         let password = "1235678"
-        let message = "123456789".data(using: .utf8)!
+        let message = Data("123456789".utf8)
 
         // then when
         do {
@@ -321,7 +321,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         let uuid1 = UUID()
         let uuid2 = UUID()
         let password = "1235678"
-        let message = "123456789".data(using: .utf8)!
+        let message = Data("123456789".utf8)
 
         // then when
         do {

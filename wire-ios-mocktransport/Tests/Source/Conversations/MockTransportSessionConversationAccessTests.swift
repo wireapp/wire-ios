@@ -162,9 +162,9 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
 
         // THEN
         XCTAssertEqual(response?.httpStatus, 200)
-        guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+        guard let receivedPayload = response?.payload as? [String: Any], let status else { XCTFail(); return }
 
-        XCTAssertEqual(receivedPayload["status"] as! String, status)
+        XCTAssertEqual(receivedPayload["status"] as? String, status)
     }
 
     func testThatItFailToFetchGuestLinkStatusWhenConversationIdIsUknown() {

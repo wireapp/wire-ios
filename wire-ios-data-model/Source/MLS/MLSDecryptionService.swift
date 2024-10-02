@@ -24,14 +24,42 @@ import WireSystem
 // sourcery: AutoMockable
 public protocol MLSDecryptionServiceInterface {
 
+    /// Publishes an event when the epoch has changed.
+
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
+
+    /// Publishes an event when new CRL distribution points are found.
+
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
+
+    /// Decrypts an MLS message for the given group
+    ///
+    /// - Parameters:
+    ///   - message: a base64 encoded encrypted message
+    ///   - groupID: the id of the MLS group
+    ///   - subconversationType: the type of subconversation (if it exists) to which this message belongs
+    ///
+    /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted.
+    ///
+    /// - Returns:
+    ///   The data representing the decrypted message bytes.
+    ///   May be nil if the message was a handshake message, in which case it is safe to ignore.
+    ///
+    /// In addition to decrypting the message and returning a result, this method will also publish events 
+    /// if the epoch has changed or if new CRL distribution points have been found.
 
     func decrypt(
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult]
+
+    /// Processes a welcome message.
+    ///
+    /// - Parameter welcomeMessage: A base64 encoded welcome message.
+    /// - Returns: The group ID of the group the welcome message was for.
+    ///
+    /// See ``MLSActionExecutor/processWelcomeMessage(_:)`` for implementation details
 
     func processWelcomeMessage(
         welcomeMessage: String
@@ -60,6 +88,10 @@ protocol DecryptedMessageBundle {
 
 extension DecryptedMessage: DecryptedMessageBundle { }
 extension BufferedDecryptedMessage: DecryptedMessageBundle { }
+
+/// A class responsible for decrypting messages for MLS groups.
+/// It is also responsible for processing welcome messages and publishing events 
+/// when the epoch changes or new CRL distribution points are found.
 
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
@@ -113,19 +145,6 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         return try await mlsActionExecutor.processWelcomeMessage(messageData)
     }
 
-    /// Decrypts an MLS message for the given group
-    ///
-    /// - Parameters:
-    ///   - message: a base64 encoded encrypted message
-    ///   - groupID: the id of the MLS group
-    ///   - subconversationType: the type of subconversation (if it exists)  to which this message belongs
-    ///
-    /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted.
-    ///
-    /// - Returns:
-    ///   The data representing the decrypted message bytes.
-    ///   May be nil if the message was a handshake message, in which case it is safe to ignore.
-
     public func decrypt(
         message: String,
         for groupID: MLSGroupID,
@@ -139,13 +158,11 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         var groupID = groupID
         var debugInfo = "parentID: \(groupID)"
-        if
-            let type = subconversationType,
+        if let type = subconversationType,
             let subconversationGroupID = await subconverationGroupIDRepository.fetchSubconversationGroupID(
                 forType: type,
                 parentGroupID: groupID
-            )
-        {
+            ) {
             groupID = subconversationGroupID
             debugInfo.append("; subconversationGroupID: \(subconversationGroupID)")
         }

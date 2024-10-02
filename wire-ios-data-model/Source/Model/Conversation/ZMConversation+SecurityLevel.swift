@@ -19,8 +19,6 @@
 import Foundation
 import WireCryptobox
 
-private let zmLog = ZMSLog(tag: "event-processing")
-
 @objc public enum ZMConversationLegalHoldStatus: Int16 {
     case disabled = 0
     case pendingApproval = 1
@@ -310,7 +308,7 @@ extension ZMConversation {
             return
         }
 
-        zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier })")
+        WireLogger.eventProcessing.debug("Sender: \(user.remoteIdentifier?.safeForLoggingDescription ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier.safeForLoggingDescription })")
 
         switch conversationType {
         case .group:
@@ -461,11 +459,11 @@ extension ZMConversation {
                 let genericMessage = clientMessage.underlyingMessage,
                 genericMessage.hasConfirmation {
                 // Delivery receipt: just expire it
-                message.expire()
+                message.expire(withReason: .other)
             } else {
                 WireLogger.messaging.warn("expiring message due to security degradation " + String(describing: message.nonce?.transportString().readableHash))
                 // All other messages: expire and mark that it caused security degradation
-                message.expire()
+                message.expire(withReason: .other)
                 message.causedSecurityLevelDegradation = true
             }
         }
@@ -633,10 +631,7 @@ extension ZMConversation {
         domains: [String]? = nil
     ) -> ZMSystemMessage {
         guard let context = managedObjectContext else {
-            let message = "can not append system message without managedObjectContext!"
-            WireLogger.updateEvent.critical(message)
-            zmLog.safePublic(SanitizedString(stringLiteral: message))
-            fatalError("can not append system message without managedObjectContext!")
+            fatal("can not append system message without managedObjectContext!")
         }
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
         systemMessage.systemMessageType = type

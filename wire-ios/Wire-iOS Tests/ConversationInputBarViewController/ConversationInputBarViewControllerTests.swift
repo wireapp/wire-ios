@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireSyncEngineSupport
 import XCTest
 
@@ -253,7 +252,7 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
     func testUploadFileActionSheet() throws {
         let sut = makeViewController()
 
-        let alert: UIAlertController = sut.createDocUploadActionSheet()
+        let alert: UIAlertController = sut.createFileUploadActionSheet(sender: .init())
 
         try verify(matching: alert)
     }

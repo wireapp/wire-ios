@@ -40,6 +40,10 @@ extension ZMOTRMessage: OTREntity {
         // no-op
     }
 
+    public func missesRecipients(_ recipients: Set<WireDataModel.UserClient>) {
+        // no-op
+    }
+
     public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
         self.mutableSetValue(forKey: ZMMessageFailedToSendRecipientsKey).addObjects(from: recipients)
     }

@@ -75,21 +75,51 @@ extension AppState: CustomDebugStringConvertible {
         case .authenticated:
             "authenticated"
         case .unauthenticated(error: let error):
-            "unauthenticated"
+            "unauthenticated: \(error.debugDescription)"
         case .blacklisted(reason: let reason):
-            "blacklisted"
+            "blacklisted: \(reason)"
         case .jailbroken:
             "jailbroken"
         case .certificateEnrollmentRequired:
             "certificateEnrollmentRequired"
         case .databaseFailure(reason: let reason):
-            "databaseFailure"
+            "databaseFailure: \(reason)"
         case .migrating:
             "migrating"
-        case .loading(account: let account, from: let from):
+        case .loading:
             "loading"
         }
     }
+}
+
+extension AppState: SafeForLoggingStringConvertible {
+    var safeForLoggingDescription: String {
+        switch self {
+        case .retryStart:
+            return "retryStart"
+        case .headless:
+            return "headless"
+        case .locked:
+            return "locked"
+        case .authenticated:
+            return "authenticated"
+        case .unauthenticated(let error):
+            return "unauthenticated \(error?.localizedDescription ?? "<nil>")"
+        case .blacklisted(let reason):
+            return "blacklisted \(reason)"
+        case .jailbroken:
+            return "jailbroken"
+        case .certificateEnrollmentRequired:
+            return "certificateEnrollmentRequired"
+        case .databaseFailure(let reason):
+            return "databaseFailure \(reason)"
+        case .migrating:
+            return "migrating"
+        case .loading(let account, let from):
+            return "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
+        }
+    }
+
 }
 
 // sourcery: AutoMockable
@@ -154,7 +184,8 @@ final class AppStateCalculator {
 
         self.appState = appState
         self.pendingAppState = nil
-        WireLogger.appState.debug("transitioning to app state: \(appState)")
+
+        WireLogger.appState.debug("transitioning to app state \(appState.safeForLoggingDescription)", attributes: .safePublic)
         delegate?.appStateCalculator(self, didCalculate: appState) {
             completion?()
         }
@@ -261,7 +292,7 @@ extension AppStateCalculator: SessionManagerDelegate {
         if let activeSession {
             transition(to: .authenticated(activeSession))
         } else {
-            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
             transition(to: .unauthenticated(error: error))
         }
     }
@@ -270,7 +301,7 @@ extension AppStateCalculator: SessionManagerDelegate {
         if let activeSession {
             transition(to: .authenticated(activeSession))
         } else {
-            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
             transition(to: .unauthenticated(error: error))
         }
     }

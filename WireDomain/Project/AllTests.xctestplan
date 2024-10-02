@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "7460DDE4-418D-4C73-B293-D9F903D9461E",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireDomain Project.xcodeproj",
+        "identifier" : "01D0DCAF2C1C8C880076CB1C",
+        "name" : "WireDomainTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/WireDomain",
+        "identifier" : "WireDomainPkgTests",
+        "name" : "WireDomainPkgTests"
+      }
+    }
+  ],
+  "version" : 1
+}

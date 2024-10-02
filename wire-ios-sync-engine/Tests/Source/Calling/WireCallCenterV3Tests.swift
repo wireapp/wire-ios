@@ -70,9 +70,6 @@ final class WireCallCenterV3Tests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.storage = .temporary()
-        BackendInfo.domain = "wire.com"
-
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
         selfUser.domain = BackendInfo.domain
@@ -125,7 +122,6 @@ final class WireCallCenterV3Tests: MessagingTest {
         mockTransport = nil
         mockAVSWrapper = nil
         conferenceCalling = nil
-        BackendInfo.storage = .standard
 
         super.tearDown()
     }
@@ -1592,7 +1588,7 @@ extension WireCallCenterV3Tests {
         let change = AVSParticipantsChange(convid: conversationId.serialized, members: [member])
 
         let encoded = try! JSONEncoder().encode(change)
-        let string = String(data: encoded, encoding: .utf8)!
+        let string = String(decoding: encoded, as: UTF8.self)
 
         sut.handleParticipantChange(conversationId: conversationId, data: string)
     }
@@ -2192,6 +2188,6 @@ private extension AVSClient {
 private extension AVSActiveSpeakersChange {
     var data: String {
         let encoded = try! JSONEncoder().encode(self)
-        return String(data: encoded, encoding: .utf8)!
+        return String(decoding: encoded, as: UTF8.self)
     }
 }

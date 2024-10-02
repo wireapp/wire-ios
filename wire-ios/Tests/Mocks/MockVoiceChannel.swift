@@ -31,7 +31,7 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     var mockIsConferenceCall: Bool = false
     var mockFirstDegradedUser: UserType?
 
-    required init(conversation: ZMConversation) {
+    required init(conversation: ZMConversation?) {
         self.conversation = conversation
     }
 

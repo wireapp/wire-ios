@@ -16,71 +16,118 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class ThumbnailCreationTests: XCTestCase {
 
-    func testThatItCreatesThumbnailForSquareImage() {
-        // Given
-        let image = self.image(inTestBundleNamed: "unsplash_square.jpg")
-        guard let data = image.imageData else {
-            return XCTFail("Failed to create image data")
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var squareImage: UIImage!
+    private var verticalPanoramaImage: UIImage!
+    private var horizontalPanoramaImage: UIImage!
+    private var squareImageData: Data!
+    private var verticalPanoramaImageData: Data!
+    private var horizontalPanoramaImageData: Data!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+        squareImage = self.image(inTestBundleNamed: "unsplash_square.jpg")
+        verticalPanoramaImage = self.image(inTestBundleNamed: "unsplash_vertical_pano.jpg")
+        horizontalPanoramaImage = self.image(inTestBundleNamed: "unsplash_pano.jpg")
+
+        guard let squareData = squareImage?.imageData,
+              let verticalData = verticalPanoramaImage?.imageData,
+              let horizontalData = horizontalPanoramaImage?.imageData else {
+            XCTFail("Failed to create image data")
+            return
         }
 
-        // When
-        guard let thumbnail = UIImage(from: data, withShorterSideLength: 100 * UIScreen.main.scale) else {
-            return XCTFail("Failed to create thumbnail") }
-
-        // Then
-        XCTAssertEqual(thumbnail.size.width, 100, accuracy: 1)
-        XCTAssertEqual(thumbnail.size.height, 100, accuracy: 1)
-        verify(matching: thumbnail.wrappedInImageView())
+        squareImageData = squareData
+        verticalPanoramaImageData = verticalData
+        horizontalPanoramaImageData = horizontalData
     }
 
-    func testThatItCreatesThumbnailForVerticalPanorama() {
-        // Given
-        let image = self.image(inTestBundleNamed: "unsplash_vertical_pano.jpg")
-        guard let data = image.imageData else {
+    // MARK: - tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+        squareImage = nil
+        verticalPanoramaImage = nil
+        horizontalPanoramaImage = nil
+        squareImageData = nil
+        verticalPanoramaImageData = nil
+        horizontalPanoramaImageData = nil
+
+        super.tearDown()
+    }
+
+    // MARK: - Snapshot Tests
+
+    func testThatItCreatesThumbnailForSquareImage() {
+        // GIVEN
+        guard let data = squareImageData else {
             return XCTFail("Failed to create image data")
         }
 
-        // When
+        // WHEN
         guard let thumbnail = UIImage(from: data, withShorterSideLength: 100 * UIScreen.main.scale) else {
             return XCTFail("Failed to create thumbnail")
         }
 
-        // Then
+        // THEN
         XCTAssertEqual(thumbnail.size.width, 100, accuracy: 1)
-        verify(matching: thumbnail.wrappedInImageView())
+        XCTAssertEqual(thumbnail.size.height, 100, accuracy: 1)
+        snapshotHelper.verify(matching: thumbnail.wrappedInImageView())
     }
 
-    func testThatItCreatesThumbnailForHorizontalPanorama() {
-        // Given
-        let image = self.image(inTestBundleNamed: "unsplash_pano.jpg")
-        guard let data = image.imageData else {
+    func testThatItCreatesThumbnailForVerticalPanorama() {
+        // GIVEN
+        guard let data = verticalPanoramaImageData else {
             return XCTFail("Failed to create image data")
         }
 
-        // When
+        // WHEN
+        guard let thumbnail = UIImage(from: data, withShorterSideLength: 100 * UIScreen.main.scale) else {
+            return XCTFail("Failed to create thumbnail")
+        }
+
+        // THEN
+        XCTAssertEqual(thumbnail.size.width, 100, accuracy: 1)
+        snapshotHelper.verify(matching: thumbnail.wrappedInImageView())
+    }
+
+    func testThatItCreatesThumbnailForHorizontalPanorama() {
+        // GIVEN
+        guard let data = horizontalPanoramaImageData else {
+            return XCTFail("Failed to create image data")
+        }
+
+        // WHEN
         guard let thumbnail = UIImage(from: data, withShorterSideLength: 100 * UIScreen.main.scale) else {
             return XCTFail("Failed to create a thumbnail")
         }
 
-        // Then
+        // THEN
         XCTAssertEqual(thumbnail.size.height, 100, accuracy: 1)
-        verify(matching: thumbnail.wrappedInImageView())
+        snapshotHelper.verify(matching: thumbnail.wrappedInImageView())
     }
+
+    // MARK: - Unit Test
 
     func testThatItReturnsEarlyForInvalidImage() {
-        // Given & When
+        // GIVEN & WHEN
         let thumbnail = UIImage(from: Data(), withShorterSideLength: 100 * UIScreen.main.scale)
 
-        // Then
+        // THEN
         XCTAssertNil(thumbnail)
     }
-
 }
 
 // MARK: - Helper
@@ -94,5 +141,4 @@ fileprivate extension UIImage {
         view.contentMode = .center
         return view
     }
-
 }

@@ -103,7 +103,7 @@ open class ZMVideoMetadata: ZMFileMetadata {
 
 }
 
-extension ZMFileMetadata {
+public extension ZMFileMetadata {
 
     var mimeType: String {
         return UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"

@@ -61,23 +61,16 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
     public class func prerequisites(forApplicationStatus applicationStatus: ApplicationStatus) -> ZMStrategyConfigurationOption {
         var prerequisites: ZMStrategyConfigurationOption = []
 
-        if applicationStatus.synchronizationState == .unauthenticated {
+        switch applicationStatus.synchronizationState {
+        case .unauthenticated:
             prerequisites.insert(.allowsRequestsWhileUnauthenticated)
-        }
-
-        if applicationStatus.synchronizationState == .slowSyncing {
+        case .slowSyncing:
             prerequisites.insert(.allowsRequestsDuringSlowSync)
-        }
-
-        if applicationStatus.synchronizationState == .establishingWebsocket {
+        case .establishingWebsocket:
             prerequisites.insert(.allowsRequestsWhileWaitingForWebsocket)
-        }
-
-        if applicationStatus.synchronizationState == .quickSyncing {
+        case .quickSyncing:
             prerequisites.insert(.allowsRequestsDuringQuickSync)
-        }
-
-        if applicationStatus.synchronizationState == .online {
+        case .online:
             prerequisites.insert(.allowsRequestsWhileOnline)
         }
 

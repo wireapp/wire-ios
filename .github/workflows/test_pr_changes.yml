@@ -15,45 +15,31 @@ jobs:
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
-    if: github.event.pull_request.draft == false
+    if: >
+      github.event.action != 'edited' || (
+        github.event.changes.title == null &&
+        github.event.changes.body == null &&
+        github.event.changes.assignees == null &&
+        github.event.changes.reviewers == null &&
+        github.event.changes.labels == null
+      ) && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     # Set job outputs to values from filter step
     outputs:
       folders: ${{ steps.filter.outputs.changes }}
-      wire-ios: ${{ steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.carthage == 'true' }}
-      wire-reusable-ui-components: ${{ steps.filter.outputs.wire-reusable-ui-components }}
-      wire-design: ${{ steps.filter.outputs.wire-design }}
-      wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
-      wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
-      wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
-      wire-ios-request-strategy: ${{ steps.filter.outputs.wire-ios-request-strategy }}
-      wire-api: ${{ steps.filter.outputs.wire-api }}
-      wire-domain: ${{ steps.filter.outputs.wire-domain }}
-      wire-ios-transport: ${{ steps.filter.outputs.wire-ios-transport }}
-      wire-ios-share-engine: ${{ steps.filter.outputs.wire-ios-share-engine }}
-      wire-ios-cryptobox: ${{ steps.filter.outputs.wire-ios-cryptobox }}
-      wire-ios-mocktransport: ${{ steps.filter.outputs.wire-ios-mocktransport }}
-      wire-ios-notification-engine: ${{ steps.filter.outputs.wire-ios-notification-engine }}
-      wire-ios-protos: ${{ steps.filter.outputs.wire-ios-protos }}
-      wire-ios-images: ${{ steps.filter.outputs.wire-ios-images }}
-      wire-ios-link-preview : ${{ steps.filter.outputs.wire-ios-link-preview }}
-      wire-ios-utilities: ${{ steps.filter.outputs.wire-ios-utilities }}
-      wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
 
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+        with:
+          lfs: 'true'
+      - uses: dorny/paths-filter@v2
         id: filter
         with:
           filters: |
             wire-ios:
               - 'wire-ios/**'
-            wire-reusable-ui-components:
-              - 'WireUI/Sources/WireReusableUIComponents/**'
-              - 'WireUI/Tests/WireReusableUIComponentsTests/**'
-            wire-design:
-              - 'WireUI/Sources/WireDesign/**'
-              - 'WireUI/Tests/WireDesignTests/**'
+            WireUI:
+              - 'WireUI/**'
             wire-ios-share-engine:
               - 'wire-ios-share-engine/**'
             wire-ios-notification-engine:
@@ -62,10 +48,18 @@ jobs:
               - 'wire-ios-sync-engine/**'
             wire-ios-request-strategy:
               - 'wire-ios-request-strategy/**'
-            wire-api:
+            WireAPI:
               - 'WireAPI/**'
-            wire-domain:
-              - 'WireDomain/**'
+            WireAnalytics:
+              - 'WireAnalytics/Sources/WireAnalytics/**'
+              - 'WireAnalytics/Sources/WireDatadog/**'
+            WireDomain:
+              - 'WireDomain/Project/**'
+              - 'WireDomain/*.*'
+              - 'WireDomain/Sources/Package/**'
+              - 'WireDomain/Sources/PackageSupport/**'
+              - 'WireDomain/Sources/WireDomain/**'
+              - 'WireDomain/Sources/WireDomainSupport/**'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
             wire-ios-transport:
@@ -84,8 +78,12 @@ jobs:
               - 'wire-ios-utilities/**'
             wire-ios-testing:
               - 'wire-ios-testing/**'
+            WireFoundation:
+              - 'WireFoundation/**'
             wire-ios-system:
-              - 'wire-ios-system/**'  
+              - 'wire-ios-system/**'
+            scripts:
+              - 'scripts/**'
             carthage:
               - 'Cartfile.resolved'
 
@@ -93,5 +91,6 @@ jobs:
     needs: detect-changes
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
-      folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ', ') }}
+      folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+      branch: ${{ github.head_ref }}
     secrets: inherit

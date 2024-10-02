@@ -33,17 +33,16 @@
 @property (nonatomic, readonly) ZMSingleRequestProgress status;
 
 /// Date of last call to `resetFetching`
-@property (nonatomic, readonly) NSDate *lastResetFetchDate;
+@property (nonatomic, readonly, nullable) NSDate *lastResetFetchDate;
 
 
-- (instancetype)initWithBasePath:(NSString *)basePath
-                        startKey:(NSString *)startKey
-                        pageSize:(NSUInteger)pageSize
-            managedObjectContext:(NSManagedObjectContext *)moc
-                 includeClientID:(BOOL)includeClientID
-                      transcoder:(id<ZMSimpleListRequestPaginatorSync>)transcoder;
+- (nonnull instancetype)initWithBasePath:(nonnull NSString *)basePath
+                                startKey:(nonnull NSString *)startKey
+                                pageSize:(NSUInteger)pageSize
+                    managedObjectContext:(nonnull NSManagedObjectContext *)moc
+                              transcoder:(nullable id<ZMSimpleListRequestPaginatorSync>)transcoder;
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
+- (nullable ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 /// this will cause the fetch to restart at the nextPaginatedRequest
 - (void)resetFetching;
@@ -54,26 +53,28 @@
 
 @protocol ZMSimpleListRequestPaginatorSync <NSObject>
 
+- (nullable NSString *)selfClientID;
+
 /// returns the next UUID to be used as the starting point for the next request
-- (NSUUID *)nextUUIDFromResponse:(ZMTransportResponse *)response forListPaginator:(ZMSimpleListRequestPaginator *)paginator;
+- (nullable NSUUID *)nextUUIDFromResponse:(nonnull ZMTransportResponse *)response forListPaginator:(nonnull ZMSimpleListRequestPaginator *)paginator;
 
 
 /// Returns an NSUUID to start with after calling resetFetching
 @optional
-- (NSUUID *)startUUID;
+- (nullable NSUUID *)startUUID;
 
 /// Returns YES, if the error response for a specific statusCode should be parsed (e.g. if the payload contains content that needs to be processed)
 @optional
-- (BOOL)shouldParseErrorForResponse:(ZMTransportResponse*)response;
+- (BOOL)shouldParseErrorForResponse:(nonnull ZMTransportResponse*)response;
 
 @optional
-- (void)parseTemporaryErrorForResponse:(ZMTransportResponse*)response;
+- (void)parseTemporaryErrorForResponse:(nonnull ZMTransportResponse*)response;
 
 @optional
 - (void)startSlowSync;
 
 @optional
-- (BOOL)shouldStartSlowSync:(ZMTransportResponse *)response;
+- (BOOL)shouldStartSlowSync:(nonnull ZMTransportResponse *)response;
 
 @end
 

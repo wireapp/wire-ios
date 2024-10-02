@@ -16,19 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class IncomingRequestFooterTests: XCTestCase {
 
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         UIColor.setAccentOverride(.blue)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         UIColor.setAccentOverride(nil)
         super.tearDown()
     }
@@ -37,18 +47,18 @@ final class IncomingRequestFooterTests: XCTestCase {
 
     func testIncomingRequestFooter_Light() {
         let footer = IncomingRequestFooterView()
-        footer.overrideUserInterfaceStyle = .light
         let view = footer.prepareForSnapshots()
 
-        verify(matching: view)
+        snapshotHelper.verify(matching: view)
     }
 
     func testIncomingRequestFooter_Dark() {
         let footer = IncomingRequestFooterView()
-        footer.overrideUserInterfaceStyle = .dark
         let view = footer.prepareForSnapshots()
 
-        verify(matching: view)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view)
     }
 
 }

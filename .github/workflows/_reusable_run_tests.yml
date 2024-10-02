@@ -7,6 +7,9 @@ on:
         type: boolean
         default: false
         required: false
+      branch:
+        type: string
+        required: true
     secrets:
       ZENKINS_USERNAME:
         required: true
@@ -26,7 +29,10 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'true'
 
       - name: Retrieve Xcode version
         run: |
@@ -76,7 +82,37 @@ jobs:
       - name: "Test all selected frameworks" 
         id: set_frameworks
         run: |
-          bundle exec fastlane test_frameworks folders:${{ inputs.folders }}
+          bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
+
+      # Step to find all .xcresult files and analyze each one
+      - name: Analyze xcresult files
+        run: |
+          # Find all .xcresult files under the artifacts directory
+          find artifacts/ -type f -name "*.xcresult" | while read result; do
+            echo "Analyzing $result"
+            # Run the analysis action for each .xcresult file
+            gh action run analyze-xcoderesults-action@v0.1.9 \
+              --with results="$result" \
+              --with warningAnnotations=true \
+              --with GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          done
+
+      # Scripts
+      - name: Test Scripts
+        if: ${{ contains(inputs.folders, 'scripts') || inputs.all }}
+        run: |
+          echo "Scripts has changes"
+          echo "Testing Scripts..."
+          xcrun swift test --package-path ./scripts
+
+      - name: Upload Failed snapshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Failed Snapshots and log
+          path: |
+            wire-ios/SnapshotResults/
+            xcodebuild*.log
 
       - name: Save cache with warning counts
         # This step should only run for the test_develop.yml workflow
@@ -85,14 +121,15 @@ jobs:
         with:
           path: Danger.results
           key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}-Danger.results
-  
+
       - name: Upload Test Reports as Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-reports
           path: |
             build/reports/*.junit
+            artifacts/**/*.junit
 
       - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2
@@ -100,10 +137,11 @@ jobs:
         with:
           files: |
             build/reports/*.junit
+            artifacts/**/*.junit
           compare_to_earlier_commit: false
 
       - name: Archiving DerivedData Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: derived-data-xcode
@@ -112,11 +150,11 @@ jobs:
             ~/Library/Logs/DiagnosticReports/**
 
       - name: Notify on Wire if failed
-        if: ${{ failure() && github.ref_name == 'develop' }}
+        if: ${{ failure() && inputs.all }}
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "🆘 Tests for 'develop' failed 🆘\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: "🆘 Tests for '${{ github.ref_name }}' failed 🆘\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
   
   upload-test-results-datadadog:
     runs-on: ubuntu-latest

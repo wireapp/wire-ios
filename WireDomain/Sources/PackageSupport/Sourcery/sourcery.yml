@@ -1,0 +1,8 @@
+sources:
+- ${PACKAGE_ROOT_DIR}/Sources/WireDomain
+templates:
+- ${TARGET_DIR}/Sourcery/AutoMockable.stencil
+output:
+   ${DERIVED_SOURCES_DIR}
+args:
+   autoMockableImports: ["WireDomainPkg"]

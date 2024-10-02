@@ -67,15 +67,6 @@ final class CallParticipantsSnapshot {
         return ZMUser.selfUser(in: moc)
     }
 
-    /// Worst network quality of all the participants.
-
-    var networkQuality: NetworkQuality {
-        return members.array
-            .map(\.networkQuality)
-            .sorted { $0.rawValue < $1.rawValue }
-            .last ?? .normal
-    }
-
     // MARK: - Life Cycle
 
     init(conversationId: AVSIdentifier, members: [AVSCallMember], callCenter: WireCallCenterV3) {
@@ -88,20 +79,6 @@ final class CallParticipantsSnapshot {
 
     func callParticipantsChanged(participants: [AVSCallMember]) {
         members = type(of: self).removeDuplicateMembers(participants)
-    }
-
-    func callParticipantNetworkQualityChanged(client: AVSClient, networkQuality: NetworkQuality) {
-        guard let localMember = findMember(with: client) else { return }
-
-        let updatedMember = AVSCallMember(client: client,
-                                          audioState: localMember.audioState,
-                                          videoState: localMember.videoState,
-                                          microphoneState: localMember.microphoneState,
-                                          networkQuality: networkQuality)
-
-        members = OrderedSetState(array: members.array.map({ member in
-            member == localMember ? updatedMember : member
-        }))
     }
 
     // MARK: - Helpers

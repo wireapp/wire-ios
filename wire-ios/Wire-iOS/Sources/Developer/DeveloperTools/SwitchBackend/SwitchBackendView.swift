@@ -31,6 +31,12 @@ struct SwitchBackendView: View {
         List(viewModel.items, rowContent: itemView(for:))
             .navigationTitle("Switch backend")
             .navigationBarTitleDisplayMode(.inline)
+            .alert(item: $viewModel.alertItem) { alertItem in
+                Alert(title: Text(""),
+                      message: Text(alertItem.message),
+                      dismissButton: .default(Text("OK")) { alertItem.action?() }
+                )
+            }
     }
 
     @ViewBuilder
@@ -46,13 +52,7 @@ struct SwitchBackendView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             viewModel.handleEvent(.itemTapped(item))
-        }.alert(item: $viewModel.alertItem) { alertItem in
-            Alert(title: Text(""),
-                  message: Text(alertItem.message),
-                  dismissButton: .default(Text("OK")) { alertItem.action?() }
-            )
         }
-
     }
 }
 

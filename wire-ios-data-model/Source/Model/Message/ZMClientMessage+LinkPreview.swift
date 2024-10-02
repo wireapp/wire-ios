@@ -79,7 +79,7 @@ extension ZMClientMessage {
     }
 
     public func fetchLinkPreviewImageData(
-        with queue: DispatchQueue,
+        queue: DispatchQueue,
         completionHandler: @escaping (_ imageData: Data?) -> Void
     ) {
         let cache = managedObjectContext?.zm_fileAssetCache
@@ -107,16 +107,14 @@ extension ZMClientMessage {
                 return
             }
 
-            if
-                let mediumKey,
+            if let mediumKey,
                 let encryptionKey,
                 let digest,
                 let data = cache.decryptData(
                     key: mediumKey,
                     encryptionKey: encryptionKey,
                     sha256Digest: digest
-                )
-            {
+                ) {
                 completionHandler(data)
             } else if let fallbackKey {
                 completionHandler(cache.assetData(fallbackKey))

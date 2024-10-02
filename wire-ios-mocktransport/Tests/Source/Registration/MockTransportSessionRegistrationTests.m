@@ -17,6 +17,7 @@
 //
 
 #import "MockTransportSessionTests.h"
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 @import WireMockTransport;
 
 @interface MockTransportSessionRegistrationTests : MockTransportSessionTests
@@ -33,7 +34,7 @@
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat: @"email == %@", email];
         
-        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
         
         if (users.count == 1) {
             user = users[0];
@@ -50,8 +51,8 @@
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
         
-        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
+        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
         if (users.count == 1) {
             user = users[0];
         }

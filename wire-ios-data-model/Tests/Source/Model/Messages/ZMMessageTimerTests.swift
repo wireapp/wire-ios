@@ -35,13 +35,13 @@ class ZMMessageTimerTests: BaseZMMessageTests {
         super.tearDown()
     }
 
-    func testThatItDoesNotCreateBackgroundActivityWhenTimerStarted() {
+    func testThatItDoesNotCreateBackgroundActivityWhenTimerStarted() throws {
         // given
         XCTAssertFalse(BackgroundActivityFactory.shared.isActive)
-        let message = createClientTextMessage(withText: "hello")
+        let message = try XCTUnwrap(createClientTextMessage(withText: "hello"))
 
         // when
-        sut.start(forMessageIfNeeded: message, fire: Date(timeIntervalSinceNow: 1.0), userInfo: [:])
+        sut.startTimerIfNeeded(for: message, fireDate: Date(timeIntervalSinceNow: 1.0), userInfo: [:])
 
         // then
         let timer = sut.timer(for: message)
@@ -50,24 +50,24 @@ class ZMMessageTimerTests: BaseZMMessageTests {
         XCTAssertFalse(BackgroundActivityFactory.shared.isActive)
     }
 
-    func testThatItRemovesTheInternalTimerAfterTimerFired() {
+    func testThatItRemovesTheInternalTimerAfterTimerFired() throws {
         // given
-        let message = createClientTextMessage(withText: "hello")
+        let message = try XCTUnwrap(createClientTextMessage(withText: "hello"))
         let expectation = self.customExpectation(description: "timer fired")
         sut.timerCompletionBlock = { _, _ in expectation.fulfill() }
 
         // when
-        sut.start(forMessageIfNeeded: message, fire: Date(), userInfo: [:])
+        sut.startTimerIfNeeded(for: message, fireDate: Date(), userInfo: [:])
         _ = waitForCustomExpectations(withTimeout: 0.5)
 
         // then
         XCTAssertNil(sut.timer(for: message))
     }
 
-    func testThatItRemovesTheInternalTimerWhenTimerStopped() {
+    func testThatItRemovesTheInternalTimerWhenTimerStopped() throws {
         // given
-        let message = createClientTextMessage(withText: "hello")
-        sut.start(forMessageIfNeeded: message, fire: Date(), userInfo: [:])
+        let message = try XCTUnwrap(createClientTextMessage(withText: "hello"))
+        sut.startTimerIfNeeded(for: message, fireDate: Date(), userInfo: [:])
 
         // when
         sut.stop(for: message)

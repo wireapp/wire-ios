@@ -106,10 +106,6 @@ final class ServiceDetailViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        if let title = self.service.serviceUser.name {
-            navigationItem.setupNavigationBarTitle(title: title.capitalized)
-        }
-
         setupViews()
     }
 
@@ -121,15 +117,28 @@ final class ServiceDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(icon: .cross,
-                                                                 target: self,
-                                                                 action: #selector(ServiceDetailViewController.dismissButtonTapped(_:)))
-        self.navigationItem.rightBarButtonItem?.accessibilityIdentifier = "close"
-        self.navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceDetails.CloseButton.description
+        if let title = self.service.serviceUser.name {
+            setupNavigationBarTitle(title)
+        }
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            icon: .cross,
+            target: self,
+            action: #selector(ServiceDetailViewController.dismissButtonTapped(_:))
+        )
+        navigationItem.rightBarButtonItem?.accessibilityIdentifier = "close"
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceDetails.CloseButton.description
     }
 
     private func setupViews() {
-        actionButton.addCallback(for: .touchUpInside, callback: callback(for: actionType, completion: self.completion))
+        actionButton.addCallback(
+            for: .primaryActionTriggered,
+            callback: callback(
+                for: actionType,
+                sender: actionButton,
+                completion: completion
+            )
+        )
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
@@ -158,8 +167,8 @@ final class ServiceDetailViewController: UIViewController {
             detailView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            actionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(16 + UIScreen.safeArea.bottom)),
-            detailView.topAnchor.constraint(equalTo: safeTopAnchor, constant: 16),
+            actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            detailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             actionButton.topAnchor.constraint(equalTo: detailView.bottomAnchor, constant: 16),
             actionButton.heightAnchor.constraint(equalToConstant: 48)
         ])
@@ -172,18 +181,23 @@ final class ServiceDetailViewController: UIViewController {
 
     @objc
     func dismissButtonTapped(_ sender: AnyObject!) {
-        self.navigationController?.dismiss(animated: true, completion: { [weak self] in
+        self.navigationController?.dismiss(animated: true) { [weak self] in
             self?.completion?(nil)
-        })
+        }
     }
 
-    func callback(for type: ActionType, completion: Completion?) -> Callback<LegacyButton> {
-        return { [weak self] _ in
+    func callback(
+        for type: ActionType,
+        sender: UIView,
+        completion: Completion?
+    ) -> Callback<LegacyButton> {
+        { [weak self] _ in
             guard let `self`, let userSession = userSession as? ZMUserSession else {
                 return
             }
             let serviceUser = self.service.serviceUser
             switch type {
+
             case let .addService(conversation):
                 conversation.add(serviceUser: serviceUser, in: userSession) { result in
 
@@ -195,8 +209,15 @@ final class ServiceDetailViewController: UIViewController {
                         completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
                     }
                 }
+
             case let .removeService(conversation):
-                self.presentRemoveDialogue(for: serviceUser, from: conversation, dismisser: self.viewControllerDismisser)
+                self.presentRemoveDialogue(
+                    for: serviceUser,
+                    from: conversation,
+                    sender: sender,
+                    dismisser: self.viewControllerDismisser
+                )
+
             case .openConversation:
                 if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: userSession.selfUser.membership?.team) {
                     completion?(.success(conversation: existingConversation))

@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/properties/WIRE_TYPING_INDICATOR_MODE"
+  - method: get
+  - body: none

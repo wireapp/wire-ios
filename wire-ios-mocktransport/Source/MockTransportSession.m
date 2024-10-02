@@ -29,6 +29,7 @@
 #import "MockPreKey.h"
 #import "MockReachability.h"
 #import "WireMockTransport/WireMockTransport-Swift.h"
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 NSString * const ZMPushChannelStateChangeNotificationName = @"ZMPushChannelStateChangeNotification";
 NSString * const ZMPushChannelIsOpenKey = @"pushChannelIsOpen";
@@ -115,7 +116,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     self = [super init];
     if (self != nil) {
         if (group == nil) {
-            group = [ZMSDispatchGroup groupWithLabel:@"MockTransportSession"];
+            group = [[ZMSDispatchGroup alloc] initWithLabel:@"MockTransportSession"];
         }
         [self setupWithDispatchGroup:group];
         _generatedTransportRequests = [NSMutableArray array];
@@ -139,6 +140,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.domain = @"wire.com";
         self.federation = false;
         self.isAPIVersionEndpointAvailable = true;
+        self.isInternalError = false;
     }
     return self;
 }
@@ -353,7 +355,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     NSFetchRequest *request = [MockConnection sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat:@"from.identifier == %@ AND to.identifier == %@", fromUserIdentifier, toUserIdentifier];
     
-    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
     RequireString(connections.count <= 1, "Too many connections with one identifier");
     
     return [connections firstObject];
@@ -569,8 +571,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 {
     NSFetchRequest *request = [MockConnection sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat:@"(from == %@) AND (to == %@)", user, otherUser];
-    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:request];
-    
+    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
+
     if (connections.count == 0) {
         return nil;
     }
@@ -771,7 +773,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"email == %@", email];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
     for(MockUser *user in users) {
         user.isEmailValidated = YES;
     }
@@ -788,7 +790,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     NSFetchRequest *request = [MockConnection sortedFetchRequest];
     request.predicate = predicate;
     
-    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
     MockConnection *connection = connections.firstObject;
     [connection accept];
 }
@@ -834,8 +836,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     NSFetchRequest *userClientFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
     userClientFetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND user == %@", identifier, user];
     
-    NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert:userClientFetchRequest];
-    
+    NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert_mt:userClientFetchRequest];
+
     for(MockUserClient *result in results) {
         [self.managedObjectContext deleteObject:result];
     }
@@ -851,7 +853,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     NSFetchRequest *userFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"User"];
     userFetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", remoteIdentifier];
     
-    NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert:userFetchRequest];
+    NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert_mt:userFetchRequest];
     return results.firstObject;
 }
 
@@ -860,7 +862,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     NSFetchRequest *userClientFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
     userClientFetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND user == %@", remoteIdentifier, user];
     
-    NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert:userClientFetchRequest];
+    NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert_mt:userClientFetchRequest];
     return results.firstObject;
 }
 

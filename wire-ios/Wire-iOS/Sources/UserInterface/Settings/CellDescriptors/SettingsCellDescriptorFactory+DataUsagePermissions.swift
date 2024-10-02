@@ -21,10 +21,7 @@ import Foundation
 extension SettingsCellDescriptorFactory {
     func dataUsagePermissionsGroup(isTeamMember: Bool) -> SettingsCellDescriptorType {
 
-        let sendCrashData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.disableCrashSharing), inverse: true)
-        let sendCrashDataSection = SettingsSectionDescriptor(cellDescriptors: [sendCrashData], footer: L10n.Localizable.Self.Settings.PrivacyCrashMenu.Description.title)
-
-        var items: [SettingsSectionDescriptor] = [sendCrashDataSection]
+        var items: [SettingsSectionDescriptor] = []
 
         // show analytics toggle for team members only
         if isTeamMember {
@@ -33,11 +30,6 @@ extension SettingsCellDescriptorFactory {
 
             items.append(sendAnalyticsDataSection)
         }
-
-        let receiveNewsAndOffersData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.receiveNewsAndOffers))
-        let receiveNewsAndOffersSection = SettingsSectionDescriptor(cellDescriptors: [receiveNewsAndOffersData], footer: L10n.Localizable.Self.Settings.ReceiveNewsAndOffers.Description.title)
-
-        items.append(receiveNewsAndOffersSection)
 
         return SettingsGroupCellDescriptor(
             items: items,

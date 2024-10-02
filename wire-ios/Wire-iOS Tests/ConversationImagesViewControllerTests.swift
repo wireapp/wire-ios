@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 extension SelfUser {
 
@@ -36,18 +38,18 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
-    var sut: ConversationImagesViewController! = nil
-    var navigatorController: UINavigationController! = nil
-    var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationImagesViewController! = nil
+    private var navigatorController: UINavigationController! = nil
+    private var userSession: UserSessionMock!
 
-    override var needsCaches: Bool {
-        return true
-    }
+    override var needsCaches: Bool { true }
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
         snapshotBackgroundColor = UIColor.white
@@ -74,28 +76,35 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
+
+        snapshotHelper = .init()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
     func testForWrappedInNavigationController() {
-        verify(matching: navigatorController.view)
+        snapshotHelper.verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Normal() {
+        // GIVEN & WHEN
         sut.setBoundsSizeAsIPhone4_7Inch()
 
-        verify(matching: navigatorController.view)
+        // THEN
+        snapshotHelper.verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Ephemeral() {
+        // GIVEN & WHEN
         let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.isEphemeral = true
@@ -106,10 +115,12 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         // Calls viewWillAppear
         sut.beginAppearanceTransition(true, animated: false)
 
-        verify(matching: navigatorController.view)
+        // THEN
+        snapshotHelper.verify(matching: navigatorController.view)
     }
 
     // MARK: - Unit Tests
+
     // Update toolbar buttons for switching between ephemeral/normal messages
 
     func testThatToolBarIsUpdateAfterScollToAnEphemeralImage() {
@@ -123,7 +134,11 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         sut.viewDidLoad()
 
         // THEN
-        XCTAssertEqual(sut.buttonsBar.buttons.count, 7)
+        XCTAssertEqual(
+            sut.buttonsBar.buttons.map(\.accessibilityLabel),
+            ["Sketch over picture", "Sketch emoji over picture", "Copy picture", "Save picture", "Reveal in conversation", "Delete picture"]
+        )
+        print(sut.buttonsBar.buttons.map { $0.accessibilityLabel })
 
         // WHEN
         message.isEphemeral = true
@@ -131,6 +146,5 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
         // THEN
         XCTAssertEqual(sut.buttonsBar.buttons.count, 1)
-
     }
 }

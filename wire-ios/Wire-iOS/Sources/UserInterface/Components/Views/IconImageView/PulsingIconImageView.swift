@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol PulsingIconImageStyle {
     var shouldPulse: Bool { get }

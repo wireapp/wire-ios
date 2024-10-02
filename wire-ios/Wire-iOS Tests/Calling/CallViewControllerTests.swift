@@ -134,7 +134,10 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
     func testThatCallGridViewControllerDelegate_ForwardsVideoStreamsRequestToVoiceChannel() {
         // Given
         let configuration = MockCallGridViewControllerInput()
-        let viewController = CallGridViewController(configuration: configuration)
+        let viewController = CallGridViewController(
+            voiceChannel: mockVoiceChannel,
+            configuration: configuration
+        )
         let clients = [
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString()),
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString())

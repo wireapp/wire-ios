@@ -16,21 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireTransport
+import XCTest
 
 extension ZMOperationLoopTests {
 
-    // MARK: - Helpers
+    // MARK: - BackendInfo Helpers
 
     @objc
-    func setCurrentAPIVersion(_ apiVersion: APIVersion) {
-        setCurrentAPIVersion(.some(apiVersion))
-    }
-
-    @objc
-    func clearCurrentAPIVersion() {
-        // we want to remove the apiVersion here
-        setCurrentAPIVersion(nil)
+    func setBackendInfoAPIVersionNil() {
+        BackendInfo.apiVersion = nil
     }
 
     // MARK: - Tests

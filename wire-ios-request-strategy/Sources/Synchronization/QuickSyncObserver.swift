@@ -23,35 +23,52 @@ public protocol QuickSyncObserverInterface {
     func waitForQuickSyncToFinish() async
 }
 
-public class QuickSyncObserver: QuickSyncObserverInterface {
+public final class QuickSyncObserver: QuickSyncObserverInterface {
 
-    let context: NSManagedObjectContext
-    let applicationStatus: ApplicationStatus
-    let notificationContext: NotificationContext
+    private let context: NSManagedObjectContext
+    private let applicationStatus: ApplicationStatus
+    private let notificationCenter: NotificationCenter = .default
+    private let notificationContext: NotificationContext
 
-    public init(context: NSManagedObjectContext, applicationStatus: ApplicationStatus, notificationContext: NotificationContext) {
+    public init(
+        context: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        notificationContext: NotificationContext
+    ) {
         self.context = context
         self.applicationStatus = applicationStatus
         self.notificationContext = notificationContext
     }
 
     public func waitForQuickSyncToFinish() async {
-        func quickSyncHasCompleted() async -> Bool {
-            await context.perform {
-                return self.applicationStatus.synchronizationState == .online
-            }
-        }
-
         if await quickSyncHasCompleted() {
+            WireLogger.messaging.info(
+                "no need to wait, because quick sync has completed",
+                attributes: .safePublic
+            )
             return
         }
 
-        WireLogger.messaging.debug("Waiting for app to be online before sending message")
-        for await _ in NotificationCenter.default.notifications(
+        WireLogger.messaging.info(
+            "Waiting for app to be online before sending message",
+            attributes: .safePublic
+        )
+
+        for await _ in notificationCenter.notifications(
             named: .quickSyncCompletedNotification,
             object: notificationContext
         ) {
+            WireLogger.messaging.info(
+                "Quick sync finished",
+                attributes: .safePublic
+            )
             break
+        }
+    }
+
+    private func quickSyncHasCompleted() async -> Bool {
+        await context.perform {
+            self.applicationStatus.synchronizationState == .online
         }
     }
 }

@@ -33,11 +33,7 @@ public enum CaptureDevice: Int {
     }
 }
 
-public protocol VoiceChannel: CallProperties, CallActions, CallActionsInternal, CallObservers {
-
-    init(conversation: ZMConversation)
-
-}
+public protocol VoiceChannel: CallProperties, CallActions, CallActionsInternal, CallObservers {}
 
 public protocol CallProperties: NSObjectProtocol {
 

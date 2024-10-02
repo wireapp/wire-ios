@@ -34,4 +34,12 @@ public struct EndToEndIdentityFeatureConfig: Equatable, Codable {
 
     public let verificationExpiration: UInt
 
+    /// The crl proxy URL
+
+    public let crlProxy: String?
+
+    /// Uses proxy on mobile
+
+    public let useProxyOnMobile: Bool
+
 }

@@ -17,26 +17,25 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
 
-@objcMembers class MockOTREntity: OTREntity, Hashable {
+@testable import WireRequestStrategy
+
+final class MockOTREntity: OTREntity {
 
     var context: NSManagedObjectContext
     var expirationDate: Date?
+    var shouldExpire: Bool = false
     var isExpired: Bool = false
     var shouldIgnoreTheSecurityLevelCheck: Bool = false
-    public func expire() {
-        isExpired = true
-    }
-    public var expirationReasonCode: NSNumber?
+    var expirationReasonCode: NSNumber?
 
     let messageData: Data
 
-    public func missesRecipients(_ recipients: Set<UserClient>!) {
+    func missesRecipients(_ recipients: Set<UserClient>) {
         // no-op
     }
-    public var conversation: ZMConversation?
+    var conversation: ZMConversation?
 
     var isMissingClients = false
     var didCallHandleClientUpdates = false
@@ -51,10 +50,6 @@ import XCTest
         self.context = context
     }
 
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(self.conversation!)
-    }
-
     func detectedRedundantUsers(_ users: [ZMUser]) {
         // no-op
     }
@@ -67,21 +62,36 @@ import XCTest
         isFailedToSendUsers = true
     }
 
+    func expire(withReason reason: ExpirationReason) {
+        isExpired = true
+        expirationReasonCode = NSNumber(value: reason.rawValue)
+    }
+
 }
 
 extension MockOTREntity: ProteusMessage {
+    func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {
+    }
+
+    var targetRecipients: WireRequestStrategy.Recipients {
+        .conversationParticipants
+    }
+
+    func prepareMessageForSending() async throws {
+
+    }
+
     var debugInfo: String {
         "Mock ProteusMessage"
     }
 
-    func encryptForTransport() -> EncryptedPayloadGenerator.Payload? {
-        return ("non-qualified".data(using: .utf8)!, .doNotIgnoreAnyMissingClient)
+    var underlyingMessage: GenericMessage? {
+        return nil
     }
 
-    func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
-        return ("qualified".data(using: .utf8)!, .doNotIgnoreAnyMissingClient)
+    func setExpirationDate() {
+        // no-op
     }
-
 }
 
 func == (lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {

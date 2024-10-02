@@ -16,29 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class ConfirmEmailViewControllerTests: XCTestCase {
 
-    var sut: ConfirmEmailViewController!
-    var userSession: UserSessionMock!
+    // MARK: Properties
+
+    private var sut: ConfirmEmailViewController!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         sut = ConfirmEmailViewController(newEmail: "bill@wire.com", delegate: nil, userSession: userSession)
         sut.overrideUserInterfaceStyle = .dark
     }
 
+    // MARK: tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         userSession = nil
         sut = nil
         super.tearDown()
     }
 
-    func testConfirmationSentToEmail() {
-        verify(matching: sut.view)
+    // MARK: Snapshot Tests
+
+    func testConfirmationSentToEmail_Dark() {
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.view)
     }
 }

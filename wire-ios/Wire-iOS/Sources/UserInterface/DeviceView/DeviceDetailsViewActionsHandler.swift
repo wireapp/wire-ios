@@ -124,11 +124,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func getProteusFingerPrint() async -> String {
-        guard let data = await getProteusFingerprint.invoke(userClient: userClient),
-                let fingerPrint = String(data: data, encoding: .utf8) else {
+        guard let data = await getProteusFingerprint.invoke(userClient: userClient) else {
             logger.error("Valid fingerprint data is missing")
             return ""
         }
+        let fingerPrint = String(decoding: data, as: UTF8.self)
         return fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
     }
 
@@ -139,7 +139,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             logger.error(errorDescription)
             throw DeviceDetailsActionsError.failedAction(errorDescription)
         }
-        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
         return try await e2eiCertificateEnrollment.invoke(
             authenticate: oauthUseCase.invoke
         )

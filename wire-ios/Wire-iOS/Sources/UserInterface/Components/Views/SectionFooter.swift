@@ -72,7 +72,7 @@ final class SectionFooter: UICollectionReusableView {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    class func register(collectionView: UICollectionView) {
+    static func register(collectionView: UICollectionView) {
         collectionView.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter")
     }
 }

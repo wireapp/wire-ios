@@ -43,7 +43,7 @@ extension ConversationListViewController {
 
         let user = ZMUser.selfUser(inUserSession: session)
 
-        let accountView = AccountViewBuilder(account: viewModel.account, user: user, displayContext: .conversationListHeader).build()
+        let accountView = PersonalAccountView(account: viewModel.account, user: user, displayContext: .conversationListHeader)
         accountView.unreadCountStyle = .current
         accountView.autoUpdateSelection = false
 
@@ -94,8 +94,10 @@ extension ConversationListViewController {
             guard userStatusViewController == nil else { return }
 
             let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
-            navigationItem.titleView = userStatusViewController.view
             userStatusViewController.delegate = self
+            navigationController?.addChild(userStatusViewController)
+            navigationItem.titleView = userStatusViewController.view
+            userStatusViewController.didMove(toParent: navigationController)
             self.userStatusViewController = userStatusViewController
 
         } else {

@@ -348,7 +348,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     private func createAndAddConstraints() {
 
-        topStackTopConstraint = topStack.topAnchor.constraint(equalTo: view.safeTopAnchor,
+        topStackTopConstraint = topStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
                                                               constant: topStackTopConstraintConstant)
 
         contentViewWidthConstraint = contentView.widthAnchor.constraint(equalToConstant: 375)
@@ -368,10 +368,10 @@ final class LandingViewController: AuthenticationStepViewController {
                                                                                       constant: subMessageLabelConstraintsConstant)
 
         createAccountInfoLabelTopConstraint = createAccountInfoLabel.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor,
-                                                                                        constant: 98)
+                                                                                          constant: 98)
 
-        createAccountButtomBottomConstraint = createAccountButton.bottomAnchor.constraint(equalTo: view.safeBottomAnchor,
-                                                                                         constant: -35)
+        createAccountButtomBottomConstraint = createAccountButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                                                                          constant: -35)
 
         NSLayoutConstraint.activate([
             // top stack view
@@ -450,10 +450,9 @@ final class LandingViewController: AuthenticationStepViewController {
         if SessionManager.shared?.firstAuthenticatedAccount == nil {
             navigationItem.rightBarButtonItem = nil
         } else {
-            let cancelItem = UIBarButtonItem(icon: .cross, target: self, action: #selector(cancelButtonTapped))
-            cancelItem.accessibilityIdentifier = "CancelButton"
-            cancelItem.accessibilityLabel = L10n.Localizable.General.cancel
-            navigationItem.rightBarButtonItem = cancelItem
+            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                self?.cancelButtonTapped()
+            }, accessibilityLabel: L10n.Localizable.General.cancel)
         }
     }
 
@@ -514,7 +513,6 @@ final class LandingViewController: AuthenticationStepViewController {
         delegate?.landingViewControllerDidChooseEnterpriseLogin()
     }
 
-    @objc
     private func cancelButtonTapped() {
         guard let account = SessionManager.shared?.firstAuthenticatedAccount else { return }
         SessionManager.shared!.select(account)

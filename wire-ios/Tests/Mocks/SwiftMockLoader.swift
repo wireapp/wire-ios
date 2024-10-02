@@ -20,11 +20,11 @@ import Foundation
 
 final class SwiftMockLoader {
 
-    class func mockUsers() -> [MockUserType] {
+    static func mockUsers() -> [MockUserType] {
         return mockUsers(fromResource: "people-01.json")
     }
 
-    class func mockUsers(fromResource resource: String) -> [MockUserType] {
+    static func mockUsers(fromResource resource: String) -> [MockUserType] {
         let fileName = (resource as NSString).deletingPathExtension
         let fileExtension = (resource as NSString).pathExtension
 

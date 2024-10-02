@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
 
-"general.guest-room-name" = "访客聊天室";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = "(你)";
@@ -51,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "通过您的名字或用户名搜索";
 "peoplepicker.header.top_people" = "常联系的人";
-"peoplepicker.button.create_conversation" = "创建群聊";
+"peoplepicker.button.create_conversation" = "创建群聊\n";
 "peoplepicker.button.add_to_conversation" = "添加参与者";
 "peoplepicker.header.conversations" = "群组";
 "peoplepicker.header.team_conversations" = "%@ 组";
@@ -102,8 +102,8 @@
 "peoplepicker.invite_more_people" = "邀请更多人";
 "peoplepicker.invite_team_members" = "邀请好友使用Wire";
 "peoplepicker.quick-action.open-conversation" = "开启";
-"peoplepicker.quick-action.create-conversation" = "创建群聊";
-"peoplepicker.quick-action.create-guest-room" = "创建访客聊天室";
+"peoplepicker.quick-action.create-conversation" = "创建群聊\n";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "管理服务";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,18 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "点击激活";
 "conversation_list.header.self_team.accessibility_value.active" = "立即激活";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "有新消息。";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "联络人";
-"conversation_list.bottom_bar.conversations.title" = "会话";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "归档";
-
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "帮助我们改善Wire";
-"conversation_list.data_usage_permission_alert.message" = "我同意，Wire可以创建和使用匿名的使用和错误报告来改进Wire应用。我随时可以撤销此授权。";
-"conversation_list.data_usage_permission_alert.disagree" = "否";
-"conversation_list.data_usage_permission_alert.agree" = "我接受";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在联系人中";
@@ -401,6 +389,9 @@
 "location.unauthorized_alert.cancel" = "取消";
 "location.unauthorized_alert.settings" = "设置";
 
+"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
+
 // Twitter
 "twitter_status.on_twitter" = "%@ 在推特上";
 
@@ -515,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "已送达";
 "content.system.message_read_timestamp" = "已读";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -624,7 +616,6 @@
 
 "content.message.like" = "赞";
 "content.message.unlike" = "取消赞";
-"content.message.forward" = "共享";
 "content.message.go_to_conversation" = "显示";
 "content.message.forward.to" = "搜索";
 "content.message.open" = "开启";
@@ -1013,6 +1004,20 @@
 "group_details.conversation_admins_header.title" = "群组管理员";
 "group_details.conversation_members_header.title" = "群组成员";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Create password secured link";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**";
+"secured_guest_link_with_password.generate_password_button.title" = "Generate password";
+"secured_guest_link_with_password.textfield.header" = "设置密码";
+"secured_guest_link_with_password.textfield.footer" = "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"secured_guest_link_with_password.textfield.placeholder" = "Enter password";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Confirm password";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Confirm your password";
+"secured_guest_link_with_password.createLinkButton.title" = "创建链接";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Password copied";
+"secured_guest_link_with_password.alertController.message" = "The password was copied to your device clipboard.";
 "group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
 "group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
@@ -1046,14 +1051,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "使用条款";
 "about.privacy.title" = "隐私政策";
-"about.license.title" = "授權資訊";
 "about.website.title" = "Wire官网";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "详细信息";
-"about.license.open_project_button" = "查看项目页面";
-"about.license.license_header" = "致谢";
 
 // Self new devices
 "self.new_device_alert.title" = "您的账号被使用在：";
@@ -1148,18 +1147,10 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "使用与崩溃报告";
 
-// Crash
-"self.settings.privacy_crash.title" = "发送匿名故障数据";
-"self.settings.privacy_crash_menu.description.title" = "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "接收新闻动态";
-"self.settings.receiveNews_and_offers.description.title" = "通过邮件接收来自Wire的新闻动态和产品更新。";
-
-
 
 // Change Username
 
@@ -1296,16 +1287,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "当您遇到信息推送相关问题，Wire 建议您重置该Token。";
 "self.settings.advanced.reset_push_token_alert.title" = "信息推送Token已被重置";
 "self.settings.advanced.reset_push_token_alert.message" = "信息通知将在几秒钟内恢复。";
-"self.settings.advanced.version_technical_details.title" = "版本与技术信息";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "数据使用权限";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "技术报告";
-"self.settings.technical_report.send_report" = "发送报告给Wire";
+"self.settings.technical_report_section.title" = "调试报告";
+"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "Wire调试报告";
 "self.settings.technical_report.include_log" = "包括详细的日志";
+"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "详细的日志将包含个人数据";
 "self.settings.technical_report.no_mail_alert" = "没有电邮程式。点击“确定”并手动将日志发送到：";
 
@@ -1420,6 +1412,12 @@
 
 "guest_room.link.button.title" = "创建链接";
 
+"guest_room.secure_link.header.title" = "Link is password secured";
+"guest_room.secure_link.header.subtitle" = "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.";
+
+"guest_room.create.link_with_password.action" = "Create password secured link";
+"guest_room.create.link_without_password.action" = "Create link without password";
+
 "guest_room.actions.copy_link" = "复制链接";
 "guest_room.actions.copied_link" = "链接已复制！";
 "guest_room.actions.share_link" = "分享链接";
@@ -1429,6 +1427,13 @@
 
 "guest_room.expiration.hours_left" = "还余%@小时";
 "guest_room.expiration.less_than_minutes_left" = "余下少于%@分钟";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Enter Password";
+"join.group.conversation.alert.message" = "This conversation is password protected";
+"join.group.conversation.alert.textfield.placeholder" = "Enter conversation password";
+"join.group.conversation.alert.joinAction.title" = "Join conversation";
+"join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
 // Services Options
 
@@ -1788,7 +1793,7 @@
 "giphy.conversation.message" = "%@ · 来源 giphy.com";
 "giphy.conversation.random_message" = "来源 giphy.com";
 "giphy.error.no_more_results" = "没有更多的gif图片";
-"giphy.error.no_result" = "找不到gif图片";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "发送";
 "giphy.cancel" = "取消";
@@ -1893,6 +1898,8 @@
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "The conversation link is invalid.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Learn more about guest links";
 
+"url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
+
 // Deep Link
 "url_action.invalid_user.title" = "Wire无法找到此人。";
 "url_action.invalid_user.message" = "您可能没有访问该帐号的权限或该帐号不再存在。";
@@ -1905,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "无效的链接。";
 "url_action.invalid_link.message" = "您打开的链接无效。";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "您想通过电子邮件接收来自 Wire 的新闻和产品更新吗？";
-"news_offers.consent.message" = "您可以随时取消订阅。";
-"news_offers.consent.button.privacy_policy.title" = "隐私政策";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

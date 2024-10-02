@@ -16,34 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-public protocol HttpClient {
-
-    func send(_ request: ZMTransportRequest) async -> ZMTransportResponse
-
-}
-
-public class HttpClientImpl: HttpClient {
-
-    let transportSession: TransportSessionType
-    let queue: ZMSGroupQueue
-
-    public init(transportSession: TransportSessionType, queue: ZMSGroupQueue) {
-        self.transportSession = transportSession
-        self.queue = queue
-    }
-
-    public func send(_ request: ZMTransportRequest) async -> ZMTransportResponse {
-        await withCheckedContinuation { continuation in
-            request.add(ZMCompletionHandler(on: queue, block: { response in
-                continuation.resume(returning: response)
-            }))
-
-            transportSession.enqueueOneTime(request)
-        }
-    }
-}
+import WireDataModel
 
 public enum MessageSendError: Error, Equatable {
     case missingMessageProtocol
@@ -52,6 +25,7 @@ public enum MessageSendError: Error, Equatable {
     case missingMlsService
     case unresolvedApiVersion
     case messageExpired
+    case missingProteusService
 }
 
 public typealias SendableMessage = ProteusMessage & MLSMessage
@@ -65,7 +39,7 @@ public protocol MessageSenderInterface {
 
 }
 
-public class MessageSender: MessageSenderInterface {
+public final class MessageSender: MessageSenderInterface {
 
     public init (
         apiProvider: APIProviderInterface,
@@ -81,6 +55,7 @@ public class MessageSender: MessageSenderInterface {
         self.messageDependencyResolver = messageDependencyResolver
         self.quickSyncObserver = quickSyncObserver
         self.context = context
+        self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
     }
 
     private let apiProvider: APIProviderInterface
@@ -91,9 +66,11 @@ public class MessageSender: MessageSenderInterface {
     private let quickSyncObserver: QuickSyncObserverInterface
     private let proteusPayloadProcessor = MessageSendingStatusPayloadProcessor()
     private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
+    private let logAttributesBuilder: MessageLogAttributesBuilder
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
-        WireLogger.messaging.debug("broadcast message")
+        let logAttributes = await logAttributesBuilder.logAttributes(message)
+        WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
 
         await quickSyncObserver.waitForQuickSyncToFinish()
 
@@ -101,21 +78,37 @@ public class MessageSender: MessageSenderInterface {
             guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
             try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
         } catch {
-            WireLogger.messaging.warn("broadcast message failed: \(error)")
+            let logAttributes = await logAttributesBuilder.logAttributes(message)
+            WireLogger.messaging.warn("broadcast message failed: \(error)", attributes: logAttributes)
             throw error
         }
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
-        WireLogger.messaging.debug("send message")
+        let logAttributes = await logAttributesBuilder.logAttributes(message)
+        WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
         await quickSyncObserver.waitForQuickSyncToFinish()
+        WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
 
         do {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            WireLogger.messaging.debug(
+                "send message - resolve dependencies finished",
+                attributes: logAttributes
+            )
+            let timePoint = TimePoint(interval: 30, label: "attempt to send message")
+
             try await attemptToSend(message: message)
+
+            WireLogger.messaging.debug(
+                "send message - attemptToSend duration: \(timePoint.elapsedTime)",
+                attributes: logAttributes
+            )
+
         } catch {
-            WireLogger.messaging.warn("send message failed: \(error)")
+            let logAttributes = await logAttributesBuilder.logAttributes(message)
+            WireLogger.messaging.warn("send message - failed: \(error)", attributes: logAttributes)
             throw error
         }
 
@@ -147,8 +140,29 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToBroadcastWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async throws {
+
+        let proteusService = await context.perform { [context] in
+            context.proteusService
+        }
+
+        guard let proteusService else {
+            throw MessageSendError.missingProteusService
+        }
+
         do {
-            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: message)
+            try await message.prepareMessageForSending()
+
+            // 1) get the info for the message from CoreData objects
+            let extractor = MessageInfoExtractor(context: context)
+            let messageInfo = try await extractor.infoForBroadcast(message: message)
+
+            // 2) get the encrypted payload
+            let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
+
+            // 3) send it via API
+            // no need to expire the broadcast message as it's only availability status no report to the user
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: messageData)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
@@ -158,19 +172,48 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
-        let conversationID = await context.perform {
-            message.conversation?.qualifiedID
+        let (proteusService, conversationID) = await context.perform { [context] in (context.proteusService, message.conversation?.qualifiedID) }
+
+        guard let proteusService else {
+            throw MessageSendError.missingProteusService
         }
 
         guard let conversationID else {
             throw MessageSendError.missingQualifiedID
         }
 
+        let logAttributes = await logAttributesBuilder.logAttributes(message)
+        WireLogger.messaging.debug(
+            "send message - via proteus",
+            attributes: logAttributes
+        )
+
         do {
-            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(
-                message: message,
-                conversationID: conversationID
-            )
+            try await message.prepareMessageForSending()
+
+            // 1) get the info for the message from CoreData objects
+            let extractor = MessageInfoExtractor(context: context)
+            let messageInfo = try await extractor.infoForSending(message: message, conversationID: conversationID)
+
+            // 2) get the encrypted payload
+            let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
+
+            // set expiration so request can be expired later
+            let expirationDate = await context.perform {
+                if message.shouldExpire {
+                    message.setExpirationDate()
+                    self.context.saveOrRollback()
+                    return message.expirationDate
+                }
+                return nil
+            }
+
+            // 3) send it via API
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
+                .sendProteusMessage(message: messageData,
+                                    conversationID: conversationID,
+                                    expirationDate: expirationDate)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
@@ -180,9 +223,16 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) async {
-        await context.perform { // swiftlint:disable todo_requires_jira_link
+        let logAttributes = await logAttributesBuilder.logAttributes(message)
+        WireLogger.messaging.debug(
+            "send message - via proteus succeeded",
+            attributes: logAttributes
+        )
+
+        await context.perform {
+            // swiftlint:disable:next todo_requires_jira_link
             message.delivered(with: response) // FIXME: jacob refactor to not use raw response
-        } // swiftlint:enable todo_requires_jira_link
+        }
         await proteusPayloadProcessor.updateClientsChanges(
             from: messageSendingStatus,
             for: message
@@ -190,6 +240,8 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) async throws -> Set<QualifiedClientID> {
+        let logAttributes = await logAttributesBuilder.logAttributes(message)
+
         switch failure {
         case .missingClients(let messageSendingStatus, _):
             await proteusPayloadProcessor.updateClientsChanges(
@@ -201,6 +253,11 @@ public class MessageSender: MessageSenderInterface {
             }
 
             if await context.perform({ message.isExpired }) {
+                WireLogger.messaging.warn(
+                    "attempt to send with proteus failed - missing clients and message is expired",
+                    attributes: logAttributes
+                )
+
                 throw MessageSendError.messageExpired
             } else {
                 return Set(messageSendingStatus.missing.qualifiedClientIDs)
@@ -208,8 +265,16 @@ public class MessageSender: MessageSenderInterface {
         default:
             if case .tryAgainLater = failure.response?.result {
                 if await context.perform({ message.isExpired }) {
+                    WireLogger.messaging.warn(
+                        "attempt to send with proteus failed - message is expired and try again later",
+                        attributes: logAttributes
+                    )
                     throw MessageSendError.messageExpired
                 } else {
+                    WireLogger.messaging.warn(
+                        "attempt to send with proteus failed - try again later",
+                        attributes: logAttributes
+                    )
                     return Set() // FIXME: [WPB-5454] it's dangerous to retry indefinitely like this - [jacob]
                 }
             } else {
@@ -224,7 +289,7 @@ public class MessageSender: MessageSenderInterface {
             case .federation:
                 responseFailure.updateExpirationReason(for: message, with: .federationRemoteError)
             case .unknown:
-                responseFailure.updateExpirationReason(for: message, with: .unknown)
+                responseFailure.updateExpirationReason(for: message, with: .other)
             case .none:
                 break
             }
@@ -233,9 +298,11 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithMLS(message: any MLSMessage, apiVersion: APIVersion) async throws {
-        let conversationID = await context.perform { message.conversation?.qualifiedID }
-        let groupID = await context.perform { message.conversation?.mlsGroupID }
-        let mlsService = await context.perform { self.context.mlsService }
+        let (conversationID, groupID, mlsService) = await context.perform { (
+            message.conversation?.qualifiedID,
+            message.conversation?.mlsGroupID,
+            self.context.mlsService
+        ) }
 
         guard let conversationID else {
             throw MessageSendError.missingQualifiedID
@@ -249,6 +316,15 @@ public class MessageSender: MessageSenderInterface {
 
         try await mlsService.commitPendingProposals(in: groupID)
         let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
+
+        // set expiration so request can be expired later
+        await context.perform {
+            if message.shouldExpire {
+                message.setExpirationDate()
+                self.context.saveOrRollback()
+            }
+        }
+
         let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
             .sendMLSMessage(message: encryptedData,
                             conversationID: conversationID,
@@ -273,19 +349,6 @@ public class MessageSender: MessageSenderInterface {
             return encryptedData
         }
     }
-}
-
-public extension UserClient {
-    var qualifiedClientID: QualifiedClientID? {
-        guard
-            let clientID = remoteIdentifier,
-            let qualifiedID = user?.qualifiedID
-        else {
-            return nil
-        }
-        return QualifiedClientID(userID: qualifiedID.uuid, domain: qualifiedID.domain, clientID: clientID)
-    }
-
 }
 
 private extension Payload.ClientListByQualifiedUserID {

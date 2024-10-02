@@ -70,6 +70,11 @@ final class ContactsViewController: UIViewController {
         observeKeyboardFrame()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(ContactsUI.title.capitalized)
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         showKeyboardIfNeeded()
@@ -108,7 +113,7 @@ final class ContactsViewController: UIViewController {
         ContactsCell.register(in: tableView)
         ContactsSectionHeaderView.register(in: tableView)
 
-        let bottomContainerHeight: CGFloat = 56.0 + UIScreen.safeArea.bottom
+        let bottomContainerHeight: CGFloat = 56.0 + view.safeAreaInsets.bottom
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomContainerHeight, right: 0)
         view.addSubview(tableView)
     }
@@ -133,7 +138,6 @@ final class ContactsViewController: UIViewController {
     }
 
     private func setupStyle() {
-        navigationItem.setupNavigationBarTitle(title: ContactsUI.title.capitalized)
 
         view.backgroundColor = .clear
 
@@ -199,10 +203,13 @@ final class ContactsViewController: UIViewController {
 
         UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrame in
             guard let self else { return }
+
+            let safeAreaBottomInset = view.safeAreaInsets.bottom
+
             bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
-            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : UIScreen.safeArea.bottom)
+            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : safeAreaBottomInset)
+
             view.layoutIfNeeded()
         })
     }
-
 }

@@ -55,8 +55,8 @@ public final class ProxyCredentials: NSObject {
             let usernameData = try Keychain.fetchItem(.usernameItem(for: proxy))
             let passwordData = try Keychain.fetchItem(.passwordItem(for: proxy))
 
-            let username = String(data: usernameData, encoding: .utf8)
-            let password = String(data: passwordData, encoding: .utf8)
+            let username = String(decoding: usernameData, as: UTF8.self)
+            let password = String(decoding: passwordData, as: UTF8.self)
             return ProxyCredentials(username: username,
                                     password: password,
                                     proxy: proxy)

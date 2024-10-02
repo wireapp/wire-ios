@@ -44,7 +44,6 @@ class RegistrationTests: IntegrationTest {
         user.credentials = .email(address: email, password: "BadAttitude")
         user.accentColor = .red
         user.acceptedTermsOfService = true
-        user.marketingConsent = true
     }
 
     override func tearDown() {
@@ -109,7 +108,7 @@ class RegistrationTests: IntegrationTest {
         let error: NSError? = (delegate.activationCodeSendingFailedError) as NSError?
 
         XCTAssertNotNil(error)
-        XCTAssertEqual(error?.code, Int(ZMUserSessionErrorCode.emailIsAlreadyRegistered.rawValue))
+        XCTAssertEqual(error?.code, ZMUserSessionErrorCode.emailIsAlreadyRegistered.rawValue)
     }
 
     func testThatActivationCodeSendingFailsWhenPhoneIsAlreadyRegistered() {
@@ -135,7 +134,7 @@ class RegistrationTests: IntegrationTest {
         let error: NSError? = (delegate.activationCodeSendingFailedError) as NSError?
 
         XCTAssertNotNil(error)
-        XCTAssertEqual(error?.code, Int(ZMUserSessionErrorCode.phoneNumberIsAlreadyRegistered.rawValue))
+        XCTAssertEqual(error?.code, ZMUserSessionErrorCode.phoneNumberIsAlreadyRegistered.rawValue)
     }
 
     func testThatWeCanSendAnActivationCodeTwice_Phone() {
@@ -258,7 +257,7 @@ class RegistrationTests: IntegrationTest {
         XCTAssertEqual(delegate.teamRegistrationFailedCalled, 1)
         let error = (delegate.teamRegistrationFailedError) as NSError?
         XCTAssertNotNil(error)
-        XCTAssertEqual(error?.code, Int(ZMUserSessionErrorCode.emailIsAlreadyRegistered.rawValue))
+        XCTAssertEqual(error?.code, ZMUserSessionErrorCode.emailIsAlreadyRegistered.rawValue)
     }
 
     // MARK: - Create User Tests
@@ -304,7 +303,7 @@ class RegistrationTests: IntegrationTest {
 
         let error = (delegate.userRegistrationError) as NSError?
         XCTAssertNotNil(error)
-        XCTAssertEqual(error?.code, Int(ZMUserSessionErrorCode.emailIsAlreadyRegistered.rawValue))
+        XCTAssertEqual(error?.code, ZMUserSessionErrorCode.emailIsAlreadyRegistered.rawValue)
     }
 
 }

@@ -47,41 +47,9 @@ static NSString * const ZMUserSessionRegistrationErrorKey = @"ZMUserSessionRegis
     [[[NotificationInContext alloc] initWithName:self.name context:authenticationStatus object:nil userInfo:userInfo] post];
 }
 
-+ (void)notifyPhoneNumberVerificationDidFail:(NSError *)error context:(ZMAuthenticationStatus *)authenticationStatus
-{
-    NSCParameterAssert(error);
-    NSDictionary *userInfo = @{ ZMUserSessionRegistrationEventKey : @(ZMRegistrationNotificationPhoneNumberVerificationDidFail),
-                                ZMUserSessionRegistrationErrorKey : error };
-    
-    [[[NotificationInContext alloc] initWithName:self.name context:authenticationStatus object:nil userInfo:userInfo] post];
-}
-
-+ (void)notifyPhoneNumberVerificationCodeRequestDidFail:(NSError *)error context:(ZMAuthenticationStatus *)authenticationStatus
-{
-    NSCParameterAssert(error);
-    NSDictionary *userInfo = @{ ZMUserSessionRegistrationEventKey : @(ZMRegistrationNotificationPhoneNumberVerificationCodeRequestDidFail),
-                                ZMUserSessionRegistrationErrorKey : error };
-    
-    [[[NotificationInContext alloc] initWithName:self.name context:authenticationStatus object:nil userInfo:userInfo] post];
-}
-
-+ (void)notifyPhoneNumberVerificationCodeRequestDidSucceedInContext:(ZMAuthenticationStatus *)authenticationStatus;
-{
-    NSDictionary *userInfo = @{ ZMUserSessionRegistrationEventKey : @(ZMRegistrationNotificationPhoneNumberVerificationCodeRequestDidSucceed) };
-    
-    [[[NotificationInContext alloc] initWithName:self.name context:authenticationStatus object:nil userInfo:userInfo] post];
-}
-
 + (void)notifyEmailVerificationDidSucceedInContext:(ZMAuthenticationStatus *)authenticationStatus
 {
     NSDictionary *userInfo = @{ ZMUserSessionRegistrationEventKey : @(ZMRegistrationNotificationEmailVerificationDidSucceed) };
-    
-    [[[NotificationInContext alloc] initWithName:self.name context:authenticationStatus object:nil userInfo:userInfo] post];
-}
-
-+ (void)notifyPhoneNumberVerificationDidSucceedInContext:(ZMAuthenticationStatus *)authenticationStatus
-{
-    NSDictionary *userInfo = @{ ZMUserSessionRegistrationEventKey : @(ZMRegistrationNotificationPhoneNumberVerificationDidSucceed) };
     
     [[[NotificationInContext alloc] initWithName:self.name context:authenticationStatus object:nil userInfo:userInfo] post];
 }

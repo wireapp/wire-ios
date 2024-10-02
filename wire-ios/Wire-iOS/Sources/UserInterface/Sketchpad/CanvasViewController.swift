@@ -41,8 +41,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     // MARK: - Properties
 
-    typealias SketchColors = SemanticColors.DrawingColors
-
     weak var delegate: CanvasViewControllerDelegate?
     var canvas = Canvas()
     private lazy var toolbar: SketchToolbar = SketchToolbar(buttons: [photoButton, drawButton, emojiButton, sendButton])
@@ -96,7 +94,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         separatorLine.backgroundColor = SemanticColors.View.backgroundSeparatorCell
         hintImageView.setIcon(.brush, size: 132, color: SemanticColors.Label.textSettingsPasswordPlaceholder)
         hintImageView.tintColor = SemanticColors.Label.textSettingsPasswordPlaceholder
-        hintLabel.text = L10n.Localizable.Sketchpad.initialHint.capitalizingFirstCharacterOnly
+        hintLabel.text = L10n.Localizable.Sketchpad.initialHint
         hintLabel.numberOfLines = 0
         hintLabel.font = FontSpec.normalRegularFont.font
         hintLabel.textAlignment = .center
@@ -120,14 +118,10 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     func configureNavigationItems() {
         let undoImage = StyleKitIcon.undo.makeImage(size: .tiny, color: .black)
-        let closeImage = StyleKitIcon.cross.makeImage(size: .tiny, color: .black)
 
-        let closeButtonItem = UIBarButtonItem(image: closeImage,
-                                              style: .plain,
-                                              target: self,
-                                              action: #selector(CanvasViewController.close))
-        closeButtonItem.accessibilityIdentifier = "closeButton"
-        closeButtonItem.accessibilityLabel = L10n.Accessibility.Sketch.CloseButton.description
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.dismiss(animated: true, completion: nil)
+        }, accessibilityLabel: L10n.Accessibility.Sketch.CloseButton.description)
 
         let undoButtonItem = UIBarButtonItem(image: undoImage,
                                              style: .plain,
@@ -138,7 +132,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         undoButtonItem.accessibilityLabel = L10n.Accessibility.Sketch.UndoButton.description
 
         navigationItem.leftBarButtonItem = undoButtonItem
-        navigationItem.rightBarButtonItem = closeButtonItem
     }
 
     func configureButtons() {
@@ -220,7 +213,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             canvas.rightAnchor.constraint(equalTo: view.rightAnchor),
 
             toolbar.topAnchor.constraint(equalTo: canvas.bottomAnchor),
-            toolbar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            toolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             toolbar.leftAnchor.constraint(equalTo: view.leftAnchor),
             toolbar.rightAnchor.constraint(equalTo: view.rightAnchor),
 
@@ -262,10 +255,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         if let image = canvas.trimmedImage {
             delegate?.canvasViewController(self, didExportImage: image)
         }
-    }
-
-    @objc func close() {
-        self.dismiss(animated: true, completion: nil)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

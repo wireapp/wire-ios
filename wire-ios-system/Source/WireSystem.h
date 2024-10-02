@@ -29,5 +29,3 @@ FOUNDATION_EXPORT const unsigned char ZMSystemVersionString[];
 #import <WireSystem/ZMSAsserts.h>
 #import <WireSystem/ZMSDefines.h>
 #import <WireSystem/ZMSLogging.h>
-#import <WireSystem/ZMSGroupQueue.h>
-#import <WireSystem/ZMSDispatchGroup.h>

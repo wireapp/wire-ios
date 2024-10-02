@@ -101,22 +101,19 @@ open class Flow {
 
 struct FlowLog: LogConvertible, Encodable {
 
-  let name: String
-  let event: Event
+    let name: String
+    let event: Event
 
-  var logDescription: String {
-      let encoder = JSONEncoder()
-      encoder.outputFormatting = .sortedKeys
-      guard
-        let data = try? encoder.encode(self),
-      let string = String(data: data, encoding: .utf8)
-    else {
-      return "FLOW: \(name) ENCODING ERROR"
+    var logDescription: String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        guard let data = try? encoder.encode(self) else {
+            return "FLOW: \(name) ENCODING ERROR"
+        }
+
+        let string = String(decoding: data, as: UTF8.self)
+        return "FLOW: \(string)"
     }
-
-    return "FLOW: \(string)"
-  }
-
 }
 
 extension FlowLog {

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -64,7 +64,6 @@
 		54FB26871D4669D0005574BF /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		54FB26881D4669D0005574BF /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		54FB268A1D4669D0005574BF /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		54FB268B1D4669D0005574BF /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		54FB268C1D4669D0005574BF /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5E107A9A20F358C000EB9DE7 /* mock_search_end.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = mock_search_end.json; sourceTree = "<group>"; };
 		5EBC343220EE0F5D00AFB6DF /* ZiphyImageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZiphyImageType.swift; sourceTree = "<group>"; };
@@ -153,7 +152,6 @@
 				54FB26871D4669D0005574BF /* project.xcconfig */,
 				54FB26881D4669D0005574BF /* simulator.xcconfig */,
 				54FB268A1D4669D0005574BF /* tests.xcconfig */,
-				54FB268B1D4669D0005574BF /* warnings-debug.xcconfig */,
 				54FB268C1D4669D0005574BF /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -301,7 +299,6 @@
 				DBF380561B15C0B800369FB7 /* Headers */,
 				DBF380541B15C0B800369FB7 /* Sources */,
 				DBF380551B15C0B800369FB7 /* Frameworks */,
-				E91CAE9F27623A64005B13F0 /* Run SwiftLint */,
 				DBF380571B15C0B800369FB7 /* Resources */,
 			);
 			buildRules = (
@@ -391,29 +388,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		E91CAE9F27623A64005B13F0 /* Run SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run SwiftLint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		DBF380541B15C0B800369FB7 /* Sources */ = {

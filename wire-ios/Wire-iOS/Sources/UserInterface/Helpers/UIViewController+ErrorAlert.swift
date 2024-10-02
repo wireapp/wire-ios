@@ -53,8 +53,8 @@ extension UIViewController {
             default:
                 break
             }
-        } else if nsError.domain == NSError.ZMUserSessionErrorDomain,
-            let code: ZMUserSessionErrorCode = ZMUserSessionErrorCode(rawValue: UInt(nsError.code)) {
+        } else if nsError.domain == NSError.userSessionErrorDomain,
+            let code = UserSessionErrorCode(rawValue: nsError.code) {
             switch code {
             case .noError:
                 message = ""
@@ -76,7 +76,7 @@ extension UIViewController {
                 message = L10n.Localizable.Error.User.registrationUnknownError
             case .invalidEmail:
                 message = L10n.Localizable.Error.Email.invalid
-            case .codeRequestIsAlreadyPending:
+            case .requestIsAlreadyPending:
                  message = L10n.Localizable.Error.User.verificationCodeTooMany
             case .clientDeletedRemotely:
                 message = L10n.Localizable.Error.User.deviceDeletedRemotely

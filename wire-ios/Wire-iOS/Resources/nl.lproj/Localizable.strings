@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Gast gesprek";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Jij)";
@@ -51,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Zoek op naam of gebruikersnaam";
 "peoplepicker.header.top_people" = "Favoriete contacten";
-"peoplepicker.button.create_conversation" = "Groep creëren";
+"peoplepicker.button.create_conversation" = "Maak groep";
 "peoplepicker.button.add_to_conversation" = "Deelnemers toevoegen";
 "peoplepicker.header.conversations" = "Groepen";
 "peoplepicker.header.team_conversations" = "%@ Groepen";
@@ -102,8 +102,8 @@
 "peoplepicker.invite_more_people" = "Nodig meer mensen uit";
 "peoplepicker.invite_team_members" = "Nodig andere mensen uit voor het team";
 "peoplepicker.quick-action.open-conversation" = "Openen";
-"peoplepicker.quick-action.create-conversation" = "Groep creëren";
-"peoplepicker.quick-action.create-guest-room" = "Maak een nieuwe gast chat aan";
+"peoplepicker.quick-action.create-conversation" = "Maak groep";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Beheer diensten";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,18 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Tap om te activeren.";
 "conversation_list.header.self_team.accessibility_value.active" = "Nu activeren.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Heeft nieuwe berichten.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contacten";
-"conversation_list.bottom_bar.conversations.title" = "Gesprekken";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archiveren";
-
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Help ons Wire te verbeteren";
-"conversation_list.data_usage_permission_alert.message" = "I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.";
-"conversation_list.data_usage_permission_alert.disagree" = "Nee";
-"conversation_list.data_usage_permission_alert.agree" = "Ik ga akkoord";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacten";
@@ -401,6 +389,9 @@
 "location.unauthorized_alert.cancel" = "Anuleer";
 "location.unauthorized_alert.settings" = "Instellingen";
 
+"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
+
 // Twitter
 "twitter_status.on_twitter" = "%@ op Twitter";
 
@@ -515,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Afgeleverd";
 "content.system.message_read_timestamp" = "Gezien";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -624,7 +616,6 @@
 
 "content.message.like" = "Vind ik leuk";
 "content.message.unlike" = "Vind ik niet leuk";
-"content.message.forward" = "Delen";
 "content.message.go_to_conversation" = "Tonen";
 "content.message.forward.to" = "Zoeken…";
 "content.message.open" = "Openen";
@@ -1013,6 +1004,20 @@
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Create password secured link";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**";
+"secured_guest_link_with_password.generate_password_button.title" = "Generate password";
+"secured_guest_link_with_password.textfield.header" = "Wachtwoord instellen";
+"secured_guest_link_with_password.textfield.footer" = "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"secured_guest_link_with_password.textfield.placeholder" = "Enter password";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Confirm password";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Confirm your password";
+"secured_guest_link_with_password.createLinkButton.title" = "Maak link aan";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Password copied";
+"secured_guest_link_with_password.alertController.message" = "The password was copied to your device clipboard.";
 "group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
 "group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
@@ -1046,14 +1051,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Gebruikersvoorwaarden";
 "about.privacy.title" = "Privacybeleid";
-"about.license.title" = "Licentie-informatie";
 "about.website.title" = "Wire Website";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Beschrijving";
-"about.license.open_project_button" = "Bekijk projectpagina";
-"about.license.license_header" = "Dankwoord";
 
 // Self new devices
 "self.new_device_alert.title" = "Je account werd gebruikt op:";
@@ -1148,18 +1147,10 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Diagnose en gebruik";
 
-// Crash
-"self.settings.privacy_crash.title" = "Send anonymous crash data";
-"self.settings.privacy_crash_menu.description.title" = "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Ontvang nieuwsbrief";
-"self.settings.receiveNews_and_offers.description.title" = "Ontvang nieuws en product updates van Wire via de mail.";
-
-
 
 // Change Username
 
@@ -1296,16 +1287,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Als je problemen ondervindt met push-notificaties, kan Wire je vragen om deze token te herstellen.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push token is gereset";
 "self.settings.advanced.reset_push_token_alert.message" = "Notificaties zullen over een paar seconden worden hersteld.";
-"self.settings.advanced.version_technical_details.title" = "Technische details van deze versie";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Machtigingen voor datagebruik";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "Technisch rapport";
-"self.settings.technical_report.send_report" = "Stuur rapport naar Wire";
+"self.settings.technical_report_section.title" = "Foutrapportage";
+"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "Wire Fout Rapport";
 "self.settings.technical_report.include_log" = "Voeg gedetailleerd log toe";
+"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Gedetailleerde logs kunnen persoonlijke gegevens bevatten";
 "self.settings.technical_report.no_mail_alert" = "Er is geen mail app gedetecteerd. Klik op 'OK' om de logs handmatig te versturen naar: ";
 
@@ -1420,6 +1412,12 @@
 
 "guest_room.link.button.title" = "Maak link aan";
 
+"guest_room.secure_link.header.title" = "Link is password secured";
+"guest_room.secure_link.header.subtitle" = "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.";
+
+"guest_room.create.link_with_password.action" = "Create password secured link";
+"guest_room.create.link_without_password.action" = "Create link without password";
+
 "guest_room.actions.copy_link" = "Kopieer link";
 "guest_room.actions.copied_link" = "Link gekopieerd!";
 "guest_room.actions.share_link" = "Deel link";
@@ -1429,6 +1427,13 @@
 
 "guest_room.expiration.hours_left" = "%@h over";
 "guest_room.expiration.less_than_minutes_left" = "Minder dan %@m over";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Enter Password";
+"join.group.conversation.alert.message" = "This conversation is password protected";
+"join.group.conversation.alert.textfield.placeholder" = "Enter conversation password";
+"join.group.conversation.alert.joinAction.title" = "Join conversation";
+"join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
 // Services Options
 
@@ -1788,7 +1793,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "geen gifs meer";
-"giphy.error.no_result" = "geen gif gevonden";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "stuur";
 "giphy.cancel" = "annuleer";
@@ -1893,6 +1898,8 @@
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "The conversation link is invalid.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Learn more about guest links";
 
+"url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
+
 // Deep Link
 "url_action.invalid_user.title" = "Wire kan deze persoon niet vinden.";
 "url_action.invalid_user.message" = "You may not have permission with this account or it no longer exists.";
@@ -1905,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "Ongeldige link.";
 "url_action.invalid_link.message" = "The link you opened is not valid.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Wil je nieuws en product updates van Wire via de mail ontvangen?";
-"news_offers.consent.message" = "Je kan dit altijd stopzetten.";
-"news_offers.consent.button.privacy_policy.title" = "Privacybeleid";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

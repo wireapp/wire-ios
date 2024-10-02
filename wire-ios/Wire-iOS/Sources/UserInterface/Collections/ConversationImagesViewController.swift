@@ -22,7 +22,7 @@ import WireSyncEngine
 
 typealias DismissAction = (_ completion: Completion?) -> Void
 
-final class ConversationImagesViewController: TintColorCorrectedViewController {
+final class ConversationImagesViewController: UIViewController {
 
     typealias ButtonColors = SemanticColors.Button
 
@@ -33,7 +33,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
                                                                         options: [:])
     var buttonsBar: InputBarButtonsView!
     lazy var deleteButton = iconButton(messageAction: .delete)
-    var shareButton: IconButton?
     let overlay = FeedbackOverlayView()
     let separator: UIView = {
         let view = UIView()
@@ -171,7 +170,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         NSLayoutConstraint.activate([
             buttonsBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             buttonsBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            buttonsBar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            buttonsBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             overlay.topAnchor.constraint(equalTo: buttonsBar.topAnchor),
             overlay.bottomAnchor.constraint(equalTo: buttonsBar.bottomAnchor),
             overlay.trailingAnchor.constraint(equalTo: buttonsBar.trailingAnchor),
@@ -239,8 +238,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
             return #selector(copyCurrent(_:))
         case .save:
             return #selector(saveCurrent(_:))
-        case .forward:
-            return #selector(shareCurrent(_:))
         case .sketchDraw:
             return #selector(sketchCurrent(_:))
         case .sketchEmoji:
@@ -277,17 +274,15 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
 
             let saveButton = iconButton(messageAction: .save)
 
-            let shareButton = iconButton(messageAction: .forward)
-
             let sketchButton = iconButton(messageAction: .sketchDraw)
 
             let emojiSketchButton = iconButton(messageAction: .sketchEmoji)
 
             let revealButton = iconButton(messageAction: .showInConversation)
             if !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canDownloadMedia {
-                buttons = [shareButton, sketchButton, emojiSketchButton, revealButton]
+                buttons = [sketchButton, emojiSketchButton, revealButton]
             } else {
-                buttons = [shareButton, sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
+                buttons = [sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
             }
         }
 
@@ -419,11 +414,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
             currentController?.performSaveImageAnimation(from: sender)
         }
         perform(action: .save, sender: sender)
-    }
-
-    @objc
-    func shareCurrent(_ sender: AnyObject!) {
-        perform(action: .forward, sender: sender)
     }
 
     @objc

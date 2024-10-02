@@ -245,10 +245,11 @@ extension FileManagerMoveTests {
 
     func checkIfFileExists(in folder: URL, relativePath: String, content: String? = nil) {
         let fileURL = folder.appendingPathComponent(relativePath)
-        guard let data = try? Data(contentsOf: fileURL), let fileContent = String(data: data, encoding: .utf8) else {
+        guard let data = try? Data(contentsOf: fileURL) else {
             XCTFail("File \(relativePath) not readable")
             return
         }
+        let fileContent = String(decoding: data, as: UTF8.self)
         XCTAssertEqual(fileContent, content ?? relativePath)
     }
 

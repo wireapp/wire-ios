@@ -20,6 +20,7 @@ import FLAnimatedImage
 import MobileCoreServices
 import Photos
 import WireCommonComponents
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -91,7 +92,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             let confirmVideoViewController = ConfirmAssetViewController(context: context)
             confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback
 
-            endEditing()
+            view.window?.endEditing(true)
             present(confirmVideoViewController, animated: true)
         }
     }
@@ -119,22 +120,26 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_ controller: CameraKeyboardViewController) {
-        self.hideCameraKeyboardViewController {
-            self.shouldRefocusKeyboardAfterImagePickerDismiss = true
-            self.presentImagePicker(with: .camera,
-                                    mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
-                                    allowsEditing: false,
-                                    pointToView: self.photoButton.imageView)
+        hideCameraKeyboardViewController { [self] in
+            shouldRefocusKeyboardAfterImagePickerDismiss = true
+            presentImagePicker(
+                sourceType: .camera,
+                mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
+                allowsEditing: false,
+                pointToView: photoButton.imageView!
+            )
         }
     }
 
     func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController) {
-        self.hideCameraKeyboardViewController {
-            self.shouldRefocusKeyboardAfterImagePickerDismiss = true
-            self.presentImagePicker(with: .photoLibrary,
-                                    mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
-                                    allowsEditing: false,
-                                    pointToView: self.photoButton.imageView)
+        hideCameraKeyboardViewController { [self] in
+            shouldRefocusKeyboardAfterImagePickerDismiss = true
+            presentImagePicker(
+                sourceType: .photoLibrary,
+                mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
+                allowsEditing: false,
+                pointToView: photoButton.imageView!
+            )
         }
     }
 
@@ -170,7 +175,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         let confirmImageViewController = ConfirmAssetViewController(context: context)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
-        endEditing()
+        view.window?.endEditing(true)
         present(confirmImageViewController, animated: true)
     }
 
@@ -213,12 +218,12 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 return
             }
             completion(true, resultURL.path, CMTimeGetSeconds((videoAsset?.duration)!))
-
-            }
+        }
     }
 }
 
 extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
+
     func videoEditorControllerDidCancel(_ editor: UIVideoEditorController) {
         editor.dismiss(animated: true, completion: .none)
     }
@@ -226,10 +231,11 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
     func videoEditorController(_ editor: UIVideoEditorController, didSaveEditedVideoToPath editedVideoPath: String) {
         editor.dismiss(animated: true, completion: .none)
 
-        editor.isLoadingViewVisible = true
+        let activityIndicator = BlockingActivityIndicator(view: editor.view)
+        activityIndicator.start()
 
         self.convertVideoAtPath(editedVideoPath) { success, resultPath, _ in
-            editor.isLoadingViewVisible = false
+            activityIndicator.stop()
 
             guard let path = resultPath, success else {
                 return
@@ -252,11 +258,11 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
         hideCameraKeyboardViewController { [weak self] in
             guard let self else { return }
 
-            self.dismiss(animated: true, completion: {
+            self.dismiss(animated: true) {
                 if let imageData = image.pngData() {
                     self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
                 }
-            })
+            }
         }
     }
 
@@ -267,7 +273,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 extension ConversationInputBarViewController {
 
     func showCameraAndPhotos() {
-        UIApplication.wr_requestVideoAccess({ _ in
+        UIApplication.wr_requestVideoAccess { _ in
             if SecurityFlags.cameraRoll.isEnabled,
                MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
                 self.executeWithCameraRollPermission { _ in
@@ -278,7 +284,7 @@ extension ConversationInputBarViewController {
                 self.mode = .camera
                 self.inputBar.textView.becomeFirstResponder()
             }
-        })
+        }
     }
 
     @objc

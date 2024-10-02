@@ -24,7 +24,7 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
     // MARK: - Helpers
 
     let pushToken = PushToken(
-        deviceToken: "deviceToken".data(using: .utf8)!,
+        deviceToken: Data("deviceToken".utf8),
         appIdentifier: "appIdentifier",
         transportType: "APNS",
         tokenType: .standard

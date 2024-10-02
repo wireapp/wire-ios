@@ -142,8 +142,8 @@ extension ZMUserTests_Swift {
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.previewProfileAssetIdentifier = "123"
             user.completeProfileAssetIdentifier = "456"
-            user.setImage(data: "some".data(using: .utf8), size: .preview)
-            user.setImage(data: "other".data(using: .utf8), size: .complete)
+            user.setImage(data: Data("some".utf8), size: .preview)
+            user.setImage(data: Data("other".utf8), size: .complete)
             XCTAssertNotNil(user.imageData(for: .preview))
             XCTAssertNotNil(user.imageData(for: .complete))
             let previewId = "some"
@@ -165,9 +165,9 @@ extension ZMUserTests_Swift {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let previewId = "some"
-            let previewData = "some".data(using: .utf8)
+            let previewData = Data("some".utf8)
             let completeId = "other"
-            let completeData = "other".data(using: .utf8)
+            let completeData = Data("other".utf8)
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.previewProfileAssetIdentifier = previewId
             user.completeProfileAssetIdentifier = completeId
@@ -223,7 +223,7 @@ extension ZMUserTests_Swift {
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.completeProfileAssetIdentifier = nil
-            user.setImage(data: "foo".data(using: .utf8), size: .complete)
+            user.setImage(data: Data("foo".utf8), size: .complete)
 
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
@@ -236,7 +236,7 @@ extension ZMUserTests_Swift {
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.completeProfileAssetIdentifier = "not+valid+id"
-            user.setImage(data: "foo".data(using: .utf8), size: .complete)
+            user.setImage(data: Data("foo".utf8), size: .complete)
 
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
@@ -249,7 +249,7 @@ extension ZMUserTests_Swift {
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.previewProfileAssetIdentifier = "1234"
-            user.setImage(data: "foo".data(using: .utf8), size: .preview)
+            user.setImage(data: Data("foo".utf8), size: .preview)
 
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
@@ -262,7 +262,7 @@ extension ZMUserTests_Swift {
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.completeProfileAssetIdentifier = "1234"
-            user.setImage(data: "foo".data(using: .utf8), size: .complete)
+            user.setImage(data: Data("foo".utf8), size: .complete)
 
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))

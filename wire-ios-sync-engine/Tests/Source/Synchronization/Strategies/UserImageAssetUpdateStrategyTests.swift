@@ -132,7 +132,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
     func testThatItCreatesRequestWhenThereIsData() {
         // WHEN
         updateStatus.dataToConsume.removeAll()
-        updateStatus.dataToConsume[.preview] = "Some".data(using: .utf8)
+        updateStatus.dataToConsume[.preview] = Data("Some".utf8)
 
         // THEN
         let previewRequest = sut.nextRequest(for: .v0)
@@ -142,7 +142,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
 
         // WHEN
         updateStatus.dataToConsume.removeAll()
-        updateStatus.dataToConsume[.complete] = "Other".data(using: .utf8)
+        updateStatus.dataToConsume[.complete] = Data("Other".utf8)
 
         // THEN
         let completeRequest = sut.nextRequest(for: .v0)
@@ -155,10 +155,10 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
     func testThatItCreatesRequestWithExpectedData() {
         XCTExpectFailure("this could be flaky", strict: false)
         // GIVEN
-        let previewData = "--1--".data(using: .utf8)
-        let previewRequest = sut.requestFactory.upstreamRequestForAsset(withData: previewData!, shareable: true, retention: .eternal, apiVersion: .v0)
-        let completeData = "1111111".data(using: .utf8)
-        let completeRequest = sut.requestFactory.upstreamRequestForAsset(withData: completeData!, shareable: true, retention: .eternal, apiVersion: .v0)
+        let previewData = Data("--1--".utf8)
+        let previewRequest = sut.requestFactory.upstreamRequestForAsset(withData: previewData, shareable: true, retention: .eternal, apiVersion: .v0)
+        let completeData = Data("1111111".utf8)
+        let completeRequest = sut.requestFactory.upstreamRequestForAsset(withData: completeData, shareable: true, retention: .eternal, apiVersion: .v0)
 
         // WHEN
         updateStatus.dataToConsume.removeAll()
@@ -352,7 +352,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         try syncMOC.performAndWait {
             // GIVEN
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
-            let imageData = try XCTUnwrap("image".data(using: .utf8))
+            let imageData = try XCTUnwrap(Data("image".utf8))
             let sync = try XCTUnwrap(self.sut.downstreamRequestSyncs[.preview])
             user.previewProfileAssetIdentifier = "foo"
             let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
@@ -369,7 +369,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         try syncMOC.performAndWait {
             // GIVEN
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
-            let imageData = try XCTUnwrap("image".data(using: .utf8))
+            let imageData = try XCTUnwrap(Data("image".utf8))
             let sync = try XCTUnwrap(self.sut.downstreamRequestSyncs[.complete])
             user.completeProfileAssetIdentifier = "foo"
             let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)

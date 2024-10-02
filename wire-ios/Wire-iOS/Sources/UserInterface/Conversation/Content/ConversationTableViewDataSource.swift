@@ -87,7 +87,7 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    var messages: [ConversationMessage] {
+    var messages: [ZMMessage] {
         // NOTE: We limit the number of messages to the `lastFetchedObjectCount` since the
         // NSFetchResultsController will add objects to `fetchObjects` if they are modified after
         // the initial fetch, which results in unwanted table view updates. This is normally what

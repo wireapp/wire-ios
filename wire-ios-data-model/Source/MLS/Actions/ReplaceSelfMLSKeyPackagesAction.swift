@@ -55,16 +55,19 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
     public var resultHandler: ResultHandler?
     public var clientID: String
     public var keyPackages: [String]
+    public let ciphersuite: MLSCipherSuite
 
     // MARK: - Life cycle
 
     public init(
         clientID: String,
         keyPackages: [String],
+        ciphersuite: MLSCipherSuite,
         resultHandler: ResultHandler? = nil
     ) {
         self.clientID = clientID
         self.keyPackages = keyPackages
+        self.ciphersuite = ciphersuite
         self.resultHandler = resultHandler
     }
 }

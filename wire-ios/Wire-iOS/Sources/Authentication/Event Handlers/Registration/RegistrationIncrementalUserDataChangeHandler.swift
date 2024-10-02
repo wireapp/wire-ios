@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCommonComponents
 import WireDataModel
 
 /**
@@ -35,10 +36,7 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
 
         // Check for missing requirements before allowing the user to register.
 
-        if unregisteredUser.marketingConsent == nil {
-            return handleMissingMarketingConsent(with: unregisteredUser)
-
-        } else if unregisteredUser.name == nil {
+        if unregisteredUser.name == nil {
             return requestIntermediateStep(
                 .setName,
                 with: unregisteredUser,
@@ -63,18 +61,6 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
         mode: AuthenticationStateController.StateChangeMode) -> [AuthenticationCoordinatorAction] {
         let flowStep = AuthenticationFlowStep.incrementalUserCreation(user, step)
         return [.hideLoadingView, .transition(flowStep, mode: mode)]
-    }
-
-    private func handleMissingMarketingConsent(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
-        // Alert Actions
-        let privacyPolicyAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title, coordinatorActions: [.openURL(URL.wr_privacyPolicy.appendingLocaleParameter)])
-        let declineAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.decline, coordinatorActions: [.setMarketingConsent(false)])
-        let acceptAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.accept, coordinatorActions: [.setMarketingConsent(true)])
-
-        // Alert
-        let alert = AuthenticationCoordinatorAlert(title: L10n.Localizable.NewsOffers.Consent.title, message: L10n.Localizable.NewsOffers.Consent.message, actions: [privacyPolicyAction, declineAction, acceptAction])
-
-        return [.hideLoadingView, .presentAlert(alert)]
     }
 
     private func handleRegistrationCompletion(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {

@@ -16,27 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class CheckmarkCellTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: CheckmarkCell!
-    var conversation: MockConversation!
+    private var sut: CheckmarkCell!
+    private var conversation: SwiftMockConversation!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        conversation = MockConversation.groupConversation()
+        snapshotHelper = SnapshotHelper()
+        conversation = SwiftMockConversation.groupConversation()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         conversation = nil
         super.tearDown()
@@ -46,35 +50,49 @@ final class CheckmarkCellTests: XCTestCase {
 
     func setUpCheckMarkCell(
         title: String,
-        showCheckmark: Bool,
-        userInterfaceStyle: UIUserInterfaceStyle = .light
+        showCheckmark: Bool
     ) {
         sut = CheckmarkCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         sut.title = title
         sut.showCheckmark = showCheckmark
-        sut.overrideUserInterfaceStyle = userInterfaceStyle
     }
 
     // MARK: - Snapshot Tests
 
     func testCheckmarkCell_NoCheckmark_Light() {
+        // GIVEN
         setUpCheckMarkCell(title: "Option A", showCheckmark: false)
-        verify(matching: sut)
+
+        // WHEN & THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCheckmarkCell_NoCheckmark_Dark() {
-        setUpCheckMarkCell(title: "Option A", showCheckmark: false, userInterfaceStyle: .dark)
-        verify(matching: sut)
+        // GIVEN
+        setUpCheckMarkCell(title: "Option A", showCheckmark: false)
+
+        // WHEN & THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testCheckmarkCell_WithCheckmark_Light() {
+        // GIVEN
         setUpCheckMarkCell(title: "Option B", showCheckmark: true)
-        verify(matching: sut)
+
+        // WHEN & THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCheckmarkCell_WithCheckmark_Dark() {
-        setUpCheckMarkCell(title: "Option B", showCheckmark: true, userInterfaceStyle: .dark)
-        verify(matching: sut)
+        // GIVEN
+        setUpCheckMarkCell(title: "Option B", showCheckmark: true)
+
+        // WHEN & THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
 }

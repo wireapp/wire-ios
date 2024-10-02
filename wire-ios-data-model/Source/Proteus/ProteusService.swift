@@ -99,9 +99,8 @@ public final class ProteusService: ProteusServiceInterface {
         do {
             try await coreCrypto.perform { try await $0.proteusSessionSave(sessionId: id.rawValue) }
         } catch {
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: Log error
-            // swiftlint:enable todo_requires_jira_link
             throw SaveSessionError.failedToSaveSession
         }
     }
@@ -121,9 +120,30 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusEncrypt
 
-    enum EncryptionError: Error {
-        case failedToEncryptData
-        case failedToEncryptDataBatch
+    enum EncryptionError: Error, Equatable, LocalizedError {
+        case failedToEncryptData(Error)
+        case failedToEncryptDataBatch(Error)
+
+        static func == (lhs: ProteusService.EncryptionError, rhs: ProteusService.EncryptionError) -> Bool {
+            switch (lhs, rhs) {
+            case (let failedToEncryptData(lhsError), let failedToEncryptData(rhsError)):
+                return lhsError as NSError == rhsError as NSError
+            case (let failedToEncryptDataBatch(lhsError), let failedToEncryptDataBatch(rhsError)):
+                return lhsError as NSError == rhsError as NSError
+
+            default:
+                return false
+            }
+        }
+
+        var errorDescription: String? {
+            switch self {
+            case .failedToEncryptData(let error):
+                return "failedToEncryptData: underlying error : \(error.localizedDescription)"
+            case .failedToEncryptDataBatch(let error):
+                return "failedToEncryptDataBatch: underlying error : \(error.localizedDescription)"
+            }
+        }
     }
 
     public func encrypt(
@@ -141,8 +161,7 @@ public final class ProteusService: ProteusServiceInterface {
             }
             return encryptedData
         } catch {
-            logger.error("failed to encrypt data: \(String(describing: error))")
-            throw EncryptionError.failedToEncryptData
+            throw EncryptionError.failedToEncryptData(error)
         }
     }
 
@@ -163,8 +182,7 @@ public final class ProteusService: ProteusServiceInterface {
             }
             return encryptedBatch
         } catch {
-            logger.error("failed to encrypt data batch: \(String(describing: error))")
-            throw EncryptionError.failedToEncryptDataBatch
+            throw EncryptionError.failedToEncryptDataBatch(error)
         }
     }
 
@@ -236,12 +254,9 @@ public final class ProteusService: ProteusServiceInterface {
     }
 
     public func generatePrekey(id: UInt16) async throws -> String {
-        logger.info("generating prekey with id: \(id)")
-
         do {
             return try await coreCrypto.perform { try await $0.proteusNewPrekey(prekeyId: id).base64EncodedString() }
         } catch {
-            logger.error("failed to generate prekey: \(String(describing: error))")
             throw PrekeyError.failedToGeneratePrekey
         }
     }
@@ -268,6 +283,7 @@ public final class ProteusService: ProteusServiceInterface {
             throw PrekeyError.prekeyCountTooLow
         }
 
+        logger.info("generate \(count) prekeys")
         let range = await prekeysRange(count, start: start)
         let prekeys = try await generatePrekeys(range)
 

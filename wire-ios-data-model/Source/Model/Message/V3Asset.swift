@@ -79,16 +79,14 @@ private let zmLog = ZMSLog(tag: "AssetV3")
                 return
             }
 
-            if
-                let mediumKey,
+            if let mediumKey,
                 let key,
                 let digest,
                 let data = cache.decryptData(
                     key: mediumKey,
                     encryptionKey: key,
                     sha256Digest: digest
-                )
-            {
+                ) {
                 completionHandler(data)
             } else if let fallbackKey {
                 completionHandler(cache.assetData(fallbackKey))
@@ -129,14 +127,12 @@ private let zmLog = ZMSLog(tag: "AssetV3")
             return nil
         }
 
-        if
-            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
+        if let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
             let data = cache.decryptedMediumImageData(
                 for: assetClientMessage,
                 encryptionKey: asset.otrKey,
                 sha256Digest: asset.sha256
-            )
-        {
+            ) {
             return data
         } else if let data = cache.mediumImageData(for: assetClientMessage) {
             return data

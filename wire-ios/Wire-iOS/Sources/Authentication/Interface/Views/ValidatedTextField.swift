@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 
 protocol TextFieldValidationDelegate: AnyObject {
 
@@ -34,7 +34,7 @@ protocol ValidatedTextFieldDelegate: AnyObject {
     func buttonPressed(_ sender: UIButton)
 }
 
-final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
+final class ValidatedTextField: AccessoryTextField, TextContainer {
     enum Kind: Equatable {
         case email
         case name(isTeam: Bool)
@@ -51,7 +51,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     override var text: String? {
         didSet {
             validateInput()
-            boundTextField?.validateInput()
         }
     }
 
@@ -99,27 +98,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         didSet {
             confirmButton.isHidden = !showConfirmButton
         }
-    }
-
-    @objc
-    dynamic var colorSchemeVariant: ColorSchemeVariant = .light {
-        didSet {
-            applyColorScheme(colorSchemeVariant)
-        }
-    }
-
-    /// The other text field that needs to be valid in order to enable the confirm button.
-    private weak var boundTextField: ValidatedTextField?
-
-    /**
-     * Binds the state of the confirmation button to the validity of another text field.
-     * The button will be enabled when both the current and bound fields are valid.
-     */
-
-    func bindConfirmationButton(to textField: ValidatedTextField) {
-        assert(boundTextField == nil, "A text field cannot be bound to another text field more than once.")
-        self.boundTextField = textField
-        textField.boundTextField = self
     }
 
     var enableConfirmButton: (() -> Bool)?
@@ -187,7 +165,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         self.style = style
         applyStyle(style)
         configureObservers()
-        applyColorScheme(colorSchemeVariant)
     }
 
     private func configureObservers() {
@@ -244,13 +221,11 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         }
     }
 
-    func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) { }
-
     private func updateLoadingState() {
         updateButtonIcon()
         let animationKey = "rotation_animation"
         if isLoading {
-            let animation = CABasicAnimation(rotationSpeed: 1.4, beginTime: 0)
+            let animation = ProgressIndicatorRotationAnimation(rotationSpeed: 1.4, beginTime: 0)
             confirmButton.layer.add(animation, forKey: animationKey)
         } else {
             confirmButton.layer.removeAnimation(forKey: animationKey)
@@ -324,11 +299,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     private func updateConfirmButton() {
-        if let boundTextField {
-            confirmButton.isEnabled = boundTextField.isInputValid && self.isInputValid
-        } else {
-            confirmButton.isEnabled = isInputValid
-        }
+        confirmButton.isEnabled = isInputValid
     }
 
     // MARK: - text validation

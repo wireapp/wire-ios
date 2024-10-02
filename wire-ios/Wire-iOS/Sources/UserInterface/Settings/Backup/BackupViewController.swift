@@ -17,13 +17,14 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
-final class BackupViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+final class BackupViewController: UIViewController {
 
     private let tableView = UITableView(frame: .zero)
     private var cells: [UITableViewCell.Type] = []
     private let backupSource: BackupSource
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     init(backupSource: BackupSource) {
         self.backupSource = backupSource
@@ -37,9 +38,13 @@ final class BackupViewController: UIViewController, SpinnerCapable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNavigationTitle()
         setupViews()
         setupLayout()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title.capitalized)
     }
 
     private func setupViews() {
@@ -67,30 +72,22 @@ final class BackupViewController: UIViewController, SpinnerCapable {
     private func setupLayout() {
         tableView.fitIn(view: view)
     }
-
-    private func setupNavigationTitle() {
-        let title = L10n.Localizable.Self.Settings.HistoryBackup.title.capitalized
-        navigationItem.setupNavigationBarTitle(title: title)
-    }
-
-    var loadingHostController: SpinnerCapableViewController {
-        return (navigationController as? SpinnerCapableViewController) ?? self
-    }
 }
 
 // MARK: - UITableViewDataSource & UITableViewDelegate
 
 extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return tableView.dequeueReusableCell(withIdentifier: cells[indexPath.row].reuseIdentifier, for: indexPath)
-    }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cells.count
+        cells.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        tableView.dequeueReusableCell(withIdentifier: cells[indexPath.row].reuseIdentifier, for: indexPath)
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -107,10 +104,10 @@ private extension BackupViewController {
     func backupActiveAccount(indexPath: IndexPath) {
         requestBackupPassword { [weak self] result in
             guard let self, let password = result else { return }
-            self.loadingHostController.isLoadingViewVisible = true
+            activityIndicator.start()
 
             self.backupSource.backupActiveAccount(password: password) { backupResult in
-                self.loadingHostController.isLoadingViewVisible = false
+                self.activityIndicator.stop()
 
                 switch backupResult {
                 case .failure(let error):

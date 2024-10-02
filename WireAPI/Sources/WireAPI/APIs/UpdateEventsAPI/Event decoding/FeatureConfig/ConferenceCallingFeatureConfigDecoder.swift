@@ -28,7 +28,10 @@ struct ConferenceCallingFeatureConfigDecoder {
             forKey: .payload
         )
 
-        return ConferenceCallingFeatureConfig(status: payload.status)
+        return ConferenceCallingFeatureConfig(
+            status: payload.status,
+            useSFTForOneToOneCalls: false
+        )
     }
 
 }

@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 #
 # Wire
-# Copyright (C) 2023 Wire Swiss GmbH
+# Copyright (C) 2024 Wire Swiss GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ set -Eeuo pipefail
 #
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-SWIFTLINT="$REPO_ROOT/scripts/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.54.0-macos/bin/swiftlint"
+SWIFTLINT="$REPO_ROOT/scripts/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.55.1-macos/bin/swiftlint"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping SwiftLint in CI environment"
@@ -31,4 +31,5 @@ if [[ ! -f "$SWIFTLINT" ]]; then
     echo "❌ Executable is missing, please run the setup script!"
 fi
 
-"$SWIFTLINT" --quiet --config "$REPO_ROOT/.swiftlint.yml" "$@"
+echo "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"
+"$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"

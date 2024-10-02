@@ -237,115 +237,183 @@ class MockBackupSource: BackupSource {
 
 }
 
+class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - presentCallQualitySurvey
+
+    var presentCallQualitySurveyWith_Invocations: [TimeInterval] = []
+    var presentCallQualitySurveyWith_MockMethod: ((TimeInterval) -> Void)?
+
+    func presentCallQualitySurvey(with callDuration: TimeInterval) {
+        presentCallQualitySurveyWith_Invocations.append(callDuration)
+
+        guard let mock = presentCallQualitySurveyWith_MockMethod else {
+            fatalError("no mock for `presentCallQualitySurveyWith`")
+        }
+
+        mock(callDuration)
+    }
+
+    // MARK: - dismissCallQualitySurvey
+
+    var dismissCallQualitySurveyCompletion_Invocations: [Completion?] = []
+    var dismissCallQualitySurveyCompletion_MockMethod: ((Completion?) -> Void)?
+
+    func dismissCallQualitySurvey(completion: Completion?) {
+        dismissCallQualitySurveyCompletion_Invocations.append(completion)
+
+        guard let mock = dismissCallQualitySurveyCompletion_MockMethod else {
+            fatalError("no mock for `dismissCallQualitySurveyCompletion`")
+        }
+
+        mock(completion)
+    }
+
+    // MARK: - presentCallFailureDebugAlert
+
+    var presentCallFailureDebugAlertMainWindow_Invocations: [UIWindow] = []
+    var presentCallFailureDebugAlertMainWindow_MockMethod: ((UIWindow) -> Void)?
+
+    func presentCallFailureDebugAlert(mainWindow: UIWindow) {
+        presentCallFailureDebugAlertMainWindow_Invocations.append(mainWindow)
+
+        guard let mock = presentCallFailureDebugAlertMainWindow_MockMethod else {
+            fatalError("no mock for `presentCallFailureDebugAlertMainWindow`")
+        }
+
+        mock(mainWindow)
+    }
+
+    // MARK: - presentCallQualityRejection
+
+    var presentCallQualityRejectionMainWindow_Invocations: [UIWindow] = []
+    var presentCallQualityRejectionMainWindow_MockMethod: ((UIWindow) -> Void)?
+
+    func presentCallQualityRejection(mainWindow: UIWindow) {
+        presentCallQualityRejectionMainWindow_Invocations.append(mainWindow)
+
+        guard let mock = presentCallQualityRejectionMainWindow_MockMethod else {
+            fatalError("no mock for `presentCallQualityRejectionMainWindow`")
+        }
+
+        mock(mainWindow)
+    }
+
+}
+
 class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsViewModelDelegate {
 
     // MARK: - Life cycle
 
 
 
-    // MARK: - viewModel
+    // MARK: - conversationGuestOptionsViewModel
 
-    var viewModelDidUpdateState_Invocations: [(viewModel: ConversationGuestOptionsViewModel, state: ConversationGuestOptionsViewModel.State)] = []
-    var viewModelDidUpdateState_MockMethod: ((ConversationGuestOptionsViewModel, ConversationGuestOptionsViewModel.State) -> Void)?
+    var conversationGuestOptionsViewModelDidUpdateState_Invocations: [(viewModel: ConversationGuestOptionsViewModel, state: ConversationGuestOptionsViewModel.State)] = []
+    var conversationGuestOptionsViewModelDidUpdateState_MockMethod: ((ConversationGuestOptionsViewModel, ConversationGuestOptionsViewModel.State) -> Void)?
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didUpdateState state: ConversationGuestOptionsViewModel.State) {
-        viewModelDidUpdateState_Invocations.append((viewModel: viewModel, state: state))
+    func conversationGuestOptionsViewModel(_ viewModel: ConversationGuestOptionsViewModel, didUpdateState state: ConversationGuestOptionsViewModel.State) {
+        conversationGuestOptionsViewModelDidUpdateState_Invocations.append((viewModel: viewModel, state: state))
 
-        guard let mock = viewModelDidUpdateState_MockMethod else {
-            fatalError("no mock for `viewModelDidUpdateState`")
+        guard let mock = conversationGuestOptionsViewModelDidUpdateState_MockMethod else {
+            fatalError("no mock for `conversationGuestOptionsViewModelDidUpdateState`")
         }
 
         mock(viewModel, state)
     }
 
-    // MARK: - viewModel
+    // MARK: - conversationGuestOptionsViewModel
 
-    var viewModelDidReceiveError_Invocations: [(viewModel: ConversationGuestOptionsViewModel, error: Error)] = []
-    var viewModelDidReceiveError_MockMethod: ((ConversationGuestOptionsViewModel, Error) -> Void)?
+    var conversationGuestOptionsViewModelDidReceiveError_Invocations: [(viewModel: ConversationGuestOptionsViewModel, error: Error)] = []
+    var conversationGuestOptionsViewModelDidReceiveError_MockMethod: ((ConversationGuestOptionsViewModel, Error) -> Void)?
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didReceiveError error: Error) {
-        viewModelDidReceiveError_Invocations.append((viewModel: viewModel, error: error))
+    func conversationGuestOptionsViewModel(_ viewModel: ConversationGuestOptionsViewModel, didReceiveError error: Error) {
+        conversationGuestOptionsViewModelDidReceiveError_Invocations.append((viewModel: viewModel, error: error))
 
-        guard let mock = viewModelDidReceiveError_MockMethod else {
-            fatalError("no mock for `viewModelDidReceiveError`")
+        guard let mock = conversationGuestOptionsViewModelDidReceiveError_MockMethod else {
+            fatalError("no mock for `conversationGuestOptionsViewModelDidReceiveError`")
         }
 
         mock(viewModel, error)
     }
 
-    // MARK: - viewModel
+    // MARK: - conversationGuestOptionsViewModel
 
-    var viewModelSourceViewConfirmRemovingGuests_Invocations: [(viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, completion: (Bool) -> Void)] = []
-    var viewModelSourceViewConfirmRemovingGuests_MockMethod: ((ConversationGuestOptionsViewModel, UIView?, @escaping (Bool) -> Void) -> UIAlertController?)?
-    var viewModelSourceViewConfirmRemovingGuests_MockValue: UIAlertController??
+    var conversationGuestOptionsViewModelSourceViewConfirmRemovingGuests_Invocations: [(viewModel: ConversationGuestOptionsViewModel, sourceView: UIView, completion: (Bool) -> Void)] = []
+    var conversationGuestOptionsViewModelSourceViewConfirmRemovingGuests_MockMethod: ((ConversationGuestOptionsViewModel, UIView, @escaping (Bool) -> Void) -> UIAlertController?)?
+    var conversationGuestOptionsViewModelSourceViewConfirmRemovingGuests_MockValue: UIAlertController??
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController? {
-        viewModelSourceViewConfirmRemovingGuests_Invocations.append((viewModel: viewModel, sourceView: sourceView, completion: completion))
+    func conversationGuestOptionsViewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController? {
+        conversationGuestOptionsViewModelSourceViewConfirmRemovingGuests_Invocations.append((viewModel: viewModel, sourceView: sourceView, completion: completion))
 
-        if let mock = viewModelSourceViewConfirmRemovingGuests_MockMethod {
+        if let mock = conversationGuestOptionsViewModelSourceViewConfirmRemovingGuests_MockMethod {
             return mock(viewModel, sourceView, completion)
-        } else if let mock = viewModelSourceViewConfirmRemovingGuests_MockValue {
+        } else if let mock = conversationGuestOptionsViewModelSourceViewConfirmRemovingGuests_MockValue {
             return mock
         } else {
-            fatalError("no mock for `viewModelSourceViewConfirmRemovingGuests`")
+            fatalError("no mock for `conversationGuestOptionsViewModelSourceViewConfirmRemovingGuests`")
         }
     }
 
-    // MARK: - viewModel
+    // MARK: - conversationGuestOptionsViewModel
 
-    var viewModelSourceViewPresentGuestLinkTypeSelection_Invocations: [(viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, completion: (GuestLinkType) -> Void)] = []
-    var viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod: ((ConversationGuestOptionsViewModel, UIView?, @escaping (GuestLinkType) -> Void) -> Void)?
+    var conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_Invocations: [(viewModel: ConversationGuestOptionsViewModel, sourceView: UIView, completion: (GuestLinkType) -> Void)] = []
+    var conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod: ((ConversationGuestOptionsViewModel, UIView, @escaping (GuestLinkType) -> Void) -> Void)?
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void) {
-        viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.append((viewModel: viewModel, sourceView: sourceView, completion: completion))
+    func conversationGuestOptionsViewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView, presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void) {
+        conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_Invocations.append((viewModel: viewModel, sourceView: sourceView, completion: completion))
 
-        guard let mock = viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod else {
-            fatalError("no mock for `viewModelSourceViewPresentGuestLinkTypeSelection`")
-        }
-
-        mock(viewModel, sourceView, completion)
-    }
-
-    // MARK: - viewModel
-
-    var viewModelSourceViewConfirmRevokingLink_Invocations: [(viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, completion: (Bool) -> Void)] = []
-    var viewModelSourceViewConfirmRevokingLink_MockMethod: ((ConversationGuestOptionsViewModel, UIView?, @escaping (Bool) -> Void) -> Void)?
-
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRevokingLink completion: @escaping (Bool) -> Void) {
-        viewModelSourceViewConfirmRevokingLink_Invocations.append((viewModel: viewModel, sourceView: sourceView, completion: completion))
-
-        guard let mock = viewModelSourceViewConfirmRevokingLink_MockMethod else {
-            fatalError("no mock for `viewModelSourceViewConfirmRevokingLink`")
+        guard let mock = conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod else {
+            fatalError("no mock for `conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection`")
         }
 
         mock(viewModel, sourceView, completion)
     }
 
-    // MARK: - viewModel
+    // MARK: - conversationGuestOptionsViewModel
 
-    var viewModelWantsToShareMessageSourceView_Invocations: [(viewModel: ConversationGuestOptionsViewModel, message: String, sourceView: UIView?)] = []
-    var viewModelWantsToShareMessageSourceView_MockMethod: ((ConversationGuestOptionsViewModel, String, UIView?) -> Void)?
+    var conversationGuestOptionsViewModelSourceViewConfirmRevokingLink_Invocations: [(viewModel: ConversationGuestOptionsViewModel, sourceView: UIView, completion: (Bool) -> Void)] = []
+    var conversationGuestOptionsViewModelSourceViewConfirmRevokingLink_MockMethod: ((ConversationGuestOptionsViewModel, UIView, @escaping (Bool) -> Void) -> Void)?
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView?) {
-        viewModelWantsToShareMessageSourceView_Invocations.append((viewModel: viewModel, message: message, sourceView: sourceView))
+    func conversationGuestOptionsViewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView, confirmRevokingLink completion: @escaping (Bool) -> Void) {
+        conversationGuestOptionsViewModelSourceViewConfirmRevokingLink_Invocations.append((viewModel: viewModel, sourceView: sourceView, completion: completion))
 
-        guard let mock = viewModelWantsToShareMessageSourceView_MockMethod else {
-            fatalError("no mock for `viewModelWantsToShareMessageSourceView`")
+        guard let mock = conversationGuestOptionsViewModelSourceViewConfirmRevokingLink_MockMethod else {
+            fatalError("no mock for `conversationGuestOptionsViewModelSourceViewConfirmRevokingLink`")
+        }
+
+        mock(viewModel, sourceView, completion)
+    }
+
+    // MARK: - conversationGuestOptionsViewModel
+
+    var conversationGuestOptionsViewModelWantsToShareMessageSourceView_Invocations: [(viewModel: ConversationGuestOptionsViewModel, message: String, sourceView: UIView)] = []
+    var conversationGuestOptionsViewModelWantsToShareMessageSourceView_MockMethod: ((ConversationGuestOptionsViewModel, String, UIView) -> Void)?
+
+    func conversationGuestOptionsViewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView) {
+        conversationGuestOptionsViewModelWantsToShareMessageSourceView_Invocations.append((viewModel: viewModel, message: message, sourceView: sourceView))
+
+        guard let mock = conversationGuestOptionsViewModelWantsToShareMessageSourceView_MockMethod else {
+            fatalError("no mock for `conversationGuestOptionsViewModelWantsToShareMessageSourceView`")
         }
 
         mock(viewModel, message, sourceView)
     }
 
-    // MARK: - viewModel
+    // MARK: - conversationGuestOptionsViewModel
 
-    var viewModelPresentCreateSecureGuestLinkAnimated_Invocations: [(viewModel: ConversationGuestOptionsViewModel, viewController: UIViewController, animated: Bool)] = []
-    var viewModelPresentCreateSecureGuestLinkAnimated_MockMethod: ((ConversationGuestOptionsViewModel, UIViewController, Bool) -> Void)?
+    var conversationGuestOptionsViewModelPresentCreateSecureGuestLinkAnimated_Invocations: [(viewModel: ConversationGuestOptionsViewModel, viewController: UIViewController, animated: Bool)] = []
+    var conversationGuestOptionsViewModelPresentCreateSecureGuestLinkAnimated_MockMethod: ((ConversationGuestOptionsViewModel, UIViewController, Bool) -> Void)?
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
-        viewModelPresentCreateSecureGuestLinkAnimated_Invocations.append((viewModel: viewModel, viewController: viewController, animated: animated))
+    func conversationGuestOptionsViewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
+        conversationGuestOptionsViewModelPresentCreateSecureGuestLinkAnimated_Invocations.append((viewModel: viewModel, viewController: viewController, animated: animated))
 
-        guard let mock = viewModelPresentCreateSecureGuestLinkAnimated_MockMethod else {
-            fatalError("no mock for `viewModelPresentCreateSecureGuestLinkAnimated`")
+        guard let mock = conversationGuestOptionsViewModelPresentCreateSecureGuestLinkAnimated_MockMethod else {
+            fatalError("no mock for `conversationGuestOptionsViewModelPresentCreateSecureGuestLinkAnimated`")
         }
 
         mock(viewModel, viewController, animated)
@@ -640,6 +708,33 @@ class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotific
 
 }
 
+public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - metadataForFile
+
+    public var metadataForFileAt_Invocations: [URL] = []
+    public var metadataForFileAt_MockMethod: ((URL) async -> ZMFileMetadata)?
+    public var metadataForFileAt_MockValue: ZMFileMetadata?
+
+    public func metadataForFile(at url: URL) async -> ZMFileMetadata {
+        metadataForFileAt_Invocations.append(url)
+
+        if let mock = metadataForFileAt_MockMethod {
+            return await mock(url)
+        } else if let mock = metadataForFileAt_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `metadataForFileAt`")
+        }
+    }
+
+}
+
 class MockImageTransformer: ImageTransformer {
 
     // MARK: - Life cycle
@@ -666,6 +761,80 @@ class MockImageTransformer: ImageTransformer {
 
 }
 
+class MockLogFilesProviding: LogFilesProviding {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - generateLogFilesData
+
+    var generateLogFilesData_Invocations: [Void] = []
+    var generateLogFilesData_MockError: Error?
+    var generateLogFilesData_MockMethod: (() throws -> Data)?
+    var generateLogFilesData_MockValue: Data?
+
+    func generateLogFilesData() throws -> Data {
+        generateLogFilesData_Invocations.append(())
+
+        if let error = generateLogFilesData_MockError {
+            throw error
+        }
+
+        if let mock = generateLogFilesData_MockMethod {
+            return try mock()
+        } else if let mock = generateLogFilesData_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `generateLogFilesData`")
+        }
+    }
+
+    // MARK: - generateLogFilesZip
+
+    var generateLogFilesZip_Invocations: [Void] = []
+    var generateLogFilesZip_MockError: Error?
+    var generateLogFilesZip_MockMethod: (() throws -> URL)?
+    var generateLogFilesZip_MockValue: URL?
+
+    func generateLogFilesZip() throws -> URL {
+        generateLogFilesZip_Invocations.append(())
+
+        if let error = generateLogFilesZip_MockError {
+            throw error
+        }
+
+        if let mock = generateLogFilesZip_MockMethod {
+            return try mock()
+        } else if let mock = generateLogFilesZip_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `generateLogFilesZip`")
+        }
+    }
+
+    // MARK: - clearLogsDirectory
+
+    var clearLogsDirectory_Invocations: [Void] = []
+    var clearLogsDirectory_MockError: Error?
+    var clearLogsDirectory_MockMethod: (() throws -> Void)?
+
+    func clearLogsDirectory() throws {
+        clearLogsDirectory_Invocations.append(())
+
+        if let error = clearLogsDirectory_MockError {
+            throw error
+        }
+
+        guard let mock = clearLogsDirectory_MockMethod else {
+            fatalError("no mock for `clearLogsDirectory`")
+        }
+
+        try mock()
+    }
+
+}
+
 public class MockNetworkStatusObservable: NetworkStatusObservable {
 
     // MARK: - Life cycle
@@ -681,6 +850,47 @@ public class MockNetworkStatusObservable: NetworkStatusObservable {
 
     public var underlyingReachability: ServerReachability!
 
+
+}
+
+class MockNetworkStatusViewDelegate: NetworkStatusViewDelegate {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - shouldAnimateNetworkStatusView
+
+    var shouldAnimateNetworkStatusView: Bool {
+        get { return underlyingShouldAnimateNetworkStatusView }
+        set(value) { underlyingShouldAnimateNetworkStatusView = value }
+    }
+
+    var underlyingShouldAnimateNetworkStatusView: Bool!
+
+    // MARK: - bottomMargin
+
+    var bottomMargin: CGFloat {
+        get { return underlyingBottomMargin }
+        set(value) { underlyingBottomMargin = value }
+    }
+
+    var underlyingBottomMargin: CGFloat!
+
+
+    // MARK: - didChangeHeight
+
+    var didChangeHeightAnimatedState_Invocations: [(networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState)] = []
+    var didChangeHeightAnimatedState_MockMethod: ((NetworkStatusView, Bool, NetworkStatusViewState) -> Void)?
+
+    func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
+        didChangeHeightAnimatedState_Invocations.append((networkStatusView: networkStatusView, animated: animated, state: state))
+
+        guard let mock = didChangeHeightAnimatedState_MockMethod else {
+            fatalError("no mock for `didChangeHeightAnimatedState`")
+        }
+
+        mock(networkStatusView, animated, state)
+    }
 
 }
 
@@ -1152,6 +1362,98 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
         }
 
         mock(delegate)
+    }
+
+}
+
+class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - presentMailComposer
+
+    var presentMailComposer_Invocations: [Void] = []
+    var presentMailComposer_MockMethod: (() -> Void)?
+
+    @MainActor
+    func presentMailComposer() {
+        presentMailComposer_Invocations.append(())
+
+        guard let mock = presentMailComposer_MockMethod else {
+            fatalError("no mock for `presentMailComposer`")
+        }
+
+        mock()
+    }
+
+    // MARK: - presentFallbackAlert
+
+    var presentFallbackAlertSender_Invocations: [UIView] = []
+    var presentFallbackAlertSender_MockMethod: ((UIView) -> Void)?
+
+    func presentFallbackAlert(sender: UIView) {
+        presentFallbackAlertSender_Invocations.append(sender)
+
+        guard let mock = presentFallbackAlertSender_MockMethod else {
+            fatalError("no mock for `presentFallbackAlertSender`")
+        }
+
+        mock(sender)
+    }
+
+    // MARK: - presentShareViewController
+
+    var presentShareViewControllerDestinationsDebugReport_Invocations: [(destinations: [ZMConversation], debugReport: ShareableDebugReport)] = []
+    var presentShareViewControllerDestinationsDebugReport_MockMethod: (([ZMConversation], ShareableDebugReport) -> Void)?
+
+    func presentShareViewController(destinations: [ZMConversation], debugReport: ShareableDebugReport) {
+        presentShareViewControllerDestinationsDebugReport_Invocations.append((destinations: destinations, debugReport: debugReport))
+
+        guard let mock = presentShareViewControllerDestinationsDebugReport_MockMethod else {
+            fatalError("no mock for `presentShareViewControllerDestinationsDebugReport`")
+        }
+
+        mock(destinations, debugReport)
+    }
+
+}
+
+class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - sendReport
+
+    var sendReportSender_Invocations: [UIView] = []
+    var sendReportSender_MockMethod: ((UIView) -> Void)?
+
+    func sendReport(sender: UIView) {
+        sendReportSender_Invocations.append(sender)
+
+        guard let mock = sendReportSender_MockMethod else {
+            fatalError("no mock for `sendReportSender`")
+        }
+
+        mock(sender)
+    }
+
+    // MARK: - shareReport
+
+    var shareReport_Invocations: [Void] = []
+    var shareReport_MockMethod: (() async -> Void)?
+
+    func shareReport() async {
+        shareReport_Invocations.append(())
+
+        guard let mock = shareReport_MockMethod else {
+            fatalError("no mock for `shareReport`")
+        }
+
+        await mock()
     }
 
 }

@@ -34,7 +34,7 @@ extension ZMUserSession: AccessTokenRenewing {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
             let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
-            let error = NSError.userSessionErrorWith(.accessTokenExpired, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
+            let error = NSError.userSessionError(code: .accessTokenExpired, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
             self.notifyAuthenticationInvalidated(error)
         }
 

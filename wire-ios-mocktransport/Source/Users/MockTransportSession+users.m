@@ -23,6 +23,7 @@
 #import "MockTransportSession+internal.h"
 #import "MockPreKey.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 @implementation MockTransportSession (Users)
@@ -94,8 +95,8 @@
     NSFetchRequest *request = [MockUser sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
     
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
+
     // check that I got all of them
     if (users.count < 1) {
         return [self errorResponseWithCode:404 reason:@"user not found" apiVersion:apiVersion];
@@ -117,8 +118,8 @@
     NSFetchRequest *request = [MockUser sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
     
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
+
     // check that I got all of them
     if (users.count < 1) {
         return [self errorResponseWithCode:404 reason:@"user not found" apiVersion:apiVersion];
@@ -136,8 +137,8 @@
     NSFetchRequest *request = [MockUser sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
     
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
+
     // check that I got all of them
     if (users.count < 1) {
         return [self errorResponseWithCode:404 reason:@"user not found" apiVersion:apiVersion];
@@ -169,8 +170,8 @@
     NSFetchRequest *request = [MockUser sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat:@"handle IN %@", userHandles];
     
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
+
     // check that I got all of them
     if (users.count != userHandles.count) {
         return [self errorResponseWithCode:404 reason:@"user not found" apiVersion:apiVersion];
@@ -198,8 +199,8 @@
     NSFetchRequest *request = [MockUser sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", userIDs];
     
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
+
     // check that I got all of them
     if (users.count != userIDs.count) {
         return [self errorResponseWithCode:404 reason:@"user not found" apiVersion:apiVersion];
@@ -256,8 +257,8 @@
     
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"phone == %@", phone];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
     if(users.count > 0) {
         return [self errorResponseWithCode:409 reason:@"key-exist" apiVersion:apiVersion];
     }
@@ -276,8 +277,8 @@
     
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"email == %@", email];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
     if(users.count > 0) {
         return [self errorResponseWithCode:409 reason:@"key-exist" apiVersion:apiVersion];
     }
@@ -314,8 +315,8 @@
     
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@", handle];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
     if(users.count > 0) {
         return [self errorResponseWithCode:409 reason:@"key-exists" apiVersion:apiVersion];
     }
@@ -358,8 +359,8 @@
 {
     NSFetchRequest *usersRequest = [NSFetchRequest fetchRequestWithEntityName:@"User"];
     usersRequest.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", clientsMap.allKeys];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:usersRequest];
-    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:usersRequest];
+
     if (clientsMap.count < 128) {
         
         NSMutableDictionary *payload = [NSMutableDictionary new];
@@ -428,7 +429,7 @@
 {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@", handle];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
     NSData *payloadData;
     NSInteger statusCode;
 
@@ -453,7 +454,7 @@
 {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@ AND domain == %@", handle, domain];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
     NSData *payloadData;
     NSInteger statusCode;
 
@@ -498,7 +499,7 @@
         }
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@", handle];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
         
         if(users.count == 0) {
             [selectedHandles addObject:handle];

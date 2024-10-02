@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDesign
-import WireUITesting
+import WireTestingPackage
 import WireUtilities
 import XCTest
 

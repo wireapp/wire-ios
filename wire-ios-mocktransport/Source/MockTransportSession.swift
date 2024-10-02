@@ -152,7 +152,7 @@ public extension MockTransportSession {
 
 extension MockTransportSession: TransportSessionType {
 
-    public func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse {
+    public func enqueue(_ request: ZMTransportRequest, queue: GroupQueue) async -> ZMTransportResponse {
         return await withCheckedContinuation { continuation in
             request.add(ZMCompletionHandler(on: queue, block: { response in
                 continuation.resume(returning: response)

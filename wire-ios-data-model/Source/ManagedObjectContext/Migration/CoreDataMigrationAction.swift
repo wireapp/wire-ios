@@ -20,6 +20,9 @@ import Foundation
 
 /// Action to perform on a given persistentContainer
 class CoreDataMigrationAction {
+    var dataModelName: String {
+        "zmessaging"
+    }
 
     private func loadStore(for persistentContainer: NSPersistentContainer) throws {
         persistentContainer.persistentStoreDescriptions.first?.shouldAddStoreAsynchronously = false
@@ -70,7 +73,6 @@ class CoreDataMigrationAction {
 
     private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
 
-        let dataModelName = "zmessaging"
         let container = NSPersistentContainer(
             name: dataModelName,
             managedObjectModel: model

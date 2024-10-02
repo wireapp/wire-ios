@@ -30,14 +30,14 @@ public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProvide
 
     private var provider: DeletableAssetIdentifierProvider
     private var identifiersInProgress = Set<String>()
-    private let queue: ZMSGroupQueue
+    private let queue: GroupQueue
 
     private var remainingIdentifiersToDelete: Set<String> {
         return provider.assetIdentifiersToBeDeleted.subtracting(identifiersInProgress)
     }
 
     @objc(initWithProvider:queue:)
-    public init(provider: DeletableAssetIdentifierProvider, queue: ZMSGroupQueue) {
+    public init(provider: DeletableAssetIdentifierProvider, queue: GroupQueue) {
         self.queue = queue
         self.provider = provider
         super.init()
