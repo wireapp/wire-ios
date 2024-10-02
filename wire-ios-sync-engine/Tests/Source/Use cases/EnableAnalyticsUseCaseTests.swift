@@ -46,6 +46,7 @@ final class EnableAnalyticsUseCaseTests: XCTestCase {
     func testInvoke_enables_and_switches_user_via_service() throws {
         // Mock
         service.enableTracking_MockMethod = { }
+        service.switchUser_MockMethod = { _ in }
 
         // When
         try sut.invoke()
