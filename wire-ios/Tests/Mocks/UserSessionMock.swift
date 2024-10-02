@@ -343,6 +343,10 @@ final class UserSessionMock: UserSession {
         AppendFileMessageUseCase(analyticsSession: nil)
     }
 
+    func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol {
+        ToggleMessageReactionUseCase(analyticsSession: nil)
+    }
+
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
     var mlsFeature: Feature.MLS = Feature.MLS(
