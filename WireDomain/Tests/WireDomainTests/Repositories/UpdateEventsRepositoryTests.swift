@@ -20,10 +20,10 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import XCTest
-
 @testable import WireDomain
 @testable import WireDomainSupport
+import WireTestingPackage
+import XCTest
 
 final class UpdateEventsRepositoryTests: XCTestCase {
 
@@ -31,7 +31,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
     var updateEventsAPI: MockUpdateEventsAPI!
     var pushChannel: MockPushChannelProtocol!
     var updateEventDecryptor: MockUpdateEventDecryptorProtocol!
-    var lastEventIDRepository: MockLastEventIDRepositoryInterface!
+    var mockUserDefaults: UserDefaults!
 
     var stack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
@@ -46,30 +46,35 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         updateEventsAPI = MockUpdateEventsAPI()
         pushChannel = MockPushChannelProtocol()
         updateEventDecryptor = MockUpdateEventDecryptorProtocol()
-        lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        mockUserDefaults = UserDefaults(
+            suiteName: Scaffolding.defaultsTestSuiteName
+        )
         sut = UpdateEventsRepository(
+            userID: Scaffolding.selfUserID.uuid,
             selfClientID: Scaffolding.selfClientID,
             updateEventsAPI: updateEventsAPI,
             pushChannel: pushChannel,
             updateEventDecryptor: updateEventDecryptor,
             eventContext: context,
-            lastEventIDRepository: lastEventIDRepository
+            sharedUserDefaults: mockUserDefaults
         )
 
         // Base mocks
         updateEventDecryptor.decryptEventsIn_MockMethod = { $0.events }
-        lastEventIDRepository.storeLastEventID_MockMethod = { _ in }
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         stack = nil
         updateEventsAPI = nil
         pushChannel = nil
         updateEventDecryptor = nil
-        lastEventIDRepository = nil
         sut = nil
+        mockUserDefaults.removePersistentDomain(
+            forName: Scaffolding.defaultsTestSuiteName
+        )
+        mockUserDefaults = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
     }
 
     private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
@@ -89,9 +94,6 @@ final class UpdateEventsRepositoryTests: XCTestCase {
     // MARK: - Pull pending events
 
     func testItThrowsErrorWhenPullingPendingEventsWithoutLastEventID() async throws {
-        // Given no last event id.
-        lastEventIDRepository.fetchLastEventID_MockValue = .some(nil)
-
         do {
             // When
             try await sut.pullPendingEvents()
@@ -111,7 +113,10 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         ])
 
         // There is a last event id.
-        lastEventIDRepository.fetchLastEventID_MockValue = Scaffolding.lastEventID
+        mockUserDefaults.set(
+            Scaffolding.lastEventID.uuidString,
+            forKey: Scaffolding.lastEventIDUserDefaultsKey
+        )
 
         // There are two pages of events waiting to be pulled.
         updateEventsAPI.getUpdateEventsSelfClientIDSinceEventID_MockValue = PayloadPager(start: "page1") { start in
@@ -197,17 +202,11 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             XCTAssertEqual(storedEventEnvelopes[5].sortIndex, 5)
         }
 
-        // The the last update event id was persisted for each non-transient envelope.
-        let lastEventIDInvocations = lastEventIDRepository.storeLastEventID_Invocations
+        // The the update event id was persisted for the last non-transient envelope.
 
-        guard lastEventIDInvocations.count == 3 else {
-            XCTFail("expected 3 invocations, got \(lastEventIDInvocations.count)")
-            return
-        }
+        let lastEventID = try XCTUnwrap(mockUserDefaults.string(forKey: Scaffolding.lastEventIDUserDefaultsKey))
 
-        XCTAssertEqual(lastEventIDInvocations[0], Scaffolding.id3)
-        XCTAssertEqual(lastEventIDInvocations[1], Scaffolding.id5)
-        XCTAssertEqual(lastEventIDInvocations[2], Scaffolding.id6)
+        XCTAssertEqual(UUID(uuidString: lastEventID), Scaffolding.envelope6.id)
     }
 
     // MARK: - Fetch next pending events
@@ -364,7 +363,22 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         sut.storeLastEventEnvelopeID(id)
 
         // Then
-        lastEventIDRepository.storeLastEventID_Invocations = [id]
+        let lastEventId = try XCTUnwrap(mockUserDefaults.string(forKey: Scaffolding.lastEventIDUserDefaultsKey))
+        XCTAssertEqual(UUID(uuidString: lastEventId), id)
+    }
+
+    func testPullLastEventID_It_Stores_Last_Event_ID() async throws {
+        // Mock
+
+        updateEventsAPI.getLastUpdateEventSelfClientID_MockValue = Scaffolding.envelope1
+
+        // When
+
+        try await sut.pullLastEventID()
+
+        // Then
+        let lastEventId = try XCTUnwrap(mockUserDefaults.string(forKey: Scaffolding.lastEventIDUserDefaultsKey))
+        XCTAssertEqual(UUID(uuidString: lastEventId), Scaffolding.envelope1.id)
     }
 
 }
@@ -479,5 +493,9 @@ private enum Scaffolding {
         hasMore: false,
         nextStart: ""
     )
+
+    static let defaultsTestSuiteName = UUID().uuidString
+
+    static let lastEventIDUserDefaultsKey = "\(selfUserID.uuid.uuidString)_lastEventID"
 
 }
