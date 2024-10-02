@@ -374,7 +374,6 @@
       }
     },
     "tabBar.contacts.description" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -493,7 +492,6 @@
       }
     },
     "tabBar.contacts.hint" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -612,7 +610,6 @@
       }
     },
     "tabBar.contacts.title" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1109,7 +1106,6 @@
       }
     },
     "tabBar.folders.description" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1228,7 +1224,6 @@
       }
     },
     "tabBar.folders.hint" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1347,7 +1342,6 @@
       }
     },
     "tabBar.folders.title" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {

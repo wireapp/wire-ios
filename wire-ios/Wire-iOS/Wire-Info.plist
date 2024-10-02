@@ -153,7 +153,7 @@
 	<key>UIRequiredDeviceCapabilities</key>
 	<array/>
 	<key>UIRequiresFullScreen</key>
-	<false/>
+	<true/>
 	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
