@@ -84,6 +84,19 @@ jobs:
         run: |
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
 
+      # Step to find all .xcresult files and analyze each one
+      - name: Analyze xcresult files
+        run: |
+          # Find all .xcresult files under the artifacts directory
+          find artifacts/ -type f -name "*.xcresult" | while read result; do
+            echo "Analyzing $result"
+            # Run the analysis action for each .xcresult file
+            gh action run analyze-xcoderesults-action@v0.1.9 \
+              --with results="$result" \
+              --with warningAnnotations=true \
+              --with GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          done
+
       # Scripts
       - name: Test Scripts
         if: ${{ contains(inputs.folders, 'scripts') || inputs.all }}
