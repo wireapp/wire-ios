@@ -200,15 +200,6 @@ jobs:
         run: |
           ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
-        # Save Swift Package Dependencies Cache
-      #- name: Save Swift Package Dependencies Cache
-      #  uses: actions/cache@v3
-      #  with:
-      #    path: ${{ env.PACKAGES_DIR }}
-          #path: |
-          #  /Users/admin/actions-runner/_work/wire-ios/wire-ios/DerivedData/CachedSwiftPackages
-      #    key: ${{ runner.os }}-swiftpm-${{ hashFiles('Package.resolved') }}
-
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
