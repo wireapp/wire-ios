@@ -80,7 +80,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         sut.invoke("❤️", for: firstMessage, in: convo)
 
         // THEN
-        let userReactions = firstMessage.usersReaction // Get the usersReaction dictionary
+        let userReactions = firstMessage.usersReaction
 
         XCTAssert(userReactions.keys.contains("❤️"), "Expected the first message to have a ❤️ reaction.")
         XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
