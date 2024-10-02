@@ -137,11 +137,11 @@ jobs:
             ~/Library/Logs/DiagnosticReports/**
 
       - name: Notify on Wire if failed
-        if: ${{ failure() && github.ref_name == 'develop' }}
+        if: ${{ failure() && inputs.all }}
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "🆘 Tests for 'develop' failed 🆘\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: "🆘 Tests for '${{ github.ref_name }}' failed 🆘\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
   
   upload-test-results-datadadog:
     runs-on: ubuntu-latest
