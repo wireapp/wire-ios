@@ -39,22 +39,133 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
     }
 
     func testEncryptForTransportUsingNonQualifiedIds() async throws {
-        try await internalTestEncryptForTransport(qualifiedIds: false)
+        let message = GenericMessage(content: Text(content: "test"))
+        try await internalTestEncryptForTransport(genericMessage: message, qualifiedIds: true)
     }
 
     func testEncryptForTransportUsingQualifiedIds() async throws {
-        try await internalTestEncryptForTransport(qualifiedIds: true)
+        let message = GenericMessage(content: Text(content: "test"))
+        try await internalTestEncryptForTransport(genericMessage: message, qualifiedIds: true)
     }
 
-    // MARK: - helpers
+    func testEncryptForTransportEphemeralMessage() async throws {
+        let message = GenericMessage(content: Ephemeral(content: Text(content: "test"), expiresAfter: .fiveMinutes))
+        try await internalTestEncryptForTransport(genericMessage: message)
+    }
 
-    private func internalTestEncryptForTransport(qualifiedIds: Bool) async throws {
+    func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
+        // GIVEN
+        let message = GenericMessage(content: Text(content: self.stringLargeEnoughToRequireExternal), nonce: UUID())
+
+        // WHEN
+        let data = try await internalTestEncryptForTransport(genericMessage: message, qualifiedIds: false)
+
+        // THEN
+        let createdMessage = try Proteus_NewOtrMessage.with {
+            try $0.merge(serializedData: data)
+        }
+
+        XCTAssertEqual(createdMessage.hasBlob, true)
+        let clientIds = createdMessage.recipients.flatMap { userEntry -> [Proteus_ClientId] in
+            return (userEntry.clients).map { clientEntry -> Proteus_ClientId in
+                return clientEntry.client
+            }
+        }
+        let clientSet = Set(clientIds)
+        XCTAssertEqual(clientSet.count, 1)
+    }
+
+    func testThatCorruptedClientsReceiveBogusPayloadWhenSentAsExternal() async throws {
+
+        // GIVEN
+        let userAID = QualifiedID.random()
+        let userBID = QualifiedID.random()
+        let clientAID = String.randomClientIdentifier()
+        let clientBID = String.randomClientIdentifier()
+        let domain = String.randomDomain()
+        let sessionAID: ProteusSessionID = .init(domain: domain,
+                                                userID: userAID.uuid.uuidString,
+                                                clientID: clientAID)
+
+        let sessionBID: ProteusSessionID = .init(domain: domain,
+                                                userID: userBID.uuid.uuidString,
+                                                clientID: clientBID)
+
+        let listClients: MessageInfo.ClientList = [
+            userAID.domain: [
+                userAID.uuid: [
+                    UserClientData(sessionID: sessionAID)
+                ],
+
+                userBID.uuid: [
+                    UserClientData(sessionID: sessionBID, data: ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!)
+                ]
+            ]
+        ]
+
+        let message = GenericMessage(content: Text(content: self.stringLargeEnoughToRequireExternal), nonce: UUID())
+
+        // WHEN
+        let data = try await internalTestEncryptForTransport(genericMessage: message,
+                                                             qualifiedIds: false,
+                                                             listClients: listClients)
+
+        // THEN
+        let createdMessage = try Proteus_NewOtrMessage.with {
+            try $0.merge(serializedData: data)
+        }
+        XCTAssertEqual(createdMessage.hasBlob, true)
+
+        guard let userEntry = createdMessage.recipients.first else {
+            return XCTFail()
+        }
+
+        XCTAssertEqual(userEntry.clients.count, 1)
+        XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
+    }
+
+    // MARK: - Helpers
+
+    @discardableResult
+    private func internalTestEncryptForTransport(genericMessage: GenericMessage,
+                                                 qualifiedIds: Bool = true,
+                                                 listClients: MessageInfo.ClientList,
+                                                 file: StaticString = #filePath,
+                                                 line: UInt = #line) async throws -> Data {
+
+        proteusService.encryptBatchedDataForSessions_MockMethod = { data, sessions in
+            var result = [String: Data]()
+            sessions.forEach { session in
+                result[session.rawValue] = data
+            }
+            return result
+        }
+
+        sut = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: qualifiedIds)
+        let messageInfo = MessageInfo(genericMessage: genericMessage,
+                                      listClients: listClients,
+                                      missingClientsStrategy: .doNotIgnoreAnyMissingClient,
+                                      selfClientID: .randomClientIdentifier())
+
+        // WHEN
+        let data = try await sut.encryptForTransport(with: messageInfo)
+
+        // THEN
+        XCTAssertNotNil(data, file: file, line: line)
+        return data
+    }
+
+    @discardableResult
+    private func internalTestEncryptForTransport(genericMessage: GenericMessage,
+                                                 qualifiedIds: Bool = true,
+                                                 file: StaticString = #filePath,
+                                                 line: UInt = #line) async throws -> Data {
         // GIVEN
         let userID = QualifiedID.random()
         let clientID = String.randomClientIdentifier()
         let sessionID: ProteusSessionID = .init(domain: .randomDomain(),
-                              userID: userID.uuid.uuidString,
-                              clientID: clientID)
+                                                userID: userID.uuid.uuidString,
+                                                clientID: clientID)
         let listClients: MessageInfo.ClientList = [
             userID.domain: [
                 userID.uuid: [
@@ -62,22 +173,19 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
                 ]
             ]
         ]
+        return try await internalTestEncryptForTransport(genericMessage: genericMessage,
+                                                         qualifiedIds: qualifiedIds,
+                                                         listClients: listClients,
+                                                         file: file,
+                                                         line: line)
+    }
 
-        proteusService.encryptBatchedDataForSessions_MockMethod = { _, _ in
-            [sessionID.rawValue: Data()]
+    /// Returns a string large enough to have to be encoded in an external message
+    fileprivate var stringLargeEnoughToRequireExternal: String {
+        var text = "Hello"
+        while text.data(using: .utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold) {
+            text.append(text)
         }
-
-        sut = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: qualifiedIds)
-        let messageInfo = MessageInfo(genericMessage: GenericMessage(content: Text(content: "test")),
-                                      listClients: listClients,
-                                      missingClientsStrategy: .doNotIgnoreAnyMissingClient,
-                                      selfClientID: .randomClientIdentifier(),
-                                      nativePush: true)
-
-        // WHEN
-        let data = try await sut.encryptForTransport(with: messageInfo)
-
-        // THEN
-        XCTAssertNotNil(data)
+        return text
     }
 }

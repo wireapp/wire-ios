@@ -26,10 +26,6 @@ public enum Recipients {
 
 @objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
 
-    public var underlyingMessage: WireProtos.GenericMessage? {
-        message
-    }
-
     public var context: NSManagedObjectContext
     public var message: GenericMessage
     public var conversation: ZMConversation?
@@ -60,7 +56,7 @@ public enum Recipients {
 
     public var shouldIgnoreTheSecurityLevelCheck: Bool = false
 
-    public func missesRecipients(_ recipients: Set<UserClient>!) {
+    public func missesRecipients(_ recipients: Set<UserClient>) {
         // no-op
     }
 
@@ -80,6 +76,14 @@ public enum Recipients {
         // no-op
     }
 
+    public func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {
+        self.message = message
+    }
+
+    public var underlyingMessage: WireProtos.GenericMessage? {
+        message
+    }
+
     public func expire(withReason reason: ExpirationReason) {
         isExpired = true
         expirationReasonCode = NSNumber(value: reason.rawValue)
@@ -92,47 +96,4 @@ public enum Recipients {
 
 public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
     return lhs === rhs
-}
-
-extension GenericMessageEntity: EncryptedPayloadGenerator {
-
-    public func encryptForTransport() async -> EncryptedPayloadGenerator.Payload? {
-
-        switch targetRecipients {
-        case .conversationParticipants:
-            guard let conversation else { return nil }
-            return await message.encryptForTransport(for: conversation, in: context)
-        case .users(let users):
-            fatal("should use ProteusMessagePayloadBuilder")
-        case .clients(let clientsByUser):
-            return await message.encryptForTransport(for: clientsByUser, in: context)
-        }
-    }
-
-    public func encryptForTransportQualified() async -> EncryptedPayloadGenerator.Payload? {
-        switch targetRecipients {
-        case .conversationParticipants:
-            guard let conversation else { return nil }
-            return await message.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
-        case .users(let users):
-            fatal("should use ProteusMessagePayloadBuilder")
-        case .clients(let clientsByUser):
-            return await message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: context)
-        }
-    }
-
-    public var debugInfo: String {
-        if case .confirmation = message.content {
-            return "Confirmation Message"
-        } else if case .calling? = message.content {
-            return "Calling Message"
-        } else if case .clientAction? = message.content {
-            switch message.clientAction {
-            case .resetSession: return "Reset Session Message"
-            }
-        }
-
-        return "\(self)"
-    }
-
 }

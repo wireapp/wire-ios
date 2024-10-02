@@ -24,7 +24,7 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
     override func setUp() {
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
+        flag.isOn = true
 
         super.setUp()
     }

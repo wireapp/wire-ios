@@ -104,8 +104,7 @@ struct MessageInfoExtractor {
         return MessageInfo(genericMessage: message,
                            listClients: listClients,
                            missingClientsStrategy: .ignoreAllMissingClients,
-                           selfClientID: selfClientID,
-                           nativePush: !message.hasConfirmation)
+                           selfClientID: selfClientID)
     }
 
     private func infoForTransport(message: GenericMessage, in conversation: ZMConversation) async throws -> MessageInfo {
@@ -128,9 +127,7 @@ struct MessageInfoExtractor {
             genericMessage: message,
             listClients: clients,
             missingClientsStrategy: missingClientsStrategy,
-            selfClientID: selfClientID,
-            // We do not want to send pushes for delivery receipts.
-            nativePush: !message.hasConfirmation
+            selfClientID: selfClientID
         )
     }
 
