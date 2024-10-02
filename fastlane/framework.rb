@@ -23,7 +23,8 @@ class Framework
             "WireAPI",
             "WireAnalytics",
             "WireDomain",
-            "WireUI"
+            "WireUI",
+            "WireFoundation",
         ]
 
         frameworks = all_folders.reduce({}) do |hash, framework| 
@@ -64,7 +65,11 @@ class Framework
         
         frameworks["WireDomain"].add_dependency(frameworks["wire-ios-transport"])
         frameworks["WireDomain"].add_dependency(frameworks["wire-ios-data-model"])
-        
+        frameworks["WireDomain"].add_dependency(frameworks["WireAPI"])
+        frameworks["WireDomain"].add_dependency(frameworks["WireFoundation"])
+
+        frameworks["WireAPI"].add_dependency(frameworks["WireFoundation"])
+
         frameworks
     end
 
@@ -95,7 +100,9 @@ class Framework
         case name
         when "wire-ios"
             "Wire-iOS"
-        when "WireDomain", "WireAPI", "WireAnalytics", "WireUI"
+        when "WireDomain"
+            "WireDomain"
+        when "WireAPI", "WireAnalytics", "WireUI", "WireFoundation"
             name
         when "wire-ios-mocktransport"
             "WireMockTransport"
