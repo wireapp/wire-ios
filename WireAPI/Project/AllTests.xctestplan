@@ -14,7 +14,7 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/WireAPI",
+        "containerPath" : "container:..\/..\/WireAPI",
         "identifier" : "WireAPITests",
         "name" : "WireAPITests"
       }
