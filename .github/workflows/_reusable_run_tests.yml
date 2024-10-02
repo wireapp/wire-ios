@@ -114,6 +114,8 @@ on:
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
+  REPO_ROOT: ${{ github.workspace }}
+  PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
 
 jobs:
   run-tests:
@@ -176,15 +178,40 @@ jobs:
           path: SourceryPlugin/.build
           key: ${{ runner.os }}-swiftpm-${{ hashFiles('SourceryPlugin/Package.resolved') }}
 
-        # Resolve dependencies if no cash for scripts
+        # Bootstrap dependencies if no cash for scripts
       - name: Bootstrap Swift Package Dependencies (scripts)
         if: steps.cache-scripts-package.outputs.cache-hit != 'true'
         run: xcrun --sdk macosx swift package --package-path scripts resolve
        
-        # Resolve dependencies if no cash for SourceryPlugin
+        # Bootstrap dependencies if no cash for SourceryPlugin
       - name: Bootstrap Swift Package Dependencies (SourceryPlugin)
         if: steps.cache-sourceryPlugin-package.outputs.cache-hit != 'true'
         run: xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
+
+        # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        uses: actions/cache@v3
+        id: cache-swift-package
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          #path: |
+          #  /Users/admin/actions-runner/_work/wire-ios/wire-ios/DerivedData/CachedSwiftPackages
+          key: ${{ runner.os }}-swiftpm-${{ hashFiles('Package.resolved') }}
+
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        if: steps.cache-swift-package.outputs.cache-hit != 'true'
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+
+        # Save Swift Package Dependencies Cache
+      - name: Save Swift Package Dependencies Cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          #path: |
+          #  /Users/admin/actions-runner/_work/wire-ios/wire-ios/DerivedData/CachedSwiftPackages
+          key: ${{ runner.os }}-swiftpm-${{ hashFiles('Package.resolved') }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
