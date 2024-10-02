@@ -77,34 +77,52 @@ protocol UpdateEventsRepositoryProtocol {
 
     func storeLastEventEnvelopeID(_ id: UUID)
 
+    /// Pulls the last event envelope id and stores it locally.
+
+    func pullLastEventID() async throws
+
 }
 
 final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
+    enum Key: String, DefaultsKey {
+        case lastEventID
+    }
+
+    // MARK: - Properties
+
+    private let userID: UUID
     private let selfClientID: String
     private let updateEventsAPI: any UpdateEventsAPI
     private let pushChannel: any PushChannelProtocol
     private let updateEventDecryptor: any UpdateEventDecryptorProtocol
     private let eventContext: NSManagedObjectContext
-    private let lastEventIDRepository: any LastEventIDRepositoryInterface
+    private let storage: PrivateUserDefaults<Key>
 
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
+    // MARK: - Object lifecycle
+
     init(
+        userID: UUID,
         selfClientID: String,
         updateEventsAPI: any UpdateEventsAPI,
         pushChannel: any PushChannelProtocol,
         updateEventDecryptor: any UpdateEventDecryptorProtocol,
         eventContext: NSManagedObjectContext,
-        lastEventIDRepository: any LastEventIDRepositoryInterface
+        sharedUserDefaults: UserDefaults
     ) {
+        self.userID = userID
         self.selfClientID = selfClientID
         self.updateEventsAPI = updateEventsAPI
         self.pushChannel = pushChannel
         self.updateEventDecryptor = updateEventDecryptor
         self.eventContext = eventContext
-        self.lastEventIDRepository = lastEventIDRepository
+        storage = PrivateUserDefaults(
+            userID: userID,
+            storage: sharedUserDefaults
+        )
     }
 
     // MARK: - Pull pending events
@@ -112,7 +130,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     func pullPendingEvents() async throws {
         WireLogger.sync.debug("pulling pending events")
         // We want all events since this event.
-        guard let lastEventID = lastEventIDRepository.fetchLastEventID() else {
+        guard let lastEventID = storage.getUUID(forKey: .lastEventID) else {
             throw UpdateEventsRepositoryError.lastEventIDMissing
         }
 
@@ -162,6 +180,14 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 }
             }
         }
+    }
+
+    func pullLastEventID() async throws {
+        let lastEvent = try await updateEventsAPI.getLastUpdateEvent(
+            selfClientID: selfClientID
+        )
+
+        storeLastEventEnvelopeID(lastEvent.id)
     }
 
     private func indexOfLastEventEnvelope() async throws -> Int64 {
@@ -237,7 +263,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     // MARK: - Live events
 
     func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
-        try await pushChannel.open().compactMap {
+        try pushChannel.open().compactMap {
             do {
                 WireLogger.sync.debug(
                     "decrypting live event",
@@ -265,7 +291,8 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             "storing last event id",
             attributes: [.eventEnvelopeID: id]
         )
-        lastEventIDRepository.storeLastEventID(id)
+
+        storage.setUUID(id, forKey: .lastEventID)
     }
 
 }

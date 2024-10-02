@@ -22,6 +22,7 @@ import Foundation
 import PushKit
 import UserNotifications
 import WireDataModel
+import WireFoundation
 import WireRequestStrategy
 import WireTransport
 import WireUtilities

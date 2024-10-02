@@ -17,88 +17,98 @@
 //
 
 import Foundation
-@testable import WireUtilities
+@testable import WireFoundation
 import XCTest
 
 final class PrivateUserDefaultsTests: XCTestCase {
-
     var sut: PrivateUserDefaults<String>!
-    var userID: UUID!
-    let key = "foo"
-
-    // MARK: - Life cycle
+    var mockUserDefaults: UserDefaults!
 
     override func setUp() {
         super.setUp()
-        userID = UUID.create()
-        sut = PrivateUserDefaults(userID: userID, storage: .standard)
+        mockUserDefaults = UserDefaults(
+            suiteName: Scaffolding.defaultsTestSuiteName
+        )
+
+        sut = PrivateUserDefaults(
+            userID: Scaffolding.userID,
+            storage: mockUserDefaults
+        )
     }
 
     override func tearDown() {
-        sut.setUUID(nil, forKey: key)
+        mockUserDefaults.removePersistentDomain(
+            forName: Scaffolding.defaultsTestSuiteName
+        )
+        mockUserDefaults = nil
         sut = nil
-        userID = nil
         super.tearDown()
     }
 
-    // MARK: - Get / set id
+    // MARK: - Tests
 
     func test_setUUID() throws {
         // Given
         let uuid = UUID()
 
         // When
-        sut.setUUID(uuid, forKey: key)
+        sut.setUUID(uuid, forKey: Scaffolding.key)
 
         // Then
-        let scopedKey = "\(userID.uuidString)_\(key)"
-        let storedValue = UserDefaults.standard.string(forKey: scopedKey)
+        let scopedKey = "\(Scaffolding.userID.uuidString)_\(Scaffolding.key)"
+        let storedValue = mockUserDefaults.string(forKey: scopedKey)
         XCTAssertEqual(storedValue, uuid.uuidString)
 
         // When
-        sut.setUUID(nil, forKey: key)
+        sut.setUUID(nil, forKey: Scaffolding.key)
 
         // Then
-        XCTAssertNil(UserDefaults.standard.string(forKey: scopedKey))
+        XCTAssertNil(mockUserDefaults.string(forKey: scopedKey))
     }
 
     func test_getUUID() throws {
         // Given
-        let scopedKey = "\(userID.uuidString)_\(key)"
+        let scopedKey = "\(Scaffolding.userID.uuidString)_\(Scaffolding.key)"
         let uuid = UUID()
 
         // Then
-        XCTAssertNil(sut.getUUID(forKey: key))
+        XCTAssertNil(sut.getUUID(forKey: Scaffolding.key))
 
         // When
-        UserDefaults.standard.set(uuid.uuidString, forKey: scopedKey)
+        mockUserDefaults.set(uuid.uuidString, forKey: scopedKey)
 
         // Then
-        XCTAssertEqual(sut.getUUID(forKey: key), uuid)
+        XCTAssertEqual(sut.getUUID(forKey: Scaffolding.key), uuid)
     }
 
     // MARK: Removing all
 
     func test_removeAll() throws {
         // Given
-        let scopedKey = "\(userID.uuidString)_B"
+        let scopedKey = "\(Scaffolding.userID.uuidString)_B"
         let storage = UserDefaults.standard
         storage.set("A", forKey: "A-key")
         storage.set("B", forKey: scopedKey)
 
         // When
-        PrivateUserDefaults.removeAll(forUserID: userID, in: .standard)
+        PrivateUserDefaults.removeAll(forUserID: Scaffolding.userID, in: .standard)
 
         // Then
         XCTAssertEqual(storage.value(forKey: "A-key") as? String, "A")
         XCTAssertNil(storage.value(forKey: scopedKey))
+    }
+
+    private enum Scaffolding {
+        static let userID = UUID()
+        static let key = "foo"
+        static let defaultsTestSuiteName = UUID().uuidString
     }
 }
 
 extension String: DefaultsKey {
 
     public var rawValue: String {
-        return self
+        self
     }
 
 }

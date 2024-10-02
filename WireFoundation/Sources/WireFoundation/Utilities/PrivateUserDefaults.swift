@@ -42,54 +42,54 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
     }
 
     private func scopeKey(_ key: Key) -> String {
-        return "\(Self.scopePrefix(userID: userID))\(key.rawValue)"
+        "\(Self.scopePrefix(userID: userID))\(key.rawValue)"
     }
 }
 
-extension PrivateUserDefaults {
+public extension PrivateUserDefaults {
 
-    public func setUUID(_ uuid: UUID?, forKey key: Key) {
+    func setUUID(_ uuid: UUID?, forKey key: Key) {
         storage.set(uuid?.uuidString, forKey: scopeKey(key))
     }
 
-    public func getUUID(forKey key: Key) -> UUID? {
+    func getUUID(forKey key: Key) -> UUID? {
         guard let uuidString = storage.string(forKey: scopeKey(key)) else { return nil }
         return UUID(uuidString: uuidString)
     }
 
-    public func set(_ value: Bool, forKey key: Key) {
+    func set(_ value: Bool, forKey key: Key) {
         storage.set(value, forKey: scopeKey(key))
     }
 
-    public func bool(forKey key: Key) -> Bool {
-        return storage.bool(forKey: scopeKey(key))
+    func bool(forKey key: Key) -> Bool {
+        storage.bool(forKey: scopeKey(key))
     }
 
-    public func set(_ value: Any?, forKey key: Key) {
+    func set(_ value: Any?, forKey key: Key) {
         storage.set(value, forKey: scopeKey(key))
     }
 
-    public func object(forKey key: Key) -> Any? {
-        return storage.object(forKey: scopeKey(key))
+    func object(forKey key: Key) -> Any? {
+        storage.object(forKey: scopeKey(key))
     }
 
-    public func set(_ value: Int, forKey key: Key) {
+    func set(_ value: Int, forKey key: Key) {
         storage.set(value, forKey: scopeKey(key))
     }
 
-    public func integer(forKey key: Key) -> Int {
-        return storage.integer(forKey: scopeKey(key))
+    func integer(forKey key: Key) -> Int {
+        storage.integer(forKey: scopeKey(key))
     }
 
-    public func set(_ value: Date, forKey key: Key) {
+    func set(_ value: Date, forKey key: Key) {
         storage.set(value, forKey: scopeKey(key))
     }
 
-    public func date(forKey key: Key) -> Date? {
-        return storage.object(forKey: scopeKey(key)) as? Date
+    func date(forKey key: Key) -> Date? {
+        storage.object(forKey: scopeKey(key)) as? Date
     }
 
-    public func removeObject(forKey key: Key) {
+    func removeObject(forKey key: Key) {
         storage.removeObject(forKey: scopeKey(key))
     }
 
@@ -107,11 +107,11 @@ extension Never: DefaultsKey {
 
 }
 
-extension PrivateUserDefaults where Key == Never {
+public extension PrivateUserDefaults where Key == Never {
 
     /// Removes all values for keys scoped to `userID` in `storage`.
 
-    public static func removeAll(forUserID userID: UUID, in storage: UserDefaults) {
+    static func removeAll(forUserID userID: UUID, in storage: UserDefaults) {
         let prefix = scopePrefix(userID: userID)
         let skopedKeys = storage.dictionaryRepresentation().keys.filter { $0.hasPrefix(prefix) }
         for key in skopedKeys {

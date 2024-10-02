@@ -140,11 +140,9 @@
 		EE162712250BA6E600D35062 /* VolatileDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE162711250BA6E600D35062 /* VolatileDataTests.swift */; };
 		EE1E354221E7739400F1144B /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */; };
 		EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */; };
-		EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */; };
 		EE9AEC882BD158BC00F7853F /* WireUtilities.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC872BD158BC00F7853F /* WireUtilities.docc */; };
 		EEAB73842A31CE4100EAB4E5 /* Data+Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */; };
 		EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */; };
-		EEB121AC2A1759F300E74D39 /* PrivateUserDefaultsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB121AB2A1759F300E74D39 /* PrivateUserDefaultsTests.swift */; };
 		EEBFE03E2A3AE58E001F1060 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBFE03D2A3AE58E001F1060 /* String+Random.swift */; };
 		EECE48C71FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */; };
 		EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */; };
@@ -345,13 +343,11 @@
 		EE162711250BA6E600D35062 /* VolatileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolatileDataTests.swift; path = Source/VolatileDataTests.swift; sourceTree = "<group>"; };
 		EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
 		EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenterTests.swift; sourceTree = "<group>"; };
-		EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUserDefaults.swift; sourceTree = "<group>"; };
 		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0AD296EFBE60055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC872BD158BC00F7853F /* WireUtilities.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireUtilities.docc; sourceTree = "<group>"; };
 		EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Bytes.swift"; sourceTree = "<group>"; };
 		EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Base64.swift"; sourceTree = "<group>"; };
-		EEB121AB2A1759F300E74D39 /* PrivateUserDefaultsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUserDefaultsTests.swift; sourceTree = "<group>"; };
 		EEBFE03D2A3AE58E001F1060 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthInteger_RandomTests.swift; sourceTree = "<group>"; };
 		EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FixedWidthInteger+Random.swift"; sourceTree = "<group>"; };
@@ -630,7 +626,6 @@
 				8735AE6E2035E3BC00DCE66E /* StringLengthValidator.swift */,
 				EF2AFC9C228176C3008C921A /* UUID+Data.swift */,
 				067BB07025068D6500946EC8 /* String+HexDecodedData.swift */,
-				EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */,
 				EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */,
 				EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */,
 				EEBFE03D2A3AE58E001F1060 /* String+Random.swift */,
@@ -806,7 +801,6 @@
 				6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */,
 				A98EC2A626B8169700D10C80 /* UTIHelperTests.swift */,
 				A94DA31526BC256E00CC626C /* NSData+ImageTests.swift */,
-				EEB121AB2A1759F300E74D39 /* PrivateUserDefaultsTests.swift */,
 				59E3C25B2BD8053000C95BD7 /* ZMAccentColorTests.swift */,
 			);
 			name = Source;
@@ -1103,7 +1097,6 @@
 				5915B9622BF4C1AD00215817 /* UserNotificationCenterWrapper.swift in Sources */,
 				F19E554D22AFDC8D005C792D /* String+ReadableHash.swift in Sources */,
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
-				EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */,
 				1623F8F52AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift in Sources */,
 				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
 				067BB07125068D6500946EC8 /* String+HexDecodedData.swift in Sources */,
@@ -1175,7 +1168,6 @@
 				877F501F1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift in Sources */,
 				54181A521F594E6F00155ABC /* FileManager+MoveTests.swift in Sources */,
 				546E8A501B750146009EBA02 /* NSOperationQueue+HelpersTests.m in Sources */,
-				EEB121AC2A1759F300E74D39 /* PrivateUserDefaultsTests.swift in Sources */,
 				A94DA31626BC256E00CC626C /* NSData+ImageTests.swift in Sources */,
 				A9CDCDCB237D9AE3008A9BC6 /* UIColor+MixingTests.swift in Sources */,
 				F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */,
