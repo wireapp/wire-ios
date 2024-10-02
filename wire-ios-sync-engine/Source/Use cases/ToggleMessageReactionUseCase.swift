@@ -28,15 +28,15 @@ public protocol ToggleMessageReactionUseCaseProtocol {
     )
 }
 
-struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol {
+public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol {
 
     private let analyticsSession: AnalyticsSessionProtocol?
 
-    init(analyticsSession: AnalyticsSessionProtocol?) {
+    public init(analyticsSession: AnalyticsSessionProtocol?) {
         self.analyticsSession = analyticsSession
     }
 
-    func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke<Conversation: MessageAppendableConversation>(
         _ reaction: String,
         for message: ZMConversationMessage,
         in conversation: Conversation
