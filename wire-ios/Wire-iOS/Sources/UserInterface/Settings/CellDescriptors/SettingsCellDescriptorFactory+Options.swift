@@ -49,7 +49,7 @@ extension SettingsCellDescriptorFactory {
             title: L10n.Localizable.Self.Settings.OptionsMenu.title,
             icon: .settingsOptions,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: .options,
+            settingsTopLevelMenuItem: .options,
             settingsCoordinator: settingsCoordinator
         )
     }
@@ -299,7 +299,7 @@ extension SettingsCellDescriptorFactory {
             identifier: nil,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil,
+            settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator
         )
     }
@@ -326,7 +326,7 @@ extension SettingsCellDescriptorFactory {
             identifier: nil,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil,
+            settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator
         )
     }
@@ -353,7 +353,7 @@ extension SettingsCellDescriptorFactory {
             identifier: nil,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil,
+            settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator
         )
     }
@@ -380,7 +380,7 @@ extension SettingsCellDescriptorFactory {
             identifier: nil,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil,
+            settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator
         )
     }

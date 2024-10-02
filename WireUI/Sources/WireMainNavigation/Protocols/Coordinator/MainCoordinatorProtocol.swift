@@ -21,7 +21,6 @@ import UIKit
 public protocol MainCoordinatorProtocol: AnyObject {
 
     associatedtype ConversationList: MainConversationListProtocol
-    associatedtype Settings: UIViewController // TODO: needed?
     associatedtype ConversationBuilder: MainConversationBuilderProtocol
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
 

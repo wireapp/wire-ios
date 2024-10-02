@@ -279,7 +279,7 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
         let sectionDescriptor = sections[indexPath.section]
         let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
 
-        if let content = property.settingsTopLevelContent {
+        if let content = property.settingsTopLevelMenuItem {
             settingsCoordinator.showSettingsContent(content)
         } else {
             property.select(SettingsPropertyValue.none, sender: cell)

@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: delete
-public typealias SettingsTopLevelContent = SettingsTopLevelMenuItem
-
 public enum SettingsTopLevelMenuItem: Sendable {
     case account, devices, options, advanced, support, about, developerOptions
 }

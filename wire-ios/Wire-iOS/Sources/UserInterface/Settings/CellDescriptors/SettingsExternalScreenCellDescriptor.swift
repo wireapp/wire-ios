@@ -43,7 +43,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     let icon: StyleKitIcon?
     var copiableText: String?
 
-    let settingsTopLevelContent: SettingsTopLevelContent?
+    let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
 
     private let accessoryViewMode: AccessoryViewMode
 
@@ -64,7 +64,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             previewGenerator: nil,
             icon: .none,
             copiableText: nil,
-            settingsTopLevelContent: nil
+            settingsTopLevelMenuItem: nil
         )
     }
 
@@ -86,7 +86,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             icon: icon,
             accessoryViewMode: accessoryViewMode,
             copiableText: copiableText,
-            settingsTopLevelContent: nil
+            settingsTopLevelMenuItem: nil
         )
     }
 
@@ -100,7 +100,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         icon: StyleKitIcon? = nil,
         accessoryViewMode: AccessoryViewMode = .default,
         copiableText: String?,
-        settingsTopLevelContent: SettingsTopLevelContent?
+        settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
     ) {
         self.title = title
         self.destructive = isDestructive
@@ -111,7 +111,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.icon = icon
         self.accessoryViewMode = accessoryViewMode
         self.copiableText = copiableText
-        self.settingsTopLevelContent = settingsTopLevelContent
+        self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {

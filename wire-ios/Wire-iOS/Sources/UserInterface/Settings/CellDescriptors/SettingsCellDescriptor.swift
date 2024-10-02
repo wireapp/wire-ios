@@ -47,7 +47,7 @@ protocol SettingsCellDescriptorType: AnyObject {
 
     /// If non-nil the item is a top-level item of the main settings menu.
     /// For presenting the content the main coordinator is called.
-    var settingsTopLevelContent: SettingsTopLevelContent? { get } // TODO: check again if needed
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? { get } // TODO: check again if needed
 
     func select(_ value: SettingsPropertyValue, sender: UIView)
     func featureCell(_: SettingsCellType)
@@ -58,7 +58,7 @@ extension SettingsCellDescriptorType {
         return nil
     }
 
-    var settingsTopLevelContent: SettingsTopLevelContent? {
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? {
         .none
     }
 }
@@ -181,7 +181,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
     }
 
-    let settingsTopLevelContent: SettingsTopLevelContent?
+    let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
     let settingsCoordinator: AnySettingsCoordinator
 
     weak var viewController: UIViewController?
@@ -194,7 +194,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
         accessibilityBackButtonText: String,
-        settingsTopLevelContent: SettingsTopLevelContent?,
+        settingsTopLevelMenuItem: SettingsTopLevelMenuItem?,
         settingsCoordinator: AnySettingsCoordinator
     ) {
         self.items = items
@@ -204,7 +204,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         self.previewGenerator = previewGenerator
         self.icon = icon
         self.accessibilityBackButtonText = accessibilityBackButtonText
-        self.settingsTopLevelContent = settingsTopLevelContent
+        self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
         self.settingsCoordinator = settingsCoordinator
     }
 

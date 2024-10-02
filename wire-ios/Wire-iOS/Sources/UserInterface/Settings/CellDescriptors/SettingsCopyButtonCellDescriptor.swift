@@ -73,7 +73,7 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
     weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
 
-    var settingsTopLevelContent: SettingsTopLevelContent? { nil }
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? { nil }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
         UIPasteboard.general.string = title

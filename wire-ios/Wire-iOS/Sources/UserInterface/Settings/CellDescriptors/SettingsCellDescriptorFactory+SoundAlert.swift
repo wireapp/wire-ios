@@ -28,7 +28,7 @@ extension SettingsCellDescriptorFactory {
             identifier: .none,
             previewGenerator: alertPreviewGenerator,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil,
+            settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator
         )
     }

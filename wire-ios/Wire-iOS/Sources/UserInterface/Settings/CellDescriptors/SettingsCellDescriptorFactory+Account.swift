@@ -73,7 +73,7 @@ extension SettingsCellDescriptorFactory {
             title: L10n.Localizable.Self.Settings.accountSection,
             icon: .personalProfile,
             accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
-            settingsTopLevelContent: .account,
+            settingsTopLevelMenuItem: .account,
             settingsCoordinator: settingsCoordinator
         )
     }

@@ -19,7 +19,7 @@
 import WireMainNavigation
 import WireSettings
 
-extension SettingsTopLevelContent: MainSettingsTopLevelMenuItemRepresentable {
+extension SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable {
 
     public init(_ mainSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItem) {
         switch mainSettingsTopLevelMenuItem {

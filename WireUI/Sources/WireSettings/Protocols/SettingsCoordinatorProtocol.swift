@@ -18,7 +18,7 @@
 
 public protocol SettingsCoordinatorProtocol: AnyObject {
     @MainActor
-    func showSettingsContent(_ content: SettingsTopLevelContent)
+    func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem)
 }
 
 // MARK: -
@@ -26,7 +26,7 @@ public protocol SettingsCoordinatorProtocol: AnyObject {
 @MainActor
 public final class AnySettingsCoordinator: SettingsCoordinatorProtocol {
 
-    private let _showSettingsContent: (_ content: SettingsTopLevelContent) -> Void
+    private let _showSettingsContent: (_ topLevelMenuItem: SettingsTopLevelMenuItem) -> Void
 
     public init(
         settingsCoordinator: some SettingsCoordinatorProtocol
@@ -34,7 +34,7 @@ public final class AnySettingsCoordinator: SettingsCoordinatorProtocol {
         _showSettingsContent = settingsCoordinator.showSettingsContent(_:)
     }
 
-    public func showSettingsContent(_ content: SettingsTopLevelContent) {
-        _showSettingsContent(content)
+    public func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
+        _showSettingsContent(topLevelMenuItem)
     }
 }

@@ -49,7 +49,7 @@ struct SettingsCellDescriptorFactory {
             title: L10n.Localizable.Self.profile,
             style: .plain,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
-            settingsTopLevelContent: nil,
+            settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator
         )
     }
@@ -67,7 +67,7 @@ struct SettingsCellDescriptorFactory {
             icon: .team,
             accessoryViewMode: .alwaysHide,
             copiableText: nil,
-            settingsTopLevelContent: nil
+            settingsTopLevelMenuItem: nil
         )
     }
 
@@ -110,7 +110,7 @@ struct SettingsCellDescriptorFactory {
             icon: .plus,
             accessoryViewMode: .alwaysHide,
             copiableText: nil,
-            settingsTopLevelContent: nil
+            settingsTopLevelMenuItem: nil
         )
     }
 
@@ -145,7 +145,7 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: .none,
             icon: .gear,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
-            settingsTopLevelContent: nil,
+            settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator
         )
     }
@@ -166,7 +166,7 @@ struct SettingsCellDescriptorFactory {
             },
             icon: .devices,
             copiableText: nil,
-            settingsTopLevelContent: .devices
+            settingsTopLevelMenuItem: .devices
         )
     }
 
@@ -212,7 +212,7 @@ struct SettingsCellDescriptorFactory {
             identifier: .none,
             previewGenerator: previewGenerator,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelContent: nil,
+            settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator
         )
     }
@@ -241,7 +241,7 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: .none,
             icon: .settingsSupport,
             accessibilityBackButtonText: L10n.Accessibility.SupportSettings.BackButton.description,
-            settingsTopLevelContent: .support,
+            settingsTopLevelMenuItem: .support,
             settingsCoordinator: settingsCoordinator
         )
     }
@@ -288,7 +288,7 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: .none,
             icon: .about,
             accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description,
-            settingsTopLevelContent: .about,
+            settingsTopLevelMenuItem: .about,
             settingsCoordinator: settingsCoordinator
         )
     }

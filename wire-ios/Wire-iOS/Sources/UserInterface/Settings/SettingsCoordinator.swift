@@ -22,7 +22,7 @@ import WireSettings
 @MainActor
 final class SettingsCoordinator: SettingsCoordinatorProtocol {
 
-    let _showSettingsContent: (SettingsTopLevelContent) -> Void
+    let _showSettingsContent: (SettingsTopLevelMenuItem) -> Void
 
     init(mainCoordinator: some MainCoordinatorProtocol) {
         _showSettingsContent = { content in
@@ -30,7 +30,7 @@ final class SettingsCoordinator: SettingsCoordinatorProtocol {
         }
     }
 
-    func showSettingsContent(_ content: SettingsTopLevelContent) {
+    func showSettingsContent(_ content: SettingsTopLevelMenuItem) {
         _showSettingsContent(content)
     }
 }
