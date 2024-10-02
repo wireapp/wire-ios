@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireConversationListNavigation"
-               BuildableName = "WireConversationListNavigation"
-               BlueprintName = "WireConversationListNavigation"
+               BlueprintIdentifier = "WireConversationList"
+               BuildableName = "WireConversationList"
+               BlueprintName = "WireConversationList"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireConversationListNavigation"
-            BuildableName = "WireConversationListNavigation"
-            BlueprintName = "WireConversationListNavigation"
+            BlueprintIdentifier = "WireConversationList"
+            BuildableName = "WireConversationList"
+            BlueprintName = "WireConversationList"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

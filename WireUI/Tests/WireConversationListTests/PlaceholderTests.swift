@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable import WireConversationListNavigation
+@testable import WireConversationList
 
 final class PlaceholderTests: XCTestCase {
 

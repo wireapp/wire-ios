@@ -24,8 +24,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireConversationListNavigationTests",
-        "name" : "WireConversationListNavigationTests"
+        "identifier" : "WireConversationListTests",
+        "name" : "WireConversationListTests"
       }
     },
     {

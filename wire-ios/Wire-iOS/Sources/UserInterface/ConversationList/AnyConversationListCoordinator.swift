@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireConversationListNavigation
+import WireConversationList
 
 final class AnyConversationListCoordinator<ConversationID: Sendable>: ConversationListCoordinatorProtocol {
 

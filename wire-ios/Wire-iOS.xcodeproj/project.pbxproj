@@ -337,7 +337,7 @@
 		591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
 		5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
-		5929CB222CA6C9C800070488 /* WireConversationListNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 5929CB212CA6C9C800070488 /* WireConversationListNavigation */; };
+		5929CB222CA6C9C800070488 /* WireConversationList in Frameworks */ = {isa = PBXBuildFile; productRef = 5929CB212CA6C9C800070488 /* WireConversationList */; };
 		592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		593D510A2C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593D51092C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift */; };
@@ -3987,7 +3987,7 @@
 				5996E8A62C19D090007A52F0 /* WireSyncEngine.framework in Frameworks */,
 				59B99FB02C89DFB700201827 /* WireDomainPackage in Frameworks */,
 				EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */,
-				5929CB222CA6C9C800070488 /* WireConversationListNavigation in Frameworks */,
+				5929CB222CA6C9C800070488 /* WireConversationList in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8624,7 +8624,7 @@
 				59B99FAF2C89DFB700201827 /* WireDomainPackage */,
 				59076F942C934A9800AE7529 /* WireAccountImage */,
 				590DCA072C971A56002D0A2C /* WireSidebar */,
-				5929CB212CA6C9C800070488 /* WireConversationListNavigation */,
+				5929CB212CA6C9C800070488 /* WireConversationList */,
 				595C49682CA995E900F8F881 /* WireSettings */,
 			);
 			productName = "ZClient iOS";
@@ -11710,9 +11710,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
 		};
-		5929CB212CA6C9C800070488 /* WireConversationListNavigation */ = {
+		5929CB212CA6C9C800070488 /* WireConversationList */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireConversationListNavigation;
+			productName = WireConversationList;
 		};
 		592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;

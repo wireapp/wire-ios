@@ -12,7 +12,7 @@ let package = Package(
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "WireAccountImage", targets: ["WireAccountImage"]),
-        .library(name: "WireConversationListNavigation", targets: ["WireConversationListNavigation"]),
+        .library(name: "WireConversationList", targets: ["WireConversationList"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireMainNavigation", targets: ["WireMainNavigation"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
@@ -27,8 +27,8 @@ let package = Package(
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage", "WireFoundation"]),
 
-        .target(name: "WireConversationListNavigation"), // TODO: rename `WireConversationList`
-        .testTarget(name: "WireConversationListNavigationTests", dependencies: ["WireConversationListNavigation"]),
+        .target(name: "WireConversationList"),
+        .testTarget(name: "WireConversationListTests", dependencies: ["WireConversationList"]),
 
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),

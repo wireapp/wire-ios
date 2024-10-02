@@ -18,7 +18,7 @@
 
 import DifferenceKit
 import UIKit
-import WireConversationListNavigation
+import WireConversationList
 import WireDataModel
 import WireDesign
 import WireMainNavigation
