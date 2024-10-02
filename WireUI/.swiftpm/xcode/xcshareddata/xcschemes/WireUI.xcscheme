@@ -72,7 +72,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:.swiftpm/WireUI.xctestplan"
+            reference = "container:.swiftpm/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
