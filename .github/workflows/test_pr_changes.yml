@@ -38,7 +38,7 @@ jobs:
           filters: |
             wire-ios:
               - 'wire-ios/**'
-            wire-ui:
+            WireUI:
               - 'WireUI/**'
             wire-ios-share-engine:
               - 'wire-ios-share-engine/**'
@@ -48,17 +48,12 @@ jobs:
               - 'wire-ios-sync-engine/**'
             wire-ios-request-strategy:
               - 'wire-ios-request-strategy/**'
-            wire-api:
+            WireAPI:
               - 'WireAPI/**'
-            wire-analytics:
+            WireAnalytics:
               - 'WireAnalytics/Sources/WireAnalytics/**'
-            wire-datadog:
               - 'WireAnalytics/Sources/WireDatadog/**'
-            wire-domain-project:
-              - 'WireDomain/Project/**'
-              - 'WireDomain/Sources/WireDomain/**'
-              - 'WireDomain/Sources/WireDomainSupport/**'
-            wire-domain:
+            WireDomain:
               - 'WireDomain/*.*'
               - 'WireDomain/Sources/Package/**'
               - 'WireDomain/Sources/PackageSupport/**'
@@ -80,7 +75,7 @@ jobs:
               - 'wire-ios-utilities/**'
             wire-ios-testing:
               - 'wire-ios-testing/**'
-            wire-foundation:
+            WireFoundation:
               - 'WireFoundation/**'
             wire-ios-system:
               - 'wire-ios-system/**'
