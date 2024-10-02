@@ -25,12 +25,12 @@ struct StartUIViewControllerBuilder: MainCoordinatorInjectingViewControllerBuild
     var userSession: UserSession
     var delegate: StartUIDelegate?
 
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
-        let viewController = StartUIViewController(
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UINavigationController {
+        let rootViewController = StartUIViewController(
             userSession: userSession,
             mainCoordinator: mainCoordinator
         )
-        viewController.delegate = delegate
-        return viewController
+        rootViewController.delegate = delegate
+        return .init(rootViewController: rootViewController)
     }
 }

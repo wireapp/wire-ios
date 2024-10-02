@@ -256,6 +256,8 @@ public final class MainCoordinator<
         selfProfile.modalPresentationStyle = .formSheet
         self.selfProfile = selfProfile
 
+        dismissConnectIfNeeded()
+
         splitViewController.present(selfProfile, animated: true)
     }
 
@@ -266,17 +268,12 @@ public final class MainCoordinator<
         }
 
         let connect = connectBuilder.build(mainCoordinator: self)
+        connect.modalPresentationStyle = .formSheet
         self.connect = connect
 
-        if mainSplitViewState == .expanded {
-            dismissConversationListIfNeeded()
-            dismissArchiveIfNeeded()
-            dismissSettingsIfNeeded()
-            dismissSelfProfileIfNeeded()
-        }
+        dismissSelfProfileIfNeeded()
 
-        let navigationController = UINavigationController(rootViewController: connect)
-        splitViewController.present(navigationController, animated: true)
+        splitViewController.present(connect, animated: true)
     }
 
     private func dismissConversationListIfNeeded() {
