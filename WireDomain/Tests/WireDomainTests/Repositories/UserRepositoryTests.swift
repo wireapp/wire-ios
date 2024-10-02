@@ -352,32 +352,6 @@ class UserRepositoryTests: XCTestCase {
         )
 
         nonisolated(unsafe) static let user1 = User(
-        static let userID = UUID()
-        static let userClientID = UUID().uuidString
-        static let lastPrekeyId = 65_535
-        static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
-
-        nonisolated(unsafe) static let remoteUserClient = WireAPI.UserClient(
-            id: userClientID,
-            type: .permanent,
-            activationDate: .now,
-            label: "test",
-            model: "test",
-            deviceClass: .phone,
-            capabilities: []
-        )
-
-        nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(
-            target: userID,
-            requester: nil,
-            clientIdentifier: userClientID,
-            lastPrekey: .init(
-                id: lastPrekeyId,
-                key: Data(base64Encoded: base64encodedString)!
-            )
-        )
-
-        nonisolated(unsafe) static let user1 = User(
             id: QualifiedID(uuid: UUID(), domain: "example.com"),
             name: "user1",
             handle: "handle1",
