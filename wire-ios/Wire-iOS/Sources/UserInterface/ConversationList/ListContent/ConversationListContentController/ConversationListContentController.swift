@@ -18,6 +18,7 @@
 
 import DifferenceKit
 import UIKit
+import WireConversationList
 import WireDataModel
 import WireDesign
 import WireMainNavigation
@@ -28,7 +29,12 @@ private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController {
 
-    private let mainCoordinator: MainCoordinatorProtocol
+    typealias ConversationListCoordinator = AnyConversationListCoordinator<
+        ZMConversation.ConversationID,
+        ZMConversationMessage.MessageID
+    >
+    private let conversationListCoordinator: ConversationListCoordinator
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     private(set) weak var zClientViewController: ZClientViewController?
 
@@ -44,12 +50,18 @@ final class ConversationListContentController: UICollectionViewController {
 
     let userSession: UserSession
 
-    init(
+    init<ConversationListCoordinator>(
         userSession: UserSession,
-        mainCoordinator: MainCoordinatorProtocol,
+        conversationListCoordinator: ConversationListCoordinator,
+        mainCoordinator: any MainCoordinatorProtocol,
         zClientViewController: ZClientViewController?
-    ) {
+    ) where
+    ConversationListCoordinator: ConversationListCoordinatorProtocol,
+    ConversationListCoordinator.ConversationID == ZMConversation.ConversationID,
+    ConversationListCoordinator.MessageID == ZMConversationMessage.MessageID {
+
         self.userSession = userSession
+        self.conversationListCoordinator = .init(conversationListCoordinator: conversationListCoordinator)
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
 
@@ -382,25 +394,22 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             return
         }
 
-        if let conversation = item as? ZMConversation {
-            if let scrollToMessageOnNextSelection {
-                fatalError("TODO")
-                // TODO: fix
-                // mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+        Task {
+            if let conversation = item as? ZMConversation {
+                if let message = scrollToMessageOnNextSelection, let messageID = message.nonce {
+                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier, scrolledToMessageWith: messageID)
+                } else {
+                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier)
+                }
+                contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection) // TODO: check what happens here, should it be within the Task { ... } ?
+            } else if item is ConversationListConnectRequestsItem {
+                zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
             } else {
-                fatalError("TODO")
-                // TODO: fix
-                // mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                assertionFailure("Invalid item in conversation list view model!!")
             }
-            contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
-        } else if item is ConversationListConnectRequestsItem {
-            zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
-        } else {
-            assertionFailure("Invalid item in conversation list view model!!")
+            // Make sure the correct item is selected in the list, without triggering a collection view callback
+            ensureCurrentSelection()
         }
-        // Make sure the correct item is selected in the list, without triggering a collection view
-        // callback
-        ensureCurrentSelection()
     }
 
     func listViewModelShouldBeReloaded() {

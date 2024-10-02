@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1540"
+   LastUpgradeVersion = "1600"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -29,9 +29,37 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireConversationList"
+               BuildableName = "WireConversationList"
+               BlueprintName = "WireConversationList"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WireDesign"
                BuildableName = "WireDesign"
                BlueprintName = "WireDesign"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireMainNavigation"
+               BuildableName = "WireMainNavigation"
+               BlueprintName = "WireMainNavigation"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -57,9 +85,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireMainNavigation"
-               BuildableName = "WireMainNavigation"
-               BlueprintName = "WireMainNavigation"
+               BlueprintIdentifier = "WireSettings"
+               BuildableName = "WireSettings"
+               BlueprintName = "WireSettings"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireSidebar"
+               BuildableName = "WireSidebar"
+               BlueprintName = "WireSidebar"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -72,7 +114,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:.swiftpm/WireUI.xctestplan"
+            reference = "container:.swiftpm/WireUI-Package.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -91,9 +133,29 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireConversationListTests"
+               BuildableName = "WireConversationListTests"
+               BlueprintName = "WireConversationListTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WireDesignTests"
                BuildableName = "WireDesignTests"
                BlueprintName = "WireDesignTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireMainNavigationTests"
+               BuildableName = "WireMainNavigationTests"
+               BlueprintName = "WireMainNavigationTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -111,9 +173,19 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireMainNavigationTests"
-               BuildableName = "WireMainNavigationTests"
-               BlueprintName = "WireMainNavigationTests"
+               BlueprintIdentifier = "WireSettingsTests"
+               BuildableName = "WireSettingsTests"
+               BlueprintName = "WireSettingsTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireSidebarTests"
+               BuildableName = "WireSidebarTests"
+               BlueprintName = "WireSidebarTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

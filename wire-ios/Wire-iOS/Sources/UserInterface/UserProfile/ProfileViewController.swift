@@ -54,7 +54,7 @@ final class ProfileViewController: UIViewController {
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var tabsController: TabBarController?
-    private let mainCoordinator: MainCoordinatorProtocol
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     // MARK: - init
 
@@ -66,7 +66,7 @@ final class ProfileViewController: UIViewController {
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession,
-        mainCoordinator: MainCoordinatorProtocol
+        mainCoordinator: any MainCoordinatorProtocol
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context {

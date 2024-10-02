@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSettings
 
 enum PresentationStyle: Int {
     case modal
@@ -42,6 +43,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     let icon: StyleKitIcon?
     var copiableText: String?
 
+    let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
+
     private let accessoryViewMode: AccessoryViewMode
 
     weak var group: SettingsGroupCellDescriptorType?
@@ -60,7 +63,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             presentationAction: presentationAction,
             previewGenerator: nil,
             icon: .none,
-            copiableText: nil
+            copiableText: nil,
+            settingsTopLevelMenuItem: nil
         )
     }
 
@@ -81,20 +85,23 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             previewGenerator: previewGenerator,
             icon: icon,
             accessoryViewMode: accessoryViewMode,
-            copiableText: copiableText
+            copiableText: copiableText,
+            settingsTopLevelMenuItem: nil
         )
     }
 
-    init(title: String,
-         isDestructive: Bool,
-         presentationStyle: PresentationStyle,
-         identifier: String?,
-         presentationAction: @escaping () -> (UIViewController?),
-         previewGenerator: PreviewGeneratorType? = .none,
-         icon: StyleKitIcon? = nil,
-         accessoryViewMode: AccessoryViewMode = .default,
-         copiableText: String?) {
-
+    init(
+        title: String,
+        isDestructive: Bool,
+        presentationStyle: PresentationStyle,
+        identifier: String?,
+        presentationAction: @escaping () -> (UIViewController?),
+        previewGenerator: PreviewGeneratorType? = .none,
+        icon: StyleKitIcon? = nil,
+        accessoryViewMode: AccessoryViewMode = .default,
+        copiableText: String?,
+        settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
+    ) {
         self.title = title
         self.destructive = isDestructive
         self.presentationStyle = presentationStyle
@@ -104,6 +111,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.icon = icon
         self.accessoryViewMode = accessoryViewMode
         self.copiableText = copiableText
+        self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {

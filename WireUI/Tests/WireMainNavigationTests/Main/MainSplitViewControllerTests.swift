@@ -24,12 +24,12 @@ import XCTest
 
 final class MainSplitViewControllerTests: XCTestCase {
 
-    private var sut: MainSplitViewController<PreviewSidebarViewController, PreviewConversationListViewController>!
+    private var sut: MainSplitViewController<PreviewSidebarViewController, PreviewTabBarController>!
     private var sidebar: PreviewSidebarViewController!
     private var conversationList: PreviewConversationListViewController!
-    private var conversation: UIViewController!
+    private var conversation: PreviewConversationViewController!
     private var noConversationPlaceholder: UIViewController!
-    private var tabContainer: UIViewController!
+    private var tabContainer: PreviewTabBarController!
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -37,9 +37,9 @@ final class MainSplitViewControllerTests: XCTestCase {
     override func setUp() async throws {
         sidebar = .init("Sidebar", .gray)
         conversationList = .init("Conversation List", .purple)
-        conversation = PreviewSidebarViewController("Conversation", .blue)
+        conversation = .init()
         noConversationPlaceholder = PreviewSidebarViewController("No Conversation Selected", .brown)
-        tabContainer = PreviewSidebarViewController("Tab Container", .cyan)
+        tabContainer = .init()
         sut = .init(
             sidebar: sidebar,
             noConversationPlaceholder: noConversationPlaceholder,
@@ -131,13 +131,13 @@ final class MainSplitViewControllerTests: XCTestCase {
     }
 
     @MainActor
-    func testConversationIsReleasedWhenNewConversationIsSet() async {
+    func testConversationIsReleasedWhenConnectIsSet() async {
         // Given
         weak var conversationList = conversationList
         self.conversationList = nil
 
         // When
-        sut.newConversation = .init()
+        sut.connect = .init()
 
         // Then
         await Task.yield()

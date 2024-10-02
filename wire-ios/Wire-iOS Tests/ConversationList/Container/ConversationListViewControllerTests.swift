@@ -33,7 +33,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
-    private var tabBarController: MainTabBarController<ConversationListViewController>!
+    private var tabBarController: MainTabBarController<ConversationListViewController, ConversationRootViewController>!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
@@ -85,7 +85,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         )
 
         tabBarController = MainTabBarController()
-        tabBarController.conversations = (sut, nil)
+        tabBarController.conversationList = sut
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = tabBarController

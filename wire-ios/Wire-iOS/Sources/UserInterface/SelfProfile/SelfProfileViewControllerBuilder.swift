@@ -33,7 +33,8 @@ struct SelfProfileViewControllerBuilder: MainCoordinatorInjectingViewControllerB
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
-            accountSelector: accountSelector
+            accountSelector: accountSelector,
+            mainCoordinator: mainCoordinator
         )
     }
 }

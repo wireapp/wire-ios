@@ -16,13 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+
 public protocol MainCoordinatorProtocol: AnyObject {
-    // var conversationListCoordinator: MainConversationListCoordinatorRepresentable
-    func showConversationList<ConversationFilter>(conversationFilter: ConversationFilter?) async
-        where ConversationFilter: MainConversationFilterRepresentable
-    //func showConversation<Conversation>(conversation: Conversation) async
-    func showArchivedConversations() async
-    func showSelfProfile() async
-    func showSettings() async
-    func showNewConversation() async
+
+    associatedtype ConversationList: MainConversationListProtocol
+    associatedtype ConversationBuilder: MainConversationBuilderProtocol
+    associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
+
+    @MainActor
+    func showConversationList(conversationFilter: ConversationList.ConversationFilter?)
+    @MainActor
+    func showArchive()
+    @MainActor
+    func showSettings()
+
+    @MainActor
+    func showConversation(conversationID: ConversationList.ConversationID) async
+    /// This method will be called by the custom back button in the conversation content screen.
+    @MainActor
+    func hideConversation()
+
+    @MainActor
+    func showSettingsContent(_ topLevelMenuItem: SettingsContentBuilder.TopLevelMenuItem)
+    @MainActor
+    func hideSettingsContent()
+
+    @MainActor
+    func showSelfProfile()
+    @MainActor
+    func showConnect()
 }

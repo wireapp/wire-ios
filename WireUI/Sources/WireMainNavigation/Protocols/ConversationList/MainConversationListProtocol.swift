@@ -23,14 +23,13 @@ import UIKit
 @MainActor
 public protocol MainConversationListProtocol: UIViewController {
 
-    /// ``MainConversationListProtocol`` conforming view controllers may use their own type for the
-    /// ``conversationFilter-swift.property`` property, however, this type must be creatable from
-    /// a ``ConversationFilter`` and has to be convertable to ``ConversationFilter``.
     associatedtype ConversationFilter: MainConversationFilterRepresentable
+    associatedtype ConversationID: Sendable
+    associatedtype MessageID: Sendable
 
     /// Assigning a non-nil value to this property filters the presented conversations by the provided criteria.
     var conversationFilter: ConversationFilter? { get set }
 
     /// Allows the ``MainCoordinator`` to inform this instance about the current split view state.
-    var splitViewInterface: MainSplitViewState { get set }
+    var mainSplitViewState: MainSplitViewState { get set }
 }

@@ -22,7 +22,15 @@ import XCTest
 
 final class MainCoordinatorTests: XCTestCase {
 
-    private var sut: MainCoordinator<MockSplitViewController, MockTabBarController, MockViewControllerBuilder, MockViewControllerBuilder>!
+    typealias SUT = MainCoordinator<
+        MockSplitViewController,
+        MockConversationBuilder<MockConversationID>,
+        MockSettingsViewControllerBuilder,
+        MockViewControllerBuilder,
+        MockViewControllerBuilder
+    >
+
+    private var sut: SUT!
 
     private var splitViewController: MockSplitViewController!
     private var tabBarController: MockTabBarController!
@@ -45,7 +53,9 @@ final class MainCoordinatorTests: XCTestCase {
         sut = .init(
             mainSplitViewController: splitViewController,
             mainTabBarController: tabBarController,
-            newConversationBuilder: .init(),
+            conversationBuilder: .init(),
+            settingsContentBuilder: .init(),
+            connectBuilder: .init(),
             selfProfileBuilder: .init()
         )
     }
@@ -66,7 +76,7 @@ final class MainCoordinatorTests: XCTestCase {
 
         // Then
         XCTAssertNotNil(splitViewController.conversationList)
-        XCTAssertNil(tabBarController.conversations?.conversationList)
+        XCTAssertNil(tabBarController.conversationList)
         XCTAssertEqual(conversationList.conversationFilter, .groups)
         XCTAssertEqual(sidebar.selectedMenuItem, .groups)
     }
@@ -74,7 +84,7 @@ final class MainCoordinatorTests: XCTestCase {
     @MainActor
     func testShowingGroupConversationsFromArchive() {
         // When
-        sut.showArchivedConversations()
+        sut.showArchive()
 
         // Then
         testShowingGroupConversations()
@@ -87,17 +97,17 @@ final class MainCoordinatorTests: XCTestCase {
 
         // Then
         XCTAssertNil(splitViewController.conversationList)
-        XCTAssertNotNil(tabBarController.conversations?.conversationList)
+        XCTAssertNotNil(tabBarController.conversationList)
     }
 
     @MainActor
     func testShowingArchivedConversations() {
         // When
-        sut.showArchivedConversations()
+        sut.showArchive()
 
         // Then
         XCTAssertNil(splitViewController.conversationList)
-        XCTAssertNotNil(tabBarController.conversations?.conversationList)
+        XCTAssertNotNil(tabBarController.conversationList)
         XCTAssertNotNil(splitViewController.archive)
         XCTAssertNil(tabBarController.archive)
     }
@@ -105,6 +115,6 @@ final class MainCoordinatorTests: XCTestCase {
     // TODO: [WPB-10903] add many more tests, e.g.
     // - collapsing archive, connect, settings, selfProfile
     // - expanding archive, connect, settings, selfProfile
-    // - dismissing conversationList, archive, connect, newConversation, settings, selfProfile
+    // - dismissing conversationList, archive, connect, connect, settings, selfProfile
     // - tabBarController(_:didSelect:)
 }

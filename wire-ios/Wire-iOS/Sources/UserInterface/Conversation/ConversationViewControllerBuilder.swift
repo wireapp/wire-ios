@@ -17,29 +17,29 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDataModel
 import WireMainNavigation
 import WireSyncEngine
 
-struct SettingsMainViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
 
-    // TODO: can selfUser be taken from the userSession?
     var userSession: UserSession
-    var selfUser: SettingsSelfUser
+    var mediaPlaybackManager: MediaPlaybackManager?
+    var conversationLoader: (_ conversationID: UUID) async -> ZMConversation?
 
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
-        let settingsPropertyFactory = SettingsPropertyFactory(
+    @MainActor
+    func build(
+        conversationID: UUID,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) async -> ConversationRootViewController {
+        let viewController = ConversationRootViewController(
+            conversation: await conversationLoader(conversationID)!,
+            message: nil, // TODO: use `scroll(to:)`
             userSession: userSession,
-            selfUser: selfUser
+            mainCoordinator: mainCoordinator,
+            mediaPlaybackManager: mediaPlaybackManager
         )
-        let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
-            settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: UserRight.self
-        )
-        return settingsCellDescriptorFactory.settingsGroup(
-            isTeamMember: userSession.selfUser.isTeamMember,
-            userSession: userSession,
-            useTypeIntrinsicSizeTableView: false
-        ).generateViewController()!
+        viewController.hidesBottomBarWhenPushed = true
+        return viewController
     }
 }

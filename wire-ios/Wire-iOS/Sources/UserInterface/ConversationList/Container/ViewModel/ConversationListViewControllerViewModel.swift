@@ -100,7 +100,7 @@ extension ConversationListViewController {
         var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
-        let mainCoordinator: MainCoordinatorProtocol
+        let mainCoordinator: any MainCoordinatorProtocol
 
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol

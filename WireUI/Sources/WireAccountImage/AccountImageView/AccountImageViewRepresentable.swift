@@ -73,7 +73,7 @@ extension AccountImageViewRepresentable {
 
 // MARK: - View Modifiers + Environment
 
-extension View {
+public extension View {
     func accountImageBorderWidth(_ borderWidth: CGFloat) -> some View {
         modifier(AccountImageViewBorderWidthViewModifier(accountImageBorderWidth: borderWidth))
     }

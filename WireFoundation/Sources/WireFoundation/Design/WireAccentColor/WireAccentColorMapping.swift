@@ -50,20 +50,11 @@ public final class WireAccentColorMapping: ObservableObject, Sendable {
 }
 
 private struct WireAccentColorMappingKey: EnvironmentKey {
-    static let defaultValue = WireAccentColorMapping { accentColor in
-        switch accentColor {
-        case .blue: .systemBlue
-        case .green: .systemGreen
-        case .red: .systemRed
-        case .amber: .systemYellow
-        case .turquoise: .systemTeal
-        case .purple: .systemPurple
-        }
-    }
+    static let defaultValue: WireAccentColorMapping? = .none
 }
 
 public extension EnvironmentValues {
-    var wireAccentColorMapping: WireAccentColorMapping {
+    var wireAccentColorMapping: WireAccentColorMapping? {
         get { self[WireAccentColorMappingKey.self] }
         set { self[WireAccentColorMappingKey.self] = newValue }
     }

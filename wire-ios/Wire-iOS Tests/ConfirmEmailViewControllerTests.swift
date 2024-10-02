@@ -31,11 +31,17 @@ final class ConfirmEmailViewControllerTests: XCTestCase {
 
     // MARK: setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
-        sut = ConfirmEmailViewController(newEmail: "bill@wire.com", delegate: nil, userSession: userSession, useTypeIntrinsicSizeTableView: true)
+        sut = ConfirmEmailViewController(
+            newEmail: "bill@wire.com",
+            delegate: nil,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true,
+            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+        )
         sut.overrideUserInterfaceStyle = .dark
     }
 
@@ -45,7 +51,6 @@ final class ConfirmEmailViewControllerTests: XCTestCase {
         snapshotHelper = nil
         userSession = nil
         sut = nil
-        super.tearDown()
     }
 
     // MARK: Snapshot Tests

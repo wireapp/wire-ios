@@ -67,10 +67,5 @@ struct SnapshotTestReferenceImageDirectoryPlugin: BuildToolPlugin {
     }
 }
 
-// TODO: artifacts
-/*
- let artifactsUrl = URL(
-   fileURLWithPath: ProcessInfo.processInfo.environment["SNAPSHOT_ARTIFACTS"]
-     ?? NSTemporaryDirectory(), isDirectory: true
- )
-  */
+// The issue with this plugin is that the SwiftUI previews compile the files in the test target, but then the plugin is not executed.
+// Adding the plugin to the main target will have undefined behavior. Sometimes the snapshot reference images end up in the main target.

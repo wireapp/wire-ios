@@ -16,9 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import WireDataModel
 import WireMainNavigation
 
 extension ConversationListViewController: MainConversationListProtocol {
+    typealias ConversationID = ZMConversation.ConversationID
+    typealias MessageID = ZMConversationMessage.MessageID
+
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
         set { listContentController.listViewModel.selectedFilter = newValue }

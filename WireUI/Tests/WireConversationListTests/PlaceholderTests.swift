@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigation
+import XCTest
 
-@testable import Wire
+@testable import WireConversationList
 
-// TODO: remove file
-// final class MockMainConversationListProtocol: UIViewController, MainConversationListProtocol {
-//    var conversationFilter: MainConversationFilter?
-//    var splitViewInterface: MainSplitViewState = .expanded
-// }
+final class PlaceholderTests: XCTestCase {
+
+    func testNothing() {}
+}

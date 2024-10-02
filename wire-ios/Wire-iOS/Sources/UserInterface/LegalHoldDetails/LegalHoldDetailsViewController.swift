@@ -28,7 +28,7 @@ final class LegalHoldDetailsViewController: UIViewController {
     private let collectionViewController: SectionCollectionViewController
     private let conversation: LegalHoldDetailsConversation
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinatorProtocol
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     convenience init?(
         user: UserType,

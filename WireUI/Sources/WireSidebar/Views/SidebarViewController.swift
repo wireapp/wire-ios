@@ -44,9 +44,19 @@ public final class SidebarViewController: UIViewController {
         set { model.wireAccentColor = newValue }
     }
 
+    public var wireAccentColorMapping: WireAccentColorMapping? {
+        get { model.wireAccentColorMapping }
+        set { model.wireAccentColorMapping = newValue }
+    }
+
     public var wireTextStyleMapping: WireTextStyleMapping? {
         get { model.wireTextStyleMapping }
         set { model.wireTextStyleMapping = newValue }
+    }
+
+    public var sidebarBackgroundColor: UIColor {
+        get { model.sidebarBackgroundColor }
+        set { model.sidebarBackgroundColor = newValue }
     }
 
     // MARK: - Private Properties
@@ -65,7 +75,9 @@ public final class SidebarViewController: UIViewController {
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
 
-    public init(accountImageView: @escaping AccountImageViewBuilder<some View>) {
+    public init(
+        accountImageView: @escaping AccountImageViewBuilder<some View>
+    ) {
         super.init(nibName: nil, bundle: nil)
 
         model = .init(accountImageAction: { [weak self] in
@@ -125,8 +137,10 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
             supportAction: model.supportAction,
             accountImageView: accountImageView
         )
-        .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
+        .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
         .environment(\.wireAccentColor, model.wireAccentColor)
+        .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
+        .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
     }
 }
 

@@ -32,7 +32,7 @@ final class SearchUserViewController: UIViewController {
     private let userId: UUID
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
-    private let mainCoordinator: MainCoordinatorProtocol
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
@@ -45,7 +45,7 @@ final class SearchUserViewController: UIViewController {
         userId: UUID,
         profileViewControllerDelegate: ProfileViewControllerDelegate?,
         userSession: UserSession,
-        mainCoordinator: MainCoordinatorProtocol
+        mainCoordinator: any MainCoordinatorProtocol
     ) {
         self.userId = userId
         self.profileViewControllerDelegate = profileViewControllerDelegate

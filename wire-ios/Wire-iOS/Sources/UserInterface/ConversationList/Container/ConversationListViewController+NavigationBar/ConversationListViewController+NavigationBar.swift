@@ -31,7 +31,7 @@ extension ConversationListViewController {
         _ viewModel: ViewModel,
         didUpdate selfUserStatus: UserStatus
     ) {
-        accountImageView?.availability = selfUserStatus.availability.map()
+        accountImageView?.availability = selfUserStatus.availability.mapToAccountImageAvailability()
     }
 
     func conversationListViewControllerViewModel(
@@ -63,7 +63,7 @@ extension ConversationListViewController {
 
         let accountImageView = AccountImageView()
         accountImageView.accountImage = viewModel.accountImage.image
-        accountImageView.availability = viewModel.selfUserStatus.availability.map()
+        accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityIdentifier = "bottomBarSettingsButton" // TODO: fix, can't be correct
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
@@ -125,7 +125,7 @@ extension ConversationListViewController {
     }
 
     func setupTitleView() {
-        switch splitViewInterface {
+        switch mainSplitViewState {
         case .expanded:
             navigationItem.title = L10n.Localizable.ConversationList.Filter.AllConversations.title
         case .collapsed:
@@ -142,7 +142,7 @@ extension ConversationListViewController {
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
             Task {
-                await self?.mainCoordinator.showNewConversation()
+                await self?.mainCoordinator.showConnect()
             }
         }
         // TODO: accessibility
@@ -216,7 +216,7 @@ extension ConversationListViewController {
         newConversationBarButton.accessibilityLabel = "" // TODO: accessibilityLabel
         newConversationBarButton.addAction(.init { [weak self] _ in
             Task {
-                await self?.mainCoordinator.showNewConversation()
+                await self?.mainCoordinator.showConnect()
             }
         }, for: .primaryActionTriggered)
         newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem

@@ -20,6 +20,5 @@ import UIKit
 import WireMainNavigation
 
 struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-    @MainActor
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { fatalError() }
 }

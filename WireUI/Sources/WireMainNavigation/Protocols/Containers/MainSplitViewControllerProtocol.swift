@@ -19,34 +19,22 @@
 import UIKit
 
 @MainActor
-public protocol MainSplitViewControllerProtocol: UISplitViewController {
+public protocol MainSplitViewControllerProtocol: UISplitViewController, MainContainerViewController {
 
     associatedtype Sidebar: MainSidebarProtocol
-    associatedtype ConversationList: MainConversationListProtocol
-
-    typealias Archive = UIViewController
-    typealias NewConversation = UIViewController
-    typealias Settings = UIViewController
-    typealias Conversation = UIViewController
-    typealias TabContainer = UIViewController
+    associatedtype Connect: UIViewController
+    associatedtype TabContainer: MainTabBarControllerProtocol where
+        TabContainer.ConversationList == ConversationList,
+        TabContainer.Conversation == Conversation,
+        TabContainer.Archive == Archive,
+        TabContainer.Settings == Settings,
+        TabContainer.SettingsContent == SettingsContent
 
     /// Contains the reference to the view controller shown in the primary column.
     var sidebar: Sidebar! { get }
 
     /// Assigning a view controller instance to this property will present the instance in the supplementary column.
-    var conversationList: ConversationList? { get set }
-
-    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
-    var archive: Archive? { get set }
-
-    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
-    var newConversation: NewConversation? { get set }
-
-    /// Assigning a view controller instance to this property will present the instance in the supplementary column.
-    var settings: Settings? { get set }
-
-    /// Assigning a view controller instance to this property will present it in the secondary column.
-    var conversation: Conversation? { get set }
+    var connect: Connect? { get set }
 
     /// Contains the reference to the view controller which will be visible in collapsed mode.
     var tabContainer: TabContainer! { get }

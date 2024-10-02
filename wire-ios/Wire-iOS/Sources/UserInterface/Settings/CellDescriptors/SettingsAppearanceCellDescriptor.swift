@@ -18,6 +18,7 @@
 
 import MobileCoreServices
 import UIKit
+import WireSettings
 import WireSyncEngine
 
 class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
@@ -33,6 +34,8 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
     weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
 
+    let settingsCoordinator: AnySettingsCoordinator
+
     var visible: Bool {
         return true
     }
@@ -41,14 +44,18 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
         return text
     }
 
-    init(text: String,
-         previewGenerator: PreviewGeneratorType? = .none,
-         presentationStyle: PresentationStyle,
-         presentationAction: @escaping () -> (UIViewController?)) {
+    init(
+        text: String,
+        previewGenerator: PreviewGeneratorType? = .none,
+        presentationStyle: PresentationStyle,
+        presentationAction: @escaping () -> (UIViewController?),
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.text = text
         self.previewGenerator = previewGenerator
         self.presentationStyle = presentationStyle
         self.presentationAction = presentationAction
+        self.settingsCoordinator = settingsCoordinator
     }
 
     // MARK: - Configuration

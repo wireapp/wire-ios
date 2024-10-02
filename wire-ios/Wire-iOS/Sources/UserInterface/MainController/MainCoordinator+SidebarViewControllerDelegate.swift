@@ -42,29 +42,32 @@ import WireSidebar
 
 extension MainCoordinator: SidebarViewControllerDelegate {
 
+    @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
         showSelfProfile()
     }
 
+    @MainActor
     public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarMenuItem) {
         switch menuItem {
         case .all:
-            showConversationList(conversationFilter: ConversationFilter?.none)
+            showConversationList(conversationFilter: .none)
         case .favorites:
-            showConversationList(conversationFilter: ConversationFilter.favorites)
+            showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.favorites))
         case .groups:
-            showConversationList(conversationFilter: ConversationFilter.groups)
+            showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.groups))
         case .oneOnOne:
-            showConversationList(conversationFilter: ConversationFilter.oneOnOne)
+            showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.oneOnOne)) // TODO: try to write .oneOnOne
         case .archive:
-            showArchivedConversations()
+            showArchive()
         case .connect:
-            showNewConversation()
+            showConnect()
         case .settings:
             showSettings()
         }
     }
 
+    @MainActor
     public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
         fatalError("TODO")
     }

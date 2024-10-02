@@ -19,11 +19,13 @@
 import SwiftUI
 
 final class PreviewConversationListViewController: UIHostingController<LabelView>, MainConversationListProtocol {
+    struct ConversationID: Sendable {}
+    struct MessageID: Sendable {}
 
     // MARK: - MainConversationListProtocol
 
     var conversationFilter: ConversationFilter?
-    var splitViewInterface: MainSplitViewState = .expanded
+    var mainSplitViewState: MainSplitViewState = .expanded
 
     enum ConversationFilter: MainConversationFilterRepresentable {
         case favorites, groups, oneOnOne

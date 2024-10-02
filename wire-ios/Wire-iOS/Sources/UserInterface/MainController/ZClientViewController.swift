@@ -22,12 +22,28 @@ import UIKit
 import WireAccountImage
 import WireCommonComponents
 import WireDesign
-import WireMainNavigation
 import WireFoundation
+import WireMainNavigation
 import WireSidebar
 import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
+
+    typealias MainTabBarController = WireMainNavigation.MainTabBarController<
+        ConversationListViewController,
+        ConversationRootViewController
+    >
+    typealias MainSplitViewController = WireMainNavigation.MainSplitViewController<
+        SidebarViewController,
+        MainTabBarController
+    >
+    typealias MainCoordinator = WireMainNavigation.MainCoordinator<
+        MainSplitViewController,
+        ConversationViewControllerBuilder,
+        SettingsViewControllerBuilder,
+        StartUIViewControllerBuilder,
+        SelfProfileViewControllerBuilder
+    >
 
     // MARK: - Private Members
 
@@ -39,19 +55,33 @@ final class ZClientViewController: UIViewController {
 
     private(set) var conversationRootViewController: UIViewController?
     // TODO [WPB-8778]: Check if this property is still needed
+    @available(*, deprecated, message: "might be deleted")
     private(set) var currentConversation: ZMConversation?
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let sidebarViewController = {
+    private let sidebarViewController = {
+        let accountImageViewDesign = AccountImageViewDesign()
+        let availabilityIndicatorDesign = accountImageViewDesign.availabilityIndicator
         let sidebarViewController = SidebarViewController { accountImage, availability in
-            AnyView(AccountImageViewRepresentable(accountImage: accountImage, availability: availability?.map()))
+            AccountImageViewRepresentable(
+                accountImage: accountImage,
+                availability: availability?.mapToAccountImageAvailability()
+            )
+            .accountImageBorderWidth(accountImageViewDesign.borderWidth)
+            .accountImageViewBorderColor(accountImageViewDesign.borderColor)
+            .availabilityIndicatorAvailableColor(availabilityIndicatorDesign.availableColor)
+            .availabilityIndicatorAwayColor(availabilityIndicatorDesign.awayColor)
+            .availabilityIndicatorBusyColor(availabilityIndicatorDesign.busyColor)
+            .availabilityIndicatorBackgroundViewColor(availabilityIndicatorDesign.backgroundViewColor)
         }
         sidebarViewController.wireTextStyleMapping = .init()
+        sidebarViewController.wireAccentColorMapping = WireAccentColorMapping()
+        sidebarViewController.sidebarBackgroundColor = SidebarViewDesign().backgroundColor
         return sidebarViewController
     }()
 
-    private(set) lazy var mainSplitViewController = MainSplitViewController<SidebarViewController, ConversationListViewController>(
+    private(set) lazy var mainSplitViewController = MainSplitViewController(
         sidebar: sidebarViewController,
         noConversationPlaceholder: NoConversationPlaceholderViewController(),
         tabContainer: mainTabBarController
@@ -61,10 +91,23 @@ final class ZClientViewController: UIViewController {
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
     let mainTabBarController = {
-        let tabBarController = MainTabBarController<ConversationListViewController>()
+        let tabBarController = MainTabBarController()
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
     }()
+
+    private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
+        userSession: userSession,
+        mediaPlaybackManager: mediaPlaybackManager,
+        conversationLoader: { [weak userSession] conversationID in
+            let viewContext = userSession?.contextProvider.viewContext
+            return await viewContext?.perform {
+                ZMConversation.fetch(with: conversationID, domain: nil, in: viewContext!)
+            }
+        }
+    )
+
+    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(userSession: userSession)
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -74,6 +117,7 @@ final class ZClientViewController: UIViewController {
             accountSelector: SessionManager.shared
         )
     }
+
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
@@ -98,14 +142,16 @@ final class ZClientViewController: UIViewController {
     private var networkAvailabilityObserverToken: NSObjectProtocol?
 
     private(set) lazy var mainCoordinator = {
-        var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
+        var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
         let mainCoordinator = MainCoordinator(
             mainSplitViewController: mainSplitViewController,
             mainTabBarController: mainTabBarController,
-            newConversationBuilder: newConversationBuilder,
+            conversationBuilder: conversationViewControllerBuilder,
+            settingsContentBuilder: settingsViewControllerBuilder,
+            connectBuilder: connectBuilder,
             selfProfileBuilder: selfProfileViewControllerBuilder
         )
-        newConversationBuilder.delegate = mainCoordinator
+        connectBuilder.delegate = mainCoordinator
         return mainCoordinator
     }()
 
@@ -222,7 +268,7 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.conversationList = conversationListViewController
 
         mainTabBarController.archive = archive
-        mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser)
+        mainTabBarController.settings = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
 
         mainTabBarController.delegate = mainCoordinator
@@ -280,7 +326,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        mainCoordinator.showNewConversation()
+        mainCoordinator.showConnect()
     }
 
     // MARK: Status bar
@@ -299,24 +345,6 @@ final class ZClientViewController: UIViewController {
 
     override var childForStatusBarHidden: UIViewController? {
         return childForStatusBar
-    }
-
-    // MARK: trait
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        // TODO: check if still needed
-        // if changing from compact width to regular width, make sure current conversation is loaded
-        if false, previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
-            if let currentConversation {
-                select(conversation: currentConversation)
-            } else {
-                attemptToLoadLastViewedConversation(withFocus: false, animated: false)
-            }
-        }
-
-        view.setNeedsLayout()
     }
 
     // MARK: - Singleton
@@ -358,50 +386,13 @@ final class ZClientViewController: UIViewController {
     }
 
     func loadPlaceholderConversationController(animated: Bool) {
+        // TODO: can this method be removed?
         currentConversation = nil
         pushContentViewController(focusOnView: false, animated: animated)
     }
 
-    /// Load and optionally show a conversation, but don't change the list selection.  This is the place to put
-    /// stuff if you definitely need it to happen when a conversation is selected and/or presented
-    ///
-    /// This method should only be called when the list selection changes, or internally by other zclientviewcontroller
-    ///
-    /// - Parameters:
-    ///   - conversation: conversation to load
-    ///   - message: scroll to a specific message
-    ///   - focus: focus on view or not
-    ///   - animated: animated or not
-    ///   - completion: optional completion handler
-    func load(
-        _ conversation: ZMConversation,
-        scrollTo message: ZMConversationMessage?,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
-        var conversationRootController: ConversationRootViewController?
-        if conversation === currentConversation,
-           conversationRootController != nil {
-            if let message {
-                conversationRootController?.scroll(to: message)
-            }
-        } else {
-            conversationRootController = ConversationRootViewController(
-                conversation: conversation,
-                message: message,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator,
-                mediaPlaybackManager: mediaPlaybackManager
-            )
-        }
-
-        currentConversation = conversation
-        conversationRootController?.conversationViewController?.isFocused = focus
-
-        pushContentViewController(conversationRootController, focusOnView: focus, animated: animated)
-    }
-
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
+        // TODO: can this method be removed?
         currentConversation = nil
 
         let inbox = ConnectRequestsViewController(userSession: userSession)
@@ -467,6 +458,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
 
     private func reloadCurrentConversation() {
+        // TODO: what is this method neede for?
         guard let currentConversation else { return }
 
         let currentConversationViewController = ConversationRootViewController(

@@ -19,6 +19,7 @@
 import UIKit
 import WireAccountImage
 import WireCommonComponents
+import WireConversationList
 import WireDataModel
 import WireDesign
 import WireMainNavigation
@@ -30,7 +31,8 @@ final class ConversationListViewController: UIViewController {
     // MARK: - Properties
 
     let viewModel: ViewModel
-    let mainCoordinator: MainCoordinatorProtocol
+    let mainCoordinator: any MainCoordinatorProtocol
+    let conversationListCoordinator: any ConversationListCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
@@ -98,7 +100,7 @@ final class ConversationListViewController: UIViewController {
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: any MainCoordinatorInjectingViewControllerBuilder
-    var splitViewInterface: MainSplitViewState = .expanded { // TODO: rename property `mainSplitViewState`
+    var mainSplitViewState: MainSplitViewState = .expanded {
         didSet {
             setupTitleView()
             updateNavigationItem()
@@ -108,15 +110,19 @@ final class ConversationListViewController: UIViewController {
 
     // MARK: - Init
 
-    convenience init(
+    convenience init<MainCoordinator>(
         account: Account,
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinatorProtocol,
+        mainCoordinator: MainCoordinator,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) {
+    ) where
+    MainCoordinator: MainCoordinatorProtocol,
+    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
+    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
@@ -133,20 +139,27 @@ final class ConversationListViewController: UIViewController {
         )
     }
 
-    required init(
+    required init<MainCoordinator>(
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinatorProtocol,
+        mainCoordinator: MainCoordinator,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) {
+    ) where
+    MainCoordinator: MainCoordinatorProtocol,
+    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
+    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
+        self.conversationListCoordinator = conversationListCoordinator
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
+            conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
             zClientViewController: zClientViewController
         )
@@ -343,7 +356,7 @@ final class ConversationListViewController: UIViewController {
     }
 
     func applyColorTheme() {
-        view.backgroundColor = splitViewInterface == .expanded
+        view.backgroundColor = mainSplitViewState == .expanded
         ? ColorTheme.Backgrounds.backgroundVariant
         : ColorTheme.Backgrounds.surfaceVariant
     }
@@ -367,7 +380,7 @@ final class ConversationListViewController: UIViewController {
     /// For collapsed layouts the navigation bar should additionally show an account image and a filter button item.
     private func updateNavigationItem() {
 
-        switch splitViewInterface {
+        switch mainSplitViewState {
         case .collapsed:
             setupLeftNavigationBarButtons()
             setupRightNavigationBarButtons()

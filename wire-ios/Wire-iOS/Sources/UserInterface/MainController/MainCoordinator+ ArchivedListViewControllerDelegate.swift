@@ -19,13 +19,15 @@
 import WireDataModel
 import WireMainNavigation
 
-extension MainCoordinator: ArchivedListViewControllerDelegate {
+extension MainCoordinator: ArchivedListViewControllerDelegate where MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID {
 
     func archivedListViewController(
         _ viewController: ArchivedListViewController,
         didSelectConversation conversation: ZMConversation
     ) {
-        showConversationList(conversationFilter: ConversationFilter?.none)
-        fatalError("TODO") // TODO: open conversation
+        showConversationList(conversationFilter: .none)
+        Task { @MainActor in
+            await showConversation(conversationID: conversation.remoteIdentifier)
+        }
     }
 }

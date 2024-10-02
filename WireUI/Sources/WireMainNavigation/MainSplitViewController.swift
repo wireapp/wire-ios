@@ -18,12 +18,22 @@
 
 import SwiftUI
 
-public final class MainSplitViewController<
+// swiftlint:disable opening_brace
 
+public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
     Sidebar: MainSidebarProtocol,
-    ConversationList: MainConversationListProtocol
+    TabContainer: MainTabBarControllerProtocol
+{
+    // swiftlint:enable opening_brace
 
->: UISplitViewController, MainSplitViewControllerProtocol {
+    public typealias ConversationList = TabContainer.ConversationList
+    public typealias Archive = TabContainer.Archive
+    public typealias Settings = TabContainer.Settings
+
+    public typealias Conversation = TabContainer.Conversation
+    public typealias SettingsContent = TabContainer.SettingsContent
+
+    public typealias Connect = UIViewController
 
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
@@ -37,61 +47,65 @@ public final class MainSplitViewController<
 
     // MARK: - Supplementary Column
 
-    public weak var conversationList: ConversationList? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [conversationList].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var conversationList: ConversationList? {
+        get { _conversationList }
+        set { setConversationList(newValue, animated: false) }
     }
 
-    public weak var archive: UIViewController? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [archive].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var archive: Archive? {
+        get { _archive }
+        set { setArchive(newValue, animated: false) }
     }
 
-    public weak var newConversation: UIViewController? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [newConversation].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var connect: Connect? {
+        get { _connect }
+        set { setConnect(newValue, animated: false) }
     }
 
-    public weak var settings: UIViewController? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [settings].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var settings: Settings? {
+        get { _settings }
+        set { setSettings(newValue, animated: false) }
     }
 
     // MARK: - Secondary Column
 
-    public weak var conversation: UIViewController? {
-        didSet {
-            secondaryNavigationController?.viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
-            secondaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var conversation: Conversation? {
+        get { _conversation }
+        set { setConversation(newValue, animated: false) }
+    }
+
+    public var settingsContent: SettingsContent? {
+        get { _settingsContent }
+        set { setSettingsContent(newValue, animated: false) }
     }
 
     // MARK: - Compact/Collapsed
 
-    public private(set) weak var tabContainer: UIViewController!
+    public private(set) weak var tabContainer: TabContainer!
 
     // MARK: - Private Properties
 
     /// This view controller is displayed when no conversation in the list is selected.
     private let noConversationPlaceholder: UIViewController
 
-    private weak var supplementaryNavigationController: UINavigationController?
-    private weak var secondaryNavigationController: UINavigationController?
+    private weak var supplementaryNavigationController: UINavigationController!
+    private weak var secondaryNavigationController: UINavigationController!
+
+    private weak var _conversationList: ConversationList?
+    private weak var _archive: Archive?
+    private weak var _settings: Settings?
+
+    private weak var _conversation: Conversation?
+    private weak var _settingsContent: SettingsContent?
+
+    private weak var _connect: Connect?
 
     // MARK: - Initialization
 
     public init(
         sidebar: @autoclosure () -> Sidebar,
         noConversationPlaceholder: @autoclosure NoConversationPlaceholderBuilder,
-        tabContainer: @autoclosure () -> UIViewController
+        tabContainer: @autoclosure () -> TabContainer
     ) {
         let sidebar = sidebar()
         let noConversationPlaceholder = noConversationPlaceholder()
@@ -140,6 +154,56 @@ public final class MainSplitViewController<
         } else {
             .oneBesideSecondary
         }
+    }
+
+    // MARK: - Accessors
+
+    private func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+        _conversationList = conversationList
+
+        let viewControllers = [conversationList].compactMap { $0 }
+        supplementaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        supplementaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setArchive(_ archive: Archive?, animated: Bool) {
+        _archive = archive
+
+        let viewControllers = [archive].compactMap { $0 }
+        supplementaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        supplementaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setConnect(_ connect: Connect?, animated: Bool) {
+        _connect = connect
+
+        let viewControllers = [connect].compactMap { $0 }
+        supplementaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        supplementaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setSettings(_ settings: Settings?, animated: Bool) {
+        _settings = settings
+
+        let viewControllers = [settings].compactMap { $0 }
+        supplementaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        supplementaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setConversation(_ conversation: Conversation?, animated: Bool) {
+        _conversation = conversation
+
+        let viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
+        secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        secondaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+        _settingsContent = settingsContent
+
+        let viewControllers = [settingsContent].compactMap { $0 }
+        secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        secondaryNavigationController.view.layoutIfNeeded()
     }
 }
 

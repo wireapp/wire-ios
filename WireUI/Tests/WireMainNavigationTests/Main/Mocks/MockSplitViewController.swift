@@ -20,11 +20,46 @@ import UIKit
 import WireMainNavigation
 
 final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
+
+    typealias ConversationList = MockConversationListViewController
+    typealias Archive = UIViewController
+    typealias Settings = UIViewController
+
+    typealias Conversation = MockConversationViewController<MockConversationID>
+    typealias SettingsContent = UIViewController
+
+    typealias Connect = UIViewController
+
     var sidebar: MockSidebarViewController!
-    var conversationList: MockConversationListViewController?
-    var archive: UIViewController?
-    var newConversation: UIViewController?
-    var settings: UIViewController?
-    var conversation: UIViewController?
-    var tabContainer: UIViewController!
+    var conversationList: ConversationList?
+    var archive: Archive?
+    var connect: Connect?
+    var settings: Settings?
+    var conversation: Conversation?
+    var settingsContent: SettingsContent?
+    var tabContainer: MockTabBarController!
+
+    func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setArchive(_ archive: UIViewController?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setSettings(_ settings: Settings?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setConversation(_ conversation: Conversation?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setConnect(_ connect: Connect?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
 }
