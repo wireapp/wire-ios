@@ -183,10 +183,9 @@ extension ConversationViewController {
     func leftNavigationItems(hasUnread: Bool) -> [UIBarButtonItem] {
         var items: [UIBarButtonItem] = []
 
-        // TODO: fix
-        // if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
+        if traitCollection.horizontalSizeClass != .regular {
             items.append(createBackButton(hasUnread: hasUnread))
-        // }
+        }
 
         if shouldShowCollectionsButton {
             items.append(searchBarButtonItem)
