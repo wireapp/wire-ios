@@ -914,7 +914,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func configureAnalytics(for userSession: ZMUserSession) {
         do {
             WireLogger.analytics.debug("configuring analytics for user session")
-            try analyticsService.switchUser(userSession.analyticsUser)
+            try analyticsService.switchUser(userSession.createAnalyticsUser())
             userSession.analyticsEventTracker = analyticsService
         } catch {
             WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
@@ -1344,7 +1344,7 @@ extension SessionManager: UserObserving {
 
             do {
                 WireLogger.analytics.debug("updating current user")
-                try analyticsService.updateCurrentUser(userSession.analyticsUser)
+                try analyticsService.updateCurrentUser(userSession.createAnalyticsUser())
             } catch {
                 WireLogger.analytics.error("failed to update current user: \(error)")
             }

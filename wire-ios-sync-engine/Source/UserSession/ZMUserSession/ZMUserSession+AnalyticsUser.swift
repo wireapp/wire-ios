@@ -22,7 +22,7 @@ import WireDataModel
 
 extension ZMUserSession {
 
-    var analyticsUser: AnalyticsUser {
+    func createAnalyticsUser() -> AnalyticsUser {
         let selfUser = ZMUser.selfUser(inUserSession: self)
         let analyticsID: String
         var teamInfo: TeamInfo?

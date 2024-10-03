@@ -26,7 +26,7 @@ extension SessionManager {
 
     public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
         EnableAnalyticsUseCase(
-            currentUser: activeUserSession?.analyticsUser,
+            currentUser: activeUserSession?.createAnalyticsUser(),
             service: analyticsService
         )
     }
