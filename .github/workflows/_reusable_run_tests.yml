@@ -164,6 +164,7 @@ jobs:
 
         # Restore Swift Package Dependencies Cache
       - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
         uses: actions/cache@v3
         with:
           path: ${{ env.PACKAGES_DIR }}
@@ -177,7 +178,7 @@ jobs:
         # Save cache
       - name:  Save cache
         uses: actions/cache/save@v4
-        if: always()
+        if: steps.cache-swift-packages.outputs.cache-hit != 'true'
         with:
           path: ${{ env.PACKAGES_DIR }}
           key: ${{ runner.os }}-swiftpm-${{ hashFiles('**/Package.resolved') }}
