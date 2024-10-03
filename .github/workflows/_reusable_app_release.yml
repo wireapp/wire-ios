@@ -207,7 +207,7 @@ jobs:
         if: always()
         with:
           path: ${{ env.PACKAGES_DIR }}
-          key: ${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+          key: ${{ runner.os }}-swiftpm-${{ hashFiles('**/Package.resolved') }}
 
       - name: Run setup
         run: sh ./setup.sh
