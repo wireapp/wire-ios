@@ -59,20 +59,20 @@ public protocol TeamRepositoryProtocol {
     /// - Parameter membershipID: The id of the team member.
 
     func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws
-    
+
     func pullSelfLegalHoldStatus() async throws
 
 }
 
 public final class TeamRepository: TeamRepositoryProtocol {
-    
+
     // MARK: - Properties
 
     private let selfTeamID: UUID
     private let userRepository: any UserRepositoryProtocol
     private let teamsAPI: any TeamsAPI
     private let context: NSManagedObjectContext
-    
+
     // MARK: - Object lifecycle
 
     public init(
@@ -134,38 +134,39 @@ public final class TeamRepository: TeamRepositoryProtocol {
             try context.save()
         }
     }
-    
+
     public func pullSelfTeamRoles() async throws {
         let teamRoles = try await fetchSelfTeamRolesRemotely()
         try await storeTeamRolesLocally(teamRoles)
     }
-    
+
     public func pullSelfTeamMembers() async throws {
         let teamMembers = try await fetchSelfTeamMembersRemotely()
         try await storeTeamMembersLocally(teamMembers)
     }
-    
+
     public func pullSelfLegalHoldStatus() async throws {
         let selfUser = await context.perform { [userRepository] in
             userRepository.fetchSelfUser()
         }
-        
+
         let selfUserLegalHold = try await fetchSelfLegalhold()
-        
+
         switch selfUserLegalHold.status {
         case .pending:
             guard let selfClientID = selfUser.selfClient()?.remoteIdentifier else {
                 return
             }
-            
+
             await userRepository.addLegalHoldRequest(
                 for: selfUser.remoteIdentifier,
                 clientID: selfClientID,
                 lastPrekey: selfUserLegalHold.prekey
             )
-            
+
         case .disabled:
             try await userRepository.disableUserLegalHold()
+
         default:
             break
         }
@@ -181,7 +182,7 @@ public final class TeamRepository: TeamRepositoryProtocol {
             userID: selfUserID
         )
     }
-    
+
     // MARK: - Private
 
     private func fetchSelfTeamRemotely() async throws -> WireAPI.Team {

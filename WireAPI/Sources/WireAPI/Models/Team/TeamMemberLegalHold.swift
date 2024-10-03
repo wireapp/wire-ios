@@ -20,15 +20,15 @@ public typealias LegalHoldPrekey = Prekey
 
 /// The team member legal hold.
 public struct TeamMemberLegalHold: Equatable, Sendable {
-    
+
     /// The legal hold status
-    
+
     public let status: LegalholdStatus
-    
+
     /// The legal hold prekey
-    
+
     public let prekey: LegalHoldPrekey
-    
+
     public init(
         status: LegalholdStatus,
         prekey: LegalHoldPrekey

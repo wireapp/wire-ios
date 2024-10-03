@@ -21,7 +21,7 @@ import WireAPI
 import WireSystem
 
 protocol SyncManagerProtocol {
-    
+
     /// Pulls and stores all required objects for the database to be initially up-to-date.
 
     func performSlowSync() async throws
@@ -37,12 +37,12 @@ protocol SyncManagerProtocol {
 }
 
 final class SyncManager: SyncManagerProtocol {
-    
+
     // MARK: - Properties
 
     private(set) var syncState: SyncState = .suspended
     private var isSuspending = false
-    
+
     // MARK: - Repositories
 
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
@@ -54,11 +54,11 @@ final class SyncManager: SyncManagerProtocol {
     private let featureConfigsRepository: any FeatureConfigRepositoryProtocol
     private let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
     private let oneOnOneResolverUseCase: any OneOnOneResolverUseCaseProtocol
-    
+
     // MARK: - Update event processor
-    
+
     private let updateEventProcessor: any UpdateEventProcessorProtocol
-    
+
     // MARK: - Object lifecycle
 
     init(
@@ -84,7 +84,7 @@ final class SyncManager: SyncManagerProtocol {
         self.pushSupportedProtocolsUseCase = pushSupportedProtocolsUseCase
         self.oneOnOneResolverUseCase = oneOnOneResolverUseCase
     }
-    
+
     func performSlowSync() async throws {
         try await updateEventsRepository.pullLastEventID()
         try await teamRepository.pullSelfTeam()

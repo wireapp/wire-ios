@@ -25,7 +25,7 @@ import XCTest
 @testable import WireDomainSupport
 
 final class SyncManagerTests: XCTestCase {
-    
+
     private var sut: SyncManager!
     private var updateEventsRepository: MockUpdateEventsRepositoryProtocol!
     private var updateEventProcessor: MockUpdateEventProcessorProtocol!
@@ -33,7 +33,7 @@ final class SyncManagerTests: XCTestCase {
     private var connectionsRepository: MockConnectionsRepositoryProtocol!
     private var conversationsRepository: MockConversationRepositoryProtocol!
     private var userRepository: MockUserRepositoryProtocol!
-    private var conversationLabelsRepository:  MockConversationLabelsRepositoryProtocol!
+    private var conversationLabelsRepository: MockConversationLabelsRepositoryProtocol!
     private var featureConfigsRepository: MockFeatureConfigRepositoryProtocol!
     private var pushSupportedProtocolsUseCase: MockPushSupportedProtocolsUseCaseProtocol!
     private var oneOnOneResolverUseCase: MockOneOnOneResolverUseCaseProtocol!
@@ -46,11 +46,11 @@ final class SyncManagerTests: XCTestCase {
         connectionsRepository = MockConnectionsRepositoryProtocol()
         conversationsRepository = MockConversationRepositoryProtocol()
         userRepository = MockUserRepositoryProtocol()
-        conversationLabelsRepository =  MockConversationLabelsRepositoryProtocol()
+        conversationLabelsRepository = MockConversationLabelsRepositoryProtocol()
         featureConfigsRepository = MockFeatureConfigRepositoryProtocol()
         pushSupportedProtocolsUseCase = MockPushSupportedProtocolsUseCaseProtocol()
         oneOnOneResolverUseCase = MockOneOnOneResolverUseCaseProtocol()
-        
+
         sut = SyncManager(
             updateEventsRepository: updateEventsRepository,
             teamRepository: teamRepository,
@@ -83,7 +83,7 @@ final class SyncManagerTests: XCTestCase {
         connectionsRepository = nil
         conversationsRepository = nil
         userRepository = nil
-        conversationLabelsRepository =  nil
+        conversationLabelsRepository = nil
         featureConfigsRepository = nil
         pushSupportedProtocolsUseCase = nil
         oneOnOneResolverUseCase = nil
@@ -315,31 +315,30 @@ final class SyncManagerTests: XCTestCase {
 
         XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 0)
     }
-    
+
     func testPerformSlowSync() async throws {
-        
         // Mock
-        
-        updateEventsRepository.pullLastEventID_MockMethod = { }
-        teamRepository.pullSelfTeam_MockMethod = { }
-        teamRepository.pullSelfTeamRoles_MockMethod = { }
-        teamRepository.pullSelfTeamMembers_MockMethod = { }
-        connectionsRepository.pullConnections_MockMethod = { }
-        conversationsRepository.pullConversations_MockMethod = { }
-        userRepository.pullKnownUsers_MockMethod = { }
-        conversationLabelsRepository.pullConversationLabels_MockMethod = { }
-        featureConfigsRepository.pullFeatureConfigs_MockMethod = { }
-        userRepository.pullSelfUser_MockMethod = { }
-        teamRepository.pullSelfLegalHoldStatus_MockMethod = { }
-        pushSupportedProtocolsUseCase.invoke_MockMethod = { }
-        oneOnOneResolverUseCase.invoke_MockMethod = { }
-        
+
+        updateEventsRepository.pullLastEventID_MockMethod = {}
+        teamRepository.pullSelfTeam_MockMethod = {}
+        teamRepository.pullSelfTeamRoles_MockMethod = {}
+        teamRepository.pullSelfTeamMembers_MockMethod = {}
+        connectionsRepository.pullConnections_MockMethod = {}
+        conversationsRepository.pullConversations_MockMethod = {}
+        userRepository.pullKnownUsers_MockMethod = {}
+        conversationLabelsRepository.pullConversationLabels_MockMethod = {}
+        featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
+        userRepository.pullSelfUser_MockMethod = {}
+        teamRepository.pullSelfLegalHoldStatus_MockMethod = {}
+        pushSupportedProtocolsUseCase.invoke_MockMethod = {}
+        oneOnOneResolverUseCase.invoke_MockMethod = {}
+
         // When
-        
+
         try await sut.performSlowSync()
-        
+
         // Then
-        
+
         XCTAssertEqual(updateEventsRepository.pullLastEventID_Invocations.count, 1)
         XCTAssertEqual(teamRepository.pullSelfTeam_Invocations.count, 1)
         XCTAssertEqual(teamRepository.pullSelfTeamRoles_Invocations.count, 1)

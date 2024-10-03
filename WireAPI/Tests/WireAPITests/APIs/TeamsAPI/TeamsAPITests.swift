@@ -273,7 +273,7 @@ final class TeamsAPITests: XCTestCase {
         )
 
         // Then
-        let expectedPrekey = LegalHoldPrekey(id: 12345, base64EncodedKey: "foo")
+        let expectedPrekey = LegalHoldPrekey(id: 12_345, base64EncodedKey: "foo")
         XCTAssertEqual(result.status, .pending)
         XCTAssertEqual(result.prekey, expectedPrekey)
     }

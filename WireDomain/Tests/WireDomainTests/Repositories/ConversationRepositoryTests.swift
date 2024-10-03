@@ -308,25 +308,25 @@ class ConversationRepositoryTests: XCTestCase {
             accuracy: 0.1
         )
     }
-    
+
     func testGetMLSOneToOneConversation() async throws {
-         // Mock
+        // Mock
 
-         mockConversationsAPI()
+        mockConversationsAPI()
 
-         // When
+        // When
 
-         let mlsGroupID = try await sut.pullMLSOneToOneConversation(
-             userID: Scaffolding.userID.uuidString,
-             domain: Scaffolding.domain
-         )
+        let mlsGroupID = try await sut.pullMLSOneToOneConversation(
+            userID: Scaffolding.userID.uuidString,
+            domain: Scaffolding.domain
+        )
 
-         let mlsConversation = await sut.fetchMLSConversation(with: mlsGroupID)
+        let mlsConversation = await sut.fetchMLSConversation(with: mlsGroupID)
 
-         // Then
+        // Then
 
-         XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
-     }
+        XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
+    }
 
 }
 
@@ -374,7 +374,7 @@ extension ConversationRepositoryTests {
             notFound: conversationList.notFound,
             failed: conversationList.failed
         )
-        
+
         conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversationOneOnOneType
     }
 
@@ -392,7 +392,7 @@ extension ConversationRepositoryTests {
         }
 
         static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
-        
+
         nonisolated(unsafe) static let conversationList = ConversationList(
             found: [conversationSelfType,
                     conversationGroupType,

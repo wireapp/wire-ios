@@ -977,6 +977,29 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         await mock(user, date)
     }
 
+    // MARK: - fetchAllUserIdsWithOneOnOneConversation
+
+    public var fetchAllUserIdsWithOneOnOneConversation_Invocations: [Void] = []
+    public var fetchAllUserIdsWithOneOnOneConversation_MockError: Error?
+    public var fetchAllUserIdsWithOneOnOneConversation_MockMethod: (() async throws -> [WireDataModel.QualifiedID])?
+    public var fetchAllUserIdsWithOneOnOneConversation_MockValue: [WireDataModel.QualifiedID]?
+
+    public func fetchAllUserIdsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+        fetchAllUserIdsWithOneOnOneConversation_Invocations.append(())
+
+        if let error = fetchAllUserIdsWithOneOnOneConversation_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllUserIdsWithOneOnOneConversation_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllUserIdsWithOneOnOneConversation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllUserIdsWithOneOnOneConversation`")
+        }
+    }
+
 }
 
 // swiftlint:enable variable_name

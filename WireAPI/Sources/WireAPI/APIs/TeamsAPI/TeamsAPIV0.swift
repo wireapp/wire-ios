@@ -288,7 +288,7 @@ enum LegalholdStatusV0: String, Decodable {
     case pending
     case disabled
     case noConsent = "no_consent"
-    
+
     func toAPIModel() -> LegalholdStatus {
         switch self {
         case .enabled:
@@ -306,7 +306,7 @@ enum LegalholdStatusV0: String, Decodable {
 struct LegalHoldLastPrekeyV0: Decodable, ToAPIModelConvertible {
     let id: Int
     let key: String
-    
+
     func toAPIModel() -> Prekey {
         Prekey(
             id: id,
@@ -319,7 +319,7 @@ struct TeamMemberLegalHoldResponseV0: Decodable, ToAPIModelConvertible {
 
     let lastPrekey: LegalHoldLastPrekeyV0
     let status: LegalholdStatusV0
-    
+
     enum CodingKeys: String, CodingKey {
         case status
         case lastPrekey = "last_prekey"

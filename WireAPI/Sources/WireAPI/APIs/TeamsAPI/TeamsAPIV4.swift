@@ -89,7 +89,7 @@ class TeamsAPIV4: TeamsAPIV3 {
             .parse(response)
     }
 
-    // MARK: - Get team member legalhold 
+    // MARK: - Get team member legalhold
 
     override func getLegalhold(
         for teamID: Team.ID,

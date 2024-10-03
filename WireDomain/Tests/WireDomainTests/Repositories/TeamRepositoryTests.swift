@@ -272,11 +272,11 @@ private enum Scaffolding {
     static let member2CreatorID = UUID()
     static let member2legalholdStatus = LegalholdStatus.pending
     static let member2Permissions = Permissions.member.rawValue
-    
+
     static let teamMemberLegalHold = TeamMemberLegalHold(
         status: .pending,
         prekey: prekey
     )
-    
-    static let prekey = LegalHoldPrekey(id: 2330, base64EncodedKey: "foo")
+
+    static let prekey = LegalHoldPrekey(id: 2_330, base64EncodedKey: "foo")
 }
