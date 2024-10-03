@@ -47,5 +47,22 @@ public struct Connection: Equatable, Codable {
     /// current status of connection
 
     public let status: ConnectionStatus
+    
+    public init(senderID: UUID?,
+         receiverID: UUID?,
+         receiverQualifiedID: QualifiedID?,
+         conversationID: UUID?,
+         qualifiedConversationID: QualifiedID?,
+         lastUpdate: Date,
+         status: ConnectionStatus
+    ) {
+        self.senderID = senderID
+        self.receiverID = receiverID
+        self.receiverQualifiedID = receiverQualifiedID
+        self.conversationID = conversationID
+        self.qualifiedConversationID = qualifiedConversationID
+        self.lastUpdate = lastUpdate
+        self.status = status
+    }
 
 }

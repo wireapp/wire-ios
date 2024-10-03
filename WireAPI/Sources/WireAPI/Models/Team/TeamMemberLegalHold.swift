@@ -16,18 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public typealias LegalHoldPrekey = Prekey
 
-/// Service information for a bot.
-
-public struct Service: Equatable, Codable, Sendable {
-
-    /// The service's id.
-
-    public let id: UUID
-
-    /// The service's provider id.
-
-    public let provider: UUID
-
+/// The team member legal hold.
+public struct TeamMemberLegalHold: Equatable, Sendable {
+    
+    /// The legal hold status
+    
+    public let status: LegalholdStatus
+    
+    /// The legal hold prekey
+    
+    public let prekey: LegalHoldPrekey
+    
+    public init(
+        status: LegalholdStatus,
+        prekey: LegalHoldPrekey
+    ) {
+        self.status = status
+        self.prekey = prekey
+    }
 }

@@ -51,16 +51,16 @@ public protocol TeamsAPI {
         maxResults: UInt
     ) async throws -> [TeamMember]
 
-    /// Get the legalhold status of a team member.
+    /// Get the legalhold of a team member.
     ///
     /// - Parameters:
     ///   - teamID: The id of the team.
     ///   - userID: The id of the member.
-    /// - Returns: The legalhold status of the member.
+    /// - Returns: The legalhold of the member.
 
-    func getLegalholdStatus(
+    func getLegalhold(
         for teamID: Team.ID,
         userID: UUID
-    ) async throws -> LegalholdStatus
+    ) async throws -> TeamMemberLegalHold
 
 }

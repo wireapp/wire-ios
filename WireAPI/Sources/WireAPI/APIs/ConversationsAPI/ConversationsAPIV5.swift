@@ -38,6 +38,26 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             .success(code: .ok, type: QualifiedConversationListV5.self) // Change in v5
             .parse(response)
     }
+    
+    override func getMLSOneToOneConversation(
+         userID: String,
+         in domain: String
+     ) async throws -> Conversation {
+         let resourcePath = "\(pathPrefix)/conversations/one2one/\(domain)/\(userID)"
+
+         let request = HTTPRequest(
+             path: resourcePath,
+             method: .get
+         )
+
+         let response = try await httpClient.executeRequest(request)
+
+         return try ResponseParser()
+             .success(code: .ok, type: ConversationV5.self)
+             .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
+             .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
+             .parse(response)
+     }
 }
 
 // MARK: Decodables
