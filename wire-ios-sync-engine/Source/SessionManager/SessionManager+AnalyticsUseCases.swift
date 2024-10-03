@@ -24,8 +24,8 @@ extension SessionManager {
         DisableAnalyticsUseCase(service: analyticsService)
     }
 
-    public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
-        EnableAnalyticsUseCase(
+    public func makeEnableAnalyticsUseCase() async throws -> EnableAnalyticsUseCaseProtocol {
+        try await EnableAnalyticsUseCase(
             currentUser: activeUserSession?.createAnalyticsUser(),
             service: analyticsService
         )

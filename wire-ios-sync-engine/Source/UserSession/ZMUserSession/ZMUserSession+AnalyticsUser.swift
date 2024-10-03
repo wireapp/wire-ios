@@ -22,40 +22,58 @@ import WireDataModel
 
 extension ZMUserSession {
 
-    func createAnalyticsUser() -> AnalyticsUser {
-        let selfUser = ZMUser.selfUser(inUserSession: self)
-        let analyticsID: String
-        var teamInfo: TeamInfo?
+    enum AnalyticsError: Error {
 
-        if let existingID = selfUser.analyticsIdentifier {
-            analyticsID = existingID
-        } else {
-            let newID = UUID()
-            analyticsID = newID.transportString()
-            selfUser.analyticsIdentifier = analyticsID
+        case selfClientIsNotRegistered
+        case failedToBroadcastAnalyticsID(any Error)
 
-            syncContext.performGroupedBlock { [syncContext] in
-                do {
-                    let message = DataTransfer(trackingIdentifier: newID)
-                    try ZMConversation.sendMessageToSelfClients(message, in: syncContext)
-                } catch let error {
-                    WireLogger.analytics.error("Failed to broadcast new analytics ID: \(newID.safeForLoggingDescription) \(error)")
-                }
+    }
+
+    func createAnalyticsUser() async throws -> AnalyticsUser {
+        let (analyticsID, teamInfo) = try await syncContext.perform { [syncContext] in
+            let selfUser = ZMUser.selfUser(in: syncContext)
+
+            // Sanity check that we don't setup analytics too early.
+            guard selfUser.selfClient()?.remoteIdentifier != nil else {
+                throw AnalyticsError.selfClientIsNotRegistered
             }
-        }
 
-        if let team = selfUser.team, let teamID = team.remoteIdentifier {
-            teamInfo = TeamInfo(
-                id: teamID.uuidString,
-                role: selfUser.teamRole.analyticsValue,
-                size: UInt(team.members.count)
-            )
+            let analyticsID: String
+            var teamInfo: TeamInfo?
+
+            if let existingID = selfUser.analyticsIdentifier {
+                analyticsID = existingID
+            } else {
+                let newID = UUID()
+                analyticsID = newID.transportString()
+                selfUser.analyticsIdentifier = analyticsID
+                try self.broadcastAnalyticsID(newID)
+            }
+
+            if let team = selfUser.team, let teamID = team.remoteIdentifier {
+                teamInfo = TeamInfo(
+                    id: teamID.uuidString,
+                    role: selfUser.teamRole.analyticsValue,
+                    size: UInt(team.members.count)
+                )
+            }
+
+            return (analyticsID, teamInfo)
         }
 
         return AnalyticsUser(
             analyticsIdentifier: analyticsID,
             teamInfo: teamInfo
         )
+    }
+
+    private func broadcastAnalyticsID(_ id: UUID) throws {
+        do {
+            let message = DataTransfer(trackingIdentifier: id)
+            try ZMConversation.sendMessageToSelfClients(message, in: syncContext)
+        } catch let error {
+            throw AnalyticsError.failedToBroadcastAnalyticsID(error)
+        }
     }
 
 }

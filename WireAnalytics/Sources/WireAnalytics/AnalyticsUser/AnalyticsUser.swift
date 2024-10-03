@@ -18,7 +18,7 @@
 
 /// The subject of analytics tracking.
 
-public struct AnalyticsUser: Equatable {
+public struct AnalyticsUser: Equatable, Sendable {
 
     /// A unique id.
 

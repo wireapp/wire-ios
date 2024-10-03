@@ -16,20 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A struct representing information about the user's team.
+/// Info about an analytic user's team.
 
-public struct TeamInfo: Equatable {
+public struct TeamInfo: Equatable, Sendable {
 
-    /// The identifier for the team the user belongs to.
+    /// The team id.
+
     public let id: String
 
     /// The role of the user within the team.
+
     public let role: String
 
-    /// The size of the team the user belongs to.
+    /// The size of the team.
+
     public let size: UInt
 
-    public init(id: String, role: String, size: UInt) {
+    /// Create a new `TeamInfo`.
+    ///
+    /// - Parameters:
+    ///   - id: The team id.
+    ///   - role: The role of the user within the team.
+    ///   - size: The size of the team
+
+    public init(
+        id: String,
+        role: String,
+        size: UInt
+    ) {
         self.id = id
         self.role = role
         self.size = size

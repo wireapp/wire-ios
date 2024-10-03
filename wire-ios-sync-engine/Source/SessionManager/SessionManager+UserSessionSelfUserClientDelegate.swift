@@ -44,6 +44,10 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
         }
 
         loginDelegate?.clientRegistrationDidSucceed(accountId: accountId)
+
+        if let activeUserSession {
+            configureAnalytics(for: activeUserSession)
+        }
     }
 
     public func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {
