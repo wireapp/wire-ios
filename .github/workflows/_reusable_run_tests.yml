@@ -23,6 +23,8 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    outputs:
+      xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
@@ -85,18 +87,11 @@ jobs:
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
 
       # Step to find all .xcresult files and analyze each one
-      - name: Analyze xcresult files
-        if: always()
+      - name: Find all .xcresult files
+        id: find-xcresults
         run: |
-          # Find all .xcresult files under the artifacts directory
-          find artifacts/ -type f -name "*.xcresult" | while read result; do
-            echo "Analyzing $result"
-            # Run the analysis action for each .xcresult file
-            gh action run analyze-xcoderesults-action@v0.1.9 \
-              --with results="$result" \
-              --with warningAnnotations=true \
-              --with GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          done
+          # Find all .xcresult directories and convert them to a JSON array
+          run: echo "::set-output name=xcresult_files::$(find artifacts/ -type d -name "*.xcresult" | jq -R . | jq -s .)"
 
       # Scripts
       - name: Test Scripts
@@ -157,6 +152,20 @@ jobs:
           status: ${{ job.status }}
           text: "🆘 Tests for '${{ github.ref_name }}' failed 🆘\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
   
+  analyze-xcresults:
+    needs: run-tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
+    steps:
+      - name: Analyze .xcresult file
+        uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        with:
+          results: ${{ matrix.xcresult_file }}
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   upload-test-results-datadadog:
     runs-on: ubuntu-latest
     needs: run-tests
