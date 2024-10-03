@@ -173,12 +173,13 @@ jobs:
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
         run: |
+          echo "'**/Package.resolved'"
           ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
         # Save cache
       - name:  Save cache
         uses: actions/cache/save@v4
-        if: steps.cache-swift-packages.outputs.cache-hit != 'true'
+        if: always()
         with:
           path: ${{ env.PACKAGES_DIR }}
           key: ${{ runner.os }}-swiftpm-${{ hashFiles('**/Package.resolved') }}
