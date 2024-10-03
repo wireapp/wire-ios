@@ -43,7 +43,7 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
         try service.enableTracking()
 
         if let currentUser {
-            service.switchUser(currentUser)
+            try service.switchUser(currentUser)
         }
     }
 

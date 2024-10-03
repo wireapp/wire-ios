@@ -909,8 +909,13 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private func configureAnalytics(for userSession: ZMUserSession) {
-        analyticsService.switchUser(userSession.analyticsUser)
-        userSession.analyticsEventTracker = analyticsService
+        do {
+            WireLogger.analytics.debug("configuring analytics for user session")
+            try analyticsService.switchUser(userSession.analyticsUser)
+            userSession.analyticsEventTracker = analyticsService
+        } catch {
+            WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
+        }
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {
@@ -1334,7 +1339,12 @@ extension SessionManager: UserObserving {
                 return
             }
 
-            analyticsService.updateCurrentUser(userSession.analyticsUser)
+            do {
+                WireLogger.analytics.debug("updating current user")
+                try analyticsService.updateCurrentUser(userSession.analyticsUser)
+            } catch {
+                WireLogger.analytics.error("failed to update current user: \(error)")
+            }
         }
     }
 }

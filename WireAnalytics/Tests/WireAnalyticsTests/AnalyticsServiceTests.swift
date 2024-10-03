@@ -139,7 +139,7 @@ class AnalyticsServiceTests: XCTestCase {
         // Given sut is not enabled.
 
         // When switching to a user.
-        sut.switchUser(Scaffolding.user)
+        try sut.switchUser(Scaffolding.user)
 
         // Then the user was not set.
         XCTAssertEqual(countly.endSession_Invocations.count, 0)
@@ -153,11 +153,11 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.enableTracking()
 
         // Given a user is set.
-        sut.switchUser(Scaffolding.user)
+        try sut.switchUser(Scaffolding.user)
         resetMockInvocations()
 
         // When switching to the same user.
-        sut.switchUser(Scaffolding.user)
+        try sut.switchUser(Scaffolding.user)
 
         // Then the user was not switched again.
         XCTAssertEqual(countly.endSession_Invocations.count, 0)
@@ -171,11 +171,11 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.enableTracking()
 
         // Given a user is set.
-        sut.switchUser(Scaffolding.user)
+        try sut.switchUser(Scaffolding.user)
         resetMockInvocations()
 
         // When switching to a different user.
-        sut.switchUser(Scaffolding.userWithTeam)
+        try sut.switchUser(Scaffolding.userWithTeam)
 
         // Then the existing session was ended.
         XCTAssertEqual(countly.endSession_Invocations.count, 1)
@@ -216,7 +216,7 @@ class AnalyticsServiceTests: XCTestCase {
         // Given no current user.
 
         // When updating the current user.
-        sut.updateCurrentUser(Scaffolding.user)
+        try sut.updateCurrentUser(Scaffolding.user)
 
         // Then the user was not updated.
         XCTAssertEqual(countly.changeDeviceIDMergeData_Invocations.count, 0)
@@ -228,11 +228,11 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.enableTracking()
 
         // Given a current user is set.
-        sut.switchUser(Scaffolding.user)
+        try sut.switchUser(Scaffolding.user)
         resetMockInvocations()
 
         // When updating the current user with no change.
-        sut.updateCurrentUser(Scaffolding.user)
+        try sut.updateCurrentUser(Scaffolding.user)
 
         // Then no user data changed.
         XCTAssertEqual(countly.changeDeviceIDMergeData_Invocations.count, 0)
@@ -244,11 +244,11 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.enableTracking()
 
         // Given a current user is set.
-        sut.switchUser(Scaffolding.user)
+        try sut.switchUser(Scaffolding.user)
         resetMockInvocations()
 
         // When updating the current user.
-        sut.updateCurrentUser(Scaffolding.userWithTeam)
+        try sut.updateCurrentUser(Scaffolding.userWithTeam)
 
         // Then the device id was changed with a merge.
         let deviceChangeInvocations = countly.changeDeviceIDMergeData_Invocations
@@ -304,7 +304,7 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.enableTracking()
 
         // Given a current user.
-        sut.switchUser(Scaffolding.user)
+        try sut.switchUser(Scaffolding.user)
 
         // When tracking an event.
         sut.trackEvent(Scaffolding.event)

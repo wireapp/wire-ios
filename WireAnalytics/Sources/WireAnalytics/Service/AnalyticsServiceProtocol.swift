@@ -34,7 +34,7 @@ public protocol AnalyticsServiceProtocol: AnalyticsEventTracker {
     ///
     /// - Parameter user: The user to switch to.
 
-    func switchUser(_ user: AnalyticsUser)
+    func switchUser(_ user: AnalyticsUser) throws
 
     /// Update the current user.
     ///
@@ -43,6 +43,6 @@ public protocol AnalyticsServiceProtocol: AnalyticsEventTracker {
     ///
     /// - Parameter user: The updated current user.
 
-    func updateCurrentUser(_ user: AnalyticsUser)
+    func updateCurrentUser(_ user: AnalyticsUser) throws
 
 }

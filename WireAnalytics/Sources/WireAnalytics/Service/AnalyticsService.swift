@@ -91,7 +91,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         print("[ANALYTICS] disabling tracking")
 
         countly.endSession()
-        clearCurrentUser()
+        try clearCurrentUser()
         countly.resetInstance()
         self.countly = nil
     }
@@ -102,11 +102,12 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     ///
     /// - Parameter user: The user to switch to.
 
-    public func switchUser(_ user: AnalyticsUser) {
-        guard
-            let countly,
-            user != currentUser
-        else {
+    public func switchUser(_ user: AnalyticsUser) throws {
+        guard let countly else {
+            throw AnalyticsServiceError.serviceIsNotConfigured
+        }
+
+        guard user != currentUser else {
             return
         }
 
@@ -114,7 +115,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
         countly.endSession()
 
-        pushUser(
+        try pushUser(
             user,
             mergeData: false
         )
@@ -129,7 +130,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     ///
     /// - Parameter user: The updated current user.
 
-    public func updateCurrentUser(_ user: AnalyticsUser) {
+    public func updateCurrentUser(_ user: AnalyticsUser) throws {
         guard
             let currentUser,
             user != currentUser
@@ -139,7 +140,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
         print("[ANALYTICS] updating current user")
 
-        pushUser(
+        try pushUser(
             user,
             mergeData: true
         )
@@ -148,9 +149,9 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     private func pushUser(
         _ user: AnalyticsUser?,
         mergeData: Bool
-    ) {
+    ) throws {
         guard let countly else {
-            return
+            throw AnalyticsServiceError.serviceIsNotConfigured
         }
 
         if let id = user?.analyticsIdentifier {
@@ -178,10 +179,10 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         currentUser = user
     }
 
-    private func clearCurrentUser() {
+    private func clearCurrentUser() throws {
         print("[ANALYTICS] clearing current user")
 
-        pushUser(
+        try pushUser(
             nil,
             mergeData: false
         )
