@@ -29,14 +29,39 @@ final class SyncManagerTests: XCTestCase {
     private var sut: SyncManager!
     private var updateEventsRepository: MockUpdateEventsRepositoryProtocol!
     private var updateEventProcessor: MockUpdateEventProcessorProtocol!
+    private var teamRepository: MockTeamRepositoryProtocol!
+    private var connectionsRepository: MockConnectionsRepositoryProtocol!
+    private var conversationsRepository: MockConversationRepositoryProtocol!
+    private var userRepository: MockUserRepositoryProtocol!
+    private var conversationLabelsRepository: MockConversationLabelsRepositoryProtocol!
+    private var featureConfigsRepository: MockFeatureConfigRepositoryProtocol!
+    private var pushSupportedProtocolsUseCase: MockPushSupportedProtocolsUseCaseProtocol!
+    private var oneOnOneResolverUseCase: MockOneOnOneResolverUseCaseProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
         updateEventsRepository = MockUpdateEventsRepositoryProtocol()
         updateEventProcessor = MockUpdateEventProcessorProtocol()
+        teamRepository = MockTeamRepositoryProtocol()
+        connectionsRepository = MockConnectionsRepositoryProtocol()
+        conversationsRepository = MockConversationRepositoryProtocol()
+        userRepository = MockUserRepositoryProtocol()
+        conversationLabelsRepository = MockConversationLabelsRepositoryProtocol()
+        featureConfigsRepository = MockFeatureConfigRepositoryProtocol()
+        pushSupportedProtocolsUseCase = MockPushSupportedProtocolsUseCaseProtocol()
+        oneOnOneResolverUseCase = MockOneOnOneResolverUseCaseProtocol()
+
         sut = SyncManager(
             updateEventsRepository: updateEventsRepository,
-            updateEventProcessor: updateEventProcessor
+            teamRepository: teamRepository,
+            connectionsRepository: connectionsRepository,
+            conversationsRepository: conversationsRepository,
+            userRepository: userRepository,
+            conversationLabelsRepository: conversationLabelsRepository,
+            featureConfigsRepository: featureConfigsRepository,
+            updateEventProcessor: updateEventProcessor,
+            pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
+            oneOnOneResolverUseCase: oneOnOneResolverUseCase
         )
 
         // Base mocks.
@@ -50,10 +75,18 @@ final class SyncManagerTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         sut = nil
         updateEventsRepository = nil
         updateEventProcessor = nil
-        try await super.tearDown()
+        teamRepository = nil
+        connectionsRepository = nil
+        conversationsRepository = nil
+        userRepository = nil
+        conversationLabelsRepository = nil
+        featureConfigsRepository = nil
+        pushSupportedProtocolsUseCase = nil
+        oneOnOneResolverUseCase = nil
     }
 
     // MARK: - Tests
@@ -281,6 +314,44 @@ final class SyncManagerTests: XCTestCase {
         }
 
         XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 0)
+    }
+
+    func testPerformSlowSync() async throws {
+        // Mock
+
+        updateEventsRepository.pullLastEventID_MockMethod = {}
+        teamRepository.pullSelfTeam_MockMethod = {}
+        teamRepository.pullSelfTeamRoles_MockMethod = {}
+        teamRepository.pullSelfTeamMembers_MockMethod = {}
+        connectionsRepository.pullConnections_MockMethod = {}
+        conversationsRepository.pullConversations_MockMethod = {}
+        userRepository.pullKnownUsers_MockMethod = {}
+        conversationLabelsRepository.pullConversationLabels_MockMethod = {}
+        featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
+        userRepository.pullSelfUser_MockMethod = {}
+        teamRepository.pullSelfLegalHoldStatus_MockMethod = {}
+        pushSupportedProtocolsUseCase.invoke_MockMethod = {}
+        oneOnOneResolverUseCase.invoke_MockMethod = {}
+
+        // When
+
+        try await sut.performSlowSync()
+
+        // Then
+
+        XCTAssertEqual(updateEventsRepository.pullLastEventID_Invocations.count, 1)
+        XCTAssertEqual(teamRepository.pullSelfTeam_Invocations.count, 1)
+        XCTAssertEqual(teamRepository.pullSelfTeamRoles_Invocations.count, 1)
+        XCTAssertEqual(teamRepository.pullSelfTeamMembers_Invocations.count, 1)
+        XCTAssertEqual(connectionsRepository.pullConnections_Invocations.count, 1)
+        XCTAssertEqual(conversationsRepository.pullConversations_Invocations.count, 1)
+        XCTAssertEqual(userRepository.pullKnownUsers_Invocations.count, 1)
+        XCTAssertEqual(conversationLabelsRepository.pullConversationLabels_Invocations.count, 1)
+        XCTAssertEqual(featureConfigsRepository.pullFeatureConfigs_Invocations.count, 1)
+        XCTAssertEqual(userRepository.pullSelfUser_Invocations.count, 1)
+        XCTAssertEqual(teamRepository.pullSelfLegalHoldStatus_Invocations.count, 1)
+        XCTAssertEqual(pushSupportedProtocolsUseCase.invoke_Invocations.count, 1)
+        XCTAssertEqual(oneOnOneResolverUseCase.invoke_Invocations.count, 1)
     }
 
 }

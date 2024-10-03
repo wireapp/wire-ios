@@ -20,8 +20,13 @@ import WireAPI
 import WireDataModel
 import WireSystem
 
+// sourcery: AutoMockable
 /// Calculates and pushes the supported protocols to the backend
-public struct PushSupportedProtocolsUseCase {
+public protocol PushSupportedProtocolsUseCaseProtocol {
+    func invoke() async throws
+}
+
+public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtocol {
 
     private enum ProteusToMLSMigrationState: String {
         case disabled

@@ -39,6 +39,30 @@ public protocol ConversationRepositoryProtocol {
         removalDate: Date
     ) async
 
+    /// Pulls and stores a MLS one to one conversation locally.
+    ///
+    /// - parameters:
+    ///     - userID: The user ID.
+    ///     - domain: The user domain.
+    ///
+    /// - returns : The MLS group ID.
+
+    func pullMLSOneToOneConversation(
+        userID: String,
+        domain: String
+    ) async throws -> String
+
+    /// Fetches a MLS conversation locally.
+    ///
+    /// - parameters:
+    ///     - groupID: The MLS group ID.
+    ///
+    /// - returns : A MLS conversation.
+
+    func fetchMLSConversation(
+        with groupID: String
+    ) async -> ZMConversation?
+
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -126,6 +150,39 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.removeFromConversations(
             user: user,
             removalDate: removalDate
+        )
+    }
+
+    public func pullMLSOneToOneConversation(
+        userID: String,
+        domain: String
+    ) async throws -> String {
+        let mlsConversation = try await conversationsAPI.getMLSOneToOneConversation(
+            userID: userID,
+            in: domain
+        )
+
+        guard let mlsGroupID = mlsConversation.mlsGroupID else {
+            throw ConversationRepositoryError.mlsConversationShouldHaveAGroupID
+        }
+
+        await conversationsLocalStore.storeConversation(
+            mlsConversation,
+            isFederationEnabled: backendInfo.isFederationEnabled
+        )
+
+        return mlsGroupID
+    }
+
+    public func fetchMLSConversation(
+        with groupID: String
+    ) async -> ZMConversation? {
+        guard let mlsGroupID = MLSGroupID(base64Encoded: groupID) else {
+            return nil
+        }
+
+        return await conversationsLocalStore.fetchMLSConversation(
+            with: mlsGroupID
         )
     }
 

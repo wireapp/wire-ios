@@ -20,8 +20,8 @@ import CoreData
 import WireAPI
 import WireDataModel
 
+// sourcery: AutoMockable
 /// Facilitate access to conversation labels related domain objects.
-
 protocol ConversationLabelsRepositoryProtocol {
 
     /// Pull conversation labels from the server and store locally

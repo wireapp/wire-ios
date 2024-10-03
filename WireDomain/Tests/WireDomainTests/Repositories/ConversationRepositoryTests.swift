@@ -309,6 +309,25 @@ class ConversationRepositoryTests: XCTestCase {
         )
     }
 
+    func testGetMLSOneToOneConversation() async throws {
+        // Mock
+
+        mockConversationsAPI()
+
+        // When
+
+        let mlsGroupID = try await sut.pullMLSOneToOneConversation(
+            userID: Scaffolding.userID.uuidString,
+            domain: Scaffolding.domain
+        )
+
+        let mlsConversation = await sut.fetchMLSConversation(with: mlsGroupID)
+
+        // Then
+
+        XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
+    }
+
 }
 
 extension ConversationRepositoryTests {
@@ -355,6 +374,8 @@ extension ConversationRepositoryTests {
             notFound: conversationList.notFound,
             failed: conversationList.failed
         )
+
+        conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversationOneOnOneType
     }
 
     private enum Scaffolding {
@@ -364,10 +385,13 @@ extension ConversationRepositoryTests {
         static let teamConversationID = UUID()
         static let anotherTeamConversationID = UUID()
         static let conversationID = UUID()
+        static let domain = "domain.com"
 
         static func date(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
         }
+
+        static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 
         nonisolated(unsafe) static let conversationList = ConversationList(
             found: [conversationSelfType,
@@ -481,7 +505,7 @@ extension ConversationRepositoryTests {
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ae")!,
             type: .oneOnOne,
             messageProtocol: .proteus,
-            mlsGroupID: "",
+            mlsGroupID: base64EncodedString,
             cipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
             epoch: 0,
             epochTimestamp: nil,

@@ -22,6 +22,10 @@ import WireSystem
 
 protocol SyncManagerProtocol {
 
+    /// Pulls and stores all required objects for the database to be initially up-to-date.
+
+    func performSlowSync() async throws
+
     /// Fetch events from the server and process all pending events.
 
     func performQuickSync() async throws
@@ -34,18 +38,67 @@ protocol SyncManagerProtocol {
 
 final class SyncManager: SyncManagerProtocol {
 
+    // MARK: - Properties
+
     private(set) var syncState: SyncState = .suspended
     private var isSuspending = false
 
+    // MARK: - Repositories
+
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
+    private let teamRepository: any TeamRepositoryProtocol
+    private let connectionsRepository: any ConnectionsRepositoryProtocol
+    private let conversationsRepository: any ConversationRepositoryProtocol
+    private let userRepository: any UserRepositoryProtocol
+    private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
+    private let featureConfigsRepository: any FeatureConfigRepositoryProtocol
+    private let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
+    private let oneOnOneResolverUseCase: any OneOnOneResolverUseCaseProtocol
+
+    // MARK: - Update event processor
+
     private let updateEventProcessor: any UpdateEventProcessorProtocol
+
+    // MARK: - Object lifecycle
 
     init(
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
-        updateEventProcessor: any UpdateEventProcessorProtocol
+        teamRepository: any TeamRepositoryProtocol,
+        connectionsRepository: any ConnectionsRepositoryProtocol,
+        conversationsRepository: any ConversationRepositoryProtocol,
+        userRepository: any UserRepositoryProtocol,
+        conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
+        featureConfigsRepository: any FeatureConfigRepositoryProtocol,
+        updateEventProcessor: any UpdateEventProcessorProtocol,
+        pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol,
+        oneOnOneResolverUseCase: any OneOnOneResolverUseCaseProtocol
     ) {
         self.updateEventsRepository = updateEventsRepository
+        self.teamRepository = teamRepository
+        self.connectionsRepository = connectionsRepository
+        self.conversationsRepository = conversationsRepository
+        self.userRepository = userRepository
+        self.conversationLabelsRepository = conversationLabelsRepository
+        self.featureConfigsRepository = featureConfigsRepository
         self.updateEventProcessor = updateEventProcessor
+        self.pushSupportedProtocolsUseCase = pushSupportedProtocolsUseCase
+        self.oneOnOneResolverUseCase = oneOnOneResolverUseCase
+    }
+
+    func performSlowSync() async throws {
+        try await updateEventsRepository.pullLastEventID()
+        try await teamRepository.pullSelfTeam()
+        try await teamRepository.pullSelfTeamRoles()
+        try await teamRepository.pullSelfTeamMembers()
+        try await connectionsRepository.pullConnections()
+        try await conversationsRepository.pullConversations()
+        try await userRepository.pullKnownUsers()
+        try await userRepository.pullSelfUser()
+        try await teamRepository.pullSelfLegalHoldStatus()
+        try await conversationLabelsRepository.pullConversationLabels()
+        try await featureConfigsRepository.pullFeatureConfigs()
+        try await pushSupportedProtocolsUseCase.invoke()
+        try await oneOnOneResolverUseCase.invoke()
     }
 
     func performQuickSync() async throws {
