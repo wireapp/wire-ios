@@ -526,7 +526,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        analyticsService = AnalyticsService(config: analyticsConfig)
+        analyticsService = AnalyticsService(
+            config: analyticsConfig,
+            logger: { WireLogger.analytics.debug($0) }
+        )
 
         super.init()
 

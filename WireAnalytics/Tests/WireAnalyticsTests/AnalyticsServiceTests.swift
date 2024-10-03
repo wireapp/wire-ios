@@ -32,6 +32,7 @@ class AnalyticsServiceTests: XCTestCase {
         sut = AnalyticsService(
             config: Scaffolding.config,
             baseSegmentation: Scaffolding.baseSegmentation,
+            logger: { print($0) },
             countlyProvider: { self.countly }
         )
 
@@ -63,7 +64,10 @@ class AnalyticsServiceTests: XCTestCase {
 
     func testEnableTracking_service_is_not_configured() throws {
         // Given a service with no config.
-        let sut = AnalyticsService(config: nil)
+        let sut = AnalyticsService(
+            config: nil,
+            logger: { print($0) }
+        )
 
         // When tracking is enabled.
         XCTAssertThrowsError(try sut.enableTracking()) {
