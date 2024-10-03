@@ -323,18 +323,17 @@ class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(user.isAccountDeleted, true)
         XCTAssertEqual(conversationsRepository.removeFromConversationsUserRemovalDate_Invocations.count, 1)
     }
-    
+
     func testPullSelfUser() async throws {
-        
         // Mock
         selfUsersAPI.getSelfUser_MockValue = Scaffolding.selfUser
 
         // When
 
         try await sut.pullSelfUser()
-        
+
         // Then
-        
+
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
             XCTAssertEqual(selfUser.remoteIdentifier, Scaffolding.selfUser.id)
@@ -344,7 +343,28 @@ class UserRepositoryTests: XCTestCase {
             XCTAssertEqual(selfUser.emailAddress, Scaffolding.selfUser.email)
             XCTAssertEqual(selfUser.supportedProtocols, [.mls])
         }
-        
+    }
+
+    func testFetchAllUserIdsWithOneOnOneConversation() async throws {
+        // Given
+
+        let user = modelHelper.createUser(
+            qualifiedID: Scaffolding.qualifiedID.toDomainModel(),
+            in: context
+        )
+
+        let oneOnOneConversation = modelHelper.createOneOnOne(
+            with: user,
+            in: context
+        )
+
+        // When
+
+        let userIds = try await sut.fetchAllUserIdsWithOneOnOneConversation()
+
+        // Then
+
+        XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
     }
 
     private enum Scaffolding {
@@ -388,7 +408,7 @@ class UserRepositoryTests: XCTestCase {
             supportedProtocols: [.mls],
             legalholdStatus: .disabled
         )
-        
+
         static let selfUser = SelfUser(
             id: qualifiedID.uuid,
             qualifiedID: qualifiedID,

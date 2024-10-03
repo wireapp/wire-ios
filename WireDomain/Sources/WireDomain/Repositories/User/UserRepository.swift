@@ -27,9 +27,9 @@ import WireDataModel
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
 public protocol UserRepositoryProtocol {
-    
+
     /// Pulls self user and stores it locally
-    
+
     func pullSelfUser() async throws
 
     /// Fetch self user from the local store
@@ -113,6 +113,11 @@ public protocol UserRepositoryProtocol {
 
     func deleteUserAccount(for user: ZMUser, at date: Date) async
 
+    /// Fetches all user IDs that have a one on one conversation
+    /// - returns: A list of users' qualified IDs.
+
+    func fetchAllUserIdsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -139,10 +144,10 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     // MARK: - Public
-    
+
     public func pullSelfUser() async throws {
         let selfUser = try await selfUserAPI.getSelfUser()
-        
+
         await context.perform { [self] in
             persistSelfUser(from: selfUser)
         }
@@ -334,6 +339,26 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
+    public func fetchAllUserIdsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+        try await context.perform { [context] in
+            let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            let predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
+            request.predicate = predicate
+
+            return try context
+                .fetch(request)
+                .compactMap { user in
+                    guard let userID = user.qualifiedID else {
+                        WireLogger.conversation.error(
+                            "Missing user's qualifiedID"
+                        )
+                        return nil
+                    }
+                    return userID
+                }
+        }
+    }
+
     // MARK: - Private
 
     private func persistUser(from user: WireAPI.User) {
@@ -342,10 +367,10 @@ public final class UserRepository: UserRepositoryProtocol {
             domain: user.id.domain,
             in: context
         )
-        
+
         let previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .preview })?.key
         let completeProfileAssetIdentifier = user.assets.first(where: { $0.size == .complete })?.key
-        
+
         updateUserMetadata(
             persistedUser,
             deleted: user.deleted == true,
@@ -362,14 +387,14 @@ public final class UserRepository: UserRepositoryProtocol {
             supportedProtocols: user.supportedProtocols?.toDomainModel() ?? [.proteus]
         )
     }
-    
+
     private func persistSelfUser(
         from selfUser: WireAPI.SelfUser
     ) {
         let persistedSelfUser = ZMUser.selfUser(in: context)
         let previewProfileAssetIdentifier = selfUser.assets?.first(where: { $0.size == .preview })?.key
         let completeProfileAssetIdentifier = selfUser.assets?.first(where: { $0.size == .complete })?.key
-        
+
         updateUserMetadata(
             persistedSelfUser,
             deleted: selfUser.deleted == true,
@@ -385,12 +410,12 @@ public final class UserRepository: UserRepositoryProtocol {
             providerIdentifier: selfUser.service?.provider.transportString(),
             supportedProtocols: selfUser.supportedProtocols?.toDomainModel() ?? [.proteus]
         )
-        
+
         persistedSelfUser.remoteIdentifier = selfUser.qualifiedID.uuid
         persistedSelfUser.domain = selfUser.qualifiedID.domain
         persistedSelfUser.managedBy = selfUser.managedBy?.rawValue
     }
-    
+
     private func updateUserMetadata(
         _ user: ZMUser,
         deleted: Bool,
@@ -406,11 +431,10 @@ public final class UserRepository: UserRepositoryProtocol {
         providerIdentifier: String?,
         supportedProtocols: Set<WireDataModel.MessageProtocol>
     ) {
-        
         guard deleted == false else {
             return user.markAccountAsDeleted(at: .now)
         }
-        
+
         user.name = name
         user.handle = handle
         user.teamIdentifier = teamID
