@@ -86,6 +86,7 @@ jobs:
 
       # Step to find all .xcresult files and analyze each one
       - name: Analyze xcresult files
+        if: always()
         run: |
           # Find all .xcresult files under the artifacts directory
           find artifacts/ -type f -name "*.xcresult" | while read result; do
