@@ -174,13 +174,13 @@ jobs:
         run: |
           ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
-         # Save cache
-       - name:  Save cache
-         uses: actions/cache/save@v4
-         if: always()
-         with:
-           path: ${{ env.PACKAGES_DIR }}
-           key: ${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+        # Save cache
+      - name:  Save cache
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
