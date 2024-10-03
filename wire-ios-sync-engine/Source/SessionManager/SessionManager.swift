@@ -1343,7 +1343,7 @@ extension SessionManager: UserObserving {
             else {
                 return
             }
-            
+
             Task {
                 do {
                     WireLogger.analytics.debug("updating current user")
