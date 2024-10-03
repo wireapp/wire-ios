@@ -88,6 +88,7 @@ jobs:
 
       # Step to find all .xcresult files and analyze each one
       - name: Find all .xcresult files
+        if: always()
         id: find-xcresults
         run: |
           # Find all .xcresult directories and convert them to a JSON array
