@@ -239,13 +239,13 @@ final class TeamRepositoryTests: XCTestCase {
 
     func testFetchSelfLegalholdStatus() async throws {
         // Mock
-        teamsAPI.getLegalholdStatusForUserID_MockValue = .pending
+        teamsAPI.getLegalholdForUserID_MockValue = Scaffolding.teamMemberLegalHold
 
         // When
-        let result = try await sut.fetchSelfLegalholdStatus()
+        let result = try await sut.fetchSelfLegalhold()
 
         // Then
-        XCTAssertEqual(result, .pending)
+        XCTAssertEqual(result, Scaffolding.teamMemberLegalHold)
     }
 
 }
@@ -272,4 +272,11 @@ private enum Scaffolding {
     static let member2CreatorID = UUID()
     static let member2legalholdStatus = LegalholdStatus.pending
     static let member2Permissions = Permissions.member.rawValue
+    
+    static let teamMemberLegalHold = TeamMemberLegalHold(
+        status: .pending,
+        prekey: prekey
+    )
+    
+    static let prekey = LegalHoldPrekey(id: 2330, base64EncodedKey: "foo")
 }

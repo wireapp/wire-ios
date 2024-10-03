@@ -323,12 +323,36 @@ class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(user.isAccountDeleted, true)
         XCTAssertEqual(conversationsRepository.removeFromConversationsUserRemovalDate_Invocations.count, 1)
     }
+    
+    func testPullSelfUser() async throws {
+        
+        // Mock
+        selfUsersAPI.getSelfUser_MockValue = Scaffolding.selfUser
+
+        // When
+
+        try await sut.pullSelfUser()
+        
+        // Then
+        
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            XCTAssertEqual(selfUser.remoteIdentifier, Scaffolding.selfUser.id)
+            XCTAssertEqual(selfUser.name, Scaffolding.selfUser.name)
+            XCTAssertEqual(selfUser.handle, Scaffolding.selfUser.handle)
+            XCTAssertEqual(selfUser.managedBy, "wire")
+            XCTAssertEqual(selfUser.emailAddress, Scaffolding.selfUser.email)
+            XCTAssertEqual(selfUser.supportedProtocols, [.mls])
+        }
+        
+    }
 
     private enum Scaffolding {
         static let userID = UUID()
         static let userClientID = UUID().uuidString
         static let lastPrekeyId = 65_535
         static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
+        static let qualifiedID = UserID(uuid: UUID(), domain: "example.com")
 
         nonisolated(unsafe) static let remoteUserClient = WireAPI.UserClient(
             id: userClientID,
@@ -351,7 +375,7 @@ class UserRepositoryTests: XCTestCase {
         )
 
         nonisolated(unsafe) static let user1 = User(
-            id: QualifiedID(uuid: UUID(), domain: "example.com"),
+            id: qualifiedID,
             name: "user1",
             handle: "handle1",
             teamID: nil,
@@ -363,6 +387,24 @@ class UserRepositoryTests: XCTestCase {
             service: nil,
             supportedProtocols: [.mls],
             legalholdStatus: .disabled
+        )
+        
+        static let selfUser = SelfUser(
+            id: qualifiedID.uuid,
+            qualifiedID: qualifiedID,
+            ssoID: nil,
+            name: "username",
+            handle: "username",
+            teamID: UUID(),
+            phone: "",
+            accentID: 1,
+            managedBy: .wire,
+            assets: [],
+            deleted: false,
+            email: "username@wire.com",
+            expiresAt: .now,
+            service: nil,
+            supportedProtocols: [.mls]
         )
     }
 

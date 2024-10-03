@@ -27,6 +27,10 @@ import WireDataModel
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
 public protocol UserRepositoryProtocol {
+    
+    /// Pulls self user and stores it locally
+    
+    func pullSelfUser() async throws
 
     /// Fetch self user from the local store
 
@@ -52,9 +56,10 @@ public protocol UserRepositoryProtocol {
 
     /// Fetches a user with a specific id.
     /// - Parameter id: The ID of the user.
+    /// - Parameter domain: The domain of the user.
     /// - Returns: A `ZMUser` object.
 
-    func fetchUser(with id: UUID) async throws -> ZMUser
+    func fetchUser(with id: UUID, domain: String?) async throws -> ZMUser
 
     /// Fetches or creates a user client locally.
     ///
@@ -134,6 +139,14 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     // MARK: - Public
+    
+    public func pullSelfUser() async throws {
+        let selfUser = try await selfUserAPI.getSelfUser()
+        
+        await context.perform { [self] in
+            persistSelfUser(from: selfUser)
+        }
+    }
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
@@ -175,9 +188,9 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
-    public func fetchUser(with id: UUID) async throws -> ZMUser {
+    public func fetchUser(with id: UUID, domain: String?) async throws -> ZMUser {
         try await context.perform { [context] in
-            guard let user = ZMUser.fetch(with: id, in: context) else {
+            guard let user = ZMUser.fetch(with: id, domain: domain, in: context) else {
                 throw UserRepositoryError.failedToFetchUser(id)
             }
 
@@ -324,24 +337,91 @@ public final class UserRepository: UserRepositoryProtocol {
     // MARK: - Private
 
     private func persistUser(from user: WireAPI.User) {
-        let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)
-
-        guard user.deleted == false else {
-            return persistedUser.markAccountAsDeleted(at: Date())
-        }
-
-        persistedUser.name = user.name
-        persistedUser.handle = user.handle
-        persistedUser.teamIdentifier = user.teamID
-        persistedUser.accentColorValue = Int16(user.accentID)
-        persistedUser.previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .preview })?.key
-        persistedUser.previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .complete })?.key
-        persistedUser.emailAddress = user.email
-        persistedUser.expiresAt = user.expiresAt
-        persistedUser.serviceIdentifier = user.service?.id.transportString()
-        persistedUser.providerIdentifier = user.service?.provider.transportString()
-        persistedUser.supportedProtocols = user.supportedProtocols?.toDomainModel() ?? [.proteus]
-        persistedUser.needsToBeUpdatedFromBackend = false
+        let persistedUser = ZMUser.fetchOrCreate(
+            with: user.id.uuid,
+            domain: user.id.domain,
+            in: context
+        )
+        
+        let previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .preview })?.key
+        let completeProfileAssetIdentifier = user.assets.first(where: { $0.size == .complete })?.key
+        
+        updateUserMetadata(
+            persistedUser,
+            deleted: user.deleted == true,
+            name: user.name,
+            handle: user.handle,
+            teamID: user.teamID,
+            accentID: user.accentID,
+            previewProfileAssetIdentifier: previewProfileAssetIdentifier,
+            completeProfileAssetIdentifier: completeProfileAssetIdentifier,
+            email: user.email,
+            expiresAt: user.expiresAt,
+            serviceIdentifier: user.service?.id.transportString(),
+            providerIdentifier: user.service?.provider.transportString(),
+            supportedProtocols: user.supportedProtocols?.toDomainModel() ?? [.proteus]
+        )
     }
-
+    
+    private func persistSelfUser(
+        from selfUser: WireAPI.SelfUser
+    ) {
+        let persistedSelfUser = ZMUser.selfUser(in: context)
+        let previewProfileAssetIdentifier = selfUser.assets?.first(where: { $0.size == .preview })?.key
+        let completeProfileAssetIdentifier = selfUser.assets?.first(where: { $0.size == .complete })?.key
+        
+        updateUserMetadata(
+            persistedSelfUser,
+            deleted: selfUser.deleted == true,
+            name: selfUser.name,
+            handle: selfUser.handle,
+            teamID: selfUser.teamID,
+            accentID: selfUser.accentID,
+            previewProfileAssetIdentifier: previewProfileAssetIdentifier,
+            completeProfileAssetIdentifier: completeProfileAssetIdentifier,
+            email: selfUser.email,
+            expiresAt: selfUser.expiresAt,
+            serviceIdentifier: selfUser.service?.id.transportString(),
+            providerIdentifier: selfUser.service?.provider.transportString(),
+            supportedProtocols: selfUser.supportedProtocols?.toDomainModel() ?? [.proteus]
+        )
+        
+        persistedSelfUser.remoteIdentifier = selfUser.qualifiedID.uuid
+        persistedSelfUser.domain = selfUser.qualifiedID.domain
+        persistedSelfUser.managedBy = selfUser.managedBy?.rawValue
+    }
+    
+    private func updateUserMetadata(
+        _ user: ZMUser,
+        deleted: Bool,
+        name: String,
+        handle: String?,
+        teamID: UUID?,
+        accentID: Int,
+        previewProfileAssetIdentifier: String?,
+        completeProfileAssetIdentifier: String?,
+        email: String?,
+        expiresAt: Date?,
+        serviceIdentifier: String?,
+        providerIdentifier: String?,
+        supportedProtocols: Set<WireDataModel.MessageProtocol>
+    ) {
+        
+        guard deleted == false else {
+            return user.markAccountAsDeleted(at: .now)
+        }
+        
+        user.name = name
+        user.handle = handle
+        user.teamIdentifier = teamID
+        user.accentColorValue = Int16(accentID)
+        user.previewProfileAssetIdentifier = previewProfileAssetIdentifier
+        user.completeProfileAssetIdentifier = completeProfileAssetIdentifier
+        user.emailAddress = email
+        user.expiresAt = expiresAt
+        user.serviceIdentifier = serviceIdentifier
+        user.providerIdentifier = providerIdentifier
+        user.supportedProtocols = supportedProtocols
+        user.needsToBeUpdatedFromBackend = false
+    }
 }
