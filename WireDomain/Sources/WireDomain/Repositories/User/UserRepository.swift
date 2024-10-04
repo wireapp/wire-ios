@@ -50,7 +50,7 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
-    /// Removes user push token from defaults.
+    /// Removes user push token from storage.
 
     func removePushToken()
     /// Fetches a user with a specific id.
