@@ -20,7 +20,7 @@ import Foundation
 import WireAnalytics
 import WireDataModel
 
-extension ZMUserSession {
+extension ZMUserSession: AnalyticsEventTrackerProvider {
 
     enum AnalyticsError: Error {
 
@@ -46,8 +46,8 @@ extension ZMUserSession {
             } else {
                 let newID = UUID()
                 analyticsID = newID.transportString()
-                selfUser.analyticsIdentifier = analyticsID
                 try self.broadcastAnalyticsID(newID)
+                selfUser.analyticsIdentifier = analyticsID
             }
 
             if let team = selfUser.team, let teamID = team.remoteIdentifier {
@@ -69,6 +69,7 @@ extension ZMUserSession {
 
     private func broadcastAnalyticsID(_ id: UUID) throws {
         do {
+            WireLogger.analytics.debug("broadcasting new analytics id")
             let message = DataTransfer(trackingIdentifier: id)
             try ZMConversation.sendMessageToSelfClients(message, in: syncContext)
         } catch let error {

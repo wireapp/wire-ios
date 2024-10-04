@@ -20,14 +20,27 @@ import WireAnalytics
 
 extension SessionManager {
 
+    enum AnalyticsError: Error {
+
+        case noActiveSession
+
+    }
+
     public func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
-        DisableAnalyticsUseCase(service: analyticsService)
+        DisableAnalyticsUseCase(
+            service: analyticsService,
+            provider: activeUserSession
+        )
     }
 
     public func makeEnableAnalyticsUseCase() async throws -> EnableAnalyticsUseCaseProtocol {
-        try await EnableAnalyticsUseCase(
-            currentUser: activeUserSession?.createAnalyticsUser(),
-            service: analyticsService
+        guard let activeUserSession else {
+            throw AnalyticsError.noActiveSession
+        }
+
+        return EnableAnalyticsUseCase(
+            service: analyticsService,
+            provider: activeUserSession
         )
     }
 

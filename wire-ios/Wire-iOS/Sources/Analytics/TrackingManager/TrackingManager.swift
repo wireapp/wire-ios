@@ -43,37 +43,47 @@ final class TrackingManager: NSObject, TrackingInterface {
         super.init()
     }
 
-    var disableAnalyticsSharing: Bool { ExtensionSettings.shared.disableAnalyticsSharing
+    var disableAnalyticsSharing: Bool { 
+        ExtensionSettings.shared.disableAnalyticsSharing
     }
 
-    func disableAnalyticsSharing(isDisabled: Bool, resultHandler: @escaping (Result<Void, any Error>) -> Void) {
-        let isEnabled = !isDisabled
+    func disableAnalyticsSharing(
+        isDisabled: Bool,
+        resultHandler: @escaping (Result<Void, any Error>) -> Void
+    ) {
+        Task { @MainActor in
+            if isDisabled {
+                await self.updateAnalyticsSharing(disabled: true)
+                resultHandler(.success(()))
+            } else {
+                // User wants to enable.
+                do {
+                    let isConsentGiven = try await self.requestAnalyticsConsent()
 
-        if isEnabled {
-            self.showAnalyticsConsentAlert { userConsented in
-                if userConsented {
-                    self.updateAnalyticsSharing(disabled: false)
-                    resultHandler(.success(()))
-                } else {
-                    // User rejected, so we keep analytics disabled
-                    self.updateAnalyticsSharing(disabled: true)
-                    resultHandler(.failure(TrackingManagerError.userConsentDenied))
+                    if isConsentGiven {
+                        await self.updateAnalyticsSharing(disabled: false)
+                        resultHandler(.success(()))
+                    } else {
+                        // User rejected, keep analytics disabled.
+                        await self.updateAnalyticsSharing(disabled: true)
+                        resultHandler(.failure(TrackingManagerError.userConsentDenied))
+                    }
+                } catch {
+                    WireLogger.analytics.error("failed to enable analytics: \(error)")
+                    resultHandler(.failure(error))
                 }
             }
-        } else {
-            self.updateAnalyticsSharing(disabled: true)
-            resultHandler(.success(()))
         }
     }
 
-    private func updateAnalyticsSharing(disabled: Bool) {
+    private func updateAnalyticsSharing(disabled: Bool) async {
         do {
             if disabled {
                 let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()
                 try disableUseCase.invoke()
             } else {
-                let enableUseCase = try sessionManager.makeEnableAnalyticsUseCase()
-                try enableUseCase.invoke()
+                let enableUseCase = try await sessionManager.makeEnableAnalyticsUseCase()
+                try await enableUseCase.invoke()
             }
         } catch {
             WireLogger.analytics.error("Failed to toggle analytics sharing: \(error)")

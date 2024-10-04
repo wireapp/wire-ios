@@ -71,9 +71,15 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
     // MARK: - Enable / disable
 
+    /// Whether tracking is currently enabled.
+
+    public var isTrackingEnabled: Bool {
+        countly != nil
+    }
+
     /// Start sending analytics data.
 
-    public func enableTracking() throws {
+    public func enableTracking() async throws {
         guard let config else {
             throw AnalyticsServiceError.serviceIsNotConfigured
         }
@@ -83,10 +89,13 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         let countly = countlyProvider()
         self.countly = countly
 
-        countly.start(
-            appKey: config.secretKey,
-            host: config.serverHost
-        )
+        // Countly invokes UI apis so we need to run it on the main thraed.
+        await MainActor.run {
+            countly.start(
+                appKey: config.secretKey,
+                host: config.serverHost
+            )
+        }
     }
 
     /// Stop sending analytics data.

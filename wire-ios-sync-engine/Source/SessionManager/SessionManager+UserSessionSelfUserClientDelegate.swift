@@ -44,10 +44,6 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
         }
 
         loginDelegate?.clientRegistrationDidSucceed(accountId: accountId)
-
-        if let activeUserSession {
-            configureAnalytics(for: activeUserSession)
-        }
     }
 
     public func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {
@@ -63,7 +59,15 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
 
     public func clientCompletedInitialSync(accountId: UUID) {
         let account = accountManager.account(with: accountId)
-        guard account == accountManager.selectedAccount else { return }
+        
+        guard account == accountManager.selectedAccount else {
+            return
+        }
+
+        if let activeUserSession {
+            configureAnalytics(for: activeUserSession)
+        }
+
         delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
     }
 }

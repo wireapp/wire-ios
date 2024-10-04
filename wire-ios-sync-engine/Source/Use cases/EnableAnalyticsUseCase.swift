@@ -28,7 +28,7 @@ public protocol EnableAnalyticsUseCaseProtocol {
 
     /// Enable analytics tracking.
 
-    func invoke() throws
+    func invoke() async throws
 
 }
 
@@ -36,15 +36,14 @@ public protocol EnableAnalyticsUseCaseProtocol {
 
 struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
-    let currentUser: AnalyticsUser?
     let service: any AnalyticsServiceProtocol
+    let provider: any AnalyticsEventTrackerProvider
 
-    func invoke() throws {
-        try service.enableTracking()
-
-        if let currentUser {
-            try service.switchUser(currentUser)
-        }
+    func invoke() async throws {
+        let user = try await provider.createAnalyticsUser()
+        try await service.enableTracking()
+        try service.switchUser(user)
+        provider.analyticsEventTracker = service
     }
 
 }

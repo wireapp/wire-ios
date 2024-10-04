@@ -32,9 +32,11 @@ public protocol DisableAnalyticsUseCaseProtocol {
 struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
     let service: any AnalyticsServiceProtocol
+    let provider: (any AnalyticsEventTrackerProvider)?
 
     func invoke() throws {
         try service.disableTracking()
+        provider?.analyticsEventTracker = nil
     }
 
 }

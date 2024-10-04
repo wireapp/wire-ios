@@ -337,7 +337,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration?
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -394,7 +394,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: minTLSVersion,
             deleteUserLogs: deleteUserLogs,
-            analyticsSessionConfiguration: analyticsSessionConfiguration
+            analyticsServiceConfiguration: analyticsServiceConfiguration
         )
 
         configureBlacklistDownload()
@@ -457,7 +457,7 @@ public final class SessionManager: NSObject, SessionManagerType {
          sharedUserDefaults: UserDefaults,
          minTLSVersion: String? = nil,
          deleteUserLogs: (() -> Void)? = nil,
-         analyticsSessionConfiguration: AnalyticsSessionConfiguration?
+         analyticsServiceConfiguration: AnalyticsServiceConfiguration?
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -519,10 +519,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.notificationsTracker = nil
         }
 
-        let analyticsConfig = analyticsSessionConfiguration.map {
+        let analyticsConfig = analyticsServiceConfiguration.map {
             AnalyticsService.Config(
-                secretKey: $0.countlyKey,
-                serverHost: $0.host
+                secretKey: $0.secretKey,
+                serverHost: $0.serverHost
             )
         }
 
@@ -530,6 +530,16 @@ public final class SessionManager: NSObject, SessionManagerType {
             config: analyticsConfig,
             logger: { WireLogger.analytics.debug($0) }
         )
+
+        if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
+            Task { [analyticsService] in
+                do {
+                    try await analyticsService.enableTracking()
+                } catch {
+                    WireLogger.analytics.error("failed to enable tracking: \(error)")
+                }
+            }
+        }
 
         super.init()
 
@@ -912,10 +922,15 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     func configureAnalytics(for userSession: ZMUserSession) {
+        guard analyticsService.isTrackingEnabled else {
+            return
+        }
+
         Task {
             do {
                 WireLogger.analytics.debug("configuring analytics for user session")
-                try await analyticsService.switchUser(userSession.createAnalyticsUser())
+                let user = try await userSession.createAnalyticsUser()
+                try analyticsService.switchUser(user)
                 userSession.analyticsEventTracker = analyticsService
             } catch {
                 WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
@@ -1338,6 +1353,7 @@ extension SessionManager: UserObserving {
 
         if changeInfo.analyticsIdentifierChanged {
             guard
+                analyticsService.isTrackingEnabled,
                 changeInfo.user.isSelfUser,
                 let userSession = activeUserSession
             else {
@@ -1346,7 +1362,6 @@ extension SessionManager: UserObserving {
 
             Task {
                 do {
-                    WireLogger.analytics.debug("updating current user")
                     try await analyticsService.updateCurrentUser(userSession.createAnalyticsUser())
                 } catch {
                     WireLogger.analytics.error("failed to update current user: \(error)")

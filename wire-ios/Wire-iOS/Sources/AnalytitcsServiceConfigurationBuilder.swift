@@ -16,26 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCommonComponents
 import WireSyncEngine
 
-/// A builder struct for creating an `AnalyticsSessionConfiguration` instance.
-///
-/// This struct helps in constructing an instance of `AnalyticsSessionConfiguration`
-/// by fetching the required properties (`countlyKey` and `host`) from the appropriate sources.
-/// If either of these properties is unavailable, the builder returns `nil`.
-struct AnalyticsSessionConfigurationBuilder {
+struct AnalyticsServiceConfigurationBuilder {
 
-    func build() -> AnalyticsSessionConfiguration? {
-        let countlyKey = Bundle.countlyAppKey
-        let host = BackendEnvironment.shared.countlyURL
-
-        if let countlyKey, let host {
-            return AnalyticsSessionConfiguration(
-                countlyKey: countlyKey,
-                host: host
-            )
-        } else {
+    func build() -> AnalyticsServiceConfiguration? {
+        guard
+            let secretKey = Bundle.countlyAppKey,
+            let countlyURL = BackendEnvironment.shared.countlyURL
+        else {
             return nil
         }
+
+        return AnalyticsServiceConfiguration(
+            secretKey: secretKey,
+            serverHost: countlyURL,
+            didUserGiveTrackingConsent: !ExtensionSettings.shared.disableAnalyticsSharing
+        )
     }
+
 }

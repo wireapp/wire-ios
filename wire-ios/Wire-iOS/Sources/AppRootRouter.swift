@@ -270,24 +270,12 @@ extension AppRootRouter {
     // MARK: - Navigation Helpers
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions) { [weak self] success in
-                guard let self, success else {
-                    WireLogger.analytics.error("Failed to start the session")
-                    return
-                }
-
-                if !trackingManager.disableAnalyticsSharing {
-                    do {
-                        WireLogger.analytics.debug("setting up analytics service")
-                        let useCase = try sessionManager.makeEnableAnalyticsUseCase()
-                        try useCase.invoke()
-                    } catch {
-                        WireLogger.analytics.error("failed to set up analytics service: \(error)")
-                    }
-                }
+            self?.sessionManager.start(launchOptions: launchOptions) { _ in
+                // TODO: delete this completion? Is the tracking manager needed anymore
             }
         }
     }
+
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: reason.blockerViewControllerContext)
         rootViewController.set(childViewController: blockerViewController,

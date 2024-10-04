@@ -16,16 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// The AnalyticsSessionConfiguration struct is a configuration object used to initialize and configure an analytics session. 
-/// It holds key information required for the analytics system to function, such as the Countly key and the host URL.
+import Foundation
+import WireAnalytics
 
-public struct AnalyticsSessionConfiguration {
+protocol AnalyticsEventTrackerProvider: AnyObject {
 
-    public let countlyKey: String
-    public let host: URL
+    var analyticsEventTracker: (any AnalyticsEventTracker)? { get set }
+    func createAnalyticsUser() async throws -> AnalyticsUser
 
-    public init(countlyKey: String, host: URL) {
-        self.countlyKey = countlyKey
-        self.host = host
-    }
 }
