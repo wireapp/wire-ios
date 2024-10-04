@@ -16,15 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class UserPushRemoveEventProcessorTests: XCTestCase {
 
-    var sut: UserPushRemoveEventProcessor!
-    var mockUserRepository: MockUserRepositoryProtocol!
+    private var sut: UserPushRemoveEventProcessor!
+    private var mockUserRepository: MockUserRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()

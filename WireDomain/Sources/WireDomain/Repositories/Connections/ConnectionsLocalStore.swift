@@ -16,71 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireAPI
 import WireDataModel
 
-// sourcery: AutoMockable
-/// Facilitate access to connections related domain objects.
-///
-/// A repository provides an abstraction for the access and storage
-/// of domain models, concealing how and where the models are stored
-/// as well as the possible source(s) of the models.
-public protocol ConnectionsRepositoryProtocol {
+protocol ConnectionsLocalStoreProtocol {
 
-    /// Pull self team metadata from the server and store locally.
-
-    func pullConnections() async throws
-
-    /// Updates a connection locally.
-    ///
-    /// - parameters:
-    ///     - connection: The connection to update.
-
-    func updateConnection(
-        _ connection: Connection
+    func storeConnection(
+        _ connectionPayload: Connection
     ) async throws
 }
 
-struct ConnectionsRepository: ConnectionsRepositoryProtocol {
+final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
-    private let connectionsAPI: any ConnectionsAPI
+    // MARK: - Properties
+
     private let context: NSManagedObjectContext
 
+    // MARK: - Object lifecycle
+
     init(
-        connectionsAPI: any ConnectionsAPI,
         context: NSManagedObjectContext
     ) {
-        self.connectionsAPI = connectionsAPI
         self.context = context
     }
 
-    /// Retrieve from backend and store connections locally
-
-    public func pullConnections() async throws {
-        let connectionsPager = try await connectionsAPI.getConnections()
-
-        for try await connections in connectionsPager {
-            await withThrowingTaskGroup(of: Void.self) { taskGroup in
-                for connection in connections {
-                    taskGroup.addTask {
-                        try await storeConnection(connection)
-                    }
-                }
-            }
-        }
-    }
-
-    func updateConnection(
-        _ connection: Connection
-    ) async throws {
-        try await storeConnection(connection)
-    }
+    // MARK: - Public
 
     /// Save connection and related objects to local storage.
     /// - Parameter connectionPayload: connection object from WireAPI
 
-    private func storeConnection(_ connectionPayload: Connection) async throws {
+    public func storeConnection(_ connectionPayload: Connection) async throws {
         try await context.perform { [self] in
 
             let connection = try storedConnection(from: connectionPayload)

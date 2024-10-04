@@ -404,5 +404,4 @@ public final class UserRepository: UserRepositoryProtocol {
         persistedUser.supportedProtocols = user.supportedProtocols?.toDomainModel() ?? [.proteus]
         persistedUser.needsToBeUpdatedFromBackend = false
     }
-
 }
