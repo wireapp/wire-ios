@@ -20,11 +20,11 @@ import UIKit
 
 public protocol MainUserProfileBuilderProtocol {
     associatedtype UserProfile: UIViewController
-    associatedtype UserID: Sendable
+    associatedtype User
 
     @MainActor
     func build(
-        userID: UserID,
+        user: User,
         mainCoordinator: some MainCoordinatorProtocol
     ) async -> UserProfile // TODO: shouldn't be async
 }

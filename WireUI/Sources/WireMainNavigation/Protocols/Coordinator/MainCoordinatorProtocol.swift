@@ -24,7 +24,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype ConversationBuilder: MainConversationBuilderProtocol // TODO: remove if not needed here
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
     associatedtype UserProfileBuilder: MainUserProfileBuilderProtocol // TODO: instead a general present method could be offered (UIViewController), the actual preparatino could be done in some sub-coordinator
-    associatedtype UserID: Sendable
 
     @MainActor
     func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async
@@ -47,7 +46,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     @MainActor
     func showSelfProfile() async
     @MainActor
-    func showUserProfile(userID: UserID) async
+    func showUserProfile(user: UserProfileBuilder.User) async
     @MainActor
     func showConnect() async
 

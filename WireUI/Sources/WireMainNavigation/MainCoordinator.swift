@@ -54,7 +54,7 @@ public final class MainCoordinator<
     public typealias Connect = ConnectBuilder.ViewController
     public typealias SelfProfile = SelfProfileBuilder.ViewController
     public typealias TabBarController = SplitViewController.TabContainer
-    public typealias UserID = UserProfileBuilder.UserID
+    public typealias User = UserProfileBuilder.User
 
     // MARK: - Private Properties
 
@@ -268,10 +268,10 @@ public final class MainCoordinator<
         }
     }
 
-    public func showUserProfile(userID: UserID) async {
+    public func showUserProfile(user: User) async {
         // TODO: move this into a UserProfileCoordinator type
         let rootViewController = await userProfileBuilder.build(
-            userID: userID,
+            user: user,
             mainCoordinator: self
         )
         let userProfile = UINavigationController(rootViewController: rootViewController)

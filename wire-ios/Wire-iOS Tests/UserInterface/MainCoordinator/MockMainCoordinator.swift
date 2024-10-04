@@ -30,8 +30,7 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
     typealias ConversationBuilder = ConversationViewControllerBuilder
     typealias Settings = UIViewController
     typealias SettingsContentBuilder = SettingsViewControllerBuilder
-    typealias UserProfileBuilder = UserProfileViewControllerBuilder<ZMUserSession>
-    typealias UserID = UserProfileBuilder.UserID
+    typealias UserProfileBuilder = UserProfileViewControllerBuilder
 
     func showConversationList(conversationFilter: ConversationFilter?) {
         fatalError("Mock method not implemented")
@@ -65,7 +64,7 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
-    func showUserProfile(userID: UserProfileViewControllerBuilder.UserID) async {
+    func showUserProfile(user: any UserType) async {
         fatalError("Mock method not implemented")
     }
 

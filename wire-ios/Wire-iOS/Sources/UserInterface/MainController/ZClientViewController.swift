@@ -43,7 +43,7 @@ final class ZClientViewController: UIViewController {
         SettingsViewControllerBuilder,
         StartUIViewControllerBuilder,
         SelfProfileViewControllerBuilder,
-        UserProfileViewControllerBuilder<ZMUserSession>
+        UserProfileViewControllerBuilder
     >
 
     // MARK: - Private Members
@@ -119,17 +119,7 @@ final class ZClientViewController: UIViewController {
         )
     }
 
-    private var userProfileViewControllerBuilder: UserProfileViewControllerBuilder<ZMUserSession> {
-        .init(
-            userSession: userSession as! ZMUserSession, // TODO: fix
-            userLoader: { [weak userSession] userID in
-                let viewContext = userSession?.contextProvider.viewContext
-                return await viewContext?.perform {
-                    ZMUser.fetchOrCreate(with: userID.uuid, domain: userID.domain, in: viewContext!)
-                }
-            }
-        )
-    }
+    private lazy var userProfileViewControllerBuilder = UserProfileViewControllerBuilder(userSession: userSession)
 
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,

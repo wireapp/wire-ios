@@ -21,7 +21,7 @@ import WireMainNavigation
 
 extension MainCoordinator: StartUIDelegate where
 ConversationBuilder.Conversation.ConversationID == ZMConversation.ConversationID,
-UserProfileBuilder.UserID == QualifiedID {
+UserProfileBuilder.User == any UserType {
 
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {
@@ -46,7 +46,7 @@ UserProfileBuilder.UserID == QualifiedID {
                     // If the conversation should be using mls and is not established,
                     // or does not exits, then we open the user profile to let the user
                     // create the conversation
-                    await showUserProfile(userID: userID)
+                    await showUserProfile(user: user)
 
                 }
             } catch {

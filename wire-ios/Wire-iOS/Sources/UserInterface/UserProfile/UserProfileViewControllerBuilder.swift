@@ -22,31 +22,22 @@ import WireMainNavigation
 import WireSyncEngine
 
 @MainActor
-struct UserProfileViewControllerBuilder<UserSession>: MainUserProfileBuilderProtocol where
-UserSession: WireSyncEngine.UserSession {
-    typealias UserID = WireDataModel.QualifiedID
+struct UserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
+    typealias User = any UserType
 
     let userSession: UserSession
-    let userLoader: (_ userID: UserID) async -> UserType?
     var delegate: ProfileViewControllerDelegate?
 
-    init(
-        userSession: UserSession,
-        userLoader: @escaping (_ userID: UserID) async -> UserType?
-    ) {
+    init(userSession: some WireSyncEngine.UserSession) {
         self.userSession = userSession
-        self.userLoader = userLoader
     }
 
     func build(
-        userID: UserID,
+        user: User,
         mainCoordinator: some MainCoordinatorProtocol
     ) async -> UINavigationController {
-
-        let user = await userLoader(userID) // TODO: loading shouldn't happen here, instead pass the id into the `ProfileViewController`
-
         let rootViewController = ProfileViewController(
-            user: user!, // TODO: don't force-unwrap
+            user: user,
             viewer: userSession.selfUserLegalHoldSubject,
             context: .profileViewer,
             userSession: userSession,
