@@ -25,11 +25,11 @@ public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
 
     @MainActor
-    func showConversationList(conversationFilter: ConversationList.ConversationFilter?)
+    func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async
     @MainActor
-    func showArchive()
+    func showArchive() async
     @MainActor
-    func showSettings()
+    func showSettings() async
 
     @MainActor
     func showConversation(conversationID: ConversationList.ConversationID) async
@@ -43,7 +43,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func hideSettingsContent()
 
     @MainActor
-    func showSelfProfile()
+    func showSelfProfile() async
     @MainActor
-    func showConnect()
+    func showConnect() async
 }

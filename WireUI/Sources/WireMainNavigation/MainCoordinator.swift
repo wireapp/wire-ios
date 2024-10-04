@@ -122,7 +122,7 @@ public final class MainCoordinator<
 
     // MARK: - Public Methods
 
-    public func showConversationList(conversationFilter: ConversationList.ConversationFilter?) {
+    public func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async {
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
@@ -149,21 +149,19 @@ public final class MainCoordinator<
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
-        Task {
-            dismissArchiveIfNeeded()
-            await dismissConnectIfNeeded()
-            dismissSettingsIfNeeded()
-            await dismissSelfProfileIfNeeded()
+        dismissArchiveIfNeeded()
+        await dismissConnectIfNeeded()
+        dismissSettingsIfNeeded()
+        await dismissSelfProfileIfNeeded()
 
-            // Move the conversation list from the tab bar controller to the split view controller if needed.
-            if let conversationList = tabBarController.conversationList {
-                tabBarController.conversationList = nil
-                splitViewController.conversationList = conversationList
-            }
+        // Move the conversation list from the tab bar controller to the split view controller if needed.
+        if let conversationList = tabBarController.conversationList {
+            tabBarController.conversationList = nil
+            splitViewController.conversationList = conversationList
         }
     }
 
-    public func showArchive() {
+    public func showArchive() async {
         // switch to the archive tab
         tabBarController.selectedContent = .archive
 
@@ -178,41 +176,36 @@ public final class MainCoordinator<
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
-        Task {
+        dismissConversationListIfNeeded()
+        await dismissConnectIfNeeded()
+        dismissSettingsIfNeeded()
+        await dismissSelfProfileIfNeeded()
 
-            dismissConversationListIfNeeded()
-            await dismissConnectIfNeeded()
-            dismissSettingsIfNeeded()
-            await dismissSelfProfileIfNeeded()
-
-            // move the archive from the tab bar controller to the split view controller
-            if let archive = tabBarController.archive {
-                tabBarController.archive = nil
-                splitViewController.archive = archive
-            }
+        // move the archive from the tab bar controller to the split view controller
+        if let archive = tabBarController.archive {
+            tabBarController.archive = nil
+            splitViewController.archive = archive
         }
     }
 
-    public func showSettings() {
+    public func showSettings() async {
         tabBarController.selectedContent = .settings
 
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
-        Task {
-            dismissConversationListIfNeeded()
-            dismissArchiveIfNeeded()
-            await dismissConnectIfNeeded()
-            await dismissSelfProfileIfNeeded()
+        dismissConversationListIfNeeded()
+        dismissArchiveIfNeeded()
+        await dismissConnectIfNeeded()
+        await dismissSelfProfileIfNeeded()
 
-            // move the settings from the tab bar controller to the split view controller
-            if let settings = tabBarController.settings {
-                tabBarController.settings = nil
-                splitViewController.settings = settings
-            }
-
-            showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
+        // move the settings from the tab bar controller to the split view controller
+        if let settings = tabBarController.settings {
+            tabBarController.settings = nil
+            splitViewController.settings = settings
         }
+
+        showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
     }
 
     public func showConversation(conversationID: ConversationList.ConversationID) async {
@@ -257,7 +250,7 @@ public final class MainCoordinator<
         splitViewController.settingsContent = nil
     }
 
-    public func showSelfProfile() {
+    public func showSelfProfile() async {
         guard selfProfile == nil else {
             // Once WireLogger is available to Swift packages use it here instead.
             return assertionFailure()
@@ -267,16 +260,14 @@ public final class MainCoordinator<
         selfProfile.modalPresentationStyle = .formSheet
         self.selfProfile = selfProfile
 
-        Task {
-            await dismissConnectIfNeeded()
+        await dismissConnectIfNeeded()
 
-            await withCheckedContinuation { continuation in
-                splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
-            }
+        await withCheckedContinuation { continuation in
+            splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
         }
     }
 
-    public func showConnect() {
+    public func showConnect() async {
         guard connect == nil else {
             // Once WireLogger is available to Swift packages use it here instead.
             return assertionFailure()
@@ -286,12 +277,10 @@ public final class MainCoordinator<
         connect.modalPresentationStyle = .formSheet
         self.connect = connect
 
-        Task {
-            await dismissSelfProfileIfNeeded()
+        await dismissSelfProfileIfNeeded()
 
-            await withCheckedContinuation { continuation in
-                splitViewController.present(connect, animated: true, completion: continuation.resume)
-            }
+        await withCheckedContinuation { continuation in
+            splitViewController.present(connect, animated: true, completion: continuation.resume)
         }
     }
 

@@ -23,29 +23,35 @@ extension MainCoordinator: SidebarViewControllerDelegate {
 
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
-        showSelfProfile()
+        Task {
+            await showSelfProfile()
+        }
     }
 
     @MainActor
     public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarMenuItem) {
-        switch menuItem {
-        case .all:
-            showConversationList(conversationFilter: .none)
-        case .favorites:
-            showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.favorites))
-        case .groups:
-            showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.groups))
-        case .oneOnOne:
-            showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.oneOnOne)) // TODO: try to write .oneOnOne
-        case .archive:
-            showArchive()
-        case .settings:
-            showSettings()
+        Task {
+            switch menuItem {
+            case .all:
+                await showConversationList(conversationFilter: .none)
+            case .favorites:
+                await showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.favorites))
+            case .groups:
+                await showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.groups))
+            case .oneOnOne:
+                await showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.oneOnOne)) // TODO: try to write .oneOnOne
+            case .archive:
+                await showArchive()
+            case .settings:
+                await showSettings()
+            }
         }
     }
 
     public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
-        showConnect()
+        Task {
+            await showConnect()
+        }
     }
 
     @MainActor

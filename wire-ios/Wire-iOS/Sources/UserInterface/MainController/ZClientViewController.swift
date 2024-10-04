@@ -326,7 +326,9 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        mainCoordinator.showConnect()
+        Task {
+            await mainCoordinator.showConnect()
+        }
     }
 
     // MARK: Status bar
