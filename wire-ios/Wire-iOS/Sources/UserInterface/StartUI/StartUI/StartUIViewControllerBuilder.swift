@@ -20,10 +20,14 @@ import UIKit
 import WireMainNavigation
 import WireSyncEngine
 
-struct StartUIViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
-    var userSession: UserSession
+    let userSession: UserSession
     var delegate: StartUIDelegate?
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+    }
 
     func build(mainCoordinator: some MainCoordinatorProtocol) -> UINavigationController {
         let rootViewController = StartUIViewController(

@@ -29,3 +29,68 @@ extension MainCoordinator: StartUIDelegate {
         fatalError()
     }
 }
+
+/*
+ extension ConversationListViewController.ViewModel: StartUIDelegate {
+
+     func startUIViewController(_ startUI: StartUIViewController, didSelect user: UserType) {
+         guard let userID = user.qualifiedID else { return }
+
+         let conversation = user.oneToOneConversation
+
+         Task {
+             do {
+                 let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+
+                 if isReady {
+
+                     // If the conversation exists, and is established (in case of mls),
+                     // then we open the conversation
+                     guard let conversation else { return }
+                     await openConversation(conversation)
+
+                 } else {
+
+                     // If the conversation should be using mls and is not established,
+                     // or does not exits, then we open the user profile to let the user
+                     // create the conversation
+                     await openUserProfile(user)
+
+                 }
+             } catch {
+                 WireLogger.conversation.warn("failed to check if one on one conversation is ready: \(error)")
+             }
+         }
+     }
+
+     func startUIViewController(_ startUI: StartUIViewController, didSelect conversation: ZMConversation) {
+         startUI.dismissIfNeeded(animated: true) {
+             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
+         }
+     }
+
+     @MainActor
+     func openConversation(_ conversation: ZMConversation) {
+         ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
+     }
+
+     // TODO: migrate this code into MainCoordinator
+     @MainActor
+     func openUserProfile(_ user: UserType) {
+         let profileViewController = ProfileViewController(
+             user: user,
+             viewer: selfUserLegalHoldSubject,
+             context: .profileViewer,
+             userSession: userSession,
+             mainCoordinator: mainCoordinator
+         )
+         profileViewController.delegate = self
+
+         let navigationController = profileViewController.wrapInNavigationController()
+         navigationController.modalPresentationStyle = .formSheet
+
+         ZClientViewController.shared?.present(navigationController, animated: true)
+     }
+ }
+
+ */
