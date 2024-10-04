@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "WireDomainPackageSupport", targets: ["WireDomainPkgSupport"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.1.0"),
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../SourceryPlugin"),
         .package(name: "WireAPI", path: "../WireAPI"),
         .package(name: "WireFoundation", path: "../WireFoundation")
