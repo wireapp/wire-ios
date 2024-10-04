@@ -82,7 +82,7 @@ struct UserEventProcessor {
             try await propertiesDeleteEventProcessor.processEvent(event)
 
         case .pushRemove:
-            try await pushRemoveEventProcessor.processEvent()
+            pushRemoveEventProcessor.processEvent()
 
         case .update(let event):
             try await updateEventProcessor.processEvent(event)

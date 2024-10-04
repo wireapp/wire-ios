@@ -45,8 +45,10 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
         stack = try await coreDataStackHelper.createStack()
         connectionsAPI = MockConnectionsAPI()
-        sut = ConnectionsRepository(connectionsAPI: connectionsAPI,
-                                    context: context)
+        sut = ConnectionsRepository(
+            connectionsAPI: connectionsAPI,
+            connectionsLocalStore: ConnectionsLocalStore(context: context)
+        )
     }
 
     override func tearDown() async throws {
