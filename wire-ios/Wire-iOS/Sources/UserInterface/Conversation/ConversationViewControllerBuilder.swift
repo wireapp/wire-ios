@@ -22,14 +22,15 @@ import WireMainNavigation
 import WireSyncEngine
 
 struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
+    typealias ConversationID = ZMConversation.ConversationID
 
     var userSession: UserSession
     var mediaPlaybackManager: MediaPlaybackManager?
-    var conversationLoader: (_ conversationID: UUID) async -> ZMConversation?
+    var conversationLoader: (_ conversationID: ConversationID) async -> ZMConversation?
 
     @MainActor
     func build(
-        conversationID: UUID,
+        conversationID: ConversationID,
         mainCoordinator: some MainCoordinatorProtocol
     ) async -> ConversationRootViewController {
         let viewController = ConversationRootViewController(

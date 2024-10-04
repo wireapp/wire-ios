@@ -22,29 +22,42 @@ import WireMainNavigation
 import WireSyncEngine
 
 @MainActor
-struct UserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
+struct UserProfileViewControllerBuilder<UserSession>: MainUserProfileBuilderProtocol where
+UserSession: WireSyncEngine.UserSession {
     typealias UserID = WireDataModel.QualifiedID
+
+    let userSession: UserSession
+    let userLoader: (_ userID: UserID) async -> UserType?
+    var delegate: ProfileViewControllerDelegate?
+
+    init(
+        userSession: UserSession,
+        userLoader: @escaping (_ userID: UserID) async -> UserType?
+    ) {
+        self.userSession = userSession
+        self.userLoader = userLoader
+    }
 
     func build(
         userID: UserID,
         mainCoordinator: some MainCoordinatorProtocol
-    ) -> ProfileViewController {
+    ) async -> UINavigationController {
 
-        fatalError("TODO")
-        let user: (any UserType)! = nil
-        let viewer: (any UserType)! = nil
-        let userSession: (any UserSession)! = nil
+        let user = await userLoader(userID) // TODO: loading shouldn't happen here, instead pass the id into the `ProfileViewController`
 
-        return .init(
-            user: user,
-            viewer: viewer,
+        let rootViewController = ProfileViewController(
+            user: user!, // TODO: don't force-unwrap
+            viewer: userSession.selfUserLegalHoldSubject,
             context: .profileViewer,
             userSession: userSession,
             mainCoordinator: mainCoordinator
         )
+        rootViewController.delegate = delegate
+        return UINavigationController(rootViewController: rootViewController)
     }
 }
 
+// TODO: delete commented code
 /*
  extension ConversationListViewController.ViewModel: StartUIDelegate {
 

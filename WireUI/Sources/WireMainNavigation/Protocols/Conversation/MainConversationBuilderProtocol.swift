@@ -24,5 +24,5 @@ public protocol MainConversationBuilderProtocol {
     func build(
         conversationID: Conversation.ConversationID,
         mainCoordinator: some MainCoordinatorProtocol
-    ) async -> Conversation
+    ) async -> Conversation // TODO: shouldn't be async
 }

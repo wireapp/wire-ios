@@ -300,7 +300,6 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         case .ignore:
             viewModel.ignoreConnectionRequest()
         }
-
     }
 
     func footerView(_ footerView: ProfileFooterView, shouldPerformAction action: ProfileAction) {

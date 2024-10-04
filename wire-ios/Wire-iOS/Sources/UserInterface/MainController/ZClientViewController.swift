@@ -43,7 +43,7 @@ final class ZClientViewController: UIViewController {
         SettingsViewControllerBuilder,
         StartUIViewControllerBuilder,
         SelfProfileViewControllerBuilder,
-        UserProfileViewControllerBuilder
+        UserProfileViewControllerBuilder<ZMUserSession>
     >
 
     // MARK: - Private Members

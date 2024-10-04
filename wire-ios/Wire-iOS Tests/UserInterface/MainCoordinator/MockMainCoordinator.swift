@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireSyncEngine
 import WireMainNavigation
 import WireSettings
 
@@ -29,6 +30,8 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
     typealias ConversationBuilder = ConversationViewControllerBuilder
     typealias Settings = UIViewController
     typealias SettingsContentBuilder = SettingsViewControllerBuilder
+    typealias UserProfileBuilder = UserProfileViewControllerBuilder<ZMUserSession>
+    typealias UserID = UserProfileBuilder.UserID
 
     func showConversationList(conversationFilter: ConversationFilter?) {
         fatalError("Mock method not implemented")
@@ -59,6 +62,10 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
     }
 
     func showSelfProfile() {
+        fatalError("Mock method not implemented")
+    }
+
+    func showUserProfile(userID: UserProfileViewControllerBuilder.UserID) async {
         fatalError("Mock method not implemented")
     }
 
