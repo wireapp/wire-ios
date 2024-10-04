@@ -209,10 +209,10 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         // WHEN
         NotificationCenter.default.post(name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
-        
+
         // THEN
         XCTAssertNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
-        
+
         // CLEANUP
         testSessionManager.tearDownAllBackgroundSessions()
     }

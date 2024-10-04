@@ -674,9 +674,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         loadSession(for: account) { [weak self] session in
-            guard 
-                let self, 
-                let session 
+            guard
+                let self,
+                let session
             else {
                 return
             }
