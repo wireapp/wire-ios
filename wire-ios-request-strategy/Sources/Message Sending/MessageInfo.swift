@@ -29,13 +29,17 @@ struct MessageInfo {
     var listClients: ClientList
     var missingClientsStrategy: MissingClientsStrategy
     var selfClientID: String
-    var nativePush: Bool
+
+    var nativePush: Bool {
+        // We do not want to send pushes for delivery receipts.
+        !genericMessage.hasConfirmation
+    }
 
     func allSessionIds() -> [ProteusSessionID] {
         var result = [ProteusSessionID]()
         for (_, userClientIdAndSessionIds) in listClients {
             for (_, userClientDatas) in userClientIdAndSessionIds {
-                let sessionIds = userClientDatas.compactMap( { $0.data == nil ? $0.sessionID : nil })
+                let sessionIds = userClientDatas.compactMap( { $0.sessionID })
                 result.append(contentsOf: sessionIds)
             }
         }
