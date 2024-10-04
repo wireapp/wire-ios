@@ -173,15 +173,7 @@ jobs:
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
         run: |
-          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
-
-        # Save cache
-      #- name:  Save cache
-      #  uses: actions/cache/save@v4
-      #  if: always()
-      #  with:
-      #    path: ${{ env.PACKAGES_DIR }}
-      #    key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/Package.resolved') }}
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
