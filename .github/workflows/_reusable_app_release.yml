@@ -170,7 +170,7 @@ jobs:
         id: cache-sourceryPlugin-package
         with:
           path: SourceryPlugin/.build
-          key: ${{ runner.os }}-swiftpm-${{ hashFiles('SourceryPlugin/Package.resolved') }}
+          key: ${{ runner.os }}-swiftpm-sourcery-${{ hashFiles('SourceryPlugin/Package.resolved') }}
 
         # Bootstrap dependencies if no cash for scripts
       - name: Bootstrap Swift Package Dependencies (scripts)
