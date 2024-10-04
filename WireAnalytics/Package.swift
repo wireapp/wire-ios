@@ -33,7 +33,7 @@ let package = Package(
 
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
     // You can enable/disable Datadog for debugging by overriding the boolean.
-    if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
+    if hasEnvironmentVariable("ENABLE_DATADOG", "false") {
         ["WireDatadog"]
     } else {
         []
