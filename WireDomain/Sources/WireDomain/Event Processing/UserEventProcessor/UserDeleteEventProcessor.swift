@@ -31,7 +31,7 @@ protocol UserDeleteEventProcessorProtocol {
 }
 
 struct UserDeleteEventProcessor: UserDeleteEventProcessorProtocol {
-    
+
     let repository: any UserRepositoryProtocol
 
     func processEvent(_ event: UserDeleteEvent) async throws {

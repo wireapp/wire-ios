@@ -53,7 +53,7 @@ final class UserDeleteEventProcessorTests: XCTestCase {
 
         XCTAssertEqual(userRepository.deleteUserAccountWithDomainAt_Invocations.count, 1)
     }
-    
+
     private enum Scaffolding {
         static let event = UserDeleteEvent(
             qualifiedUserID: QualifiedID(
@@ -64,4 +64,3 @@ final class UserDeleteEventProcessorTests: XCTestCase {
         )
     }
 }
-

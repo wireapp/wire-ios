@@ -27,7 +27,7 @@ struct UserDeleteEventDecoder {
             QualifiedID.self,
             forKey: .qualifiedID
         )
-        
+
         let time = try container.decodeIfPresent(
             UTCTimeMillis.self,
             forKey: .time

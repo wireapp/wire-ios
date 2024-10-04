@@ -333,7 +333,7 @@ final class UserRepositoryTests: XCTestCase {
         }
 
         // When
-        
+
         try await sut.deleteUserAccount(
             with: Scaffolding.userID,
             domain: nil,
