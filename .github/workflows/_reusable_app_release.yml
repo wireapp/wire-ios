@@ -162,7 +162,7 @@ jobs:
         id: cache-scripts-package
         with:
           path: scripts/.build
-          key: ${{ runner.os }}-swiftpm-${{ hashFiles('scripts/Package.resolved') }}
+          key: ${{ runner.os }}-swiftpm-scripts-${{ hashFiles('scripts/Package.resolved') }}
 
         # Cache for the second folder (SourceryPlugin)
       - name: Restore Swift Package Dependencies (SourceryPlugin)
