@@ -152,9 +152,8 @@ public final class MainCoordinator<
         guard mainSplitViewState == .expanded else { return }
 
         dismissArchiveIfNeeded()
-        await dismissConnectIfNeeded()
         dismissSettingsIfNeeded()
-        await dismissSelfProfileIfNeeded()
+        await dismissPresentedViewControllerIfNeeded()
 
         // Move the conversation list from the tab bar controller to the split view controller if needed.
         if let conversationList = tabBarController.conversationList {
@@ -179,9 +178,8 @@ public final class MainCoordinator<
         guard mainSplitViewState == .expanded else { return }
 
         dismissConversationListIfNeeded()
-        await dismissConnectIfNeeded()
         dismissSettingsIfNeeded()
-        await dismissSelfProfileIfNeeded()
+        await dismissPresentedViewControllerIfNeeded()
 
         // move the archive from the tab bar controller to the split view controller
         if let archive = tabBarController.archive {
@@ -198,8 +196,7 @@ public final class MainCoordinator<
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
-        await dismissConnectIfNeeded()
-        await dismissSelfProfileIfNeeded()
+        await dismissPresentedViewControllerIfNeeded()
 
         // move the settings from the tab bar controller to the split view controller
         if let settings = tabBarController.settings {
@@ -212,8 +209,7 @@ public final class MainCoordinator<
 
     public func showConversation(conversationID: ConversationList.ConversationID) async {
 
-        await dismissSelfProfileIfNeeded()
-        await dismissConnectIfNeeded()
+        await dismissPresentedViewControllerIfNeeded()
 
         let conversation = await conversationBuilder.build(
             conversationID: conversationID,
@@ -262,8 +258,7 @@ public final class MainCoordinator<
         selfProfile.modalPresentationStyle = .formSheet
         self.selfProfile = selfProfile
 
-        await dismissConnectIfNeeded()
-
+        await dismissPresentedViewControllerIfNeeded()
         await withCheckedContinuation { continuation in
             splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
         }
@@ -283,10 +278,14 @@ public final class MainCoordinator<
         connect.modalPresentationStyle = .formSheet
         self.connect = connect
 
-        await dismissSelfProfileIfNeeded()
+        await dismissPresentedViewControllerIfNeeded()
+        await presentViewController(connect)
+    }
 
+    public func presentViewController(_ viewController: UIViewController) async {
+        await dismissPresentedViewControllerIfNeeded()
         await withCheckedContinuation { continuation in
-            splitViewController.present(connect, animated: true, completion: continuation.resume)
+            splitViewController.present(viewController, animated: true, completion: continuation.resume)
         }
     }
 
@@ -306,13 +305,6 @@ public final class MainCoordinator<
         }
     }
 
-    private func dismissConnectIfNeeded() async {
-        guard let connect else { return }
-        await withCheckedContinuation { continuation in
-            connect.dismiss(animated: true, completion: continuation.resume)
-        }
-    }
-
     private func dismissSettingsIfNeeded() {
         // Move the settings back to the tab bar controller if it's visible in the split view controller.
         if let settings = splitViewController.settings {
@@ -321,10 +313,9 @@ public final class MainCoordinator<
         }
     }
 
-    private func dismissSelfProfileIfNeeded() async {
-        guard let selfProfile else { return }
+    private func dismissPresentedViewControllerIfNeeded() async {
         await withCheckedContinuation { continuation in
-            selfProfile.dismiss(animated: true, completion: continuation.resume)
+            splitViewController.dismiss(animated: true, completion: continuation.resume)
         }
     }
 

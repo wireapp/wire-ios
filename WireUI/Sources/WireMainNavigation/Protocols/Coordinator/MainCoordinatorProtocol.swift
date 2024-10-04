@@ -50,4 +50,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func showUserProfile(userID: UserID) async
     @MainActor
     func showConnect() async
+
+    @MainActor
+    func presentViewController(_ viewController: UIViewController) async
 }
