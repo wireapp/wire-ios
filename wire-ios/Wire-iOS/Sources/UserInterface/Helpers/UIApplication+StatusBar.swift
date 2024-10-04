@@ -23,24 +23,19 @@ extension UIApplication {
     /// Get the top most view controller
     ///
     /// - Parameter onlyFullScreen: if false, also search for all kinds of presented view controller
-    /// - Returns: the top most view controller 
+    /// - Returns: the top most view controller
     func topmostViewController(onlyFullScreen: Bool = true) -> UIViewController? {
-
-        guard let window = AppDelegate.shared.mainWindow,
-            var topController = window.rootViewController else {
-                return .none
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let window = appDelegate.mainWindow,
+              var topController = window.rootViewController else {
+            return .none
         }
 
         while let presentedController = topController.presentedViewController,
-            !onlyFullScreen || presentedController.modalPresentationStyle == .fullScreen {
+              !onlyFullScreen || presentedController.modalPresentationStyle == .fullScreen {
             topController = presentedController
         }
 
         return topController
-    }
-
-    @available(*, deprecated, message: "Don't use this property!")
-    static var userInterfaceStyle: UIUserInterfaceStyle? {
-        AppDelegate.shared.mainWindow?.rootViewController?.traitCollection.userInterfaceStyle
     }
 }

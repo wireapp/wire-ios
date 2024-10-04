@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
+import WireSettings
 import WireSyncEngine
 
 fileprivate extension UIView {
@@ -215,22 +216,26 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     convenience init(
-        useTypeIntrinsicSizeTableView: Bool
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
     ) {
         let user = SelfUser.provider?.providedSelfUser
         self.init(
             state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown),
-            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
     convenience init(
         suggestedHandle handle: String,
-        useTypeIntrinsicSizeTableView: Bool
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
     ) {
         self.init(
             state: .init(currentHandle: nil, newHandle: handle, availability: .unknown),
-            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
         )
         setupViews()
         checkAvailability(of: handle)
@@ -240,11 +245,16 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     init(
         state: HandleChangeState,
         useTypeIntrinsicSizeTableView: Bool,
-        federationEnabled: Bool = BackendInfo.isFederationEnabled
+        federationEnabled: Bool = BackendInfo.isFederationEnabled,
+        settingsCoordinator: AnySettingsCoordinator
     ) {
         self.state = state
         self.federationEnabled = federationEnabled
-        super.init(style: .grouped, useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView)
+        super.init(
+            style: .grouped,
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
+        )
 
         setupViews()
     }

@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireSyncEngine
 
 final class LegalHoldDetailsViewController: UIViewController {
@@ -27,12 +28,12 @@ final class LegalHoldDetailsViewController: UIViewController {
     private let collectionViewController: SectionCollectionViewController
     private let conversation: LegalHoldDetailsConversation
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     convenience init?(
         user: UserType,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         guard let conversation = user.oneToOneConversation else { return nil }
         self.init(
@@ -45,7 +46,7 @@ final class LegalHoldDetailsViewController: UIViewController {
     init(
         conversation: LegalHoldDetailsConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.conversation = conversation
         self.collectionViewController = SectionCollectionViewController()
@@ -71,7 +72,7 @@ final class LegalHoldDetailsViewController: UIViewController {
         in parentViewController: UIViewController,
         user: UserType,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) -> UINavigationController? {
         guard let legalHoldDetailsViewController = LegalHoldDetailsViewController(user: user, userSession: userSession, mainCoordinator: mainCoordinator) else { return nil }
 
@@ -83,7 +84,7 @@ final class LegalHoldDetailsViewController: UIViewController {
         in parentViewController: UIViewController,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) -> UINavigationController {
         let legalHoldDetailsViewController = LegalHoldDetailsViewController(conversation: conversation, userSession: userSession, mainCoordinator: mainCoordinator)
 
@@ -154,5 +155,4 @@ extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionController
         )
         show(profileViewController, sender: nil)
     }
-
 }

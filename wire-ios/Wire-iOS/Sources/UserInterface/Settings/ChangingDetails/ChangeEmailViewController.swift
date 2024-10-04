@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
+import WireSettings
 import WireSyncEngine
 
 final class ChangeEmailViewController: SettingsBaseTableViewController {
@@ -43,7 +44,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     init(
         user: UserType,
         userSession: UserSession,
-        useTypeIntrinsicSizeTableView: Bool
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
     ) {
         self.userSession = userSession
         self.viewModel = ChangeEmailViewModel(
@@ -52,7 +54,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         )
         super.init(
             style: .grouped,
-            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
         )
         setupViews()
     }
@@ -138,7 +141,8 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
                 newEmail: newEmail,
                 delegate: self,
                 userSession: userSession,
-                useTypeIntrinsicSizeTableView: true
+                useTypeIntrinsicSizeTableView: true,
+                settingsCoordinator: settingsCoordinator
             )
             navigationController?.pushViewController(confirmController, animated: true)
         }

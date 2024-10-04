@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireSyncEngine
 
 enum ProfileViewControllerTabBarIndex: Int {
@@ -53,7 +54,7 @@ final class ProfileViewController: UIViewController {
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var tabsController: TabBarController?
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     // MARK: - init
 
@@ -65,7 +66,7 @@ final class ProfileViewController: UIViewController {
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: any MainCoordinatorProtocol
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context {
@@ -102,7 +103,7 @@ final class ProfileViewController: UIViewController {
 
     required init(
         viewModel: some ProfileViewControllerViewModeling,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
@@ -374,7 +375,9 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         dismiss(animated: true) {
             self.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                self.mainCoordinator.showSelfProfile()
+                fatalError("TODO")
+                // TODO: fix
+                // self.mainCoordinator.showSelfProfile()
             }
         }
     }

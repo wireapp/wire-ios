@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Weiter";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+"general.guest-room-name" = "Gästebereich";
+
 // User Cell
 "user_cell.title.you_suffix" = " (Sie)";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Nach Name oder Benutzername suchen";
 "peoplepicker.header.top_people" = "Top Kontakte";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Gruppe erstellen";
 "peoplepicker.button.add_to_conversation" = "Teilnehmer hinzufügen";
 "peoplepicker.header.conversations" = "Gruppen";
 "peoplepicker.header.team_conversations" = "%@ Gruppen";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "Weitere Personen einladen";
 "peoplepicker.invite_team_members" = "Lade weitere Mitglieder ein";
 "peoplepicker.quick-action.open-conversation" = "Öffnen";
+"peoplepicker.quick-action.create-conversation" = "Gruppe erstellen";
+"peoplepicker.quick-action.create-guest-room" = "Gästebereich erstellen";
 "peoplepicker.quick-action.admin-services" = "Dienste verwalten";
 
 "peoplepicker.federation.domain_unvailable" = "Die föderierte Domain ist derzeit nicht verfügbar. [Mehr erfahren](%@)";
@@ -127,7 +133,7 @@
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Favoriten";
 "conversation_list.filter.groups.title" = "Gruppen";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "Entfernen";
 
@@ -139,9 +145,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Hat neue Nachrichten.";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "Kontakte";
 "conversation_list.bottom_bar.conversations.title" = "Unterhaltungen";
+"conversation_list.bottom_bar.folders.title" = "Ordner";
 "conversation_list.bottom_bar.archived.title" = "Archiv";
-"conversation_list.bottom_bar.settings.title" = "Einstellungen";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";
@@ -514,6 +521,7 @@
 "content.system.message_delivered_timestamp" = "Zugestellt";
 "content.system.message_read_timestamp" = "Gesehen";
 "content.system.failedtosend_message.general_reason" = "Nachricht konnte aufgrund von Verbindungsproblemen nicht gesendet werden.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Nachricht nicht gesendet, da Sie das Hochladen abgebrochen haben.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Nachricht nicht gesendet, da das Backend **%@**  nicht erreichbar ist. [Mehr erfahren](%@)";
 "content.system.failedtosend_message.retry" = "Wiederholen";
 
@@ -1158,11 +1166,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Anonyme Nutzungsdaten senden";
 "self.settings.privacy_analytics_menu.description.title" = "Anhand der Nutzungsdaten kann Wire verstehen, wie die App genutzt wird und wie sie verbessert werden kann. Die Daten sind anonym und umfassen nicht den Inhalt Ihrer Kommunikation (wie Nachrichten, Dateien oder Anrufe).";
-
-"self.settings.receiveNews_and_offers.title" = "Newsletter abonnieren";
-"self.settings.receiveNews_and_offers.description.title" = "Neuigkeiten und Informationen zu Produktaktualisierungen von Wire per E-Mail erhalten.";
-
-
 
 // Change Username
 
@@ -1924,13 +1927,6 @@
 
 "url_action.invalid_link.title" = "Ungültiger Link.";
 "url_action.invalid_link.message" = "Der geöffnete Link ist ungültig.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Möchten Sie Neuigkeiten und Informationen zu Produktaktualisierungen von Wire per E-Mail erhalten?";
-"news_offers.consent.message" = "Sie können sich jederzeit abmelden.";
-"news_offers.consent.button.privacy_policy.title" = "Datenschutzerklärung";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

@@ -19,7 +19,9 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigation
 import WireReusableUIComponents
+import WireSettings
 import WireSyncEngine
 
 /// The first page of the user settings.
@@ -39,6 +41,7 @@ final class SelfProfileViewController: UIViewController {
     private let profileImagePicker = ProfileImagePickerManager()
 
     private let accountSelector: AccountSelector?
+    let openDevicesSettingsAction: () -> Void
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
 
@@ -57,17 +60,22 @@ final class SelfProfileViewController: UIViewController {
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
-        accountSelector: AccountSelector?
+        accountSelector: AccountSelector?,
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
-
         self.accountSelector = accountSelector
+        openDevicesSettingsAction = {
+            mainCoordinator.showSettingsContent(.init(.devices))
+        }
 
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
 
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: userRightInterfaceType
+            userRightInterfaceType: userRightInterfaceType,
+            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup()
@@ -170,7 +178,7 @@ final class SelfProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
             // profileContainerView
             profileContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            profileContainerView.topAnchor.constraint(equalTo: safeTopAnchor),
+            profileContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             profileContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
             // profileView
@@ -184,7 +192,7 @@ final class SelfProfileViewController: UIViewController {
             settingsController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             settingsController.view.topAnchor.constraint(equalTo: profileContainerView.bottomAnchor),
             settingsController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            settingsController.view.bottomAnchor.constraint(equalTo: safeBottomAnchor)
+            settingsController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 
@@ -222,7 +230,9 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 
         presentingViewController?.dismiss(animated: true) {
-            AppDelegate.shared.mediaPlaybackManager?.stop() // there must be another more appropriate place for this line
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                appDelegate.mediaPlaybackManager?.stop()
+            }
             self.accountSelector?.switchTo(account: account)
         }
     }

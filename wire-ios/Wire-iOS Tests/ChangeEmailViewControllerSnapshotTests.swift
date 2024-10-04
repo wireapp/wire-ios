@@ -17,7 +17,7 @@
 //
 
 import WireSyncEngineSupport
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -46,6 +46,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Helper method
 
+    @MainActor
     private func createSut(emailAddress: String?) -> UIViewController {
         let mockUser = MockUserType.createSelfUser(name: "User")
         let userProfile = MockUserProfile()
@@ -58,7 +59,8 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
         let sut = ChangeEmailViewController(
             user: mockUser,
             userSession: userSession,
-            useTypeIntrinsicSizeTableView: true
+            useTypeIntrinsicSizeTableView: true,
+            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
         )
         let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
@@ -67,6 +69,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
     // MARK: Snapshot Tests
 
+    @MainActor
     func testForChangingExistingEmail() {
         // GIVEN & WHEN
         let viewController = createSut(emailAddress: "user@example.com")
@@ -82,5 +85,4 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
                 line: #line
             )
     }
-
 }

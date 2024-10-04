@@ -273,12 +273,6 @@
 "calling.headerBar.description" = "Minimize calling view";
 "calling.status.connecting" = "Connecting";
 
-"tabBar.conversations.description" = "List of recent conversations";
-"tabBar.conversations.hint" = "Double tap to open list of recent conversations";
-"tabBar.archived.description" = "Archive";
-"tabBar.archived.hint" = "Double tap to open list of archived conversations";
-"tabBar.settings.description" = "Settings";
-"tabBar.settings.hint" = "Double tap to open settings";
 "tabBar.item.value" = "Selected";
 
 "landing.loginEnterpriseButton.description" = "Log in with SSO";

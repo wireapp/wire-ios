@@ -20,13 +20,6 @@ import UIKit
 
 extension StartUIViewController {
 
-    func setupNavigationBar() {
-        navigationController?.navigationBar.barTintColor = backgroundColor
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.tintColor = UIColor.accent()
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
-    }
-
     func setupNavigationBarButtonItems() {
         let cancelButton = UIBarButtonItem(
             title: L10n.Localizable.General.cancel,
@@ -44,8 +37,8 @@ extension StartUIViewController {
         button.setTitle(L10n.Localizable.Peoplepicker.Button.createConversation, for: .normal)
         button.titleLabel?.font = UIFont.font(for: .h3)
 
-        let action = UIAction { _ in
-            self.createGroup()
+        let action = UIAction { [weak self] _ in
+            self?.createGroup()
         }
         button.addAction(action, for: .touchUpInside)
 
@@ -67,5 +60,4 @@ extension StartUIViewController {
     private func createGroup() {
         openCreateGroupController()
     }
-
 }

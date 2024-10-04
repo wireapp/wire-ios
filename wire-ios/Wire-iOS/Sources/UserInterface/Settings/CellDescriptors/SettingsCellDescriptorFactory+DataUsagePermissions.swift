@@ -31,15 +31,12 @@ extension SettingsCellDescriptorFactory {
             items.append(sendAnalyticsDataSection)
         }
 
-        let receiveNewsAndOffersData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.receiveNewsAndOffers))
-        let receiveNewsAndOffersSection = SettingsSectionDescriptor(cellDescriptors: [receiveNewsAndOffersData], footer: L10n.Localizable.Self.Settings.ReceiveNewsAndOffers.Description.title)
-
-        items.append(receiveNewsAndOffersSection)
-
         return SettingsGroupCellDescriptor(
             items: items,
             title: L10n.Localizable.Self.Settings.Account.DataUsagePermissions.title,
-            accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 }

@@ -43,6 +43,7 @@ To build Wire for iOS locally, ensure the following tools are installed and set 
 - [Carthage 0.39.1 or newer](https://github.com/Carthage/Carthage)
 - Ruby environment without admin permissions, which can be set up using [rbenv](https://github.com/rbenv/rbenv). Install the Ruby version specific in the [`Gemfile`](Gemfile) and set it as the global version.
 - SSH key for Git. Follow these guides to [generate a new SSH key and add it locally](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
+- Git LFS is used for large binary files.
 
 The setup script will automatically verify that these requirements are met.
 

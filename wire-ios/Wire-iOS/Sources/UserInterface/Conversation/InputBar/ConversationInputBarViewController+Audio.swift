@@ -232,11 +232,11 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
 
         switch (callState, isRecording, wasRecordingBeforeCall) {
         case (.incoming(_, true, _), true, _),              // receiving incoming call while audio keyboard is visible
-             (.outgoing, true, _):                          // making an outgoing call while audio keyboard is visible
+            (.outgoing, true, _):                          // making an outgoing call while audio keyboard is visible
             wasRecordingBeforeCall = true                   // -> remember that the audio keyboard was visible
             callCountWhileCameraKeyboardWasVisible += 1     // -> increment calls in progress counter
         case (.incoming(_, false, _), _, true),             // refusing an incoming call
-             (.terminating, _, true):                       // terminating/closing the current call
+            (.terminating, _, true):                       // terminating/closing the current call
             callCountWhileCameraKeyboardWasVisible -= 1     // -> decrement calls in progress counter
         default: break
         }
@@ -247,16 +247,21 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
     }
 
     private func displayRecordKeyboard() {
+        // TODO: fix
+        fatalError("TODO")
+        /*
         // do not show keyboard if conversation list is shown,
         guard let splitViewController = self.wr_splitViewController,
               let rightViewController = splitViewController.rightViewController,
               splitViewController.isRightViewControllerRevealed,
               rightViewController.isVisible,
-              AppDelegate.shared.mainWindow.isKeyWindow
-            else { return }
+              let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let mainWindow = appDelegate.mainWindow,
+              mainWindow.isKeyWindow else { return }
 
         self.wasRecordingBeforeCall = false
         self.mode = .audioRecord
         self.inputBar.textView.becomeFirstResponder()
+         */
     }
 }

@@ -17,9 +17,12 @@
 //
 
 import UIKit
+import WireAccountImage
 import WireCommonComponents
+import WireConversationList
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -28,7 +31,8 @@ final class ConversationListViewController: UIViewController {
     // MARK: - Properties
 
     let viewModel: ViewModel
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: any MainCoordinatorProtocol
+    let conversationListCoordinator: any ConversationListCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
@@ -45,14 +49,14 @@ final class ConversationListViewController: UIViewController {
         return label
     }()
 
-    private lazy var removeButton: UIButton = {
+    private lazy var removeButton = {
         let button = UIButton(type: .system)
         button.setTitle(L10n.Localizable.ConversationList.Filter.RemoveButton.title, for: .normal)
         button.titleLabel?.font = UIFont.font(for: .h5)
         button.setTitleColor(UIColor.accent(), for: .normal)
         button.accessibilityLabel = L10n.Accessibility.ConversationsList.FilterView.RemoveButton.descritpion
         let action = UIAction { [weak self] _ in
-            self?.removeFilter()
+            self?.clearFilter()
         }
         button.addAction(action, for: .touchUpInside)
         return button
@@ -65,7 +69,7 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Favorites.title
         case .groups:
             return FilterMenuLocale.Groups.title
-        case .oneToOneConversations:
+        case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
         case .none:
             return ""
@@ -92,29 +96,40 @@ final class ConversationListViewController: UIViewController {
     let listContentController: ConversationListContentController
 
     weak var accountImageView: AccountImageView?
-    weak var titleViewLabel: UILabel?
 
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
-    let selfProfileViewControllerBuilder: ViewControllerBuilder
+    let selfProfileViewControllerBuilder: any MainCoordinatorInjectingViewControllerBuilder
+    var mainSplitViewState: MainSplitViewState = .expanded {
+        didSet {
+            setupTitleView()
+            updateNavigationItem()
+            applyColorTheme()
+        }
+    }
 
     // MARK: - Init
 
-    convenience init(
+    convenience init<MainCoordinator>(
         account: Account,
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: MainCoordinator,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileViewControllerBuilder: ViewControllerBuilder
-    ) {
+        selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
+    ) where
+    MainCoordinator: MainCoordinatorProtocol,
+    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
+    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            getUserAccountImageUseCase: GetUserAccountImageUseCase()
         )
         self.init(
             viewModel: viewModel,
@@ -124,20 +139,27 @@ final class ConversationListViewController: UIViewController {
         )
     }
 
-    required init(
+    required init<MainCoordinator>(
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinating,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
-    ) {
+        mainCoordinator: MainCoordinator,
+        selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
+    ) where
+    MainCoordinator: MainCoordinatorProtocol,
+    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
+    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
+        self.conversationListCoordinator = conversationListCoordinator
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
+            conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
             zClientViewController: zClientViewController
         )
@@ -173,8 +195,7 @@ final class ConversationListViewController: UIViewController {
         createViewConstraints()
 
         setupTitleView()
-        setupLeftNavigationBarButtons()
-        setupRightNavigationBarButtons()
+        updateNavigationItem()
 
         setupObservers()
 
@@ -191,7 +212,10 @@ final class ConversationListViewController: UIViewController {
         super.viewWillAppear(animated)
 
         viewModel.savePendingLastRead()
-        viewModel.requestMarketingConsentIfNeeded()
+
+        // there are currently always four tab items
+        let offset = (view.bounds.width / 4 * -1.5)
+        onboardingHint.arrowView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: offset).isActive = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -231,6 +255,14 @@ final class ConversationListViewController: UIViewController {
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         .portrait
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        // TODO: these methods are called too often, see `splitViewControllerMode`
+        // setupTitleView()
+        // updateNavigationItem()
     }
 
     // MARK: - Setup UI
@@ -276,10 +308,6 @@ final class ConversationListViewController: UIViewController {
         filterContainerView.isHidden = true
     }
 
-    func removeFilter() {
-        applyFilter(nil)
-    }
-
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
         add(listContentController, to: contentContainer)
@@ -315,7 +343,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            conversationList.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor),
+            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
             onboardingHint.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
@@ -327,9 +355,10 @@ final class ConversationListViewController: UIViewController {
         ])
     }
 
-    private func applyColorTheme() {
-        view.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
-        titleViewLabel?.textColor = ColorTheme.Backgrounds.onSurfaceVariant
+    func applyColorTheme() {
+        view.backgroundColor = mainSplitViewState == .expanded
+        ? ColorTheme.Backgrounds.backgroundVariant
+        : ColorTheme.Backgrounds.surfaceVariant
     }
 
     private func setupSearchController() {
@@ -341,6 +370,24 @@ final class ConversationListViewController: UIViewController {
         searchController.searchResultsUpdater = self
 
         navigationItem.searchController = searchController
+        if #available(iOS 16.0, *) {
+            navigationItem.preferredSearchBarPlacement = .stacked
+        }
+    }
+
+    /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.
+    /// For expanded layouts, the navigation bar should only show a title and a new-conversation-button.
+    /// For collapsed layouts the navigation bar should additionally show an account image and a filter button item.
+    private func updateNavigationItem() {
+
+        switch mainSplitViewState {
+        case .collapsed:
+            setupLeftNavigationBarButtons()
+            setupRightNavigationBarButtons()
+        case .expanded:
+            setupLeftNavigationBarButtons_SplitView()
+            setupRightNavigationBarButtons_SplitView()
+        }
     }
 
     // MARK: - No Contact Label Management
@@ -374,16 +421,18 @@ final class ConversationListViewController: UIViewController {
 
     /// Method to apply the selected filter and update the UI accordingly
     /// - Parameter filter: The selected filter type to be applied
-    func applyFilter(_ filter: ConversationFilterType?) {
+    func applyFilter(_ filter: ConversationFilter) {
         self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
 
-        if filter != nil {
-            filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
+        filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
             filterContainerView.isHidden = false
-        } else {
-            filterContainerView.isHidden = true
-        }
+    }
+
+    func clearFilter() {
+        listContentController.listViewModel.selectedFilter = .none
+        setupRightNavigationBarButtons()
+        filterContainerView.isHidden = true
     }
 
     @objc
@@ -427,27 +476,14 @@ final class ConversationListViewController: UIViewController {
 
     // MARK: - Presentation
 
-    /// Present the new conversation view controller
-    func presentNewConversationViewController() {
-        let viewController = StartUIViewController(
-            userSession: viewModel.userSession,
-            mainCoordinator: mainCoordinator
-        )
-        viewController.delegate = viewModel
-        viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
-        present(navigationController, animated: true)
-    }
-
     /// Show the newsletter subscription dialog if needed
     /// - Parameter completionHandler: The completion handler to be called after the dialog is shown
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(
-            presentViewController: self,
-            completionHandler: completionHandler
-        )
+        // TODO: fix
+        // UIAlertController.showNewsletterSubscriptionDialogIfNeeded(
+        //     presentViewController: self,
+        //     completionHandler: completionHandler
+        // )
     }
 
     /// Select the inbox and focus on the view

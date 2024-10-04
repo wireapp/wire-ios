@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-import WireSystemPackage
+import WireFoundation
 
 // MARK: SplitViewController reveal
 
@@ -29,10 +29,11 @@ extension CharacterSet {
 extension ConversationInputBarViewController {
     func hideLeftView() {
         let currentDevice = DeviceWrapper(device: .current)
-        guard self.isIPadRegularPortrait(device: currentDevice, application: UIApplication.shared) else { return }
-        guard let splitViewController = wr_splitViewController, splitViewController.isLeftViewControllerRevealed else { return }
-
-        splitViewController.setLeftViewControllerRevealed(false, animated: true)
+        guard self.isIPadRegularPortrait(device: currentDevice) else { return }
+        // TODO: fix
+        fatalError("TODO")
+        // guard let splitViewController = wr_splitViewController, splitViewController.isLeftViewControllerRevealed else { return }
+        // splitViewController.setLeftViewControllerRevealed(false, animated: true)
     }
 }
 

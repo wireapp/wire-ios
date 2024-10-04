@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Учасник";
 "contactsList.userCell.hint" = "Торкніться двічі, щоб відкрити розмову";
 "contactsList.pendingConnection.hint" = "Подвійний дотик для відкриття профілю";
-"contactsList.cancelButton.description" = "Close contact list";
+"contactsList.closeButton.description" = "Закрити список контактів";
 
 "servicesList.serviceCell.hint" = "Торкніться двічі, щоб відкрити детальну інформацію про сервіс";
 
@@ -220,20 +220,6 @@
 "conversationsList.joinButton.hint" = "Торкніться двічі, щоб приєднатися до дзвінка";
 "conversationsList.connectionRequest.description" = "Очікує схвалення запиту на підключення";
 "conversationsList.connectionRequest.hint" = "Подвійний дотик для відкриття профілю";
-
-"conversationsList.filterButton.description" = "Filter conversations";
-
-"conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
-
-"conversationsList.filter_menu_options.allConversations.selected.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.selected.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.selected.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Show all one on one conversations";
-
-"conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
 
 "conversationAnnouncement.text.description" = "Отримано текстове повідомлення від %@";
 "conversationAnnouncement.picture.description" = "Отримано картинку від %@";
@@ -273,12 +259,14 @@
 "calling.headerBar.description" = "Мінімізувати екран дзвінка";
 "calling.status.connecting" = "Connecting";
 
+"tabBar.contacts.description" = "Контакти";
+"tabBar.contacts.hint" = "Торкніться двічі для пошуку людей та відкриття списку контактів";
 "tabBar.conversations.description" = "Список недавніх розмов";
 "tabBar.conversations.hint" = "Торкніться двічі, щоб відкрити список недавніх розмов";
+"tabBar.folders.description" = "Список розмов організованих у директорії";
+"tabBar.folders.hint" = "Торкніться двічі, щоб відкрити список розмов, організованих у директорії";
 "tabBar.archived.description" = "Архівувати";
 "tabBar.archived.hint" = "Торкніться двічі, щоб відкрити список заархівованих розмов";
-"tabBar.settings.description" = "Налаштування";
-"tabBar.settings.hint" = "Торкніться двічі, щоб відкрити налаштування";
 "tabBar.item.value" = "Вибрано";
 
 "landing.loginEnterpriseButton.description" = "Увійти через SSO";

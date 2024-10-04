@@ -1032,18 +1032,6 @@ internal enum L10n {
       }
     }
     internal enum TabBar {
-      internal enum Archived {
-        /// Archive
-        internal static let description = L10n.tr("Accessibility", "tabBar.archived.description", fallback: "Archive")
-        /// Double tap to open list of archived conversations
-        internal static let hint = L10n.tr("Accessibility", "tabBar.archived.hint", fallback: "Double tap to open list of archived conversations")
-      }
-      internal enum Conversations {
-        /// List of recent conversations
-        internal static let description = L10n.tr("Accessibility", "tabBar.conversations.description", fallback: "List of recent conversations")
-        /// Double tap to open list of recent conversations
-        internal static let hint = L10n.tr("Accessibility", "tabBar.conversations.hint", fallback: "Double tap to open list of recent conversations")
-      }
       internal enum Email {
         /// Log in via email
         internal static let description = L10n.tr("Accessibility", "tabBar.email.description", fallback: "Log in via email")
@@ -1055,12 +1043,6 @@ internal enum L10n {
       internal enum Phone {
         /// Log in via phone number
         internal static let description = L10n.tr("Accessibility", "tabBar.phone.description", fallback: "Log in via phone number")
-      }
-      internal enum Settings {
-        /// Settings
-        internal static let description = L10n.tr("Accessibility", "tabBar.settings.description", fallback: "Settings")
-        /// Double tap to open settings
-        internal static let hint = L10n.tr("Accessibility", "tabBar.settings.hint", fallback: "Double tap to open settings")
       }
     }
   }
@@ -2121,6 +2103,8 @@ internal enum L10n {
           internal static let generalReason = L10n.tr("Localizable", "content.system.failedtosend_message.general_reason", fallback: "Message could not be sent due to connectivity issues.")
           /// Retry
           internal static let retry = L10n.tr("Localizable", "content.system.failedtosend_message.retry", fallback: "Retry")
+          /// Message not sent as you canceled the upload.
+          internal static let userCancelledUploadReason = L10n.tr("Localizable", "content.system.failedtosend_message.user_cancelled_upload_reason", fallback: "Message not sent as you canceled the upload.")
         }
         internal enum FailedtosendParticipants {
           /// Plural format key: "%#@lu_number_of_participants@"
@@ -2733,20 +2717,6 @@ internal enum L10n {
       }
     }
     internal enum ConversationList {
-      internal enum BottomBar {
-        internal enum Archived {
-          /// Archive
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.archived.title", fallback: "Archive")
-        }
-        internal enum Conversations {
-          /// Conversations
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.conversations.title", fallback: "Conversations")
-        }
-        internal enum Settings {
-          /// Settings
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.settings.title", fallback: "Settings")
-        }
-      }
       internal enum Empty {
         internal enum AllArchived {
           /// Everything archived
@@ -4252,20 +4222,6 @@ internal enum L10n {
         internal static let tooshort = L10n.tr("Localizable", "name.guidance.tooshort", fallback: "At least 2 characters")
       }
     }
-    internal enum NewsOffers {
-      internal enum Consent {
-        /// You can unsubscribe at any time.
-        internal static let message = L10n.tr("Localizable", "news_offers.consent.message", fallback: "You can unsubscribe at any time.")
-        /// Do you want to receive news and product updates from Wire via email?
-        internal static let title = L10n.tr("Localizable", "news_offers.consent.title", fallback: "Do you want to receive news and product updates from Wire via email?")
-        internal enum Button {
-          internal enum PrivacyPolicy {
-            /// Privacy Policy
-            internal static let title = L10n.tr("Localizable", "news_offers.consent.button.privacy_policy.title", fallback: "Privacy Policy")
-          }
-        }
-      }
-    }
     internal enum Notifications {
       /// %@ - %@
       internal static func inConversation(_ p1: Any, _ p2: Any) -> String {
@@ -5709,14 +5665,6 @@ internal enum L10n {
               /// Wrong password. Please try again.
               internal static let wrongPassword = L10n.tr("Localizable", "self.settings.privacy_security.lock_password.description.wrong_password", fallback: "Wrong password. Please try again.")
             }
-          }
-        }
-        internal enum ReceiveNewsAndOffers {
-          /// Receive Newsletter
-          internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.title", fallback: "Receive Newsletter")
-          internal enum Description {
-            /// Receive news and product updates from Wire via email.
-            internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.description.title", fallback: "Receive news and product updates from Wire via email.")
           }
         }
         internal enum SoundMenu {

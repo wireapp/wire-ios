@@ -19,7 +19,9 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
+import WireMainNavigation
 import WireReusableUIComponents
+import WireSettings
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -261,10 +263,10 @@ final class ClientListViewController: UIViewController,
         clientsTableView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            clientsTableView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            clientsTableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            clientsTableView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            clientsTableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            clientsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            clientsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            clientsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            clientsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 

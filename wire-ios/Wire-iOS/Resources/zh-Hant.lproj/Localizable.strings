@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "確認";
 "general.next" = "下一步";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
 
+"general.guest-room-name" = "訪客聊天室";
+
 // User Cell
 "user_cell.title.you_suffix" = "（你）";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "搜尋使用者名稱或名字";
 "peoplepicker.header.top_people" = "常用連絡人";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "建立群組";
 "peoplepicker.button.add_to_conversation" = "加入參與者";
 "peoplepicker.header.conversations" = "群組";
 "peoplepicker.header.team_conversations" = "%@群組";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "邀請更多人";
 "peoplepicker.invite_team_members" = "邀請其他人加入團隊";
 "peoplepicker.quick-action.open-conversation" = "開啟";
+"peoplepicker.quick-action.create-conversation" = "建立群組";
+"peoplepicker.quick-action.create-guest-room" = "建立訪客聊天室";
 "peoplepicker.quick-action.admin-services" = "管理服務";
 
 "peoplepicker.federation.domain_unvailable" = "聯合域當前不可用。 [了解更多](%@)";
@@ -123,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "全部都已存檔";
 "conversation_list.empty.no_contacts.message" = "開始對話或\n創建群組。";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "我的最愛";
-"conversation_list.filter.groups.title" = "群組";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "移除";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "加入";
@@ -139,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "有新訊息。";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "連絡人";
 "conversation_list.bottom_bar.conversations.title" = "對話";
+"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "封存";
-"conversation_list.bottom_bar.settings.title" = "設定";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在聯絡人中";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "已傳送";
 "content.system.message_read_timestamp" = "閱";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "傳送匿名使用資料";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "接收新聞";
-"self.settings.receiveNews_and_offers.description.title" = "接收Wire的新聞和產品更新電子郵件。";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "無效的鏈接。";
 "url_action.invalid_link.message" = "你想打開的連結無效。";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "您想接收來自Wire的新聞和產品更新電子郵件嗎？";
-"news_offers.consent.message" = "您可以在任何時候取消訂閱。";
-"news_offers.consent.button.privacy_policy.title" = "隱私權原則";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

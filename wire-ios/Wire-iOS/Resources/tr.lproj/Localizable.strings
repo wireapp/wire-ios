@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "Tamam";
 "general.next" = "İleri";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+"general.guest-room-name" = "Misafir odası";
+
 // User Cell
 "user_cell.title.you_suffix" = " (Siz)";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "İsim veya kullanıcı adına göre ara";
 "peoplepicker.header.top_people" = "Sık Görüşülenler";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Grup Oluştur";
 "peoplepicker.button.add_to_conversation" = "Katılımcı ekle";
 "peoplepicker.header.conversations" = "Gruplar";
 "peoplepicker.header.team_conversations" = "%@ Grup";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "Daha fazla kişi davet et";
 "peoplepicker.invite_team_members" = "İnsanları takıma katılmaya davet edin";
 "peoplepicker.quick-action.open-conversation" = "Aç";
+"peoplepicker.quick-action.create-conversation" = "Grup oluştur";
+"peoplepicker.quick-action.create-guest-room" = "Misafir odası oluştur";
 "peoplepicker.quick-action.admin-services" = "Hizmetleri yönet";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -123,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "Her şey arşivlendi";
 "conversation_list.empty.no_contacts.message" = "Bir sohbet başlat veya\nbir grup oluştur.";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "Favoriler";
-"conversation_list.filter.groups.title" = "Gruplar";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "Kaldır";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Katıl";
@@ -139,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Yeni mesaj var.";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "Kişiler";
 "conversation_list.bottom_bar.conversations.title" = "Konuşmalar";
+"conversation_list.bottom_bar.folders.title" = "Klasörler";
 "conversation_list.bottom_bar.archived.title" = "Arşivle";
-"conversation_list.bottom_bar.settings.title" = "Ayarlar";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "Kişilerde";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Gönderildi";
 "content.system.message_read_timestamp" = "Görüldü";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Anonim kullanım verileri gönder";
 "self.settings.privacy_analytics_menu.description.title" = "Kullanım verileri, Wire'ın uygulamanın nasıl kullanıldığını ve nasıl geliştirilebileceğini anlamasını sağlar. Veriler anonimdir ve iletişiminizin içeriğini (mesajlar, dosyalar veya aramalar gibi) içermez.";
-
-"self.settings.receiveNews_and_offers.title" = "Bülten Alın";
-"self.settings.receiveNews_and_offers.description.title" = "Wire'dan haberleri ve ürün güncellemelerini e-postayla alın.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Geçersiz Bağlantı.";
 "url_action.invalid_link.message" = "Açtığınız bağlantı geçerli değil.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Haber ve ürün güncellemeleri Wire e-posta yoluyla almak istiyor musunuz?";
-"news_offers.consent.message" = "İstediğiniz zaman abonelikten çıkabilirsiniz.";
-"news_offers.consent.button.privacy_policy.title" = "Gizlilik Politikası";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

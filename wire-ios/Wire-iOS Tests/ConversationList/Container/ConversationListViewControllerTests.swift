@@ -17,8 +17,9 @@
 //
 
 import WireDataModelSupport
+import WireMainNavigation
 import WireSyncEngineSupport
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -32,17 +33,19 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
-    private var tabBarController: UITabBarController!
+    private var tabBarController: MainTabBarController<ConversationListViewController, ConversationRootViewController>!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var mockGetUserAccountImageUseCase: MockGetUserAccountImageUseCase!
     private var modelHelper: ModelHelper!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
@@ -54,6 +57,9 @@ final class ConversationListViewControllerTests: XCTestCase {
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+
+        mockGetUserAccountImageUseCase = .init()
+        mockGetUserAccountImageUseCase.invoke_MockValue = .init()
 
         modelHelper = ModelHelper()
 
@@ -67,7 +73,8 @@ final class ConversationListViewControllerTests: XCTestCase {
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: .mock
+            mainCoordinator: .mock,
+            getUserAccountImageUseCase: mockGetUserAccountImageUseCase
         )
 
         sut = ConversationListViewController(
@@ -77,18 +84,15 @@ final class ConversationListViewControllerTests: XCTestCase {
             selfProfileViewControllerBuilder: .mock
         )
 
-        tabBarController = MainTabBarController(
-            conversations: UINavigationController(rootViewController: sut),
-            archive: .init(),
-            settings: .init()
-        )
+        tabBarController = MainTabBarController()
+        tabBarController.conversationList = sut
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
-        wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
-        tabBarController.overrideUserInterfaceStyle = .dark
 
+        await fulfillment(of: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+        tabBarController.overrideUserInterfaceStyle = .dark
         UIView.setAnimationsEnabled(false)
     }
 
@@ -106,11 +110,12 @@ final class ConversationListViewControllerTests: XCTestCase {
         coreDataFixture = nil
         modelHelper = nil
         mockMainCoordinator = nil
+        mockGetUserAccountImageUseCase = nil
 
         super.tearDown()
     }
 
-    // MARK: - View controller
+    // MARK: - View Controller
 
     func testForNoConversations() {
         window.rootViewController = nil
@@ -143,7 +148,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
-        sut.applyFilter(nil)
+        sut.clearFilter()
 
         // THEN
         snapshotHelper.verify(matching: tabBarController)
@@ -198,7 +203,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
-        sut.applyFilter(.oneToOneConversations)
+        sut.applyFilter(.oneOnOne)
 
         // THEN
         snapshotHelper.verify(matching: tabBarController)
@@ -227,4 +232,14 @@ final class ConversationListViewControllerTests: XCTestCase {
         }
         return XCTNSPredicateExpectation(predicate: predicate, object: nil)
     }
+}
+
+// MARK: MainCoordinatorInjectingViewControllerBuilder + mock
+
+private extension MainCoordinatorInjectingViewControllerBuilder where Self == MockMainCoordinatorInjectingViewControllerBuilder {
+    static var mock: Self { .init() }
+}
+
+private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+    func build(mainCoordinator _: some MainCoordinatorProtocol) -> UIViewController { .init() }
 }

@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "У реду";
 "general.next" = "Следећи";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+"general.guest-room-name" = "Гостинска соба";
+
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Тражи по имену или корисничком имену";
 "peoplepicker.header.top_people" = "Најчешће контактирани";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Направи групу";
 "peoplepicker.button.add_to_conversation" = "Add Participants";
 "peoplepicker.header.conversations" = "Групе";
 "peoplepicker.header.team_conversations" = "%@ Groups";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "Позовите још људи";
 "peoplepicker.invite_team_members" = "Позовите људе да се придруже тиму";
 "peoplepicker.quick-action.open-conversation" = "Отвори";
+"peoplepicker.quick-action.create-conversation" = "Направи групу";
+"peoplepicker.quick-action.create-guest-room" = "Направите собу за госте";
 "peoplepicker.quick-action.admin-services" = "Управљање услугама";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -123,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "Све је архивирано";
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "Омиљено";
-"conversation_list.filter.groups.title" = "Групе";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "Уклони";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Придружи се";
@@ -139,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "Контакти";
 "conversation_list.bottom_bar.conversations.title" = "Разговори";
+"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Архивирај";
-"conversation_list.bottom_bar.settings.title" = "Поставке";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "у контактима";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "испоручено";
 "content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Шаљи анонимне податке о употреби";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "примајте новости";
-"self.settings.receiveNews_and_offers.description.title" = "Примајте вести и ажурирања производа од компаније Вајер путем е-поште.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Неважећи линк";
 "url_action.invalid_link.message" = "Линк коју сте отворили није важећи.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Да ли желите да путем е-поште добијате вести и ажурирања производа од компаније Wire?";
-"news_offers.consent.message" = "Можете се одјавити у било ком тренутку.";
-"news_offers.consent.button.privacy_policy.title" = "Политика приватности";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

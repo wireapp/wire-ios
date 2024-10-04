@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "确定";
 "general.next" = "继续";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
 
+"general.guest-room-name" = "访客聊天室";
+
 // User Cell
 "user_cell.title.you_suffix" = "(你)";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "通过您的名字或用户名搜索";
 "peoplepicker.header.top_people" = "常联系的人";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "创建群聊";
 "peoplepicker.button.add_to_conversation" = "添加参与者";
 "peoplepicker.header.conversations" = "群组";
 "peoplepicker.header.team_conversations" = "%@ 组";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "邀请更多人";
 "peoplepicker.invite_team_members" = "邀请好友使用Wire";
 "peoplepicker.quick-action.open-conversation" = "开启";
+"peoplepicker.quick-action.create-conversation" = "创建群聊";
+"peoplepicker.quick-action.create-guest-room" = "创建访客聊天室";
 "peoplepicker.quick-action.admin-services" = "管理服务";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -123,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "全部都已存档";
 "conversation_list.empty.no_contacts.message" = "开始对话或\n创建群组。";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "收藏夾";
-"conversation_list.filter.groups.title" = "群组";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "移除";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "加入";
@@ -139,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "有新消息。";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "联络人";
 "conversation_list.bottom_bar.conversations.title" = "会话";
+"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "归档";
-"conversation_list.bottom_bar.settings.title" = "设置";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在联系人中";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "已送达";
 "content.system.message_read_timestamp" = "已读";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "接收新闻动态";
-"self.settings.receiveNews_and_offers.description.title" = "通过邮件接收来自Wire的新闻动态和产品更新。";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "无效的链接。";
 "url_action.invalid_link.message" = "您打开的链接无效。";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "您想通过电子邮件接收来自 Wire 的新闻和产品更新吗？";
-"news_offers.consent.message" = "您可以随时取消订阅。";
-"news_offers.consent.button.privacy_policy.title" = "隐私政策";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Další";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+"general.guest-room-name" = "Místnost pro hosty";
+
 // User Cell
 "user_cell.title.you_suffix" = " (Vy)";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Hledat podle jména nebo emailu";
 "peoplepicker.header.top_people" = "Nejaktivnější kontakty";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Vytvořit skupinu";
 "peoplepicker.button.add_to_conversation" = "Přidat účastníky";
 "peoplepicker.header.conversations" = "Skupiny";
 "peoplepicker.header.team_conversations" = "%@ skupiny";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "Pozvat další osoby";
 "peoplepicker.invite_team_members" = "Pozvat do týmu další členy";
 "peoplepicker.quick-action.open-conversation" = "Otevřít";
+"peoplepicker.quick-action.create-conversation" = "Vytvořit skupinu";
+"peoplepicker.quick-action.create-guest-room" = "Založit místnost pro hosty";
 "peoplepicker.quick-action.admin-services" = "Spravovat služby";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -123,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "Vše archivováno";
 "conversation_list.empty.no_contacts.message" = "Zahájit konverzaci nebo vytvořit skupinu.";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "Oblíbené";
-"conversation_list.filter.groups.title" = "Skupiny";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "Odstranit";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Vstoupit";
@@ -139,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Má nové zprávy.";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "Kontakty";
 "conversation_list.bottom_bar.conversations.title" = "Konverzace";
+"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Archivovat";
-"conversation_list.bottom_bar.settings.title" = "Nastavení";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "je v kontaktech";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Doručeno";
 "content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Přijímat novinky";
-"self.settings.receiveNews_and_offers.description.title" = "Odebírat novinky a aktualizace produktů od společnosti Wire prostřednictvím e-mailu.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Neplatný odkaz.";
 "url_action.invalid_link.message" = "Odkaz, který jste otevřeli, není platný.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Přejete si odebírat novinky a aktualizace produktů Wire prostřednictvím e-mailu?";
-"news_offers.consent.message" = "Můžete se odhlásit kdykoliv.";
-"news_offers.consent.button.privacy_policy.title" = "Zásady ochrany osobních údajů";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

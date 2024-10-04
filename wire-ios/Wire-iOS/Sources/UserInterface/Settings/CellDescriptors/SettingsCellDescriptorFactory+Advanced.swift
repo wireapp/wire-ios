@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
@@ -35,7 +36,9 @@ extension SettingsCellDescriptorFactory {
             items: items,
             title: SelfSettingsAdvancedLocale.title,
             icon: .settingsAdvanced,
-            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
+            settingsTopLevelMenuItem: .advanced,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -50,7 +53,8 @@ extension SettingsCellDescriptorFactory {
                 let viewModel = SettingsDebugReportViewModel(
                     router: router,
                     shareFile: shareFile,
-                    fetchShareableConversations: fetchShareableConversations
+                    fetchShareableConversations: fetchShareableConversations,
+                    fileMetaDataGenerator: FileMetaDataGenerator()
                 )
                 let viewController = SettingsDebugReportViewController(viewModel: viewModel)
                 router.viewController = viewController
@@ -92,11 +96,6 @@ extension SettingsCellDescriptorFactory {
                 selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
             ),
             SettingsButtonCellDescriptor(
-                title: SelfSettingsAdvancedLocale.DebuggingTools.ShowUserId.title,
-                isDestructive: false,
-                selectAction: DebugActions.showUserId
-            ),
-            SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.EnterDebugCommand.title,
                 isDestructive: false,
                 selectAction: DebugActions.enterDebugCommand
@@ -107,7 +106,9 @@ extension SettingsCellDescriptorFactory {
         let debuggingToolsGroup = SettingsGroupCellDescriptor(
             items: [findUnreadConversationSection],
             title: L10n.Localizable.Self.Settings.Advanced.DebuggingTools.title,
-            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
         )
 
         // Section

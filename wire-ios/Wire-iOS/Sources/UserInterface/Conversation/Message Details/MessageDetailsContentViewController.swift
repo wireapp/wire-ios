@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireSyncEngine
 
 // MARK: - MessageDetailsSectionDescription
@@ -76,7 +77,7 @@ final class MessageDetailsContentViewController: UIViewController {
     private let sectionHeaderIdentifier = "SectionHeader"
 
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
@@ -98,7 +99,7 @@ final class MessageDetailsContentViewController: UIViewController {
         contentType: ContentType,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.contentType = contentType
         self.conversation = conversation
@@ -182,7 +183,7 @@ final class MessageDetailsContentViewController: UIViewController {
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         collectionView.fitIn(view: view)
-        subtitleBottom = subtitleLabel.bottomAnchor.constraint(equalTo: safeBottomAnchor)
+        subtitleBottom = subtitleLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         subtitleBottom?.priority = .defaultHigh
 
         NSLayoutConstraint.activate([

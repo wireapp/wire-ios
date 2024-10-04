@@ -18,8 +18,11 @@
 
 import UIKit
 import UserNotifications
+import WireAccountImage
 import WireCommonComponents
 import WireDataModel
+import WireFoundation
+import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -40,7 +43,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
     @MainActor
     func showPermissionDeniedViewController()
 
@@ -74,6 +76,7 @@ extension ConversationListViewController {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
         }
 
+        // TODO: create two properties
         private(set) var accountImage = (image: UIImage(), isTeamAccount: false) {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: accountImage) }
         }
@@ -97,20 +100,22 @@ extension ConversationListViewController {
         var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
-        let mainCoordinator: MainCoordinating
+        let mainCoordinator: any MainCoordinatorProtocol
 
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
-        let miniatureAccountImageFactory = MiniatureAccountImageFactory()
+        let getUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol
 
+        @MainActor
         init(
             account: Account,
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default,
-            mainCoordinator: some MainCoordinating
+            mainCoordinator: some MainCoordinatorProtocol,
+            getUserAccountImageUseCase: any GetUserAccountImageUseCaseProtocol
         ) {
             self.account = account
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
@@ -121,6 +126,7 @@ extension ConversationListViewController {
             didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
+            self.getUserAccountImageUseCase = getUserAccountImageUseCase
             super.init()
 
             updateE2EICertifiedStatus()
@@ -144,15 +150,6 @@ extension ConversationListViewController.ViewModel {
     func setupObservers() {
 
         if let userSession = ZMUserSession.shared() {
-            initialSyncObserverToken = NotificationInContext.addObserver(
-                name: .initialSync,
-                context: userSession.notificationContext
-            ) { [weak self] _ in
-                userSession.managedObjectContext.performGroupedBlock {
-                    self?.requestMarketingConsentIfNeeded()
-                }
-            }
-
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
 
             if let team = userSession.selfUser.membership?.team {
@@ -180,39 +177,16 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
+    @MainActor
     private func updateAccountImage() {
-
-        if let team = userSession.selfUser.membership?.team, let teamImageViewContent = team.teamImageViewContent ?? account.teamImageViewContent {
-
-            // Team image
-            if case .teamImage(let data) = teamImageViewContent, let accountImage = UIImage(data: data) {
-                self.accountImage = (accountImage, true)
-                return
+        Task {
+            do {
+                accountImage.image = try await getUserAccountImageUseCase.invoke(account: account)
+                accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
+            } catch {
+                WireLogger.ui.error("Failed to get user account image: \(String(reflecting: error))")
+                accountImage.image = .init()
             }
-
-            // Team initials
-            let teamName: String
-            if case .teamName(let value) = teamImageViewContent {
-                teamName = value
-            } else {
-                teamName = team.name ?? account.teamName ?? ""
-            }
-            let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
-            let accountImage = miniatureAccountImageFactory.createImage(initials: initials, backgroundColor: .white)
-            self.accountImage = (accountImage, true)
-
-        } else {
-
-            // User image
-            if let data = account.imageData, let accountImage = UIImage(data: data) {
-                self.accountImage = (accountImage, false)
-                return
-            }
-
-            // User initials
-            let personName = PersonName.person(withName: account.userName, schemeTagger: nil)
-            let accountImage = miniatureAccountImageFactory.createImage(initials: personName.initials, backgroundColor: .white)
-            self.accountImage = (accountImage, false)
         }
     }
 
@@ -244,35 +218,6 @@ extension ConversationListViewController.ViewModel {
             focusOnView: focus,
             animated: animated
         )
-    }
-
-    func requestMarketingConsentIfNeeded() {
-        if let userSession = ZMUserSession.shared(), let selfUser = ZMUser.selfUser() {
-            guard
-                userSession.hasCompletedInitialSync == true,
-                userSession.isPendingHotFixChanges == false
-            else {
-                return
-            }
-
-            selfUser.fetchMarketingConsent(in: userSession) { [weak self] result in
-                switch result {
-                case .failure(let error):
-                    switch error {
-                    case ConsentRequestError.notAvailable:
-                        // don't show the alert there is no consent to show
-                        break
-                    default:
-                        self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
-                            selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
-                        })
-                    }
-                case .success:
-                    // The user already gave a marketing consent, no need to ask for it again.
-                    return
-                }
-            }
-        }
     }
 
     /// show PushPermissionDeniedDialog when necessary
@@ -310,6 +255,7 @@ extension ConversationListViewController.ViewModel {
 
 extension ConversationListViewController.ViewModel: UserObserving {
 
+    @MainActor
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
@@ -343,6 +289,7 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
 extension ConversationListViewController.ViewModel: TeamObserver {
 
+    @MainActor
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
 
         if changeInfo.imageDataChanged {

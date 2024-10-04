@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireMainNavigation
 import WireSyncEngine
 
 protocol CollectionsViewControllerDelegate: AnyObject {
@@ -54,7 +55,7 @@ final class CollectionsViewController: UIViewController {
     private var deletionDialogPresenter: DeletionDialogPresenter?
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: any MainCoordinatorProtocol
 
     private var fetchingDone: Bool = false {
         didSet {
@@ -76,7 +77,7 @@ final class CollectionsViewController: UIViewController {
     convenience init(
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
         let matchFiles = CategoryMatch(including: .file, excluding: .video)
@@ -94,7 +95,7 @@ final class CollectionsViewController: UIViewController {
         messages: [ZMConversationMessage] = [],
         fetchingDone: Bool = false,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.collection = collection
         self.sections = sections

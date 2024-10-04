@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Member";
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "Double tap to open profile";
-"contactsList.cancelButton.description" = "Close contact list";
+"contactsList.closeButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 
@@ -220,20 +220,6 @@
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
 "conversationsList.connectionRequest.hint" = "Double tap to open profile";
-
-"conversationsList.filterButton.description" = "Filter conversations";
-
-"conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
-
-"conversationsList.filter_menu_options.allConversations.selected.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.selected.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.selected.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Show all one on one conversations";
-
-"conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
 
 "conversationAnnouncement.text.description" = "Text message received from %@";
 "conversationAnnouncement.picture.description" = "Picture received from %@";
@@ -273,12 +259,14 @@
 "calling.headerBar.description" = "Minimize calling view";
 "calling.status.connecting" = "Connecting";
 
+"tabBar.contacts.description" = "Контакти";
+"tabBar.contacts.hint" = "Double tap to search for people and open contact list";
 "tabBar.conversations.description" = "List of recent conversations";
 "tabBar.conversations.hint" = "Double tap to open list of recent conversations";
+"tabBar.folders.description" = "List of conversations organized in folders";
+"tabBar.folders.hint" = "Double tap to open list of conversations organized in folders";
 "tabBar.archived.description" = "Archive";
 "tabBar.archived.hint" = "Double tap to open list of archived conversations";
-"tabBar.settings.description" = "Настройки";
-"tabBar.settings.hint" = "Double tap to open settings";
 "tabBar.item.value" = "Selected";
 
 "landing.loginEnterpriseButton.description" = "Log in with SSO";

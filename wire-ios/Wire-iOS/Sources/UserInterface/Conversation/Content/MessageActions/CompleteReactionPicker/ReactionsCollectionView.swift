@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireSystemPackage
+import WireFoundation
 
 final class ReactionsCollectionView: UICollectionView {
 

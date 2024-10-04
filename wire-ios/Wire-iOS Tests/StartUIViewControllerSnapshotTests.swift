@@ -17,7 +17,7 @@
 //
 
 import WireDesign
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -60,8 +60,10 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+
         accentColor = .default
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()

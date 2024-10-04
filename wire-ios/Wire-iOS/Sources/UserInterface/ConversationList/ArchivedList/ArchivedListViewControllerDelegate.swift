@@ -19,5 +19,10 @@
 import WireDataModel
 
 protocol ArchivedListViewControllerDelegate: AnyObject {
-    func archivedListViewController(_ viewController: ArchivedListViewController, didSelectConversation conversation: ZMConversation)
+
+    @MainActor
+    func archivedListViewController(
+        _ viewController: ArchivedListViewController,
+        didSelectConversation conversation: ZMConversation
+    )
 }

@@ -26,7 +26,7 @@ struct AccountViewBuilder {
 
     func build() -> BaseAccountView {
 
-        // TODO [WPB-7307]: availability status must be shown on the avatar image (right-bottom)
+        // TODO: [WPB-7307] availability status must be shown on the avatar image (right-bottom)
 
         if let accountView = TeamAccountView(user: user, account: account, displayContext: displayContext) {
             accountView

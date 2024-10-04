@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Järgmine";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+"general.guest-room-name" = "Külalistetuba";
+
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Otsi nime või kasutajanime järgi";
 "peoplepicker.header.top_people" = "Aktiivsed vestlused";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Loo grupivestlus";
 "peoplepicker.button.add_to_conversation" = "Lisa osalejaid";
 "peoplepicker.header.conversations" = "Grupid";
 "peoplepicker.header.team_conversations" = "%@ grupid";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "Kutsu rohkem inimesi";
 "peoplepicker.invite_team_members" = "Kutsu inimesi meeskonnaga liituma";
 "peoplepicker.quick-action.open-conversation" = "Ava";
+"peoplepicker.quick-action.create-conversation" = "Loo grupivestlus";
+"peoplepicker.quick-action.create-guest-room" = "Loo külalistetuba";
 "peoplepicker.quick-action.admin-services" = "Halda teenuseid";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -123,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "Kõik on arhiveeritud";
 "conversation_list.empty.no_contacts.message" = "Alusta vestlust või loo grupp.";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "Lemmikud";
-"conversation_list.filter.groups.title" = "Grupid";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "Eemalda";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Liitu";
@@ -139,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "On uusi sõnumeid.";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "Kontaktid";
 "conversation_list.bottom_bar.conversations.title" = "Vestlused";
+"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Arhiveeri";
-"conversation_list.bottom_bar.settings.title" = "Seaded";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "seadme kontaktides";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Kohale toimetatud";
 "content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Uudiskirja tellimine";
-"self.settings.receiveNews_and_offers.description.title" = "Soovin Wire'ilt uudiseid ja tooteuuendusi e-posti teel.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Vigane link.";
 "url_action.invalid_link.message" = "Avatud link ei ole sobiv.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Kas soovid saada Wire'i uudiseid ja tooteuuendusi e-posti teel?";
-"news_offers.consent.message" = "Saad igal ajal tellimuse lõpetada.";
-"news_offers.consent.button.privacy_policy.title" = "Privaatsuspoliitika";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

@@ -28,9 +28,6 @@ final class MockOTREntity: OTREntity {
     var shouldExpire: Bool = false
     var isExpired: Bool = false
     var shouldIgnoreTheSecurityLevelCheck: Bool = false
-    func expire() {
-        isExpired = true
-    }
     var expirationReasonCode: NSNumber?
 
     let messageData: Data
@@ -65,9 +62,22 @@ final class MockOTREntity: OTREntity {
         isFailedToSendUsers = true
     }
 
+    func expire(withReason reason: ExpirationReason) {
+        isExpired = true
+        expirationReasonCode = NSNumber(value: reason.rawValue)
+    }
+
 }
 
 extension MockOTREntity: ProteusMessage {
+    var targetRecipients: WireRequestStrategy.Recipients {
+        .conversationParticipants
+    }
+
+    func prepareMessageForSending() async throws {
+
+    }
+
     var debugInfo: String {
         "Mock ProteusMessage"
     }
@@ -78,6 +88,10 @@ extension MockOTREntity: ProteusMessage {
 
     func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
         return (Data("qualified".utf8), .doNotIgnoreAnyMissingClient)
+    }
+
+    var underlyingMessage: GenericMessage? {
+        return nil
     }
 
     func setExpirationDate() {

@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "次へ";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
 
+"general.guest-room-name" = "ゲストルーム";
+
 // User Cell
 "user_cell.title.you_suffix" = " (あなた)";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "名前またはユーザーネームで検索する";
 "peoplepicker.header.top_people" = "Top people";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "グループを作成";
 "peoplepicker.button.add_to_conversation" = "参加者を追加";
 "peoplepicker.header.conversations" = "グループ";
 "peoplepicker.header.team_conversations" = "%@ グループ";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "さらに招待する";
 "peoplepicker.invite_team_members" = "チームに招待する";
 "peoplepicker.quick-action.open-conversation" = "開く";
+"peoplepicker.quick-action.create-conversation" = "グループを作成します";
+"peoplepicker.quick-action.create-guest-room" = "ゲストルームを作成する";
 "peoplepicker.quick-action.admin-services" = "サービスを管理";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -123,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "全てアーカイブ済み";
 "conversation_list.empty.no_contacts.message" = "会話を開始またはグループを作成します。";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "お気に入り";
-"conversation_list.filter.groups.title" = "グループ";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "削除";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "参加する";
@@ -139,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "新しいメッセージ";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "連絡先";
 "conversation_list.bottom_bar.conversations.title" = "会話";
+"conversation_list.bottom_bar.folders.title" = "フォルダ";
 "conversation_list.bottom_bar.archived.title" = "アーカイブ";
-"conversation_list.bottom_bar.settings.title" = "設定";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "連絡先";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "配信済み";
 "content.system.message_read_timestamp" = "既読";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "利用状況に関する匿名のデータを送信";
 "self.settings.privacy_analytics_menu.description.title" = "使用データを使用すると、Wireはアプリがどのように使用されているかと、アプリがどのように改善されるかを理解することができます。 データは匿名であり、通信の内容(メッセージ、ファイル、通話など)は含まれません。";
-
-"self.settings.receiveNews_and_offers.title" = "ニュースレターを受け取る";
-"self.settings.receiveNews_and_offers.description.title" = "電子メールで Wireからニュースや製品アップデート情報を受け取る。";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "リンクが無効です";
 "url_action.invalid_link.message" = "あなたが開いたリンクは有効ではありません。";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "電子メールで Wireからニュースや製品アップデート情報を受け取りますか？";
-"news_offers.consent.message" = "購読解除はいつでもできます。";
-"news_offers.consent.button.privacy_policy.title" = "プライバシーポリシー";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

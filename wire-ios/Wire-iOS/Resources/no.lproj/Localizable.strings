@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Neste";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+"general.guest-room-name" = "Gjesterom";
+
 // User Cell
 "user_cell.title.you_suffix" = " (Du)";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Søk etter navn eller brukernavn";
 "peoplepicker.header.top_people" = "Topp folk";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Opprett gruppe";
 "peoplepicker.button.add_to_conversation" = "Add Participants";
 "peoplepicker.header.conversations" = "Grupper";
 "peoplepicker.header.team_conversations" = "%@ Grupper";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "Inviter andre";
 "peoplepicker.invite_team_members" = "Invitere folk til bli med på teamet";
 "peoplepicker.quick-action.open-conversation" = "Åpne";
+"peoplepicker.quick-action.create-conversation" = "Opprett gruppe";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Manage Services";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -123,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "Alt er arkivert";
 "conversation_list.empty.no_contacts.message" = "Start en samtale eller opprette en gruppe.";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "Favoritter";
-"conversation_list.filter.groups.title" = "Grupper";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "Fjern";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Bli med";
@@ -139,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Har nye meldinger.";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "Kontakter";
 "conversation_list.bottom_bar.conversations.title" = "Samtaler";
+"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Arkiver";
-"conversation_list.bottom_bar.settings.title" = "Innstillinger";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "i kontakter";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Levert";
 "content.system.message_read_timestamp" = "Sett";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Motta nyhetsbrev";
-"self.settings.receiveNews_and_offers.description.title" = "Motta nyheter og produktoppdateringer fra Wire via e-post.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Invalid link.";
 "url_action.invalid_link.message" = "The link you opened is not valid.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Do you want to receive news and product updates from Wire via email?";
-"news_offers.consent.message" = "You can unsubscribe at any time.";
-"news_offers.consent.button.privacy_policy.title" = "Personvernregler";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

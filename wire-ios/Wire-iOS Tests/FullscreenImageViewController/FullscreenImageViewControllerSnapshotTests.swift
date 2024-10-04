@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -32,7 +32,6 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
     // MARK: - setup
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
     }
@@ -43,23 +42,25 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
         snapshotHelper = nil
         sut = nil
         userSession = nil
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
+    @MainActor
     func testThatVeryLargeImageIsLoadedToImageView() {
         sut = createFullscreenImageViewControllerForTest(imageFileName: "20000x20000.gif", userSession: userSession)
 
         snapshotHelper.verify(matching: sut.view)
     }
 
+    @MainActor
     func testThatSmallImageIsCenteredInTheScreen() {
         sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
 
         snapshotHelper.verify(matching: sut.view)
     }
 
+    @MainActor
     func testThatSmallImageIsScaledToFitTheScreenAfterDoubleTapped() {
         // GIVEN
         sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
@@ -71,6 +72,7 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut.view)
     }
 
+    @MainActor
     func testThatImageIsDarkenWhenSelectedByMenu() {
         sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
 

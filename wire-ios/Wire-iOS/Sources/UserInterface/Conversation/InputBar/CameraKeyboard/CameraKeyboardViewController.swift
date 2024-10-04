@@ -77,28 +77,32 @@ class CameraKeyboardViewController: UIViewController {
     let goBackButton = IconButton()
     let cameraRollButton = IconButton()
 
-    let splitLayoutObservable: SplitLayoutObservable
+    // let splitLayoutObservable: SplitLayoutObservable
     weak var delegate: CameraKeyboardViewControllerDelegate?
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     // MARK: - Init
 
-    init(splitLayoutObservable: SplitLayoutObservable,
-         imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
-         permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy()) {
-        self.splitLayoutObservable = splitLayoutObservable
+    init(
+        // splitLayoutObservable: SplitLayoutObservable,
+        imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
+        permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy()
+    ) {
+        // TODO: fix
+        // self.splitLayoutObservable = splitLayoutObservable
         self.imageManagerType = imageManagerType
         self.assetLibrary = SecurityFlags.cameraRoll.isEnabled ? AssetLibrary() : nil
         self.permissions = permissions
         super.init(nibName: nil, bundle: nil)
         self.assetLibrary?.delegate = self
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(splitLayoutChanged(_:)),
-            name: NSNotification.Name.SplitLayoutObservableDidChangeToLayoutSize,
-            object: self.splitLayoutObservable
-        )
+        // TODO: fix
+        // NotificationCenter.default.addObserver(
+        //     self,
+        //     selector: #selector(splitLayoutChanged(_:)),
+        //     name: NSNotification.Name.SplitLayoutObservableDidChangeToLayoutSize,
+        //     object: splitLayoutObservable
+        // )
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(applicationDidBecomeActive(_:)),
@@ -166,11 +170,11 @@ class CameraKeyboardViewController: UIViewController {
         self.assetLibrary?.refetchAssets()
     }
 
-    @objc
-    func splitLayoutChanged(_ notification: Notification!) {
-        self.collectionViewLayout.invalidateLayout()
-        self.collectionView.reloadData()
-    }
+    // @objc
+    // func splitLayoutChanged(_ notification: Notification!) {
+    //     self.collectionViewLayout.invalidateLayout()
+    //     self.collectionView.reloadData()
+    // }
 
     // MARK: - Setup UI
 
@@ -208,18 +212,19 @@ class CameraKeyboardViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             goBackButton.widthAnchor.constraint(equalToConstant: 36),
             goBackButton.widthAnchor.constraint(equalTo: goBackButton.heightAnchor),
 
             goBackButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: sideMargin),
-            goBackButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(18 + UIScreen.safeArea.bottom)),
+            goBackButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -38),
 
             cameraRollButton.widthAnchor.constraint(equalToConstant: 36),
-            cameraRollButton.widthAnchor.constraint(equalTo: cameraRollButton.heightAnchor),
+            cameraRollButton.heightAnchor.constraint(equalToConstant: 36),
             cameraRollButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -sideMargin),
-            cameraRollButton.centerYAnchor.constraint(equalTo: goBackButton.centerYAnchor)])
+            cameraRollButton.bottomAnchor.constraint(equalTo: goBackButton.bottomAnchor)
+        ])
     }
 
     private func createCollectionView() {
@@ -516,12 +521,13 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 
     private var cameraCellSize: CGSize {
-        switch self.splitLayoutObservable.layoutSize {
-        case .compact:
-            return CGSize(width: self.view.bounds.size.width / 2, height: self.view.bounds.size.height)
-        case .regularPortrait, .regularLandscape:
-            return CGSize(width: self.splitLayoutObservable.leftViewControllerWidth, height: self.view.bounds.size.height)
-        }
+        // TODO: fix
+        // switch self.splitLayoutObservable.layoutSize {
+        // case .compact:
+            CGSize(width: view.bounds.size.width / 2, height: view.bounds.size.height)
+        // case .regularPortrait, .regularLandscape:
+        //     return CGSize(width: self.splitLayoutObservable.leftViewControllerWidth, height: self.view.bounds.size.height)
+        // }
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

@@ -17,40 +17,59 @@
 //
 
 import WireDataModel
+import WireMainNavigation
+import WireSettings
 
 @testable import Wire
 
-final class MockMainCoordinator: MainCoordinating {
+@MainActor
+final class MockMainCoordinator: MainCoordinatorProtocol {
 
-    func openConversation(
-        _ conversation: ZMConversation,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
+    typealias ConversationList = ConversationListViewController
+    typealias ConversationBuilder = ConversationViewControllerBuilder
+    typealias Settings = UIViewController
+    typealias SettingsContentBuilder = SettingsViewControllerBuilder
+
+    func showConversationList(conversationFilter: ConversationFilter?) {
         fatalError("Mock method not implemented")
     }
 
-    func openConversation<Message>(
-        _ conversation: ZMConversation,
-        scrollTo message: Message,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) where Message: ZMConversationMessage {
+    func showArchive() {
         fatalError("Mock method not implemented")
     }
 
-    func showConversationList() {
+    func showSettings() {
+        fatalError("Mock method not implemented")
+    }
+
+    func showConversation(conversationID: UUID) {
+        fatalError("Mock method not implemented")
+    }
+
+    func hideConversation() {
+        fatalError("Mock method not implemented")
+    }
+
+    func showSettingsContent(_: SettingsContentBuilder.TopLevelMenuItem) {
+        fatalError("Mock method not implemented")
+    }
+
+    func hideSettingsContent() {
         fatalError("Mock method not implemented")
     }
 
     func showSelfProfile() {
         fatalError("Mock method not implemented")
     }
+
+    func showConnect() {
+        fatalError("Mock method not implemented")
+    }
 }
 
-// MARK: - MainCoordinating + mock
+// MARK: - MainCoordinatorProtocol + MockMainCoordinator
 
-extension MainCoordinating where Self == MockMainCoordinator {
-
+extension MainCoordinatorProtocol where Self == MockMainCoordinator {
+    @MainActor
     static var mock: Self { .init() }
 }

@@ -55,6 +55,6 @@ public extension WireLogger {
     static let userClient = WireLogger(tag: "user-client")
     static let network = WireLogger(tag: "network")
     static let eventProcessing = WireLogger(tag: "event-processing")
-    static let safeFileContext = WireLogger(tag: "safe-file-context")
     static let messageProcessing = WireLogger(tag: "message-processing")
+    static let avs = WireLogger(tag: "avs")
 }

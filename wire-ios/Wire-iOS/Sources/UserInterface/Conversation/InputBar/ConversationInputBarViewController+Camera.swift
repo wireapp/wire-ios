@@ -23,8 +23,6 @@ import WireCommonComponents
 import WireReusableUIComponents
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "UI")
-
 final class StatusBarVideoEditorController: UIVideoEditorController {
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         return traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
@@ -34,10 +32,12 @@ final class StatusBarVideoEditorController: UIVideoEditorController {
 extension ConversationInputBarViewController: CameraKeyboardViewControllerDelegate {
 
     func createCameraKeyboardViewController() -> CameraKeyboardViewController {
-        guard let splitViewController = ZClientViewController.shared?.wireSplitViewController else {
+        guard let splitViewController = ZClientViewController.shared?.mainSplitViewController else {
             fatal("SplitViewController is not created")
         }
-        let cameraKeyboardViewController = CameraKeyboardViewController(splitLayoutObservable: splitViewController)
+        let cameraKeyboardViewController = CameraKeyboardViewController(
+            // splitLayoutObservable: SplitViewControllerObserver(splitViewController: splitViewController)
+        )
         cameraKeyboardViewController.delegate = self
 
         self.cameraKeyboardViewController = cameraKeyboardViewController
@@ -78,17 +78,19 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     }
             }
         } else {
-            let context = ConfirmAssetViewController.Context(asset: .video(url: videoURL),
-                                                             onConfirm: { [unowned self] _ in
-                                                                            self.dismiss(animated: true)
-                                                                            self.uploadFile(at: videoURL)
-                                                                            },
-                                                             onCancel: { [unowned self] in
-                                                                            self.dismiss(animated: true) {
-                                                                                self.mode = .camera
-                                                                                self.inputBar.textView.becomeFirstResponder()
-                                                                            }
-                                                            })
+            let context = ConfirmAssetViewController.Context(
+                asset: .video(url: videoURL),
+                onConfirm: { [unowned self] _ in
+                    self.dismiss(animated: true)
+                    self.uploadFile(at: videoURL)
+                },
+                onCancel: { [unowned self] in
+                    self.dismiss(animated: true) {
+                        self.mode = .camera
+                        self.inputBar.textView.becomeFirstResponder()
+                    }
+                }
+            )
             let confirmVideoViewController = ConfirmAssetViewController(context: context)
             confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback
 
@@ -107,7 +109,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     @objc
     func image(_ image: UIImage?, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
         if let error {
-            zmLog.error("didFinishSavingWithError: \(error)")
+            WireLogger.ui.error("didFinishSavingWithError: \(error)")
         }
     }
 
@@ -115,7 +117,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     @objc
     func video(_ image: UIImage?, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
         if let error {
-            zmLog.error("Error saving video: \(error)")
+            WireLogger.ui.error("Error saving video: \(error)")
         }
     }
 
@@ -248,7 +250,7 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
     func videoEditorController(_ editor: UIVideoEditorController,
                                didFailWithError error: Error) {
         editor.dismiss(animated: true, completion: .none)
-        zmLog.error("Video editor failed with error: \(error)")
+        WireLogger.ui.error("Video editor failed with error: \(error)")
     }
 }
 

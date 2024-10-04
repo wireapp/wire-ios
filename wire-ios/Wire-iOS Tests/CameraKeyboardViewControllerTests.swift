@@ -18,9 +18,8 @@
 
 import AVFoundation
 import Photos
-import SnapshotTesting
 import WireDesign
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -48,13 +47,6 @@ final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControll
     func cameraKeyboardViewController(_ controller: CameraKeyboardViewController, didSelectImageData: Data, isFromCamera: Bool, uti: String?) {
         cameraKeyboardViewControllerDidSelectImageDataHitCount += 1
     }
-}
-
-// MARK: - SplitLayoutObservableMock
-
-final class SplitLayoutObservableMock: NSObject, SplitLayoutObservable {
-    var layoutSize: SplitViewControllerLayoutSize = .compact
-    var leftViewControllerWidth: CGFloat = 0
 }
 
 // MARK: - MockAssetLibrary
@@ -106,7 +98,6 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     private var sut: CameraKeyboardViewController!
-    private var splitView: SplitLayoutObservableMock!
     private var delegateMock: CameraKeyboardViewControllerDelegateMock!
     fileprivate var mockAssetLibrary: MockAssetLibrary!
     fileprivate var mockImageManager: MockImageManager!
@@ -115,10 +106,10 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
         snapshotHelper = SnapshotHelper()
         mockAssetLibrary = MockAssetLibrary(photoLibrary: MockPhotoLibrary())
         mockImageManager = MockImageManager()
-        splitView = SplitLayoutObservableMock()
         delegateMock = CameraKeyboardViewControllerDelegateMock()
     }
 
@@ -127,7 +118,6 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        splitView = nil
         delegateMock = nil
         mockAssetLibrary = nil
         mockImageManager = nil
@@ -162,16 +152,20 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
     }
 
     private func setupSut(permissions: PhotoPermissionsController) {
-        sut = CameraKeyboardViewController(splitLayoutObservable: splitView,
-                                           permissions: permissions)
+        sut = CameraKeyboardViewController(
+            // splitLayoutObservable: splitView,
+            permissions: permissions
+        )
     }
 
     // MARK: - Tests
 
     func testWithCallingOverlay() {
         let permissions = MockPhotoPermissionsController(camera: true, library: true)
-        sut = CallingMockCameraKeyboardViewController(splitLayoutObservable: splitView,
-                                                      permissions: permissions)
+        sut = CallingMockCameraKeyboardViewController(
+            // splitLayoutObservable: splitView,
+            permissions: permissions
+        )
 
         snapshotHelper.verify(matching: prepareForSnapshot())
     }
@@ -216,7 +210,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                testName: String = #function,
                                                line: UInt = #line) {
         // GIVEN
-        splitView?.layoutSize = .compact
+        // splitView?.layoutSize = .compact
         // WHEN
         setupSut(permissions: permissions)
         // THEN
@@ -267,8 +261,8 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                        testName: String = #function,
                                                        line: UInt = #line) {
         // GIVEN
-        splitView?.layoutSize = .regularPortrait
-        splitView?.leftViewControllerWidth = 216
+        // splitView?.layoutSize = .regularPortrait
+        // splitView?.leftViewControllerWidth = 216
         // WHEN
         setupSut(permissions: permissions)
         // THEN
@@ -319,8 +313,8 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                 testName: String = #function,
                                                 line: UInt = #line) {
         // GIVEN
-        splitView?.layoutSize = .regularLandscape
-        splitView?.leftViewControllerWidth = 216
+        // splitView?.layoutSize = .regularLandscape
+        // splitView?.leftViewControllerWidth = 216
         // WHEN
         setupSut(permissions: permissions)
         // THEN
@@ -366,7 +360,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                        testName: String = #function,
                                                        line: UInt = #line) {
         // GIVEN
-        self.splitView?.layoutSize = .compact
+        // self.splitView?.layoutSize = .compact
         setupSut(permissions: permissions)
         self.prepareForSnapshot()
         // WHEN
@@ -417,7 +411,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                        testName: String = #function,
                                                        line: UInt = #line) {
         // GIVEN
-        splitView?.layoutSize = .compact
+        // splitView?.layoutSize = .compact
         setupSut(permissions: permissions)
         prepareForSnapshot()
         // WHEN

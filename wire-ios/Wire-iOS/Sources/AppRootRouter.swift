@@ -375,7 +375,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        replaceRootViewController(by: authenticatedRouter.viewController, completion: completion)
+        replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
@@ -480,7 +480,8 @@ extension AppRootRouter {
     }
 
     private func resetSelfUserProviderIfNeeded(for appState: AppState) {
-        guard AppDelegate.shared.shouldConfigureSelfUserProvider else { return }
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              appDelegate.shouldConfigureSelfUserProvider else { return }
 
         switch appState {
         case .authenticated: break
@@ -490,7 +491,8 @@ extension AppRootRouter {
     }
 
     private func configureSelfUserProviderIfNeeded(for appState: AppState) {
-        guard AppDelegate.shared.shouldConfigureSelfUserProvider else { return }
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              appDelegate.shouldConfigureSelfUserProvider else { return }
 
         if case .authenticated = appState {
             SelfUser.provider = ZMUserSession.shared()

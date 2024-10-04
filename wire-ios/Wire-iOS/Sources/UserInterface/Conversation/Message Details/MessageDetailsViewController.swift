@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireSyncEngine
 
 /**
@@ -91,7 +92,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
     convenience init(
         message: ZMConversationMessage,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.init(
             message: message,
@@ -113,7 +114,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         message: ZMConversationMessage,
         preferredDisplayMode: MessageDetailsDisplayMode,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.message = message
         self.dataSource = MessageDetailsDataSource(message: message)
@@ -182,7 +183,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         topBar.delegate = self
         topBar.needsSeparator = false
         topBar.backgroundColor = SemanticColors.View.backgroundDefault
-        topBar.configure(title: dataSource.title, subtitle: nil, topAnchor: safeTopAnchor)
+        topBar.configure(title: dataSource.title, subtitle: nil, topAnchor: view.safeAreaLayoutGuide.topAnchor)
         reloadFooters()
 
         // Configure the content

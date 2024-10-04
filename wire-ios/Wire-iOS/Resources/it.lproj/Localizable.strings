@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Avanti";
@@ -41,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+"general.guest-room-name" = "Stanza degli ospiti";
+
 // User Cell
 "user_cell.title.you_suffix" = " (Tu)";
 
@@ -49,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Ricerca per nome o username";
 "peoplepicker.header.top_people" = "Più contattati";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Crea gruppo";
 "peoplepicker.button.add_to_conversation" = "Aggiungi partecipanti";
 "peoplepicker.header.conversations" = "Gruppi";
 "peoplepicker.header.team_conversations" = "%@ Gruppi";
@@ -100,6 +104,8 @@
 "peoplepicker.invite_more_people" = "Invita più persone";
 "peoplepicker.invite_team_members" = "Invita altre persone ad unirsi al team";
 "peoplepicker.quick-action.open-conversation" = "Apri";
+"peoplepicker.quick-action.create-conversation" = "Crea gruppo";
+"peoplepicker.quick-action.create-guest-room" = "Crea stanza degli ospiti";
 "peoplepicker.quick-action.admin-services" = "Gestisci servizi";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -123,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "Tutto archiviato";
 "conversation_list.empty.no_contacts.message" = "Inizia una conversazione\no crea un gruppo.";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "Preferiti";
-"conversation_list.filter.groups.title" = "Gruppi";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "Rimuovi";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Entra";
@@ -139,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Ha nuovi messaggi.";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "Contatti";
 "conversation_list.bottom_bar.conversations.title" = "Conversazioni";
+"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Archivia";
-"conversation_list.bottom_bar.settings.title" = "Impostazioni";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contatti";
@@ -514,6 +514,7 @@
 "content.system.message_delivered_timestamp" = "Consegnato";
 "content.system.message_read_timestamp" = "Letto";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1158,11 +1159,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Inviare dati di utilizzo anonimi";
 "self.settings.privacy_analytics_menu.description.title" = "I dati di utilizzo permettono a Wire di capire come l'applicazione viene utilizzata e come può essere migliorata. I dati sono anonimi e non includono il contenuto delle vostre comunicazioni (come messaggi, file o chiamate).";
-
-"self.settings.receiveNews_and_offers.title" = "Ricevi newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Ricevi notizie e aggiornamenti da Wire via email.";
-
-
 
 // Change Username
 
@@ -1924,13 +1920,6 @@
 
 "url_action.invalid_link.title" = "Link non valido.";
 "url_action.invalid_link.message" = "Il link che hai aperto non è valido.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Vuoi ricevere notizie e aggiornamenti da Wire via email?";
-"news_offers.consent.message" = "Puoi disdire in qualsiasi momento.";
-"news_offers.consent.button.privacy_policy.title" = "Informativa sulla privacy";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

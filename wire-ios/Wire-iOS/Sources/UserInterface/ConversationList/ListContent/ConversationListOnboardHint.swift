@@ -26,7 +26,6 @@ final class ConversationListOnboardingHint: UIView {
     let arrowView = UIImageView()
 
     override init(frame: CGRect) {
-
         super.init(frame: frame)
 
         arrowView.setTemplateIcon(.longDownArrow, size: .large)

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireSettings
 
 protocol IconActionCellDelegate: AnyObject {
     func updateLayout()
@@ -71,6 +72,8 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
     var identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
+
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? { nil }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
         UIPasteboard.general.string = title

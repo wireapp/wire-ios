@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
@@ -95,7 +96,7 @@ final class ConversationContentViewController: UIViewController {
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: any MainCoordinatorProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
@@ -115,7 +116,7 @@ final class ConversationContentViewController: UIViewController {
         message: ZMConversationMessage? = nil,
         mediaPlaybackManager: MediaPlaybackManager?,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
@@ -415,19 +416,21 @@ final class ConversationContentViewController: UIViewController {
     // MARK: - MediaPlayer
     /// Update media bar visiblity
     private func updateMediaBar() {
-        let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let mediaPlayingMessage = appDelegate.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage else {
+            return
+        }
 
-        if let mediaPlayingMessage,
-           mediaPlayingMessage.conversationLike === conversation,
+        if mediaPlayingMessage.conversationLike === conversation,
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.delegate?.conversationContentViewController(self, didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            }
         } else {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.delegate?.conversationContentViewController(self, willDisplayActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            }
         }
     }
 

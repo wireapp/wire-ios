@@ -63,8 +63,11 @@ class CallQualityController: NSObject {
         #if DISABLE_CALL_QUALITY_SURVEY
         return false
         #else
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return false
+        }
         return !AutomationHelper.sharedHelper.disableCallQualitySurvey
-            && AppDelegate.shared.launchType != .unknown
+            && appDelegate.launchType != .unknown
         #endif
     }
 
@@ -89,7 +92,7 @@ class CallQualityController: NSObject {
 
     private func handleCallCompletion(in conversation: ZMConversation, reason: CallClosedReason, eventDate: Date) {
         // Check for the call start date (do not show feedback for unanswered calls)
-        guard let callStartDate = answeredCalls[conversation.remoteIdentifier!] else {
+        guard let callStartDate = answeredCalls[conversation.remoteIdentifier!], let rootViewController = mainWindow.rootViewController else {
             return
         }
 

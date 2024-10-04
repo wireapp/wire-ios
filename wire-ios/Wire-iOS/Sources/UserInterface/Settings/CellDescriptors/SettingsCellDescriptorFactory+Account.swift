@@ -68,10 +68,14 @@ extension SettingsCellDescriptorFactory {
 
         sections.append(signOutSection())
 
-        return SettingsGroupCellDescriptor(items: sections,
-                                           title: L10n.Localizable.Self.Settings.accountSection,
-                                           icon: .personalProfile,
-                                           accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: sections,
+            title: L10n.Localizable.Self.Settings.accountSection,
+            icon: .personalProfile,
+            accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
+            settingsTopLevelMenuItem: .account,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
     // MARK: - Sections
@@ -210,7 +214,8 @@ extension SettingsCellDescriptorFactory {
                     return ChangeEmailViewController(
                         user: selfUser,
                         userSession: userSession,
-                        useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
+                        useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+                        settingsCoordinator: settingsCoordinator
                     )
                 },
                 previewGenerator: { _ in
@@ -234,7 +239,12 @@ extension SettingsCellDescriptorFactory {
     ) -> SettingsCellDescriptorType {
         typealias AccountSection = L10n.Localizable.Self.Settings.AccountSection
         if enabled {
-            let presentation = { ChangeHandleViewController(useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView) }
+            let presentation = {
+                ChangeHandleViewController(
+                    useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+                    settingsCoordinator: settingsCoordinator
+                )
+            }
 
             if let selfUser = ZMUser.selfUser(), selfUser.handle != nil {
 
@@ -298,7 +308,9 @@ extension SettingsCellDescriptorFactory {
             text: L10n.Localizable.`Self`.Settings.AccountPictureGroup.picture.capitalized,
             previewGenerator: previewGenerator,
             presentationStyle: .alert,
-            presentationAction: presentationAction)
+            presentationAction: presentationAction,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
     private func colorElement() -> SettingsCellDescriptorType {
@@ -306,7 +318,8 @@ extension SettingsCellDescriptorFactory {
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
             previewGenerator: colorElementPreviewGenerator,
             presentationStyle: .navigation,
-            presentationAction: colorElementPresentationAction
+            presentationAction: colorElementPresentationAction,
+            settingsCoordinator: settingsCoordinator
         )
     }
 

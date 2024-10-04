@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -54,7 +54,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
-    // MARK: - Seen
+    @MainActor
     func testThatItShowsReceipts_ShortList_11() {
         // GIVEN
         conversation = createGroupConversation()
@@ -80,6 +80,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsReceipts_ShortList_Edited_11() {
         // GIVEN
         conversation = createGroupConversation()
@@ -107,6 +108,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsReceipts_LongList_12() {
         // GIVEN
         conversation = createGroupConversation()
@@ -133,6 +135,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsLikes_13() {
         // GIVEN
         conversation = createGroupConversation()
@@ -160,6 +163,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsDifferentReactions() {
         // GIVEN
         conversation = createGroupConversation()
@@ -193,6 +197,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
 
     // MARK: - Empty State
 
+    @MainActor
     func testThatItShowsNoLikesEmptyState_14() {
         // GIVEN
         conversation = createGroupConversation()
@@ -211,6 +216,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsNoReceiptsEmptyState_DisabledInConversation_15() {
         // GIVEN
         conversation = createGroupConversation()
@@ -230,6 +236,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsNoReceiptsEmptyState_EnabledInConversation_16() {
         // GIVEN
         conversation = createGroupConversation()
@@ -249,6 +256,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsBothTabs_WhenMessageIsSeenButNotLiked() {
         // GIVEN
         conversation = createGroupConversation()
@@ -272,6 +280,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
 
     // MARK: - Non-Combined Scenarios
 
+    @MainActor
     func testThatItShowsReceiptsOnly_Ephemeral() {
         // GIVEN
         conversation = createGroupConversation()
@@ -290,6 +299,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsLikesOnly_FromSelf_Consumer_17() {
         // GIVEN
         conversation = createGroupConversation()
@@ -306,6 +316,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsLikesOnly_FromOther_Team_17() {
         // GIVEN
         conversation = createGroupConversation()
@@ -322,6 +333,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    @MainActor
     func testThatItShowsReceiptsOnly_Pings() {
         // GIVEN
         conversation = createGroupConversation()
@@ -340,6 +352,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
 
     // MARK: - Deallocation
 
+    @MainActor
     func testThatItDeallocates() {
         verifyDeallocation { () -> MessageDetailsViewController in
             // GIVEN

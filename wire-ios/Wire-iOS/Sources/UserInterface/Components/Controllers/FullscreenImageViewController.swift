@@ -19,6 +19,7 @@
 import FLAnimatedImage
 import UIKit
 import WireDesign
+import WireMainNavigation
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -78,7 +79,7 @@ final class FullscreenImageViewController: UIViewController {
     private var isShowingChrome = true
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: any MainCoordinatorProtocol
 
     private var messageObserverToken: NSObjectProtocol?
 
@@ -91,7 +92,7 @@ final class FullscreenImageViewController: UIViewController {
     init(
         message: ZMConversationMessage,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.message = message
         self.userSession = userSession

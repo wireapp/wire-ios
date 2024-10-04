@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 
 @testable import WireAPI
 
 final class SelfUserAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<SelfUserAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any SelfUserAPI>!
 
     // MARK: - Setup
 
@@ -249,7 +248,7 @@ extension SelfUserAPITests {
 }
 
 private extension APIVersion {
-    func buildAPI(client: any HTTPClient) -> SelfUserAPI {
+    func buildAPI(client: any HTTPClient) -> any SelfUserAPI {
         let builder = SelfUserAPIBuilder(httpClient: client)
         return builder.makeAPI(for: self)
     }

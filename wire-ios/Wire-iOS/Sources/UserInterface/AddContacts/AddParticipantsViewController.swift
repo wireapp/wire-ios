@@ -490,6 +490,7 @@ extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate
 }
 
 extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
+
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnUser user: UserType, indexPath: IndexPath, section: SearchResultsViewControllerSection) {
         // no-op
     }
@@ -523,7 +524,6 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
         navigationController?.pushViewController(detail, animated: true)
     }
-
 }
 
 extension AddParticipantsViewController: EmptySearchResultsViewDelegate {

@@ -32,12 +32,6 @@ public enum ZMDeliveryState: UInt {
 }
 
 @objc
-public enum MessageSendFailure: Int {
-    case unknown
-    case federationRemoteError
-}
-
-@objc
 public protocol ReadReceipt {
 
     @available(*, deprecated, message: "Use `userType` instead")
@@ -50,9 +44,10 @@ public protocol ReadReceipt {
 
 @objc
 public protocol ZMConversationMessage: NSObjectProtocol {
+    typealias MessageID = UUID
 
     /// Unique identifier for the message
-    var nonce: UUID? { get }
+    var nonce: MessageID? { get }
 
     /// The user who sent the message (internal)
     @available(*, deprecated, message: "Use `senderUser` instead")
@@ -173,8 +168,8 @@ public protocol ConversationCompositeMessage {
 
 public protocol SwiftConversationMessage {
 
-    /// Reason why the message has not been sent
-    var failedToSendReason: MessageSendFailure? { get }
+    /// The reason `self` was expired.
+    var expirationReason: ExpirationReason? { get }
 
     /// The list of users who didn't receive the message (e.g their backend is offline)
     var failedToSendUsers: [UserType] { get }

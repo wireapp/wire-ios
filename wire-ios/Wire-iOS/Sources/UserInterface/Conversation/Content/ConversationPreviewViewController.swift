@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireMainNavigation
 import WireSyncEngine
 
 final class ConversationPreviewViewController: UIViewController {
@@ -30,7 +31,7 @@ final class ConversationPreviewViewController: UIViewController {
         presentingViewController: UIViewController,
         sourceView: UIView,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.conversation = conversation
         actionController = ConversationActionController(

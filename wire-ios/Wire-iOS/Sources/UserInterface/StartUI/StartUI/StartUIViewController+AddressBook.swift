@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireMainNavigation
 
 extension StartUIViewController {
 
@@ -49,7 +50,7 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
             // TODO: [WPB-9728] actually it should point to the right top corner, where the new conversation button is
             var tabItemFrame = tabBarController.tabBar.bounds
             tabItemFrame.size.width /= CGFloat(tabBarController.tabBar.items?.count ?? 1)
-            tabItemFrame.origin.x = CGFloat(MainTabBarControllerTab.conversations.rawValue) * tabItemFrame.size.width
+            tabItemFrame.origin.x = CGFloat(MainTabBarControllerContent.conversations.rawValue) * tabItemFrame.size.width
             tabBarController.presentInviteActivityViewController(
                 popoverPresentationConfiguration: .sourceView(
                     sourceView: tabBarController.tabBar,

@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -54,6 +53,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Helper method
 
+    @MainActor
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
 
         let createSut: () -> UIViewController = {
@@ -70,6 +70,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
+    @MainActor
     func testSelfUserUnderLegalHold() {
         // GIVEN
         let conversation = MockGroupDetailsConversation()
@@ -101,6 +102,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             )
     }
 
+    @MainActor
     func testOtherUserUnderLegalHold() {
         // GIVEN
         let conversation = MockGroupDetailsConversation()

@@ -89,12 +89,20 @@ extension UIApplication: ApplicationProtocol {
         (currentResponder as? UIView)?.endEditing(true)
 
         let alert = UIAlertController.cameraPermissionAlert(completion: completion)
-        AppDelegate.shared.mainWindow.rootViewController?.present(alert, animated: true)
+
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let rootViewController = appDelegate.mainWindow.rootViewController {
+            rootViewController.present(alert, animated: true)
+        }
     }
 
     private class func wr_warnAboutMicrophonePermission() {
         let alert = UIAlertController.microphonePermissionAlert
-        AppDelegate.shared.mainWindow.rootViewController?.present(alert, animated: true)
+
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let rootViewController = appDelegate.mainWindow.rootViewController {
+            rootViewController.present(alert, animated: true)
+        }
     }
 
     private class func wr_warnAboutPhotoLibraryRestricted() {
@@ -108,11 +116,18 @@ extension UIApplication: ApplicationProtocol {
             style: .cancel
         ))
 
-        AppDelegate.shared.mainWindow.rootViewController?.present(alert, animated: true)
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let rootViewController = appDelegate.mainWindow.rootViewController {
+            rootViewController.present(alert, animated: true)
+        }
     }
 
     private class func wr_warnAboutPhotoLibaryDenied() {
         let alert = UIAlertController.photoLibraryPermissionAlert
-        AppDelegate.shared.mainWindow.rootViewController?.present(alert, animated: true)
+
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let rootViewController = appDelegate.mainWindow.rootViewController {
+            rootViewController.present(alert, animated: true)
+        }
     }
 }
