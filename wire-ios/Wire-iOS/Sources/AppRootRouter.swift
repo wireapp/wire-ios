@@ -202,7 +202,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         switch appState {
         case .retryStart:
-            retryStart { _ in completion() }
+            retryStart(completion: completion)
         case .blacklisted(reason: let reason):
             showBlacklisted(reason: reason, completion: completion)
         case .jailbroken:
@@ -270,9 +270,7 @@ extension AppRootRouter {
     // MARK: - Navigation Helpers
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions) { _ in
-                // TODO: delete this completion? Is the tracking manager needed anymore
-            }
+            self?.sessionManager.start(launchOptions: launchOptions)
         }
     }
 
@@ -394,15 +392,11 @@ extension AppRootRouter {
         )
     }
 
-    private func retryStart(completion: @escaping (Bool) -> Void) {
-        guard let launchOptions = lastLaunchOptions else {
-            return completion(false)
-        }
-
+    private func retryStart(completion: @escaping () -> Void) {
+        guard let launchOptions = lastLaunchOptions else { return }
+        completion()
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions) { success in
-                completion(success)
-            }
+            self?.sessionManager.start(launchOptions: launchOptions)
         }
     }
 

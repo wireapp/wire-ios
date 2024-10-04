@@ -135,27 +135,26 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         testSessionManager.authenticatedSessionFactory = authenticatedSessionFactory
 
-        testSessionManager.start(launchOptions: [:]) { [self] _ in
-            testSessionManager.loadSession(for: account) { userSession in
-                XCTAssertNotNil(userSession)
-                sessionManagerExpectation.fulfill()
-            }
+        testSessionManager.start(launchOptions: [:])
 
-            // THEN
-            waitForExpectations(timeout: 0.5)
-
-            XCTAssertNotNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
-
-            // WHEN
-            NotificationCenter.default.post(name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
-
-            // THEN
-            XCTAssertNotNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
-
-            // CLEANUP
-            testSessionManager.tearDownAllBackgroundSessions()
+        testSessionManager.loadSession(for: account) { userSession in
+            XCTAssertNotNil(userSession)
+            sessionManagerExpectation.fulfill()
         }
 
+        // THEN
+        waitForExpectations(timeout: 0.5)
+
+        XCTAssertNotNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
+
+        // WHEN
+        NotificationCenter.default.post(name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+
+        // THEN
+        XCTAssertNotNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
+
+        // CLEANUP
+        testSessionManager.tearDownAllBackgroundSessions()
     }
 
     func testThatItUnloadBackgroundUserSessionFromMemoryWarning() {
@@ -196,27 +195,26 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         )
 
         testSessionManager.authenticatedSessionFactory = authenticatedSessionFactory
-        testSessionManager.start(launchOptions: [:]) { _ in
-            testSessionManager.withSession(for: account) { userSession in
-                XCTAssertNotNil(userSession)
-                sessionManagerExpectation.fulfill()
-            }
+        testSessionManager.start(launchOptions: [:])
 
-            // THEN
-            XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
-
-            XCTAssertNotNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
-
-            // WHEN
-            NotificationCenter.default.post(name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
-
-            // THEN
-            XCTAssertNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
-
-            // CLEANUP
-            testSessionManager.tearDownAllBackgroundSessions()
+        testSessionManager.withSession(for: account) { userSession in
+            XCTAssertNotNil(userSession)
+            sessionManagerExpectation.fulfill()
         }
-
+        
+        // THEN
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        
+        XCTAssertNotNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
+        
+        // WHEN
+        NotificationCenter.default.post(name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+        
+        // THEN
+        XCTAssertNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
+        
+        // CLEANUP
+        testSessionManager.tearDownAllBackgroundSessions()
     }
 
     func prepareSession(for account: Account) {
