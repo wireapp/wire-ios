@@ -20,7 +20,7 @@ import Foundation
 
 /// A Proteus client prekey used to establish a Proteus session.
 
-public struct Prekey: Equatable, Codable {
+public struct Prekey: Equatable, Codable, Sendable {
 
     /// The prekey id.
 

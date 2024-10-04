@@ -23,8 +23,8 @@ import XCTest
 
 final class UserPropertiesDeleteEventProcessorTests: XCTestCase {
 
-    var sut: UserPropertiesDeleteEventProcessor!
-    var userRepository: MockUserRepositoryProtocol!
+    private var sut: UserPropertiesDeleteEventProcessor!
+    private var userRepository: MockUserRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()

@@ -20,13 +20,13 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// sourcery: AutoMockable
 /// Facilitate access to team related domain objects.
 ///
 /// A repository provides an abstraction for the access and storage
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
-
-protocol TeamRepositoryProtocol {
+public protocol TeamRepositoryProtocol {
 
     /// Pull self team metadata from the server and store locally.
 
