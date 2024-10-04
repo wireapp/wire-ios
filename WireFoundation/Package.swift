@@ -13,7 +13,7 @@ let package = Package(
         .plugin(name: "SnapshotTestReferenceDirectoryPlugin", targets: ["SnapshotTestReferenceDirectoryPlugin"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../SourceryPlugin")
     ],

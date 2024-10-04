@@ -18,7 +18,7 @@ let package = Package(
         .library(name: "WireMainNavigation", targets: ["WireMainNavigation"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.2.0"),
+        .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.1.0"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
