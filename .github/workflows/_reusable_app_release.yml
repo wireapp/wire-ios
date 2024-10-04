@@ -200,8 +200,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          #dowland dep
-          #r
       - name: Run setup
         run: sh ./setup.sh
       - name: Configure AWS Credentials
@@ -212,6 +210,8 @@ jobs:
           aws-region: eu-west-1
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
+        env:
+          HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
       - name: Archiving Logs
         uses: actions/upload-artifact@v4
         if: failure()
