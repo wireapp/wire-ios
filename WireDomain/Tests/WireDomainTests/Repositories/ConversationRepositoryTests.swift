@@ -241,6 +241,93 @@ class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
     }
 
+    func testRemoveFromConversations_It_Appends_A_System_Message_To_All_Team_Conversations_When_A_Member_Leave() async throws {
+        // Given
+
+        let user = try await context.perform { [self] in
+            let (team, users, _) = modelHelper.createTeam(
+                id: Scaffolding.teamID,
+                withMembers: [Scaffolding.userID],
+                inGroupConversation: Scaffolding.teamConversationID,
+                context: context
+            )
+
+            let otherConversation = modelHelper.createGroupConversation(
+                id: Scaffolding.anotherTeamConversationID,
+                with: users,
+                team: team,
+                domain: nil,
+                in: context
+            )
+
+            let anotherConversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                with: Set(users),
+                domain: nil,
+                in: context
+            )
+
+            let user = try XCTUnwrap(users.first)
+            let member = try XCTUnwrap(team.members.first)
+            XCTAssertEqual(user.membership, member)
+
+            return user
+        }
+
+        let timestamp = Scaffolding.date(from: Scaffolding.time)
+
+        // When
+
+        await sut.removeFromConversations(user: user, removalDate: timestamp)
+
+        // Then
+
+        try await context.perform { [self] in
+
+            let user = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context), "No User")
+            XCTAssertNotNil(Team.fetch(with: Scaffolding.teamID, in: context))
+
+            let teamConversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.teamConversationID, in: context), "No Team Conversation")
+
+            let teamAnotherConversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.anotherTeamConversationID, in: context), "No Team Conversation")
+
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.conversationID, in: context), "No Conversation")
+
+            try checkLastMessage(
+                in: teamConversation,
+                isLeaveMessageFor: user,
+                at: timestamp
+            )
+
+            try checkLastMessage(
+                in: teamAnotherConversation,
+                isLeaveMessageFor: user,
+                at: timestamp
+            )
+
+            let lastMessage = try XCTUnwrap(conversation.lastMessage as? ZMSystemMessage)
+            XCTAssertNotEqual(lastMessage.systemMessageType, .teamMemberLeave, "Should not append leave message to regular conversation")
+        }
+    }
+
+    private func checkLastMessage(
+        in conversation: ZMConversation,
+        isLeaveMessageFor user: ZMUser,
+        at timestamp: Date
+    ) throws {
+        let lastMessage = try XCTUnwrap(conversation.lastMessage as? ZMSystemMessage, "Last message is not system message")
+
+        XCTAssertEqual(lastMessage.systemMessageType, .teamMemberLeave, "System message is not teamMemberLeave: but '\(lastMessage.systemMessageType.rawValue)")
+
+        let serverTimeStamp = try XCTUnwrap(lastMessage.serverTimestamp, "System message should have timestamp")
+
+        XCTAssertEqual(
+            serverTimeStamp.timeIntervalSince1970,
+            timestamp.timeIntervalSince1970,
+            accuracy: 0.1
+        )
+    }
+
 }
 
 extension ConversationRepositoryTests {
@@ -292,7 +379,18 @@ extension ConversationRepositoryTests {
     }
 
     private enum Scaffolding {
-        static let conversationList = ConversationList(
+        static let teamID = UUID()
+        static let userID = UUID()
+        static let time = "2021-05-12T10:52:02.671Z"
+        static let teamConversationID = UUID()
+        static let anotherTeamConversationID = UUID()
+        static let conversationID = UUID()
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
+        nonisolated(unsafe) static let conversationList = ConversationList(
             found: [conversationSelfType,
                     conversationGroupType,
                     conversationConnectionType,
@@ -301,7 +399,7 @@ extension ConversationRepositoryTests {
             failed: [conversationFailed]
         )
 
-        static let conversationListError = ConversationList(
+        nonisolated(unsafe) static let conversationListError = ConversationList(
             found: [conversationSelfTypeMissingId,
                     conversationGroupType,
                     conversationConnectionType,
@@ -433,8 +531,6 @@ extension ConversationRepositoryTests {
         )
 
         static let selfUserId = UUID()
-
-        static let userID = UUID()
 
         static let domain = "domain.com"
     }

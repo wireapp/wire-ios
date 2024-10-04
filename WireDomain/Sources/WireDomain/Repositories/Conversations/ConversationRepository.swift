@@ -51,6 +51,17 @@ public protocol ConversationRepositoryProtocol {
     func fetchMLSConversation(
         with groupID: String
     ) async -> ZMConversation?
+
+    /// Removes a given user from all conversations.
+    ///
+    /// - parameters:
+    ///     - user: The user to remove from the conversations.
+    ///     - removalDate: The date the user was removed from the conversations.
+
+    func removeFromConversations(
+        user: ZMUser,
+        removalDate: Date
+    ) async
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -163,4 +174,15 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             with: mlsGroupID
         )
     }
+
+    public func removeFromConversations(
+        user: ZMUser,
+        removalDate: Date
+    ) async {
+        await conversationsLocalStore.removeFromConversations(
+            user: user,
+            removalDate: removalDate
+        )
+    }
+
 }

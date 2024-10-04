@@ -66,6 +66,17 @@ public protocol ConversationLocalStoreProtocol {
     func fetchMLSConversation(
         with groupID: WireDataModel.MLSGroupID
     ) async -> ZMConversation?
+
+    /// Removes a given user from all conversations.
+    ///
+    /// - parameters:
+    ///     - user: The user to remove from the conversations.
+    ///     - removalDate: The date the user was removed from the conversations.
+
+    func removeFromConversations(
+        user: ZMUser,
+        removalDate: Date
+    ) async
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -192,6 +203,39 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 with: groupID,
                 in: context
             )
+        }
+    }
+
+    public func removeFromConversations(
+        user: ZMUser,
+        removalDate: Date
+    ) async {
+        await context.perform {
+            let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
+                guard $0.conversation?.conversationType == .group else {
+                    return nil
+                }
+                return $0.conversation
+            }
+
+            for conversation in allGroupConversations {
+                if user.isTeamMember, conversation.team == user.team {
+                    conversation.appendTeamMemberRemovedSystemMessage(
+                        user: user,
+                        at: removalDate
+                    )
+                } else {
+                    conversation.appendParticipantRemovedSystemMessage(
+                        user: user,
+                        at: removalDate
+                    )
+                }
+
+                conversation.removeParticipantAndUpdateConversationState(
+                    user: user,
+                    initiatingUser: user
+                )
+            }
         }
     }
 

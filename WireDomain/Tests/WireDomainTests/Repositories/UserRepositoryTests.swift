@@ -20,6 +20,7 @@ import Foundation
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireAPI
@@ -30,10 +31,13 @@ class UserRepositoryTests: XCTestCase {
     var sut: UserRepository!
     var usersAPI: MockUsersAPI!
     var selfUsersAPI: MockSelfUserAPI!
+    var conversationsRepository: MockConversationRepositoryProtocol!
 
     var stack: CoreDataStack!
     var coreDataStackHelper: CoreDataStackHelper!
     var modelHelper: ModelHelper!
+
+    var mockUserDefaults: UserDefaults!
 
     var context: NSManagedObjectContext {
         stack.syncContext
@@ -46,10 +50,16 @@ class UserRepositoryTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         usersAPI = MockUsersAPI()
         selfUsersAPI = MockSelfUserAPI()
+        conversationsRepository = MockConversationRepositoryProtocol()
+        mockUserDefaults = UserDefaults(
+            suiteName: Scaffolding.defaultsTestSuiteName
+        )
         sut = UserRepository(
             context: context,
             usersAPI: usersAPI,
-            selfUserAPI: selfUsersAPI
+            selfUserAPI: selfUsersAPI,
+            conversationRepository: conversationsRepository,
+            sharedUserDefaults: mockUserDefaults
         )
     }
 
@@ -59,6 +69,11 @@ class UserRepositoryTests: XCTestCase {
         usersAPI = nil
         selfUsersAPI = nil
         sut = nil
+        mockUserDefaults.removePersistentDomain(
+            forName: Scaffolding.defaultsTestSuiteName
+        )
+        mockUserDefaults = nil
+        conversationsRepository = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
@@ -139,6 +154,24 @@ class UserRepositoryTests: XCTestCase {
             XCTAssertEqual(user.emailAddress, Scaffolding.user1.email)
             XCTAssertEqual(user.supportedProtocols, Scaffolding.user1.supportedProtocols?.toDomainModel())
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
+        }
+
+        func testRemovesPushToken() async throws {
+            // Given
+
+            let key = "PushToken"
+            let data = try JSONEncoder().encode(Scaffolding.pushToken)
+            mockUserDefaults.set(data, forKey: key)
+            XCTAssertNotNil(mockUserDefaults.object(forKey: key))
+
+            // When
+
+            sut.removePushToken()
+
+            // Then
+
+            let pushToken = mockUserDefaults.object(forKey: key)
+            XCTAssertNil(pushToken)
         }
     }
 
@@ -279,13 +312,70 @@ class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [expectedProtocols])
     }
 
+    func testDeleteUserAccountForSelfUser() async throws {
+        let selfUser = await context.perform { [self] in
+            modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
+
+        let expectation = XCTestExpectation()
+        let notificationName = AccountDeletedNotification.notificationName
+
+        NotificationCenter.default.addObserver(
+            forName: notificationName,
+            object: nil,
+            queue: nil
+        ) { notification in
+
+            XCTAssertNotNil(notification.userInfo?[notificationName] as? AccountDeletedNotification)
+
+            expectation.fulfill()
+        }
+
+        // When
+
+        await sut.deleteUserAccount(for: selfUser, at: .now)
+
+        // Then
+
+        await fulfillment(of: [expectation], timeout: 1)
+    }
+
+    func testDeleteUserAccountForNotSelfUser() async throws {
+        // Given
+
+        let user = await context.perform { [self] in
+            modelHelper.createUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
+
+        // Mock
+        conversationsRepository.removeFromConversationsUserRemovalDate_MockMethod = { _, _ in }
+
+        // When
+
+        await sut.deleteUserAccount(for: user, at: .now)
+
+        // Then
+
+        XCTAssertEqual(user.isAccountDeleted, true)
+        XCTAssertEqual(conversationsRepository.removeFromConversationsUserRemovalDate_Invocations.count, 1)
+    }
+
     private enum Scaffolding {
         static let userID = UUID()
+        static let userPropertyKey = UserProperty.Key.wireReceiptMode
         static let userClientID = UUID().uuidString
         static let lastPrekeyId = 65_535
         static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
 
-        nonisolated(unsafe) static let remoteUserClient = WireAPI.UserClient(
+        static let remoteUserClient = WireAPI.UserClient(
             id: userClientID,
             type: .permanent,
             activationDate: .now,
@@ -305,7 +395,7 @@ class UserRepositoryTests: XCTestCase {
             )
         )
 
-        nonisolated(unsafe) static let user1 = User(
+        static let user1 = User(
             id: QualifiedID(uuid: UUID(), domain: "example.com"),
             name: "user1",
             handle: "handle1",
@@ -319,6 +409,17 @@ class UserRepositoryTests: XCTestCase {
             supportedProtocols: [.mls],
             legalholdStatus: .disabled
         )
+
+        static let deviceToken = Data(repeating: 0x41, count: 10)
+
+        static let pushToken = PushToken(
+            deviceToken: deviceToken,
+            appIdentifier: "com.wire",
+            transportType: "APNS_VOIP",
+            tokenType: .voip
+        )
+
+        static let defaultsTestSuiteName = UUID().uuidString
     }
 
 }

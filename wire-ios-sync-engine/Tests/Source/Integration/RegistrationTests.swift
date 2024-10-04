@@ -44,7 +44,6 @@ class RegistrationTests: IntegrationTest {
         user.credentials = .email(address: email, password: "BadAttitude")
         user.accentColor = .red
         user.acceptedTermsOfService = true
-        user.marketingConsent = true
     }
 
     override func tearDown() {
