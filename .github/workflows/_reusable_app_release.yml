@@ -156,6 +156,7 @@ jobs:
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+
         # Cache for the first folder (scripts)
       - name: Restore Swift Package Dependencies (scripts)
         uses: actions/cache@v3
@@ -182,15 +183,9 @@ jobs:
         if: steps.cache-sourceryPlugin-package.outputs.cache-hit != 'true'
         run: xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-          #dowland dep
-          #r
-
-        # Restore Swift Package Dependencies Cache
+         # Restore Swift Package Dependencies Cache
       - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
         uses: actions/cache@v3
         with:
           path: ${{ env.PACKAGES_DIR }}
@@ -199,16 +194,14 @@ jobs:
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
         run: |
-          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
-        # Save cache
-      - name:  Save cache
-        uses: actions/cache/save@v4
-        if: always()
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: ${{ env.PACKAGES_DIR }}
-          key: ${{ runner.os }}-swiftpm-${{ hashFiles('**/Package.resolved') }}
-
+          bundler-cache: true
+          #dowland dep
+          #r
       - name: Run setup
         run: sh ./setup.sh
       - name: Configure AWS Credentials
