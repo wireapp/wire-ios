@@ -149,15 +149,17 @@ public final class MainCoordinator<
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
-        dismissArchiveIfNeeded()
-        dismissConnectIfNeeded()
-        dismissSettingsIfNeeded()
-        dismissSelfProfileIfNeeded()
+        Task {
+            dismissArchiveIfNeeded()
+            await dismissConnectIfNeeded()
+            dismissSettingsIfNeeded()
+            await dismissSelfProfileIfNeeded()
 
-        // Move the conversation list from the tab bar controller to the split view controller if needed.
-        if let conversationList = tabBarController.conversationList {
-            tabBarController.conversationList = nil
-            splitViewController.conversationList = conversationList
+            // Move the conversation list from the tab bar controller to the split view controller if needed.
+            if let conversationList = tabBarController.conversationList {
+                tabBarController.conversationList = nil
+                splitViewController.conversationList = conversationList
+            }
         }
     }
 
@@ -176,15 +178,18 @@ public final class MainCoordinator<
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
-        dismissConversationListIfNeeded()
-        dismissConnectIfNeeded()
-        dismissSettingsIfNeeded()
-        dismissSelfProfileIfNeeded()
+        Task {
 
-        // move the archive from the tab bar controller to the split view controller
-        if let archive = tabBarController.archive {
-            tabBarController.archive = nil
-            splitViewController.archive = archive
+            dismissConversationListIfNeeded()
+            await dismissConnectIfNeeded()
+            dismissSettingsIfNeeded()
+            await dismissSelfProfileIfNeeded()
+
+            // move the archive from the tab bar controller to the split view controller
+            if let archive = tabBarController.archive {
+                tabBarController.archive = nil
+                splitViewController.archive = archive
+            }
         }
     }
 
@@ -194,21 +199,27 @@ public final class MainCoordinator<
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
-        dismissConversationListIfNeeded()
-        dismissArchiveIfNeeded()
-        dismissConnectIfNeeded()
-        dismissSelfProfileIfNeeded()
+        Task {
+            dismissConversationListIfNeeded()
+            dismissArchiveIfNeeded()
+            await dismissConnectIfNeeded()
+            await dismissSelfProfileIfNeeded()
 
-        // move the settings from the tab bar controller to the split view controller
-        if let settings = tabBarController.settings {
-            tabBarController.settings = nil
-            splitViewController.settings = settings
+            // move the settings from the tab bar controller to the split view controller
+            if let settings = tabBarController.settings {
+                tabBarController.settings = nil
+                splitViewController.settings = settings
+            }
+
+            showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
         }
-
-        showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
     }
 
     public func showConversation(conversationID: ConversationList.ConversationID) async {
+
+        await dismissSelfProfileIfNeeded()
+        await dismissConnectIfNeeded()
+
         let conversation = await conversationBuilder.build(
             conversationID: conversationID,
             mainCoordinator: self
@@ -256,9 +267,13 @@ public final class MainCoordinator<
         selfProfile.modalPresentationStyle = .formSheet
         self.selfProfile = selfProfile
 
-        dismissConnectIfNeeded()
+        Task {
+            await dismissConnectIfNeeded()
 
-        splitViewController.present(selfProfile, animated: true)
+            await withCheckedContinuation { continuation in
+                splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
+            }
+        }
     }
 
     public func showConnect() {
@@ -271,9 +286,13 @@ public final class MainCoordinator<
         connect.modalPresentationStyle = .formSheet
         self.connect = connect
 
-        dismissSelfProfileIfNeeded()
+        Task {
+            await dismissSelfProfileIfNeeded()
 
-        splitViewController.present(connect, animated: true)
+            await withCheckedContinuation { continuation in
+                splitViewController.present(connect, animated: true, completion: continuation.resume)
+            }
+        }
     }
 
     private func dismissConversationListIfNeeded() {
@@ -292,8 +311,11 @@ public final class MainCoordinator<
         }
     }
 
-    private func dismissConnectIfNeeded() {
-        connect?.dismiss(animated: true)
+    private func dismissConnectIfNeeded() async {
+        guard let connect else { return }
+        await withCheckedContinuation { continuation in
+            connect.dismiss(animated: true, completion: continuation.resume)
+        }
     }
 
     private func dismissSettingsIfNeeded() {
@@ -304,8 +326,11 @@ public final class MainCoordinator<
         }
     }
 
-    private func dismissSelfProfileIfNeeded() {
-        selfProfile?.dismiss(animated: true)
+    private func dismissSelfProfileIfNeeded() async {
+        guard let selfProfile else { return }
+        await withCheckedContinuation { continuation in
+            selfProfile.dismiss(animated: true, completion: continuation.resume)
+        }
     }
 
     // MARK: - UISplitViewControllerDelegate
