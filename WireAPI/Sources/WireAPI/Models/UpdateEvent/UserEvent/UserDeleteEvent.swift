@@ -27,7 +27,7 @@ public struct UserDeleteEvent: Equatable, Codable, Sendable {
 
     public let qualifiedUserID: QualifiedID
 
-    /// The time at which the member was deleted.
+    /// The time at which the user was deleted.
 
     public let time: Date
 
