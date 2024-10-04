@@ -70,6 +70,8 @@ public final class MainCoordinator<
     private var selfProfileBuilder: SelfProfileBuilder
     private weak var selfProfile: SelfProfile?
 
+    private var userProfileBuilder: UserProfileBuilder
+
     private var mainSplitViewState: MainSplitViewState = .expanded
 
     // MARK: - Private Helpers
@@ -107,7 +109,8 @@ public final class MainCoordinator<
         conversationBuilder: ConversationBuilder,
         settingsContentBuilder: SettingsContentBuilder,
         connectBuilder: ConnectBuilder,
-        selfProfileBuilder: SelfProfileBuilder
+        selfProfileBuilder: SelfProfileBuilder,
+        userProfileBuilder: UserProfileBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
@@ -115,6 +118,7 @@ public final class MainCoordinator<
         self.settingsContentBuilder = settingsContentBuilder
         self.connectBuilder = connectBuilder
         self.selfProfileBuilder = selfProfileBuilder
+        self.userProfileBuilder = userProfileBuilder
 
         super.init()
 
@@ -265,7 +269,14 @@ public final class MainCoordinator<
     }
 
     public func showUserProfile(userID: UserID) async {
-        fatalError()
+        // TODO: move this into a UserProfileCoordinator type
+        let rootViewController = await userProfileBuilder.build(
+            userID: userID,
+            mainCoordinator: self
+        )
+        let userProfile = UINavigationController(rootViewController: rootViewController)
+        userProfile.modalPresentationStyle = .formSheet
+        await presentViewController(userProfile)
     }
 
     public func showConnect() async {

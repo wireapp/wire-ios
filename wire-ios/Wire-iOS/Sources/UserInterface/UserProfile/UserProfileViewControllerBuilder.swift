@@ -56,27 +56,3 @@ UserSession: WireSyncEngine.UserSession {
         return UINavigationController(rootViewController: rootViewController)
     }
 }
-
-// TODO: delete commented code
-/*
- extension ConversationListViewController.ViewModel: StartUIDelegate {
-
-     // TODO: migrate this code into MainCoordinator
-     @MainActor
-     func openUserProfile(_ user: UserType) {
-         let profileViewController = ProfileViewController(
-             user: user,
-             viewer: selfUserLegalHoldSubject,
-             context: .profileViewer,
-             userSession: userSession,
-             mainCoordinator: mainCoordinator
-         )
-         profileViewController.delegate = self
-
-         let navigationController = profileViewController.wrapInNavigationController()
-         navigationController.modalPresentationStyle = .formSheet
-
-         ZClientViewController.shared?.present(navigationController, animated: true)
-     }
- }
- */

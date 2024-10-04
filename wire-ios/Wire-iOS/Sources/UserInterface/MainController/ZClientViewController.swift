@@ -119,6 +119,18 @@ final class ZClientViewController: UIViewController {
         )
     }
 
+    private var userProfileViewControllerBuilder: UserProfileViewControllerBuilder<ZMUserSession> {
+        .init(
+            userSession: userSession as! ZMUserSession, // TODO: fix
+            userLoader: { [weak userSession] userID in
+                let viewContext = userSession?.contextProvider.viewContext
+                return await viewContext?.perform {
+                    ZMUser.fetchOrCreate(with: userID.uuid, domain: userID.domain, in: viewContext!)
+                }
+            }
+        )
+    }
+
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
@@ -150,7 +162,8 @@ final class ZClientViewController: UIViewController {
             conversationBuilder: conversationViewControllerBuilder,
             settingsContentBuilder: settingsViewControllerBuilder,
             connectBuilder: connectBuilder,
-            selfProfileBuilder: selfProfileViewControllerBuilder
+            selfProfileBuilder: selfProfileViewControllerBuilder,
+            userProfileBuilder: userProfileViewControllerBuilder
         )
         connectBuilder.delegate = mainCoordinator
         return mainCoordinator
