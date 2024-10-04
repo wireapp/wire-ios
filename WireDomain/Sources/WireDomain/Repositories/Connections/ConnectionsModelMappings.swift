@@ -16,32 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
+import WireDataModel
 
-/// An event where a user's team membership metadata was updated.
+extension WireAPI.ConnectionStatus {
 
-public struct TeamMemberUpdateEvent: Equatable, Codable, Sendable {
-
-    /// The team id.
-
-    public let teamID: UUID
-
-    /// The membership id.
-
-    public let membershipID: UUID
-
-    /// Create a new `TeamMemberUpdateEvent`.
-    ///
-    /// - Parameters:
-    ///   - teamID: The id of the team.
-    ///   - membershipID: The membership ID.
-
-    public init(
-        teamID: UUID,
-        membershipID: UUID
-    ) {
-        self.teamID = teamID
-        self.membershipID = membershipID
+    func toDomainModel() -> WireDataModel.ZMConnectionStatus {
+        switch self {
+        case .accepted:
+            .accepted
+        case .blocked:
+            .blocked
+        case .pending:
+            .pending
+        case .ignored:
+            .ignored
+        case .sent:
+            .sent
+        case .cancelled:
+            .cancelled
+        case .missingLegalholdConsent:
+            .blockedMissingLegalholdConsent
+        }
     }
 
 }

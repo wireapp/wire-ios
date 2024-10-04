@@ -1,0 +1,64 @@
+{
+    "access": [
+        "private"
+    ],
+    "access_role": [
+        "team_member"
+    ],
+    "cipher_suite": 2,
+    "creator": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+    "epoch": 0,
+    "epoch_timestamp": "2021-05-12T10:52:02Z",
+    "group_id": "string",
+    "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+    "last_event": "string",
+    "last_event_time": "2024-06-04T15:03:07.598Z",
+    "members": {
+        "others": [
+            {
+                "conversation_role": "string",
+                "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+                "qualified_id": {
+                    "domain": "example.com",
+                    "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                },
+                "service": {
+                    "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+                    "provider": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                },
+                "status": 0
+            }
+        ],
+        "self": {
+            "conversation_role": "string",
+            "hidden": true,
+            "hidden_ref": "string",
+            "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+            "otr_archived": true,
+            "otr_archived_ref": "2024-01-01T00:00:00.000Z",
+            "otr_muted_ref": "2024-01-01T00:00:00.000Z",
+            "otr_muted_status": 0,
+            "qualified_id": {
+                "domain": "example.com",
+                "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+            },
+            "service": {
+                "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+                "provider": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+            },
+            "status": "string",
+            "status_ref": "string",
+            "status_time": "string"
+        }
+    },
+    "message_timer": 0,
+    "name": "string",
+    "protocol": "proteus",
+    "qualified_id": {
+        "domain": "example.com",
+        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+    },
+    "receipt_mode": 0,
+    "team": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+    "type": 0
+}

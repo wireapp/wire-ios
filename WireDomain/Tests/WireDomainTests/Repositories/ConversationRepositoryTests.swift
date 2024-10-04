@@ -17,33 +17,34 @@
 //
 
 import Foundation
+@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+@testable import WireDomain
 import XCTest
 
-@testable import WireAPI
-@testable import WireDomain
+final class ConversationRepositoryTests: XCTestCase {
 
-class ConversationRepositoryTests: XCTestCase {
-
-    var sut: ConversationRepository!
-    var conversationsAPI: MockConversationsAPI!
-    var conversationsLocalStore: ConversationLocalStoreProtocol!
-    let backendInfo: ConversationRepository.BackendInfo = .init(
+    private var sut: ConversationRepository!
+    private var conversationsAPI: MockConversationsAPI!
+    private var conversationsLocalStore: ConversationLocalStoreProtocol!
+    private let backendInfo: ConversationRepository.BackendInfo = .init(
         domain: "example.com",
         isFederationEnabled: false
     )
-    var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         conversationsLocalStore = ConversationLocalStore(
             context: context,
@@ -59,12 +60,14 @@ class ConversationRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         conversationsLocalStore = nil
         stack = nil
         conversationsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -222,6 +225,25 @@ class ConversationRepositoryTests: XCTestCase {
         }
     }
 
+    func testGetMLSOneToOneConversation() async throws {
+        // Mock
+
+        mockConversationsAPI()
+
+        // When
+
+        let mlsGroupID = try await sut.pullMLSOneToOneConversation(
+            userID: Scaffolding.userID.uuidString,
+            domain: Scaffolding.domain
+        )
+
+        let mlsConversation = await sut.fetchMLSConversation(with: mlsGroupID)
+
+        // Then
+
+        XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
+    }
+
     func testRemoveFromConversations_It_Appends_A_System_Message_To_All_Team_Conversations_When_A_Member_Leave() async throws {
         // Given
 
@@ -233,7 +255,7 @@ class ConversationRepositoryTests: XCTestCase {
                 context: context
             )
 
-            let otherConversation = modelHelper.createGroupConversation(
+            modelHelper.createGroupConversation(
                 id: Scaffolding.anotherTeamConversationID,
                 with: users,
                 team: team,
@@ -241,7 +263,7 @@ class ConversationRepositoryTests: XCTestCase {
                 in: context
             )
 
-            let anotherConversation = modelHelper.createGroupConversation(
+            modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
                 with: Set(users),
                 domain: nil,
@@ -309,54 +331,6 @@ class ConversationRepositoryTests: XCTestCase {
         )
     }
 
-}
-
-extension ConversationRepositoryTests {
-
-    private func fetchConversations(withIds ids: [UUID]) -> Set<ZMConversation> {
-        ZMConversation.fetchObjects(
-            withRemoteIdentifiers: Set(ids),
-            in: context
-        ) as! Set<ZMConversation>
-    }
-
-    private func mockSelfUser() -> ZMUser {
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = Scaffolding.selfUserId
-        selfUser.domain = backendInfo.domain
-
-        let client = UserClient.insertNewObject(in: context)
-        client.remoteIdentifier = UUID().uuidString
-        client.user = selfUser
-        context.saveOrRollback()
-
-        return selfUser
-    }
-
-    private func mockConversationsAPI(conversationList: WireAPI.ConversationList = Scaffolding.conversationList) {
-        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: [Scaffolding.conversationSelfType.id!],
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
-
-        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: [Scaffolding.conversationSelfType.qualifiedID!],
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
-
-        conversationsAPI.getConversationsFor_MockValue = .init(
-            found: conversationList.found,
-            notFound: conversationList.notFound,
-            failed: conversationList.failed
-        )
-    }
-
     private enum Scaffolding {
         static let teamID = UUID()
         static let userID = UUID()
@@ -369,7 +343,7 @@ extension ConversationRepositoryTests {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
         }
 
-        nonisolated(unsafe) static let conversationList = ConversationList(
+        static let conversationList = ConversationList(
             found: [conversationSelfType,
                     conversationGroupType,
                     conversationConnectionType,
@@ -378,7 +352,7 @@ extension ConversationRepositoryTests {
             failed: [conversationFailed]
         )
 
-        nonisolated(unsafe) static let conversationListError = ConversationList(
+        static let conversationListError = ConversationList(
             found: [conversationSelfTypeMissingId,
                     conversationGroupType,
                     conversationConnectionType,
@@ -481,7 +455,7 @@ extension ConversationRepositoryTests {
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ae")!,
             type: .oneOnOne,
             messageProtocol: .proteus,
-            mlsGroupID: "",
+            mlsGroupID: base64EncodedString,
             cipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
             epoch: 0,
             epochTimestamp: nil,
@@ -497,6 +471,8 @@ extension ConversationRepositoryTests {
             lastEventTime: nil
         )
 
+        static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+
         static let conversationNotFound = WireAPI.QualifiedID(
             uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4aa")!,
             domain: "example.com"
@@ -508,6 +484,58 @@ extension ConversationRepositoryTests {
         )
 
         static let selfUserId = UUID()
+
+        static let domain = "domain.com"
+    }
+
+}
+
+extension ConversationRepositoryTests {
+
+    private func fetchConversations(withIds ids: [UUID]) -> Set<ZMConversation> {
+        ZMConversation.fetchObjects(
+            withRemoteIdentifiers: Set(ids),
+            in: context
+        ) as! Set<ZMConversation>
+    }
+
+    private func mockSelfUser() -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = Scaffolding.selfUserId
+        selfUser.domain = backendInfo.domain
+
+        let client = UserClient.insertNewObject(in: context)
+        client.remoteIdentifier = UUID().uuidString
+        client.user = selfUser
+        context.saveOrRollback()
+
+        return selfUser
+    }
+
+    private func mockConversationsAPI(conversationList: WireAPI.ConversationList = Scaffolding.conversationList) {
+        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+            .init(
+                element: [Scaffolding.conversationSelfType.id!],
+                hasMore: false,
+                nextStart: .init()
+            )
+        })
+
+        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+            .init(
+                element: [Scaffolding.conversationSelfType.qualifiedID!],
+                hasMore: false,
+                nextStart: .init()
+            )
+        })
+
+        conversationsAPI.getConversationsFor_MockValue = .init(
+            found: conversationList.found,
+            notFound: conversationList.notFound,
+            failed: conversationList.failed
+        )
+
+        conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversationOneOnOneType
     }
 
 }

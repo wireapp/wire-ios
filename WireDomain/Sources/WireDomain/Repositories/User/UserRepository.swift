@@ -32,6 +32,14 @@ public protocol UserRepositoryProtocol {
 
     func fetchSelfUser() -> ZMUser
 
+    /// Fetches a user locally
+    ///
+    /// - parameters
+    ///     - id: The ID of the user.
+    ///     - domain: The domain of the user.
+
+    func fetchUser(with id: UUID, domain: String?) -> ZMUser?
+
     /// Push self user supported protocols
     /// - Parameter supportedProtocols: A list of supported protocols.
 
@@ -156,6 +164,10 @@ public final class UserRepository: UserRepositoryProtocol {
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
+    }
+
+    public func fetchUser(with id: UUID, domain: String?) -> ZMUser? {
+        ZMUser.fetch(with: id, domain: domain, in: context)
     }
 
     public func pushSelfSupportedProtocols(

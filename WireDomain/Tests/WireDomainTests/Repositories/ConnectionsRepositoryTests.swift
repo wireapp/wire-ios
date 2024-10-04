@@ -16,26 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+@testable import WireDomain
 import WireDomainSupport
 import WireTransport
 import XCTest
 
-@testable import WireAPI
-@testable import WireDomain
-
 final class ConnectionsRepositoryTests: XCTestCase {
 
-    var sut: ConnectionsRepository!
-    var connectionsAPI: MockConnectionsAPI!
+    private var sut: ConnectionsRepository!
+    private var connectionsAPI: MockConnectionsAPI!
 
-    var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
@@ -43,6 +42,8 @@ final class ConnectionsRepositoryTests: XCTestCase {
         try await super.setUp()
         BackendInfo.isFederationEnabled = false
 
+        modelHelper = ModelHelper()
+        coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         connectionsAPI = MockConnectionsAPI()
         sut = ConnectionsRepository(
@@ -52,11 +53,13 @@ final class ConnectionsRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         stack = nil
         connectionsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        modelHelper = nil
+        coreDataStackHelper = nil
     }
 
     // MARK: - Tests
@@ -142,28 +145,57 @@ final class ConnectionsRepositoryTests: XCTestCase {
             XCTAssertTrue(relatedConversation.needsToBeUpdatedFromBackend)
         }
     }
-}
 
-private enum Scaffolding {
-    static let member1ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
-    static let conversationID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
-    static let member2ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
-    static let lastUpdate = Date()
-    nonisolated(unsafe) static let connectionStatus = ConnectionStatus.accepted
+    func testUpdateConnection_It_Successfully_Updates_Connection_Locally() async throws {
+        // Given
 
-    nonisolated(unsafe) static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
-                                                                   receiverID: Scaffolding.member2ID.uuid,
-                                                                   receiverQualifiedID: Scaffolding.member2ID,
-                                                                   conversationID: Scaffolding.conversationID.uuid,
-                                                                   qualifiedConversationID: Scaffolding.conversationID,
-                                                                   lastUpdate: Scaffolding.lastUpdate,
-                                                                   status: Scaffolding.connectionStatus)
+        let connection = Scaffolding.connection
 
-    nonisolated(unsafe) static let brokenConnection = WireAPI.Connection(senderID: nil,
-                                                                         receiverID: nil,
-                                                                         receiverQualifiedID: nil,
-                                                                         conversationID: nil,
-                                                                         qualifiedConversationID: nil,
-                                                                         lastUpdate: Date(),
-                                                                         status: .pending)
+        // When
+
+        try await sut.updateConnection(connection)
+
+        // Then
+        try await context.perform { [context] in
+            let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
+
+            XCTAssertEqual(storedConnection.lastUpdateDateInGMT, connection.lastUpdate)
+
+            XCTAssertEqual(storedConnection.to.remoteIdentifier, connection.receiverID)
+            XCTAssertNil(storedConnection.to.domain)
+            XCTAssertEqual(storedConnection.status, ZMConnectionStatus.accepted)
+
+            let relatedConversation = try XCTUnwrap(storedConnection.to.oneOnOneConversation)
+            XCTAssertEqual(relatedConversation.remoteIdentifier, connection.qualifiedConversationID?.uuid)
+
+            XCTAssertNil(relatedConversation.domain)
+
+            XCTAssertTrue(relatedConversation.needsToBeUpdatedFromBackend)
+        }
+    }
+
+    private enum Scaffolding {
+        static let member1ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
+        static let conversationID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
+        static let member2ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
+        static let lastUpdate = Date()
+        static let connectionStatus = ConnectionStatus.accepted
+
+        static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
+                                                   receiverID: Scaffolding.member2ID.uuid,
+                                                   receiverQualifiedID: Scaffolding.member2ID,
+                                                   conversationID: Scaffolding.conversationID.uuid,
+                                                   qualifiedConversationID: Scaffolding.conversationID,
+                                                   lastUpdate: Scaffolding.lastUpdate,
+                                                   status: Scaffolding.connectionStatus)
+
+        static let brokenConnection = WireAPI.Connection(senderID: nil,
+                                                         receiverID: nil,
+                                                         receiverQualifiedID: nil,
+                                                         conversationID: nil,
+                                                         qualifiedConversationID: nil,
+                                                         lastUpdate: Date(),
+                                                         status: .pending)
+    }
+
 }

@@ -16,117 +16,48 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
-import WireAPISupport
-import WireDataModel
-import WireDataModelSupport
+@testable import WireDomain
 import WireDomainSupport
 import XCTest
 
-@testable import WireDomain
-
 final class TeamMemberUpdateEventProcessorTests: XCTestCase {
 
-    var sut: TeamMemberUpdateEventProcessor!
-
-    var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    var teamRepository: TeamRepositoryProtocol!
-    let modelHelper = ModelHelper()
-
-    var context: NSManagedObjectContext {
-        coreDataStack.syncContext
-    }
+    private var sut: TeamMemberUpdateEventProcessor!
+    private var teamRepository: MockTeamRepositoryProtocol!
 
     override func setUp() async throws {
-        coreDataStack = try await coreDataStackHelper.createStack()
-        teamRepository = TeamRepository(
-            selfTeamID: UUID(),
-            userRepository: MockUserRepositoryProtocol(),
-            teamsAPI: MockTeamsAPI(),
-            context: context
-        )
-        sut = TeamMemberUpdateEventProcessor(repository: teamRepository)
         try await super.setUp()
+        teamRepository = MockTeamRepositoryProtocol()
+        sut = TeamMemberUpdateEventProcessor(repository: teamRepository)
     }
 
     override func tearDown() async throws {
-        coreDataStack = nil
-        sut = nil
-        try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
+        sut = nil
+        teamRepository = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_Member_Needs_To_Be_Updated_From_Backend_Is_True() async throws {
-        // Given
+    func testProcessEvent_It_Invokes_Repo_Method() async throws {
+        // Mock
 
-        try await context.perform { [context, modelHelper] in
-
-            let team = modelHelper.createTeam(
-                id: Scaffolding.teamID,
-                in: context
-            )
-
-            let user = modelHelper.createUser(
-                id: Scaffolding.membershipID,
-                domain: Scaffolding.domain,
-                in: context
-            )
-
-            let member = modelHelper.addUser(
-                user,
-                to: team,
-                in: context
-            )
-
-            XCTAssertEqual(member.needsToBeUpdatedFromBackend, false)
-
-            try context.save()
-        }
+        teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_MockMethod = { _ in }
 
         // When
 
         try await sut.processEvent(Scaffolding.event)
 
-        await context.perform { [context] in
-            let user = ZMUser.fetch(with: Scaffolding.membershipID, in: context)
-            let team = Team.fetch(with: Scaffolding.teamID, in: context)
-
-            guard let user, let team, let member = user.membership else {
-                return XCTFail()
-            }
-
-            // Then
-
-            XCTAssertEqual(member.needsToBeUpdatedFromBackend, true)
-            XCTAssertEqual(member.team, team)
-        }
-    }
-
-    func testProcessEvent_Throws_Error_When_Member_Was_Not_Found() async throws {
         // Then
-        await XCTAssertThrowsError { [self] in
-            // When
-            try await sut.processEvent(Scaffolding.event)
-        }
+
+        XCTAssertEqual(teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_Invocations.count, 1)
     }
 
-}
-
-// MARK: - Scaffolding
-
-private enum Scaffolding {
-
-    static let domain = "example.com"
-    static let teamID = UUID()
-    static let membershipID = UUID()
-
-    nonisolated(unsafe) static let event = TeamMemberUpdateEvent(
-        teamID: teamID,
-        membershipID: membershipID
-    )
-
+    private enum Scaffolding {
+        static let event = TeamMemberUpdateEvent(
+            teamID: UUID(),
+            membershipID: UUID()
+        )
+    }
 }
