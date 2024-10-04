@@ -375,6 +375,10 @@ extension ZMUserSession: UserSession {
         return AppendFileMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
+    public func makeToggleMessageReactionUseCase() -> ToggleMessageReactionUseCaseProtocol {
+        return ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
 }
 
 extension UInt64 {

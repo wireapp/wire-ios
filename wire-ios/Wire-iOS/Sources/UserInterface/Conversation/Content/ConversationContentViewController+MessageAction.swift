@@ -161,7 +161,8 @@ extension ConversationContentViewController {
             client.resetSession()
         case .react(let reaction):
             userSession.perform {
-                message.react(reaction)
+                let useCase = self.userSession.makeToggleMessageReactionUseCase()
+                useCase.invoke(reaction, for: message, in: self.conversation)
             }
         case .visitLink:
             if let textMessageData = message.textMessageData,
