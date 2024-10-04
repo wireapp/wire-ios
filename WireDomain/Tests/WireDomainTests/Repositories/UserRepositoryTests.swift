@@ -36,7 +36,7 @@ class UserRepositoryTests: XCTestCase {
     var stack: CoreDataStack!
     var coreDataStackHelper: CoreDataStackHelper!
     var modelHelper: ModelHelper!
-    
+
     var mockUserDefaults: UserDefaults!
 
     var context: NSManagedObjectContext {
@@ -158,7 +158,7 @@ class UserRepositoryTests: XCTestCase {
 
         func testRemovesPushToken() async throws {
             // Given
-            
+
             let key = "PushToken"
             let data = try JSONEncoder().encode(Scaffolding.pushToken)
             mockUserDefaults.set(data, forKey: key)
@@ -402,7 +402,7 @@ class UserRepositoryTests: XCTestCase {
             transportType: "APNS_VOIP",
             tokenType: .voip
         )
-        
+
         static let defaultsTestSuiteName = UUID().uuidString
     }
 

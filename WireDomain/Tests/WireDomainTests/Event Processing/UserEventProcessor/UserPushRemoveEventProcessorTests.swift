@@ -26,7 +26,7 @@ final class UserPushRemoveEventProcessorTests: XCTestCase {
 
     var sut: UserPushRemoveEventProcessor!
     var mockUserRepository: MockUserRepositoryProtocol!
-    
+
     override func setUp() async throws {
         try await super.setUp()
         mockUserRepository = MockUserRepositoryProtocol()
@@ -45,9 +45,9 @@ final class UserPushRemoveEventProcessorTests: XCTestCase {
 
     func testProcessEvent_It_Invokes_Repo_Method() async throws {
         // Mock
-        
-        mockUserRepository.removePushToken_MockMethod = { }
-        
+
+        mockUserRepository.removePushToken_MockMethod = {}
+
         // When
 
         sut.processEvent()

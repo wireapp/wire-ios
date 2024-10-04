@@ -119,7 +119,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         self.pushChannel = pushChannel
         self.updateEventDecryptor = updateEventDecryptor
         self.eventContext = eventContext
-        self.storage = PrivateUserDefaults(
+        storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )

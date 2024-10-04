@@ -123,7 +123,7 @@ public protocol UserRepositoryProtocol {
 }
 
 public final class UserRepository: UserRepositoryProtocol {
-    
+
     enum DefaultsKeys: String {
         case pushToken = "PushToken"
     }
@@ -149,7 +149,7 @@ public final class UserRepository: UserRepositoryProtocol {
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
         self.conversationRepository = conversationRepository
-        self.storage = sharedUserDefaults
+        storage = sharedUserDefaults
     }
 
     // MARK: - Public
@@ -330,16 +330,16 @@ public final class UserRepository: UserRepositoryProtocol {
         switch key {
         case .wireReceiptMode:
             let selfUser = fetchSelfUser()
-            
+
             await context.perform {
                 selfUser.readReceiptsEnabled = false
                 selfUser.readReceiptsEnabledChangedRemotely = true
             }
-            
+
         case .wireTypingIndicatorMode:
             // TODO: [WPB-726] feature not implemented yet
             break
-            
+
         case .labels:
             /// Already handled with `user.properties-set` event (adding new labels and removing old ones)
             /// see `ConversationLabelsRepository`
