@@ -117,6 +117,8 @@ jobs:
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       PR_S3_SUBFOLDER: ${{ inputs.pr_s3_path }}
+      REPO_ROOT: ${{ github.workspace }}
+      PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
       
     steps:
       - name: Add Masks
