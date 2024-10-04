@@ -935,17 +935,22 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - deleteUserAccount
 
-    public var deleteUserAccountForAt_Invocations: [(user: ZMUser, date: Date)] = []
-    public var deleteUserAccountForAt_MockMethod: ((ZMUser, Date) async -> Void)?
+    public var deleteUserAccountWithDomainAt_Invocations: [(id: UUID, domain: String?, date: Date)] = []
+    public var deleteUserAccountWithDomainAt_MockError: Error?
+    public var deleteUserAccountWithDomainAt_MockMethod: ((UUID, String?, Date) async throws -> Void)?
 
-    public func deleteUserAccount(for user: ZMUser, at date: Date) async {
-        deleteUserAccountForAt_Invocations.append((user: user, date: date))
+    public func deleteUserAccount(with id: UUID, domain: String?, at date: Date) async throws {
+        deleteUserAccountWithDomainAt_Invocations.append((id: id, domain: domain, date: date))
 
-        guard let mock = deleteUserAccountForAt_MockMethod else {
-            fatalError("no mock for `deleteUserAccountForAt`")
+        if let error = deleteUserAccountWithDomainAt_MockError {
+            throw error
         }
 
-        await mock(user, date)
+        guard let mock = deleteUserAccountWithDomainAt_MockMethod else {
+            fatalError("no mock for `deleteUserAccountWithDomainAt`")
+        }
+
+        try await mock(id, domain, date)
     }
 
 }

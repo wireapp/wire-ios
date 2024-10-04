@@ -126,7 +126,11 @@ public protocol UserRepositoryProtocol {
     ///     - user: The user to delete the account for.
     ///     - date: The date the user was deleted.
 
-    func deleteUserAccount(for user: ZMUser, at date: Date) async
+    func deleteUserAccount(
+        with id: UUID,
+        domain: String?,
+        at date: Date
+    ) async throws
 
 }
 
@@ -360,9 +364,15 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func deleteUserAccount(
-        for user: ZMUser,
+        with id: UUID,
+        domain: String?,
         at date: Date
-    ) async {
+    ) async throws {
+        
+        guard let user = fetchUser(with: id, domain: domain) else {
+            throw UserRepositoryError.failedToFetchUser(id)
+        }
+        
         let isSelfUser = await context.perform {
             user.isSelfUser
         }

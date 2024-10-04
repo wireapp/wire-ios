@@ -31,10 +31,15 @@ protocol UserDeleteEventProcessorProtocol {
 }
 
 struct UserDeleteEventProcessor: UserDeleteEventProcessorProtocol {
+    
+    let repository: any UserRepositoryProtocol
 
-    func processEvent(_: UserDeleteEvent) async throws {
-        // TODO: [WPB-10193]
-        assertionFailure("not implemented yet")
+    func processEvent(_ event: UserDeleteEvent) async throws {
+        try await repository.deleteUserAccount(
+            with: event.qualifiedUserID.uuid,
+            domain: event.qualifiedUserID.domain,
+            at: event.time
+        )
     }
 
 }
