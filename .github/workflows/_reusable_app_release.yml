@@ -194,7 +194,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.PACKAGES_DIR }}
-          key: ${{ runner.os }}-swiftpm-${{ hashFiles('**/Package.resolved') }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/Package.resolved') }}
 
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
