@@ -50,6 +50,9 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
+    /// Removes user push token from storage.
+
+    func removePushToken()
     /// Fetches a user with a specific id.
     /// - Parameter id: The ID of the user.
     /// - Returns: A `ZMUser` object.
@@ -121,14 +124,17 @@ public protocol UserRepositoryProtocol {
 
 public final class UserRepository: UserRepositoryProtocol {
 
+    enum DefaultsKeys: String {
+        case pushToken = "PushToken"
+    }
+
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
     private let conversationRepository: any ConversationRepositoryProtocol
-
-    // MARK: - Object lifecycle
+    private let storage: UserDefaults
 
     // MARK: - Object lifecycle
 
@@ -136,12 +142,14 @@ public final class UserRepository: UserRepositoryProtocol {
         context: NSManagedObjectContext,
         usersAPI: any UsersAPI,
         selfUserAPI: any SelfUserAPI,
-        conversationRepository: ConversationRepositoryProtocol
+        conversationRepository: ConversationRepositoryProtocol,
+        sharedUserDefaults: UserDefaults = .standard
     ) {
         self.context = context
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
         self.conversationRepository = conversationRepository
+        storage = sharedUserDefaults
     }
 
     // MARK: - Public
@@ -184,6 +192,13 @@ public final class UserRepository: UserRepositoryProtocol {
         } catch {
             throw UserRepositoryError.failedToFetchRemotely(error)
         }
+    }
+
+    public func removePushToken() {
+        storage.set(
+            nil,
+            forKey: DefaultsKeys.pushToken.rawValue
+        )
     }
 
     public func fetchUser(with id: UUID) async throws -> ZMUser {
@@ -315,16 +330,16 @@ public final class UserRepository: UserRepositoryProtocol {
         switch key {
         case .wireReceiptMode:
             let selfUser = fetchSelfUser()
-            
+
             await context.perform {
                 selfUser.readReceiptsEnabled = false
                 selfUser.readReceiptsEnabledChangedRemotely = true
             }
-            
+
         case .wireTypingIndicatorMode:
             // TODO: [WPB-726] feature not implemented yet
             break
-            
+
         case .labels:
             /// Already handled with `user.properties-set` event (adding new labels and removing old ones)
             /// see `ConversationLabelsRepository`
