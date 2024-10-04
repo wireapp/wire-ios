@@ -132,8 +132,8 @@
         "repositoryURL": "https://github.com/apple/swift-docc-plugin",
         "state": {
           "branch": null,
-          "revision": "10bc670db657d11bdd561e07de30a9041311b2b1",
-          "version": "1.1.0"
+          "revision": "26ac5758409154cc448d7ab82389c520fa8a8247",
+          "version": "1.3.0"
         }
       },
       {
