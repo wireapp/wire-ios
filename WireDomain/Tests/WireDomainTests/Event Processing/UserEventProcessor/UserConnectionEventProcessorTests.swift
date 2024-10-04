@@ -23,7 +23,6 @@ import XCTest
 
 final class UserConnectionEventProcessorTests: XCTestCase {
     var sut: UserConnectionEventProcessor!
-
     var connectionsRepository: MockConnectionsRepositoryProtocol!
     var oneOnOneResolver: MockOneOnOneResolverProtocol!
 
@@ -46,7 +45,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Invokes_Methods() async throws {
+    func testProcessEvent_It_Invokes_Repo_And_Resolver_Methods() async throws {
         // Given
 
         let event = UserConnectionEvent(

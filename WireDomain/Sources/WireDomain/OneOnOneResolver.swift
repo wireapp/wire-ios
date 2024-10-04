@@ -194,7 +194,8 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
             do {
                 let ciphersuite = try await mlsService.establishGroup(
                     for: groupID,
-                    with: users
+                    with: users,
+                    removalKeys: nil
                 )
 
                 await context.perform {

@@ -32,8 +32,8 @@ final class TeamRepositoryTests: XCTestCase {
     var teamsAPI: MockTeamsAPI!
 
     var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
 
     var context: NSManagedObjectContext {
         stack.syncContext
@@ -41,7 +41,8 @@ final class TeamRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-
+        modelHelper = ModelHelper()
+        coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         userRespository = MockUserRepositoryProtocol()
         teamsAPI = MockTeamsAPI()
@@ -53,7 +54,7 @@ final class TeamRepositoryTests: XCTestCase {
         )
 
         let selfUser = await context.perform { [context, modelHelper] in
-            modelHelper.createSelfUser(
+            modelHelper?.createSelfUser(
                 id: Scaffolding.selfUserID,
                 in: context
             )
@@ -63,13 +64,14 @@ final class TeamRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         stack = nil
+        modelHelper = nil
         userRespository = nil
         teamsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-
-        try await super.tearDown()
+        coreDataStackHelper = nil
     }
 
     // MARK: - Tests
@@ -116,7 +118,7 @@ final class TeamRepositoryTests: XCTestCase {
             XCTAssertTrue(roles.isEmpty)
 
             // A team is needed to store new roles.
-            return modelHelper.createTeam(
+            return modelHelper!.createTeam(
                 id: Scaffolding.selfTeamID,
                 in: context
             )
@@ -177,7 +179,7 @@ final class TeamRepositoryTests: XCTestCase {
     func testPullSelfTeamMembers() async throws {
         // Given
         let team = await context.perform { [context, modelHelper] in
-            let team = modelHelper.createTeam(
+            let team = modelHelper!.createTeam(
                 id: Scaffolding.selfTeamID,
                 in: context
             )
@@ -248,28 +250,143 @@ final class TeamRepositoryTests: XCTestCase {
         XCTAssertEqual(result, .pending)
     }
 
+    func testDeleteTeamMembership_It_Deletes_Member_From_Team() async throws {
+        // Given
+
+        let user = try await context.perform { [self] in
+            let (team, users, _) = modelHelper.createTeam(
+                id: Scaffolding.teamID,
+                withMembers: [Scaffolding.userID],
+                context: context
+            )
+
+            let user = try XCTUnwrap(users.first)
+            let member = try XCTUnwrap(team.members.first)
+            XCTAssertEqual(user.membership, member)
+
+            return user
+        }
+
+        // Mock
+
+        userRespository.fetchUserWith_MockValue = user
+        userRespository.deleteUserAccountForAt_MockMethod = { _, _ in }
+
+        // When
+
+        try await sut.deleteMembership(
+            forUser: Scaffolding.userID,
+            fromTeam: Scaffolding.teamID,
+            at: Scaffolding.date(from: Scaffolding.time)
+        )
+
+        // Then
+
+        try await context.perform { [context] in
+            /// users won't be deleted as we might be in other (non-team) conversations with them
+            XCTAssertNotNil(ZMUser.fetch(with: Scaffolding.userID, in: context))
+
+            let team = try XCTUnwrap(Team.fetch(with: Scaffolding.teamID, in: context), "No team")
+
+            XCTAssertEqual(team.members, [])
+        }
+    }
+
+    func testStoreTeamMemberNeedsBackendUpdate_It_Updates_Flag() async throws {
+        // Given
+
+        try await context.perform { [context, modelHelper] in
+
+            let team = modelHelper!.createTeam(
+                id: Scaffolding.teamID,
+                in: context
+            )
+
+            let user = modelHelper!.createUser(
+                id: Scaffolding.membershipID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+
+            let member = modelHelper!.addUser(
+                user,
+                to: team,
+                in: context
+            )
+
+            XCTAssertEqual(member.needsToBeUpdatedFromBackend, false)
+
+            try context.save()
+        }
+
+        // When
+
+        try await sut.storeTeamMemberNeedsBackendUpdate(
+            membershipID: Scaffolding.membershipID
+        )
+
+        await context.perform { [context] in
+            let user = ZMUser.fetch(with: Scaffolding.membershipID, in: context)
+            let team = Team.fetch(with: Scaffolding.teamID, in: context)
+
+            guard let user, let team, let member = user.membership else {
+                return XCTFail()
+            }
+
+            // Then
+
+            XCTAssertEqual(member.needsToBeUpdatedFromBackend, true)
+            XCTAssertEqual(member.team, team)
+        }
+    }
+
+    func testStoreTeamMemberNeedsBackendUpdate_It_Throws_Error_When_Member_Was_Not_Found() async throws {
+        // Then
+        await XCTAssertThrowsError { [self] in
+            // When
+            try await sut.storeTeamMemberNeedsBackendUpdate(membershipID: Scaffolding.membershipID)
+        }
+    }
+
+    private enum Scaffolding {
+        static let userID = UUID()
+        static let selfUserID = UUID()
+        static let teamID = UUID()
+        static let selfTeamID = UUID()
+        static let domain = "example.com"
+        static let membershipID = UUID()
+        static let teamCreatorID = UUID()
+        static let teamName = "Team Foo"
+        static let logoID = UUID().uuidString
+        static let logoKey = UUID().uuidString
+        static let splashScreenID = UUID().uuidString
+        static let time = "2021-05-12T10:52:02.671Z"
+        static let teamConversationID = UUID()
+        static let anotherTeamConversationID = UUID()
+        static let conversationID = UUID()
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
+        static let member1ID = UUID()
+        static let member1CreationDate = Date()
+        static let member1CreatorID = UUID()
+        static let member1legalholdStatus = LegalholdStatus.enabled
+        static let member1Permissions = Permissions.admin.rawValue
+
+        static let member2ID = UUID()
+        static let member2CreationDate = Date()
+        static let member2CreatorID = UUID()
+        static let member2legalholdStatus = LegalholdStatus.pending
+        static let member2Permissions = Permissions.member.rawValue
+    }
 }
 
-private enum Scaffolding {
-
-    static let selfUserID = UUID()
-
-    static let selfTeamID = UUID()
-    static let teamCreatorID = UUID()
-    static let teamName = "Team Foo"
-    static let logoID = UUID().uuidString
-    static let logoKey = UUID().uuidString
-    static let splashScreenID = UUID().uuidString
-
-    static let member1ID = UUID()
-    static let member1CreationDate = Date()
-    static let member1CreatorID = UUID()
-    static let member1legalholdStatus = LegalholdStatus.enabled
-    static let member1Permissions = Permissions.admin.rawValue
-
-    static let member2ID = UUID()
-    static let member2CreationDate = Date()
-    static let member2CreatorID = UUID()
-    static let member2legalholdStatus = LegalholdStatus.pending
-    static let member2Permissions = Permissions.member.rawValue
+private extension ISO8601DateFormatter {
+    static let fractionalInternetDateTime = {
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return dateFormatter
+    }()
 }

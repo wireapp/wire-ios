@@ -17,10 +17,9 @@
 //
 
 import Foundation
+@testable import WireDomain
 import WireDomainSupport
 import XCTest
-
-@testable import WireDomain
 
 final class UserPushRemoveEventProcessorTests: XCTestCase {
 
@@ -43,7 +42,7 @@ final class UserPushRemoveEventProcessorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Invokes_Repo_Method() async throws {
+    func testProcessEvent_It_Invokes_Remove_Push_Token_Repo_Method() async throws {
         // Mock
 
         mockUserRepository.removePushToken_MockMethod = {}

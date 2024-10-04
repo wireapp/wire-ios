@@ -364,6 +364,138 @@ public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
 
 }
 
+public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullSelfTeam
+
+    public var pullSelfTeam_Invocations: [Void] = []
+    public var pullSelfTeam_MockError: Error?
+    public var pullSelfTeam_MockMethod: (() async throws -> Void)?
+
+    public func pullSelfTeam() async throws {
+        pullSelfTeam_Invocations.append(())
+
+        if let error = pullSelfTeam_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeam_MockMethod else {
+            fatalError("no mock for `pullSelfTeam`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - pullSelfTeamRoles
+
+    public var pullSelfTeamRoles_Invocations: [Void] = []
+    public var pullSelfTeamRoles_MockError: Error?
+    public var pullSelfTeamRoles_MockMethod: (() async throws -> Void)?
+
+    public func pullSelfTeamRoles() async throws {
+        pullSelfTeamRoles_Invocations.append(())
+
+        if let error = pullSelfTeamRoles_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamRoles_MockMethod else {
+            fatalError("no mock for `pullSelfTeamRoles`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - pullSelfTeamMembers
+
+    public var pullSelfTeamMembers_Invocations: [Void] = []
+    public var pullSelfTeamMembers_MockError: Error?
+    public var pullSelfTeamMembers_MockMethod: (() async throws -> Void)?
+
+    public func pullSelfTeamMembers() async throws {
+        pullSelfTeamMembers_Invocations.append(())
+
+        if let error = pullSelfTeamMembers_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamMembers_MockMethod else {
+            fatalError("no mock for `pullSelfTeamMembers`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - fetchSelfLegalholdStatus
+
+    public var fetchSelfLegalholdStatus_Invocations: [Void] = []
+    public var fetchSelfLegalholdStatus_MockError: Error?
+    public var fetchSelfLegalholdStatus_MockMethod: (() async throws -> LegalholdStatus)?
+    public var fetchSelfLegalholdStatus_MockValue: LegalholdStatus?
+
+    public func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
+        fetchSelfLegalholdStatus_Invocations.append(())
+
+        if let error = fetchSelfLegalholdStatus_MockError {
+            throw error
+        }
+
+        if let mock = fetchSelfLegalholdStatus_MockMethod {
+            return try await mock()
+        } else if let mock = fetchSelfLegalholdStatus_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfLegalholdStatus`")
+        }
+    }
+
+    // MARK: - deleteMembership
+
+    public var deleteMembershipForUserFromTeamAt_Invocations: [(userID: UUID, teamID: UUID, time: Date)] = []
+    public var deleteMembershipForUserFromTeamAt_MockError: Error?
+    public var deleteMembershipForUserFromTeamAt_MockMethod: ((UUID, UUID, Date) async throws -> Void)?
+
+    public func deleteMembership(forUser userID: UUID, fromTeam teamID: UUID, at time: Date) async throws {
+        deleteMembershipForUserFromTeamAt_Invocations.append((userID: userID, teamID: teamID, time: time))
+
+        if let error = deleteMembershipForUserFromTeamAt_MockError {
+            throw error
+        }
+
+        guard let mock = deleteMembershipForUserFromTeamAt_MockMethod else {
+            fatalError("no mock for `deleteMembershipForUserFromTeamAt`")
+        }
+
+        try await mock(userID, teamID, time)
+    }
+
+    // MARK: - storeTeamMemberNeedsBackendUpdate
+
+    public var storeTeamMemberNeedsBackendUpdateMembershipID_Invocations: [UUID] = []
+    public var storeTeamMemberNeedsBackendUpdateMembershipID_MockError: Error?
+    public var storeTeamMemberNeedsBackendUpdateMembershipID_MockMethod: ((UUID) async throws -> Void)?
+
+    public func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws {
+        storeTeamMemberNeedsBackendUpdateMembershipID_Invocations.append(membershipID)
+
+        if let error = storeTeamMemberNeedsBackendUpdateMembershipID_MockError {
+            throw error
+        }
+
+        guard let mock = storeTeamMemberNeedsBackendUpdateMembershipID_MockMethod else {
+            fatalError("no mock for `storeTeamMemberNeedsBackendUpdateMembershipID`")
+        }
+
+        try await mock(membershipID)
+    }
+
+}
+
 class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
 
     // MARK: - Life cycle

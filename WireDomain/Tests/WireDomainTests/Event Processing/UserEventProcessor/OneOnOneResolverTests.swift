@@ -75,7 +75,6 @@ final class OneOnOneResolverTests: XCTestCase {
     func testProcessEvent_It_Does_Not_Migrate_MLS_Conversation() async throws {
         // Given
 
-        let connectionStatus = ConnectionStatus.accepted
         let commonProtocol = WireDataModel.MessageProtocol.mls
         let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
             selfUserProtocol: commonProtocol,
@@ -99,14 +98,13 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // Then
 
-        XCTAssert(mlsService.establishGroupForWith_Invocations.isEmpty)
+        XCTAssert(mlsService.establishGroupForWithRemovalKeys_Invocations.isEmpty)
         XCTAssert(mlsService.joinGroupWith_Invocations.isEmpty)
     }
 
     func testProcessEvent_It_Resolves_MLS_Conversation_Epoch_Zero() async throws {
         // Given
 
-        let connectionStatus = ConnectionStatus.accepted
         let commonProtocol = WireDataModel.MessageProtocol.mls
         let mlsEpoch: UInt64 = 0
 
@@ -130,9 +128,9 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(mlsService.establishGroupForWith_Invocations.count, 1)
+        XCTAssertEqual(mlsService.establishGroupForWithRemovalKeys_Invocations.count, 1)
         let createGroupInvocation = try XCTUnwrap(
-            mlsService.establishGroupForWith_Invocations.first
+            mlsService.establishGroupForWithRemovalKeys_Invocations.first
         )
 
         XCTAssertEqual(createGroupInvocation.groupID, Scaffolding.mlsGroupID)
@@ -151,7 +149,6 @@ final class OneOnOneResolverTests: XCTestCase {
     func testProcessEvent_It_Resolves_MLS_Conversation_Epoch_Not_Zero() async throws {
         // Given
 
-        let connectionStatus = ConnectionStatus.accepted
         let commonProtocol = WireDataModel.MessageProtocol.mls
         let mlsEpoch: UInt64 = 1
 
@@ -185,7 +182,6 @@ final class OneOnOneResolverTests: XCTestCase {
     func testProcessEvent_It_Migrates_Proteus_Messages_To_MLS_Conversation() async throws {
         // Given
 
-        let connectionStatus = ConnectionStatus.accepted
         let commonProtocol = WireDataModel.MessageProtocol.mls
 
         let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
@@ -220,7 +216,6 @@ final class OneOnOneResolverTests: XCTestCase {
     func testProcessEvent_It_Resolves_Proteus_Conversation() async throws {
         // Given
 
-        let connectionStatus = ConnectionStatus.accepted
         let commonProtocol = WireDataModel.MessageProtocol.proteus
         let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
             selfUserProtocol: commonProtocol,
@@ -249,7 +244,6 @@ final class OneOnOneResolverTests: XCTestCase {
     func testProcessEvent_It_Resolves_Conversation_With_No_Common_Protocol() async throws {
         // Given
 
-        let connectionStatus = ConnectionStatus.accepted
         let forcedReadOnly = false
 
         let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
@@ -339,7 +333,7 @@ final class OneOnOneResolverTests: XCTestCase {
         conversationsRepository.pullMLSOneToOneConversationUserIDDomain_MockValue = Scaffolding.conversationID.uuidString
         conversationsRepository.fetchMLSConversationWith_MockValue = mlsOneOnOneConversation
 
-        mlsService.establishGroupForWith_MockValue = Scaffolding.ciphersuite
+        mlsService.establishGroupForWithRemovalKeys_MockValue = Scaffolding.ciphersuite
         mlsService.conversationExistsGroupID_MockValue = mlsConversationExists
         mlsService.joinGroupWith_MockMethod = { _ in }
     }
