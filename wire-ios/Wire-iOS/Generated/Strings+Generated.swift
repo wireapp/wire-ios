@@ -2760,10 +2760,19 @@ internal enum L10n {
           internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.all.subheadline", fallback: "Connect with others or create a new group to start collaborating!")
         }
         internal enum Favorite {
+<<<<<<< HEAD
           /// How to label conversations as favorites
           internal static let link = L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.link", fallback: "How to label conversations as favorites")
           /// Select your favorite conversations, and you’ll find them here.
           internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.subheadline", fallback: "Select your favorite conversations, and you’ll find them here.")
+=======
+          /// Select your favorite conversations, and you’ll find them here.
+          /// 
+          /// [How to label conversations as favorites](%@)
+          internal static func subheadline(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.subheadline", String(describing: p1), fallback: "Select your favorite conversations, and you’ll find them here.\n\n[How to label conversations as favorites](%@)")
+          }
+>>>>>>> 94722825ed (add new strings and link)
         }
         internal enum Group {
           /// You are not part of any group conversation yet.
@@ -2771,8 +2780,11 @@ internal enum L10n {
           internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.group.subheadline", fallback: "You are not part of any group conversation yet.\nStart a new conversation!")
         }
         internal enum Oneonone {
+<<<<<<< HEAD
           /// Connect with People
           internal static let button = L10n.tr("Localizable", "conversation_list.empty_placeholder.oneonone.button", fallback: "Connect with People")
+=======
+>>>>>>> 94722825ed (add new strings and link)
           /// You have no contacts yet.
           /// Search for people on %@ and get connected.
           internal static func subheadline(_ p1: Any) -> String {

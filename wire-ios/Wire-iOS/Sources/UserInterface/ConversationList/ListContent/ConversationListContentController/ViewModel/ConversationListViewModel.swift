@@ -214,6 +214,11 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
+    var isEmptyFavoritePlaceholderVisible: Bool {
+        //archivedConversations.isEmpty
+        return false
+    }
+
     // Local copies of the lists.
     var sections: [Section] = []
 
