@@ -506,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Afgeleverd";
 "content.system.message_read_timestamp" = "Gezien";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1150,11 +1151,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Ontvang nieuwsbrief";
-"self.settings.receiveNews_and_offers.description.title" = "Ontvang nieuws en product updates van Wire via de mail.";
-
-
 
 // Change Username
 
@@ -1916,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "Ongeldige link.";
 "url_action.invalid_link.message" = "The link you opened is not valid.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Wil je nieuws en product updates van Wire via de mail ontvangen?";
-"news_offers.consent.message" = "Je kan dit altijd stopzetten.";
-"news_offers.consent.button.privacy_policy.title" = "Privacybeleid";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

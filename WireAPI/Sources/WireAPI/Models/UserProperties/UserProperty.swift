@@ -45,7 +45,7 @@ public extension UserProperty {
 
     /// The user property key.
 
-    enum Key: String {
+    enum Key: String, Sendable {
 
         /// Wire receipt mode
 
