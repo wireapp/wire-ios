@@ -21,19 +21,17 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import XCTest
-
 @testable import WireDomain
+import XCTest
 
 final class FeatureConfigUpdateEventProcessorTests: XCTestCase {
 
-    var sut: FeatureConfigUpdateEventProcessor!
+    private var sut: FeatureConfigUpdateEventProcessor!
+    private var coreDataStack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
@@ -86,10 +84,8 @@ final class FeatureConfigUpdateEventProcessorTests: XCTestCase {
             XCTAssertEqual(config.supportedProtocols, [.mls])
         }
     }
-}
 
-private extension FeatureConfigUpdateEventProcessorTests {
-    enum Scaffolding {
+    private enum Scaffolding {
         static let event = FeatureConfigUpdateEvent(
             featureConfig: .mls(updatedConfig)
         )
@@ -103,7 +99,7 @@ private extension FeatureConfigUpdateEventProcessorTests {
             supportedProtocols: [.mls] /// updated property
         )
 
-        static let config = Feature.MLS.Config(
+        nonisolated(unsafe) static let config = Feature.MLS.Config(
             protocolToggleUsers: [UUID()],
             defaultProtocol: .proteus,
             allowedCipherSuites: [.MLS_128_DHKEMP256_AES128GCM_SHA256_P256],

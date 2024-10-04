@@ -26,22 +26,22 @@ import XCTest
 
 final class FeatureConfigRepositoryTests: XCTestCase {
 
-    var sut: FeatureConfigRepository!
-    var featureConfigsAPI: MockFeatureConfigsAPI!
+    private var sut: FeatureConfigRepository!
+    private var featureConfigsAPI: MockFeatureConfigsAPI!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    private var subscription: AnyCancellable?
 
-    var subscription: AnyCancellable?
-
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
-
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         featureConfigsAPI = MockFeatureConfigsAPI()
         sut = FeatureConfigRepository(featureConfigsAPI: featureConfigsAPI,
@@ -49,11 +49,13 @@ final class FeatureConfigRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         stack = nil
         featureConfigsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -142,11 +144,8 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         XCTAssertEqual(featureStates.count, Scaffolding.featureConfigs.count)
     }
 
-}
-
-private extension FeatureConfigRepositoryTests {
-    enum Scaffolding {
-        nonisolated(unsafe) static let featureConfigs: [FeatureConfig] = [
+    private enum Scaffolding {
+        static let featureConfigs: [FeatureConfig] = [
             .appLock(.init(
                 status: .enabled,
                 isMandatory: true,
@@ -200,4 +199,5 @@ private extension FeatureConfigRepositoryTests {
         ]
 
     }
+
 }
