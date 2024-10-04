@@ -350,7 +350,6 @@ platform :ios do
             xcargs += enable_datadog_args if build.enable_datadog
             xcargs += ["COUNTLY_APP_KEY=#{build.countly_api_key}"] if build.countly_enabled
 
-           sh "echo $PACKAGES_DIR"
            sh "echo $HAS_PACKAGES_CACHE_HIT"
             build_app(
                 scheme: "Wire-iOS",
