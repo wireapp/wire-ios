@@ -221,9 +221,9 @@ public class MockEnableAnalyticsUseCaseProtocol: EnableAnalyticsUseCaseProtocol 
 
     public var invoke_Invocations: [Void] = []
     public var invoke_MockError: Error?
-    public var invoke_MockMethod: (() throws -> Void)?
+    public var invoke_MockMethod: (() async throws -> Void)?
 
-    public func invoke() throws {
+    public func invoke() async throws {
         invoke_Invocations.append(())
 
         if let error = invoke_MockError {
@@ -234,7 +234,7 @@ public class MockEnableAnalyticsUseCaseProtocol: EnableAnalyticsUseCaseProtocol 
             fatalError("no mock for `invoke`")
         }
 
-        try mock()
+        try await mock()
     }
 
 }

@@ -23,36 +23,47 @@ import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
-final class EnableAnalyticsUseCaseTests: XCTestCase {
+final class EnableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvider {
 
     private var sut: EnableAnalyticsUseCase!
     private var currentUser: AnalyticsUser!
     private var service: MockAnalyticsServiceProtocol!
 
+    var analyticsEventTracker: (any AnalyticsEventTracker)?
+
     override func setUp() {
         super.setUp()
         currentUser = AnalyticsUser(analyticsIdentifier: UUID().transportString())
         service = MockAnalyticsServiceProtocol()
-        sut = EnableAnalyticsUseCase(currentUser: currentUser, service: service)
+        sut = EnableAnalyticsUseCase(service: service, provider: self)
     }
 
     override func tearDown() {
         sut = nil
         currentUser = nil
         service = nil
+        analyticsEventTracker = nil
         super.tearDown()
     }
 
-    func testInvoke_enables_and_switches_user_via_service() throws {
+    func createAnalyticsUser() async throws -> AnalyticsUser {
+        currentUser
+    }
+
+    func testInvoke_enables_and_switches_user_via_service() async throws {
         // Mock
         service.enableTracking_MockMethod = { }
         service.switchUser_MockMethod = { _ in }
 
+        // Given
+        XCTAssertNil(analyticsEventTracker)
+
         // When
-        try sut.invoke()
+        try await sut.invoke()
 
         // Then
         XCTAssertEqual(service.enableTracking_Invocations.count, 1)
         XCTAssertEqual(service.switchUser_Invocations, [currentUser])
+        XCTAssertNotNil(analyticsEventTracker)
     }
 }

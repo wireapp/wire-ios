@@ -310,7 +310,7 @@ extension IntegrationTest {
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
-            analyticsSessionConfiguration: nil
+            analyticsServiceConfiguration: nil
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete

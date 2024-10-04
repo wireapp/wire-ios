@@ -68,7 +68,7 @@ final class SessionManagerProxyTests: IntegrationTest {
             isUnauthenticatedTransportSessionReady: false,
             sharedUserDefaults: sharedUserDefaults,
             deleteUserLogs: {},
-            analyticsSessionConfiguration: nil
+            analyticsServiceConfiguration: nil
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete

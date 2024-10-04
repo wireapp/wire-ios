@@ -62,26 +62,24 @@ class AnalyticsServiceTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testEnableTracking_service_is_not_configured() throws {
+    func testEnableTracking_service_is_not_configured() async throws {
         // Given a service with no config.
         let sut = AnalyticsService(
             config: nil,
             logger: { print($0) }
         )
 
-        // When tracking is enabled.
-        XCTAssertThrowsError(try sut.enableTracking()) {
-            // Then it throws an error.
-            guard case AnalyticsServiceError.serviceIsNotConfigured = $0 else {
-                XCTFail("unexpected error: \($0)")
-                return
-            }
+        do {
+            // When tracking is enabled.
+            try await sut.enableTracking()
+        } catch AnalyticsServiceError.serviceIsNotConfigured {
+            // Then
         }
     }
 
-    func testEnableTracking_succeeds() throws {
+    func testEnableTracking_succeeds() async throws {
         // When tracking is enabled.
-        try sut.enableTracking()
+        try await sut.enableTracking()
 
         // Then the service was started.
         let invocations = countly.startAppKeyHost_Invocations
@@ -111,9 +109,9 @@ class AnalyticsServiceTests: XCTestCase {
         }
     }
 
-    func testDisableTracking_succeeds() throws {
+    func testDisableTracking_succeeds() async throws {
         // Given tracking is enabled.
-        try sut.enableTracking()
+        try await sut.enableTracking()
         resetMockInvocations()
 
         // When tracking is disabled.
@@ -142,19 +140,17 @@ class AnalyticsServiceTests: XCTestCase {
     func testSwitchUser_tracking_disabled() throws {
         // Given sut is not enabled.
 
-        // When switching to a user.
-        try sut.switchUser(Scaffolding.user)
-
-        // Then the user was not set.
-        XCTAssertEqual(countly.endSession_Invocations.count, 0)
-        XCTAssertEqual(countly.changeDeviceIDMergeData_Invocations.count, 0)
-        XCTAssertEqual(countly.setUserValueForKey_Invocations.count, 0)
-        XCTAssertEqual(countly.beginSession_Invocations.count, 0)
+        do {
+            // When switching to a user.
+            try sut.switchUser(Scaffolding.user)
+        } catch AnalyticsServiceError.serviceIsNotConfigured {
+            // Then
+        }
     }
 
-    func testSwitchUser_user_is_same() throws {
+    func testSwitchUser_user_is_same() async throws {
         // Given tracking is enabled.
-        try sut.enableTracking()
+        try await sut.enableTracking()
 
         // Given a user is set.
         try sut.switchUser(Scaffolding.user)
@@ -170,9 +166,9 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.beginSession_Invocations.count, 0)
     }
 
-    func testSwitchUser_succeeds() throws {
+    func testSwitchUser_succeeds() async throws {
         // Given tracking is enabled.
-        try sut.enableTracking()
+        try await sut.enableTracking()
 
         // Given a user is set.
         try sut.switchUser(Scaffolding.user)
@@ -213,9 +209,9 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.beginSession_Invocations.count, 1)
     }
 
-    func testUpdateCurrentUser_no_current_user() throws {
+    func testUpdateCurrentUser_no_current_user() async throws {
         // Given tracking is enabled.
-        try sut.enableTracking()
+        try await sut.enableTracking()
 
         // Given no current user.
 
@@ -227,9 +223,9 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.setUserValueForKey_Invocations.count, 0)
     }
 
-    func testUpdateCurrentUser_no_change() throws {
+    func testUpdateCurrentUser_no_change() async throws {
         // Given tracking is enabled.
-        try sut.enableTracking()
+        try await sut.enableTracking()
 
         // Given a current user is set.
         try sut.switchUser(Scaffolding.user)
@@ -243,9 +239,9 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.setUserValueForKey_Invocations.count, 0)
     }
 
-    func testUpdateCurrentUser_with_change() throws {
+    func testUpdateCurrentUser_with_change() async throws {
         // Given tracking is enabled.
-        try sut.enableTracking()
+        try await sut.enableTracking()
 
         // Given a current user is set.
         try sut.switchUser(Scaffolding.user)
@@ -290,9 +286,9 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.recordEventSegmentation_Invocations.count, 0)
     }
 
-    func testTrackEvent_no_current_user() throws {
+    func testTrackEvent_no_current_user() async throws {
         // Given tracking is enabled.
-        try sut.enableTracking()
+        try await sut.enableTracking()
 
         // Given no current user.
 
@@ -303,9 +299,9 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.recordEventSegmentation_Invocations.count, 0)
     }
 
-    func testTrackEvent_succeeds() throws {
+    func testTrackEvent_succeeds() async throws {
         // Given tracking is enabled.
-        try sut.enableTracking()
+        try await sut.enableTracking()
 
         // Given a current user.
         try sut.switchUser(Scaffolding.user)

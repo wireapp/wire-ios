@@ -119,7 +119,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: nil,
             deleteUserLogs: {},
-            analyticsSessionConfiguration: nil
+            analyticsServiceConfiguration: nil
         )
 
         let environment = MockEnvironment()
@@ -181,7 +181,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: nil,
             deleteUserLogs: {},
-            analyticsSessionConfiguration: nil
+            analyticsServiceConfiguration: nil
         )
 
         let environment = MockEnvironment()

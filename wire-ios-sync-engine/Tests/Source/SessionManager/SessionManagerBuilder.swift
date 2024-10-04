@@ -68,7 +68,7 @@ struct SessionManagerBuilder {
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: .temporary(),
             deleteUserLogs: nil,
-            analyticsSessionConfiguration: nil
+            analyticsServiceConfiguration: nil
         )
     }
 }
