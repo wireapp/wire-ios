@@ -140,6 +140,34 @@ final class ConnectionsRepositoryTests: XCTestCase {
             XCTAssertTrue(relatedConversation.needsToBeUpdatedFromBackend)
         }
     }
+
+    func testUpdateConnection_It_Successfully_Updates_Connection_Locally() async throws {
+        // Given
+
+        let connection = Scaffolding.connection
+
+        // When
+
+        try await sut.updateConnection(connection)
+
+        // Then
+        try await context.perform { [context] in
+            let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
+
+            XCTAssertEqual(storedConnection.lastUpdateDateInGMT, connection.lastUpdate)
+
+            XCTAssertEqual(storedConnection.to.remoteIdentifier, connection.receiverID)
+            XCTAssertNil(storedConnection.to.domain)
+            XCTAssertEqual(storedConnection.status, ZMConnectionStatus.accepted)
+
+            let relatedConversation = try XCTUnwrap(storedConnection.to.oneOnOneConversation)
+            XCTAssertEqual(relatedConversation.remoteIdentifier, connection.qualifiedConversationID?.uuid)
+
+            XCTAssertNil(relatedConversation.domain)
+
+            XCTAssertTrue(relatedConversation.needsToBeUpdatedFromBackend)
+        }
+    }
 }
 
 private enum Scaffolding {

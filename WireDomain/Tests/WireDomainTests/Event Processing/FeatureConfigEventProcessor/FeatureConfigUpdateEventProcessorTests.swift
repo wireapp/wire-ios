@@ -86,10 +86,8 @@ final class FeatureConfigUpdateEventProcessorTests: XCTestCase {
             XCTAssertEqual(config.supportedProtocols, [.mls])
         }
     }
-}
 
-private extension FeatureConfigUpdateEventProcessorTests {
-    enum Scaffolding {
+    private enum Scaffolding {
         static let event = FeatureConfigUpdateEvent(
             featureConfig: .mls(updatedConfig)
         )

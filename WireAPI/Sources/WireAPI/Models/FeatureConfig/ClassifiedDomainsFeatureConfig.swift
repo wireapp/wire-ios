@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *Classified Domains* feature.
 
-public struct ClassifiedDomainsFeatureConfig: Equatable, Codable {
+public struct ClassifiedDomainsFeatureConfig: Equatable, Codable, Sendable {
 
     /// The feature's status.
 
