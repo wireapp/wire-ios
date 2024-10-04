@@ -132,7 +132,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         XCTAssertTrue(firstMessage.usersReaction.keys.contains("❤️"), "Expected the message to have a ❤️ reaction.")
         XCTAssertTrue(firstMessage.usersReaction.keys.contains("👍"), "Expected the message to have a 👍 reaction.")
         XCTAssertTrue(firstMessage.usersReaction.keys.contains("😮"), "Expected the message to have a 😮 reaction.")
-        
+
         XCTAssertEqual(
             analyticsEventTracker.trackEvent_Invocations,
             [

@@ -31,7 +31,7 @@ public struct AnalyticsServiceConfiguration {
     /// Whether the user has given consent to track events.
 
     public let didUserGiveTrackingConsent: Bool
-    
+
     /// Create a new `AnalyticsServiceConfiguration`.
     ///
     /// - Parameters:

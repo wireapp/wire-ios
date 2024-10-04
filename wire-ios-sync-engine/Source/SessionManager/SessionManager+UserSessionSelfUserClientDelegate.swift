@@ -59,7 +59,7 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
 
     public func clientCompletedInitialSync(accountId: UUID) {
         let account = accountManager.account(with: accountId)
-        
+
         guard account == accountManager.selectedAccount else {
             return
         }

@@ -43,7 +43,7 @@ final class TrackingManager: NSObject, TrackingInterface {
         super.init()
     }
 
-    var disableAnalyticsSharing: Bool { 
+    var disableAnalyticsSharing: Bool {
         ExtensionSettings.shared.disableAnalyticsSharing
     }
 
