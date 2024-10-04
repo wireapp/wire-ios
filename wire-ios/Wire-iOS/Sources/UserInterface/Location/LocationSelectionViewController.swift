@@ -132,7 +132,7 @@ final class LocationSelectionViewController: UIViewController {
         }
 
         sendControllerHeightConstraint = sendController.heightAnchor.constraint(
-            equalToConstant: LayoutConstants.sendControllerHeight + UIScreen.safeArea.bottom
+            equalToConstant: LayoutConstants.sendControllerHeight + sendController.safeAreaInsets.bottom
         )
 
         sendControllerHeightConstraint?.isActive = false

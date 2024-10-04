@@ -20,7 +20,7 @@ import Foundation
 
 /// Represents all possible legalhold status for a user.
 
-public enum LegalholdStatus {
+public enum LegalholdStatus: Sendable {
 
     /// Legalhold is active for the user.
 
