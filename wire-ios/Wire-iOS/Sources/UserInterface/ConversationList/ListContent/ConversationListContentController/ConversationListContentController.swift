@@ -45,6 +45,7 @@ final class ConversationListContentController: UICollectionViewController {
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
+    private var emptyPlaceholderView: UIStackView!
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
@@ -123,6 +124,7 @@ final class ConversationListContentController: UICollectionViewController {
     func reload() {
         collectionView.reloadData()
         ensureCurrentSelection()
+        emptyPlaceholderView.isHidden = !listViewModel.isEmptyFavoritePlaceholderVisible
 
         // we MUST call layoutIfNeeded here because otherwise bad things happen when we close the archive, reload the conv
         // and then unarchive all at the same time
@@ -136,6 +138,7 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func setupViews() {
+        setupEmptyPlaceholder()
         collectionView.register(ConnectRequestsCell.self, forCellWithReuseIdentifier: CellReuseIdConnectionRequests)
         collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
 
@@ -148,6 +151,42 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.accessibilityIdentifier = "conversation list"
         collectionView.backgroundColor = .clear
         clearsSelectionOnViewWillAppear = false
+    }
+
+    private func setupEmptyPlaceholder() {
+
+        let titleLabel = DynamicFontLabel(
+            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.headline + " 👻",
+            style: .h3,
+            color: SemanticColors.Label.textDefault
+        )
+        titleLabel.textAlignment = .center
+
+        let descriptionLabel = DynamicFontLabel(
+            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.subheadline,
+            style: .body1,
+            color: SemanticColors.Label.baseSecondaryText
+        )
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .center
+
+        emptyPlaceholderView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
+        emptyPlaceholderView.axis = .vertical
+        emptyPlaceholderView.spacing = 2
+        emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(emptyPlaceholderView)
+        NSLayoutConstraint.activate([
+
+            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            emptyPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
+            emptyPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptyPlaceholderView.trailingAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyPlaceholderView.bottomAnchor, multiplier: 1),
+
+            emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
+        ])
     }
 
     // MARK: - section header
@@ -313,6 +352,7 @@ final class ConversationListContentController: UICollectionViewController {
     // MARK: - UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        print("Kate numberOfSections: \(listViewModel.sectionCount)")
         return listViewModel.sectionCount
     }
 

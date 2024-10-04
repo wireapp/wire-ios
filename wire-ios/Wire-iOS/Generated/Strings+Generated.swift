@@ -2728,6 +2728,34 @@ internal enum L10n {
           internal static let message = L10n.tr("Localizable", "conversation_list.empty.no_contacts.message", fallback: "Start a conversation or\ncreate a group.")
         }
       }
+      internal enum EmptyPlaceholder {
+        internal enum All {
+          /// Welcome
+          internal static let headline = L10n.tr("Localizable", "conversation_list.empty_placeholder.all.headline", fallback: "Welcome")
+          /// Connect with others or create a new group to start collaborating!
+          internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.all.subheadline", fallback: "Connect with others or create a new group to start collaborating!")
+        }
+        internal enum Favorite {
+          /// Select your favorite conversations, and you’ll find them here.
+          /// 
+          /// [How to label conversations as favorites](%@)
+          internal static func subheadline(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.subheadline", String(describing: p1), fallback: "Select your favorite conversations, and you’ll find them here.\n\n[How to label conversations as favorites](%@)")
+          }
+        }
+        internal enum Group {
+          /// You are not part of any group conversation yet.
+          /// Start a new conversation!
+          internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.group.subheadline", fallback: "You are not part of any group conversation yet.\nStart a new conversation!")
+        }
+        internal enum Oneonone {
+          /// You have no contacts yet.
+          /// Search for people on %@ and get connected.
+          internal static func subheadline(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "conversation_list.empty_placeholder.oneonone.subheadline", String(describing: p1), fallback: "You have no contacts yet.\nSearch for people on %@ and get connected.")
+          }
+        }
+      }
       internal enum Filter {
         internal enum AllConversations {
           /// All Conversations
