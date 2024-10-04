@@ -56,6 +56,34 @@ import WireDataModel
 
 
 
+class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - storeConnection
+
+    var storeConnection_Invocations: [Connection] = []
+    var storeConnection_MockError: Error?
+    var storeConnection_MockMethod: ((Connection) async throws -> Void)?
+
+    func storeConnection(_ connectionPayload: Connection) async throws {
+        storeConnection_Invocations.append(connectionPayload)
+
+        if let error = storeConnection_MockError {
+            throw error
+        }
+
+        guard let mock = storeConnection_MockMethod else {
+            fatalError("no mock for `storeConnection`")
+        }
+
+        try await mock(connectionPayload)
+    }
+
+}
+
 public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -515,6 +543,21 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
+    // MARK: - removePushToken
+
+    public var removePushToken_Invocations: [Void] = []
+    public var removePushToken_MockMethod: (() -> Void)?
+
+    public func removePushToken() {
+        removePushToken_Invocations.append(())
+
+        guard let mock = removePushToken_MockMethod else {
+            fatalError("no mock for `removePushToken`")
+        }
+
+        mock()
+    }
+
     // MARK: - fetchUser
 
     public var fetchUserWith_Invocations: [UUID] = []
@@ -614,6 +657,21 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         }
 
         try await mock()
+    }
+
+    // MARK: - deleteUserProperty
+
+    public var deleteUserPropertyWithKey_Invocations: [UserProperty.Key] = []
+    public var deleteUserPropertyWithKey_MockMethod: ((UserProperty.Key) async -> Void)?
+
+    public func deleteUserProperty(withKey key: UserProperty.Key) async {
+        deleteUserPropertyWithKey_Invocations.append(key)
+
+        guard let mock = deleteUserPropertyWithKey_MockMethod else {
+            fatalError("no mock for `deleteUserPropertyWithKey`")
+        }
+
+        await mock(key)
     }
 
     // MARK: - deleteUserAccount
