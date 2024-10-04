@@ -34,4 +34,7 @@ public enum ConversationsAPIError: Error {
     /// Users not connected
     case usersNotConnected
 
+    /// Failure if user and domain are empty
+    case userAndDomainShouldNotBeEmpty
+
 }
