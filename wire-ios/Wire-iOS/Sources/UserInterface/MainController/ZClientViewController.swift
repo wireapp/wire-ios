@@ -42,7 +42,8 @@ final class ZClientViewController: UIViewController {
         ConversationViewControllerBuilder,
         SettingsViewControllerBuilder,
         StartUIViewControllerBuilder,
-        SelfProfileViewControllerBuilder
+        SelfProfileViewControllerBuilder,
+        UserProfileViewControllerBuilder
     >
 
     // MARK: - Private Members

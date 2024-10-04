@@ -16,18 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTransport
+import UIKit
 
-public extension UserType {
+public protocol MainUserProfileBuilderProtocol {
+    associatedtype UserProfile: UIViewController
+    associatedtype UserID: Sendable
 
-    var qualifiedID: QualifiedID? {
-        guard
-            let uuid = remoteIdentifier,
-            let domain = domain ?? BackendInfo.domain
-        else {
-            return nil
-        }
-
-        return QualifiedID(uuid: uuid, domain: domain)
-    }
+    @MainActor
+    func build(
+        userID: UserID,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> UserProfile
 }

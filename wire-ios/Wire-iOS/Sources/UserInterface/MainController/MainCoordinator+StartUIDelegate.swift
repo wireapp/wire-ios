@@ -20,16 +20,17 @@ import WireDataModel
 import WireMainNavigation
 
 extension MainCoordinator: StartUIDelegate where
-MainCoordinator.ConversationBuilder.Conversation.ConversationID == ZMConversation.ConversationID {
+ConversationBuilder.Conversation.ConversationID == ZMConversation.ConversationID,
+UserProfileBuilder.UserID == QualifiedID {
 
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {
-        guard let userID = user.qualifiedID else { return }
-
-        let userSession = viewController.userSession
-        let conversation = user.oneToOneConversation
-
         Task {
+            guard let userID = user.qualifiedID else { return }
+
+            let userSession = viewController.userSession
+            let conversation = user.oneToOneConversation
+
             do {
                 let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
 
@@ -45,8 +46,7 @@ MainCoordinator.ConversationBuilder.Conversation.ConversationID == ZMConversatio
                     // If the conversation should be using mls and is not established,
                     // or does not exits, then we open the user profile to let the user
                     // create the conversation
-                    fatalError("TODO")
-                    //await openUserProfile(user)
+                    await showUserProfile(userID: userID)
 
                 }
             } catch {
@@ -57,44 +57,8 @@ MainCoordinator.ConversationBuilder.Conversation.ConversationID == ZMConversatio
 
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation) {
-        fatalError()
+        Task {
+            await showConversation(conversationID: conversation.remoteIdentifier)
+        }
     }
 }
-
-/*
- extension ConversationListViewController.ViewModel: StartUIDelegate {
-
-     func startUIViewController(_ startUI: StartUIViewController, didSelect user: UserType) {
-     }
-
-     func startUIViewController(_ startUI: StartUIViewController, didSelect conversation: ZMConversation) {
-         startUI.dismissIfNeeded(animated: true) {
-             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
-         }
-     }
-
-     @MainActor
-     func openConversation(_ conversation: ZMConversation) {
-         ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
-     }
-
-     // TODO: migrate this code into MainCoordinator
-     @MainActor
-     func openUserProfile(_ user: UserType) {
-         let profileViewController = ProfileViewController(
-             user: user,
-             viewer: selfUserLegalHoldSubject,
-             context: .profileViewer,
-             userSession: userSession,
-             mainCoordinator: mainCoordinator
-         )
-         profileViewController.delegate = self
-
-         let navigationController = profileViewController.wrapInNavigationController()
-         navigationController.modalPresentationStyle = .formSheet
-
-         ZClientViewController.shared?.present(navigationController, animated: true)
-     }
- }
-
- */

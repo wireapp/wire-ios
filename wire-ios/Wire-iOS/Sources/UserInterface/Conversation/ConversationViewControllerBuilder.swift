@@ -33,7 +33,7 @@ struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
         mainCoordinator: some MainCoordinatorProtocol
     ) async -> ConversationRootViewController {
         let viewController = ConversationRootViewController(
-            conversation: await conversationLoader(conversationID)!,
+            conversation: await conversationLoader(conversationID)!, // TODO: a view controller shouldn't have to perform async tasks, either let the controller fetch the conversation or fetch it before
             message: nil, // TODO: use `scroll(to:)`
             userSession: userSession,
             mainCoordinator: mainCoordinator,

@@ -16,18 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTransport
+import UIKit
+import WireMainNavigation
 
-public extension UserType {
+struct MockUserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
+    typealias UserProfile = UIViewController
+    struct UserID: Sendable {}
 
-    var qualifiedID: QualifiedID? {
-        guard
-            let uuid = remoteIdentifier,
-            let domain = domain ?? BackendInfo.domain
-        else {
-            return nil
-        }
-
-        return QualifiedID(uuid: uuid, domain: domain)
+    func build(
+        userID: UserID,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> UIViewController {
+        fatalError()
     }
 }

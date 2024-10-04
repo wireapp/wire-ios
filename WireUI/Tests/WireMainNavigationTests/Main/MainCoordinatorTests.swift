@@ -27,7 +27,8 @@ final class MainCoordinatorTests: XCTestCase {
         MockConversationBuilder<MockConversationID>,
         MockSettingsViewControllerBuilder,
         MockViewControllerBuilder,
-        MockViewControllerBuilder
+        MockViewControllerBuilder,
+        MockUserProfileViewControllerBuilder
     >
 
     private var sut: SUT!
@@ -69,10 +70,10 @@ final class MainCoordinatorTests: XCTestCase {
     }
 
     @MainActor
-    func testShowingGroupConversations() {
+    func testShowingGroupConversations() async {
         // When
         let conversationFilter: MockConversationListViewController.ConversationFilter = .groups
-        sut.showConversationList(conversationFilter: conversationFilter)
+        await sut.showConversationList(conversationFilter: conversationFilter)
 
         // Then
         XCTAssertNotNil(splitViewController.conversationList)
@@ -82,12 +83,12 @@ final class MainCoordinatorTests: XCTestCase {
     }
 
     @MainActor
-    func testShowingGroupConversationsFromArchive() {
+    func testShowingGroupConversationsFromArchive() async {
         // When
-        sut.showArchive()
+        await sut.showArchive()
 
         // Then
-        testShowingGroupConversations()
+        await testShowingGroupConversations()
     }
 
     @MainActor
@@ -101,9 +102,9 @@ final class MainCoordinatorTests: XCTestCase {
     }
 
     @MainActor
-    func testShowingArchivedConversations() {
+    func testShowingArchivedConversations() async {
         // When
-        sut.showArchive()
+        await sut.showArchive()
 
         // Then
         XCTAssertNil(splitViewController.conversationList)

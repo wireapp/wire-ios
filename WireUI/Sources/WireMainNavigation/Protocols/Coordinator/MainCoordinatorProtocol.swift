@@ -23,6 +23,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype ConversationList: MainConversationListProtocol
     associatedtype ConversationBuilder: MainConversationBuilderProtocol
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
+    associatedtype UserProfileBuilder: MainUserProfileBuilderProtocol
+    associatedtype UserID: Sendable
 
     @MainActor
     func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async
@@ -44,6 +46,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
 
     @MainActor
     func showSelfProfile() async
+    @MainActor
+    func showUserProfile(userID: UserID) async
     @MainActor
     func showConnect() async
 }

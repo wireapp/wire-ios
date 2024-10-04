@@ -37,7 +37,8 @@ public final class MainCoordinator<
     ConversationBuilder: MainConversationBuilderProtocol,
     SettingsContentBuilder: MainSettingsContentBuilderProtocol,
     ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder,
-    SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder
+    SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder,
+    UserProfileBuilder: MainUserProfileBuilderProtocol
 
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
@@ -53,6 +54,7 @@ public final class MainCoordinator<
     public typealias Connect = ConnectBuilder.ViewController
     public typealias SelfProfile = SelfProfileBuilder.ViewController
     public typealias TabBarController = SplitViewController.TabContainer
+    public typealias UserID = UserProfileBuilder.UserID
 
     // MARK: - Private Properties
 
@@ -265,6 +267,10 @@ public final class MainCoordinator<
         await withCheckedContinuation { continuation in
             splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
         }
+    }
+
+    public func showUserProfile(userID: UserID) async {
+        fatalError()
     }
 
     public func showConnect() async {

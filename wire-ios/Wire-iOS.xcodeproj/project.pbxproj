@@ -338,6 +338,7 @@
 		5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5929CB222CA6C9C800070488 /* WireConversationList in Frameworks */ = {isa = PBXBuildFile; productRef = 5929CB212CA6C9C800070488 /* WireConversationList */; };
+		592CF53C2CAFEA3600AE238D /* UserProfileViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592CF53B2CAFEA3600AE238D /* UserProfileViewControllerBuilder.swift */; };
 		592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		593D510A2C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593D51092C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift */; };
@@ -2346,6 +2347,7 @@
 		5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift"; sourceTree = "<group>"; };
 		5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+SecurityFlags.swift"; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
+		592CF53B2CAFEA3600AE238D /* UserProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
 		593D51092C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarViewController+MainSidebarProtocol.swift"; sourceTree = "<group>"; };
 		594211BE2C90542C00576053 /* FilePreviewGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePreviewGenerator.swift; sourceTree = "<group>"; };
@@ -6817,6 +6819,7 @@
 				EF3CB75421DD157B0030C3E8 /* ProfileViewController.swift */,
 				A9D19B172385245E00F6E14A /* ProfileViewControllerViewModel.swift */,
 				5E628020221ED0A60039A8AB /* ProfileActionsFactory.swift */,
+				592CF53B2CAFEA3600AE238D /* UserProfileViewControllerBuilder.swift */,
 				5EF7BA73221D85E800815625 /* Details */,
 				5EF7BA74221D861600815625 /* Devices */,
 				872CB8A019E58816006752B4 /* Views */,
@@ -10171,6 +10174,7 @@
 				E514F2AB287DA58000D1A8AB /* SearchTextView.swift in Sources */,
 				010497E12940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift in Sources */,
 				D5168F552010F24C00F8222A /* TokenTextAttachment.swift in Sources */,
+				592CF53C2CAFEA3600AE238D /* UserProfileViewControllerBuilder.swift in Sources */,
 				2572EC562B148EE50075A7BE /* DeviceDetailsProteusView.swift in Sources */,
 				A955D3DA23F57F4600304851 /* ZiphySession.swift in Sources */,
 				EF4018BE205975C100CFBCB0 /* ApplicationProtocol.swift in Sources */,
