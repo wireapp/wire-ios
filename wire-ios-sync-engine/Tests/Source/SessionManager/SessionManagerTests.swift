@@ -266,26 +266,26 @@ final class SessionManagerTests: IntegrationTest {
 
         // WHEN
         destroyToken = testSessionManager.addSessionManagerDestroyedSessionObserver(observer)
-        
+
         testSessionManager.loadSession(for: account1) { userSession in
             XCTAssertNotNil(userSession)
-            
+
             // load second account
             testSessionManager.loadSession(for: account2) { userSession in
                 XCTAssertNotNil(userSession)
                 sessionManagerExpectation.fulfill()
             }
         }
-        
+
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(testSessionManager.backgroundUserSessions.count, 2)
         XCTAssertEqual(testSessionManager.backgroundUserSessions[account2.userIdentifier], testSessionManager.activeUserSession)
-        
+
         withExtendedLifetime(destroyToken) {
             NotificationCenter.default.post(Notification(name: UIApplication.didReceiveMemoryWarningNotification))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // THEN
         XCTAssertEqual([account1.userIdentifier], observer.destroyedUserSessions)
     }
@@ -341,7 +341,7 @@ final class SessionManagerTests: IntegrationTest {
 
         sut.accountManager.addAndSelect(createAccount())
         XCTAssertEqual(sut.accountManager.accounts.count, 1)
-        
+
         // THEN
         performIgnoringZMLogError {
             sut.checkJailbreakIfNeeded()
@@ -374,7 +374,7 @@ final class SessionManagerTests: IntegrationTest {
         performIgnoringZMLogError {
             sut.performPostRebootLogout()
         }
-        
+
         waitForExpectations(timeout: 1)
     }
 

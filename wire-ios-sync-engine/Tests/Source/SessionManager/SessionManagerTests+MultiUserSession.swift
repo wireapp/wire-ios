@@ -201,12 +201,12 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             XCTAssertNotNil(userSession)
             sessionManagerExpectation.fulfill()
         }
-        
+
         // THEN
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
-        
+
         XCTAssertNotNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
-        
+
         // WHEN
         NotificationCenter.default.post(name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
         
