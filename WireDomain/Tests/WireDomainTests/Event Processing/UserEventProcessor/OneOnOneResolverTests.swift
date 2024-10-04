@@ -275,14 +275,14 @@ final class OneOnOneResolverTests: XCTestCase {
 
     // MARK: - Setup
 
+    typealias ManagedObjects = (selfUser: ZMUser, user: ZMUser, mlsConversation: ZMConversation)
+
     private func setupManagedObjects(
         selfUserProtocol: WireDataModel.MessageProtocol,
         userProtocol: WireDataModel.MessageProtocol,
         forcedReadOnly: Bool = true,
         mlsEpoch: UInt64 = 0
-    ) throws -> (selfUser: ZMUser,
-                 user: ZMUser,
-                 mlsConversation: ZMConversation) {
+    ) throws -> ManagedObjects {
         let user = modelHelper.createUser(
             id: Scaffolding.receiverQualifiedID.uuid,
             domain: Scaffolding.receiverQualifiedID.domain,
