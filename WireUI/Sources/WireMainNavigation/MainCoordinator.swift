@@ -270,12 +270,10 @@ public final class MainCoordinator<
 
     public func showUserProfile(user: User) async {
         // TODO: move this into a UserProfileCoordinator type
-        let rootViewController = await userProfileBuilder.build(
+        let userProfile = await userProfileBuilder.build(
             user: user,
             mainCoordinator: self
         )
-        let userProfile = UINavigationController(rootViewController: rootViewController)
-        userProfile.modalPresentationStyle = .formSheet
         await presentViewController(userProfile)
     }
 

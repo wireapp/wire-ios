@@ -44,6 +44,8 @@ struct UserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
             mainCoordinator: mainCoordinator
         )
         rootViewController.delegate = delegate
-        return UINavigationController(rootViewController: rootViewController)
+        let navigtaionController = UINavigationController(rootViewController: rootViewController)
+        navigtaionController.modalPresentationStyle = .formSheet
+        return navigtaionController
     }
 }
