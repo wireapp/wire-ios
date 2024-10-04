@@ -20,22 +20,20 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import XCTest
-
 @testable import WireDomain
 @testable import WireDomainSupport
+import XCTest
 
 final class TeamRepositoryTests: XCTestCase {
 
-    var sut: TeamRepository!
-    var userRespository: MockUserRepositoryProtocol!
-    var teamsAPI: MockTeamsAPI!
+    private var sut: TeamRepository!
+    private var userRespository: MockUserRepositoryProtocol!
+    private var teamsAPI: MockTeamsAPI!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var stack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
@@ -384,7 +382,7 @@ final class TeamRepositoryTests: XCTestCase {
 }
 
 private extension ISO8601DateFormatter {
-    static let fractionalInternetDateTime = {
+    nonisolated(unsafe) static let fractionalInternetDateTime = {
         let dateFormatter = ISO8601DateFormatter()
         dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return dateFormatter

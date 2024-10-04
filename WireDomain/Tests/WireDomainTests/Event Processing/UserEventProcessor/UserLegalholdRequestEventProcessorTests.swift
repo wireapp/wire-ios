@@ -23,8 +23,8 @@ import XCTest
 
 final class UserLegalholdRequestEventProcessorTests: XCTestCase {
 
-    var sut: UserLegalholdRequestEventProcessor!
-    var userRepository: MockUserRepositoryProtocol!
+    private var sut: UserLegalholdRequestEventProcessor!
+    private var userRepository: MockUserRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()

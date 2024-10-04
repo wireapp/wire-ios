@@ -22,8 +22,9 @@ import WireDomainSupport
 import XCTest
 
 final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
-    var sut: UserLegalholdDisableEventProcessor!
-    var userRepository: MockUserRepositoryProtocol!
+
+    private var sut: UserLegalholdDisableEventProcessor!
+    private var userRepository: MockUserRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()

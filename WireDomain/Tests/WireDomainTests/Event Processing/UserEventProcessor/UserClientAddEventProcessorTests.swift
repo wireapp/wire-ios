@@ -25,13 +25,13 @@ import XCTest
 
 final class UserClientAddEventProcessorTests: XCTestCase {
 
-    var sut: UserClientAddEventProcessor!
-    var userRepository: MockUserRepositoryProtocol!
-    var stack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
+    private var sut: UserClientAddEventProcessor!
+    private var userRepository: MockUserRepositoryProtocol!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 

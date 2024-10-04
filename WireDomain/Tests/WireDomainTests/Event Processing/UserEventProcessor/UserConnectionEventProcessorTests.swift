@@ -22,9 +22,10 @@ import WireDomainSupport
 import XCTest
 
 final class UserConnectionEventProcessorTests: XCTestCase {
-    var sut: UserConnectionEventProcessor!
-    var connectionsRepository: MockConnectionsRepositoryProtocol!
-    var oneOnOneResolver: MockOneOnOneResolverProtocol!
+
+    private var sut: UserConnectionEventProcessor!
+    private var connectionsRepository: MockConnectionsRepositoryProtocol!
+    private var oneOnOneResolver: MockOneOnOneResolverProtocol!
 
     override func setUp() async throws {
         try await super.setUp()

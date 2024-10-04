@@ -23,8 +23,8 @@ import XCTest
 
 final class TeamMemberUpdateEventProcessorTests: XCTestCase {
 
-    var sut: TeamMemberUpdateEventProcessor!
-    var teamRepository: MockTeamRepositoryProtocol!
+    private var sut: TeamMemberUpdateEventProcessor!
+    private var teamRepository: MockTeamRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()

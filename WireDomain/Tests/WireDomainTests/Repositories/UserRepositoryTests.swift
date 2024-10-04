@@ -17,29 +17,26 @@
 //
 
 import Foundation
+@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+@testable import WireDomain
 import WireDomainSupport
 import XCTest
 
-@testable import WireAPI
-@testable import WireDomain
+final class UserRepositoryTests: XCTestCase {
 
-class UserRepositoryTests: XCTestCase {
+    private var sut: UserRepository!
+    private var usersAPI: MockUsersAPI!
+    private var selfUsersAPI: MockSelfUserAPI!
+    private var conversationsRepository: MockConversationRepositoryProtocol!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
+    private var mockUserDefaults: UserDefaults!
 
-    var sut: UserRepository!
-    var usersAPI: MockUsersAPI!
-    var selfUsersAPI: MockSelfUserAPI!
-    var conversationsRepository: MockConversationRepositoryProtocol!
-
-    var stack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-
-    var mockUserDefaults: UserDefaults!
-
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
@@ -412,7 +409,7 @@ class UserRepositoryTests: XCTestCase {
 
         static let deviceToken = Data(repeating: 0x41, count: 10)
 
-        static let pushToken = PushToken(
+        nonisolated(unsafe) static let pushToken = PushToken(
             deviceToken: deviceToken,
             appIdentifier: "com.wire",
             transportType: "APNS_VOIP",

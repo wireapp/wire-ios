@@ -22,8 +22,9 @@ import WireDomainSupport
 import XCTest
 
 final class TeamMemberLeaveEventProcessorTests: XCTestCase {
-    var sut: TeamMemberLeaveEventProcessor!
-    var teamRepository: MockTeamRepositoryProtocol!
+
+    private var sut: TeamMemberLeaveEventProcessor!
+    private var teamRepository: MockTeamRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()

@@ -19,20 +19,19 @@
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
+@testable import WireDomain
 import WireDomainSupport
 import XCTest
 
-@testable import WireDomain
-
 final class OneOnOneResolverTests: XCTestCase {
-    var sut: WireDomain.OneOnOneResolver!
 
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-    var userRepository: MockUserRepositoryProtocol!
-    var conversationsRepository: MockConversationRepositoryProtocol!
-    var mlsService: MockMLSServiceInterface!
+    private var sut: WireDomain.OneOnOneResolver!
+    private var coreDataStack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
+    private var userRepository: MockUserRepositoryProtocol!
+    private var conversationsRepository: MockConversationRepositoryProtocol!
+    private var mlsService: MockMLSServiceInterface!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -348,9 +347,9 @@ final class OneOnOneResolverTests: XCTestCase {
 
         static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 
-        static let ciphersuite = WireDataModel.MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
+        nonisolated(unsafe) static let ciphersuite = WireDataModel.MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
 
-        static let mlsGroupID = WireDataModel.MLSGroupID(
+        nonisolated(unsafe) static let mlsGroupID = WireDataModel.MLSGroupID(
             base64Encoded: base64EncodedString
         )!
 
