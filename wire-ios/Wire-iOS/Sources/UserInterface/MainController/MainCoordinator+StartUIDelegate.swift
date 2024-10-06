@@ -39,7 +39,7 @@ UserProfileBuilder.User == any UserType {
                     // If the conversation exists, and is established (in case of mls),
                     // then we open the conversation
                     guard let conversation else { return }
-                    await showConversation(conversation: conversation)
+                    await showConversation(conversation: conversation, message: nil)
 
                 } else {
 
@@ -58,7 +58,7 @@ UserProfileBuilder.User == any UserType {
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation) {
         Task {
-            await showConversation(conversation: conversation)
+            await showConversation(conversation: conversation, message: nil)
         }
     }
 }

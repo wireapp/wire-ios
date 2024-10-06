@@ -211,7 +211,10 @@ public final class MainCoordinator<
         showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
     }
 
-    public func showConversation(conversation: ConversationList.ConversationModel) async {
+    public func showConversation(
+        conversation: ConversationList.ConversationModel,
+        message: ConversationList.ConversationMessageModel?
+    ) async {
 
         await dismissPresentedViewControllerIfNeeded()
 

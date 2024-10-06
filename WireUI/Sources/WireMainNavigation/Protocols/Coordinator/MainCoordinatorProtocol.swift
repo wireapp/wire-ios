@@ -33,7 +33,10 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func showSettings() async
 
     @MainActor
-    func showConversation(conversation: ConversationList.ConversationModel) async
+    func showConversation(
+        conversation: ConversationList.ConversationModel,
+        message: ConversationList.ConversationMessageModel?
+    ) async
     /// This method will be called by the custom back button in the conversation content screen.
     @MainActor
     func hideConversation()

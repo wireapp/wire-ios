@@ -44,7 +44,7 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
-    func showConversation(conversation: ZMConversation) async {
+    func showConversation(conversation: ZMConversation, message: ZMConversationMessage?) async {
         fatalError("Mock method not implemented")
     }
 

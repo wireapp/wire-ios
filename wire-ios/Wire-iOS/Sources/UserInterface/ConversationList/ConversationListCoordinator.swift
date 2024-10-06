@@ -33,11 +33,10 @@ final class ConversationListCoordinator<MainCoordinator: MainCoordinatorProtocol
     }
 
     func showConversation(conversation: ConversationModel) async {
-        await mainCoordinator.showConversation(conversation: conversation)
+        await mainCoordinator.showConversation(conversation: conversation, message: nil)
     }
 
     func showConversation(conversation: ConversationModel, scrolledTo message: ConversationMessageModel) async {
-        await mainCoordinator.showConversation(conversation: conversation)
-        fatalError() // TODO: implement scrolling to message
+        await mainCoordinator.showConversation(conversation: conversation, message: message)
     }
 }
