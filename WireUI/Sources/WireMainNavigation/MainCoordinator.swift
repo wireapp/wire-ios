@@ -273,8 +273,7 @@ public final class MainCoordinator<
     }
 
     public func showUserProfile(user: User) async {
-        // TODO: move this into a UserProfileCoordinator type
-        let userProfile = await userProfileBuilder.build(
+        let userProfile = userProfileBuilder.build(
             user: user,
             mainCoordinator: self
         )
