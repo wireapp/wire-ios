@@ -25,6 +25,9 @@ public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
     associatedtype UserProfileBuilder: MainUserProfileBuilderProtocol // TODO: instead a general present method could be offered (UIViewController), the actual preparatino could be done in some sub-coordinator
 
+    typealias ConversationModel = ConversationBuilder.Conversation.ConversationModel
+    typealias ConversationMessageModel = ConversationBuilder.Conversation.ConversationMessageModel
+
     @MainActor
     func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async
     @MainActor
@@ -34,8 +37,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
 
     @MainActor
     func showConversation(
-        conversation: ConversationList.ConversationModel,
-        message: ConversationList.ConversationMessageModel?
+        conversation: ConversationModel,
+        message: ConversationMessageModel?
     ) async
     /// This method will be called by the custom back button in the conversation content screen.
     @MainActor
