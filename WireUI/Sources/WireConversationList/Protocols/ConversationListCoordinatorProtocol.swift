@@ -18,10 +18,10 @@
 
 public protocol ConversationListCoordinatorProtocol: AnyObject {
     associatedtype ConversationModel
-    associatedtype MessageID: Sendable
+    associatedtype ConversationMessageModel
 
     @MainActor
     func showConversation(conversation: ConversationModel) async
     @MainActor
-    func showConversation(conversation: ConversationModel, scrolledToMessageWith messageID: MessageID) async
+    func showConversation(conversation: ConversationModel, scrolledTo message: ConversationMessageModel) async
 }

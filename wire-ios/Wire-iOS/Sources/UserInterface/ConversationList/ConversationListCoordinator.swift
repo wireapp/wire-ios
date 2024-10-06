@@ -24,7 +24,7 @@ import WireMainNavigation
 final class ConversationListCoordinator<MainCoordinator: MainCoordinatorProtocol>: ConversationListCoordinatorProtocol {
 
     typealias ConversationModel = MainCoordinator.ConversationList.ConversationModel
-    typealias MessageID = MainCoordinator.ConversationList.MessageID
+    typealias ConversationMessageModel = MainCoordinator.ConversationList.ConversationMessageModel
 
     let mainCoordinator: MainCoordinator
 
@@ -36,7 +36,7 @@ final class ConversationListCoordinator<MainCoordinator: MainCoordinatorProtocol
         await mainCoordinator.showConversation(conversation: conversation)
     }
 
-    func showConversation(conversation: ConversationModel, scrolledToMessageWith messageID: MessageID) async {
+    func showConversation(conversation: ConversationModel, scrolledTo message: ConversationMessageModel) async {
         await mainCoordinator.showConversation(conversation: conversation)
         fatalError() // TODO: implement scrolling to message
     }

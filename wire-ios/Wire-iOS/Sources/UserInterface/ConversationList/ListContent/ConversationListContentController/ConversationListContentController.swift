@@ -31,7 +31,7 @@ final class ConversationListContentController: UICollectionViewController {
 
     typealias ConversationListCoordinator = AnyConversationListCoordinator<
         ZMConversation,
-        ZMConversationMessage.MessageID
+        ZMConversationMessage
     >
     private let conversationListCoordinator: ConversationListCoordinator
     private let mainCoordinator: any MainCoordinatorProtocol
@@ -58,7 +58,7 @@ final class ConversationListContentController: UICollectionViewController {
     ) where
     ConversationListCoordinator: ConversationListCoordinatorProtocol,
     ConversationListCoordinator.ConversationModel == ZMConversation,
-    ConversationListCoordinator.MessageID == ZMConversationMessage.MessageID {
+    ConversationListCoordinator.ConversationMessageModel == ZMConversationMessage {
 
         self.userSession = userSession
         self.conversationListCoordinator = .init(conversationListCoordinator: conversationListCoordinator)
@@ -396,8 +396,8 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 
         Task {
             if let conversation = item as? ZMConversation {
-                if let message = scrollToMessageOnNextSelection, let messageID = message.nonce {
-                    await conversationListCoordinator.showConversation(conversation: conversation, scrolledToMessageWith: messageID)
+                if let message = scrollToMessageOnNextSelection {
+                    await conversationListCoordinator.showConversation(conversation: conversation, scrolledTo: message)
                 } else {
                     await conversationListCoordinator.showConversation(conversation: conversation)
                 }

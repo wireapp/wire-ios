@@ -24,6 +24,7 @@ public protocol MainConversationBuilderProtocol {
 
     func build(
         conversation: Conversation.ConversationModel,
+        message: Conversation.ConversationMessageModel?,
         mainCoordinator: some MainCoordinatorProtocol
     ) -> Conversation
 }

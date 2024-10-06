@@ -25,7 +25,7 @@ final class MainTabBarControllerTests: XCTestCase {
 
     private var sut: MainTabBarController<
         MockConversationListViewController,
-        MockConversationViewController<MockConversation>
+        MockConversationViewController<MockConversation, MockMessage>
     >!
     private var snapshotHelper: SnapshotHelper!
 

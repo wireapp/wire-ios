@@ -22,4 +22,5 @@ import WireDataModel
 
 extension ConversationRootViewController: MainConversationProtocol {
     typealias ConversationModel = ZMConversation
+    typealias ConversationMessageModel = ZMConversationMessage
 }

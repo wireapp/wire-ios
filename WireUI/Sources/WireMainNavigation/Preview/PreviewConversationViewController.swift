@@ -20,6 +20,7 @@ import SwiftUI
 
 final class PreviewConversationViewController: UIHostingController<LabelView>, MainConversationProtocol {
     struct ConversationModel {}
+    struct ConversationMessageModel {}
 
     // MARK: - Life Cycle
 

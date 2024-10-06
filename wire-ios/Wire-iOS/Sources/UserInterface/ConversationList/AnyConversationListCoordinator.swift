@@ -18,23 +18,22 @@
 
 import WireConversationList
 
-final class AnyConversationListCoordinator<ConversationModel, MessageID>: ConversationListCoordinatorProtocol where
-MessageID: Sendable {
+final class AnyConversationListCoordinator<ConversationModel, ConversationMessageModel>: ConversationListCoordinatorProtocol {
 
     let showConversation: (ConversationModel) async -> Void
-    let showConversationScrolledToMessage: (ConversationModel, MessageID) async -> Void
+    let showConversationScrolledToMessage: (ConversationModel, ConversationMessageModel) async -> Void
 
     init<ConversationListCoordinator: ConversationListCoordinatorProtocol>(
         conversationListCoordinator: ConversationListCoordinator
     ) where
     ConversationListCoordinator.ConversationModel == ConversationModel,
-    ConversationListCoordinator.MessageID == MessageID {
+    ConversationListCoordinator.ConversationMessageModel == ConversationMessageModel {
 
         showConversation = { conversation in
             await conversationListCoordinator.showConversation(conversation: conversation)
         }
-        showConversationScrolledToMessage = { conversation, messageID in
-            await conversationListCoordinator.showConversation(conversation: conversation, scrolledToMessageWith: messageID)
+        showConversationScrolledToMessage = { conversation, message in
+            await conversationListCoordinator.showConversation(conversation: conversation, scrolledTo: message)
         }
     }
 
@@ -42,7 +41,7 @@ MessageID: Sendable {
         await showConversation(conversation)
     }
 
-    func showConversation(conversation: ConversationModel, scrolledToMessageWith messageID: MessageID) async {
-        await showConversationScrolledToMessage(conversation, messageID)
+    func showConversation(conversation: ConversationModel, scrolledTo message: ConversationMessageModel) async {
+        await showConversationScrolledToMessage(conversation, message)
     }
 }

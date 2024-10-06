@@ -121,7 +121,7 @@ final class ConversationListViewController: UIViewController {
     ) where
     MainCoordinator: MainCoordinatorProtocol,
     MainCoordinator.ConversationList.ConversationModel == ZMConversation,
-    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+    MainCoordinator.ConversationList.ConversationMessageModel == ZMConversationMessage {
 
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -147,7 +147,7 @@ final class ConversationListViewController: UIViewController {
     ) where
     MainCoordinator: MainCoordinatorProtocol,
     MainCoordinator.ConversationList.ConversationModel == ZMConversation,
-    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+    MainCoordinator.ConversationList.ConversationMessageModel == ZMConversationMessage {
 
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator

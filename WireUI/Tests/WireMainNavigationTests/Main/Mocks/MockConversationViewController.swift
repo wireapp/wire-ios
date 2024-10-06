@@ -19,4 +19,4 @@
 import UIKit
 import WireMainNavigation
 
-final class MockConversationViewController<ConversationModel>: UIViewController, MainConversationProtocol {}
+final class MockConversationViewController<ConversationModel, ConversationMessageModel>: UIViewController, MainConversationProtocol {}

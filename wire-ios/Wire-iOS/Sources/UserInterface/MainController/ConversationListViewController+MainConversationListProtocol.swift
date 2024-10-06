@@ -22,7 +22,7 @@ import WireMainNavigation
 
 extension ConversationListViewController: MainConversationListProtocol {
     typealias ConversationModel = ZMConversation
-    typealias MessageID = ZMConversationMessage.MessageID
+    typealias ConversationMessageModel = ZMConversationMessage
 
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }

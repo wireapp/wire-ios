@@ -20,4 +20,5 @@ import UIKit
 
 public protocol MainConversationProtocol: UIViewController {
     associatedtype ConversationModel
+    associatedtype ConversationMessageModel
 }

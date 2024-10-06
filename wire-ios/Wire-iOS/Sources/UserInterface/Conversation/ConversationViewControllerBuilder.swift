@@ -29,11 +29,12 @@ struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
 
     func build(
         conversation: ZMConversation,
+        message: ZMConversationMessage?,
         mainCoordinator: some MainCoordinatorProtocol
     ) -> ConversationRootViewController {
         let viewController = ConversationRootViewController(
             conversation: conversation,
-            message: nil, // TODO: use `scroll(to:)`
+            message: message,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             mediaPlaybackManager: mediaPlaybackManager

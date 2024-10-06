@@ -21,7 +21,7 @@ import WireMainNavigation
 
 final class MockConversationListViewController: UIViewController, MainConversationListProtocol {
     typealias ConversationModel = MockConversation
-    typealias MessageID = MockMessageID
+    typealias ConversationMessageModel = MockMessage
 
     enum ConversationFilter {
         case groups

@@ -217,6 +217,7 @@ public final class MainCoordinator<
 
         let conversation = conversationBuilder.build(
             conversation: conversation,
+            message: nil,
             mainCoordinator: self
         )
         if mainSplitViewState == .collapsed {
