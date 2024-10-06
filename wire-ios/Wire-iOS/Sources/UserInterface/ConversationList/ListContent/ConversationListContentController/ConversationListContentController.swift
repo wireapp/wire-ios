@@ -401,7 +401,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
                 } else {
                     await conversationListCoordinator.showConversation(conversation: conversation)
                 }
-                contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection) // TODO: check what happens here, should it be within the Task { ... } ?
+                contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
             } else if item is ConversationListConnectRequestsItem {
                 zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
             } else {
