@@ -43,7 +43,7 @@ public final class MainCoordinator<
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
     ConversationBuilder.Conversation == SplitViewController.Conversation,
-    ConversationBuilder.Conversation.ConversationID == SplitViewController.ConversationList.ConversationID,
+    ConversationBuilder.Conversation.ConversationModel == SplitViewController.ConversationList.ConversationModel,
     SettingsContentBuilder.SettingsContent == SplitViewController.SettingsContent
 {
     // swiftlint:enable opening_brace
@@ -211,12 +211,12 @@ public final class MainCoordinator<
         showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
     }
 
-    public func showConversation(conversationID: ConversationList.ConversationID) async {
+    public func showConversation(conversation: ConversationList.ConversationModel) async {
 
         await dismissPresentedViewControllerIfNeeded()
 
-        let conversation = await conversationBuilder.build(
-            conversationID: conversationID,
+        let conversation = conversationBuilder.build(
+            conversation: conversation,
             mainCoordinator: self
         )
         if mainSplitViewState == .collapsed {

@@ -18,11 +18,12 @@
 
 import UIKit
 
+@MainActor
 public protocol MainConversationBuilderProtocol {
     associatedtype Conversation: MainConversationProtocol
 
     func build(
-        conversationID: Conversation.ConversationID,
+        conversation: Conversation.ConversationModel,
         mainCoordinator: some MainCoordinatorProtocol
-    ) async -> Conversation // TODO: shouldn't be async
+    ) -> Conversation
 }

@@ -24,7 +24,7 @@ import UIKit
 public protocol MainConversationListProtocol: UIViewController {
 
     associatedtype ConversationFilter: MainConversationFilterRepresentable
-    associatedtype ConversationID: Sendable
+    associatedtype ConversationModel
     associatedtype MessageID: Sendable
 
     /// Assigning a non-nil value to this property filters the presented conversations by the provided criteria.

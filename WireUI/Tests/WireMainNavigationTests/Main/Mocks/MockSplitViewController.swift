@@ -25,7 +25,7 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     typealias Archive = UIViewController
     typealias Settings = UIViewController
 
-    typealias Conversation = MockConversationViewController<MockConversationID>
+    typealias Conversation = MockConversationViewController<MockConversation>
     typealias SettingsContent = UIViewController
 
     typealias Connect = UIViewController

@@ -26,5 +26,5 @@ public protocol MainUserProfileBuilderProtocol {
     func build(
         user: User,
         mainCoordinator: some MainCoordinatorProtocol
-    ) async -> UserProfile // TODO: shouldn't be async
+    ) -> UserProfile
 }

@@ -21,10 +21,10 @@ import WireMainNavigation
 
 struct MockUserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
     typealias UserProfile = UIViewController
-    struct UserID: Sendable {}
+    struct User {}
 
     func build(
-        userID: UserID,
+        user: User,
         mainCoordinator: some MainCoordinatorProtocol
     ) -> UIViewController {
         fatalError()

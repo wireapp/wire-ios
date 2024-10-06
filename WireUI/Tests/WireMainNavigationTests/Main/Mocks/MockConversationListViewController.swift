@@ -20,7 +20,7 @@ import UIKit
 import WireMainNavigation
 
 final class MockConversationListViewController: UIViewController, MainConversationListProtocol {
-    typealias ConversationID = MockConversationID
+    typealias ConversationModel = MockConversation
     typealias MessageID = MockMessageID
 
     enum ConversationFilter {

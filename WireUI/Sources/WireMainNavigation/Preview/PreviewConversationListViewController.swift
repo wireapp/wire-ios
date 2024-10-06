@@ -19,7 +19,7 @@
 import SwiftUI
 
 final class PreviewConversationListViewController: UIHostingController<LabelView>, MainConversationListProtocol {
-    struct ConversationID: Sendable {}
+    struct ConversationModel {}
     struct MessageID: Sendable {}
 
     // MARK: - MainConversationListProtocol

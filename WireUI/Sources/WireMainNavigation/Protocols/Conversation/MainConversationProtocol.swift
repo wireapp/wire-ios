@@ -19,5 +19,5 @@
 import UIKit
 
 public protocol MainConversationProtocol: UIViewController {
-    associatedtype ConversationID: Sendable
+    associatedtype ConversationModel
 }

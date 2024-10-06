@@ -35,7 +35,7 @@ struct UserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
     func build(
         user: User,
         mainCoordinator: some MainCoordinatorProtocol
-    ) async -> UINavigationController {
+    ) -> UINavigationController {
         let rootViewController = ProfileViewController(
             user: user,
             viewer: userSession.selfUserLegalHoldSubject,
