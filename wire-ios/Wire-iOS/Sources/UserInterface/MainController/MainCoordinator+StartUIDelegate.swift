@@ -20,7 +20,7 @@ import WireDataModel
 import WireMainNavigation
 
 extension MainCoordinator: StartUIDelegate where
-ConversationBuilder.Conversation.ConversationID == ZMConversation.ConversationID,
+ConversationBuilder.Conversation.ConversationModel == ZMConversation,
 UserProfileBuilder.User == any UserType {
 
     @MainActor
@@ -39,7 +39,7 @@ UserProfileBuilder.User == any UserType {
                     // If the conversation exists, and is established (in case of mls),
                     // then we open the conversation
                     guard let conversation else { return }
-                    await showConversation(conversationID: conversation.remoteIdentifier)
+                    await showConversation(conversation: conversation)
 
                 } else {
 
@@ -58,7 +58,7 @@ UserProfileBuilder.User == any UserType {
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation) {
         Task {
-            await showConversation(conversationID: conversation.remoteIdentifier)
+            await showConversation(conversation: conversation)
         }
     }
 }

@@ -18,7 +18,8 @@
 
 import Foundation
 import WireMainNavigation
+import WireDataModel
 
 extension ConversationRootViewController: MainConversationProtocol {
-    typealias ConversationID = UUID
+    typealias ConversationModel = ZMConversation
 }

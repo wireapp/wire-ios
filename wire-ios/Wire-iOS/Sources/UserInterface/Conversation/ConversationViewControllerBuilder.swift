@@ -21,20 +21,18 @@ import WireDataModel
 import WireMainNavigation
 import WireSyncEngine
 
+@MainActor
 struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
-    typealias ConversationID = ZMConversation.ConversationID
 
     var userSession: UserSession
     var mediaPlaybackManager: MediaPlaybackManager?
-    var conversationLoader: (_ conversationID: ConversationID) async -> ZMConversation?
 
-    @MainActor
     func build(
-        conversationID: ConversationID,
+        conversation: ZMConversation,
         mainCoordinator: some MainCoordinatorProtocol
-    ) async -> ConversationRootViewController {
+    ) -> ConversationRootViewController {
         let viewController = ConversationRootViewController(
-            conversation: await conversationLoader(conversationID)!, // TODO: a view controller shouldn't have to perform async tasks, either let the controller fetch the conversation or fetch it before
+            conversation: conversation,
             message: nil, // TODO: use `scroll(to:)`
             userSession: userSession,
             mainCoordinator: mainCoordinator,

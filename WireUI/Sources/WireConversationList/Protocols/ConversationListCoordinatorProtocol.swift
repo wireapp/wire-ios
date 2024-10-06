@@ -17,11 +17,11 @@
 //
 
 public protocol ConversationListCoordinatorProtocol: AnyObject {
-    associatedtype ConversationID: Sendable
+    associatedtype ConversationModel
     associatedtype MessageID: Sendable
 
     @MainActor
-    func showConversation(conversationID: ConversationID) async
+    func showConversation(conversation: ConversationModel) async
     @MainActor
-    func showConversation(conversationID: ConversationID, scrolledToMessageWith messageID: MessageID) async
+    func showConversation(conversation: ConversationModel, scrolledToMessageWith messageID: MessageID) async
 }

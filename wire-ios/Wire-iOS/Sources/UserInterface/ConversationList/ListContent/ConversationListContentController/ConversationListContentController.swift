@@ -30,7 +30,7 @@ private let CellReuseIdConversation = "CellId"
 final class ConversationListContentController: UICollectionViewController {
 
     typealias ConversationListCoordinator = AnyConversationListCoordinator<
-        ZMConversation.ConversationID,
+        ZMConversation,
         ZMConversationMessage.MessageID
     >
     private let conversationListCoordinator: ConversationListCoordinator
@@ -57,7 +57,7 @@ final class ConversationListContentController: UICollectionViewController {
         zClientViewController: ZClientViewController?
     ) where
     ConversationListCoordinator: ConversationListCoordinatorProtocol,
-    ConversationListCoordinator.ConversationID == ZMConversation.ConversationID,
+    ConversationListCoordinator.ConversationModel == ZMConversation,
     ConversationListCoordinator.MessageID == ZMConversationMessage.MessageID {
 
         self.userSession = userSession
@@ -397,9 +397,9 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         Task {
             if let conversation = item as? ZMConversation {
                 if let message = scrollToMessageOnNextSelection, let messageID = message.nonce {
-                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier, scrolledToMessageWith: messageID)
+                    await conversationListCoordinator.showConversation(conversation: conversation, scrolledToMessageWith: messageID)
                 } else {
-                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier)
+                    await conversationListCoordinator.showConversation(conversation: conversation)
                 }
                 contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection) // TODO: check what happens here, should it be within the Task { ... } ?
             } else if item is ConversationListConnectRequestsItem {

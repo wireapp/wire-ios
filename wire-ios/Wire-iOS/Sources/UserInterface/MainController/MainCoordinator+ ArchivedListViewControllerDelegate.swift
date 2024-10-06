@@ -19,7 +19,7 @@
 import WireDataModel
 import WireMainNavigation
 
-extension MainCoordinator: ArchivedListViewControllerDelegate where MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID {
+extension MainCoordinator: ArchivedListViewControllerDelegate where MainCoordinator.ConversationList.ConversationModel == ZMConversation {
 
     func archivedListViewController(
         _ viewController: ArchivedListViewController,
@@ -27,7 +27,7 @@ extension MainCoordinator: ArchivedListViewControllerDelegate where MainCoordina
     ) {
         Task { @MainActor in
             await showConversationList(conversationFilter: .none)
-            await showConversation(conversationID: conversation.remoteIdentifier)
+            await showConversation(conversation: conversation)
         }
     }
 }

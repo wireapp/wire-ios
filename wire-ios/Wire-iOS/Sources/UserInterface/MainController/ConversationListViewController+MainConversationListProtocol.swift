@@ -21,7 +21,7 @@ import WireDataModel
 import WireMainNavigation
 
 extension ConversationListViewController: MainConversationListProtocol {
-    typealias ConversationID = ZMConversation.ConversationID
+    typealias ConversationModel = ZMConversation
     typealias MessageID = ZMConversationMessage.MessageID
 
     var conversationFilter: ConversationFilter? {
