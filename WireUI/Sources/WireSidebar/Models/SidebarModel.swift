@@ -28,18 +28,18 @@ final class SidebarModel: ObservableObject {
     @Published var wireTextStyleMapping: WireTextStyleMapping?
     @Published var sidebarBackgroundColor: UIColor = .systemGray5
     @Published var accountInfo = SidebarAccountInfo()
-    @Published var selectedMenuItem: SidebarMenuItem = .all {
+    @Published var selectedMenuItem: SidebarSelectableMenuItem = .all {
         didSet { menuItemAction(selectedMenuItem) }
     }
 
     let accountImageAction: () -> Void
-    let menuItemAction: (_ selectedMenuItem: SidebarMenuItem) -> Void
+    let menuItemAction: (_ selectedMenuItem: SidebarSelectableMenuItem) -> Void
     let connectAction: () -> Void
     let supportAction: () -> Void
 
     init(
         accountImageAction: @escaping () -> Void,
-        menuItemAction: @escaping (_: SidebarMenuItem) -> Void,
+        menuItemAction: @escaping (_: SidebarSelectableMenuItem) -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void
     ) {

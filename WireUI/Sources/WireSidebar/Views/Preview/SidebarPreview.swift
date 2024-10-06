@@ -31,7 +31,7 @@ struct SidebarPreview: View {
         accountImage: .from(solidColor: .brown),
         availability: .away
     )
-    @State private var selectedMenuItem: SidebarMenuItem = .all
+    @State private var selectedMenuItem: SidebarSelectableMenuItem = .all
 
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
     @State private var preferredCompactColumn: NavigationSplitViewColumn = .sidebar

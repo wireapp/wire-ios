@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: remove
-public typealias SidebarMenuItem = SidebarSelectableMenuItem
-
 public enum SidebarSelectableMenuItem: CaseIterable, Comparable, Sendable {
     // conversation filters
     case all, favorites, groups, oneOnOne

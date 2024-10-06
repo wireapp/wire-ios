@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainSidebarMenuItemRepresentable: Sendable {
+public protocol MainSidebarSelectableMenuItemRepresentable: Sendable {
     init(_ mainSidebarMenuItem: MainSidebarMenuItem)
     func map() -> MainSidebarMenuItem
 }
 
-extension MainSidebarMenuItem: MainSidebarMenuItemRepresentable {
+extension MainSidebarMenuItem: MainSidebarSelectableMenuItemRepresentable {
     public init(_ mainSidebarMenuItem: MainSidebarMenuItem) { self = mainSidebarMenuItem }
     public func map() -> MainSidebarMenuItem { self }
 }

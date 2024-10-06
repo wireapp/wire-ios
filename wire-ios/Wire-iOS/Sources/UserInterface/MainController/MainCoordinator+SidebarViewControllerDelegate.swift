@@ -29,7 +29,7 @@ extension MainCoordinator: SidebarViewControllerDelegate {
     }
 
     @MainActor
-    public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarMenuItem) {
+    public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarSelectableMenuItem) {
         Task {
             switch menuItem {
             case .all:

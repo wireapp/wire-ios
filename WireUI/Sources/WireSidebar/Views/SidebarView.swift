@@ -39,7 +39,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     public init(
         accountInfo: SidebarAccountInfo,
-        selectedMenuItem: Binding<SidebarMenuItem>,
+        selectedMenuItem: Binding<SidebarSelectableMenuItem>,
         accountImageAction: @escaping () -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
@@ -109,7 +109,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             menuItemHeader("sidebar.conversation_filter.title", addTopPadding: false)
-            let conversationFilters = [SidebarMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
+            let conversationFilters = [SidebarSelectableMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
             ForEach(conversationFilters, id: \.self) { conversationFilter in
                 selectableMenuItem(conversationFilter)
             }

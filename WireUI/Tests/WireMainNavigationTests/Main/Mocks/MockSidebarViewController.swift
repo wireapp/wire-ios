@@ -28,7 +28,7 @@ final class MockSidebarViewController: UIViewController, MainSidebarProtocol {
     var selectedMenuItem: MenuItem = .all
 }
 
-extension MockSidebarViewController.MenuItem: MainSidebarMenuItemRepresentable {
+extension MockSidebarViewController.MenuItem: MainSidebarSelectableMenuItemRepresentable {
 
     init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
         switch mainSidebarMenuItem {

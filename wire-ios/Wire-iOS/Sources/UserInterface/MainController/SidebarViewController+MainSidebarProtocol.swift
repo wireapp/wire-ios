@@ -21,7 +21,7 @@ import WireSidebar
 
 extension SidebarViewController: MainSidebarProtocol {}
 
-extension SidebarMenuItem: MainSidebarMenuItemRepresentable {
+extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable {
 
     public init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
         switch mainSidebarMenuItem {

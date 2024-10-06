@@ -30,7 +30,7 @@ public final class SidebarViewController: UIViewController {
         set { model.accountInfo = newValue }
     }
 
-    public var selectedMenuItem: SidebarMenuItem {
+    public var selectedMenuItem: SidebarSelectableMenuItem {
         get { model.selectedMenuItem }
         set {
             skipCallingDelegate.toggle()
