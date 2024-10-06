@@ -23,8 +23,8 @@ import WireMainNavigation
 @MainActor
 final class ConversationListCoordinator<MainCoordinator: MainCoordinatorProtocol>: ConversationListCoordinatorProtocol {
 
-    typealias ConversationModel = MainCoordinator.ConversationBuilder.Conversation.ConversationModel
-    typealias ConversationMessageModel = MainCoordinator.ConversationBuilder.Conversation.ConversationMessageModel
+    typealias ConversationModel = MainCoordinator.ConversationModel
+    typealias ConversationMessageModel = MainCoordinator.ConversationMessageModel
 
     let mainCoordinator: MainCoordinator
 

@@ -43,17 +43,21 @@ public final class MainCoordinator<
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
     ConversationBuilder.Conversation == SplitViewController.Conversation,
-    ConversationBuilder.Conversation.ConversationModel == SplitViewController.Conversation.ConversationModel, // TODO: remove?
     SettingsContentBuilder.SettingsContent == SplitViewController.SettingsContent
 {
     // swiftlint:enable opening_brace
 
     public typealias ConversationList = SplitViewController.ConversationList
     public typealias Settings = SplitViewController.Settings
+    public typealias TabBarController = SplitViewController.TabContainer
+
+    public typealias ConversationModel = ConversationBuilder.Conversation.ConversationModel
+    public typealias ConversationMessageModel = ConversationBuilder.Conversation.ConversationMessageModel
+
     public typealias SettingsContent = SplitViewController.SettingsContent
+    
     public typealias Connect = ConnectBuilder.ViewController
     public typealias SelfProfile = SelfProfileBuilder.ViewController
-    public typealias TabBarController = SplitViewController.TabContainer
     public typealias User = UserProfileBuilder.User
 
     // MARK: - Private Properties

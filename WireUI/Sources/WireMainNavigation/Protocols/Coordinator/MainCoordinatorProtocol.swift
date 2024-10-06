@@ -21,12 +21,12 @@ import UIKit
 public protocol MainCoordinatorProtocol: AnyObject {
 
     associatedtype ConversationList: MainConversationListProtocol
-    associatedtype ConversationBuilder: MainConversationBuilderProtocol // TODO: remove if not needed here
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
-    associatedtype UserProfileBuilder: MainUserProfileBuilderProtocol // TODO: instead a general present method could be offered (UIViewController), the actual preparatino could be done in some sub-coordinator
 
-    typealias ConversationModel = ConversationBuilder.Conversation.ConversationModel
-    typealias ConversationMessageModel = ConversationBuilder.Conversation.ConversationMessageModel
+    associatedtype ConversationModel
+    associatedtype ConversationMessageModel
+
+    associatedtype UserProfileBuilder: MainUserProfileBuilderProtocol // TODO: instead a general present method could be offered (UIViewController), the actual preparatino could be done in some sub-coordinator
 
     @MainActor
     func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async
