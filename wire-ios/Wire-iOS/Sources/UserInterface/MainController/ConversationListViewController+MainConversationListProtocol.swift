@@ -21,8 +21,6 @@ import WireDataModel
 import WireMainNavigation
 
 extension ConversationListViewController: MainConversationListProtocol {
-    typealias ConversationModel = ZMConversation
-    typealias ConversationMessageModel = ZMConversationMessage
 
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
@@ -34,7 +32,7 @@ extension ConversationListViewController: MainConversationListProtocol {
 
 extension ConversationFilter: MainConversationFilterRepresentable {
 
-    init(_ mainConversationFilter: MainConversationFilter) {
+    public init(_ mainConversationFilter: MainConversationFilter) {
         switch mainConversationFilter {
         case .favorites: self = .favorites
         case .groups: self = .groups
@@ -42,7 +40,7 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         }
     }
 
-    func mapToMainConversationFilter() -> MainConversationFilter {
+    public func mapToMainConversationFilter() -> MainConversationFilter {
         switch self {
         case .favorites: .favorites
         case .groups: .groups

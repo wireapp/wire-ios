@@ -19,7 +19,8 @@
 import WireMainNavigation
 import WireSidebar
 
-extension MainCoordinator: SidebarViewControllerDelegate {
+extension MainCoordinator: SidebarViewControllerDelegate where
+SplitViewController.ConversationList.ConversationFilter == ConversationFilter {
 
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
@@ -35,11 +36,11 @@ extension MainCoordinator: SidebarViewControllerDelegate {
             case .all:
                 await showConversationList(conversationFilter: .none)
             case .favorites:
-                await showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.favorites))
+                await showConversationList(conversationFilter: .favorites)
             case .groups:
-                await showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.groups))
+                await showConversationList(conversationFilter: .groups)
             case .oneOnOne:
-                await showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.oneOnOne)) // TODO: try to write .oneOnOne
+                await showConversationList(conversationFilter: .oneOnOne)
             case .archive:
                 await showArchive()
             case .settings:
