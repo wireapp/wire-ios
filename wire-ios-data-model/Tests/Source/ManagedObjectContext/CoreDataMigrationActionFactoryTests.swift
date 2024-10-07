@@ -23,11 +23,32 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
 
     // add version with actions here - aka custom migration
     let excludedVersions: [CoreDataMessagingMigrationVersion] = [
+        .v119,
         .v116,
         .v114,
         .v111,
         .v107
     ]
+
+    // MARK: - Version 119
+
+    func test_ItReturnsPreActionForVersion119() {
+        // given
+        // when
+        let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .v119)
+
+        // then
+        XCTAssertNil(action)
+    }
+
+    func test_ItReturnsPostActionForVersion119() {
+        // given
+        // when
+        let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: .v119)
+
+        // then
+        XCTAssertTrue(action is FixDuplicateOneOnOneConversationsAction)
+    }
 
     // MARK: - Version 116
 

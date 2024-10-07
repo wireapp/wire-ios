@@ -305,6 +305,29 @@ public extension ZMConversation {
 
         return try context.fetch(request)
     }
+
+    static func fetchAllFakeOneOnOneGroupConversations(
+        in context: NSManagedObjectContext
+    ) throws -> [ZMConversation] {
+        let selfUser = ZMUser.selfUser(in: context)
+        guard let selfUserTeamIdentifier = selfUser.teamIdentifier else {
+            assertionFailure("this method is supposed to be called for users which are part of a team")
+            return []
+        }
+
+        let request = NSFetchRequest<Self>(entityName: Self.entityName())
+        request.predicate = NSCompoundPredicate(
+            andPredicateWithSubpredicates: [
+                .hasConversationType(.group),
+                .hasMessageProtocol(.proteus),
+                .noDefinedName(),
+                .hasOneUserWithSelf(selfUser: selfUser),
+                .teamRemoteIdentifier(matches: selfUserTeamIdentifier)
+            ]
+        )
+
+        return try context.fetch(request)
+    }
 }
 
 // MARK: - NSPredicate Extensions
@@ -349,6 +372,24 @@ private extension NSPredicate {
                 TeamRemoteIdentifierDataKey,
                 (teamRemoteIdentifier as NSUUID).data() as Data
             ]
+        )
+    }
+
+    static func noDefinedName() -> NSPredicate {
+        .init(
+            format: "%K == NULL",
+            argumentArray: [
+                ZMConversationUserDefinedNameKey
+            ]
+        )
+    }
+
+    static func hasOneUserWithSelf(selfUser: ZMUser) -> NSPredicate {
+        .init(
+            format: "%K.@count == 2 AND ANY %K.user == %@",
+            ZMConversationParticipantRolesKey,
+            ZMConversationParticipantRolesKey,
+            selfUser
         )
     }
 }
