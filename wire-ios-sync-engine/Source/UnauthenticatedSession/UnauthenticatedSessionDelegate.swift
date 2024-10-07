@@ -19,7 +19,7 @@
 import Foundation
 
 public protocol UnauthenticatedSessionDelegate: AnyObject {
-    
+
     /// Update credentials for the corresponding user session. Returns true if the credentials were accepted.
     func session(
         session: UnauthenticatedSession,
