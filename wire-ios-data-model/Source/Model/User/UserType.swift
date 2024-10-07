@@ -39,9 +39,6 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Email for the user
     var emailAddress: String? { get }
 
-    /// The phone number of the user
-    var phoneNumber: String? { get }
-
     /// Whether this is the self user
     var isSelfUser: Bool { get }
 

@@ -182,11 +182,6 @@
     user.emailAddress = emailAddress;
 }
 
-- (void)setPhoneNumber:(NSString *)phoneNumber onUser:(ZMUser *)user;
-{
-    user.phoneNumber = phoneNumber;
-}
-
 @end
 
 
