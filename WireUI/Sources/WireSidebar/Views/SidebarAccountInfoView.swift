@@ -19,7 +19,7 @@
 import SwiftUI
 import WireFoundation
 
-// TODO: remove commented code
+// TODO: remove commented code <-
 // private let titleColor: UIColor = .black // ColorTheme.Backgrounds.onSurface
 // private let subtitleColor: UIColor = .gray // ColorTheme.Base.secondaryText
 

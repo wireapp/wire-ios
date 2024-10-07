@@ -89,14 +89,14 @@ class CameraKeyboardViewController: UIViewController {
         imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
         permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy()
     ) {
-        // TODO: fix
+        // TODO: fix <-
         // self.splitLayoutObservable = splitLayoutObservable
         self.imageManagerType = imageManagerType
         self.assetLibrary = SecurityFlags.cameraRoll.isEnabled ? AssetLibrary() : nil
         self.permissions = permissions
         super.init(nibName: nil, bundle: nil)
         self.assetLibrary?.delegate = self
-        // TODO: fix
+        // TODO: fix <-
         // NotificationCenter.default.addObserver(
         //     self,
         //     selector: #selector(splitLayoutChanged(_:)),
@@ -521,7 +521,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 
     private var cameraCellSize: CGSize {
-        // TODO: fix
+        // TODO: fix <-
         // switch self.splitLayoutObservable.layoutSize {
         // case .compact:
             CGSize(width: view.bounds.size.width / 2, height: view.bounds.size.height)

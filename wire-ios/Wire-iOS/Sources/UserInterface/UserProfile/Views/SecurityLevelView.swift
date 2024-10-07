@@ -22,7 +22,7 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-// TODO: ensure this view is displayed correctly everywhere
+// TODO: ensure this view is displayed correctly everywhere <-
 final class SecurityLevelView: UIView {
 
     // MARK: - Constants

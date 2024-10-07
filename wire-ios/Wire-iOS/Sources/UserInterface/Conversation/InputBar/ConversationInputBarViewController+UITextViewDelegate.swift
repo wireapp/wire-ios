@@ -30,7 +30,7 @@ extension ConversationInputBarViewController {
     func hideLeftView() {
         let currentDevice = DeviceWrapper(device: .current)
         guard self.isIPadRegularPortrait(device: currentDevice) else { return }
-        // TODO: fix
+        // TODO: fix <-
         fatalError("TODO")
         // guard let splitViewController = wr_splitViewController, splitViewController.isLeftViewControllerRevealed else { return }
         // splitViewController.setLeftViewControllerRevealed(false, animated: true)

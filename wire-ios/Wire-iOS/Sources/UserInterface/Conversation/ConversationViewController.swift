@@ -433,7 +433,7 @@ final class ConversationViewController: UIViewController {
         }
 
         fatalError("TODO")
-        // TODO: fix
+        // TODO: fix <-
         // mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
     }
 

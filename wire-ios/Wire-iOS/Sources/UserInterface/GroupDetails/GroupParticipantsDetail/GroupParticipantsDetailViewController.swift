@@ -237,7 +237,7 @@ extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
             fatalError("TODO")
-            // TODO: fix
+            // TODO: fix <-
             // self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }

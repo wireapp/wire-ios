@@ -247,7 +247,7 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
     }
 
     private func displayRecordKeyboard() {
-        // TODO: fix
+        // TODO: fix <-
         fatalError("TODO")
         /*
         // do not show keyboard if conversation list is shown,

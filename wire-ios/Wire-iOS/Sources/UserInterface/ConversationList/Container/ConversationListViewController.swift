@@ -471,7 +471,7 @@ final class ConversationListViewController: UIViewController {
     /// Show the newsletter subscription dialog if needed
     /// - Parameter completionHandler: The completion handler to be called after the dialog is shown
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        // TODO: fix
+        // TODO: fix <-
         // UIAlertController.showNewsletterSubscriptionDialogIfNeeded(
         //     presentViewController: self,
         //     completionHandler: completionHandler

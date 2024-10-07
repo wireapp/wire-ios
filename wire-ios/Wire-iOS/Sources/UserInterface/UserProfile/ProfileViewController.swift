@@ -375,7 +375,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         dismiss(animated: true) {
             self.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
                 fatalError("TODO")
-                // TODO: fix
+                // TODO: fix <-
                 // self.mainCoordinator.showSelfProfile()
             }
         }

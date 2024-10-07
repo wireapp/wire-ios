@@ -22,7 +22,7 @@ import WireDataModel
 /// handle, availability and verification status.
 struct UserStatus {
 
-    // TODO: rename displayName?
+    // TODO: rename displayName? <-
     var name = ""
 
     var availability = Availability.none

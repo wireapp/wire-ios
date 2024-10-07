@@ -65,7 +65,7 @@ extension ConversationListViewController {
         accountImageView.accountImage = viewModel.accountImage.image
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.accessibilityTraits = .button
-        accountImageView.accessibilityIdentifier = "bottomBarSettingsButton" // TODO: fix, can't be correct
+        accountImageView.accessibilityIdentifier = "bottomBarSettingsButton" // TODO: fix, can't be correct <-
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
         accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
@@ -153,7 +153,7 @@ extension ConversationListViewController {
                 await self?.mainCoordinator.showConnect()
             }
         }
-        // TODO: accessibility
+        // TODO: accessibility <-
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
 
         let defaultFilterImage = UIImage(resource: .ConversationList.Header.filterConversations)
@@ -220,8 +220,8 @@ extension ConversationListViewController {
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
-        newConversationBarButton.accessibilityIdentifier = "???????????" // TODO: accessibilityIdentifier
-        newConversationBarButton.accessibilityLabel = "" // TODO: accessibilityLabel
+        newConversationBarButton.accessibilityIdentifier = "???????????" // TODO: accessibilityIdentifier <-
+        newConversationBarButton.accessibilityLabel = "" // TODO: accessibilityLabel <-
         newConversationBarButton.addAction(.init { [weak self] _ in
             Task {
                 await self?.mainCoordinator.showConnect()
@@ -300,7 +300,7 @@ extension ConversationListViewController {
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
     func adjustRightBarButtonItemsSpace() {
-        // TODO: fix
+        // TODO: fix <-
 //        guard
 //            let rightBarButtonItems = navigationItem.rightBarButtonItems,
 //            rightBarButtonItems.count == 3, // new conversation, spacer, filter
