@@ -257,14 +257,6 @@ final class ConversationListViewController: UIViewController {
         .portrait
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        // TODO: these methods are called too often, see `splitViewControllerMode`
-        // setupTitleView()
-        // updateNavigationItem()
-    }
-
     // MARK: - Setup UI
 
     private func setupObservers() {
