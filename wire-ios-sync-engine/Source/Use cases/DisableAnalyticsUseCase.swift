@@ -20,43 +20,23 @@ import Countly
 import WireAnalytics
 
 // sourcery: AutoMockable
-/// Protocol defining the interface for disabling analytics sharing.
+/// Disable analytics tracking.
 public protocol DisableAnalyticsUseCaseProtocol {
 
-    /// Invokes the use case to disable analytics sharing.
-    func invoke()
+    /// Disable analytics tracking.
+
+    func invoke() throws
+
 }
 
-/// Concrete implementation of the DisableAnalyticsUseCaseProtocol.
-/// This struct is responsible for disabling analytics sharing.
 struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
-    private let sessionManager: AnalyticsManagerProviding
-    private let analyticsSessionProvider: DisableAnalyticsUseCaseAnalyticsSessionProviding
+    let service: any AnalyticsServiceProtocol
+    let provider: (any AnalyticsEventTrackerProvider)?
 
-    /// Initializes a new instance of `DisableAnalyticsUseCase`.
-    ///
-    /// - Parameters:
-    ///   - sessionManager: The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
-    ///   - analyticsSessionProvider: An instance conforming to `DisableAnalyticsUseCaseAnalyticsSessionProviding` that manages the user's analytics session state.
-    init(
-        sessionManager: AnalyticsManagerProviding,
-        analyticsSessionProvider: DisableAnalyticsUseCaseAnalyticsSessionProviding
-    ) {
-        self.sessionManager = sessionManager
-        self.analyticsSessionProvider = analyticsSessionProvider
+    func invoke() throws {
+        try service.disableTracking()
+        provider?.analyticsEventTracker = nil
     }
 
-    /// Invokes the use case to disable analytics sharing.
-    ///
-    /// This method calls the `disableTracking` method on the analytics manager if it exists.
-    func invoke() {
-        sessionManager.analyticsManager?.disableTracking()
-        sessionManager.analyticsManager = nil
-        analyticsSessionProvider.analyticsSession = nil
-    }
-}
-
-protocol DisableAnalyticsUseCaseAnalyticsSessionProviding: AnyObject {
-    var analyticsSession: (any AnalyticsSessionProtocol)? { get set }
 }

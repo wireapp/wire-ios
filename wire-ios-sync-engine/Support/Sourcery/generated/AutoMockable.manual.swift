@@ -251,21 +251,3 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
            }
        }
 }
-
-class MockDisableAnalyticsUseCaseAnalyticsSessionProviding: DisableAnalyticsUseCaseAnalyticsSessionProviding {
-
-    // MARK: - Life cycle
-
-    // MARK: - analyticsSession
-
-    var analyticsSession: (any AnalyticsSessionProtocol)?
-}
-
-class MockEnableAnalyticsUseCaseAnalyticsSessionProviding: EnableAnalyticsUseCaseAnalyticsSessionProviding {
-
-    // MARK: - Life cycle
-
-    // MARK: - analyticsSession
-
-    var analyticsSession: (any AnalyticsSessionProtocol)?
-}

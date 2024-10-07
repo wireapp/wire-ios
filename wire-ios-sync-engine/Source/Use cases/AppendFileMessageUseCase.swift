@@ -27,10 +27,11 @@ public protocol AppendFileMessageUseCaseProtocol {
 }
 
 public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
-    let analyticsSession: AnalyticsSessionProtocol?
 
-    public init(analyticsSession: AnalyticsSessionProtocol?) {
-        self.analyticsSession = analyticsSession
+    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+
+    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     public func invoke<Conversation: MessageAppendableConversation>(
@@ -39,7 +40,7 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
     ) throws {
         let message = try conversation.appendFile(with: fileMetadata, nonce: UUID())
 
-        var contributionType: ContributionType = .fileMessage
+        var contributionType: ConversationContributionType = .fileMessage
 
         if let fileMessageData = message.fileMessageData {
             if fileMessageData.isVideo {
@@ -52,16 +53,13 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
 
         }
 
-        analyticsSession?.trackEvent(
-            ConversationContributionAnalyticsEvent(
-                contributionType: contributionType,
-                conversationType: .init(
-                    conversation.conversationType
-                ),
-                conversationSize: UInt(
-                    conversation.localParticipants.count
-                )
+        analyticsEventTracker?.trackEvent(
+            .conversationContribution(
+                contributionType,
+                conversationType: .init(conversation.conversationType),
+                conversationSize: UInt(conversation.localParticipants.count)
             )
         )
     }
+
 }

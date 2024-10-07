@@ -16,10 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension Bool: AnalyticsValue {
+/// The subject of analytics tracking.
 
-    public var analyticsValue: String {
-        self ? "True" : "False"
+public struct AnalyticsUser: Equatable, Sendable {
+
+    /// A unique id.
+
+    public let analyticsIdentifier: String
+
+    /// The user's team information.
+
+    public let teamInfo: TeamInfo?
+
+    /// Create a new `AnalyticsUser`.
+    ///
+    /// - Parameters:
+    ///   - analyticsIdentifier: A uniqe id.
+    ///   - teamInfo: The user's team information.
+
+    public init(
+        analyticsIdentifier: String,
+        teamInfo: TeamInfo? = nil
+    ) {
+        self.analyticsIdentifier = analyticsIdentifier
+        self.teamInfo = teamInfo
     }
 
 }

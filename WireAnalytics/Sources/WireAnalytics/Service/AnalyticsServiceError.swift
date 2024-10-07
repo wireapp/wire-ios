@@ -16,16 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+import Foundation
 
-final class MockAnalyticsManagerProviding: AnalyticsManagerProviding {
+/// Errors originating from `AnalyticsService`.
 
-    // MARK: - Life cycle
+public enum AnalyticsServiceError: Error {
 
-    init() {}
+    /// The analytics service has not been configured.
 
-    // MARK: - analyticsManager
-
-    var analyticsManager: (any AnalyticsManagerProtocol)?
+    case serviceIsNotConfigured
 
 }

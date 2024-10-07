@@ -16,22 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A struct representing information about the user's team.
+import Foundation
 
-public struct TeamInfo {
+// sourcery: AutoMockable
+/// Abstraction around `Countly`.
+protocol CountlyProtocol {
 
-    /// The identifier for the team the user belongs to.
-    public let id: String
+    func resetInstance()
 
-    /// The role of the user within the team.
-    public let role: String
+    func start(
+        appKey: String,
+        host: URL
+    )
 
-    /// The size of the team the user belongs to.
-    public let size: UInt
+    func setUserValue(
+        _ value: String?,
+        forKey key: String
+    )
 
-    public init(id: String, role: String, size: UInt) {
-        self.id = id
-        self.role = role
-        self.size = size
-    }
+    func changeDeviceID(
+        _ id: String,
+        mergeData: Bool
+    )
+
+    func beginSession()
+
+    func endSession()
+
+    func recordEvent(
+        _ key: String,
+        segmentation: [String: String]?
+    )
+
 }

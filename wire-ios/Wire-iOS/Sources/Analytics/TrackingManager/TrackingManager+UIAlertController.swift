@@ -23,32 +23,61 @@ extension TrackingManager {
 
     typealias AlertLocale = L10n.Localizable.Self.Settings.PrivacyAnalytics.Alert
 
-    func showAnalyticsConsentAlert(completion: @escaping (Bool) -> Void) {
-        guard let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
-            WireLogger.ui.error("No topmost view controller found.")
-            return
+    enum AnalyticsError: Error {
+
+        case unableToPresentAlert
+
+    }
+
+    @MainActor
+    func requestAnalyticsConsent() async throws -> Bool {
+        guard let viewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            throw AnalyticsError.unableToPresentAlert
         }
 
-        let alertController = UIAlertController(
-            title: AlertLocale.title,
-            message: AlertLocale.message,
-            preferredStyle: .alert
-        )
+        return await withCheckedContinuation { continuation in
+            let alert = UIAlertController(
+                title: AlertLocale.title,
+                message: AlertLocale.message,
+                preferredStyle: .alert
+            )
 
-        let actions: [(title: String, style: UIAlertAction.Style, handler: (UIAlertAction) -> Void)] = [
-            (AlertLocale.Button.agree, .default, { _ in completion(true) }),
-            (AlertLocale.Button.decline, .cancel, { _ in completion(false) }),
-            (AlertLocale.Button.privacyPolicy, .default, { [weak self] _ in
-                self?.presentPrivacyPolicy()
-                completion(false)
-            })
-        ]
+            alert.addAction(
+                UIAlertAction(
+                    title: AlertLocale.Button.agree,
+                    style: .default,
+                    handler: { _ in
+                        continuation.resume(returning: true)
+                    }
+                )
+            )
 
-        actions.forEach { action in
-            alertController.addAction(UIAlertAction(title: action.title, style: action.style, handler: action.handler))
+            alert.addAction(
+                UIAlertAction(
+                    title: AlertLocale.Button.decline,
+                    style: .cancel,
+                    handler: { _ in
+                        continuation.resume(returning: false)
+                    }
+                )
+            )
+
+            alert.addAction(
+                UIAlertAction(
+                    title: AlertLocale.Button.privacyPolicy,
+                    style: .default,
+                    handler: { [weak self] _ in
+                        self?.presentPrivacyPolicy()
+                        continuation.resume(returning: false)
+                    }
+                )
+            )
+
+            viewController.present(
+                alert,
+                animated: true
+            )
         }
-
-        topViewController.present(alertController, animated: true)
     }
 
     private func presentPrivacyPolicy() {

@@ -29,7 +29,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var mockAnalyticsSessionProtocol: MockAnalyticsSessionProtocol!
+    private var analyticsEventTracker: MockAnalyticsEventTracker!
     private var sut: ToggleMessageReactionUseCase!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var coreDataStack: CoreDataStack!
@@ -45,9 +45,10 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
 
-        mockAnalyticsSessionProtocol = .init()
-        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
-        sut = ToggleMessageReactionUseCase(analyticsSession: mockAnalyticsSessionProtocol)
+        analyticsEventTracker = MockAnalyticsEventTracker()
+        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+
+        sut = ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
 
         (conversation, firstMessage) = try await setupConversationWithMessage()
 
@@ -57,7 +58,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
-        mockAnalyticsSessionProtocol = nil
+        analyticsEventTracker = nil
         coreDataStack = nil
         coreDataStackHelper = nil
         conversation = nil
@@ -96,9 +97,17 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
 
         // THEN
         XCTAssertTrue(firstMessage.usersReaction.keys.contains("❤️"), "Expected the first message to have a ❤️ reaction.")
-        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
-        let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ConversationContributionAnalyticsEvent)
-        XCTAssertEqual(trackEventInvocation.contributionType, .likeMessage)
+
+        XCTAssertEqual(
+            analyticsEventTracker.trackEvent_Invocations,
+            [
+                AnalyticsEvent.conversationContribution(
+                    .likeMessage,
+                    conversationType: .group,
+                    conversationSize: 0
+                )
+            ]
+        )
     }
 
     func testToggleMessageReaction_RemoveLikeReaction() throws {
@@ -110,7 +119,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
 
         // THEN
         XCTAssertFalse(firstMessage.usersReaction.keys.contains("❤️"), "Expected the ❤️ reaction to be removed from the first message.")
-        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 0, "Removing reactions should not trigger analytics events.")
+        XCTAssertEqual(analyticsEventTracker.trackEvent_Invocations.count, 0, "Removing reactions should not trigger analytics events.")
     }
 
     func testToggleMessageReaction_MultipleReactions() throws {
@@ -123,6 +132,16 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         XCTAssertTrue(firstMessage.usersReaction.keys.contains("❤️"), "Expected the message to have a ❤️ reaction.")
         XCTAssertTrue(firstMessage.usersReaction.keys.contains("👍"), "Expected the message to have a 👍 reaction.")
         XCTAssertTrue(firstMessage.usersReaction.keys.contains("😮"), "Expected the message to have a 😮 reaction.")
-        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1, "Only like reactions should trigger analytics events.")
+
+        XCTAssertEqual(
+            analyticsEventTracker.trackEvent_Invocations,
+            [
+                AnalyticsEvent.conversationContribution(
+                    .likeMessage,
+                    conversationType: .group,
+                    conversationSize: 0
+                )
+            ]
+        )
     }
 }

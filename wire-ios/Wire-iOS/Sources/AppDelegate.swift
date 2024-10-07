@@ -325,7 +325,7 @@ private extension AppDelegate {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: LogFileDestination.deleteAllLogs,
-            analyticsSessionConfiguration: AnalyticsSessionConfigurationBuilder().build()
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build()
         )
 
         voIPPushManager.delegate = sessionManager

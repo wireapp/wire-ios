@@ -16,78 +16,51 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAnalytics
 import WireAnalyticsSupport
 import XCTest
 
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
-final class DisableAnalyticsUseCaseTests: XCTestCase {
-
-    // MARK: - Properties
+final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvider {
 
     private var sut: DisableAnalyticsUseCase!
-    private var mockAnalyticsManagerProvider: MockAnalyticsManagerProviding!
-    private var mockAnalyticsManager: MockAnalyticsManagerProtocol!
-    private var mockUserSession: MockDisableAnalyticsUseCaseAnalyticsSessionProviding!
+    private var service: MockAnalyticsServiceProtocol!
 
-    // MARK: - setUp
+    var analyticsEventTracker: (any AnalyticsEventTracker)?
 
     override func setUp() {
-
-        mockAnalyticsManager = MockAnalyticsManagerProtocol()
-        mockAnalyticsManagerProvider = MockAnalyticsManagerProviding()
-        mockAnalyticsManagerProvider.analyticsManager = mockAnalyticsManager
-        mockUserSession = .init()
-
-        sut = .init(
-            sessionManager: mockAnalyticsManagerProvider,
-            analyticsSessionProvider: mockUserSession
-        )
+        super.setUp()
+        service = MockAnalyticsServiceProtocol()
+        sut = DisableAnalyticsUseCase(service: service, provider: self)
+        analyticsEventTracker = MockAnalyticsEventTracker()
     }
-
-    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
-        mockAnalyticsManagerProvider = nil
-        mockAnalyticsManager = nil
+        service = nil
+        analyticsEventTracker = nil
+        super.tearDown()
     }
 
-    // MARK: - Unit Tests
-
-    func testInvoke_CallsDisableTrackingOnAnalyticsManager() {
-        // GIVEN
-        XCTAssertFalse(mockAnalyticsManager.invokedDisableTracking)
-        XCTAssertEqual(mockAnalyticsManager.invokedDisableTrackingCount, 0)
-
-        // WHEN
-        sut.invoke()
-
-        // THEN
-        XCTAssertTrue(mockAnalyticsManager.invokedDisableTracking, "disableTracking should be called on the analytics manager")
-        XCTAssertEqual(mockAnalyticsManager.invokedDisableTrackingCount, 1, "disableTracking should be called exactly once")
+    func createAnalyticsUser() async throws -> AnalyticsUser {
+        AnalyticsUser(analyticsIdentifier: UUID().uuidString)
     }
 
-    func testInvoke_SetsAnalyticsManagerToNil() {
-        // GIVEN
-        XCTAssertNotNil(mockAnalyticsManagerProvider.analyticsManager)
+    func testInvoke_disables_via_service() throws {
+        // Mock
+        service.disableTracking_MockMethod = { }
 
-        // WHEN
-        sut.invoke()
+        // Given
+        XCTAssertNotNil(analyticsEventTracker)
 
-        // THEN
-        XCTAssertNil(mockAnalyticsManagerProvider.analyticsManager, "analyticsManager should be set to nil after invoke")
+        // When
+        try sut.invoke()
+
+        // Then
+        XCTAssertEqual(service.disableTracking_Invocations.count, 1)
+        XCTAssertNil(analyticsEventTracker)
     }
 
-    func testInvoke_ClearsAnalyticsSession() {
-        // GIVEN
-        mockUserSession.analyticsSession = MockAnalyticsSessionProtocol()
-
-        // WHEN
-        sut.invoke()
-
-        // THEN
-        XCTAssertNil(mockUserSession.analyticsSession, "userSession.analyticsSession is not set to nil")
-    }
 }

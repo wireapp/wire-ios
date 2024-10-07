@@ -30,10 +30,10 @@ public protocol ToggleMessageReactionUseCaseProtocol {
 
 public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol {
 
-    private let analyticsSession: AnalyticsSessionProtocol?
+    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
 
-    public init(analyticsSession: AnalyticsSessionProtocol?) {
-        self.analyticsSession = analyticsSession
+    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     public func invoke<Conversation: MessageAppendableConversation>(
@@ -47,9 +47,9 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
         } else {
             ZMMessage.addReaction(reaction, to: message)
             if reaction == "❤️" {
-                analyticsSession?.trackEvent(
-                    ConversationContributionAnalyticsEvent(
-                        contributionType: .likeMessage,
+                analyticsEventTracker?.trackEvent(
+                    .conversationContribution(
+                        .likeMessage,
                         conversationType: .init(conversation.conversationType),
                         conversationSize: UInt(conversation.localParticipants.count)
                     )

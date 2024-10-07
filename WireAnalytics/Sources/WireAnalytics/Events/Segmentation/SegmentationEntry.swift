@@ -16,8 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension UInt: AnalyticsValue {
-    public var analyticsValue: String {
-        String(logRound())
-    }
+/// Represents a key-value pair for analytics event segmentation.
+///
+/// This struct is used to provide additional, structured information about an analytics event.
+/// Each `SegmentationEntry` consists of a key (identifying the type of information) and a value
+/// (the actual data point).
+
+public struct SegmentationEntry: Hashable, Sendable {
+
+    let key: String
+    let value: String
+
 }

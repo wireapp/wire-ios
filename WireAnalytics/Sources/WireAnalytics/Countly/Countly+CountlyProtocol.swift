@@ -18,9 +18,12 @@
 
 import Countly
 
-extension Countly: AnalyticsService {
+extension Countly: CountlyProtocol {
 
-    func start(appKey: String, host: URL) {
+    func start(
+        appKey: String,
+        host: URL
+    ) {
         let config = CountlyConfig()
         config.appKey = appKey
         config.manualSessionHandling = true
@@ -28,7 +31,10 @@ extension Countly: AnalyticsService {
         start(with: config)
     }
 
-    func changeDeviceID(_ id: String, mergeData: Bool) {
+    func changeDeviceID(
+        _ id: String,
+        mergeData: Bool
+    ) {
         if mergeData {
             changeDeviceID(withMerge: id)
         } else {
@@ -36,22 +42,15 @@ extension Countly: AnalyticsService {
         }
     }
 
-    func setUserValue(_ value: String?, forKey key: String) {
+    func setUserValue(
+        _ value: String?,
+        forKey key: String
+    ) {
         if let value {
             Countly.user().set(key, value: value)
         } else {
             Countly.user().unSet(key)
         }
-    }
-
-    func trackEvent(
-        name: String,
-        segmentation: [String: String]
-    ) {
-        recordEvent(
-            name,
-            segmentation: segmentation
-        )
     }
 
 }

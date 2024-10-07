@@ -20,51 +20,28 @@ import WireAnalytics
 
 extension SessionManager {
 
-    enum AnalyticsSessionError: Error {
+    enum AnalyticsError: Error {
 
-        case analyticsNotAvailable
-        case analyticsConfigurationNotAvailable
-        case missingAnalyticsUserProfile
-        case missingActiveUserSession
+        case noActiveSession
 
     }
 
     public func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
-
-        guard let userSession = self.activeUserSession else {
-            throw AnalyticsSessionError.missingActiveUserSession
-        }
-
-        return DisableAnalyticsUseCase(
-            sessionManager: self,
-            analyticsSessionProvider: userSession
+        DisableAnalyticsUseCase(
+            service: analyticsService,
+            provider: activeUserSession
         )
     }
 
-    public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
-
-        guard let analyticsSessionConfiguration else {
-            throw AnalyticsSessionError.analyticsConfigurationNotAvailable
-        }
-
-        guard let userSession = self.activeUserSession else {
-            throw AnalyticsSessionError.missingActiveUserSession
-        }
-
-        guard let analyticsUserProfile = getUserAnalyticsProfile(for: userSession) else {
-            throw AnalyticsSessionError.missingAnalyticsUserProfile
+    public func makeEnableAnalyticsUseCase() async throws -> EnableAnalyticsUseCaseProtocol {
+        guard let activeUserSession else {
+            throw AnalyticsError.noActiveSession
         }
 
         return EnableAnalyticsUseCase(
-            analyticsManagerBuilder: { AnalyticsManager(appKey: $0, host: $1) },
-            sessionManager: self,
-            analyticsSessionConfiguration: analyticsSessionConfiguration,
-            analyticsUserProfile: analyticsUserProfile,
-            analyticsSessionProvider: userSession
+            service: analyticsService,
+            provider: activeUserSession
         )
     }
 
 }
-
-extension ZMUserSession: EnableAnalyticsUseCaseAnalyticsSessionProviding {}
-extension ZMUserSession: DisableAnalyticsUseCaseAnalyticsSessionProviding {}

@@ -324,27 +324,27 @@ final class UserSessionMock: UserSession {
     }
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol {
-        AppendTextMessageUseCase(analyticsSession: nil)
+        AppendTextMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {
-        AppendImageMessageUseCase(analyticsSession: nil)
+        AppendImageMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol {
-        AppendKnockMessageUseCase(analyticsSession: nil)
+        AppendKnockMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
-        AppendLocationMessageUseCase(analyticsSession: nil)
+        AppendLocationMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeAppendFileMessageUseCase() -> any WireSyncEngine.AppendFileMessageUseCaseProtocol {
-        AppendFileMessageUseCase(analyticsSession: nil)
+        AppendFileMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol {
-        ToggleMessageReactionUseCase(analyticsSession: nil)
+        ToggleMessageReactionUseCase(analyticsEventTracker: nil)
     }
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)

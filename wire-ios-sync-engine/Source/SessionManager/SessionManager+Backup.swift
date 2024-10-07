@@ -60,7 +60,7 @@ extension SessionManager {
                 case .success:
                     break
                 case .failure:
-                    activeUserSession.analyticsSession?.trackEvent(BackupExportFailedAnalyticsEvent())
+                    activeUserSession.analyticsEventTracker?.trackEvent(.backupExportFailed)
                 }
 
                 SessionManager.handle(
@@ -114,11 +114,9 @@ extension SessionManager {
                 DispatchQueue.main.async(group: dispatchGroup) {
                     switch result {
                     case .success:
-                        let restoreBackupSucceeded = RestoreBackupAnalyticsEvent(didSucceed: true)
-                        self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupSucceeded)
+                        self.activeUserSession?.analyticsEventTracker?.trackEvent(.backupRestored)
                     case .failure:
-                        let restoreBackupFailed = RestoreBackupAnalyticsEvent(didSucceed: false)
-                        self.activeUserSession?.analyticsSession?.trackEvent(restoreBackupFailed)
+                        self.activeUserSession?.analyticsEventTracker?.trackEvent(.backupRestoredFailed)
                     }
                     completion(result)
                 }

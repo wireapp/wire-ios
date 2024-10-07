@@ -16,25 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Struct representing an analytics event for when a user joins a call.
-public struct JoinedCallAnaltyicsEvent: AnalyticsEvent {
+/// The type of contribution made in an conversation.
 
-    /// The name of the event.
-    public var eventName: String {
-        "calling.joined_call"
+public enum ConversationContributionType: String, AnalyticsValue {
+
+    case textMessage = "text_message"
+    case likeMessage = "like_message"
+    case pingMessage = "ping_message"
+    case fileMessage = "file_message"
+    case imageMessage = "image_message"
+    case locationMessage = "location_message"
+    case audioMessage = "audio_message"
+    case videoMessage = "video_message"
+    case audioCallMessage = "audio_call_message"
+    case videoCallMessage = "video_call_message"
+
+    public var analyticsValue: String {
+        rawValue
     }
 
-    /// Additional segmentation data for the event.
-    public var segmentation: Set<SegmentationValue> {
-        [
-            .isVideoCall(isVideoCall),
-            .groupType(conversationType)
-        ]
-    }
-
-    /// Indicates whether the call is a video call.
-    public var isVideoCall: Bool
-
-    /// The type of conversation for the call.
-    public var conversationType: ConversationType
 }

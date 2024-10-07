@@ -201,12 +201,12 @@ public final class SessionManager: NSObject, SessionManagerType {
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
     public weak var loginDelegate: LoginDelegate?
-    public var analyticsSessionConfiguration: AnalyticsSessionConfiguration?
 
     public internal(set) var activeUserSession: ZMUserSession? {
         willSet {
             guard activeUserSession != newValue else { return }
             activeUserSession?.appLockController.beginTimer()
+            activeUserSession?.analyticsEventTracker = nil
         }
     }
 
@@ -310,7 +310,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
-    public var analyticsManager: (any AnalyticsManagerProtocol)?
+    let analyticsService: AnalyticsService
 
     public override init() {
         fatal("init() not implemented")
@@ -337,7 +337,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration?
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -394,7 +394,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: minTLSVersion,
             deleteUserLogs: deleteUserLogs,
-            analyticsSessionConfiguration: analyticsSessionConfiguration
+            analyticsServiceConfiguration: analyticsServiceConfiguration
         )
 
         configureBlacklistDownload()
@@ -457,7 +457,7 @@ public final class SessionManager: NSObject, SessionManagerType {
          sharedUserDefaults: UserDefaults,
          minTLSVersion: String? = nil,
          deleteUserLogs: (() -> Void)? = nil,
-         analyticsSessionConfiguration: AnalyticsSessionConfiguration?
+         analyticsServiceConfiguration: AnalyticsServiceConfiguration?
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -479,8 +479,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
         }
-
-        self.analyticsSessionConfiguration = analyticsSessionConfiguration
 
         self.sharedContainerURL = sharedContainerURL
         self.accountManager = AccountManager(sharedDirectory: sharedContainerURL)
@@ -519,6 +517,28 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.notificationsTracker = NotificationsTracker(analytics: analytics)
         } else {
             self.notificationsTracker = nil
+        }
+
+        let analyticsConfig = analyticsServiceConfiguration.map {
+            AnalyticsService.Config(
+                secretKey: $0.secretKey,
+                serverHost: $0.serverHost
+            )
+        }
+
+        analyticsService = AnalyticsService(
+            config: analyticsConfig,
+            logger: { WireLogger.analytics.debug($0) }
+        )
+
+        if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
+            Task { [analyticsService] in
+                do {
+                    try await analyticsService.enableTracking()
+                } catch {
+                    WireLogger.analytics.error("failed to enable tracking: \(error)")
+                }
+            }
         }
 
         super.init()
@@ -607,14 +627,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         unauthenticatedSessionFactory.readyForRequests = ready
     }
 
-    public func start(
-        launchOptions: LaunchOptions,
-        completion: @escaping (Bool) -> Void
-    ) {
+    public func start(launchOptions: LaunchOptions) {
         if let account = accountManager.selectedAccount {
-            selectInitialAccount(account, launchOptions: launchOptions) { success in
-                completion(success)
-            }
+            selectInitialAccount(account, launchOptions: launchOptions)
             // swiftlint:disable todo_requires_jira_link
             // TODO: this might need to happen with a completion handler.
             // TODO: register as voip delegate?
@@ -623,7 +638,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerDidFailToLogin(error: nil)
-            completion(false)
         }
     }
 
@@ -645,29 +659,30 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private func selectInitialAccount(
         _ account: Account,
-        launchOptions: LaunchOptions,
-        completion: @escaping (Bool) -> Void
+        launchOptions: LaunchOptions
     ) {
         if let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL {
             if (try? URLAction(url: url))?.causesLogout == true {
                 // Do not log in if the launch URL action causes a logout
-                return completion(false)
+                return
             }
         }
 
         guard !shouldPerformPostRebootLogout() else {
             performPostRebootLogout()
-            return completion(false)
+            return
         }
 
         loadSession(for: account) { [weak self] session in
-            guard let self, let session else {
-                return completion(false)
+            guard
+                let self,
+                let session
+            else {
+                return
             }
 
             self.updateCurrentAccount(in: session.managedObjectContext)
             session.application(self.application, didFinishLaunching: launchOptions)
-            completion(true)
         }
     }
 
@@ -892,50 +907,28 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
-                self.switchAnalyticsUser(to: session)
 
                 Task {
+                    await self.configureAnalytics(for: session)
                     await self.requestCertificateEnrollmentIfNeeded()
                 }
             }
         }
     }
 
-    private func switchAnalyticsUser(to userSession: ZMUserSession) {
-        guard
-            let analyticsManager,
-            let userProfile = getUserAnalyticsProfile(for: userSession)
-        else {
+    func configureAnalytics(for userSession: ZMUserSession) async {
+        guard analyticsService.isTrackingEnabled else {
             return
         }
 
-        let analyticsSession = analyticsManager.switchUser(userProfile)
-        userSession.analyticsSession = analyticsSession
-    }
-
-    func getUserAnalyticsProfile(for userSession: ZMUserSession) -> AnalyticsUserProfile? {
-        let selfUser = ZMUser.selfUser(inUserSession: userSession)
-
-        // Set the analytics identifier if it's not present
-        if selfUser.analyticsIdentifier == nil {
-            let idProvider = AnalyticsIdentifierProvider(selfUser: selfUser)
-            idProvider.setIdentifierIfNeeded()
+        do {
+            WireLogger.analytics.debug("configuring analytics for user session")
+            let user = try await userSession.createAnalyticsUser()
+            try analyticsService.switchUser(user)
+            userSession.analyticsEventTracker = analyticsService
+        } catch {
+            WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
         }
-
-        guard let analyticsID = selfUser.analyticsIdentifier else {
-            return nil
-        }
-
-        var teamInfo: TeamInfo?
-        if let team = selfUser.team, let teamID = team.remoteIdentifier {
-            teamInfo = TeamInfo(
-                id: teamID.uuidString,
-                role: selfUser.teamRole.analyticsValue,
-                size: UInt(team.members.count)
-            )
-        }
-
-        return AnalyticsUserProfile(analyticsIdentifier: analyticsID, teamInfo: teamInfo)
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {
@@ -1352,12 +1345,20 @@ extension SessionManager: UserObserving {
         }
 
         if changeInfo.analyticsIdentifierChanged {
-            guard changeInfo.user.isSelfUser, let userSession = activeUserSession else {
+            guard
+                analyticsService.isTrackingEnabled,
+                changeInfo.user.isSelfUser,
+                let userSession = activeUserSession
+            else {
                 return
             }
 
-            if let userProfile = getUserAnalyticsProfile(for: userSession) {
-                analyticsManager?.updateUserAnalyticsIdentifier(userProfile, mergeData: true)
+            Task {
+                do {
+                    try await analyticsService.updateCurrentUser(userSession.createAnalyticsUser())
+                } catch {
+                    WireLogger.analytics.error("failed to update current user: \(error)")
+                }
             }
         }
     }

@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol defining the structure of an analytics event.
-public protocol AnalyticsEvent {
+/// Types of conversations.
 
-    /// The name of the event.
-    var eventName: String { get }
+public enum ConversationType: String, AnalyticsValue {
 
-    /// Additional segmentation data for the event.
-    var segmentation: Set<SegmentationValue> { get }
+    case group
+    case oneOnOne = "one_on_one"
+    case unknown
+
+    public var analyticsValue: String {
+        rawValue
+    }
 
 }

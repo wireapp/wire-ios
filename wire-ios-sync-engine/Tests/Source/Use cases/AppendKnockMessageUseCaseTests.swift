@@ -28,16 +28,17 @@ import XCTest
 final class AppendKnockMessageUseCaseTests: XCTest {
 
     // MARK: - Properties
-    private var mockAnalyticsSessionProtocol: MockAnalyticsSessionProtocol!
+
+    private var analyticsEventTracker: MockAnalyticsEventTracker!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendKnockMessageUseCase!
 
     // MARK: - setUp
 
     override func setUp() {
-        mockAnalyticsSessionProtocol = .init()
+        analyticsEventTracker = .init()
         mockConversation = .init()
-        sut = AppendKnockMessageUseCase(analyticsSession: mockAnalyticsSessionProtocol)
+        sut = AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     // MARK: - tearDown
@@ -45,7 +46,7 @@ final class AppendKnockMessageUseCaseTests: XCTest {
     override func tearDown() {
         sut = nil
         mockConversation = nil
-        mockAnalyticsSessionProtocol = nil
+        analyticsEventTracker = nil
     }
 
     func testInvoke_AppendKnockMessage_TracksEventCorrectly() throws {
@@ -57,7 +58,7 @@ final class AppendKnockMessageUseCaseTests: XCTest {
             MockZMConversationMessage()
         }
 
-        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEvent_MockMethod = { _ in }
 
         // WHEN
         try sut.invoke(
@@ -68,11 +69,16 @@ final class AppendKnockMessageUseCaseTests: XCTest {
 
         XCTAssertNil(mockConversation.draftMessage)
 
-        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
-        let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ConversationContributionAnalyticsEvent)
-        XCTAssertEqual(trackEventInvocation.contributionType, .pingMessage)
-        XCTAssertEqual(trackEventInvocation.conversationType, .group)
+        let expectedEvent = AnalyticsEvent.conversationContribution(
+            .pingMessage,
+            conversationType: .group,
+            conversationSize: 0
+        )
 
+        XCTAssertEqual(
+            analyticsEventTracker.trackEvent_Invocations,
+            [expectedEvent]
+        )
     }
 
 }

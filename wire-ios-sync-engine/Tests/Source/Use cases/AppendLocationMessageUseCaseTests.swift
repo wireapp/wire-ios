@@ -29,16 +29,16 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var mockAnalyticsSessionProtocol: MockAnalyticsSessionProtocol!
+    private var analyticsEventTracker: MockAnalyticsEventTracker!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendLocationMessageUseCase!
 
     // MARK: - setUp
 
     override func setUp() {
-        mockAnalyticsSessionProtocol = .init()
+        analyticsEventTracker = .init()
         mockConversation = .init()
-        sut = AppendLocationMessageUseCase(analyticsSession: mockAnalyticsSessionProtocol)
+        sut = AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     // MARK: - tearDown
@@ -46,7 +46,7 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
     override func tearDown() {
         sut = nil
         mockConversation = nil
-        mockAnalyticsSessionProtocol = nil
+        analyticsEventTracker = nil
     }
 
     // MARK: - Unit Tests
@@ -58,7 +58,7 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
         mockConversation.appendLocation_MockMethod = { _, _ in
             MockZMConversationMessage()
         }
-        mockAnalyticsSessionProtocol.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEvent_MockMethod = { _ in }
 
         let testLocationData = LocationData(latitude: 37.7749, longitude: -122.4194, name: "San Francisco", zoomLevel: 10)
 
@@ -74,10 +74,15 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
         XCTAssertEqual(appendLocationInvocation.locationData.zoomLevel, testLocationData.zoomLevel)
         XCTAssertNotNil(appendLocationInvocation.nonce)
 
-        XCTAssertEqual(mockAnalyticsSessionProtocol.trackEvent_Invocations.count, 1)
-        let trackEventInvocation = try XCTUnwrap(mockAnalyticsSessionProtocol.trackEvent_Invocations.first as? ConversationContributionAnalyticsEvent)
-        XCTAssertEqual(trackEventInvocation.contributionType, .locationMessage)
-        XCTAssertEqual(trackEventInvocation.conversationType, .group)
-        XCTAssertEqual(trackEventInvocation.conversationSize, UInt(mockConversation.localParticipants.count))
+        let expectedEvent = AnalyticsEvent.conversationContribution(
+            .locationMessage,
+            conversationType: .group,
+            conversationSize: 0
+        )
+
+        XCTAssertEqual(
+            analyticsEventTracker.trackEvent_Invocations,
+            [expectedEvent]
+        )
     }
 }

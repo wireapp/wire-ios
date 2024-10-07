@@ -16,16 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents a key-value pair for analytics event segmentation.
-///
-/// This struct is used to provide additional, structured information about an analytics event.
-/// Each `SegmentationValue` consists of a key (identifying the type of information) and a value
-/// (the actual data point).
-///
-/// - Note: This struct conforms to `Hashable`, allowing it to be used in sets and as dictionary keys.
-public struct SegmentationValue: Hashable {
+import Foundation
+import WireAnalytics
 
-    let key: String
-    let value: String
+protocol AnalyticsEventTrackerProvider: AnyObject {
+
+    var analyticsEventTracker: (any AnalyticsEventTracker)? { get set }
+    func createAnalyticsUser() async throws -> AnalyticsUser
 
 }

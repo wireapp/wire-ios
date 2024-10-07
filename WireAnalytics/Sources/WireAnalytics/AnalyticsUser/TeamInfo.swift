@@ -16,14 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An enumeration representing the type of conversation.
-public enum ConversationType: String, AnalyticsValue {
-    case group
-    case oneOnOne = "one_on_one"
-    case unknown
+/// Info about an analytic user's team.
 
-    /// A string representation of the conversation type suitable for analytics tracking.
-    public var analyticsValue: String {
-        rawValue
+public struct TeamInfo: Equatable, Sendable {
+
+    /// The team id.
+
+    public let id: String
+
+    /// The role of the user within the team.
+
+    public let role: String
+
+    /// The size of the team.
+
+    public let size: UInt
+
+    /// Create a new `TeamInfo`.
+    ///
+    /// - Parameters:
+    ///   - id: The team id.
+    ///   - role: The role of the user within the team.
+    ///   - size: The size of the team
+
+    public init(
+        id: String,
+        role: String,
+        size: UInt
+    ) {
+        self.id = id
+        self.role = role
+        self.size = size
     }
+
 }

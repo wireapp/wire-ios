@@ -16,18 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Struct representing an analytics event for app opening.
-public struct AppOpenAnalyticsEvent: AnalyticsEvent {
+import Foundation
 
-    public init() {}
+// sourcery: AutoMockable
+/// An object that tracks analytic events.
+public protocol AnalyticsEventTracker: AnyObject {
 
-    /// The name of the event.
-    public var eventName: String {
-        "app.open"
-    }
+    /// Track an event.
+    ///
+    /// - Parameter event: The event to track.
 
-    /// Additional segmentation data for the event.
-    public var segmentation: Set<SegmentationValue> {
-        []
-    }
+    func trackEvent(_ event: AnalyticsEvent)
+
 }

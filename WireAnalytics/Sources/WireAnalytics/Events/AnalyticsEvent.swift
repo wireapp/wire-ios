@@ -16,16 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// The AnalyticsSessionConfiguration struct is a configuration object used to initialize and configure an analytics session. 
-/// It holds key information required for the analytics system to function, such as the Countly key and the host URL.
+/// An event that can be tracked..
 
-public struct AnalyticsSessionConfiguration {
+public struct AnalyticsEvent: Sendable, Equatable {
 
-    public let countlyKey: String
-    public let host: URL
+    /// A unique name.
 
-    public init(countlyKey: String, host: URL) {
-        self.countlyKey = countlyKey
-        self.host = host
+    let name: String
+
+    /// Additional metadata.
+
+    let segmentation: Set<SegmentationEntry>
+
+    /// Create a new `AnalyticsEvent`.
+    ///
+    /// - Parameters:
+    ///   - name: A unique name.
+    ///   - segmentation: Additional metadata.
+
+    init(
+        name: String,
+        segmentation: Set<SegmentationEntry> = []
+    ) {
+        self.name = name
+        self.segmentation = segmentation
     }
+
+}
+
+extension AnalyticsEvent: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        "event: \(name), segmentation: \(segmentation)"
+    }
+
 }
