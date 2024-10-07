@@ -57,6 +57,11 @@ SplitViewController.ConversationList.ConversationFilter == ConversationFilter {
 
     @MainActor
     public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
-        fatalError("TODO")
+        let url = WireURLs.shared.support
+        let browser = BrowserViewController(url: url)
+        browser.modalPresentationCapturesStatusBarAppearance = true
+        Task {
+            await presentViewController(browser)
+        }
     }
 }
