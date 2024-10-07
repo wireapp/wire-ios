@@ -23,8 +23,8 @@ import XCTest
 
 final class TeamMemberUpdateEventProcessorTests: XCTestCase {
 
-    var sut: TeamMemberUpdateEventProcessor!
-    var teamRepository: MockTeamRepositoryProtocol!
+    private var sut: TeamMemberUpdateEventProcessor!
+    private var teamRepository: MockTeamRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
@@ -40,7 +40,7 @@ final class TeamMemberUpdateEventProcessorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testProcessEvent_Member_Needs_To_Be_Updated_From_Backend_Is_True() async throws {
+    func testProcessEvent_It_Invokes_Repo_Method() async throws {
         // Given
 
         let event = TeamMemberUpdateEvent(
@@ -59,6 +59,7 @@ final class TeamMemberUpdateEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_Invocations, [Scaffolding.membershipID])
+        XCTAssertEqual(teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_Invocations.count, 1)
     }
 
     private enum Scaffolding {
@@ -66,6 +67,11 @@ final class TeamMemberUpdateEventProcessorTests: XCTestCase {
         static let domain = "example.com"
         static let teamID = UUID()
         static let membershipID = UUID()
+
+        static let event = TeamMemberUpdateEvent(
+            teamID: UUID(),
+            membershipID: UUID()
+        )
 
     }
 

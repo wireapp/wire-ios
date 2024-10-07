@@ -21,7 +21,7 @@ import Foundation
 /// An event where a user was requested to become a
 /// legalhold subject.
 
-public struct UserLegalholdRequestEvent: Equatable, Codable {
+public struct UserLegalholdRequestEvent: Equatable, Codable, Sendable {
 
     /// The user id of the target legalhold subject.
 

@@ -26,23 +26,23 @@ import XCTest
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
 
-    var sut: ConversationLabelsRepository!
-    var userPropertiesAPI: MockUserPropertiesAPI!
-
-    var stack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    let modelHelper = ModelHelper()
+    private var sut: ConversationLabelsRepository!
+    private var userPropertiesAPI: MockUserPropertiesAPI!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
     private var conversation1: ZMConversation!
     private var conversation2: ZMConversation!
     private var conversation3: ZMConversation!
 
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
+        modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         /// Batch requests don't work with in-memory store
         /// so we need to use a persistent store.
@@ -57,11 +57,12 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         userPropertiesAPI = nil
         sut = nil
-        try await super.tearDown()
+        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -377,68 +378,69 @@ private extension ConversationLabelsRepositoryTests {
         conversation3 = ZMConversation.insertNewObject(in: context)
         conversation3.remoteIdentifier = Scaffolding.updatedConversationLabel1.conversationIDs[2]
     }
-}
 
-private enum Scaffolding {
-    static let conversationLabel1 = ConversationLabel(
-        id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b0")!,
-        name: "ConversationLabel1",
-        type: 0,
-        conversationIDs: [
-            UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
-            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!
-        ]
-    )
+    private enum Scaffolding {
+        static let conversationLabel1 = ConversationLabel(
+            id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b0")!,
+            name: "ConversationLabel1",
+            type: 0,
+            conversationIDs: [
+                UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
+                UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!
+            ]
+        )
 
-    static let updatedConversationLabel1 = ConversationLabel(
-        id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b0")!,
-        name: "UpdatedConversationLabel1", /// Updated name
-        type: 0,
-        conversationIDs: [
-            UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
-            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!,
-            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d2")! /// new conversation added
-        ]
-    )
+        static let updatedConversationLabel1 = ConversationLabel(
+            id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b0")!,
+            name: "UpdatedConversationLabel1", /// Updated name
+            type: 0,
+            conversationIDs: [
+                UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
+                UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!,
+                UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d2")! /// new conversation added
+            ]
+        )
 
-    static let favoriteConversationLabel1 = ConversationLabel(
-        id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b9")!,
-        name: "FavoriteConversationLabel1",
-        type: 1, /// this label is favorite
-        conversationIDs: [
-            UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
-            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!
-        ]
-    )
+        static let favoriteConversationLabel1 = ConversationLabel(
+            id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b9")!,
+            name: "FavoriteConversationLabel1",
+            type: 1, /// this label is favorite
+            conversationIDs: [
+                UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
+                UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!
+            ]
+        )
 
-    static let conversationLabel2 = ConversationLabel(
-        id: UUID(uuidString: "2AA27182-AA54-4D79-973E-8974A3BBE375")!,
-        name: "ConversationLabel2",
-        type: 0,
-        conversationIDs: [
-            UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ffc")!,
-            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf8")!
-        ]
-    )
+        static let conversationLabel2 = ConversationLabel(
+            id: UUID(uuidString: "2AA27182-AA54-4D79-973E-8974A3BBE375")!,
+            name: "ConversationLabel2",
+            type: 0,
+            conversationIDs: [
+                UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ffc")!,
+                UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf8")!
+            ]
+        )
 
-    static let conversationLabel3 = ConversationLabel(
-        id: UUID(uuidString: "2AA27182-AA54-4D79-973E-8974A3BBE390")!,
-        name: "ConversationLabel3",
-        type: 0,
-        conversationIDs: [
-            UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ff3")!,
-            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf9")!
-        ]
-    )
+        static let conversationLabel3 = ConversationLabel(
+            id: UUID(uuidString: "2AA27182-AA54-4D79-973E-8974A3BBE390")!,
+            name: "ConversationLabel3",
+            type: 0,
+            conversationIDs: [
+                UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ff3")!,
+                UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf9")!
+            ]
+        )
 
-    static let conversationLabel4 = ConversationLabel(
-        id: UUID(uuidString: "2AA27182-AA54-4D79-973E-8974A3BBE372")!,
-        name: "ConversationLabel4",
-        type: 0,
-        conversationIDs: [
-            UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ff0")!,
-            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf2")!
-        ]
-    )
+        static let conversationLabel4 = ConversationLabel(
+            id: UUID(uuidString: "2AA27182-AA54-4D79-973E-8974A3BBE372")!,
+            name: "ConversationLabel4",
+            type: 0,
+            conversationIDs: [
+                UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ff0")!,
+                UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf2")!
+            ]
+        )
+
+    }
 
 }

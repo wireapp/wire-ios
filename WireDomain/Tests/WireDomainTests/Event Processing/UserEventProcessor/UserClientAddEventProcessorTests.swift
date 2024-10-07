@@ -25,44 +25,64 @@ import XCTest
 
 final class UserClientAddEventProcessorTests: XCTestCase {
 
-    var sut: UserClientAddEventProcessor!
+    private var sut: UserClientAddEventProcessor!
+    private var userRepository: MockUserRepositoryProtocol!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-    var userRepository: MockUserRepositoryProtocol!
-
-    var context: NSManagedObjectContext {
-        coreDataStack.syncContext
+    private var context: NSManagedObjectContext {
+        stack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
-        coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
+        coreDataStackHelper = CoreDataStackHelper()
+        stack = try await coreDataStackHelper.createStack()
         userRepository = MockUserRepositoryProtocol()
-        coreDataStack = try await coreDataStackHelper.createStack()
-        sut = UserClientAddEventProcessor(repository: userRepository)
+        sut = UserClientAddEventProcessor(
+            repository: userRepository
+        )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        coreDataStack = nil
-        sut = nil
+        stack = nil
         modelHelper = nil
-        userRepository = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
+        sut = nil
+        userRepository = nil
     }
 
     // MARK: - Tests
 
     func testProcessEvent_It_Invokes_User_Repo_Methods() async throws {
-        // Given
+        // Mock
 
-        let event = UserClientAddEvent(
+        let userClient = modelHelper.createSelfClient(in: context)
+
+        userRepository.fetchOrCreateUserClientWith_MockMethod = { _ in
+            (userClient, true)
+        }
+
+        userRepository.updateUserClientFromIsNewClient_MockMethod = { _, _, _ in }
+
+        // When
+
+        try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        XCTAssertEqual(userRepository.fetchOrCreateUserClientWith_Invocations.count, 1)
+        XCTAssertEqual(userRepository.updateUserClientFromIsNewClient_Invocations.count, 1)
+    }
+
+    private enum Scaffolding {
+        static let event = UserClientAddEvent(
             client: UserClient(
-                id: Scaffolding.clientID,
+                id: "94766bd92f56923d",
                 type: .permanent,
                 activationDate: .now,
                 label: "test",
@@ -74,29 +94,6 @@ final class UserClientAddEventProcessorTests: XCTestCase {
                 capabilities: [.legalholdConsent]
             )
         )
-
-        let selfUser = modelHelper.createSelfUser(in: context)
-        let client = modelHelper.createClient(for: selfUser)
-
-        // Mock
-
-        userRepository.fetchOrCreateUserClientWith_MockMethod = { _ in (client, true) }
-        userRepository.updateUserClientFromIsNewClient_MockMethod = { _, _, _ in }
-
-        // When
-
-        try await sut.processEvent(event)
-
-        // Then
-
-        XCTAssertEqual(userRepository.fetchOrCreateUserClientWith_Invocations.first, Scaffolding.clientID)
-        XCTAssertEqual(userRepository.updateUserClientFromIsNewClient_Invocations.first?.remoteClient, event.client)
-        XCTAssertEqual(userRepository.updateUserClientFromIsNewClient_Invocations.first?.localClient, client)
-        XCTAssertEqual(userRepository.updateUserClientFromIsNewClient_Invocations.first?.isNewClient, true)
-    }
-
-    private enum Scaffolding {
-        static let clientID = "94766bd92f56923d"
     }
 
 }

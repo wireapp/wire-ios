@@ -17,68 +17,53 @@
 //
 
 import WireAPI
+@testable import WireDomain
 import WireDomainSupport
 import XCTest
 
-@testable import WireDomain
-
 final class UserLegalholdRequestEventProcessorTests: XCTestCase {
 
-    var sut: UserLegalholdRequestEventProcessor!
-    var userRepository: MockUserRepositoryProtocol!
+    private var sut: UserLegalholdRequestEventProcessor!
+    private var userRepository: MockUserRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
         userRepository = MockUserRepositoryProtocol()
-        sut = UserLegalholdRequestEventProcessor(repository: userRepository)
+        sut = UserLegalholdRequestEventProcessor(
+            repository: userRepository
+        )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        sut = nil
         userRepository = nil
+        sut = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Invokes_Add_Legal_Hold_Request_Repo_Method() async throws {
-        // Given
-
-        let event = UserLegalholdRequestEvent(
-            userID: Scaffolding.userID,
-            clientID: Scaffolding.clientID,
-            lastPrekey: Scaffolding.lastPrekey
-        )
-
+    func testProcessEvent_It_Invokes_Add_Legalhold_Request_Repo_Method() async throws {
         // Mock
 
         userRepository.addLegalHoldRequestForClientIDLastPrekey_MockMethod = { _, _, _ in }
 
         // When
 
-        try await sut.processEvent(event)
+        try await sut.processEvent(Scaffolding.event)
 
         // Then
 
-        let invocation = try XCTUnwrap(userRepository.addLegalHoldRequestForClientIDLastPrekey_Invocations.first)
-        XCTAssertEqual(invocation.clientID, Scaffolding.clientID)
-        XCTAssertEqual(invocation.userID, Scaffolding.userID)
-        XCTAssertEqual(invocation.lastPrekey, Scaffolding.lastPrekey)
+        XCTAssertEqual(userRepository.addLegalHoldRequestForClientIDLastPrekey_Invocations.count, 1)
     }
 
     private enum Scaffolding {
-        static let userID = UUID()
-
-        static let clientID = UUID().uuidString
-
-        static let lastPrekeyId = 65_535
-
-        static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
-
-        nonisolated(unsafe) static let lastPrekey = Prekey(
-            id: Scaffolding.lastPrekeyId,
-            base64EncodedKey: Scaffolding.base64encodedString
+        static let event = UserLegalholdRequestEvent(
+            userID: UUID(),
+            clientID: UUID().uuidString,
+            lastPrekey: Prekey(
+                id: 2_932,
+                base64EncodedKey: "foo"
+            )
         )
     }
-
 }

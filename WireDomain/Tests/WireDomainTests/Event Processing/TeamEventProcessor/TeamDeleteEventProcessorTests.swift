@@ -24,12 +24,11 @@ import XCTest
 
 final class TeamDeleteEventProcessorTests: XCTestCase {
 
-    var sut: TeamDeleteEventProcessor!
+    private var sut: TeamDeleteEventProcessor!
+    private var coreDataStack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
 
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
@@ -72,6 +71,8 @@ final class TeamDeleteEventProcessorTests: XCTestCase {
         // When
 
         try await sut.processEvent()
+
+        await fulfillment(of: [expectation], timeout: 5.0)
     }
 
 }

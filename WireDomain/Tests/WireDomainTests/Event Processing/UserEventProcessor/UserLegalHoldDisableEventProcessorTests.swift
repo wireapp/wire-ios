@@ -17,20 +17,21 @@
 //
 
 import WireAPI
+@testable import WireDomain
 import WireDomainSupport
 import XCTest
 
-@testable import WireDomain
-
 final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
 
-    var sut: UserLegalholdDisableEventProcessor!
-    var userRepository: MockUserRepositoryProtocol!
+    private var sut: UserLegalholdDisableEventProcessor!
+    private var userRepository: MockUserRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
         userRepository = MockUserRepositoryProtocol()
-        sut = UserLegalholdDisableEventProcessor(repository: userRepository)
+        sut = UserLegalholdDisableEventProcessor(
+            repository: userRepository
+        )
     }
 
     override func tearDown() async throws {
@@ -42,19 +43,13 @@ final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
     // MARK: - Tests
 
     func testProcessEvent_It_Invokes_Disable_User_Legalhold_Repo_Method() async throws {
-        // Given
-
-        let event = UserLegalholdDisableEvent(
-            userID: Scaffolding.userID
-        )
-
         // Mock
 
         userRepository.disableUserLegalHold_MockMethod = {}
 
         // When
 
-        try await sut.processEvent(event)
+        try await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -62,7 +57,9 @@ final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let userID = UUID()
+        static let event = UserLegalholdDisableEvent(
+            userID: UUID()
+        )
     }
 
 }

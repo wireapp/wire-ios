@@ -28,7 +28,7 @@ final class SidebarViewSnapshotTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
@@ -37,7 +37,7 @@ final class SidebarViewSnapshotTests: XCTestCase {
 
     @available(iOS 17, *) @MainActor
     func testUIFontDarkUserInterfaceStyle() {
-        let sut = SidebarPreview()
+        let sut = SidebarViewControllerPreview()
         sut.view.frame.size = .init(width: 1_024, height: 768)
         sut.traitOverrides.userInterfaceIdiom = .pad
         snapshotHelper
@@ -47,7 +47,7 @@ final class SidebarViewSnapshotTests: XCTestCase {
 
     @available(iOS 17, *) @MainActor
     func testUIFontContentSizeCategories() {
-        let sut = SidebarPreview()
+        let sut = SidebarViewControllerPreview()
         sut.view.frame.size = .init(width: 1_024, height: 768)
         sut.traitOverrides.userInterfaceIdiom = .pad
         for contentSizeCategory in UIContentSizeCategory.allCases {
