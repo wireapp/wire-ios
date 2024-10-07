@@ -282,7 +282,7 @@ public final class UserRepository: UserRepositoryProtocol {
         switch userProperty {
         case .areReadReceiptsEnabled(let isEnabled):
             let selfUser = fetchSelfUser()
-            
+
             await context.perform {
                 selfUser.readReceiptsEnabled = isEnabled
                 selfUser.readReceiptsEnabledChangedRemotely = true
