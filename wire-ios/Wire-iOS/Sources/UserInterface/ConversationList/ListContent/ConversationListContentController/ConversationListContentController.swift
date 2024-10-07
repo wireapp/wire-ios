@@ -140,7 +140,7 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func setupViews() {
-        setupEmptyPlaceholder() // ??
+        //setupEmptyPlaceholder() // ??
         collectionView.register(ConnectRequestsCell.self, forCellWithReuseIdentifier: CellReuseIdConnectionRequests)
         collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
 
@@ -158,14 +158,14 @@ final class ConversationListContentController: UICollectionViewController {
     private func setupEmptyPlaceholder() {
 
         let titleLabel = DynamicFontLabel(
-            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.headline + " 👻",
-            style: .h3,
+            text: listViewModel.emptyPlaceholderForFilters.headline,
+            style: .h2,
             color: SemanticColors.Label.textDefault
         )
         titleLabel.textAlignment = .center
 
         let descriptionLabel = DynamicFontLabel(
-            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.subheadline,
+            text: listViewModel.emptyPlaceholderForFilters.subheadline,
             style: .body1,
             color: SemanticColors.Label.baseSecondaryText
         )
@@ -174,7 +174,7 @@ final class ConversationListContentController: UICollectionViewController {
 
         emptyPlaceholderView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
         emptyPlaceholderView.axis = .vertical
-        emptyPlaceholderView.spacing = 2
+        emptyPlaceholderView.spacing = 10
         emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(emptyPlaceholderView)
         NSLayoutConstraint.activate([
