@@ -112,35 +112,11 @@ extension StartUIViewController: ConversationCreationControllerDelegate {
         _ controller: ConversationCreationController,
         didCreateConversation conversation: ZMConversation
     ) {
-        dismiss(controller: controller) { [weak self] in
-            guard let self else { return }
-
-            delegate?.startUIViewController(
-                self,
-                didSelect: conversation
-            )
-        }
+        delegate?.startUIViewController(
+            self,
+            didSelect: conversation
+        )
     }
-
-    func dismiss(
-        controller: ConversationCreationController,
-        completion: (() -> Void)? = nil
-    ) {
-        switch traitCollection.horizontalSizeClass {
-        case .compact:
-            navigationController?.popToRootViewController(
-                animated: true,
-                completion: completion
-            )
-
-        default:
-            controller.navigationController?.dismiss(
-                animated: true,
-                completion: completion
-            )
-        }
-    }
-
 }
 
 extension StartUIViewController: EmptySearchResultsViewDelegate {
