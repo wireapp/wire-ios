@@ -20,6 +20,8 @@ import SwiftUI
 
 final class DoubleColumnContainerViewController: UIViewController {
 
+    // MARK: Internal Properties
+
     let primaryNavigationController = UINavigationController()
     let secondaryNavigationController = UINavigationController()
 
@@ -27,6 +29,18 @@ final class DoubleColumnContainerViewController: UIViewController {
         didSet { primaryColumnWidthConstraint?.constant = primaryColumnWidth }
     }
 
+    var borderColor: UIColor = .gray {
+        didSet { borderView.backgroundColor = borderColor }
+    }
+
+    var borderWidth: CGFloat = 0.5 {
+        didSet { borderWidthConstraint?.constant = primaryColumnWidth }
+    }
+
+    // MARK: - Private Properties
+
+    private let borderView = UIView()
+    private var borderWidthConstraint: NSLayoutConstraint?
     private var primaryColumnWidthConstraint: NSLayoutConstraint?
 
     // MARK: -
@@ -47,18 +61,28 @@ final class DoubleColumnContainerViewController: UIViewController {
         view.addSubview(secondaryNavigationController.view)
         secondaryNavigationController.didMove(toParent: self)
 
+        borderView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(borderView)
+        borderView.backgroundColor = borderColor
+
         let constraints = [
+            borderView.leadingAnchor.constraint(equalTo: primaryNavigationController.view.trailingAnchor),
+            borderView.topAnchor.constraint(equalTo: view.topAnchor),
+            borderView.widthAnchor.constraint(equalToConstant: borderWidth),
+            view.bottomAnchor.constraint(equalTo: borderView.bottomAnchor),
+
             primaryNavigationController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             primaryNavigationController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.bottomAnchor.constraint(equalTo: primaryNavigationController.view.bottomAnchor),
             primaryNavigationController.view.widthAnchor.constraint(equalToConstant: primaryColumnWidth),
 
-            secondaryNavigationController.view.leadingAnchor.constraint(equalTo: primaryNavigationController.view.trailingAnchor),
+            secondaryNavigationController.view.leadingAnchor.constraint(equalTo: borderView.trailingAnchor),
             secondaryNavigationController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.trailingAnchor.constraint(equalTo: secondaryNavigationController.view.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: secondaryNavigationController.view.bottomAnchor)
         ]
-        primaryColumnWidthConstraint = constraints[3]
+        borderWidthConstraint = constraints[2]
+        primaryColumnWidthConstraint = constraints[7]
         NSLayoutConstraint.activate(constraints)
     }
 }
@@ -78,6 +102,8 @@ final class DoubleColumnContainerViewController: UIViewController {
         container.primaryNavigationController.viewControllers = [primary]
         container.secondaryNavigationController.viewControllers = [secondary]
         container.primaryColumnWidth = 400
+        container.borderColor = .red
+        container.borderWidth = 1
 
         let splitViewController = UISplitViewController(style: .doubleColumn)
         splitViewController.preferredSplitBehavior = .overlay
