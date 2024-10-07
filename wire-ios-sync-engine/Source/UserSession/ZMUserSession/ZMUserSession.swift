@@ -79,7 +79,8 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    private var pendingAnalyticsEvents = [AnalyticsEvent]()
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
@@ -596,6 +597,27 @@ public final class ZMUserSession: NSObject {
                                                 userInfo: ["path": path])
             }
         }
+    }
+
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?) {
+        analyticsEventTracker = tracker
+
+        // Track any events that were added before the service was configured.
+        if let analyticsEventTracker {
+            while !pendingAnalyticsEvents.isEmpty {
+                let event = pendingAnalyticsEvents.removeFirst()
+                analyticsEventTracker.trackEvent(event)
+            }
+        }
+    }
+
+    func trackAnalyticsEvent(_ event: AnalyticsEvent) {
+        guard let analyticsEventTracker else {
+            pendingAnalyticsEvents.append(event)
+            return
+        }
+
+        analyticsEventTracker.trackEvent(event)
     }
 
     private func registerForCalculateBadgeCountNotification() {

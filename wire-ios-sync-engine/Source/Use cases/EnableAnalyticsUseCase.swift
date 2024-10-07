@@ -43,7 +43,7 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
         let user = try await provider.createAnalyticsUser()
         try await service.enableTracking()
         try service.switchUser(user)
-        provider.analyticsEventTracker = service
+        provider.setAnalyticsEventTracker(service)
     }
 
 }

@@ -19,20 +19,16 @@
 import Foundation
 import WireUtilities
 
-public protocol UnauthenticatedSessionDelegate: AnyObject {
-    /// Update credentials for the corresponding user session. Returns true if the credentials were accepted.
-    func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool
-    func session(session: UnauthenticatedSession, updatedProfileImage imageData: Data)
-    func session(session: UnauthenticatedSession, createdAccount account: Account)
-    func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool
-    func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool
-}
-
 @objc public protocol UserInfoParser: AnyObject {
+    
     @objc(accountExistsLocallyFromUserInfo:)
     func accountExistsLocally(from userInfo: UserInfo) -> Bool
+    
     @objc(upgradeToAuthenticatedSessionWithUserInfo:)
     func upgradeToAuthenticatedSession(with userInfo: UserInfo)
+
+    @objc (reportBackupImportDidSucceed:)
+    func reportBackupImportDidSucceed(_ didSucceed: Bool)
 }
 
 private let log = ZMSLog(tag: "UnauthenticatedSession")
@@ -51,6 +47,8 @@ public class UnauthenticatedSession: NSObject {
     fileprivate var urlActionProcessors: [URLActionProcessor] = []
     fileprivate var tornDown = false
     let userPropertyValidator: UserPropertyValidating
+
+    var backupImportDidSucceed: Bool?
 
     weak var delegate: UnauthenticatedSessionDelegate?
 
@@ -143,4 +141,9 @@ extension UnauthenticatedSession: UserInfoParser {
         self.authenticationStatus.authenticationCookieData = userInfo.cookieData
         self.delegate?.session(session: self, createdAccount: account)
     }
+
+    public func reportBackupImportDidSucceed(_ didSucceed: Bool) {
+        backupImportDidSucceed = didSucceed
+    }
+
 }

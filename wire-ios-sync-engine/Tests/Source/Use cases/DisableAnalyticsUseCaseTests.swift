@@ -44,6 +44,10 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
         super.tearDown()
     }
 
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?) {
+        analyticsEventTracker = tracker
+    }
+
     func createAnalyticsUser() async throws -> AnalyticsUser {
         AnalyticsUser(analyticsIdentifier: UUID().uuidString)
     }
