@@ -17,9 +17,9 @@
 //
 
 import WireDataModel
-import WireSyncEngine
 import WireMainNavigation
 import WireSettings
+import WireSyncEngine
 
 @testable import Wire
 

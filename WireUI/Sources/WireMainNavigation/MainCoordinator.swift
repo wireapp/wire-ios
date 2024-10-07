@@ -55,7 +55,7 @@ public final class MainCoordinator<
     public typealias ConversationMessageModel = ConversationBuilder.Conversation.ConversationMessageModel
 
     public typealias SettingsContent = SplitViewController.SettingsContent
-    
+
     public typealias Connect = ConnectBuilder.ViewController
     public typealias SelfProfile = SelfProfileBuilder.ViewController
     public typealias User = UserProfileBuilder.User
@@ -219,7 +219,6 @@ public final class MainCoordinator<
         conversation: ConversationModel,
         message: ConversationMessageModel?
     ) async {
-
         await dismissPresentedViewControllerIfNeeded()
 
         let conversation = conversationBuilder.build(

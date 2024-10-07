@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireMainNavigation
 import WireDataModel
+import WireMainNavigation
 
 extension ConversationRootViewController: MainConversationProtocol {
     typealias ConversationModel = ZMConversation
