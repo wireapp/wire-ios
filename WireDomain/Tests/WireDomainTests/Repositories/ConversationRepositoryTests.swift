@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 @testable import WireAPI
 import WireAPISupport
 import WireDataModel

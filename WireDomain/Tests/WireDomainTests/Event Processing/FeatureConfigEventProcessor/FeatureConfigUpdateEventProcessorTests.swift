@@ -61,13 +61,15 @@ final class FeatureConfigUpdateEventProcessorTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let config = FeatureConfig.mls(MLSFeatureConfig(
-            status: .disabled,
-            protocolToggleUsers: [UUID()],
-            defaultProtocol: .proteus,
-            allowedCipherSuites: [.MLS_128_DHKEMP256_AES128GCM_SHA256_P256],
-            defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
-            supportedProtocols: [.mls]
-        ))
+        static let config = FeatureConfig.mls(
+            MLSFeatureConfig(
+                status: .disabled,
+                protocolToggleUsers: [UUID()],
+                defaultProtocol: .proteus,
+                allowedCipherSuites: [.MLS_128_DHKEMP256_AES128GCM_SHA256_P256],
+                defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
+                supportedProtocols: [.mls]
+            )
+        )
     }
 }

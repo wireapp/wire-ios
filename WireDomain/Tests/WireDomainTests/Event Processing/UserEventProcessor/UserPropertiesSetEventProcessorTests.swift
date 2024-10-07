@@ -58,6 +58,7 @@ final class UserPropertiesSetEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userRepository.updateUserProperty_Invocations, [.conversationLabels(labels)])
+        XCTAssertEqual(userRepository.updateUserProperty_Invocations.count, 1)
     }
 
     private enum Scaffolding {

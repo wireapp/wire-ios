@@ -20,18 +20,16 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import XCTest
-
 @testable import WireDomain
 @testable import WireDomainSupport
+import XCTest
 
 final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
     private var sut: PushSupportedProtocolsUseCase!
-
     private var coreDataStackHelper: CoreDataStackHelper!
     private var stack: CoreDataStack!
-    private let modelHelper = ModelHelper()
+    private var modelHelper: ModelHelper!
     private var mockSelfUserAPI: MockSelfUserAPI!
 
     private var context: NSManagedObjectContext {
@@ -42,7 +40,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-
+        modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         mockSelfUserAPI = MockSelfUserAPI()
@@ -66,8 +64,8 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         try await super.tearDown()
         sut = nil
         stack = nil
+        modelHelper = nil
         mockSelfUserAPI = nil
-
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
     }
@@ -326,15 +324,13 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
             }
         }
     }
-}
 
-// MARK: - Scaffolding
-
-private enum Scaffolding {
-    enum MigrationState {
-        case disabled
-        case notStarted
-        case ongoing
-        case finalised
+    private enum Scaffolding {
+        enum MigrationState {
+            case disabled
+            case notStarted
+            case ongoing
+            case finalised
+        }
     }
 }
