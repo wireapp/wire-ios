@@ -8,6 +8,8 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 * removed phoneNumber from User entity
 
+PostAction to fix duplicate 1-1 proteus conversations
+
 ### 2.118.0
 
 * added `shouldExpire` attribute on the Messaging entity
