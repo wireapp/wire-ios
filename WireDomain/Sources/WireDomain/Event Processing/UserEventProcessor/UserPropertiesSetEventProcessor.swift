@@ -32,9 +32,10 @@ protocol UserPropertiesSetEventProcessorProtocol {
 
 struct UserPropertiesSetEventProcessor: UserPropertiesSetEventProcessorProtocol {
 
-    func processEvent(_: UserPropertiesSetEvent) async throws {
-        // TODO: [WPB-10197]
-        assertionFailure("not implemented yet")
+    let repository: any UserRepositoryProtocol
+
+    func processEvent(_ event: UserPropertiesSetEvent) async throws {
+        try await repository.updateUserProperty(event.property)
     }
 
 }

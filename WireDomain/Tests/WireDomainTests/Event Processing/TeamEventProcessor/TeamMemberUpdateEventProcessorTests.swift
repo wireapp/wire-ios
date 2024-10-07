@@ -41,23 +41,38 @@ final class TeamMemberUpdateEventProcessorTests: XCTestCase {
     // MARK: - Tests
 
     func testProcessEvent_It_Invokes_Repo_Method() async throws {
+        // Given
+
+        let event = TeamMemberUpdateEvent(
+            teamID: Scaffolding.teamID,
+            membershipID: Scaffolding.membershipID
+        )
+
         // Mock
 
         teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_MockMethod = { _ in }
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        try await sut.processEvent(event)
 
         // Then
 
+        XCTAssertEqual(teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_Invocations, [Scaffolding.membershipID])
         XCTAssertEqual(teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_Invocations.count, 1)
     }
 
     private enum Scaffolding {
+
+        static let domain = "example.com"
+        static let teamID = UUID()
+        static let membershipID = UUID()
+
         static let event = TeamMemberUpdateEvent(
             teamID: UUID(),
             membershipID: UUID()
         )
+
     }
+
 }
