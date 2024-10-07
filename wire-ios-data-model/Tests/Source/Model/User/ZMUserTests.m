@@ -443,7 +443,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // then
     XCTAssertEqualObjects(user.name, payload[@"name"]);
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
-    XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
     XCTAssertEqual([self managedByString:user], payload[@"managed_by"]);
     XCTAssertNil(user.expiresAt);
@@ -501,7 +500,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // then
     XCTAssertEqualObjects(user.name, payload[@"name"]);
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
-    XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
     XCTAssertEqualObjects([self managedByString:user], payload[@"managed_by"]);
 }
@@ -523,7 +521,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // then
     XCTAssertEqualObjects(user.name, payload[@"name"]);
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
-    XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
     XCTAssertEqualObjects([self managedByString:user], payload[@"managed_by"]);
 }
@@ -637,26 +634,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         [completeDataArrived fulfill];
     }];
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
-}
-
-- (void)testThatItHandlesEmptyOptionalData
-{
-    // given
-    NSUUID *uuid = [NSUUID createUUID];
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user.remoteIdentifier = uuid;
-
-    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
-    [payload removeObjectForKey:@"phone"];
-    [payload removeObjectForKey:@"accent_id"];
-
-    // when
-    [self performIgnoringZMLogError:^{
-        [user updateWithTransportData:payload authoritative:NO];
-    }];
-    
-    // then
-    XCTAssertNil(user.phoneNumber);
 }
 
 
@@ -869,7 +846,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.emailAddress =  email;
     user.name = name;
     user.handle = handle;
-    user.phoneNumber = phone;
     
     NSDictionary *payload = @{
                               @"id": [uuid transportString]
@@ -883,7 +859,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // then
     XCTAssertEqualObjects(name, user.name);
     XCTAssertEqualObjects(email, user.emailAddress);
-    XCTAssertEqualObjects(phone, user.phoneNumber);
     XCTAssertEqualObjects(handle, user.handle);
 }
 
@@ -1148,7 +1123,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         @"previewProfileAssetIdentifier",
         @"completeProfileAssetIdentifier",
         @"name",
-        @"phoneNumber",
         @"availability",
         @"readReceiptsEnabled",
         @"supportedProtocols"
