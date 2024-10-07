@@ -277,6 +277,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
         archive.delegate = mainCoordinator
+        userProfileViewControllerBuilder.delegate = mainCoordinator
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
