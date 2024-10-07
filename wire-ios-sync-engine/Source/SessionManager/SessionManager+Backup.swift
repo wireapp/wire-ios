@@ -120,7 +120,7 @@ extension SessionManager {
             }
         }
 
-        guard 
+        guard
             let status = unauthenticatedSession?.authenticationStatus,
             let userId = status.authenticatedUserIdentifier
         else {
@@ -162,11 +162,11 @@ extension SessionManager {
             }
 
             let url = SessionManager.unzippedBackupURL(for: location)
-            
+
             guard decryptedURL.unzip(to: url) else {
                 return complete(.failure(BackupError.compressionError))
             }
-            
+
             CoreDataStack.importLocalStorage(
                 accountIdentifier: userId,
                 from: url,

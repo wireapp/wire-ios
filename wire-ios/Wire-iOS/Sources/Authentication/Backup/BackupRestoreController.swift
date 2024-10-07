@@ -23,7 +23,7 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 protocol BackupRestoreControllerDelegate: AnyObject {
-    
+
     func backupResoreControllerDidFinishRestoring(
         _ controller: BackupRestoreController,
         didSucceed: Bool
@@ -106,13 +106,13 @@ final class BackupRestoreController: NSObject {
         using password: String,
         from url: URL
     ) {
-        guard 
+        guard
             let sessionManager = SessionManager.shared,
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup")
         else {
             return
         }
-        
+
         Task { @MainActor in activityIndicator.start() }
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
@@ -121,7 +121,7 @@ final class BackupRestoreController: NSObject {
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
                 return
             }
-        
+
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")

@@ -20,10 +20,10 @@ import Foundation
 import WireUtilities
 
 @objc public protocol UserInfoParser: AnyObject {
-    
+
     @objc(accountExistsLocallyFromUserInfo:)
     func accountExistsLocally(from userInfo: UserInfo) -> Bool
-    
+
     @objc(upgradeToAuthenticatedSessionWithUserInfo:)
     func upgradeToAuthenticatedSession(with userInfo: UserInfo)
 

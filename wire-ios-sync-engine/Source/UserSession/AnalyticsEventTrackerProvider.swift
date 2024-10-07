@@ -26,4 +26,3 @@ protocol AnalyticsEventTrackerProvider: AnyObject {
     func createAnalyticsUser() async throws -> AnalyticsUser
 
 }
-
