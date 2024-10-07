@@ -72,6 +72,7 @@ class AnalyticsServiceTests: XCTestCase {
         do {
             // When tracking is enabled.
             try await sut.enableTracking()
+            XCTFail("expected error AnalyticsServiceError.serviceIsNotConfigured")
         } catch AnalyticsServiceError.serviceIsNotConfigured {
             // Then
         }
@@ -143,6 +144,7 @@ class AnalyticsServiceTests: XCTestCase {
         do {
             // When switching to a user.
             try sut.switchUser(Scaffolding.user)
+            XCTFail("expected error AnalyticsServiceError.serviceIsNotConfigured")
         } catch AnalyticsServiceError.serviceIsNotConfigured {
             // Then
         }
