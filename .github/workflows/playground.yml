@@ -15,7 +15,7 @@ jobs:
   playground:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
-      datadog_enabled: false
+      datadog_enabled: true
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
     secrets: inherit
