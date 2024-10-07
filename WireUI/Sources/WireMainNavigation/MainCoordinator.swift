@@ -156,6 +156,10 @@ public final class MainCoordinator<
             sidebar.selectedMenuItem = .init(mainMenuItem)
         }
 
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
@@ -171,6 +175,10 @@ public final class MainCoordinator<
     }
 
     public func showArchive() async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         // switch to the archive tab
         tabBarController.selectedContent = .archive
 
@@ -197,6 +205,10 @@ public final class MainCoordinator<
     }
 
     public func showSettings() async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         tabBarController.selectedContent = .settings
 
         // In collapsed state switching the tab was all we needed to do.
@@ -219,6 +231,10 @@ public final class MainCoordinator<
         conversation: ConversationModel,
         message: ConversationMessageModel?
     ) async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         await dismissPresentedViewControllerIfNeeded()
 
         let conversation = conversationBuilder.build(
@@ -240,6 +256,10 @@ public final class MainCoordinator<
     }
 
     public func showSettingsContent(_ topLevelMenuItem: SettingsContentBuilder.TopLevelMenuItem) {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         if let conversation = splitViewController.conversation {
             splitViewController.conversation = nil
             tabBarController.conversation = conversation
@@ -265,6 +285,10 @@ public final class MainCoordinator<
             return assertionFailure()
         }
 
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         let selfProfile = selfProfileBuilder.build(mainCoordinator: self)
         selfProfile.modalPresentationStyle = .formSheet
         self.selfProfile = selfProfile
@@ -276,6 +300,10 @@ public final class MainCoordinator<
     }
 
     public func showUserProfile(user: User) async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         let userProfile = userProfileBuilder.build(
             user: user,
             mainCoordinator: self
@@ -289,6 +317,10 @@ public final class MainCoordinator<
             return assertionFailure()
         }
 
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         let connect = connectBuilder.build(mainCoordinator: self)
         connect.modalPresentationStyle = .formSheet
         self.connect = connect
@@ -298,6 +330,10 @@ public final class MainCoordinator<
     }
 
     public func presentViewController(_ viewController: UIViewController) async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         await dismissPresentedViewControllerIfNeeded()
         await withCheckedContinuation { continuation in
             splitViewController.present(viewController, animated: true, completion: continuation.resume)

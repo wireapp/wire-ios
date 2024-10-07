@@ -166,6 +166,10 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         }
     }
 
+    public func hideSidebar() {
+        hide(.primary)
+    }
+
     // MARK: - Accessors
 
     private func setConversationList(_ conversationList: ConversationList?, animated: Bool) {

@@ -66,6 +66,7 @@ final class ConversationRootViewController: UIViewController {
 
         conversationViewController = conversationController
 
+        // TODO: keep container or not?
         let navbar = UINavigationBar()
         navbar.isTranslucent = false
         navbar.isOpaque = true

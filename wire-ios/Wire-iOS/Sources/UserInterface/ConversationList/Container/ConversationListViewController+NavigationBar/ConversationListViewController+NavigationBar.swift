@@ -135,7 +135,16 @@ extension ConversationListViewController {
     func setupTitleView() {
         switch mainSplitViewState {
         case .expanded:
-            navigationItem.title = L10n.Localizable.ConversationList.Filter.AllConversations.title
+            switch conversationFilter {
+            case .none:
+                navigationItem.title = L10n.Localizable.ConversationList.Filter.AllConversations.title
+            case .favorites:
+                navigationItem.title = L10n.Localizable.ConversationList.Filter.Favorites.title
+            case .groups:
+                navigationItem.title = L10n.Localizable.ConversationList.Filter.Groups.title
+            case .oneOnOne:
+                navigationItem.title = L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
+            }
         case .collapsed:
             navigationItem.title = L10n.Localizable.List.title
         }
