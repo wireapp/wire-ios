@@ -37,8 +37,12 @@ public protocol UserRepositoryProtocol {
     /// - parameters
     ///     - id: The ID of the user.
     ///     - domain: The domain of the user.
+    /// - returns : A  local`ZMUser`.
 
-    func fetchUser(with id: UUID, domain: String?) -> ZMUser?
+    func fetchUser(
+        with id: UUID,
+        domain: String?
+    ) async throws -> ZMUser
 
     /// Push self user supported protocols
     /// - Parameter supportedProtocols: A list of supported protocols.
@@ -61,11 +65,6 @@ public protocol UserRepositoryProtocol {
     /// Removes user push token from storage.
 
     func removePushToken()
-    /// Fetches a user with a specific id.
-    /// - Parameter id: The ID of the user.
-    /// - Returns: A `ZMUser` object.
-
-    func fetchUser(with id: UUID) async throws -> ZMUser
 
     /// Fetches or creates a user client locally.
     ///
@@ -111,6 +110,15 @@ public protocol UserRepositoryProtocol {
 
     func disableUserLegalHold() async throws
 
+    /// Updates a user property
+    ///
+    /// - parameters:
+    ///     - userProperty: The user property to update.
+
+    func updateUserProperty(
+        _ userProperty: WireAPI.UserProperty
+    ) async throws
+
     /// Deletes a user property.
     ///
     /// - parameters:
@@ -141,6 +149,7 @@ public final class UserRepository: UserRepositoryProtocol {
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
+    private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
     private let conversationRepository: any ConversationRepositoryProtocol
     private let storage: UserDefaults
 
@@ -150,12 +159,14 @@ public final class UserRepository: UserRepositoryProtocol {
         context: NSManagedObjectContext,
         usersAPI: any UsersAPI,
         selfUserAPI: any SelfUserAPI,
+        conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
         conversationRepository: ConversationRepositoryProtocol,
         sharedUserDefaults: UserDefaults = .standard
     ) {
         self.context = context
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
+        self.conversationLabelsRepository = conversationLabelsRepository
         self.conversationRepository = conversationRepository
         storage = sharedUserDefaults
     }
@@ -166,8 +177,17 @@ public final class UserRepository: UserRepositoryProtocol {
         ZMUser.selfUser(in: context)
     }
 
-    public func fetchUser(with id: UUID, domain: String?) -> ZMUser? {
-        ZMUser.fetch(with: id, domain: domain, in: context)
+    public func fetchUser(
+        with id: UUID,
+        domain: String?
+    ) async throws -> ZMUser {
+        try await context.perform { [context] in
+            guard let user = ZMUser.fetch(with: id, in: context) else {
+                throw UserRepositoryError.failedToFetchUser(id)
+            }
+
+            return user
+        }
     }
 
     public func pushSelfSupportedProtocols(
@@ -333,6 +353,26 @@ public final class UserRepository: UserRepositoryProtocol {
             selfUser.legalHoldRequestWasCancelled()
 
             try context.save()
+        }
+    }
+
+    public func updateUserProperty(_ userProperty: UserProperty) async throws {
+        switch userProperty {
+        case .areReadReceiptsEnabled(let isEnabled):
+            let selfUser = fetchSelfUser()
+
+            await context.perform {
+                selfUser.readReceiptsEnabled = isEnabled
+                selfUser.readReceiptsEnabledChangedRemotely = true
+            }
+
+        case .conversationLabels(let conversationLabels):
+            try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
+
+        default:
+            WireLogger.updateEvent.warn(
+                "\(String(describing: userProperty)) property not handled."
+            )
         }
     }
 
