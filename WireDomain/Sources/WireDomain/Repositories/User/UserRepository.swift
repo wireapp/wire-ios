@@ -132,6 +132,7 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
+    // TODO: [WPB-10727] reuse `updateUserMetadata` from mentioned ticket's implementation to avoid code duplication
     public func updateUser(
         from event: UserUpdateEvent
     ) async throws {

@@ -142,7 +142,13 @@ class UserRepositoryTests: XCTestCase {
     func testUpdateUser_It_Updates_User_Locally_With_Federation_Enabled() async throws {
         // Given
 
-        modelHelper.createUser(id: Scaffolding.userID, in: context)
+        modelHelper.createUser(
+            id: Scaffolding.userID,
+            handle: Scaffolding.existingHandle,
+            email: Scaffolding.existingEmail,
+            supportedProtocols: [.mls],
+            in: context
+        )
 
         // When
 
@@ -156,8 +162,8 @@ class UserRepositoryTests: XCTestCase {
             XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
             XCTAssertEqual(updatedUser.domain, Scaffolding.domain) /// federation enabled, domain is set
             XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
-            XCTAssertEqual(updatedUser.handle, Scaffolding.event.handle)
-            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.event.email)
+            XCTAssertEqual(updatedUser.handle, Scaffolding.existingHandle) /// ensuring handle is not updated to nil
+            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.existingEmail) /// ensuring email is not updated to nil
             XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
         }
     }
@@ -166,7 +172,14 @@ class UserRepositoryTests: XCTestCase {
         // Given
 
         makeSut(isFederationEnabled: false)
-        modelHelper.createUser(id: Scaffolding.userID, in: context)
+
+        modelHelper.createUser(
+            id: Scaffolding.userID,
+            handle: Scaffolding.existingHandle,
+            email: Scaffolding.existingEmail,
+            supportedProtocols: [.mls],
+            in: context
+        )
 
         // When
 
@@ -180,8 +193,8 @@ class UserRepositoryTests: XCTestCase {
             XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
             XCTAssertNil(updatedUser.domain) /// federation disabled, domain is nil
             XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
-            XCTAssertEqual(updatedUser.handle, Scaffolding.event.handle)
-            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.event.email)
+            XCTAssertEqual(updatedUser.handle, Scaffolding.existingHandle) /// ensuring handle is not updated to nil
+            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.existingEmail) /// ensuring email is not updated to nil
             XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
         }
     }
@@ -189,8 +202,10 @@ class UserRepositoryTests: XCTestCase {
     private enum Scaffolding {
         static let userID = UUID()
         static let domain = "domain.com"
+        static let existingHandle = "handle"
+        static let existingEmail = "test@wire.com"
 
-        nonisolated(unsafe) static let user1 = User(
+        static let user1 = User(
             id: QualifiedID(uuid: userID, domain: domain),
             name: "user1",
             handle: "handle1",
@@ -205,13 +220,13 @@ class UserRepositoryTests: XCTestCase {
             legalholdStatus: .disabled
         )
 
-        nonisolated(unsafe) static let event = UserUpdateEvent(
+        static let event = UserUpdateEvent(
             id: userID,
             userID: UserID(uuid: userID, domain: domain),
             accentColorID: nil,
             name: "username",
-            handle: "test",
-            email: "test@wire.com",
+            handle: nil,
+            email: nil,
             isSSOIDDeleted: nil,
             assets: nil,
             supportedProtocols: [.proteus, .mls]
