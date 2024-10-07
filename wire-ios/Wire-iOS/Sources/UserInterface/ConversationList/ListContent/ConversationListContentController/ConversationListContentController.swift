@@ -123,9 +123,11 @@ final class ConversationListContentController: UICollectionViewController {
 
     func reload() {
         collectionView.reloadData()
-        ensureCurrentSelection()
-        emptyPlaceholderView.isHidden = !listViewModel.isEmptyFavoritePlaceholderVisible
+        ensureCurrentSelection() // not sure
 
+        setupEmptyPlaceholder() // ??
+        emptyPlaceholderView.isHidden = !listViewModel.isEmptyPlaceholderVisible
+        
         // we MUST call layoutIfNeeded here because otherwise bad things happen when we close the archive, reload the conv
         // and then unarchive all at the same time
         view.layoutIfNeeded()
@@ -138,7 +140,7 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func setupViews() {
-        setupEmptyPlaceholder()
+        setupEmptyPlaceholder() // ??
         collectionView.register(ConnectRequestsCell.self, forCellWithReuseIdentifier: CellReuseIdConnectionRequests)
         collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
 
@@ -352,7 +354,6 @@ final class ConversationListContentController: UICollectionViewController {
     // MARK: - UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        print("Kate numberOfSections: \(listViewModel.sectionCount)")
         return listViewModel.sectionCount
     }
 
