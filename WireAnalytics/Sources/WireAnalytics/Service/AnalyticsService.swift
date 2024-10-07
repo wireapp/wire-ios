@@ -89,7 +89,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         let countly = countlyProvider()
         self.countly = countly
 
-        // Countly invokes UI apis so we need to run it on the main thraed.
+        // Countly invokes UI apis so we need to run it on the main thread.
         await MainActor.run {
             countly.start(
                 appKey: config.secretKey,
