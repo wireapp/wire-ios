@@ -57,7 +57,6 @@ class SettingsBaseTableViewController: UIViewController {
             UITableView(frame: .zero, style: style)
         }
         super.init(nibName: nil, bundle: nil)
-        self.edgesForExtendedLayout = UIRectEdge()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -69,10 +68,10 @@ class SettingsBaseTableViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        self.createTableView()
-        self.view.addSubview(self.topSeparator)
-        self.createConstraints()
         super.viewDidLoad()
+        createTableView()
+        view.addSubview(topSeparator)
+        createConstraints()
     }
 
     override func viewDidAppear(_ animated: Bool) {
