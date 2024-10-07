@@ -64,10 +64,14 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
             return
         }
 
-        if let activeUserSession {
-            configureAnalytics(for: activeUserSession)
-        }
+        Task {
+            if let activeUserSession {
+                await configureAnalytics(for: activeUserSession)
+            }
 
-        delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+            await MainActor.run {
+                delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+            }
+        }
     }
 }

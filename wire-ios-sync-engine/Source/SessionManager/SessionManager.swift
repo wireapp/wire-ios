@@ -907,29 +907,27 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
-                self.configureAnalytics(for: session)
 
                 Task {
+                    await self.configureAnalytics(for: session)
                     await self.requestCertificateEnrollmentIfNeeded()
                 }
             }
         }
     }
 
-    func configureAnalytics(for userSession: ZMUserSession) {
+    func configureAnalytics(for userSession: ZMUserSession) async {
         guard analyticsService.isTrackingEnabled else {
             return
         }
 
-        Task {
-            do {
-                WireLogger.analytics.debug("configuring analytics for user session")
-                let user = try await userSession.createAnalyticsUser()
-                try analyticsService.switchUser(user)
-                userSession.analyticsEventTracker = analyticsService
-            } catch {
-                WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
-            }
+        do {
+            WireLogger.analytics.debug("configuring analytics for user session")
+            let user = try await userSession.createAnalyticsUser()
+            try analyticsService.switchUser(user)
+            userSession.analyticsEventTracker = analyticsService
+        } catch {
+            WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
         }
     }
 
