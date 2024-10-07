@@ -30,7 +30,7 @@ public final class SidebarViewController: UIViewController {
         set { model.accountInfo = newValue }
     }
 
-    public var selectedMenuItem: SidebarMenuItem {
+    public var selectedMenuItem: SidebarSelectableMenuItem {
         get { model.selectedMenuItem }
         set {
             skipCallingDelegate.toggle()
@@ -85,6 +85,8 @@ public final class SidebarViewController: UIViewController {
         }, menuItemAction: { [weak self] menuItem in
             guard let self, !skipCallingDelegate else { return }
             delegate?.sidebarViewController(self, didSelect: menuItem)
+        }, connectAction: { [weak self] in
+            self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
         }, supportAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
         })
@@ -134,6 +136,7 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
             accountInfo: model.accountInfo,
             selectedMenuItem: $model.selectedMenuItem,
             accountImageAction: model.accountImageAction,
+            connectAction: model.connectAction,
             supportAction: model.supportAction,
             accountImageView: accountImageView
         )

@@ -171,6 +171,9 @@ final class StartUIViewController: UIViewController {
         searchController.searchBar.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
         searchController.searchBar.accessibilityIdentifier = "textViewSearch"
         navigationItem.searchController = searchController
+        if #available(iOS 16.0, *) {
+            navigationItem.preferredSearchBarPlacement = .stacked
+        }
         navigationItem.hidesSearchBarWhenScrolling = false
     }
 

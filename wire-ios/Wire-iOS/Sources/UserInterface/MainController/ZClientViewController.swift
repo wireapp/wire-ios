@@ -27,6 +27,9 @@ import WireMainNavigation
 import WireSidebar
 import WireSyncEngine
 
+// TODO: create bug ticket: after logging in and getting certificate, the account image is blank instead of showing initials
+// TODO: after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
+
 final class ZClientViewController: UIViewController {
 
     typealias MainTabBarController = WireMainNavigation.MainTabBarController<
@@ -42,7 +45,8 @@ final class ZClientViewController: UIViewController {
         ConversationViewControllerBuilder,
         SettingsViewControllerBuilder,
         StartUIViewControllerBuilder,
-        SelfProfileViewControllerBuilder
+        SelfProfileViewControllerBuilder,
+        UserProfileViewControllerBuilder
     >
 
     // MARK: - Private Members
@@ -98,13 +102,7 @@ final class ZClientViewController: UIViewController {
 
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
         userSession: userSession,
-        mediaPlaybackManager: mediaPlaybackManager,
-        conversationLoader: { [weak userSession] conversationID in
-            let viewContext = userSession?.contextProvider.viewContext
-            return await viewContext?.perform {
-                ZMConversation.fetch(with: conversationID, domain: nil, in: viewContext!)
-            }
-        }
+        mediaPlaybackManager: mediaPlaybackManager
     )
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(userSession: userSession)
@@ -117,6 +115,8 @@ final class ZClientViewController: UIViewController {
             accountSelector: SessionManager.shared
         )
     }
+
+    private lazy var userProfileViewControllerBuilder = UserProfileViewControllerBuilder(userSession: userSession)
 
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
@@ -149,7 +149,8 @@ final class ZClientViewController: UIViewController {
             conversationBuilder: conversationViewControllerBuilder,
             settingsContentBuilder: settingsViewControllerBuilder,
             connectBuilder: connectBuilder,
-            selfProfileBuilder: selfProfileViewControllerBuilder
+            selfProfileBuilder: selfProfileViewControllerBuilder,
+            userProfileBuilder: userProfileViewControllerBuilder
         )
         connectBuilder.delegate = mainCoordinator
         return mainCoordinator
@@ -265,6 +266,8 @@ final class ZClientViewController: UIViewController {
     private func setupSplitViewController() {
         let archive = ArchivedListViewController(userSession: userSession)
 
+        // TODO: the border color doesn't match on iPad 15
+        mainSplitViewController.borderColor = ColorTheme.Strokes.outline // TODO: is there a better approach than setting the value here?
         mainSplitViewController.conversationList = conversationListViewController
 
         mainTabBarController.archive = archive
@@ -274,6 +277,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
         archive.delegate = mainCoordinator
+        userProfileViewControllerBuilder.delegate = mainCoordinator
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -326,7 +330,9 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        mainCoordinator.showConnect()
+        Task {
+            await mainCoordinator.showConnect()
+        }
     }
 
     // MARK: Status bar

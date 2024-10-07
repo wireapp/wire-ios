@@ -30,8 +30,8 @@ private let CellReuseIdConversation = "CellId"
 final class ConversationListContentController: UICollectionViewController {
 
     typealias ConversationListCoordinator = AnyConversationListCoordinator<
-        ZMConversation.ConversationID,
-        ZMConversationMessage.MessageID
+        ZMConversation,
+        ZMConversationMessage
     >
     private let conversationListCoordinator: ConversationListCoordinator
     private let mainCoordinator: any MainCoordinatorProtocol
@@ -57,8 +57,8 @@ final class ConversationListContentController: UICollectionViewController {
         zClientViewController: ZClientViewController?
     ) where
     ConversationListCoordinator: ConversationListCoordinatorProtocol,
-    ConversationListCoordinator.ConversationID == ZMConversation.ConversationID,
-    ConversationListCoordinator.MessageID == ZMConversationMessage.MessageID {
+    ConversationListCoordinator.ConversationModel == ZMConversation,
+    ConversationListCoordinator.ConversationMessageModel == ZMConversationMessage {
 
         self.userSession = userSession
         self.conversationListCoordinator = .init(conversationListCoordinator: conversationListCoordinator)
@@ -396,12 +396,12 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 
         Task {
             if let conversation = item as? ZMConversation {
-                if let message = scrollToMessageOnNextSelection, let messageID = message.nonce {
-                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier, scrolledToMessageWith: messageID)
+                if let message = scrollToMessageOnNextSelection {
+                    await conversationListCoordinator.showConversation(conversation: conversation, scrolledTo: message)
                 } else {
-                    await conversationListCoordinator.showConversation(conversationID: conversation.remoteIdentifier)
+                    await conversationListCoordinator.showConversation(conversation: conversation)
                 }
-                contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection) // TODO: check what happens here, should it be within the Task { ... } ?
+                contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
             } else if item is ConversationListConnectRequestsItem {
                 zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
             } else {

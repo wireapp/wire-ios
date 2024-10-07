@@ -120,8 +120,8 @@ final class ConversationListViewController: UIViewController {
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
     ) where
     MainCoordinator: MainCoordinatorProtocol,
-    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
-    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+    MainCoordinator.ConversationModel == ZMConversation,
+    MainCoordinator.ConversationMessageModel == ZMConversationMessage {
 
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -146,8 +146,8 @@ final class ConversationListViewController: UIViewController {
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
     ) where
     MainCoordinator: MainCoordinatorProtocol,
-    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
-    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+    MainCoordinator.ConversationModel == ZMConversation,
+    MainCoordinator.ConversationMessageModel == ZMConversationMessage {
 
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator

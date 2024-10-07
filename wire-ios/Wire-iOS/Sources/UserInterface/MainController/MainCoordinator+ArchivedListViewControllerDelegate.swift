@@ -16,4 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct MockConversationID: Sendable {}
+import WireDataModel
+import WireMainNavigation
+
+extension MainCoordinator: ArchivedListViewControllerDelegate where
+MainCoordinator.ConversationModel == ZMConversation {
+
+    func archivedListViewController(
+        _ viewController: ArchivedListViewController,
+        didSelectConversation conversation: ZMConversation
+    ) {
+        Task { @MainActor in
+            await showConversationList(conversationFilter: .none)
+            await showConversation(conversation: conversation, message: nil)
+        }
+    }
+}

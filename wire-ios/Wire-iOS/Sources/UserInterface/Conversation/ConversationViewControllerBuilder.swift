@@ -21,20 +21,20 @@ import WireDataModel
 import WireMainNavigation
 import WireSyncEngine
 
+@MainActor
 struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
 
     var userSession: UserSession
     var mediaPlaybackManager: MediaPlaybackManager?
-    var conversationLoader: (_ conversationID: UUID) async -> ZMConversation?
 
-    @MainActor
     func build(
-        conversationID: UUID,
+        conversation: ZMConversation,
+        message: ZMConversationMessage?,
         mainCoordinator: some MainCoordinatorProtocol
-    ) async -> ConversationRootViewController {
+    ) -> ConversationRootViewController {
         let viewController = ConversationRootViewController(
-            conversation: await conversationLoader(conversationID)!,
-            message: nil, // TODO: use `scroll(to:)`
+            conversation: conversation,
+            message: message,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             mediaPlaybackManager: mediaPlaybackManager

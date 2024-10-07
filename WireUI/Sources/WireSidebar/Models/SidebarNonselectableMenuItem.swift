@@ -16,18 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireMainNavigation
-
-extension MainCoordinator: ArchivedListViewControllerDelegate where MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID {
-
-    func archivedListViewController(
-        _ viewController: ArchivedListViewController,
-        didSelectConversation conversation: ZMConversation
-    ) {
-        showConversationList(conversationFilter: .none)
-        Task { @MainActor in
-            await showConversation(conversationID: conversation.remoteIdentifier)
-        }
-    }
+public enum SidebarNonselectableMenuItem: CaseIterable, Comparable, Sendable {
+    case connect, support
 }

@@ -71,6 +71,14 @@ extension ConversationListViewController {
         accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
         accountImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
 
+        let design = AccountImageViewDesign()
+        accountImageView.imageBorderWidth = design.borderWidth
+        accountImageView.imageBorderColor = design.borderColor
+        accountImageView.availableColor = design.availabilityIndicator.availableColor
+        accountImageView.busyColor = design.availabilityIndicator.busyColor
+        accountImageView.awayColor = design.availabilityIndicator.awayColor
+        accountImageView.availabilityIndicatorBackgroundColor = design.availabilityIndicator.backgroundViewColor
+
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
 

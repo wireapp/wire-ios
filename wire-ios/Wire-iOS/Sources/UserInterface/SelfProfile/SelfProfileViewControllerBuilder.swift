@@ -28,13 +28,14 @@ struct SelfProfileViewControllerBuilder: MainCoordinatorInjectingViewControllerB
     var userSession: UserSession
     var accountSelector: AccountSelector?
 
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> SelfProfileViewController {
-        .init(
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UINavigationController {
+        let rootViewController = SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
             accountSelector: accountSelector,
             mainCoordinator: mainCoordinator
         )
+        return .init(rootViewController: rootViewController)
     }
 }

@@ -17,8 +17,16 @@
 //
 
 import UIKit
+import WireMainNavigation
 
-public protocol MainConversationProtocol: UIViewController {
-    associatedtype ConversationModel
-    associatedtype ConversationMessageModel
+struct MockUserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
+    typealias UserProfile = UIViewController
+    struct User {}
+
+    func build(
+        user: User,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> UIViewController {
+        fatalError()
+    }
 }

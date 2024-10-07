@@ -19,51 +19,39 @@
 import WireMainNavigation
 import WireSidebar
 
-/*
-    func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {
-        guard let zClientViewController else {
-            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
-        }
-        zClientViewController.load(conversation, scrollTo: nil, focusOnView: focus, animated: animated)
-    }
-
-    func openConversation<Message>(
-        _ conversation: ZMConversation,
-        scrollTo message: Message,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) where Message: ZMConversationMessage {
-        guard let zClientViewController else {
-            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
-        }
-        zClientViewController.load(conversation, scrollTo: message, focusOnView: focus, animated: animated)
-    }
- */
-
-extension MainCoordinator: SidebarViewControllerDelegate {
+extension MainCoordinator: SidebarViewControllerDelegate where
+SplitViewController.ConversationList.ConversationFilter == ConversationFilter {
 
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
-        showSelfProfile()
+        Task {
+            await showSelfProfile()
+        }
     }
 
     @MainActor
-    public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarMenuItem) {
-        switch menuItem {
-        case .all:
-            showConversationList(conversationFilter: .none)
-        case .favorites:
-            showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.favorites))
-        case .groups:
-            showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.groups))
-        case .oneOnOne:
-            showConversationList(conversationFilter: .init(mappingFrom: ConversationFilter.oneOnOne)) // TODO: try to write .oneOnOne
-        case .archive:
-            showArchive()
-        case .connect:
-            showConnect()
-        case .settings:
-            showSettings()
+    public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarSelectableMenuItem) {
+        Task {
+            switch menuItem {
+            case .all:
+                await showConversationList(conversationFilter: .none)
+            case .favorites:
+                await showConversationList(conversationFilter: .favorites)
+            case .groups:
+                await showConversationList(conversationFilter: .groups)
+            case .oneOnOne:
+                await showConversationList(conversationFilter: .oneOnOne)
+            case .archive:
+                await showArchive()
+            case .settings:
+                await showSettings()
+            }
+        }
+    }
+
+    public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
+        Task {
+            await showConnect()
         }
     }
 

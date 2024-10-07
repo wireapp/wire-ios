@@ -19,14 +19,17 @@
 import UIKit
 import WireMainNavigation
 
-struct MockConversationBuilder<ConversationID: Sendable>: MainConversationBuilderProtocol {
-    typealias Conversation = MockConversationViewController<ConversationID>
+struct MockConversationBuilder: MainConversationBuilderProtocol {
+    typealias Conversation = MockConversationViewController<MockConversation, MockMessage>
+    typealias ConversationModel = Conversation.ConversationModel
+    typealias ConversationMessageModel = Conversation.ConversationMessageModel
 
     @MainActor
     func build(
-        conversationID: ConversationID,
+        conversation: ConversationModel,
+        message: ConversationMessageModel?,
         mainCoordinator: some MainCoordinatorProtocol
-    ) -> MockConversationViewController<ConversationID> {
+    ) -> Conversation {
         .init()
     }
 }

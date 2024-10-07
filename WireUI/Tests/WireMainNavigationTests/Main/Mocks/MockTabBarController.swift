@@ -25,7 +25,7 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
     typealias Archive = UIViewController
     typealias Settings = UIViewController
 
-    typealias Conversation = MockConversationViewController<MockConversationID>
+    typealias Conversation = MockConversationViewController<MockConversation, MockMessage>
     typealias SettingsContent = UIViewController
 
     typealias Connect = UIViewController

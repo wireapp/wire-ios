@@ -17,24 +17,35 @@
 //
 
 import UIKit
+import WireDataModel
 import WireMainNavigation
 import WireSyncEngine
 
-final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+@MainActor
+final class UserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
+    typealias User = any UserType
 
     let userSession: UserSession
-    var delegate: StartUIDelegate?
+    var delegate: ProfileViewControllerDelegate?
 
-    init(userSession: UserSession) {
+    init(userSession: some WireSyncEngine.UserSession) {
         self.userSession = userSession
     }
 
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UINavigationController {
-        let rootViewController = StartUIViewController(
+    func build(
+        user: User,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> UINavigationController {
+        let rootViewController = ProfileViewController(
+            user: user,
+            viewer: userSession.selfUserLegalHoldSubject,
+            context: .profileViewer,
             userSession: userSession,
             mainCoordinator: mainCoordinator
         )
         rootViewController.delegate = delegate
-        return .init(rootViewController: rootViewController)
+        let navigtaionController = UINavigationController(rootViewController: rootViewController)
+        navigtaionController.modalPresentationStyle = .formSheet
+        return navigtaionController
     }
 }

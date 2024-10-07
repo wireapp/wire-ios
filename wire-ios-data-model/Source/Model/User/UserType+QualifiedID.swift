@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireTransport
 
 public extension UserType {
@@ -31,5 +30,4 @@ public extension UserType {
 
         return QualifiedID(uuid: uuid, domain: domain)
     }
-
 }

@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-public protocol MainConversationProtocol: UIViewController {
-    associatedtype ConversationModel
-    associatedtype ConversationMessageModel
+public enum SidebarSelectableMenuItem: CaseIterable, Comparable, Sendable {
+    // conversation filters
+    case all, favorites, groups, oneOnOne
+    // archived conversations
+    case archive
+    // bottom
+    case settings
 }

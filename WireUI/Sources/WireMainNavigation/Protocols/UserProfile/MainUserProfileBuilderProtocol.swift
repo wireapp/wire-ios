@@ -18,7 +18,13 @@
 
 import UIKit
 
-public protocol MainConversationProtocol: UIViewController {
-    associatedtype ConversationModel
-    associatedtype ConversationMessageModel
+public protocol MainUserProfileBuilderProtocol {
+    associatedtype UserProfile: UIViewController
+    associatedtype User
+
+    @MainActor
+    func build(
+        user: User,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> UserProfile
 }

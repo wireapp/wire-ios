@@ -21,18 +21,25 @@ import UIKit
 public protocol MainCoordinatorProtocol: AnyObject {
 
     associatedtype ConversationList: MainConversationListProtocol
-    associatedtype ConversationBuilder: MainConversationBuilderProtocol
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
 
-    @MainActor
-    func showConversationList(conversationFilter: ConversationList.ConversationFilter?)
-    @MainActor
-    func showArchive()
-    @MainActor
-    func showSettings()
+    associatedtype ConversationModel
+    associatedtype ConversationMessageModel
+
+    associatedtype User
 
     @MainActor
-    func showConversation(conversationID: ConversationList.ConversationID) async
+    func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async
+    @MainActor
+    func showArchive() async
+    @MainActor
+    func showSettings() async
+
+    @MainActor
+    func showConversation(
+        conversation: ConversationModel,
+        message: ConversationMessageModel?
+    ) async
     /// This method will be called by the custom back button in the conversation content screen.
     @MainActor
     func hideConversation()
@@ -43,7 +50,12 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func hideSettingsContent()
 
     @MainActor
-    func showSelfProfile()
+    func showSelfProfile() async
     @MainActor
-    func showConnect()
+    func showUserProfile(user: User) async
+    @MainActor
+    func showConnect() async
+
+    @MainActor
+    func presentViewController(_ viewController: UIViewController) async
 }

@@ -257,7 +257,7 @@ final class ProfileViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             securityLevelView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            securityLevelView.topAnchor.constraint(equalTo: view.topAnchor),
+            securityLevelView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             securityLevelView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             securityLevelView.heightAnchor.constraint(equalToConstant: securityBannerHeight),
 
@@ -300,7 +300,6 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         case .ignore:
             viewModel.ignoreConnectionRequest()
         }
-
     }
 
     func footerView(_ footerView: ProfileFooterView, shouldPerformAction action: ProfileAction) {

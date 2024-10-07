@@ -16,9 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import WireDataModel
+import WireMainNavigation
 
-public protocol MainConversationProtocol: UIViewController {
-    associatedtype ConversationModel
-    associatedtype ConversationMessageModel
+extension MainCoordinator: ProfileViewControllerDelegate where
+MainCoordinator.ConversationModel == ZMConversation {
+
+    func profileViewController(
+        _ controller: ProfileViewController?,
+        wantsToNavigateTo conversation: ZMConversation
+    ) {
+        Task { @MainActor in
+            await showConversationList(conversationFilter: .none)
+            await showConversation(conversation: conversation, message: nil)
+        }
+    }
 }
