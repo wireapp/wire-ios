@@ -267,7 +267,7 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Mock
 
-        userRespository.fetchUserWith_MockValue = user
+        userRespository.fetchUserWithDomain_MockValue = user
         userRespository.deleteUserAccountForAt_MockMethod = { _, _ in }
 
         // When

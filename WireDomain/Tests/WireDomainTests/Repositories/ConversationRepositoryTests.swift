@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 @testable import WireAPI
 import WireAPISupport
 import WireDataModel
@@ -352,7 +351,7 @@ final class ConversationRepositoryTests: XCTestCase {
             failed: [conversationFailed]
         )
 
-        static let conversationListError = ConversationList(
+        nonisolated(unsafe) static let conversationListError = ConversationList(
             found: [conversationSelfTypeMissingId,
                     conversationGroupType,
                     conversationConnectionType,

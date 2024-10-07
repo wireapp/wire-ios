@@ -84,11 +84,10 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     private func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws {
-        guard let user = userRepository.fetchUser(
-            with: userID.uuid, domain: userID.domain
-        ) else {
-            throw Error.failedToActivateConversation
-        }
+        let user = try await userRepository.fetchUser(
+            with: userID.uuid,
+            domain: userID.domain
+        )
 
         let selfUser = userRepository.fetchSelfUser()
         let commonProtocol = getCommonProtocol(between: selfUser, and: user)

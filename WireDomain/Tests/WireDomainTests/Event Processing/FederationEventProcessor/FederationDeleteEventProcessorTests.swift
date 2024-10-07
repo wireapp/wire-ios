@@ -16,31 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import XCTest
-
 @testable import WireDomain
+import XCTest
 
 final class FederationDeleteEventProcessorTests: XCTestCase {
 
-    var sut: FederationDeleteEventProcessor!
+    private var sut: FederationDeleteEventProcessor!
+    private var coreDataStack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
 
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
         coreDataStackHelper = CoreDataStackHelper()
-        modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = FederationDeleteEventProcessor(
             context: context
@@ -53,7 +47,6 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
-        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -481,28 +474,24 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
         return groupConversation
     }
 
-}
+    private enum Scaffolding {
 
-// MARK: - Scaffolding
+        /// UUIDs
+        static let selfUserID = UUID()
+        static let userID = UUID()
+        static let otherUserID = UUID()
+        static let groupConversationID = UUID()
+        static let oneOnOneConversationID = UUID()
 
-private enum Scaffolding {
+        /// Domains
+        static let firstDomain = "domain.com"
+        static let secondDomain = "domain2.com"
+        static let defederatedDomain = "domain3.com"
 
-    /// UUIDs
+        static let event = FederationDeleteEvent(
+            domain: defederatedDomain
+        )
 
-    static let selfUserID = UUID()
-    static let userID = UUID()
-    static let otherUserID = UUID()
-    static let groupConversationID = UUID()
-    static let oneOnOneConversationID = UUID()
-
-    /// Domains
-
-    static let firstDomain = "domain.com"
-    static let secondDomain = "domain2.com"
-    static let defederatedDomain = "domain3.com"
-
-    static let event = FederationDeleteEvent(
-        domain: defederatedDomain
-    )
+    }
 
 }

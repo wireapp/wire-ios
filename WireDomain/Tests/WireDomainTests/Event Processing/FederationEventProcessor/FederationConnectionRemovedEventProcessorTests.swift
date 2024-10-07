@@ -16,31 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import XCTest
-
 @testable import WireDomain
+import XCTest
 
 final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
-    var sut: FederationConnectionRemovedEventProcessor!
-
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-
-    var context: NSManagedObjectContext {
+    private var sut: FederationConnectionRemovedEventProcessor!
+    private var coreDataStack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
         coreDataStackHelper = CoreDataStackHelper()
-        modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = FederationConnectionRemovedEventProcessor(
             context: context
@@ -53,7 +46,6 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
-        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -213,26 +205,22 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
         return conversation
     }
 
-}
+    private enum Scaffolding {
 
-// MARK: - Scaffolding
+        /// UUIDs
+        static let userID = UUID()
+        static let otherUserID = UUID()
+        static let groupConversationID = UUID()
 
-private enum Scaffolding {
+        /// Domains
+        static let firstDomain = "domain.com"
+        static let secondDomain = "domain2.com"
+        static let thirdDomain = "domain3.com"
 
-    /// UUIDs
+        static let event = FederationConnectionRemovedEvent(
+            domains: Set([secondDomain, thirdDomain])
+        )
 
-    static let userID = UUID()
-    static let otherUserID = UUID()
-    static let groupConversationID = UUID()
-
-    /// Domains
-
-    static let firstDomain = "domain.com"
-    static let secondDomain = "domain2.com"
-    static let thirdDomain = "domain3.com"
-
-    static let event = FederationConnectionRemovedEvent(
-        domains: Set([secondDomain, thirdDomain])
-    )
+    }
 
 }

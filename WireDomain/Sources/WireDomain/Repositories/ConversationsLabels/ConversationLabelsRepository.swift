@@ -20,19 +20,32 @@ import CoreData
 import WireAPI
 import WireDataModel
 
-/// Facilitate access to conversation labels related domain objects.
+// sourcery: AutoMockable
+/// Facilitates access to conversation labels related domain objects.
+public protocol ConversationLabelsRepositoryProtocol {
 
-protocol ConversationLabelsRepositoryProtocol {
-
-    /// Pull conversation labels from the server and store locally
+    /// Pulls conversation labels from the server and stores locally
 
     func pullConversationLabels() async throws
+
+    /// Updates conversation labels locally
+    /// - parameters:
+    ///     - conversationLabels: The conversation labels to update locally.
+
+    func updateConversationLabels(
+        _ conversationLabels: [ConversationLabel]
+    ) async throws
 }
 
-final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
+public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
+
+    // MARK: - Properties
 
     private let userPropertiesAPI: any UserPropertiesAPI
     private let context: NSManagedObjectContext
+    private let logger = WireLogger(tag: "conversation-labels")
+
+    // MARK: - Object lifecycle
 
     init(
         userPropertiesAPI: any UserPropertiesAPI,
@@ -42,26 +55,57 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
         self.context = context
     }
 
+    // MARK: - Public
+
     /// Retrieve from backend and store conversation labels locally
 
-    func pullConversationLabels() async throws {
+    public func pullConversationLabels() async throws {
         let conversationLabels = try await userPropertiesAPI.getLabels()
+        try await updateConversationLabels(conversationLabels)
+    }
 
+    public func updateConversationLabels(
+        _ conversationLabels: [ConversationLabel]
+    ) async throws {
+        await storeLabelsLocally(conversationLabels)
+        try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
+    }
+
+    // MARK: - Private
+
+    private func storeLabelsLocally(
+        _ conversationLabels: [ConversationLabel]
+    ) async {
         await withThrowingTaskGroup(of: Void.self) { taskGroup in
             for conversationLabel in conversationLabels {
                 taskGroup.addTask { [self] in
                     try await storeLabelLocally(conversationLabel)
                 }
             }
-        }
 
-        try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
+            /// Iterates through the group child tasks results and logs the error if any.
+            while let result = await taskGroup.nextResult() {
+                switch result {
+                case .success:
+                    continue
+                case .failure(let error):
+                    let repoError = error as? ConversationLabelsRepositoryError
+                    if case .failedToStoreLabelLocally(let label) = repoError {
+                        logger.error("Failed to store conversation label with id \(label.id): \(error)")
+                    } else {
+                        logger.error("Failed to store conversation with error: \(error)")
+                    }
+                }
+            }
+        }
     }
 
     /// Save label and related conversations objects to local storage.
     /// - Parameter conversationLabel: conversation label from WireAPI
 
-    private func storeLabelLocally(_ conversationLabel: ConversationLabel) async throws {
+    private func storeLabelLocally(
+        _ conversationLabel: ConversationLabel
+    ) async throws {
         try await context.perform { [context] in
             var created = false
             let label: Label? = if conversationLabel.type == Label.Kind.favorite.rawValue {
@@ -85,7 +129,11 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
             label.conversations = conversations
             label.modifiedKeys = nil
 
-            try context.save()
+            do {
+                try context.save()
+            } catch {
+                throw ConversationLabelsRepositoryError.failedToStoreLabelLocally(conversationLabel)
+            }
         }
     }
 
@@ -93,8 +141,10 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
     /// - Parameter excludedLabels: remote labels that should be excluded from deletion.
     /// - Only old labels of type `folder` are deleted, `favorite` labels always remain in the local storage.
 
-    private func deleteOldLabelsLocally(excludedLabels remoteLabels: [ConversationLabel]) async throws {
-        try await context.perform { [context] in
+    private func deleteOldLabelsLocally(
+        excludedLabels remoteLabels: [ConversationLabel]
+    ) async throws {
+        try await context.perform { [self] in
             let uuids = remoteLabels.map { $0.id.uuidData as NSData }
             let predicateFormat = "type == \(Label.Kind.folder.rawValue) AND NOT remoteIdentifier_data IN %@"
 
@@ -119,27 +169,29 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
 
             deleteRequest.resultType = .resultTypeObjectIDs
 
-            let batchDelete = try context.execute(deleteRequest) as? NSBatchDeleteResult
+            do {
+                let batchDelete = try context.execute(deleteRequest) as? NSBatchDeleteResult
 
-            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
-                throw ConversationLabelsRepositoryError.failedToDeleteStoredLabels
+                guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
+                    throw ConversationLabelsRepositoryError.failedToDeleteStoredLabels
+                }
+
+                let deletedObjects: [AnyHashable: Any] = [
+                    NSDeletedObjectsKey: deleteResult
+                ]
+
+                /// Since `NSBatchDeleteRequest` only operates at the SQL level (in the persistent store itself),
+                /// we need to manually update our in-memory objects after execution.
+
+                NSManagedObjectContext.mergeChanges(
+                    fromRemoteContextSave: deletedObjects,
+                    into: [context]
+                )
+
+            } catch {
+                logger.error("Failed to delete old labels: \(error)")
+                throw error
             }
-
-            let deletedObjects: [AnyHashable: Any] = [
-                NSDeletedObjectsKey: deleteResult
-            ]
-
-            /// Since `NSBatchDeleteRequest` only operates at the SQL level (in the persistent store itself),
-            /// we need to manually update our in-memory objects after execution.
-
-            NSManagedObjectContext.mergeChanges(
-                fromRemoteContextSave: deletedObjects,
-                into: [context]
-            )
-
-            /// Ensures the context and the persistent store are in sync
-
-            context.saveOrRollback()
         }
     }
 

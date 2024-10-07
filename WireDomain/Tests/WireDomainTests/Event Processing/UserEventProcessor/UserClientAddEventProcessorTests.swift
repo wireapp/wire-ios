@@ -95,4 +95,5 @@ final class UserClientAddEventProcessorTests: XCTestCase {
             )
         )
     }
+
 }

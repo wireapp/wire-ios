@@ -21,15 +21,12 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 @testable import WireDomain
-import WireDomainSupport
-import WireTransport
 import XCTest
 
 final class ConnectionsRepositoryTests: XCTestCase {
 
     private var sut: ConnectionsRepository!
     private var connectionsAPI: MockConnectionsAPI!
-
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
