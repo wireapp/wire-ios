@@ -432,9 +432,7 @@ final class ConversationViewController: UIViewController {
             return
         }
 
-        fatalError("TODO")
-        // TODO: fix <-
-        // mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
+        await mainCoordinator.showConversation(conversation: mlsConversation, message: nil)
     }
 
     // MARK: - ParticipantsPopover
