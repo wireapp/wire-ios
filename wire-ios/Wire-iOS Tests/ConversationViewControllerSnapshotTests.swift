@@ -65,7 +65,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
             conversation: mockConversation,
             visibleMessage: nil,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             mediaPlaybackManager: .init(name: nil, userSession: userSession),
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable()

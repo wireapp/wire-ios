@@ -20,16 +20,24 @@ import UIKit
 import WireMainNavigation
 
 struct MockConversationBuilder: MainConversationBuilderProtocol {
+    typealias ConversationList = MockConversationListViewController
+    typealias SettingsBuilder = MockSettingsViewControllerBuilder
     typealias Conversation = MockConversationViewController<MockConversation, MockMessage>
     typealias ConversationModel = Conversation.ConversationModel
     typealias ConversationMessageModel = Conversation.ConversationMessageModel
+    typealias User = MockUserProfileViewControllerBuilder.User
 
     @MainActor
-    func build(
-        conversation: ConversationModel,
-        message: ConversationMessageModel?,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) -> Conversation {
+    func build<MainCoordinator: MainCoordinatorProtocol>(
+        conversation: Conversation.ConversationModel,
+        message: Conversation.ConversationMessageModel?,
+        mainCoordinator: MainCoordinator
+    ) -> Conversation where
+    MainCoordinator.ConversationList == ConversationList,
+    MainCoordinator.SettingsContentBuilder == SettingsBuilder,
+    MainCoordinator.ConversationModel == Conversation.ConversationModel,
+    MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
+    MainCoordinator.User == User {
         .init()
     }
 }

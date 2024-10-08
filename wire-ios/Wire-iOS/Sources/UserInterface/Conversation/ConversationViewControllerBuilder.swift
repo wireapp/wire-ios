@@ -24,19 +24,30 @@ import WireSyncEngine
 @MainActor
 struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
 
+    typealias ConversationList = ConversationListViewController
+    typealias SettingsBuilder = SettingsViewControllerBuilder
+    typealias Conversation = ConversationRootViewController
+    typealias User = any UserType
+
     var userSession: UserSession
     var mediaPlaybackManager: MediaPlaybackManager?
 
-    func build(
+    func build<MainCoordinator: MainCoordinatorProtocol>(
         conversation: ZMConversation,
         message: ZMConversationMessage?,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) -> ConversationRootViewController {
+        mainCoordinator: MainCoordinator
+    ) -> Conversation where
+    MainCoordinator.ConversationList == ConversationList,
+    MainCoordinator.SettingsContentBuilder == SettingsBuilder,
+    MainCoordinator.ConversationModel == Conversation.ConversationModel,
+    MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
+    MainCoordinator.User == User {
+
         let viewController = ConversationRootViewController(
             conversation: conversation,
             message: message,
             userSession: userSession,
-            mainCoordinator: mainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
             mediaPlaybackManager: mediaPlaybackManager
         )
         viewController.hidesBottomBarWhenPushed = true

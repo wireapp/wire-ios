@@ -62,4 +62,8 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     func setConnect(_ connect: Connect?, animated: Bool) {
         fatalError("mock method not implemented")
     }
+
+    func hideSidebar() {
+        fatalError("mock method not implemented")
+    }
 }

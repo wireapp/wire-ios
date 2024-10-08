@@ -393,7 +393,7 @@ final class ZClientViewController: UIViewController {
         let controller = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController()
@@ -452,7 +452,7 @@ final class ZClientViewController: UIViewController {
             conversation: currentConversation,
             message: nil,
             userSession: userSession,
-            mainCoordinator: mainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
             mediaPlaybackManager: mediaPlaybackManager
         )
 

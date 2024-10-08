@@ -20,63 +20,93 @@ import WireMainNavigation
 import WireDataModel
 import WireSettings
 
-@MainActor
-final class AnyMainCoordinator<MainCoordinator: MainCoordinatorProtocol>: MainCoordinatorProtocol {
+final class AnyMainCoordinator<ConversationList, SettingsContentBuilder, ConversationModel, ConversationMessageModel, User>: MainCoordinatorProtocol where
+ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSettingsContentBuilderProtocol {
 
-    typealias ConversationFilter = MainCoordinator.ConversationList.ConversationFilter
-    typealias ConversationList = MainCoordinator.ConversationList
-    typealias SettingsContentBuilder = MainCoordinator.SettingsContentBuilder
-    typealias ConversationModel = MainCoordinator.ConversationModel
-    typealias ConversationMessageModel = MainCoordinator.ConversationMessageModel
-    typealias User = MainCoordinator.User
-    typealias TopLevelMenuItem = MainCoordinator.SettingsContentBuilder.TopLevelMenuItem
+    typealias ConversationFilter = ConversationList.ConversationFilter
+    typealias TopLevelMenuItem = SettingsContentBuilder.TopLevelMenuItem
 
-    let mainCoordinator: MainCoordinator
+    let mainCoordinator: any MainCoordinatorProtocol
 
-    init(mainCoordinator: MainCoordinator) {
+    private let _showConversationList: @MainActor (ConversationFilter?) async -> Void
+    private let _showConversation: @MainActor (ConversationModel, ConversationMessageModel?) async -> Void
+    private let _showSettingsContent: @MainActor (TopLevelMenuItem) -> Void
+    private let _showUserProfile: @MainActor (User) async -> Void
+
+    init<MainCoordinator: MainCoordinatorProtocol>(mainCoordinator: MainCoordinator) where
+    MainCoordinator.ConversationList == ConversationList,
+    MainCoordinator.SettingsContentBuilder == SettingsContentBuilder,
+    MainCoordinator.ConversationModel == ConversationModel,
+    MainCoordinator.ConversationMessageModel == ConversationMessageModel,
+    MainCoordinator.User == User {
+
         self.mainCoordinator = mainCoordinator
+
+        _showConversationList = { conversationFilter in
+            await mainCoordinator.showConversationList(conversationFilter: conversationFilter)
+        }
+        _showConversation = { conversation, message in
+            await mainCoordinator.showConversation(conversation: conversation, message: message)
+        }
+        _showSettingsContent = { topLevelMenuItem in
+            mainCoordinator.showSettingsContent(topLevelMenuItem)
+        }
+        _showUserProfile = { user in
+            await mainCoordinator.showUserProfile(user: user)
+        }
     }
 
+    @MainActor
     func showConversationList(conversationFilter: ConversationFilter?) async {
-        await mainCoordinator.showConversationList(conversationFilter: conversationFilter)
+        await _showConversationList(conversationFilter)
     }
-    
+
+    @MainActor
     func showArchive() async {
         await mainCoordinator.showArchive()
     }
-    
+
+    @MainActor
     func showSettings() async {
         await mainCoordinator.showSettings()
     }
-    
+
+    @MainActor
     func showConversation(conversation: ConversationModel, message: ConversationMessageModel?) async {
-        await mainCoordinator.showConversation(conversation: conversation, message: message)
+        await _showConversation(conversation, message)
     }
-    
+
+    @MainActor
     func hideConversation() {
         mainCoordinator.hideConversation()
     }
-    
+
+    @MainActor
     func showSettingsContent(_ topLevelMenuItem: TopLevelMenuItem) {
-        mainCoordinator.showSettingsContent(topLevelMenuItem)
+        _showSettingsContent(topLevelMenuItem)
     }
-    
+
+    @MainActor
     func hideSettingsContent() {
         mainCoordinator.hideSettingsContent()
     }
-    
+
+    @MainActor
     func showSelfProfile() async {
         await mainCoordinator.showSelfProfile()
     }
-    
+
+    @MainActor
     func showUserProfile(user: User) async {
-        await mainCoordinator.showUserProfile(user: user)
+        await _showUserProfile(user)
     }
-    
+
+    @MainActor
     func showConnect() async {
         await mainCoordinator.showConnect()
     }
-    
+
+    @MainActor
     func presentViewController(_ viewController: UIViewController) async {
         await mainCoordinator.presentViewController(viewController)
     }

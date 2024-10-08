@@ -21,10 +21,9 @@ import WireDesign
 import WireMainNavigation
 import WireSyncEngine
 
-final class GroupDetailsViewController<MainCoordinator: MainCoordinatorProtocol>: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate where
-MainCoordinator.ConversationModel == ZMConversation {
+final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
-    private let mainCoordinator: MainCoordinator
+    private let mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -47,7 +46,7 @@ MainCoordinator.ConversationModel == ZMConversation {
     init(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
-        mainCoordinator: any MainCoordinatorProtocol,
+        mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation

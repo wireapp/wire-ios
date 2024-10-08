@@ -43,6 +43,9 @@ public final class MainCoordinator<
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
     ConversationBuilder.Conversation == SplitViewController.Conversation,
+    ConversationBuilder.ConversationList == SplitViewController.ConversationList,
+    ConversationBuilder.SettingsBuilder == SettingsContentBuilder,
+    ConversationBuilder.User == UserProfileBuilder.User,
     SettingsContentBuilder.SettingsContent == SplitViewController.SettingsContent
 {
     // swiftlint:enable opening_brace
