@@ -1410,6 +1410,16 @@
 		E9DD582D2C539B3C00645A2F /* ChangeEmailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DD582C2C539B3C00645A2F /* ChangeEmailViewModelTests.swift */; };
 		E9DD582F2C539D0C00645A2F /* ChangeEmailError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DD582E2C539D0C00645A2F /* ChangeEmailError.swift */; };
 		E9E20AEA2AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */; };
+		E9E50F662CB54D6F00EFCF10 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9E50F652CB54D6F00EFCF10 /* WidgetKit.framework */; };
+		E9E50F682CB54D6F00EFCF10 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9E50F672CB54D6F00EFCF10 /* SwiftUI.framework */; };
+		E9E50F6B2CB54D6F00EFCF10 /* WireWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E50F6A2CB54D6F00EFCF10 /* WireWidgetBundle.swift */; };
+		E9E50F6D2CB54D6F00EFCF10 /* WireWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E50F6C2CB54D6F00EFCF10 /* WireWidgetLiveActivity.swift */; };
+		E9E50F6F2CB54D6F00EFCF10 /* WireWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E50F6E2CB54D6F00EFCF10 /* WireWidget.swift */; };
+		E9E50F712CB54D6F00EFCF10 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E50F702CB54D6F00EFCF10 /* AppIntent.swift */; };
+		E9E50F732CB54D7100EFCF10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9E50F722CB54D7100EFCF10 /* Assets.xcassets */; };
+		E9E50F772CB54D7100EFCF10 /* WireWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = E9E50F642CB54D6F00EFCF10 /* WireWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E9E50F7D2CB5561A00EFCF10 /* LAManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E50F7C2CB5561A00EFCF10 /* LAManager.swift */; };
+		E9E50F7E2CB5562100EFCF10 /* LAManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E50F7C2CB5561A00EFCF10 /* LAManager.swift */; };
 		E9F0BC292BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */; };
 		E9F2D63E2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */; };
 		E9F2D6402B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */; };
@@ -1921,6 +1931,13 @@
 			remoteGlobalIDString = 8F42C537199244A700288E4D;
 			remoteInfo = "Wire-iOS";
 		};
+		E9E50F752CB54D7100EFCF10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E9E50F632CB54D6F00EFCF10;
+			remoteInfo = WireWidgetExtension;
+		};
 		F1FEA14F21DCEB1700790A54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F42C530199244A700288E4D /* Project object */;
@@ -1945,6 +1962,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				EE7905F627F326EB00FCBF8C /* Wire Share Extension.appex in Embed App Extensions */,
+				E9E50F772CB54D7100EFCF10 /* WireWidgetExtension.appex in Embed App Extensions */,
 				065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
@@ -3415,6 +3433,16 @@
 		E9DD582C2C539B3C00645A2F /* ChangeEmailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewModelTests.swift; sourceTree = "<group>"; };
 		E9DD582E2C539D0C00645A2F /* ChangeEmailError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailError.swift; sourceTree = "<group>"; };
 		E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkViewController.swift; sourceTree = "<group>"; };
+		E9E50F642CB54D6F00EFCF10 /* WireWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WireWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9E50F652CB54D6F00EFCF10 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		E9E50F672CB54D6F00EFCF10 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		E9E50F6A2CB54D6F00EFCF10 /* WireWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireWidgetBundle.swift; sourceTree = "<group>"; };
+		E9E50F6C2CB54D6F00EFCF10 /* WireWidgetLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireWidgetLiveActivity.swift; sourceTree = "<group>"; };
+		E9E50F6E2CB54D6F00EFCF10 /* WireWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireWidget.swift; sourceTree = "<group>"; };
+		E9E50F702CB54D6F00EFCF10 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		E9E50F722CB54D7100EFCF10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E9E50F742CB54D7100EFCF10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E9E50F7C2CB5561A00EFCF10 /* LAManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LAManager.swift; sourceTree = "<group>"; };
 		E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnapshotTesting+UITableViewCell.swift"; sourceTree = "<group>"; };
 		E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCannotDecryptSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStartedSystemMessageCellDescription.swift; sourceTree = "<group>"; };
@@ -3978,6 +4006,15 @@
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
 				591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9E50F612CB54D6F00EFCF10 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9E50F682CB54D6F00EFCF10 /* SwiftUI.framework in Frameworks */,
+				E9E50F662CB54D6F00EFCF10 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5465,6 +5502,8 @@
 				EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */,
 				E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */,
 				EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */,
+				E9E50F652CB54D6F00EFCF10 /* WidgetKit.framework */,
+				E9E50F672CB54D6F00EFCF10 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -6238,6 +6277,7 @@
 				168A16AA1D9597C2005CFA6C /* Wire-iOS Share Extension */,
 				F1FEA14B21DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADF279B07AC002D4D1E /* Wire Notification Service Extension */,
+				E9E50F692CB54D6F00EFCF10 /* WireWidget */,
 				8F42C539199244A700288E4D /* Products */,
 				8286E48D7CC440448CBD8F48 /* Frameworks */,
 			);
@@ -6256,6 +6296,7 @@
 				F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */,
 				065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */,
 				E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */,
+				E9E50F642CB54D6F00EFCF10 /* WireWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7830,6 +7871,20 @@
 			path = CreateSecureGuestLink;
 			sourceTree = "<group>";
 		};
+		E9E50F692CB54D6F00EFCF10 /* WireWidget */ = {
+			isa = PBXGroup;
+			children = (
+				E9E50F6A2CB54D6F00EFCF10 /* WireWidgetBundle.swift */,
+				E9E50F6C2CB54D6F00EFCF10 /* WireWidgetLiveActivity.swift */,
+				E9E50F6E2CB54D6F00EFCF10 /* WireWidget.swift */,
+				E9E50F702CB54D6F00EFCF10 /* AppIntent.swift */,
+				E9E50F722CB54D7100EFCF10 /* Assets.xcassets */,
+				E9E50F742CB54D7100EFCF10 /* Info.plist */,
+				E9E50F7C2CB5561A00EFCF10 /* LAManager.swift */,
+			);
+			path = WireWidget;
+			sourceTree = "<group>";
+		};
 		E9E6F09C2861E549004A4BD6 /* Styles */ = {
 			isa = PBXGroup;
 			children = (
@@ -8563,6 +8618,7 @@
 				F1FEA15021DCEB1700790A54 /* PBXTargetDependency */,
 				168A16B21D9597C2005CFA6C /* PBXTargetDependency */,
 				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
+				E9E50F762CB54D7100EFCF10 /* PBXTargetDependency */,
 			);
 			name = "Wire-iOS";
 			packageProductDependencies = (
@@ -8632,6 +8688,23 @@
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		E9E50F632CB54D6F00EFCF10 /* WireWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9E50F7A2CB54D7100EFCF10 /* Build configuration list for PBXNativeTarget "WireWidgetExtension" */;
+			buildPhases = (
+				E9E50F602CB54D6F00EFCF10 /* Sources */,
+				E9E50F612CB54D6F00EFCF10 /* Frameworks */,
+				E9E50F622CB54D6F00EFCF10 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WireWidgetExtension;
+			productName = WireWidgetExtension;
+			productReference = E9E50F642CB54D6F00EFCF10 /* WireWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		F1FEA14921DCEB1700790A54 /* WireCommonComponents */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F1FEA15521DCEB1700790A54 /* Build configuration list for PBXNativeTarget "WireCommonComponents" */;
@@ -8660,7 +8733,7 @@
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftMigration = 0710;
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1310;
 				ORGANIZATIONNAME = "Zeta Project Germany GmbH";
 				TargetAttributes = {
@@ -8701,6 +8774,9 @@
 					E6579E352AFF9B30004E7FD8 = {
 						CreatedOnToolsVersion = 15.0.1;
 						TestTargetID = 8F42C537199244A700288E4D;
+					};
+					E9E50F632CB54D6F00EFCF10 = {
+						CreatedOnToolsVersion = 15.4;
 					};
 					F1FEA14921DCEB1700790A54 = {
 						CreatedOnToolsVersion = 10.0;
@@ -8755,6 +8831,7 @@
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
 				592996512C2EB98A008C334F /* Format & Lint Swift Code */,
+				E9E50F632CB54D6F00EFCF10 /* WireWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -8863,6 +8940,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9E50F622CB54D6F00EFCF10 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9E50F732CB54D7100EFCF10 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9890,6 +9975,7 @@
 				A9C33DFE23D0704F0069C8BB /* MediaPlaybackManager.swift in Sources */,
 				5E21344B21E351D400273D0D /* LogInStepDescription.swift in Sources */,
 				EF3CB75521DD157B0030C3E8 /* ProfileViewController.swift in Sources */,
+				E9E50F7D2CB5561A00EFCF10 /* LAManager.swift in Sources */,
 				F16426FE1FCC5A2C00D2ABFC /* AuthenticationStepDescription.swift in Sources */,
 				87D56DFA1E0046FE00DFF722 /* CollectionImageCell.swift in Sources */,
 				8750B1CB2124236200B807A9 /* SecondaryTextButton.swift in Sources */,
@@ -10694,6 +10780,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E9E50F602CB54D6F00EFCF10 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9E50F6B2CB54D6F00EFCF10 /* WireWidgetBundle.swift in Sources */,
+				E9E50F712CB54D6F00EFCF10 /* AppIntent.swift in Sources */,
+				E9E50F7E2CB5562100EFCF10 /* LAManager.swift in Sources */,
+				E9E50F6D2CB54D6F00EFCF10 /* WireWidgetLiveActivity.swift in Sources */,
+				E9E50F6F2CB54D6F00EFCF10 /* WireWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F1FEA14621DCEB1700790A54 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10771,6 +10869,11 @@
 			isa = PBXTargetDependency;
 			target = 8F42C537199244A700288E4D /* Wire-iOS */;
 			targetProxy = E6579E3A2AFF9B30004E7FD8 /* PBXContainerItemProxy */;
+		};
+		E9E50F762CB54D7100EFCF10 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E9E50F632CB54D6F00EFCF10 /* WireWidgetExtension */;
+			targetProxy = E9E50F752CB54D7100EFCF10 /* PBXContainerItemProxy */;
 		};
 		F1FEA15021DCEB1700790A54 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11453,6 +11556,166 @@
 			};
 			name = Release;
 		};
+		E9E50F782CB54D7100EFCF10 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WireWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WireWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Zeta Project Germany GmbH. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wearezeta.zclient.alpha.WireWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E9E50F792CB54D7100EFCF10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WireWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WireWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Zeta Project Germany GmbH. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wearezeta.zclient.alpha.WireWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		F1FEA15321DCEB1700790A54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F156509721DCED3000210504 /* CommonComponents-Debug.xcconfig */;
@@ -11563,6 +11826,15 @@
 			buildConfigurations = (
 				E6579E3C2AFF9B30004E7FD8 /* Debug */,
 				E6579E3D2AFF9B30004E7FD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E9E50F7A2CB54D7100EFCF10 /* Build configuration list for PBXNativeTarget "WireWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9E50F782CB54D7100EFCF10 /* Debug */,
+				E9E50F792CB54D7100EFCF10 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

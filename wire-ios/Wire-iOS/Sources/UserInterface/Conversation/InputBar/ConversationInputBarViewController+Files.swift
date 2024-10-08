@@ -90,9 +90,12 @@ extension ConversationInputBarViewController {
 
                 var conversationMediaAction: ConversationMediaAction = .fileTransfer
 
+                let manager = LiveActivityManager()
+
                 do {
                     let message = try conversation.appendFile(with: metadata)
-                    if let fileMessageData = message.fileMessageData {
+                    manager.startUploadingFile(fileName: metadata.filename)
+                    if let fileMessageData = message.fileMessaggeData {
                         if fileMessageData.isVideo {
                             conversationMediaAction = .videoMessage
                         } else if fileMessageData.isAudio {

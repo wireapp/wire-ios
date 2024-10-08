@@ -144,9 +144,33 @@ final class DeveloperToolsViewModel: ObservableObject {
         setupPushToken()
 
         setupDatadog()
+
+        liveActivity()
     }
 
     // MARK: - Section Builders
+
+    private func liveActivity() {
+        if #available(iOS 16.2, *) {
+            sections.append(Section(
+                header: "Live Activity",
+                items: [
+                    .button(ButtonItem(title: "Start Live Activity", action: { [weak self] in
+                       // self?.demoLiveActivity()
+
+                    }))
+                ]))
+
+        }
+    }
+
+
+    @available(iOS 16.2, *)
+    private func demoLiveActivity() {
+       // LiveActivityManager().startBookingCab()
+    }
+
+
 
     private func setupAppInfo() {
         sections.append(Section(
