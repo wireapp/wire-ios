@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-// TODO: rotating the call screen doesn't seem to work <-
+// TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
 
 /// A subclass of `UITabBarController` which configures its `viewControllers` property to match
 /// ``MainTabBarControllerContent``'s cases. After initialization each tab contains an empty navigation controller.
