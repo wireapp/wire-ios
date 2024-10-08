@@ -103,6 +103,7 @@ class ImagePickerManager: NSObject {
                 imagePickerController.modalPresentationStyle = .popover
 
                 if let popoverPresentationController = imagePickerController.popoverPresentationController {
+                    fatalError("doesn't work")
                     popoverPresentationController.backgroundColor = UIColor.white
                     popoverPresentationController.sourceView = alertController.popoverPresentationController?.sourceView
                     popoverPresentationController.sourceRect = alertController.popoverPresentationController?.sourceRect ?? .zero
