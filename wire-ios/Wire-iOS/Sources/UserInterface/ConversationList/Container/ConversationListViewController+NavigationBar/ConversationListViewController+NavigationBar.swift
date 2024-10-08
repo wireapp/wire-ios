@@ -65,7 +65,8 @@ extension ConversationListViewController {
         accountImageView.accountImage = viewModel.accountImage.image
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.accessibilityTraits = .button
-        accountImageView.accessibilityIdentifier = "bottomBarSettingsButton" // TODO: fix, can't be correct <-
+        // TODO: [WPB-11449] fix accessibility
+        // accountImageView.accessibilityIdentifier =
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
         accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
@@ -162,8 +163,11 @@ extension ConversationListViewController {
                 await self?.mainCoordinator.showConnect()
             }
         }
-        // TODO: accessibility <-
-        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
+        let startConversationItem = UIBarButtonItem(customView: UIButton(primaryAction: newConversationAction))
+        // TODO: [WPB-11449] fix accessibility
+        // startConversationItem.accessibilityIdentifier =
+        // startConversationItem.accessibilityLabel =
+        navigationItem.rightBarButtonItems = [startConversationItem, spacer]
 
         let defaultFilterImage = UIImage(resource: .ConversationList.Header.filterConversations)
         let filledFilterImage = UIImage(resource: .ConversationList.Header.filterConversationsFilled)
@@ -229,8 +233,9 @@ extension ConversationListViewController {
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
-        newConversationBarButton.accessibilityIdentifier = "???????????" // TODO: accessibilityIdentifier <-
-        newConversationBarButton.accessibilityLabel = "" // TODO: accessibilityLabel <-
+        // TODO: [WPB-11449] fix accessibility
+        // newConversationBarButton.accessibilityIdentifier =
+        // newConversationBarButton.accessibilityLabel =
         newConversationBarButton.addAction(.init { [weak self] _ in
             Task {
                 await self?.mainCoordinator.showConnect()
@@ -309,21 +314,22 @@ extension ConversationListViewController {
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
     func adjustRightBarButtonItemsSpace() {
-        // TODO: fix <-
-//        guard
-//            let rightBarButtonItems = navigationItem.rightBarButtonItems,
-//            rightBarButtonItems.count == 3, // new conversation, spacer, filter
-//            let newConversationButton = rightBarButtonItems[0].customView,
-//            let filterConversationsButton = rightBarButtonItems[2].customView,
-//            let titleViewLabel,
-//            let window = viewIfLoaded?.window
-//        else { return }
-//
+        guard
+            let rightBarButtonItems = navigationItem.rightBarButtonItems,
+            rightBarButtonItems.count == 3, // new conversation, spacer, filter
+            // let newConversationButton = rightBarButtonItems[0].customView,
+            // let filterConversationsButton = rightBarButtonItems[2].customView,
+            // let titleViewLabel,
+            let window = viewIfLoaded?.window
+        else { return }
+
+        // This code doesn't work anymore because we don't use a custom title view
 //        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
 //        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
 //        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
 //        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
 //        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
+        rightBarButtonItems[1].width = 29
     }
 
     @objc
