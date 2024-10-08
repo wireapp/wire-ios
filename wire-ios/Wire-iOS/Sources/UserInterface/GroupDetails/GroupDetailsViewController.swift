@@ -21,9 +21,10 @@ import WireDesign
 import WireMainNavigation
 import WireSyncEngine
 
-final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
+final class GroupDetailsViewController<MainCoordinator: MainCoordinatorProtocol>: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate where
+MainCoordinator.ConversationModel == ZMConversation {
 
-    private let mainCoordinator: any MainCoordinatorProtocol
+    private let mainCoordinator: MainCoordinator
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -468,10 +469,8 @@ extension GroupDetailsViewController: ViewControllerDismisser {
 
 extension GroupDetailsViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        dismiss(animated: true) {
-            fatalError("TODO")
-            // TODO: fix <-
-            // self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+        Task {
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }
