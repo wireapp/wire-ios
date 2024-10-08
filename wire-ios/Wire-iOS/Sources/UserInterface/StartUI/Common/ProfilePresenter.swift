@@ -26,13 +26,15 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     var profileOpenedFromPeoplePicker = false
     var keyboardPersistedAfterOpeningProfile = false
 
-    let mainCoordinator: any MainCoordinatorProtocol
+    let mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
     private var presentedFrame: CGRect = .zero
     private weak var viewToPresentOn: UIView?
     private weak var controllerToPresentOn: UIViewController?
     private var onDismiss: (() -> Void)?
 
-    init(mainCoordinator: any MainCoordinatorProtocol) {
+    init(
+        mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
+    ) {
         self.mainCoordinator = mainCoordinator
         super.init()
 

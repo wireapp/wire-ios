@@ -323,7 +323,7 @@ extension ConversationListViewController {
             let window = viewIfLoaded?.window
         else { return }
 
-        // This code doesn't work anymore because we don't use a custom title view
+        // TODO: [WPB-11449] Fix spacing between bar button items. This code doesn't work anymore because we don't use a custom title view
 //        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
 //        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
 //        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX

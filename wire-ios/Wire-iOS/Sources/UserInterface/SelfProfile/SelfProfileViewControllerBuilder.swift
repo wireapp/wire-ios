@@ -22,6 +22,12 @@ import WireMainNavigation
 import WireSyncEngine
 
 struct SelfProfileViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+    typealias ConversationList = ConversationListViewController
+    typealias SettingsBuilder = SettingsViewControllerBuilder
+    typealias ConversationModel = ZMConversation
+    typealias ConversationMessageModel = ZMConversationMessage
+    typealias User = any UserType
+    typealias ViewController = UINavigationController
 
     var selfUser: SettingsSelfUser
     var userRightInterfaceType: UserRightInterface.Type
