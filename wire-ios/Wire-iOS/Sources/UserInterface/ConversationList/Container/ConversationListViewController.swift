@@ -302,7 +302,9 @@ final class ConversationListViewController: UIViewController {
 
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
-        add(listContentController, to: contentContainer)
+        addChild(listContentController)
+        contentContainer.addSubview(listContentController.view)
+        listContentController.didMove(toParent: self)
     }
 
     private func setupNoConversationLabel() {
@@ -315,7 +317,9 @@ final class ConversationListViewController: UIViewController {
 
     private func setupNetworkStatusBar() {
         networkStatusViewController.delegate = self
-        add(networkStatusViewController, to: contentContainer)
+        addChild(networkStatusViewController)
+        contentContainer.addSubview(networkStatusViewController.view)
+        networkStatusViewController.didMove(toParent: self)
     }
 
     private func createViewConstraints() {
