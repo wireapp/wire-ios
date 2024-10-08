@@ -42,10 +42,15 @@ struct SidebarViewControllerBuilder {
         }
         sidebarViewController.wireTextStyleMapping = .init()
         sidebarViewController.wireAccentColorMapping = WireAccentColorMapping()
+
         let sidebarDesign = SidebarViewDesign()
         sidebarViewController.sidebarBackgroundColor = sidebarDesign.backgroundColor
         sidebarViewController.sidebarAccountInfoViewDisplayNameColor = sidebarDesign.accountInfoViewDisplayNameColor
         sidebarViewController.sidebarAccountInfoViewUsernameColor = sidebarDesign.accountInfoViewUsernameColor
+        sidebarViewController.sidebarMenuItemTitleForegroundColor = sidebarDesign.menuItemTitleForegroundColor
+        sidebarViewController.sidebarMenuItemLinkIconForegroundColor = sidebarDesign.menuItemLinkIconForegroundColor
+        sidebarViewController.sidebarMenuItemIsPressedTitleForegroundColor = sidebarDesign.menuItemIsPressedTitleForegroundColor
+
         return sidebarViewController
     }
 }
