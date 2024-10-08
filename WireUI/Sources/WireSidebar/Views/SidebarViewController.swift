@@ -59,6 +59,16 @@ public final class SidebarViewController: UIViewController {
         set { model.sidebarBackgroundColor = newValue }
     }
 
+    public var sidebarAccountInfoViewDisplayNameColor: UIColor {
+        get { model.sidebarAccountInfoViewDisplayNameColor }
+        set { model.sidebarAccountInfoViewDisplayNameColor = newValue }
+    }
+
+    public var sidebarAccountInfoViewUsernameColor: UIColor {
+        get { model.sidebarAccountInfoViewUsernameColor }
+        set { model.sidebarAccountInfoViewUsernameColor = newValue }
+    }
+
     // MARK: - Private Properties
 
     private var model: SidebarModel!
@@ -141,6 +151,8 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
             accountImageView: accountImageView
         )
         .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
+        .sidebarAccountInfoViewDisplayNameColor(.init(uiColor: model.sidebarAccountInfoViewDisplayNameColor))
+        .sidebarAccountInfoViewUsernameColor(.init(uiColor: model.sidebarAccountInfoViewUsernameColor))
         .environment(\.wireAccentColor, model.wireAccentColor)
         .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
         .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)

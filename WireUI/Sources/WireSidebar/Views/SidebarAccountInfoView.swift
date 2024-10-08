@@ -19,14 +19,10 @@
 import SwiftUI
 import WireFoundation
 
-// TODO: remove commented code <-
-// private let titleColor: UIColor = .black // ColorTheme.Backgrounds.onSurface
-// private let subtitleColor: UIColor = .gray // ColorTheme.Base.secondaryText
-
 struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: View {
 
-    @Environment(\.sidebarProfileSwitcherDisplayNameColor) private var displayNameColor
-    @Environment(\.sidebarProfileSwitcherUsernameColor) private var usernameColor
+    @Environment(\.sidebarAccountInfoViewDisplayNameColor) private var displayNameColor
+    @Environment(\.sidebarAccountInfoViewUsernameColor) private var usernameColor
 
     // MARK: - Life Cycle
 
@@ -107,48 +103,48 @@ private struct ProfileSwitcherHeightKey: PreferenceKey {
 // MARK: - View Modifiers + Environment
 
 extension View {
-    func sidebarProfileSwitcherDisplayNameColor(_ displayNameColor: Color) -> some View {
-        modifier(SidebarProfileSwitcherDisplayNameColorViewModifier(sidebarProfileSwitcherDisplayNameColor: displayNameColor))
+    func sidebarAccountInfoViewDisplayNameColor(_ displayNameColor: Color) -> some View {
+        modifier(SidebarAccountInfoViewDisplayNameColorViewModifier(sidebarAccountInfoViewDisplayNameColor: displayNameColor))
     }
 
-    func sidebarProfileSwitcherusernameColor(_ usernameColor: Color) -> some View {
-        modifier(SidebarProfileSwitcherUsernameColorViewModifier(sidebarProfileSwitcherUsernameColor: usernameColor))
+    func sidebarAccountInfoViewUsernameColor(_ usernameColor: Color) -> some View {
+        modifier(SidebarAccountInfoViewUsernameColorViewModifier(sidebarAccountInfoViewUsernameColor: usernameColor))
     }
 }
 
 private extension EnvironmentValues {
-    var sidebarProfileSwitcherDisplayNameColor: Color {
-        get { self[SidebarProfileSwitcherDisplayNameColorKey.self] }
-        set { self[SidebarProfileSwitcherDisplayNameColorKey.self] = newValue }
+    var sidebarAccountInfoViewDisplayNameColor: Color {
+        get { self[SidebarAccountInfoViewDisplayNameColorKey.self] }
+        set { self[SidebarAccountInfoViewDisplayNameColorKey.self] = newValue }
     }
 
-    var sidebarProfileSwitcherUsernameColor: Color {
-        get { self[SidebarProfileSwitcherUsernameColorKey.self] }
-        set { self[SidebarProfileSwitcherUsernameColorKey.self] = newValue }
+    var sidebarAccountInfoViewUsernameColor: Color {
+        get { self[SidebarAccountInfoViewUsernameColorKey.self] }
+        set { self[SidebarAccountInfoViewUsernameColorKey.self] = newValue }
     }
 }
 
-struct SidebarProfileSwitcherDisplayNameColorViewModifier: ViewModifier {
-    var sidebarProfileSwitcherDisplayNameColor: Color
+struct SidebarAccountInfoViewDisplayNameColorViewModifier: ViewModifier {
+    var sidebarAccountInfoViewDisplayNameColor: Color
     func body(content: Content) -> some View {
         content
-            .environment(\.sidebarProfileSwitcherDisplayNameColor, sidebarProfileSwitcherDisplayNameColor)
+            .environment(\.sidebarAccountInfoViewDisplayNameColor, sidebarAccountInfoViewDisplayNameColor)
     }
 }
 
-private struct SidebarProfileSwitcherDisplayNameColorKey: EnvironmentKey {
+private struct SidebarAccountInfoViewDisplayNameColorKey: EnvironmentKey {
     static let defaultValue = Color.primary
 }
 
-struct SidebarProfileSwitcherUsernameColorViewModifier: ViewModifier {
-    var sidebarProfileSwitcherUsernameColor: Color
+struct SidebarAccountInfoViewUsernameColorViewModifier: ViewModifier {
+    var sidebarAccountInfoViewUsernameColor: Color
     func body(content: Content) -> some View {
         content
-            .environment(\.sidebarProfileSwitcherUsernameColor, sidebarProfileSwitcherUsernameColor)
+            .environment(\.sidebarAccountInfoViewUsernameColor, sidebarAccountInfoViewUsernameColor)
     }
 }
 
-private struct SidebarProfileSwitcherUsernameColorKey: EnvironmentKey {
+private struct SidebarAccountInfoViewUsernameColorKey: EnvironmentKey {
     static let defaultValue = Color.primary.opacity(0.7)
 }
 

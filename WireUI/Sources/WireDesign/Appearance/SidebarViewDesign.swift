@@ -19,6 +19,10 @@
 import UIKit
 
 public struct SidebarViewDesign {
+
     public let backgroundColor = ColorTheme.Backgrounds.background
+    public let accountInfoViewDisplayNameColor = ColorTheme.Backgrounds.onSurface
+    public let accountInfoViewUsernameColor = ColorTheme.Base.secondaryText
+
     public init() {}
 }
