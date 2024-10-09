@@ -102,19 +102,17 @@ extension ConversationLegalHoldSystemMessageCell {
 
     override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
 
-        // TODO: fix <-
-        fatalError("TODO")
-
         if url == ConversationLegalHoldSystemMessageCell.legalHoldURL,
             let conversation,
             let clientViewController = ZClientViewController.shared {
 
-//            LegalHoldDetailsViewController.present(
-//                in: clientViewController,
-//                conversation: conversation,
-//                userSession: clientViewController.userSession,
-//                mainCoordinator: MainCoordinator(zClientViewController: clientViewController) // TODO: pass mainCoordinator <-
-//            )
+            // TODO: [WPB-11449] Do we want to display the view controller, jump into the browser, or both?
+            LegalHoldDetailsViewController.present(
+                in: clientViewController,
+                conversation: conversation,
+                userSession: clientViewController.userSession,
+                mainCoordinator: clientViewController.mainCoordinator
+            )
 
             return true
         }
