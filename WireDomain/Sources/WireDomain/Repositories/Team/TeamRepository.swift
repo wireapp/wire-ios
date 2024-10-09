@@ -146,20 +146,24 @@ public final class TeamRepository: TeamRepositoryProtocol {
     }
 
     public func pullSelfLegalHoldStatus() async throws {
-        let selfUser = await context.perform { [userRepository] in
-            userRepository.fetchSelfUser()
+        let (selfUserID, selfClientID) = await context.perform { [userRepository] in
+            let selfUser = userRepository.fetchSelfUser()
+            let selfUserID: UUID = selfUser.remoteIdentifier
+            let selfClientID = selfUser.selfClient()?.remoteIdentifier
+            
+            return (selfUserID, selfClientID)
         }
 
         let selfUserLegalHold = try await fetchSelfLegalhold()
 
         switch selfUserLegalHold.status {
         case .pending:
-            guard let selfClientID = selfUser.selfClient()?.remoteIdentifier else {
+            guard let selfClientID else {
                 return
             }
 
             await userRepository.addLegalHoldRequest(
-                for: selfUser.remoteIdentifier,
+                for: selfUserID,
                 clientID: selfClientID,
                 lastPrekey: selfUserLegalHold.prekey
             )
