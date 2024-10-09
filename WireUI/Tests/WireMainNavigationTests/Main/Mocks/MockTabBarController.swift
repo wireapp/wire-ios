@@ -17,11 +17,12 @@
 //
 
 import UIKit
-import WireMainNavigation
+
+@testable import WireMainNavigation
 
 final class MockTabBarController: UITabBarController, MainTabBarControllerProtocol {
 
-    typealias ConversationList = MockConversationListViewController
+    typealias ConversationList = PreviewConversationListViewController
     typealias Archive = UIViewController
     typealias Settings = UIViewController
 
@@ -32,7 +33,7 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
 
     var selectedContent: MainTabBarControllerContent = .conversations
 
-    var conversationList: MockConversationListViewController?
+    var conversationList: ConversationList?
     var archive: Archive?
     var settings: Settings?
 

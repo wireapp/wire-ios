@@ -17,10 +17,11 @@
 //
 
 import UIKit
-import WireMainNavigation
+
+@testable import WireMainNavigation
 
 struct MockConversationBuilder: MainConversationBuilderProtocol {
-    typealias ConversationList = MockConversationListViewController
+    typealias ConversationList = PreviewConversationListViewController
     typealias SettingsBuilder = MockSettingsViewControllerBuilder
     typealias Conversation = MockConversationViewController<MockConversation, MockMessage>
     typealias ConversationModel = Conversation.ConversationModel
