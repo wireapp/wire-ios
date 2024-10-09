@@ -58,7 +58,7 @@ class ImagePickerManager: NSObject {
         if mediaShareRestrictionManager.isPhotoLibraryEnabled {
             let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ in
                 self?.sourceType = .photoLibrary
-                self?.getImage(fromSourceType: .photoLibrary, alertController: actionSheet)
+                self?.getImage(fromSourceType: .photoLibrary)
             }
             actionSheet.addAction(galleryAction)
         }
@@ -66,7 +66,7 @@ class ImagePickerManager: NSObject {
         // Take photo
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ in
             self?.sourceType = .camera
-            self?.getImage(fromSourceType: .camera, alertController: actionSheet)
+            self?.getImage(fromSourceType: .camera)
         }
         actionSheet.addAction(cameraAction)
 
@@ -76,10 +76,7 @@ class ImagePickerManager: NSObject {
         return actionSheet
     }
 
-    private func getImage(
-        fromSourceType sourceType: UIImagePickerController.SourceType,
-        alertController: UIAlertController
-    ) {
+    private func getImage(fromSourceType sourceType: UIImagePickerController.SourceType) {
         guard UIImagePickerController.isSourceTypeAvailable(sourceType),
               let viewController else {
                   return

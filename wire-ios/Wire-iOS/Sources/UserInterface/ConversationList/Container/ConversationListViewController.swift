@@ -26,8 +26,6 @@ import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
 
-// TODO: plus button should open "Create Conversation" on iPad!
-
 final class ConversationListViewController: UIViewController {
 
     // MARK: - Properties
