@@ -445,7 +445,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
 
     private func reloadCurrentConversation() {
-        // TODO: what is this method neede for? <-
+        // TODO: what is this method needed for? <-
         guard let currentConversation else { return }
 
         let currentConversationViewController = ConversationRootViewController(
@@ -546,7 +546,7 @@ final class ZClientViewController: UIViewController {
 
     func transitionToList(animated: Bool,
                           leftViewControllerRevealed: Bool = true,
-                          completion: Completion?) {
+                          completion: Completion?) { // TODO: still used?
         let action: Completion = { [weak self] in
             self?.mainSplitViewController.show(leftViewControllerRevealed ? .primary : .secondary)
             completion?()
@@ -666,7 +666,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) {
+    func openClientListScreen(for user: UserType) { // TODO: use main coordinator
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
@@ -702,7 +702,7 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    func showConversationList() {
+    func showConversationList() { // TODO: use main coordinator
         transitionToList(animated: true, completion: nil)
     }
 
@@ -720,7 +720,7 @@ final class ZClientViewController: UIViewController {
         scrollTo message: ZMConversationMessage? = nil,
         focusOnView focus: Bool,
         animated: Bool
-    ) {
+    ) { // TODO: use main coordinator
         dismissAllModalControllers { [weak self] in
             guard
                 let self,
@@ -737,16 +737,11 @@ final class ZClientViewController: UIViewController {
     }
 
     var isConversationViewVisible: Bool {
-        // TODO: fix <-
-        false
-        // mainSplitViewController.isConversationViewVisible
+        mainCoordinator.isConversationVisible
     }
 
     var isConversationListVisible: Bool {
-        // TODO: fix <-
-        return false
-        // return (mainSplitViewController.layoutSize == .regularLandscape) ||
-        // (mainSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+        mainCoordinator.isConversationListVisible
     }
 
     func minimizeCallOverlay(

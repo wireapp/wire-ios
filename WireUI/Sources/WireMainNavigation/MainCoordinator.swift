@@ -504,6 +504,24 @@ public final class MainCoordinator<
             sidebar.selectedMenuItem = .init(.settings)
         }
     }
+
+    // MARK: - Legacy Helpers
+
+    public var isConversationListVisible: Bool {
+        if mainSplitViewState == .expanded {
+            splitViewController.conversationList == nil
+        } else {
+            tabBarController.conversationList == nil
+        }
+    }
+
+    public var isConversationVisible: Bool {
+        if mainSplitViewState == .expanded {
+            splitViewController.conversation == nil
+        } else {
+            tabBarController.conversation == nil
+        }
+    }
 }
 
 // MARK: - MainSidebarMenuItem + MainConversationFilter
