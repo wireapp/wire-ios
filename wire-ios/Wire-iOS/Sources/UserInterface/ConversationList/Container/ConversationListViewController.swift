@@ -479,10 +479,6 @@ final class ConversationListViewController: UIViewController {
     }
 }
 
-// MARK: - ViewModel Delegate
-
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {}
-
 // MARK: - ConversationListViewController + ArchivedListViewControllerDelegate
 
 extension ConversationListViewController: ArchivedListViewControllerDelegate {
