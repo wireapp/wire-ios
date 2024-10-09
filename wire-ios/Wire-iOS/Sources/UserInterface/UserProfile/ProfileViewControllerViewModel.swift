@@ -173,7 +173,6 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
 
     // MARK: - Opening Conversation
 
-    // TODO: check if we end up on the conversation screen
     func openOneToOneConversation() {
         if let conversation = user.oneToOneConversation {
             transition(to: conversation)
@@ -182,7 +181,6 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         }
     }
 
-    // TODO: check if we end up on the conversation screen
     func startOneToOneConversation() {
         viewModelDelegate?.startAnimatingActivity()
 

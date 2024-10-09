@@ -28,6 +28,8 @@ public protocol MainConversationListProtocol: UIViewController {
     /// Assigning a non-nil value to this property filters the presented conversations by the provided criteria.
     var conversationFilter: ConversationFilter? { get set }
 
+    // TODO: selected conversation
+
     /// Allows the ``MainCoordinator`` to inform this instance about the current split view state.
     var mainSplitViewState: MainSplitViewState { get set }
 }
