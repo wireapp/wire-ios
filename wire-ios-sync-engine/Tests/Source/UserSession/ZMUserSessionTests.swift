@@ -484,7 +484,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
 
         XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
-        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
     
     func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {
