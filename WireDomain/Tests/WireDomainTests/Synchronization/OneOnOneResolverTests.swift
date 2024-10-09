@@ -26,8 +26,8 @@ import XCTest
 
 @testable import WireDomain
 
-final class OneOnOneResolverUseCaseTests: XCTestCase {
-    var sut: OneOnOneResolverUseCase!
+final class OneOnOneResolverTests: XCTestCase {
+    var sut: WireDomain.OneOnOneResolver!
 
     var coreDataStack: CoreDataStack!
     var coreDataStackHelper: CoreDataStackHelper!
@@ -48,12 +48,11 @@ final class OneOnOneResolverUseCaseTests: XCTestCase {
         userRepository = MockUserRepositoryProtocol()
         conversationsRepository = MockConversationRepositoryProtocol()
         mlsService = MockMLSServiceInterface()
-        sut = OneOnOneResolverUseCase(
+        sut = OneOnOneResolver(
             context: context,
             userRepository: userRepository,
             conversationsRepository: conversationsRepository,
-            mlsService: mlsService,
-            isMLSEnabled: true
+            mlsProvider: MLSProvider(service: mlsService, isMLSEnabled: true)
         )
     }
 

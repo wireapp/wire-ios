@@ -19,14 +19,18 @@
 import Combine
 import WireAPI
 import WireAPISupport
-import XCTest
-
+import WireDataModel
+import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport
+import XCTest
 
 final class SyncManagerTests: XCTestCase {
 
     private var sut: SyncManager!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var stack: CoreDataStack!
+    private var modelHelper: ModelHelper!
     private var updateEventsRepository: MockUpdateEventsRepositoryProtocol!
     private var updateEventProcessor: MockUpdateEventProcessorProtocol!
     private var teamRepository: MockTeamRepositoryProtocol!
@@ -36,10 +40,18 @@ final class SyncManagerTests: XCTestCase {
     private var conversationLabelsRepository: MockConversationLabelsRepositoryProtocol!
     private var featureConfigsRepository: MockFeatureConfigRepositoryProtocol!
     private var pushSupportedProtocolsUseCase: MockPushSupportedProtocolsUseCaseProtocol!
-    private var oneOnOneResolverUseCase: MockOneOnOneResolverUseCaseProtocol!
+    private var mlsService: MockMLSServiceInterface!
+
+    var context: NSManagedObjectContext {
+        stack.syncContext
+    }
 
     override func setUp() async throws {
         try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        stack = try await coreDataStackHelper.createStack()
+        mlsService = MockMLSServiceInterface()
+        modelHelper = ModelHelper()
         updateEventsRepository = MockUpdateEventsRepositoryProtocol()
         updateEventProcessor = MockUpdateEventProcessorProtocol()
         teamRepository = MockTeamRepositoryProtocol()
@@ -49,7 +61,6 @@ final class SyncManagerTests: XCTestCase {
         conversationLabelsRepository = MockConversationLabelsRepositoryProtocol()
         featureConfigsRepository = MockFeatureConfigRepositoryProtocol()
         pushSupportedProtocolsUseCase = MockPushSupportedProtocolsUseCaseProtocol()
-        oneOnOneResolverUseCase = MockOneOnOneResolverUseCaseProtocol()
 
         sut = SyncManager(
             updateEventsRepository: updateEventsRepository,
@@ -61,7 +72,8 @@ final class SyncManagerTests: XCTestCase {
             featureConfigsRepository: featureConfigsRepository,
             updateEventProcessor: updateEventProcessor,
             pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
-            oneOnOneResolverUseCase: oneOnOneResolverUseCase
+            mlsProvider: MLSProvider(service: mlsService, isMLSEnabled: true),
+            context: context
         )
 
         // Base mocks.
@@ -77,6 +89,11 @@ final class SyncManagerTests: XCTestCase {
     override func tearDown() async throws {
         try await super.tearDown()
         sut = nil
+        modelHelper = nil
+        try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
+        stack = nil
+        mlsService = nil
         updateEventsRepository = nil
         updateEventProcessor = nil
         teamRepository = nil
@@ -86,7 +103,6 @@ final class SyncManagerTests: XCTestCase {
         conversationLabelsRepository = nil
         featureConfigsRepository = nil
         pushSupportedProtocolsUseCase = nil
-        oneOnOneResolverUseCase = nil
     }
 
     // MARK: - Tests
@@ -317,7 +333,20 @@ final class SyncManagerTests: XCTestCase {
     }
 
     func testPerformSlowSync() async throws {
+
         // Mock
+        
+        let user = await context.perform { [self] in
+            modelHelper.createUser(in: context)
+        }
+
+        let selfUser = await context.perform { [self] in
+            modelHelper.createSelfUser(in: context)
+        }
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
 
         updateEventsRepository.pullLastEventID_MockMethod = {}
         teamRepository.pullSelfTeam_MockMethod = {}
@@ -325,13 +354,20 @@ final class SyncManagerTests: XCTestCase {
         teamRepository.pullSelfTeamMembers_MockMethod = {}
         connectionsRepository.pullConnections_MockMethod = {}
         conversationsRepository.pullConversations_MockMethod = {}
+        conversationsRepository.pullMLSOneToOneConversationUserIDDomain_MockValue = UUID().uuidString
+        conversationsRepository.fetchMLSConversationWith_MockValue = conversation
         userRepository.pullKnownUsers_MockMethod = {}
         conversationLabelsRepository.pullConversationLabels_MockMethod = {}
         featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
         userRepository.pullSelfUser_MockMethod = {}
         teamRepository.pullSelfLegalHoldStatus_MockMethod = {}
         pushSupportedProtocolsUseCase.invoke_MockMethod = {}
-        oneOnOneResolverUseCase.invoke_MockMethod = {}
+        userRepository.fetchAllUserIdsWithOneOnOneConversation_MockMethod = { [] }
+        userRepository.fetchUserWithDomain_MockValue = user
+        userRepository.fetchSelfUser_MockValue = selfUser
+        mlsService.conversationExistsGroupID_MockValue = true
+        mlsService.establishGroupForWithRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
+        mlsService.joinGroupWith_MockMethod = { _ in }
 
         // When
 
@@ -351,7 +387,6 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(userRepository.pullSelfUser_Invocations.count, 1)
         XCTAssertEqual(teamRepository.pullSelfLegalHoldStatus_Invocations.count, 1)
         XCTAssertEqual(pushSupportedProtocolsUseCase.invoke_Invocations.count, 1)
-        XCTAssertEqual(oneOnOneResolverUseCase.invoke_Invocations.count, 1)
     }
 
 }

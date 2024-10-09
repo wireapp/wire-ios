@@ -22,11 +22,11 @@ import WireDataModel
 
 // sourcery: AutoMockable
 /// Resolves 1:1 conversations
-public protocol OneOnOneResolverUseCaseProtocol {
+protocol OneOnOneResolverProtocol {
     func invoke() async throws
 }
 
-public struct OneOnOneResolverUseCase: OneOnOneResolverUseCaseProtocol {
+struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     private enum OneOnOneResolverUseCaseError: Error {
         case failedToActivateConversation
@@ -39,28 +39,23 @@ public struct OneOnOneResolverUseCase: OneOnOneResolverUseCaseProtocol {
     private let context: NSManagedObjectContext
     private let userRepository: any UserRepositoryProtocol
     private let conversationsRepository: any ConversationRepositoryProtocol
-    private let mlsService: any MLSServiceInterface
-    private let isMLSEnabled: Bool
+    private let mlsProvider: MLSProvider
 
     // MARK: - Object lifecycle
 
-    public init(
+    init(
         context: NSManagedObjectContext,
         userRepository: any UserRepositoryProtocol,
         conversationsRepository: any ConversationRepositoryProtocol,
-        mlsService: any MLSServiceInterface,
-        isMLSEnabled: Bool
+        mlsProvider: MLSProvider
     ) {
         self.context = context
         self.userRepository = userRepository
         self.conversationsRepository = conversationsRepository
-        self.mlsService = mlsService
-        self.isMLSEnabled = isMLSEnabled
+        self.mlsProvider = mlsProvider
     }
 
-    // MARK: - Public
-
-    public func invoke() async throws {
+    func invoke() async throws {
         try await resolveAllOneOnOneConversations()
     }
 
@@ -95,13 +90,13 @@ public struct OneOnOneResolverUseCase: OneOnOneResolverUseCaseProtocol {
         let selfUser = userRepository.fetchSelfUser()
         let commonProtocol = getCommonProtocol(between: selfUser, and: user)
 
-        if isMLSEnabled, commonProtocol == .mls {
+        if mlsProvider.isMLSEnabled, commonProtocol == .mls {
             try await resolveMLSConversation(
                 for: user
             )
         }
 
-        if isMLSEnabled, commonProtocol == nil {
+        if mlsProvider.isMLSEnabled, commonProtocol == nil {
             await resolveNoCommonProtocolConversation(
                 between: selfUser,
                 and: user
@@ -134,6 +129,8 @@ public struct OneOnOneResolverUseCase: OneOnOneResolverUseCaseProtocol {
         guard let mlsConversation, let groupID = mlsConversation.mlsGroupID else {
             throw OneOnOneResolverUseCaseError.failedToFetchConversation
         }
+
+        let mlsService = mlsProvider.service
 
         /// If conversation already exists, there is no need to perform a migration.
         let needsMLSMigration = try await mlsService.conversationExists(
@@ -190,6 +187,8 @@ public struct OneOnOneResolverUseCase: OneOnOneResolverUseCaseProtocol {
         groupID: MLSGroupID,
         userID: WireDataModel.QualifiedID
     ) async throws {
+        let mlsService = mlsProvider.service
+
         if mlsConversation.epoch == 0 {
             let users = [MLSUser(userID)]
 

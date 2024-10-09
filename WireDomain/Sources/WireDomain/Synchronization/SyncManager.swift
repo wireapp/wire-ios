@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireAPI
+import WireDataModel
 import WireSystem
 
 protocol SyncManagerProtocol {
@@ -34,6 +36,19 @@ protocol SyncManagerProtocol {
 
     func suspend() async throws
 
+}
+
+public struct MLSProvider {
+    let service: any MLSServiceInterface
+    let isMLSEnabled: Bool
+
+    public init(
+        service: any MLSServiceInterface,
+        isMLSEnabled: Bool
+    ) {
+        self.service = service
+        self.isMLSEnabled = isMLSEnabled
+    }
 }
 
 final class SyncManager: SyncManagerProtocol {
@@ -53,7 +68,8 @@ final class SyncManager: SyncManagerProtocol {
     private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
     private let featureConfigsRepository: any FeatureConfigRepositoryProtocol
     private let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
-    private let oneOnOneResolverUseCase: any OneOnOneResolverUseCaseProtocol
+    private let mlsProvider: MLSProvider
+    private let context: NSManagedObjectContext
 
     // MARK: - Update event processor
 
@@ -71,7 +87,8 @@ final class SyncManager: SyncManagerProtocol {
         featureConfigsRepository: any FeatureConfigRepositoryProtocol,
         updateEventProcessor: any UpdateEventProcessorProtocol,
         pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol,
-        oneOnOneResolverUseCase: any OneOnOneResolverUseCaseProtocol
+        mlsProvider: MLSProvider,
+        context: NSManagedObjectContext
     ) {
         self.updateEventsRepository = updateEventsRepository
         self.teamRepository = teamRepository
@@ -82,7 +99,8 @@ final class SyncManager: SyncManagerProtocol {
         self.featureConfigsRepository = featureConfigsRepository
         self.updateEventProcessor = updateEventProcessor
         self.pushSupportedProtocolsUseCase = pushSupportedProtocolsUseCase
-        self.oneOnOneResolverUseCase = oneOnOneResolverUseCase
+        self.mlsProvider = mlsProvider
+        self.context = context
     }
 
     func performSlowSync() async throws {
@@ -98,7 +116,17 @@ final class SyncManager: SyncManagerProtocol {
         try await conversationLabelsRepository.pullConversationLabels()
         try await featureConfigsRepository.pullFeatureConfigs()
         try await pushSupportedProtocolsUseCase.invoke()
-        try await oneOnOneResolverUseCase.invoke()
+        let oneOnOneResolver = makeOneOnOneResolver()
+        try await oneOnOneResolver.invoke()
+    }
+
+    private func makeOneOnOneResolver() -> OneOnOneResolverProtocol {
+        OneOnOneResolver(
+            context: context,
+            userRepository: userRepository,
+            conversationsRepository: conversationsRepository,
+            mlsProvider: mlsProvider
+        )
     }
 
     func performQuickSync() async throws {
