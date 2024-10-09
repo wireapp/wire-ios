@@ -192,7 +192,7 @@ public final class MainCoordinator< // TODO: rename GenericMainCoordinator?
 
         dismissArchiveIfNeeded()
         dismissSettingsIfNeeded()
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
 
         // Move the conversation list from the tab bar controller to the split view controller if needed.
         if let conversationList = tabBarController.conversationList {
@@ -222,7 +222,7 @@ public final class MainCoordinator< // TODO: rename GenericMainCoordinator?
 
         dismissConversationListIfNeeded()
         dismissSettingsIfNeeded()
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
 
         // move the archive from the tab bar controller to the split view controller
         if let archive = tabBarController.archive {
@@ -243,7 +243,7 @@ public final class MainCoordinator< // TODO: rename GenericMainCoordinator?
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
 
         // move the settings from the tab bar controller to the split view controller
         if let settings = tabBarController.settings {
@@ -262,7 +262,7 @@ public final class MainCoordinator< // TODO: rename GenericMainCoordinator?
             splitViewController.hideSidebar()
         }
 
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
 
         let conversation = conversationBuilder.build(
             conversation: conversation,
@@ -320,7 +320,7 @@ public final class MainCoordinator< // TODO: rename GenericMainCoordinator?
         selfProfile.modalPresentationStyle = .formSheet
         self.selfProfile = selfProfile
 
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
         await withCheckedContinuation { continuation in
             splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
         }
@@ -369,7 +369,7 @@ public final class MainCoordinator< // TODO: rename GenericMainCoordinator?
             splitViewController.hideSidebar()
         }
 
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
         await withCheckedContinuation { continuation in
             splitViewController.present(viewController, animated: true, completion: continuation.resume)
         }
@@ -399,7 +399,7 @@ public final class MainCoordinator< // TODO: rename GenericMainCoordinator?
         }
     }
 
-    private func dismissPresentedViewControllerIfNeeded() async {
+    public func dismissPresentedViewController() async {
         await withCheckedContinuation { continuation in
             splitViewController.dismiss(animated: true, completion: continuation.resume)
         }

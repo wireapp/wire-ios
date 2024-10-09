@@ -539,26 +539,14 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - Setup methods
 
-    func transitionToList(animated: Bool, completion: Completion?) {
-        transitionToList(animated: animated,
-                         leftViewControllerRevealed: true,
-                         completion: completion)
-    }
-
     func transitionToList(animated: Bool,
                           leftViewControllerRevealed: Bool = true,
-                          completion: Completion?) { // TODO: is this still used?
-        let action: Completion = { [weak self] in
-            self?.mainSplitViewController.show(leftViewControllerRevealed ? .primary : .secondary)
+                          completion: Completion?) {
+        Task {
+            let currentFilter = conversationListViewController.conversationFilter
+            await mainCoordinator.showConversationList(conversationFilter: currentFilter)
             completion?()
         }
-
-        if let presentedViewController = mainSplitViewController.viewController(for: .secondary)?.presentedViewController {
-            presentedViewController.dismiss(animated: animated, completion: action)
-        } else {
-            action()
-        }
-
     }
 
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
@@ -667,7 +655,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) { // TODO: use mainCoordinator
+    func openClientListScreen(for user: UserType) { // TODO: use mainCoordinator and check if still needed
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
@@ -703,7 +691,7 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    func showConversationList() { // TODO: use mainCoordinator
+    func showConversationList() {
         transitionToList(animated: true, completion: nil)
     }
 
@@ -721,7 +709,8 @@ final class ZClientViewController: UIViewController {
         scrollTo message: ZMConversationMessage? = nil,
         focusOnView focus: Bool,
         animated: Bool
-    ) { // TODO: use mainCoordinator
+    ) {
+        // TODO: manually test this
         dismissAllModalControllers { [weak self] in
             guard
                 let self,
@@ -729,7 +718,10 @@ final class ZClientViewController: UIViewController {
                 conversation.managedObjectContext != nil
             else { return }
 
-            conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated)
+            Task {
+                await self.mainCoordinator.dismissPresentedViewController()
+                self.conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated)
+            }
         }
     }
 

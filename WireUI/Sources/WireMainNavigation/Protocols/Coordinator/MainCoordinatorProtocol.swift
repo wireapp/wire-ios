@@ -60,4 +60,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
 
     @MainActor
     func presentViewController(_ viewController: UIViewController) async
+    @MainActor
+    func dismissPresentedViewController() async
 }
