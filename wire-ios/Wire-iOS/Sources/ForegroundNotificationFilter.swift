@@ -32,6 +32,7 @@ final class ForegroundNotificationFilter {
 // TO DO: Ask for the logic, not clear when a notification shuld be presented
 extension ForegroundNotificationFilter: ForegroundNotificationResponder {
 
+    @MainActor
     func shouldPresentNotification(with userInfo: NotificationUserInfo) -> Bool {
         // user wants to see fg notifications
         let chatHeadsDisabled: Bool = Settings.shared[.chatHeadsDisabled] ?? false
@@ -62,7 +63,7 @@ extension ForegroundNotificationFilter: ForegroundNotificationResponder {
         // conversation view is visible for another conversation
         guard
             let convID = userInfo.conversationID,
-            convID != clientVC.currentConversation?.remoteIdentifier // TODO: offer a way to know which conversation is shown
+            convID != clientVC.mainSplitViewController.conversationList?.selectedConversation?.remoteIdentifier
         else {
             return false
         }

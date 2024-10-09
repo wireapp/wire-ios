@@ -198,8 +198,6 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         }
     }
 
-    // TODO: there are unhandled MLS errors sometimes when new conversations are about to start (like with David who hasn't logged in yet)
-
     // MARK: - Actions List
 
     func updateActionsList() {
