@@ -332,10 +332,9 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 0)
     }
 
-    func testPerformSlowSync() async throws {
-
+    func testPerformSlowSync_Success() async throws {
         // Mock
-        
+
         let user = await context.perform { [self] in
             modelHelper.createUser(in: context)
         }
@@ -389,57 +388,107 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(pushSupportedProtocolsUseCase.invoke_Invocations.count, 1)
     }
 
-}
+    func testPerformSlowSync_Failure() async throws {
+        // Mock
 
-private enum Scaffolding {
+        let user = await context.perform { [self] in
+            modelHelper.createUser(in: context)
+        }
 
-    static let localDomain = "example.com"
-    static let conversationID1 = ConversationID(uuid: UUID(), domain: localDomain)
-    static let conversationID2 = ConversationID(uuid: UUID(), domain: localDomain)
-    static let aliceID = UserID(uuid: UUID(), domain: localDomain)
+        let (selfUser, selfUserID) = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(in: context)
+            let selfUserID: UUID = selfUser.remoteIdentifier
 
-    static let event1 = UpdateEvent.user(.clientAdd(UserClientAddEvent(client: UserClient(
-        id: "userClientID",
-        type: .permanent,
-        activationDate: .now,
-        capabilities: [.legalholdConsent]
-    ))))
+            return (selfUser, selfUserID)
+        }
 
-    static let event2 = UpdateEvent.conversation(.typing(ConversationTypingEvent(
-        conversationID: conversationID1,
-        senderID: aliceID,
-        isTyping: true
-    )))
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
 
-    static let event3 = UpdateEvent.conversation(.delete(ConversationDeleteEvent(
-        conversationID: conversationID1,
-        senderID: aliceID,
-        timestamp: .now
-    )))
+        updateEventsRepository.pullLastEventID_MockMethod = {}
+        teamRepository.pullSelfTeam_MockMethod = {}
+        teamRepository.pullSelfTeamRoles_MockMethod = {}
+        teamRepository.pullSelfTeamMembers_MockMethod = {}
+        connectionsRepository.pullConnections_MockMethod = {}
+        conversationsRepository.pullConversations_MockMethod = {}
+        conversationsRepository.pullMLSOneToOneConversationUserIDDomain_MockValue = UUID().uuidString
+        conversationsRepository.fetchMLSConversationWith_MockValue = conversation
+        userRepository.pullKnownUsers_MockMethod = {}
+        conversationLabelsRepository.pullConversationLabels_MockMethod = {}
+        featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
+        userRepository.pullSelfUser_MockError = UserRepositoryError.failedToFetchUser(selfUserID) /// throws error
+        teamRepository.pullSelfLegalHoldStatus_MockMethod = {}
+        pushSupportedProtocolsUseCase.invoke_MockMethod = {}
+        userRepository.fetchAllUserIdsWithOneOnOneConversation_MockMethod = { [] }
+        userRepository.fetchUserWithDomain_MockValue = user
+        userRepository.fetchSelfUser_MockValue = selfUser
+        mlsService.conversationExistsGroupID_MockValue = true
+        mlsService.establishGroupForWithRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
+        mlsService.joinGroupWith_MockMethod = { _ in }
 
-    static let event4 = UpdateEvent.conversation(.rename(ConversationRenameEvent(
-        conversationID: conversationID2,
-        senderID: aliceID,
-        timestamp: .now,
-        newName: "Foo"
-    )))
+        do {
+            try await sut.performSlowSync()
+        } catch {
+            let syncError = try XCTUnwrap(error as? SyncManager.Error)
 
-    static let event5 = UpdateEvent.conversation(.rename(ConversationRenameEvent(
-        conversationID: conversationID2,
-        senderID: aliceID,
-        timestamp: .now,
-        newName: "Bar"
-    )))
-
-    static func makeEnvelope(
-        with event: UpdateEvent,
-        isTransient: Bool = false
-    ) -> UpdateEventEnvelope {
-        .init(
-            id: UUID(),
-            events: [event],
-            isTransient: isTransient
-        )
+            switch syncError {
+            case .failedToPerformSlowSync(let error):
+                XCTAssertTrue(error is UserRepositoryError)
+            }
+        }
     }
 
+    private enum Scaffolding {
+
+        static let localDomain = "example.com"
+        static let conversationID1 = ConversationID(uuid: UUID(), domain: localDomain)
+        static let conversationID2 = ConversationID(uuid: UUID(), domain: localDomain)
+        static let aliceID = UserID(uuid: UUID(), domain: localDomain)
+
+        static let event1 = UpdateEvent.user(.clientAdd(UserClientAddEvent(client: UserClient(
+            id: "userClientID",
+            type: .permanent,
+            activationDate: .now,
+            capabilities: [.legalholdConsent]
+        ))))
+
+        static let event2 = UpdateEvent.conversation(.typing(ConversationTypingEvent(
+            conversationID: conversationID1,
+            senderID: aliceID,
+            isTyping: true
+        )))
+
+        static let event3 = UpdateEvent.conversation(.delete(ConversationDeleteEvent(
+            conversationID: conversationID1,
+            senderID: aliceID,
+            timestamp: .now
+        )))
+
+        static let event4 = UpdateEvent.conversation(.rename(ConversationRenameEvent(
+            conversationID: conversationID2,
+            senderID: aliceID,
+            timestamp: .now,
+            newName: "Foo"
+        )))
+
+        static let event5 = UpdateEvent.conversation(.rename(ConversationRenameEvent(
+            conversationID: conversationID2,
+            senderID: aliceID,
+            timestamp: .now,
+            newName: "Bar"
+        )))
+
+        static func makeEnvelope(
+            with event: UpdateEvent,
+            isTransient: Bool = false
+        ) -> UpdateEventEnvelope {
+            .init(
+                id: UUID(),
+                events: [event],
+                isTransient: isTransient
+            )
+        }
+
+    }
 }

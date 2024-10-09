@@ -53,6 +53,10 @@ public struct MLSProvider {
 
 final class SyncManager: SyncManagerProtocol {
 
+    enum Error: Swift.Error {
+        case failedToPerformSlowSync(Swift.Error)
+    }
+
     // MARK: - Properties
 
     private(set) var syncState: SyncState = .suspended
@@ -104,20 +108,24 @@ final class SyncManager: SyncManagerProtocol {
     }
 
     func performSlowSync() async throws {
-        try await updateEventsRepository.pullLastEventID()
-        try await teamRepository.pullSelfTeam()
-        try await teamRepository.pullSelfTeamRoles()
-        try await teamRepository.pullSelfTeamMembers()
-        try await connectionsRepository.pullConnections()
-        try await conversationsRepository.pullConversations()
-        try await userRepository.pullKnownUsers()
-        try await userRepository.pullSelfUser()
-        try await teamRepository.pullSelfLegalHoldStatus()
-        try await conversationLabelsRepository.pullConversationLabels()
-        try await featureConfigsRepository.pullFeatureConfigs()
-        try await pushSupportedProtocolsUseCase.invoke()
-        let oneOnOneResolver = makeOneOnOneResolver()
-        try await oneOnOneResolver.invoke()
+        do {
+            try await updateEventsRepository.pullLastEventID()
+            try await teamRepository.pullSelfTeam()
+            try await teamRepository.pullSelfTeamRoles()
+            try await teamRepository.pullSelfTeamMembers()
+            try await connectionsRepository.pullConnections()
+            try await conversationsRepository.pullConversations()
+            try await userRepository.pullKnownUsers()
+            try await userRepository.pullSelfUser()
+            try await teamRepository.pullSelfLegalHoldStatus()
+            try await conversationLabelsRepository.pullConversationLabels()
+            try await featureConfigsRepository.pullFeatureConfigs()
+            try await pushSupportedProtocolsUseCase.invoke()
+            let oneOnOneResolver = makeOneOnOneResolver()
+            try await oneOnOneResolver.invoke()
+        } catch {
+            throw Error.failedToPerformSlowSync(error)
+        }
     }
 
     private func makeOneOnOneResolver() -> OneOnOneResolverProtocol {
@@ -192,7 +200,7 @@ final class SyncManager: SyncManagerProtocol {
         isSuspending = false
     }
 
-    private var ongoingTask: Task<Void, Error>? {
+    private var ongoingTask: Task<Void, Swift.Error>? {
         switch syncState {
         case .quickSync(let task):
             task

@@ -150,7 +150,7 @@ public final class TeamRepository: TeamRepositoryProtocol {
             let selfUser = userRepository.fetchSelfUser()
             let selfUserID: UUID = selfUser.remoteIdentifier
             let selfClientID = selfUser.selfClient()?.remoteIdentifier
-            
+
             return (selfUserID, selfClientID)
         }
 
