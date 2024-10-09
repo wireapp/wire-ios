@@ -105,7 +105,6 @@
 		EEAD0A182C46A88D00CC8658 /* UserClientAddEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A172C46A88D00CC8658 /* UserClientAddEventProcessor.swift */; };
 		EEAD0A1A2C46A92000CC8658 /* UserClientRemoveEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A192C46A92000CC8658 /* UserClientRemoveEventProcessor.swift */; };
 		EEAD0A1C2C46A99D00CC8658 /* UserConnectionEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A1B2C46A99D00CC8658 /* UserConnectionEventProcessor.swift */; };
-		EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A1D2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift */; };
 		EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A1F2C46AB8700CC8658 /* UserDeleteEventProcessor.swift */; };
 		EEAD0A222C46ABFB00CC8658 /* UserLegalholdDisableEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A212C46ABFA00CC8658 /* UserLegalholdDisableEventProcessor.swift */; };
 		EEAD0A242C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A232C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift */; };
@@ -236,7 +235,6 @@
 		EEAD0A172C46A88D00CC8658 /* UserClientAddEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientAddEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A192C46A92000CC8658 /* UserClientRemoveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientRemoveEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A1B2C46A99D00CC8658 /* UserConnectionEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionEventProcessor.swift; sourceTree = "<group>"; };
-		EEAD0A1D2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContactJoinEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A1F2C46AB8700CC8658 /* UserDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDeleteEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A212C46ABFA00CC8658 /* UserLegalholdDisableEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLegalholdDisableEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A232C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLegalholdEnableEventProcessor.swift; sourceTree = "<group>"; };
@@ -657,7 +655,6 @@
 				EEAD0A172C46A88D00CC8658 /* UserClientAddEventProcessor.swift */,
 				EEAD0A192C46A92000CC8658 /* UserClientRemoveEventProcessor.swift */,
 				EEAD0A1B2C46A99D00CC8658 /* UserConnectionEventProcessor.swift */,
-				EEAD0A1D2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift */,
 				EEAD0A1F2C46AB8700CC8658 /* UserDeleteEventProcessor.swift */,
 				EEAD0A212C46ABFA00CC8658 /* UserLegalholdDisableEventProcessor.swift */,
 				EEAD0A232C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift */,
@@ -933,7 +930,6 @@
 				C99322E22C986E3A0065E10F /* ConversationLocalStore+Status.swift in Sources */,
 				EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */,
 				C99322D92C986E3A0065E10F /* UpdateEventsRepositoryError.swift in Sources */,
-				EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */,
 				EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */,
 				EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */,
 				EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */,
