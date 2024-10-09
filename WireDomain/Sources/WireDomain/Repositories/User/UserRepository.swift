@@ -71,18 +71,15 @@ public final class UserRepository: UserRepositoryProtocol {
 
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
-    private let isFederationEnabled: Bool
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
-        usersAPI: any UsersAPI,
-        isFederationEnabled: Bool
+        usersAPI: any UsersAPI
     ) {
         self.context = context
         self.usersAPI = usersAPI
-        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Public
@@ -139,12 +136,8 @@ public final class UserRepository: UserRepositoryProtocol {
         try await context.perform { [self] in
 
             let user = fetchOrCreateUser(
-                with: event.id
+                with: event.userID
             )
-
-            if isFederationEnabled {
-                user.domain = event.userID.domain
-            }
 
             if let name = event.name {
                 user.name = name

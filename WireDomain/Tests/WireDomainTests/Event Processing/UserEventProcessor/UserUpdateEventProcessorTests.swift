@@ -45,8 +45,7 @@ final class UserUpdateEventProcessorTests: XCTestCase {
         // Given
 
         let event = UserUpdateEvent(
-            id: Scaffolding.userID,
-            userID: UserID(uuid: Scaffolding.userID, domain: Scaffolding.domain),
+            userID: Scaffolding.userID,
             accentColorID: nil,
             name: "username",
             handle: "test",

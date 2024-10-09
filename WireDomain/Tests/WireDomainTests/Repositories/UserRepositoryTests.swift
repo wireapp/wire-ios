@@ -42,7 +42,10 @@ class UserRepositoryTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         usersAPI = MockUsersAPI()
-        makeSut()
+        sut = UserRepository(
+            context: context,
+            usersAPI: usersAPI
+        )
     }
 
     override func tearDown() async throws {
@@ -51,14 +54,6 @@ class UserRepositoryTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
-    }
-
-    func makeSut(isFederationEnabled: Bool = true) {
-        sut = UserRepository(
-            context: context,
-            usersAPI: usersAPI,
-            isFederationEnabled: isFederationEnabled
-        )
     }
 
     // MARK: - Tests
@@ -139,7 +134,7 @@ class UserRepositoryTests: XCTestCase {
         }
     }
 
-    func testUpdateUser_It_Updates_User_Locally_With_Federation_Enabled() async throws {
+    func testUpdateUser_It_Updates_User_Locally() async throws {
         // Given
 
         modelHelper.createUser(
@@ -160,38 +155,6 @@ class UserRepositoryTests: XCTestCase {
             let updatedUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
 
             XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
-            XCTAssertEqual(updatedUser.domain, Scaffolding.domain) /// federation enabled, domain is set
-            XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
-            XCTAssertEqual(updatedUser.handle, Scaffolding.existingHandle) /// ensuring handle is not updated to nil
-            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.existingEmail) /// ensuring email is not updated to nil
-            XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
-        }
-    }
-
-    func testUpdateUser_It_Updates_User_Locally_With_Federation_Disabled() async throws {
-        // Given
-
-        makeSut(isFederationEnabled: false)
-
-        modelHelper.createUser(
-            id: Scaffolding.userID,
-            handle: Scaffolding.existingHandle,
-            email: Scaffolding.existingEmail,
-            supportedProtocols: [.mls],
-            in: context
-        )
-
-        // When
-
-        try await sut.updateUser(from: Scaffolding.event)
-
-        // Then
-
-        try await context.perform { [context] in
-            let updatedUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
-
-            XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
-            XCTAssertNil(updatedUser.domain) /// federation disabled, domain is nil
             XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
             XCTAssertEqual(updatedUser.handle, Scaffolding.existingHandle) /// ensuring handle is not updated to nil
             XCTAssertEqual(updatedUser.emailAddress, Scaffolding.existingEmail) /// ensuring email is not updated to nil
@@ -221,8 +184,7 @@ class UserRepositoryTests: XCTestCase {
         )
 
         static let event = UserUpdateEvent(
-            id: userID,
-            userID: UserID(uuid: userID, domain: domain),
+            userID: userID,
             accentColorID: nil,
             name: "username",
             handle: nil,
