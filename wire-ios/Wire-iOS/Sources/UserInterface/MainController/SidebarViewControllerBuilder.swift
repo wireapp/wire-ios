@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSidebar
+import WireAccountImage
 import WireDesign
 import WireFoundation
-import WireAccountImage
+import WireSidebar
 
 struct SidebarViewControllerBuilder {
 
@@ -42,7 +42,15 @@ struct SidebarViewControllerBuilder {
         }
         sidebarViewController.wireTextStyleMapping = .init()
         sidebarViewController.wireAccentColorMapping = WireAccentColorMapping()
-        sidebarViewController.sidebarBackgroundColor = SidebarViewDesign().backgroundColor
+
+        let sidebarDesign = SidebarViewDesign()
+        sidebarViewController.sidebarBackgroundColor = sidebarDesign.backgroundColor
+        sidebarViewController.sidebarAccountInfoViewDisplayNameColor = sidebarDesign.accountInfoViewDisplayNameColor
+        sidebarViewController.sidebarAccountInfoViewUsernameColor = sidebarDesign.accountInfoViewUsernameColor
+        sidebarViewController.sidebarMenuItemTitleForegroundColor = sidebarDesign.menuItemTitleForegroundColor
+        sidebarViewController.sidebarMenuItemLinkIconForegroundColor = sidebarDesign.menuItemLinkIconForegroundColor
+        sidebarViewController.sidebarMenuItemIsPressedTitleForegroundColor = sidebarDesign.menuItemIsPressedTitleForegroundColor
+
         return sidebarViewController
     }
 }

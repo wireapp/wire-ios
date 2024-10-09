@@ -20,5 +20,24 @@ import UIKit
 import WireMainNavigation
 
 struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { fatalError() }
+
+    typealias ConversationList = MockConversationListViewController
+    typealias SettingsBuilder = MockSettingsViewControllerBuilder
+    typealias Conversation = MockConversationViewController<MockConversation, MockMessage>
+    typealias ConversationModel = Conversation.ConversationModel
+    typealias ConversationMessageModel = Conversation.ConversationMessageModel
+    typealias User = MockUserProfileViewControllerBuilder.User
+    typealias ViewController = UIViewController
+
+    func build<MainCoordinator: MainCoordinatorProtocol>(
+        mainCoordinator: MainCoordinator
+    ) -> UIViewController where
+    MainCoordinator : MainCoordinatorProtocol,
+    MockConversationListViewController == MainCoordinator.ConversationList,
+    Conversation.ConversationMessageModel == MainCoordinator.ConversationMessageModel,
+    Conversation.ConversationModel == MainCoordinator.ConversationModel,
+    MockSettingsViewControllerBuilder == MainCoordinator.SettingsContentBuilder,
+    MockUserProfileViewControllerBuilder.User == MainCoordinator.User {
+        .init()
+    }
 }

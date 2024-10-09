@@ -34,7 +34,7 @@ extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable 
         }
     }
 
-    public func map() -> MainSidebarMenuItem {
+    public func mapToMainSidebarMenuItem() -> MainSidebarMenuItem {
         switch self {
         case .all: .all
         case .favorites: .favorites

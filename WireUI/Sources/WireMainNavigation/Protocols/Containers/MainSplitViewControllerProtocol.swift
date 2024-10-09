@@ -34,4 +34,6 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController, MainCont
 
     /// Contains the reference to the view controller which will be visible in collapsed mode.
     var tabContainer: TabContainer! { get }
+
+    func hideSidebar()
 }

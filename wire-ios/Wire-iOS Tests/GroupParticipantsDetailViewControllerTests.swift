@@ -80,7 +80,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             selectedParticipants: selected,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator)
         ).wrapInNavigationController()
 
         snapshotHelper
@@ -125,7 +125,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             selectedParticipants: selected,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator)
         )
 
         snapshotHelper.verify(matching: sut.wrapInNavigationController())
@@ -140,7 +140,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             selectedParticipants: [],
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator)
         )
         sut.viewModel.admins = []
         sut.viewModel.members = []

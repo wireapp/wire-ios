@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Inject
+// import Inject
 import SwiftUI
 import WireCommonComponents
 import WireDesign
@@ -29,13 +29,13 @@ struct AccentColorPicker: View {
     var selectedColor: AccentColor
     private let colorViewSize: CGFloat = 28
 
-    @ObserveInjection var inject
+    // @ObserveInjection var inject
 
     let onColorSelect: ((AccentColor) -> Void)?
 
     var body: some View {
         accentColorList
-            .enableInjection()
+        // .enableInjection()
     }
 
     @ViewBuilder

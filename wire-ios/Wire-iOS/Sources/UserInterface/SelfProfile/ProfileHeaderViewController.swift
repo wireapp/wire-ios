@@ -258,7 +258,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func applyUserStatus() {
-        nameLabel.text = userStatus.name
+        nameLabel.text = userStatus.displayName
         userStatusViewController.userStatus = userStatus
         e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
         proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
@@ -396,7 +396,7 @@ extension ProfileHeaderViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.nameChanged {
-            userStatus.name = changeInfo.user.name ?? ""
+            userStatus.displayName = changeInfo.user.name ?? ""
         }
         if changeInfo.handleChanged {
             updateHandleLabel()

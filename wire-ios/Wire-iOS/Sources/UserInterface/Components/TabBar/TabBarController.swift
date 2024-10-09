@@ -101,7 +101,9 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     fileprivate func createViews() {
         self.view.addSubview(self.contentView)
         contentView.backgroundColor = viewControllers.first?.view?.backgroundColor
-        add(pageViewController, to: contentView)
+        addChild(pageViewController)
+        contentView.addSubview(pageViewController.view)
+        pageViewController.didMove(toParent: self)
         pageViewController.scrollView?.delegate = self
 
         if isInteractive {

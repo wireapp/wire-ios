@@ -76,7 +76,7 @@ extension ConversationListViewController {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
         }
 
-        // TODO: create two properties
+        // TODO: create two properties <-
         private(set) var accountImage = (image: UIImage(), isTeamAccount: false) {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: accountImage) }
         }

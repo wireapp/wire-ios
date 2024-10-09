@@ -81,7 +81,7 @@ final class StartUIViewController: UIViewController {
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
-        mainCoordinator: any MainCoordinatorProtocol
+        mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType

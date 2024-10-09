@@ -247,14 +247,10 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
     }
 
     private func displayRecordKeyboard() {
-        // TODO: fix
-        fatalError("TODO")
-        /*
+        // TODO: [WPB-11449] ensure this implementation is correct and still needed
         // do not show keyboard if conversation list is shown,
-        guard let splitViewController = self.wr_splitViewController,
-              let rightViewController = splitViewController.rightViewController,
-              splitViewController.isRightViewControllerRevealed,
-              rightViewController.isVisible,
+        guard let splitViewController = ZClientViewController.shared?.mainSplitViewController,
+              splitViewController.conversationList != nil,
               let appDelegate = UIApplication.shared.delegate as? AppDelegate,
               let mainWindow = appDelegate.mainWindow,
               mainWindow.isKeyWindow else { return }
@@ -262,6 +258,5 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
         self.wasRecordingBeforeCall = false
         self.mode = .audioRecord
         self.inputBar.textView.becomeFirstResponder()
-         */
     }
 }

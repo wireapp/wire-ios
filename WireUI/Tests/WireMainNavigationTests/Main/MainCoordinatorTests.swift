@@ -28,6 +28,7 @@ final class MainCoordinatorTests: XCTestCase {
         MockSettingsViewControllerBuilder,
         MockViewControllerBuilder,
         MockViewControllerBuilder,
+        MockViewControllerBuilder,
         MockUserProfileViewControllerBuilder
     >
 
@@ -57,6 +58,7 @@ final class MainCoordinatorTests: XCTestCase {
             conversationBuilder: .init(),
             settingsContentBuilder: .init(),
             connectBuilder: .init(),
+            createGroupConversationBuilder: .init(),
             selfProfileBuilder: .init(),
             userProfileBuilder: .init()
         )

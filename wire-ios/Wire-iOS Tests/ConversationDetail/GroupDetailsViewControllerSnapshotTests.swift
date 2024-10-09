@@ -96,7 +96,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -116,7 +116,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -143,7 +143,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -163,7 +163,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -182,7 +182,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -203,7 +203,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -222,7 +222,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -242,7 +242,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -262,7 +262,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 

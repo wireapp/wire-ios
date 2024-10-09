@@ -59,6 +59,31 @@ public final class SidebarViewController: UIViewController {
         set { model.sidebarBackgroundColor = newValue }
     }
 
+    public var sidebarAccountInfoViewDisplayNameColor: UIColor {
+        get { model.sidebarAccountInfoViewDisplayNameColor }
+        set { model.sidebarAccountInfoViewDisplayNameColor = newValue }
+    }
+
+    public var sidebarAccountInfoViewUsernameColor: UIColor {
+        get { model.sidebarAccountInfoViewUsernameColor }
+        set { model.sidebarAccountInfoViewUsernameColor = newValue }
+    }
+
+    public var sidebarMenuItemTitleForegroundColor: UIColor {
+        get { model.sidebarMenuItemTitleForegroundColor }
+        set { model.sidebarMenuItemTitleForegroundColor = newValue }
+    }
+
+    public var sidebarMenuItemLinkIconForegroundColor: UIColor {
+        get { model.sidebarMenuItemLinkIconForegroundColor }
+        set { model.sidebarMenuItemLinkIconForegroundColor = newValue }
+    }
+
+    public var sidebarMenuItemIsPressedTitleForegroundColor: UIColor {
+        get { model.sidebarMenuItemIsPressedTitleForegroundColor }
+        set { model.sidebarMenuItemIsPressedTitleForegroundColor = newValue }
+    }
+
     // MARK: - Private Properties
 
     private var model: SidebarModel!
@@ -141,6 +166,11 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
             accountImageView: accountImageView
         )
         .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
+        .sidebarAccountInfoViewDisplayNameColor(.init(uiColor: model.sidebarAccountInfoViewDisplayNameColor))
+        .sidebarAccountInfoViewUsernameColor(.init(uiColor: model.sidebarAccountInfoViewUsernameColor))
+        .sidebarMenuItemTitleForegroundColor(.init(uiColor: model.sidebarMenuItemTitleForegroundColor))
+        .sidebarMenuItemLinkIconForegroundColor(.init(uiColor: model.sidebarMenuItemLinkIconForegroundColor))
+        .sidebarMenuItemIsPressedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsPressedTitleForegroundColor))
         .environment(\.wireAccentColor, model.wireAccentColor)
         .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
         .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)

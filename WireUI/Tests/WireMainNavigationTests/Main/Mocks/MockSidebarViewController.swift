@@ -41,7 +41,7 @@ extension MockSidebarViewController.MenuItem: MainSidebarSelectableMenuItemRepre
         }
     }
 
-    func map() -> MainSidebarMenuItem {
+    func mapToMainSidebarMenuItem() -> MainSidebarMenuItem {
         switch self {
         case .all:
             .all

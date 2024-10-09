@@ -18,8 +18,6 @@
 
 import UIKit
 
-// TODO: remove file if possible
-
 extension UIViewController {
     /// add a child view controller to self and add its view as view paramenter's subview
     ///
@@ -38,7 +36,9 @@ extension UIViewController {
     ///
     /// - Parameter viewController: viewController to add
     func addToSelf(_ viewController: UIViewController) {
-        add(viewController, to: view)
+        addChild(viewController)
+        view.addSubview(viewController.view)
+        viewController.didMove(toParent: self)
     }
 
     /// remove a child view controller to self and add its view from the paramenter's view

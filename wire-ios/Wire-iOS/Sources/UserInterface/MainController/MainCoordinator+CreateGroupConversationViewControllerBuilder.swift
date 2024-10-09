@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import WireDataModel
+import WireMainNavigation
 
-// TODO: remove file
-public extension UIViewController {
+extension MainCoordinator: ConversationCreationControllerDelegate where
+ConversationBuilder.Conversation.ConversationModel == ZMConversation,
+UserProfileBuilder.User == any UserType {
 
-    @MainActor
-    func presentAsync(
-        _ viewControllerToPresent: UIViewController,
-        animated: Bool
-    ) async {
-        await withCheckedContinuation { continuation in
-            present(viewControllerToPresent, animated: animated) {
-                continuation.resume()
-            }
+    func conversationCreationController(
+        _ controller: ConversationCreationController,
+        didCreateConversation conversation: ZMConversation
+    ) {
+        Task {
+            await showConversationList(conversationFilter: .none)
+            await showConversation(conversation: conversation, message: nil)
         }
     }
 }

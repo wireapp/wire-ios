@@ -51,7 +51,7 @@ final class ConversationRootViewController: UIViewController {
         conversation: ZMConversation,
         message: ZMConversationMessage?,
         userSession: UserSession,
-        mainCoordinator: any MainCoordinatorProtocol,
+        mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>,
         mediaPlaybackManager: MediaPlaybackManager?
     ) {
         let conversationController = ConversationViewController(

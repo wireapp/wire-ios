@@ -27,6 +27,12 @@ final class SidebarModel: ObservableObject {
     @Published var wireAccentColorMapping: WireAccentColorMapping?
     @Published var wireTextStyleMapping: WireTextStyleMapping?
     @Published var sidebarBackgroundColor: UIColor = .systemGray5
+    @Published var sidebarAccountInfoViewDisplayNameColor: UIColor = .darkText
+    @Published var sidebarAccountInfoViewUsernameColor: UIColor = .systemGray
+    @Published var sidebarMenuItemTitleForegroundColor: UIColor = .darkText
+    @Published var sidebarMenuItemLinkIconForegroundColor: UIColor = .systemGray
+    @Published var sidebarMenuItemIsPressedTitleForegroundColor: UIColor = .systemBlue
+
     @Published var accountInfo = SidebarAccountInfo()
     @Published var selectedMenuItem: SidebarSelectableMenuItem = .all {
         didSet { menuItemAction(selectedMenuItem) }

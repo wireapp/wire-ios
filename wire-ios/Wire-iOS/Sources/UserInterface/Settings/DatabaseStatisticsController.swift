@@ -20,6 +20,7 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
+
 final class DatabaseStatisticsController: UIViewController {
 
     let stackView = UIStackView()
@@ -27,6 +28,9 @@ final class DatabaseStatisticsController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        view.backgroundColor = ColorTheme.Backgrounds.background
+
         stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.spacing = 15
@@ -36,14 +40,12 @@ final class DatabaseStatisticsController: UIViewController {
         stackView.addArrangedSubview(spinner)
         spinner.startAnimating()
 
-        edgesForExtendedLayout = []
-
         view.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-          stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-          stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
 
