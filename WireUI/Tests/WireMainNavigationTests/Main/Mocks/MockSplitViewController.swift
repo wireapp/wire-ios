@@ -64,7 +64,5 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
         fatalError("mock method not implemented")
     }
 
-    func hideSidebar() {
-        fatalError("mock method not implemented")
-    }
+    func hideSidebar() {}
 }

@@ -18,6 +18,8 @@
 
 import UIKit
 
+public typealias MainCoordinator = GenericMainCoordinator
+
 // swiftlint:disable opening_brace
 
 /// Manages the main navigation and the layout changes of the application after a successful login.
@@ -31,7 +33,7 @@ import UIKit
 /// instances and then put or remove the content view controllers into/from `viewControllers` array.
 
 @MainActor
-public final class MainCoordinator< // TODO: rename GenericMainCoordinator?
+public final class GenericMainCoordinator<
 
     SplitViewController: MainSplitViewControllerProtocol,
     ConversationBuilder: MainConversationBuilderProtocol,
