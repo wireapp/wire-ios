@@ -192,10 +192,6 @@ final class ZClientViewController: UIViewController {
         AVSMediaManager.sharedInstance().unregisterMedia(mediaPlaybackManager)
     }
 
-    private func restoreStartupState() {
-        attemptToPresentInitialConversation()
-    }
-
     @discardableResult
     private func attemptToPresentInitialConversation() -> Bool {
         var stateRestored = false
@@ -227,8 +223,8 @@ final class ZClientViewController: UIViewController {
 
         setupSplitViewController()
 
-        // TODO: enable
-        // restoreStartupState()
+        // TODO: [WPB-11449] fix if needed
+        // attemptToPresentInitialConversation()
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
