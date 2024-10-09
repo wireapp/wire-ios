@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *MLS Migration* feature.
 
-public struct MLSMigrationFeatureConfig: Equatable, Codable {
+public struct MLSMigrationFeatureConfig: Equatable, Codable, Sendable {
 
     /// The feature's status.
 

@@ -57,9 +57,6 @@
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Tests/TestsPlans/IntegrationTests.xctestplan">
-         </TestPlanReference>
-         <TestPlanReference
             reference = "container:Tests/TestsPlans/SecurityTests.xctestplan">
          </TestPlanReference>
       </TestPlans>
