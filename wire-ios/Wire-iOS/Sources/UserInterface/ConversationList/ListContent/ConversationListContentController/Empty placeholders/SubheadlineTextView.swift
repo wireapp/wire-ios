@@ -16,24 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
 import UIKit
+import WireFoundation
 
-// This subclass is used for the legal text in the Welcome screen and the reset password text in the login screen
-// Purpose of this class is to reduce the amount of duplicate code to set the default properties of this NSTextView.
-// On the Mac client we are using something similar to also stop the user from being able to select the text
-// (selection property needs to be enabled to make the NSLinkAttribute work on the string). We may want to add this
-// in the future here as well
-
-final class WebLinkTextView: UITextView {
-
-    init() {
-        super.init(frame: .zero, textContainer: nil)
-
-        textDragDelegate = self
-
-        setup()
-    }
+final class SubheadlineTextView: UITextView {
 
     init(
         attributedText: NSAttributedString,
@@ -42,12 +28,17 @@ final class WebLinkTextView: UITextView {
     ) {
         super.init(frame: .zero, textContainer: nil)
 
-        setup()
         self.attributedText = attributedText
-        textColor = color
-        font = .font(for: style)
-        adjustsFontForContentSizeCategory = true
+        self.textColor = color
+        self.font = .font(for: style)
+        configure()
+    }
 
+    private func configure() {
+        adjustsFontForContentSizeCategory = true
+        isScrollEnabled = false
+        bounces = false
+        backgroundColor = UIColor.clear
         linkTextAttributes = [
             .underlineStyle: NSUnderlineStyle.single.rawValue
         ]
@@ -58,22 +49,13 @@ final class WebLinkTextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setup() {
-        isScrollEnabled = false
-        bounces = false
-        backgroundColor = UIColor.clear
-        textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        textContainer.lineFragmentPadding = 0
-        accessibilityTraits = .link
-    }
-
     /// non-selectable textview
     override var selectedTextRange: UITextRange? {
         get { return nil }
         set { /* no-op */ }
     }
 
-    // Prevent double-tap to select 
+    // Prevent double-tap to select
     override var canBecomeFirstResponder: Bool {
         return false
     }
@@ -86,12 +68,4 @@ final class WebLinkTextView: UITextView {
 
         super.addGestureRecognizer(gestureRecognizer)
     }
-}
-
-extension WebLinkTextView: UITextDragDelegate {
-
-    func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
-        return []
-    }
-
 }

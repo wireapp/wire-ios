@@ -19,6 +19,7 @@
 import DifferenceKit
 import UIKit
 import WireConversationList
+import WireFoundation
 import WireDataModel
 import WireDesign
 import WireMainNavigation
@@ -156,38 +157,36 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func setupEmptyPlaceholder() {
+        emptyPlaceholderView = BaseEmptyPlaceholderView(
+            title: listViewModel.emptyPlaceholderForSelectedFilter.headline,
+            description: listViewModel.emptyPlaceholderForSelectedFilter.subheadline)
+        let arrowImageView = UIImageView()
+        arrowImageView.image = UIImage(resource: .ConversationList.arrow)
+        arrowImageView.contentMode = .scaleAspectFit
 
-        let titleLabel = DynamicFontLabel(
-            text: listViewModel.emptyPlaceholderForFilters.headline,
-            style: .h2,
-            color: SemanticColors.Label.textDefault
-        )
-        titleLabel.textAlignment = .center
-
-        let descriptionLabel = DynamicFontLabel(
-            text: listViewModel.emptyPlaceholderForFilters.subheadline,
-            style: .body1,
-            color: SemanticColors.Label.baseSecondaryText
-        )
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.textAlignment = .center
-
-        emptyPlaceholderView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
-        emptyPlaceholderView.axis = .vertical
-        emptyPlaceholderView.spacing = 10
-        emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(emptyPlaceholderView)
-        NSLayoutConstraint.activate([
+        view.addSubview(arrowImageView)
+        arrowImageView.translatesAutoresizingMaskIntoConstraints = false
 
+        NSLayoutConstraint.activate([
             emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            emptyPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
-            emptyPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptyPlaceholderView.trailingAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyPlaceholderView.bottomAnchor, multiplier: 1),
+//            emptyPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
+//            emptyPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
+//            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptyPlaceholderView.trailingAnchor, multiplier: 1),
+//            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyPlaceholderView.bottomAnchor, multiplier: 1),
 
             emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
+            //arrowImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+//            arrowImageView.bottomAnchor.constraint(equalTo: emptyPlaceholderView.topAnchor)
+
+        ])
+
+        NSLayoutConstraint.activate([
+            arrowImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            arrowImageView.bottomAnchor.constraint(equalTo: emptyPlaceholderView.topAnchor, constant: -20),
+            arrowImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
     }
 

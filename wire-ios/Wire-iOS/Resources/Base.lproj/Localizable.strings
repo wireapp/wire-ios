@@ -143,7 +143,8 @@
 // Conversation List - Empty states
 "conversation_list.empty_placeholder.all.headline" = "Welcome";
 "conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
-"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.\n\n[How to label conversations as favorites](%@)";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 

@@ -52,6 +52,9 @@
 		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		0622D6A2265B38DE00D759DB /* UserBlockingReasonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */; };
+		06231BD62CB6AD5D00BFCFE3 /* ConversationListViewModel+EmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06231BD52CB6AD5D00BFCFE3 /* ConversationListViewModel+EmptyState.swift */; };
+		06231BD92CB6C79A00BFCFE3 /* SubheadlineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06231BD82CB6C79A00BFCFE3 /* SubheadlineTextView.swift */; };
+		06231BDB2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06231BDA2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift */; };
 		0630E4C42580469300C75BFB /* AppLockChangeWarningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */; };
 		06379687296491C000674AAA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06379686296491C000674AAA /* Images.xcassets */; };
 		064AD4C425DD31A600143D74 /* UIApplication+OpenURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */; };
@@ -2047,6 +2050,9 @@
 		061EF88E2797F74800584C53 /* SettingsCopyButtonCellDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCopyButtonCellDescriptor.swift; sourceTree = "<group>"; };
 		061F34152B1A4F360099CBAB /* OAuthUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthUseCase.swift; sourceTree = "<group>"; };
 		0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBlockingReasonCell.swift; sourceTree = "<group>"; };
+		06231BD52CB6AD5D00BFCFE3 /* ConversationListViewModel+EmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewModel+EmptyState.swift"; sourceTree = "<group>"; };
+		06231BD82CB6C79A00BFCFE3 /* SubheadlineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubheadlineTextView.swift; sourceTree = "<group>"; };
+		06231BDA2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEmptyPlaceholderView.swift; sourceTree = "<group>"; };
 		0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockChangeWarningViewController.swift; sourceTree = "<group>"; };
 		06379686296491C000674AAA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+OpenURL.swift"; sourceTree = "<group>"; };
@@ -4074,6 +4080,15 @@
 				06ADE9DE2BBD65E2008BA0B3 /* UIAlertController+RevokedCertificate.swift */,
 			);
 			path = E2EIdentity;
+			sourceTree = "<group>";
+		};
+		06231BD72CB6AE7D00BFCFE3 /* Empty placeholders */ = {
+			isa = PBXGroup;
+			children = (
+				06231BD82CB6C79A00BFCFE3 /* SubheadlineTextView.swift */,
+				06231BDA2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift */,
+			);
+			path = "Empty placeholders";
 			sourceTree = "<group>";
 		};
 		0630E4C22580467300C75BFB /* Warning */ = {
@@ -6327,6 +6342,7 @@
 			children = (
 				EF4265882333BA7500DDAD0A /* ConversationListViewModel.swift */,
 				EF42658A2333DB9800DDAD0A /* ConversationListViewModelDelegate.swift */,
+				06231BD52CB6AD5D00BFCFE3 /* ConversationListViewModel+EmptyState.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -8141,6 +8157,7 @@
 		EF26EBD923322EAD001EB65A /* ConversationListContentController */ = {
 			isa = PBXGroup;
 			children = (
+				06231BD72CB6AE7D00BFCFE3 /* Empty placeholders */,
 				8F8914061A9F287E0056AB0C /* ViewModel */,
 				EF4C5D4F233A17680092CA38 /* ConversationListContentController.swift */,
 				EFEC285E233A6FF8007F47FF /* ConversationListHeaderView.swift */,
@@ -9570,6 +9587,7 @@
 				7CCA7CC2221AEC7B00A7CA2A /* ConversationDetailFooterView.swift in Sources */,
 				87DCF4E61D34EA4500BB420F /* ShareItemProvider.swift in Sources */,
 				BFE4186A209B6E3700503C7C /* UserImageViewContainer.swift in Sources */,
+				06231BD62CB6AD5D00BFCFE3 /* ConversationListViewModel+EmptyState.swift in Sources */,
 				EE378E3024BDE6210014118A /* CallGridViewControllerInput.swift in Sources */,
 				BA79B0A51B6284D900F23AFB /* SoundEventRulesWatchDog.swift in Sources */,
 				D3DA6E7E292FDEEA0045CC57 /* CallingActionButton.swift in Sources */,
@@ -10159,6 +10177,7 @@
 				7CED30721FD97748009F0DAC /* IconStringsBuilder.swift in Sources */,
 				E9B0DED42B5E7151006DC9E4 /* AccentColorPicker.swift in Sources */,
 				EFABC92420208D80001F9866 /* UIViewController+removeUserConfirmationUI.swift in Sources */,
+				06231BD92CB6C79A00BFCFE3 /* SubheadlineTextView.swift in Sources */,
 				5E35F7762181C49100D3F4FE /* ConversationSystemMessageCell.swift in Sources */,
 				F15650F221DD1B4100210504 /* UIFont+Weight.swift in Sources */,
 				63B7FB5227CFBAF50035087F /* BlacklistReason+BlockerViewControllerContext.swift in Sources */,
@@ -10264,6 +10283,7 @@
 				5E62802C222551CF0039A8AB /* IncomingRequestFooterView.swift in Sources */,
 				EF2F161E225748F100C44B88 /* ConnectRequestsCell.swift in Sources */,
 				0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */,
+				06231BDB2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift in Sources */,
 				A918330F2419272E00CBD0B7 /* TokenSeparatorAttachment.swift in Sources */,
 				5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */,
 				163495871F010F91004E80DB /* UnauthenticatedSession+Shared.swift in Sources */,

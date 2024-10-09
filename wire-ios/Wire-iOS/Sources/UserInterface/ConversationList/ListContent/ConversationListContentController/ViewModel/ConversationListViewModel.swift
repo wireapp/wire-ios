@@ -38,7 +38,7 @@ final class ConversationListViewModel: NSObject {
         didSet { reloadConversationList() }
     }
 
-    fileprivate struct Section: DifferentiableSection {
+    struct Section: DifferentiableSection {
 
         enum Kind: Equatable, Hashable {
 
@@ -215,7 +215,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     // Local copies of the lists.
-    private var sections: [Section] = []
+    var sections: [Section] = []
 
     private typealias DiffKitSection = ArraySection<Int, SectionItem>
 
@@ -278,7 +278,7 @@ final class ConversationListViewModel: NSObject {
 
     private var conversationDirectoryToken: Any?
 
-    private let userSession: UserSession?
+    let userSession: UserSession?
 
     init(userSession: UserSession) {
         self.userSession = userSession
@@ -721,31 +721,4 @@ extension ConversationListViewModel.Section: SearchableConversationContainer {
     mutating func removeConversation(at index: Int) {
         items.remove(at: index)
     }
-}
-
-// MARK: - Empty state
-
-extension ConversationListViewModel {
-
-    var isEmptyPlaceholderVisible: Bool {
-        let totalItems = sections.map { $0.items.count }.reduce(0, +)
-        return totalItems == 0
-    }
-
-    var emptyPlaceholderForFilters: (headline: String, subheadline: String) {
-        typealias EmptyPlaceholder = L10n.Localizable.ConversationList.EmptyPlaceholder
-
-        guard let selectedFilter else {
-            return (EmptyPlaceholder.All.headline + " 👋", EmptyPlaceholder.All.subheadline)
-        }
-        switch selectedFilter {
-        case .favorites:
-            return ("", EmptyPlaceholder.Favorite.subheadline(WireURLs.shared.howToAddConversationToYourFavourites))
-        case .groups:
-            return ("", EmptyPlaceholder.Group.subheadline)
-        case .oneOnOne:
-            return ("", EmptyPlaceholder.Oneonone.subheadline(userSession?.selfUser.domain ?? ""))
-        }
-    }
-
 }

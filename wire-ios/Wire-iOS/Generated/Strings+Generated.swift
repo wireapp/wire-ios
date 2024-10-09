@@ -2736,12 +2736,10 @@ internal enum L10n {
           internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.all.subheadline", fallback: "Connect with others or create a new group to start collaborating!")
         }
         internal enum Favorite {
+          /// How to label conversations as favorites
+          internal static let link = L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.link", fallback: "How to label conversations as favorites")
           /// Select your favorite conversations, and you’ll find them here.
-          /// 
-          /// [How to label conversations as favorites](%@)
-          internal static func subheadline(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.subheadline", String(describing: p1), fallback: "Select your favorite conversations, and you’ll find them here.\n\n[How to label conversations as favorites](%@)")
-          }
+          internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.subheadline", fallback: "Select your favorite conversations, and you’ll find them here.")
         }
         internal enum Group {
           /// You are not part of any group conversation yet.
