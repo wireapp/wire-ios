@@ -71,12 +71,6 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
-// no-op
-}
-
-func showNewsletterSubscriptionDialogIfNeeded(
-        completionHandler: @escaping ResultHandler
-    ) {
         // no-op
     }
 

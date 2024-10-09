@@ -472,16 +472,6 @@ final class ConversationListViewController: UIViewController {
 
     // MARK: - Presentation
 
-    /// Show the newsletter subscription dialog if needed
-    /// - Parameter completionHandler: The completion handler to be called after the dialog is shown
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        // TODO: fix <-
-        // UIAlertController.showNewsletterSubscriptionDialogIfNeeded(
-        //     presentViewController: self,
-        //     completionHandler: completionHandler
-        // )
-    }
-
     /// Select the inbox and focus on the view
     /// - Parameter focus: Boolean to indicate if the view should focus
     func selectInboxAndFocusOnView(focus: Bool) {
