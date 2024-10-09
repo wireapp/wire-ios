@@ -388,7 +388,8 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
                     self.collectionView.deselectItem(at: obj, animated: false)
                 }
             })
-            zClientViewController?.loadPlaceholderConversationController(animated: true)
+            // TODO: [WPB-11449] still needed? (iPhone and iPad)
+            // zClientViewController?.loadPlaceholderConversationController(animated: true)
             zClientViewController?.transitionToList(animated: true, completion: nil)
 
             return

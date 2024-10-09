@@ -59,9 +59,10 @@ final class ZClientViewController: UIViewController {
     }
 
     private(set) var conversationRootViewController: UIViewController?
-    // TODO [WPB-8778]: Check if this property is still needed
-    @available(*, deprecated, message: "might be deleted")
-    private(set) var currentConversation: ZMConversation?
+
+    var currentConversation: ZMConversation? {
+        conversationListViewController.selectedConversation
+    }
 
     weak var router: AuthenticatedRouterProtocol?
 
@@ -361,30 +362,13 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.show(.primary)
     }
 
-    private func pushContentViewController(
-        _ viewController: UIViewController? = nil,
-        focusOnView focus: Bool = false,
-        animated: Bool = false,
-        completion: Completion? = nil
-    ) {
-        // TODO: `focus` argument is not used
-        conversationRootViewController = viewController
-        let secondaryNavigationController = mainSplitViewController.viewController(for: .secondary) as! UINavigationController
-        secondaryNavigationController.setViewControllers([conversationRootViewController!], animated: false)
-    }
-
-    func loadPlaceholderConversationController(animated: Bool) {
-        // TODO: can this method be removed?
-        currentConversation = nil
-        pushContentViewController(focusOnView: false, animated: animated)
-    }
-
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
-        // TODO: can this method be removed?
-        currentConversation = nil
-
-        let inbox = ConnectRequestsViewController(userSession: userSession)
-        pushContentViewController(inbox.wrapInNavigationController(), focusOnView: focus, animated: animated)
+        // TODO: [WPB-11449] check if this flow works
+        let connectRequests = ConnectRequestsViewController(userSession: userSession)
+        let navigationController = UINavigationController(rootViewController: connectRequests)
+        Task {
+            await mainCoordinator.presentViewController(navigationController)
+        }
     }
 
     /// Open the user clients detail screen
@@ -446,19 +430,11 @@ final class ZClientViewController: UIViewController {
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
 
     private func reloadCurrentConversation() {
-        // TODO: what is this method needed for?
         guard let currentConversation else { return }
 
-        let currentConversationViewController = ConversationRootViewController(
-            conversation: currentConversation,
-            message: nil,
-            userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
-            mediaPlaybackManager: mediaPlaybackManager
-        )
-
-        // Need to reload conversation to apply color scheme changes
-        pushContentViewController(currentConversationViewController)
+        Task {
+            await mainCoordinator.showConversation(conversation: currentConversation, message: nil)
+        }
     }
 
     // MARK: - Debug logging notifications
@@ -488,6 +464,7 @@ final class ZClientViewController: UIViewController {
     /// - Returns: In the first case, YES is returned, otherwise NO.
     @discardableResult
     private func attemptToLoadLastViewedConversation(withFocus focus: Bool, animated: Bool) -> Bool {
+        // TODO: [WPB-11449] check if needed
 
         if let currentAccount = SessionManager.shared?.accountManager.selectedAccount {
             if let conversation = Settings.shared.lastViewedConversation(for: currentAccount) {
@@ -503,24 +480,8 @@ final class ZClientViewController: UIViewController {
             return true
 
         } else {
-            selectListItemWhenNoPreviousItemSelected()
+            // selectListItemWhenNoPreviousItemSelected()
             return false
-        }
-    }
-
-    /**
-     * This handles the case where we have to select a list item on startup but there is no previous item saved
-     */
-    func selectListItemWhenNoPreviousItemSelected() {
-        // check for conversations and pick the first one.. this can be tricky if there are pending updates and
-        // we haven't synced yet, but for now we just pick the current first item
-        let list = userSession.conversationList().items
-
-        if let conversation = list.first {
-            // select the first conversation and don't focus on it
-            select(conversation: conversation)
-        } else {
-            loadPlaceholderConversationController(animated: true)
         }
     }
 

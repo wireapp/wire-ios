@@ -115,4 +115,9 @@ ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSett
     func presentViewController(_ viewController: UIViewController) async {
         await mainCoordinator.presentViewController(viewController)
     }
+
+    @MainActor
+    func dismissPresentedViewController() async {
+        await mainCoordinator.dismissPresentedViewController()
+    }
 }
