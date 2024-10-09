@@ -20,6 +20,8 @@ import UIKit
 
 @testable import WireMainNavigation
 
+// swiftlint:disable opening_brace
+
 struct MockConversationBuilder: MainConversationBuilderProtocol {
     typealias ConversationList = PreviewConversationListViewController
     typealias SettingsBuilder = MockSettingsViewControllerBuilder
@@ -38,7 +40,10 @@ struct MockConversationBuilder: MainConversationBuilderProtocol {
         MainCoordinator.SettingsContentBuilder == SettingsBuilder,
         MainCoordinator.ConversationModel == Conversation.ConversationModel,
         MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
-        MainCoordinator.User == User {
+        MainCoordinator.User == User
+    {
         .init()
     }
 }
+
+// swiftlint:enable opening_brace
