@@ -27,8 +27,8 @@ import WireMainNavigation
 import WireSidebar
 import WireSyncEngine
 
-// TODO: create bug ticket: after logging in and getting certificate, the account image is blank instead of showing initials
-// TODO: after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
+// TODO: [WPB-11449] after logging in and getting certificate, the account image is blank instead of showing initials
+// TODO: [WPB-11449] after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
 
 final class ZClientViewController: UIViewController {
 
@@ -243,8 +243,8 @@ final class ZClientViewController: UIViewController {
     private func setupSplitViewController() {
         let archive = ArchivedListViewController(userSession: userSession)
 
-        // TODO: the border color doesn't match on iPad 15
-        mainSplitViewController.borderColor = ColorTheme.Strokes.outline // TODO: is there a better approach than setting the value here?
+        // TODO: [WPB-11449] the border color doesn't match on iPad 15
+        mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationList = conversationListViewController
 
         mainTabBarController.archive = archive
