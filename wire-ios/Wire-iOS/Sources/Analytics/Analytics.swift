@@ -22,51 +22,9 @@ import WireSyncEngine
 
 final class Analytics: NSObject {
 
-    var provider: AnalyticsProvider?
-
     private var callingTracker: AnalyticsCallingTracker?
-    private var userObserverToken: Any?
 
     static var shared: Analytics!
-
-    required override init() {
-        provider = nil
-
-        super.init()
-
-        setupObserver()
-    }
-
-    private func setupObserver() {
-         NotificationCenter.default.addObserver(self, selector: #selector(userSessionDidBecomeAvailable(_:)), name: Notification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
-    }
-
-    @objc
-    private func userSessionDidBecomeAvailable(_ note: Notification?) {
-        callingTracker = AnalyticsCallingTracker(analytics: self)
-        selfUser = SelfUser.provider?.providedSelfUser
-    }
-
-    var selfUser: UserType? {
-        get {
-            return provider?.selfUser
-        }
-
-        set {
-            if let newValue {
-                let idProvider = AnalyticsIdentifierProvider(selfUser: newValue)
-                idProvider.setIdentifierIfNeeded()
-            }
-            provider?.selfUser = newValue
-
-            if let user = newValue, let userSession = ZMUserSession.shared() {
-                userObserverToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
-
-            } else {
-                userObserverToken = nil
-            }
-        }
-    }
 
     func tagEvent(_ event: String,
                   attributes: [String: Any]) {
@@ -86,32 +44,10 @@ extension Analytics: AnalyticsType {
         return nil
     }
 
-    /// Record an event with no attributes
-    func tagEvent(_ event: String) {
-        provider?.tagEvent(event, attributes: [:])
-    }
-
     /// Record an event with optional attributes.
     /// - Parameters:
     ///   - event: event to tag
     ///   - attributes: attributes of the event
     func tagEvent(_ event: String, attributes: [String: NSObject]) {
-        provider?.tagEvent(event, attributes: attributes)
     }
-}
-
-extension Analytics: UserObserving {
-
-    func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard
-            changeInfo.user.isSelfUser,
-            changeInfo.analyticsIdentifierChanged
-        else {
-            return
-        }
-
-        selfUser = nil
-        selfUser = changeInfo.user
-    }
-
 }

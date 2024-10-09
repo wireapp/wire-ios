@@ -465,7 +465,6 @@
 		BF10B58B1E6432ED00E7036E /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF10B58A1E6432ED00E7036E /* Message.swift */; };
 		BF10B5971E64591600E7036E /* AnalyticsType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF10B5951E64591600E7036E /* AnalyticsType.swift */; };
 		BF10B5981E64591600E7036E /* NSManagedObjectContext+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF10B5961E64591600E7036E /* NSManagedObjectContext+Analytics.swift */; };
-		BF10B59D1E645A3300E7036E /* Analytics+UnknownMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF10B59C1E645A3300E7036E /* Analytics+UnknownMessage.swift */; };
 		BF1B98041EC313C600DE033B /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B98031EC313C600DE033B /* Team.swift */; };
 		BF1B98071EC31A3C00DE033B /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B98061EC31A3C00DE033B /* Member.swift */; };
 		BF1B98091EC31A4200DE033B /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B98081EC31A4200DE033B /* Permissions.swift */; };
@@ -1411,7 +1410,6 @@
 		BF10B58A1E6432ED00E7036E /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		BF10B5951E64591600E7036E /* AnalyticsType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsType.swift; sourceTree = "<group>"; };
 		BF10B5961E64591600E7036E /* NSManagedObjectContext+Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Analytics.swift"; sourceTree = "<group>"; };
-		BF10B59C1E645A3300E7036E /* Analytics+UnknownMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+UnknownMessage.swift"; sourceTree = "<group>"; };
 		BF1B98031EC313C600DE033B /* Team.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
 		BF1B98061EC31A3C00DE033B /* Member.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		BF1B98081EC31A4200DE033B /* Permissions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
@@ -2434,7 +2432,6 @@
 		BF10B59E1E645A3A00E7036E /* Events */ = {
 			isa = PBXGroup;
 			children = (
-				BF10B59C1E645A3300E7036E /* Analytics+UnknownMessage.swift */,
 			);
 			name = Events;
 			sourceTree = "<group>";
@@ -4322,7 +4319,6 @@
 				16D68E971CEF2EC4003AB9E0 /* ZMFileMetadata.swift in Sources */,
 				BF421B2D1EF3F91D0079533A /* Team+Patches.swift in Sources */,
 				547E664B1F750E4A008CB1FA /* ZMConnection+Notification.swift in Sources */,
-				BF10B59D1E645A3300E7036E /* Analytics+UnknownMessage.swift in Sources */,
 				D5D10DA9203B161700145497 /* ZMConversation+AccessMode.swift in Sources */,
 				EE70612A2A72AB4600C9F351 /* ZMUser+SupportedProtocols.swift in Sources */,
 				0660FEBD2580E4A900F4C19F /* TransferApplockKeychain.swift in Sources */,
