@@ -852,7 +852,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         WaitingGroupTask(context: syncContext) { [self] in
             await fetchAndStoreFeatureConfig()
-            await calculateSelfProtocolsIfNeeded()
+            await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
         }
 
@@ -860,7 +860,12 @@ extension ZMUserSession: ZMSyncStateDelegate {
         performPostQuickSyncE2EIActions()
     }
 
-    private func calculateSelfProtocolsIfNeeded() async {
+    /// Calculate supported protocols for self user in case they are empty
+    /// - note: Supported protocols are calculated only during slow sync
+    /// or while resolving 1-1 conversations (MLS enabled).
+    /// It fixes users that updates to latest version without having a supported-protocol.
+    /// This could be removed once MLS is enabled.
+    private func calculateSelfSupportedProtocolsIfNeeded() async {
         await syncContext.perform { [syncContext] in
             let service = SupportedProtocolsService(context: syncContext)
             let selfUser = ZMUser.selfUser(in: syncContext)
