@@ -31,7 +31,7 @@ import UIKit
 /// instances and then put or remove the content view controllers into/from `viewControllers` array.
 
 @MainActor
-public final class MainCoordinator<
+public final class MainCoordinator< // TODO: rename GenericMainCoordinator?
 
     SplitViewController: MainSplitViewControllerProtocol,
     ConversationBuilder: MainConversationBuilderProtocol,

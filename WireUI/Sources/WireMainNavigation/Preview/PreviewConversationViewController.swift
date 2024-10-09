@@ -22,6 +22,8 @@ final class PreviewConversationViewController: UIHostingController<LabelView>, M
     struct ConversationModel {}
     struct ConversationMessageModel {}
 
+    var conversationModel: ConversationModel { .init() }
+
     // MARK: - Life Cycle
 
     convenience init() {

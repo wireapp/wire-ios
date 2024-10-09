@@ -41,6 +41,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         accountImageView?.accountImage = accountImage
 
+        // TODO: [WPB-11449] fix accessibilityIdentifier if needed
         if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(userName)
             accountImageView?.accessibilityIdentifier = .none
@@ -62,8 +63,6 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         accountImageView.accountImage = viewModel.accountImage
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.accessibilityTraits = .button
-        // TODO: [WPB-11449] fix accessibility
-        // accountImageView.accessibilityIdentifier =
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
         accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
