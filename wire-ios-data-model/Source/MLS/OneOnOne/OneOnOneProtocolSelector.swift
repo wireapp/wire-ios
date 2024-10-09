@@ -45,7 +45,13 @@ public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
 
         let commonProtocols = try await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
-            let selfProtocols = selfUser.supportedProtocols
+            var selfProtocols = selfUser.supportedProtocols
+            if selfProtocols.isEmpty {
+                // if self does not have a value because previous apiVersions
+                // or slow sync was never triggered with apiV5
+                // assume we support proteus
+                selfProtocols.insert(.proteus)
+            }
 
             guard let otherUser = ZMUser.fetch(with: id, in: context) else {
                 throw OneOnOneProtocolSelectorError.userNotFound
