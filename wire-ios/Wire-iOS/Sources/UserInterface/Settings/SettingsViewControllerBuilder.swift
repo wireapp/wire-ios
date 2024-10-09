@@ -79,7 +79,7 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
             isTeamMember: userSession.selfUser.isTeamMember,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false
-        ) as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap <-
+        ) as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
         return SettingsTableViewController(
             group: group,
             settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
@@ -93,7 +93,7 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
     private func buildOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-        let group = factory.optionsGroup as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap <-
+        let group = factory.optionsGroup as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
         return SettingsTableViewController(
             group: group,
             settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
@@ -103,7 +103,7 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
     private func buildAdvanced(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-        let group = factory.advancedGroup(userSession: userSession) as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap <-
+        let group = factory.advancedGroup(userSession: userSession) as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
         return SettingsTableViewController(
             group: group,
             settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
@@ -113,7 +113,7 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
     private func buildSupport(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-        let group = factory.helpSection() as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap <-
+        let group = factory.helpSection() as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
         return SettingsTableViewController(
             group: group,
             settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
@@ -123,7 +123,7 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
     private func buildAbout(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-        let group = factory.aboutSection() as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap <-
+        let group = factory.aboutSection() as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
         return SettingsTableViewController(
             group: group,
             settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
@@ -133,7 +133,7 @@ struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsC
     private func buildDeveloperOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-        let group = factory.developerGroup as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap <-
+        let group = factory.developerGroup as! SettingsGroupCellDescriptor // TODO: try to remove force-unwrap
         return SettingsTableViewController(
             group: group,
             settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)

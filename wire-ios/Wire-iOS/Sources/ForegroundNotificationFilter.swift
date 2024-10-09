@@ -62,7 +62,7 @@ extension ForegroundNotificationFilter: ForegroundNotificationResponder {
         // conversation view is visible for another conversation
         guard
             let convID = userInfo.conversationID,
-            convID != clientVC.currentConversation?.remoteIdentifier // TODO: offer a way to know which conversation is shown <-
+            convID != clientVC.currentConversation?.remoteIdentifier // TODO: offer a way to know which conversation is shown
         else {
             return false
         }

@@ -38,7 +38,7 @@ extension StartUIViewController {
         button.titleLabel?.font = UIFont.font(for: .h3)
 
         let action = UIAction { [weak self] _ in
-            self?.createGroup() // TODO: use main coordinator
+            self?.createGroup() // TODO: use mainCoordinator
         }
         button.addAction(action, for: .touchUpInside)
 

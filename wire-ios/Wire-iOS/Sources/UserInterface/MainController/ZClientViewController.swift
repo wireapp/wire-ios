@@ -27,8 +27,8 @@ import WireMainNavigation
 import WireSidebar
 import WireSyncEngine
 
-// TODO: create bug ticket: after logging in and getting certificate, the account image is blank instead of showing initials <-
-// TODO: after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded) <-
+// TODO: create bug ticket: after logging in and getting certificate, the account image is blank instead of showing initials
+// TODO: after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
 
 final class ZClientViewController: UIViewController {
 
@@ -226,7 +226,7 @@ final class ZClientViewController: UIViewController {
 
         setupSplitViewController()
 
-        // TODO: enable <-
+        // TODO: enable
         // restoreStartupState()
 
         if Bundle.developerModeEnabled {
@@ -246,8 +246,8 @@ final class ZClientViewController: UIViewController {
     private func setupSplitViewController() {
         let archive = ArchivedListViewController(userSession: userSession)
 
-        // TODO: the border color doesn't match on iPad 15 <-
-        mainSplitViewController.borderColor = ColorTheme.Strokes.outline // TODO: is there a better approach than setting the value here? <-
+        // TODO: the border color doesn't match on iPad 15
+        mainSplitViewController.borderColor = ColorTheme.Strokes.outline // TODO: is there a better approach than setting the value here?
         mainSplitViewController.conversationList = conversationListViewController
 
         mainTabBarController.archive = archive
@@ -367,20 +367,20 @@ final class ZClientViewController: UIViewController {
         animated: Bool = false,
         completion: Completion? = nil
     ) {
-        // TODO: `focus` argument is not used <-
+        // TODO: `focus` argument is not used
         conversationRootViewController = viewController
         let secondaryNavigationController = mainSplitViewController.viewController(for: .secondary) as! UINavigationController
         secondaryNavigationController.setViewControllers([conversationRootViewController!], animated: false)
     }
 
     func loadPlaceholderConversationController(animated: Bool) {
-        // TODO: can this method be removed? <-
+        // TODO: can this method be removed?
         currentConversation = nil
         pushContentViewController(focusOnView: false, animated: animated)
     }
 
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
-        // TODO: can this method be removed? <-
+        // TODO: can this method be removed?
         currentConversation = nil
 
         let inbox = ConnectRequestsViewController(userSession: userSession)
@@ -446,7 +446,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
 
     private func reloadCurrentConversation() {
-        // TODO: what is this method needed for? <-
+        // TODO: what is this method needed for?
         guard let currentConversation else { return }
 
         let currentConversationViewController = ConversationRootViewController(
@@ -547,7 +547,7 @@ final class ZClientViewController: UIViewController {
 
     func transitionToList(animated: Bool,
                           leftViewControllerRevealed: Bool = true,
-                          completion: Completion?) { // TODO: still used?
+                          completion: Completion?) { // TODO: is this still used?
         let action: Completion = { [weak self] in
             self?.mainSplitViewController.show(leftViewControllerRevealed ? .primary : .secondary)
             completion?()
@@ -667,7 +667,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) { // TODO: use main coordinator
+    func openClientListScreen(for user: UserType) { // TODO: use mainCoordinator
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
@@ -703,7 +703,7 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    func showConversationList() { // TODO: use main coordinator
+    func showConversationList() { // TODO: use mainCoordinator
         transitionToList(animated: true, completion: nil)
     }
 
@@ -721,7 +721,7 @@ final class ZClientViewController: UIViewController {
         scrollTo message: ZMConversationMessage? = nil,
         focusOnView focus: Bool,
         animated: Bool
-    ) { // TODO: use main coordinator
+    ) { // TODO: use mainCoordinator
         dismissAllModalControllers { [weak self] in
             guard
                 let self,

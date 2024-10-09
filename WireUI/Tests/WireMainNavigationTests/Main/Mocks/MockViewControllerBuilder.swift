@@ -32,12 +32,12 @@ struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator
     ) -> UIViewController where
-    MainCoordinator : MainCoordinatorProtocol,
-    MockConversationListViewController == MainCoordinator.ConversationList,
-    Conversation.ConversationMessageModel == MainCoordinator.ConversationMessageModel,
-    Conversation.ConversationModel == MainCoordinator.ConversationModel,
-    MockSettingsViewControllerBuilder == MainCoordinator.SettingsContentBuilder,
-    MockUserProfileViewControllerBuilder.User == MainCoordinator.User {
+        MainCoordinator: MainCoordinatorProtocol,
+        MockConversationListViewController == MainCoordinator.ConversationList,
+        Conversation.ConversationMessageModel == MainCoordinator.ConversationMessageModel,
+        Conversation.ConversationModel == MainCoordinator.ConversationModel,
+        MockSettingsViewControllerBuilder == MainCoordinator.SettingsContentBuilder,
+        MockUserProfileViewControllerBuilder.User == MainCoordinator.User {
         .init()
     }
 }

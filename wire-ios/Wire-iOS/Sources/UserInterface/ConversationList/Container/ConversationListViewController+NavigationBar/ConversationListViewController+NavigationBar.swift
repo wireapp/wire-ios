@@ -231,7 +231,6 @@ extension ConversationListViewController {
 
     func setupRightNavigationBarButtons_SplitView() {
 
-        // TODO: start conversation
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
         // TODO: [WPB-11449] fix accessibility
