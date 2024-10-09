@@ -231,6 +231,7 @@ extension ConversationListViewController {
 
     func setupRightNavigationBarButtons_SplitView() {
 
+        // TODO: start conversation
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
         // TODO: [WPB-11449] fix accessibility
@@ -238,7 +239,7 @@ extension ConversationListViewController {
         // newConversationBarButton.accessibilityLabel =
         newConversationBarButton.addAction(.init { [weak self] _ in
             Task {
-                await self?.mainCoordinator.showConnect()
+                await self?.mainCoordinator.showCreateGroupConversation()
             }
         }, for: .primaryActionTriggered)
         newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem

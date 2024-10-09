@@ -55,6 +55,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func showUserProfile(user: User) async
     @MainActor
     func showConnect() async
+    @MainActor
+    func showCreateGroupConversation() async
 
     @MainActor
     func presentViewController(_ viewController: UIViewController) async

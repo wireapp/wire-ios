@@ -72,6 +72,10 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
+    func showCreateGroupConversation() async {
+        fatalError("Mock method not implemented")
+    }
+
     func presentViewController(_ viewController: UIViewController) async {
         fatalError("Mock method not implemented")
     }

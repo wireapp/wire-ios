@@ -37,6 +37,7 @@ public final class MainCoordinator<
     ConversationBuilder: MainConversationBuilderProtocol,
     SettingsContentBuilder: MainSettingsContentBuilderProtocol,
     ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder,
+    CreateGroupConversationBuilder: MainCoordinatorInjectingViewControllerBuilder,
     SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder,
     UserProfileBuilder: MainUserProfileBuilderProtocol
 
@@ -52,6 +53,12 @@ public final class MainCoordinator<
     ConnectBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
     ConnectBuilder.SettingsBuilder == SettingsContentBuilder,
     ConnectBuilder.User == UserProfileBuilder.User,
+
+    CreateGroupConversationBuilder.ConversationList == SplitViewController.ConversationList,
+    CreateGroupConversationBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
+    CreateGroupConversationBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
+    CreateGroupConversationBuilder.SettingsBuilder == SettingsContentBuilder,
+    CreateGroupConversationBuilder.User == UserProfileBuilder.User,
 
     SelfProfileBuilder.ConversationList == SplitViewController.ConversationList,
     SelfProfileBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
@@ -86,6 +93,8 @@ public final class MainCoordinator<
 
     private let connectBuilder: ConnectBuilder
     private weak var connect: Connect?
+
+    private let createGroupConversationBuilder: CreateGroupConversationBuilder
 
     private var selfProfileBuilder: SelfProfileBuilder
     private weak var selfProfile: SelfProfile?
@@ -129,6 +138,7 @@ public final class MainCoordinator<
         conversationBuilder: ConversationBuilder,
         settingsContentBuilder: SettingsContentBuilder,
         connectBuilder: ConnectBuilder,
+        createGroupConversationBuilder: CreateGroupConversationBuilder,
         selfProfileBuilder: SelfProfileBuilder,
         userProfileBuilder: UserProfileBuilder
     ) {
@@ -137,6 +147,7 @@ public final class MainCoordinator<
         self.conversationBuilder = conversationBuilder
         self.settingsContentBuilder = settingsContentBuilder
         self.connectBuilder = connectBuilder
+        self.createGroupConversationBuilder = createGroupConversationBuilder
         self.selfProfileBuilder = selfProfileBuilder
         self.userProfileBuilder = userProfileBuilder
 
@@ -340,9 +351,17 @@ public final class MainCoordinator<
         let connect = connectBuilder.build(mainCoordinator: self)
         connect.modalPresentationStyle = .formSheet
         self.connect = connect
-
-        await dismissPresentedViewControllerIfNeeded()
         await presentViewController(connect)
+    }
+
+    public func showCreateGroupConversation() async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        let createGroupConversation = createGroupConversationBuilder.build(mainCoordinator: self)
+        createGroupConversation.modalPresentationStyle = .formSheet
+        await presentViewController(createGroupConversation)
     }
 
     public func presentViewController(_ viewController: UIViewController) async {

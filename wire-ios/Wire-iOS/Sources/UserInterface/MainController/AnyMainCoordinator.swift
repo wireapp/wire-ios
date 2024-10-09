@@ -107,6 +107,11 @@ ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSett
     }
 
     @MainActor
+    func showCreateGroupConversation() async {
+        await mainCoordinator.showCreateGroupConversation()
+    }
+
+    @MainActor
     func presentViewController(_ viewController: UIViewController) async {
         await mainCoordinator.presentViewController(viewController)
     }

@@ -45,6 +45,7 @@ final class ZClientViewController: UIViewController {
         ConversationViewControllerBuilder,
         SettingsViewControllerBuilder,
         StartUIViewControllerBuilder,
+        CreateGroupConversationViewControllerBuilder,
         SelfProfileViewControllerBuilder,
         UserProfileViewControllerBuilder
     >
@@ -97,6 +98,8 @@ final class ZClientViewController: UIViewController {
         )
     }
 
+    private lazy var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
+    private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(userSession: userSession)
     private lazy var userProfileViewControllerBuilder = UserProfileViewControllerBuilder(userSession: userSession)
 
     private lazy var conversationListViewController = ConversationListViewController(
@@ -122,20 +125,16 @@ final class ZClientViewController: UIViewController {
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
 
-    private(set) lazy var mainCoordinator = {
-        var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
-        let mainCoordinator = MainCoordinator(
-            mainSplitViewController: mainSplitViewController,
-            mainTabBarController: mainTabBarController,
-            conversationBuilder: conversationViewControllerBuilder,
-            settingsContentBuilder: settingsViewControllerBuilder,
-            connectBuilder: connectBuilder,
-            selfProfileBuilder: selfProfileViewControllerBuilder,
-            userProfileBuilder: userProfileViewControllerBuilder
-        )
-        connectBuilder.delegate = mainCoordinator
-        return mainCoordinator
-    }()
+    private(set) lazy var mainCoordinator = MainCoordinator(
+        mainSplitViewController: mainSplitViewController,
+        mainTabBarController: mainTabBarController,
+        conversationBuilder: conversationViewControllerBuilder,
+        settingsContentBuilder: settingsViewControllerBuilder,
+        connectBuilder: connectBuilder,
+        createGroupConversationBuilder: createGroupConversationBuilder,
+        selfProfileBuilder: selfProfileViewControllerBuilder,
+        userProfileBuilder: userProfileViewControllerBuilder
+    )
 
     /// init method for testing allows injecting an Account object and self user
     required init(
@@ -259,6 +258,8 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.delegate = mainCoordinator
         archive.delegate = mainCoordinator
         userProfileViewControllerBuilder.delegate = mainCoordinator
+        connectBuilder.delegate = mainCoordinator
+        createGroupConversationBuilder.delegate = mainCoordinator
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
