@@ -23,5 +23,5 @@ public protocol MainConversationProtocol: UIViewController {
     associatedtype ConversationModel
     associatedtype ConversationMessageModel
 
-    var conversationModel: ConversationModel { get }
+    var conversationModel: ConversationModel! { get }
 }

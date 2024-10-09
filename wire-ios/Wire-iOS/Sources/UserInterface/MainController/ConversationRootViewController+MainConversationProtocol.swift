@@ -24,7 +24,7 @@ extension ConversationRootViewController: MainConversationProtocol {
     typealias ConversationModel = ZMConversation
     typealias ConversationMessageModel = ZMConversationMessage
 
-    var conversationModel: ZMConversation {
+    var conversationModel: ZMConversation! {
         conversationViewController!.conversation
     }
 }
