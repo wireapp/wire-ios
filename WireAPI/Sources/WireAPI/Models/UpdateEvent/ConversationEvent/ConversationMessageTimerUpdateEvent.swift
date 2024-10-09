@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the message timer of a conversation was updated.
 
-public struct ConversationMessageTimerUpdateEvent: Equatable, Codable {
+public struct ConversationMessageTimerUpdateEvent: Equatable, Codable, Sendable {
 
     /// The id of the conversation.
 

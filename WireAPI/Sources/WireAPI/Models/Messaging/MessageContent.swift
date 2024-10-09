@@ -21,7 +21,7 @@ import Foundation
 /// The contents of a message, typically as a base-64 encoded
 /// Protobuf string.
 
-public enum MessageContent: Equatable, Codable {
+public enum MessageContent: Equatable, Codable, Sendable {
 
     /// Encrypted message content.
 

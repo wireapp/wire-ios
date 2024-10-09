@@ -41,7 +41,7 @@ struct ConversationReceiptModeUpdateEventDecoder {
         return ConversationReceiptModeUpdateEvent(
             conversationID: conversationID,
             senderID: senderID,
-            newRecieptMode: payload.receiptMode
+            newReceiptMode: payload.receiptMode
         )
     }
 

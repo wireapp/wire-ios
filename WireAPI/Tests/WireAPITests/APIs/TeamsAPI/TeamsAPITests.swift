@@ -397,7 +397,7 @@ final class TeamsAPITests: XCTestCase {
             errorLabel: ""
         )
     }
-    
+
     private func internalTest_GetLegalhold_Failure(
         expectedError: any Error & Equatable,
         for apiVersion: APIVersion,
@@ -409,7 +409,7 @@ final class TeamsAPITests: XCTestCase {
         // Given
         let httpClient = try HTTPClientMock(code: code, errorLabel: errorLabel)
         let sut = apiVersion.buildAPI(client: httpClient)
-        
+
         // Then
         await XCTAssertThrowsError(expectedError) {
             // When

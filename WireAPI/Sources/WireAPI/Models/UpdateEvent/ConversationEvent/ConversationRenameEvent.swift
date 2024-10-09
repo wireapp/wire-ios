@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the conversation's name was changed.
 
-public struct ConversationRenameEvent: Equatable, Codable {
+public struct ConversationRenameEvent: Equatable, Codable, Sendable {
 
     /// The id of the conversation.
 

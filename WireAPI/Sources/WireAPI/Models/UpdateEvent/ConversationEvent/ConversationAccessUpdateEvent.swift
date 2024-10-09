@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the access settings of a conversation were updated.
 
-public struct ConversationAccessUpdateEvent: Equatable, Codable {
+public struct ConversationAccessUpdateEvent: Equatable, Codable, Sendable {
 
     /// The id of the conversation.
 
