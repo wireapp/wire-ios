@@ -52,6 +52,14 @@ final class ConversationListContentController: UICollectionViewController {
 
     let userSession: UserSession
 
+    let arrowImageView: UIImageView = {
+        let arrow = UIImageView()
+        arrow.image = UIImage(resource: .ConversationList.arrow)
+        arrow.contentMode = .scaleAspectFit
+        arrow.translatesAutoresizingMaskIntoConstraints = false
+        return arrow
+    }()
+
     init<ConversationListCoordinator>(
         userSession: UserSession,
         conversationListCoordinator: ConversationListCoordinator,
@@ -105,6 +113,10 @@ final class ConversationListContentController: UICollectionViewController {
         }
     }
 
+    override func viewDidLoad() {
+        setupEmptyPlaceholder()
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
@@ -126,9 +138,10 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.reloadData()
         ensureCurrentSelection() // not sure
 
-        setupEmptyPlaceholder() // ??
+        //setupEmptyPlaceholder() // ??
         emptyPlaceholderView.isHidden = !listViewModel.isEmptyPlaceholderVisible
-        
+        arrowImageView.isHidden = !listViewModel.isEmptyPlaceholderVisible
+
         // we MUST call layoutIfNeeded here because otherwise bad things happen when we close the archive, reload the conv
         // and then unarchive all at the same time
         view.layoutIfNeeded()
@@ -160,33 +173,19 @@ final class ConversationListContentController: UICollectionViewController {
         emptyPlaceholderView = BaseEmptyPlaceholderView(
             title: listViewModel.emptyPlaceholderForSelectedFilter.headline,
             description: listViewModel.emptyPlaceholderForSelectedFilter.subheadline)
-        let arrowImageView = UIImageView()
-        arrowImageView.image = UIImage(resource: .ConversationList.arrow)
-        arrowImageView.contentMode = .scaleAspectFit
 
         view.addSubview(emptyPlaceholderView)
         view.addSubview(arrowImageView)
-        arrowImageView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-//            emptyPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
-//            emptyPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
-//            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptyPlaceholderView.trailingAnchor, multiplier: 1),
-//            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyPlaceholderView.bottomAnchor, multiplier: 1),
-
-            emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
-            //arrowImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-//            arrowImageView.bottomAnchor.constraint(equalTo: emptyPlaceholderView.topAnchor)
-
-        ])
-
-        NSLayoutConstraint.activate([
-            arrowImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
+            arrowImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             arrowImageView.bottomAnchor.constraint(equalTo: emptyPlaceholderView.topAnchor, constant: -20),
             arrowImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+
         ])
     }
 
@@ -535,4 +534,9 @@ extension ConversationListContentController: ConversationListCellDelegate {
         startCallController = ConversationCallController(conversation: conversation, target: self)
         startCallController?.joinCall()
     }
+}
+
+extension ConversationListContentController {
+
+
 }

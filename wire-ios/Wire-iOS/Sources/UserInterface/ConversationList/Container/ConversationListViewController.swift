@@ -369,7 +369,11 @@ final class ConversationListViewController: UIViewController {
         searchController.searchBar.isTranslucent = false
         searchController.searchResultsUpdater = self
 
-        navigationItem.searchController = searchController
+        if !listContentController.listViewModel.isEmptyPlaceholderVisible {
+            navigationItem.searchController = searchController
+        } else {
+            navigationItem.searchController = nil
+        }
         if #available(iOS 16.0, *) {
             navigationItem.preferredSearchBarPlacement = .stacked
         }
@@ -424,14 +428,16 @@ final class ConversationListViewController: UIViewController {
     func applyFilter(_ filter: ConversationFilter) {
         self.listContentController.listViewModel.selectedFilter = filter //
         self.setupRightNavigationBarButtons()
+        self.setupSearchController()
 
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
-            filterContainerView.isHidden = false
+        filterContainerView.isHidden = self.listContentController.listViewModel.isEmptyPlaceholderVisible
     }
 
     func clearFilter() {
         listContentController.listViewModel.selectedFilter = .none //
         setupRightNavigationBarButtons()
+        setupSearchController()
         filterContainerView.isHidden = true
     }
 
