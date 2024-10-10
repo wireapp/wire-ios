@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireSidebar
 
-final class SidebarViewSnapshotTests: XCTestCase {
+final class SidebarViewControllerSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
