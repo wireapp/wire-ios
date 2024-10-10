@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [.iOS(.v15), .macOS(.v12)],
+    platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireDatadog", targets: ["WireDatadog"])

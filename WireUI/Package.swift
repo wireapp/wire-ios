@@ -9,7 +9,7 @@ let SnapshotTestReferenceDirectoryPlugin = Target.PluginUsage.plugin(name: "Snap
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
-    platforms: [.iOS(.v15), .macOS(.v12)],
+    platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
         .library(name: "WireAccountImage", targets: ["WireAccountImage"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
