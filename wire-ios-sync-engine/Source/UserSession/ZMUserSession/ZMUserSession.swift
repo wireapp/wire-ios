@@ -876,7 +876,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
     }
-    
+
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
         let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))

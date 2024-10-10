@@ -304,7 +304,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             results: [.success(())],
             context: syncMOC.notificationContext
         )
- 
+
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
         }
@@ -485,7 +485,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
     }
-    
+
     func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {
         self.syncMOC.performAndWait {
             // GIVEN
@@ -499,7 +499,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         // THEN
         let supportedProtocols = syncMOC.performAndWait { ZMUser.selfUser(in: self.syncMOC).supportedProtocols }
-        
+
         XCTAssertTrue(supportedProtocols.contains(.proteus))
     }
 }
