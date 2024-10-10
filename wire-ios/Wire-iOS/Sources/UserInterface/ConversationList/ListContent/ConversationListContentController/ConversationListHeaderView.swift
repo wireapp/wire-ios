@@ -73,7 +73,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
     private let titleLabel: UILabel = {
         let label = DynamicFontLabel(
-            fontSpec: .smallRegularFont,
+            style: .body2,
             color: .white)
         label.textColor = SemanticColors.Label.textDefault
         label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)

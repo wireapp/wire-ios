@@ -31,7 +31,7 @@ final class TextSearchInputView: UIView {
 
     let iconView = UIImageView()
     let searchInput = SearchTextView(style: .default)
-    let placeholderLabel = DynamicFontLabel(fontSpec: .body,
+    let placeholderLabel = DynamicFontLabel(style: .body1,
                                             color: SearchBarColors.textInputViewPlaceholder)
     let clearButton = IconButton(style: .default)
 

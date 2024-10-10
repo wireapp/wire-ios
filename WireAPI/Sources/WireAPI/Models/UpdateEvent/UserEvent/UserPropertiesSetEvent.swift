@@ -27,4 +27,8 @@ public struct UserPropertiesSetEvent: Equatable, Codable {
 
     public let property: UserProperty
 
+    public init(property: UserProperty) {
+        self.property = property
+    }
+
 }
