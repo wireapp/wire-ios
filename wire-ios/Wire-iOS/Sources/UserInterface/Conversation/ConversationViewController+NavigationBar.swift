@@ -117,26 +117,28 @@ extension ConversationViewController {
         let icon = backButtonIcon(hasUnreadInOtherConversations: hasUnread)
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
 
-        let button = UIBarButtonItem(icon: icon, target: self, action: action)
+        let button = UIButton(type: .system)
+        button.setImage(icon, for: .normal)
+        button.addTarget(self, action: action, for: .touchUpInside)
+        button.tintColor = hasUnread ? UIColor.accent() : SemanticColors.Icon.foregroundDefaultBlack
         button.accessibilityIdentifier = "ConversationBackButton"
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
-        button.tintColor = hasUnread ? UIColor.accent() : nil
         button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
 
-        return button
+        return UIBarButtonItem(customView: button)
     }
 
-    private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
-        var arrowIcon: StyleKitIcon
+    private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> UIImage {
+        var arrowIcon: UIImage
 
         if view.isRightToLeft {
-            arrowIcon = hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
+            arrowIcon = hasUnreadInOtherConversations ? .init(resource: .frontArrowWithDot) : .init(resource: .frontArrow)
         } else {
-            arrowIcon = hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
+            arrowIcon = hasUnreadInOtherConversations ? .init(resource: .backArrowWithDot) : .init(resource: .backArrow)
         }
 
         let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact
-        let icon: StyleKitIcon = isLayoutSizeCompact ? arrowIcon : .hamburger
+        let icon: UIImage = isLayoutSizeCompact ? arrowIcon :  UIImage(systemName: "sidebar.left") ?? UIImage()
 
         return icon
     }
