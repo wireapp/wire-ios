@@ -56,5 +56,9 @@ public extension WireLogger {
     static let network = WireLogger(tag: "network")
     static let eventProcessing = WireLogger(tag: "event-processing")
     static let messageProcessing = WireLogger(tag: "message-processing")
+<<<<<<< HEAD
     static let avs = WireLogger(tag: "avs")
+=======
+    static let supportedProtocols = WireLogger(tag: "supported-protocols")
+>>>>>>> 82be9e3494 (fix: cannot start conversation - WPB-11454 (#2008))
 }
