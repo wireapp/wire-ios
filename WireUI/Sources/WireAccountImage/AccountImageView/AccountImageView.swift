@@ -195,7 +195,7 @@ public final class AccountImageView: UIView {
         guard let accountImageViewWrapper = accountImageView.superview else { return }
 
         accountImageViewWrapper.layer.cornerRadius = if isTeamAccount {
-            teamAccountImageCornerRadius
+            teamAccountImageCornerRadius // TODO: [WPB-11449] is this even needed? We always show the user's image
         } else {
             accountImageViewWrapper.frame.height / 2
         }

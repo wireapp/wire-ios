@@ -18,6 +18,8 @@
 
 import UIKit
 
+public typealias MainCoordinator = GenericMainCoordinator
+
 // swiftlint:disable opening_brace
 
 /// Manages the main navigation and the layout changes of the application after a successful login.
@@ -31,7 +33,7 @@ import UIKit
 /// instances and then put or remove the content view controllers into/from `viewControllers` array.
 
 @MainActor
-public final class MainCoordinator<
+public final class GenericMainCoordinator<
 
     SplitViewController: MainSplitViewControllerProtocol,
     ConversationBuilder: MainConversationBuilderProtocol,
@@ -192,7 +194,7 @@ public final class MainCoordinator<
 
         dismissArchiveIfNeeded()
         dismissSettingsIfNeeded()
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
 
         // Move the conversation list from the tab bar controller to the split view controller if needed.
         if let conversationList = tabBarController.conversationList {
@@ -222,7 +224,7 @@ public final class MainCoordinator<
 
         dismissConversationListIfNeeded()
         dismissSettingsIfNeeded()
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
 
         // move the archive from the tab bar controller to the split view controller
         if let archive = tabBarController.archive {
@@ -243,7 +245,7 @@ public final class MainCoordinator<
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
 
         // move the settings from the tab bar controller to the split view controller
         if let settings = tabBarController.settings {
@@ -262,7 +264,7 @@ public final class MainCoordinator<
             splitViewController.hideSidebar()
         }
 
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
 
         let conversation = conversationBuilder.build(
             conversation: conversation,
@@ -320,7 +322,7 @@ public final class MainCoordinator<
         selfProfile.modalPresentationStyle = .formSheet
         self.selfProfile = selfProfile
 
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
         await withCheckedContinuation { continuation in
             splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
         }
@@ -369,7 +371,7 @@ public final class MainCoordinator<
             splitViewController.hideSidebar()
         }
 
-        await dismissPresentedViewControllerIfNeeded()
+        await dismissPresentedViewController()
         await withCheckedContinuation { continuation in
             splitViewController.present(viewController, animated: true, completion: continuation.resume)
         }
@@ -399,7 +401,7 @@ public final class MainCoordinator<
         }
     }
 
-    private func dismissPresentedViewControllerIfNeeded() async {
+    public func dismissPresentedViewController() async {
         await withCheckedContinuation { continuation in
             splitViewController.dismiss(animated: true, completion: continuation.resume)
         }

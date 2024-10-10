@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-
 final class DatabaseStatisticsController: UIViewController {
 
     let stackView = UIStackView()

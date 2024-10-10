@@ -38,7 +38,9 @@ extension StartUIViewController {
         button.titleLabel?.font = UIFont.font(for: .h3)
 
         let action = UIAction { [weak self] _ in
-            self?.createGroup() // TODO: use main coordinator
+            Task {
+                await self?.mainCoordinator.showCreateGroupConversation()
+            }
         }
         button.addAction(action, for: .touchUpInside)
 
@@ -54,10 +56,5 @@ extension StartUIViewController {
     func onDismiss() {
         _ = searchController.searchBar.resignFirstResponder()
         navigationController?.dismiss(animated: true)
-    }
-
-    @objc
-    private func createGroup() {
-        openCreateGroupController()
     }
 }

@@ -21,7 +21,8 @@ import WireFoundation
 
 public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
-    @Environment(\.sidebarBackgroundColor) private var sidebarBackgroundColor
+    @Environment(\.sidebarMenuHeaderForegroundColor) private var menuHeaderForegroundColor
+    @Environment(\.sidebarBackgroundColor) private var backgroundViewColor
 
     public var accountInfo: SidebarAccountInfo?
     @Binding public var selectedMenuItem: SidebarSelectableMenuItem
@@ -57,7 +58,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         ZStack {
             // background color
             Rectangle()
-                .foregroundStyle(sidebarBackgroundColor)
+                .foregroundStyle(backgroundViewColor)
                 .ignoresSafeArea()
 
             // content
@@ -123,6 +124,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     @ViewBuilder
     private func menuItemHeader(_ key: LocalizedStringKey, addTopPadding: Bool = true) -> some View {
         let text = Text(key, bundle: .module)
+            .foregroundStyle(menuHeaderForegroundColor)
             .wireTextStyle(.h2)
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
@@ -205,16 +207,37 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 // MARK: - View Modifiers + Environment
 
 extension View {
+    func sidebarMenuHeaderForegroundColor(_ headerForegroundColor: Color) -> some View {
+        modifier(SidebarMenuHeaderForegroundColorViewModifier(headerForegroundColor: headerForegroundColor))
+    }
+
     func sidebarBackgroundColor(_ sidebarBackgroundColor: Color) -> some View {
         modifier(SidebarBackgroundColorViewModifier(sidebarBackgroundColor: sidebarBackgroundColor))
     }
 }
 
 private extension EnvironmentValues {
+    var sidebarMenuHeaderForegroundColor: Color {
+        get { self[SidebarMenuHeaderForegroundColorKey.self] }
+        set { self[SidebarMenuHeaderForegroundColorKey.self] = newValue }
+    }
+
     var sidebarBackgroundColor: Color {
         get { self[SidebarBackgroundColorKey.self] }
         set { self[SidebarBackgroundColorKey.self] = newValue }
     }
+}
+
+struct SidebarMenuHeaderForegroundColorViewModifier: ViewModifier {
+    var headerForegroundColor: Color
+    func body(content: Content) -> some View {
+        content
+            .environment(\.sidebarMenuHeaderForegroundColor, headerForegroundColor)
+    }
+}
+
+private struct SidebarMenuHeaderForegroundColorKey: EnvironmentKey {
+    static let defaultValue = Color.primary
 }
 
 struct SidebarBackgroundColorViewModifier: ViewModifier {

@@ -69,6 +69,11 @@ public final class SidebarViewController: UIViewController {
         set { model.sidebarAccountInfoViewUsernameColor = newValue }
     }
 
+    public var sidebarMenuHeaderForegroundColor: UIColor {
+        get { model.sidebarMenuHeaderForegroundColor }
+        set { model.sidebarMenuHeaderForegroundColor = newValue }
+    }
+
     public var sidebarMenuItemTitleForegroundColor: UIColor {
         get { model.sidebarMenuItemTitleForegroundColor }
         set { model.sidebarMenuItemTitleForegroundColor = newValue }
@@ -79,9 +84,9 @@ public final class SidebarViewController: UIViewController {
         set { model.sidebarMenuItemLinkIconForegroundColor = newValue }
     }
 
-    public var sidebarMenuItemIsPressedTitleForegroundColor: UIColor {
-        get { model.sidebarMenuItemIsPressedTitleForegroundColor }
-        set { model.sidebarMenuItemIsPressedTitleForegroundColor = newValue }
+    public var sidebarMenuItemIsSelectedTitleForegroundColor: UIColor {
+        get { model.sidebarMenuItemIsSelectedTitleForegroundColor }
+        set { model.sidebarMenuItemIsSelectedTitleForegroundColor = newValue }
     }
 
     // MARK: - Private Properties
@@ -168,9 +173,10 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
         .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
         .sidebarAccountInfoViewDisplayNameColor(.init(uiColor: model.sidebarAccountInfoViewDisplayNameColor))
         .sidebarAccountInfoViewUsernameColor(.init(uiColor: model.sidebarAccountInfoViewUsernameColor))
+        .sidebarMenuHeaderForegroundColor(.init(uiColor: model.sidebarMenuHeaderForegroundColor))
         .sidebarMenuItemTitleForegroundColor(.init(uiColor: model.sidebarMenuItemTitleForegroundColor))
         .sidebarMenuItemLinkIconForegroundColor(.init(uiColor: model.sidebarMenuItemLinkIconForegroundColor))
-        .sidebarMenuItemIsPressedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsPressedTitleForegroundColor))
+        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsSelectedTitleForegroundColor))
         .environment(\.wireAccentColor, model.wireAccentColor)
         .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
         .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)

@@ -97,26 +97,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
         navigationController?.pushViewController(detail, animated: true)
     }
-
-    func openCreateGroupController() {
-        let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
-        controller.delegate = self
-
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-}
-
-extension StartUIViewController: ConversationCreationControllerDelegate {
-
-    func conversationCreationController(
-        _ controller: ConversationCreationController,
-        didCreateConversation conversation: ZMConversation
-    ) {
-        delegate?.startUIViewController(
-            self,
-            didSelect: conversation
-        )
-    }
 }
 
 extension StartUIViewController: EmptySearchResultsViewDelegate {

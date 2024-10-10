@@ -43,6 +43,8 @@ final class StartUIViewController: UIViewController {
 
     let userSession: UserSession
 
+    let mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
+
     let isFederationEnabled: Bool
 
     let quickActionsBar = StartUIInviteActionBar()
@@ -93,6 +95,7 @@ final class StartUIViewController: UIViewController {
             isFederationEnabled: isFederationEnabled
         )
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
         profilePresenter = .init(mainCoordinator: mainCoordinator)
         super.init(nibName: nil, bundle: nil)
 

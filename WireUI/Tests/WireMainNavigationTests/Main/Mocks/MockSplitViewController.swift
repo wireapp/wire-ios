@@ -17,11 +17,12 @@
 //
 
 import UIKit
-import WireMainNavigation
+
+@testable import WireMainNavigation
 
 final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
 
-    typealias ConversationList = MockConversationListViewController
+    typealias ConversationList = PreviewConversationListViewController
     typealias Archive = UIViewController
     typealias Settings = UIViewController
 
@@ -63,7 +64,5 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
         fatalError("mock method not implemented")
     }
 
-    func hideSidebar() {
-        fatalError("mock method not implemented")
-    }
+    func hideSidebar() {}
 }

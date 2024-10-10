@@ -27,8 +27,8 @@ import WireMainNavigation
 import WireSidebar
 import WireSyncEngine
 
-// TODO: create bug ticket: after logging in and getting certificate, the account image is blank instead of showing initials <-
-// TODO: after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded) <-
+// TODO: [WPB-11449] after logging in and getting certificate, the account image is blank instead of showing initials
+// TODO: [WPB-11449] after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
 
 final class ZClientViewController: UIViewController {
 
@@ -59,9 +59,10 @@ final class ZClientViewController: UIViewController {
     }
 
     private(set) var conversationRootViewController: UIViewController?
-    // TODO [WPB-8778]: Check if this property is still needed
-    @available(*, deprecated, message: "might be deleted")
-    private(set) var currentConversation: ZMConversation?
+
+    var currentConversation: ZMConversation? {
+        conversationListViewController.selectedConversation
+    }
 
     weak var router: AuthenticatedRouterProtocol?
 
@@ -191,10 +192,6 @@ final class ZClientViewController: UIViewController {
         AVSMediaManager.sharedInstance().unregisterMedia(mediaPlaybackManager)
     }
 
-    private func restoreStartupState() {
-        attemptToPresentInitialConversation()
-    }
-
     @discardableResult
     private func attemptToPresentInitialConversation() -> Bool {
         var stateRestored = false
@@ -226,8 +223,8 @@ final class ZClientViewController: UIViewController {
 
         setupSplitViewController()
 
-        // TODO: enable <-
-        // restoreStartupState()
+        // TODO: [WPB-11449] fix if needed
+        // attemptToPresentInitialConversation()
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
@@ -246,8 +243,8 @@ final class ZClientViewController: UIViewController {
     private func setupSplitViewController() {
         let archive = ArchivedListViewController(userSession: userSession)
 
-        // TODO: the border color doesn't match on iPad 15 <-
-        mainSplitViewController.borderColor = ColorTheme.Strokes.outline // TODO: is there a better approach than setting the value here? <-
+        // TODO: [WPB-11449] the border color doesn't match on iPad 15
+        mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationList = conversationListViewController
 
         mainTabBarController.archive = archive
@@ -361,30 +358,13 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.show(.primary)
     }
 
-    private func pushContentViewController(
-        _ viewController: UIViewController? = nil,
-        focusOnView focus: Bool = false,
-        animated: Bool = false,
-        completion: Completion? = nil
-    ) {
-        // TODO: `focus` argument is not used <-
-        conversationRootViewController = viewController
-        let secondaryNavigationController = mainSplitViewController.viewController(for: .secondary) as! UINavigationController
-        secondaryNavigationController.setViewControllers([conversationRootViewController!], animated: false)
-    }
-
-    func loadPlaceholderConversationController(animated: Bool) {
-        // TODO: can this method be removed? <-
-        currentConversation = nil
-        pushContentViewController(focusOnView: false, animated: animated)
-    }
-
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
-        // TODO: can this method be removed? <-
-        currentConversation = nil
-
-        let inbox = ConnectRequestsViewController(userSession: userSession)
-        pushContentViewController(inbox.wrapInNavigationController(), focusOnView: focus, animated: animated)
+        // TODO: [WPB-11449] check if this flow works
+        let connectRequests = ConnectRequestsViewController(userSession: userSession)
+        let navigationController = UINavigationController(rootViewController: connectRequests)
+        Task {
+            await mainCoordinator.presentViewController(navigationController)
+        }
     }
 
     /// Open the user clients detail screen
@@ -446,19 +426,11 @@ final class ZClientViewController: UIViewController {
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
 
     private func reloadCurrentConversation() {
-        // TODO: what is this method needed for? <-
         guard let currentConversation else { return }
 
-        let currentConversationViewController = ConversationRootViewController(
-            conversation: currentConversation,
-            message: nil,
-            userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
-            mediaPlaybackManager: mediaPlaybackManager
-        )
-
-        // Need to reload conversation to apply color scheme changes
-        pushContentViewController(currentConversationViewController)
+        Task {
+            await mainCoordinator.showConversation(conversation: currentConversation, message: nil)
+        }
     }
 
     // MARK: - Debug logging notifications
@@ -488,6 +460,7 @@ final class ZClientViewController: UIViewController {
     /// - Returns: In the first case, YES is returned, otherwise NO.
     @discardableResult
     private func attemptToLoadLastViewedConversation(withFocus focus: Bool, animated: Bool) -> Bool {
+        // TODO: [WPB-11449] check if needed
 
         if let currentAccount = SessionManager.shared?.accountManager.selectedAccount {
             if let conversation = Settings.shared.lastViewedConversation(for: currentAccount) {
@@ -503,24 +476,8 @@ final class ZClientViewController: UIViewController {
             return true
 
         } else {
-            selectListItemWhenNoPreviousItemSelected()
+            // selectListItemWhenNoPreviousItemSelected()
             return false
-        }
-    }
-
-    /**
-     * This handles the case where we have to select a list item on startup but there is no previous item saved
-     */
-    func selectListItemWhenNoPreviousItemSelected() {
-        // check for conversations and pick the first one.. this can be tricky if there are pending updates and
-        // we haven't synced yet, but for now we just pick the current first item
-        let list = userSession.conversationList().items
-
-        if let conversation = list.first {
-            // select the first conversation and don't focus on it
-            select(conversation: conversation)
-        } else {
-            loadPlaceholderConversationController(animated: true)
         }
     }
 
@@ -539,26 +496,14 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - Setup methods
 
-    func transitionToList(animated: Bool, completion: Completion?) {
-        transitionToList(animated: animated,
-                         leftViewControllerRevealed: true,
-                         completion: completion)
-    }
-
     func transitionToList(animated: Bool,
                           leftViewControllerRevealed: Bool = true,
-                          completion: Completion?) { // TODO: still used?
-        let action: Completion = { [weak self] in
-            self?.mainSplitViewController.show(leftViewControllerRevealed ? .primary : .secondary)
+                          completion: Completion?) {
+        Task {
+            let currentFilter = conversationListViewController.conversationFilter
+            await mainCoordinator.showConversationList(conversationFilter: currentFilter)
             completion?()
         }
-
-        if let presentedViewController = mainSplitViewController.viewController(for: .secondary)?.presentedViewController {
-            presentedViewController.dismiss(animated: animated, completion: action)
-        } else {
-            action()
-        }
-
     }
 
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
@@ -667,7 +612,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) { // TODO: use main coordinator
+    func openClientListScreen(for user: UserType) { // TODO: use mainCoordinator and check if still needed
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
@@ -703,7 +648,7 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    func showConversationList() { // TODO: use main coordinator
+    func showConversationList() {
         transitionToList(animated: true, completion: nil)
     }
 
@@ -721,7 +666,8 @@ final class ZClientViewController: UIViewController {
         scrollTo message: ZMConversationMessage? = nil,
         focusOnView focus: Bool,
         animated: Bool
-    ) { // TODO: use main coordinator
+    ) {
+        // TODO: manually test this
         dismissAllModalControllers { [weak self] in
             guard
                 let self,
@@ -729,7 +675,10 @@ final class ZClientViewController: UIViewController {
                 conversation.managedObjectContext != nil
             else { return }
 
-            conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated)
+            Task {
+                await self.mainCoordinator.dismissPresentedViewController()
+                self.conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated)
+            }
         }
     }
 

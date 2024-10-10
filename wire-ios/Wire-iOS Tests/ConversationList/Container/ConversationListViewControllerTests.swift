@@ -250,7 +250,7 @@ private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinato
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator
     ) -> UIViewController where
-    MainCoordinator : MainCoordinatorProtocol,
+    MainCoordinator: MainCoordinatorProtocol,
     MainCoordinator.ConversationList == ConversationList,
     ConversationMessageModel == MainCoordinator.ConversationMessageModel,
     ZMConversation == MainCoordinator.ConversationModel,

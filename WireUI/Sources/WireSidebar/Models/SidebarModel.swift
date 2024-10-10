@@ -27,11 +27,12 @@ final class SidebarModel: ObservableObject {
     @Published var wireAccentColorMapping: WireAccentColorMapping?
     @Published var wireTextStyleMapping: WireTextStyleMapping?
     @Published var sidebarBackgroundColor: UIColor = .systemGray5
-    @Published var sidebarAccountInfoViewDisplayNameColor: UIColor = .darkText
-    @Published var sidebarAccountInfoViewUsernameColor: UIColor = .systemGray
-    @Published var sidebarMenuItemTitleForegroundColor: UIColor = .darkText
+    @Published var sidebarAccountInfoViewDisplayNameColor: UIColor = defaultTextColor
+    @Published var sidebarAccountInfoViewUsernameColor: UIColor = .gray
+    @Published var sidebarMenuHeaderForegroundColor: UIColor = defaultTextColor
+    @Published var sidebarMenuItemTitleForegroundColor: UIColor = defaultTextColor
     @Published var sidebarMenuItemLinkIconForegroundColor: UIColor = .systemGray
-    @Published var sidebarMenuItemIsPressedTitleForegroundColor: UIColor = .systemBlue
+    @Published var sidebarMenuItemIsSelectedTitleForegroundColor: UIColor = .systemBackground
 
     @Published var accountInfo = SidebarAccountInfo()
     @Published var selectedMenuItem: SidebarSelectableMenuItem = .all {
@@ -54,4 +55,8 @@ final class SidebarModel: ObservableObject {
         self.connectAction = connectAction
         self.supportAction = supportAction
     }
+}
+
+private let defaultTextColor = UIColor {
+    $0.userInterfaceStyle == .dark ? .white : .darkText
 }

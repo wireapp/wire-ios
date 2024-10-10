@@ -35,14 +35,14 @@ final class MainCoordinatorTests: XCTestCase {
     private var sut: SUT!
 
     private var splitViewController: MockSplitViewController!
-    private var tabBarController: MockTabBarController!
+    private var tabBarController: SUT.TabBarController!
     private var sidebar: MockSidebarViewController!
-    private var conversationList: MockConversationListViewController!
+    private var conversationList: SUT.ConversationList!
 
     @MainActor
     override func setUp() async throws {
         sidebar = .init()
-        conversationList = .init()
+        conversationList = .init("")
 
         splitViewController = .init(style: .tripleColumn)
         splitViewController.sidebar = sidebar
@@ -75,7 +75,7 @@ final class MainCoordinatorTests: XCTestCase {
     @MainActor
     func testShowingGroupConversations() async {
         // When
-        let conversationFilter: MockConversationListViewController.ConversationFilter = .groups
+        let conversationFilter: SUT.ConversationList.ConversationFilter = .groups
         await sut.showConversationList(conversationFilter: conversationFilter)
 
         // Then

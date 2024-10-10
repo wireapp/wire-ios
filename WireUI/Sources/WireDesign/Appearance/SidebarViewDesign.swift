@@ -25,7 +25,7 @@ public struct SidebarViewDesign {
     public let accountInfoViewUsernameColor = ColorTheme.Base.secondaryText
     public let menuItemTitleForegroundColor = ColorTheme.Backgrounds.onBackground
     public let menuItemLinkIconForegroundColor = ColorTheme.Base.secondaryText
-    public let menuItemIsPressedTitleForegroundColor = ColorTheme.Base.onPrimary
+    public let menuItemIsSelectedTitleForegroundColor = ColorTheme.Base.onPrimary
 
     public init() {}
 }

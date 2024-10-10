@@ -42,8 +42,7 @@ final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewController
     MainCoordinator.ConversationModel == ZMConversation,
     MainCoordinator.ConversationMessageModel == ZMConversationMessage,
     MainCoordinator.SettingsContentBuilder == SettingsViewControllerBuilder,
-    MainCoordinator.User == any UserType
-    {
+    MainCoordinator.User == any UserType {
         let rootViewController = StartUIViewController(
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator)

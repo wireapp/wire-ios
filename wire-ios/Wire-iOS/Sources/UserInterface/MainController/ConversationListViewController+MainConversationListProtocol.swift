@@ -29,6 +29,10 @@ extension ConversationListViewController: MainConversationListProtocol {
             setupTitleView()
         }
     }
+
+    var selectedConversation: ZMConversation? {
+        listContentController.listViewModel.selectedItem as? ZMConversation
+    }
 }
 
 // MARK: - ConversationFilter + MainConversationFilterRepresentable

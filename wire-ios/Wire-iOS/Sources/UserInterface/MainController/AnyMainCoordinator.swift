@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMainNavigation
 import WireDataModel
+import WireMainNavigation
 import WireSettings
 
 final class AnyMainCoordinator<ConversationList, SettingsContentBuilder, ConversationModel, ConversationMessageModel, User>: MainCoordinatorProtocol where
@@ -114,5 +114,10 @@ ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSett
     @MainActor
     func presentViewController(_ viewController: UIViewController) async {
         await mainCoordinator.presentViewController(viewController)
+    }
+
+    @MainActor
+    func dismissPresentedViewController() async {
+        await mainCoordinator.dismissPresentedViewController()
     }
 }

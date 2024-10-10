@@ -25,7 +25,7 @@ import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
 
-extension ConversationListViewController {
+extension ConversationListViewController: ConversationListContainerViewModelDelegate {
 
     func conversationListViewControllerViewModel(
         _ viewModel: ViewModel,
@@ -36,15 +36,13 @@ extension ConversationListViewController {
 
     func conversationListViewControllerViewModel(
         _ viewModel: ViewModel,
-        didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)
+        didUpdate accountImage: UIImage
     ) {
 
-        accountImageView?.accountImage = accountImage.image
+        accountImageView?.accountImage = accountImage
 
-        if accountImage.isTeamAccount, let teamName = viewModel.account.teamName ?? viewModel.userSession.selfUser.teamName {
-            accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(teamName)
-            accountImageView?.accessibilityIdentifier = "\(teamName) team"
-        } else if let userName = viewModel.userSession.selfUser.name {
+        // TODO: [WPB-11449] fix accessibilityIdentifier if needed
+        if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(userName)
             accountImageView?.accessibilityIdentifier = .none
         } else {
@@ -62,11 +60,9 @@ extension ConversationListViewController {
     private func setupAccountImageView() -> AccountImageView {
 
         let accountImageView = AccountImageView()
-        accountImageView.accountImage = viewModel.accountImage.image
+        accountImageView.accountImage = viewModel.accountImage
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.accessibilityTraits = .button
-        // TODO: [WPB-11449] fix accessibility
-        // accountImageView.accessibilityIdentifier =
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
         accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
@@ -231,7 +227,6 @@ extension ConversationListViewController {
 
     func setupRightNavigationBarButtons_SplitView() {
 
-        // TODO: start conversation
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
         // TODO: [WPB-11449] fix accessibility

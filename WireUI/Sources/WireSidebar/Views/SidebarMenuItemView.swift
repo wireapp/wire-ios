@@ -31,7 +31,7 @@ struct SidebarMenuItemView: View {
 
     @Environment(\.sidebarMenuItemTitleForegroundColor) private var titleForegroundColor
     @Environment(\.sidebarMenuItemLinkIconForegroundColor) private var linkIconForegroundColor
-    @Environment(\.sidebarMenuItemIsPressedTitleForegroundColor) private var isPressedTitleForegroundColor
+    @Environment(\.sidebarMenuItemIsSelectedTitleForegroundColor) private var isSelectedTitleForegroundColor
 
     /// The `systemName` which is passed into `SwiftUI.Image`.
     private(set) var icon: String
@@ -55,11 +55,11 @@ struct SidebarMenuItemView: View {
             HStack {
                 Label {
                     title()
-                        .foregroundStyle(isHighlighted ? isPressedTitleForegroundColor : titleForegroundColor)
+                        .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : titleForegroundColor)
                 } icon: {
                     let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
                     let icon = Image(systemName: icon + iconSystemNameSuffix)
-                        .foregroundStyle(isHighlighted ? isPressedTitleForegroundColor : Color(accentColor))
+                        .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : Color(accentColor))
                         .background(GeometryReader { geometryProxy in
                             Color.clear.preference(key: SidebarMenuItemMinIconSizeKey.self, value: geometryProxy.size)
                         })
@@ -74,7 +74,7 @@ struct SidebarMenuItemView: View {
 
                 if isLink {
                     Image(systemName: "arrow.up.forward.square")
-                        .foregroundStyle(isHighlighted ? isPressedTitleForegroundColor : linkIconForegroundColor)
+                        .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : linkIconForegroundColor)
                 }
             }
             .contentShape(RoundedRectangle(cornerRadius: backgroundCornerRadius))
@@ -108,8 +108,8 @@ extension View {
         modifier(SidebarMenuItemLinkIconForegroundColorViewModifier(linkIconForegroundColor: linkIconForegroundColor))
     }
 
-    func sidebarMenuItemIsPressedTitleForegroundColor(_ isPressedTitleForegroundColor: Color) -> some View {
-        modifier(SidebarMenuItemIsPressedTitleForegroundColorViewModifier(isPressedTitleForegroundColor: isPressedTitleForegroundColor))
+    func sidebarMenuItemIsSelectedTitleForegroundColor(_ isSelectedTitleForegroundColor: Color) -> some View {
+        modifier(SidebarMenuItemIsSelectedTitleForegroundColorViewModifier(isSelectedTitleForegroundColor: isSelectedTitleForegroundColor))
     }
 }
 
@@ -124,9 +124,9 @@ private extension EnvironmentValues {
         set { self[SidebarMenuItemLinkIconForegroundColorKey.self] = newValue }
     }
 
-    var sidebarMenuItemIsPressedTitleForegroundColor: Color {
-        get { self[SidebarMenuItemIsPressedTitleForegroundColorKey.self] }
-        set { self[SidebarMenuItemIsPressedTitleForegroundColorKey.self] = newValue }
+    var sidebarMenuItemIsSelectedTitleForegroundColor: Color {
+        get { self[SidebarMenuItemIsSelectedTitleForegroundColorKey.self] }
+        set { self[SidebarMenuItemIsSelectedTitleForegroundColorKey.self] = newValue }
     }
 }
 
@@ -154,15 +154,15 @@ private struct SidebarMenuItemLinkIconForegroundColorKey: EnvironmentKey {
     static let defaultValue = Color.primary.opacity(0.6)
 }
 
-struct SidebarMenuItemIsPressedTitleForegroundColorViewModifier: ViewModifier {
-    var isPressedTitleForegroundColor: Color
+struct SidebarMenuItemIsSelectedTitleForegroundColorViewModifier: ViewModifier {
+    var isSelectedTitleForegroundColor: Color
     func body(content: Content) -> some View {
         content
-            .environment(\.sidebarMenuItemIsPressedTitleForegroundColor, isPressedTitleForegroundColor)
+            .environment(\.sidebarMenuItemIsSelectedTitleForegroundColor, isSelectedTitleForegroundColor)
     }
 }
 
-private struct SidebarMenuItemIsPressedTitleForegroundColorKey: EnvironmentKey {
+private struct SidebarMenuItemIsSelectedTitleForegroundColorKey: EnvironmentKey {
     static let defaultValue = Color.white
 }
 

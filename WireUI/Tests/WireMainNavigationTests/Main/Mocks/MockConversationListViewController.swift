@@ -33,6 +33,8 @@ final class MockConversationListViewController: UIViewController, MainConversati
         }
     }
 
+    var selectedConversation: MockConversation?
+
     var mainSplitViewState: MainSplitViewState = .expanded
 }
 

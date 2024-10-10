@@ -23,4 +23,8 @@ import WireMainNavigation
 extension ConversationRootViewController: MainConversationProtocol {
     typealias ConversationModel = ZMConversation
     typealias ConversationMessageModel = ZMConversationMessage
+
+    var conversationModel: ZMConversation! {
+        conversationViewController!.conversation
+    }
 }
