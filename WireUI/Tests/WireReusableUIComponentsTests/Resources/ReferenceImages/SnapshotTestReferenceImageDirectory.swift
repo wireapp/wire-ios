@@ -21,3 +21,5 @@ import Foundation
 public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #file)
     .deletingLastPathComponent()
     .path
+
+//SNAPSHOT_ARTIFACTS
