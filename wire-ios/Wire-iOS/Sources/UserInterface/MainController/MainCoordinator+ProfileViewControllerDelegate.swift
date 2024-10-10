@@ -20,7 +20,7 @@ import WireDataModel
 import WireMainNavigation
 
 extension MainCoordinator: ProfileViewControllerDelegate where
-MainCoordinator.ConversationModel == ZMConversation {
+ConnectBuilder.ConversationModel == ZMConversation {
 
     func profileViewController(
         _ controller: ProfileViewController?,

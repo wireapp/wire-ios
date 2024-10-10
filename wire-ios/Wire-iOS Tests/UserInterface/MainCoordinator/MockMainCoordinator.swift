@@ -79,6 +79,10 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
     func presentViewController(_ viewController: UIViewController) async {
         fatalError("Mock method not implemented")
     }
+
+    func dismissPresentedViewController() async {
+        fatalError("Mock method not implemented")
+    }
 }
 
 // MARK: - MainCoordinatorProtocol + MockMainCoordinator
