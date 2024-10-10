@@ -19,7 +19,10 @@
 import SwiftUI
 
 final class PreviewConversationViewController: UIHostingController<LabelView>, MainConversationProtocol {
-    typealias ConversationID = UUID
+    struct ConversationModel {}
+    struct ConversationMessageModel {}
+
+    var conversationModel: ConversationModel! { .init() }
 
     // MARK: - Life Cycle
 

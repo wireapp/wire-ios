@@ -20,6 +20,8 @@ import Foundation
 import WireDataModel
 
 protocol StartUIDelegate: AnyObject {
+    @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: UserType)
+    @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation)
 }

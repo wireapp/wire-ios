@@ -33,7 +33,7 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     func conversationListViewControllerViewModel(
         _ viewModel: ConversationListViewController.ViewModel,
-        didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)
+        didUpdate accountImage: UIImage
     )
 
     func conversationListViewControllerViewModel(
@@ -76,8 +76,7 @@ extension ConversationListViewController {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
         }
 
-        // TODO: create two properties
-        private(set) var accountImage = (image: UIImage(), isTeamAccount: false) {
+        private(set) var accountImage = UIImage() {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: accountImage) }
         }
 
@@ -181,11 +180,10 @@ extension ConversationListViewController.ViewModel {
     private func updateAccountImage() {
         Task {
             do {
-                accountImage.image = try await getUserAccountImageUseCase.invoke(account: account)
-                accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
+                accountImage = try await getUserAccountImageUseCase.invoke(account: account)
             } catch {
                 WireLogger.ui.error("Failed to get user account image: \(String(reflecting: error))")
-                accountImage.image = .init()
+                accountImage = .init()
             }
         }
     }

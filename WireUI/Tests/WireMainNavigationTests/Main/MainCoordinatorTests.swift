@@ -24,23 +24,25 @@ final class MainCoordinatorTests: XCTestCase {
 
     typealias SUT = MainCoordinator<
         MockSplitViewController,
-        MockConversationBuilder<MockConversationID>,
+        MockConversationBuilder,
         MockSettingsViewControllerBuilder,
         MockViewControllerBuilder,
-        MockViewControllerBuilder
+        MockViewControllerBuilder,
+        MockViewControllerBuilder,
+        MockUserProfileViewControllerBuilder
     >
 
     private var sut: SUT!
 
     private var splitViewController: MockSplitViewController!
-    private var tabBarController: MockTabBarController!
+    private var tabBarController: SUT.TabBarController!
     private var sidebar: MockSidebarViewController!
-    private var conversationList: MockConversationListViewController!
+    private var conversationList: SUT.ConversationList!
 
     @MainActor
     override func setUp() async throws {
         sidebar = .init()
-        conversationList = .init()
+        conversationList = .init("")
 
         splitViewController = .init(style: .tripleColumn)
         splitViewController.sidebar = sidebar
@@ -56,7 +58,9 @@ final class MainCoordinatorTests: XCTestCase {
             conversationBuilder: .init(),
             settingsContentBuilder: .init(),
             connectBuilder: .init(),
-            selfProfileBuilder: .init()
+            createGroupConversationBuilder: .init(),
+            selfProfileBuilder: .init(),
+            userProfileBuilder: .init()
         )
     }
 
@@ -69,10 +73,10 @@ final class MainCoordinatorTests: XCTestCase {
     }
 
     @MainActor
-    func testShowingGroupConversations() {
+    func testShowingGroupConversations() async {
         // When
-        let conversationFilter: MockConversationListViewController.ConversationFilter = .groups
-        sut.showConversationList(conversationFilter: conversationFilter)
+        let conversationFilter: SUT.ConversationList.ConversationFilter = .groups
+        await sut.showConversationList(conversationFilter: conversationFilter)
 
         // Then
         XCTAssertNotNil(splitViewController.conversationList)
@@ -82,12 +86,12 @@ final class MainCoordinatorTests: XCTestCase {
     }
 
     @MainActor
-    func testShowingGroupConversationsFromArchive() {
+    func testShowingGroupConversationsFromArchive() async {
         // When
-        sut.showArchive()
+        await sut.showArchive()
 
         // Then
-        testShowingGroupConversations()
+        await testShowingGroupConversations()
     }
 
     @MainActor
@@ -101,9 +105,9 @@ final class MainCoordinatorTests: XCTestCase {
     }
 
     @MainActor
-    func testShowingArchivedConversations() {
+    func testShowingArchivedConversations() async {
         // When
-        sut.showArchive()
+        await sut.showArchive()
 
         // Then
         XCTAssertNil(splitViewController.conversationList)

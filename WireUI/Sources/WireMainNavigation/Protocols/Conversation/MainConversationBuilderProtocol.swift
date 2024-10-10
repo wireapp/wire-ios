@@ -18,11 +18,21 @@
 
 import UIKit
 
+@MainActor
 public protocol MainConversationBuilderProtocol {
+    associatedtype ConversationList: MainConversationListProtocol
+    associatedtype SettingsBuilder: MainSettingsBuilderProtocol
     associatedtype Conversation: MainConversationProtocol
+    associatedtype User
 
-    func build(
-        conversationID: Conversation.ConversationID,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) async -> Conversation
+    func build<MainCoordinator: MainCoordinatorProtocol>(
+        conversation: Conversation.ConversationModel,
+        message: Conversation.ConversationMessageModel?,
+        mainCoordinator: MainCoordinator
+    ) -> Conversation where
+        MainCoordinator.ConversationList == ConversationList,
+        MainCoordinator.SettingsContentBuilder == SettingsBuilder,
+        MainCoordinator.ConversationModel == Conversation.ConversationModel,
+        MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
+        MainCoordinator.User == User
 }

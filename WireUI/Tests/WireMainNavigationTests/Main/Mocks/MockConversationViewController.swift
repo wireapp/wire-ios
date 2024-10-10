@@ -19,4 +19,6 @@
 import UIKit
 import WireMainNavigation
 
-final class MockConversationViewController<ConversationID: Sendable>: UIViewController, MainConversationProtocol {}
+final class MockConversationViewController<ConversationModel, ConversationMessageModel>: UIViewController, MainConversationProtocol {
+    var conversationModel: ConversationModel! { nil }
+}

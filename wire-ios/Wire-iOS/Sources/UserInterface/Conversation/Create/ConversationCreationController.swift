@@ -24,6 +24,7 @@ import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
 
+    @MainActor
     func conversationCreationController(
         _ controller: ConversationCreationController,
         didCreateConversation conversation: ZMConversation

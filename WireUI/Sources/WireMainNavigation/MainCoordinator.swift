@@ -18,6 +18,8 @@
 
 import UIKit
 
+public typealias MainCoordinator = GenericMainCoordinator
+
 // swiftlint:disable opening_brace
 
 /// Manages the main navigation and the layout changes of the application after a successful login.
@@ -31,28 +33,57 @@ import UIKit
 /// instances and then put or remove the content view controllers into/from `viewControllers` array.
 
 @MainActor
-public final class MainCoordinator<
+public final class GenericMainCoordinator<
 
     SplitViewController: MainSplitViewControllerProtocol,
     ConversationBuilder: MainConversationBuilderProtocol,
     SettingsContentBuilder: MainSettingsContentBuilderProtocol,
     ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder,
-    SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder
+    CreateGroupConversationBuilder: MainCoordinatorInjectingViewControllerBuilder,
+    SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder,
+    UserProfileBuilder: MainUserProfileBuilderProtocol
 
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
     ConversationBuilder.Conversation == SplitViewController.Conversation,
-    ConversationBuilder.Conversation.ConversationID == SplitViewController.ConversationList.ConversationID,
-    ConnectBuilder.ViewController == SplitViewController.Connect,
+    ConversationBuilder.ConversationList == SplitViewController.ConversationList,
+    ConversationBuilder.SettingsBuilder == SettingsContentBuilder,
+    ConversationBuilder.User == UserProfileBuilder.User,
+
+    ConnectBuilder.ConversationList == SplitViewController.ConversationList,
+    ConnectBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
+    ConnectBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
+    ConnectBuilder.SettingsBuilder == SettingsContentBuilder,
+    ConnectBuilder.User == UserProfileBuilder.User,
+
+    CreateGroupConversationBuilder.ConversationList == SplitViewController.ConversationList,
+    CreateGroupConversationBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
+    CreateGroupConversationBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
+    CreateGroupConversationBuilder.SettingsBuilder == SettingsContentBuilder,
+    CreateGroupConversationBuilder.User == UserProfileBuilder.User,
+
+    SelfProfileBuilder.ConversationList == SplitViewController.ConversationList,
+    SelfProfileBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
+    SelfProfileBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
+    SelfProfileBuilder.SettingsBuilder == SettingsContentBuilder,
+    SelfProfileBuilder.User == UserProfileBuilder.User,
+
     SettingsContentBuilder.SettingsContent == SplitViewController.SettingsContent
 {
     // swiftlint:enable opening_brace
 
     public typealias ConversationList = SplitViewController.ConversationList
     public typealias Settings = SplitViewController.Settings
-    public typealias SettingsContent = SplitViewController.SettingsContent
-    public typealias Connect = SplitViewController.Connect
     public typealias TabBarController = SplitViewController.TabContainer
+
+    public typealias ConversationModel = ConversationBuilder.Conversation.ConversationModel
+    public typealias ConversationMessageModel = ConversationBuilder.Conversation.ConversationMessageModel
+
+    public typealias SettingsContent = SplitViewController.SettingsContent
+
+    public typealias Connect = ConnectBuilder.ViewController
+    public typealias SelfProfile = SelfProfileBuilder.ViewController
+    public typealias User = UserProfileBuilder.User
 
     // MARK: - Private Properties
 
@@ -65,8 +96,12 @@ public final class MainCoordinator<
     private let connectBuilder: ConnectBuilder
     private weak var connect: Connect?
 
+    private let createGroupConversationBuilder: CreateGroupConversationBuilder
+
     private var selfProfileBuilder: SelfProfileBuilder
-    private weak var selfProfile: UIViewController?
+    private weak var selfProfile: SelfProfile?
+
+    private var userProfileBuilder: UserProfileBuilder
 
     private var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -105,14 +140,18 @@ public final class MainCoordinator<
         conversationBuilder: ConversationBuilder,
         settingsContentBuilder: SettingsContentBuilder,
         connectBuilder: ConnectBuilder,
-        selfProfileBuilder: SelfProfileBuilder
+        createGroupConversationBuilder: CreateGroupConversationBuilder,
+        selfProfileBuilder: SelfProfileBuilder,
+        userProfileBuilder: UserProfileBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
         self.conversationBuilder = conversationBuilder
         self.settingsContentBuilder = settingsContentBuilder
         self.connectBuilder = connectBuilder
+        self.createGroupConversationBuilder = createGroupConversationBuilder
         self.selfProfileBuilder = selfProfileBuilder
+        self.userProfileBuilder = userProfileBuilder
 
         super.init()
 
@@ -122,7 +161,7 @@ public final class MainCoordinator<
 
     // MARK: - Public Methods
 
-    public func showConversationList(conversationFilter: ConversationList.ConversationFilter?) {
+    public func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async {
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
@@ -146,13 +185,16 @@ public final class MainCoordinator<
             sidebar.selectedMenuItem = .init(mainMenuItem)
         }
 
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
         dismissArchiveIfNeeded()
-        dismissConnectIfNeeded()
         dismissSettingsIfNeeded()
-        dismissSelfProfileIfNeeded()
+        await dismissPresentedViewController()
 
         // Move the conversation list from the tab bar controller to the split view controller if needed.
         if let conversationList = tabBarController.conversationList {
@@ -161,7 +203,11 @@ public final class MainCoordinator<
         }
     }
 
-    public func showArchive() {
+    public func showArchive() async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         // switch to the archive tab
         tabBarController.selectedContent = .archive
 
@@ -177,9 +223,8 @@ public final class MainCoordinator<
         guard mainSplitViewState == .expanded else { return }
 
         dismissConversationListIfNeeded()
-        dismissConnectIfNeeded()
         dismissSettingsIfNeeded()
-        dismissSelfProfileIfNeeded()
+        await dismissPresentedViewController()
 
         // move the archive from the tab bar controller to the split view controller
         if let archive = tabBarController.archive {
@@ -188,7 +233,11 @@ public final class MainCoordinator<
         }
     }
 
-    public func showSettings() {
+    public func showSettings() async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         tabBarController.selectedContent = .settings
 
         // In collapsed state switching the tab was all we needed to do.
@@ -196,8 +245,7 @@ public final class MainCoordinator<
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
-        dismissConnectIfNeeded()
-        dismissSelfProfileIfNeeded()
+        await dismissPresentedViewController()
 
         // move the settings from the tab bar controller to the split view controller
         if let settings = tabBarController.settings {
@@ -208,9 +256,19 @@ public final class MainCoordinator<
         showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
     }
 
-    public func showConversation(conversationID: ConversationList.ConversationID) async {
-        let conversation = await conversationBuilder.build(
-            conversationID: conversationID,
+    public func showConversation(
+        conversation: ConversationModel,
+        message: ConversationMessageModel?
+    ) async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        await dismissPresentedViewController()
+
+        let conversation = conversationBuilder.build(
+            conversation: conversation,
+            message: nil,
             mainCoordinator: self
         )
         if mainSplitViewState == .collapsed {
@@ -227,6 +285,10 @@ public final class MainCoordinator<
     }
 
     public func showSettingsContent(_ topLevelMenuItem: SettingsContentBuilder.TopLevelMenuItem) {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
         if let conversation = splitViewController.conversation {
             splitViewController.conversation = nil
             tabBarController.conversation = conversation
@@ -246,40 +308,72 @@ public final class MainCoordinator<
         splitViewController.settingsContent = nil
     }
 
-    public func showSelfProfile() {
+    public func showSelfProfile() async {
         guard selfProfile == nil else {
             // Once WireLogger is available to Swift packages use it here instead.
             return assertionFailure()
         }
 
-        let rootViewController = selfProfileBuilder.build(mainCoordinator: self)
-        let selfProfile = UINavigationController(rootViewController: rootViewController)
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        let selfProfile = selfProfileBuilder.build(mainCoordinator: self)
         selfProfile.modalPresentationStyle = .formSheet
         self.selfProfile = selfProfile
 
-        splitViewController.present(selfProfile, animated: true)
+        await dismissPresentedViewController()
+        await withCheckedContinuation { continuation in
+            splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
+        }
     }
 
-    public func showConnect() {
+    public func showUserProfile(user: User) async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        let userProfile = userProfileBuilder.build(
+            user: user,
+            mainCoordinator: self
+        )
+        await presentViewController(userProfile)
+    }
+
+    public func showConnect() async {
         guard connect == nil else {
             // Once WireLogger is available to Swift packages use it here instead.
             return assertionFailure()
         }
 
-        sidebar.selectedMenuItem = .init(.connect)
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
 
         let connect = connectBuilder.build(mainCoordinator: self)
+        connect.modalPresentationStyle = .formSheet
         self.connect = connect
+        await presentViewController(connect)
+    }
 
-        if mainSplitViewState == .expanded {
-            dismissConversationListIfNeeded()
-            dismissArchiveIfNeeded()
-            dismissSettingsIfNeeded()
-            dismissSelfProfileIfNeeded()
-            splitViewController.connect = connect
-        } else {
-            let navigationController = UINavigationController(rootViewController: connect)
-            splitViewController.present(navigationController, animated: true)
+    public func showCreateGroupConversation() async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        let createGroupConversation = createGroupConversationBuilder.build(mainCoordinator: self)
+        createGroupConversation.modalPresentationStyle = .formSheet
+        await presentViewController(createGroupConversation)
+    }
+
+    public func presentViewController(_ viewController: UIViewController) async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        await dismissPresentedViewController()
+        await withCheckedContinuation { continuation in
+            splitViewController.present(viewController, animated: true, completion: continuation.resume)
         }
     }
 
@@ -299,14 +393,6 @@ public final class MainCoordinator<
         }
     }
 
-    private func dismissConnectIfNeeded() {
-        // Dismiss the new conversation view controller if it's visible in the split view controller.
-        if let connect = splitViewController.connect {
-            splitViewController.connect = nil
-            connect.navigationController?.presentingViewController?.dismiss(animated: true)
-        }
-    }
-
     private func dismissSettingsIfNeeded() {
         // Move the settings back to the tab bar controller if it's visible in the split view controller.
         if let settings = splitViewController.settings {
@@ -315,9 +401,10 @@ public final class MainCoordinator<
         }
     }
 
-    private func dismissSelfProfileIfNeeded() {
-        // Dismiss the settings view controller if it's being presentd.
-        selfProfile?.dismiss(animated: true)
+    public func dismissPresentedViewController() async {
+        await withCheckedContinuation { continuation in
+            splitViewController.dismiss(animated: true, completion: continuation.resume)
+        }
     }
 
     // MARK: - UISplitViewControllerDelegate
@@ -360,15 +447,6 @@ public final class MainCoordinator<
                 splitViewController.settingsContent = nil
                 tabBarController.settingsContent = settingsContent
             }
-        }
-
-        // take out the new conversation controller from the supplementary column's navigation
-        // controller and put it into a separate one for modal presentation
-        if let connect = splitViewController.connect {
-            splitViewController.connect = nil
-            let navigationController = UINavigationController(rootViewController: connect)
-            // navigationController.modalPresentationStyle = .fullScreen
-            splitViewController.present(navigationController, animated: false)
         }
 
         mainSplitViewState = .collapsed
@@ -417,16 +495,6 @@ public final class MainCoordinator<
             }
         }
 
-        // the new conversation view controller in collapsed mode is
-        // presented in a separate navigation controller
-        if let connect {
-            let navigationController = connect.navigationController!
-            navigationController.presentingViewController!.dismiss(animated: false)
-            navigationController.viewControllers = []
-            navigationController.view.layoutIfNeeded()
-            splitViewController.connect = connect
-        }
-
         mainSplitViewState = .expanded
         let conversationList = tabBarController.conversationList ?? splitViewController.conversationList
         conversationList!.mainSplitViewState = .expanded
@@ -455,6 +523,24 @@ public final class MainCoordinator<
 
         case .settings:
             sidebar.selectedMenuItem = .init(.settings)
+        }
+    }
+
+    // MARK: - Legacy Helpers
+
+    public var isConversationListVisible: Bool {
+        if mainSplitViewState == .expanded {
+            splitViewController.conversationList == nil
+        } else {
+            tabBarController.conversationList == nil
+        }
+    }
+
+    public var isConversationVisible: Bool {
+        if mainSplitViewState == .expanded {
+            splitViewController.conversation == nil
+        } else {
+            tabBarController.conversation == nil
         }
     }
 }

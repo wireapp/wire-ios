@@ -25,7 +25,7 @@ import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
 
-extension ConversationListViewController {
+extension ConversationListViewController: ConversationListContainerViewModelDelegate {
 
     func conversationListViewControllerViewModel(
         _ viewModel: ViewModel,
@@ -36,15 +36,13 @@ extension ConversationListViewController {
 
     func conversationListViewControllerViewModel(
         _ viewModel: ViewModel,
-        didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)
+        didUpdate accountImage: UIImage
     ) {
 
-        accountImageView?.accountImage = accountImage.image
+        accountImageView?.accountImage = accountImage
 
-        if accountImage.isTeamAccount, let teamName = viewModel.account.teamName ?? viewModel.userSession.selfUser.teamName {
-            accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(teamName)
-            accountImageView?.accessibilityIdentifier = "\(teamName) team"
-        } else if let userName = viewModel.userSession.selfUser.name {
+        // TODO: [WPB-11449] fix accessibilityIdentifier if needed
+        if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(userName)
             accountImageView?.accessibilityIdentifier = .none
         } else {
@@ -62,14 +60,21 @@ extension ConversationListViewController {
     private func setupAccountImageView() -> AccountImageView {
 
         let accountImageView = AccountImageView()
-        accountImageView.accountImage = viewModel.accountImage.image
+        accountImageView.accountImage = viewModel.accountImage
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.accessibilityTraits = .button
-        accountImageView.accessibilityIdentifier = "bottomBarSettingsButton" // TODO: fix, can't be correct
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
         accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
         accountImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
+
+        let design = AccountImageViewDesign()
+        accountImageView.imageBorderWidth = design.borderWidth
+        accountImageView.imageBorderColor = design.borderColor
+        accountImageView.availableColor = design.availabilityIndicator.availableColor
+        accountImageView.busyColor = design.availabilityIndicator.busyColor
+        accountImageView.awayColor = design.availabilityIndicator.awayColor
+        accountImageView.availabilityIndicatorBackgroundColor = design.availabilityIndicator.backgroundViewColor
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
@@ -127,7 +132,16 @@ extension ConversationListViewController {
     func setupTitleView() {
         switch mainSplitViewState {
         case .expanded:
-            navigationItem.title = L10n.Localizable.ConversationList.Filter.AllConversations.title
+            switch conversationFilter {
+            case .none:
+                navigationItem.title = L10n.Localizable.ConversationList.Filter.AllConversations.title
+            case .favorites:
+                navigationItem.title = L10n.Localizable.ConversationList.Filter.Favorites.title
+            case .groups:
+                navigationItem.title = L10n.Localizable.ConversationList.Filter.Groups.title
+            case .oneOnOne:
+                navigationItem.title = L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
+            }
         case .collapsed:
             navigationItem.title = L10n.Localizable.List.title
         }
@@ -145,8 +159,11 @@ extension ConversationListViewController {
                 await self?.mainCoordinator.showConnect()
             }
         }
-        // TODO: accessibility
-        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
+        let startConversationItem = UIBarButtonItem(customView: UIButton(primaryAction: newConversationAction))
+        // TODO: [WPB-11449] fix accessibility
+        // startConversationItem.accessibilityIdentifier =
+        // startConversationItem.accessibilityLabel =
+        navigationItem.rightBarButtonItems = [startConversationItem, spacer]
 
         let defaultFilterImage = UIImage(resource: .ConversationList.Header.filterConversations)
         let filledFilterImage = UIImage(resource: .ConversationList.Header.filterConversationsFilled)
@@ -212,11 +229,12 @@ extension ConversationListViewController {
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
-        newConversationBarButton.accessibilityIdentifier = "???????????" // TODO: accessibilityIdentifier
-        newConversationBarButton.accessibilityLabel = "" // TODO: accessibilityLabel
+        // TODO: [WPB-11449] fix accessibility
+        // newConversationBarButton.accessibilityIdentifier =
+        // newConversationBarButton.accessibilityLabel =
         newConversationBarButton.addAction(.init { [weak self] _ in
             Task {
-                await self?.mainCoordinator.showConnect()
+                await self?.mainCoordinator.showCreateGroupConversation()
             }
         }, for: .primaryActionTriggered)
         newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem
@@ -292,21 +310,22 @@ extension ConversationListViewController {
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
     func adjustRightBarButtonItemsSpace() {
-        // TODO: fix
-//        guard
-//            let rightBarButtonItems = navigationItem.rightBarButtonItems,
-//            rightBarButtonItems.count == 3, // new conversation, spacer, filter
-//            let newConversationButton = rightBarButtonItems[0].customView,
-//            let filterConversationsButton = rightBarButtonItems[2].customView,
-//            let titleViewLabel,
-//            let window = viewIfLoaded?.window
-//        else { return }
-//
+        guard
+            let rightBarButtonItems = navigationItem.rightBarButtonItems,
+            rightBarButtonItems.count == 3, // new conversation, spacer, filter
+            // let newConversationButton = rightBarButtonItems[0].customView,
+            // let filterConversationsButton = rightBarButtonItems[2].customView,
+            // let titleViewLabel,
+            let window = viewIfLoaded?.window
+        else { return }
+
+        // TODO: [WPB-11449] Fix spacing between bar button items. This code doesn't work anymore because we don't use a custom title view
 //        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
 //        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
 //        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
 //        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
 //        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
+        rightBarButtonItems[1].width = 29
     }
 
     @objc

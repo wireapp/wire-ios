@@ -30,7 +30,7 @@ public final class SidebarViewController: UIViewController {
         set { model.accountInfo = newValue }
     }
 
-    public var selectedMenuItem: SidebarMenuItem {
+    public var selectedMenuItem: SidebarSelectableMenuItem {
         get { model.selectedMenuItem }
         set {
             skipCallingDelegate.toggle()
@@ -59,6 +59,36 @@ public final class SidebarViewController: UIViewController {
         set { model.sidebarBackgroundColor = newValue }
     }
 
+    public var sidebarAccountInfoViewDisplayNameColor: UIColor {
+        get { model.sidebarAccountInfoViewDisplayNameColor }
+        set { model.sidebarAccountInfoViewDisplayNameColor = newValue }
+    }
+
+    public var sidebarAccountInfoViewUsernameColor: UIColor {
+        get { model.sidebarAccountInfoViewUsernameColor }
+        set { model.sidebarAccountInfoViewUsernameColor = newValue }
+    }
+
+    public var sidebarMenuHeaderForegroundColor: UIColor {
+        get { model.sidebarMenuHeaderForegroundColor }
+        set { model.sidebarMenuHeaderForegroundColor = newValue }
+    }
+
+    public var sidebarMenuItemTitleForegroundColor: UIColor {
+        get { model.sidebarMenuItemTitleForegroundColor }
+        set { model.sidebarMenuItemTitleForegroundColor = newValue }
+    }
+
+    public var sidebarMenuItemLinkIconForegroundColor: UIColor {
+        get { model.sidebarMenuItemLinkIconForegroundColor }
+        set { model.sidebarMenuItemLinkIconForegroundColor = newValue }
+    }
+
+    public var sidebarMenuItemIsSelectedTitleForegroundColor: UIColor {
+        get { model.sidebarMenuItemIsSelectedTitleForegroundColor }
+        set { model.sidebarMenuItemIsSelectedTitleForegroundColor = newValue }
+    }
+
     // MARK: - Private Properties
 
     private var model: SidebarModel!
@@ -85,6 +115,8 @@ public final class SidebarViewController: UIViewController {
         }, menuItemAction: { [weak self] menuItem in
             guard let self, !skipCallingDelegate else { return }
             delegate?.sidebarViewController(self, didSelect: menuItem)
+        }, connectAction: { [weak self] in
+            self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
         }, supportAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
         })
@@ -134,10 +166,17 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
             accountInfo: model.accountInfo,
             selectedMenuItem: $model.selectedMenuItem,
             accountImageAction: model.accountImageAction,
+            connectAction: model.connectAction,
             supportAction: model.supportAction,
             accountImageView: accountImageView
         )
         .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
+        .sidebarAccountInfoViewDisplayNameColor(.init(uiColor: model.sidebarAccountInfoViewDisplayNameColor))
+        .sidebarAccountInfoViewUsernameColor(.init(uiColor: model.sidebarAccountInfoViewUsernameColor))
+        .sidebarMenuHeaderForegroundColor(.init(uiColor: model.sidebarMenuHeaderForegroundColor))
+        .sidebarMenuItemTitleForegroundColor(.init(uiColor: model.sidebarMenuItemTitleForegroundColor))
+        .sidebarMenuItemLinkIconForegroundColor(.init(uiColor: model.sidebarMenuItemLinkIconForegroundColor))
+        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsSelectedTitleForegroundColor))
         .environment(\.wireAccentColor, model.wireAccentColor)
         .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
         .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)

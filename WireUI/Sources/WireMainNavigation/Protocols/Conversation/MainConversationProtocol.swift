@@ -18,6 +18,10 @@
 
 import UIKit
 
+@MainActor
 public protocol MainConversationProtocol: UIViewController {
-    associatedtype ConversationID: Sendable
+    associatedtype ConversationModel
+    associatedtype ConversationMessageModel
+
+    var conversationModel: ConversationModel! { get }
 }

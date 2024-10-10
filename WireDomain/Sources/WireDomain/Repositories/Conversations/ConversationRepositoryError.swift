@@ -26,4 +26,8 @@ enum ConversationRepositoryError: Error {
 
     case failedToDeleteConversation(Error)
 
+    /// Missing MLS group ID
+
+    case mlsConversationShouldHaveAGroupID
+
 }

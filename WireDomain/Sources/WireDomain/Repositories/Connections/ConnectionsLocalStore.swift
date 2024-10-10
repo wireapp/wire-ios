@@ -21,7 +21,6 @@ import Foundation
 import WireAPI
 import WireDataModel
 
-// sourcery: AutoMockable
 protocol ConnectionsLocalStoreProtocol {
 
     func storeConnection(
@@ -99,31 +98,8 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             in: context
         )
 
-        storedConnection.status = status(from: connection.status)
+        storedConnection.status = connection.status.toDomainModel()
         storedConnection.lastUpdateDateInGMT = connection.lastUpdate
         return storedConnection
-    }
-
-    /// Converts ConnectionStatus to stored connectionStatus
-    /// - Parameter connectionStatus: WireAPI's ConnectionStatus
-    /// - Returns: stored ConnectionStatus
-
-    private func status(from connectionStatus: ConnectionStatus) -> ZMConnectionStatus {
-        switch connectionStatus {
-        case .sent:
-            .sent
-        case .accepted:
-            .accepted
-        case .pending:
-            .pending
-        case .blocked:
-            .blocked
-        case .cancelled:
-            .cancelled
-        case .ignored:
-            .ignored
-        case .missingLegalholdConsent:
-            .blockedMissingLegalholdConsent
-        }
     }
 }

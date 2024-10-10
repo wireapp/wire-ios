@@ -39,6 +39,11 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 
     private let secondaryColumnMinWidth: CGFloat = 360
 
+    /// This property corresponds only to the border of the nested custom container view controller.
+    public var borderColor: UIColor = .gray {
+        didSet { splitLayoutContainer.borderColor = borderColor }
+    }
+
     // MARK: - Primary Column
 
     public private(set) weak var sidebar: Sidebar!
@@ -115,6 +120,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         self.noConversationPlaceholder = noConversationPlaceholder
         self.splitLayoutContainer = splitLayoutContainer
         splitLayoutContainer.secondaryNavigationController.viewControllers = [noConversationPlaceholder]
+        splitLayoutContainer.borderColor = borderColor
 
         self.sidebar = sidebar
         self.tabContainer = tabContainer
@@ -158,6 +164,10 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
             preferredSplitBehavior = .overlay
             preferredDisplayMode = isSidebarVisible ? .oneOverSecondary : .secondaryOnly
         }
+    }
+
+    public func hideSidebar() {
+        hide(.primary)
     }
 
     // MARK: - Accessors

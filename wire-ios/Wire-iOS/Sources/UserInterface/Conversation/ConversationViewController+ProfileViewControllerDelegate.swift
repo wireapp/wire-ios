@@ -38,10 +38,8 @@ extension ConversationViewController {
 
 extension ConversationViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        dismiss(animated: true) {
-            fatalError("TODO")
-            // TODO: fix
-            // self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+        Task {
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }

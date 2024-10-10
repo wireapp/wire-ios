@@ -24,11 +24,13 @@ import UIKit
 public protocol MainConversationListProtocol: UIViewController {
 
     associatedtype ConversationFilter: MainConversationFilterRepresentable
-    associatedtype ConversationID: Sendable
-    associatedtype MessageID: Sendable
+    associatedtype ConversationModel
 
     /// Assigning a non-nil value to this property filters the presented conversations by the provided criteria.
     var conversationFilter: ConversationFilter? { get set }
+
+    /// The conversation which is represented by the list selection.
+    var selectedConversation: ConversationModel? { get }
 
     /// Allows the ``MainCoordinator`` to inform this instance about the current split view state.
     var mainSplitViewState: MainSplitViewState { get set }

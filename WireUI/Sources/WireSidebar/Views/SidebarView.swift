@@ -21,12 +21,14 @@ import WireFoundation
 
 public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
-    @Environment(\.sidebarBackgroundColor) private var sidebarBackgroundColor
+    @Environment(\.sidebarMenuHeaderForegroundColor) private var menuHeaderForegroundColor
+    @Environment(\.sidebarBackgroundColor) private var backgroundViewColor
 
     public var accountInfo: SidebarAccountInfo?
-    @Binding public var selectedMenuItem: SidebarMenuItem
+    @Binding public var selectedMenuItem: SidebarSelectableMenuItem
 
     private(set) var accountImageAction: () -> Void
+    private(set) var connectAction: () -> Void
     private(set) var supportAction: () -> Void
 
     private(set) var accountImageView: (
@@ -38,14 +40,16 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     public init(
         accountInfo: SidebarAccountInfo,
-        selectedMenuItem: Binding<SidebarMenuItem>,
+        selectedMenuItem: Binding<SidebarSelectableMenuItem>,
         accountImageAction: @escaping () -> Void,
+        connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView
     ) {
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
         self.accountImageAction = accountImageAction
+        self.connectAction = connectAction
         self.supportAction = supportAction
         self.accountImageView = accountImageView
     }
@@ -54,7 +58,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         ZStack {
             // background color
             Rectangle()
-                .foregroundStyle(sidebarBackgroundColor)
+                .foregroundStyle(backgroundViewColor)
                 .ignoresSafeArea()
 
             // content
@@ -74,13 +78,8 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
                 // bottom menu items
                 Group {
-                    menuItem(.settings)
-
-                    SidebarMenuItemView(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
-                        Text("sidebar.support.title", bundle: .module)
-                    } action: {
-                        supportAction()
-                    }
+                    selectableMenuItem(.settings)
+                    nonselectableMenuItem(.support)
                 }
                 .padding(.horizontal, 16)
             }
@@ -111,13 +110,13 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             menuItemHeader("sidebar.conversation_filter.title", addTopPadding: false)
-            let conversationFilters = [SidebarMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
+            let conversationFilters = [SidebarSelectableMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
             ForEach(conversationFilters, id: \.self) { conversationFilter in
-                menuItem(conversationFilter)
+                selectableMenuItem(conversationFilter)
             }
 
             menuItemHeader("sidebar.contacts.title")
-            menuItem(.connect)
+            nonselectableMenuItem(.connect)
         }
         .padding(.horizontal, 16)
     }
@@ -125,6 +124,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     @ViewBuilder
     private func menuItemHeader(_ key: LocalizedStringKey, addTopPadding: Bool = true) -> some View {
         let text = Text(key, bundle: .module)
+            .foregroundStyle(menuHeaderForegroundColor)
             .wireTextStyle(.h2)
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
@@ -136,7 +136,35 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         }
     }
 
-    private func menuItem(_ menuItem: SidebarMenuItem) -> some View {
+    private func nonselectableMenuItem(_ menuItem: SidebarNonselectableMenuItem) -> some View {
+        let text: Text
+        let icon: String
+        let isLink: Bool
+        let action: () -> Void
+        switch menuItem {
+        case .connect:
+            text = Text("sidebar.contacts.connect.title", bundle: .module)
+            icon = "person.badge.plus"
+            isLink = false
+            action = connectAction
+
+        case .support:
+            text = Text("sidebar.support.title", bundle: .module)
+            icon = "questionmark.circle"
+            isLink = true
+            action = supportAction
+        }
+
+        return SidebarMenuItemView(
+            icon: icon,
+            iconSize: iconSize,
+            isLink: isLink,
+            title: { text },
+            action: action
+        )
+    }
+
+    private func selectableMenuItem(_ menuItem: SidebarSelectableMenuItem) -> some View {
         let text: Text
         let icon: String
         switch menuItem {
@@ -160,10 +188,6 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             text = Text("sidebar.conversation_filter.archived.title", bundle: .module)
             icon = "archivebox"
 
-        case .connect:
-            text = Text("sidebar.contacts.connect.title", bundle: .module)
-            icon = "person.badge.plus"
-
         case .settings:
             text = Text("sidebar.settings.title", bundle: .module)
             icon = "gearshape"
@@ -183,16 +207,37 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 // MARK: - View Modifiers + Environment
 
 extension View {
+    func sidebarMenuHeaderForegroundColor(_ headerForegroundColor: Color) -> some View {
+        modifier(SidebarMenuHeaderForegroundColorViewModifier(headerForegroundColor: headerForegroundColor))
+    }
+
     func sidebarBackgroundColor(_ sidebarBackgroundColor: Color) -> some View {
         modifier(SidebarBackgroundColorViewModifier(sidebarBackgroundColor: sidebarBackgroundColor))
     }
 }
 
 private extension EnvironmentValues {
+    var sidebarMenuHeaderForegroundColor: Color {
+        get { self[SidebarMenuHeaderForegroundColorKey.self] }
+        set { self[SidebarMenuHeaderForegroundColorKey.self] = newValue }
+    }
+
     var sidebarBackgroundColor: Color {
         get { self[SidebarBackgroundColorKey.self] }
         set { self[SidebarBackgroundColorKey.self] = newValue }
     }
+}
+
+struct SidebarMenuHeaderForegroundColorViewModifier: ViewModifier {
+    var headerForegroundColor: Color
+    func body(content: Content) -> some View {
+        content
+            .environment(\.sidebarMenuHeaderForegroundColor, headerForegroundColor)
+    }
+}
+
+private struct SidebarMenuHeaderForegroundColorKey: EnvironmentKey {
+    static let defaultValue = Color.primary
 }
 
 struct SidebarBackgroundColorViewModifier: ViewModifier {

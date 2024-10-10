@@ -43,6 +43,8 @@ final class StartUIViewController: UIViewController {
 
     let userSession: UserSession
 
+    let mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
+
     let isFederationEnabled: Bool
 
     let quickActionsBar = StartUIInviteActionBar()
@@ -81,7 +83,7 @@ final class StartUIViewController: UIViewController {
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
-        mainCoordinator: any MainCoordinatorProtocol
+        mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
@@ -93,6 +95,7 @@ final class StartUIViewController: UIViewController {
             isFederationEnabled: isFederationEnabled
         )
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
         profilePresenter = .init(mainCoordinator: mainCoordinator)
         super.init(nibName: nil, bundle: nil)
 
@@ -171,6 +174,9 @@ final class StartUIViewController: UIViewController {
         searchController.searchBar.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
         searchController.searchBar.accessibilityIdentifier = "textViewSearch"
         navigationItem.searchController = searchController
+        if #available(iOS 16.0, *) {
+            navigationItem.preferredSearchBarPlacement = .stacked
+        }
         navigationItem.hidesSearchBarWhenScrolling = false
     }
 
