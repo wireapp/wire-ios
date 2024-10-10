@@ -34,31 +34,23 @@ struct AccentColorPicker: View {
     let onColorSelect: ((AccentColor) -> Void)?
 
     var body: some View {
-        // The NavigationView is needed here to properly set the font size for the navigation bar title.
-        // Currently, there's no other way to set the font size of the navigation bar title to the desired value.
-        // Without the NavigationView, the title would be too small.
-        NavigationView {
-            List(AccentColor.allCases, id: \.self) { color in
-                cell(for: color)
-                    .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
-                    .onTapGesture {
-                        self.selectedColor = color
-                        onColorSelect?(color)
-                    }
-            }
-            .listStyle(.plain)
-            .modifier(ListBackgroundStyleModifier())
-            .background(Color(SemanticColors.View.backgroundDefault))
-        }
-        .enableInjection()
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                VStack {
-                    Text(L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized)
-                        .font(.textStyle(.h3))
+        accentColorList
+            .enableInjection()
+    }
+
+    @ViewBuilder
+    private var accentColorList: some View {
+        List(AccentColor.allCases, id: \.self) { color in
+            cell(for: color)
+                .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
+                .onTapGesture {
+                    self.selectedColor = color
+                    onColorSelect?(color)
                 }
-            }
         }
+        .listStyle(.plain)
+        .modifier(ListBackgroundStyleModifier())
+        .background(Color(SemanticColors.View.backgroundDefault))
     }
 
     @ViewBuilder
