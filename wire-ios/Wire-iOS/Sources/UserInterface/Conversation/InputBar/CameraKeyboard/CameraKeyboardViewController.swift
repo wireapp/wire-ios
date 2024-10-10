@@ -180,8 +180,9 @@ class CameraKeyboardViewController: UIViewController {
         self.goBackButton.translatesAutoresizingMaskIntoConstraints = false
         self.goBackButton.backgroundColor = .black
         self.goBackButton.circular = true
-        self.goBackButton.setIcon(.backArrow, size: .tiny, for: [])
-        self.goBackButton.setIconColor(.white, for: [])
+        self.goBackButton.setImage(UIImage(named: "BackArrow"), for: .normal)
+        self.goBackButton.tintColor = .white
+
         self.goBackButton.accessibilityIdentifier = "goBackButton"
         self.goBackButton.addTarget(self, action: #selector(goBackPressed(_:)), for: .touchUpInside)
         self.goBackButton.applyRTLTransformIfNeeded()
