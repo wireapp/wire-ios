@@ -79,9 +79,9 @@ public final class SidebarViewController: UIViewController {
         set { model.sidebarMenuItemLinkIconForegroundColor = newValue }
     }
 
-    public var sidebarMenuItemIsPressedTitleForegroundColor: UIColor {
-        get { model.sidebarMenuItemIsPressedTitleForegroundColor }
-        set { model.sidebarMenuItemIsPressedTitleForegroundColor = newValue }
+    public var sidebarMenuItemIsSelectedTitleForegroundColor: UIColor {
+        get { model.sidebarMenuItemIsSelectedTitleForegroundColor }
+        set { model.sidebarMenuItemIsSelectedTitleForegroundColor = newValue }
     }
 
     // MARK: - Private Properties
@@ -170,7 +170,7 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
         .sidebarAccountInfoViewUsernameColor(.init(uiColor: model.sidebarAccountInfoViewUsernameColor))
         .sidebarMenuItemTitleForegroundColor(.init(uiColor: model.sidebarMenuItemTitleForegroundColor))
         .sidebarMenuItemLinkIconForegroundColor(.init(uiColor: model.sidebarMenuItemLinkIconForegroundColor))
-        .sidebarMenuItemIsPressedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsPressedTitleForegroundColor))
+        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsSelectedTitleForegroundColor))
         .environment(\.wireAccentColor, model.wireAccentColor)
         .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
         .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)

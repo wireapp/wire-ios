@@ -31,7 +31,7 @@ final class SidebarModel: ObservableObject {
     @Published var sidebarAccountInfoViewUsernameColor: UIColor = .systemGray
     @Published var sidebarMenuItemTitleForegroundColor: UIColor = .darkText
     @Published var sidebarMenuItemLinkIconForegroundColor: UIColor = .systemGray
-    @Published var sidebarMenuItemIsPressedTitleForegroundColor: UIColor = .systemBackground
+    @Published var sidebarMenuItemIsSelectedTitleForegroundColor: UIColor = .systemBackground
 
     @Published var accountInfo = SidebarAccountInfo()
     @Published var selectedMenuItem: SidebarSelectableMenuItem = .all {
