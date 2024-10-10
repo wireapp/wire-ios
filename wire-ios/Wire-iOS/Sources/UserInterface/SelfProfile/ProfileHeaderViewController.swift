@@ -82,13 +82,7 @@ final class ProfileHeaderViewController: UIViewController {
         let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
         button.setImage(boldImage, for: .normal)
 
-        button.setBorderColor(ColorTheme.Strokes.outline, for: .normal)
-        button.setBackgroundImageColor(ColorTheme.Backgrounds.surfaceVariant, for: .normal)
-        button.setIconColor(ColorTheme.Buttons.Secondary.onEnabled, for: .normal)
-
-        button.setBorderColor(ColorTheme.Strokes.outline, for: .highlighted)
-        button.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .highlighted)
-
+        button.accessibilityIdentifier = "QR code button"
         button.accessibilityLabel = L10n.Accessibility.Profile.ShareProfileButton.description
 
         return button
@@ -171,12 +165,7 @@ final class ProfileHeaderViewController: UIViewController {
         handleLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         handleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        let nameWithQRCodeStack = UIStackView(arrangedSubviews: [nameLabel, qrCodeButton])
-        nameWithQRCodeStack.axis = .horizontal
-        nameWithQRCodeStack.alignment = .center
-        nameWithQRCodeStack.spacing = 8
-
-        let nameHandleStack = UIStackView(arrangedSubviews: [nameWithQRCodeStack, handleLabel])
+        let nameHandleStack = UIStackView(arrangedSubviews: [nameLabel, handleLabel])
         nameHandleStack.axis = .vertical
         nameHandleStack.alignment = .center
         nameHandleStack.spacing = 8
@@ -231,6 +220,7 @@ final class ProfileHeaderViewController: UIViewController {
         stackView.wr_addCustomSpacing(20, after: federatedIndicator)
 
         view.addSubview(stackView)
+        view.addSubview(qrCodeButton)
 
         guestIndicator.tintColor = SemanticColors.Icon.foregroundDefault
         view.backgroundColor = UIColor.clear
@@ -255,16 +245,19 @@ final class ProfileHeaderViewController: UIViewController {
     private func configureConstraints() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        qrCodeButton.translatesAutoresizingMaskIntoConstraints = false
 
-        let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 26)
+        let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 56)
         let topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
-        let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -26)
+        let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -56)
         let bottomSpaceConstraint = stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
 
         let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
             widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint,
+            qrCodeButton.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            qrCodeButton.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 8),
             qrCodeButton.heightAnchor.constraint(equalToConstant: 32),
             qrCodeButton.widthAnchor.constraint(equalToConstant: 40)
         ])
@@ -395,6 +388,16 @@ final class ProfileHeaderViewController: UIViewController {
         let qrCodeAction = UIAction { _ in }
         qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
         qrCodeButton.isHidden = !user.isSelfUser
+        updateColors()
+    }
+
+    private func updateColors() {
+        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .normal)
+        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.surfaceVariant, for: .normal)
+        qrCodeButton.setIconColor(ColorTheme.Buttons.Secondary.onEnabled, for: .normal)
+
+        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .highlighted)
+        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .highlighted)
     }
 
     // MARK: -
@@ -463,4 +466,17 @@ extension ProfileHeaderViewController: TeamObserver {
             updateTeamLabel()
         }
     }
+}
+
+// MARK: - TraitCollectionDidChange
+
+extension ProfileHeaderViewController {
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        updateColors()
+    }
+
 }
