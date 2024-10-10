@@ -183,7 +183,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         accessoryIconView.contentMode = .center
         accessoryIconView.accessibilityIdentifier = nil
         accessoryIconView.isHidden = true
-        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .chevronRight).withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
 
         // titleLabel

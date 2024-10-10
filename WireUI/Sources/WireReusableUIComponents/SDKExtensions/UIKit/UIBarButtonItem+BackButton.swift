@@ -32,12 +32,12 @@ public extension UIBarButtonItem {
     ///
     /// - Returns: A UIBarButtonItem configured as a back button.
     static func backButton(action: UIAction, accessibilityLabel: String) -> UIBarButtonItem {
-        let chevronRightImage = UIImage(named: "ChevronRight")
-        let chevronLeftImage = UIImage(named: "ChevronLeft")
+        let frontArrowImage = UIImage(named: "FrontArrow")
+        let backArrowImage = UIImage(named: "BackArrow")
 
         let backItem = UIBarButtonItem(title: accessibilityLabel, primaryAction: action)
 
-        backItem.image = UIApplication.shared.userInterfaceLayoutDirection == .leftToRight ? chevronLeftImage : chevronRightImage
+        backItem.image = UIApplication.shared.userInterfaceLayoutDirection == .leftToRight ? backArrowImage : frontArrowImage
 
         backItem.style = .plain
         backItem.tintColor = SemanticColors.Icon.foregroundDefaultBlack

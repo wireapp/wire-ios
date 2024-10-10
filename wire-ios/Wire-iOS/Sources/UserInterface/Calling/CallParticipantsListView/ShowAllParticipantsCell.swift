@@ -113,7 +113,7 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
         participantIconView.image = .init(resource: .contactsFilled).withRenderingMode(.alwaysTemplate)
         participantIconView.tintColor = iconTintColor
 
-        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .chevronRight).withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = iconTintColor
 
         titleLabel.textColor = SemanticColors.Label.textDefault

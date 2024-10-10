@@ -30,12 +30,12 @@ final class BackButtonDescription {
 extension BackButtonDescription: ViewDescriptor {
     func create() -> UIView {
         let button = UIButton()
-        let chevronRightImage = UIImage(named: "ChevronRight")
-        let chevronLeftImage = UIImage(named: "ChevronLeft")
+        let frontArrowImage = UIImage(named: "FrontArrow")
+        let backArrowImage = UIImage(named: "BackArrow")
 
         button.tintColor = SemanticColors.Icon.foregroundDefault
 
-        let buttonImage = UIApplication.shared.userInterfaceLayoutDirection == .leftToRight ? chevronLeftImage : chevronRightImage
+        let buttonImage = UIApplication.shared.userInterfaceLayoutDirection == .leftToRight ? backArrowImage : frontArrowImage
         button.setImage(buttonImage, for: .normal)
 
         button.accessibilityIdentifier = accessibilityIdentifier
