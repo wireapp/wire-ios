@@ -21,8 +21,7 @@ let package = Package(
         .target(name: "WireFoundation"),
         .testTarget(
             name: "WireFoundationTests",
-            dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"],
-            plugins: ["SnapshotTestReferenceDirectoryPlugin"]
+            dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]
         ),
         .target(
             name: "WireFoundationSupport",
