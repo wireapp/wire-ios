@@ -310,16 +310,12 @@ final class CollectionsViewController: UIViewController {
         if !inOverviewMode,
            let count = navigationController?.viewControllers.count,
            count > 1 {
-            let backButton = CollectionsView.backButton()
-            backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
-            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+            navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            }, accessibilityLabel: L10n.Accessibility.ConversationSearch.BackButton.description)
         }
     }
 
-    @objc
-    private func backButtonPressed(_ button: UIButton) {
-        _ = navigationController?.popViewController(animated: true)
-    }
 }
 
 extension CollectionsViewController: AssetCollectionDelegate {
@@ -730,15 +726,14 @@ extension CollectionsViewController: CollectionCellDelegate {
                     mainCoordinator: mainCoordinator
                 )
 
-                let backButton = CollectionsView.backButton()
-                backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
-                backButton.accessibilityLabel = L10n.Accessibility.ConversationSearch.BackButton.description
+                navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                    self?.navigationController?.popViewController(animated: true)
+                }, accessibilityLabel: L10n.Accessibility.ConversationSearch.BackButton.description)
 
                 navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
                     self?.presentingViewController?.dismiss(animated: true)
                 }, accessibilityLabel: L10n.Accessibility.ConversationSearch.CloseButton.description)
 
-                imagesController.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
                 imagesController.swipeToDismiss = false
                 imagesController.messageActionDelegate = self
                 navigationController?.pushViewController(imagesController, animated: true)
