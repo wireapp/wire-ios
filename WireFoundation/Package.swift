@@ -9,8 +9,7 @@ let package = Package(
     products: [
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
-        .library(name: "WireTestingPackage", targets: ["WireTestingPackage"]),
-        .plugin(name: "SnapshotTestReferenceDirectoryPlugin", targets: ["SnapshotTestReferenceDirectoryPlugin"])
+        .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -35,8 +34,7 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"
-        ),
-        .plugin(name: "SnapshotTestReferenceDirectoryPlugin", capability: .buildTool())
+        )
     ]
 )
 
