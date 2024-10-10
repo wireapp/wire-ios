@@ -94,3 +94,6 @@ vendor/*
 # LicensePlist in Settings
 /wire-ios/Wire-iOS/Resources/Settings.bundle/com.mono0926.LicensePlist.latest_result.txt
 /wire-ios/Wire-iOS/Resources/Settings.bundle/com.mono0926.LicensePlist
+
+# Failing Snapshot Tests
+SnapshotResults
