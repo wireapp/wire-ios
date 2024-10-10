@@ -87,12 +87,12 @@ jobs:
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
 
       # Step to find all .xcresult files and analyze each one
-      - name: Find all .xcresult files
+      - name: Find all .xcresult files and convert them to a JSON array
         if: always()
         id: find-xcresults
         run: |
-          # Find all .xcresult directories and convert them to a JSON array
-          run: echo "::set-output name=xcresult_files::$(find artifacts/ -type d -name "*.xcresult" | jq -R . | jq -s .)"
+          files=`find artifacts/ -type d -name "*.xcresult" | jq -R . | jq -s .`
+          echo xcresult_files=${files} >> $GITHUB_OUTPUT
 
       # Scripts
       - name: Test Scripts
