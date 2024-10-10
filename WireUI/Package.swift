@@ -4,7 +4,6 @@
 import PackageDescription
 
 let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
-let SnapshotTestReferenceDirectoryPlugin = Target.PluginUsage.plugin(name: "SnapshotTestReferenceDirectoryPlugin", package: "WireFoundation")
 
 let package = Package(
     name: "WireUI",
@@ -40,7 +39,6 @@ let package = Package(
 )
 
 for target in package.targets {
-    target.plugins = (target.plugins ?? []) + [SnapshotTestReferenceDirectoryPlugin]
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
