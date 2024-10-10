@@ -75,11 +75,15 @@ final class ProfileHeaderViewController: UIViewController {
 
     private let qrCodeButton = {
         let button = IconButton()
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 12
+        button.layer.masksToBounds = true
+
         let boldConfig = UIImage.SymbolConfiguration(weight: .black)
         let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
         button.setImage(boldImage, for: .normal)
-        button.setIconColor(ColorTheme.Buttons.Secondary.onEnabled, for: .normal)
-        button.hitAreaPadding = CGSize(width: 20, height: 20)
+
+        button.accessibilityIdentifier = "QR code button"
         button.accessibilityLabel = L10n.Accessibility.Profile.ShareProfileButton.description
 
         return button
@@ -253,10 +257,10 @@ final class ProfileHeaderViewController: UIViewController {
         NSLayoutConstraint.activate([
             // stackView
             widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint,
-            qrCodeButton.topAnchor.constraint(equalTo: stackView.topAnchor),
-            qrCodeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            qrCodeButton.heightAnchor.constraint(equalToConstant: 20),
-            qrCodeButton.widthAnchor.constraint(equalToConstant: 20)
+            qrCodeButton.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            qrCodeButton.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 8),
+            qrCodeButton.heightAnchor.constraint(equalToConstant: 32),
+            qrCodeButton.widthAnchor.constraint(equalToConstant: 40)
         ])
     }
 
@@ -387,6 +391,16 @@ final class ProfileHeaderViewController: UIViewController {
         }
         qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
         qrCodeButton.isHidden = !user.isSelfUser
+        updateColors()
+    }
+
+    private func updateColors() {
+        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .normal)
+        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.surfaceVariant, for: .normal)
+        qrCodeButton.setIconColor(ColorTheme.Buttons.Secondary.onEnabled, for: .normal)
+
+        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .highlighted)
+        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .highlighted)
     }
 
     private func qrCodeButtonTapped() {
@@ -484,4 +498,17 @@ extension ProfileHeaderViewController: TeamObserver {
             updateTeamLabel()
         }
     }
+}
+
+// MARK: - TraitCollectionDidChange
+
+extension ProfileHeaderViewController {
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        updateColors()
+    }
+
 }

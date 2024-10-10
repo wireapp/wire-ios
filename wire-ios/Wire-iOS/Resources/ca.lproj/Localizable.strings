@@ -506,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Delivered";
 "content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1150,11 +1151,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Envia dades d'ús anònimes";
 "self.settings.privacy_analytics_menu.description.title" = "Les dades d'ús permeten a Wire entendre com s'usa l'aplicació i com es pot millorar. Les dades son anònimes i no inclouen contingut de les comunicaciones (com missatges, fitxers o trucades).";
-
-"self.settings.receiveNews_and_offers.title" = "Subscripció al butlletí";
-"self.settings.receiveNews_and_offers.description.title" = "Wire us enviarà per correu electrònic notícies i informació sobre actualitzacions de productes.";
-
-
 
 // Change Username
 
@@ -1916,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "L'enllaç no és vàlid.";
 "url_action.invalid_link.message" = "L'enllaç que has intentat obrir no és vàlid.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Do you want to receive news and product updates from Wire via email?";
-"news_offers.consent.message" = "You can unsubscribe at any time.";
-"news_offers.consent.button.privacy_policy.title" = "Política de privadesa";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
