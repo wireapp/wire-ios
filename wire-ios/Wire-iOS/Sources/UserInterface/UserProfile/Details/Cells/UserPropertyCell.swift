@@ -29,7 +29,7 @@ final class UserPropertyCell: SeparatorTableViewCell {
     typealias LabelColors = SemanticColors.Label
 
     private let propertyNameLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(style: .subline1,
+        let label = DynamicFontLabel(style: .h4,
                                      color: LabelColors.textUserPropertyCellName)
         label.numberOfLines = 1
         label.setContentCompressionResistancePriority(.required, for: .vertical)
