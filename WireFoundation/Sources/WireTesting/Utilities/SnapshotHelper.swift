@@ -30,9 +30,7 @@ public struct SnapshotHelper {
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
-    private var referenceDirectory = ""
-    /// If empty, the `SNAPSHOT_ARTIFACTS` environment variable is read.
-    private var artifactsDirectory = ""
+    private var snapshotReferenceDirectory = ""
 
     public init() {}
 
@@ -92,12 +90,12 @@ public struct SnapshotHelper {
 
     /// Creates a copy of the current helper with the overriden snapshot directory.
     ///
-    /// - Parameter snapshotDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
+    /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
     /// - Returns: A copy of the current helper with a new snapshot directory.
 
     public func withSnapshotDirectory(_ snapshotDirectory: String) -> Self {
         var helper = self
-        helper.referenceDirectory = snapshotDirectory
+        helper.snapshotReferenceDirectory = snapshotDirectory
         return helper
     }
 
@@ -377,22 +375,12 @@ public struct SnapshotHelper {
     }
 
     private func snapshotDirectory(file: StaticString = #file) -> String {
-        var referenceDirectory = referenceDirectory
-        if referenceDirectory.isEmpty {
-            referenceDirectory = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]!
+        var snapshotReferenceDirectory = snapshotReferenceDirectory
+        if snapshotReferenceDirectory.isEmpty {
+            snapshotReferenceDirectory = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]!
         }
 
         let filePath = URL(fileURLWithPath: "\(file)").deletingPathExtension().lastPathComponent
-        return NSString.path(withComponents: [referenceDirectory, filePath])
-    }
-
-    private func artifactsDirectory(file: StaticString = #file) -> String {
-        var artifactsDirectory = artifactsDirectory
-        if artifactsDirectory.isEmpty {
-            artifactsDirectory = ProcessInfo.processInfo.environment["SNAPSHOT_ARTIFACTS"]!
-        }
-
-        let filePath = URL(fileURLWithPath: "\(file)").deletingPathExtension().lastPathComponent
-        return NSString.path(withComponents: [artifactsDirectory, filePath])
+        return NSString.path(withComponents: [snapshotReferenceDirectory, filePath])
     }
 }
