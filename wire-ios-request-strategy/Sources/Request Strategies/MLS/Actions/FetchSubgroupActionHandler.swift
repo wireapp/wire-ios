@@ -97,7 +97,7 @@ extension FetchSubgroupActionHandler {
             case subconvID = "subconv_id"
         }
 
-        let cipherSuite: Int
+        let cipherSuite: Int?
         let epoch: Int
         let epochTimestamp: Date?
         let groupID: String
