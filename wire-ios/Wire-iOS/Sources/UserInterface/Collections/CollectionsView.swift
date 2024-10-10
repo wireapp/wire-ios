@@ -81,15 +81,6 @@ final class CollectionsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    static func backButton() -> IconButton {
-        let button = IconButton(style: .default)
-        button.setIcon(.backArrow, size: .tiny, for: .normal)
-        button.frame = CGRect(x: 0, y: 0, width: 32, height: 20)
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -16, bottom: 0, right: 0)
-        button.accessibilityIdentifier = "back"
-        return button
-    }
-
     func constrainViews(searchViewController: TextSearchViewController) {
 
         let searchBar = searchViewController.searchBar
