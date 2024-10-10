@@ -88,7 +88,7 @@ struct SidebarMenuItemPreview: View {
                 .padding(.leading, 8)
             }
         }
-        .frame(width: 260)
+        .frame(width: 20)
     }
 }
 
