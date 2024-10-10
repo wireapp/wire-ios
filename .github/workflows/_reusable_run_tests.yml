@@ -86,21 +86,22 @@ jobs:
         run: |
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
 
-      # Step to find all .xcresult files and analyze each one
-      - name: Find all .xcresult files and convert them to a JSON array
-        if: always()
+      - name: Find all .xcresult files
+        if: ${{ always() && github.event_name == 'pull_request' }}
         id: find-xcresults
         run: |
+          # Find all .xcresult directories and convert them to a JSON array
           files=`find artifacts/ -type d -name "*.xcresult" | jq -R . | jq -s .`
           echo xcresult_files=${files} >> $GITHUB_OUTPUT
-          
-      - name: Upload .xcresult files
-        uses: actions/upload-artifact@v4
+      - name: Debug Print xcresult files
+        run: |
+          echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+      - name: Upload .xcresult files as artifact
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: xcresults
-          path: |
-              ${{ steps.find-xcresults.outputs.xcresult_files }}
+          path: artifacts/**/*.xcresult  # Adjust this if necessary
 
       # Scripts
       - name: Test Scripts
@@ -163,16 +164,17 @@ jobs:
   
   analyze-xcresults:
     needs: run-tests
+    if: ${{ always() && github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
     steps:
-      - name: Download xcresults
+      - name: Download .xcresult files
         uses: actions/download-artifact@v4
-        continue-on-error: true
         with:
           name: xcresults
+          path: ./artifacts
 
       - name: Display downloaded files
         run: ls -R
