@@ -149,5 +149,4 @@ final class TopPeopleCell: UICollectionViewCell {
         avatarViewSizeConstraint?.constant = squareImageWidth
         conversationImageViewSize?.constant = squareImageWidth
     }
-
 }
