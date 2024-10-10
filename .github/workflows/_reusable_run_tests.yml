@@ -667,7 +667,7 @@ jobs:
         with:
           name: Failed Snapshots and log
           path: |
-            wire-ios/SnapshotResults/
+            **/SnapshotResults/
             xcodebuild*.log
 
       # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build
