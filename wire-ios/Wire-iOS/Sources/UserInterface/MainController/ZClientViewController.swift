@@ -31,7 +31,11 @@ final class ZClientViewController: UIViewController {
     let userSession: UserSession
 
     private(set) var conversationRootViewController: UIViewController?
-    private(set) var currentConversation: ZMConversation?
+    private(set) var currentConversation: ZMConversation? {
+        didSet {
+            DeveloperToolsViewModel.context.currentConversation = currentConversation
+        }
+    }
 
     weak var router: AuthenticatedRouterProtocol?
 
