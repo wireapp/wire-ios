@@ -220,6 +220,7 @@ public struct ModelHelper {
         let member = Member.insertNewObject(in: context)
         member.user = user
         member.team = team
+        member.user?.teamIdentifier = team.remoteIdentifier
         member.remoteIdentifier = user.remoteIdentifier
 
         return member
@@ -267,19 +268,25 @@ public struct ModelHelper {
             role: nil
         )
         conversation.team = team
+        conversation.teamRemoteIdentifier = team?.remoteIdentifier
 
         return conversation
     }
 
     @discardableResult
     public func createOneOnOne(
+        id: UUID = UUID(),
+        domain: String? = nil,
         with user: ZMUser,
+        team: Team? = nil,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let selfUser = ZMUser.selfUser(in: context)
         let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = UUID()
+        conversation.remoteIdentifier = id
+        conversation.domain = domain
         conversation.conversationType = .oneOnOne
+        conversation.team = team
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
         conversation.oneOnOneUser = user
@@ -315,5 +322,19 @@ public struct ModelHelper {
         conversation.conversationType = .group
 
         return conversation
+    }
+
+    @discardableResult
+    public func addTextMessages(to conversation: ZMConversation,
+                                messagePrefix: String = "message",
+                                sender: ZMUser?,
+                                count: Int,
+                                in context: NSManagedObjectContext) throws -> [ZMMessage] {
+        let messageSender = sender ?? ZMUser.selfUser(in: context)
+        return try (0..<count).map { index in
+            let message = try conversation.appendText(content: "\(messagePrefix) \(index)") as! ZMMessage
+            message.sender = messageSender
+            return message
+        }
     }
 }

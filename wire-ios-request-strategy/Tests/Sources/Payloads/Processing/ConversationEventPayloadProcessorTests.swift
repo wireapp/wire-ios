@@ -709,6 +709,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Group_OneOnOneUser() async throws {
         let (teamID, qualifiedID, members) = await syncMOC.perform {
             // given
+            self.otherUser.oneOnOneConversation = nil
             let teamID = UUID.create()
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = teamID

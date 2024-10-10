@@ -60,8 +60,7 @@ public final class ZMUserSession: NSObject {
     let debugCommands: [String: DebugCommand]
     let eventProcessingTracker: EventProcessingTracker = EventProcessingTracker()
     let legacyHotFix: ZMHotFix
-    // When we move to the monorepo, uncomment hotFixApplicator
-    // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
+
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
     var recurringActionService: any RecurringActionServiceInterface
