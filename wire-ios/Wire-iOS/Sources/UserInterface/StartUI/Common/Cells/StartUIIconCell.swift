@@ -22,18 +22,15 @@ import WireDesign
 
 class StartUIIconCell: UICollectionViewCell {
 
-    // MARK: - Properties
-
     typealias CellColors = SemanticColors.View
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
 
-    let iconView = UIImageView()
-    let titleLabel = DynamicFontLabel(
-        fontSpec: .bodyTwoSemibold,
+    fileprivate let iconView = UIImageView()
+    fileprivate let titleLabel = DynamicFontLabel(
+        style: .body2,
         color: SemanticColors.Label.textDefault
     )
-
-    let separator = UIView()
+    fileprivate let separator = UIView()
 
     var icon: StyleKitIcon? {
         didSet {
@@ -48,15 +45,11 @@ class StartUIIconCell: UICollectionViewCell {
         }
     }
 
-    // MARK: - Override Properties
-
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted ? CellColors.backgroundUserCellHightLighted : CellColors.backgroundUserCell
         }
     }
-
-    // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -69,27 +62,17 @@ class StartUIIconCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Set up UI
-
     func setupViews() {
         iconView.contentMode = .center
         separator.backgroundColor = CellColors.backgroundSeparatorCell
         backgroundColor = CellColors.backgroundUserCell
-        [
-            iconView,
-            titleLabel,
-            separator
-        ].forEach(contentView.addSubview)
+        [iconView, titleLabel, separator].forEach(contentView.addSubview)
     }
 
-    func createConstraints() {
+    fileprivate func createConstraints() {
         let iconSize: CGFloat = 32.0
 
-        [
-            iconView,
-            titleLabel,
-            separator
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [iconView, titleLabel, separator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             iconView.widthAnchor.constraint(equalToConstant: iconSize),
             iconView.heightAnchor.constraint(equalToConstant: iconSize),
@@ -107,5 +90,4 @@ class StartUIIconCell: UICollectionViewCell {
             separator.heightAnchor.constraint(equalToConstant: .hairline)
         ])
     }
-
 }

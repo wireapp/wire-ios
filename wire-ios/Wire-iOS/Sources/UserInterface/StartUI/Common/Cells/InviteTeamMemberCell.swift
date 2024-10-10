@@ -31,35 +31,4 @@ final class InviteTeamMemberCell: StartUIIconCell {
         accessibilityTraits.insert(.button)
         accessibilityIdentifier = "button.searchui.invite_team"
     }
-
-}
-
-final class CreateGroupCell: StartUIIconCell {
-
-    override func setupViews() {
-        super.setupViews()
-        icon = .createConversation
-        // TODO: fix
-        // title = PeoplePicker.QuickAction.createConversation
-        isAccessibilityElement = true
-        accessibilityLabel = title
-        accessibilityTraits.insert(.button)
-        accessibilityIdentifier = "button.searchui.creategroup"
-    }
-
-}
-
-final class CreateGuestRoomCell: StartUIIconCell {
-
-    override func setupViews() {
-        super.setupViews()
-        icon = .guest
-        // TODO: fix
-        // title = PeoplePicker.QuickAction.createGuestRoom
-        isAccessibilityElement = true
-        accessibilityLabel = title
-        accessibilityTraits.insert(.button)
-        accessibilityIdentifier = "button.searchui.createguestroom"
-    }
-
 }
