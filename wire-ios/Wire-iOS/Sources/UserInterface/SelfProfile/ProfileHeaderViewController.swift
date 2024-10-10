@@ -74,11 +74,21 @@ final class ProfileHeaderViewController: UIViewController {
 
     private let qrCodeButton = {
         let button = IconButton()
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 12
+        button.layer.masksToBounds = true
+
         let boldConfig = UIImage.SymbolConfiguration(weight: .black)
         let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
         button.setImage(boldImage, for: .normal)
+
+        button.setBorderColor(ColorTheme.Strokes.outline, for: .normal)
+        button.setBackgroundImageColor(ColorTheme.Backgrounds.surfaceVariant, for: .normal)
         button.setIconColor(ColorTheme.Buttons.Secondary.onEnabled, for: .normal)
-        button.hitAreaPadding = CGSize(width: 20, height: 20)
+
+        button.setBorderColor(ColorTheme.Strokes.outline, for: .highlighted)
+        button.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .highlighted)
+
         button.accessibilityLabel = L10n.Accessibility.Profile.ShareProfileButton.description
 
         return button
@@ -161,7 +171,12 @@ final class ProfileHeaderViewController: UIViewController {
         handleLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         handleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        let nameHandleStack = UIStackView(arrangedSubviews: [nameLabel, handleLabel])
+        let nameWithQRCodeStack = UIStackView(arrangedSubviews: [nameLabel, qrCodeButton])
+        nameWithQRCodeStack.axis = .horizontal
+        nameWithQRCodeStack.alignment = .center
+        nameWithQRCodeStack.spacing = 8
+
+        let nameHandleStack = UIStackView(arrangedSubviews: [nameWithQRCodeStack, handleLabel])
         nameHandleStack.axis = .vertical
         nameHandleStack.alignment = .center
         nameHandleStack.spacing = 8
@@ -216,7 +231,6 @@ final class ProfileHeaderViewController: UIViewController {
         stackView.wr_addCustomSpacing(20, after: federatedIndicator)
 
         view.addSubview(stackView)
-        view.addSubview(qrCodeButton)
 
         guestIndicator.tintColor = SemanticColors.Icon.foregroundDefault
         view.backgroundColor = UIColor.clear
@@ -241,21 +255,18 @@ final class ProfileHeaderViewController: UIViewController {
     private func configureConstraints() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        qrCodeButton.translatesAutoresizingMaskIntoConstraints = false
 
-        let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 56)
+        let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 26)
         let topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
-        let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -56)
+        let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -26)
         let bottomSpaceConstraint = stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
 
         let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
             widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint,
-            qrCodeButton.topAnchor.constraint(equalTo: stackView.topAnchor),
-            qrCodeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            qrCodeButton.heightAnchor.constraint(equalToConstant: 20),
-            qrCodeButton.widthAnchor.constraint(equalToConstant: 20)
+            qrCodeButton.heightAnchor.constraint(equalToConstant: 32),
+            qrCodeButton.widthAnchor.constraint(equalToConstant: 40)
         ])
     }
 
