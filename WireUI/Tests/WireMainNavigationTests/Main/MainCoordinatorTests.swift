@@ -22,17 +22,27 @@ import XCTest
 
 final class MainCoordinatorTests: XCTestCase {
 
-    private var sut: MainCoordinator<MockSplitViewController, MockTabBarController, MockViewControllerBuilder, MockViewControllerBuilder>!
+    typealias SUT = MainCoordinator<
+        MockSplitViewController,
+        MockConversationBuilder,
+        MockSettingsViewControllerBuilder,
+        MockViewControllerBuilder,
+        MockViewControllerBuilder,
+        MockViewControllerBuilder,
+        MockUserProfileViewControllerBuilder
+    >
+
+    private var sut: SUT!
 
     private var splitViewController: MockSplitViewController!
-    private var tabBarController: MockTabBarController!
+    private var tabBarController: SUT.TabBarController!
     private var sidebar: MockSidebarViewController!
-    private var conversationList: MockConversationListViewController!
+    private var conversationList: SUT.ConversationList!
 
     @MainActor
     override func setUp() async throws {
         sidebar = .init()
-        conversationList = .init()
+        conversationList = .init("")
 
         splitViewController = .init(style: .tripleColumn)
         splitViewController.sidebar = sidebar
@@ -45,8 +55,12 @@ final class MainCoordinatorTests: XCTestCase {
         sut = .init(
             mainSplitViewController: splitViewController,
             mainTabBarController: tabBarController,
-            newConversationBuilder: .init(),
-            selfProfileBuilder: .init()
+            conversationBuilder: .init(),
+            settingsContentBuilder: .init(),
+            connectBuilder: .init(),
+            createGroupConversationBuilder: .init(),
+            selfProfileBuilder: .init(),
+            userProfileBuilder: .init()
         )
     }
 
@@ -59,25 +73,25 @@ final class MainCoordinatorTests: XCTestCase {
     }
 
     @MainActor
-    func testShowingGroupConversations() {
+    func testShowingGroupConversations() async {
         // When
-        let conversationFilter: MockConversationListViewController.ConversationFilter = .groups
-        sut.showConversationList(conversationFilter: conversationFilter)
+        let conversationFilter: SUT.ConversationList.ConversationFilter = .groups
+        await sut.showConversationList(conversationFilter: conversationFilter)
 
         // Then
         XCTAssertNotNil(splitViewController.conversationList)
-        XCTAssertNil(tabBarController.conversations?.conversationList)
+        XCTAssertNil(tabBarController.conversationList)
         XCTAssertEqual(conversationList.conversationFilter, .groups)
         XCTAssertEqual(sidebar.selectedMenuItem, .groups)
     }
 
     @MainActor
-    func testShowingGroupConversationsFromArchive() {
+    func testShowingGroupConversationsFromArchive() async {
         // When
-        sut.showArchivedConversations()
+        await sut.showArchive()
 
         // Then
-        testShowingGroupConversations()
+        await testShowingGroupConversations()
     }
 
     @MainActor
@@ -87,17 +101,17 @@ final class MainCoordinatorTests: XCTestCase {
 
         // Then
         XCTAssertNil(splitViewController.conversationList)
-        XCTAssertNotNil(tabBarController.conversations?.conversationList)
+        XCTAssertNotNil(tabBarController.conversationList)
     }
 
     @MainActor
-    func testShowingArchivedConversations() {
+    func testShowingArchivedConversations() async {
         // When
-        sut.showArchivedConversations()
+        await sut.showArchive()
 
         // Then
         XCTAssertNil(splitViewController.conversationList)
-        XCTAssertNotNil(tabBarController.conversations?.conversationList)
+        XCTAssertNotNil(tabBarController.conversationList)
         XCTAssertNotNil(splitViewController.archive)
         XCTAssertNil(tabBarController.archive)
     }
@@ -105,6 +119,6 @@ final class MainCoordinatorTests: XCTestCase {
     // TODO: [WPB-10903] add many more tests, e.g.
     // - collapsing archive, connect, settings, selfProfile
     // - expanding archive, connect, settings, selfProfile
-    // - dismissing conversationList, archive, connect, newConversation, settings, selfProfile
+    // - dismissing conversationList, archive, connect, connect, settings, selfProfile
     // - tabBarController(_:didSelect:)
 }

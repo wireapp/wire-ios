@@ -18,18 +18,31 @@
 
 import SwiftUI
 
-public final class MainSplitViewController<
+// swiftlint:disable opening_brace
 
+public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
     Sidebar: MainSidebarProtocol,
-    ConversationList: MainConversationListProtocol
+    TabContainer: MainTabBarControllerProtocol
+{
+    // swiftlint:enable opening_brace
 
->: UISplitViewController, MainSplitViewControllerProtocol {
+    public typealias ConversationList = TabContainer.ConversationList
+    public typealias Archive = TabContainer.Archive
+    public typealias Settings = TabContainer.Settings
+
+    public typealias Conversation = TabContainer.Conversation
+    public typealias SettingsContent = TabContainer.SettingsContent
+
+    public typealias Connect = UIViewController
 
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
-    /// If the width of the view is lower than this value, the `preferredDisplayMode` property
-    /// will be set to `.oneBesideSecondary`, otherwise to `.twoBesideSecondary`.
-    private let sidebarVisibilityThreshold: CGFloat = 768
+    private let secondaryColumnMinWidth: CGFloat = 360
+
+    /// This property corresponds only to the border of the nested custom container view controller.
+    public var borderColor: UIColor = .gray {
+        didSet { splitLayoutContainer.borderColor = borderColor }
+    }
 
     // MARK: - Primary Column
 
@@ -37,85 +50,90 @@ public final class MainSplitViewController<
 
     // MARK: - Supplementary Column
 
-    public weak var conversationList: ConversationList? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [conversationList].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var conversationList: ConversationList? {
+        get { _conversationList }
+        set { setConversationList(newValue, animated: false) }
     }
 
-    public weak var archive: UIViewController? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [archive].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var archive: Archive? {
+        get { _archive }
+        set { setArchive(newValue, animated: false) }
     }
 
-    public weak var newConversation: UIViewController? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [newConversation].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var connect: Connect? {
+        get { _connect }
+        set { setConnect(newValue, animated: false) }
     }
 
-    public weak var settings: UIViewController? {
-        didSet {
-            supplementaryNavigationController?.viewControllers = [settings].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var settings: Settings? {
+        get { _settings }
+        set { setSettings(newValue, animated: false) }
     }
 
     // MARK: - Secondary Column
 
-    public weak var conversation: UIViewController? {
-        didSet {
-            secondaryNavigationController?.viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
-            secondaryNavigationController?.view.layoutIfNeeded()
-        }
+    public var conversation: Conversation? {
+        get { _conversation }
+        set { setConversation(newValue, animated: false) }
+    }
+
+    public var settingsContent: SettingsContent? {
+        get { _settingsContent }
+        set { setSettingsContent(newValue, animated: false) }
     }
 
     // MARK: - Compact/Collapsed
 
-    public private(set) weak var tabContainer: UIViewController!
+    public private(set) weak var tabContainer: TabContainer!
 
     // MARK: - Private Properties
 
     /// This view controller is displayed when no conversation in the list is selected.
     private let noConversationPlaceholder: UIViewController
 
-    private weak var supplementaryNavigationController: UINavigationController?
-    private weak var secondaryNavigationController: UINavigationController?
+    /// The required behavior wasn't achievable with the native split view controller.
+    /// Therefore this simple split view container view controller combines conversation list and conversation
+    /// or settings menu and settings content.
+    private weak var splitLayoutContainer: DoubleColumnContainerViewController!
+
+    private weak var _conversationList: ConversationList?
+    private weak var _archive: Archive?
+    private weak var _settings: Settings?
+
+    private weak var _conversation: Conversation?
+    private weak var _settingsContent: SettingsContent?
+
+    private weak var _connect: Connect?
 
     // MARK: - Initialization
 
     public init(
         sidebar: @autoclosure () -> Sidebar,
         noConversationPlaceholder: @autoclosure NoConversationPlaceholderBuilder,
-        tabContainer: @autoclosure () -> UIViewController
+        tabContainer: @autoclosure () -> TabContainer
     ) {
         let sidebar = sidebar()
         let noConversationPlaceholder = noConversationPlaceholder()
         let tabContainer = tabContainer()
-        let supplementaryNavigationController = UINavigationController()
-        let secondaryNavigationController = UINavigationController(rootViewController: noConversationPlaceholder)
+        let splitLayoutContainer = DoubleColumnContainerViewController()
 
         self.noConversationPlaceholder = noConversationPlaceholder
-        self.supplementaryNavigationController = supplementaryNavigationController
-        self.secondaryNavigationController = secondaryNavigationController
+        self.splitLayoutContainer = splitLayoutContainer
+        splitLayoutContainer.secondaryNavigationController.viewControllers = [noConversationPlaceholder]
+        splitLayoutContainer.borderColor = borderColor
 
         self.sidebar = sidebar
         self.tabContainer = tabContainer
 
-        super.init(style: .tripleColumn)
+        super.init(style: .doubleColumn)
 
-        preferredSplitBehavior = .tile
-        preferredDisplayMode = .oneBesideSecondary
+        preferredSplitBehavior = .overlay
+        preferredDisplayMode = .oneOverSecondary
         preferredPrimaryColumnWidth = 260
-        preferredSupplementaryColumnWidth = 320
+        splitLayoutContainer.primaryColumnWidth = 320
 
         setViewController(sidebar, for: .primary)
-        setViewController(supplementaryNavigationController, for: .supplementary)
-        setViewController(secondaryNavigationController, for: .secondary)
+        setViewController(splitLayoutContainer, for: .secondary)
         setViewController(tabContainer, for: .compact)
     }
 
@@ -126,20 +144,80 @@ public final class MainSplitViewController<
 
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setPreferredDisplayMode(basedOn: view.frame.size.width)
+        setPreferredSplitBehaviorAndDisplayMode(basedOn: view.frame.size.width)
     }
 
     override public func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        setPreferredDisplayMode(basedOn: size.width)
+        setPreferredSplitBehaviorAndDisplayMode(basedOn: size.width)
     }
 
-    private func setPreferredDisplayMode(basedOn width: CGFloat) {
-        preferredDisplayMode = if width >= sidebarVisibilityThreshold {
-            .twoBesideSecondary
+    private func setPreferredSplitBehaviorAndDisplayMode(basedOn width: CGFloat) {
+        let remainingWidth = width - preferredPrimaryColumnWidth - splitLayoutContainer.primaryColumnWidth
+
+        // remember if the sidebar was visible or not
+        let isSidebarVisible = displayMode != .secondaryOnly
+        if remainingWidth >= secondaryColumnMinWidth {
+            preferredSplitBehavior = .tile
+            preferredDisplayMode = isSidebarVisible ? .oneBesideSecondary : .secondaryOnly
         } else {
-            .oneBesideSecondary
+            preferredSplitBehavior = .overlay
+            preferredDisplayMode = isSidebarVisible ? .oneOverSecondary : .secondaryOnly
         }
+    }
+
+    public func hideSidebar() {
+        hide(.primary)
+    }
+
+    // MARK: - Accessors
+
+    private func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+        _conversationList = conversationList
+
+        let viewControllers = [conversationList].compactMap { $0 }
+        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setArchive(_ archive: Archive?, animated: Bool) {
+        _archive = archive
+
+        let viewControllers = [archive].compactMap { $0 }
+        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setConnect(_ connect: Connect?, animated: Bool) {
+        _connect = connect
+
+        let viewControllers = [connect].compactMap { $0 }
+        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setSettings(_ settings: Settings?, animated: Bool) {
+        _settings = settings
+
+        let viewControllers = [settings].compactMap { $0 }
+        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setConversation(_ conversation: Conversation?, animated: Bool) {
+        _conversation = conversation
+
+        let viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
+        splitLayoutContainer.secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+        _settingsContent = settingsContent
+
+        let viewControllers = [settingsContent].compactMap { $0 }
+        splitLayoutContainer.secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
     }
 }
 

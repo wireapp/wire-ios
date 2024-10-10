@@ -1,0 +1,68 @@
+{
+  "configurations" : [
+    {
+      "id" : "6F51967A-7ACF-414E-91E0-8077734A0817",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireAccountImageTests",
+        "name" : "WireAccountImageTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireConversationListTests",
+        "name" : "WireConversationListTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireMainNavigationTests",
+        "name" : "WireMainNavigationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireSettingsTests",
+        "name" : "WireSettingsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireSidebarTests",
+        "name" : "WireSidebarTests"
+      }
+    }
+  ],
+  "version" : 1
+}

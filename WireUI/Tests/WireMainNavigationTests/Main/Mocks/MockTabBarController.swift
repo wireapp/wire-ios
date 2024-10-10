@@ -17,12 +17,46 @@
 //
 
 import UIKit
-import WireMainNavigation
+
+@testable import WireMainNavigation
 
 final class MockTabBarController: UITabBarController, MainTabBarControllerProtocol {
-    var contacts: UIViewController?
-    var conversations: (conversationList: MockConversationListViewController, conversation: UIViewController?)?
-    var archive: UIViewController?
-    var settings: UIViewController?
+
+    typealias ConversationList = PreviewConversationListViewController
+    typealias Archive = UIViewController
+    typealias Settings = UIViewController
+
+    typealias Conversation = MockConversationViewController<MockConversation, MockMessage>
+    typealias SettingsContent = UIViewController
+
+    typealias Connect = UIViewController
+
     var selectedContent: MainTabBarControllerContent = .conversations
+
+    var conversationList: ConversationList?
+    var archive: Archive?
+    var settings: Settings?
+
+    var conversation: Conversation?
+    var settingsContent: SettingsContent?
+
+    func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setArchive(_ archive: UIViewController?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setSettings(_ settings: Settings?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setConversation(_ conversation: Conversation?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
 }

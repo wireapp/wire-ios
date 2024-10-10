@@ -9,6 +9,7 @@ let package = Package(
     products: [
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
+        .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"]),
         .plugin(name: "SnapshotTestReferenceDirectoryPlugin", targets: ["SnapshotTestReferenceDirectoryPlugin"])
     ],
@@ -29,14 +30,26 @@ let package = Package(
             dependencies: ["WireFoundation"],
             plugins: [.plugin(name: "SourceryPlugin", package: "SourceryPlugin")]
         ),
+
+        .target(
+            name: "WireUtilitiesPackage",
+            path: "./Sources/WireUtilities"
+        ),
+        .testTarget(
+            name: "WireUtilitiesPackageTests",
+            dependencies: ["WireUtilitiesPackage"],
+            path: "./Tests/WireUtilitiesTests",
+            plugins: ["SnapshotTestReferenceDirectoryPlugin"]
+        ),
+
         .target(
             name: "WireTestingPackage",
             dependencies: [
-                "WireFoundation",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"
         ),
+
         .plugin(name: "SnapshotTestReferenceDirectoryPlugin", capability: .buildTool())
     ]
 )

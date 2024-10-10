@@ -20,6 +20,8 @@ import UIKit
 import WireMainNavigation
 
 final class MockConversationListViewController: UIViewController, MainConversationListProtocol {
+    typealias ConversationModel = MockConversation
+    typealias ConversationMessageModel = MockMessage
 
     enum ConversationFilter {
         case groups
@@ -27,11 +29,13 @@ final class MockConversationListViewController: UIViewController, MainConversati
 
     var conversationFilter: ConversationFilter? {
         didSet {
-            print("didset \(conversationFilter)")
+            print("didset \(String(describing: conversationFilter))")
         }
     }
 
-    var splitViewInterface: MainSplitViewState = .expanded
+    var selectedConversation: MockConversation?
+
+    var mainSplitViewState: MainSplitViewState = .expanded
 }
 
 extension MockConversationListViewController.ConversationFilter: MainConversationFilterRepresentable {

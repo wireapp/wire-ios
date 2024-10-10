@@ -17,9 +17,33 @@
 //
 
 import UIKit
-import WireMainNavigation
+
+@testable import WireMainNavigation
+
+// swiftlint:disable opening_brace
 
 struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-    @MainActor
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
+
+    typealias ConversationList = PreviewConversationListViewController
+    typealias SettingsBuilder = MockSettingsViewControllerBuilder
+    typealias Conversation = MockConversationViewController<MockConversation, MockMessage>
+    typealias ConversationModel = Conversation.ConversationModel
+    typealias ConversationMessageModel = Conversation.ConversationMessageModel
+    typealias User = MockUserProfileViewControllerBuilder.User
+    typealias ViewController = UIViewController
+
+    func build<MainCoordinator: MainCoordinatorProtocol>(
+        mainCoordinator: MainCoordinator
+    ) -> UIViewController where
+        MainCoordinator: MainCoordinatorProtocol,
+        MainCoordinator.ConversationList == ConversationList,
+        MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
+        MainCoordinator.ConversationModel == Conversation.ConversationModel,
+        MainCoordinator.SettingsContentBuilder == SettingsBuilder,
+        MainCoordinator.User == User
+    {
+        .init()
+    }
 }
+
+// swiftlint:enable opening_brace
