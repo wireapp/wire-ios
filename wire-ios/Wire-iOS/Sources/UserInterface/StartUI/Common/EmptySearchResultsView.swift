@@ -128,8 +128,8 @@ final class EmptySearchResultsView: UIView {
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     private let iconView = UIImageView()
-    private let statusLabel = DynamicFontLabel(fontSpec: .normalRegularFont, color: LabelColors.textSettingsPasswordPlaceholder)
-    private let actionButton = LinkButton(fontSpec: .normalRegularFont)
+    private let statusLabel = DynamicFontLabel(style: .body1, color: LabelColors.textSettingsPasswordPlaceholder)
+    private let actionButton = LinkButton(style: .body1)
     private let iconColor = LabelColors.textSettingsPasswordPlaceholder
 
     weak var delegate: EmptySearchResultsViewDelegate?
