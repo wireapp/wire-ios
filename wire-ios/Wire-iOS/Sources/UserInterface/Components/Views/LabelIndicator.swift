@@ -57,7 +57,7 @@ enum LabelIndicatorContext {
 final class LabelIndicator: UIView {
 
     private let indicatorIcon = UIImageView()
-    private let titleLabel = DynamicFontLabel(fontSpec: .mediumSemiboldInputText,
+    private let titleLabel = DynamicFontLabel(style: .h5,
                                               color: SemanticColors.Label.textDefault)
     private let containerView = UIView()
     private let context: LabelIndicatorContext
