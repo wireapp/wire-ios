@@ -41,6 +41,8 @@ struct QRCodeCard: View {
                 Text(handle)
                     .font(.textStyle(.h2))
                     .foregroundColor(.black)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
                 Text(profileLink)
                     .font(.textStyle(.subline1))
                     .foregroundColor(.black)
