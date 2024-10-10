@@ -93,6 +93,14 @@ jobs:
         run: |
           files=`find artifacts/ -type d -name "*.xcresult" | jq -R . | jq -s .`
           echo xcresult_files=${files} >> $GITHUB_OUTPUT
+          
+      - name: Upload .xcresult files
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xcresults
+          path: |
+              ${{ steps.find-xcresults.outputs.xcresult_files }}
 
       # Scripts
       - name: Test Scripts
@@ -160,6 +168,15 @@ jobs:
       matrix:
         xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
     steps:
+      - name: Download xcresults
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: xcresults
+
+      - name: Display downloaded files
+        run: ls -R
+      
       - name: Analyze .xcresult file
         uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         with:
