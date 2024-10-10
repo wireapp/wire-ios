@@ -267,7 +267,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         WireLogger.appDelegate.info("application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)")
 
         appRootRouter?.performWhenAuthenticated {
-            ZMUserSession.shared()?.application(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
+            ZMUserSession.shared()?.application(application, 
+                                                handleEventsForBackgroundURLSession: identifier,
+                                                completionHandler: completionHandler)
         }
     }
 
