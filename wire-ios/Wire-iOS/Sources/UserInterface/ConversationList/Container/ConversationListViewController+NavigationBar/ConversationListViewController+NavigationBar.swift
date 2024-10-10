@@ -153,7 +153,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
 
         // New Conversation Button
-        let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
+        fatalError("TODO: use sf symbols")
+        let newConversationImage = UIImage() // TODO: (resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
             Task {
                 await self?.mainCoordinator.showConnect()
@@ -165,8 +166,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         // startConversationItem.accessibilityLabel =
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
 
-        let defaultFilterImage = UIImage(resource: .ConversationList.Header.filterConversations)
-        let filledFilterImage = UIImage(resource: .ConversationList.Header.filterConversationsFilled)
+        let defaultFilterImage = UIImage() // TODO: (resource: .ConversationList.Header.filterConversations)
+        let filledFilterImage = UIImage() // TODO: (resource: .ConversationList.Header.filterConversationsFilled)
 
         var selectedFilterImage: UIImage
 
