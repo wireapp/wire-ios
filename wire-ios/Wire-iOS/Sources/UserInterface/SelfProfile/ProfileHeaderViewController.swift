@@ -58,12 +58,6 @@ final class ProfileHeaderViewController: UIViewController {
         label.accessibilityLabel = AccountPageStrings.Name.description
         label.accessibilityIdentifier = "name"
 
-//        label.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
-//        label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-
         label.accessibilityTraits.insert(.header)
         label.lineBreakMode = .byTruncatingTail
         label.numberOfLines = 3

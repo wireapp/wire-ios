@@ -24,8 +24,11 @@ import WireDesign
 final class WarningLabelView: UIView {
     private let stackView = UIStackView(axis: .horizontal)
     private let imageView = UIImageView(image: UIImage(named: "Info"))
-    private let label = DynamicFontLabel(style: .h5,
-                                 color: SemanticColors.Label.textErrorDefault)
+
+    private let label = DynamicFontLabel(
+        style: .h5,
+        color: SemanticColors.Label.textErrorDefault
+    )
 
     // MARK: - Setup
 
@@ -50,9 +53,9 @@ final class WarningLabelView: UIView {
         NSLayoutConstraint.activate([
             imageView.widthAnchor.constraint(equalToConstant: 16.0),
             imageView.heightAnchor.constraint(equalToConstant: 16.0)] +
-            NSLayoutConstraint.forView(view: stackView,
-                                       inContainer: self,
-                                       withInsets: .zero)
+                                    NSLayoutConstraint.forView(view: stackView,
+                                                               inContainer: self,
+                                                               withInsets: .zero)
         )
     }
 
