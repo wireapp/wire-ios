@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireMainNavigation
 import WireSettings
 import WireSidebar
-import WireDataModel
 
 enum MainCoordinatorDependencies: WireMainNavigation.MainCoordinatorDependencies {
 

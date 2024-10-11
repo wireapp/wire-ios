@@ -40,8 +40,7 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>
     public init<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator
     ) where MainCoordinator.Dependencies == Dependencies {
-
-        self.base = mainCoordinator
+        base = mainCoordinator
         _showConversationList = { conversationFilter in
             await mainCoordinator.showConversationList(conversationFilter: conversationFilter)
         }

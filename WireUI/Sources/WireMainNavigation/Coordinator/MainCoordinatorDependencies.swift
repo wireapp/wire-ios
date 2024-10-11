@@ -19,25 +19,25 @@
 public protocol MainCoordinatorDependencies: MainCoordinatorProtocolDependencies {
 
     associatedtype SplitViewController: MainSplitViewControllerProtocol where
-    SplitViewController.TabContainer.ConversationList.ConversationFilter == ConversationFilter,
-    SplitViewController.TabContainer.ConversationList.ConversationModel == ConversationModel
+        SplitViewController.TabContainer.ConversationList.ConversationFilter == ConversationFilter,
+        SplitViewController.TabContainer.ConversationList.ConversationModel == ConversationModel
 
     associatedtype ConversationBuilder: MainConversationBuilderProtocol where
-    ConversationBuilder.Dependencies == Self,
-    ConversationBuilder.Conversation == SplitViewController.Conversation
+        ConversationBuilder.Dependencies == Self,
+        ConversationBuilder.Conversation == SplitViewController.Conversation
 
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol where
-    SettingsContentBuilder.TopLevelMenuItem == SettingsTopLevelMenuItem
+        SettingsContentBuilder.TopLevelMenuItem == SettingsTopLevelMenuItem
 
     associatedtype ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder where
-    ConnectBuilder.Dependencies == Self
+        ConnectBuilder.Dependencies == Self
 
     associatedtype CreateGroupConversationBuilder: MainCoordinatorInjectingViewControllerBuilder where
-    CreateGroupConversationBuilder.Dependencies == Self
+        CreateGroupConversationBuilder.Dependencies == Self
 
     associatedtype SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder where
-    SelfProfileBuilder.Dependencies == Self
+        SelfProfileBuilder.Dependencies == Self
 
     associatedtype UserProfileBuilder: MainUserProfileBuilderProtocol where
-    UserProfileBuilder.User == User
+        UserProfileBuilder.User == User
 }

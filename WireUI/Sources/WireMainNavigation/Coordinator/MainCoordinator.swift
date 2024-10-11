@@ -18,6 +18,8 @@
 
 import UIKit
 
+// swiftlint:disable opening_brace
+
 /// Manages the main navigation and the layout changes of the application after a successful login.
 ///
 /// The MainCoordinator class is the central controller for the app's navigation and layout management.
@@ -30,7 +32,9 @@ import UIKit
 
 @MainActor
 public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate
-where Dependencies: MainCoordinatorDependencies {
+    where Dependencies: MainCoordinatorDependencies
+{
+    // swiftlint:enable opening_brace
 
     // MARK: - Private Properties
 

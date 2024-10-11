@@ -19,7 +19,6 @@
 import WireDataModel
 import WireMainNavigation
 
-// TODO: rename?
 extension MainCoordinator: StartUIDelegate where Dependencies.ConversationModel == ZMConversation, Dependencies.User == any UserType {
 
     @MainActor

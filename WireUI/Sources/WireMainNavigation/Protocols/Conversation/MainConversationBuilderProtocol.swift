@@ -24,7 +24,7 @@ public protocol MainConversationBuilderProtocol {
     associatedtype Dependencies: MainCoordinatorProtocolDependencies
 
     associatedtype Conversation: MainConversationProtocol where
-    Conversation.ConversationModel == Dependencies.ConversationModel
+        Conversation.ConversationModel == Dependencies.ConversationModel
 
     typealias ConversationModel = Dependencies.ConversationModel
     typealias ConversationMessageModel = Dependencies.ConversationMessageModel
