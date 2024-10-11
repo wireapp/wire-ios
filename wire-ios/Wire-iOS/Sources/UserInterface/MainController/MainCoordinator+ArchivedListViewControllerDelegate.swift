@@ -19,11 +19,11 @@
 import WireDataModel
 import WireMainNavigation
 
-extension GenericMainCoordinator: ProfileViewControllerDelegate where Dependencies.ConversationModel == ZMConversation {
+extension MainCoordinator: ArchivedListViewControllerDelegate where Dependencies.ConversationModel == ZMConversation {
 
-    func profileViewController(
-        _ controller: ProfileViewController?,
-        wantsToNavigateTo conversation: ZMConversation
+    func archivedListViewController(
+        _ viewController: ArchivedListViewController,
+        didSelectConversation conversation: ZMConversation
     ) {
         Task { @MainActor in
             await showConversationList(conversationFilter: .none)

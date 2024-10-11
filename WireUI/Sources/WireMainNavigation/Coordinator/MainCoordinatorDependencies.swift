@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol GenericMainCoordinatorDependencies: MainCoordinatorProtocolDependencies {
+public protocol MainCoordinatorDependencies: MainCoordinatorProtocolDependencies {
 
     associatedtype SplitViewController: MainSplitViewControllerProtocol where
     SplitViewController.TabContainer.ConversationList.ConversationFilter == ConversationFilter,

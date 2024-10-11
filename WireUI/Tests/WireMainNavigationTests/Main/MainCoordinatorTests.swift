@@ -22,7 +22,7 @@ import XCTest
 
 final class MainCoordinatorTests: XCTestCase {
 
-    typealias SUT = GenericMainCoordinator<MockMainCoordinatorDependencies>
+    typealias SUT = MainCoordinator<MockMainCoordinatorDependencies>
 
     private var sut: SUT!
 

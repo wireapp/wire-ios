@@ -16,17 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension GenericMainCoordinator {
-
-    typealias SplitViewController = Dependencies.SplitViewController
-    typealias ConversationList = Dependencies.SplitViewController.ConversationList
-    typealias Settings = Dependencies.SplitViewController.Settings
-    typealias TabBarController = Dependencies.SplitViewController.TabContainer
-
-    typealias ConversationModel = Dependencies.ConversationModel
-    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
-
-    typealias Connect = Dependencies.ConnectBuilder.ViewController
-    typealias SelfProfile = Dependencies.SelfProfileBuilder.ViewController
-    typealias User = Dependencies.UserProfileBuilder.User
-}
+//public final class AnyMainCoordinator: MainCoordinatorProtocol {}

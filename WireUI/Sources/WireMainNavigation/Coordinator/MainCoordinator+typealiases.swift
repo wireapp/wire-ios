@@ -16,18 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireMainNavigation
+public extension MainCoordinator {
 
-extension GenericMainCoordinator: ConversationCreationControllerDelegate where Dependencies.ConversationModel == ZMConversation, Dependencies.User == any UserType {
+    typealias SplitViewController = Dependencies.SplitViewController
+    typealias ConversationList = Dependencies.SplitViewController.ConversationList
+    typealias Settings = Dependencies.SplitViewController.Settings
+    typealias TabBarController = Dependencies.SplitViewController.TabContainer
 
-    func conversationCreationController(
-        _ controller: ConversationCreationController,
-        didCreateConversation conversation: ZMConversation
-    ) {
-        Task {
-            await showConversationList(conversationFilter: .none)
-            await showConversation(conversation: conversation, message: nil)
-        }
-    }
+    typealias ConversationModel = Dependencies.ConversationModel
+    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
+
+    typealias Connect = Dependencies.ConnectBuilder.ViewController
+    typealias SelfProfile = Dependencies.SelfProfileBuilder.ViewController
+    typealias User = Dependencies.UserProfileBuilder.User
 }

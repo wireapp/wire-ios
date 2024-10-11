@@ -18,7 +18,7 @@
 
 @testable import WireMainNavigation
 
-enum MockMainCoordinatorDependencies: GenericMainCoordinatorDependencies {
+enum MockMainCoordinatorDependencies: MainCoordinatorDependencies {
 
     // MainCoordinatorProtocolDependencies
 
@@ -28,7 +28,7 @@ enum MockMainCoordinatorDependencies: GenericMainCoordinatorDependencies {
     typealias SettingsTopLevelMenuItem = MainSettingsTopLevelMenuItem
     typealias User = MockUser
 
-    // GenericMainCoordinatorDependencies
+    // MainCoordinatorDependencies
 
     typealias SplitViewController = MockSplitViewController
     typealias ConversationBuilder = MockConversationBuilder

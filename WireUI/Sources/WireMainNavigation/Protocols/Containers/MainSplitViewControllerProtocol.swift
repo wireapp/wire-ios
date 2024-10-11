@@ -19,7 +19,7 @@
 import UIKit
 
 @MainActor
-public protocol MainSplitViewControllerProtocol: UISplitViewController, MainContainerViewController {
+public protocol MainSplitViewControllerProtocol: UISplitViewController, MainContainerViewControllerProtocol {
 
     associatedtype Sidebar: MainSidebarProtocol
     associatedtype TabContainer: MainTabBarControllerProtocol where

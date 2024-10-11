@@ -18,8 +18,6 @@
 
 import UIKit
 
-public typealias MainContainerViewController = MainContainerViewControllerProtocol
-
 /// A common base for the split view controller and the tab bar controller.
 @MainActor
 public protocol MainContainerViewControllerProtocol: UIViewController {

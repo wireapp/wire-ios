@@ -26,7 +26,7 @@ import WireSyncEngine
 @MainActor
 final class MockMainCoordinator: MainCoordinatorProtocol {
 
-    typealias Dependencies = MainCoordinatorDependencies
+    typealias Dependencies = Wire.MainCoordinatorDependencies
 
     func showConversationList(conversationFilter: ConversationFilter?) {
         fatalError("Mock method not implemented")

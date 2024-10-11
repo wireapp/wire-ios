@@ -242,7 +242,7 @@ private extension MainCoordinatorInjectingViewControllerBuilder where Self == Mo
 
 private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
-    typealias Dependencies = MainCoordinatorDependencies
+    typealias Dependencies = Wire.MainCoordinatorDependencies
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator

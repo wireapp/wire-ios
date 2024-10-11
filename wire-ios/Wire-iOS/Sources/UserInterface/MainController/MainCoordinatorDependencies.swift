@@ -21,7 +21,7 @@ import WireSettings
 import WireSidebar
 import WireDataModel
 
-enum MainCoordinatorDependencies: GenericMainCoordinatorDependencies {
+enum MainCoordinatorDependencies: WireMainNavigation.MainCoordinatorDependencies {
 
     // MainCoordinatorProtocolDependencies
 
@@ -31,7 +31,7 @@ enum MainCoordinatorDependencies: GenericMainCoordinatorDependencies {
     typealias SettingsTopLevelMenuItem = WireSettings.SettingsTopLevelMenuItem
     typealias User = any UserType
 
-    // GenericMainCoordinatorDependencies
+    // MainCoordinatorDependencies
 
     typealias SplitViewController = MainSplitViewController<SidebarViewController, TabBarController>
     typealias TabBarController = MainTabBarController<ConversationListViewController, ConversationRootViewController>

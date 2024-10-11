@@ -20,7 +20,7 @@ import WireDataModel
 import WireMainNavigation
 import WireSettings
 
-final class AnyMainCoordinator<Dependencies: GenericMainCoordinatorDependencies>: MainCoordinatorProtocol {
+final class AnyMainCoordinator<Dependencies: WireMainNavigation.MainCoordinatorDependencies>: MainCoordinatorProtocol {
 
     let mainCoordinator: any MainCoordinatorProtocol
 
