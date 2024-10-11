@@ -26,7 +26,7 @@ import XCTest
 final class UserClientAddEventProcessorTests: XCTestCase {
 
     private var sut: UserClientAddEventProcessor!
-    private var userRepository: MockUserRepositoryProtocol!
+    private var clientRepository: MockClientRepositoryProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -40,9 +40,9 @@ final class UserClientAddEventProcessorTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
-        userRepository = MockUserRepositoryProtocol()
+        clientRepository = MockClientRepositoryProtocol()
         sut = UserClientAddEventProcessor(
-            repository: userRepository
+            repository: clientRepository
         )
     }
 
@@ -53,7 +53,7 @@ final class UserClientAddEventProcessorTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         sut = nil
-        userRepository = nil
+        clientRepository = nil
     }
 
     // MARK: - Tests
@@ -63,11 +63,11 @@ final class UserClientAddEventProcessorTests: XCTestCase {
 
         let userClient = modelHelper.createSelfClient(in: context)
 
-        userRepository.fetchOrCreateUserClientWith_MockMethod = { _ in
+        clientRepository.fetchOrCreateClientWith_MockMethod = { _ in
             (userClient, true)
         }
 
-        userRepository.updateUserClientFromIsNewClient_MockMethod = { _, _, _ in }
+        clientRepository.updateClientWithFromIsNewClient_MockMethod = { _, _, _ in }
 
         // When
 
@@ -75,8 +75,8 @@ final class UserClientAddEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userRepository.fetchOrCreateUserClientWith_Invocations.count, 1)
-        XCTAssertEqual(userRepository.updateUserClientFromIsNewClient_Invocations.count, 1)
+        XCTAssertEqual(clientRepository.fetchOrCreateClientWith_Invocations.count, 1)
+        XCTAssertEqual(clientRepository.updateClientWithFromIsNewClient_Invocations.count, 1)
     }
 
     private enum Scaffolding {
