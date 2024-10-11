@@ -31,7 +31,6 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
     public typealias Settings = TabContainer.Settings
 
     public typealias Conversation = TabContainer.Conversation
-    public typealias SettingsContent = TabContainer.SettingsContent
 
     public typealias Connect = UIViewController
 
@@ -77,7 +76,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         set { setConversation(newValue, animated: false) }
     }
 
-    public var settingsContent: SettingsContent? {
+    public var settingsContent: UIViewController? {
         get { _settingsContent }
         set { setSettingsContent(newValue, animated: false) }
     }
@@ -101,7 +100,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
     private weak var _settings: Settings?
 
     private weak var _conversation: Conversation?
-    private weak var _settingsContent: SettingsContent?
+    private weak var _settingsContent: UIViewController?
 
     private weak var _connect: Connect?
 
@@ -212,7 +211,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
     }
 
-    private func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+    private func setSettingsContent(_ settingsContent: UIViewController?, animated: Bool) {
         _settingsContent = settingsContent
 
         let viewControllers = [settingsContent].compactMap { $0 }

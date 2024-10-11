@@ -26,8 +26,7 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController, MainCont
         TabContainer.ConversationList == ConversationList,
         TabContainer.Conversation == Conversation,
         TabContainer.Archive == Archive,
-        TabContainer.Settings == Settings,
-        TabContainer.SettingsContent == SettingsContent
+        TabContainer.Settings == Settings
 
     /// Contains the reference to the view controller shown in the primary column.
     var sidebar: Sidebar! { get }

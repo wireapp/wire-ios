@@ -64,9 +64,7 @@ public final class GenericMainCoordinator<
     SelfProfileBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
     SelfProfileBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
     SelfProfileBuilder.SettingsBuilder == SettingsContentBuilder,
-    SelfProfileBuilder.User == UserProfileBuilder.User,
-
-    SettingsContentBuilder.SettingsContent == SplitViewController.SettingsContent
+    SelfProfileBuilder.User == UserProfileBuilder.User
 {
     // swiftlint:enable opening_brace
 
@@ -76,8 +74,6 @@ public final class GenericMainCoordinator<
 
     public typealias ConversationModel = ConversationBuilder.Conversation.ConversationModel
     public typealias ConversationMessageModel = ConversationBuilder.Conversation.ConversationMessageModel
-
-    public typealias SettingsContent = SplitViewController.SettingsContent
 
     public typealias Connect = ConnectBuilder.ViewController
     public typealias SelfProfile = SelfProfileBuilder.ViewController
