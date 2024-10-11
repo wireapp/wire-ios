@@ -16,16 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigation
-
-struct MockUserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
-    typealias UserProfile = UIViewController
-
-    func build(
-        user: MockUser,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) -> UIViewController {
-        fatalError()
-    }
-}
+struct MockUser {}

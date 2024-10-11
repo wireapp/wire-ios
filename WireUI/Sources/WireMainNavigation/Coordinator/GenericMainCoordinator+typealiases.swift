@@ -16,16 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigation
+public extension GenericMainCoordinator {
 
-struct MockUserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
-    typealias UserProfile = UIViewController
+    typealias SplitViewController = Dependencies.SplitViewController
+    typealias ConversationList = Dependencies.SplitViewController.ConversationList
+    typealias Settings = Dependencies.SplitViewController.Settings
+    typealias TabBarController = Dependencies.SplitViewController.TabContainer
 
-    func build(
-        user: MockUser,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) -> UIViewController {
-        fatalError()
-    }
+    typealias ConversationModel = Dependencies.ConversationModel
+    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
+
+    typealias Connect = Dependencies.ConnectBuilder.ViewController
+    typealias SelfProfile = Dependencies.SelfProfileBuilder.ViewController
+    typealias User = Dependencies.UserProfileBuilder.User
 }

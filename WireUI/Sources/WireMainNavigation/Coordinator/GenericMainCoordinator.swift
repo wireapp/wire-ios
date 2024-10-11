@@ -18,8 +18,6 @@
 
 import UIKit
 
-// swiftlint:disable opening_brace
-
 /// Manages the main navigation and the layout changes of the application after a successful login.
 ///
 /// The MainCoordinator class is the central controller for the app's navigation and layout management.
@@ -31,65 +29,26 @@ import UIKit
 /// instances and then put or remove the content view controllers into/from `viewControllers` array.
 
 @MainActor
-public final class GenericMainCoordinator<
-
-    SplitViewController: MainSplitViewControllerProtocol,
-    ConversationBuilder: MainConversationBuilderProtocol,
-    SettingsContentBuilder: MainSettingsContentBuilderProtocol,
-    ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder,
-    CreateGroupConversationBuilder: MainCoordinatorInjectingViewControllerBuilder,
-    SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder,
-    UserProfileBuilder: MainUserProfileBuilderProtocol
-
->: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
-
-    ConversationBuilder.Conversation == SplitViewController.Conversation,
-
-    ConnectBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
-    ConnectBuilder.ConversationMessageModel == ConversationBuilder.ConversationMessageModel,
-    ConnectBuilder.SettingsBuilder == SettingsContentBuilder,
-    ConnectBuilder.User == UserProfileBuilder.User,
-
-    CreateGroupConversationBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
-    CreateGroupConversationBuilder.ConversationMessageModel == ConversationBuilder.ConversationMessageModel,
-    CreateGroupConversationBuilder.SettingsBuilder == SettingsContentBuilder,
-    CreateGroupConversationBuilder.User == UserProfileBuilder.User,
-
-    SelfProfileBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
-    SelfProfileBuilder.ConversationMessageModel == ConversationBuilder.ConversationMessageModel,
-    SelfProfileBuilder.SettingsBuilder == SettingsContentBuilder,
-    SelfProfileBuilder.User == UserProfileBuilder.User
-{
-    // swiftlint:enable opening_brace
-
-    public typealias ConversationList = SplitViewController.ConversationList
-    public typealias Settings = SplitViewController.Settings
-    public typealias TabBarController = SplitViewController.TabContainer
-
-    public typealias ConversationModel = ConversationBuilder.ConversationModel
-    public typealias ConversationMessageModel = ConversationBuilder.ConversationMessageModel
-
-    public typealias Connect = ConnectBuilder.ViewController
-    public typealias SelfProfile = SelfProfileBuilder.ViewController
-    public typealias User = UserProfileBuilder.User
+public final class GenericMainCoordinator<Dependencies>: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate
+where Dependencies: GenericMainCoordinatorDependencies {
 
     // MARK: - Private Properties
 
     private weak var splitViewController: SplitViewController!
     private weak var tabBarController: TabBarController!
 
-    private let conversationBuilder: ConversationBuilder
-    private let settingsContentBuilder: SettingsContentBuilder
+    private let conversationBuilder: Dependencies.ConversationBuilder
+    private let settingsContentBuilder: Dependencies.SettingsContentBuilder
 
-    private let connectBuilder: ConnectBuilder
+    private let connectBuilder: Dependencies.ConnectBuilder
     private weak var connect: Connect?
 
-    private let createGroupConversationBuilder: CreateGroupConversationBuilder
+    private let createGroupConversationBuilder: Dependencies.CreateGroupConversationBuilder
 
-    private var selfProfileBuilder: SelfProfileBuilder
+    private var selfProfileBuilder: Dependencies.SelfProfileBuilder
     private weak var selfProfile: SelfProfile?
 
-    private var userProfileBuilder: UserProfileBuilder
+    private var userProfileBuilder: Dependencies.UserProfileBuilder
 
     private var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -125,12 +84,12 @@ public final class GenericMainCoordinator<
     public init(
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
-        conversationBuilder: ConversationBuilder,
-        settingsContentBuilder: SettingsContentBuilder,
-        connectBuilder: ConnectBuilder,
-        createGroupConversationBuilder: CreateGroupConversationBuilder,
-        selfProfileBuilder: SelfProfileBuilder,
-        userProfileBuilder: UserProfileBuilder
+        conversationBuilder: Dependencies.ConversationBuilder,
+        settingsContentBuilder: Dependencies.SettingsContentBuilder,
+        connectBuilder: Dependencies.ConnectBuilder,
+        createGroupConversationBuilder: Dependencies.CreateGroupConversationBuilder,
+        selfProfileBuilder: Dependencies.SelfProfileBuilder,
+        userProfileBuilder: Dependencies.UserProfileBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
@@ -149,7 +108,7 @@ public final class GenericMainCoordinator<
 
     // MARK: - Public Methods
 
-    public func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async {
+    public func showConversationList(conversationFilter: ConversationFilter?) async {
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
@@ -273,7 +232,7 @@ public final class GenericMainCoordinator<
         splitViewController.conversation = nil
     }
 
-    public func showSettingsContent(_ topLevelMenuItem: SettingsContentBuilder.TopLevelMenuItem) {
+    public func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
             splitViewController.hideSidebar()
         }
@@ -307,14 +266,14 @@ public final class GenericMainCoordinator<
             splitViewController.hideSidebar()
         }
 
-        let selfProfile = selfProfileBuilder.build(mainCoordinator: self)
-        selfProfile.modalPresentationStyle = .formSheet
-        self.selfProfile = selfProfile
-
-        await dismissPresentedViewController()
-        await withCheckedContinuation { continuation in
-            splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
-        }
+//        let selfProfile = selfProfileBuilder.build(mainCoordinator: self)
+//        selfProfile.modalPresentationStyle = .formSheet
+//        self.selfProfile = selfProfile
+//
+//        await dismissPresentedViewController()
+//        await withCheckedContinuation { continuation in
+//            splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
+//        }
     }
 
     public func showUserProfile(user: User) async {
@@ -339,10 +298,10 @@ public final class GenericMainCoordinator<
             splitViewController.hideSidebar()
         }
 
-        let connect = connectBuilder.build(mainCoordinator: self)
-        connect.modalPresentationStyle = .formSheet
-        self.connect = connect
-        await presentViewController(connect)
+//        let connect = connectBuilder.build(mainCoordinator: self)
+//        connect.modalPresentationStyle = .formSheet
+//        self.connect = connect
+//        await presentViewController(connect)
     }
 
     public func showCreateGroupConversation() async {
@@ -350,9 +309,9 @@ public final class GenericMainCoordinator<
             splitViewController.hideSidebar()
         }
 
-        let createGroupConversation = createGroupConversationBuilder.build(mainCoordinator: self)
-        createGroupConversation.modalPresentationStyle = .formSheet
-        await presentViewController(createGroupConversation)
+//        let createGroupConversation = createGroupConversationBuilder.build(mainCoordinator: self)
+//        createGroupConversation.modalPresentationStyle = .formSheet
+//        await presentViewController(createGroupConversation)
     }
 
     public func presentViewController(_ viewController: UIViewController) async {
@@ -470,7 +429,7 @@ public final class GenericMainCoordinator<
         }
 
         // if the settings were visible, present it
-        var settingsContentToSelect: SettingsContentBuilder.TopLevelMenuItem?
+        var settingsContentToSelect: Dependencies.SettingsContentBuilder.TopLevelMenuItem?
         if tabBarController.selectedContent == .settings {
             let settings = tabBarController.settings
             tabBarController.settings = nil

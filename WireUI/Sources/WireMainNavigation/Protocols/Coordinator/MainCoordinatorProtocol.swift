@@ -20,11 +20,13 @@ import UIKit
 
 public protocol MainCoordinatorProtocol: AnyObject {
 
-    associatedtype ConversationFilter: MainConversationFilterRepresentable
-    associatedtype ConversationModel
-    associatedtype ConversationMessageModel
-    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
-    associatedtype User
+    associatedtype Dependencies: MainCoordinatorProtocolDependencies
+
+    typealias ConversationFilter = Dependencies.ConversationFilter
+    typealias ConversationModel = Dependencies.ConversationModel
+    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
+    typealias SettingsTopLevelMenuItem = Dependencies.SettingsTopLevelMenuItem
+    typealias User = Dependencies.User
 
     @MainActor
     func showConversationList(conversationFilter: ConversationFilter?) async

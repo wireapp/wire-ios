@@ -22,15 +22,7 @@ import XCTest
 
 final class MainCoordinatorTests: XCTestCase {
 
-    typealias SUT = GenericMainCoordinator<
-        MockSplitViewController,
-        MockConversationBuilder,
-        MockSettingsViewControllerBuilder,
-        MockViewControllerBuilder,
-        MockViewControllerBuilder,
-        MockViewControllerBuilder,
-        MockUserProfileViewControllerBuilder
-    >
+    typealias SUT = GenericMainCoordinator<MockMainCoordinatorDependencies>
 
     private var sut: SUT!
 

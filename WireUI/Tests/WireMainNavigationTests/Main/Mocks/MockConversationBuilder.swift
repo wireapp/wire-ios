@@ -20,27 +20,17 @@ import UIKit
 
 @testable import WireMainNavigation
 
-// swiftlint:disable opening_brace
-
 struct MockConversationBuilder: MainConversationBuilderProtocol {
-    typealias SettingsBuilder = MockSettingsViewControllerBuilder
-    typealias Conversation = MockConversationViewController<MockConversation, MockMessage>
-    typealias ConversationModel = Conversation.ConversationModel
-    typealias ConversationMessageModel = Conversation.ConversationMessageModel
-    typealias User = MockUserProfileViewControllerBuilder.User
+
+    typealias Dependencies = MockMainCoordinatorDependencies
+    typealias Conversation = MockConversationViewController<Dependencies.ConversationModel, Dependencies.ConversationMessageModel>
 
     @MainActor
     func build<MainCoordinator: MainCoordinatorProtocol>(
-        conversation: Conversation.ConversationModel,
-        message: Conversation.ConversationMessageModel?,
+        conversation: ConversationModel,
+        message: ConversationMessageModel?,
         mainCoordinator: MainCoordinator
-    ) -> Conversation where
-        MainCoordinator.ConversationModel == Conversation.ConversationModel,
-        MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
-        MainCoordinator.User == User
-    {
+    ) -> Conversation where MainCoordinator.Dependencies == Dependencies {
         .init()
     }
 }
-
-// swiftlint:enable opening_brace
