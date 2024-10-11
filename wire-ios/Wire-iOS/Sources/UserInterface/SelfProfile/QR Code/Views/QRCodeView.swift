@@ -25,24 +25,25 @@ struct QRCodeView: View {
     @ObservedObject var viewModel: UserQRCodeViewModel
     @State private var isShareTextSheetPresented = false
     @State private var isShareImageSheetPresented = false
+    @State private var capturedImage: UIImage?
+    @State private var shouldCaptureImage = false
 
     // MARK: - View
 
     var body: some View {
         GeometryReader { geometry in
-            if #available(iOS 16.0, *) {
-                ScrollView(showsIndicators: false) {
-                    shareView
-                        .frame(minHeight: geometry.size.height)
-                }
-            } else {
-                ScrollView(showsIndicators: false) {
-                    shareView
-                        .frame(minHeight: geometry.size.height)
-                }
+            ScrollView(showsIndicators: false) {
+                shareView
+                    .frame(minHeight: geometry.size.height)
             }
         }
         .background(Color.viewBackground.edgesIgnoringSafeArea(.all))
+        .onChange(of: shouldCaptureImage) { newValue in
+            if newValue {
+                capturedImage = captureImage(from: qrCodeCard)
+                shouldCaptureImage.toggle()
+            }
+        }
     }
 
     private var shareView: some View {
@@ -84,12 +85,13 @@ struct QRCodeView: View {
 
             Button(L10n.Localizable.Qrcode.ShareQrcode.Button.title) {
                 isShareImageSheetPresented = true
+                shouldCaptureImage = true
             }
             .font(.textStyle(.buttonBig))
             .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareImageSheetPresented) {
-                if let capturedImageNew = captureImage(from: qrCodeCard) {
-                    ShareSheet(activityItems: [capturedImageNew])
+                if let image = capturedImage {
+                    ShareSheet(activityItems: [image])
                 }
             }
         }
