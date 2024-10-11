@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 
 extension MainCoordinator: ArchivedListViewControllerDelegate where Dependencies.ConversationModel == ZMConversation {
 

@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireMainNavigation
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {

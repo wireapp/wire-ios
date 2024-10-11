@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireMainNavigation
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMainNavigation
+import WireMainNavigationUI
 
 /// Enum representing different filter icons based on the user's selection.
 enum FilterImageName: String {

@@ -19,9 +19,9 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
-import WireMainNavigation
+import WireMainNavigationUI
 import WireReusableUIComponents
-import WireSettings
+import WireSettingsUI
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")

@@ -18,11 +18,11 @@
 
 import UIKit
 import UserNotifications
-import WireAccountImage
+import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
-import WireMainNavigation
+import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
 

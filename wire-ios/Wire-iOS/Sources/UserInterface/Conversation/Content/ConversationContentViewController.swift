@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireMainNavigation
+import WireMainNavigationUI
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine

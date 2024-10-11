@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAccountImage
+import WireAccountImageUI
 import WireDesign
 import WireFoundation
-import WireSidebar
+import WireSidebarUI
 
 struct SidebarViewControllerBuilder {
 

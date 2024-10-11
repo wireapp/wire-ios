@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 
 extension ConversationListViewController: MainConversationListProtocol {
 
