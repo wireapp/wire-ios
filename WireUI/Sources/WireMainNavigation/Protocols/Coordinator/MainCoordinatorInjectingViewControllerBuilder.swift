@@ -19,20 +19,12 @@
 import UIKit
 
 public protocol MainCoordinatorInjectingViewControllerBuilder {
-    associatedtype ConversationList: MainConversationListProtocol
-    associatedtype SettingsBuilder: MainSettingsBuilderProtocol
-    associatedtype ConversationModel
-    associatedtype ConversationMessageModel
-    associatedtype User
+
+    associatedtype Dependencies: MainCoordinatorProtocolDependencies
     associatedtype ViewController: UIViewController
 
     @MainActor
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator
-    ) -> ViewController where
-        MainCoordinator.ConversationList == ConversationList,
-        MainCoordinator.SettingsContentBuilder == SettingsBuilder,
-        MainCoordinator.ConversationModel == ConversationModel,
-        MainCoordinator.ConversationMessageModel == ConversationMessageModel,
-        MainCoordinator.User == User
+    ) -> ViewController where MainCoordinator.Dependencies == Dependencies
 }

@@ -19,12 +19,11 @@
 import UIKit
 
 public protocol MainSettingsContentBuilderProtocol {
-    associatedtype SettingsContent: UIViewController
     associatedtype TopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
 
     @MainActor
     func build(
         topLevelMenuItem: TopLevelMenuItem,
         mainCoordinator: some MainCoordinatorProtocol
-    ) -> SettingsContent
+    ) -> UIViewController
 }

@@ -20,14 +20,13 @@ import UIKit
 
 /// A common base for the split view controller and the tab bar controller.
 @MainActor
-public protocol MainContainerViewController: UIViewController {
+public protocol MainContainerViewControllerProtocol: UIViewController {
 
     associatedtype ConversationList: MainConversationListProtocol
     associatedtype Archive: UIViewController
     associatedtype Settings: UIViewController
 
     associatedtype Conversation: MainConversationProtocol
-    associatedtype SettingsContent: UIViewController
 
     // These three properties represent the tabs of the main tab bar controller.
     var conversationList: ConversationList? { get set }
@@ -36,5 +35,5 @@ public protocol MainContainerViewController: UIViewController {
 
     // These two represent the content, which will be pushed on the three main screens.
     var conversation: Conversation? { get set }
-    var settingsContent: SettingsContent? { get set }
+    var settingsContent: UIViewController? { get set }
 }

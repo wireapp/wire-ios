@@ -17,44 +17,18 @@
 //
 
 import UIKit
-import WireMainNavigation
+
+@testable import WireMainNavigation
 
 final class MockConversationListViewController: UIViewController, MainConversationListProtocol {
-    typealias ConversationModel = MockConversation
-    typealias ConversationMessageModel = MockMessage
 
-    enum ConversationFilter {
-        case groups
-    }
-
-    var conversationFilter: ConversationFilter? {
+    var conversationFilter: MainConversationFilter? {
         didSet {
             print("didset \(String(describing: conversationFilter))")
         }
     }
 
-    var selectedConversation: MockConversation?
+    var selectedConversation: PreviewConversationModel?
 
     var mainSplitViewState: MainSplitViewState = .expanded
-}
-
-extension MockConversationListViewController.ConversationFilter: MainConversationFilterRepresentable {
-
-    init(_ mainConversationFilter: MainConversationFilter) {
-        switch mainConversationFilter {
-        case .groups:
-            self = .groups
-        case .favorites:
-            fatalError("not supported")
-        case .oneOnOne:
-            fatalError("not supported")
-        }
-    }
-
-    func mapToMainConversationFilter() -> MainConversationFilter {
-        switch self {
-        case .groups:
-            .groups
-        }
-    }
 }

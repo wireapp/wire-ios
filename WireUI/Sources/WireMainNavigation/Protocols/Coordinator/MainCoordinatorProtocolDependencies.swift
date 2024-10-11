@@ -16,22 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-@MainActor
-public protocol MainConversationBuilderProtocol {
-
-    associatedtype Dependencies: MainCoordinatorProtocolDependencies
-
-    associatedtype Conversation: MainConversationProtocol where
-        Conversation.ConversationModel == Dependencies.ConversationModel
-
-    typealias ConversationModel = Dependencies.ConversationModel
-    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
-
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        conversation: ConversationModel,
-        message: ConversationMessageModel?,
-        mainCoordinator: MainCoordinator
-    ) -> Conversation where MainCoordinator.Dependencies == Dependencies
+public protocol MainCoordinatorProtocolDependencies {
+    associatedtype ConversationFilter: MainConversationFilterRepresentable
+    associatedtype ConversationModel
+    associatedtype ConversationMessageModel
+    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
+    associatedtype User
 }

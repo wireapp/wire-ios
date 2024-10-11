@@ -22,11 +22,7 @@ import WireSyncEngine
 
 final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
-    typealias ConversationList = ConversationListViewController
-    typealias SettingsBuilder = SettingsViewControllerBuilder
-    typealias ConversationModel = ZMConversation
-    typealias ConversationMessageModel = ZMConversationMessage
-    typealias User = any UserType
+    typealias Dependencies = MainCoordinatorDependencies
 
     let userSession: UserSession
     var delegate: StartUIDelegate?
@@ -37,12 +33,7 @@ final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewController
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator
-    ) -> UINavigationController where
-    MainCoordinator.ConversationList == ConversationListViewController,
-    MainCoordinator.ConversationModel == ZMConversation,
-    MainCoordinator.ConversationMessageModel == ZMConversationMessage,
-    MainCoordinator.SettingsContentBuilder == SettingsViewControllerBuilder,
-    MainCoordinator.User == any UserType {
+    ) -> UINavigationController where MainCoordinator.Dependencies == Dependencies {
         let rootViewController = StartUIViewController(
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator)

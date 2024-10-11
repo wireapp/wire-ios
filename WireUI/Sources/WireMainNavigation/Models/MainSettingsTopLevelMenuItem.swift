@@ -20,3 +20,14 @@
 public enum MainSettingsTopLevelMenuItem {
     case account, devices, options, advanced, support, about, developerOptions
 }
+
+extension MainSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable {
+
+    public init(_ mainSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItem) {
+        self = mainSettingsTopLevelMenuItem
+    }
+
+    public func mapToMainSettingsContent() -> MainSettingsTopLevelMenuItem {
+        self
+    }
+}

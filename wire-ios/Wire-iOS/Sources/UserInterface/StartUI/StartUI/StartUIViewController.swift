@@ -43,7 +43,7 @@ final class StartUIViewController: UIViewController {
 
     let userSession: UserSession
 
-    let mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
+    let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
 
     let isFederationEnabled: Bool
 
@@ -83,7 +83,7 @@ final class StartUIViewController: UIViewController {
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
-        mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
+        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
