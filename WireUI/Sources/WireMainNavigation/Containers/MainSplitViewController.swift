@@ -31,6 +31,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
     public typealias Settings = TabContainer.Settings
 
     public typealias Conversation = TabContainer.Conversation
+    public typealias SettingsContent = UIViewController
 
     public typealias Connect = UIViewController
 
@@ -59,11 +60,6 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         set { setArchive(newValue, animated: false) }
     }
 
-    public var connect: Connect? {
-        get { _connect }
-        set { setConnect(newValue, animated: false) }
-    }
-
     public var settings: Settings? {
         get { _settings }
         set { setSettings(newValue, animated: false) }
@@ -76,7 +72,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         set { setConversation(newValue, animated: false) }
     }
 
-    public var settingsContent: UIViewController? {
+    public var settingsContent: SettingsContent? {
         get { _settingsContent }
         set { setSettingsContent(newValue, animated: false) }
     }
@@ -100,9 +96,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
     private weak var _settings: Settings?
 
     private weak var _conversation: Conversation?
-    private weak var _settingsContent: UIViewController?
-
-    private weak var _connect: Connect?
+    private weak var _settingsContent: SettingsContent?
 
     // MARK: - Initialization
 
@@ -183,14 +177,6 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         _archive = archive
 
         let viewControllers = [archive].compactMap { $0 }
-        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
-        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
-    }
-
-    private func setConnect(_ connect: Connect?, animated: Bool) {
-        _connect = connect
-
-        let viewControllers = [connect].compactMap { $0 }
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
