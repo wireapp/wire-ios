@@ -19,8 +19,7 @@
 import WireMainNavigation
 import WireSidebar
 
-extension MainCoordinator: SidebarViewControllerDelegate where
-SplitViewController.ConversationList.ConversationFilter == ConversationFilter {
+extension MainCoordinator: SidebarViewControllerDelegate where Dependencies.ConversationFilter == Wire.ConversationFilter {
 
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {

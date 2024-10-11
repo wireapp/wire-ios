@@ -32,23 +32,9 @@ import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
 
-    typealias MainTabBarController = WireMainNavigation.MainTabBarController<
-        ConversationListViewController,
-        ConversationRootViewController
-    >
-    typealias MainSplitViewController = WireMainNavigation.MainSplitViewController<
-        SidebarViewController,
-        MainTabBarController
-    >
-    typealias MainCoordinator = WireMainNavigation.MainCoordinator<
-        MainSplitViewController,
-        ConversationViewControllerBuilder,
-        SettingsViewControllerBuilder,
-        StartUIViewControllerBuilder,
-        CreateGroupConversationViewControllerBuilder,
-        SelfProfileViewControllerBuilder,
-        UserProfileViewControllerBuilder
-    >
+    typealias MainCoordinator = WireMainNavigation.MainCoordinator<MainCoordinatorDependencies>
+    typealias MainSplitViewController = MainCoordinator.SplitViewController
+    typealias MainTabBarController = MainCoordinator.TabBarController
 
     // MARK: - Private Members
 

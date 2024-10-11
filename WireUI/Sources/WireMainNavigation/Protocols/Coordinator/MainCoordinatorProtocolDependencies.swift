@@ -16,4 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct MockConversation {}
+public protocol MainCoordinatorProtocolDependencies {
+    associatedtype ConversationFilter: MainConversationFilterRepresentable
+    associatedtype ConversationModel
+    associatedtype ConversationMessageModel
+    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
+    associatedtype User
+}

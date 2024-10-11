@@ -340,6 +340,7 @@
 		591B6E1E2C8B0968009F8A7B /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; };
 		591B6E212C8B096C009F8A7B /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
 		591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
+		591C22E42CB949C6009EEB0D /* MainCoordinatorDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */; };
 		5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5929CB222CA6C9C800070488 /* WireConversationList in Frameworks */ = {isa = PBXBuildFile; productRef = 5929CB212CA6C9C800070488 /* WireConversationList */; };
@@ -379,7 +380,6 @@
 		597C918E2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */; };
 		597CAEB32CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CAEB22CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift */; };
 		59800F502BE3BD38003730B3 /* ScreenCurtainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */; };
-		598E29E22CB56AEF008B9E0A /* AnyMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E29E12CB56AEE008B9E0A /* AnyMainCoordinator.swift */; };
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
 		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
@@ -2360,6 +2360,7 @@
 		5915B9572BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCaseProtocol.swift; sourceTree = "<group>"; };
 		5915B9592BF4BAFE00215817 /* DidPresentNotificationPermissionHintUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCase.swift; sourceTree = "<group>"; };
 		5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift"; sourceTree = "<group>"; };
+		591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinatorDependencies.swift; sourceTree = "<group>"; };
 		5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+SecurityFlags.swift"; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		592CF53B2CAFEA3600AE238D /* UserProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
@@ -2396,7 +2397,6 @@
 		597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoConversationPlaceholderViewController.swift; sourceTree = "<group>"; };
 		597CAEB22CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainCoordinator+ArchivedListViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCurtainView.swift; sourceTree = "<group>"; };
-		598E29E12CB56AEE008B9E0A /* AnyMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyMainCoordinator.swift; sourceTree = "<group>"; };
 		598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCaseTests.swift; sourceTree = "<group>"; };
@@ -6766,7 +6766,6 @@
 		8FC851E3199245760008B66B /* MainController */ = {
 			isa = PBXGroup;
 			children = (
-				598E29E12CB56AEE008B9E0A /* AnyMainCoordinator.swift */,
 				59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */,
 				59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */,
 				5965E9722C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift */,
@@ -6775,6 +6774,7 @@
 				59510DD02CB3DE7700BCD5FD /* MainCoordinator+ProfileViewControllerDelegate.swift */,
 				59A27BB92C2ADC2900195393 /* MainCoordinator+SidebarViewControllerDelegate.swift */,
 				5965E9932C9C01CC001D8AE1 /* MainCoordinator+StartUIDelegate.swift */,
+				591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */,
 				597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */,
 				59E506F12C971DD6004214AC /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */,
 				593D51092C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift */,
@@ -9724,7 +9724,6 @@
 				E9A60C7329716A70001D0E14 /* UITextField+DoneBarButtonItem.swift in Sources */,
 				EFF3DA452097587F007A3358 /* UIPasteboard+MediaAsset.swift in Sources */,
 				1682AEB620480C80003A052A /* UIViewController+Navigation.swift in Sources */,
-				598E29E22CB56AEF008B9E0A /* AnyMainCoordinator.swift in Sources */,
 				5E33F0D020AD629D00414EA6 /* CallPermissionsConfiguration.swift in Sources */,
 				EF2388862211A67900331C07 /* UserRight.swift in Sources */,
 				5405444F253842C200FAE77A /* LaunchSequenceOperation.swift in Sources */,
@@ -9894,6 +9893,7 @@
 				EEF37ED72BDFD2870055C9E1 /* PrimaryButtonStyle.swift in Sources */,
 				A90E4ABF2381CD0200468F31 /* AccentColorChangeHandler.swift in Sources */,
 				EFDAC64722DE2AD100D63025 /* TeamImageView.swift in Sources */,
+				591C22E42CB949C6009EEB0D /* MainCoordinatorDependencies.swift in Sources */,
 				5E8FFC1021EE0CA60052DF03 /* AuthenticationButtonTapInputHandler.swift in Sources */,
 				A965F89C23DB29D8005209E1 /* ConversationInputBarSendController.swift in Sources */,
 				5E8DA74F211AEE3D00360979 /* AuthenticationCoordinatorAction.swift in Sources */,

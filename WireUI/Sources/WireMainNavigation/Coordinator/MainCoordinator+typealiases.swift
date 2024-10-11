@@ -16,25 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public extension MainCoordinator {
 
-public extension NSManagedObjectContext {
+    typealias SplitViewController = Dependencies.SplitViewController
+    typealias ConversationList = Dependencies.SplitViewController.ConversationList
+    typealias Settings = Dependencies.SplitViewController.Settings
+    typealias TabBarController = Dependencies.SplitViewController.TabContainer
 
-    private static let ServerTimeDeltaKey = "ServerTimeDeltaKey"
+    typealias ConversationModel = Dependencies.ConversationModel
+    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
 
-    @objc
-    var serverTimeDelta: TimeInterval {
-
-        get {
-            precondition(zm_isSyncContext, "serverTimeDelta can only be accessed on the sync context")
-            return userInfo[NSManagedObjectContext.ServerTimeDeltaKey] as? TimeInterval ?? 0
-        }
-
-        set {
-            precondition(zm_isSyncContext, "serverTimeDelta can only be accessed on the sync context")
-            userInfo[NSManagedObjectContext.ServerTimeDeltaKey] = newValue
-        }
-
-    }
-
+    typealias Connect = Dependencies.ConnectBuilder.ViewController
+    typealias SelfProfile = Dependencies.SelfProfileBuilder.ViewController
+    typealias User = Dependencies.UserProfileBuilder.User
 }

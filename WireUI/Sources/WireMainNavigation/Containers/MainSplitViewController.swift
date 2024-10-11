@@ -31,7 +31,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
     public typealias Settings = TabContainer.Settings
 
     public typealias Conversation = TabContainer.Conversation
-    public typealias SettingsContent = TabContainer.SettingsContent
+    public typealias SettingsContent = UIViewController
 
     public typealias Connect = UIViewController
 
@@ -58,11 +58,6 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
     public var archive: Archive? {
         get { _archive }
         set { setArchive(newValue, animated: false) }
-    }
-
-    public var connect: Connect? {
-        get { _connect }
-        set { setConnect(newValue, animated: false) }
     }
 
     public var settings: Settings? {
@@ -102,8 +97,6 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 
     private weak var _conversation: Conversation?
     private weak var _settingsContent: SettingsContent?
-
-    private weak var _connect: Connect?
 
     // MARK: - Initialization
 
@@ -188,14 +181,6 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
 
-    private func setConnect(_ connect: Connect?, animated: Bool) {
-        _connect = connect
-
-        let viewControllers = [connect].compactMap { $0 }
-        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
-        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
-    }
-
     private func setSettings(_ settings: Settings?, animated: Bool) {
         _settings = settings
 
@@ -212,7 +197,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
     }
 
-    private func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+    private func setSettingsContent(_ settingsContent: UIViewController?, animated: Bool) {
         _settingsContent = settingsContent
 
         let viewControllers = [settingsContent].compactMap { $0 }
