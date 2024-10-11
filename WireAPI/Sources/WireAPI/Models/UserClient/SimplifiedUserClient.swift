@@ -17,18 +17,18 @@
 //
 
 public struct SimplifiedUserClient: Equatable, Codable, Sendable {
-    
+
     /// The unique id of the client.
-    
+
     public let id: String
-    
+
     /// The device class of the client.
-    
+
     public let deviceClass: DeviceClass?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case deviceClass = "class"
     }
-    
+
 }

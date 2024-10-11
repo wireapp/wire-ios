@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireAPI
 import WireDataModel
-import CoreData
 
 // sourcery: AutoMockable
 /// Facilitate access to clients related domain objects.
@@ -28,18 +28,18 @@ import CoreData
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
 public protocol ClientRepositoryProtocol {
-    
+
     /// Fetches self user clients.
     /// - returns : A self user clients list.
 
     func fetchSelfClients() async throws -> [WireAPI.UserClient]
-    
+
     /// Fetches user clients.
     /// - parameter userIDs: A list of user qualified ids.
     /// - returns : A list of clients for a given user on a given domain.
 
     func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.UserClients]
-    
+
     /// Fetches or creates a client locally.
     ///
     /// - parameters:
@@ -49,7 +49,7 @@ public protocol ClientRepositoryProtocol {
     func fetchOrCreateClient(
         with id: String
     ) async throws -> (client: WireDataModel.UserClient, isNew: Bool)
-    
+
     /// Updates the user client informations locally.
     ///
     /// - parameters:
@@ -62,7 +62,7 @@ public protocol ClientRepositoryProtocol {
         from remoteClient: WireAPI.UserClient,
         isNewClient: Bool
     ) async throws
-    
+
     /// Deletes client locally.
     /// - parameter id: The client id.
 
@@ -87,15 +87,15 @@ public struct ClientRepository: ClientRepositoryProtocol {
     }
 
     // MARK: - Public
-    
+
     public func fetchSelfClients() async throws -> [WireAPI.UserClient] {
         try await clientAPI.getSelfClients()
     }
-    
+
     public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.UserClients] {
         try await clientAPI.getClients(for: userIDs)
     }
-    
+
     public func fetchOrCreateClient(
         with id: String
     ) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
@@ -116,13 +116,12 @@ public struct ClientRepository: ClientRepositoryProtocol {
 
         return localUserClient
     }
-    
+
     public func updateClient(
         with id: String,
         from remoteClient: WireAPI.UserClient,
         isNewClient: Bool
     ) async throws {
-        
         guard let localClient = UserClient.fetchExistingUserClient(
             with: id,
             in: context
@@ -131,7 +130,7 @@ public struct ClientRepository: ClientRepositoryProtocol {
                 "Failed to find existing client with id: \(id)"
             )
         }
-        
+
         await context.perform { [context] in
 
             localClient.label = remoteClient.label
@@ -184,7 +183,7 @@ public struct ClientRepository: ClientRepositoryProtocol {
 
         try context.save()
     }
-    
+
     public func deleteClient(with id: String) async {
         guard let localClient = UserClient.fetchExistingUserClient(
             with: id,
@@ -194,7 +193,7 @@ public struct ClientRepository: ClientRepositoryProtocol {
                 "Failed to find existing client with id: \(id)"
             )
         }
-        
+
         await localClient.deleteClientAndEndSession()
     }
 }

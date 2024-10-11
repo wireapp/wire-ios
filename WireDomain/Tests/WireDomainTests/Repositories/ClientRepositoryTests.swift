@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import XCTest
 @testable import WireDomain
-@testable import WireAPI
+import XCTest
 
 final class ClientRepositoryTests: XCTestCase {
 
@@ -112,68 +112,63 @@ final class ClientRepositoryTests: XCTestCase {
             XCTAssertEqual(updatedClient.deviceClass, .phone)
         }
     }
-    
+
     func testFetchSelfClients() async throws {
         // Mock
-        
+
         clientAPI.getSelfClients_MockValue = [Scaffolding.selfUserClient]
-        
+
         // When
-        
+
         let selfClients = try await sut.fetchSelfClients()
-        
+
         // Then
-        
+
         XCTAssertEqual(selfClients, [Scaffolding.selfUserClient])
     }
-    
+
     func testFetchClients() async throws {
         // Mock
-        
+
         clientAPI.getClientsFor_MockValue = [Scaffolding.userClients1, Scaffolding.userClients2]
-        
+
         // When
-        
+
         let userClients = try await sut.fetchClients(for: [.mockID1, .mockID2, .mockID3])
-        
+
         // Then
-        
+
         XCTAssertEqual(userClients, [Scaffolding.userClients1, Scaffolding.userClients2])
     }
-    
+
     func testDeleteClients() async throws {
-        
         // Given
-        
-        
+
         let (newClient, _) = try await sut.fetchOrCreateClient(with: Scaffolding.userClientID)
-        
-        
-        
+
         let localClient = await context.perform { [context] in
             WireDataModel.UserClient.fetchExistingUserClient(
                 with: Scaffolding.userClientID,
                 in: context
             )
         }
-        
+
         XCTAssertEqual(localClient, newClient)
-        
+
         // When
-        
+
         await sut.deleteClient(with: Scaffolding.userClientID)
-        
+
         // Then
-        
+
         let deletedClient = await context.perform { [context] in
             WireDataModel.UserClient.fetchExistingUserClient(
                 with: Scaffolding.userClientID,
                 in: context
             )
         }
-        
+
         XCTAssertEqual(deletedClient, nil)
-        
     }
 
     private enum Scaffolding {
@@ -188,13 +183,13 @@ final class ClientRepositoryTests: XCTestCase {
             deviceClass: .phone,
             capabilities: []
         )
-        
+
         static let userClients1 = WireAPI.UserClients(
             domain: "domain.com",
             userID: UUID(),
             clients: [.init(id: "foo", deviceClass: .legalhold)]
         )
-        
+
         static let userClients2 = WireAPI.UserClients(
             domain: "domain.com",
             userID: UUID(),

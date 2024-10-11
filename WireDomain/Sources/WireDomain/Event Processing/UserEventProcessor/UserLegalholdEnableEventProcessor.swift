@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import CoreData
+import WireAPI
 
 /// Process user legalhold enable events.
 
@@ -32,50 +32,50 @@ protocol UserLegalholdEnableEventProcessorProtocol {
 }
 
 struct UserLegalholdEnableEventProcessor: UserLegalholdEnableEventProcessorProtocol {
-    
+
     let context: NSManagedObjectContext
     let userRepository: any UserRepositoryProtocol
     let clientRepository: any ClientRepositoryProtocol
 
     func processEvent(_ event: UserLegalholdEnableEvent) async throws {
         let userID = event.userID
-        
+
         let selfUserID = await context.perform {
             let selfUser = userRepository.fetchSelfUser()
             return selfUser.remoteIdentifier
         }
-        
+
         guard userID == selfUserID else {
             return
         }
-        
+
         try await processSelfUserClients()
     }
-    
+
     /// Fetches, creates and updates clients for self user and removes the deleted clients locally.
 
     private func processSelfUserClients() async throws {
         let remoteSelfClients = try await clientRepository.fetchSelfClients()
-        let (localSelfClients) = await context.perform {
+        let localSelfClients = await context.perform {
             let selfUser = userRepository.fetchSelfUser()
             return selfUser.clients
         }
-        
+
         for remoteSelfClient in remoteSelfClients {
             let localUserClient = try await clientRepository.fetchOrCreateClient(
                 with: remoteSelfClient.id
             )
-            
+
             try await clientRepository.updateClient(
                 with: remoteSelfClient.id,
                 from: remoteSelfClient,
                 isNewClient: localUserClient.isNew
             )
         }
-        
+
         let deletedSelfClientsIDs = localSelfClients.compactMap(\.remoteIdentifier).filter { !remoteSelfClients.map(\.id).contains($0)
         }
-        
+
         for deletedSelfClientID in deletedSelfClientsIDs {
             await clientRepository.deleteClient(with: deletedSelfClientID)
         }

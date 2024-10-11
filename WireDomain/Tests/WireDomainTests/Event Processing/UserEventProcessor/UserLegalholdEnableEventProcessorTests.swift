@@ -65,18 +65,19 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
     func testProcessEvent_It_Invokes_Repo_Methods() async throws {
         // Mock
-        
+
         let (selfUser, selfClient) = await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(
                 id: Scaffolding.selfUserID,
                 domain: nil,
-                in: context)
-            
+                in: context
+            )
+
             let selfClient = modelHelper.createSelfClient(
                 id: Scaffolding.deletedUserClientID.uuidString,
                 in: context
             )
-            
+
             return (selfUser, selfClient)
         }
 
@@ -106,13 +107,13 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let selfUserID = UUID()
-        
+
         static let event = UserLegalholdEnableEvent(
             userID: selfUserID
         )
-        
+
         static let deletedUserClientID = UUID()
-        
+
         static let userClient1 = WireAPI.UserClient(
             id: UUID().uuidString,
             type: .permanent,
@@ -122,7 +123,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
             deviceClass: .phone,
             capabilities: []
         )
-        
+
         static let userClient2 = WireAPI.UserClient(
             id: UUID().uuidString,
             type: .permanent,
@@ -132,7 +133,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
             deviceClass: .phone,
             capabilities: []
         )
-        
+
         static let userClient3 = WireAPI.UserClient(
             id: UUID().uuidString,
             type: .permanent,
@@ -145,4 +146,3 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
     }
 
 }
-

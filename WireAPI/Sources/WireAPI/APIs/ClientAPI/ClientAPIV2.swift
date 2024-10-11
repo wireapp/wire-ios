@@ -23,7 +23,7 @@ class ClientAPIV2: ClientAPIV1 {
     override var apiVersion: APIVersion {
         .v2
     }
-    
+
     override func getClients(for userIDs: Set<UserID>) async throws -> [UserClients] {
         let body = try JSONEncoder.defaultEncoder.encode(UserClientsRequestV0(qualifiedIDs: Array(userIDs)))
         let request = HTTPRequest(

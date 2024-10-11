@@ -21,4 +21,3 @@ import Foundation
 /// Errors originating from `ClientAPI`.
 
 public enum ClientAPIError: Error {}
-

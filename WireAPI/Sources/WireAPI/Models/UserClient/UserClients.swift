@@ -20,17 +20,17 @@ import Foundation
 
 /// The clients for a given user on a given domain
 public struct UserClients: Equatable, Sendable {
-    
+
     /// The domain of the user
-    
+
     public let domain: String
-    
+
     /// The user id
-    
+
     public let userID: UUID
-    
+
     /// The clients of the user
 
     public let clients: [SimplifiedUserClient]
-    
+
 }

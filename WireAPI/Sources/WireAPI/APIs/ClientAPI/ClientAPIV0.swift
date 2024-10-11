@@ -29,7 +29,7 @@ class ClientAPIV0: ClientAPI, VersionedAPI {
     var apiVersion: APIVersion {
         .v0
     }
-    
+
     func getSelfClients() async throws -> [UserClient] {
         let request = HTTPRequest(
             path: "\(pathPrefix)/clients",
@@ -42,7 +42,7 @@ class ClientAPIV0: ClientAPI, VersionedAPI {
             .success(code: .ok, type: ListUserClientV0.self)
             .parse(response)
     }
-    
+
     func getClients(for userIDs: Set<UserID>) async throws -> [UserClients] {
         let body = try JSONEncoder.defaultEncoder.encode(UserClientsRequestV0(qualifiedIDs: Array(userIDs)))
         let request = HTTPRequest(
@@ -59,24 +59,23 @@ class ClientAPIV0: ClientAPI, VersionedAPI {
     }
 }
 
-
 struct ListUserClientV0: Decodable, ToAPIModelConvertible {
-    
+
     let payload: [UserClientV0]
-    
+
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let payload = try container.decode([UserClientV0].self)
         self.payload = payload
     }
-    
+
     func toAPIModel() -> [UserClient] {
         payload.map { $0.toAPIModel() }
     }
 }
 
 struct UserClientV0: Decodable, ToAPIModelConvertible {
-    
+
     let id: String
     let type: UserClientType
     let activationDate: UTCTimeMillis
@@ -87,15 +86,15 @@ struct UserClientV0: Decodable, ToAPIModelConvertible {
     let mlsPublicKeys: MLSPublicKeys?
     let cookie: String?
     let capabilities: CapabilitiesList?
-    
+
     struct CapabilitiesList: Decodable {
 
         let capabilities: [UserClientCapability]
 
     }
-    
+
     enum CodingKeys: String, CodingKey {
-        
+
         case id
         case type
         case activationDate = "time"
@@ -106,7 +105,7 @@ struct UserClientV0: Decodable, ToAPIModelConvertible {
         case mlsPublicKeys = "mls_public_keys"
         case cookie
         case capabilities
-        
+
     }
 
     func toAPIModel() -> UserClient {
@@ -127,39 +126,39 @@ struct UserClientV0: Decodable, ToAPIModelConvertible {
 }
 
 struct UserClientsRequestV0: Encodable {
-    
+
     let qualifiedIDs: [UserID]
-    
+
     enum CodingKeys: String, CodingKey {
         case qualifiedIDs = "qualified_users"
     }
-    
+
 }
 
 struct UserClientsV0: Decodable, ToAPIModelConvertible {
     typealias Domain = String
     typealias UserID = String
-    
+
     let payload: [Domain: [UserID: [SimplifiedUserClient]]]
-    
+
     enum CodingKeys: String, CodingKey {
         case qualifiedUserMap = "qualified_user_map"
     }
-    
+
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let payload = try container.decode(
             [Domain: [UserID: [SimplifiedUserClient]]].self,
             forKey: .qualifiedUserMap
         )
-        
+
         self.payload = payload
     }
-    
+
     func toAPIModel() -> [UserClients] {
         let userClients = payload.reduce(into: [UserClients]()) { partialResult, dict in
             let domain = dict.key
-            
+
             for (userID, userClients) in dict.value {
                 let userClients = UserClients(
                     domain: domain,
@@ -169,8 +168,8 @@ struct UserClientsV0: Decodable, ToAPIModelConvertible {
                 partialResult.append(userClients)
             }
         }
-        
+
         return userClients
     }
-    
+
 }

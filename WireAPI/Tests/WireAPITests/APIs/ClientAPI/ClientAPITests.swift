@@ -40,7 +40,7 @@ final class ClientAPITests: XCTestCase {
     }
 
     // MARK: - Request generation
-    
+
     func testGetSelfClients() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getSelfClients()
@@ -50,7 +50,7 @@ final class ClientAPITests: XCTestCase {
     // MARK: - Response handling
 
     // MARK: - V0
-    
+
     func testGetSelfUserClients_SuccessResponse_200_V0_And_Next_Versions() async throws {
         // Given
         let httpClient = try HTTPClientMock(
@@ -69,14 +69,14 @@ final class ClientAPITests: XCTestCase {
                 }
 
                 for try await value in taskGroup {
-                    value.forEach {
-                        XCTAssertEqual($0, Scaffolding.userClient)
+                    for item in value {
+                        XCTAssertEqual(item, Scaffolding.userClient)
                     }
                 }
             }
         }
     }
-    
+
     func testGetUserClients_SuccessResponse_200_V0_And_Next_Versions() async throws {
         // Given
         let httpClient = try HTTPClientMock(
@@ -118,25 +118,25 @@ final class ClientAPITests: XCTestCase {
             cookie: "string",
             capabilities: [.legalholdConsent]
         )
-        
+
         static let userClient1 = UserClients(
             domain: "domain1.example.com",
             userID: UUID(uuidString: "000600d0-000b-9c1a-000d-a4130002c221")!,
             clients: [.init(id: "d0", deviceClass: .legalhold), .init(id: "d0", deviceClass: .desktop)]
         )
-        
+
         static let userClient2 = UserClients(
             domain: "domain2.example.com",
             userID: UUID(uuidString: "000700d0-000b-9c1a-000d-a4130002c221")!,
             clients: [.init(id: "d0", deviceClass: .legalhold), .init(id: "d0", deviceClass: .phone)]
         )
-        
+
         static let userClient3 = UserClients(
             domain: "domain2.example.com",
             userID: UUID(uuidString: "000800d0-000b-9c1a-000d-a4130002c221")!,
             clients: [.init(id: "d0", deviceClass: .legalhold), .init(id: "d0", deviceClass: .tablet)]
         )
-        
+
         static let userClient4 = UserClients(
             domain: "domain3.example.com",
             userID: UUID(uuidString: "000900d0-000b-9c1a-000d-a4130002c221")!,
