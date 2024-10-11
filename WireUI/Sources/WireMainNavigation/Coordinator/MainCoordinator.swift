@@ -39,18 +39,12 @@ where Dependencies: MainCoordinatorDependencies {
 
     private let conversationBuilder: Dependencies.ConversationBuilder
     private let settingsContentBuilder: Dependencies.SettingsContentBuilder
-
     private let connectBuilder: Dependencies.ConnectBuilder
-    private weak var connect: Connect?
-
     private let createGroupConversationBuilder: Dependencies.CreateGroupConversationBuilder
-
     private var selfProfileBuilder: Dependencies.SelfProfileBuilder
-    private weak var selfProfile: SelfProfile?
-
     private var userProfileBuilder: Dependencies.UserProfileBuilder
 
-    private var mainSplitViewState: MainSplitViewState = .expanded
+    public private(set) var mainSplitViewState: MainSplitViewState = .expanded
 
     // MARK: - Private Helpers
 
@@ -257,23 +251,17 @@ where Dependencies: MainCoordinatorDependencies {
     }
 
     public func showSelfProfile() async {
-        guard selfProfile == nil else {
-            // Once WireLogger is available to Swift packages use it here instead.
-            return assertionFailure()
-        }
-
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
             splitViewController.hideSidebar()
         }
 
-//        let selfProfile = selfProfileBuilder.build(mainCoordinator: self)
-//        selfProfile.modalPresentationStyle = .formSheet
-//        self.selfProfile = selfProfile
-//
-//        await dismissPresentedViewController()
-//        await withCheckedContinuation { continuation in
-//            splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
-//        }
+        let selfProfile = selfProfileBuilder.build(mainCoordinator: self)
+        selfProfile.modalPresentationStyle = .formSheet
+
+        await dismissPresentedViewController()
+        await withCheckedContinuation { continuation in
+            splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
+        }
     }
 
     public func showUserProfile(user: User) async {
@@ -289,19 +277,13 @@ where Dependencies: MainCoordinatorDependencies {
     }
 
     public func showConnect() async {
-        guard connect == nil else {
-            // Once WireLogger is available to Swift packages use it here instead.
-            return assertionFailure()
-        }
-
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
             splitViewController.hideSidebar()
         }
 
-//        let connect = connectBuilder.build(mainCoordinator: self)
-//        connect.modalPresentationStyle = .formSheet
-//        self.connect = connect
-//        await presentViewController(connect)
+        let connect = connectBuilder.build(mainCoordinator: self)
+        connect.modalPresentationStyle = .formSheet
+        await presentViewController(connect)
     }
 
     public func showCreateGroupConversation() async {
@@ -309,9 +291,9 @@ where Dependencies: MainCoordinatorDependencies {
             splitViewController.hideSidebar()
         }
 
-//        let createGroupConversation = createGroupConversationBuilder.build(mainCoordinator: self)
-//        createGroupConversation.modalPresentationStyle = .formSheet
-//        await presentViewController(createGroupConversation)
+        let createGroupConversation = createGroupConversationBuilder.build(mainCoordinator: self)
+        createGroupConversation.modalPresentationStyle = .formSheet
+        await presentViewController(createGroupConversation)
     }
 
     public func presentViewController(_ viewController: UIViewController) async {
