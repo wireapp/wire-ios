@@ -19,7 +19,7 @@
 import WireMainNavigation
 import WireSidebar
 
-extension MainCoordinator: SidebarViewControllerDelegate where
+extension GenericMainCoordinator: SidebarViewControllerDelegate where
 SplitViewController.ConversationList.ConversationFilter == ConversationFilter {
 
     @MainActor

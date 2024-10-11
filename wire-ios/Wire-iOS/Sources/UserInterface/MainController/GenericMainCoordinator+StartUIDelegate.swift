@@ -19,7 +19,7 @@
 import WireDataModel
 import WireMainNavigation
 
-extension MainCoordinator: StartUIDelegate where
+extension GenericMainCoordinator: StartUIDelegate where
 ConversationBuilder.Conversation.ConversationModel == ZMConversation,
 UserProfileBuilder.User == any UserType {
 

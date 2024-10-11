@@ -18,8 +18,6 @@
 
 import UIKit
 
-public typealias MainCoordinator = GenericMainCoordinator
-
 // swiftlint:disable opening_brace
 
 /// Manages the main navigation and the layout changes of the application after a successful login.

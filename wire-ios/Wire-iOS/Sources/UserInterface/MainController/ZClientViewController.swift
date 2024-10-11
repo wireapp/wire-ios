@@ -40,7 +40,7 @@ final class ZClientViewController: UIViewController {
         SidebarViewController,
         MainTabBarController
     >
-    typealias MainCoordinator = WireMainNavigation.MainCoordinator<
+    typealias MainCoordinator = WireMainNavigation.GenericMainCoordinator<
         MainSplitViewController,
         ConversationViewControllerBuilder,
         SettingsViewControllerBuilder,

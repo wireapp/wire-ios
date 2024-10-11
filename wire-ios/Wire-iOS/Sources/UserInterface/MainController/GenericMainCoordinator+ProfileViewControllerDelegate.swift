@@ -19,15 +19,14 @@
 import WireDataModel
 import WireMainNavigation
 
-extension MainCoordinator: ConversationCreationControllerDelegate where
-ConversationBuilder.Conversation.ConversationModel == ZMConversation,
-UserProfileBuilder.User == any UserType {
+extension GenericMainCoordinator: ProfileViewControllerDelegate where
+ConnectBuilder.ConversationModel == ZMConversation {
 
-    func conversationCreationController(
-        _ controller: ConversationCreationController,
-        didCreateConversation conversation: ZMConversation
+    func profileViewController(
+        _ controller: ProfileViewController?,
+        wantsToNavigateTo conversation: ZMConversation
     ) {
-        Task {
+        Task { @MainActor in
             await showConversationList(conversationFilter: .none)
             await showConversation(conversation: conversation, message: nil)
         }

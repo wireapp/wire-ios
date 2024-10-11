@@ -19,14 +19,15 @@
 import WireDataModel
 import WireMainNavigation
 
-extension MainCoordinator: ArchivedListViewControllerDelegate where
-ConnectBuilder.ConversationModel == ZMConversation {
+extension GenericMainCoordinator: ConversationCreationControllerDelegate where
+ConversationBuilder.Conversation.ConversationModel == ZMConversation,
+UserProfileBuilder.User == any UserType {
 
-    func archivedListViewController(
-        _ viewController: ArchivedListViewController,
-        didSelectConversation conversation: ZMConversation
+    func conversationCreationController(
+        _ controller: ConversationCreationController,
+        didCreateConversation conversation: ZMConversation
     ) {
-        Task { @MainActor in
+        Task {
             await showConversationList(conversationFilter: .none)
             await showConversation(conversation: conversation, message: nil)
         }
