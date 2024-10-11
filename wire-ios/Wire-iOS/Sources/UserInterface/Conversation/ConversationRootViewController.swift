@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireMainNavigationUI
 
 // MARK: - ConversationRootViewController
 

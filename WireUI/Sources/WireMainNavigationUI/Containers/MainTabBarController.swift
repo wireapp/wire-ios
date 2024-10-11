@@ -39,6 +39,11 @@ public final class MainTabBarController<
         set { setConversationList(newValue, animated: false) }
     }
 
+    public var folders: UIViewController? {
+        get { _folders }
+        set { setFolders(newValue, animated: false) }
+    }
+
     public var archive: Archive? {
         get { _archive }
         set { setArchive(newValue, animated: false) }
@@ -73,6 +78,7 @@ public final class MainTabBarController<
     private weak var settingsNavigationController: UINavigationController!
 
     private weak var _conversationList: ConversationList?
+    private weak var _folders: UIViewController?
     private weak var _archive: Archive?
     private weak var _settings: Settings?
     private weak var _conversation: Conversation?
@@ -206,6 +212,14 @@ public final class MainTabBarController<
         let viewControllers = [conversationList, conversation].compactMap { $0 }
         conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
         conversationListNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setFolders(_ folders: UIViewController?, animated: Bool) {
+        _folders = folders
+
+        let viewControllers = [folders].compactMap { $0 }
+        foldersNavigationController.setViewControllers(viewControllers, animated: animated)
+        foldersNavigationController.view.layoutIfNeeded()
     }
 
     private func setArchive(_ archive: Archive?, animated: Bool) {

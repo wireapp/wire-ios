@@ -39,7 +39,7 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: MainTabBarController<ConversationListViewController>!
+    private(set) var mainTabBarController: MainTabBarController<ConversationListViewController, ConversationRootViewController>!
     // TODO [WPB-6647]: Remove in navigation overhaul
     private var tabBarChangeHandler: TabBarChangeHandler!
 
@@ -196,7 +196,7 @@ final class ZClientViewController: UIViewController {
 
         mainTabBarController = .init()
         mainTabBarController.applyMainTabBarControllerAppearance()
-        mainTabBarController.conversations = (conversationListViewController, nil)
+        mainTabBarController.conversationList = conversationListViewController
         mainTabBarController.folders = conversationListWithFoldersViewController
         wireSplitViewController.leftViewController = mainTabBarController
 

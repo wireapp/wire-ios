@@ -17,6 +17,7 @@
 //
 
 import WireMainNavigationUI
+import WireDataModel
 
 extension ConversationListViewController: MainConversationListProtocol {
     // TODO: [WPB-6647] this is implemented correctly in the navigation overhaul epic branch
@@ -24,7 +25,11 @@ extension ConversationListViewController: MainConversationListProtocol {
         get { .none }
         set {}
     }
-    var splitViewInterface: MainSplitViewState {
+    var selectedConversation: ZMConversation? {
+        get { .none }
+        set {}
+    }
+    var mainSplitViewState: MainSplitViewState {
         get { .collapsed }
         set {}
     }
