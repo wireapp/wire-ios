@@ -48,7 +48,7 @@ else
 	# Local machine
     echo ""
     echo "ℹ️  Resolve Dependencies"
-    ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+    ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 fi
 
 
