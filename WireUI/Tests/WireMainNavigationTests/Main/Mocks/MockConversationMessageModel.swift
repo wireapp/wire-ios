@@ -18,4 +18,4 @@
 
 @testable import WireMainNavigation
 
-typealias MockConversationMessage = PreviewConversationListViewController.ConversationMessageModel
+struct MockConversationMessageModel {}

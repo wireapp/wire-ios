@@ -19,13 +19,11 @@
 import SwiftUI
 
 final class PreviewConversationListViewController: UIHostingController<LabelView>, MainConversationListProtocol {
-    struct ConversationModel {}
-    struct ConversationMessageModel {}
 
     // MARK: - MainConversationListProtocol
 
     var conversationFilter: MainConversationFilter?
-    var selectedConversation: ConversationModel?
+    var selectedConversation: PreviewConversationModel?
     var mainSplitViewState: MainSplitViewState = .expanded
 
     // MARK: - Life Cycle

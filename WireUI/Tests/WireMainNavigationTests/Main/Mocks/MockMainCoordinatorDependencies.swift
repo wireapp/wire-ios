@@ -23,8 +23,8 @@ enum MockMainCoordinatorDependencies: GenericMainCoordinatorDependencies {
     // MainCoordinatorProtocolDependencies
 
     typealias ConversationFilter = MainConversationFilter
-    typealias ConversationModel = PreviewConversationListViewController.ConversationModel
-    typealias ConversationMessageModel = PreviewConversationListViewController.ConversationMessageModel
+    typealias ConversationModel = PreviewConversationModel
+    typealias ConversationMessageModel = MockConversationMessageModel
     typealias SettingsTopLevelMenuItem = MainSettingsTopLevelMenuItem
     typealias User = MockUser
 
