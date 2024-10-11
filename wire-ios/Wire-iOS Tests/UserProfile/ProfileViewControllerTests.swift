@@ -35,8 +35,8 @@ final class ProfileViewControllerTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
-        accentColor = .blue
+
+        UIColor.setAccentOverride(.blue)
         snapshotHelper = SnapshotHelper()
         let teamIdentifier = UUID()
         selfUser = MockUser.createSelfUser(name: "George Johnson", inTeam: teamIdentifier)
@@ -70,7 +70,7 @@ final class ProfileViewControllerTests: XCTestCase {
         mockUser = nil
         selfUser = nil
         mockViewModel = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     // MARK: - Snapshot Tests

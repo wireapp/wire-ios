@@ -31,6 +31,8 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+
+        UIColor.setAccentOverride(.blue)
         snapshotHelper = SnapshotHelper()
         serviceUser = .createServiceUser(name: "ServiceUser")
         groupConversation = createGroupConversation()
@@ -43,6 +45,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         serviceUser = nil
         groupConversation = nil
         mockSelfUser = nil
+        UIColor.setAccentOverride(nil)
 
         super.tearDown()
     }
