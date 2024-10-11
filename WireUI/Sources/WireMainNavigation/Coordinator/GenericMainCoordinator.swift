@@ -44,23 +44,19 @@ public final class GenericMainCoordinator<
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
     ConversationBuilder.Conversation == SplitViewController.Conversation,
-    ConversationBuilder.ConversationList == SplitViewController.ConversationList,
     ConversationBuilder.SettingsBuilder == SettingsContentBuilder,
     ConversationBuilder.User == UserProfileBuilder.User,
 
-    ConnectBuilder.ConversationList == SplitViewController.ConversationList,
     ConnectBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
     ConnectBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
     ConnectBuilder.SettingsBuilder == SettingsContentBuilder,
     ConnectBuilder.User == UserProfileBuilder.User,
 
-    CreateGroupConversationBuilder.ConversationList == SplitViewController.ConversationList,
     CreateGroupConversationBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
     CreateGroupConversationBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
     CreateGroupConversationBuilder.SettingsBuilder == SettingsContentBuilder,
     CreateGroupConversationBuilder.User == UserProfileBuilder.User,
 
-    SelfProfileBuilder.ConversationList == SplitViewController.ConversationList,
     SelfProfileBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
     SelfProfileBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
     SelfProfileBuilder.SettingsBuilder == SettingsContentBuilder,

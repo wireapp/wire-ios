@@ -241,7 +241,6 @@ private extension MainCoordinatorInjectingViewControllerBuilder where Self == Mo
 }
 
 private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-    typealias ConversationList = ConversationListViewController
     typealias SettingsBuilder = SettingsViewControllerBuilder
     typealias ConversationModel = ZMConversation
     typealias ConversationMessageModel = ZMConversationMessage
@@ -251,7 +250,6 @@ private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinato
         mainCoordinator: MainCoordinator
     ) -> UIViewController where
     MainCoordinator: MainCoordinatorProtocol,
-    MainCoordinator.ConversationList == ConversationList,
     ConversationMessageModel == MainCoordinator.ConversationMessageModel,
     ZMConversation == MainCoordinator.ConversationModel,
     SettingsViewControllerBuilder == MainCoordinator.SettingsContentBuilder,

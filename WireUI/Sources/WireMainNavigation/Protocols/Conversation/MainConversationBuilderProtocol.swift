@@ -20,7 +20,6 @@ import UIKit
 
 @MainActor
 public protocol MainConversationBuilderProtocol {
-    associatedtype ConversationList: MainConversationListProtocol
     associatedtype SettingsBuilder: MainSettingsBuilderProtocol
     associatedtype Conversation: MainConversationProtocol
     associatedtype User
@@ -30,7 +29,6 @@ public protocol MainConversationBuilderProtocol {
         message: Conversation.ConversationMessageModel?,
         mainCoordinator: MainCoordinator
     ) -> Conversation where
-        MainCoordinator.ConversationList == ConversationList,
         MainCoordinator.SettingsContentBuilder == SettingsBuilder,
         MainCoordinator.ConversationModel == Conversation.ConversationModel,
         MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,

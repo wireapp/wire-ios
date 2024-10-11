@@ -24,7 +24,6 @@ import WireSyncEngine
 @MainActor
 struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
 
-    typealias ConversationList = ConversationListViewController
     typealias SettingsBuilder = SettingsViewControllerBuilder
     typealias Conversation = ConversationRootViewController
     typealias User = any UserType
@@ -37,7 +36,6 @@ struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
         message: ZMConversationMessage?,
         mainCoordinator: MainCoordinator
     ) -> Conversation where
-    MainCoordinator.ConversationList == ConversationList,
     MainCoordinator.SettingsContentBuilder == SettingsBuilder,
     MainCoordinator.ConversationModel == Conversation.ConversationModel,
     MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,

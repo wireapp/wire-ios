@@ -22,7 +22,6 @@ import WireSyncEngine
 
 final class CreateGroupConversationViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
-    typealias ConversationList = ConversationListViewController
     typealias SettingsBuilder = SettingsViewControllerBuilder
     typealias ConversationModel = ZMConversation
     typealias ConversationMessageModel = ZMConversationMessage
@@ -38,7 +37,6 @@ final class CreateGroupConversationViewControllerBuilder: MainCoordinatorInjecti
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator _: MainCoordinator
     ) -> UINavigationController where
-    MainCoordinator.ConversationList == ConversationListViewController,
     MainCoordinator.ConversationModel == ZMConversation,
     MainCoordinator.ConversationMessageModel == ZMConversationMessage,
     MainCoordinator.SettingsContentBuilder == SettingsViewControllerBuilder,

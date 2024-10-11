@@ -20,7 +20,7 @@ import UIKit
 
 public protocol MainCoordinatorProtocol: AnyObject {
 
-    associatedtype ConversationList: MainConversationListProtocol
+    associatedtype ConversationFilter: MainConversationFilterRepresentable
     associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
 
     associatedtype ConversationModel
@@ -29,7 +29,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     associatedtype User
 
     @MainActor
-    func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async
+    func showConversationList(conversationFilter: ConversationFilter?) async
     @MainActor
     func showArchive() async
     @MainActor

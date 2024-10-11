@@ -23,7 +23,6 @@ import WireSettings
 final class AnyMainCoordinator<ConversationList, SettingsContentBuilder, ConversationModel, ConversationMessageModel, User>: MainCoordinatorProtocol where
 ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSettingsContentBuilderProtocol {
 
-    typealias ConversationFilter = ConversationList.ConversationFilter
     typealias TopLevelMenuItem = SettingsContentBuilder.TopLevelMenuItem
 
     let mainCoordinator: any MainCoordinatorProtocol
@@ -34,7 +33,6 @@ ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSett
     private let _showUserProfile: @MainActor (User) async -> Void
 
     init<MainCoordinator: MainCoordinatorProtocol>(mainCoordinator: MainCoordinator) where
-    MainCoordinator.ConversationList == ConversationList,
     MainCoordinator.SettingsContentBuilder == SettingsContentBuilder,
     MainCoordinator.ConversationModel == ConversationModel,
     MainCoordinator.ConversationMessageModel == ConversationMessageModel,
@@ -42,7 +40,8 @@ ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSett
 
         self.mainCoordinator = mainCoordinator
 
-        _showConversationList = { conversationFilter in
+        _showConversationList = {
+            let conversationFilter = MainCoordinator.ConversationFilter(mappingFrom: $0)
             await mainCoordinator.showConversationList(conversationFilter: conversationFilter)
         }
         _showConversation = { conversation, message in

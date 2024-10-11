@@ -24,7 +24,6 @@ import UIKit
 
 struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
-    typealias ConversationList = PreviewConversationListViewController
     typealias SettingsBuilder = MockSettingsViewControllerBuilder
     typealias Conversation = MockConversationViewController<MockConversation, MockMessage>
     typealias ConversationModel = Conversation.ConversationModel
@@ -36,7 +35,6 @@ struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder 
         mainCoordinator: MainCoordinator
     ) -> UIViewController where
         MainCoordinator: MainCoordinatorProtocol,
-        MainCoordinator.ConversationList == ConversationList,
         MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
         MainCoordinator.ConversationModel == Conversation.ConversationModel,
         MainCoordinator.SettingsContentBuilder == SettingsBuilder,
