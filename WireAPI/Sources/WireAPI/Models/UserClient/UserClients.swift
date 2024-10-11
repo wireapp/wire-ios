@@ -18,12 +18,19 @@
 
 import Foundation
 
-/// An event where legalhold was enabled for a user.
-
-public struct UserLegalholdEnableEvent: Equatable, Codable, Sendable {
-
-    /// The user id for whom legalhold was enabled.
-
+/// The clients for a given user on a given domain
+public struct UserClients: Equatable, Sendable {
+    
+    /// The domain of the user
+    
+    public let domain: String
+    
+    /// The user id
+    
     public let userID: UUID
+    
+    /// The clients of the user
 
+    public let clients: [SimplifiedUserClient]
+    
 }

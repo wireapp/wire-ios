@@ -16,14 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/// An event where legalhold was enabled for a user.
-
-public struct UserLegalholdEnableEvent: Equatable, Codable, Sendable {
-
-    /// The user id for whom legalhold was enabled.
-
-    public let userID: UUID
-
+public struct SimplifiedUserClient: Equatable, Codable, Sendable {
+    
+    /// The unique id of the client.
+    
+    public let id: String
+    
+    /// The device class of the client.
+    
+    public let deviceClass: DeviceClass?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case deviceClass = "class"
+    }
+    
 }

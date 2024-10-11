@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/v5/clients"
+  - method: get
+  - body: none

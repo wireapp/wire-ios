@@ -16,14 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning clients.
+public protocol ClientAPI {
+    
+    /// Get self user registered clients
+    /// - returns: A list of self user clients.
 
-/// An event where legalhold was enabled for a user.
-
-public struct UserLegalholdEnableEvent: Equatable, Codable, Sendable {
-
-    /// The user id for whom legalhold was enabled.
-
-    public let userID: UUID
-
+    func getSelfClients() async throws -> [UserClient]
+    
+    /// Get clients for qualified users.
+    ///
+    /// - parameter userIDs: A list of user ids.
+    /// - returns: A list of clients for a given user ID on a given domain.
+    
+    func getClients(for userIDs: Set<UserID>) async throws -> [UserClients]
 }
