@@ -26,9 +26,7 @@ final class NetworkStatusViewSnapshotTests: XCTestCase {
     private var mockContainer: MockNetworkStatusViewDelegate!
 
     override func setUp() {
-        super.setUp()
-
-        accentColor = .purple
+        UIColor.setAccentOverride(.blue)
         mockContainer = .init()
         mockContainer.bottomMargin = 0
         mockContainer.didChangeHeightAnimatedState_MockMethod = { _, _, _ in }
@@ -42,8 +40,7 @@ final class NetworkStatusViewSnapshotTests: XCTestCase {
     override func tearDown() {
         sut = nil
         mockContainer = nil
-
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     func testOfflineExpandedState() {

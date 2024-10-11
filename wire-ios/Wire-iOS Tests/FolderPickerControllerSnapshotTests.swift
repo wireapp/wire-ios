@@ -28,18 +28,17 @@ final class FolderPickerControllerSnapshotTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         mockConversation = MockConversation.groupConversation()
         directory = MockConversationDirectory()
-        accentColor = .purple
+        UIColor.setAccentOverride(.blue)
     }
 
     override func tearDown() {
         snapshotHelper = nil
         directory = nil
         mockConversation = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     func testWithNoExistingFolders() {

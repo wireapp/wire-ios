@@ -28,21 +28,20 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
 
         let convo = createTeamGroupConversation()
         let conversationDirectory = coreDataFixture.uiMOC.conversationListDirectory()
         sut = FolderCreationController(conversation: convo, directory: conversationDirectory)
-        accentColor = .purple
+        UIColor.setAccentOverride(.blue)
     }
 
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
         coreDataFixture = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     func testForEditingTextField() {

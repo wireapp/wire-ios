@@ -27,16 +27,15 @@ final class AccountViewSnapshotTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
-        accentColor = .purple
+        UIColor.setAccentOverride(.blue)
         imageData = UIImage(inTestBundleNamed: "unsplash_matterhorn.jpg", for: AccountViewSnapshotTests.self)!.jpegData(compressionQuality: 0.9)
     }
 
     override func tearDown() {
         snapshotHelper = nil
         imageData = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     func testThatItShowsBasicAccount_Personal() {

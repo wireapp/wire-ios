@@ -36,7 +36,7 @@ final class ConversationListAccessoryViewTests: XCTestCase {
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(name: "test", userSession: userSession))
-        accentColor = .purple
+        UIColor.setAccentOverride(.blue)
     }
 
     // MARK: - tearDown
@@ -45,7 +45,7 @@ final class ConversationListAccessoryViewTests: XCTestCase {
         snapshotHelper = nil
         sut = nil
         userSession = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     // MARK: - Snapshot Tests
