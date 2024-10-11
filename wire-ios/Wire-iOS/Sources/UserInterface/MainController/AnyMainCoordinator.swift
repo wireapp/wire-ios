@@ -21,15 +21,14 @@ import WireMainNavigation
 import WireSettings
 
 final class AnyMainCoordinator<ConversationList, SettingsContentBuilder, ConversationModel, ConversationMessageModel, User>: MainCoordinatorProtocol where
-ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSettingsContentBuilderProtocol {
-
-    typealias TopLevelMenuItem = SettingsContentBuilder.TopLevelMenuItem
+ConversationList: MainConversationListProtocol,
+SettingsContentBuilder: MainSettingsContentBuilderProtocol {
 
     let mainCoordinator: any MainCoordinatorProtocol
 
     private let _showConversationList: @MainActor (ConversationFilter?) async -> Void
     private let _showConversation: @MainActor (ConversationModel, ConversationMessageModel?) async -> Void
-    private let _showSettingsContent: @MainActor (TopLevelMenuItem) -> Void
+    private let _showSettingsContent: @MainActor (SettingsTopLevelMenuItem) -> Void
     private let _showUserProfile: @MainActor (User) async -> Void
 
     init<MainCoordinator: MainCoordinatorProtocol>(mainCoordinator: MainCoordinator) where
@@ -46,9 +45,9 @@ ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSett
         _showConversation = { conversation, message in
             await mainCoordinator.showConversation(conversation: conversation, message: message)
         }
-        _showSettingsContent = {
-            let topLevelMenuItem = MainCoordinator.SettingsTopLevelMenuItem(mappingFrom: $0)
-            mainCoordinator.showSettingsContent(topLevelMenuItem!)
+        _showSettingsContent = { topLevelMenuItem in
+            let topLevelMenuItem = MainCoordinator.SettingsTopLevelMenuItem(mappingFrom: topLevelMenuItem)
+            mainCoordinator.showSettingsContent(topLevelMenuItem)
         }
         _showUserProfile = { user in
             await mainCoordinator.showUserProfile(user: user)
@@ -81,7 +80,7 @@ ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSett
     }
 
     @MainActor
-    func showSettingsContent(_ topLevelMenuItem: TopLevelMenuItem) {
+    func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
         _showSettingsContent(topLevelMenuItem)
     }
 

@@ -21,9 +21,9 @@ import UIKit
 public protocol MainCoordinatorProtocol: AnyObject {
 
     associatedtype ConversationFilter: MainConversationFilterRepresentable
-    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
     associatedtype ConversationModel
     associatedtype ConversationMessageModel
+    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
     associatedtype User
 
     @MainActor

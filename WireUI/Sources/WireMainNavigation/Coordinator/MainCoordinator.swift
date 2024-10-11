@@ -16,18 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainConversationFilterRepresentable: Sendable {
-
-    init(_ mainConversationFilter: MainConversationFilter)
-    func mapToMainConversationFilter() -> MainConversationFilter
-
-    // A convenience init method.
-    init(mappingFrom conversationFilter: some MainConversationFilterRepresentable)
-}
-
-public extension MainConversationFilterRepresentable {
-
-    init(mappingFrom conversationFilter: some MainConversationFilterRepresentable) {
-        self.init(conversationFilter.mapToMainConversationFilter())
-    }
-}
+//public final class MainCoordinator: MainCoordinatorProtocol {}
