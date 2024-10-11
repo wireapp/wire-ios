@@ -26,11 +26,7 @@ import WireSyncEngine
 @MainActor
 final class MockMainCoordinator: MainCoordinatorProtocol {
 
-    typealias ConversationList = ConversationListViewController
-    typealias ConversationBuilder = ConversationViewControllerBuilder
-    typealias Settings = UIViewController
-    typealias SettingsContentBuilder = SettingsViewControllerBuilder
-    typealias UserProfileBuilder = UserProfileViewControllerBuilder
+    typealias Dependencies = MainCoordinatorDependencies
 
     func showConversationList(conversationFilter: ConversationFilter?) {
         fatalError("Mock method not implemented")
@@ -52,7 +48,7 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 
-    func showSettingsContent(_: SettingsContentBuilder.TopLevelMenuItem) {
+    func showSettingsContent(_: SettingsTopLevelMenuItem) {
         fatalError("Mock method not implemented")
     }
 

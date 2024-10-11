@@ -19,8 +19,7 @@
 import WireDataModel
 import WireMainNavigation
 
-extension GenericMainCoordinator: ArchivedListViewControllerDelegate where
-ConnectBuilder.ConversationModel == ZMConversation {
+extension GenericMainCoordinator: ArchivedListViewControllerDelegate where Dependencies.ConversationModel == ZMConversation {
 
     func archivedListViewController(
         _ viewController: ArchivedListViewController,

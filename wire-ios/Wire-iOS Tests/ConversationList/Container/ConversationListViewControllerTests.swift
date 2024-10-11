@@ -241,18 +241,13 @@ private extension MainCoordinatorInjectingViewControllerBuilder where Self == Mo
 }
 
 private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-    typealias SettingsBuilder = SettingsViewControllerBuilder
-    typealias ConversationModel = ZMConversation
-    typealias ConversationMessageModel = ZMConversationMessage
-    typealias User = any UserType
+
+    typealias Dependencies = MainCoordinatorDependencies
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator
     ) -> UIViewController where
-    MainCoordinator: MainCoordinatorProtocol,
-    ConversationMessageModel == MainCoordinator.ConversationMessageModel,
-    ZMConversation == MainCoordinator.ConversationModel,
-    any UserType == MainCoordinator.User {
+    MainCoordinator.Dependencies == Dependencies {
         .init()
     }
 }

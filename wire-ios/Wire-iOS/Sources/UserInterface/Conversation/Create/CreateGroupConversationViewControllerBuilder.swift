@@ -22,10 +22,7 @@ import WireSyncEngine
 
 final class CreateGroupConversationViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
-    typealias SettingsBuilder = SettingsViewControllerBuilder
-    typealias ConversationModel = ZMConversation
-    typealias ConversationMessageModel = ZMConversationMessage
-    typealias User = any UserType
+    typealias Dependencies = MainCoordinatorDependencies
 
     let userSession: UserSession
     var delegate: ConversationCreationControllerDelegate?
@@ -36,10 +33,7 @@ final class CreateGroupConversationViewControllerBuilder: MainCoordinatorInjecti
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator _: MainCoordinator
-    ) -> UINavigationController where
-    MainCoordinator.ConversationModel == ZMConversation,
-    MainCoordinator.ConversationMessageModel == ZMConversationMessage,
-    MainCoordinator.User == any UserType {
+    ) -> UINavigationController where MainCoordinator.Dependencies == Dependencies {
         let rootViewController = ConversationCreationController(
             preSelectedParticipants: nil,
             userSession: userSession

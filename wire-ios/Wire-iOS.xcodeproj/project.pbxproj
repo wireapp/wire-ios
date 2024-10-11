@@ -337,6 +337,7 @@
 		591B6E1E2C8B0968009F8A7B /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; };
 		591B6E212C8B096C009F8A7B /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
 		591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
+		591C22E42CB949C6009EEB0D /* MainCoordinatorDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */; };
 		5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5929CB222CA6C9C800070488 /* WireConversationList in Frameworks */ = {isa = PBXBuildFile; productRef = 5929CB212CA6C9C800070488 /* WireConversationList */; };
@@ -2354,6 +2355,7 @@
 		5915B9572BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCaseProtocol.swift; sourceTree = "<group>"; };
 		5915B9592BF4BAFE00215817 /* DidPresentNotificationPermissionHintUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCase.swift; sourceTree = "<group>"; };
 		5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift"; sourceTree = "<group>"; };
+		591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinatorDependencies.swift; sourceTree = "<group>"; };
 		5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+SecurityFlags.swift"; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		592CF53B2CAFEA3600AE238D /* UserProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
@@ -6759,6 +6761,7 @@
 				59510DD02CB3DE7700BCD5FD /* GenericMainCoordinator+ProfileViewControllerDelegate.swift */,
 				59A27BB92C2ADC2900195393 /* GenericMainCoordinator+SidebarViewControllerDelegate.swift */,
 				5965E9932C9C01CC001D8AE1 /* GenericMainCoordinator+StartUIDelegate.swift */,
+				591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */,
 				597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */,
 				59E506F12C971DD6004214AC /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */,
 				593D51092C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift */,
@@ -9876,6 +9879,7 @@
 				EEF37ED72BDFD2870055C9E1 /* PrimaryButtonStyle.swift in Sources */,
 				A90E4ABF2381CD0200468F31 /* AccentColorChangeHandler.swift in Sources */,
 				EFDAC64722DE2AD100D63025 /* TeamImageView.swift in Sources */,
+				591C22E42CB949C6009EEB0D /* MainCoordinatorDependencies.swift in Sources */,
 				5E8FFC1021EE0CA60052DF03 /* AuthenticationButtonTapInputHandler.swift in Sources */,
 				A965F89C23DB29D8005209E1 /* ConversationInputBarSendController.swift in Sources */,
 				5E8DA74F211AEE3D00360979 /* AuthenticationCoordinatorAction.swift in Sources */,

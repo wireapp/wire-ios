@@ -20,21 +20,17 @@ import WireDataModel
 import WireMainNavigation
 import WireSettings
 
-final class AnyMainCoordinator<ConversationList, SettingsContentBuilder, ConversationModel, ConversationMessageModel, User>: MainCoordinatorProtocol where
-ConversationList: MainConversationListProtocol,
-SettingsContentBuilder: MainSettingsContentBuilderProtocol {
+final class AnyMainCoordinator<Dependencies: GenericMainCoordinatorDependencies>: MainCoordinatorProtocol {
 
     let mainCoordinator: any MainCoordinatorProtocol
 
-    private let _showConversationList: @MainActor (ConversationFilter?) async -> Void
+    private let _showConversationList: @MainActor (Dependencies.ConversationFilter?) async -> Void
     private let _showConversation: @MainActor (ConversationModel, ConversationMessageModel?) async -> Void
-    private let _showSettingsContent: @MainActor (SettingsTopLevelMenuItem) -> Void
+    private let _showSettingsContent: @MainActor (Dependencies.SettingsTopLevelMenuItem) -> Void
     private let _showUserProfile: @MainActor (User) async -> Void
 
     init<MainCoordinator: MainCoordinatorProtocol>(mainCoordinator: MainCoordinator) where
-    MainCoordinator.ConversationModel == ConversationModel,
-    MainCoordinator.ConversationMessageModel == ConversationMessageModel,
-    MainCoordinator.User == User {
+    MainCoordinator.Dependencies == Dependencies {
 
         self.mainCoordinator = mainCoordinator
 
@@ -55,7 +51,7 @@ SettingsContentBuilder: MainSettingsContentBuilderProtocol {
     }
 
     @MainActor
-    func showConversationList(conversationFilter: ConversationFilter?) async {
+    func showConversationList(conversationFilter: Dependencies.ConversationFilter?) async {
         await _showConversationList(conversationFilter)
     }
 
@@ -80,7 +76,7 @@ SettingsContentBuilder: MainSettingsContentBuilderProtocol {
     }
 
     @MainActor
-    func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
+    func showSettingsContent(_ topLevelMenuItem: Dependencies.SettingsTopLevelMenuItem) {
         _showSettingsContent(topLevelMenuItem)
     }
 

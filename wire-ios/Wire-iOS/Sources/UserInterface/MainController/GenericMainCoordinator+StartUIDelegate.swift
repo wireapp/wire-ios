@@ -19,9 +19,7 @@
 import WireDataModel
 import WireMainNavigation
 
-extension GenericMainCoordinator: StartUIDelegate where
-ConversationBuilder.Conversation.ConversationModel == ZMConversation,
-UserProfileBuilder.User == any UserType {
+extension GenericMainCoordinator: StartUIDelegate where Dependencies.ConversationModel == ZMConversation, Dependencies.User == any UserType {
 
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {

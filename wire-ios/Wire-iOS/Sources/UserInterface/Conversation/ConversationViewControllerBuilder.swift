@@ -24,19 +24,17 @@ import WireSyncEngine
 @MainActor
 struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
 
-    typealias SettingsBuilder = SettingsViewControllerBuilder
+    typealias Dependencies = MainCoordinatorDependencies
     typealias Conversation = ConversationRootViewController
 
     var userSession: UserSession
     var mediaPlaybackManager: MediaPlaybackManager?
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
-        conversation: ZMConversation,
-        message: ZMConversationMessage?,
+        conversation: ConversationModel,
+        message: ConversationMessageModel?,
         mainCoordinator: MainCoordinator
-    ) -> Conversation where
-    MainCoordinator.ConversationModel == ZMConversation,
-    MainCoordinator.ConversationMessageModel == ZMConversationMessage {
+    ) -> Conversation where MainCoordinator.Dependencies == Dependencies {
 
         let viewController = ConversationRootViewController(
             conversation: conversation,

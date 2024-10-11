@@ -31,24 +31,10 @@ import WireSyncEngine
 // TODO: [WPB-11449] after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
 
 final class ZClientViewController: UIViewController {
-
-    typealias MainTabBarController = WireMainNavigation.MainTabBarController<
-        ConversationListViewController,
-        ConversationRootViewController
-    >
-    typealias MainSplitViewController = WireMainNavigation.MainSplitViewController<
-        SidebarViewController,
-        MainTabBarController
-    >
-    typealias MainCoordinator = WireMainNavigation.GenericMainCoordinator<
-        MainSplitViewController,
-        ConversationViewControllerBuilder,
-        SettingsViewControllerBuilder,
-        StartUIViewControllerBuilder,
-        CreateGroupConversationViewControllerBuilder,
-        SelfProfileViewControllerBuilder,
-        UserProfileViewControllerBuilder
-    >
+// TODO: remove?
+    typealias MainCoordinator = GenericMainCoordinator<MainCoordinatorDependencies>
+    typealias MainSplitViewController = MainCoordinator.SplitViewController
+    typealias MainTabBarController = MainCoordinator.TabBarController
 
     // MARK: - Private Members
 
