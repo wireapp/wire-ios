@@ -237,7 +237,7 @@ final class TeamRepositoryTests: XCTestCase {
         }
     }
 
-    func testFetchSelfLegalholdStatus() async throws {
+    func testFetchSelfLegalholdInfo() async throws {
         // Mock
         teamsAPI.getLegalholdInfoForUserID_MockValue = Scaffolding.teamMemberLegalhold
 

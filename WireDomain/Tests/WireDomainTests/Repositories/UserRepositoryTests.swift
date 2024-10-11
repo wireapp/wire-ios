@@ -360,7 +360,7 @@ class UserRepositoryTests: XCTestCase {
 
         // When
 
-        let userIds = try await sut.fetchAllUserIdsWithOneOnOneConversation()
+        let userIds = try await sut.fetchAllUserIDsWithOneOnOneConversation()
 
         // Then
 

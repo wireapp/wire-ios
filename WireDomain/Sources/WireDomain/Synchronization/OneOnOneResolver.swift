@@ -23,15 +23,15 @@ import WireDataModel
 // sourcery: AutoMockable
 /// Resolves 1:1 conversations
 protocol OneOnOneResolverProtocol {
-    func invoke() async throws
+    func resolveAllOneOnOneConversations() async throws
 }
 
 struct OneOnOneResolver: OneOnOneResolverProtocol {
 
-    private enum OneOnOneResolverUseCaseError: Error {
+    private enum Error: Swift.Error {
         case failedToActivateConversation
         case failedToFetchConversation
-        case failedToEstablishGroup(Error)
+        case failedToEstablishGroup(Swift.Error)
     }
 
     // MARK: - Properties
@@ -55,14 +55,8 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         self.mlsProvider = mlsProvider
     }
 
-    func invoke() async throws {
-        try await resolveAllOneOnOneConversations()
-    }
-
-    // MARK: - Private
-
-    private func resolveAllOneOnOneConversations() async throws {
-        let usersIDs = try await userRepository.fetchAllUserIdsWithOneOnOneConversation()
+    func resolveAllOneOnOneConversations() async throws {
+        let usersIDs = try await userRepository.fetchAllUserIDsWithOneOnOneConversation()
 
         await withTaskGroup(of: Void.self) { group in
             for userID in usersIDs {
@@ -114,7 +108,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         WireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
 
         guard let userID = user.qualifiedID else {
-            throw OneOnOneResolverUseCaseError.failedToActivateConversation
+            throw Error.failedToActivateConversation
         }
 
         /// Sync the user MLS conversation from backend.
@@ -127,7 +121,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         let mlsConversation = await conversationsRepository.fetchMLSConversation(with: mlsGroupID)
 
         guard let mlsConversation, let groupID = mlsConversation.mlsGroupID else {
-            throw OneOnOneResolverUseCaseError.failedToFetchConversation
+            throw Error.failedToFetchConversation
         }
 
         let mlsService = mlsProvider.service
@@ -205,7 +199,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
                 }
 
             } catch {
-                throw OneOnOneResolverUseCaseError.failedToEstablishGroup(error)
+                throw Error.failedToEstablishGroup(error)
             }
         } else {
             try await mlsService.joinGroup(with: groupID)

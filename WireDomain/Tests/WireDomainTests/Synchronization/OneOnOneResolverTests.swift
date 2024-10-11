@@ -90,7 +90,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -134,7 +134,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -165,7 +165,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -201,7 +201,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -231,7 +231,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -296,7 +296,7 @@ final class OneOnOneResolverTests: XCTestCase {
     ) {
         userRepository.fetchUserWithDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
-        userRepository.fetchAllUserIdsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
+        userRepository.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
 
         conversationsRepository.pullMLSOneToOneConversationUserIDDomain_MockValue = Scaffolding.conversationID.uuidString
         conversationsRepository.fetchMLSConversationWith_MockValue = mlsOneOnOneConversation

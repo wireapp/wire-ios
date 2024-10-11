@@ -116,7 +116,7 @@ public protocol UserRepositoryProtocol {
     /// Fetches all user IDs that have a one on one conversation
     /// - returns: A list of users' qualified IDs.
 
-    func fetchAllUserIdsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
 
 }
 
@@ -339,7 +339,7 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
-    public func fetchAllUserIdsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
         try await context.perform { [context] in
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             let predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))

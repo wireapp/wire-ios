@@ -38,19 +38,6 @@ protocol SyncManagerProtocol {
 
 }
 
-public struct MLSProvider {
-    let service: any MLSServiceInterface
-    let isMLSEnabled: Bool
-
-    public init(
-        service: any MLSServiceInterface,
-        isMLSEnabled: Bool
-    ) {
-        self.service = service
-        self.isMLSEnabled = isMLSEnabled
-    }
-}
-
 final class SyncManager: SyncManagerProtocol {
 
     enum Error: Swift.Error {
@@ -122,7 +109,7 @@ final class SyncManager: SyncManagerProtocol {
             try await featureConfigsRepository.pullFeatureConfigs()
             try await pushSupportedProtocolsUseCase.invoke()
             let oneOnOneResolver = makeOneOnOneResolver()
-            try await oneOnOneResolver.invoke()
+            try await oneOnOneResolver.resolveAllOneOnOneConversations()
         } catch {
             throw Error.failedToPerformSlowSync(error)
         }

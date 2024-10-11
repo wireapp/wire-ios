@@ -27,6 +27,7 @@
 		C97C019C2CB66B9E000683C5 /* OneOnOneResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C019B2CB66B9E000683C5 /* OneOnOneResolverTests.swift */; };
 		C97C019F2CB66BC8000683C5 /* PushSupportedProtocolsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C019E2CB66BC8000683C5 /* PushSupportedProtocolsUseCaseTests.swift */; };
 		C97C01A12CB66BFF000683C5 /* OneOnOneResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01A02CB66BFF000683C5 /* OneOnOneResolver.swift */; };
+		C97C01B02CB96F3C000683C5 /* MLSProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01AF2CB96F3C000683C5 /* MLSProvider.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
 		C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */; };
 		C99322D42C986E3A0065E10F /* SelfUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B52C986E3A0065E10F /* SelfUserProvider.swift */; };
@@ -149,6 +150,7 @@
 		C97C019B2CB66B9E000683C5 /* OneOnOneResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneResolverTests.swift; sourceTree = "<group>"; };
 		C97C019E2CB66BC8000683C5 /* PushSupportedProtocolsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsUseCaseTests.swift; sourceTree = "<group>"; };
 		C97C01A02CB66BFF000683C5 /* OneOnOneResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneResolver.swift; sourceTree = "<group>"; };
+		C97C01AF2CB96F3C000683C5 /* MLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProvider.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
 		C99322B52C986E3A0065E10F /* SelfUserProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUserProvider.swift; sourceTree = "<group>"; };
@@ -670,6 +672,7 @@
 				C97C01A02CB66BFF000683C5 /* OneOnOneResolver.swift */,
 				EECC35A52C2EB6CD00679448 /* SyncManager.swift */,
 				EECC35A72C2EB70400679448 /* SyncState.swift */,
+				C97C01AF2CB96F3C000683C5 /* MLSProvider.swift */,
 			);
 			path = Synchronization;
 			sourceTree = "<group>";
@@ -880,6 +883,7 @@
 				EEAD0A2E2C46B01900CC8658 /* UserUpdateEventProcessor.swift in Sources */,
 				EEAD0A2A2C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift in Sources */,
 				C99322D42C986E3A0065E10F /* SelfUserProvider.swift in Sources */,
+				C97C01B02CB96F3C000683C5 /* MLSProvider.swift in Sources */,
 				EEAD0A332C46B99800CC8658 /* FederationDeleteEventProcessor.swift in Sources */,
 				C99322E42C986E3A0065E10F /* ConversationRepository.swift in Sources */,
 				C99322E02C986E3A0065E10F /* ConversationLocalStore+Metadata.swift in Sources */,

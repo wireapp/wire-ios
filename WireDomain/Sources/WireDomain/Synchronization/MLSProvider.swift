@@ -16,8 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-/// Fully qualified user identifier.
+public struct MLSProvider {
+    let service: any MLSServiceInterface
+    let isMLSEnabled: Bool
 
-public typealias UserID = QualifiedID
+    public init(
+        service: any MLSServiceInterface,
+        isMLSEnabled: Bool
+    ) {
+        self.service = service
+        self.isMLSEnabled = isMLSEnabled
+    }
+}

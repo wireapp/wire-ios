@@ -361,7 +361,7 @@ final class SyncManagerTests: XCTestCase {
         userRepository.pullSelfUser_MockMethod = {}
         teamRepository.pullSelfLegalholdInfo_MockMethod = {}
         pushSupportedProtocolsUseCase.invoke_MockMethod = {}
-        userRepository.fetchAllUserIdsWithOneOnOneConversation_MockMethod = { [] }
+        userRepository.fetchAllUserIDsWithOneOnOneConversation_MockMethod = { [] }
         userRepository.fetchUserWithDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
         mlsService.conversationExistsGroupID_MockValue = true
@@ -420,7 +420,7 @@ final class SyncManagerTests: XCTestCase {
         userRepository.pullSelfUser_MockError = UserRepositoryError.failedToFetchUser(selfUserID) /// throws error
         teamRepository.pullSelfLegalholdInfo_MockMethod = {}
         pushSupportedProtocolsUseCase.invoke_MockMethod = {}
-        userRepository.fetchAllUserIdsWithOneOnOneConversation_MockMethod = { [] }
+        userRepository.fetchAllUserIDsWithOneOnOneConversation_MockMethod = { [] }
         userRepository.fetchUserWithDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
         mlsService.conversationExistsGroupID_MockValue = true

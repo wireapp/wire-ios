@@ -59,7 +59,7 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetLegalholdRequest() async throws {
+    func testGetLegalholdInfoRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getLegalholdInfo(for: .mockID1, userID: .mockID2)
         }
@@ -249,7 +249,7 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetLegalhold_SuccessResponse_200_V0() async throws {
+    func testGetLegalholdInfo_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
             code: .ok,
@@ -273,13 +273,13 @@ final class TeamsAPITests: XCTestCase {
         )
 
         // Then
-        let expectedPrekey = LegalHoldPrekey(id: 12_345, base64EncodedKey: "foo")
+        let expectedPrekey = LegalholdPrekey(id: 12_345, base64EncodedKey: "foo")
         XCTAssertEqual(result.status, .pending)
         XCTAssertEqual(result.prekey, expectedPrekey)
     }
 
-    func testGetLegalhold_FailureResponse_InvalidRequest_V0() async throws {
-        try await internalTest_GetLegalhold_Failure(
+    func testGetLegalholdInfo_FailureResponse_InvalidRequest_V0() async throws {
+        try await internalTest_GetLegalholdInfo_Failure(
             expectedError: TeamsAPIError.invalidRequest,
             for: .v0,
             code: .notFound,
@@ -287,8 +287,8 @@ final class TeamsAPITests: XCTestCase {
         )
     }
 
-    func testGetLegalhold_FailureResponse_MemberNotFound_V0() async throws {
-        try await internalTest_GetLegalhold_Failure(
+    func testGetLegalholdInfo_FailureResponse_MemberNotFound_V0() async throws {
+        try await internalTest_GetLegalholdInfo_Failure(
             expectedError: TeamsAPIError.teamMemberNotFound,
             for: .v0,
             code: .notFound,
@@ -366,8 +366,8 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetLegalhold_FailureResponse_InvalidRequest_V4() async throws {
-        try await internalTest_GetLegalhold_Failure(
+    func testGetLegalholdInfo_FailureResponse_InvalidRequest_V4() async throws {
+        try await internalTest_GetLegalholdInfo_Failure(
             expectedError: TeamsAPIError.invalidRequest,
             for: .v4,
             code: .badRequest,
@@ -389,8 +389,8 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetLegalhold_FailureResponse_InvalidRequest_V5() async throws {
-        try await internalTest_GetLegalhold_Failure(
+    func testGetLegalholdInfo_FailureResponse_InvalidRequest_V5() async throws {
+        try await internalTest_GetLegalholdInfo_Failure(
             expectedError: TeamsAPIError.invalidRequest,
             for: .v5,
             code: .notFound,
@@ -398,7 +398,7 @@ final class TeamsAPITests: XCTestCase {
         )
     }
 
-    private func internalTest_GetLegalhold_Failure(
+    private func internalTest_GetLegalholdInfo_Failure(
         expectedError: any Error & Equatable,
         for apiVersion: APIVersion,
         code: HTTPStatusCode,

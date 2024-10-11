@@ -291,21 +291,21 @@ class MockOneOnOneResolverProtocol: OneOnOneResolverProtocol {
 
 
 
-    // MARK: - invoke
+    // MARK: - resolveAllOneOnOneConversations
 
-    var invoke_Invocations: [Void] = []
-    var invoke_MockError: Error?
-    var invoke_MockMethod: (() async throws -> Void)?
+    var resolveAllOneOnOneConversations_Invocations: [Void] = []
+    var resolveAllOneOnOneConversations_MockError: Error?
+    var resolveAllOneOnOneConversations_MockMethod: (() async throws -> Void)?
 
-    func invoke() async throws {
-        invoke_Invocations.append(())
+    func resolveAllOneOnOneConversations() async throws {
+        resolveAllOneOnOneConversations_Invocations.append(())
 
-        if let error = invoke_MockError {
+        if let error = resolveAllOneOnOneConversations_MockError {
             throw error
         }
 
-        guard let mock = invoke_MockMethod else {
-            fatalError("no mock for `invoke`")
+        guard let mock = resolveAllOneOnOneConversations_MockMethod else {
+            fatalError("no mock for `resolveAllOneOnOneConversations`")
         }
 
         try await mock()
@@ -976,26 +976,26 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         await mock(user, date)
     }
 
-    // MARK: - fetchAllUserIdsWithOneOnOneConversation
+    // MARK: - fetchAllUserIDsWithOneOnOneConversation
 
-    public var fetchAllUserIdsWithOneOnOneConversation_Invocations: [Void] = []
-    public var fetchAllUserIdsWithOneOnOneConversation_MockError: Error?
-    public var fetchAllUserIdsWithOneOnOneConversation_MockMethod: (() async throws -> [WireDataModel.QualifiedID])?
-    public var fetchAllUserIdsWithOneOnOneConversation_MockValue: [WireDataModel.QualifiedID]?
+    public var fetchAllUserIDsWithOneOnOneConversation_Invocations: [Void] = []
+    public var fetchAllUserIDsWithOneOnOneConversation_MockError: Error?
+    public var fetchAllUserIDsWithOneOnOneConversation_MockMethod: (() async throws -> [WireDataModel.QualifiedID])?
+    public var fetchAllUserIDsWithOneOnOneConversation_MockValue: [WireDataModel.QualifiedID]?
 
-    public func fetchAllUserIdsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
-        fetchAllUserIdsWithOneOnOneConversation_Invocations.append(())
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+        fetchAllUserIDsWithOneOnOneConversation_Invocations.append(())
 
-        if let error = fetchAllUserIdsWithOneOnOneConversation_MockError {
+        if let error = fetchAllUserIDsWithOneOnOneConversation_MockError {
             throw error
         }
 
-        if let mock = fetchAllUserIdsWithOneOnOneConversation_MockMethod {
+        if let mock = fetchAllUserIDsWithOneOnOneConversation_MockMethod {
             return try await mock()
-        } else if let mock = fetchAllUserIdsWithOneOnOneConversation_MockValue {
+        } else if let mock = fetchAllUserIDsWithOneOnOneConversation_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchAllUserIdsWithOneOnOneConversation`")
+            fatalError("no mock for `fetchAllUserIDsWithOneOnOneConversation`")
         }
     }
 
