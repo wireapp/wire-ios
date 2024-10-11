@@ -373,6 +373,15 @@
         }
       }
     },
+    "tabBar.contacts.description" : {
+
+    },
+    "tabBar.contacts.hint" : {
+
+    },
+    "tabBar.contacts.title" : {
+
+    },
     "tabBar.conversations.description" : {
       "localizations" : {
         "ar" : {
@@ -744,6 +753,15 @@
           }
         }
       }
+    },
+    "tabBar.folders.description" : {
+
+    },
+    "tabBar.folders.hint" : {
+
+    },
+    "tabBar.folders.title" : {
+
     },
     "tabBar.settings.description" : {
       "localizations" : {
