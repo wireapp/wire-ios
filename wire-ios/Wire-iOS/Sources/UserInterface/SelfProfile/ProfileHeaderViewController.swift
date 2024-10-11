@@ -55,15 +55,9 @@ final class ProfileHeaderViewController: UIViewController {
     typealias LabelColors = SemanticColors.Label
 
     private let nameLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .accountName, color: LabelColors.textDefault)
+        let label = DynamicFontLabel(style: .h2, color: LabelColors.textDefault)
         label.accessibilityLabel = AccountPageStrings.Name.description
         label.accessibilityIdentifier = "name"
-
-        label.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
-        label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         label.accessibilityTraits.insert(.header)
         label.lineBreakMode = .byTruncatingMiddle
@@ -89,9 +83,9 @@ final class ProfileHeaderViewController: UIViewController {
         return button
     }()
 
-    private let handleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: LabelColors.textDefault)
-    private let teamNameLabel = DynamicFontLabel(fontSpec: .accountTeam, color: LabelColors.textDefault)
-    private let remainingTimeLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont, color: LabelColors.textDefault)
+    private let handleLabel = DynamicFontLabel(style: .subline1, color: LabelColors.textDefault)
+    private let teamNameLabel = DynamicFontLabel(style: .h4, color: LabelColors.textDefault)
+    private let remainingTimeLabel = DynamicFontLabel(style: .h5, color: LabelColors.textDefault)
     let imageView = UserImageView(size: .big)
     private let userStatusViewController: UserStatusViewController
 
@@ -172,6 +166,8 @@ final class ProfileHeaderViewController: UIViewController {
         nameHandleStack.spacing = 8
 
         teamNameLabel.accessibilityLabel = AccountPageStrings.TeamName.description
+        teamNameLabel.numberOfLines = 0
+        teamNameLabel.textAlignment = .center
         teamNameLabel.accessibilityIdentifier = "team name"
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
