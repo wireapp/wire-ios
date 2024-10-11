@@ -16,17 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-final class OpenServicesAdminCell: StartUIIconCell {
-
-    override func setupViews() {
-        super.setupViews()
-
-        icon = .bot
-        // TODO: title = PeoplePicker.QuickAction.adminServices
-        isAccessibilityElement = true
-        accessibilityLabel = title
-        accessibilityIdentifier = "button.searchui.open-services"
-    }
-}
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #file)
+    .deletingLastPathComponent()
+    .path

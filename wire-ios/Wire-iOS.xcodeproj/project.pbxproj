@@ -317,6 +317,8 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5902F8D72BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */; };
 		5902F8E32BF7B18B00F1D392 /* ArchivedListViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */; };
+		590673E92CB84111005780E7 /* CreateGuestRoomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590673E82CB84110005780E7 /* CreateGuestRoomCell.swift */; };
+		590673EB2CB84174005780E7 /* CreateGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590673EA2CB84172005780E7 /* CreateGroupCell.swift */; };
 		59076F952C934A9800AE7529 /* WireAccountImage in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImage */; };
 		59076F972C934AA100AE7529 /* WireAccountImage in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F962C934AA100AE7529 /* WireAccountImage */; };
 		590A5F072BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */; };
@@ -2346,6 +2348,8 @@
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerDelegate.swift; sourceTree = "<group>"; };
 		5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
+		590673E82CB84110005780E7 /* CreateGuestRoomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGuestRoomCell.swift; sourceTree = "<group>"; };
+		590673EA2CB84172005780E7 /* CreateGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupCell.swift; sourceTree = "<group>"; };
 		590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+addressBook.swift"; sourceTree = "<group>"; };
 		590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+notifications.swift"; sourceTree = "<group>"; };
 		590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedViewControllerDelegate.swift; sourceTree = "<group>"; };
@@ -6171,11 +6175,13 @@
 		87DCF4A21D34EA4500BB420F /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */,
-				1671D6D0200CDC380022D289 /* InviteTeamMemberCell.swift */,
+				590673EA2CB84172005780E7 /* CreateGroupCell.swift */,
+				590673E82CB84110005780E7 /* CreateGuestRoomCell.swift */,
 				16C02A0F204E964300811912 /* GroupConversationCell.swift */,
-				E9ACC8352C10884F0002E608 /* StartUIIconCell.swift */,
+				1671D6D0200CDC380022D289 /* InviteTeamMemberCell.swift */,
 				E9ACC8372C1089D10002E608 /* OpenServicesAdminCell.swift */,
+				E9ACC8352C10884F0002E608 /* StartUIIconCell.swift */,
+				EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -9896,6 +9902,7 @@
 				BAD4D0661B613D4E008585A5 /* ColorKnobView.swift in Sources */,
 				871BC2521D34F8F800DF0793 /* MediaPreviewView.swift in Sources */,
 				D58192022091E2C0003BA7EC /* IconLabelButton+CallActions.swift in Sources */,
+				590673EB2CB84174005780E7 /* CreateGroupCell.swift in Sources */,
 				1648EEEF20498F8900CC6B37 /* ContactsSectionController.swift in Sources */,
 				BD979D2C1D8F3AF700E8E3CB /* SendTechnicalReportPresenter.swift in Sources */,
 				87DCF49D1D34E9E600BB420F /* MapKit+Helper.swift in Sources */,
@@ -10151,6 +10158,7 @@
 				5E15D31B219DB9060038439D /* ConversationFileMessageCell.swift in Sources */,
 				161ACB3823F6AFB100ABFF33 /* Error+Localization.swift in Sources */,
 				E9ACC83A2C108F390002E608 /* StartUIViewController+NavigationController.swift in Sources */,
+				590673E92CB84111005780E7 /* CreateGuestRoomCell.swift in Sources */,
 				EEA4F47C2410054100DBEA3D /* HashBox.swift in Sources */,
 				5E8FFC2421F086240052DF03 /* AuthenticationReauthenticateInputHandler.swift in Sources */,
 				BFE277631D5B4FC50074DC6D /* ConversationContentViewController+MessageDeletion.swift in Sources */,

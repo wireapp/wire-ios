@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 
-final class OpenServicesAdminCell: StartUIIconCell {
+final class CreateGuestRoomCell: StartUIIconCell {
 
     override func setupViews() {
         super.setupViews()
 
-        icon = .bot
-        // TODO: title = PeoplePicker.QuickAction.adminServices
+        icon = .guest
+        // TODO: title = PeoplePicker.QuickAction.createGuestRoom
         isAccessibilityElement = true
         accessibilityLabel = title
-        accessibilityIdentifier = "button.searchui.open-services"
+        accessibilityTraits.insert(.button)
+        accessibilityIdentifier = "button.searchui.createguestroom"
     }
 }
