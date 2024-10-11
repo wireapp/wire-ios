@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-import WireSidebar
+import WireSidebarUI
 
 extension SidebarAccountInfo {
 

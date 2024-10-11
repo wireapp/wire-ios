@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 import WireSyncEngine
 
 extension MessagePresenter {

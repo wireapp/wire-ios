@@ -19,9 +19,9 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireMainNavigation
+import WireMainNavigationUI
 import WireReusableUIComponents
-import WireSettings
+import WireSettingsUI
 import WireSyncEngine
 
 /// The first page of the user settings.

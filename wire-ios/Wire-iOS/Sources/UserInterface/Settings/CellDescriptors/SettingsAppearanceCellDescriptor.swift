@@ -18,7 +18,7 @@
 
 import MobileCoreServices
 import UIKit
-import WireSettings
+import WireSettingsUI
 import WireSyncEngine
 
 class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {

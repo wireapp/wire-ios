@@ -19,7 +19,7 @@
 import LocalAuthentication
 import UIKit
 import WireCommonComponents
-import WireSettings
+import WireSettingsUI
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {

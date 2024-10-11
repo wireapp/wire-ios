@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSettings
+import WireSettingsUI
 
 enum PresentationStyle: Int {
     case modal

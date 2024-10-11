@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSettings
+import WireSettingsUI
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains

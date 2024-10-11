@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireAccountImage"
-               BuildableName = "WireAccountImage"
-               BlueprintName = "WireAccountImage"
+               BlueprintIdentifier = "WireAccountImageUI"
+               BuildableName = "WireAccountImageUI"
+               BlueprintName = "WireAccountImageUI"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,9 +29,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireConversationList"
-               BuildableName = "WireConversationList"
-               BlueprintName = "WireConversationList"
+               BlueprintIdentifier = "WireConversationListUI"
+               BuildableName = "WireConversationListUI"
+               BlueprintName = "WireConversationListUI"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -57,9 +57,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireMainNavigation"
-               BuildableName = "WireMainNavigation"
-               BlueprintName = "WireMainNavigation"
+               BlueprintIdentifier = "WireMainNavigationUI"
+               BuildableName = "WireMainNavigationUI"
+               BlueprintName = "WireMainNavigationUI"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -85,9 +85,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireSettings"
-               BuildableName = "WireSettings"
-               BlueprintName = "WireSettings"
+               BlueprintIdentifier = "WireSettingsUI"
+               BuildableName = "WireSettingsUI"
+               BlueprintName = "WireSettingsUI"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -99,9 +99,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireSidebar"
-               BuildableName = "WireSidebar"
-               BlueprintName = "WireSidebar"
+               BlueprintIdentifier = "WireSidebarUI"
+               BuildableName = "WireSidebarUI"
+               BlueprintName = "WireSidebarUI"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -123,9 +123,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireAccountImageTests"
-               BuildableName = "WireAccountImageTests"
-               BlueprintName = "WireAccountImageTests"
+               BlueprintIdentifier = "WireAccountImageUITests"
+               BuildableName = "WireAccountImageUITests"
+               BlueprintName = "WireAccountImageUITests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -133,9 +133,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireConversationListTests"
-               BuildableName = "WireConversationListTests"
-               BlueprintName = "WireConversationListTests"
+               BlueprintIdentifier = "WireConversationListUITests"
+               BuildableName = "WireConversationListUITests"
+               BlueprintName = "WireConversationListUITests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -153,9 +153,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireMainNavigationTests"
-               BuildableName = "WireMainNavigationTests"
-               BlueprintName = "WireMainNavigationTests"
+               BlueprintIdentifier = "WireMainNavigationUITests"
+               BuildableName = "WireMainNavigationUITests"
+               BlueprintName = "WireMainNavigationUITests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -173,9 +173,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireSettingsTests"
-               BuildableName = "WireSettingsTests"
-               BlueprintName = "WireSettingsTests"
+               BlueprintIdentifier = "WireSettingsUITests"
+               BuildableName = "WireSettingsUITests"
+               BlueprintName = "WireSettingsUITests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -183,9 +183,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireSidebarTests"
-               BuildableName = "WireSidebarTests"
-               BlueprintName = "WireSidebarTests"
+               BlueprintIdentifier = "WireSidebarUITests"
+               BuildableName = "WireSidebarUITests"
+               BlueprintName = "WireSidebarUITests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -211,9 +211,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireAccountImage"
-            BuildableName = "WireAccountImage"
-            BlueprintName = "WireAccountImage"
+            BlueprintIdentifier = "WireAccountImageUI"
+            BuildableName = "WireAccountImageUI"
+            BlueprintName = "WireAccountImageUI"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
