@@ -1,19 +1,22 @@
-name: Test Develop
+name: Test Develop and Release branches
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'develop'
-
+  schedule:
+    - cron: "0 21 * * *"
+  
 # This is what will cancel the workflow
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  trigger_tests_develop:
+  trigger_tests:
+    strategy:
+      matrix:
+        branch: [develop, release/cycle-3.113]  # List other branches here
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
+      branch: ${{ matrix.branch }}
     secrets: inherit

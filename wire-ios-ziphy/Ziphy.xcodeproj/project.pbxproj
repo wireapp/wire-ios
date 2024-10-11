@@ -48,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01E8EC3A2BB7D2B2002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		54FB26591D4669A6005574BF /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ziphy-ios.xcconfig"; sourceTree = "<group>"; };
 		54FB265B1D4669A6005574BF /* ziphy-osx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ziphy-osx.xcconfig"; sourceTree = "<group>"; };
@@ -119,6 +120,7 @@
 		54FB26571D4669A6005574BF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01E8EC3A2BB7D2B2002A5A91 /* AllTests.xctestplan */,
 				54FB26581D4669A6005574BF /* Configurations */,
 			);
 			path = Resources;

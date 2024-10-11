@@ -1,0 +1,36 @@
+{
+  "configurations" : [
+    {
+      "id" : "151E77A1-8AF3-4516-B938-27AE056CFC32",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "environmentVariableEntries" : [
+      {
+        "key" : "OS_ACTIVITY_MODE",
+        "value" : "disable"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireImages.xcodeproj",
+      "identifier" : "0969600B1B663E7B006DF53B",
+      "name" : "WireImages-ios"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:WireImages.xcodeproj",
+        "identifier" : "096960151B663E7C006DF53B",
+        "name" : "WireImages-iosTests"
+      }
+    }
+  ],
+  "version" : 1
+}

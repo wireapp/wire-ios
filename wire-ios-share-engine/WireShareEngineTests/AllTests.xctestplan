@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "64B3175E-2A10-4F32-95C4-986259860F2E",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireShareEngine.xcodeproj",
+      "identifier" : "5470D3E71D76E1B000FDE440",
+      "name" : "WireShareEngine"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireShareEngine.xcodeproj",
+        "identifier" : "5470D3F11D76E1B000FDE440",
+        "name" : "WireShareEngineTests"
+      }
+    }
+  ],
+  "version" : 1
+}

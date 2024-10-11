@@ -218,6 +218,7 @@
 		01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLogTests.swift; sourceTree = "<group>"; };
 		01D97B0F294CB921001A04BD /* RequestLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLog.swift; sourceTree = "<group>"; };
 		01D97B11294CB98F001A04BD /* ResponseLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseLog.swift; sourceTree = "<group>"; };
+		01E8EC462BB7D5FE002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		0928E2041BA023A30057232E /* NSData_MultipartTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSData_MultipartTests.m; sourceTree = "<group>"; };
 		0958401E1B9591F1004555F9 /* NSData+Multipart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Multipart.m"; sourceTree = "<group>"; };
 		095840211B959200004555F9 /* NSData+Multipart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Multipart.h"; sourceTree = "<group>"; };
@@ -881,6 +882,7 @@
 				F1D1282121C2722E0090045E /* certificates.json */,
 				F108BCC721C3CB6C00E1BBE3 /* Backend.bundle */,
 				09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */,
+				01E8EC462BB7D5FE002A5A91 /* AllTests.xctestplan */,
 			);
 			path = Resources;
 			sourceTree = "<group>";

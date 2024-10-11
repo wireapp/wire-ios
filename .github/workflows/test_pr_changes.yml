@@ -26,29 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     # Set job outputs to values from filter step
     outputs:
-      wire-ios: ${{ steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.carthage == 'true' }}
-      wire-ui: ${{ steps.filter.outputs.wire-ui }}
-      wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
-      wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
-      wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
-      wire-ios-request-strategy: ${{ steps.filter.outputs.wire-ios-request-strategy }}
-      wire-api: ${{ steps.filter.outputs.wire-api }}
-      wire-analytics: ${{ steps.filter.outputs.wire-analytics }}
-      wire-datadog: ${{ steps.filter.outputs.wire-datadog }}
-      wire-domain-project: ${{ steps.filter.outputs.wire-domain-project }}
-      wire-domain: ${{ steps.filter.outputs.wire-domain }}
-      wire-ios-transport: ${{ steps.filter.outputs.wire-ios-transport }}
-      wire-ios-share-engine: ${{ steps.filter.outputs.wire-ios-share-engine }}
-      wire-ios-cryptobox: ${{ steps.filter.outputs.wire-ios-cryptobox }}
-      wire-ios-mocktransport: ${{ steps.filter.outputs.wire-ios-mocktransport }}
-      wire-ios-notification-engine: ${{ steps.filter.outputs.wire-ios-notification-engine }}
-      wire-ios-protos: ${{ steps.filter.outputs.wire-ios-protos }}
-      wire-ios-images: ${{ steps.filter.outputs.wire-ios-images }}
-      wire-ios-link-preview : ${{ steps.filter.outputs.wire-ios-link-preview }}
-      wire-ios-utilities: ${{ steps.filter.outputs.wire-ios-utilities }}
-      wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
-      wire-foundation: ${{ steps.filter.outputs.wire-foundation }}
-      scripts: ${{ steps.filter.outputs.scripts }}
+      folders: ${{ steps.filter.outputs.changes }}
 
     steps:
       - uses: actions/checkout@v4
@@ -60,7 +38,7 @@ jobs:
           filters: |
             wire-ios:
               - 'wire-ios/**'
-            wire-ui:
+            WireUI:
               - 'WireUI/**'
             wire-ios-share-engine:
               - 'wire-ios-share-engine/**'
@@ -70,20 +48,18 @@ jobs:
               - 'wire-ios-sync-engine/**'
             wire-ios-request-strategy:
               - 'wire-ios-request-strategy/**'
-            wire-api:
+            WireAPI:
               - 'WireAPI/**'
-            wire-analytics:
+            WireAnalytics:
               - 'WireAnalytics/Sources/WireAnalytics/**'
-            wire-datadog:
               - 'WireAnalytics/Sources/WireDatadog/**'
-            wire-domain-project:
+            WireDomain:
               - 'WireDomain/Project/**'
-              - 'WireDomain/Sources/WireDomain/**'
-              - 'WireDomain/Sources/WireDomainSupport/**'
-            wire-domain:
               - 'WireDomain/*.*'
               - 'WireDomain/Sources/Package/**'
               - 'WireDomain/Sources/PackageSupport/**'
+              - 'WireDomain/Sources/WireDomain/**'
+              - 'WireDomain/Sources/WireDomainSupport/**'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
             wire-ios-transport:
@@ -102,7 +78,7 @@ jobs:
               - 'wire-ios-utilities/**'
             wire-ios-testing:
               - 'wire-ios-testing/**'
-            wire-foundation:
+            WireFoundation:
               - 'WireFoundation/**'
             wire-ios-system:
               - 'wire-ios-system/**'
@@ -115,27 +91,6 @@ jobs:
     needs: detect-changes
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
-      wire-ios: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
-      wire-ui: ${{ needs.detect-changes.outputs.wire-ui == 'true' }}
-      wire-ios-sync-engine: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
-      wire-ios-data-model: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
-      wire-ios-system: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
-      wire-ios-request-strategy: ${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
-      wire-api: ${{ needs.detect-changes.outputs.wire-api == 'true' }}
-      wire-analytics: ${{ needs.detect-changes.outputs.wire-analytics == 'true' }}
-      wire-datadog: ${{ needs.detect-changes.outputs.wire-datadog == 'true' }}
-      wire-domain-project: ${{ needs.detect-changes.outputs.wire-domain-project == 'true' }}
-      wire-domain: ${{ needs.detect-changes.outputs.wire-domain == 'true' }}
-      wire-ios-transport: ${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
-      wire-ios-share-engine: ${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
-      wire-ios-cryptobox: ${{ needs.detect-changes.outputs.wire-ios-cryptobox == 'true' }}
-      wire-ios-mocktransport: ${{ needs.detect-changes.outputs.wire-ios-mocktransport == 'true' }}
-      wire-ios-notification-engine: ${{ needs.detect-changes.outputs.wire-ios-notification-engine == 'true' }}
-      wire-ios-protos: ${{ needs.detect-changes.outputs.wire-ios-protos == 'true' }}
-      wire-ios-images: ${{ needs.detect-changes.outputs.wire-ios-images == 'true' }}
-      wire-ios-link-preview: ${{ needs.detect-changes.outputs.wire-ios-link-preview == 'true' }}
-      wire-ios-utilities: ${{ needs.detect-changes.outputs.wire-ios-utilities == 'true' }}
-      wire-ios-testing: ${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
-      wire-foundation: ${{ needs.detect-changes.outputs.wire-foundation == 'true' }}
-      scripts: ${{ needs.detect-changes.outputs.scripts == 'true' }}
+      folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+      branch: ${{ github.head_ref }}
     secrets: inherit

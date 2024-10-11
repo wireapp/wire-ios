@@ -200,6 +200,7 @@
 
 /* Begin PBXFileReference section */
 		01461A3F2A60422B00C3C85E /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Developer-Flags.xcconfig"; path = "../../../wire-ios/Configuration/Developer-Flags.xcconfig"; sourceTree = "<group>"; };
+		01E8EC482BB7D6C4002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = AllTests.xctestplan; path = Resources/AllTests.xctestplan; sourceTree = "<group>"; };
 		067BB07025068D6500946EC8 /* String+HexDecodedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HexDecodedData.swift"; sourceTree = "<group>"; };
 		06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Units.swift"; sourceTree = "<group>"; };
 		097E36C21B7B62150039CC4C /* NSLocale+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLocale+Internal.m"; sourceTree = "<group>"; };
@@ -537,6 +538,7 @@
 				F9D381A21B70B91000E6E4EB /* WireUtilities-Tests.pch */,
 				F9D381D81B70DF8400E6E4EB /* WireUtilities-ios-tests-Bridging-Header.h */,
 				F9D3819B1B70B8A700E6E4EB /* Source */,
+				01E8EC482BB7D6C4002A5A91 /* AllTests.xctestplan */,
 			);
 			path = Tests;
 			sourceTree = "<group>";

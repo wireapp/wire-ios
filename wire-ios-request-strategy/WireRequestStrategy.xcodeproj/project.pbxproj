@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01E8EC432BB7D4A5002A5A91 /* AllTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */; };
 		0106AC8C2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */; };
 		0106AC8E2C99A4DC0022E2CF /* MessageInfoExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */; };
 		0106AC902C9B00A30022E2CF /* MessageInfoExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */; };
@@ -466,6 +467,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessagePayloadBuilder.swift; sourceTree = "<group>"; };
 		0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractor.swift; sourceTree = "<group>"; };
 		0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractorTests.swift; sourceTree = "<group>"; };
@@ -1759,6 +1761,7 @@
 		F12CD7932035FC4400EAAEBC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */,
 				0648FC1027851623006519D1 /* audio.m4a */,
 				F18402042073C2FF00E9F4CC /* 1900x1500.jpg */,
 				F18402022073C2FF00E9F4CC /* animated.gif */,
@@ -2343,6 +2346,7 @@
 			files = (
 				0649D15524F64335001DDC78 /* Push.strings in Resources */,
 				0649D15424F64335001DDC78 /* Push.stringsdict in Resources */,
+				01E8EC432BB7D4A5002A5A91 /* AllTests.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

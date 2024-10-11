@@ -1,0 +1,33 @@
+{
+  "configurations" : [
+    {
+      "id" : "5EDA5F2D-C61B-4ABF-9629-FAA5B2EC7C53",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireMockTransport.xcodeproj",
+      "identifier" : "54C902321B7532DD007162A8",
+      "name" : "WireMockTransport"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireMockTransport.xcodeproj",
+        "identifier" : "54C9023D1B7532DD007162A8",
+        "name" : "WireMockTransportTests"
+      }
+    }
+  ],
+  "version" : 1
+}

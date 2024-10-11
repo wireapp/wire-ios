@@ -3,6 +3,7 @@ require 'base64'
 require 'httparty'
 require 'json'
 require 'fastlane/action'
+require_relative 'framework'
 
 opt_out_usage
 default_platform(:ios)
@@ -41,12 +42,12 @@ platform :ios do
 
     before_all do |lane|
         ensure_xcode_version
-        create_keychain_if_needed unless [:prepare_for_tests].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :select_frameworks, :generate_framework_list, :test_frameworks].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
             if !File.exist?(appstoreconnect_api_key_file_path) && !encoded_key.nil?
-                puts "Setting AppStoreConnect API Key"
+                UI.message("Setting AppStoreConnect API Key")
                 File.open(appstoreconnect_api_key_file_path, 'w+') {|f| f.write(Base64.decode64(encoded_key)) }
             end
         end
@@ -56,10 +57,62 @@ platform :ios do
         begin
             delete_keychain if is_running_on_ci
         rescue
-            puts "No keychain found, skipping deletion..."
+            UI.verbose("No keychain found, skipping deletion...") 
         end
     end
 
+    desc "Test frameworks given folders"
+    lane :test_frameworks do |options|
+        if options[:all] == "true" || options[:all] == "1" 
+            schemas = Framework.all.values.map { |f| f.scheme }
+        else
+            if options[:folders] == nil || options[:folders].empty?
+                schemas = select_frameworks()
+            else 
+                schemas = generate_framework_schemes(folders: options[:folders])
+            end
+        end
+       
+       # hardcoded values that are required - not meaningful for testing
+       options[:build_type] = "Development"
+       options[:build_number] = generate_build_number
+       build = Build.new(options: options)
+       
+       testplan = options[:testplan] || "AllTests"
+       schemas.each do |scheme|
+           test_plan(build, scheme, testplan)
+       end
+    end
+
+    lane :select_frameworks do |options|
+        frameworks = Framework.all.values
+        select_all = "All"  
+        framework_options = frameworks.map { |f| f.scheme } + [select_all]
+    
+        selected_choice = UI.select("Select a framework for testing:", framework_options)
+        if selected_choice == select_all 
+            test_frameworks(all: "true")
+        else 
+            framework = frameworks.find { |framework| framework.scheme == selected_choice }
+
+            test_frameworks(folders: framework.name)
+        end
+    end
+
+    desc "Generate list of frameworks' schemes to test from folders"
+    lane :generate_framework_schemes do |options|
+        frameworks = Framework.all      
+
+        folders = options[:folders].split(',')
+        matching_frameworks = folders.map { |folder| frameworks[folder] }
+        
+        unique_schemes = matching_frameworks.compact.map do |framework|
+            framework.schemes
+        end.flatten.uniq
+
+        unique_schemes
+    end
+    
     desc "Prepare for tests"
     lane :prepare_for_tests do
         create_simulator_if_needed
@@ -269,7 +322,9 @@ platform :ios do
             path: './wire-ios/Configuration/Release.xcconfig',
             name: 'WIRE_BUNDLE_ID'
         )
-        puts "downloading provisioning profiles for bundle id: #{app_bundle_id}"
+
+        UI.message("downloading provisioning profiles for bundle id: #{app_bundle_id}")
+        
         sigh(
             adhoc: build.should_sigh_adhoc,
             readonly: true,
@@ -291,7 +346,7 @@ platform :ios do
     end
 
     def generate_build_number
-        build_number = `curl -H "Accept: text/plain" -X POST -d '' "https://incrementator.appspot.com/api/v1/code/ORUHILeMbXB4D5Z5conFzYoYpQPjVnyUA4pu56X2MHVJSFxM/increment"`
+        build_number = `curl -H "Accept: text/plain" -X POST -d '' "https://incrementator.appspot.com/api/v1/code/iqZCQLhyVYKxWVzecuQHXBbhfJJJdtoxUXvtMzn99MoFlJIW/increment"`
         `echo BUILD_NUMBER=#{build_number} >> ./.post_build/.env`
         build_number
     end
@@ -372,34 +427,49 @@ platform :ios do
         build = Build.new(options: options)
       
         for scheme in ["Wire-iOS", "WireDataModel", "WireSyncEngine"] do
-            run_tests(
-                testplan: "SecurityTests",
-                scheme: scheme,
-                skip_detect_devices: true,
-                configuration: "Debug",
-                # test_without_building: true,
-                sdk:"iphonesimulator",
-                destination: "platform=iOS Simulator,name=#{iPhoneNameForTesting},OS=#{ios_version}",
-                # code_coverage: true,
-                derived_data_path: "DerivedData",
-                buildlog_path: build.build_path,
-                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
-                output_types: "junit"
-            )    
+            test_plan(build, scheme, "SecurityTests")
         end
     end
+
+    def test_plan(build, scheme, testplan)
+        if ENV['IOS_SIM_ID'].nil?
+            create_simulator_if_needed
+        end
         
+        if ENV['IOS_SIM_ID'].nil?
+            UI.user_error! "missing id for tests"
+        end
+
+        run_tests(
+            testplan: testplan,
+            scheme: scheme,
+            skip_detect_devices: true,
+            configuration: "Debug",
+            # test_without_building: true,
+            sdk:"iphonesimulator",
+            destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
+            # code_coverage: true,
+            derived_data_path: "DerivedData",
+            buildlog_path: build.build_path,
+            result_bundle: true,
+            output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
+            output_types: "junit"
+        )    
+
+    end
+
     def create_simulator_if_needed
         # Check if the simulator already exists
         existing_simulator = `xcrun simctl list devices | grep "#{iPhoneNameForTesting}" | grep "iOS#{ios_version}" | awk -F '[()]' '{print $2}'`.chomp
 
         if existing_simulator.empty?
             UI.message "create simulator #{iPhoneNameForTesting} - iOS#{ios_version}"
-            `xcrun simctl create "#{iPhoneNameForTesting} - iOS#{ios_version}" "#{iPhoneNameForTesting}" "iOS#{ios_version}"`
+            existing_simulator = `xcrun simctl create "#{iPhoneNameForTesting} - iOS#{ios_version}" "#{iPhoneNameForTesting}" "iOS#{ios_version}"`
         else
             UI.message "clear simulator content for #{existing_simulator}"
             `xcrun simctl erase #{existing_simulator}`
         end
+        ENV['IOS_SIM_ID'] = existing_simulator
     end
 
     # Upload to AppStore
@@ -630,11 +700,6 @@ class Build
         @build_type == "Development"
     end
 
-    def internal_build
-        @build_type == "Internal"
-    end
-
-
     def rc_build
         @build_type == "RC"
     end
@@ -703,8 +768,6 @@ class Build
             result = "playground-#{normalized_branch_name}/#{suffix}"
         when "Development"
             result = "development/#{suffix}"
-        when "Internal"
-            result = "internal/#{suffix}"
         when "AppStore"
             result = "release/appstore"
         when "RC"
@@ -776,14 +839,11 @@ class Build
             "Wire-iOS-Playground"
         elsif development_build
             "Wire-iOS-Development"
-        elsif internal_build
-            "Wire-iOS-Internal"
         elsif appstore_build
             "Wire-iOS-App-Store"
-        elsif rc_build
-            "Wire-iOS-Release-Candidate"
         elsif beta_build
             "Wire-iOS-Beta"
         end
     end
 end
+

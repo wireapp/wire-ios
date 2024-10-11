@@ -86,6 +86,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01E8EC472BB7D63C002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		54BD49F91D41FDE5006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5E2BEC51214BA4A600E65B53 /* WireLinkPreviewTestsHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireLinkPreviewTestsHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2BEC53214BA4A600E65B53 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -349,6 +350,7 @@
 				BF4F2B621E926D5E000B22D1 /* Info.plist */,
 				BFBB01CD1D2A610000DA7163 /* Helper */,
 				BF3DD2A21D2552BB00D51DED /* Fixtures */,
+				01E8EC472BB7D63C002A5A91 /* AllTests.xctestplan */,
 			);
 			path = WireLinkPreviewTests;
 			sourceTree = "<group>";

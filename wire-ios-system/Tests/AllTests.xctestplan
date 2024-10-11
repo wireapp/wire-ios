@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "5059D5B6-6855-416F-AAC1-F5C858C8C5E2",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireSystem.xcodeproj",
+      "identifier" : "3ECC350F1AD436750089FD4B",
+      "name" : "WireSystem"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireSystem.xcodeproj",
+        "identifier" : "54A3272B1B99A3190004EB95",
+        "name" : "WireSystem Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

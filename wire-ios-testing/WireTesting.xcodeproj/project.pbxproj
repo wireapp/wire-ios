@@ -68,6 +68,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01E8EC492BB7D6ED002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		091799561B7DFBD100E60DD9 /* NSUUID+WireTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUUID+WireTesting.h"; sourceTree = "<group>"; };
 		091799571B7DFBD100E60DD9 /* NSUUID+WireTesting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUUID+WireTesting.m"; sourceTree = "<group>"; };
 		096AD7BB1B68D41D00E007A8 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -218,6 +219,7 @@
 			isa = PBXGroup;
 			children = (
 				096AD7EB1B68D6E700E007A8 /* WireTesting-test-iOS.plist */,
+				01E8EC492BB7D6ED002A5A91 /* AllTests.xctestplan */,
 			);
 			path = Resources;
 			sourceTree = "<group>";

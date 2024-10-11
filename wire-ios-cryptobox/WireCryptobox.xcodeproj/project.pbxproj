@@ -116,6 +116,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01E8EC452BB7D585002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		0928E2341BA0777A0057232E /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0928E36C1BA0908F0057232E /* WireCryptobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireCryptobox.h; sourceTree = "<group>"; };
 		0928E36E1BA0909D0057232E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -452,6 +453,7 @@
 			isa = PBXGroup;
 			children = (
 				BA7EF96F1B7109B600204A8E /* Info.plist */,
+				01E8EC452BB7D585002A5A91 /* AllTests.xctestplan */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";

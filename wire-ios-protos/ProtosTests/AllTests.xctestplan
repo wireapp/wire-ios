@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "7460DDE4-418D-4C73-B293-D9F903D9461E",
+      "id" : "F2102EC5-B5E2-4DF5-9F36-8C6EC4819DFE",
       "name" : "Configuration 1",
       "options" : {
 
@@ -14,9 +14,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:WireDomain Project.xcodeproj",
-        "identifier" : "01D0DCAF2C1C8C880076CB1C",
-        "name" : "WireDomainTests"
+        "containerPath" : "container:WireProtos.xcodeproj",
+        "identifier" : "090838081B872DBF00629095",
+        "name" : "WireProtosTests"
       }
     }
   ],

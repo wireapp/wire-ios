@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01E8EC392BB7D267002A5A91 /* AllTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 01E8EC382BB7D267002A5A91 /* AllTests.xctestplan */; };
 		0969602D1B663EF0006DF53B /* ZMAssetsPreprocessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB1331B5FAD5A00712DF9 /* ZMAssetsPreprocessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0969602E1B663EF0006DF53B /* ZMAssetsPreprocessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 098CB1341B5FAD5A00712DF9 /* ZMAssetsPreprocessor.m */; };
 		0969602F1B663EF0006DF53B /* ZMImageDownsampleOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB1351B5FAD5A00712DF9 /* ZMImageDownsampleOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -92,6 +93,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01E8EC382BB7D267002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		0927584A1B70C23B00AD5A78 /* WireImages.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireImages.xcconfig; sourceTree = "<group>"; };
 		092758591B70D7A200AD5A78 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		0969600C1B663E7B006DF53B /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -268,6 +270,7 @@
 				098CB1661B5FAD6900712DF9 /* Info.plist */,
 				09B976C91B6693D700A30B38 /* ZMImagePreprocessorTests.m */,
 				09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */,
+				01E8EC382BB7D267002A5A91 /* AllTests.xctestplan */,
 				09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */,
 				09B977421B669CEC00A30B38 /* NSOperationQueue+Helpers.h */,
 				09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */,
@@ -523,6 +526,7 @@
 				87B91C311E5C7E5D00A5EC11 /* ceiling_rotated_3.tiff in Resources */,
 				87B91C3B1E5C7E5D00A5EC11 /* unsplash_medium_exif_4.jpg in Resources */,
 				87B91C3A1E5C7E5D00A5EC11 /* unsplash_medium_exif_3.jpg in Resources */,
+				01E8EC392BB7D267002A5A91 /* AllTests.xctestplan in Resources */,
 				87B91C471E5C7E5D00A5EC11 /* unsplash_owl_1_MB.png in Resources */,
 				87B91C351E5C7E5D00A5EC11 /* unsplash_720_KB_rotated.jpg in Resources */,
 				87B91C441E5C7E5D00A5EC11 /* unsplash_original_exif_6.jpg in Resources */,
