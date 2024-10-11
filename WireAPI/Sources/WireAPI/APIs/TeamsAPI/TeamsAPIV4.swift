@@ -91,10 +91,10 @@ class TeamsAPIV4: TeamsAPIV3 {
 
     // MARK: - Get team member legalhold
 
-    override func getLegalhold(
+    override func getLegalholdInfo(
         for teamID: Team.ID,
         userID: UUID
-    ) async throws -> TeamMemberLegalHold {
+    ) async throws -> TeamMemberLegalholdInfo {
         let request = HTTPRequest(
             path: "\(basePath(for: teamID))/legalhold/\(userID.transportString())",
             method: .get
@@ -104,7 +104,7 @@ class TeamsAPIV4: TeamsAPIV3 {
 
         // New: 400
         return try ResponseParser()
-            .success(code: .ok, type: TeamMemberLegalHoldResponseV0.self)
+            .success(code: .ok, type: TeamMemberLegalholdResponseV0.self)
             .failure(code: .badRequest, error: TeamsAPIError.invalidRequest)
             .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
             .parse(response)

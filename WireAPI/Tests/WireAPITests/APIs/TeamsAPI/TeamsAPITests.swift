@@ -61,7 +61,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetLegalholdRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
-            _ = try await sut.getLegalhold(for: .mockID1, userID: .mockID2)
+            _ = try await sut.getLegalholdInfo(for: .mockID1, userID: .mockID2)
         }
     }
 
@@ -267,7 +267,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // When
-        let result = try await sut.getLegalhold(
+        let result = try await sut.getLegalholdInfo(
             for: Team.ID(),
             userID: UUID()
         )
@@ -413,7 +413,7 @@ final class TeamsAPITests: XCTestCase {
         // Then
         await XCTAssertThrowsError(expectedError) {
             // When
-            try await sut.getLegalhold(
+            try await sut.getLegalholdInfo(
                 for: Team.ID(),
                 userID: UUID()
             )

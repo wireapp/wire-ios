@@ -467,26 +467,26 @@ public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
         try await mock()
     }
 
-    // MARK: - fetchSelfLegalhold
+    // MARK: - fetchSelfLegalholdInfo
 
-    public var fetchSelfLegalhold_Invocations: [Void] = []
-    public var fetchSelfLegalhold_MockError: Error?
-    public var fetchSelfLegalhold_MockMethod: (() async throws -> TeamMemberLegalHold)?
-    public var fetchSelfLegalhold_MockValue: TeamMemberLegalHold?
+    public var fetchSelfLegalholdInfo_Invocations: [Void] = []
+    public var fetchSelfLegalholdInfo_MockError: Error?
+    public var fetchSelfLegalholdInfo_MockMethod: (() async throws -> TeamMemberLegalholdInfo)?
+    public var fetchSelfLegalholdInfo_MockValue: TeamMemberLegalholdInfo?
 
-    public func fetchSelfLegalhold() async throws -> TeamMemberLegalHold {
-        fetchSelfLegalhold_Invocations.append(())
+    public func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo {
+        fetchSelfLegalholdInfo_Invocations.append(())
 
-        if let error = fetchSelfLegalhold_MockError {
+        if let error = fetchSelfLegalholdInfo_MockError {
             throw error
         }
 
-        if let mock = fetchSelfLegalhold_MockMethod {
+        if let mock = fetchSelfLegalholdInfo_MockMethod {
             return try await mock()
-        } else if let mock = fetchSelfLegalhold_MockValue {
+        } else if let mock = fetchSelfLegalholdInfo_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchSelfLegalhold`")
+            fatalError("no mock for `fetchSelfLegalholdInfo`")
         }
     }
 
@@ -530,21 +530,21 @@ public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
         try await mock(membershipID)
     }
 
-    // MARK: - pullSelfLegalHoldStatus
+    // MARK: - pullSelfLegalholdInfo
 
-    public var pullSelfLegalHoldStatus_Invocations: [Void] = []
-    public var pullSelfLegalHoldStatus_MockError: Error?
-    public var pullSelfLegalHoldStatus_MockMethod: (() async throws -> Void)?
+    public var pullSelfLegalholdInfo_Invocations: [Void] = []
+    public var pullSelfLegalholdInfo_MockError: Error?
+    public var pullSelfLegalholdInfo_MockMethod: (() async throws -> Void)?
 
-    public func pullSelfLegalHoldStatus() async throws {
-        pullSelfLegalHoldStatus_Invocations.append(())
+    public func pullSelfLegalholdInfo() async throws {
+        pullSelfLegalholdInfo_Invocations.append(())
 
-        if let error = pullSelfLegalHoldStatus_MockError {
+        if let error = pullSelfLegalholdInfo_MockError {
             throw error
         }
 
-        guard let mock = pullSelfLegalHoldStatus_MockMethod else {
-            fatalError("no mock for `pullSelfLegalHoldStatus`")
+        guard let mock = pullSelfLegalholdInfo_MockMethod else {
+            fatalError("no mock for `pullSelfLegalholdInfo`")
         }
 
         try await mock()

@@ -117,7 +117,7 @@ final class SyncManager: SyncManagerProtocol {
             try await conversationsRepository.pullConversations()
             try await userRepository.pullKnownUsers()
             try await userRepository.pullSelfUser()
-            try await teamRepository.pullSelfLegalHoldStatus()
+            try await teamRepository.pullSelfLegalholdInfo()
             try await conversationLabelsRepository.pullConversationLabels()
             try await featureConfigsRepository.pullFeatureConfigs()
             try await pushSupportedProtocolsUseCase.invoke()

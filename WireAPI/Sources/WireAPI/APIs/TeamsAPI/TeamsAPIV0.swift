@@ -98,10 +98,10 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
     // MARK: - Get team member legalhold
 
-    func getLegalhold(
+    func getLegalholdInfo(
         for teamID: Team.ID,
         userID: UUID
-    ) async throws -> TeamMemberLegalHold {
+    ) async throws -> TeamMemberLegalholdInfo {
         let request = HTTPRequest(
             path: "\(basePath(for: teamID))/legalhold/\(userID.transportString())",
             method: .get
@@ -110,7 +110,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: .ok, type: TeamMemberLegalHoldResponseV0.self)
+            .success(code: .ok, type: TeamMemberLegalholdResponseV0.self)
             .failure(code: .notFound, error: TeamsAPIError.invalidRequest)
             .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
             .parse(response)
@@ -315,7 +315,7 @@ struct LegalHoldLastPrekeyV0: Decodable, ToAPIModelConvertible {
     }
 }
 
-struct TeamMemberLegalHoldResponseV0: Decodable, ToAPIModelConvertible {
+struct TeamMemberLegalholdResponseV0: Decodable, ToAPIModelConvertible {
 
     let lastPrekey: LegalHoldLastPrekeyV0
     let status: LegalholdStatusV0
@@ -325,8 +325,8 @@ struct TeamMemberLegalHoldResponseV0: Decodable, ToAPIModelConvertible {
         case lastPrekey = "last_prekey"
     }
 
-    func toAPIModel() -> TeamMemberLegalHold {
-        TeamMemberLegalHold(
+    func toAPIModel() -> TeamMemberLegalholdInfo {
+        TeamMemberLegalholdInfo(
             status: status.toAPIModel(),
             prekey: lastPrekey.toAPIModel()
         )

@@ -359,7 +359,7 @@ final class SyncManagerTests: XCTestCase {
         conversationLabelsRepository.pullConversationLabels_MockMethod = {}
         featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
         userRepository.pullSelfUser_MockMethod = {}
-        teamRepository.pullSelfLegalHoldStatus_MockMethod = {}
+        teamRepository.pullSelfLegalholdInfo_MockMethod = {}
         pushSupportedProtocolsUseCase.invoke_MockMethod = {}
         userRepository.fetchAllUserIdsWithOneOnOneConversation_MockMethod = { [] }
         userRepository.fetchUserWithDomain_MockValue = user
@@ -384,7 +384,7 @@ final class SyncManagerTests: XCTestCase {
         XCTAssertEqual(conversationLabelsRepository.pullConversationLabels_Invocations.count, 1)
         XCTAssertEqual(featureConfigsRepository.pullFeatureConfigs_Invocations.count, 1)
         XCTAssertEqual(userRepository.pullSelfUser_Invocations.count, 1)
-        XCTAssertEqual(teamRepository.pullSelfLegalHoldStatus_Invocations.count, 1)
+        XCTAssertEqual(teamRepository.pullSelfLegalholdInfo_Invocations.count, 1)
         XCTAssertEqual(pushSupportedProtocolsUseCase.invoke_Invocations.count, 1)
     }
 
@@ -418,7 +418,7 @@ final class SyncManagerTests: XCTestCase {
         conversationLabelsRepository.pullConversationLabels_MockMethod = {}
         featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
         userRepository.pullSelfUser_MockError = UserRepositoryError.failedToFetchUser(selfUserID) /// throws error
-        teamRepository.pullSelfLegalHoldStatus_MockMethod = {}
+        teamRepository.pullSelfLegalholdInfo_MockMethod = {}
         pushSupportedProtocolsUseCase.invoke_MockMethod = {}
         userRepository.fetchAllUserIdsWithOneOnOneConversation_MockMethod = { [] }
         userRepository.fetchUserWithDomain_MockValue = user

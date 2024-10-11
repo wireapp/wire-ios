@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public typealias LegalHoldPrekey = Prekey
+public typealias LegalholdPrekey = Prekey
 
 /// The team member legal hold.
-public struct TeamMemberLegalHold: Equatable, Sendable {
+public struct TeamMemberLegalholdInfo: Equatable, Sendable {
 
     /// The legal hold status
 
@@ -27,11 +27,11 @@ public struct TeamMemberLegalHold: Equatable, Sendable {
 
     /// The legal hold prekey
 
-    public let prekey: LegalHoldPrekey
+    public let prekey: LegalholdPrekey
 
     public init(
         status: LegalholdStatus,
-        prekey: LegalHoldPrekey
+        prekey: LegalholdPrekey
     ) {
         self.status = status
         self.prekey = prekey

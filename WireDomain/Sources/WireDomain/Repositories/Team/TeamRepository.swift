@@ -40,9 +40,10 @@ public protocol TeamRepositoryProtocol {
 
     func pullSelfTeamMembers() async throws
 
-    /// Fetch the legalhold for the self user from the server.
+    /// Fetches the legalhold info for the self user from the server.
+    /// - returns: The legalhold info.
 
-    func fetchSelfLegalhold() async throws -> TeamMemberLegalHold
+    func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo
 
     /// Deletes the member of a team.
     /// - Parameter userID: The ID of the team member.
@@ -60,7 +61,9 @@ public protocol TeamRepositoryProtocol {
 
     func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws
 
-    func pullSelfLegalHoldStatus() async throws
+    /// Pulls and stores legalhold info locally.
+
+    func pullSelfLegalholdInfo() async throws
 
 }
 
@@ -145,7 +148,7 @@ public final class TeamRepository: TeamRepositoryProtocol {
         try await storeTeamMembersLocally(teamMembers)
     }
 
-    public func pullSelfLegalHoldStatus() async throws {
+    public func pullSelfLegalholdInfo() async throws {
         let (selfUserID, selfClientID) = await context.perform { [userRepository] in
             let selfUser = userRepository.fetchSelfUser()
             let selfUserID: UUID = selfUser.remoteIdentifier
@@ -154,7 +157,7 @@ public final class TeamRepository: TeamRepositoryProtocol {
             return (selfUserID, selfClientID)
         }
 
-        let selfUserLegalHold = try await fetchSelfLegalhold()
+        let selfUserLegalHold = try await fetchSelfLegalholdInfo()
 
         switch selfUserLegalHold.status {
         case .pending:
@@ -176,12 +179,12 @@ public final class TeamRepository: TeamRepositoryProtocol {
         }
     }
 
-    public func fetchSelfLegalhold() async throws -> TeamMemberLegalHold {
+    public func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo {
         let selfUserID: UUID = await context.perform { [userRepository] in
             userRepository.fetchSelfUser().remoteIdentifier
         }
 
-        return try await teamsAPI.getLegalhold(
+        return try await teamsAPI.getLegalholdInfo(
             for: selfTeamID,
             userID: selfUserID
         )
