@@ -44,21 +44,19 @@ public final class GenericMainCoordinator<
 >: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
 
     ConversationBuilder.Conversation == SplitViewController.Conversation,
-    ConversationBuilder.SettingsBuilder == SettingsContentBuilder,
-    ConversationBuilder.User == UserProfileBuilder.User,
 
     ConnectBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
-    ConnectBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
+    ConnectBuilder.ConversationMessageModel == ConversationBuilder.ConversationMessageModel,
     ConnectBuilder.SettingsBuilder == SettingsContentBuilder,
     ConnectBuilder.User == UserProfileBuilder.User,
 
     CreateGroupConversationBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
-    CreateGroupConversationBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
+    CreateGroupConversationBuilder.ConversationMessageModel == ConversationBuilder.ConversationMessageModel,
     CreateGroupConversationBuilder.SettingsBuilder == SettingsContentBuilder,
     CreateGroupConversationBuilder.User == UserProfileBuilder.User,
 
     SelfProfileBuilder.ConversationModel == SplitViewController.Conversation.ConversationModel,
-    SelfProfileBuilder.ConversationMessageModel == SplitViewController.Conversation.ConversationMessageModel,
+    SelfProfileBuilder.ConversationMessageModel == ConversationBuilder.ConversationMessageModel,
     SelfProfileBuilder.SettingsBuilder == SettingsContentBuilder,
     SelfProfileBuilder.User == UserProfileBuilder.User
 {
@@ -68,8 +66,8 @@ public final class GenericMainCoordinator<
     public typealias Settings = SplitViewController.Settings
     public typealias TabBarController = SplitViewController.TabContainer
 
-    public typealias ConversationModel = ConversationBuilder.Conversation.ConversationModel
-    public typealias ConversationMessageModel = ConversationBuilder.Conversation.ConversationMessageModel
+    public typealias ConversationModel = ConversationBuilder.ConversationModel
+    public typealias ConversationMessageModel = ConversationBuilder.ConversationMessageModel
 
     public typealias Connect = ConnectBuilder.ViewController
     public typealias SelfProfile = SelfProfileBuilder.ViewController

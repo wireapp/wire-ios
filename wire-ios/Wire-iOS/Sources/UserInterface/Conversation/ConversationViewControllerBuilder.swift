@@ -26,7 +26,6 @@ struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
 
     typealias SettingsBuilder = SettingsViewControllerBuilder
     typealias Conversation = ConversationRootViewController
-    typealias User = any UserType
 
     var userSession: UserSession
     var mediaPlaybackManager: MediaPlaybackManager?
@@ -36,9 +35,8 @@ struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
         message: ZMConversationMessage?,
         mainCoordinator: MainCoordinator
     ) -> Conversation where
-    MainCoordinator.ConversationModel == Conversation.ConversationModel,
-    MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
-    MainCoordinator.User == User {
+    MainCoordinator.ConversationModel == ZMConversation,
+    MainCoordinator.ConversationMessageModel == ZMConversationMessage {
 
         let viewController = ConversationRootViewController(
             conversation: conversation,

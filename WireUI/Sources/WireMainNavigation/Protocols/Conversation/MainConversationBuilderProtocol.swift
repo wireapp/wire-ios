@@ -20,16 +20,27 @@ import UIKit
 
 @MainActor
 public protocol MainConversationBuilderProtocol {
-    associatedtype SettingsBuilder: MainSettingsBuilderProtocol
+
     associatedtype Conversation: MainConversationProtocol
+    where Conversation.ConversationModel == ConversationModel
+
+    // These associated types are required to match the MainCoordinatorProtocol.
+    // Having an `associatedtype MainCoordinator: MainCoordinatorProtocol` is not allowed
+    // (Generic class 'MainCoordinator' has self-referential generic requirements).
+    associatedtype ConversationFilter: MainConversationFilterRepresentable
+    associatedtype ConversationModel
+    associatedtype ConversationMessageModel
+    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
     associatedtype User
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
-        conversation: Conversation.ConversationModel,
-        message: Conversation.ConversationMessageModel?,
+        conversation: ConversationModel,
+        message: ConversationMessageModel?,
         mainCoordinator: MainCoordinator
     ) -> Conversation where
-        MainCoordinator.ConversationModel == Conversation.ConversationModel,
-        MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
-        MainCoordinator.User == User
+    MainCoordinator.ConversationFilter == ConversationFilter,
+    MainCoordinator.ConversationModel == ConversationModel,
+    MainCoordinator.ConversationMessageModel == ConversationMessageModel,
+    MainCoordinator.SettingsTopLevelMenuItem == SettingsTopLevelMenuItem,
+    MainCoordinator.User == User
 }
