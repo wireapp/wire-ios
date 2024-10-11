@@ -20,32 +20,29 @@ import UIKit
 
 public protocol MainCoordinatorProtocol: AnyObject {
 
-    associatedtype ConversationList: MainConversationListProtocol
-    associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol
+    associatedtype Dependencies: MainCoordinatorProtocolDependencies
 
-    associatedtype ConversationModel
-    associatedtype ConversationMessageModel
-
-    associatedtype User
+    typealias ConversationFilter = Dependencies.ConversationFilter
+    typealias ConversationModel = Dependencies.ConversationModel
+    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
+    typealias SettingsTopLevelMenuItem = Dependencies.SettingsTopLevelMenuItem
+    typealias User = Dependencies.User
 
     @MainActor
-    func showConversationList(conversationFilter: ConversationList.ConversationFilter?) async
+    func showConversationList(conversationFilter: ConversationFilter?) async
     @MainActor
     func showArchive() async
     @MainActor
     func showSettings() async
 
     @MainActor
-    func showConversation(
-        conversation: ConversationModel,
-        message: ConversationMessageModel?
-    ) async
+    func showConversation(conversation: ConversationModel, message: ConversationMessageModel?) async
     /// This method will be called by the custom back button in the conversation content screen.
     @MainActor
     func hideConversation()
 
     @MainActor
-    func showSettingsContent(_ topLevelMenuItem: SettingsContentBuilder.TopLevelMenuItem)
+    func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem)
     @MainActor
     func hideSettingsContent()
 

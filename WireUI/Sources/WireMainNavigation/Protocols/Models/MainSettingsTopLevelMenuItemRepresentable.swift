@@ -19,15 +19,15 @@
 public protocol MainSettingsTopLevelMenuItemRepresentable: Sendable {
 
     init(_ mainSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItem)
-    init?<TopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable>(mappingFrom topLevelMenuItem: TopLevelMenuItem?)
-
     func mapToMainSettingsContent() -> MainSettingsTopLevelMenuItem
+
+    // A convenience init method.
+    init(mappingFrom topLevelMenuItem: some MainSettingsTopLevelMenuItemRepresentable)
 }
 
 public extension MainSettingsTopLevelMenuItemRepresentable {
 
-    init?(mappingFrom topLevelMenuItem: (some MainSettingsTopLevelMenuItemRepresentable)?) {
-        guard let topLevelMenuItem else { return nil }
+    init(mappingFrom topLevelMenuItem: some MainSettingsTopLevelMenuItemRepresentable) {
         self.init(topLevelMenuItem.mapToMainSettingsContent())
     }
 }

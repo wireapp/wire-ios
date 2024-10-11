@@ -31,7 +31,6 @@ public final class MainTabBarController<
 
     public typealias Archive = UIViewController
     public typealias Settings = UIViewController
-    public typealias SettingsContent = UIViewController
 
     // MARK: - Public Properties
 
@@ -55,7 +54,7 @@ public final class MainTabBarController<
         set { setConversation(newValue, animated: false) }
     }
 
-    public var settingsContent: SettingsContent? {
+    public var settingsContent: UIViewController? {
         get { _settingsContent }
         set { setSettingsContent(newValue, animated: false) }
     }
@@ -75,7 +74,7 @@ public final class MainTabBarController<
     private weak var _archive: Archive?
     private weak var _settings: Settings?
     private weak var _conversation: Conversation?
-    private weak var _settingsContent: SettingsContent?
+    private weak var _settingsContent: UIViewController?
 
     // MARK: - Life Cycle
 
@@ -204,7 +203,7 @@ public final class MainTabBarController<
         conversationListNavigationController.view.layoutIfNeeded()
     }
 
-    public func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+    public func setSettingsContent(_ settingsContent: UIViewController?, animated: Bool) {
         _settingsContent = settingsContent
 
         if settings == nil, settingsContent != nil {

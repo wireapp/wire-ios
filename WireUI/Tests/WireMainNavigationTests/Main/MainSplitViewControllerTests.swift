@@ -132,20 +132,6 @@ final class MainSplitViewControllerTests: XCTestCase {
     }
 
     @MainActor
-    func testConversationIsReleasedWhenConnectIsSet() async {
-        // Given
-        weak var conversationList = conversationList
-        self.conversationList = nil
-
-        // When
-        sut.connect = .init()
-
-        // Then
-        await Task.yield()
-        XCTAssertEqual(conversationList, nil)
-    }
-
-    @MainActor
     func testConversationIsReleasedWhenSettingsIsSet() async {
         // Given
         weak var conversationList = conversationList
