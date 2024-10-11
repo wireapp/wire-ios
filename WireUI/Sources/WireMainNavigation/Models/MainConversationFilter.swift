@@ -19,3 +19,14 @@
 public enum MainConversationFilter: Sendable {
     case favorites, groups, oneOnOne
 }
+
+extension MainConversationFilter: MainConversationFilterRepresentable {
+
+    public init(_ mainConversationFilter: MainConversationFilter) {
+        self = mainConversationFilter
+    }
+
+    public func mapToMainConversationFilter() -> MainConversationFilter {
+        self
+    }
+}

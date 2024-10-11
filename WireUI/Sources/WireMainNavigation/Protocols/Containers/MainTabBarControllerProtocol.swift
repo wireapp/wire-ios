@@ -26,11 +26,11 @@ import UIKit
 /// that a conforming tab bar controller must manage.
 
 @MainActor
-public protocol MainTabBarControllerProtocol: UITabBarController, MainContainerViewController {
+public protocol MainTabBarControllerProtocol: UITabBarController, MainContainerViewControllerProtocol {
 
     /// The selected content (tab).
     var selectedContent: MainTabBarControllerContent { get set }
 
     func setConversation(_ conversation: Conversation?, animated: Bool)
-    func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool)
+    func setSettingsContent(_ settingsContent: UIViewController?, animated: Bool)
 }

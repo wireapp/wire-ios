@@ -24,7 +24,7 @@ import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
 
-    let mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>
+    let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
     private let visibleMessage: ZMConversationMessage?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
@@ -113,7 +113,7 @@ final class ConversationViewController: UIViewController {
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
         userSession: UserSession,
-        mainCoordinator: AnyMainCoordinator<ConversationListViewController, SettingsViewControllerBuilder, ZMConversation, ZMConversationMessage, any UserType>,
+        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable
