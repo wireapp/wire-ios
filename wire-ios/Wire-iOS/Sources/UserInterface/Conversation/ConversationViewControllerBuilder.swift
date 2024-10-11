@@ -36,7 +36,6 @@ struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
         message: ZMConversationMessage?,
         mainCoordinator: MainCoordinator
     ) -> Conversation where
-    MainCoordinator.SettingsContentBuilder == SettingsBuilder,
     MainCoordinator.ConversationModel == Conversation.ConversationModel,
     MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
     MainCoordinator.User == User {

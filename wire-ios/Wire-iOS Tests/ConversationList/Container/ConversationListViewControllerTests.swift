@@ -252,7 +252,6 @@ private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinato
     MainCoordinator: MainCoordinatorProtocol,
     ConversationMessageModel == MainCoordinator.ConversationMessageModel,
     ZMConversation == MainCoordinator.ConversationModel,
-    SettingsViewControllerBuilder == MainCoordinator.SettingsContentBuilder,
     any UserType == MainCoordinator.User {
         .init()
     }

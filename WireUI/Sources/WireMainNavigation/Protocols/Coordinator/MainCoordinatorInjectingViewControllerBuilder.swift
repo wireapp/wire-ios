@@ -29,7 +29,6 @@ public protocol MainCoordinatorInjectingViewControllerBuilder {
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator
     ) -> ViewController where
-        MainCoordinator.SettingsContentBuilder == SettingsBuilder,
         MainCoordinator.ConversationModel == ConversationModel,
         MainCoordinator.ConversationMessageModel == ConversationMessageModel,
         MainCoordinator.User == User

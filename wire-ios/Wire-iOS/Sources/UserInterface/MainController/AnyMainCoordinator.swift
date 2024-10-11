@@ -33,22 +33,22 @@ ConversationList: MainConversationListProtocol, SettingsContentBuilder: MainSett
     private let _showUserProfile: @MainActor (User) async -> Void
 
     init<MainCoordinator: MainCoordinatorProtocol>(mainCoordinator: MainCoordinator) where
-    MainCoordinator.SettingsContentBuilder == SettingsContentBuilder,
     MainCoordinator.ConversationModel == ConversationModel,
     MainCoordinator.ConversationMessageModel == ConversationMessageModel,
     MainCoordinator.User == User {
 
         self.mainCoordinator = mainCoordinator
 
-        _showConversationList = {
-            let conversationFilter = MainCoordinator.ConversationFilter(mappingFrom: $0)
+        _showConversationList = { conversationFilter in
+            let conversationFilter = conversationFilter.map { MainCoordinator.ConversationFilter(mappingFrom: $0) }
             await mainCoordinator.showConversationList(conversationFilter: conversationFilter)
         }
         _showConversation = { conversation, message in
             await mainCoordinator.showConversation(conversation: conversation, message: message)
         }
-        _showSettingsContent = { topLevelMenuItem in
-            mainCoordinator.showSettingsContent(topLevelMenuItem)
+        _showSettingsContent = {
+            let topLevelMenuItem = MainCoordinator.SettingsTopLevelMenuItem(mappingFrom: $0)
+            mainCoordinator.showSettingsContent(topLevelMenuItem!)
         }
         _showUserProfile = { user in
             await mainCoordinator.showUserProfile(user: user)

@@ -19,15 +19,14 @@
 public protocol MainConversationFilterRepresentable: Sendable {
 
     init(_ mainConversationFilter: MainConversationFilter)
-    init?<ConversationFilter: MainConversationFilterRepresentable>(mappingFrom conversationFilter: ConversationFilter?)
+    init<ConversationFilter: MainConversationFilterRepresentable>(mappingFrom conversationFilter: ConversationFilter)
 
     func mapToMainConversationFilter() -> MainConversationFilter
 }
 
 public extension MainConversationFilterRepresentable {
 
-    init?(mappingFrom conversationFilter: (some MainConversationFilterRepresentable)?) {
-        guard let conversationFilter else { return nil }
+    init(mappingFrom conversationFilter: some MainConversationFilterRepresentable) {
         self.init(conversationFilter.mapToMainConversationFilter())
     }
 }

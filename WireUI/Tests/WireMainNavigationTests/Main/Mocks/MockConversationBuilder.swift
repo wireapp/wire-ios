@@ -35,7 +35,6 @@ struct MockConversationBuilder: MainConversationBuilderProtocol {
         message: Conversation.ConversationMessageModel?,
         mainCoordinator: MainCoordinator
     ) -> Conversation where
-        MainCoordinator.SettingsContentBuilder == SettingsBuilder,
         MainCoordinator.ConversationModel == Conversation.ConversationModel,
         MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
         MainCoordinator.User == User

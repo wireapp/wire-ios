@@ -37,7 +37,6 @@ struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder 
         MainCoordinator: MainCoordinatorProtocol,
         MainCoordinator.ConversationMessageModel == Conversation.ConversationMessageModel,
         MainCoordinator.ConversationModel == Conversation.ConversationModel,
-        MainCoordinator.SettingsContentBuilder == SettingsBuilder,
         MainCoordinator.User == User
     {
         .init()

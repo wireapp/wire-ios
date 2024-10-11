@@ -168,7 +168,8 @@ public final class GenericMainCoordinator<
             }
 
             // apply the filter to the conversation list
-            conversationList.conversationFilter = .init(mappingFrom: conversationFilter)
+            let conversationFilter = conversationFilter.map { ConversationFilter(mappingFrom: $0) }
+            conversationList.conversationFilter = conversationFilter
 
             // set the right menu item in the sidebar
             let mainMenuItem = MainSidebarMenuItem(conversationFilter)

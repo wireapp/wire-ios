@@ -39,7 +39,6 @@ final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewController
     ) -> UINavigationController where
     MainCoordinator.ConversationModel == ZMConversation,
     MainCoordinator.ConversationMessageModel == ZMConversationMessage,
-    MainCoordinator.SettingsContentBuilder == SettingsViewControllerBuilder,
     MainCoordinator.User == any UserType {
         let rootViewController = StartUIViewController(
             userSession: userSession,
