@@ -862,6 +862,10 @@ internal enum L10n {
         /// Close profile
         internal static let description = L10n.tr("Accessibility", "profile.closeButton.description", fallback: "Close profile")
       }
+      internal enum ShareProfileButton {
+        /// Share your profile via QR code or link
+        internal static let description = L10n.tr("Accessibility", "profile.shareProfileButton.description", fallback: "Share your profile via QR code or link")
+      }
     }
     internal enum ReactionPicker {
       internal enum DismissButton {
