@@ -27,7 +27,7 @@ protocol ConversationAccessUpdateEventProcessorProtocol {
     ///
     /// - Parameter event: A conversation access update event.
 
-    func processEvent(_ event: ConversationAccessUpdateEvent) async throws
+    func processEvent(_ event: ConversationAccessUpdateEvent) async
 
 }
 
@@ -36,7 +36,7 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
     let context: NSManagedObjectContext
     let repository: any ConversationRepositoryProtocol
 
-    func processEvent(_ event: ConversationAccessUpdateEvent) async throws {
+    func processEvent(_ event: ConversationAccessUpdateEvent) async {
         let conversationID = event.conversationID
 
         let localConversation = await repository.fetchOrCreateConversation(
