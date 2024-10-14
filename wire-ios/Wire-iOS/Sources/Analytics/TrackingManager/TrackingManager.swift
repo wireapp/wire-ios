@@ -23,28 +23,30 @@ import WireSyncEngine
 
 final class TrackingManager: NSObject, TrackingInterface {
 
-    private let flowManagerObserver: NSObjectProtocol
     private let sessionManager: SessionManager
+    private var observerToken: NSObjectProtocol?
 
     init(sessionManager: SessionManager) {
         self.sessionManager = sessionManager
-
-        AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
-
-        flowManagerObserver = NotificationCenter.default.addObserver(
+        super.init()
+        AVSFlowManager.getInstance()?.setEnableMetrics(!disableAnalyticsSharing)
+        observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
             queue: OperationQueue.main,
-            using: { _ in
-                AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
+            using: { [weak self] _ in
+                guard let self else { return }
+                AVSFlowManager.getInstance()?.setEnableMetrics(!self.disableAnalyticsSharing)
             }
         )
+    }
 
-        super.init()
+    var doesUserConsentPreferenceExist: Bool {
+        ExtensionSettings.shared.disableAnalyticsSharing != nil
     }
 
     var disableAnalyticsSharing: Bool {
-        ExtensionSettings.shared.disableAnalyticsSharing
+        ExtensionSettings.shared.disableAnalyticsSharing ?? true
     }
 
     func disableAnalyticsSharing(
@@ -76,7 +78,7 @@ final class TrackingManager: NSObject, TrackingInterface {
         }
     }
 
-    private func updateAnalyticsSharing(disabled: Bool) async {
+    func updateAnalyticsSharing(disabled: Bool) async {
         do {
             if disabled {
                 let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()

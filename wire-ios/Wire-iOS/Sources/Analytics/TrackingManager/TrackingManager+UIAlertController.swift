@@ -30,6 +30,19 @@ extension TrackingManager {
     }
 
     @MainActor
+    func requestFirstTimeAnalyticsConsentIfNeeded() async throws {
+        // Only ask if user has not given a preference yet.
+        guard !doesUserConsentPreferenceExist else {
+            return
+        }
+
+        WireLogger.analytics.debug("requesting first time analytics content")
+        let didConsent = try await requestAnalyticsConsent()
+        WireLogger.analytics.debug("user did consent: \(didConsent)")
+        await updateAnalyticsSharing(disabled: !didConsent)
+    }
+
+    @MainActor
     func requestAnalyticsConsent() async throws -> Bool {
         guard let viewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             throw AnalyticsError.unableToPresentAlert

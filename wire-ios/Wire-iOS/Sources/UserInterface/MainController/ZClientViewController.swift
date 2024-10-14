@@ -236,6 +236,13 @@ final class ZClientViewController: UIViewController {
         setUpConferenceCallingUnavailableObserver()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        Task {
+            try await trackingManager?.requestFirstTimeAnalyticsConsentIfNeeded()
+        }
+    }
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
