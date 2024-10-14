@@ -314,13 +314,13 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5902F8D72BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */; };
 		5902F8E32BF7B18B00F1D392 /* ArchivedListViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */; };
-		59076F952C934A9800AE7529 /* WireAccountImage in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImage */; };
-		59076F972C934AA100AE7529 /* WireAccountImage in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F962C934AA100AE7529 /* WireAccountImage */; };
+		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
+		59076F972C934AA100AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F962C934AA100AE7529 /* WireAccountImageUI */; };
 		590A5F072BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */; };
 		590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */; };
 		590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */; };
 		590BD7B82C00BD1C0093435A /* ShareContactsViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590BD7B72C00BD1C0093435A /* ShareContactsViewControllerDelegate.swift */; };
-		590DCA082C971A56002D0A2C /* WireSidebar in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebar */; };
+		590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebarUI */; };
 		590DCA0A2C971AFF002D0A2C /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA092C971AFF002D0A2C /* WireFoundation */; };
 		5915B94B2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */; };
 		5915B94D2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94C2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift */; };
@@ -396,7 +396,7 @@
 		59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; };
 		59CD83E52C22CE9800186022 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 59CD83E42C22CE9800186022 /* WireDesign */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
-		59D038272C85D31E009FE583 /* WireMainNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigation */; };
+		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
 		59D2D9352BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */; };
 		59D53E452C74ADBF007EB3EF /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */; };
 		59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62B2B7A73B2008236FF /* ShapeView.swift */; };
@@ -3920,13 +3920,13 @@
 				CB4E15122C81CC81005DDEC8 /* Down in Frameworks */,
 				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
 				E92C8CC62C942A5C00E0F7F7 /* Inject in Frameworks */,
-				59D038272C85D31E009FE583 /* WireMainNavigation in Frameworks */,
+				59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
-				59076F952C934A9800AE7529 /* WireAccountImage in Frameworks */,
-				590DCA082C971A56002D0A2C /* WireSidebar in Frameworks */,
+				59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */,
+				590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */,
 				EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */,
 				59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */,
 				59B99FAC2C89DF2100201827 /* WireAPI in Frameworks */,
@@ -3954,7 +3954,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */,
-				59076F972C934AA100AE7529 /* WireAccountImage in Frameworks */,
+				59076F972C934AA100AE7529 /* WireAccountImageUI in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
 				CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
@@ -8573,12 +8573,12 @@
 				59CD83E42C22CE9800186022 /* WireDesign */,
 				E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */,
 				CB4E15112C81CC81005DDEC8 /* Down */,
-				59D038262C85D31E009FE583 /* WireMainNavigation */,
+				59D038262C85D31E009FE583 /* WireMainNavigationUI */,
 				59B99FA92C89DE8600201827 /* WireFoundation */,
 				59B99FAB2C89DF2100201827 /* WireAPI */,
 				59B99FAF2C89DFB700201827 /* WireDomainPackage */,
-				59076F942C934A9800AE7529 /* WireAccountImage */,
-				590DCA072C971A56002D0A2C /* WireSidebar */,
+				59076F942C934A9800AE7529 /* WireAccountImageUI */,
+				590DCA072C971A56002D0A2C /* WireSidebarUI */,
 				E92C8CC52C942A5C00E0F7F7 /* Inject */,
 			);
 			productName = "ZClient iOS";
@@ -8604,7 +8604,7 @@
 				01C1A7C62A54C45A0058D578 /* SnapshotTesting */,
 				59B48C5D2C89CCAB00EA7999 /* WireFoundationSupport */,
 				59B48C612C89CD3D00EA7999 /* WireTestingPackage */,
-				59076F962C934AA100AE7529 /* WireAccountImage */,
+				59076F962C934AA100AE7529 /* WireAccountImageUI */,
 				590DCA092C971AFF002D0A2C /* WireFoundation */,
 			);
 			productName = "ZClient-iOS Tests";
@@ -11650,17 +11650,17 @@
 			package = 407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
 			productName = DifferenceKit;
 		};
-		59076F942C934A9800AE7529 /* WireAccountImage */ = {
+		59076F942C934A9800AE7529 /* WireAccountImageUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireAccountImage;
+			productName = WireAccountImageUI;
 		};
-		59076F962C934AA100AE7529 /* WireAccountImage */ = {
+		59076F962C934AA100AE7529 /* WireAccountImageUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireAccountImage;
+			productName = WireAccountImageUI;
 		};
-		590DCA072C971A56002D0A2C /* WireSidebar */ = {
+		590DCA072C971A56002D0A2C /* WireSidebarUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireSidebar;
+			productName = WireSidebarUI;
 		};
 		590DCA092C971AFF002D0A2C /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -11710,9 +11710,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireReusableUIComponents;
 		};
-		59D038262C85D31E009FE583 /* WireMainNavigation */ = {
+		59D038262C85D31E009FE583 /* WireMainNavigationUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireMainNavigation;
+			productName = WireMainNavigationUI;
 		};
 		CB4E15112C81CC81005DDEC8 /* Down */ = {
 			isa = XCSwiftPackageProductDependency;
