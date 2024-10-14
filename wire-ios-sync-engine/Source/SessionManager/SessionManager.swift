@@ -206,7 +206,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         willSet {
             guard activeUserSession != newValue else { return }
             activeUserSession?.appLockController.beginTimer()
-            activeUserSession?.analyticsEventTracker = nil
+            activeUserSession?.setAnalyticsEventTracker(nil)
         }
     }
 
@@ -925,7 +925,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             WireLogger.analytics.debug("configuring analytics for user session")
             let user = try await userSession.createAnalyticsUser()
             try analyticsService.switchUser(user)
-            userSession.analyticsEventTracker = analyticsService
+            userSession.setAnalyticsEventTracker(analyticsService)
         } catch {
             WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
         }
@@ -1380,24 +1380,43 @@ extension SessionManager {
 
 extension SessionManager: UnauthenticatedSessionDelegate {
 
-    public func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool {
+    public func sessionIsAllowedToCreateNewAccount(
+        _ session: UnauthenticatedSession
+    ) -> Bool {
         return accountManager.accounts.count < maxNumberAccounts
     }
 
-    public func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool {
+    public func session(
+        session: UnauthenticatedSession,
+        isExistingAccount account: Account
+    ) -> Bool {
         return accountManager.accounts.contains(account)
     }
 
-    public func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool {
+    public func session(
+        session: UnauthenticatedSession,
+        updatedCredentials credentials: UserCredentials
+    ) -> Bool {
         return update(credentials: credentials)
     }
 
-    public func session(session: UnauthenticatedSession, updatedProfileImage imageData: Data) {
+    public func session(
+        session: UnauthenticatedSession,
+        updatedProfileImage imageData: Data
+    ) {
         updateProfileImage(imageData: imageData)
     }
 
-    public func session(session: UnauthenticatedSession, createdAccount account: Account) {
-        guard !(accountManager.accounts.count == maxNumberAccounts && accountManager.account(with: account.userIdentifier) == nil) else {
+    public func session(
+        session: UnauthenticatedSession,
+        createdAccount account: Account
+    ) {
+        let numberOfExistingAccounts = accountManager.accounts.count
+        let createdAccountIsKnown = accountManager.account(with: account.userIdentifier) != nil
+
+        guard
+            numberOfExistingAccounts < maxNumberAccounts || createdAccountIsKnown
+        else {
             let error = NSError(userSessionErrorCode: .accountLimitReached, userInfo: nil)
             loginDelegate?.authenticationDidFail(error)
             return
@@ -1410,6 +1429,15 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
             if let profileImageData = session.authenticationStatus.profileImageData {
                 self.updateProfileImage(imageData: profileImageData)
+            }
+
+            switch session.backupImportDidSucceed {
+            case true?:
+                userSession.trackAnalyticsEvent(.backupRestored)
+            case false?:
+                userSession.trackAnalyticsEvent(.backupRestoredFailed)
+            case nil:
+                break
             }
 
             let registered = session.authenticationStatus.completedRegistration || session.registrationStatus.completedRegistration

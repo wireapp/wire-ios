@@ -23,7 +23,12 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 protocol BackupRestoreControllerDelegate: AnyObject {
-    func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
+
+    func backupResoreControllerDidFinishRestoring(
+        _ controller: BackupRestoreController,
+        didSucceed: Bool
+    )
+
 }
 
 /// An object that coordinates restoring a backup.
@@ -101,10 +106,13 @@ final class BackupRestoreController: NSObject {
         using password: String,
         from url: URL
     ) {
-        guard let sessionManager = SessionManager.shared,
-              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup") else {
+        guard
+            let sessionManager = SessionManager.shared,
+            let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup")
+        else {
             return
         }
+
         Task { @MainActor in activityIndicator.start() }
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
@@ -113,6 +121,7 @@ final class BackupRestoreController: NSObject {
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
                 return
             }
+
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
@@ -129,7 +138,7 @@ final class BackupRestoreController: NSObject {
 
             case .success:
                 self.temporaryFilesService.removeTemporaryData()
-                self.delegate?.backupResoreControllerDidFinishRestoring(self)
+                self.delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: true)
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             }
         }
@@ -154,7 +163,7 @@ final class BackupRestoreController: NSObject {
         let controller = restoreBackupFailed(
             error: error,
             onTryAgain: { [unowned self] in self.showFilePicker() },
-            onCancel: { [unowned self] in self.delegate?.backupResoreControllerDidFinishRestoring(self) }
+            onCancel: { [unowned self] in self.delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: false) }
         )
 
         target.present(controller, animated: true)

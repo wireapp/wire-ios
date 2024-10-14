@@ -21,7 +21,8 @@ import WireAnalytics
 
 protocol AnalyticsEventTrackerProvider: AnyObject {
 
-    var analyticsEventTracker: (any AnalyticsEventTracker)? { get set }
+    var analyticsEventTracker: (any AnalyticsEventTracker)? { get }
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?)
     func createAnalyticsUser() async throws -> AnalyticsUser
 
 }

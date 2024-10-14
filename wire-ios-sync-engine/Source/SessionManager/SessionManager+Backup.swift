@@ -109,23 +109,30 @@ extension SessionManager {
     /// Restores the account database from the Wire iOS database back up file.
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
     /// is called.
-    public func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    public func restoreFromBackup(
+        at location: URL,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         func complete(_ result: Result<Void, Error>) {
-                DispatchQueue.main.async(group: dispatchGroup) {
-                    switch result {
-                    case .success:
-                        self.activeUserSession?.analyticsEventTracker?.trackEvent(.backupRestored)
-                    case .failure:
-                        self.activeUserSession?.analyticsEventTracker?.trackEvent(.backupRestoredFailed)
-                    }
-                    completion(result)
-                }
+            DispatchQueue.main.async(group: dispatchGroup) {
+                completion(result)
             }
+        }
 
-        guard let userId = unauthenticatedSession?.authenticationStatus.authenticatedUserIdentifier else { return completion(.failure(BackupError.notAuthenticated)) }
+        guard
+            let status = unauthenticatedSession?.authenticationStatus,
+            let userId = status.authenticatedUserIdentifier
+        else {
+            return completion(.failure(BackupError.notAuthenticated))
+        }
 
         // Verify the imported file has the correct file extension.
-        guard BackupFileExtensions.allCases.contains(where: { $0.rawValue == location.pathExtension }) else { return completion(.failure(BackupError.invalidFileExtension)) }
+        guard BackupFileExtensions.allCases.contains(where: {
+            $0.rawValue == location.pathExtension
+        }) else {
+            return completion(.failure(BackupError.invalidFileExtension))
+        }
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
             guard let self else {
@@ -138,19 +145,28 @@ extension SessionManager {
             WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
 
             do {
-                try SessionManager.decrypt(from: location, to: decryptedURL, password: password, accountId: userId)
+                try SessionManager.decrypt(
+                    from: location,
+                    to: decryptedURL,
+                    password: password,
+                    accountId: userId
+                )
+            } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
+                return complete(.failure(BackupError.decryptionError))
+
+            } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
+                return complete(.failure(BackupError.keyCreationFailed))
+
             } catch {
-                switch error {
-                case ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed:
-                    return complete(.failure(BackupError.decryptionError))
-                case ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed:
-                    return complete(.failure(BackupError.keyCreationFailed))
-                default: return complete(.failure(error))
-                }
+                return complete(.failure(error))
             }
 
             let url = SessionManager.unzippedBackupURL(for: location)
-            guard decryptedURL.unzip(to: url) else { return complete(.failure(BackupError.compressionError)) }
+
+            guard decryptedURL.unzip(to: url) else {
+                return complete(.failure(BackupError.compressionError))
+            }
+
             CoreDataStack.importLocalStorage(
                 accountIdentifier: userId,
                 from: url,

@@ -36,7 +36,7 @@ struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
     func invoke() throws {
         try service.disableTracking()
-        provider?.analyticsEventTracker = nil
+        provider?.setAnalyticsEventTracker(nil)
     }
 
 }
