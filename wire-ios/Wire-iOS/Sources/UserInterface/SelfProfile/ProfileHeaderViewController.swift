@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
@@ -381,7 +382,9 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateQRCodeButton() {
-        let qrCodeAction = UIAction { _ in }
+        let qrCodeAction = UIAction { _ in
+            self.qrCodeButtonTapped()
+        }
         qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
         qrCodeButton.isHidden = !user.isSelfUser
         updateColors()
@@ -394,6 +397,35 @@ final class ProfileHeaderViewController: UIViewController {
 
         qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .highlighted)
         qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .highlighted)
+    }
+
+    private func qrCodeButtonTapped() {
+        guard let viewModel = makeUserQRCodeViewModel(selfUser: user) else {
+            return
+        }
+        let qrCodeView = QRCodeView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: qrCodeView)
+        hostingController.setupNavigationBarTitle(L10n.Localizable.Qrcode.title)
+        hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            },
+            accessibilityLabel: L10n.Accessibility.ShareProfile.CloseButton.description)
+        navigationController?.pushViewController(hostingController, animated: true)
+    }
+
+    private func makeUserQRCodeViewModel(selfUser: UserType) -> UserQRCodeViewModel? {
+        guard
+            let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
+            let handle = selfUser.handle
+        else {
+            return nil
+        }
+
+        return UserQRCodeViewModel(
+            profileLink: profileLink,
+            handle: handle
+        )
     }
 
     // MARK: -

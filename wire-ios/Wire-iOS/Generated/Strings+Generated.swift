@@ -957,6 +957,20 @@ internal enum L10n {
         }
       }
     }
+    internal enum ShareProfile {
+      internal enum BackButton {
+        /// Go back to your profile
+        internal static let description = L10n.tr("Accessibility", "shareProfile.backButton.description", fallback: "Go back to your profile")
+      }
+      internal enum CloseButton {
+        /// Close share profile view
+        internal static let description = L10n.tr("Accessibility", "shareProfile.closeButton.description", fallback: "Close share profile view")
+      }
+      internal enum QrCode {
+        /// QR code
+        internal static let description = L10n.tr("Accessibility", "shareProfile.qrCode.description", fallback: "QR code")
+      }
+    }
     internal enum Sketch {
       internal enum CloseButton {
         /// Close sketch
@@ -4631,6 +4645,24 @@ internal enum L10n {
         /// %@ joined Wire
         internal static func newUser(_ p1: Any) -> String {
           return L10n.tr("Localizable", "push.notification.new_user", String(describing: p1), fallback: "%@ joined Wire")
+        }
+      }
+    }
+    internal enum Qrcode {
+      /// Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.
+      internal static let shareMessage = L10n.tr("Localizable", "qrcode.share_message", fallback: "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.")
+      /// Share Profile
+      internal static let title = L10n.tr("Localizable", "qrcode.title", fallback: "Share Profile")
+      internal enum ShareProfileLink {
+        internal enum Button {
+          /// Share Profile Link
+          internal static let title = L10n.tr("Localizable", "qrcode.share_profile_link.button.title", fallback: "Share Profile Link")
+        }
+      }
+      internal enum ShareQrcode {
+        internal enum Button {
+          /// Share QR Code
+          internal static let title = L10n.tr("Localizable", "qrcode.share_qrcode.button.title", fallback: "Share QR Code")
         }
       }
     }
