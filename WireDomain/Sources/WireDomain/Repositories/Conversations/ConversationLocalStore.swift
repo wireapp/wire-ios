@@ -498,14 +498,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         domain: String?,
         handler: @escaping (ZMConversation) -> (ZMConversation, MLSGroupID?)
     ) async -> (ZMConversation, MLSGroupID?) {
-        await context.perform { [self] in
-            let conversation = ZMConversation.fetchOrCreate(
-                with: conversationID,
-                domain: domain,
-                in: context
-            )
-
-            return handler(conversation)
+        let conversation = await fetchOrCreateConversation(
+            with: conversationID,
+            domain: domain
+        )
+        
+        return await context.perform {
+            handler(conversation)
         }
     }
 
