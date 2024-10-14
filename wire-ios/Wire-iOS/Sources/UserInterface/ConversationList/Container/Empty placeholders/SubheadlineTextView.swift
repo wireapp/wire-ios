@@ -21,6 +21,8 @@ import WireFoundation
 
 final class SubheadlineTextView: UITextView {
 
+    // MARK: - Init
+
     init(
         attributedText: NSAttributedString,
         style: WireTextStyle,

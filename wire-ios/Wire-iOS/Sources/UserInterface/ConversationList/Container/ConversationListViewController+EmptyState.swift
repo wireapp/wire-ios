@@ -74,4 +74,3 @@ extension ConversationListViewController {
     }
 
 }
-
