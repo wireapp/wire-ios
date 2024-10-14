@@ -325,7 +325,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // When
 
-        let localConversation = await sut.fetchConversation(
+        let localConversation = await sut.fetchOrCreateConversation(
             with: Scaffolding.conversationID,
             domain: Scaffolding.domain
         )

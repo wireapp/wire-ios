@@ -39,7 +39,7 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
     func processEvent(_ event: ConversationAccessUpdateEvent) async throws {
         let conversationID = event.conversationID
 
-        let localConversation = await repository.fetchConversation(
+        let localConversation = await repository.fetchOrCreateConversation(
             with: conversationID.uuid,
             domain: conversationID.domain
         )

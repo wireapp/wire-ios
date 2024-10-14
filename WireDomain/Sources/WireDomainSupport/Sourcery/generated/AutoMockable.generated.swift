@@ -161,21 +161,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public init() {}
 
 
-    // MARK: - fetchConversation
+    // MARK: - fetchOrCreateConversation
 
-    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
-    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
-    public var fetchConversationWithDomain_MockValue: ZMConversation?
+    public var fetchOrCreateConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchOrCreateConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchOrCreateConversationWithDomain_MockValue: ZMConversation?
 
-    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation {
-        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+    public func fetchOrCreateConversation(with id: UUID, domain: String?) async -> ZMConversation {
+        fetchOrCreateConversationWithDomain_Invocations.append((id: id, domain: domain))
 
-        if let mock = fetchConversationWithDomain_MockMethod {
+        if let mock = fetchOrCreateConversationWithDomain_MockMethod {
             return await mock(id, domain)
-        } else if let mock = fetchConversationWithDomain_MockValue {
+        } else if let mock = fetchOrCreateConversationWithDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchConversationWithDomain`")
+            fatalError("no mock for `fetchOrCreateConversationWithDomain`")
         }
     }
 
@@ -266,21 +266,21 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
     public init() {}
 
 
-    // MARK: - fetchConversation
+    // MARK: - fetchOrCreateConversation
 
-    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
-    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
-    public var fetchConversationWithDomain_MockValue: ZMConversation?
+    public var fetchOrCreateConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchOrCreateConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchOrCreateConversationWithDomain_MockValue: ZMConversation?
 
-    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation {
-        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+    public func fetchOrCreateConversation(with id: UUID, domain: String?) async -> ZMConversation {
+        fetchOrCreateConversationWithDomain_Invocations.append((id: id, domain: domain))
 
-        if let mock = fetchConversationWithDomain_MockMethod {
+        if let mock = fetchOrCreateConversationWithDomain_MockMethod {
             return await mock(id, domain)
-        } else if let mock = fetchConversationWithDomain_MockValue {
+        } else if let mock = fetchOrCreateConversationWithDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchConversationWithDomain`")
+            fatalError("no mock for `fetchOrCreateConversationWithDomain`")
         }
     }
 

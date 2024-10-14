@@ -31,13 +31,13 @@ import WireDataModel
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
-    /// Fetches a conversation locally.
+    /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
     ///
-    /// - returns: The `ZMConversation` found locally.
+    /// - returns: The `ZMConversation` found or created locally.
 
-    func fetchConversation(
+    func fetchOrCreateConversation(
         with id: UUID,
         domain: String?
     ) async -> ZMConversation
@@ -116,7 +116,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     // MARK: - Public
 
-    public func fetchConversation(
+    public func fetchOrCreateConversation(
         with id: UUID,
         domain: String?
     ) async -> ZMConversation {

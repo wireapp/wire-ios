@@ -81,7 +81,7 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
             )
         }
 
-        repository.fetchConversationWithDomain_MockValue = conversation
+        repository.fetchOrCreateConversationWithDomain_MockValue = conversation
 
         // When
 
@@ -89,7 +89,7 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(repository.fetchConversationWithDomain_Invocations.count, 1)
+        XCTAssertEqual(repository.fetchOrCreateConversationWithDomain_Invocations.count, 1)
         internalTest_assertAccessRolesAndModes(
             for: conversation,
             expectedAccessModes: event.accessModes,
@@ -144,7 +144,7 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
             )
         }
 
-        repository.fetchConversationWithDomain_MockValue = conversation
+        repository.fetchOrCreateConversationWithDomain_MockValue = conversation
 
         // When legacy role == activated
 
