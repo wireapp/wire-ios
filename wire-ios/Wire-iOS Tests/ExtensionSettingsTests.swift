@@ -37,22 +37,8 @@ final class ExtensionSettingsTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatItDisablesCrashReportByDefault() {
-        XCTAssert(settings.disableCrashSharing)
-    }
-
     func testThatItDisablesAnalyticsReportByDefault() {
         XCTAssertTrue(settings.disableAnalyticsSharing)
-    }
-
-    func testThatItHandlesCrashReportPreferenceChange() {
-        XCTAssert(settings.disableCrashSharing)
-
-        settings.disableCrashSharing = false
-        XCTAssertFalse(settings.disableCrashSharing)
-
-        settings.disableCrashSharing = true
-        XCTAssert(settings.disableCrashSharing)
     }
 
     func testThatItHandlesAnalyticsPreferenceChange() {

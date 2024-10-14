@@ -60,10 +60,6 @@ extension ZMOTRMessage {
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timestamp ?? Date())
 
-        if !message.knownMessage {
-            UnknownMessageAnalyticsTracker.tagUnknownMessage(with: moc.analytics)
-        }
-
         // Verify sender is part of conversation
         conversation.verifySender(of: updateEvent, moc: moc)
 

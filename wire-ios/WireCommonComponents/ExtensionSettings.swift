@@ -21,15 +21,12 @@ import WireUtilities
 
 private enum ExtensionSettingsKey: String, CaseIterable {
 
-    case disableCrashSharing
     case disableAnalyticsSharing
     case disableLinkPreviews
 
     private var defaultValue: Any? {
         switch self {
         // Always disable analytics by default.
-        case .disableCrashSharing:
-            return true
         case .disableAnalyticsSharing:
             return true
         case .disableLinkPreviews:
@@ -69,11 +66,6 @@ public final class ExtensionSettings: NSObject {
     public var disableAnalyticsSharing: Bool {
         get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool ?? true }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
-    }
-
-    public var disableCrashSharing: Bool {
-        get { defaults.bool(forKey: ExtensionSettingsKey.disableCrashSharing.rawValue) }
-        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableCrashSharing.rawValue) }
     }
 
     public var disableLinkPreviews: Bool {
