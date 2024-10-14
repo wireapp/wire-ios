@@ -48,15 +48,16 @@ final class EmptyPlaceholderView: UIView {
     // MARK: - Setup
 
     private func setup(_ content: ConversationListViewController.EmptyPlaceholder) {
+        backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds.surfaceVariant
         titleLabel = DynamicFontLabel(
             text: content.headline,
             style: .h2,
-            color: SemanticColors.Label.textDefault)
+            color: ColorTheme.Backgrounds.onSurfaceVariant)
 
         descriptionLabel = SubheadlineTextView(
             attributedText: content.subheadline,
             style: .body1,
-            color: SemanticColors.Label.textDefault)
+            color: ColorTheme.Backgrounds.onSurfaceVariant)
 
         titleLabel.textAlignment = .center
         descriptionLabel.textAlignment = .center
@@ -79,7 +80,7 @@ final class EmptyPlaceholderView: UIView {
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
-            arrowView.topAnchor.constraint(equalTo: topAnchor),
+            arrowView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             arrowView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -40),
             arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])

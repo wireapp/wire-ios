@@ -46,7 +46,7 @@ extension ConversationListViewController {
 
             return EmptyPlaceholder(
                 subheadline: subheadline + "\n\n" + link,
-                showArrow: false)
+                showArrow: !isIPadRegular())
         case .groups:
             return EmptyPlaceholder(subheadline: Strings.Group.subheadline.attributedString)
         case .oneOnOne:

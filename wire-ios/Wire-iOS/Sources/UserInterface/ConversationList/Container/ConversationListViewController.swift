@@ -313,7 +313,7 @@ final class ConversationListViewController: UIViewController {
         contentContainer.addSubview(emptyPlaceholderView)
     }
 
-    private func configureEmptyPlaceholder() {
+    func configureEmptyPlaceholder() {
         emptyPlaceholderView.configure(with: emptyPlaceholderForSelectedFilter)
         emptyPlaceholderView.isHidden = !isEmptyPlaceholderVisible
     }
@@ -344,7 +344,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
-            emptyPlaceholderView.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 20),
+            emptyPlaceholderView.topAnchor.constraint(equalTo: contentContainer.topAnchor),
             emptyPlaceholderView.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
             emptyPlaceholderView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             emptyPlaceholderView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
