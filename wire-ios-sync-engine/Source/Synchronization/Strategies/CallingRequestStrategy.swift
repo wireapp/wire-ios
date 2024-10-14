@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireDataModel
 import WireRequestStrategy
+import WireAnalytics
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
@@ -47,6 +48,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private var cancellables = Set<AnyCancellable>()
 
+    var analytics: AnalyticsService?
+
     // MARK: - Internal Properties
 
     var callCenter: WireCallCenterV3?
@@ -60,7 +63,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         flowManager: FlowManagerType,
         callEventStatus: CallEventStatus,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
-        messageSender: MessageSenderInterface
+        messageSender: MessageSenderInterface,
+        analytics: AnalyticsService?
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
@@ -84,7 +88,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                                                             clientId: clientId,
                                                             uiMOC: managedObjectContext.zm_userInterface,
                                                             flowManager: flowManager,
-                                                            analytics: managedObjectContext.analytics,
+                                                            analytics: analytics,
                                                             transport: self)
         }
 
@@ -219,13 +223,12 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             if let userClient = object as? UserClient, userClient.isSelfClient(), let clientId = userClient.remoteIdentifier, let userId = userClient.user?.avsIdentifier {
                 zmLog.debug("Creating callCenter")
                 let uiContext = managedObjectContext.zm_userInterface!
-                let analytics = managedObjectContext.analytics
                 uiContext.performGroupedBlock {
                     self.callCenter = WireCallCenterV3Factory.callCenter(withUserId: userId,
                                                                          clientId: clientId,
                                                                          uiMOC: uiContext.zm_userInterface,
                                                                          flowManager: self.flowManager,
-                                                                         analytics: analytics,
+                                                                         analytics: self.analytics,
                                                                          transport: self)
                 }
                 break

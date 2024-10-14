@@ -263,7 +263,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
                 flowManager: flowManager,
                 callEventStatus: applicationStatusDirectory.callEventStatus,
-                messageSender: messageSender),
+                messageSender: messageSender,
+                analytics: sessionManager.analyticsService),
             LegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
