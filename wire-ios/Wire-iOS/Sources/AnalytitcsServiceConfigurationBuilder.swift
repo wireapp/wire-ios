@@ -23,13 +23,15 @@ struct AnalyticsServiceConfigurationBuilder {
 
     func build() -> AnalyticsServiceConfiguration? {
         guard
+            let secretKey = Bundle.countlyAppKey,
+            !secretKey.isEmpty,
             let countlyURL = BackendEnvironment.shared.countlyURL
         else {
             return nil
         }
 
         return AnalyticsServiceConfiguration(
-            secretKey: "37cc418a6fc07403b0a918252133c15b95486883",
+            secretKey: secretKey,
             serverHost: countlyURL,
             didUserGiveTrackingConsent: !ExtensionSettings.shared.disableAnalyticsSharing
         )
