@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAccountImage
+import WireAccountImageUI
 import WireDataModel
-import WireSidebar
+import WireSidebarUI
 
 extension WireDataModel.Availability {
 
     /// Since `WireAccountImage` does not know about the type `WireDataModel.Availability`,
     /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImage.Availability?`.
 
-    func map() -> WireAccountImage.Availability? {
+    func map() -> WireAccountImageUI.Availability? {
         switch self {
         case .none: .none
         case .available: .available
@@ -40,7 +40,7 @@ extension WireDataModel.Availability {
     /// Since `WireSidebar` does not know about the type `WireDataModel.Availability`,
     /// this function serves as an adapter from `WireDataModel.Availability` to `WireSidebar.SidebarAccountInfo.Availability?`.
 
-    func map() -> WireSidebar.SidebarAccountInfo.Availability? {
+    func map() -> WireSidebarUI.SidebarAccountInfo.Availability? {
         switch self {
         case .none: .none
         case .available: .available
@@ -50,12 +50,12 @@ extension WireDataModel.Availability {
     }
 }
 
-extension WireSidebar.SidebarAccountInfo.Availability {
+extension WireSidebarUI.SidebarAccountInfo.Availability {
 
     /// Since `WireSidebar` does not know about the type `WireAccountImage.Availability`,
     /// this function serves as an adapter from `WireAccountImage.Availability` to `WireSidebar.SidebarAccountInfo.Availability?`.
 
-    func map() -> WireAccountImage.Availability {
+    func map() -> WireAccountImageUI.Availability {
         switch self {
         case .available: .available
         case .busy: .busy

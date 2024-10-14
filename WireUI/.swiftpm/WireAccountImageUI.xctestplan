@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "EE19C776-C34B-4ED9-B55F-54761C5D7C65",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireAccountImageUITests",
+        "name" : "WireAccountImageUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
