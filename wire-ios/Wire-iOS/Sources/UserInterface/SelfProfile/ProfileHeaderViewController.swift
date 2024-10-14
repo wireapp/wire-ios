@@ -496,7 +496,7 @@ extension ProfileHeaderViewController: TeamObserver {
     }
 }
 
-// MARK: - TraitCollectionDidChange
+// MARK: - TraitCollectionDidChange.
 
 extension ProfileHeaderViewController {
 
