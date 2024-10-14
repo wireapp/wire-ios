@@ -82,9 +82,9 @@ extension ConversationLocalStore {
     // MARK: - Timestamps
 
     func updateConversationTimestamps(
-        for localConversation: ZMConversation
+        for localConversation: ZMConversation,
+        serverTimestamp: Date
     ) {
-        let serverTimestamp = Date.now
 
         /// If the lastModifiedDate is non-nil, e.g. restore from backup,
         /// do not update the lastModifiedDate.

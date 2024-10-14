@@ -30,13 +30,26 @@ import WireDataModel
 ///
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
+    
+    /// Fetches a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: The `ZMConversation` found locally.
+
+    func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation?
 
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
+    /// - Parameter timestamp: The date the conversation was created or last modified.
     /// - Parameter isFederationEnabled: A flag indicating whether a `Federation` is enabled.
 
     func storeConversation(
         _ conversation: WireAPI.Conversation,
+        timestamp: Date,
         isFederationEnabled: Bool
     ) async
 
@@ -105,8 +118,22 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     // MARK: - Public
 
+    public func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation? {
+        await context.perform { [context] in
+            ZMConversation.fetch(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
+    }
+
     public func storeConversation(
         _ conversation: WireAPI.Conversation,
+        timestamp: Date,
         isFederationEnabled: Bool
     ) async {
         guard let conversationType = conversation.type else {
@@ -136,6 +163,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             await updateOrCreateGroupConversation(
                 remoteConversation: conversation,
                 remoteConversationID: id,
+                serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -143,6 +171,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             await updateOrCreateSelfConversation(
                 remoteConversation: conversation,
                 remoteConversationID: id,
+                serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -152,6 +181,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             await updateOrCreateConnectionConversation(
                 remoteConversation: conversation,
                 remoteConversationID: id,
+                serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -161,6 +191,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             await updateOrCreateOneToOneConversation(
                 remoteConversation: conversation,
                 remoteConversationID: id,
+                serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled
             )
         }
@@ -252,6 +283,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func updateOrCreateConnectionConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
         await fetchOrCreateConversation(
@@ -260,7 +292,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         ) { [self] in
             $0.conversationType = .connection
 
-            commonUpdate(from: remoteConversation, for: $0, isFederationEnabled: isFederationEnabled)
+            commonUpdate(
+                from: remoteConversation,
+                for: $0,
+                serverTimestamp: serverTimestamp,
+                isFederationEnabled: isFederationEnabled
+            )
+            
             assignMessageProtocol(from: remoteConversation, for: $0)
             updateConversationStatus(from: remoteConversation, for: $0)
 
@@ -282,6 +320,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func updateOrCreateSelfConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
         let (conversation, mlsGroupID) = await fetchOrCreateConversation(
@@ -292,7 +331,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             $0.conversationType = .`self`
             $0.isPendingMetadataRefresh = false
 
-            commonUpdate(from: remoteConversation, for: $0, isFederationEnabled: isFederationEnabled)
+            commonUpdate(
+                from: remoteConversation,
+                for: $0,
+                serverTimestamp: serverTimestamp,
+                isFederationEnabled: isFederationEnabled
+            )
+            
             updateMessageProtocol(from: remoteConversation, for: $0)
 
             $0.isPendingInitialFetch = false
@@ -323,6 +368,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func updateOrCreateGroupConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
         var isInitialFetch = false
@@ -339,7 +385,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             $0.isPendingMetadataRefresh = false
             $0.isPendingInitialFetch = false
 
-            commonUpdate(from: remoteConversation, for: $0, isFederationEnabled: isFederationEnabled)
+            commonUpdate(
+                from: remoteConversation,
+                for: $0,
+                serverTimestamp: serverTimestamp,
+                isFederationEnabled: isFederationEnabled
+            )
+            
             updateConversationStatus(from: remoteConversation, for: $0)
 
             if isInitialFetch {
@@ -390,6 +442,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func updateOrCreateOneToOneConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
         guard let conversationTypeRawValue = remoteConversation.type?.rawValue else {
@@ -411,7 +464,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             }
 
             assignMessageProtocol(from: remoteConversation, for: $0)
-            commonUpdate(from: remoteConversation, for: $0, isFederationEnabled: isFederationEnabled)
+            commonUpdate(
+                from: remoteConversation,
+                for: $0,
+                serverTimestamp: serverTimestamp,
+                isFederationEnabled: isFederationEnabled
+            )
             updateConversationStatus(from: remoteConversation, for: $0)
             linkOneOnOneUserIfNeeded(for: $0)
 
@@ -431,10 +489,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     /// - Parameter remoteConversation: The conversation object received from backend.
     /// - Parameter localConversation: The local conversation to update.
     /// - Parameter isFederationEnabled: A flag indicating whether a federation is enabled.
+    /// - Parameter serverTimestamp: The date the conversation was created/updated.
 
     private func commonUpdate(
         from remoteConversation: WireAPI.Conversation,
         for localConversation: ZMConversation,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) {
         updateAttributes(
@@ -454,7 +514,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         )
 
         updateConversationTimestamps(
-            for: localConversation
+            for: localConversation,
+            serverTimestamp: serverTimestamp
         )
     }
 

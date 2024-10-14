@@ -17,6 +17,8 @@
 //
 
 import WireAPI
+import CoreData
+import WireSystem
 
 /// Process conversation create events.
 
@@ -31,10 +33,30 @@ protocol ConversationCreateEventProcessorProtocol {
 }
 
 struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtocol {
+    
+    let context: NSManagedObjectContext
+    let repository: any ConversationRepositoryProtocol
 
-    func processEvent(_: ConversationCreateEvent) async throws {
-        // TODO: [WPB-10166]
-        assertionFailure("not implemented yet")
+    func processEvent(_ event: ConversationCreateEvent) async throws {
+        let conversationID = event.conversationID
+        let conversation = event.conversation
+        let timestamp = event.timestamp
+        
+        let existingConversation = await repository.fetchConversation(
+            with: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        guard existingConversation == nil else {
+            WireLogger.eventProcessing.warn("Conversation already exists, aborting...")
+            return
+        }
+        
+        await repository.storeConversation(
+            conversation,
+            timestamp: timestamp
+        )
+        
     }
 
 }

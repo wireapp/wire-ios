@@ -161,19 +161,37 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public init() {}
 
 
+    // MARK: - fetchConversation
+
+    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
+    public var fetchConversationWithDomain_MockValue: ZMConversation??
+
+    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation? {
+        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationWithDomain`")
+        }
+    }
+
     // MARK: - storeConversation
 
-    public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
-    public var storeConversationIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Bool) async -> Void)?
+    public var storeConversationTimestampIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool)] = []
+    public var storeConversationTimestampIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Date, Bool) async -> Void)?
 
-    public func storeConversation(_ conversation: WireAPI.Conversation, isFederationEnabled: Bool) async {
-        storeConversationIsFederationEnabled_Invocations.append((conversation: conversation, isFederationEnabled: isFederationEnabled))
+    public func storeConversation(_ conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool) async {
+        storeConversationTimestampIsFederationEnabled_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled))
 
-        guard let mock = storeConversationIsFederationEnabled_MockMethod else {
-            fatalError("no mock for `storeConversationIsFederationEnabled`")
+        guard let mock = storeConversationTimestampIsFederationEnabled_MockMethod else {
+            fatalError("no mock for `storeConversationTimestampIsFederationEnabled`")
         }
 
-        await mock(conversation, isFederationEnabled)
+        await mock(conversation, timestamp, isFederationEnabled)
     }
 
     // MARK: - storeConversationNeedsBackendUpdate
@@ -247,6 +265,39 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     public init() {}
 
+
+    // MARK: - fetchConversation
+
+    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
+    public var fetchConversationWithDomain_MockValue: ZMConversation??
+
+    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation? {
+        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationWithDomain`")
+        }
+    }
+
+    // MARK: - storeConversation
+
+    public var storeConversationTimestamp_Invocations: [(conversation: WireAPI.Conversation, timestamp: Date)] = []
+    public var storeConversationTimestamp_MockMethod: ((WireAPI.Conversation, Date) async -> Void)?
+
+    public func storeConversation(_ conversation: WireAPI.Conversation, timestamp: Date) async {
+        storeConversationTimestamp_Invocations.append((conversation: conversation, timestamp: timestamp))
+
+        guard let mock = storeConversationTimestamp_MockMethod else {
+            fatalError("no mock for `storeConversationTimestamp`")
+        }
+
+        await mock(conversation, timestamp)
+    }
 
     // MARK: - pullConversations
 
