@@ -18,7 +18,7 @@
 
 import WireUtilities
 
-@objc (ZMLocationData) @objcMembers
+@objc(ZMLocationData) @objcMembers
 public final class LocationData: NSObject {
 
     public let latitude, longitude: Float
