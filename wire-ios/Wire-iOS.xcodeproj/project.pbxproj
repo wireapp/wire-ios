@@ -6616,12 +6616,12 @@
 		8FC8517F199245760008B66B /* Conversation */ = {
 			isa = PBXGroup;
 			children = (
-				A98CF97325A47295008818D8 /* ConversationProtocol.swift */,
 				7C25D7532149118D002E22BF /* Mentions */,
 				F10F46D02028857C00261449 /* Create */,
 				8FC85180199245760008B66B /* Content */,
 				8FC851B3199245760008B66B /* InputBar */,
 				875F89151D6F35DC00D8748E /* Message Details */,
+				A98CF97325A47295008818D8 /* ConversationProtocol.swift */,
 				A9EB722723C3A9F600DA8240 /* ConversationViewController.swift */,
 				59E67CAD2CA8B392000F1C17 /* ConversationViewControllerBuilder.swift */,
 				A92CB35823CDF97800F12797 /* ConversationViewController+ConversationContentViewControllerDelegate.swift */,
@@ -8653,6 +8653,8 @@
 				590DCA072C971A56002D0A2C /* WireSidebarUI */,
 				5929CB212CA6C9C800070488 /* WireConversationListUI */,
 				595C49682CA995E900F8F881 /* WireSettingsUI */,
+				59076F942C934A9800AE7529 /* WireAccountImageUI */,
+				590DCA072C971A56002D0A2C /* WireSidebarUI */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
