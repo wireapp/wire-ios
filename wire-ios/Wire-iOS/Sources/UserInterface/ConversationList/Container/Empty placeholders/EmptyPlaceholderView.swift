@@ -28,7 +28,7 @@ final class EmptyPlaceholderView: UIView {
     let arrowView: UIImageView = {
         let arrow = UIImageView()
         arrow.image = UIImage(resource: .ConversationList.arrow)
-        arrow.contentMode = .scaleAspectFit
+        arrow.contentMode = .scaleToFill
         arrow.translatesAutoresizingMaskIntoConstraints = false
         return arrow
     }()
@@ -80,7 +80,7 @@ final class EmptyPlaceholderView: UIView {
 
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
             arrowView.topAnchor.constraint(equalTo: topAnchor),
-            arrowView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -20),
+            arrowView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -40),
             arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])
     }
