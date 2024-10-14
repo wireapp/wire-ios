@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 
 extension MainCoordinator: StartUIDelegate where Dependencies.ConversationModel == ZMConversation, Dependencies.User == any UserType {
 

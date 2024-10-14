@@ -17,18 +17,18 @@
 //
 
 import WireDataModel
-import WireMainNavigation
-import WireSettings
-import WireSidebar
+import WireMainNavigationUI
+import WireSettingsUI
+import WireSidebarUI
 
-enum MainCoordinatorDependencies: WireMainNavigation.MainCoordinatorDependencies {
+enum MainCoordinatorDependencies: WireMainNavigationUI.MainCoordinatorDependencies {
 
     // MainCoordinatorProtocolDependencies
 
     typealias ConversationFilter = Wire.ConversationFilter
     typealias ConversationModel = ZMConversation
     typealias ConversationMessageModel = ZMConversationMessage
-    typealias SettingsTopLevelMenuItem = WireSettings.SettingsTopLevelMenuItem
+    typealias SettingsTopLevelMenuItem = WireSettingsUI.SettingsTopLevelMenuItem
     typealias User = any UserType
 
     // MainCoordinatorDependencies

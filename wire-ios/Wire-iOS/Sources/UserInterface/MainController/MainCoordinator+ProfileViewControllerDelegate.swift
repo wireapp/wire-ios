@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 
 extension MainCoordinator: ProfileViewControllerDelegate where Dependencies.ConversationModel == ZMConversation {
 

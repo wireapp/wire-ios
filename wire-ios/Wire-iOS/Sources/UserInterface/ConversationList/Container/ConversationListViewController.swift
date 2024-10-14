@@ -17,12 +17,12 @@
 //
 
 import UIKit
-import WireAccountImage
+import WireAccountImageUI
 import WireCommonComponents
-import WireConversationList
+import WireConversationListUI
 import WireDataModel
 import WireDesign
-import WireMainNavigation
+import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
 

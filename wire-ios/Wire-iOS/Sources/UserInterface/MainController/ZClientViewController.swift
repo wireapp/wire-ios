@@ -19,12 +19,12 @@
 import avs
 import SwiftUI
 import UIKit
-import WireAccountImage
+import WireAccountImageUI
 import WireCommonComponents
 import WireDesign
 import WireFoundation
-import WireMainNavigation
-import WireSidebar
+import WireMainNavigationUI
+import WireSidebarUI
 import WireSyncEngine
 
 // TODO: [WPB-11449] after logging in and getting certificate, the account image is blank instead of showing initials
@@ -32,7 +32,7 @@ import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
 
-    typealias MainCoordinator = WireMainNavigation.MainCoordinator<MainCoordinatorDependencies>
+    typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
     typealias MainSplitViewController = MainCoordinator.SplitViewController
     typealias MainTabBarController = MainCoordinator.TabBarController
 

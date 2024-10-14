@@ -18,7 +18,7 @@
 
 import UIKit
 import WireCommonComponents
-import WireMainNavigation
+import WireMainNavigationUI
 import WireSyncEngine
 
 struct SelfProfileViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {

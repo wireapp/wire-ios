@@ -18,11 +18,10 @@
 
 import DifferenceKit
 import UIKit
-import WireConversationList
-import WireFoundation
+import WireConversationListUI
 import WireDataModel
 import WireDesign
-import WireMainNavigation
+import WireMainNavigationUI
 import WireSyncEngine
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"

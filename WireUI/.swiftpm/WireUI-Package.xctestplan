@@ -17,15 +17,15 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireAccountImageTests",
-        "name" : "WireAccountImageTests"
+        "identifier" : "WireAccountImageUITests",
+        "name" : "WireAccountImageUITests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireConversationListTests",
-        "name" : "WireConversationListTests"
+        "identifier" : "WireConversationListUITests",
+        "name" : "WireConversationListUITests"
       }
     },
     {
@@ -38,8 +38,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireMainNavigationTests",
-        "name" : "WireMainNavigationTests"
+        "identifier" : "WireMainNavigationUITests",
+        "name" : "WireMainNavigationUITests"
       }
     },
     {
@@ -52,15 +52,15 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireSettingsTests",
-        "name" : "WireSettingsTests"
+        "identifier" : "WireSettingsUITests",
+        "name" : "WireSettingsUITests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireSidebarTests",
-        "name" : "WireSidebarTests"
+        "identifier" : "WireSidebarUITests",
+        "name" : "WireSidebarUITests"
       }
     }
   ],

@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
-import WireSettings
+import WireSettingsUI
 import WireSyncEngine
 
 final class ChangeEmailViewController: SettingsBaseTableViewController {

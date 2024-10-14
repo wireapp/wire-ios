@@ -19,7 +19,7 @@
 import DifferenceKit
 import Foundation
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
