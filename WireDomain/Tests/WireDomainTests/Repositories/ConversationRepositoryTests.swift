@@ -312,6 +312,29 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
+    func testFetchConversation_It_Retrieves_Conversation_Locally() async throws {
+        // Given
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+        }
+
+        // When
+
+        let localConversation = await sut.fetchConversation(
+            with: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        XCTAssertEqual(localConversation, conversation)
+    }
+
     private func checkLastMessage(
         in conversation: ZMConversation,
         isLeaveMessageFor user: ZMUser,
@@ -351,7 +374,7 @@ final class ConversationRepositoryTests: XCTestCase {
             failed: [conversationFailed]
         )
 
-        nonisolated(unsafe) static let conversationListError = ConversationList(
+        static let conversationListError = ConversationList(
             found: [conversationSelfTypeMissingId,
                     conversationGroupType,
                     conversationConnectionType,

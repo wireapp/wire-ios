@@ -161,6 +161,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public init() {}
 
 
+    // MARK: - fetchConversation
+
+    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchConversationWithDomain_MockValue: ZMConversation?
+
+    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation {
+        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationWithDomain`")
+        }
+    }
+
     // MARK: - storeConversation
 
     public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
@@ -247,6 +265,24 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     public init() {}
 
+
+    // MARK: - fetchConversation
+
+    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchConversationWithDomain_MockValue: ZMConversation?
+
+    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation {
+        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationWithDomain`")
+        }
+    }
 
     // MARK: - pullConversations
 

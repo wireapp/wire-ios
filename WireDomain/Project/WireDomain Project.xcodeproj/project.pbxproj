@@ -33,6 +33,7 @@
 		C97C015A2CB40010000683C5 /* FederationDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01572CB40010000683C5 /* FederationDeleteEventProcessorTests.swift */; };
 		C97C015C2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C015B2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift */; };
 		C97C015F2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C015E2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift */; };
+		C97C01B52CBD236F000683C5 /* ConversationAccessUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01B42CBD236F000683C5 /* ConversationAccessUpdateEventProcessorTests.swift */; };
 		C9841A1F2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
 		C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */; };
@@ -163,6 +164,7 @@
 		C97C01572CB40010000683C5 /* FederationDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C015B2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertiesSetEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C015E2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsUseCaseTests.swift; sourceTree = "<group>"; };
+		C97C01B42CBD236F000683C5 /* ConversationAccessUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAccessUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
@@ -440,6 +442,14 @@
 			path = UseCases;
 			sourceTree = "<group>";
 		};
+		C97C01B32CBD2349000683C5 /* ConversationEventProcessorTests */ = {
+			isa = PBXGroup;
+			children = (
+				C97C01B42CBD236F000683C5 /* ConversationAccessUpdateEventProcessorTests.swift */,
+			);
+			path = ConversationEventProcessorTests;
+			sourceTree = "<group>";
+		};
 		C9841A1D2CA309090062A834 /* Mock */ = {
 			isa = PBXGroup;
 			children = (
@@ -558,6 +568,7 @@
 		C9C8FDCD2C9DBE0E00702B91 /* Event Processing */ = {
 			isa = PBXGroup;
 			children = (
+				C97C01B32CBD2349000683C5 /* ConversationEventProcessorTests */,
 				C97C01582CB40010000683C5 /* FederationEventProcessor */,
 				C9C8FDC42C9DBE0E00702B91 /* FeatureConfigEventProcessor */,
 				C9C8FDC82C9DBE0E00702B91 /* TeamEventProcessor */,
@@ -976,6 +987,7 @@
 			files = (
 				C9F691292C9B164A008CC41F /* UserPushRemoveEventProcessorTests.swift in Sources */,
 				C93961932C91B15B00EA971A /* ConversationRepositoryTests.swift in Sources */,
+				C97C01B52CBD236F000683C5 /* ConversationAccessUpdateEventProcessorTests.swift in Sources */,
 				C93961922C91B12800EA971A /* TestError.swift in Sources */,
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
 				C9C8FDD32C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */,
