@@ -60,12 +60,4 @@ final class SubheadlineTextView: UITextView {
         return false
     }
 
-    override func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
-        // Prevent long press to show the magnifying glass
-        if gestureRecognizer is UILongPressGestureRecognizer {
-            gestureRecognizer.isEnabled = false
-        }
-
-        super.addGestureRecognizer(gestureRecognizer)
-    }
 }

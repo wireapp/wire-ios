@@ -365,11 +365,11 @@ final class ConversationListViewController: UIViewController {
         searchController.searchBar.isTranslucent = false
         searchController.searchResultsUpdater = self
 
-        if !listContentController.listViewModel.isEmptyPlaceholderVisible {
-            navigationItem.searchController = searchController
-        } else {
-            navigationItem.searchController = nil
-        }
+//        if !listContentController.listViewModel.isEmptyPlaceholderVisible {
+//            navigationItem.searchController = searchController
+//        } else {
+//            navigationItem.searchController = nil
+//        }
         if #available(iOS 16.0, *) {
             navigationItem.preferredSearchBarPlacement = .stacked
         }
@@ -422,18 +422,18 @@ final class ConversationListViewController: UIViewController {
     /// Method to apply the selected filter and update the UI accordingly
     /// - Parameter filter: The selected filter type to be applied
     func applyFilter(_ filter: ConversationFilter) {
-        self.listContentController.listViewModel.selectedFilter = filter //
+        self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
-        self.setupSearchController()
+        //self.setupSearchController()
 
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
         filterContainerView.isHidden = self.listContentController.listViewModel.isEmptyPlaceholderVisible
     }
 
     func clearFilter() {
-        listContentController.listViewModel.selectedFilter = .none //
+        listContentController.listViewModel.selectedFilter = .none
         setupRightNavigationBarButtons()
-        setupSearchController()
+        //setupSearchController()
         filterContainerView.isHidden = true
     }
 

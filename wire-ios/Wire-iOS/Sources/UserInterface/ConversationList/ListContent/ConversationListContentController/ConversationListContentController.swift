@@ -46,19 +46,11 @@ final class ConversationListContentController: UICollectionViewController {
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
-    private var emptyPlaceholderView: UIStackView!
+    private var emptyPlaceholderView: EmptyPlaceholderView!
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
     let userSession: UserSession
-
-    let arrowImageView: UIImageView = {
-        let arrow = UIImageView()
-        arrow.image = UIImage(resource: .ConversationList.arrow)
-        arrow.contentMode = .scaleAspectFit
-        arrow.translatesAutoresizingMaskIntoConstraints = false
-        return arrow
-    }()
 
     init<ConversationListCoordinator>(
         userSession: UserSession,
@@ -105,6 +97,7 @@ final class ConversationListContentController: UICollectionViewController {
         guard SelfUser.provider != nil else { return }
 
         updateVisibleCells()
+        emptyPlaceholderView.isHidden = true
 
         scrollToCurrentSelection(animated: false)
 
@@ -136,12 +129,9 @@ final class ConversationListContentController: UICollectionViewController {
 
     func reload() {
         collectionView.reloadData()
-        ensureCurrentSelection() // not sure
+        ensureCurrentSelection()
 
-        //setupEmptyPlaceholder() // ??
-        emptyPlaceholderView.isHidden = !listViewModel.isEmptyPlaceholderVisible
-        arrowImageView.isHidden = !listViewModel.isEmptyPlaceholderVisible
-
+        configureEmptyPlaceholder()
         // we MUST call layoutIfNeeded here because otherwise bad things happen when we close the archive, reload the conv
         // and then unarchive all at the same time
         view.layoutIfNeeded()
@@ -154,7 +144,6 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func setupViews() {
-        //setupEmptyPlaceholder() // ??
         collectionView.register(ConnectRequestsCell.self, forCellWithReuseIdentifier: CellReuseIdConnectionRequests)
         collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
 
@@ -170,23 +159,21 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func setupEmptyPlaceholder() {
-        emptyPlaceholderView = BaseEmptyPlaceholderView(
-            title: listViewModel.emptyPlaceholderForSelectedFilter.headline,
-            description: listViewModel.emptyPlaceholderForSelectedFilter.subheadline)
-
+        emptyPlaceholderView = EmptyPlaceholderView(content: listViewModel.emptyPlaceholderForSelectedFilter)
         view.addSubview(emptyPlaceholderView)
-        view.addSubview(arrowImageView)
+        emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-
-            emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
-            arrowImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            arrowImageView.bottomAnchor.constraint(equalTo: emptyPlaceholderView.topAnchor, constant: -20),
-            arrowImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
-
+            emptyPlaceholderView.topAnchor.constraint(equalTo: view.topAnchor),
+            emptyPlaceholderView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            emptyPlaceholderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            emptyPlaceholderView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+    }
+
+    private func configureEmptyPlaceholder() {
+        emptyPlaceholderView.configure(with: listViewModel.emptyPlaceholderForSelectedFilter)
+        emptyPlaceholderView.isHidden = !listViewModel.isEmptyPlaceholderVisible
     }
 
     // MARK: - section header
@@ -535,9 +522,4 @@ extension ConversationListContentController: ConversationListCellDelegate {
         startCallController = ConversationCallController(conversation: conversation, target: self)
         startCallController?.joinCall()
     }
-}
-
-extension ConversationListContentController {
-
-
 }

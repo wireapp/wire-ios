@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
 import UIKit
 
 // This subclass is used for the legal text in the Welcome screen and the reset password text in the login screen
@@ -33,24 +32,6 @@ final class WebLinkTextView: UITextView {
         textDragDelegate = self
 
         setup()
-    }
-
-    init(
-        attributedText: NSAttributedString,
-        style: WireTextStyle,
-        color: UIColor
-    ) {
-        super.init(frame: .zero, textContainer: nil)
-
-        setup()
-        self.attributedText = attributedText
-        textColor = color
-        font = .font(for: style)
-        adjustsFontForContentSizeCategory = true
-
-        linkTextAttributes = [
-            .underlineStyle: NSUnderlineStyle.single.rawValue
-        ]
     }
 
     @available(*, unavailable)

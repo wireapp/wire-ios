@@ -54,7 +54,7 @@
 		0622D6A2265B38DE00D759DB /* UserBlockingReasonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */; };
 		06231BD62CB6AD5D00BFCFE3 /* ConversationListViewModel+EmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06231BD52CB6AD5D00BFCFE3 /* ConversationListViewModel+EmptyState.swift */; };
 		06231BD92CB6C79A00BFCFE3 /* SubheadlineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06231BD82CB6C79A00BFCFE3 /* SubheadlineTextView.swift */; };
-		06231BDB2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06231BDA2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift */; };
+		06231BDB2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06231BDA2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift */; };
 		0630E4C42580469300C75BFB /* AppLockChangeWarningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */; };
 		06379687296491C000674AAA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06379686296491C000674AAA /* Images.xcassets */; };
 		064AD4C425DD31A600143D74 /* UIApplication+OpenURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */; };
@@ -2059,7 +2059,7 @@
 		0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBlockingReasonCell.swift; sourceTree = "<group>"; };
 		06231BD52CB6AD5D00BFCFE3 /* ConversationListViewModel+EmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewModel+EmptyState.swift"; sourceTree = "<group>"; };
 		06231BD82CB6C79A00BFCFE3 /* SubheadlineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubheadlineTextView.swift; sourceTree = "<group>"; };
-		06231BDA2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEmptyPlaceholderView.swift; sourceTree = "<group>"; };
+		06231BDA2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPlaceholderView.swift; sourceTree = "<group>"; };
 		0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockChangeWarningViewController.swift; sourceTree = "<group>"; };
 		06379686296491C000674AAA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+OpenURL.swift"; sourceTree = "<group>"; };
@@ -4100,7 +4100,7 @@
 			isa = PBXGroup;
 			children = (
 				06231BD82CB6C79A00BFCFE3 /* SubheadlineTextView.swift */,
-				06231BDA2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift */,
+				06231BDA2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift */,
 			);
 			path = "Empty placeholders";
 			sourceTree = "<group>";
@@ -10311,7 +10311,7 @@
 				5E62802C222551CF0039A8AB /* IncomingRequestFooterView.swift in Sources */,
 				EF2F161E225748F100C44B88 /* ConnectRequestsCell.swift in Sources */,
 				0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */,
-				06231BDB2CB6CB9300BFCFE3 /* BaseEmptyPlaceholderView.swift in Sources */,
+				06231BDB2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift in Sources */,
 				A918330F2419272E00CBD0B7 /* TokenSeparatorAttachment.swift in Sources */,
 				5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */,
 				163495871F010F91004E80DB /* UnauthenticatedSession+Shared.swift in Sources */,
