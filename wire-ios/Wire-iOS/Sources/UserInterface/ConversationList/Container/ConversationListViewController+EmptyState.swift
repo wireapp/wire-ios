@@ -20,6 +20,7 @@ import Foundation
 import WireSyncEngine
 
 extension ConversationListViewController {
+
     var isEmptyPlaceholderVisible: Bool {
         let totalItems = listContentController.listViewModel.sections.map { $0.items.count }.reduce(0, +)
         return totalItems == 0
@@ -73,58 +74,4 @@ extension ConversationListViewController {
     }
 
 }
-extension ConversationListViewModel {
 
-    var isEmptyPlaceholderVisible: Bool {
-        let totalItems = sections.map { $0.items.count }.reduce(0, +)
-        return totalItems == 0
-    }
-
-    var emptyPlaceholderForSelectedFilter: EmptyPlaceholder {
-        typealias Strings = L10n.Localizable.ConversationList.EmptyPlaceholder
-
-        guard let selectedFilter else {
-            return EmptyPlaceholder(
-                headline: Strings.All.headline + " 👋",
-                subheadline: Strings.All.subheadline.attributedString)
-        }
-        switch selectedFilter {
-        case .favorites:
-            let subheadline = Strings.Favorite.subheadline.attributedString
-            let link = NSAttributedString(
-                string: Strings.Favorite.link,
-                attributes: [
-                    .link: WireURLs.shared.howToAddConversationToYourFavourites
-                ]
-            )
-
-            return EmptyPlaceholder(
-                subheadline: subheadline + "\n\n" + link,
-                showArrow: false)
-        case .groups:
-            return EmptyPlaceholder(subheadline: Strings.Group.subheadline.attributedString)
-        case .oneOnOne:
-            let domain = userSession?.selfUser.domain ?? ""
-            return EmptyPlaceholder(subheadline: Strings.Oneonone.subheadline(domain).attributedString)
-        }
-    }
-
-    struct EmptyPlaceholder {
-
-        let headline: String
-        let subheadline: NSAttributedString
-        let showArrow: Bool
-
-        init(
-            headline: String? = nil,
-            subheadline: NSAttributedString,
-            showArrow: Bool = true
-        ) {
-            self.headline = headline ?? ""
-            self.subheadline = subheadline
-            self.showArrow = showArrow
-        }
-
-    }
-
-}

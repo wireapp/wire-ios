@@ -369,7 +369,7 @@ final class ConversationListViewController: UIViewController {
         searchController.searchBar.isTranslucent = false
         searchController.searchResultsUpdater = self
 
-        if !listContentController.listViewModel.isEmptyPlaceholderVisible {
+        if !isEmptyPlaceholderVisible {
             navigationItem.searchController = searchController
         } else {
             navigationItem.searchController = nil
@@ -429,7 +429,7 @@ final class ConversationListViewController: UIViewController {
         self.setupSearchController()
 
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
-        filterContainerView.isHidden = self.listContentController.listViewModel.isEmptyPlaceholderVisible
+        filterContainerView.isHidden = isEmptyPlaceholderVisible
         configureEmptyPlaceholder()
     }
 
