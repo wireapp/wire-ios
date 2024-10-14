@@ -23,7 +23,7 @@ import WireDataModel
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.
 public protocol ConversationRepositoryProtocol {
-    
+
     /// Fetches a conversation locally.
     /// - Parameters:
     ///     - id: The ID of the conversation.
@@ -34,12 +34,12 @@ public protocol ConversationRepositoryProtocol {
         with id: UUID,
         domain: String?
     ) async -> ZMConversation?
-    
+
     /// Stores a conversation locally.
     /// - Parameters:
     ///     - conversation: The conversation to update or create locally.
     ///     - timestamp: The date the conversation was created or last modified.
-    
+
     func storeConversation(
         _ conversation: WireAPI.Conversation,
         timestamp: Date
@@ -111,7 +111,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Public
-    
+
     public func fetchConversation(
         with id: UUID,
         domain: String?
@@ -121,7 +121,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             domain: domain
         )
     }
-    
+
     public func storeConversation(
         _ conversation: WireAPI.Conversation,
         timestamp: Date
@@ -132,7 +132,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             isFederationEnabled: backendInfo.isFederationEnabled
         )
     }
-    
+
     public func pullConversations() async throws {
         var qualifiedIds: [WireAPI.QualifiedID]
 

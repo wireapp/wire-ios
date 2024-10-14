@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import CoreData
+import WireAPI
 import WireSystem
 
 /// Process conversation create events.
@@ -28,20 +28,19 @@ protocol ConversationCreateEventProcessorProtocol {
     ///
     /// - Parameter event: A conversation create event.
 
-    func processEvent(_ event: ConversationCreateEvent) async throws
+    func processEvent(_ event: ConversationCreateEvent) async
 
 }
 
 struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtocol {
-    
-    let context: NSManagedObjectContext
+
     let repository: any ConversationRepositoryProtocol
 
-    func processEvent(_ event: ConversationCreateEvent) async throws {
+    func processEvent(_ event: ConversationCreateEvent) async {
         let conversationID = event.conversationID
         let conversation = event.conversation
         let timestamp = event.timestamp
-        
+
         let existingConversation = await repository.fetchConversation(
             with: conversationID.uuid,
             domain: conversationID.domain
@@ -51,12 +50,11 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
             WireLogger.eventProcessing.warn("Conversation already exists, aborting...")
             return
         }
-        
+
         await repository.storeConversation(
             conversation,
             timestamp: timestamp
         )
-        
     }
 
 }

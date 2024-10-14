@@ -30,7 +30,7 @@ import WireDataModel
 ///
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
-    
+
     /// Fetches a conversation locally.
     /// - Parameters:
     ///     - id: The ID of the conversation.
@@ -298,7 +298,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
-            
+
             assignMessageProtocol(from: remoteConversation, for: $0)
             updateConversationStatus(from: remoteConversation, for: $0)
 
@@ -337,7 +337,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
-            
+
             updateMessageProtocol(from: remoteConversation, for: $0)
 
             $0.isPendingInitialFetch = false
@@ -391,7 +391,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
-            
+
             updateConversationStatus(from: remoteConversation, for: $0)
 
             if isInitialFetch {

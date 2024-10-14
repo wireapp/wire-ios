@@ -85,7 +85,6 @@ extension ConversationLocalStore {
         for localConversation: ZMConversation,
         serverTimestamp: Date
     ) {
-
         /// If the lastModifiedDate is non-nil, e.g. restore from backup,
         /// do not update the lastModifiedDate.
 
