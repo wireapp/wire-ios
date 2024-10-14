@@ -2747,6 +2747,8 @@ internal enum L10n {
           internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.group.subheadline", fallback: "You are not part of any group conversation yet.\nStart a new conversation!")
         }
         internal enum Oneonone {
+          /// Connect with People
+          internal static let button = L10n.tr("Localizable", "conversation_list.empty_placeholder.oneonone.button", fallback: "Connect with People")
           /// You have no contacts yet.
           /// Search for people on %@ and get connected.
           internal static func subheadline(_ p1: Any) -> String {

@@ -46,12 +46,15 @@ extension ConversationListViewController {
 
             return EmptyPlaceholder(
                 subheadline: subheadline + "\n\n" + link,
-                showArrow: !isIPadRegular())
+                showArrow: false)
         case .groups:
             return EmptyPlaceholder(subheadline: Strings.Group.subheadline.attributedString)
         case .oneOnOne:
             let domain = listContentController.listViewModel.userSession?.selfUser.domain ?? ""
-            return EmptyPlaceholder(subheadline: Strings.Oneonone.subheadline(domain).attributedString)
+            return EmptyPlaceholder(
+                subheadline: Strings.Oneonone.subheadline(domain).attributedString,
+                showArrow: !isIPadRegular(),
+                showButton: isIPadRegular())
         }
     }
 
@@ -60,15 +63,18 @@ extension ConversationListViewController {
         let headline: String
         let subheadline: NSAttributedString
         let showArrow: Bool
+        let showButton: Bool
 
         init(
             headline: String? = nil,
             subheadline: NSAttributedString,
-            showArrow: Bool = true
+            showArrow: Bool = true,
+            showButton: Bool = false
         ) {
             self.headline = headline ?? ""
             self.subheadline = subheadline
             self.showArrow = showArrow
+            self.showButton = showButton
         }
 
     }

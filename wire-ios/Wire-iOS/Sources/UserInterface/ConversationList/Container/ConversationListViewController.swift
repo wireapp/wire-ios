@@ -237,7 +237,10 @@ final class ConversationListViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+
         adjustRightBarButtonItemsSpace()
+        configureEmptyPlaceholder()
+        filterContainerView.isHidden = isEmptyPlaceholderVisible || listContentController.listViewModel.selectedFilter == .none
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -309,7 +312,14 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func setupEmptyPlaceholder() {
-        emptyPlaceholderView = EmptyPlaceholderView(content: emptyPlaceholderForSelectedFilter)
+        let connectWithPeopleAction: UIAction = .init { [weak self] _ in
+            Task {
+                await self?.mainCoordinator.showConnect()
+            }
+        }
+        emptyPlaceholderView = EmptyPlaceholderView(
+            content: emptyPlaceholderForSelectedFilter,
+            connectWithPeopleAction: connectWithPeopleAction)
         contentContainer.addSubview(emptyPlaceholderView)
     }
 

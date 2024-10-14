@@ -33,12 +33,26 @@ final class EmptyPlaceholderView: UIView {
         return arrow
     }()
 
+    let connectWithPeopleButton: DynamicFontButton = {
+        let button = DynamicFontButton(style: .body1)
+        button.setTitleColor(ColorTheme.Base.primary, for: .normal)
+        button.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .normal)
+        button.layer.cornerRadius = 18
+        button.layer.masksToBounds = true
+
+        button.contentEdgeInsets = UIEdgeInsets(top: 10, left: 12, bottom: 10, right: 12)
+        button.setTitle(L10n.Localizable.ConversationList.EmptyPlaceholder.Oneonone.button, for: .normal)
+        button.accessibilityIdentifier = "connect-with-people.button"
+
+        return button
+    }()
+
     // MARK: - Init
 
-    init(content: ConversationListViewController.EmptyPlaceholder) {
+    init(content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: UIAction) {
         super.init(frame: .zero)
 
-        setup(content)
+        setup(content, connectWithPeopleAction: connectWithPeopleAction)
     }
 
     required init(coder: NSCoder) {
@@ -47,7 +61,7 @@ final class EmptyPlaceholderView: UIView {
 
     // MARK: - Setup
 
-    private func setup(_ content: ConversationListViewController.EmptyPlaceholder) {
+    private func setup(_ content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: UIAction) {
         backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds.surfaceVariant
         titleLabel = DynamicFontLabel(
             text: content.headline,
@@ -67,22 +81,29 @@ final class EmptyPlaceholderView: UIView {
         stackView.axis = .vertical
         stackView.spacing = 2
 
-        [arrowView, stackView].forEach(addSubview)
+        connectWithPeopleButton.isHidden = !content.showButton
+        connectWithPeopleButton.addAction(connectWithPeopleAction, for: .touchUpInside)
+
+        [arrowView, stackView, connectWithPeopleButton].forEach(addSubview)
         createConstraints()
     }
 
     private func createConstraints() {
         arrowView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        connectWithPeopleButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
+
             arrowView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             arrowView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -40),
-            arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
+            arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+
+            connectWithPeopleButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 10),
+            connectWithPeopleButton.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
     }
 
@@ -97,6 +118,7 @@ final class EmptyPlaceholderView: UIView {
         ]
         descriptionLabel.attributedText = content.subheadline && textAttributes
         arrowView.isHidden = !content.showArrow
+        connectWithPeopleButton.isHidden = !content.showButton
     }
 
 }
