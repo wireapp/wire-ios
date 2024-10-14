@@ -23,8 +23,9 @@ final class EmptyPlaceholderView: UIView {
 
     var titleLabel: DynamicFontLabel!
     var descriptionLabel: SubheadlineTextView!
+    var stackView: UIStackView!
 
-    let arrowImageView: UIImageView = {
+    let arrowView: UIImageView = {
         let arrow = UIImageView()
         arrow.image = UIImage(resource: .ConversationList.arrow)
         arrow.contentMode = .scaleAspectFit
@@ -34,7 +35,7 @@ final class EmptyPlaceholderView: UIView {
 
     // MARK: - Init
 
-    init(content: ConversationListViewModel.EmptyPlaceholder) {
+    init(content: ConversationListViewController.EmptyPlaceholder) {
         super.init(frame: .zero)
 
         setup(content)
@@ -46,7 +47,7 @@ final class EmptyPlaceholderView: UIView {
 
     // MARK: - Setup
 
-    private func setup(_ content: ConversationListViewModel.EmptyPlaceholder) {
+    private func setup(_ content: ConversationListViewController.EmptyPlaceholder) {
         titleLabel = DynamicFontLabel(
             text: content.headline,
             style: .h2,
@@ -59,27 +60,32 @@ final class EmptyPlaceholderView: UIView {
 
         titleLabel.textAlignment = .center
         descriptionLabel.textAlignment = .center
-        arrowImageView.isHidden = !content.showArrow
+        arrowView.isHidden = !content.showArrow
 
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
+        stackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
         stackView.axis = .vertical
         stackView.spacing = 2
+
+        [arrowView, stackView].forEach(addSubview)
+        createConstraints()
+    }
+
+    private func createConstraints() {
+        arrowView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(stackView)
-        addSubview(arrowImageView)
 
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
-            arrowImageView.topAnchor.constraint(equalTo: topAnchor),
-            arrowImageView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -20),
-            arrowImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
+            arrowView.topAnchor.constraint(equalTo: topAnchor),
+            arrowView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -20),
+            arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])
     }
 
-    func configure(with content: ConversationListViewModel.EmptyPlaceholder) {
+    func configure(with content: ConversationListViewController.EmptyPlaceholder) {
         titleLabel.text = content.headline
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
@@ -89,7 +95,7 @@ final class EmptyPlaceholderView: UIView {
             .paragraphStyle: paragraphStyle
         ]
         descriptionLabel.attributedText = content.subheadline && textAttributes
-        arrowImageView.isHidden = !content.showArrow
+        arrowView.isHidden = !content.showArrow
     }
 
 }

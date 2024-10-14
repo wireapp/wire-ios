@@ -98,7 +98,7 @@ final class ConversationListViewController: UIViewController {
     weak var accountImageView: AccountImageView?
 
     let networkStatusViewController = NetworkStatusViewController()
-    let onboardingHint = ConversationListOnboardingHint()
+    private var emptyPlaceholderView: EmptyPlaceholderView!
     let selfProfileViewControllerBuilder: any MainCoordinatorInjectingViewControllerBuilder
     var mainSplitViewState: MainSplitViewState = .expanded {
         didSet {
@@ -186,7 +186,7 @@ final class ConversationListViewController: UIViewController {
         setupStackView()
         setupListContentController()
         setupNoConversationLabel()
-        setupOnboardingHint()
+        setupEmptyPlaceholder()
         setupNetworkStatusBar()
         setupFilterContainerView()
 
@@ -212,10 +212,7 @@ final class ConversationListViewController: UIViewController {
         super.viewWillAppear(animated)
 
         viewModel.savePendingLastRead()
-
-        // there are currently always four tab items
-        let offset = (view.bounds.width / 4 * -1.5)
-        onboardingHint.arrowView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: offset).isActive = true
+        configureEmptyPlaceholder()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -311,8 +308,14 @@ final class ConversationListViewController: UIViewController {
         contentContainer.addSubview(noConversationLabel)
     }
 
-    private func setupOnboardingHint() {
-        contentContainer.addSubview(onboardingHint)
+    private func setupEmptyPlaceholder() {
+        emptyPlaceholderView = EmptyPlaceholderView(content: emptyPlaceholderForSelectedFilter)
+        contentContainer.addSubview(emptyPlaceholderView)
+    }
+
+    private func configureEmptyPlaceholder() {
+        emptyPlaceholderView.configure(with: emptyPlaceholderForSelectedFilter)
+        emptyPlaceholderView.isHidden = !isEmptyPlaceholderVisible
     }
 
     private func setupNetworkStatusBar() {
@@ -328,7 +331,7 @@ final class ConversationListViewController: UIViewController {
         contentContainer.translatesAutoresizingMaskIntoConstraints = false
         conversationList.translatesAutoresizingMaskIntoConstraints = false
         noConversationLabel.translatesAutoresizingMaskIntoConstraints = false
-        onboardingHint.translatesAutoresizingMaskIntoConstraints = false
+        emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
         networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
@@ -341,9 +344,10 @@ final class ConversationListViewController: UIViewController {
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
-            onboardingHint.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
-            onboardingHint.rightAnchor.constraint(equalTo: contentContainer.rightAnchor),
+            emptyPlaceholderView.topAnchor.constraint(equalTo: view.topAnchor),
+            emptyPlaceholderView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            emptyPlaceholderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            emptyPlaceholderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
             noConversationLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
             noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
@@ -365,11 +369,11 @@ final class ConversationListViewController: UIViewController {
         searchController.searchBar.isTranslucent = false
         searchController.searchResultsUpdater = self
 
-//        if !listContentController.listViewModel.isEmptyPlaceholderVisible {
-//            navigationItem.searchController = searchController
-//        } else {
-//            navigationItem.searchController = nil
-//        }
+        if !listContentController.listViewModel.isEmptyPlaceholderVisible {
+            navigationItem.searchController = searchController
+        } else {
+            navigationItem.searchController = nil
+        }
         if #available(iOS 16.0, *) {
             navigationItem.preferredSearchBarPlacement = .stacked
         }
@@ -398,7 +402,6 @@ final class ConversationListViewController: UIViewController {
         let closure = {
             let hasArchivedConversations = self.viewModel.hasArchivedConversations
             self.noConversationLabel.alpha = hasArchivedConversations ? 1.0 : 0.0
-            self.onboardingHint.alpha = hasArchivedConversations ? 0.0 : 1.0
         }
 
         if animated {
@@ -413,7 +416,6 @@ final class ConversationListViewController: UIViewController {
     func hideNoContactLabel(animated: Bool) {
         UIView.animate(withDuration: animated ? 0.2 : 0) {
             self.noConversationLabel.alpha = 0
-            self.onboardingHint.alpha = 0
         }
     }
 
@@ -424,17 +426,19 @@ final class ConversationListViewController: UIViewController {
     func applyFilter(_ filter: ConversationFilter) {
         self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
-        //self.setupSearchController()
+        self.setupSearchController()
 
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
         filterContainerView.isHidden = self.listContentController.listViewModel.isEmptyPlaceholderVisible
+        configureEmptyPlaceholder()
     }
 
     func clearFilter() {
         listContentController.listViewModel.selectedFilter = .none
         setupRightNavigationBarButtons()
-        //setupSearchController()
+        setupSearchController()
         filterContainerView.isHidden = true
+        configureEmptyPlaceholder()
     }
 
     @objc

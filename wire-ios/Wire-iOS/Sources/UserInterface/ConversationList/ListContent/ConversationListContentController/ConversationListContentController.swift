@@ -45,7 +45,6 @@ final class ConversationListContentController: UICollectionViewController {
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
-    private var emptyPlaceholderView: EmptyPlaceholderView!
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
@@ -96,17 +95,12 @@ final class ConversationListContentController: UICollectionViewController {
         guard SelfUser.provider != nil else { return }
 
         updateVisibleCells()
-        emptyPlaceholderView.isHidden = true
 
         scrollToCurrentSelection(animated: false)
 
         token = NotificationCenter.default.addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
             self?.activeMediaPlayerChanged()
         }
-    }
-
-    override func viewDidLoad() {
-        setupEmptyPlaceholder()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -130,7 +124,6 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.reloadData()
         ensureCurrentSelection()
 
-        configureEmptyPlaceholder()
         // we MUST call layoutIfNeeded here because otherwise bad things happen when we close the archive, reload the conv
         // and then unarchive all at the same time
         view.layoutIfNeeded()
@@ -155,24 +148,6 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.accessibilityIdentifier = "conversation list"
         collectionView.backgroundColor = .clear
         clearsSelectionOnViewWillAppear = false
-    }
-
-    private func setupEmptyPlaceholder() {
-        emptyPlaceholderView = EmptyPlaceholderView(content: listViewModel.emptyPlaceholderForSelectedFilter)
-        view.addSubview(emptyPlaceholderView)
-        emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            emptyPlaceholderView.topAnchor.constraint(equalTo: view.topAnchor),
-            emptyPlaceholderView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            emptyPlaceholderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            emptyPlaceholderView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-    }
-
-    private func configureEmptyPlaceholder() {
-        emptyPlaceholderView.configure(with: listViewModel.emptyPlaceholderForSelectedFilter)
-        emptyPlaceholderView.isHidden = !listViewModel.isEmptyPlaceholderVisible
     }
 
     // MARK: - section header
