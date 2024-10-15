@@ -950,6 +950,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         WaitingGroupTask(context: syncContext) { [self] in
             await fetchAndStoreFeatureConfig()
+            await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
         }
 
@@ -960,6 +961,34 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         performPostQuickSyncE2EIActions()
+    }
+
+    /// Calculate supported protocols for self user in case they are empty
+    /// - note: Supported protocols are calculated only during slow sync
+    /// or while resolving 1-1 conversations (MLS enabled).
+    /// It fixes users that updates to latest version without having a supported-protocol.
+    /// This could be removed once MLS is enabled.
+    private func calculateSelfSupportedProtocolsIfNeeded() async {
+        await syncContext.perform { [syncContext] in
+            let service = SupportedProtocolsService(context: syncContext)
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            if selfUser.supportedProtocols.isEmpty {
+                WireLogger.supportedProtocols.warn("no supported protocols found")
+                selfUser.supportedProtocols = service.calculateSupportedProtocols()
+                syncContext.saveOrRollback()
+            }
+        }
+    }
+
+    private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+        let supportedProtocolService = SupportedProtocolsService(context: context)
+        let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+
+        return ResolveOneOnOneConversationsUseCase(
+            context: context,
+            supportedProtocolService: supportedProtocolService,
+            resolver: resolver
+        )
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
