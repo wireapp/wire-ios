@@ -28,7 +28,7 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
 
     private let cellNameLabel: UILabel = {
         let label = DynamicFontLabel(
-            fontSpec: .normalSemiboldFont,
+            style: .body2,
             color: SemanticColors.Label.textDefault)
 
         label.numberOfLines = 0
