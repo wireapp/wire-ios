@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import UIKit
 import WireCommonComponents
 import WireDesign
@@ -30,6 +31,8 @@ final class ConversationCreateNameCell: UICollectionViewCell {
     )
 
     let textField = WireTextField()
+
+    private var cancellables = Set<AnyCancellable>()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,6 +49,7 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         setupGroupNameLabel()
         setupTextField()
         setupConstraints()
+        setupNotifications()
     }
 
     private func setupStackView() {
@@ -65,7 +69,6 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         textField.borderStyle = .roundedRect
         textField.layer.borderColor = SemanticColors.SearchBar.borderInputView.cgColor
         textField.font = .font(for: .body1)
-        textField.delegate = self
         stackView.addArrangedSubview(textField)
     }
 
@@ -79,15 +82,18 @@ final class ConversationCreateNameCell: UICollectionViewCell {
             textField.heightAnchor.constraint(equalToConstant: 46)
         ])
     }
-    }
 
-extension ConversationCreateNameCell: UITextFieldDelegate {
+    private func setupNotifications() {
+        NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification, object: textField)
+            .sink { [weak self] _ in
+                self?.groupNameLabel.textColor = UIColor.accent()
+            }
+            .store(in: &cancellables)
 
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        groupNameLabel.textColor = UIColor.accent()
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        groupNameLabel.textColor = SemanticColors.Label.textUserPropertyCellName
+        NotificationCenter.default.publisher(for: UITextField.textDidEndEditingNotification, object: textField)
+            .sink { [weak self] _ in
+                self?.groupNameLabel.textColor = SemanticColors.Label.textUserPropertyCellName
+            }
+            .store(in: &cancellables)
     }
 }
