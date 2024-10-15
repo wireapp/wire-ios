@@ -19,6 +19,7 @@
 import WireTestingPackage
 import WireTransport
 import XCTest
+import WireSettingsUI
 
 @testable import Wire
 
@@ -27,6 +28,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     var sut: SettingsTableViewController!
+    private var mockSettingsCoordinator: AnySettingsCoordinator!
     var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
     var settingsPropertyFactory: SettingsPropertyFactory!
     var userSession: UserSessionMock!
@@ -35,8 +37,12 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - setUp
 
+    @MainActor
+    override func setUp() async throws {
+        mockSettingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
+    }
+
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         selfUser = MockZMEditableUser()
 
@@ -56,7 +62,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+            settingsCoordinator: mockSettingsCoordinator
         )
 
         MockUserRight.isPermitted = true
@@ -65,6 +71,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        mockSettingsCoordinator = nil
         snapshotHelper = nil
         sut = nil
         settingsCellDescriptorFactory = nil
@@ -135,7 +142,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         let group = settingsCellDescriptorFactory.optionsGroup
         sut = SettingsTableViewController(
             group: group as! SettingsInternalGroupCellDescriptorType,
-            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+            settingsCoordinator: mockSettingsCoordinator
         )
 
         sut.view.backgroundColor = .black
@@ -156,7 +163,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+            settingsCoordinator: mockSettingsCoordinator
         )
 
         // then
@@ -171,7 +178,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+            settingsCoordinator: mockSettingsCoordinator
         )
 
         // then
@@ -185,7 +192,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         let group = SettingsCellDescriptorFactory.darkThemeGroup(
             for: settingsPropertyFactory.property(.darkMode),
-            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+            settingsCoordinator: mockSettingsCoordinator
         )
         try verify(group: group)
     }
@@ -199,7 +206,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         let group = try XCTUnwrap(group as? SettingsInternalGroupCellDescriptorType)
         sut = SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+            settingsCoordinator: mockSettingsCoordinator
         )
 
         sut.view.backgroundColor = .black

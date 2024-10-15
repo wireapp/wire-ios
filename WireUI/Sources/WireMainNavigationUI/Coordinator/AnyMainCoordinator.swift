@@ -37,6 +37,7 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>
     private let _presentViewController: @MainActor (_ viewController: UIViewController) async -> Void
     private let _dismissPresentedViewController: @MainActor () async -> Void
 
+    @MainActor
     public init<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator
     ) where MainCoordinator.Dependencies == Dependencies {

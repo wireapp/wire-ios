@@ -18,13 +18,14 @@
 
 import WireSyncEngineSupport
 import WireTestingPackage
+import WireMainNavigationUI
 import XCTest
 
 @testable import Wire
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
-    private var mockMainCoordinator: MockMainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator<Wire.MainCoordinatorDependencies>!
     private var sut: ConversationViewController!
     private var mockConversation: ZMConversation!
     private var serviceUser: ZMUser!
@@ -39,9 +40,14 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         uiMOC = coreDataFixture.coreDataStack.viewContext
     }
 
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
         super.setUp()
-        mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
@@ -63,7 +69,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
             conversation: mockConversation,
             visibleMessage: nil,
             userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
+            mainCoordinator: mockMainCoordinator,
             mediaPlaybackManager: .init(name: nil, userSession: userSession),
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable()

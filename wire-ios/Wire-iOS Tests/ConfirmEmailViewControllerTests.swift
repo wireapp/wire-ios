@@ -18,6 +18,7 @@
 
 import WireTestingPackage
 import XCTest
+import WireSettingsUI
 
 @testable import Wire
 
@@ -28,19 +29,21 @@ final class ConfirmEmailViewControllerTests: XCTestCase {
     private var sut: ConfirmEmailViewController!
     private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
+    private var settingsCoordinator: AnySettingsCoordinator!
 
     // MARK: setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
+        settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
         sut = ConfirmEmailViewController(
             newEmail: "bill@wire.com",
             delegate: nil,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: true,
-            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+            settingsCoordinator: settingsCoordinator
         )
         sut.overrideUserInterfaceStyle = .dark
     }
@@ -48,6 +51,7 @@ final class ConfirmEmailViewControllerTests: XCTestCase {
     // MARK: tearDown
 
     override func tearDown() {
+        settingsCoordinator = nil
         snapshotHelper = nil
         userSession = nil
         sut = nil

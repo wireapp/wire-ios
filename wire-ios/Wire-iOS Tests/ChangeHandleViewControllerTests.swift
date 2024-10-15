@@ -18,6 +18,7 @@
 
 import WireTestingPackage
 import XCTest
+import WireSettingsUI
 
 @testable import Wire
 
@@ -27,11 +28,13 @@ final class ChangeHandleViewControllerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     private var mockSelfUser: MockUserType!
+    private var settingsCoordinator: AnySettingsCoordinator!
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
@@ -43,11 +46,10 @@ final class ChangeHandleViewControllerTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        settingsCoordinator = nil
         snapshotHelper = nil
         mockSelfUser = nil
         SelfUser.provider = nil
-
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
@@ -92,7 +94,7 @@ final class ChangeHandleViewControllerTests: XCTestCase {
             state: state,
             useTypeIntrinsicSizeTableView: true,
             federationEnabled: federationEnabled,
-            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+            settingsCoordinator: settingsCoordinator
         )
         sut.overrideUserInterfaceStyle = .light
         snapshotHelper.verify(matching: sut.prepareForSettingsSnapshots(), file: file, testName: testName, line: line)
