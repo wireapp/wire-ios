@@ -160,7 +160,8 @@ public final class UserRepository: UserRepositoryProtocol {
                 ZMUser.completeProfileAssetIdentifierKey
             ]
 
-            /// Do not update assets if user has local modifications.
+            /// Do not update assets if user has local modifications: a possible explanation is that if user has local changes to its assets
+            /// we don't want to update them and keep these changes as is until they're synced.
             if !user.hasLocalModifications(forKeys: assetKeys) {
                 let previewAssetKey = event.assets?
                     .first(where: { $0.size == .preview })
