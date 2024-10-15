@@ -337,7 +337,11 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        await sut.deleteUserAccount(for: selfUser, at: .now)
+        try await sut.deleteUserAccount(
+            with: Scaffolding.userID,
+            domain: nil,
+            at: .now
+        )
 
         // Then
 
@@ -360,7 +364,11 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        await sut.deleteUserAccount(for: user, at: .now)
+        try await sut.deleteUserAccount(
+            with: Scaffolding.userID,
+            domain: nil,
+            at: .now
+        )
 
         // Then
 
