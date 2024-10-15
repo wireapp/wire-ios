@@ -33,8 +33,8 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
 
     private var coreDataFixture: CoreDataFixture!
 
-    override func setUp() async throws {
-        await MainActor.run {
+    override func setUp() {
+        super.setUp()
 
             coreDataFixture = CoreDataFixture()
 

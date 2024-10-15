@@ -35,8 +35,8 @@ final class ProfileViewControllerTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-
-        UIColor.setAccentOverride(.blue)
+        super.setUp()
+        accentColor = .blue
         snapshotHelper = SnapshotHelper()
         let teamIdentifier = UUID()
         selfUser = MockUser.createSelfUser(name: "George Johnson", inTeam: teamIdentifier)
@@ -70,12 +70,11 @@ final class ProfileViewControllerTests: XCTestCase {
         mockUser = nil
         selfUser = nil
         mockViewModel = nil
-        UIColor.setAccentOverride(nil)
+        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
-    @MainActor
     func test_ProfileInfo() {
         // WHEN
         sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
@@ -84,7 +83,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_ProfileInfo_UserWithoutName() {
         // GIVEN
         mockUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: nil)
@@ -100,7 +98,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_ProfileInfo_WithLegalHold_InNavigationController() {
         // GIVEN
         mockViewModel.hasLegalHoldItem = true
@@ -114,7 +111,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: navWrapperController)
     }
 
-    @MainActor
     func test_ProfileInfo_BottomAction_OpenOneToOne() {
         // WHEN
         sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
@@ -124,7 +120,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_ProfileInfo_BottomAction_OpenSelfProfile() {
         // GIVEN
         mockViewModel.user = selfUser
@@ -137,7 +132,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_ProfileInfo_BottomAction_RemoveFromGroup() {
         // WHEN
         sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
@@ -147,7 +141,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_ProfileInfo_BottomAction_Multiple() {
         // WHEN
         sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
@@ -157,7 +150,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_ProfileInfo_HasClientListTab_IncomingRequest() {
         // GIVEN
         mockViewModel.hasUserClientListTab = true
@@ -173,7 +165,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_ProfileInfo_HasClientListTab_IncomingRequest_Classified() {
         // GIVEN
         mockViewModel.hasUserClientListTab = true
@@ -190,7 +181,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_ProfileInfo_HasClientListTab_IncomingRequest_NotClassified() {
         // GIVEN
         mockViewModel.hasUserClientListTab = true
@@ -207,7 +197,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_ProfileInfo_NonTeamMember_BottomAction_Connect() {
         // GIVEN
         mockUser.teamIdentifier = nil
@@ -227,7 +216,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_OneToOneContext_HasClientListTab_BottomAction_CreateGroup() {
         // GIVEN
         mockViewModel.hasUserClientListTab = true
@@ -241,7 +229,6 @@ final class ProfileViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    @MainActor
     func test_DeviceListContext_HasClientListTab() {
         // GIVEN
         mockViewModel.hasUserClientListTab = true
@@ -256,7 +243,6 @@ final class ProfileViewControllerTests: XCTestCase {
 
     // MARK: Data Refresh tests
 
-    @MainActor
     func testItRequestsDataRefeshForTeamMembers() {
         // GIVEN
         mockUser.isTeamMember = true
@@ -269,7 +255,6 @@ final class ProfileViewControllerTests: XCTestCase {
         XCTAssertEqual(mockUser.refreshMembershipCount, 1)
     }
 
-    @MainActor
     func testItDoesNotRequestsDataRefeshForNonTeamMembers() {
         // GIVEN
         mockUser.isTeamMember = false
