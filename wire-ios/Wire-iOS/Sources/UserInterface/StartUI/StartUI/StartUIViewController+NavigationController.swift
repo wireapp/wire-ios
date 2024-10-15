@@ -43,7 +43,7 @@ extension StartUIViewController {
                 preSelectedParticipants: nil,
                 userSession: userSession
             )
-            navigationController?.pushViewController(conversationCreationController, animated: false)
+            navigationController?.pushViewController(conversationCreationController, animated: true)
         }
         button.addAction(action, for: .touchUpInside)
 
