@@ -19,11 +19,11 @@
 import CoreData
 
 extension NSManagedObjectContext {
-    
+
     /// Saves or rollback changes if saving fails
     ///
     /// This is a lighter implementation of the `saveOrRollback`objc- method for `WireDataModel`.
-     func saveOrRevert() throws {
+    func saveOrRevert() throws {
         guard hasChanges else { return }
 
         do {
@@ -33,5 +33,5 @@ extension NSManagedObjectContext {
             throw error
         }
     }
-    
+
 }
