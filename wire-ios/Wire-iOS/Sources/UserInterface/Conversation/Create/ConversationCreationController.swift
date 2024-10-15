@@ -216,16 +216,6 @@ final class ConversationCreationController: UIViewController {
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
         navigationItem.rightBarButtonItem = nextButtonItem
-
-        // Ensure title supports LargeContentViewer
-        navigationItem.titleView?.isAccessibilityElement = true
-        navigationItem.titleView?.accessibilityTraits = .header
-        navigationItem.titleView?.accessibilityLabel = navigationItem.title
-
-        if let titleView = navigationItem.titleView {
-            titleView.showsLargeContentViewer = true
-            titleView.largeContentTitle = navigationItem.title
-        }
     }
 
     func proceedWith(value: WireTextField.Value) {
