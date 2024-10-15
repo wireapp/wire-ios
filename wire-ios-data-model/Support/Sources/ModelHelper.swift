@@ -55,11 +55,20 @@ public struct ModelHelper {
     public func createUser(
         id: UUID = .init(),
         domain: String? = nil,
+        name: String? = nil,
+        handle: String? = nil,
+        email: String? = nil,
+        supportedProtocols: Set<WireDataModel.MessageProtocol> = [],
         in context: NSManagedObjectContext
     ) -> ZMUser {
         let user = ZMUser.insertNewObject(in: context)
         user.remoteIdentifier = id
         user.domain = domain
+        user.name = name
+        user.handle = handle
+        user.emailAddress = email
+        user.supportedProtocols = supportedProtocols
+
         return user
     }
 
