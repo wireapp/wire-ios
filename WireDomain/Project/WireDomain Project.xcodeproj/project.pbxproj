@@ -34,6 +34,7 @@
 		C97C015A2CB40010000683C5 /* FederationDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01572CB40010000683C5 /* FederationDeleteEventProcessorTests.swift */; };
 		C97C015C2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C015B2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift */; };
 		C97C015F2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C015E2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift */; };
+		C97C01BB2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */; };
 		C9841A1F2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
 		C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */; };
@@ -167,6 +168,7 @@
 		C97C01572CB40010000683C5 /* FederationDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C015B2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertiesSetEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C015E2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsUseCaseTests.swift; sourceTree = "<group>"; };
+		C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
@@ -546,6 +548,7 @@
 		C9C8FDCC2C9DBE0E00702B91 /* UserEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
+				C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */,
 				C97C014F2CB01BDF000683C5 /* OneOnOneResolverTests.swift */,
 				C97C01512CB01BEF000683C5 /* UserConnectionEventProcessorTests.swift */,
 				C97C015B2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift */,
@@ -993,6 +996,7 @@
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */,
 				C97C015F2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift in Sources */,
+				C97C01BB2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift in Sources */,
 				C97C013D2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift in Sources */,
 				C97C01502CB01BDF000683C5 /* OneOnOneResolverTests.swift in Sources */,
 				C9C8FDD22C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift in Sources */,
