@@ -22,10 +22,6 @@ import Foundation
 
 public enum PushChannelServiceError: Error {
 
-    /// An enqueued url request is invalid.
-
-    case invalidRequest
-
     /// An access token is required but none is available.
 
     case missingAccessToken
