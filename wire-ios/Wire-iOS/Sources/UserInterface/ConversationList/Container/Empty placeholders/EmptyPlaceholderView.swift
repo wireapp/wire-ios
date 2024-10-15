@@ -91,6 +91,7 @@ final class EmptyPlaceholderView: UIView {
         arrowView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         connectWithPeopleButton.translatesAutoresizingMaskIntoConstraints = false
+        let arrowOffset: CGFloat = isIPadRegular() ? 30 : 20
 
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -99,7 +100,7 @@ final class EmptyPlaceholderView: UIView {
 
             arrowView.topAnchor.constraint(equalTo: topAnchor),
             arrowView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -40),
-            arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -arrowOffset),
 
             connectWithPeopleButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 10),
             connectWithPeopleButton.centerXAnchor.constraint(equalTo: centerXAnchor)
