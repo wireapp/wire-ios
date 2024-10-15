@@ -367,26 +367,3 @@ private extension AppDelegate {
         return .standard
     }
 }
-
-/*
- Failing tests:
-     AddParticipantsViewControllerSnapshotTests.testThatTabBarIsShown_WhenBotCanBeAdded()
-     ArchivedListViewControllerSnapshotTests.testEmpty()
-     ArchivedListViewControllerSnapshotTests.testNonEmpty()
-     CallParticipantsListViewControllerTests.testCallParticipants_Truncated_Dark()
-     CallParticipantsListViewControllerTests.testCallParticipants_Truncated_Light()
-     CameraKeyboardViewControllerTests.testInitialStateLayoutSizeRegularLandscape()
-     CameraKeyboardViewControllerTests.testInitialStateLayoutSizeRegularLandscape_CameraAccessGranted()
-     CameraKeyboardViewControllerTests.testInitialStateLayoutSizeRegularLandscape_LibraryAccessGranted()
-     CameraKeyboardViewControllerTests.testInitialStateLayoutSizeRegularPortrait()
-     CameraKeyboardViewControllerTests.testInitialStateLayoutSizeRegularPortrait_CameraAccessGranted()
-     CameraKeyboardViewControllerTests.testInitialStateLayoutSizeRegularPortrait_LibraryAccessGranted()
-     ConversationListViewControllerTests.testForEverythingArchived()
-     ConversationListViewControllerTests.testForNoConversations()
-     SelfProfileViewControllerTests.testForAUserWithALongName()
-     SelfProfileViewControllerTests.testForAUserWithNoTeam()
-     StartUIViewControllerSnapshotTests.testStartUIViewControllerNoContact()
-     StartUIViewControllerSnapshotTests.testStartUIViewControllerNoContactWhenSelfIsPartner()
-     StartUIViewControllerSnapshotTests.testStartUIViewControllerNoContactWhenSelfIsTeamMember()
-     StartUIViewControllerSnapshotTests.testStartUIViewControllerWrappedInNavigationController()
- */
