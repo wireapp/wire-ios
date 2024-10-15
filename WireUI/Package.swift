@@ -4,43 +4,52 @@
 import PackageDescription
 
 let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
-let SnapshotTestReferenceDirectoryPlugin = Target.PluginUsage.plugin(name: "SnapshotTestReferenceDirectoryPlugin", package: "WireFoundation")
 
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireAccountImage", targets: ["WireAccountImage"]),
+        .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
+        .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
+        .library(name: "WireMainNavigationUI", targets: ["WireMainNavigationUI"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
-        .library(name: "WireSidebar", targets: ["WireSidebar"]),
-        .library(name: "WireMainNavigation", targets: ["WireMainNavigation"])
+        .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
+        .library(name: "WireSidebarUI", targets: ["WireSidebarUI"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
+        .target(name: "WireAccountImageUI", dependencies: ["WireFoundation"]),
+        .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
+
+        .target(name: "WireConversationListUI"),
+        .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
+
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign", WireTestingPackage]),
+        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
+
+        .target(name: "WireMainNavigationUI"),
+        .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
 
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
-        .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage]),
+        .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
 
-        .target(name: "WireMainNavigation", dependencies: ["WireDesign"]),
-        .testTarget(name: "WireMainNavigationTests", dependencies: ["WireMainNavigation", WireTestingPackage]),
+        .target(name: "WireSettingsUI"),
+        .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI"]),
 
-        .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage", WireTestingPackage]),
-
-        .target(name: "WireSidebar", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireSidebarTests", dependencies: ["WireSidebar", WireTestingPackage])
+        .target(name: "WireSidebarUI", dependencies: ["WireFoundation"]),
+        .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
     ]
 )
 
 for target in package.targets {
-    target.plugins = (target.plugins ?? []) + [SnapshotTestReferenceDirectoryPlugin]
+    if target.isTest {
+        target.dependencies += [WireTestingPackage]
+    }
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
