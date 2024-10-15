@@ -62,6 +62,7 @@ struct UserEventProcessor {
         case .contactJoin(let event):
             /// This event is not processed, we only show a notification to the user.
             break
+
         case .delete(let event):
             try await deleteEventProcessor.processEvent(event)
 
