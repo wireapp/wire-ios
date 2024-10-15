@@ -21,8 +21,8 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireMainNavigation
-import WireSidebar
+import WireMainNavigationUI
+import WireSidebarUI
 import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
@@ -195,6 +195,7 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.view.backgroundColor = .clear
 
         mainTabBarController = .init()
+        mainTabBarController.applyMainTabBarControllerAppearance()
         mainTabBarController.conversations = (conversationListViewController, nil)
         mainTabBarController.folders = conversationListWithFoldersViewController
         wireSplitViewController.leftViewController = mainTabBarController
