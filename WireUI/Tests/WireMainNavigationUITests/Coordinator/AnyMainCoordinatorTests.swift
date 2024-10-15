@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMainNavigationUI
 import XCTest
+
+@testable  import WireMainNavigationUI
 
 final class AnyMainCoordinatorTests: XCTestCase {
 
@@ -32,5 +33,152 @@ final class AnyMainCoordinatorTests: XCTestCase {
     override func tearDown() {
         sut = nil
         mockMainCoordinator = nil
+    }
+
+    @MainActor
+    func testShowConversationListIsInvoked() async {
+        // When
+        await sut.showConversationList(conversationFilter: .groups)
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showConversationList_Invocations.count, 1)
+        XCTAssertEqual(mockMainCoordinator.showConversationList_Invocations.first, .groups)
+    }
+
+    @MainActor
+    func testShowArchiveIsInvoked() async {
+        // When
+        await sut.showArchive()
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showArchive_Invocations.count, 1)
+    }
+
+    @MainActor
+    func testShowSettingsIsInvoked() async {
+        // When
+        await sut.showSettings()
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showSettings_Invocations.count, 1)
+    }
+
+    @MainActor
+    func testShowConversationIsInvokedWithoutMessage() async {
+        // Given
+        let conversation = PreviewConversationModel()
+
+        // When
+        await sut.showConversation(conversation: conversation, message: nil)
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showConversation_Invocations.count, 1)
+        XCTAssertEqual(mockMainCoordinator.showConversation_Invocations.first?.conversation, conversation)
+        XCTAssertNil(mockMainCoordinator.showConversation_Invocations.first?.message)
+    }
+
+    @MainActor
+    func testShowConversationIsInvokedWithMessage() async {
+        // Given
+        let conversation = PreviewConversationModel()
+        let message: Void = ()
+
+        // When
+        await sut.showConversation(conversation: conversation, message: message)
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showConversation_Invocations.count, 1)
+        XCTAssertEqual(mockMainCoordinator.showConversation_Invocations.first?.conversation, conversation)
+        XCTAssertNotNil(mockMainCoordinator.showConversation_Invocations.first?.message)
+    }
+
+    @MainActor
+    func testHideConversationIsInvoked() {
+        // When
+        sut.hideConversation()
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.hideConversation_Invocations.count, 1)
+    }
+
+    @MainActor
+    func testShowSettingsContentIsInvoked() {
+        // When
+        sut.showSettingsContent(.advanced)
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showSettingsContent_Invocations.count, 1)
+        XCTAssertEqual(mockMainCoordinator.showSettingsContent_Invocations.first, .advanced)
+    }
+
+    @MainActor
+    func testHideSettingsContentIsInvoked() {
+        // When
+        sut.hideSettingsContent()
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.hideSettingsContent_Invocations.count, 1)
+    }
+
+    @MainActor
+    func testShowSelfProfileIsInvoked() async {
+        // When
+        await sut.showSelfProfile()
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showSelfProfile_Invocations.count, 1)
+    }
+
+    @MainActor
+    func testShowUserProfileIsInvoked() async {
+        // Given
+        let user = MockUser()
+
+        // When
+        await sut.showUserProfile(user: user)
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showUserProfile_Invocations.count, 1)
+        XCTAssertEqual(mockMainCoordinator.showUserProfile_Invocations.first, user)
+    }
+
+    @MainActor
+    func testShowConnectIsInvoked() async {
+        // When
+        await sut.showConnect()
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showConnect_Invocations.count, 1)
+    }
+
+    @MainActor
+    func testShowCreateGroupConversationIsInvoked() async {
+        // When
+        await sut.showCreateGroupConversation()
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.showCreateGroupConversation_Invocations.count, 1)
+    }
+
+    @MainActor
+    func testPresentViewControllerIsInvoked() async {
+        // Given
+        let viewController = UIViewController()
+
+        // When
+        await sut.presentViewController(viewController)
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.presentViewController_Invocations.count, 1)
+        XCTAssertEqual(mockMainCoordinator.presentViewController_Invocations.first, viewController)
+    }
+
+    @MainActor
+    func testDismissPresentedViewControllerIsInvoked() async {
+        // When
+        await sut.dismissPresentedViewController()
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.dismissPresentedViewController_Invocations.count, 1)
     }
 }
