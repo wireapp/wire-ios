@@ -16,25 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import SwiftUI
 
-/// Process user contact join events.
+// MARK: - ShareSheet
 
-protocol UserContactJoinEventProcessorProtocol {
+struct ShareSheet: UIViewControllerRepresentable {
+    var activityItems: [Any]
+    var applicationActivities: [UIActivity]?
 
-    /// Process a user contact join event.
-    ///
-    /// - Parameter event: A user contact join event.
-
-    func processEvent(_ event: UserContactJoinEvent) async throws
-
-}
-
-struct UserContactJoinEventProcessor: UserContactJoinEventProcessorProtocol {
-
-    func processEvent(_: UserContactJoinEvent) async throws {
-        // TODO: [WPB-10192]
-        assertionFailure("not implemented yet")
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: applicationActivities)
+        return controller
     }
 
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

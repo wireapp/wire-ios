@@ -17,26 +17,28 @@
 //
 
 import Foundation
+import SwiftUI
 
-struct UserDeleteEventDecoder {
+final class UserQRCodeViewModel: ObservableObject {
 
-    func decode(
-        from container: KeyedDecodingContainer<UserEventCodingKeys>
-    ) throws -> UserDeleteEvent {
-        let qualifiedUserID = try container.decode(
-            QualifiedID.self,
-            forKey: .qualifiedID
+    @Published var profileLink: String
+    @Published var profileLinkQRCode: UIImage
+    @Published var handle: String
+
+    init(
+        profileLink: String,
+        handle: String
+    ) {
+        self.profileLink = profileLink
+        let qrCodeImage = QRCodeGenerator.generateQRCode(from: profileLink)
+        let overlaySize = CGSize(width: qrCodeImage.size.width * 0.25, height: qrCodeImage.size.height * 0.25)
+        self.profileLinkQRCode = qrCodeImage.addImageCentered(
+            UIImage(resource: .Wire.roundIcon),
+            overlaySize: overlaySize,
+            borderWidth: 1,
+            borderColor: .white
         )
-
-        let time = try container.decodeIfPresent(
-            UTCTimeMillis.self,
-            forKey: .time
-        )
-
-        return UserDeleteEvent(
-            qualifiedUserID: qualifiedUserID,
-            time: time?.date ?? .now
-        )
+        self.handle = "@" + handle
     }
 
 }
