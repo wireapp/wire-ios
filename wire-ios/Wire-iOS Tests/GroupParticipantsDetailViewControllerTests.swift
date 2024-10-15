@@ -45,9 +45,8 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
     private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
-    @MainActor
-    override func setUp() async throws {
-
+    override func setUp() {
+        super.setUp()
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()

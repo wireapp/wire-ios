@@ -27,10 +27,8 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
     private var sut: SettingsTextCell!
     private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
 
-    @MainActor
-    override func setUp() async throws {
-        try await super.setUp()
-
+    override func setUp() {
+        super.setUp()
         snapshotHelper = .init()
         sut = SettingsTextCell()
 

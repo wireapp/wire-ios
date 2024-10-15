@@ -31,7 +31,7 @@ final class FolderPickerControllerSnapshotTests: XCTestCase {
         snapshotHelper = SnapshotHelper()
         mockConversation = MockConversation.groupConversation()
         directory = MockConversationDirectory()
-        UIColor.setAccentOverride(.blue)
+        accentColor = .purple
     }
 
     override func tearDown() {

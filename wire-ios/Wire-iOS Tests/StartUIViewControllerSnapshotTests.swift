@@ -62,20 +62,11 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
-        userSession = UserSessionMock(
-            selfUser: selfUser,
-            selfUserLegalHoldSubject: selfUser,
-            editableSelfUser: selfUser
-        )
-    }
-
-    @MainActor
-    override func setUp() async throws {
-        try await super.setUp()
-        mockMainCoordinator = .init()
+        userSession = UserSessionMock()
     }
 
     // MARK: - tearDown

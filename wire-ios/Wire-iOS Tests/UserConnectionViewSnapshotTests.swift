@@ -49,7 +49,7 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = SnapshotHelper()
-        UIColor.setAccentOverride(.blue)
+        accentColor = .purple
         mockUser = SwiftMockLoader.mockUsers().first!
         sut = sutForUser(mockUser)
     }

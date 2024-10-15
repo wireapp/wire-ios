@@ -35,9 +35,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - setUp
 
-    @MainActor
-    override func setUp() async throws {
-
+    override func setUp() {
+        super.setUp()
         snapshotHelper = SnapshotHelper()
         selfUser = MockZMEditableUser()
 
@@ -80,7 +79,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
-    @MainActor
     func testForSettingGroup() throws {
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
@@ -92,7 +90,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         try verify(group: group)
     }
 
-    @MainActor
     private func testForAccountGroup(
         federated: Bool,
         disabledEditing: Bool = false,
@@ -107,36 +104,30 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         try verify(group: group, file: file, testName: testName, line: line)
     }
 
-    @MainActor
     func testForAccountGroup_Federated() throws {
         try testForAccountGroup(federated: true)
     }
 
-    @MainActor
     func testForAccountGroup_NotFederated() throws {
         try testForAccountGroup(federated: false)
     }
 
-    @MainActor
     func testForAccountGroupWithDisabledEditing_Federated() throws {
         try testForAccountGroup(federated: true, disabledEditing: true)
     }
 
-    @MainActor
     func testForAccountGroupWithDisabledEditing_NotFederated() throws {
         try testForAccountGroup(federated: false, disabledEditing: true)
     }
 
     // MARK: - options
 
-    @MainActor
     func testForOptionsGroup() throws {
         Settings.shared[.chatHeadsDisabled] = false
         let group = settingsCellDescriptorFactory.optionsGroup
         try verify(group: group)
     }
 
-    @MainActor
     func testForOptionsGroupFullTableView() {
         setToLightTheme()
         userSession.isAppLockAvailable = true
@@ -157,7 +148,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut, size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height))
     }
 
-    @MainActor
     func testThatApplockIsAvailableInOptionsGroup_WhenIsAvailable() {
         // given
         userSession.isAppLockAvailable = true
@@ -173,7 +163,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         XCTAssertTrue(settingsCellDescriptorFactory.isAppLockAvailable)
     }
 
-    @MainActor
     func testThatApplockIsNotAvailableInOptionsGroup_WhenIsNotAvailable() {
         // given
         userSession.isAppLockAvailable = false
@@ -191,7 +180,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - dark theme
 
-    @MainActor
     func testForDarkThemeOptionsGroup() throws {
         setToLightTheme()
 
@@ -202,7 +190,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         try verify(group: group)
     }
 
-    @MainActor
     private func verify(
         group: Any,
         file: StaticString = #file,
@@ -223,7 +210,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - advanced
 
-    @MainActor
     func testForAdvancedGroup() throws {
         let group = settingsCellDescriptorFactory.advancedGroup(userSession: userSession)
         try verify(group: group)
@@ -231,7 +217,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - data usage permissions
 
-    @MainActor
     func testForDataUsagePermissionsForTeamMember() throws {
         let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isTeamMember: true)
         try verify(group: group)

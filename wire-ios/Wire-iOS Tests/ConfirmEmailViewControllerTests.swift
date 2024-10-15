@@ -31,8 +31,8 @@ final class ConfirmEmailViewControllerTests: XCTestCase {
 
     // MARK: setUp
 
-    @MainActor
-    override func setUp() async throws {
+    override func setUp() {
+        super.setUp()
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         sut = ConfirmEmailViewController(

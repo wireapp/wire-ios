@@ -46,7 +46,6 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Helper method
 
-    @MainActor
     private func createSut(emailAddress: String?) -> UIViewController {
         let mockUser = MockUserType.createSelfUser(name: "User")
         let userProfile = MockUserProfile()
@@ -69,7 +68,6 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
     // MARK: Snapshot Tests
 
-    @MainActor
     func testForChangingExistingEmail() {
         // GIVEN & WHEN
         let viewController = createSut(emailAddress: "user@example.com")

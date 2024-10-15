@@ -39,10 +39,8 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         uiMOC = coreDataFixture.coreDataStack.viewContext
     }
 
-    @MainActor
-    override func setUp() async throws {
-        try await super.setUp()
-
+    override func setUp() {
+        super.setUp()
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         imageTransformerMock = .init()

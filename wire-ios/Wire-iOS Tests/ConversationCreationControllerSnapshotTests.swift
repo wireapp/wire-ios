@@ -33,7 +33,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = SnapshotHelper()
-        UIColor.setAccentOverride(.blue)
+        accentColor = .purple
     }
 
     // MARK: - tearDown

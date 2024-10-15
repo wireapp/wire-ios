@@ -31,7 +31,7 @@ final class IncomingRequestFooterTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = SnapshotHelper()
-        UIColor.setAccentOverride(.amber)
+        UIColor.setAccentOverride(.blue)
     }
 
     // MARK: - tearDown

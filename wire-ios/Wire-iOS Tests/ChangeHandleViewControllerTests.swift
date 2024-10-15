@@ -52,34 +52,28 @@ final class ChangeHandleViewControllerTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
-    @MainActor
     func testThatItRendersCorrectInitially() {
         verify(newHandle: nil, availability: .unknown)
     }
 
-    @MainActor
     func testThatItRendersCorrectInitially_Federated() {
         verify(newHandle: nil, availability: .unknown, federationEnabled: true)
     }
 
-    @MainActor
     func testThatItRendersCorrectNewHandleUnavailable() {
         verify(newHandle: "james", availability: .taken)
     }
 
-    @MainActor
     func testThatItRendersCorrectNewHandleAvailable() {
         verify(newHandle: "james_xXx", availability: .available)
     }
 
-    @MainActor
     func testThatItRendersCorrectNewHandleNotYetChecked() {
         verify(newHandle: "vanessa92", availability: .unknown)
     }
 
     // MARK: - Helper methods
 
-    @MainActor
     private func verify(
         currentHandle: String = "bruno",
         newHandle: String?,

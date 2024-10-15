@@ -204,7 +204,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                testName: String = #function,
                                                line: UInt = #line) {
         // GIVEN
-        // splitView?.layoutSize = .compact
+        // splitView?.layoutSize = .compact // TODO: remove?
         // WHEN
         setupSut(permissions: permissions)
         // THEN
@@ -255,7 +255,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                        testName: String = #function,
                                                        line: UInt = #line) {
         // GIVEN
-        // splitView?.layoutSize = .regularPortrait
+        // splitView?.layoutSize = .regularPortrait // TODO: remove?
         // splitView?.leftViewControllerWidth = 216
         // WHEN
         setupSut(permissions: permissions)
@@ -307,7 +307,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                 testName: String = #function,
                                                 line: UInt = #line) {
         // GIVEN
-        // splitView?.layoutSize = .regularLandscape
+        // splitView?.layoutSize = .regularLandscape // TODO: remove?
         // splitView?.leftViewControllerWidth = 216
         // WHEN
         setupSut(permissions: permissions)
@@ -354,7 +354,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                        testName: String = #function,
                                                        line: UInt = #line) {
         // GIVEN
-        // self.splitView?.layoutSize = .compact
+        // self.splitView?.layoutSize = .compact // TODO: remove?
         setupSut(permissions: permissions)
         self.prepareForSnapshot()
         // WHEN
@@ -405,7 +405,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
                                                        testName: String = #function,
                                                        line: UInt = #line) {
         // GIVEN
-        // splitView?.layoutSize = .compact
+        // splitView?.layoutSize = .compact // TODO: remove?
         setupSut(permissions: permissions)
         prepareForSnapshot()
         // WHEN
