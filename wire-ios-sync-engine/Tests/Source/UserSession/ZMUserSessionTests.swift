@@ -304,10 +304,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             results: [.success(())],
             context: syncMOC.notificationContext
         )
-        let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
-            result: .success(()),
-            context: syncMOC.notificationContext
-        )
 
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
@@ -317,7 +313,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // THEN
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
         XCTAssertEqual(mockGetFeatureConfigsActionHandler.performedActions.count, 1)
-        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
@@ -452,6 +447,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
         // GIVEN
+        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
         mockMLSService.performPendingJoins_MockMethod = {}
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
@@ -488,6 +484,22 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
 
         XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
-        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
+    }
+
+    func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {
+        self.syncMOC.performAndWait {
+            // GIVEN
+            ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
+
+            // WHEN
+            sut.didFinishQuickSync()
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        let supportedProtocols = syncMOC.performAndWait { ZMUser.selfUser(in: self.syncMOC).supportedProtocols }
+
+        XCTAssertTrue(supportedProtocols.contains(.proteus))
     }
 }
