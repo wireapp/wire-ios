@@ -20,7 +20,7 @@ set -Eeuo pipefail
 #
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-SWIFTLINT="$REPO_ROOT/scripts/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.55.1-macos/bin/swiftlint"
+SWIFTLINT="$REPO_ROOT/scripts/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.57.0-macos/bin/swiftlint"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping SwiftLint in CI environment"

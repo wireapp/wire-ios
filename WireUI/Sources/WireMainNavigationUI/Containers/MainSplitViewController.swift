@@ -26,17 +26,6 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 {
     // swiftlint:enable opening_brace
 
-    public typealias ConversationList = TabContainer.ConversationList
-    public typealias Archive = TabContainer.Archive
-    public typealias Settings = TabContainer.Settings
-
-    public typealias Conversation = TabContainer.Conversation
-    public typealias SettingsContent = UIViewController
-
-    public typealias Connect = UIViewController
-
-    public typealias NoConversationPlaceholderBuilder = () -> UIViewController
-
     private let secondaryColumnMinWidth: CGFloat = 360
 
     /// This property corresponds only to the border of the nested custom container view controller.

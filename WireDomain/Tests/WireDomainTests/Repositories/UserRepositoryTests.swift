@@ -232,7 +232,7 @@ final class UserRepositoryTests: XCTestCase {
     func testFetchSelfUser() async {
         // Given
 
-        modelHelper.createSelfUser(
+        let selfUser = modelHelper.createSelfUser(
             id: Scaffolding.userID,
             domain: nil,
             in: context
@@ -240,19 +240,19 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        let user = sut.fetchSelfUser()
+        let localSelfUser = sut.fetchSelfUser()
 
         // Then
 
         await context.perform {
-            XCTAssertEqual(user.remoteIdentifier, Scaffolding.userID)
+            XCTAssertEqual(selfUser, localSelfUser)
         }
     }
 
     func testFetchUser() async throws {
         // Given
 
-        modelHelper.createUser(
+        let user = modelHelper.createUser(
             id: Scaffolding.userID,
             domain: nil,
             in: context
@@ -260,12 +260,12 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        let user = try await sut.fetchUser(with: Scaffolding.userID, domain: nil)
+        let localUser = try await sut.fetchUser(with: Scaffolding.userID, domain: nil)
 
         // Then
 
         await context.perform {
-            XCTAssertEqual(user.remoteIdentifier, Scaffolding.userID)
+            XCTAssertEqual(user, localUser)
         }
     }
 
@@ -337,7 +337,11 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        await sut.deleteUserAccount(for: selfUser, at: .now)
+        try await sut.deleteUserAccount(
+            with: Scaffolding.userID,
+            domain: nil,
+            at: .now
+        )
 
         // Then
 
@@ -360,7 +364,11 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        await sut.deleteUserAccount(for: user, at: .now)
+        try await sut.deleteUserAccount(
+            with: Scaffolding.userID,
+            domain: nil,
+            at: .now
+        )
 
         // Then
 
