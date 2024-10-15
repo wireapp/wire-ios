@@ -70,4 +70,3 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
         }
     }
 }
-
