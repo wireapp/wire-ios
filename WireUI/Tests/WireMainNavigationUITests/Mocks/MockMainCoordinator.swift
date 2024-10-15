@@ -19,6 +19,7 @@
 import WireMainNavigationUI
 import UIKit
 
+/*
 final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
     typealias Dependencies = MockMainCoordinatorDependencies
 
@@ -74,3 +75,4 @@ final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
         <#code#>
     }
 }
+*/

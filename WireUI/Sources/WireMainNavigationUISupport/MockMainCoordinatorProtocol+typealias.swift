@@ -17,14 +17,15 @@
 //
 
 import WireMainNavigationUI
-import XCTest
 
-final class AnyMainCoordinatorTests: XCTestCase {
-
-    //private var mockMainCoordinator: MockMainCoordinator!
-    private var sut: AnyMainCoordinator<MockMainCoordinatorDependencies>!
-
-    override func setUp() {
-        //sut = .init(mainCoordinator: MockMainCoordinator())
-    }
+public extension MockMainCoordinatorProtocol {
+    typealias ConversationFilter = MainConversationFilter
+    typealias ConversationModel = MockConversationModel
+    typealias ConversationMessageModel = MockConversationMessageModel
+    typealias SettingsTopLevelMenuItem = MainSettingsTopLevelMenuItem
+    typealias User = MockUser
 }
+
+public struct MockConversationModel {}
+public struct MockConversationMessageModel {}
+public struct MockUser {}
