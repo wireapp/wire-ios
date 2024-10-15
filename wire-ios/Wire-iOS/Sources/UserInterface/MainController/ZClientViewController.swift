@@ -598,7 +598,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) { // TODO: use mainCoordinator and check if still needed
+    func openClientListScreen(for user: UserType) { // TODO: [WPB-11449] use mainCoordinator if possible
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {

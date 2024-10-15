@@ -22,7 +22,8 @@ final class CreateGuestRoomCell: StartUIIconCell {
         super.setupViews()
 
         icon = .guest
-        // TODO: title = PeoplePicker.QuickAction.createGuestRoom
+        // TODO: [WPB-11449] why is this string missing?
+        // title = PeoplePicker.QuickAction.createGuestRoom
         isAccessibilityElement = true
         accessibilityLabel = title
         accessibilityTraits.insert(.button)
