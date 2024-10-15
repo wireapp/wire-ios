@@ -312,6 +312,54 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
+    func testFetchConversation_It_Retrieves_Conversation_Locally() async {
+        // Given
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+        }
+
+        // When
+
+        let localConversation = await sut.fetchConversation(
+            with: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        XCTAssertEqual(conversation, localConversation)
+    }
+
+    func testStoreConversation_It_Stores_Conversation_Locally() async throws {
+        // Given
+
+        let groupConversation = Scaffolding.conversationGroupType
+        let id = try XCTUnwrap(groupConversation.qualifiedID?.uuid)
+        let domain = try XCTUnwrap(groupConversation.qualifiedID?.domain)
+
+        // When
+
+        await sut.storeConversation(Scaffolding.conversationGroupType, timestamp: .now)
+
+        // Then
+
+        let localConversation = await sut.fetchConversation(with: id, domain: domain)
+
+        XCTAssertEqual(localConversation?.remoteIdentifier, id)
+        XCTAssertEqual(localConversation?.teamRemoteIdentifier, groupConversation.teamID)
+        XCTAssertEqual(localConversation?.conversationType, .group)
+        XCTAssertEqual(localConversation?.messageProtocol, .proteus)
+        XCTAssertEqual(localConversation?.epoch, 0)
+        XCTAssertEqual(localConversation?.hasReadReceiptsEnabled, false)
+        XCTAssertEqual(localConversation?.accessMode, [.invite])
+        XCTAssertEqual(localConversation?.accessRoles, [.teamMember])
+    }
+
     private func checkLastMessage(
         in conversation: ZMConversation,
         isLeaveMessageFor user: ZMUser,
@@ -351,7 +399,7 @@ final class ConversationRepositoryTests: XCTestCase {
             failed: [conversationFailed]
         )
 
-        nonisolated(unsafe) static let conversationListError = ConversationList(
+        static let conversationListError = ConversationList(
             found: [conversationSelfTypeMissingId,
                     conversationGroupType,
                     conversationConnectionType,
