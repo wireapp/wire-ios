@@ -397,7 +397,7 @@ final class ConversationListViewModel: NSObject {
 
     func reloadConversationList() {
         updateAllSections()
-        delegate?.listViewModelShouldBeReloaded()//
+        delegate?.listViewModelShouldBeReloaded()
     }
 
     private func updateAllSections() {
