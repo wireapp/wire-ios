@@ -370,9 +370,6 @@ private extension AppDelegate {
 
 /*
  Failing tests:
-     CallQualityControllerTests.testThatCallFailureDebugAlertIsPresented_WhenCallIsTerminated()
-     CallQualityControllerTests.testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsNormal()
-     CallQualityControllerTests.testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsStillOngoing()
      ConversationImagesViewControllerTests.testForWrappedInNavigationController()
      ConversationImagesViewControllerTests.testThatItDisplaysCorrectToolbarForImage_Ephemeral()
      ConversationImagesViewControllerTests.testThatItDisplaysCorrectToolbarForImage_Normal()
