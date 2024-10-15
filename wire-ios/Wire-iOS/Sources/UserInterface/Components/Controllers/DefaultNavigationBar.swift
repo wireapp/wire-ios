@@ -46,7 +46,6 @@ class DefaultNavigationBar: UINavigationBar {
     func configureBackground() {
         isTranslucent = false
         barTintColor = SemanticColors.View.backgroundDefault
-        shadowImage = UIImage.singlePixelImage(with: UIColor.clear)
     }
 
 }
