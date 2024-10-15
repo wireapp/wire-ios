@@ -585,7 +585,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
 
-    // swiftlint:disable:next todo_requires_jira_link
     // TODO: [WPB-5917] re-enable and fix calling `legalHoldClient.deleteClientAndEndSession()`
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
         // given
