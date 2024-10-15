@@ -1,8 +1,0 @@
-sources:
-- ${PACKAGE_ROOT_DIR}/Sources/WireMainNavigationUI
-templates:
-- ${TARGET_DIR}/Sourcery/AutoMockable.stencil
-output:
-   ${DERIVED_SOURCES_DIR}
-args:
-   autoMockableImports: ["WireMainNavigationUI"]

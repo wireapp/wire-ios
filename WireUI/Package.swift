@@ -20,7 +20,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../SourceryPlugin"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
@@ -34,12 +33,7 @@ let package = Package(
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
 
         .target(name: "WireMainNavigationUI"),
-        .target(
-            name: "WireMainNavigationUISupport",
-            dependencies: ["WireMainNavigationUI"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "SourceryPlugin")]
-        ),
-        .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI", "WireMainNavigationUISupport"]),
+        .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
 
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
