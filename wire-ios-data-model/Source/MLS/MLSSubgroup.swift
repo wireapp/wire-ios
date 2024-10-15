@@ -18,9 +18,11 @@
 
 import Foundation
 
+/// Contains metadata about a subgroup. Used when fetching information about subgroup from the backend.
+
 public struct MLSSubgroup: Equatable {
 
-    public let cipherSuite: Int
+    public let cipherSuite: Int?
     public let epoch: Int
     public let epochTimestamp: Date?
     public let groupID: MLSGroupID
@@ -28,7 +30,7 @@ public struct MLSSubgroup: Equatable {
     public let parentQualifiedID: QualifiedID
 
     public init(
-        cipherSuite: Int,
+        cipherSuite: Int?,
         epoch: Int,
         epochTimestamp: Date?,
         groupID: MLSGroupID,

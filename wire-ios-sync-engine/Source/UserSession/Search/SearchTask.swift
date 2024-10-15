@@ -306,9 +306,8 @@ extension SearchTask {
     }
 
     func conversations(matchingQuery query: SearchRequest.Query, selfUser: ZMUser) -> [ZMConversation] {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: use the interface with team param?
-        // swiftlint:enable todo_requires_jira_link
         let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: query.string, selfUser: selfUser))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: ZMNormalizedUserDefinedNameKey, ascending: true)]
 

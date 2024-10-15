@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a user's team membership metadata was updated.
 
-public struct TeamMemberUpdateEvent: Equatable, Codable {
+public struct TeamMemberUpdateEvent: Equatable, Codable, Sendable {
 
     /// The team id.
 
@@ -29,5 +29,19 @@ public struct TeamMemberUpdateEvent: Equatable, Codable {
     /// The membership id.
 
     public let membershipID: UUID
+
+    /// Create a new `TeamMemberUpdateEvent`.
+    ///
+    /// - Parameters:
+    ///   - teamID: The id of the team.
+    ///   - membershipID: The membership ID.
+
+    public init(
+        teamID: UUID,
+        membershipID: UUID
+    ) {
+        self.teamID = teamID
+        self.membershipID = membershipID
+    }
 
 }

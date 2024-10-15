@@ -134,7 +134,10 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             let repository = FeatureRepository(context: managedObjectContext)
 
             let processor = FeatureConfigsPayloadProcessor()
-            try processor.processEventPayload(data: payloadData, featureName: featureName, repository: repository)
+            try processor.processEventPayload(
+                data: payloadData,
+                featureName: featureName,
+                repository: repository)
 
             WireLogger.featureConfigs.info("Finished processing update event \(name)")
         } catch {

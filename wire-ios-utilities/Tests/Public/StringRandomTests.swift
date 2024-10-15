@@ -61,25 +61,18 @@ final class StringRandomTests: XCTestCase {
         })
     }
 
-    func test_randomClientIdentifier_withDefaultLength() {
-        // given
-        // when
-        let string = String.randomClientIdentifier()
+    func test_randomClientIdentifier_isHexadecimalString() {
+        for _ in 1..<10 {
+            // given
+            // when
+            let string = String.randomClientIdentifier()
 
-        // then
-        XCTAssertEqual(string.count, 16)
+            // then
+            XCTAssertNotNil(UInt32(string, radix: 16), "\(string) is not hexadecimal")
+        }
     }
 
-    func test_randomClientIdentifier_withLength8() {
-        // given
-        // when
-        let string = String.randomClientIdentifier(length: 8)
-
-        // then
-        XCTAssertEqual(string.count, 8)
-    }
-
-    func test_randomDomain_withDefaultLenght() {
+    func test_randomDomain_withDefaultLength() {
         // given
         // when
         let string = String.randomDomain()
@@ -102,7 +95,7 @@ final class StringRandomTests: XCTestCase {
     func test_randomRemoteIdentifier_withDefaultLength() {
         // given
         // when
-        let string = String.randomClientIdentifier()
+        let string = String.randomRemoteIdentifier()
 
         // then
         XCTAssertEqual(string.count, 16)
@@ -111,7 +104,7 @@ final class StringRandomTests: XCTestCase {
     func test_randomRemoteIdentifier_withLength8() {
         // given
         // when
-        let string = String.randomClientIdentifier(length: 8)
+        let string = String.randomRemoteIdentifier(length: 8)
 
         // then
         XCTAssertEqual(string.count, 8)

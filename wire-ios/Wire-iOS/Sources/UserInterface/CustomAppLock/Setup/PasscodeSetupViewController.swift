@@ -118,8 +118,8 @@ final class PasscodeSetupViewController: UIViewController {
 
     /// init with parameters
     /// - Parameters:
-    ///   - useCompactLayout: Set this to true for reduce font size and spacing for iPhone 4 inch screen. Set to nil to follow current window's height
-    ///   - context: context  for this screen. Depending on the context, there are a different title and info message.
+    ///   - useCompactLayout: Set this to true for reduced font size and spacing for iPhone 4 inch screen. Set to nil to follow current window's height
+    ///   - context: context for this screen. Depending on the context, there is a different title and info message.
     ///   - callback: callback for storing passcode result.
     required init(useCompactLayout: Bool? = nil,
                   context: Context,
@@ -127,8 +127,9 @@ final class PasscodeSetupViewController: UIViewController {
         self.callback = callback
         self.context = context
 
-        self.useCompactLayout = useCompactLayout ??
-        (AppDelegate.shared.window!.frame.height <= CGFloat.iPhone4Inch.height)
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        let windowHeight = appDelegate?.mainWindow?.frame.height ?? UIScreen.main.bounds.height
+        self.useCompactLayout = useCompactLayout ?? (windowHeight <= CGFloat.iPhone4Inch.height)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -190,8 +191,8 @@ final class PasscodeSetupViewController: UIViewController {
             // content view
             widthConstraint,
             contentView.widthAnchor.constraint(lessThanOrEqualToConstant: 375),
-            contentView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            contentView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
+            contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             contentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             contentView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: contentPadding),
             contentView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -contentPadding),

@@ -21,6 +21,11 @@ import Foundation
 import WireDataModel
 import WireUtilities
 
+/// A class responsible for removing stale participants in a MLS conference.
+///
+/// Confluence use case:
+/// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/698908878/Use+case+remove+stale+participants+MLS
+
 class MLSConferenceStaleParticipantsRemover: Subscriber {
 
     typealias Input = MLSConferenceParticipantsInfo
@@ -32,6 +37,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private let mlsService: MLSServiceInterface
     private let syncContext: NSManagedObjectContext
     private var previousInput: MLSConferenceParticipantsInfo?
+    private var subscription: Subscription?
 
     private static let defaultRemovalTimeout: TimeInterval = 180
 
@@ -51,8 +57,9 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     deinit {
         stopSubscribing()
     }
-    private var subscription: Subscription?
+
     // MARK: - Subscriber implementation
+
     func stopSubscribing() {
         subscription?.cancel()
         subscription = nil

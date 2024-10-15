@@ -126,9 +126,8 @@ final class ImageToolbarView: UIView {
         createButtonConstraints()
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: Bill - use stack view to hold the buttons?
-    //  swiftlint:enable todo_requires_jira_link
     private func createButtonConstraints() {
         let spacing: CGFloat = 16
 

@@ -252,9 +252,16 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     return NO;
 }
 
-- (void)expire;
+- (void)expireWithExpirationReason:(ZMExpirationReason)expirationReason;
 {
+    BOOL wasAlreadyExpired = self.isExpired;
+
     self.isExpired = YES;
+    if (!wasAlreadyExpired) {
+        // It is possible that multiple objects expire a message without the full context of why the message was
+        // originally expired. Don't overwrite the original reason.
+        self.expirationReasonCode = [NSNumber numberWithInteger:expirationReason];
+    }
     [self removeExpirationDate];
     self.conversation.hasUnreadUnsentMessage = YES;
 }
@@ -612,112 +619,6 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
     return ignoredKeys;
-}
-
-@end
-
-
-
-#pragma mark - Text message
-
-@implementation ZMTextMessage
-
-@dynamic text;
-
-+ (NSString *)entityName;
-{
-    return @"TextMessage";
-}
-
-- (NSString *)shortDebugDescription;
-{
-    return [[super shortDebugDescription] stringByAppendingFormat:@", \'%@\'", self.text];
-}
-
-+ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent __unused *)updateEvent
-                              inManagedObjectContext:(NSManagedObjectContext __unused *)moc
-                                      prefetchResult:(ZMFetchRequestBatchResult __unused *)prefetchResult
-{
-    return nil;
-}
-
-- (NSString *)messageText
-{
-    return self.text;
-}
-
-- (LinkMetadata *)linkPreview
-{
-    return nil;
-}
-
-- (id<ZMTextMessageData>)textMessageData
-{
-    return self;
-}
-
-- (NSData *)linkPreviewImageData
-{
-    return nil;
-}
-
-- (BOOL)linkPreviewHasImage
-{
-    return NO;
-}
-
-- (NSString *)linkPreviewImageCacheKey
-{
-    return nil;
-}
-
-- (NSArray<Mention *> *)mentions
-{
-    return @[];
-}
-
-- (ZMMessage *)quote
-{
-    return nil;
-}
-
--(NSSet<ZMMessage *> *)replies
-{
-    return [NSSet set];
-}
-
--(BOOL)hasQuote
-{
-    return NO;
-}
-
--(BOOL)isQuotingSelf
-{
-    return NO;
-}
-
-- (void)removeMessageClearingSender:(BOOL)clearingSender
-{
-    self.text = nil;
-    [super removeMessageClearingSender:clearingSender];
-}
-
-- (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler
-{
-    NOT_USED(queue);
-    NOT_USED(completionHandler);
-}
-
-- (void)requestLinkPreviewImageDownload
-{
-    
-}
-
-- (void)editText:(NSString *)text mentions:(NSArray<Mention *> *)mentions fetchLinkPreview:(BOOL)fetchLinkPreview
-{
-    NOT_USED(text);
-    NOT_USED(mentions);
-    NOT_USED(fetchLinkPreview);
 }
 
 @end

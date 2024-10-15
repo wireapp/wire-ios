@@ -67,10 +67,6 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
         }
     }
 
-    private func setupViewModel() {
-        viewModel = LegalHoldParticipantsSectionViewModel(participants: conversation.sortedActiveParticipantsUserTypes.filter(\.isUnderLegalHold))
-    }
-
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)

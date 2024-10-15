@@ -13,9 +13,10 @@ concurrency:
 
 jobs:
   synchronize-with-crowdin:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    container: swift:5.10.1
 
-    steps:      
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -23,21 +24,63 @@ jobs:
         uses: crowdin/github-action@v2
         with:
           # For more info: https://github.com/crowdin/github-action/blob/master/action.yml
-          project_id: ${{ secrets.CROWDIN_PROJECT_ID }}          
+          project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
           token: ${{ secrets.CROWDIN_API_TOKEN }}
-          config: wire-ios/crowdin.yml
-          
+          config: crowdin.yml
+
           upload_sources: true
           download_translations: true
           upload_translations: false
-
-          create_pull_request: true
+          create_pull_request: false
+          push_translations: true
           localization_branch_name: chore/update-localization
           commit_message: "chore: Update localization"
-          pull_request_title: "chore: Update localization - no ticket"
-          pull_request_body: "This PR pulls in the latest localization translations from Crowdin."
           github_user_name: "zenkins"
           github_user_email: "iosx@wire.com"
-          pull_request_team_reviewers: "wireapp/ios"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trim unused localizations from string catalogs and create PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BASE_BRANCH=${GITHUB_REF#refs/heads/}
+          HEAD_BRANCH="chore/update-localization"
+          TITLE="chore: Update localization - no ticket"
+          BODY="This PR pulls in the latest localization translations from Crowdin."
+
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+          find . -name "*.xcstrings" | tee string-catalogs.txt
+          xargs swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
+          xargs git add < string-catalogs.txt
+
+          # abort if there are no changes after trimming
+          if git diff --quiet && git diff --cached --quiet; then
+          echo "No changes to commit."
+          exit 0
+          fi
+
+          # commit and push the changes
+          git commit --no-verify -m "chore: trim string catalogs"
+          git push --no-verify origin "$HEAD_BRANCH"
+
+          # abort if there no changes to be merged
+          if git diff --quiet "origin/$BASE_BRANCH"; then
+          echo "No changes compared to the base branch, aborting."
+          exit 0
+          fi
+
+          # abort if the pr already exists
+          apt update && apt install -y gh
+          PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
+          if [ -n "$PR_EXISTS" ]; then
+          echo "A PR already exists, aborting."
+          exit 0
+          fi
+
+          gh pr create --fill \
+          --base "$BASE_BRANCH" \
+          --head "$HEAD_BRANCH" \
+          --title "$TITLE" \
+          --body "$BODY" \

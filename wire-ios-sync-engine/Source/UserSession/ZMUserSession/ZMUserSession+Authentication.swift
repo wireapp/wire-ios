@@ -54,7 +54,7 @@ extension ZMUserSession {
     /// `True` if the session has a valid authentication cookie
 
     var isAuthenticated: Bool {
-        return transportSession.cookieStorage.isAuthenticated
+        return transportSession.cookieStorage.hasAuthenticationCookie
     }
 
     /// This will delete user data stored by WireSyncEngine in the keychain.

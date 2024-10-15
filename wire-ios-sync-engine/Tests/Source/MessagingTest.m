@@ -260,8 +260,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     self.groupIdentifier = nil;
     self.sharedContainerURL = nil;
 
-    [self resetBackendInfo];
-
     [self.lastEventIDRepository storeLastEventID:nil];
 
     [super tearDown];

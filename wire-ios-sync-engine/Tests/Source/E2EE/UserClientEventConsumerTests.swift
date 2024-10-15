@@ -132,7 +132,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
 
         // when
-        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        await self.sut.processEvents([event])
 
         await syncMOC.performGrouped {
             // then
@@ -163,7 +163,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
         // when
 
-        await self.sut.processEvents([event], liveEvents: false, prefetchResult: .none)
+        await self.sut.processEvents([event])
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -210,7 +210,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             return
         }
 
-        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        await self.sut.processEvents([event])
 
         // then
         await syncMOC.performGrouped {
@@ -256,7 +256,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
 
         // when
-        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        await self.sut.processEvents([event])
 
         await syncMOC.performGrouped {
             // then
@@ -282,9 +282,8 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             selfUser = ZMUser.selfUser(in: self.syncMOC)
             let existingClient = self.createSelfClient()
 
-            // swiftlint:disable todo_requires_jira_link
-            // TODO: [John] use flag here
-            // swiftlint:enable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
+            // TODO: [John] use flag here 
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 fingerprint = sessionsDirectory.localFingerprint
             }
@@ -305,7 +304,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
         guard let event else { return XCTFail("missing event") }
         // when
-        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        await self.sut.processEvents([event])
 
         await syncMOC.performGrouped {
             // then

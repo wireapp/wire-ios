@@ -33,8 +33,10 @@ public extension String {
         return s
     }
 
-    static func randomClientIdentifier(length: UInt = 16) -> String {
-        randomAlphanumerical(length: length)
+    // TODO: [WPB-11016] Move this test code from production targets
+    #if DEBUG
+    static func randomClientIdentifier() -> String {
+        randomHexadecimal()
     }
 
     static func randomDomain(hostLength: UInt = 5) -> String {
@@ -44,20 +46,10 @@ public extension String {
     static func randomRemoteIdentifier(length: UInt = 16) -> String {
         randomAlphanumerical(length: length)
     }
-}
 
-// MARK: - Legacy
-
-public extension String {
-
-    // https://github.com/wireapp/wire-ios/pull/920
-    // Replacing all random strings didn't work for the some places,
-    // so we reverted the change to keep the legacy random func.
-    //
-    // ClientMessageTests_OTR and ClientMessageTests_OTR_Legacy seem to use rely on a "%llx",
-    // but the underlying logic is not clear to me at this point.
-    @available(*, deprecated, message: "Better use one of the newer random string methods!")
-    static func createLegacyAlphanumerical() -> String {
-        String(format: "%llx", arc4random()) // swiftlint:disable:this legacy_random
+    private static func randomHexadecimal() -> String {
+        let value = UInt32.random(in: UInt32.min...UInt32.max)
+        return String(value, radix: 16)
     }
+    #endif
 }

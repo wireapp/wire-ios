@@ -135,11 +135,16 @@ private extension SearchRequest {
             .map { String($0).trimmingCharacters(in: .whitespaces).lowercased() }
             .filter { !$0.isEmpty }
 
-        guard let text = components.element(atIndex: 0) else {
+        guard !components.isEmpty else {
             return (.fullTextSearch(""), domain: nil)
         }
 
-        let domain = components.element(atIndex: 1)
+        let text = components[0]
+        let domain = if components.indices.contains(1) {
+            components[1]
+        } else {
+            String?.none
+        }
 
         if searchString.hasPrefix("@") {
             return (.exactHandle(text), domain)
@@ -156,5 +161,4 @@ fileprivate extension String {
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)
     }
-
 }

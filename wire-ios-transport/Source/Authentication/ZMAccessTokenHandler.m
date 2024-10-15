@@ -191,7 +191,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
         return;
     }
 
-    if(self.cookieStorage.authenticationCookieData == nil) {
+    if(self.cookieStorage.hasAuthenticationCookie == NO) {
         [self logError:@"No cookie to request access token"];
         [self notifyTokenFailure:nil];
         return;

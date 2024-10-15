@@ -30,11 +30,11 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     var apiVersion: APIVersion { .v0 }
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
     // MARK: - Initialize
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
@@ -63,7 +63,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
-                .success(code: 200, type: PaginatedConversationIDsV0.self)
+                .success(code: .ok, type: PaginatedConversationIDsV0.self)
                 .parse(response)
         }
     }
@@ -86,9 +86,16 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: QualifiedConversationListV0.self)
-            .failure(code: 400, error: ConversationsAPIError.invalidBody)
+            .success(code: .ok, type: QualifiedConversationListV0.self)
+            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
             .parse(response)
+    }
+
+    func getMLSOneToOneConversation(
+        userID: String,
+        in domain: String
+    ) async throws -> Conversation {
+        throw ConversationsAPIError.unsupportedEndpointForAPIVersion
     }
 }
 

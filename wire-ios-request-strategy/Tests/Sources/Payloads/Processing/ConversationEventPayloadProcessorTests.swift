@@ -17,7 +17,6 @@
 //
 
 import WireDataModelSupport
-@_spi(MockBackendInfo)
 import WireTransport
 import XCTest
 
@@ -47,7 +46,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         syncMOC.performAndWait {
             syncMOC.mlsService = mockMLSService
         }
-        BackendInfo.enableMocking()
         BackendInfo.isFederationEnabled = false
     }
 
@@ -57,7 +55,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         mockMLSEventProcessor = nil
         mockRemoveLocalConversation = nil
         mockMLSEventProcessor = nil
-        BackendInfo.resetMocking()
         super.tearDown()
     }
 
@@ -1384,7 +1381,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         )
         let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
         expectation.handler = { notification in
-            notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil
+            notification.userInfo?[AccountDeletedNotification.userInfoKey] is AccountDeletedNotification
         }
 
         // When

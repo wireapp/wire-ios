@@ -29,11 +29,6 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
 
     }
 
-    func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool {
-        // no-op
-        return false
-    }
-
     func conversationMessageWantsToOpenUserDetails(
         _ cell: UIView,
         user: UserType,
@@ -205,7 +200,7 @@ final class ArticleViewTests: XCTestCase {
 
     func setUpArticleView(
         withImagePlaceholder: Bool,
-        textMessageData: ZMTextMessageData
+        textMessageData: TextMessageData
     ) -> ArticleView {
 
         let sut = ArticleView(withImagePlaceholder: withImagePlaceholder)

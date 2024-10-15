@@ -30,8 +30,6 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
 
     private enum Option: Int, CaseIterable {
 
-        fileprivate static let count = Option.allCases.count
-
         case notifications = 0, guests, services, timeout
 
         func accessible(in conversation: GroupDetailsConversationType,

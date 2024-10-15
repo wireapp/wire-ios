@@ -23,7 +23,7 @@ import WireDesign
 
 enum ConversationActionType {
 
-    case none, started(withName: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left, teamMemberLeave
+    case none, started(name: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left, teamMemberLeave
 
     /// Some actions only involve the sender, others involve other users too.
     var involvesUsersOtherThanSender: Bool {
@@ -62,7 +62,7 @@ extension ZMConversationMessage {
             ? .left
             : .removed(reason: systemMessage.participantsRemovedReason)
         case .participantsAdded:    return .added(herself: systemMessage.userIsTheSender)
-        case .newConversation:      return .started(withName: systemMessage.text)
+        case .newConversation:      return .started(name: systemMessage.text)
         case .teamMemberLeave:      return .teamMemberLeave
         default:                    return .none
         }
@@ -88,12 +88,6 @@ final class ParticipantsCellViewModel {
 
     private var maxShownUsersWhenCollapsed: Int {
         return isSelfIncludedInUsers ? 14 : 15
-    }
-
-    var showInviteButton: Bool {
-        guard case .started = action,
-              let conversation = message.conversationLike as? (ConversationLike & CanManageAccessProvider) else { return false }
-        return conversation.canManageAccess && conversation.allowGuests
     }
 
     private var showServiceUserWarning: Bool {
@@ -221,7 +215,7 @@ final class ParticipantsCellViewModel {
 
     func attributedHeading() -> NSAttributedString? {
         guard
-            case let .started(withName: conversationName?) = action,
+            case let .started(name: conversationName?) = action,
             let sender = message.senderUser,
             let formatter = formatter(for: message)
             else { return nil }

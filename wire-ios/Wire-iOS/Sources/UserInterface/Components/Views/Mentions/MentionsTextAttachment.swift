@@ -94,7 +94,3 @@ final class MentionTextAttachment: NSTextAttachment {
     }
 
 }
-
-fileprivate extension CGSize {
-    static let max = CGSize(width: .max, height: .max)
-}

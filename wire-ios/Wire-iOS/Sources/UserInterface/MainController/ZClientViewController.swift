@@ -17,9 +17,12 @@
 //
 
 import avs
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigationUI
+import WireSidebarUI
 import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
@@ -36,7 +39,9 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: UITabBarController!
+    private(set) var mainTabBarController: MainTabBarController<ConversationListViewController>!
+    // TODO [WPB-6647]: Remove in navigation overhaul
+    private var tabBarChangeHandler: TabBarChangeHandler!
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -78,7 +83,7 @@ final class ZClientViewController: UIViewController {
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
 
-    private let topOverlayContainer: UIView = UIView()
+    private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
     private var contentTopRegularConstraint: NSLayoutConstraint!
     private var contentTopCompactConstraint: NSLayoutConstraint!
@@ -189,24 +194,24 @@ final class ZClientViewController: UIViewController {
 
         wireSplitViewController.view.backgroundColor = .clear
 
-        mainTabBarController = MainTabBarController(
-            contacts: .init(),
-            conversations: UINavigationController(rootViewController: conversationListViewController),
-            folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
-            archive: .init()
-        )
+        mainTabBarController = .init()
+        mainTabBarController.applyMainTabBarControllerAppearance()
+        mainTabBarController.conversations = (conversationListViewController, nil)
+        mainTabBarController.folders = conversationListWithFoldersViewController
         wireSplitViewController.leftViewController = mainTabBarController
+
+        // TODO [WPB-6647]: Remove in navigation overhaul
+        // `selectedTab` must be in sync with tab set in MainTabBarController(contacts:conversations:folders:archive:)
+        tabBarChangeHandler = TabBarChangeHandler(
+            conversationsViewController: conversationListViewController,
+            foldersViewController: conversationListWithFoldersViewController,
+            selectedTab: .conversations
+        )
+        mainTabBarController.delegate = tabBarChangeHandler
 
         if pendingInitialStateRestore {
             restoreStartupState()
         }
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(colorSchemeControllerDidApplyChanges(_:)),
-            name: .colorSchemeControllerDidApplyColorSchemeChange,
-            object: nil
-        )
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
@@ -287,7 +292,7 @@ final class ZClientViewController: UIViewController {
 
     @available(*, deprecated, message: "Please don't access this property, it shall be deleted. Maybe the MainCoordinator can be used.")
     static var shared: ZClientViewController? {
-        AppDelegate.shared.appRootRouter?.rootViewController.children.first { $0 is ZClientViewController } as? ZClientViewController
+        return (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter?.zClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.
@@ -451,11 +456,6 @@ final class ZClientViewController: UIViewController {
 
         // Need to reload conversation to apply color scheme changes
         pushContentViewController(currentConversationViewController)
-    }
-
-    @objc
-    private func colorSchemeControllerDidApplyChanges(_ notification: Notification?) {
-        reloadCurrentConversation()
     }
 
     // MARK: - Debug logging notifications
@@ -652,7 +652,7 @@ final class ZClientViewController: UIViewController {
         topOverlayContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topOverlayContainer)
 
-        contentTopRegularConstraint = topOverlayContainer.topAnchor.constraint(equalTo: safeTopAnchor)
+        contentTopRegularConstraint = topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         contentTopCompactConstraint = topOverlayContainer.topAnchor.constraint(equalTo: view.topAnchor)
 
         NSLayoutConstraint.activate([

@@ -28,7 +28,7 @@ public struct UpdateEventDecodingProxyError: Error, CustomStringConvertible {
 
     /// The error that occurred when decoding.
 
-    public let decodingError: Error
+    public let decodingError: any Error
 
     /// A textual representation of the error.
 

@@ -27,10 +27,6 @@ final class BarController: UIViewController {
 
     private(set) var bars: [UIViewController] = []
 
-    var topBar: UIViewController? {
-        return bars.last
-    }
-
     func present(bar: UIViewController) {
         if bars.contains(bar) {
             return

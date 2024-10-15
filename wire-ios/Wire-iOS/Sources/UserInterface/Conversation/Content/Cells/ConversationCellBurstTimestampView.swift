@@ -141,8 +141,4 @@ final class ConversationCellBurstTimestampView: UIView {
         isShowingUnreadDot = showUnreadDot
         unreadDot.backgroundColor = accentColor
     }
-
-    func prepareForReuse() {
-        label.text = nil
-    }
 }

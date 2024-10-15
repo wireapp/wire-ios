@@ -55,11 +55,20 @@ public struct ModelHelper {
     public func createUser(
         id: UUID = .init(),
         domain: String? = nil,
+        name: String? = nil,
+        handle: String? = nil,
+        email: String? = nil,
+        supportedProtocols: Set<WireDataModel.MessageProtocol> = [],
         in context: NSManagedObjectContext
     ) -> ZMUser {
         let user = ZMUser.insertNewObject(in: context)
         user.remoteIdentifier = id
         user.domain = domain
+        user.name = name
+        user.handle = handle
+        user.emailAddress = email
+        user.supportedProtocols = supportedProtocols
+
         return user
     }
 
@@ -137,6 +146,59 @@ public struct ModelHelper {
     @discardableResult
     public func createTeam(
         id: UUID = .init(),
+        withMembers membersIDs: [UUID],
+        inGroupConversation conversationID: UUID = UUID(),
+        context: NSManagedObjectContext
+    ) -> (Team, Set<ZMUser>, ZMConversation) {
+        let team = createTeam(id: id, in: context)
+
+        let users = membersIDs
+            .map { userId in
+                let user = self.createUser(id: userId, domain: nil, in: context)
+                let member = addUser(user, to: team, in: context)
+                return user
+            }
+
+        let conversation = createGroupConversation(
+            id: conversationID,
+            with: Set(users),
+            team: team,
+            domain: nil,
+            in: context
+        )
+
+        return (team, Set(users), conversation)
+    }
+
+    @discardableResult
+    public func createTeam(
+        id: UUID = .init(),
+        withMembers members: [ZMUser],
+        inGroupConversation conversationID: UUID = UUID(),
+        context: NSManagedObjectContext
+    ) -> (Team, Set<ZMUser>, ZMConversation) {
+        let team = createTeam(id: id, in: context)
+
+        let users = members
+            .map { member in
+                addUser(member, to: team, in: context)
+                return member
+            }
+
+        let conversation = createGroupConversation(
+            id: conversationID,
+            with: Set(members),
+            team: team,
+            domain: nil,
+            in: context
+        )
+
+        return (team, Set(users), conversation)
+    }
+
+    @discardableResult
+    public func createTeam(
+        id: UUID = .init(),
         in context: NSManagedObjectContext
     ) -> Team {
         let team = Team.insertNewObject(in: context)
@@ -167,6 +229,8 @@ public struct ModelHelper {
         let member = Member.insertNewObject(in: context)
         member.user = user
         member.team = team
+        member.remoteIdentifier = user.remoteIdentifier
+
         return member
     }
 
@@ -198,6 +262,8 @@ public struct ModelHelper {
     @discardableResult
     public func createGroupConversation(
         id: UUID = .init(),
+        with participants: Set<ZMUser> = [],
+        team: Team? = nil,
         domain: String? = nil,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
@@ -205,6 +271,12 @@ public struct ModelHelper {
         conversation.remoteIdentifier = id
         conversation.domain = domain
         conversation.conversationType = .group
+        conversation.addParticipantsAndUpdateConversationState(
+            users: participants,
+            role: nil
+        )
+        conversation.team = team
+
         return conversation
     }
 
@@ -243,14 +315,21 @@ public struct ModelHelper {
     @discardableResult
     public func createMLSConversation(
         mlsGroupID: MLSGroupID? = nil,
+        mlsStatus: MLSGroupStatus = .ready,
+        conversationType: ZMConversationType = .group,
+        epoch: UInt64 = 0,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = UUID()
+        conversation.domain = "domain.com"
         conversation.mlsGroupID = mlsGroupID
         conversation.messageProtocol = .mls
-        conversation.mlsStatus = .ready
-        conversation.conversationType = .group
+        conversation.mlsStatus = mlsStatus
+        conversation.conversationType = conversationType
+        conversation.epoch = epoch
 
         return conversation
     }
+
 }

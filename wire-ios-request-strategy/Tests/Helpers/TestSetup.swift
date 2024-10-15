@@ -18,30 +18,21 @@
 
 import WireTesting
 import WireTransport
+import WireTransportSupport
 
-final class TestSetup: NSObject, XCTestObservation {
-    private let defaults: TestUserDefaults
+final class TestSetup: NSObject {
 
     override init() {
-        defaults = TestUserDefaults(suiteName: UUID().uuidString)!
         super.init()
 
-        XCTestObservationCenter.shared.addTestObserver(self)
+        XCTestObservationCenter.shared.addTestObserver(
+            makeBackendInfoTestObserver(
+                apiVersion: .v0,
+                preferredAPIVersion: nil,
+                domain: "wire.com",
+                isFederationEnabled: false
+            )
+        )
     }
 
-    func testBundleWillStart(_ testBundle: Bundle) {
-        BackendInfo.storage = defaults
-        BackendInfo.apiVersion = .v0
-        BackendInfo.domain = "wire.com"
-        BackendInfo.isFederationEnabled = false
-
-        defaults.shouldSet = { _, _ in
-            XCTFail("BackendInfo was mutated outside of mocking")
-            return false
-        }
-    }
-
-    func testBundleDidFinish(_ testBundle: Bundle) {
-        defaults.reset()
-    }
 }

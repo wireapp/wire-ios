@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModelSupport
-@testable import WireSyncEngine
 import WireTesting
 import XCTest
+
+@testable import WireDataModelSupport
+@testable import WireSyncEngine
 
 class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
 

@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a new self user client was added.
 
-public struct UserClientAddEvent: Equatable, Codable {
+public struct UserClientAddEvent: Equatable, Codable, Sendable {
 
     /// The new user client.
 

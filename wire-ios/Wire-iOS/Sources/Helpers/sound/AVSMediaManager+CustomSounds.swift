@@ -90,10 +90,6 @@ extension AVSMediaManager {
         mediaManager.registerMedia(fromConfiguration: AVSMediaManager.MediaManagerSoundConfig, inDirectory: audioDir)
     }
 
-    func configureWithActualSoundsFromSettings() {
-        self.configureDefaultSounds()
-    }
-
     func unregisterCallRingingSounds() {
         guard let mediaManager = AVSMediaManager.sharedInstance() else { return }
         let sounds: [MediaManagerSound] = [.ringingFromThemInCallSound, .ringingFromThemSound]

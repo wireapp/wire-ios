@@ -21,7 +21,6 @@ import WireDataModelSupport
 import WireRequestStrategy
 @testable import WireSyncEngine
 import WireSyncEngineSupport
-@_spi(MockBackendInfo)
 import WireTransport
 
 class CallingRequestStrategyTests: MessagingTest {
@@ -164,7 +163,6 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_NotFederated() throws {
         // Given
-        BackendInfo.enableMocking()
         BackendInfo.isFederationEnabled = false
 
         let (conversation, payload) = try syncMOC.performAndWait {
@@ -239,13 +237,10 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-
-        BackendInfo.resetMocking()
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
         // Given
-        BackendInfo.enableMocking()
         BackendInfo.isFederationEnabled = true
 
         let (conversation, payload) = try syncMOC.performAndWait {
@@ -330,8 +325,6 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-
-        BackendInfo.resetMocking()
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_MLS() throws {
@@ -596,29 +589,11 @@ class CallingRequestStrategyTests: MessagingTest {
             return
         }
 
-        let data = await sentMessage.encryptForTransport()?.data
-
         await syncMOC.perform {
-            guard let data,
-                let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
-            else {
-                return XCTFail("Expected OTR message")
-            }
-
             // Then we send the message to all clients in the conversation
-            XCTAssertEqual(otrMessage.recipients.count, 2)
-
-            guard let recipient1 = otrMessage.recipients.first(where: { $0.user == user1.userId }) else {
-                return XCTFail("Expected user1 to be recipient")
+            guard case Recipients.conversationParticipants = sentMessage.targetRecipients else {
+                return XCTFail("Expected to target all clients in the conversation")
             }
-
-            XCTAssertEqual(Set(recipient1.clients.map(\.client)), Set([client1, client2].map(\.clientId)))
-
-            guard let recipient2 = otrMessage.recipients.first(where: { $0.user == user2.userId }) else {
-                return XCTFail("Expected user2 to be recipient")
-            }
-
-            XCTAssertEqual(Set(recipient2.clients.map(\.client)), Set([client3, client4].map(\.clientId)))
         }
     }
 
@@ -628,9 +603,8 @@ class CallingRequestStrategyTests: MessagingTest {
         client.remoteIdentifier = .randomRemoteIdentifier()
         client.user = user
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: [John] use flag here
-        // swiftlint:enable todo_requires_jira_link
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
             try! session.createClientSession(
                 client.sessionIdentifier!,

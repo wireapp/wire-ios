@@ -44,7 +44,3 @@ protocol ConversationListViewModelDelegate: AnyObject {
     setData: (C?) -> Void
     )
 }
-
-protocol ConversationListViewModelRestorationDelegate: AnyObject {
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool)
-}

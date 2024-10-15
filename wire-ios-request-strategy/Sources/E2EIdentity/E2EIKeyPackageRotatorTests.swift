@@ -29,6 +29,7 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockCommitSender: MockCommitSending!
     private var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
     private var sut: E2EIKeyPackageRotator!
 
     override func setUp() {
@@ -39,13 +40,15 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
         mockConversationEventProcessor = MockConversationEventProcessorProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockFeatureRepository = .init()
 
         sut = E2EIKeyPackageRotator(
             coreCryptoProvider: mockCoreCryptoProvider,
             conversationEventProcessor: mockConversationEventProcessor,
             context: syncMOC,
             onNewCRLsDistributionPointsSubject: .init(),
-            commitSender: mockCommitSender
+            commitSender: mockCommitSender,
+            featureRepository: mockFeatureRepository
         )
     }
 

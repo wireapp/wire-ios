@@ -24,7 +24,6 @@ import WireDesign
 final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
-    typealias LabelColors = SemanticColors.Label
 
     let configuration: View.Configuration
 

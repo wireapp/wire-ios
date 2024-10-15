@@ -72,6 +72,8 @@ protocol MLSActionsProviderProtocol {
         conversationID: UUID,
         domain: String,
         subgroupType: SubgroupType,
+        epoch: Int,
+        groupID: MLSGroupID,
         context: NotificationContext
     ) async throws
 
@@ -207,12 +209,16 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
         conversationID: UUID,
         domain: String,
         subgroupType: SubgroupType,
+        epoch: Int,
+        groupID: MLSGroupID,
         context: NotificationContext
     ) async throws {
         var action = DeleteSubgroupAction(
             conversationID: conversationID,
             domain: domain,
-            subgroupType: subgroupType
+            subgroupType: subgroupType,
+            epoch: epoch,
+            groupID: groupID
         )
 
         try await action.perform(in: context)

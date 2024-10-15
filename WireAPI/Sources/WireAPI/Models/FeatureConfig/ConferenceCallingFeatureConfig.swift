@@ -20,10 +20,14 @@ import Foundation
 
 /// A configuration for the *Conference Calling* feature.
 
-public struct ConferenceCallingFeatureConfig: Codable, Equatable {
+public struct ConferenceCallingFeatureConfig: Codable, Equatable, Sendable {
 
     /// The feature's status.
 
     public let status: FeatureConfigStatus
+
+    /// If set to `true`, clients will use SFTs for 1:1 calls
+
+    public let useSFTForOneToOneCalls: Bool
 
 }

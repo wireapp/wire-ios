@@ -99,9 +99,8 @@ public final class ProteusService: ProteusServiceInterface {
         do {
             try await coreCrypto.perform { try await $0.proteusSessionSave(sessionId: id.rawValue) }
         } catch {
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: Log error
-            // swiftlint:enable todo_requires_jira_link
             throw SaveSessionError.failedToSaveSession
         }
     }
@@ -121,7 +120,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusEncrypt
 
-    enum EncryptionError: Error, Equatable {
+    enum EncryptionError: Error, Equatable, LocalizedError {
         case failedToEncryptData(Error)
         case failedToEncryptDataBatch(Error)
 
@@ -134,6 +133,15 @@ public final class ProteusService: ProteusServiceInterface {
 
             default:
                 return false
+            }
+        }
+
+        var errorDescription: String? {
+            switch self {
+            case .failedToEncryptData(let error):
+                return "failedToEncryptData: underlying error : \(error.localizedDescription)"
+            case .failedToEncryptDataBatch(let error):
+                return "failedToEncryptDataBatch: underlying error : \(error.localizedDescription)"
             }
         }
     }
@@ -246,12 +254,9 @@ public final class ProteusService: ProteusServiceInterface {
     }
 
     public func generatePrekey(id: UInt16) async throws -> String {
-        logger.info("generating prekey with id: \(id)")
-
         do {
             return try await coreCrypto.perform { try await $0.proteusNewPrekey(prekeyId: id).base64EncodedString() }
         } catch {
-            logger.error("failed to generate prekey: \(String(describing: error))")
             throw PrekeyError.failedToGeneratePrekey
         }
     }
@@ -278,6 +283,7 @@ public final class ProteusService: ProteusServiceInterface {
             throw PrekeyError.prekeyCountTooLow
         }
 
+        logger.info("generate \(count) prekeys")
         let range = await prekeysRange(count, start: start)
         let prekeys = try await generatePrekeys(range)
 

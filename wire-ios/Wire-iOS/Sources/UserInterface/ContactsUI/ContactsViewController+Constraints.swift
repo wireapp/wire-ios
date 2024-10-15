@@ -33,7 +33,6 @@ extension ContactsViewController {
         }
 
         let standardOffset: CGFloat = 24.0
-
         var constraints: [NSLayoutConstraint] = []
 
         constraints += [
@@ -46,7 +45,6 @@ extension ContactsViewController {
         constraints += [
             separatorView.leadingAnchor.constraint(equalTo: separatorView.superview!.leadingAnchor, constant: standardOffset),
             separatorView.trailingAnchor.constraint(equalTo: separatorView.superview!.trailingAnchor, constant: -standardOffset),
-
             separatorView.heightAnchor.constraint(equalToConstant: 0.5),
             separatorView.bottomAnchor.constraint(equalTo: tableView.topAnchor),
 
@@ -79,19 +77,23 @@ extension ContactsViewController {
             bottomContainerSeparatorView.heightAnchor.constraint(equalToConstant: 0.5)
         ]
 
-        let bottomEdgeConstraint = inviteOthersButton.bottomAnchor.constraint(equalTo: inviteOthersButton.superview!.bottomAnchor, constant: -(standardOffset / 2.0 + UIScreen.safeArea.bottom))
-        self.bottomEdgeConstraint = bottomEdgeConstraint
+        guard let superview = inviteOthersButton.superview else {
+            assertionFailure("inviteOthersButton must have a superview before layout is set")
+            return
+        }
+            let bottomInset = superview.safeAreaInsets.bottom
+            let bottomEdgeConstraint = inviteOthersButton.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -(standardOffset / 2.0 + bottomInset))
+            self.bottomEdgeConstraint = bottomEdgeConstraint
 
-        constraints += [
-            bottomEdgeConstraint,
-            inviteOthersButton.topAnchor.constraint(equalTo: inviteOthersButton.superview!.topAnchor, constant: standardOffset / CGFloat(2)),
-            inviteOthersButton.leadingAnchor.constraint(equalTo: inviteOthersButton.superview!.leadingAnchor, constant: standardOffset),
-            inviteOthersButton.trailingAnchor.constraint(equalTo: inviteOthersButton.superview!.trailingAnchor, constant: -standardOffset)
-        ]
+            constraints += [
+                bottomEdgeConstraint,
+                inviteOthersButton.topAnchor.constraint(equalTo: superview.topAnchor, constant: standardOffset / 2),
+                inviteOthersButton.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: standardOffset),
+                inviteOthersButton.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -standardOffset)
+            ]
 
         constraints += [inviteOthersButton.heightAnchor.constraint(equalToConstant: 56)]
 
         NSLayoutConstraint.activate(constraints)
     }
-
 }

@@ -24,10 +24,14 @@ class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<Replace
 
     let clientId = UUID().transportString()
     let keyPackages = ["a2V5IHBhY2thZ2UgZGF0YQo="]
+    let ciphersuite = MLSCipherSuite.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 
     override func setUp() {
         super.setUp()
-        action = ReplaceSelfMLSKeyPackagesAction(clientID: clientId, keyPackages: keyPackages)
+        action = ReplaceSelfMLSKeyPackagesAction(
+            clientID: clientId,
+            keyPackages: keyPackages,
+            ciphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
         handler = ReplaceSelfMLSKeyPackagesActionHandler(context: syncMOC)
     }
 
@@ -36,7 +40,7 @@ class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<Replace
     func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v5/mls/key-packages/self/\(clientId)",
+            expectedPath: "/v5/mls/key-packages/self/\(clientId)?ciphersuites=\(ciphersuite.rawValue)",
             expectedPayload: ["key_packages": keyPackages],
             expectedMethod: .put,
             apiVersion: .v5
@@ -55,7 +59,7 @@ class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<Replace
 
         // when there are empty parameters
         test_itDoesntGenerateARequest(
-            action: ReplaceSelfMLSKeyPackagesAction(clientID: "", keyPackages: []),
+            action: ReplaceSelfMLSKeyPackagesAction(clientID: "", keyPackages: [], ciphersuite: ciphersuite),
             apiVersion: .v5,
             expectedError: .invalidParameters
         )

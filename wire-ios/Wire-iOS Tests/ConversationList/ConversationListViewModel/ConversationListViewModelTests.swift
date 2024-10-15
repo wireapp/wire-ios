@@ -17,8 +17,9 @@
 //
 
 import DifferenceKit
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
@@ -37,7 +38,7 @@ final class MockConversationListViewModelDelegate: NSObject, ConversationListVie
         using stagedChangeset: StagedChangeset<C>,
         interrupt: ((Changeset<C>) -> Bool)?,
         setData: (C?) -> Void
-        ) {
+    ) {
         setData(stagedChangeset.first?.data)
     }
 
@@ -59,7 +60,6 @@ final class ConversationListViewModelTests: XCTestCase {
     var sut: ConversationListViewModel!
     var mockUserSession: UserSessionMock!
     var mockConversationListViewModelDelegate: MockConversationListViewModelDelegate!
-    var mockBar: MockBar!
     var mockConversation: ZMConversation!
     var coreDataFixture: CoreDataFixture!
 
@@ -70,7 +70,6 @@ final class ConversationListViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         removeViewModelState()
-        mockBar = MockBar()
         mockUserSession = UserSessionMock()
         sut = ConversationListViewModel(userSession: mockUserSession, isFolderStatePersistenceEnabled: false)
 
@@ -85,7 +84,6 @@ final class ConversationListViewModelTests: XCTestCase {
         sut = nil
         mockUserSession = nil
         mockConversationListViewModelDelegate = nil
-        mockBar = nil
         mockConversation = nil
         coreDataFixture = nil
 
@@ -188,36 +186,6 @@ final class ConversationListViewModelTests: XCTestCase {
         XCTAssertNil(sut.section(at: 100))
     }
 
-    func testForItemAfter() {
-        // GIVEN
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-
-        // THEN
-        XCTAssertEqual(sut.item(after: 0, section: sectionGroups), IndexPath(item: 1, section: Int(sectionGroups)))
-        XCTAssertEqual(sut.item(after: 1, section: 1), IndexPath(item: 0, section: 2))
-        XCTAssertEqual(sut.item(after: 0, section: sectionContacts), nil)
-    }
-
-    func testForItemPervious() {
-        // GIVEN
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-
-        // THEN
-        XCTAssertEqual(sut.itemPrevious(to: 0, section: sectionGroups), nil)
-
-        XCTAssertEqual(sut.itemPrevious(to: 1, section: sectionGroups), IndexPath(item: 0, section: Int(sectionGroups)))
-
-        XCTAssertEqual(sut.itemPrevious(to: 0, section: sectionContacts), IndexPath(item: 1, section: Int(sectionGroups)))
-    }
-
     func testForSelectItem() {
         sut.folderEnabled = true
 
@@ -228,19 +196,6 @@ final class ConversationListViewModelTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.selectedItem as? AnyHashable, mockConversation)
-    }
-
-    func testThatSelectItemAtIndexReturnCorrectConversation() {
-        // GIVEN
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-        let indexPath = sut.indexPath(for: mockConversation)!
-
-        // THEN
-        XCTAssertEqual(sut.selectItem(at: indexPath) as? AnyHashable, mockConversation)
     }
 
     // MARK: - state
@@ -297,13 +252,5 @@ final class ConversationListViewModelTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.jsonString, #"{"collapsed":["groups"],"folderEnabled":true}"#)
-    }
-}
-
-final class MockBar: ConversationListViewModelRestorationDelegate {
-    var folderEnabled: Bool = false
-
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool) {
-        folderEnabled = enabled
     }
 }

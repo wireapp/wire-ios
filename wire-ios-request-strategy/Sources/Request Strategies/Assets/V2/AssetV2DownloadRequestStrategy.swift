@@ -117,9 +117,8 @@ import WireTransport
             return
         }
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
-        // swiftlint:enable todo_requires_jira_link
         fileCache.storeEncryptedFile(
             data: data,
             for: assetClientMessage

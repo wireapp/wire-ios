@@ -152,7 +152,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     func testThatItDeletesAPreEndtoEndPlainTextMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let sut = ZMTextMessage(nonce: .create(), managedObjectContext: uiMOC) // Pre e2ee plain text message
+        let sut = TextMessage(nonce: .create(), managedObjectContext: uiMOC) // Pre e2ee plain text message
 
         sut.visibleInConversation = conversation
         sut.sender = selfUser
@@ -510,7 +510,7 @@ extension ZMClientMessageTests_Deletion {
                 $0.messageID = sut.nonce!.transportString()
             }
             let deletedMessage = GenericMessage(content: messageDelete)
-            let recipients = deletedMessage.recipientUsersForMessage(in: self.syncConversation, selfUser: self.syncSelfUser).users
+            let recipients = deletedMessage.recipientUsersForMessage(in: self.syncConversation, selfUser: self.syncSelfUser).users.keys
 
             // then all users receive delete message
             XCTAssertEqual(4, recipients.count)
@@ -539,7 +539,7 @@ extension ZMClientMessageTests_Deletion {
             $0.messageID = sut.nonce!.transportString()
         }
         let deletedMessage = GenericMessage(content: messageDelete)
-        let recipients = deletedMessage.recipientUsersForMessage(in: conversation, selfUser: selfUser).users
+        let recipients = deletedMessage.recipientUsersForMessage(in: conversation, selfUser: selfUser).users.keys
 
         // then only sender & self recieve the delete message
         XCTAssertEqual(2, recipients.count)

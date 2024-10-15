@@ -275,32 +275,32 @@ class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
 
     // MARK: - presentCallFailureDebugAlert
 
-    var presentCallFailureDebugAlertPresentingViewController_Invocations: [UIViewController] = []
-    var presentCallFailureDebugAlertPresentingViewController_MockMethod: ((UIViewController) -> Void)?
+    var presentCallFailureDebugAlertMainWindow_Invocations: [UIWindow] = []
+    var presentCallFailureDebugAlertMainWindow_MockMethod: ((UIWindow) -> Void)?
 
-    func presentCallFailureDebugAlert(presentingViewController: UIViewController) {
-        presentCallFailureDebugAlertPresentingViewController_Invocations.append(presentingViewController)
+    func presentCallFailureDebugAlert(mainWindow: UIWindow) {
+        presentCallFailureDebugAlertMainWindow_Invocations.append(mainWindow)
 
-        guard let mock = presentCallFailureDebugAlertPresentingViewController_MockMethod else {
-            fatalError("no mock for `presentCallFailureDebugAlertPresentingViewController`")
+        guard let mock = presentCallFailureDebugAlertMainWindow_MockMethod else {
+            fatalError("no mock for `presentCallFailureDebugAlertMainWindow`")
         }
 
-        mock(presentingViewController)
+        mock(mainWindow)
     }
 
     // MARK: - presentCallQualityRejection
 
-    var presentCallQualityRejectionPresentingViewController_Invocations: [UIViewController] = []
-    var presentCallQualityRejectionPresentingViewController_MockMethod: ((UIViewController) -> Void)?
+    var presentCallQualityRejectionMainWindow_Invocations: [UIWindow] = []
+    var presentCallQualityRejectionMainWindow_MockMethod: ((UIWindow) -> Void)?
 
-    func presentCallQualityRejection(presentingViewController: UIViewController) {
-        presentCallQualityRejectionPresentingViewController_Invocations.append(presentingViewController)
+    func presentCallQualityRejection(mainWindow: UIWindow) {
+        presentCallQualityRejectionMainWindow_Invocations.append(mainWindow)
 
-        guard let mock = presentCallQualityRejectionPresentingViewController_MockMethod else {
-            fatalError("no mock for `presentCallQualityRejectionPresentingViewController`")
+        guard let mock = presentCallQualityRejectionMainWindow_MockMethod else {
+            fatalError("no mock for `presentCallQualityRejectionMainWindow`")
         }
 
-        mock(presentingViewController)
+        mock(mainWindow)
     }
 
 }
@@ -708,26 +708,29 @@ class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotific
 
 }
 
-public class MockFileMetaDataGenerating: FileMetaDataGenerating {
+public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - metadataForFileAtURL
+    // MARK: - metadataForFile
 
-    public var metadataForFileAtURLUTINameCompletion_Invocations: [(url: URL, uti: String, name: String, completion: (ZMFileMetadata) -> Void)] = []
-    public var metadataForFileAtURLUTINameCompletion_MockMethod: ((URL, String, String, @escaping (ZMFileMetadata) -> Void) -> Void)?
+    public var metadataForFileAt_Invocations: [URL] = []
+    public var metadataForFileAt_MockMethod: ((URL) async -> ZMFileMetadata)?
+    public var metadataForFileAt_MockValue: ZMFileMetadata?
 
-    public func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
-        metadataForFileAtURLUTINameCompletion_Invocations.append((url: url, uti: uti, name: name, completion: completion))
+    public func metadataForFile(at url: URL) async -> ZMFileMetadata {
+        metadataForFileAt_Invocations.append(url)
 
-        guard let mock = metadataForFileAtURLUTINameCompletion_MockMethod else {
-            fatalError("no mock for `metadataForFileAtURLUTINameCompletion`")
+        if let mock = metadataForFileAt_MockMethod {
+            return await mock(url)
+        } else if let mock = metadataForFileAt_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `metadataForFileAt`")
         }
-
-        mock(url, uti, name, completion)
     }
 
 }
@@ -847,6 +850,47 @@ public class MockNetworkStatusObservable: NetworkStatusObservable {
 
     public var underlyingReachability: ServerReachability!
 
+
+}
+
+class MockNetworkStatusViewDelegate: NetworkStatusViewDelegate {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - shouldAnimateNetworkStatusView
+
+    var shouldAnimateNetworkStatusView: Bool {
+        get { return underlyingShouldAnimateNetworkStatusView }
+        set(value) { underlyingShouldAnimateNetworkStatusView = value }
+    }
+
+    var underlyingShouldAnimateNetworkStatusView: Bool!
+
+    // MARK: - bottomMargin
+
+    var bottomMargin: CGFloat {
+        get { return underlyingBottomMargin }
+        set(value) { underlyingBottomMargin = value }
+    }
+
+    var underlyingBottomMargin: CGFloat!
+
+
+    // MARK: - didChangeHeight
+
+    var didChangeHeightAnimatedState_Invocations: [(networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState)] = []
+    var didChangeHeightAnimatedState_MockMethod: ((NetworkStatusView, Bool, NetworkStatusViewState) -> Void)?
+
+    func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
+        didChangeHeightAnimatedState_Invocations.append((networkStatusView: networkStatusView, animated: animated, state: state))
+
+        guard let mock = didChangeHeightAnimatedState_MockMethod else {
+            fatalError("no mock for `didChangeHeightAnimatedState`")
+        }
+
+        mock(networkStatusView, animated, state)
+    }
 
 }
 
@@ -1400,16 +1444,16 @@ class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProt
     // MARK: - shareReport
 
     var shareReport_Invocations: [Void] = []
-    var shareReport_MockMethod: (() -> Void)?
+    var shareReport_MockMethod: (() async -> Void)?
 
-    func shareReport() {
+    func shareReport() async {
         shareReport_Invocations.append(())
 
         guard let mock = shareReport_MockMethod else {
             fatalError("no mock for `shareReport`")
         }
 
-        mock()
+        await mock()
     }
 
 }

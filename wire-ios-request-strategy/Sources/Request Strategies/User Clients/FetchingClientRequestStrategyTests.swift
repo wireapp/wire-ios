@@ -20,7 +20,6 @@ import Foundation
 import WireCryptobox
 import WireDataModel
 import WireTesting
-@_spi(MockBackendInfo)
 import WireTransport
 
 @testable import WireRequestStrategy
@@ -43,7 +42,6 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         sut = FetchingClientRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: mockApplicationStatus)
         NotificationCenter.default.addObserver(self, selector: #selector(FetchClientRequestStrategyTests.didReceiveAuthenticationNotification(_:)), name: NSNotification.Name(rawValue: "ZMUserSessionAuthenticationNotificationName"), object: nil)
 
-        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
         BackendInfo.domain = "local.com"
     }
@@ -53,7 +51,6 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = nil
         sut = nil
         NotificationCenter.default.removeObserver(self)
-        BackendInfo.resetMocking()
         super.tearDown()
     }
 
@@ -586,9 +583,8 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             sessionIdentifier = EncryptionSessionIdentifier(userId: self.otherUser!.remoteIdentifier.uuidString, clientId: remoteIdentifier)
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: [John] use flag here
-            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform {
                 try! $0.createClientSession(sessionIdentifier, base64PreKeyString: self.syncMOC.zm_cryptKeyStore.lastPreKey()) // just a bogus key is OK
             }

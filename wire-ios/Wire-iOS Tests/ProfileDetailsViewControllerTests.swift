@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -585,9 +584,8 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [])
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // FIXME: can self user disable myself as admin? In this test since self user.isConnected == false we do not show it.
-    // swiftlint:enable todo_requires_jira_link
     func test_Group_SelfUser_SCIM() {
         // GIVEN
         selfUser.availability = .busy

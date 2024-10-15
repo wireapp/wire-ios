@@ -22,14 +22,14 @@ import Foundation
 
 public struct BackendInfoAPIBuilder {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
     /// Create a new builder.
     ///
-    /// - Parameter httpClient: A http client.
+    /// - Parameter apiService: A service for executing requests.`
 
-    public init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    public init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     /// Make a `BackendInfoAPI`.
@@ -37,7 +37,7 @@ public struct BackendInfoAPIBuilder {
     /// - Returns: A `BackendInfoAPI`.
 
     public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(httpClient: httpClient)
+        BackendInfoAPIImpl(apiService: apiService)
     }
 
 }

@@ -22,26 +22,25 @@ import Foundation
 final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
 
     func testThatItCreatesPayloadForZMClearedMessages() async {
-        var message: ZMClientMessage?
 
         await self.syncMOC.perform {
+            // given
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
-            message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation)
+            let message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation)
+            let genericMessage = message?.underlyingMessage
 
-        }
+            guard let message = genericMessage else { return XCTFail("missing message") }
+            // when
+            let result = message.recipientUsersForMessage(in: self.syncConversation, selfUser: self.syncSelfUser)
 
-        // given
-        guard let message else { return XCTFail("missing message") }
-        // when
-        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail("encryptForTransport failed") }
-
-        // then
-        switch payloadAndStrategy.strategy {
-        case .doNotIgnoreAnyMissingClient:
-            break
-        default:
-            XCTFail()
+            // then
+            switch result.strategy {
+            case .doNotIgnoreAnyMissingClient:
+                break
+            default:
+                XCTFail()
+            }
         }
     }
 
@@ -69,12 +68,12 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
 
             self.syncConversation.remoteIdentifier = UUID()
             let message1 = try! self.syncConversation.appendText(content: "B") as! ZMMessage
-            message1.expire()
+            message1.expire(withReason: .other)
 
             try! self.syncConversation.appendText(content: "A")
 
             let message3 = try! self.syncConversation.appendText(content: "B") as! ZMMessage
-            message3.expire()
+            message3.expire(withReason: .other)
 
             self.syncConversation.lastServerTimeStamp = message3.serverTimestamp
 

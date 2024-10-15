@@ -43,7 +43,7 @@ class ConversationsAPIV1: ConversationsAPIV0 {
             let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
-                .success(code: 200, type: PaginatedConversationIDsV1.self)
+                .success(code: .ok, type: PaginatedConversationIDsV1.self)
                 .parse(response)
         }
     }

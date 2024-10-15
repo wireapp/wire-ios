@@ -32,12 +32,6 @@ public enum ZMDeliveryState: UInt {
 }
 
 @objc
-public enum MessageSendFailure: Int {
-    case unknown
-    case federationRemoteError
-}
-
-@objc
 public protocol ReadReceipt {
 
     @available(*, deprecated, message: "Use `userType` instead")
@@ -85,7 +79,7 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     var needsReadConfirmation: Bool { get }
 
     /// The textMessageData of the message which also contains potential link previews. If the message has no text, it will be nil
-    var textMessageData: ZMTextMessageData? { get }
+    var textMessageData: TextMessageData? { get }
 
     /// The image data associated with the message. If the message has no image, it will be nil
     var imageMessageData: ZMImageMessageData? { get }
@@ -173,8 +167,8 @@ public protocol ConversationCompositeMessage {
 
 public protocol SwiftConversationMessage {
 
-    /// Reason why the message has not been sent
-    var failedToSendReason: MessageSendFailure? { get }
+    /// The reason `self` was expired.
+    var expirationReason: ExpirationReason? { get }
 
     /// The list of users who didn't receive the message (e.g their backend is offline)
     var failedToSendUsers: [UserType] { get }
@@ -312,7 +306,7 @@ extension ZMMessage {
     @NSManaged public var sender: ZMUser?
     @NSManaged public var serverTimestamp: Date?
 
-    @objc public var textMessageData: ZMTextMessageData? {
+    @objc public var textMessageData: TextMessageData? {
         return nil
     }
 

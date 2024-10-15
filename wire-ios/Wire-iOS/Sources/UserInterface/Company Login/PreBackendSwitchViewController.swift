@@ -38,7 +38,6 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     // MARK: - UI Styles
 
     static let informationBlue = UIColor(red: 35 / 255, green: 145 / 255, blue: 211 / 255, alpha: 1)
-    static let informationBackgroundBlue = UIColor(red: 220 / 255, green: 237 / 255, blue: 248 / 255, alpha: 1)
 
     // MARK: - UI Elements
     let wireLogoInfoView = WireLogoInfoView(title: Login.title, subtitle: Login.subtitle)
