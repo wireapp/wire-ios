@@ -33,6 +33,8 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Properties
 
+    var callInfos: [UUID: CallInfo] = [:]
+
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
@@ -337,6 +339,8 @@ public final class ZMUserSession: NSObject {
     // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
 
+    var callStateObserverToken: Any?
+
     // MARK: - Initialize
 
     init(
@@ -608,7 +612,14 @@ public final class ZMUserSession: NSObject {
                 let event = pendingAnalyticsEvents.removeFirst()
                 analyticsEventTracker.trackEvent(event)
             }
+            setupCallStateObserverForAnalytics()
+        } else {
+            callStateObserverToken = nil
         }
+    }
+
+    private func setupCallStateObserverForAnalytics() {
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: self)
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
