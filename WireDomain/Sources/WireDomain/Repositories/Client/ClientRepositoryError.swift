@@ -16,14 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Errors originating from `ClientRepository`.
 
-/// An event where legalhold was enabled for a user.
-
-public struct UserLegalholdEnableEvent: Equatable, Codable, Sendable {
-
-    /// The user id for whom legalhold was enabled.
-
-    public let userID: UUID
-
-}
+enum ClientRepositoryError: Error {}

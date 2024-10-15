@@ -18,12 +18,25 @@
 
 import Foundation
 
-/// An event where legalhold was enabled for a user.
+class ClientAPIV2: ClientAPIV1 {
 
-public struct UserLegalholdEnableEvent: Equatable, Codable, Sendable {
+    override var apiVersion: APIVersion {
+        .v2
+    }
 
-    /// The user id for whom legalhold was enabled.
+    override func getClients(for userIDs: Set<UserID>) async throws -> [UserClients] {
+        let body = try JSONEncoder.defaultEncoder.encode(UserClientsRequestV0(qualifiedIDs: Array(userIDs)))
+        let request = HTTPRequest(
+            path: "/users/list-clients",
+            method: .post,
+            body: body
+        )
 
-    public let userID: UUID
+        let response = try await httpClient.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: .ok, type: UserClientsV0.self)
+            .parse(response)
+    }
 
 }

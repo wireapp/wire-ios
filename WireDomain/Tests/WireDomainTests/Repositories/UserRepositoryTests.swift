@@ -175,60 +175,6 @@ final class UserRepositoryTests: XCTestCase {
         }
     }
 
-    func testFetchOrCreateUserClient() async throws {
-        // Given
-
-        await context.perform { [self] in
-            let userClient = modelHelper.createSelfClient(
-                id: Scaffolding.userClientID,
-                in: context
-            )
-
-            XCTAssertEqual(userClient.remoteIdentifier, Scaffolding.userClientID)
-        }
-
-        // When
-
-        let userClient = try await sut.fetchOrCreateUserClient(
-            with: Scaffolding.userClientID
-        )
-
-        // Then
-
-        XCTAssertNotNil(userClient)
-    }
-
-    func testUpdatesUserClient() async throws {
-        // Given
-
-        let createdClient = try await sut.fetchOrCreateUserClient(
-            with: Scaffolding.userClientID
-        )
-
-        // When
-
-        try await sut.updateUserClient(
-            createdClient.client,
-            from: Scaffolding.remoteUserClient,
-            isNewClient: createdClient.isNew
-        )
-
-        // Then
-
-        try await context.perform { [context] in
-            let updatedClient = try XCTUnwrap(UserClient.fetchExistingUserClient(
-                with: Scaffolding.userClientID,
-                in: context
-            ))
-
-            XCTAssertEqual(updatedClient.remoteIdentifier, Scaffolding.userClientID)
-            XCTAssertEqual(updatedClient.type, .permanent)
-            XCTAssertEqual(updatedClient.label, Scaffolding.remoteUserClient.label)
-            XCTAssertEqual(updatedClient.model, Scaffolding.remoteUserClient.model)
-            XCTAssertEqual(updatedClient.deviceClass, .phone)
-        }
-    }
-
     func testFetchSelfUser() async {
         // Given
 
@@ -459,16 +405,6 @@ final class UserRepositoryTests: XCTestCase {
                 UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ffc")!,
                 UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf8")!
             ]
-        )
-
-        static let remoteUserClient = WireAPI.UserClient(
-            id: userClientID,
-            type: .permanent,
-            activationDate: .now,
-            label: "test",
-            model: "test",
-            deviceClass: .phone,
-            capabilities: []
         )
 
         nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(

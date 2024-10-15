@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/users/list-clients"
+  - method: post
+  - body: {"qualified_users":[{"domain":"example.com","id":"7E23727B-D612-4123-88C0-57E311A7E5A3"},{"domain":"example.com","id":"302C59B0-037C-4B0F-A3ED-CCDBFB4CFE2C"},{"domain":"example.com","id":"213248A1-5499-418F-8173-5010D1C1E506"}]}

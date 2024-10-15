@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/clients"
+  - method: get
+  - body: none
