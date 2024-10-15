@@ -31,6 +31,17 @@ import WireDataModel
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
+    /// Fetches or creates a conversation locally.
+    /// - parameter id: The ID of the conversation.
+    /// - parameter domain: The domain of the conversation if any.
+    ///
+    /// - returns: The `ZMConversation` found or created locally.
+
+    func fetchOrCreateConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation
+
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
     /// - Parameter isFederationEnabled: A flag indicating whether a `Federation` is enabled.
@@ -104,6 +115,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+
+    public func fetchOrCreateConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation {
+        await context.perform { [context] in
+            ZMConversation.fetchOrCreate(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
+    }
 
     public func storeConversation(
         _ conversation: WireAPI.Conversation,
@@ -474,14 +498,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         domain: String?,
         handler: @escaping (ZMConversation) -> (ZMConversation, MLSGroupID?)
     ) async -> (ZMConversation, MLSGroupID?) {
-        await context.perform { [self] in
-            let conversation = ZMConversation.fetchOrCreate(
-                with: conversationID,
-                domain: domain,
-                in: context
-            )
-
-            return handler(conversation)
+        let conversation = await fetchOrCreateConversation(
+            with: conversationID,
+            domain: domain
+        )
+        
+        return await context.perform {
+            handler(conversation)
         }
     }
 

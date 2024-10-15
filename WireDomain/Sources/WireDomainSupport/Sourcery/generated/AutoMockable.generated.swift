@@ -161,6 +161,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public init() {}
 
 
+    // MARK: - fetchOrCreateConversation
+
+    public var fetchOrCreateConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchOrCreateConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchOrCreateConversationWithDomain_MockValue: ZMConversation?
+
+    public func fetchOrCreateConversation(with id: UUID, domain: String?) async -> ZMConversation {
+        fetchOrCreateConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchOrCreateConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchOrCreateConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateConversationWithDomain`")
+        }
+    }
+
     // MARK: - storeConversation
 
     public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
@@ -247,6 +265,24 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     public init() {}
 
+
+    // MARK: - fetchOrCreateConversation
+
+    public var fetchOrCreateConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchOrCreateConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchOrCreateConversationWithDomain_MockValue: ZMConversation?
+
+    public func fetchOrCreateConversation(with id: UUID, domain: String?) async -> ZMConversation {
+        fetchOrCreateConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchOrCreateConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchOrCreateConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateConversationWithDomain`")
+        }
+    }
 
     // MARK: - pullConversations
 
