@@ -238,6 +238,10 @@ final class ZClientViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        firstTimeRequestToEnableAnalytics()
+    }
+
+    private func firstTimeRequestToEnableAnalytics() {
         Task {
             do {
                 try await trackingManager?.firstTimeRequestToEnableAnalytics()
