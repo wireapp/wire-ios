@@ -239,7 +239,11 @@ final class ZClientViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         Task {
-            try await trackingManager?.firstTimeRequestToEnableAnalytics()
+            do {
+                try await trackingManager?.firstTimeRequestToEnableAnalytics()
+            } catch {
+                WireLogger.analytics.error("failed to first time enable analytics: \(error)")
+            }
         }
     }
 

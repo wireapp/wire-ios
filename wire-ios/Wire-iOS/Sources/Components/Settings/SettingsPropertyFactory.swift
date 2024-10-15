@@ -240,7 +240,7 @@ final class SettingsPropertyFactory {
                 guard let tracking else {
                     return
                 }
-                
+
                 guard case .number(let shouldDisable) = value else {
                     throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                 }
