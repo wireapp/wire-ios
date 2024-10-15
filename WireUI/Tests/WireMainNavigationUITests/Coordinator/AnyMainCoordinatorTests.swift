@@ -21,10 +21,16 @@ import XCTest
 
 final class AnyMainCoordinatorTests: XCTestCase {
 
-    //private var mockMainCoordinator: MockMainCoordinator!
+    private var mockMainCoordinator: MockMainCoordinatorProtocol!
     private var sut: AnyMainCoordinator<MockMainCoordinatorDependencies>!
 
     override func setUp() {
-        //sut = .init(mainCoordinator: MockMainCoordinator())
+        mockMainCoordinator = .init()
+        sut = .init(mainCoordinator: mockMainCoordinator)
+    }
+
+    override func tearDown() {
+        sut = nil
+        mockMainCoordinator = nil
     }
 }

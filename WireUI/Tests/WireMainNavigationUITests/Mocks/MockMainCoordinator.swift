@@ -19,60 +19,71 @@
 import WireMainNavigationUI
 import UIKit
 
-/*
 final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
     typealias Dependencies = MockMainCoordinatorDependencies
 
+    var showConversationList_Invocations: [ConversationFilter?] = []
     func showConversationList(conversationFilter: ConversationFilter?) async {
-        <#code#>
+        showConversationList_Invocations += [conversationFilter]
     }
-    
+
+    var showArchive_Invocations: [Void] = []
     func showArchive() async {
-        <#code#>
+        showArchive_Invocations.append(())
     }
-    
+
+    var showSettings_Invocations: [Void] = []
     func showSettings() async {
-        <#code#>
+        showSettings_Invocations.append(())
     }
-    
+
+    var showConversation_Invocations: [(conversation: ConversationModel, message: ConversationMessageModel?)] = []
     func showConversation(conversation: ConversationModel, message: ConversationMessageModel?) async {
-        <#code#>
+        showConversation_Invocations += [(conversation, message)]
     }
-    
+
+    var hideConversation_Invocations: [Void] = []
     func hideConversation() {
-        <#code#>
+        hideConversation_Invocations.append(())
     }
-    
+
+    var showSettingsContent_Invocations: [SettingsTopLevelMenuItem] = []
     func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
-        <#code#>
+        showSettingsContent_Invocations += [topLevelMenuItem]
     }
-    
+
+    var hideSettingsContent_Invocations: [Void] = []
     func hideSettingsContent() {
-        <#code#>
+        hideSettingsContent_Invocations.append(())
     }
-    
+
+    var showSelfProfile_Invocations: [Void] = []
     func showSelfProfile() async {
-        <#code#>
+        showSelfProfile_Invocations.append(())
     }
-    
+
+    var showUserProfile_Invocations: [User] = []
     func showUserProfile(user: User) async {
-        <#code#>
+        showUserProfile_Invocations += [user]
     }
-    
+
+    var showConnect_Invocations: [Void] = []
     func showConnect() async {
-        <#code#>
+        showConnect_Invocations.append(())
     }
-    
+
+    var showCreateGroupConversation_Invocations: [Void] = []
     func showCreateGroupConversation() async {
-        <#code#>
+        showCreateGroupConversation_Invocations.append(())
     }
-    
+
+    var presentViewController_Invocations: [UIViewController] = []
     func presentViewController(_ viewController: UIViewController) async {
-        <#code#>
+        presentViewController_Invocations += [viewController]
     }
-    
+
+    var dismissPresentedViewController_Invocations: [Void] = []
     func dismissPresentedViewController() async {
-        <#code#>
+        dismissPresentedViewController_Invocations.append(())
     }
 }
-*/
