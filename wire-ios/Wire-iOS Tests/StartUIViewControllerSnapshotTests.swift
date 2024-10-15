@@ -17,8 +17,8 @@
 //
 
 import WireDesign
-import WireTestingPackage
 import WireMainNavigationUI
+import WireTestingPackage
 import XCTest
 
 @testable import Wire

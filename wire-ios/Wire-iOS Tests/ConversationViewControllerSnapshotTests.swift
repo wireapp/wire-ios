@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMainNavigationUI
 import WireSyncEngineSupport
 import WireTestingPackage
-import WireMainNavigationUI
 import XCTest
 
 @testable import Wire
