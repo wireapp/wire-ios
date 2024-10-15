@@ -22,7 +22,7 @@ import WireDesign
 final class GuestAccountWarningView: UIView {
 
     private let stackView = UIStackView(axis: .vertical)
-    
+
     private let encryptionLabel = DynamicFontLabel(
         style: .subline1,
         color: SemanticColors.Label.textDefault
