@@ -408,9 +408,7 @@ public final class UserRepository: UserRepositoryProtocol {
         domain: String?,
         at date: Date
     ) async throws {
-        guard let user = fetchUser(with: id, domain: domain) else {
-            throw UserRepositoryError.failedToFetchUser(id)
-        }
+        let user = try await fetchUser(with: id, domain: domain)
 
         let isSelfUser = await context.perform {
             user.isSelfUser
