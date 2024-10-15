@@ -19,13 +19,25 @@
 import WireMainNavigationUI
 
 public extension MockMainCoordinatorProtocol {
-    typealias ConversationFilter = MainConversationFilter
-    typealias ConversationModel = MockConversationModel
-    typealias ConversationMessageModel = MockConversationMessageModel
-    typealias SettingsTopLevelMenuItem = MainSettingsTopLevelMenuItem
-    typealias User = MockUser
-}
 
-public struct MockConversationModel {}
-public struct MockConversationMessageModel {}
-public struct MockUser {}
+    typealias ConversationFilter = MainConversationFilter
+    typealias SettingsTopLevelMenuItem = MainSettingsTopLevelMenuItem
+    struct ConversationModel {}
+    struct ConversationMessageModel {}
+    struct User {}
+
+    enum Dependencies: MainCoordinatorDependencies {
+        public typealias SplitViewController = <#type#>
+        public typealias ConversationBuilder = <#type#>
+        public typealias SettingsContentBuilder = <#type#>
+        public typealias ConnectBuilder = <#type#>
+        public typealias CreateGroupConversationBuilder = <#type#>
+        public typealias SelfProfileBuilder = <#type#>
+        public typealias UserProfileBuilder = <#type#>
+        public typealias ConversationFilter = <#type#>
+        public typealias ConversationModel = <#type#>
+        public typealias ConversationMessageModel = <#type#>
+        public typealias SettingsTopLevelMenuItem = <#type#>
+        public typealias User = <#type#>
+    }
+}
