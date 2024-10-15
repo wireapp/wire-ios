@@ -18,19 +18,16 @@
 
 import UIKit
 
-@testable import WireMainNavigationUI
+public extension MainSplitViewController {
 
-struct MockConversationBuilder: MainConversationBuilderProtocol {
+    typealias ConversationList = TabContainer.ConversationList
+    typealias Archive = TabContainer.Archive
+    typealias Settings = TabContainer.Settings
 
-    typealias Dependencies = MockMainCoordinatorDependencies
-    typealias Conversation = MockConversationViewController<Dependencies.ConversationModel, Dependencies.ConversationMessageModel>
+    typealias Conversation = TabContainer.Conversation
+    typealias SettingsContent = UIViewController
 
-    @MainActor
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        conversation: ConversationModel,
-        message: ConversationMessageModel?,
-        mainCoordinator: MainCoordinator
-    ) -> Conversation where MainCoordinator.Dependencies == Dependencies {
-        .init()
-    }
+    typealias Connect = UIViewController
+
+    typealias NoConversationPlaceholderBuilder = () -> UIViewController
 }

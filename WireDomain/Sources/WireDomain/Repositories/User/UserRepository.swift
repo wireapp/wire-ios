@@ -134,7 +134,11 @@ public protocol UserRepositoryProtocol {
     ///     - user: The user to delete the account for.
     ///     - date: The date the user was deleted.
 
-    func deleteUserAccount(for user: ZMUser, at date: Date) async
+    func deleteUserAccount(
+        with id: UUID,
+        domain: String?,
+        at date: Date
+    ) async throws
 
 }
 
@@ -182,7 +186,11 @@ public final class UserRepository: UserRepositoryProtocol {
         domain: String?
     ) async throws -> ZMUser {
         try await context.perform { [context] in
-            guard let user = ZMUser.fetch(with: id, in: context) else {
+            guard let user = ZMUser.fetch(
+                with: id,
+                domain: domain,
+                in: context
+            ) else {
                 throw UserRepositoryError.failedToFetchUser(id)
             }
 
@@ -231,16 +239,6 @@ public final class UserRepository: UserRepositoryProtocol {
             nil,
             forKey: DefaultsKeys.pushToken.rawValue
         )
-    }
-
-    public func fetchUser(with id: UUID) async throws -> ZMUser {
-        try await context.perform { [context] in
-            guard let user = ZMUser.fetch(with: id, in: context) else {
-                throw UserRepositoryError.failedToFetchUser(id)
-            }
-
-            return user
-        }
     }
 
     public func fetchOrCreateUserClient(
@@ -348,8 +346,9 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func disableUserLegalHold() async throws {
+        let selfUser = fetchSelfUser()
+
         try await context.perform { [context] in
-            let selfUser = ZMUser.selfUser(in: context)
             selfUser.legalHoldRequestWasCancelled()
 
             try context.save()
@@ -400,9 +399,12 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func deleteUserAccount(
-        for user: ZMUser,
+        with id: UUID,
+        domain: String?,
         at date: Date
-    ) async {
+    ) async throws {
+        let user = try await fetchUser(with: id, domain: domain)
+
         let isSelfUser = await context.perform {
             user.isSelfUser
         }

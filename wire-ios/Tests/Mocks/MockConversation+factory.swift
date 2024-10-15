@@ -69,12 +69,12 @@ extension MockConversation {
         return mockConversation
     }
 
-    @objc (willAccessValueForKey:)
+    @objc(willAccessValueForKey:)
     func willAccessValue(forKey: String) {
 
     }
 
-    @objc (didAccessValueForKey:)
+    @objc(didAccessValueForKey:)
     func didAccessValue(forKey: String) {
 
     }
