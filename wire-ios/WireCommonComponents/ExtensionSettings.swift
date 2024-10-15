@@ -26,9 +26,9 @@ private enum ExtensionSettingsKey: String, CaseIterable {
 
     private var defaultValue: Any? {
         switch self {
-        // Always disable analytics by default.
         case .disableAnalyticsSharing:
-            return true
+            // No default value because the user needs to decide.
+            return nil
         case .disableLinkPreviews:
             return false
         }
@@ -63,8 +63,8 @@ public final class ExtensionSettings: NSObject {
         }
     }
 
-    public var disableAnalyticsSharing: Bool {
-        get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool ?? true }
+    public var disableAnalyticsSharing: Bool? {
+        get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
     }
 
