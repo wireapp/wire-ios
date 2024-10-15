@@ -47,12 +47,23 @@ final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
 }
 
 final class ZMMockTracking: TrackingInterface {
-    func disableAnalyticsSharing(isDisabled: Bool, resultHandler: @escaping (Result<Void, any Error>) -> Void) {
-        // no - op
+
+    var isAnalyticsDisabled: Bool = true
+    var disableCrashAndAnalyticsSharing: Bool = false
+
+    func requestAnalyticsConsent() async throws -> Bool {
+        // no op
+        return false
     }
 
-    var disableAnalyticsSharing: Bool = true
-    var disableCrashAndAnalyticsSharing: Bool = false
+    func disableAnalytics() throws {
+        // no op
+    }
+
+    func enableAnalytics() async throws {
+        // no op
+    }
+
 }
 
 final class SettingsPropertyTests: XCTestCase {

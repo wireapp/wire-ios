@@ -236,6 +236,21 @@ final class ZClientViewController: UIViewController {
         setUpConferenceCallingUnavailableObserver()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        firstTimeRequestToEnableAnalytics()
+    }
+
+    private func firstTimeRequestToEnableAnalytics() {
+        Task {
+            do {
+                try await trackingManager?.firstTimeRequestToEnableAnalytics()
+            } catch {
+                WireLogger.analytics.error("failed to first time enable analytics: \(error)")
+            }
+        }
+    }
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }

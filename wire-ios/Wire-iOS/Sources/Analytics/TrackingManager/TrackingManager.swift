@@ -23,75 +23,60 @@ import WireSyncEngine
 
 final class TrackingManager: NSObject, TrackingInterface {
 
-    private let flowManagerObserver: NSObjectProtocol
     private let sessionManager: SessionManager
+    private var observerToken: NSObjectProtocol?
 
     init(sessionManager: SessionManager) {
         self.sessionManager = sessionManager
-
-        AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
-
-        flowManagerObserver = NotificationCenter.default.addObserver(
+        super.init()
+        AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
+        observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
             queue: OperationQueue.main,
-            using: { _ in
-                AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
+            using: { [weak self] _ in
+                guard let self else { return }
+                AVSFlowManager.getInstance()?.setEnableMetrics(!self.isAnalyticsDisabled)
             }
         )
-
-        super.init()
     }
 
-    var disableAnalyticsSharing: Bool {
-        ExtensionSettings.shared.disableAnalyticsSharing
+    var doesUserConsentPreferenceExist: Bool {
+        ExtensionSettings.shared.disableAnalyticsSharing != nil
     }
 
-    func disableAnalyticsSharing(
-        isDisabled: Bool,
-        resultHandler: @escaping (Result<Void, any Error>) -> Void
-    ) {
-        Task { @MainActor in
-            if isDisabled {
-                await self.updateAnalyticsSharing(disabled: true)
-                resultHandler(.success(()))
-            } else {
-                // User wants to enable.
-                do {
-                    let isConsentGiven = try await self.requestAnalyticsConsent()
-
-                    if isConsentGiven {
-                        await self.updateAnalyticsSharing(disabled: false)
-                        resultHandler(.success(()))
-                    } else {
-                        // User rejected, keep analytics disabled.
-                        await self.updateAnalyticsSharing(disabled: true)
-                        resultHandler(.failure(TrackingManagerError.userConsentDenied))
-                    }
-                } catch {
-                    WireLogger.analytics.error("failed to enable analytics: \(error)")
-                    resultHandler(.failure(error))
-                }
-            }
-        }
+    var isAnalyticsDisabled: Bool {
+        ExtensionSettings.shared.disableAnalyticsSharing ?? true
     }
 
-    private func updateAnalyticsSharing(disabled: Bool) async {
-        do {
-            if disabled {
-                let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()
-                try disableUseCase.invoke()
-            } else {
-                let enableUseCase = try await sessionManager.makeEnableAnalyticsUseCase()
-                try await enableUseCase.invoke()
-            }
-        } catch {
-            WireLogger.analytics.error("Failed to toggle analytics sharing: \(error)")
+    @MainActor
+    func firstTimeRequestToEnableAnalytics() async throws {
+        // Only ask if user has not given a preference yet.
+        guard !doesUserConsentPreferenceExist else {
             return
         }
 
-        ExtensionSettings.shared.disableAnalyticsSharing = disabled
-        AVSFlowManager.getInstance()?.setEnableMetrics(!disabled)
+        WireLogger.analytics.debug("requesting first time analytics content")
+        let didConsent = try await requestAnalyticsConsent()
+        WireLogger.analytics.debug("user did consent: \(didConsent)")
+
+        if didConsent {
+            try await enableAnalytics()
+        } else {
+            try disableAnalytics()
+        }
+    }
+
+    func enableAnalytics() async throws {
+        try await sessionManager.makeEnableAnalyticsUseCase().invoke()
+        ExtensionSettings.shared.disableAnalyticsSharing = false
+        AVSFlowManager.getInstance()?.setEnableMetrics(true)
+    }
+
+    func disableAnalytics() throws {
+        try sessionManager.makeDisableAnalyticsUseCase().invoke()
+        ExtensionSettings.shared.disableAnalyticsSharing = true
+        AVSFlowManager.getInstance()?.setEnableMetrics(false)
     }
 
 }
