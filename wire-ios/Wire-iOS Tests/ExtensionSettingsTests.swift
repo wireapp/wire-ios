@@ -38,7 +38,7 @@ final class ExtensionSettingsTests: XCTestCase {
     }
 
     func testThatItHandlesAnalyticsPreferenceChange() {
-        XCTAssertEqual(settings.disableAnalyticsSharing, true)
+        XCTAssertNil(settings.disableAnalyticsSharing)
 
         settings.disableAnalyticsSharing = false
         XCTAssertEqual(settings.disableAnalyticsSharing, false)
