@@ -38,6 +38,7 @@ final class SectionFooterView: UIView {
     private func setupViews() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 0
+        titleLabel.textColor = SemanticColors.Label.textSectionFooter
         addSubview(titleLabel)
     }
 
