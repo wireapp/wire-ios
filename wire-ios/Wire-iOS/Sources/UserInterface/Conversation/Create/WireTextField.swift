@@ -51,13 +51,15 @@ class WireTextField: UITextField {
     private let textFieldValidator = SimpleTextFieldValidator()
 
     var value: Value? {
-        guard let text = self.text else { return nil }
-        return if let error = textFieldValidator.validate(text: text) {
+        let validator = SimpleTextFieldValidator()
+        guard let text else { return nil }
+        return if let error = validator.validate(text: text) {
             .error(error)
         } else {
             .valid(text)
         }
     }
+
 
     // MARK: - Initialization
 
@@ -118,10 +120,12 @@ class WireTextField: UITextField {
 
 extension WireTextField: SimpleTextFieldValidatorDelegate {
 
+
     func textFieldValueChanged(_ text: String?) {
-        let newValue: Value = {
+        let validator = SimpleTextFieldValidator()
+        let newValue = { () -> WireTextField.Value in
             guard let text else { return .error(.empty) }
-            if let error = textFieldValidator.validate(text: text) {
+            if let error = validator.validate(text: text) {
                 return .error(error)
             } else {
                 return .valid(text)
