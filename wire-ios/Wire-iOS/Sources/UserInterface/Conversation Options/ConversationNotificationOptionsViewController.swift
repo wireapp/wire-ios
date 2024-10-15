@@ -37,6 +37,8 @@ final class ConversationNotificationOptionsViewController: UIViewController {
         return UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
     }()
 
+    private lazy var sizingFooter = SectionFooter()
+
     // MARK: - Initialization
 
     init(conversation: ZMConversation, userSession: ZMUserSession) {
@@ -133,16 +135,14 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        let dequeuedView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
-                                                                           withReuseIdentifier: "SectionFooter",
-                                                                           for: IndexPath(item: 0, section: section))
-
-        guard let view = dequeuedView as? SectionFooter else { return .zero }
-
-        view.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
-        view.size(fittingWidth: collectionView.bounds.width)
-        return view.bounds.size
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
+        sizingFooter.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
+        sizingFooter.size(fittingWidth: collectionView.bounds.width)
+        return sizingFooter.bounds.size
     }
 
     // MARK: Saving Changes
