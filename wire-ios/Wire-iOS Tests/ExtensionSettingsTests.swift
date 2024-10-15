@@ -37,18 +37,14 @@ final class ExtensionSettingsTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatItDisablesAnalyticsReportByDefault() {
-        XCTAssertTrue(settings.disableAnalyticsSharing)
-    }
-
     func testThatItHandlesAnalyticsPreferenceChange() {
-        XCTAssertTrue(settings.disableAnalyticsSharing)
+        XCTAssertEqual(settings.disableAnalyticsSharing, true)
 
         settings.disableAnalyticsSharing = false
-        XCTAssertFalse(settings.disableAnalyticsSharing)
+        XCTAssertEqual(settings.disableAnalyticsSharing, false)
 
         settings.disableAnalyticsSharing = true
-        XCTAssertTrue(settings.disableAnalyticsSharing)
+        XCTAssertEqual(settings.disableAnalyticsSharing, true)
     }
 
     func testThatItEnablesLinkPreviewsByDefault() {

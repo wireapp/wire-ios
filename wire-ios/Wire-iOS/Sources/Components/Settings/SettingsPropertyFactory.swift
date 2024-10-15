@@ -22,8 +22,12 @@ import WireSyncEngine
 import WireUtilities
 
 protocol TrackingInterface {
-    var disableAnalyticsSharing: Bool { get }
-    func disableAnalyticsSharing(isDisabled: Bool, resultHandler: @escaping (Result<Void, any Error>) -> Void)
+
+    var isAnalyticsDisabled: Bool { get }
+    func requestAnalyticsConsent() async throws -> Bool
+    func disableAnalytics() throws
+    func enableAnalytics() async throws
+
 }
 
 protocol AVSMediaManagerInterface {
@@ -226,20 +230,37 @@ final class SettingsPropertyFactory {
         case .disableAnalyticsSharing:
             let getAction: GetAction = { [unowned self] _ in
                 if let tracking = self.tracking {
-                    return SettingsPropertyValue(tracking.disableAnalyticsSharing)
+                    return SettingsPropertyValue(tracking.isAnalyticsDisabled)
                 } else {
                     return SettingsPropertyValue(false)
                 }
             }
 
             let setAction: SetAction = { [unowned self] _, value, resultHandler in
-                if var tracking = self.tracking {
-                    switch value {
-                    case .number(let number):
-                        tracking.disableAnalyticsSharing(isDisabled: number.boolValue, resultHandler: resultHandler)
-                    default:
-                        throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
+                guard let tracking else {
+                    return
+                }
+                
+                guard case .number(let shouldDisable) = value else {
+                    throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
+                }
+
+                Task { @MainActor in
+                    do {
+                        if shouldDisable.boolValue {
+                            try tracking.disableAnalytics()
+                        } else {
+                            guard try await tracking.requestAnalyticsConsent() else {
+                                throw TrackingManagerError.userConsentDenied
+                            }
+
+                            try await tracking.enableAnalytics()
+                        }
+                    } catch {
+                        resultHandler(.failure(error))
                     }
+
+                    resultHandler(.success(()))
                 }
             }
 
