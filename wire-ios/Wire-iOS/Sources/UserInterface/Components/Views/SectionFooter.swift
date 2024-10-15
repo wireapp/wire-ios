@@ -19,40 +19,6 @@
 import UIKit
 import WireDesign
 
-final class SectionFooterView: UIView {
-
-    let titleLabel = DynamicFontLabel(style: .subline1, color: SemanticColors.Label.textSectionFooter)
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupViews()
-        titleLabel.lineBreakMode = .byWordWrapping
-        createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupViews() {
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.numberOfLines = 0
-        titleLabel.textColor = SemanticColors.Label.textSectionFooter
-        addSubview(titleLabel)
-    }
-
-    private func createConstraints() {
-        NSLayoutConstraint.activate([
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
-        ])
-    }
-
-}
-
 final class SectionFooter: UICollectionReusableView {
 
     let footerView = SectionFooterView()
