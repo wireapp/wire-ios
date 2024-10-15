@@ -24,6 +24,17 @@ import WireDataModel
 /// Facilitate access to conversations related domain objects.
 public protocol ConversationRepositoryProtocol {
 
+    /// Fetches a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: The `ZMConversation` found locally.
+
+    func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation?
+
     /// Fetches and persists all conversations
 
     func pullConversations() async throws
@@ -90,6 +101,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Public
+
+    public func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation? {
+        await conversationsLocalStore.fetchConversation(
+            with: id,
+            domain: domain
+        )
+    }
 
     public func pullConversations() async throws {
         var qualifiedIds: [WireAPI.QualifiedID]

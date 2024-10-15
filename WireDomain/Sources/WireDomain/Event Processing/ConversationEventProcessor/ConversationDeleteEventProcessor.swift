@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
+import WireDataModel
+import WireSystem
 
 /// Process conversation delete events.
 
@@ -32,9 +35,56 @@ protocol ConversationDeleteEventProcessorProtocol {
 
 struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtocol {
 
-    func processEvent(_: ConversationDeleteEvent) async throws {
-        // TODO: [WPB-10167]
-        assertionFailure("not implemented yet")
+    enum Error: Swift.Error {
+        case failedToDeleteMLSConversation(Swift.Error)
+    }
+
+    let context: NSManagedObjectContext
+    let repository: any ConversationRepositoryProtocol
+    let mlsService: any MLSServiceInterface
+
+    func processEvent(_ event: ConversationDeleteEvent) async throws {
+        let id = event.conversationID.uuid
+        let domain = event.conversationID.domain
+
+        let conversation = await repository.fetchConversation(
+            with: id,
+            domain: domain
+        )
+
+        guard let conversation else {
+            return WireLogger.eventProcessing.warn(
+                "Cannot delete a conversation that doesn't exist locally: \(id.safeForLoggingDescription)"
+            )
+        }
+
+        if conversation.messageProtocol == .mls {
+            do {
+                try await wipeMLSGroup(conversation: conversation)
+            } catch {
+                throw Error.failedToDeleteMLSConversation(error)
+            }
+        }
+
+        await context.perform {
+            conversation.isDeletedRemotely = true
+        }
+
+        try context.saveOrRevert()
+    }
+
+    private func wipeMLSGroup(conversation: ZMConversation) async throws {
+        let groupID = await context.perform {
+            conversation.mlsGroupID
+        }
+
+        guard let groupID else {
+            return WireLogger.mls.warn(
+                "Failed to wipe MLS conversation: missing `mlsGroupID`"
+            )
+        }
+
+        try await mlsService.wipeGroup(groupID)
     }
 
 }

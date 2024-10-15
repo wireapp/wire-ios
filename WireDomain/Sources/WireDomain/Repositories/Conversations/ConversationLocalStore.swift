@@ -31,6 +31,17 @@ import WireDataModel
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
+    /// Fetches a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: The `ZMConversation` found locally.
+
+    func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation?
+
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
     /// - Parameter isFederationEnabled: A flag indicating whether a `Federation` is enabled.
@@ -104,6 +115,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+
+    public func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation? {
+        await context.perform { [context] in
+            ZMConversation.fetch(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
+    }
 
     public func storeConversation(
         _ conversation: WireAPI.Conversation,
