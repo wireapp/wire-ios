@@ -19,7 +19,6 @@
 import avs
 import Combine
 import Foundation
-import WireAnalytics
 
 private let zmLog = ZMSLog(tag: "calling")
 
@@ -47,7 +46,7 @@ public class WireCallCenterV3: NSObject {
     let flowManager: FlowManagerType
 
     /// The object to use to record stats about the call.
-    let analytics: AnalyticsService?
+    let analytics: AnalyticsType?
 
     /// The bridge to use to communicate with and receive events from AVS.
     var avsWrapper: AVSWrapperType!
@@ -136,7 +135,7 @@ public class WireCallCenterV3: NSObject {
                          avsWrapper: AVSWrapperType? = nil,
                          uiMOC: NSManagedObjectContext,
                          flowManager: FlowManagerType,
-                         analytics: AnalyticsService? = nil,
+                         analytics: AnalyticsType? = nil,
                          transport: WireCallCenterTransport) {
 
         self.selfUserId = userId

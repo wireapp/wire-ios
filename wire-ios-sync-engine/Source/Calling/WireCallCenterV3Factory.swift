@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-import WireAnalytics
 
 /**
  * Creates call centers.
@@ -47,7 +46,7 @@ import WireAnalytics
                                  clientId: String,
                                  uiMOC: NSManagedObjectContext,
                                  flowManager: FlowManagerType,
-                                 analytics: AnalyticsService? = nil,
+                                 analytics: AnalyticsType? = nil,
                                  transport: WireCallCenterTransport) -> WireCallCenterV3 {
 
         if let wireCallCenter = uiMOC.zm_callCenter {
