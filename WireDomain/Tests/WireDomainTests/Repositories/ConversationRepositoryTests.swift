@@ -16,34 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+@testable import WireDomain
 import XCTest
 
-@testable import WireAPI
-@testable import WireDomain
+final class ConversationRepositoryTests: XCTestCase {
 
-class ConversationRepositoryTests: XCTestCase {
-
-    var sut: ConversationRepository!
-    var conversationsAPI: MockConversationsAPI!
-    var conversationsLocalStore: ConversationLocalStoreProtocol!
-    let backendInfo: ConversationRepository.BackendInfo = .init(
+    private var sut: ConversationRepository!
+    private var conversationsAPI: MockConversationsAPI!
+    private var conversationsLocalStore: ConversationLocalStoreProtocol!
+    private let backendInfo: ConversationRepository.BackendInfo = .init(
         domain: "example.com",
         isFederationEnabled: false
     )
-    var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         conversationsLocalStore = ConversationLocalStore(
             context: context,
@@ -59,12 +59,14 @@ class ConversationRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         conversationsLocalStore = nil
         stack = nil
         conversationsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -222,55 +224,124 @@ class ConversationRepositoryTests: XCTestCase {
         }
     }
 
-}
+    func testGetMLSOneToOneConversation() async throws {
+        // Mock
 
-extension ConversationRepositoryTests {
+        mockConversationsAPI()
 
-    private func fetchConversations(withIds ids: [UUID]) -> Set<ZMConversation> {
-        ZMConversation.fetchObjects(
-            withRemoteIdentifiers: Set(ids),
-            in: context
-        ) as! Set<ZMConversation>
+        // When
+
+        let mlsGroupID = try await sut.pullMLSOneToOneConversation(
+            userID: Scaffolding.userID.uuidString,
+            domain: Scaffolding.domain
+        )
+
+        let mlsConversation = await sut.fetchMLSConversation(with: mlsGroupID)
+
+        // Then
+
+        XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
     }
 
-    private func mockSelfUser() -> ZMUser {
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = Scaffolding.selfUserId
-        selfUser.domain = backendInfo.domain
+    func testRemoveFromConversations_It_Appends_A_System_Message_To_All_Team_Conversations_When_A_Member_Leave() async throws {
+        // Given
 
-        let client = UserClient.insertNewObject(in: context)
-        client.remoteIdentifier = UUID().uuidString
-        client.user = selfUser
-        context.saveOrRollback()
+        let user = try await context.perform { [self] in
+            let (team, users, _) = modelHelper.createTeam(
+                id: Scaffolding.teamID,
+                withMembers: [Scaffolding.userID],
+                inGroupConversation: Scaffolding.teamConversationID,
+                context: context
+            )
 
-        return selfUser
+            modelHelper.createGroupConversation(
+                id: Scaffolding.anotherTeamConversationID,
+                with: users,
+                team: team,
+                domain: nil,
+                in: context
+            )
+
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                with: Set(users),
+                domain: nil,
+                in: context
+            )
+
+            let user = try XCTUnwrap(users.first)
+            let member = try XCTUnwrap(team.members.first)
+            XCTAssertEqual(user.membership, member)
+
+            return user
+        }
+
+        let timestamp = Scaffolding.date(from: Scaffolding.time)
+
+        // When
+
+        await sut.removeFromConversations(user: user, removalDate: timestamp)
+
+        // Then
+
+        try await context.perform { [self] in
+
+            let user = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context), "No User")
+            XCTAssertNotNil(Team.fetch(with: Scaffolding.teamID, in: context))
+
+            let teamConversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.teamConversationID, in: context), "No Team Conversation")
+
+            let teamAnotherConversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.anotherTeamConversationID, in: context), "No Team Conversation")
+
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.conversationID, in: context), "No Conversation")
+
+            try checkLastMessage(
+                in: teamConversation,
+                isLeaveMessageFor: user,
+                at: timestamp
+            )
+
+            try checkLastMessage(
+                in: teamAnotherConversation,
+                isLeaveMessageFor: user,
+                at: timestamp
+            )
+
+            let lastMessage = try XCTUnwrap(conversation.lastMessage as? ZMSystemMessage)
+            XCTAssertNotEqual(lastMessage.systemMessageType, .teamMemberLeave, "Should not append leave message to regular conversation")
+        }
     }
 
-    private func mockConversationsAPI(conversationList: WireAPI.ConversationList = Scaffolding.conversationList) {
-        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: [Scaffolding.conversationSelfType.id!],
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
+    private func checkLastMessage(
+        in conversation: ZMConversation,
+        isLeaveMessageFor user: ZMUser,
+        at timestamp: Date
+    ) throws {
+        let lastMessage = try XCTUnwrap(conversation.lastMessage as? ZMSystemMessage, "Last message is not system message")
 
-        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: [Scaffolding.conversationSelfType.qualifiedID!],
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
+        XCTAssertEqual(lastMessage.systemMessageType, .teamMemberLeave, "System message is not teamMemberLeave: but '\(lastMessage.systemMessageType.rawValue)")
 
-        conversationsAPI.getConversationsFor_MockValue = .init(
-            found: conversationList.found,
-            notFound: conversationList.notFound,
-            failed: conversationList.failed
+        let serverTimeStamp = try XCTUnwrap(lastMessage.serverTimestamp, "System message should have timestamp")
+
+        XCTAssertEqual(
+            serverTimeStamp.timeIntervalSince1970,
+            timestamp.timeIntervalSince1970,
+            accuracy: 0.1
         )
     }
 
     private enum Scaffolding {
+        static let teamID = UUID()
+        static let userID = UUID()
+        static let time = "2021-05-12T10:52:02.671Z"
+        static let teamConversationID = UUID()
+        static let anotherTeamConversationID = UUID()
+        static let conversationID = UUID()
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
         static let conversationList = ConversationList(
             found: [conversationSelfType,
                     conversationGroupType,
@@ -280,7 +351,7 @@ extension ConversationRepositoryTests {
             failed: [conversationFailed]
         )
 
-        static let conversationListError = ConversationList(
+        nonisolated(unsafe) static let conversationListError = ConversationList(
             found: [conversationSelfTypeMissingId,
                     conversationGroupType,
                     conversationConnectionType,
@@ -383,7 +454,7 @@ extension ConversationRepositoryTests {
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ae")!,
             type: .oneOnOne,
             messageProtocol: .proteus,
-            mlsGroupID: "",
+            mlsGroupID: base64EncodedString,
             cipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
             epoch: 0,
             epochTimestamp: nil,
@@ -399,6 +470,8 @@ extension ConversationRepositoryTests {
             lastEventTime: nil
         )
 
+        static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+
         static let conversationNotFound = WireAPI.QualifiedID(
             uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4aa")!,
             domain: "example.com"
@@ -410,6 +483,58 @@ extension ConversationRepositoryTests {
         )
 
         static let selfUserId = UUID()
+
+        static let domain = "domain.com"
+    }
+
+}
+
+extension ConversationRepositoryTests {
+
+    private func fetchConversations(withIds ids: [UUID]) -> Set<ZMConversation> {
+        ZMConversation.fetchObjects(
+            withRemoteIdentifiers: Set(ids),
+            in: context
+        ) as! Set<ZMConversation>
+    }
+
+    private func mockSelfUser() -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = Scaffolding.selfUserId
+        selfUser.domain = backendInfo.domain
+
+        let client = UserClient.insertNewObject(in: context)
+        client.remoteIdentifier = UUID().uuidString
+        client.user = selfUser
+        context.saveOrRollback()
+
+        return selfUser
+    }
+
+    private func mockConversationsAPI(conversationList: WireAPI.ConversationList = Scaffolding.conversationList) {
+        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+            .init(
+                element: [Scaffolding.conversationSelfType.id!],
+                hasMore: false,
+                nextStart: .init()
+            )
+        })
+
+        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+            .init(
+                element: [Scaffolding.conversationSelfType.qualifiedID!],
+                hasMore: false,
+                nextStart: .init()
+            )
+        })
+
+        conversationsAPI.getConversationsFor_MockValue = .init(
+            found: conversationList.found,
+            notFound: conversationList.notFound,
+            failed: conversationList.failed
+        )
+
+        conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversationOneOnOneType
     }
 
 }

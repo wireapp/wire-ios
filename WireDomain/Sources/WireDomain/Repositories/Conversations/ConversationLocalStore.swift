@@ -55,6 +55,28 @@ public protocol ConversationLocalStoreProtocol {
     func storeFailedConversation(
         withQualifiedId qualifiedId: WireAPI.QualifiedID
     ) async
+
+    /// Fetches a MLS conversation locally.
+    ///
+    /// - parameters:
+    ///     - groupID: The MLS group ID object.
+    ///
+    /// - returns : A MLS conversation.
+
+    func fetchMLSConversation(
+        with groupID: WireDataModel.MLSGroupID
+    ) async -> ZMConversation?
+
+    /// Removes a given user from all conversations.
+    ///
+    /// - parameters:
+    ///     - user: The user to remove from the conversations.
+    ///     - removalDate: The date the user was removed from the conversations.
+
+    func removeFromConversations(
+        user: ZMUser,
+        removalDate: Date
+    ) async
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -170,6 +192,50 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             $0.needsToBeUpdatedFromBackend = true
 
             return ($0, $0.mlsGroupID)
+        }
+    }
+
+    public func fetchMLSConversation(
+        with groupID: WireDataModel.MLSGroupID
+    ) async -> ZMConversation? {
+        await context.perform { [context] in
+            ZMConversation.fetch(
+                with: groupID,
+                in: context
+            )
+        }
+    }
+
+    public func removeFromConversations(
+        user: ZMUser,
+        removalDate: Date
+    ) async {
+        await context.perform {
+            let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
+                guard $0.conversation?.conversationType == .group else {
+                    return nil
+                }
+                return $0.conversation
+            }
+
+            for conversation in allGroupConversations {
+                if user.isTeamMember, conversation.team == user.team {
+                    conversation.appendTeamMemberRemovedSystemMessage(
+                        user: user,
+                        at: removalDate
+                    )
+                } else {
+                    conversation.appendParticipantRemovedSystemMessage(
+                        user: user,
+                        at: removalDate
+                    )
+                }
+
+                conversation.removeParticipantAndUpdateConversationState(
+                    user: user,
+                    initiatingUser: user
+                )
+            }
         }
     }
 

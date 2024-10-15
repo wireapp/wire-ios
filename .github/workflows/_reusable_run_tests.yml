@@ -189,7 +189,7 @@ jobs:
         run: |
           echo "WireFoundation has changes"
           echo "Building WireFoundation..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireFoundation -resultBundlePath xcodebuild-wire-foundation.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-foundation.log | bundle exec xcpretty
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireFoundation-Package -resultBundlePath xcodebuild-wire-foundation.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-foundation.log | bundle exec xcpretty
 
       - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-foundation || inputs.all }}
@@ -202,7 +202,7 @@ jobs:
         if: ${{ inputs.wire-foundation || inputs.all }}
         run: |
           echo "Testing WireFoundation..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireFoundation -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-foundation.log | bundle exec xcpretty --report junit --output build/reports/WireFoundation.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireFoundation-Package -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-foundation.log | bundle exec xcpretty --report junit --output build/reports/WireFoundation.junit
           exit ${PIPESTATUS[0]}
 
       # WireSystem Project
@@ -615,7 +615,7 @@ jobs:
         run: |
           echo "WireUI has changes"
           echo "Building WireUI..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUI -resultBundlePath xcodebuild-wire-ui.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ui.log | bundle exec xcpretty
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUI-Package -resultBundlePath xcodebuild-wire-ui.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ui.log | bundle exec xcpretty
 
       - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
         if: ${{ inputs.wire-ui || inputs.all }}
@@ -628,7 +628,7 @@ jobs:
         if: ${{ inputs.wire-ui || inputs.all }}
         run: |
           echo "Testing WireUI..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ui.log | bundle exec xcpretty --report junit --output build/reports/WireUI.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUI-Package -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ui.log | bundle exec xcpretty --report junit --output build/reports/WireUI.junit
           exit ${PIPESTATUS[0]}
 
       # Wire-iOS
@@ -667,7 +667,7 @@ jobs:
         with:
           name: Failed Snapshots and log
           path: |
-            wire-ios/SnapshotResults/
+            **/SnapshotResults/
             xcodebuild*.log
 
       # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build

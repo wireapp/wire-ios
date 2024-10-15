@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireTestingPackage
 import XCTest
 
@@ -39,7 +38,7 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
 
         sut = .init(view: viewController.view, accessibilityAnnouncement: .none)
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     // MARK: - tearDown

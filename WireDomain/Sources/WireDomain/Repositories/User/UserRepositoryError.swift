@@ -28,4 +28,8 @@ enum UserRepositoryError: Error {
 
     case failedToCollectKnownUsers(Error)
 
+    /// Failed to fetch user locally.
+
+    case failedToFetchUser(UUID)
+
 }
