@@ -60,7 +60,6 @@ class WireTextField: UITextField {
         }
     }
 
-
     // MARK: - Initialization
 
     override init(frame: CGRect) {
@@ -119,7 +118,6 @@ class WireTextField: UITextField {
 // MARK: - SimpleTextFieldValidatorDelegate
 
 extension WireTextField: SimpleTextFieldValidatorDelegate {
-
 
     func textFieldValueChanged(_ text: String?) {
         let validator = SimpleTextFieldValidator()
