@@ -23,7 +23,7 @@ import UIKit
 struct MockConversationBuilder: MainConversationBuilderProtocol {
 
     typealias Dependencies = MockMainCoordinatorDependencies
-    typealias Conversation = MockConversationViewController<Dependencies.ConversationModel, Dependencies.ConversationMessageModel>
+    typealias Conversation = MockConversationViewController<Dependencies.ConversationModel>
 
     @MainActor
     func build<MainCoordinator: MainCoordinatorProtocol>(

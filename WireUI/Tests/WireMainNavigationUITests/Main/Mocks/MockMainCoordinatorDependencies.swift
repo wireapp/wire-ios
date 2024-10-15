@@ -24,7 +24,7 @@ enum MockMainCoordinatorDependencies: MainCoordinatorDependencies {
 
     typealias ConversationFilter = MainConversationFilter
     typealias ConversationModel = PreviewConversationModel
-    typealias ConversationMessageModel = MockConversationMessageModel
+    typealias ConversationMessageModel = Void
     typealias SettingsTopLevelMenuItem = MainSettingsTopLevelMenuItem
     typealias User = MockUser
 
