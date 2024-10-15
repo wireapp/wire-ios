@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireMainNavigation
+import WireMainNavigationUI
 import WireSyncEngine
 
 typealias DismissAction = (_ completion: Completion?) -> Void

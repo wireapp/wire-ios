@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSettings
+import WireSettingsUI
 
 protocol IconActionCellDelegate: AnyObject {
     func updateLayout()

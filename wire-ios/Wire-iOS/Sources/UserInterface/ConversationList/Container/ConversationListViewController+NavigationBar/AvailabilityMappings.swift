@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAccountImage
+import WireAccountImageUI
 import WireDataModel
-import WireSidebar
+import WireSidebarUI
 
 extension WireDataModel.Availability {
 
-    /// Since `WireAccountImage` does not know about the type `WireDataModel.Availability`,
-    /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImage.Availability?`.
+    /// Since `WireAccountImageUI` does not know about the type `WireDataModel.Availability`,
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImageUI.Availability?`.
 
-    func mapToAccountImageAvailability() -> WireAccountImage.Availability? {
+    func mapToAccountImageAvailability() -> WireAccountImageUI.Availability? {
         switch self {
         case .none: .none
         case .available: .available
@@ -37,10 +37,10 @@ extension WireDataModel.Availability {
 
 extension WireDataModel.Availability {
 
-    /// Since `WireSidebar` does not know about the type `WireDataModel.Availability`,
-    /// this function serves as an adapter from `WireDataModel.Availability` to `WireSidebar.SidebarAccountInfo.Availability?`.
+    /// Since `WireSidebarUI` does not know about the type `WireDataModel.Availability`,
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireSidebarUI.SidebarAccountInfo.Availability?`.
 
-    func mapToSidebarAccountInfoAvailability() -> WireSidebar.SidebarAccountInfo.Availability? {
+    func mapToSidebarAccountInfoAvailability() -> WireSidebarUI.SidebarAccountInfo.Availability? {
         switch self {
         case .none: .none
         case .available: .available
@@ -50,12 +50,12 @@ extension WireDataModel.Availability {
     }
 }
 
-extension WireSidebar.SidebarAccountInfo.Availability {
+extension WireSidebarUI.SidebarAccountInfo.Availability {
 
-    /// Since `WireAccountImage.Availability` does not know about the type `WireSidebar`,
-    /// this function serves as an adapter from `WireSidebar.SidebarAccountInfo.Availability` to `WireAccountImage.Availability`.
+    /// Since `WireAccountImageUI.Availability` does not know about the type `WireSidebarUI`,
+    /// this function serves as an adapter from `WireSidebarUI.SidebarAccountInfo.Availability` to `WireAccountImageUI.Availability`.
 
-    func mapToAccountImageAvailability() -> WireAccountImage.Availability {
+    func mapToAccountImageAvailability() -> WireAccountImageUI.Availability {
         switch self {
         case .available: .available
         case .busy: .busy

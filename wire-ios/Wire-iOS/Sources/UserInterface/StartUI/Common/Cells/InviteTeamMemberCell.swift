@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireDesign
 
 final class InviteTeamMemberCell: StartUIIconCell {
 
@@ -29,5 +31,4 @@ final class InviteTeamMemberCell: StartUIIconCell {
         accessibilityTraits.insert(.button)
         accessibilityIdentifier = "button.searchui.invite_team"
     }
-
 }

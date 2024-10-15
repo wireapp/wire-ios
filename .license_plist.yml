@@ -16,3 +16,5 @@ manual:
   - source: https://github.com/undefinedlabs/Thrift-Swift # No license file in repository.
     name: Thrift-Swift
     file: scripts/ManualLicenses/Thrift-Swift.LICENSE.txt
+exclude:
+  - owner: DataDog # not shipped in production

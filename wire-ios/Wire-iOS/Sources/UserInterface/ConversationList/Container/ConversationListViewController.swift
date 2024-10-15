@@ -17,12 +17,12 @@
 //
 
 import UIKit
-import WireAccountImage
+import WireAccountImageUI
 import WireCommonComponents
-import WireConversationList
+import WireConversationListUI
 import WireDataModel
 import WireDesign
-import WireMainNavigation
+import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -120,8 +120,8 @@ final class ConversationListViewController: UIViewController {
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
     ) where
     MainCoordinator: MainCoordinatorProtocol,
-    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
-    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+    MainCoordinator.ConversationModel == ZMConversation,
+    MainCoordinator.ConversationMessageModel == ZMConversationMessage {
 
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -146,8 +146,8 @@ final class ConversationListViewController: UIViewController {
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
     ) where
     MainCoordinator: MainCoordinatorProtocol,
-    MainCoordinator.ConversationList.ConversationID == ZMConversation.ConversationID,
-    MainCoordinator.ConversationList.MessageID == ZMConversationMessage.MessageID {
+    MainCoordinator.ConversationModel == ZMConversation,
+    MainCoordinator.ConversationMessageModel == ZMConversationMessage {
 
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
@@ -257,14 +257,6 @@ final class ConversationListViewController: UIViewController {
         .portrait
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        // TODO: these methods are called too often, see `splitViewControllerMode`
-        // setupTitleView()
-        // updateNavigationItem()
-    }
-
     // MARK: - Setup UI
 
     private func setupObservers() {
@@ -310,7 +302,9 @@ final class ConversationListViewController: UIViewController {
 
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
-        add(listContentController, to: contentContainer)
+        addChild(listContentController)
+        contentContainer.addSubview(listContentController.view)
+        listContentController.didMove(toParent: self)
     }
 
     private func setupNoConversationLabel() {
@@ -323,7 +317,9 @@ final class ConversationListViewController: UIViewController {
 
     private func setupNetworkStatusBar() {
         networkStatusViewController.delegate = self
-        add(networkStatusViewController, to: contentContainer)
+        addChild(networkStatusViewController)
+        contentContainer.addSubview(networkStatusViewController.view)
+        networkStatusViewController.didMove(toParent: self)
     }
 
     private func createViewConstraints() {
@@ -476,26 +472,12 @@ final class ConversationListViewController: UIViewController {
 
     // MARK: - Presentation
 
-    /// Show the newsletter subscription dialog if needed
-    /// - Parameter completionHandler: The completion handler to be called after the dialog is shown
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        // TODO: fix
-        // UIAlertController.showNewsletterSubscriptionDialogIfNeeded(
-        //     presentViewController: self,
-        //     completionHandler: completionHandler
-        // )
-    }
-
     /// Select the inbox and focus on the view
     /// - Parameter focus: Boolean to indicate if the view should focus
     func selectInboxAndFocusOnView(focus: Bool) {
         listContentController.selectInboxAndFocus(onView: focus)
     }
 }
-
-// MARK: - ViewModel Delegate
-
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {}
 
 // MARK: - ConversationListViewController + ArchivedListViewControllerDelegate
 

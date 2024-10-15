@@ -22,8 +22,10 @@ import WireDesign
 
 final class SectionHeaderView: UIView {
 
-    let titleLabel = DynamicFontLabel(style: .subline1,
-                                      color: SemanticColors.Label.textSectionHeader)
+    let titleLabel = DynamicFontLabel(
+        style: .h5,
+        color: SemanticColors.Label.textSectionHeader
+    )
 
     override init(frame: CGRect) {
         super.init(frame: frame)

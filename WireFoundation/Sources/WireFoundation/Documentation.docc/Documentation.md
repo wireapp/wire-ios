@@ -1,6 +1,6 @@
 # ``WireFoundation``
 
-Provide core shared code which is absoluteley needed in almost all targets.
+Provide core shared code which is absolutely needed in almost all targets.
 
 ## Overview
 

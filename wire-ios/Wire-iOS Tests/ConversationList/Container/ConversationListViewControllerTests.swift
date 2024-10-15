@@ -17,7 +17,7 @@
 //
 
 import WireDataModelSupport
-import WireMainNavigation
+import WireMainNavigationUI
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
@@ -241,5 +241,13 @@ private extension MainCoordinatorInjectingViewControllerBuilder where Self == Mo
 }
 
 private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-    func build(mainCoordinator _: some MainCoordinatorProtocol) -> UIViewController { .init() }
+
+    typealias Dependencies = Wire.MainCoordinatorDependencies
+
+    func build<MainCoordinator: MainCoordinatorProtocol>(
+        mainCoordinator: MainCoordinator
+    ) -> UIViewController where
+    MainCoordinator.Dependencies == Dependencies {
+        .init()
+    }
 }

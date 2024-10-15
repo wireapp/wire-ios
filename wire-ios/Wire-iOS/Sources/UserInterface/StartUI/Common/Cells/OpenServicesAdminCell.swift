@@ -22,8 +22,9 @@ final class OpenServicesAdminCell: StartUIIconCell {
 
     override func setupViews() {
         super.setupViews()
+
         icon = .bot
-        title = PeoplePicker.QuickAction.adminServices
+        // TODO: title = PeoplePicker.QuickAction.adminServices
         isAccessibilityElement = true
         accessibilityLabel = title
         accessibilityIdentifier = "button.searchui.open-services"

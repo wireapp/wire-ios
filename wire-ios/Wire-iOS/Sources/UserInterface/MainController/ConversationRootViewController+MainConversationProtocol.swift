@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireMainNavigation
+import WireDataModel
+import WireMainNavigationUI
 
 extension ConversationRootViewController: MainConversationProtocol {
-    typealias ConversationID = UUID
+    typealias ConversationModel = ZMConversation
+
+    var conversationModel: ZMConversation! {
+        conversationViewController!.conversation
+    }
 }

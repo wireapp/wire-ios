@@ -18,25 +18,29 @@
 
 import UIKit
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 import WireSyncEngine
 
+@MainActor
 struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
+
+    typealias Dependencies = MainCoordinatorDependencies
+    typealias Conversation = ConversationRootViewController
 
     var userSession: UserSession
     var mediaPlaybackManager: MediaPlaybackManager?
-    var conversationLoader: (_ conversationID: UUID) async -> ZMConversation?
 
-    @MainActor
-    func build(
-        conversationID: UUID,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) async -> ConversationRootViewController {
+    func build<MainCoordinator: MainCoordinatorProtocol>(
+        conversation: ConversationModel,
+        message: ConversationMessageModel?,
+        mainCoordinator: MainCoordinator
+    ) -> Conversation where MainCoordinator.Dependencies == Dependencies {
+
         let viewController = ConversationRootViewController(
-            conversation: await conversationLoader(conversationID)!,
-            message: nil, // TODO: use `scroll(to:)`
+            conversation: conversation,
+            message: message,
             userSession: userSession,
-            mainCoordinator: mainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
             mediaPlaybackManager: mediaPlaybackManager
         )
         viewController.hidesBottomBarWhenPushed = true

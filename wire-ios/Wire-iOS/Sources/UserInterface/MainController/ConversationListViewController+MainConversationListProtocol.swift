@@ -16,17 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 
 extension ConversationListViewController: MainConversationListProtocol {
-    typealias ConversationID = ZMConversation.ConversationID
-    typealias MessageID = ZMConversationMessage.MessageID
 
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
-        set { listContentController.listViewModel.selectedFilter = newValue }
+        set {
+            listContentController.listViewModel.selectedFilter = newValue
+            setupTitleView()
+        }
+    }
+
+    var selectedConversation: ZMConversation? {
+        listContentController.listViewModel.selectedItem as? ZMConversation
     }
 }
 
@@ -34,7 +38,7 @@ extension ConversationListViewController: MainConversationListProtocol {
 
 extension ConversationFilter: MainConversationFilterRepresentable {
 
-    init(_ mainConversationFilter: MainConversationFilter) {
+    public init(_ mainConversationFilter: MainConversationFilter) {
         switch mainConversationFilter {
         case .favorites: self = .favorites
         case .groups: self = .groups
@@ -42,7 +46,7 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         }
     }
 
-    func mapToMainConversationFilter() -> MainConversationFilter {
+    public func mapToMainConversationFilter() -> MainConversationFilter {
         switch self {
         case .favorites: .favorites
         case .groups: .groups

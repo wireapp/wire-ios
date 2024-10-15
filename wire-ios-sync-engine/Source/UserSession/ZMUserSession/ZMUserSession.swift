@@ -766,7 +766,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
 // MARK: - UpdateEventProcessor
 
-// swiftlint:disable:next todo_requires_jira_link
 // TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {

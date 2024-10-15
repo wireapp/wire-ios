@@ -19,7 +19,7 @@
 import avs
 import Foundation
 import SafariServices
-import WireSettings
+import WireSettingsUI
 import WireSyncEngine
 
 struct SettingsCellDescriptorFactory {

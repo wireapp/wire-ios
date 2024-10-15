@@ -17,15 +17,46 @@
 //
 
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 
-extension MainCoordinator: StartUIDelegate {
+extension MainCoordinator: StartUIDelegate where Dependencies.ConversationModel == ZMConversation, Dependencies.User == any UserType {
 
+    @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {
-        fatalError()
+        Task {
+            guard let userID = user.qualifiedID else { return }
+
+            let userSession = viewController.userSession
+            let conversation = user.oneToOneConversation
+
+            do {
+                let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+
+                if isReady {
+
+                    // If the conversation exists, and is established (in case of mls),
+                    // then we open the conversation
+                    guard let conversation else { return }
+                    await showConversation(conversation: conversation, message: nil)
+
+                } else {
+
+                    // If the conversation should be using mls and is not established,
+                    // or does not exits, then we open the user profile to let the user
+                    // create the conversation
+                    await showUserProfile(user: user)
+
+                }
+            } catch {
+                WireLogger.conversation.warn("failed to check if one on one conversation is ready: \(error)")
+            }
+        }
     }
 
+    @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation) {
-        fatalError()
+        Task {
+            await showConversation(conversation: conversation, message: nil)
+        }
     }
 }
