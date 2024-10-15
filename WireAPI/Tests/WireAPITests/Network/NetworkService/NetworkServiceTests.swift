@@ -42,7 +42,7 @@ final class NetworkServiceTests: XCTestCase {
 
     // MARK: - Execute request
 
-    func testItDoesNotExecuteAnInvalidRequest() async throws {
+    func testExecuteRequest_It_Does_Not_Execute_An_Invalid_Request() async throws {
         // Given
         let invalidRequest = Scaffolding.invalidRequest
 
@@ -53,7 +53,7 @@ final class NetworkServiceTests: XCTestCase {
         }
     }
 
-    func testItThrowsWhenThereIsAnInvalidResponse() async throws {
+    func testExecuteRequest_It_Throws_When_There_Is_An_Invalid_Response() async throws {
         // Given
         let request = Scaffolding.getRequest
 
@@ -69,7 +69,7 @@ final class NetworkServiceTests: XCTestCase {
         }
     }
 
-    func testItExecutesARequest() async throws {
+    func testExecuteRequest_Success() async throws {
         // Given
         let request = Scaffolding.getRequest
 
