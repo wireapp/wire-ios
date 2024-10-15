@@ -16,4 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct MockUser {}
+import UIKit
+import WireMainNavigationUI
+
+final class MockConversationViewController<ConversationModel>: UIViewController, MainConversationProtocol {
+    var conversationModel: ConversationModel! { nil }
+}

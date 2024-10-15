@@ -22,6 +22,7 @@ import WireDesign
 import WireMainNavigationUI
 import WireSyncEngine
 import WireMainNavigationUI
+import WireSyncEngine
 
 // MARK: - ConversationRootViewController
 
