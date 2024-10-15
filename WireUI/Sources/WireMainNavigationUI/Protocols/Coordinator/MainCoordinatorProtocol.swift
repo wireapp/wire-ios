@@ -18,7 +18,6 @@
 
 import UIKit
 
-// sourcery: AutoMockable
 public protocol MainCoordinatorProtocol: AnyObject {
 
     associatedtype Dependencies: MainCoordinatorProtocolDependencies

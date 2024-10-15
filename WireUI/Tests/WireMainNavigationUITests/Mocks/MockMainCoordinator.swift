@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMainNavigationUI
 import UIKit
+import WireMainNavigationUI
 
 final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
     typealias Dependencies = MockMainCoordinatorDependencies

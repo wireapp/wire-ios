@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable  import WireMainNavigationUI
+@testable import WireMainNavigationUI
 
 final class AnyMainCoordinatorTests: XCTestCase {
 

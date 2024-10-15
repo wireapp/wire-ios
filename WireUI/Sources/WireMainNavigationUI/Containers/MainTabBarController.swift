@@ -75,7 +75,7 @@ public final class MainTabBarController<
     private weak var conversationListNavigationController: UINavigationController!
     private weak var foldersNavigationController: UINavigationController!
     private weak var archiveNavigationController: UINavigationController!
-    private /*weak*/ var settingsNavigationController: UINavigationController! // TODO: [WPB-6647] make this property weak as well
+    private /* weak */ var settingsNavigationController: UINavigationController! // TODO: [WPB-6647] make this property weak as well
 
     private weak var _conversationList: ConversationList?
     private weak var _folders: UIViewController?
