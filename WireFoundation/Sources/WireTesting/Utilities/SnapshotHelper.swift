@@ -32,9 +32,6 @@ public struct SnapshotHelper {
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
     private var snapshotReferenceDirectory = ""
 
-    // The SNAPSHOT_ARTIFACTS environment variable is not yet supported.
-    // By injecting it we could support downloading failing snapshot test outputs from GitHub.
-
     public init() {}
 
     // MARK: - Create variations

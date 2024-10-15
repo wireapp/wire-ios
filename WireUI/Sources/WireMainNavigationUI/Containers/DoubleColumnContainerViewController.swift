@@ -18,6 +18,9 @@
 
 import SwiftUI
 
+/// The split view behavior which is required for the app is not achievable with the `tripleColumn` style
+/// of `UISplitViewController`. Therefore we use the `doubleColumn` style and combine the
+/// supplementary and secondary column in this custom conatiner view controller.
 final class DoubleColumnContainerViewController: UIViewController {
 
     // MARK: Internal Properties
