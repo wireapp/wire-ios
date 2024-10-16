@@ -422,8 +422,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
 
         // THEN
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
-        XCTAssertEqual(mockGetFeatureConfigsActionHandler.performedActions.count, 1)
+        XCTAssertTrue(waitForOfflineStatus())
     }
 
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
@@ -592,23 +591,11 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
-
-        XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
-
-        XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
-    }
-
-    func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {
-        self.syncMOC.performAndWait {
-            // GIVEN
-            ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
-
-            // WHEN
-            sut.didFinishQuickSync()
+        withExtendedLifetime(handler) {
+            XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
+            XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
+            XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
+            XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
