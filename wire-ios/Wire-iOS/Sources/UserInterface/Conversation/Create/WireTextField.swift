@@ -75,18 +75,27 @@ class WireTextField: UITextField {
     // MARK: - Setup
 
     private func setup() {
+        setupAppearance()
+        setupPadding()
+        setupTextFieldProperties()
+        setupTextFieldEvents()
+    }
 
+    private func setupAppearance() {
         layer.borderWidth = borderWidth
         layer.cornerRadius = cornerRadius
         layer.borderColor = defaultBorderColor.cgColor
         layer.masksToBounds = true
+        self.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+    }
 
-        // Add padding to the text
+    private func setupPadding() {
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: frame.height))
         leftView = paddingView
         leftViewMode = .always
-        self.backgroundColor = SemanticColors.View.backgroundDefaultWhite
-        // Setup text field properties
+    }
+
+    private func setupTextFieldProperties() {
         returnKeyType = .next
         autocapitalizationType = .words
         accessibilityIdentifier = "NameField"
@@ -96,8 +105,9 @@ class WireTextField: UITextField {
 
         textFieldValidator.delegate = self
         delegate = textFieldValidator
+    }
 
-        // Listen for text field events
+    private func setupTextFieldEvents() {
         addTarget(self, action: #selector(textFieldDidStartEditing), for: .editingDidBegin)
         addTarget(self, action: #selector(textFieldDidFinishEditing), for: .editingDidEnd)
     }
