@@ -33,10 +33,6 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Properties
 
-    /// Stores information about ongoing calls, keyed by conversation ID.
-    /// This dictionary is populated and updated in the WireCallCenterCallStateObserver extension.
-    var callInfos: [UUID: CallInfo] = [:]
-
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false

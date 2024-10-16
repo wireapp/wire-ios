@@ -33,20 +33,20 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
         timestamp: Date?,
         previousCallState: CallState?
     ) {
-        guard let conversationId = conversation.remoteIdentifier else { return }
+        let isVideoCall = isVideoCall(for: conversation)
 
         switch callState {
         case .outgoing:
-            let isVideo = conversation.voiceChannel?.isVideoCall ?? false
-            callInfos[conversationId] = CallInfo(toggledVideo: isVideo)
-            trackCallInitialized(isVideo: isVideo, conversationType: conversation.conversationType)
+            trackCallInitialized(isVideo: isVideoCall, conversationType: conversation.conversationType)
         case .answered:
-            if let callInfo = callInfos[conversationId] {
-                trackCallJoined(isVideo: callInfo.toggledVideo, conversationType: conversation.conversationType)
-            }
+            trackCallJoined(isVideo: isVideoCall, conversationType: conversation.conversationType)
         default:
             break
         }
+    }
+
+    private func isVideoCall(for conversation: ZMConversation) -> Bool {
+        return conversation.voiceChannel?.isVideoCall ?? false
     }
 
     private func trackCallInitialized(isVideo: Bool, conversationType: ZMConversationType) {
