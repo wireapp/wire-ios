@@ -20,7 +20,7 @@ import UIKit
 
 @testable import WireMainNavigationUI
 
-final class MockConversationListViewController: UIViewController, MainConversationListProtocol {
+final class MockConversationListViewController: UIViewController, MainConversationListUIProtocol {
 
     var conversationFilter: MainConversationFilter? {
         didSet {

@@ -20,17 +20,17 @@ import UIKit
 
 @testable import WireMainNavigationUI
 
-struct MockConversationBuilder: MainConversationBuilderProtocol {
+struct MockConversationBuilder: MainConversationUIBuilderProtocol {
 
     typealias Dependencies = MockMainCoordinatorDependencies
-    typealias Conversation = MockConversationViewController<Dependencies.ConversationModel>
+    typealias ConversationUI = MockConversationViewController<Dependencies.ConversationModel>
 
     @MainActor
     func build<MainCoordinator: MainCoordinatorProtocol>(
         conversation: ConversationModel,
         message: ConversationMessageModel?,
         mainCoordinator: MainCoordinator
-    ) -> Conversation where MainCoordinator.Dependencies == Dependencies {
+    ) -> ConversationUI where MainCoordinator.Dependencies == Dependencies {
         .init()
     }
 }

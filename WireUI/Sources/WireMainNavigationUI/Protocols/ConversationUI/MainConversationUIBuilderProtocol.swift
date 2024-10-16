@@ -18,20 +18,20 @@
 
 import UIKit
 
-/// Defines the contract for any conversation list view controller.
-
 @MainActor
-public protocol MainConversationListProtocol: UIViewController {
+public protocol MainConversationUIBuilderProtocol {
 
-    associatedtype ConversationFilter: MainConversationFilterRepresentable
-    associatedtype ConversationModel
+    associatedtype Dependencies: MainCoordinatorProtocolDependencies
 
-    /// Assigning a non-nil value to this property filters the presented conversations by the provided criteria.
-    var conversationFilter: ConversationFilter? { get set }
+    associatedtype ConversationUI: MainConversationUIProtocol where
+        ConversationUI.ConversationModel == Dependencies.ConversationModel
 
-    /// The conversation which is represented by the list selection.
-    var selectedConversation: ConversationModel? { get }
+    typealias ConversationModel = Dependencies.ConversationModel
+    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
 
-    /// Allows the ``MainCoordinator`` to inform this instance about the current split view state.
-    var mainSplitViewState: MainSplitViewState { get set }
+    func build<MainCoordinator: MainCoordinatorProtocol>(
+        conversation: ConversationModel,
+        message: ConversationMessageModel?,
+        mainCoordinator: MainCoordinator
+    ) -> ConversationUI where MainCoordinator.Dependencies == Dependencies
 }

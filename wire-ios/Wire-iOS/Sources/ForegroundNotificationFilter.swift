@@ -62,8 +62,8 @@ extension ForegroundNotificationFilter: ForegroundNotificationResponder {
 
         // conversation view is visible for another conversation
         let svc = clientVC.mainSplitViewController
-        let conversationVC = svc.conversation ?? svc.tabContainer.conversation
-        let conversationListVC = svc.conversationList ?? svc.tabContainer.conversationList
+        let conversationVC = svc.conversationUI ?? svc.tabController.conversationUI
+        let conversationListVC = svc.conversationListUI ?? svc.tabController.conversationListUI
         let visibleConversation = conversationVC?.conversationModel ?? conversationListVC?.selectedConversation
         guard
             let convID = userInfo.conversationID,

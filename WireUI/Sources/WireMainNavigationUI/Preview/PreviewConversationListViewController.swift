@@ -18,9 +18,9 @@
 
 import SwiftUI
 
-final class PreviewConversationListViewController: UIHostingController<LabelView>, MainConversationListProtocol {
+final class PreviewConversationListViewController: UIHostingController<LabelView>, MainConversationListUIProtocol {
 
-    // MARK: - MainConversationListProtocol
+    // MARK: - MainConversationListUIProtocol
 
     var conversationFilter: MainConversationFilter?
     var selectedConversation: PreviewConversationModel?
