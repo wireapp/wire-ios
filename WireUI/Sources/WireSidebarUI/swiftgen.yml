@@ -1,4 +1,4 @@
-input_dir: Sources/MyExample/Resources
+input_dir: Resources
 output_dir: ${DERIVED_SOURCES_DIR}
 
 files:
