@@ -20,10 +20,6 @@ import Foundation
 import WireAnalytics
 import WireDataModel
 
-struct CallInfo {
-    var toggledVideo: Bool
-}
-
 extension ZMUserSession: WireCallCenterCallStateObserver {
 
     public func callCenterDidChange(
