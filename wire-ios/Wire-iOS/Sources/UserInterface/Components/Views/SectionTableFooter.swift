@@ -21,7 +21,7 @@ import WireDesign
 
 final class SectionTableFooter: UITableViewHeaderFooterView {
 
-    let footerView = SectionFooterView()
+    private let footerView = SectionFooterView()
 
     var titleLabel: UILabel {
         return footerView.titleLabel
