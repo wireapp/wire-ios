@@ -28,7 +28,6 @@ extension XCTestCase {
         fullscreenImageViewController.view.layoutIfNeeded()
     }
 
-    @MainActor
     func createFullscreenImageViewControllerForTest(imageFileName: String, userSession: UserSessionMock) -> FullscreenImageViewController {
         let image = self.image(inTestBundleNamed: imageFileName)
 

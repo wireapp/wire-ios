@@ -38,9 +38,12 @@ extension StartUIViewController {
         button.titleLabel?.font = UIFont.font(for: .h3)
 
         let action = UIAction { [weak self] _ in
-            Task {
-                await self?.mainCoordinator.showCreateGroupConversation()
-            }
+            guard let self else { return }
+            let conversationCreationController = ConversationCreationController(
+                preSelectedParticipants: nil,
+                userSession: userSession
+            )
+            navigationController?.pushViewController(conversationCreationController, animated: true)
         }
         button.addAction(action, for: .touchUpInside)
 

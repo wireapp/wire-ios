@@ -22,7 +22,10 @@ import WireDesign
 
 final class ConversationListOnboardingHint: UIView {
 
-    let messageLabel = DynamicFontLabel(fontSpec: .largeLightFont, color: SemanticColors.Label.textDefault)
+    let messageLabel: UILabel = DynamicFontLabel(
+        style: .h2,
+        color: SemanticColors.Label.textDefault
+    )
     let arrowView = UIImageView()
 
     override init(frame: CGRect) {

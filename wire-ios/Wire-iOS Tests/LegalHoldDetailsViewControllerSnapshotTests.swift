@@ -53,7 +53,6 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Helper method
 
-    @MainActor
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
 
         let createSut: () -> UIViewController = {
@@ -70,7 +69,6 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
-    @MainActor
     func testSelfUserUnderLegalHold() {
         // GIVEN
         let conversation = MockGroupDetailsConversation()
@@ -102,7 +100,6 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             )
     }
 
-    @MainActor
     func testOtherUserUnderLegalHold() {
         // GIVEN
         let conversation = MockGroupDetailsConversation()

@@ -287,7 +287,6 @@
 		594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */; };
 		5952B89B2BA3179100C48B01 /* MLSClientID+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89A2BA3179100C48B01 /* MLSClientID+random.swift */; };
 		5952B89D2BA3189F00C48B01 /* MLSConferenceInfo+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89C2BA3189F00C48B01 /* MLSConferenceInfo+random.swift */; };
-		595706AF2C85BA4600442FF5 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5990A3B42C7CAFDD00189B21 /* WireUtilitiesPackage */; };
 		5966D82E2BD6A33F00305BBC /* UserPropertyValidating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82D2BD6A33F00305BBC /* UserPropertyValidating.swift */; };
 		5966D8302BD6AA4100305BBC /* UserPropertyNormalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82F2BD6AA4100305BBC /* UserPropertyNormalization.swift */; };
 		5966D8322BD6AA8200305BBC /* UserPropertyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8312BD6AA8200305BBC /* UserPropertyNormalizer.swift */; };
@@ -300,7 +299,6 @@
 		5986A08D2C6B710E00299181 /* TextMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5986A08C2C6B710E00299181 /* TextMessageData.swift */; };
 		5986A08F2C6B744300299181 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5986A08E2C6B744300299181 /* TextMessage.swift */; };
 		598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */; };
-		5996E8C72C1A0000007A52F0 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8C62C1A0000007A52F0 /* OCMock.xcframework */; };
 		599EA3D02C246886009319D4 /* SearchConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3CF2C246886009319D4 /* SearchConversationsUseCase.swift */; };
 		599EA3D32C2468A0009319D4 /* SearchConversationsUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D22C2468A0009319D4 /* SearchConversationsUseCaseProtocol.swift */; };
 		599EA3D52C246955009319D4 /* SearchableConversationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D42C246955009319D4 /* SearchableConversationContainer.swift */; };
@@ -911,39 +909,6 @@
 			remoteInfo = WireDataModel;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		014C36B32B27206E00D7E8EA /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5990A3B72C7CAFDD00189B21 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		59D5888B2C7CD9B900CAFA0F /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0125F73A2B28A31C00D989AB /* SpyUserClientKeyStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpyUserClientKeyStore.swift; sourceTree = "<group>"; };
@@ -1908,7 +1873,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				595706AF2C85BA4600442FF5 /* WireUtilitiesPackage in Frameworks */,
 				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
 				591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
@@ -3853,8 +3817,6 @@
 				F9C9A4F71CAD5DF10039E10C /* Sources */,
 				F9C9A4F81CAD5DF10039E10C /* Frameworks */,
 				F9C9A4FA1CAD5DF10039E10C /* Resources */,
-				59D5888B2C7CD9B900CAFA0F /* Embed Frameworks */,
-				5990A3B72C7CAFDD00189B21 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

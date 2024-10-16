@@ -25,7 +25,8 @@ final class AnyMainCoordinatorTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinatorProtocol!
     private var sut: AnyMainCoordinator<MockMainCoordinatorDependencies>!
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         mockMainCoordinator = .init()
         sut = .init(mainCoordinator: mockMainCoordinator)
     }

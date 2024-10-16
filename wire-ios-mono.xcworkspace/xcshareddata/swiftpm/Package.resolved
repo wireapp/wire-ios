@@ -65,6 +65,15 @@
         }
       },
       {
+        "package": "Inject",
+        "repositoryURL": "https://github.com/krzysztofzablocki/Inject",
+        "state": {
+          "branch": null,
+          "revision": "728c56639ecb3df441d51d5bc6747329afabcfc9",
+          "version": "1.5.2"
+        }
+      },
+      {
         "package": "libPhoneNumber",
         "repositoryURL": "https://github.com/wireapp/libPhoneNumber-iOS.git",
         "state": {

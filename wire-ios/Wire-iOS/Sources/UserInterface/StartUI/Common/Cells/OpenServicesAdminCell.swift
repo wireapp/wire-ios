@@ -24,7 +24,7 @@ final class OpenServicesAdminCell: StartUIIconCell {
         super.setupViews()
 
         icon = .bot
-        // TODO: title = PeoplePicker.QuickAction.adminServices
+        title = PeoplePicker.QuickAction.adminServices
         isAccessibilityElement = true
         accessibilityLabel = title
         accessibilityIdentifier = "button.searchui.open-services"

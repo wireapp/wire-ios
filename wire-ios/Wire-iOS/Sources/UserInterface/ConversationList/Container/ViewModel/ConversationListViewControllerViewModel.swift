@@ -106,7 +106,6 @@ extension ConversationListViewController {
 
         let getUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol
 
-        @MainActor
         init(
             account: Account,
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
@@ -176,9 +175,8 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
-    @MainActor
     private func updateAccountImage() {
-        Task {
+        Task { @MainActor in
             do {
                 accountImage = try await getUserAccountImageUseCase.invoke(account: account)
             } catch {

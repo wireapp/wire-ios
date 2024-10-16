@@ -18,20 +18,10 @@
 
 import Foundation
 
-@objc final class ConversationMessageSectionController: NSObject {
+enum NetworkServiceError: Error {
 
-    let sectionDescription: CellSectionDescription
-
-    init(sectionDescription: CellSectionDescription) {
-        self.sectionDescription = sectionDescription
-    }
-
-    var numberOfCells: Int {
-        return sectionDescription.numberOfCells
-    }
-
-    func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        return sectionDescription.cell(tableView: tableView, at: indexPath)
-    }
+    case serviceNotConfigured
+    case invalidRequest
+    case notAHTTPURLResponse
 
 }

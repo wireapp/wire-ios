@@ -269,7 +269,7 @@ final class ProfileHeaderViewController: UIViewController {
     private func combineUserNameWithIcons() -> NSAttributedString {
         var userNameWithIcons: [NSAttributedString] = []
 
-        let userName = NSAttributedString(string: userStatus.name)
+        let userName = NSAttributedString(string: userStatus.displayName)
         userNameWithIcons.append(userName)
 
         if userStatus.isProteusVerified {
