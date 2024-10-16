@@ -26,6 +26,7 @@ extension ConversationListViewController: MainConversationListProtocol {
         set {
             listContentController.listViewModel.selectedFilter = newValue
             setupTitleView()
+            configureEmptyPlaceholder()
         }
     }
 
