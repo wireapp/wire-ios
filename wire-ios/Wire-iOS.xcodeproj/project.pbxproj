@@ -1896,7 +1896,6 @@
 		F1F5E57E216CC94A006BF3D5 /* ConversationStatusLineTests+Muting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F5E57D216CC94A006BF3D5 /* ConversationStatusLineTests+Muting.swift */; };
 		F1FDF2C421ADA3A600E037A1 /* OtherImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C321ADA3A600E037A1 /* OtherImages.xcassets */; };
 		F1FDF2C621ADA3FA00E037A1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C521ADA3F000E037A1 /* Images.xcassets */; };
-		F93D58451D7DA865003AE972 /* ZMConversation+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F93D58441D7DA865003AE972 /* ZMConversation+Analytics.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3927,7 +3926,6 @@
 		F1FDF2C521ADA3F000E037A1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCommonComponents.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1FEA14D21DCEB1700790A54 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F93D58441D7DA865003AE972 /* ZMConversation+Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Analytics.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5532,7 +5530,6 @@
 		871BBFC31D34F56300DF0793 /* Events */ = {
 			isa = PBXGroup;
 			children = (
-				F93D58441D7DA865003AE972 /* ZMConversation+Analytics.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -9263,7 +9260,6 @@
 				F15650D621DD0FC600210504 /* VerticalColumnCollectionViewLayout.swift in Sources */,
 				5E4BC1CA218C9F6600A8682E /* ConversationQuoteCell.swift in Sources */,
 				54FF9E281E813BA500323D2E /* DebugAlert.swift in Sources */,
-				F93D58451D7DA865003AE972 /* ZMConversation+Analytics.swift in Sources */,
 				87AB6DB61D9AB47400ADAD38 /* SettingsStyleNavigationController.swift in Sources */,
 				E9559B4927B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift in Sources */,
 				16F6BB101EDDA0BA009EA803 /* AddParticipantsViewController.swift in Sources */,
