@@ -30,7 +30,6 @@ public extension WireTextStyleMapping {
     }
 }
 
-@available(iOS 16, *)
 #Preview("SwiftUI.Font") {
     WireTextStyleFontMappingPreview()
 }
@@ -40,7 +39,7 @@ public extension WireTextStyleMapping {
     WireTextStyleUIFontMappingPreview()
 }
 
-@available(iOS 16, *) @ViewBuilder @MainActor
+@ViewBuilder @MainActor
 func WireTextStyleFontMappingPreview() -> some View {
     NavigationStack {
         ScrollView {

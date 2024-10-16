@@ -20,23 +20,22 @@ import XCTest
 
 @testable import WireMainNavigationUI
 
+@MainActor
 final class AnyMainCoordinatorTests: XCTestCase {
 
     private var mockMainCoordinator: MockMainCoordinatorProtocol!
     private var sut: AnyMainCoordinator<MockMainCoordinatorDependencies>!
 
-    @MainActor
     override func setUp() async throws {
         mockMainCoordinator = .init()
         sut = .init(mainCoordinator: mockMainCoordinator)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         mockMainCoordinator = nil
     }
 
-    @MainActor
     func testShowConversationListIsInvoked() async {
         // When
         await sut.showConversationList(conversationFilter: .groups)
@@ -46,7 +45,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.showConversationList_Invocations.first, .groups)
     }
 
-    @MainActor
     func testShowArchiveIsInvoked() async {
         // When
         await sut.showArchive()
@@ -55,7 +53,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.showArchive_Invocations.count, 1)
     }
 
-    @MainActor
     func testShowSettingsIsInvoked() async {
         // When
         await sut.showSettings()
@@ -64,7 +61,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.showSettings_Invocations.count, 1)
     }
 
-    @MainActor
     func testShowConversationIsInvokedWithoutMessage() async {
         // Given
         let conversation = PreviewConversationModel()
@@ -78,7 +74,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertNil(mockMainCoordinator.showConversation_Invocations.first?.message)
     }
 
-    @MainActor
     func testShowConversationIsInvokedWithMessage() async {
         // Given
         let conversation = PreviewConversationModel()
@@ -93,7 +88,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertNotNil(mockMainCoordinator.showConversation_Invocations.first?.message)
     }
 
-    @MainActor
     func testHideConversationIsInvoked() {
         // When
         sut.hideConversation()
@@ -102,7 +96,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.hideConversation_Invocations.count, 1)
     }
 
-    @MainActor
     func testShowSettingsContentIsInvoked() {
         // When
         sut.showSettingsContent(.advanced)
@@ -112,7 +105,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.showSettingsContent_Invocations.first, .advanced)
     }
 
-    @MainActor
     func testHideSettingsContentIsInvoked() {
         // When
         sut.hideSettingsContent()
@@ -121,7 +113,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.hideSettingsContent_Invocations.count, 1)
     }
 
-    @MainActor
     func testShowSelfProfileIsInvoked() async {
         // When
         await sut.showSelfProfile()
@@ -130,7 +121,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.showSelfProfile_Invocations.count, 1)
     }
 
-    @MainActor
     func testShowUserProfileIsInvoked() async {
         // Given
         let user = MockUser()
@@ -143,7 +133,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.showUserProfile_Invocations.first, user)
     }
 
-    @MainActor
     func testShowConnectIsInvoked() async {
         // When
         await sut.showConnect()
@@ -152,7 +141,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.showConnect_Invocations.count, 1)
     }
 
-    @MainActor
     func testShowCreateGroupConversationIsInvoked() async {
         // When
         await sut.showCreateGroupConversation()
@@ -161,7 +149,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.showCreateGroupConversation_Invocations.count, 1)
     }
 
-    @MainActor
     func testPresentViewControllerIsInvoked() async {
         // Given
         let viewController = UIViewController()
@@ -174,7 +161,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.presentViewController_Invocations.first, viewController)
     }
 
-    @MainActor
     func testDismissPresentedViewControllerIsInvoked() async {
         // When
         await sut.dismissPresentedViewController()
