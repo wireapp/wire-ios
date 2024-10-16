@@ -28,7 +28,7 @@ enum MockMainCoordinatorDependencies: MainCoordinatorDependencies {
     typealias SettingsTopLevelMenuItem = MainSettingsTopLevelMenuItem
     typealias User = MockUser
 
-    // MainCoordinatorDependencies
+    // MARK: - MainCoordinatorDependencies
 
     typealias SplitViewController = MockSplitViewController
     typealias ConversationBuilder = MockConversationBuilder
