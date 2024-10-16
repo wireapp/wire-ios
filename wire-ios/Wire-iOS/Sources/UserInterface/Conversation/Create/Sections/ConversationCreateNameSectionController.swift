@@ -79,7 +79,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 66)
+        return CGSize(width: collectionView.bounds.size.width, height: 76)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
