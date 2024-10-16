@@ -25,7 +25,7 @@ final class ConversationCreateNameCell: UICollectionViewCell {
 
     private let stackView = UIStackView()
     private let groupNameLabel = DynamicFontLabel(
-        text: "Group name",
+        text: L10n.Localizable.Conversation.Create.GroupName.label,
         style: .h4,
         color: SemanticColors.Label.textUserPropertyCellName
     )

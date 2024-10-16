@@ -2364,7 +2364,7 @@ internal enum L10n {
       internal enum Create {
         internal enum GroupName {
           /// Group name
-          internal static let placeholder = L10n.tr("Localizable", "conversation.create.group_name.placeholder", fallback: "Group name")
+          internal static let label = L10n.tr("Localizable", "conversation.create.group_name.label", fallback: "Group name")
           /// Create group
           internal static let title = L10n.tr("Localizable", "conversation.create.group_name.title", fallback: "Create group")
         }
