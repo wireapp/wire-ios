@@ -217,7 +217,6 @@ public extension AccountImageView {
 
 // MARK: - Previews
 
-@available(iOS 16.0, *)
 struct AccountImageView_Previews: PreviewProvider {
 
     static var previews: some View {

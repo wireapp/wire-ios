@@ -52,12 +52,11 @@ private extension UIColor {
 
 // MARK: - Previews
 
-@available(iOS 16.0, *)
 #Preview {
     WireAccentColorMappingPreview()
 }
 
-@available(iOS 16.0, *) @ViewBuilder @MainActor
+@ViewBuilder @MainActor
 func WireAccentColorMappingPreview() -> some View {
     NavigationStack {
         VStack {

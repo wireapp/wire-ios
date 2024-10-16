@@ -38,24 +38,19 @@ final class AccountImageViewSnapshotTests: XCTestCase {
     @MainActor
     func testAllAccountTypesAndAvailabilities() {
         for availability in Availability.allCases + [Availability?.none] {
-            if #available(iOS 16.0, *) {
-                // Given
-                let rootView = AccountImageView_Previews.previewWithNavigationBar(availability)
-                let hostingControllerView = UIHostingController(rootView: rootView).view!
-                hostingControllerView.frame = UIScreen.main.bounds
-                let testName = if let availability { "\(availability)" } else { "none" }
+            // Given
+            let rootView = AccountImageView_Previews.previewWithNavigationBar(availability)
+            let hostingControllerView = UIHostingController(rootView: rootView).view!
+            hostingControllerView.frame = UIScreen.main.bounds
+            let testName = if let availability { "\(availability)" } else { "none" }
 
-                // Then
-                snapshotHelper
-                    .withUserInterfaceStyle(.light)
-                    .verify(matching: hostingControllerView, named: "light", testName: testName)
-                snapshotHelper
-                    .withUserInterfaceStyle(.dark)
-                    .verify(matching: hostingControllerView, named: "dark", testName: testName)
-
-            } else {
-                XCTFail("iOS 16+ is needed")
-            }
+            // Then
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: hostingControllerView, named: "light", testName: testName)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: hostingControllerView, named: "dark", testName: testName)
         }
     }
 }
