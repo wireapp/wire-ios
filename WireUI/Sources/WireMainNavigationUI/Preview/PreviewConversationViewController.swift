@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-final class PreviewConversationViewController: UIHostingController<LabelView>, MainConversationProtocol {
+final class PreviewConversationViewController: UIHostingController<LabelView>, MainConversationUIProtocol {
     struct ConversationModel {}
     struct ConversationMessageModel {}
 

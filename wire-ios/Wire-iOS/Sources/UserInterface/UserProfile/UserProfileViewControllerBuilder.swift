@@ -22,7 +22,7 @@ import WireMainNavigationUI
 import WireSyncEngine
 
 @MainActor
-final class UserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
+final class UserProfileViewControllerBuilder: MainUserProfileUIBuilderProtocol {
     typealias User = any UserType
 
     let userSession: UserSession

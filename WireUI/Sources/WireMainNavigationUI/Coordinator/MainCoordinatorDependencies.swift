@@ -19,25 +19,25 @@
 public protocol MainCoordinatorDependencies: MainCoordinatorProtocolDependencies {
 
     associatedtype SplitViewController: MainSplitViewControllerProtocol where
-        SplitViewController.TabContainer.ConversationList.ConversationFilter == ConversationFilter,
-        SplitViewController.TabContainer.ConversationList.ConversationModel == ConversationModel
+        SplitViewController.TabBarController.ConversationListUI.ConversationFilter == ConversationFilter,
+        SplitViewController.TabBarController.ConversationListUI.ConversationModel == ConversationModel
 
-    associatedtype ConversationBuilder: MainConversationBuilderProtocol where
-        ConversationBuilder.Dependencies == Self,
-        ConversationBuilder.Conversation == SplitViewController.Conversation
+    associatedtype ConversationUIBuilder: MainConversationUIBuilderProtocol where
+        ConversationUIBuilder.Dependencies == Self,
+        ConversationUIBuilder.ConversationUI == SplitViewController.ConversationUI
 
-    associatedtype SettingsContentBuilder: MainSettingsContentBuilderProtocol where
-        SettingsContentBuilder.TopLevelMenuItem == SettingsTopLevelMenuItem
+    associatedtype SettingsContentUIBuilder: MainSettingsContentUIBuilderProtocol where
+        SettingsContentUIBuilder.TopLevelMenuItem == SettingsTopLevelMenuItem
 
-    associatedtype ConnectBuilder: MainCoordinatorInjectingViewControllerBuilder where
-        ConnectBuilder.Dependencies == Self
+    associatedtype ConnectUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
+        ConnectUIBuilder.Dependencies == Self
 
-    associatedtype CreateGroupConversationBuilder: MainCoordinatorInjectingViewControllerBuilder where
-        CreateGroupConversationBuilder.Dependencies == Self
+    associatedtype CreateGroupConversationUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
+        CreateGroupConversationUIBuilder.Dependencies == Self
 
-    associatedtype SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder where
-        SelfProfileBuilder.Dependencies == Self
+    associatedtype SelfProfileUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
+        SelfProfileUIBuilder.Dependencies == Self
 
-    associatedtype UserProfileBuilder: MainUserProfileBuilderProtocol where
-        UserProfileBuilder.User == User
+    associatedtype UserProfileUIBuilder: MainUserProfileUIBuilderProtocol where
+        UserProfileUIBuilder.User == User
 }

@@ -19,7 +19,7 @@
 import WireDataModel
 import WireMainNavigationUI
 
-extension ConversationRootViewController: MainConversationProtocol {
+extension ConversationRootViewController: MainConversationUIProtocol {
     typealias ConversationModel = ZMConversation
 
     var conversationModel: ZMConversation! {

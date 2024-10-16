@@ -19,6 +19,6 @@
 import UIKit
 import WireMainNavigationUI
 
-final class MockConversationViewController<ConversationModel>: UIViewController, MainConversationProtocol {
+final class MockConversationViewController<ConversationModel>: UIViewController, MainConversationUIProtocol {
     var conversationModel: ConversationModel! { nil }
 }

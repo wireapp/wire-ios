@@ -19,14 +19,14 @@
 public extension MainCoordinator {
 
     typealias SplitViewController = Dependencies.SplitViewController
-    typealias ConversationList = Dependencies.SplitViewController.ConversationList
-    typealias Settings = Dependencies.SplitViewController.Settings
-    typealias TabBarController = Dependencies.SplitViewController.TabContainer
+    typealias ConversationListUI = Dependencies.SplitViewController.ConversationListUI
+    typealias SettingsUI = Dependencies.SplitViewController.SettingsUI
+    typealias TabBarController = Dependencies.SplitViewController.TabBarController
 
     typealias ConversationModel = Dependencies.ConversationModel
     typealias ConversationMessageModel = Dependencies.ConversationMessageModel
 
-    typealias Connect = Dependencies.ConnectBuilder.ViewController
-    typealias SelfProfile = Dependencies.SelfProfileBuilder.ViewController
-    typealias User = Dependencies.UserProfileBuilder.User
+    typealias ConnectUI = Dependencies.ConnectUIBuilder.ViewController
+    typealias SelfProfileUI = Dependencies.SelfProfileUIBuilder.ViewController
+    typealias User = Dependencies.UserProfileUIBuilder.User
 }

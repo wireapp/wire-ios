@@ -24,39 +24,39 @@ import SwiftUI
 /// ``MainTabBarControllerContent``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController<
 
-    ConversationList: MainConversationListProtocol,
-    Conversation: MainConversationProtocol
+    ConversationListUI: MainConversationListUIProtocol,
+    ConversationUI: MainConversationUIProtocol
 
 >: UITabBarController, MainTabBarControllerProtocol {
 
-    public typealias Archive = UIViewController
-    public typealias Settings = UIViewController
+    public typealias ArchiveUI = UIViewController
+    public typealias SettingsUI = UIViewController
 
     // MARK: - Public Properties
 
-    public var conversationList: ConversationList? {
-        get { _conversationList }
-        set { setConversationList(newValue, animated: false) }
+    public var conversationListUI: ConversationListUI? {
+        get { _conversationListUI }
+        set { setConversationListUI(newValue, animated: false) }
     }
 
-    public var archive: Archive? {
-        get { _archive }
-        set { setArchive(newValue, animated: false) }
+    public var archiveUI: ArchiveUI? {
+        get { _archiveUI }
+        set { setArchiveUI(newValue, animated: false) }
     }
 
-    public var settings: Settings? {
-        get { _settings }
-        set { setSettings(newValue, animated: false) }
+    public var settingsUI: SettingsUI? {
+        get { _settingsUI }
+        set { setSettingsUI(newValue, animated: false) }
     }
 
-    public var conversation: Conversation? {
-        get { _conversation }
-        set { setConversation(newValue, animated: false) }
+    public var conversationUI: ConversationUI? {
+        get { _conversationUI }
+        set { setConversationUI(newValue, animated: false) }
     }
 
-    public var settingsContent: UIViewController? {
-        get { _settingsContent }
-        set { setSettingsContent(newValue, animated: false) }
+    public var settingsContentUI: UIViewController? {
+        get { _settingsContentUI }
+        set { setSettingsContentUI(newValue, animated: false) }
     }
 
     public var selectedContent: MainTabBarControllerContent {
@@ -68,13 +68,13 @@ public final class MainTabBarController<
 
     private weak var conversationListNavigationController: UINavigationController!
     private weak var archiveNavigationController: UINavigationController!
-    private /* weak */ var settingsNavigationController: UINavigationController! // TODO: [WPB-6647] make this property weak as well
+    private weak var settingsNavigationController: UINavigationController!
 
-    private weak var _conversationList: ConversationList?
-    private weak var _archive: Archive?
-    private weak var _settings: Settings?
-    private weak var _conversation: Conversation?
-    private weak var _settingsContent: UIViewController?
+    private weak var _conversationListUI: ConversationListUI?
+    private weak var _archiveUI: ArchiveUI?
+    private weak var _settingsUI: SettingsUI?
+    private weak var _conversationUI: ConversationUI?
+    private weak var _settingsContentUI: UIViewController?
 
     // MARK: - Life Cycle
 
@@ -167,50 +167,50 @@ public final class MainTabBarController<
 
     // MARK: - Accessors
 
-    private func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
-        _conversationList = conversationList
+    private func setConversationListUI(_ conversationListUI: ConversationListUI?, animated: Bool) {
+        _conversationListUI = conversationListUI
 
-        let viewControllers = [conversationList, conversation].compactMap { $0 }
+        let viewControllers = [conversationListUI, conversationUI].compactMap { $0 }
         conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
         conversationListNavigationController.view.layoutIfNeeded()
     }
 
-    private func setArchive(_ archive: Archive?, animated: Bool) {
-        _archive = archive
+    private func setArchiveUI(_ archiveUI: ArchiveUI?, animated: Bool) {
+        _archiveUI = archiveUI
 
-        let viewControllers = [archive].compactMap { $0 }
+        let viewControllers = [archiveUI].compactMap { $0 }
         archiveNavigationController.setViewControllers(viewControllers, animated: animated)
         archiveNavigationController.view.layoutIfNeeded()
     }
 
-    private func setSettings(_ settings: Settings?, animated: Bool) {
-        _settings = settings
+    private func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {
+        _settingsUI = settingsUI
 
-        let viewControllers = [settings].compactMap { $0 }
+        let viewControllers = [settingsUI].compactMap { $0 }
         settingsNavigationController.setViewControllers(viewControllers, animated: animated)
         settingsNavigationController.view.layoutIfNeeded()
     }
 
-    public func setConversation(_ conversation: Conversation?, animated: Bool) {
-        _conversation = conversation
+    public func setConversationUI(_ conversationUI: ConversationUI?, animated: Bool) {
+        _conversationUI = conversationUI
 
-        if conversationList == nil, conversation != nil {
-            return assertionFailure("conversationList == nil, conversation != nil")
+        if conversationListUI == nil, conversationUI != nil {
+            return assertionFailure("conversationListUI == nil, conversationUI != nil")
         }
 
-        let viewControllers = [conversationList, conversation].compactMap { $0 }
+        let viewControllers = [conversationListUI, conversationUI].compactMap { $0 }
         conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
         conversationListNavigationController.view.layoutIfNeeded()
     }
 
-    public func setSettingsContent(_ settingsContent: UIViewController?, animated: Bool) {
-        _settingsContent = settingsContent
+    public func setSettingsContentUI(_ settingsContentUI: UIViewController?, animated: Bool) {
+        _settingsContentUI = settingsContentUI
 
-        if settings == nil, settingsContent != nil {
-            return assertionFailure("settings == nil, settingsContent != nil")
+        if settingsUI == nil, settingsContentUI != nil {
+            return assertionFailure("settingsUI == nil, settingsContentUI != nil")
         }
 
-        let viewControllers = [settings, settingsContent].compactMap { $0 }
+        let viewControllers = [settingsUI, settingsContentUI].compactMap { $0 }
         settingsNavigationController.setViewControllers(viewControllers, animated: animated)
         settingsNavigationController.view.layoutIfNeeded()
     }

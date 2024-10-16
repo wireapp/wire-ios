@@ -35,10 +35,10 @@ enum MainCoordinatorDependencies: WireMainNavigationUI.MainCoordinatorDependenci
 
     typealias SplitViewController = MainSplitViewController<SidebarViewController, TabBarController>
     typealias TabBarController = MainTabBarController<ConversationListViewController, ConversationRootViewController>
-    typealias ConversationBuilder = ConversationViewControllerBuilder
-    typealias SettingsContentBuilder = SettingsViewControllerBuilder
-    typealias ConnectBuilder = StartUIViewControllerBuilder
-    typealias CreateGroupConversationBuilder = CreateGroupConversationViewControllerBuilder
-    typealias SelfProfileBuilder = SelfProfileViewControllerBuilder
-    typealias UserProfileBuilder = UserProfileViewControllerBuilder
+    typealias ConversationUIBuilder = ConversationViewControllerBuilder
+    typealias SettingsContentUIBuilder = SettingsViewControllerBuilder
+    typealias ConnectUIBuilder = StartUIViewControllerBuilder
+    typealias CreateGroupConversationUIBuilder = CreateGroupConversationViewControllerBuilder
+    typealias SelfProfileUIBuilder = SelfProfileViewControllerBuilder
+    typealias UserProfileUIBuilder = UserProfileViewControllerBuilder
 }

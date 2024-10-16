@@ -22,17 +22,17 @@ import UIKit
 public protocol MainSplitViewControllerProtocol: UISplitViewController, MainContainerViewControllerProtocol {
 
     associatedtype Sidebar: MainSidebarProtocol
-    associatedtype TabContainer: MainTabBarControllerProtocol where
-        TabContainer.ConversationList == ConversationList,
-        TabContainer.Conversation == Conversation,
-        TabContainer.Archive == Archive,
-        TabContainer.Settings == Settings
+    associatedtype TabBarController: MainTabBarControllerProtocol where
+    TabBarController.ConversationListUI == ConversationListUI,
+    TabBarController.ConversationUI == ConversationUI,
+    TabBarController.ArchiveUI == ArchiveUI,
+    TabBarController.SettingsUI == SettingsUI
 
     /// Contains the reference to the view controller shown in the primary column.
     var sidebar: Sidebar! { get }
 
     /// Contains the reference to the view controller which will be visible in collapsed mode.
-    var tabContainer: TabContainer! { get }
+    var tabController: TabBarController! { get }
 
     func hideSidebar()
 }

@@ -21,7 +21,7 @@ import WireSettingsUI
 import WireSyncEngine
 
 @MainActor
-struct SettingsViewControllerBuilder: MainSettingsBuilderProtocol, MainSettingsContentBuilderProtocol {
+struct SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSettingsContentUIBuilderProtocol {
 
     var userSession: UserSession
 

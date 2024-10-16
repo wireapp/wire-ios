@@ -250,7 +250,7 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
         // TODO: [WPB-11616] ensure this implementation is correct and still needed
         // do not show keyboard if conversation list is shown,
         guard let splitViewController = ZClientViewController.shared?.mainSplitViewController,
-              splitViewController.conversationList != nil,
+              splitViewController.conversationListUI != nil,
               let appDelegate = UIApplication.shared.delegate as? AppDelegate,
               let mainWindow = appDelegate.mainWindow,
               mainWindow.isKeyWindow else { return }

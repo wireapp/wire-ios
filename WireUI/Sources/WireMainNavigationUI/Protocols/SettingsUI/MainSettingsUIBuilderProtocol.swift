@@ -18,13 +18,9 @@
 
 import UIKit
 
-public protocol MainUserProfileBuilderProtocol {
-    associatedtype UserProfile: UIViewController
-    associatedtype User
+public protocol MainSettingsUIBuilderProtocol {
+    associatedtype SettingsUI: UIViewController
 
     @MainActor
-    func build(
-        user: User,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) -> UserProfile
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsUI
 }

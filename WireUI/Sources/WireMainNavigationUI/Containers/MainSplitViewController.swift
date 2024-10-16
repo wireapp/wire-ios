@@ -20,9 +20,9 @@ import SwiftUI
 
 // swiftlint:disable opening_brace
 
-public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
+public final class MainSplitViewController<Sidebar, TabController>: UISplitViewController, MainSplitViewControllerProtocol where
     Sidebar: MainSidebarProtocol,
-    TabContainer: MainTabBarControllerProtocol
+    TabController: MainTabBarControllerProtocol
 {
     // swiftlint:enable opening_brace
 
@@ -39,36 +39,36 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 
     // MARK: - Supplementary Column
 
-    public var conversationList: ConversationList? {
-        get { _conversationList }
-        set { setConversationList(newValue, animated: false) }
+    public var conversationListUI: ConversationListUI? {
+        get { _conversationListUI }
+        set { setConversationListUI(newValue, animated: false) }
     }
 
-    public var archive: Archive? {
-        get { _archive }
-        set { setArchive(newValue, animated: false) }
+    public var archiveUI: ArchiveUI? {
+        get { _archiveUI }
+        set { setArchiveUI(newValue, animated: false) }
     }
 
-    public var settings: Settings? {
-        get { _settings }
-        set { setSettings(newValue, animated: false) }
+    public var settingsUI: SettingsUI? {
+        get { _settingsUI }
+        set { setSettingsUI(newValue, animated: false) }
     }
 
     // MARK: - Secondary Column
 
-    public var conversation: Conversation? {
-        get { _conversation }
-        set { setConversation(newValue, animated: false) }
+    public var conversationUI: ConversationUI? {
+        get { _conversationUI }
+        set { setConversationUI(newValue, animated: false) }
     }
 
-    public var settingsContent: SettingsContent? {
-        get { _settingsContent }
-        set { setSettingsContent(newValue, animated: false) }
+    public var settingsContentUI: SettingsContentUI? {
+        get { _settingsContentUI }
+        set { setSettingsContentUI(newValue, animated: false) }
     }
 
     // MARK: - Compact/Collapsed
 
-    public private(set) weak var tabContainer: TabContainer!
+    public private(set) weak var tabController: TabController!
 
     // MARK: - Private Properties
 
@@ -80,23 +80,23 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
     /// or settings menu and settings content.
     private weak var splitLayoutContainer: DoubleColumnContainerViewController!
 
-    private weak var _conversationList: ConversationList?
-    private weak var _archive: Archive?
-    private weak var _settings: Settings?
+    private weak var _conversationListUI: ConversationListUI?
+    private weak var _archiveUI: ArchiveUI?
+    private weak var _settingsUI: SettingsUI?
 
-    private weak var _conversation: Conversation?
-    private weak var _settingsContent: SettingsContent?
+    private weak var _conversationUI: ConversationUI?
+    private weak var _settingsContentUI: SettingsContentUI?
 
     // MARK: - Initialization
 
     public init(
         sidebar: @autoclosure () -> Sidebar,
         noConversationPlaceholder: @autoclosure NoConversationPlaceholderBuilder,
-        tabContainer: @autoclosure () -> TabContainer
+        tabController: @autoclosure () -> TabBarController
     ) {
         let sidebar = sidebar()
         let noConversationPlaceholder = noConversationPlaceholder()
-        let tabContainer = tabContainer()
+        let tabController = tabController()
         let splitLayoutContainer = DoubleColumnContainerViewController()
 
         self.noConversationPlaceholder = noConversationPlaceholder
@@ -105,7 +105,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
         splitLayoutContainer.borderColor = borderColor
 
         self.sidebar = sidebar
-        self.tabContainer = tabContainer
+        self.tabController = tabController
 
         super.init(style: .doubleColumn)
 
@@ -116,7 +116,7 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 
         setViewController(sidebar, for: .primary)
         setViewController(splitLayoutContainer, for: .secondary)
-        setViewController(tabContainer, for: .compact)
+        setViewController(tabController, for: .compact)
     }
 
     @available(*, unavailable)
@@ -154,42 +154,42 @@ public final class MainSplitViewController<Sidebar, TabContainer>: UISplitViewCo
 
     // MARK: - Accessors
 
-    private func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
-        _conversationList = conversationList
+    private func setConversationListUI(_ conversationListUI: ConversationListUI?, animated: Bool) {
+        _conversationListUI = conversationListUI
 
-        let viewControllers = [conversationList].compactMap { $0 }
+        let viewControllers = [conversationListUI].compactMap { $0 }
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
 
-    private func setArchive(_ archive: Archive?, animated: Bool) {
-        _archive = archive
+    private func setArchiveUI(_ archiveUI: ArchiveUI?, animated: Bool) {
+        _archiveUI = archiveUI
 
-        let viewControllers = [archive].compactMap { $0 }
+        let viewControllers = [archiveUI].compactMap { $0 }
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
 
-    private func setSettings(_ settings: Settings?, animated: Bool) {
-        _settings = settings
+    private func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {
+        _settingsUI = settingsUI
 
-        let viewControllers = [settings].compactMap { $0 }
+        let viewControllers = [settingsUI].compactMap { $0 }
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
 
-    private func setConversation(_ conversation: Conversation?, animated: Bool) {
-        _conversation = conversation
+    private func setConversationUI(_ conversationUI: ConversationUI?, animated: Bool) {
+        _conversationUI = conversationUI
 
-        let viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
+        let viewControllers = [conversationUI ?? noConversationPlaceholder].compactMap { $0 }
         splitLayoutContainer.secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
     }
 
-    private func setSettingsContent(_ settingsContent: UIViewController?, animated: Bool) {
-        _settingsContent = settingsContent
+    private func setSettingsContentUI(_ settingsContentUI: UIViewController?, animated: Bool) {
+        _settingsContentUI = settingsContentUI
 
-        let viewControllers = [settingsContent].compactMap { $0 }
+        let viewControllers = [settingsContentUI].compactMap { $0 }
         splitLayoutContainer.secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
     }

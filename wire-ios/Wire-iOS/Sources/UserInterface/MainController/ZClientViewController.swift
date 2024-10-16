@@ -58,7 +58,7 @@ final class ZClientViewController: UIViewController {
     private(set) lazy var mainSplitViewController = MainSplitViewController(
         sidebar: sidebarViewController,
         noConversationPlaceholder: NoConversationPlaceholderViewController(),
-        tabContainer: mainTabBarController
+        tabController: mainTabBarController
     )
 
     // TODO [WPB-9867]: make private or remove this property
@@ -116,12 +116,12 @@ final class ZClientViewController: UIViewController {
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
         mainTabBarController: mainTabBarController,
-        conversationBuilder: conversationViewControllerBuilder,
-        settingsContentBuilder: settingsViewControllerBuilder,
-        connectBuilder: connectBuilder,
-        createGroupConversationBuilder: createGroupConversationBuilder,
-        selfProfileBuilder: selfProfileViewControllerBuilder,
-        userProfileBuilder: userProfileViewControllerBuilder
+        conversationUIBuilder: conversationViewControllerBuilder,
+        settingsContentUIBuilder: settingsViewControllerBuilder,
+        connectUIBuilder: connectBuilder,
+        createGroupConversationUIBuilder: createGroupConversationBuilder,
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        userProfileUIBuilder: userProfileViewControllerBuilder
     )
 
     /// init method for testing allows injecting an Account object and self user
@@ -228,19 +228,19 @@ final class ZClientViewController: UIViewController {
     }
 
     private func setupSplitViewController() {
-        let archive = ArchivedListViewController(userSession: userSession)
+        let archiveUI = ArchivedListViewController(userSession: userSession)
 
         // TODO: [WPB-11608] the border color doesn't match on iPad 15
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
-        mainSplitViewController.conversationList = conversationListViewController
+        mainSplitViewController.conversationListUI = conversationListViewController
 
-        mainTabBarController.archive = archive
-        mainTabBarController.settings = settingsViewControllerBuilder
+        mainTabBarController.archiveUI = archiveUI
+        mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
 
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
-        archive.delegate = mainCoordinator
+        archiveUI.delegate = mainCoordinator
         userProfileViewControllerBuilder.delegate = mainCoordinator
         connectBuilder.delegate = mainCoordinator
         createGroupConversationBuilder.delegate = mainCoordinator

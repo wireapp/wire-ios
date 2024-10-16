@@ -20,33 +20,7 @@ import UIKit
 import WireMainNavigationUI
 
 final class MockSidebarViewController: UIViewController, MainSidebarProtocol {
-
-    enum MenuItem {
-        case all, groups
-    }
+    typealias MenuItem = MainSidebarMenuItem
 
     var selectedMenuItem: MenuItem = .all
-}
-
-extension MockSidebarViewController.MenuItem: MainSidebarSelectableMenuItemRepresentable {
-
-    init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
-        switch mainSidebarMenuItem {
-        case .all:
-            self = .all
-        case .groups:
-            self = .groups
-        default:
-            fatalError("not implemented")
-        }
-    }
-
-    func mapToMainSidebarMenuItem() -> MainSidebarMenuItem {
-        switch self {
-        case .all:
-            .all
-        case .groups:
-            .groups
-        }
-    }
 }

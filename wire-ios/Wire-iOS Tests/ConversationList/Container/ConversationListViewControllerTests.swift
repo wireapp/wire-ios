@@ -85,7 +85,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         )
 
         tabBarController = MainTabBarController()
-        tabBarController.conversationList = sut
+        tabBarController.conversationListUI = sut
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = tabBarController
