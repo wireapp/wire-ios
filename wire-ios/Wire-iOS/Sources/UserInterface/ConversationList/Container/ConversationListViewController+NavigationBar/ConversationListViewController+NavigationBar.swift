@@ -41,7 +41,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         accountImageView?.accountImage = accountImage
 
-        // TODO: [WPB-11449] fix accessibilityIdentifier if needed
+        // TODO: [WPB-11606] fix accessibilityIdentifier if needed
         if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(userName)
             accountImageView?.accessibilityIdentifier = .none
@@ -161,7 +161,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             }
         }
         let startConversationItem = UIBarButtonItem(customView: UIButton(primaryAction: newConversationAction))
-        // TODO: [WPB-11449] fix accessibility
+        // TODO: [WPB-11606] fix accessibility
         // startConversationItem.accessibilityIdentifier =
         // startConversationItem.accessibilityLabel =
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
@@ -230,7 +230,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
-        // TODO: [WPB-11449] fix accessibility
+        // TODO: [WPB-11606] fix accessibility
         // newConversationBarButton.accessibilityIdentifier =
         // newConversationBarButton.accessibilityLabel =
         newConversationBarButton.addAction(.init { [weak self] _ in
@@ -315,7 +315,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             let window = viewIfLoaded?.window
         else { return }
 
-        // TODO: [WPB-11449] Fix spacing between bar button items. This code doesn't work anymore because we don't use a custom title view
+        // TODO: [WPB-11619] Fix spacing between bar button items. This code doesn't work anymore because we don't use a custom title view
 //        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
 //        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
 //        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
