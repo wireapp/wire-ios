@@ -16,4 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 3.114.0
+=======
+WIRE_SHORT_VERSION = 3.112.7
+>>>>>>> c8668f7e5c (fix: update the WIRE SHORT VERSION version - WPB-11594 (#2040))
