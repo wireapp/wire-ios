@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 protocol WireTextFieldDelegate: AnyObject {
 
     func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value)
