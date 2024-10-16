@@ -400,7 +400,7 @@ final class ConversationListViewModel: NSObject {
 
     }
 
-    func reloadConversationList() {//
+    func reloadConversationList() {
         updateAllSections()
         delegate?.listViewModelShouldBeReloaded()
     }

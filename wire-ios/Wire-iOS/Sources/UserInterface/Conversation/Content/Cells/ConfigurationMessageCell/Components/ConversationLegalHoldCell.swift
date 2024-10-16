@@ -106,7 +106,7 @@ extension ConversationLegalHoldSystemMessageCell {
             let conversation,
             let clientViewController = ZClientViewController.shared {
 
-            // TODO: [WPB-11449] Do we want to display the view controller, jump into the browser, or both?
+            // TODO: [WPB-11607] Do we want to display the view controller, jump into the browser, or both?
             LegalHoldDetailsViewController.present(
                 in: clientViewController,
                 conversation: conversation,

@@ -44,91 +44,90 @@ final class MainTabBarControllerTests: XCTestCase {
     @MainActor
     func testConversationListIsInstalled() throws {
         // Given
-        let conversationList = MockConversationListViewController()
+        let conversationListUI = MockConversationListViewController()
 
         // When
-        sut.conversationList = conversationList
+        sut.conversationListUI = conversationListUI
 
         // Then
         let navigationController = try XCTUnwrap(sut.viewControllers?[0] as? UINavigationController)
-        XCTAssertEqual(navigationController.viewControllers, [conversationList])
+        XCTAssertEqual(navigationController.viewControllers, [conversationListUI])
     }
 
     @MainActor
     func testConversationIsReleased() async throws {
         // Given
-        weak var weakConversationList: MockConversationListViewController?
-        sut.conversationList = {
-            let conversationList = MockConversationListViewController()
-            weakConversationList = conversationList
-            return conversationList
+        weak var weakConversationListUI: MockConversationListViewController?
+        sut.conversationListUI = {
+            let conversationListUI = MockConversationListViewController()
+            weakConversationListUI = conversationListUI
+            return conversationListUI
         }()
 
         // When
-        sut.conversationList = nil
+        sut.conversationListUI = nil
 
         // Then
         await Task.yield()
-        XCTAssertNil(weakConversationList)
+        XCTAssertNil(weakConversationListUI)
     }
 
     @MainActor
     func testArchiveIsInstalled() throws {
         // Given
-        let archive = UIViewController()
+        let archiveUI = UIViewController()
 
         // When
-        sut.archive = archive
+        sut.archiveUI = archiveUI
 
         // Then
         let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
-        XCTAssertEqual(navigationController.viewControllers, [archive])
+        XCTAssertEqual(navigationController.viewControllers, [archiveUI])
     }
 
     @MainActor
     func testArchiveIsReleased() async throws {
         // Given
-        weak var weakArchive: UIViewController?
-        sut.archive = {
-            let archive = UIViewController()
-            weakArchive = archive
-            return archive
+        weak var weakArchiveUI: UIViewController?
+        sut.archiveUI = {
+            let archiveUI = UIViewController()
+            weakArchiveUI = archiveUI
+            return archiveUI
         }()
 
         // When
-        sut.archive = nil
+        sut.archiveUI = nil
 
         // Then
         await Task.yield()
-        XCTAssertNil(weakArchive)
+        XCTAssertNil(weakArchiveUI)
     }
 
     @MainActor
     func testSettingsIsInstalled() throws {
-        throw XCTSkip("this test will be fixed with navigation overhaul") // TODO: [WPB-6647] remove this line
         // Given
-        let settings = UIViewController()
+        let settingsUI = UIViewController()
 
         // When
-        sut.settings = settings
+        sut.settingsUI = settingsUI
 
         // Then
         let navigationController = try XCTUnwrap(sut.viewControllers?[2] as? UINavigationController)
-        XCTAssertEqual(navigationController.viewControllers, [settings])
+        XCTAssertEqual(navigationController.viewControllers, [settingsUI])
     }
 
     @MainActor
     func testSettingsIsReleased() async throws {
         // Given
         weak var weakSettings: UIViewController?
-        sut.settings = {
+        sut.settingsUI = {
             let settings = UIViewController()
             weakSettings = settings
             return settings
         }()
 
         // When
-        sut.settings = nil
+        sut.settingsUI = nil
         await Task.yield()
 
         // Then

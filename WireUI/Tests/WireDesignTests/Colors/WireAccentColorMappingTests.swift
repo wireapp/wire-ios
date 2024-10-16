@@ -34,7 +34,7 @@ final class WireAccentColorMappingTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @available(iOS 16, *) @MainActor
+    @MainActor
     func testAccentColors() {
         let screenBounds = UIScreen.main.bounds
         let sut = WireAccentColorMappingPreview()

@@ -27,9 +27,9 @@ import WireMainNavigationUI
 import WireSidebarUI
 import WireSyncEngine
 
-// TODO: [WPB-11449] after logging in and getting certificate, the account image is blank instead of showing initials
-// TODO: [WPB-11449] after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
-// TODO: [WPB-11449] the E2EI green shield is sometimes not shown when it should (after starting the app)
+// TODO: [WPB-11602] after logging in and getting certificate, the account image is blank instead of showing initials
+// TODO: [WPB-11604] after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
+// TODO: [WPB-11599] the E2EI green shield is sometimes not shown when it should (after starting the app)
 
 final class ZClientViewController: UIViewController {
 
@@ -58,7 +58,7 @@ final class ZClientViewController: UIViewController {
     private(set) lazy var mainSplitViewController = MainSplitViewController(
         sidebar: sidebarViewController,
         noConversationPlaceholder: NoConversationPlaceholderViewController(),
-        tabContainer: mainTabBarController
+        tabController: mainTabBarController
     )
 
     // TODO [WPB-9867]: make private or remove this property
@@ -116,12 +116,12 @@ final class ZClientViewController: UIViewController {
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
         mainTabBarController: mainTabBarController,
-        conversationBuilder: conversationViewControllerBuilder,
-        settingsContentBuilder: settingsViewControllerBuilder,
-        connectBuilder: connectBuilder,
-        createGroupConversationBuilder: createGroupConversationBuilder,
-        selfProfileBuilder: selfProfileViewControllerBuilder,
-        userProfileBuilder: userProfileViewControllerBuilder
+        conversationUIBuilder: conversationViewControllerBuilder,
+        settingsContentUIBuilder: settingsViewControllerBuilder,
+        connectUIBuilder: connectBuilder,
+        createGroupConversationUIBuilder: createGroupConversationBuilder,
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        userProfileUIBuilder: userProfileViewControllerBuilder
     )
 
     /// init method for testing allows injecting an Account object and self user
@@ -210,7 +210,7 @@ final class ZClientViewController: UIViewController {
 
         setupSplitViewController()
 
-        // TODO: [WPB-11449] fix if needed
+        // TODO: [WPB-11609] fix if needed
         // attemptToPresentInitialConversation()
 
         if Bundle.developerModeEnabled {
@@ -228,19 +228,19 @@ final class ZClientViewController: UIViewController {
     }
 
     private func setupSplitViewController() {
-        let archive = ArchivedListViewController(userSession: userSession)
+        let archiveUI = ArchivedListViewController(userSession: userSession)
 
-        // TODO: [WPB-11449] the border color doesn't match on iPad 15
+        // TODO: [WPB-11608] the border color doesn't match on iPad 15
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
-        mainSplitViewController.conversationList = conversationListViewController
+        mainSplitViewController.conversationListUI = conversationListViewController
 
-        mainTabBarController.archive = archive
-        mainTabBarController.settings = settingsViewControllerBuilder
+        mainTabBarController.archiveUI = archiveUI
+        mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
 
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
-        archive.delegate = mainCoordinator
+        archiveUI.delegate = mainCoordinator
         userProfileViewControllerBuilder.delegate = mainCoordinator
         connectBuilder.delegate = mainCoordinator
         createGroupConversationBuilder.delegate = mainCoordinator
@@ -346,7 +346,7 @@ final class ZClientViewController: UIViewController {
     }
 
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
-        // TODO: [WPB-11449] check if this flow works
+        // TODO: [WPB-11620] check if this flow works
         let connectRequests = ConnectRequestsViewController(userSession: userSession)
         let navigationController = UINavigationController(rootViewController: connectRequests)
         Task {
@@ -447,7 +447,7 @@ final class ZClientViewController: UIViewController {
     /// - Returns: In the first case, YES is returned, otherwise NO.
     @discardableResult
     private func attemptToLoadLastViewedConversation(withFocus focus: Bool, animated: Bool) -> Bool {
-        // TODO: [WPB-11449] check if needed
+        // TODO: [WPB-11609] check if needed
 
         if let currentAccount = SessionManager.shared?.accountManager.selectedAccount {
             if let conversation = Settings.shared.lastViewedConversation(for: currentAccount) {
@@ -599,7 +599,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) { // TODO: [WPB-11449] use mainCoordinator if possible
+    func openClientListScreen(for user: UserType) { // TODO: [WPB-11614] use mainCoordinator if possible
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
@@ -654,7 +654,7 @@ final class ZClientViewController: UIViewController {
         focusOnView focus: Bool,
         animated: Bool
     ) {
-        // TODO: [WPB-11449] check if the conversation is opened, e.g. after accepting a connection request
+        // TODO: [WPB-11620] check if the conversation is opened, e.g. after accepting a connection request
         dismissAllModalControllers { [weak self] in
             guard
                 let self,
