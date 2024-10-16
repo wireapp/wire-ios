@@ -68,25 +68,24 @@ final class DoubleColumnContainerViewController: UIViewController {
         view.addSubview(borderView)
         borderView.backgroundColor = borderColor
 
-        let constraints = [
+        borderWidthConstraint = borderView.widthAnchor.constraint(equalToConstant: borderWidth)
+        primaryColumnWidthConstraint = primaryNavigationController.view.widthAnchor.constraint(equalToConstant: primaryColumnWidth)
+        NSLayoutConstraint.activate([
             borderView.leadingAnchor.constraint(equalTo: primaryNavigationController.view.trailingAnchor),
             borderView.topAnchor.constraint(equalTo: view.topAnchor),
-            borderView.widthAnchor.constraint(equalToConstant: borderWidth),
+            borderWidthConstraint!,
             view.bottomAnchor.constraint(equalTo: borderView.bottomAnchor),
 
             primaryNavigationController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             primaryNavigationController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.bottomAnchor.constraint(equalTo: primaryNavigationController.view.bottomAnchor),
-            primaryNavigationController.view.widthAnchor.constraint(equalToConstant: primaryColumnWidth),
+            primaryColumnWidthConstraint!,
 
             secondaryNavigationController.view.leadingAnchor.constraint(equalTo: borderView.trailingAnchor),
             secondaryNavigationController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.trailingAnchor.constraint(equalTo: secondaryNavigationController.view.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: secondaryNavigationController.view.bottomAnchor)
-        ]
-        borderWidthConstraint = constraints[2]
-        primaryColumnWidthConstraint = constraints[7]
-        NSLayoutConstraint.activate(constraints)
+        ])
     }
 }
 
