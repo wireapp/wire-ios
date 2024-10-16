@@ -20,14 +20,14 @@ import UIKit
 
 public extension MainSplitViewController {
 
-    typealias ConversationList = TabContainer.ConversationList
-    typealias Archive = TabContainer.Archive
-    typealias Settings = TabContainer.Settings
+    typealias ConversationListUI = TabController.ConversationListUI
+    typealias ArchiveUI = TabController.ArchiveUI
+    typealias SettingsUI = TabController.SettingsUI
 
-    typealias Conversation = TabContainer.Conversation
-    typealias SettingsContent = UIViewController
+    typealias ConversationUI = TabController.ConversationUI
+    typealias SettingsContentUI = UIViewController
 
-    typealias Connect = UIViewController
+    typealias ConnectUI = UIViewController
 
     typealias NoConversationPlaceholderBuilder = () -> UIViewController
 }

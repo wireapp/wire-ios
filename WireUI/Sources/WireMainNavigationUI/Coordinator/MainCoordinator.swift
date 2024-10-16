@@ -41,12 +41,12 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     private weak var splitViewController: SplitViewController!
     private weak var tabBarController: TabBarController!
 
-    private let conversationBuilder: Dependencies.ConversationBuilder
-    private let settingsContentBuilder: Dependencies.SettingsContentBuilder
-    private let connectBuilder: Dependencies.ConnectBuilder
-    private let createGroupConversationBuilder: Dependencies.CreateGroupConversationBuilder
-    private var selfProfileBuilder: Dependencies.SelfProfileBuilder
-    private var userProfileBuilder: Dependencies.UserProfileBuilder
+    private let conversationUIBuilder: Dependencies.ConversationUIBuilder
+    private let settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder
+    private let connectUIBuilder: Dependencies.ConnectUIBuilder
+    private let createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder
+    private var selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder
+    private var userProfileUIBuilder: Dependencies.UserProfileUIBuilder
 
     public private(set) var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -56,24 +56,24 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         splitViewController.sidebar
     }
 
-    private var conversationList: TabBarController.ConversationList! {
+    private var conversationListUI: TabBarController.ConversationListUI! {
         switch mainSplitViewState {
-        case .collapsed: tabBarController.conversationList
-        case .expanded: splitViewController.conversationList
+        case .collapsed: tabBarController.conversationListUI
+        case .expanded: splitViewController.conversationListUI
         }
     }
 
-    private var archive: TabBarController.Archive! {
+    private var archiveUI: TabBarController.ArchiveUI! {
         switch mainSplitViewState {
-        case .collapsed: tabBarController.archive
-        case .expanded: splitViewController.archive
+        case .collapsed: tabBarController.archiveUI
+        case .expanded: splitViewController.archiveUI
         }
     }
 
-    private var settings: TabBarController.Settings! {
+    private var settingsUI: TabBarController.SettingsUI! {
         switch mainSplitViewState {
-        case .collapsed: tabBarController.settings
-        case .expanded: splitViewController.settings
+        case .collapsed: tabBarController.settingsUI
+        case .expanded: splitViewController.settingsUI
         }
     }
 
@@ -82,21 +82,21 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     public init(
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
-        conversationBuilder: Dependencies.ConversationBuilder,
-        settingsContentBuilder: Dependencies.SettingsContentBuilder,
-        connectBuilder: Dependencies.ConnectBuilder,
-        createGroupConversationBuilder: Dependencies.CreateGroupConversationBuilder,
-        selfProfileBuilder: Dependencies.SelfProfileBuilder,
-        userProfileBuilder: Dependencies.UserProfileBuilder
+        conversationUIBuilder: Dependencies.ConversationUIBuilder,
+        settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder,
+        connectUIBuilder: Dependencies.ConnectUIBuilder,
+        createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder,
+        selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder,
+        userProfileUIBuilder: Dependencies.UserProfileUIBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
-        self.conversationBuilder = conversationBuilder
-        self.settingsContentBuilder = settingsContentBuilder
-        self.connectBuilder = connectBuilder
-        self.createGroupConversationBuilder = createGroupConversationBuilder
-        self.selfProfileBuilder = selfProfileBuilder
-        self.userProfileBuilder = userProfileBuilder
+        self.conversationUIBuilder = conversationUIBuilder
+        self.settingsContentUIBuilder = settingsContentUIBuilder
+        self.connectUIBuilder = connectUIBuilder
+        self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
+        self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.userProfileUIBuilder = userProfileUIBuilder
 
         super.init()
 
@@ -114,17 +114,17 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             switch mainSplitViewState {
             case .collapsed:
                 // if `showConversationList` is called while in collapsed mode, pop the conversation view controller
-                tabBarController.setConversation(nil, animated: true)
+                tabBarController.setConversationUI(nil, animated: true)
             case .expanded:
-                if splitViewController.conversation == nil {
+                if splitViewController.conversationUI == nil {
                     // this line ensures that the no conversation placeholder is shown in case we switch from settings
-                    splitViewController.conversation = tabBarController.conversation
+                    splitViewController.conversationUI = tabBarController.conversationUI
                 }
             }
 
             // apply the filter to the conversation list
             let conversationFilter = conversationFilter.map { ConversationFilter(mappingFrom: $0) }
-            conversationList.conversationFilter = conversationFilter
+            conversationListUI.conversationFilter = conversationFilter
 
             // set the right menu item in the sidebar
             let mainMenuItem = MainSidebarMenuItem(conversationFilter)
@@ -143,9 +143,9 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         await dismissPresentedViewController()
 
         // Move the conversation list from the tab bar controller to the split view controller if needed.
-        if let conversationList = tabBarController.conversationList {
-            tabBarController.conversationList = nil
-            splitViewController.conversationList = conversationList
+        if let conversationListUI = tabBarController.conversationListUI {
+            tabBarController.conversationListUI = nil
+            splitViewController.conversationListUI = conversationListUI
         }
     }
 
@@ -157,12 +157,12 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         // switch to the archive tab
         tabBarController.selectedContent = .archive
 
-        if mainSplitViewState == .collapsed, tabBarController.conversation != nil {
+        if mainSplitViewState == .collapsed, tabBarController.conversationUI != nil {
             // if the method is called while in collapsed mode, pop the conversation view controller
-            tabBarController.setConversation(nil, animated: false)
-        } else if splitViewController.conversation == nil {
+            tabBarController.setConversationUI(nil, animated: false)
+        } else if splitViewController.conversationUI == nil {
             // display either the conversation or the placeholder in the secondary column
-            splitViewController.conversation = tabBarController.conversation
+            splitViewController.conversationUI = tabBarController.conversationUI
         }
 
         // In collapsed state switching the tab was all we needed to do.
@@ -173,9 +173,9 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         await dismissPresentedViewController()
 
         // move the archive from the tab bar controller to the split view controller
-        if let archive = tabBarController.archive {
-            tabBarController.archive = nil
-            splitViewController.archive = archive
+        if let archiveUI = tabBarController.archiveUI {
+            tabBarController.archiveUI = nil
+            splitViewController.archiveUI = archiveUI
         }
     }
 
@@ -194,9 +194,9 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         await dismissPresentedViewController()
 
         // move the settings from the tab bar controller to the split view controller
-        if let settings = tabBarController.settings {
-            tabBarController.settings = nil
-            splitViewController.settings = settings
+        if let settingsUI = tabBarController.settingsUI {
+            tabBarController.settingsUI = nil
+            splitViewController.settingsUI = settingsUI
         }
 
         showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
@@ -212,22 +212,22 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         await dismissPresentedViewController()
 
-        let conversation = conversationBuilder.build(
+        let conversationUI = conversationUIBuilder.build(
             conversation: conversation,
             message: nil,
             mainCoordinator: self
         )
         if mainSplitViewState == .collapsed {
             tabBarController.selectedContent = .conversations
-            tabBarController.setConversation(conversation, animated: true)
+            tabBarController.setConversationUI(conversationUI, animated: true)
         } else {
-            splitViewController.conversation = conversation
+            splitViewController.conversationUI = conversationUI
         }
     }
 
     public func hideConversation() {
-        tabBarController.setConversation(nil, animated: true)
-        splitViewController.conversation = nil
+        tabBarController.setConversationUI(nil, animated: true)
+        splitViewController.conversationUI = nil
     }
 
     public func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
@@ -235,23 +235,23 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.hideSidebar()
         }
 
-        if let conversation = splitViewController.conversation {
-            splitViewController.conversation = nil
-            tabBarController.conversation = conversation
+        if let conversationUI = splitViewController.conversationUI {
+            splitViewController.conversationUI = nil
+            tabBarController.conversationUI = conversationUI
         }
 
-        let contentViewController = settingsContentBuilder.build(topLevelMenuItem: topLevelMenuItem, mainCoordinator: self)
+        let contentViewController = settingsContentUIBuilder.build(topLevelMenuItem: topLevelMenuItem, mainCoordinator: self)
         switch mainSplitViewState {
         case .collapsed:
-            tabBarController.setSettingsContent(contentViewController, animated: true) // TODO: [WPB-11347] make the selection visible
+            tabBarController.setSettingsContentUI(contentViewController, animated: true) // TODO: [WPB-11347] make the selection visible
         case .expanded:
-            splitViewController.settingsContent = contentViewController
+            splitViewController.settingsContentUI = contentViewController
         }
     }
 
     public func hideSettingsContent() {
-        tabBarController.setSettingsContent(nil, animated: true)
-        splitViewController.settingsContent = nil
+        tabBarController.setSettingsContentUI(nil, animated: true)
+        splitViewController.settingsContentUI = nil
     }
 
     public func showSelfProfile() async {
@@ -259,12 +259,12 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.hideSidebar()
         }
 
-        let selfProfile = selfProfileBuilder.build(mainCoordinator: self)
-        selfProfile.modalPresentationStyle = .formSheet
+        let selfProfileUI = selfProfileUIBuilder.build(mainCoordinator: self)
+        selfProfileUI.modalPresentationStyle = .formSheet
 
         await dismissPresentedViewController()
         await withCheckedContinuation { continuation in
-            splitViewController.present(selfProfile, animated: true, completion: continuation.resume)
+            splitViewController.present(selfProfileUI, animated: true, completion: continuation.resume)
         }
     }
 
@@ -273,11 +273,11 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.hideSidebar()
         }
 
-        let userProfile = userProfileBuilder.build(
+        let userProfileUI = userProfileUIBuilder.build(
             user: user,
             mainCoordinator: self
         )
-        await presentViewController(userProfile)
+        await presentViewController(userProfileUI)
     }
 
     public func showConnect() async {
@@ -285,9 +285,9 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.hideSidebar()
         }
 
-        let connect = connectBuilder.build(mainCoordinator: self)
-        connect.modalPresentationStyle = .formSheet
-        await presentViewController(connect)
+        let connectUI = connectUIBuilder.build(mainCoordinator: self)
+        connectUI.modalPresentationStyle = .formSheet
+        await presentViewController(connectUI)
     }
 
     public func showCreateGroupConversation() async {
@@ -295,9 +295,9 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.hideSidebar()
         }
 
-        let createGroupConversation = createGroupConversationBuilder.build(mainCoordinator: self)
-        createGroupConversation.modalPresentationStyle = .formSheet
-        await presentViewController(createGroupConversation)
+        let createGroupConversationUI = createGroupConversationUIBuilder.build(mainCoordinator: self)
+        createGroupConversationUI.modalPresentationStyle = .formSheet
+        await presentViewController(createGroupConversationUI)
     }
 
     public func presentViewController(_ viewController: UIViewController) async {
@@ -313,25 +313,25 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
     private func dismissConversationListIfNeeded() {
         // if the conversation list is currently visible, move it back to the tab bar controller
-        if let conversationList = splitViewController.conversationList {
-            splitViewController.conversationList = nil
-            tabBarController.conversationList = conversationList
+        if let conversationListUI = splitViewController.conversationListUI {
+            splitViewController.conversationListUI = nil
+            tabBarController.conversationListUI = conversationListUI
         }
     }
 
     private func dismissArchiveIfNeeded() {
         // Move the archive back to the tab bar controller if needed.
-        if let archive = splitViewController.archive {
-            splitViewController.archive = nil
-            tabBarController.archive = archive
+        if let archive = splitViewController.archiveUI {
+            splitViewController.archiveUI = nil
+            tabBarController.archiveUI = archive
         }
     }
 
     private func dismissSettingsIfNeeded() {
         // Move the settings back to the tab bar controller if it's visible in the split view controller.
-        if let settings = splitViewController.settings {
-            splitViewController.settings = nil
-            tabBarController.settings = settings
+        if let settingsUI = splitViewController.settingsUI {
+            splitViewController.settingsUI = nil
+            tabBarController.settingsUI = settingsUI
         }
     }
 
@@ -352,39 +352,39 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
 
         // move view controllers from the split view controller's columns to the tab bar controller
-        if let conversationListViewController = splitViewController.conversationList {
-            splitViewController.conversationList = nil
-            tabBarController.conversationList = conversationListViewController
+        if let conversationListViewController = splitViewController.conversationListUI {
+            splitViewController.conversationListUI = nil
+            tabBarController.conversationListUI = conversationListViewController
 
-            if let conversation = splitViewController.conversation {
-                splitViewController.conversation = nil
-                tabBarController.conversation = conversation
+            if let conversationUI = splitViewController.conversationUI {
+                splitViewController.conversationUI = nil
+                tabBarController.conversationUI = conversationUI
             }
         } else {
             // dismiss the conversation if archive or connect has been visible
             // and there is still a conversation presented in the secondary column
-            splitViewController.conversation = nil
+            splitViewController.conversationUI = nil
         }
 
         // move the archived conversations list back to the tab bar controller if needed
-        if let archive = splitViewController.archive {
-            splitViewController.archive = nil
-            tabBarController.archive = archive
+        if let archiveUI = splitViewController.archiveUI {
+            splitViewController.archiveUI = nil
+            tabBarController.archiveUI = archiveUI
         }
 
         // move the settings back to the tab bar controller if needed
-        if let settings = splitViewController.settings {
-            splitViewController.settings = nil
-            tabBarController.settings = settings
+        if let settingsUI = splitViewController.settingsUI {
+            splitViewController.settingsUI = nil
+            tabBarController.settingsUI = settingsUI
 
-            if let settingsContent = splitViewController.settingsContent {
-                splitViewController.settingsContent = nil
-                tabBarController.settingsContent = settingsContent
+            if let settingsContentUI = splitViewController.settingsContentUI {
+                splitViewController.settingsContentUI = nil
+                tabBarController.settingsContentUI = settingsContentUI
             }
         }
 
         mainSplitViewState = .collapsed
-        conversationList.mainSplitViewState = .collapsed
+        conversationListUI.mainSplitViewState = .collapsed
     }
 
     public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
@@ -397,43 +397,43 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         // move view controllers from the tab bar controller to the supplementary column
         if tabBarController.selectedContent == .conversations {
-            let conversationViewController = tabBarController.conversationList
-            tabBarController.conversationList = nil
-            splitViewController.conversationList = conversationViewController
+            let conversationViewController = tabBarController.conversationListUI
+            tabBarController.conversationListUI = nil
+            splitViewController.conversationListUI = conversationViewController
 
-            if let conversation = tabBarController.conversation {
-                tabBarController.conversation = nil
-                splitViewController.conversation = conversation
+            if let conversationUI = tabBarController.conversationUI {
+                tabBarController.conversationUI = nil
+                splitViewController.conversationUI = conversationUI
             }
         }
 
         // if the archived conversations view controller was visible, present it
         if tabBarController.selectedContent == .archive {
-            let archive = tabBarController.archive
-            tabBarController.archive = nil
-            splitViewController.archive = archive
+            let archiveUI = tabBarController.archiveUI
+            tabBarController.archiveUI = nil
+            splitViewController.archiveUI = archiveUI
         }
 
         // if the settings were visible, present it
-        var settingsContentToSelect: Dependencies.SettingsContentBuilder.TopLevelMenuItem?
+        var settingsContentUIToSelect: Dependencies.SettingsContentUIBuilder.TopLevelMenuItem?
         if tabBarController.selectedContent == .settings {
-            let settings = tabBarController.settings
-            tabBarController.settings = nil
-            splitViewController.settings = settings
+            let settingsUI = tabBarController.settingsUI
+            tabBarController.settingsUI = nil
+            splitViewController.settingsUI = settingsUI
 
-            if let settingsContent = tabBarController.settingsContent {
-                tabBarController.settingsContent = nil
-                splitViewController.settingsContent = settingsContent
+            if let settingsContentUI = tabBarController.settingsContentUI {
+                tabBarController.settingsContentUI = nil
+                splitViewController.settingsContentUI = settingsContentUI
             } else {
-                settingsContentToSelect = .init(.account)
+                settingsContentUIToSelect = .init(.account)
             }
         }
 
         mainSplitViewState = .expanded
-        let conversationList = tabBarController.conversationList ?? splitViewController.conversationList
-        conversationList!.mainSplitViewState = .expanded
-        if let settingsContentToSelect {
-            showSettingsContent(settingsContentToSelect) // TODO: [WPB-11347] make the selection visible
+        let conversationListUI = tabBarController.conversationListUI ?? splitViewController.conversationListUI
+        conversationListUI!.mainSplitViewState = .expanded
+        if let settingsContentUIToSelect {
+            showSettingsContent(settingsContentUIToSelect) // TODO: [WPB-11347] make the selection visible
         }
     }
 
@@ -449,7 +449,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         switch tabBarController.selectedContent {
         case .conversations:
-            let mainMenuItem = MainSidebarMenuItem(conversationList.conversationFilter)
+            let mainMenuItem = MainSidebarMenuItem(conversationListUI.conversationFilter)
             sidebar.selectedMenuItem = .init(mainMenuItem)
 
         case .archive:
@@ -467,17 +467,17 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
     public var isConversationListVisible: Bool {
         if mainSplitViewState == .expanded {
-            splitViewController.conversationList == nil
+            splitViewController.conversationListUI == nil
         } else {
-            tabBarController.conversationList == nil
+            tabBarController.conversationListUI == nil
         }
     }
 
     public var isConversationVisible: Bool {
         if mainSplitViewState == .expanded {
-            splitViewController.conversation == nil
+            splitViewController.conversationUI == nil
         } else {
-            tabBarController.conversation == nil
+            tabBarController.conversationUI == nil
         }
     }
 }

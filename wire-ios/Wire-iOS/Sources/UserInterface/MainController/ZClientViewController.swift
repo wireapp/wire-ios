@@ -196,8 +196,8 @@ final class ZClientViewController: UIViewController {
 
         mainTabBarController = .init()
         mainTabBarController.applyMainTabBarControllerAppearance()
-        mainTabBarController.conversationList = conversationListViewController
-        mainTabBarController.folders = conversationListWithFoldersViewController
+        mainTabBarController.conversationListUI = conversationListViewController
+        mainTabBarController.foldersUI = conversationListWithFoldersViewController
         wireSplitViewController.leftViewController = mainTabBarController
 
         // TODO [WPB-6647]: Remove in navigation overhaul

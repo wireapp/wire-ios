@@ -19,7 +19,7 @@
 import WireDataModel
 import WireMainNavigationUI
 
-extension ConversationListViewController: MainConversationListProtocol {
+extension ConversationListViewController: MainConversationListUIProtocol {
     // TODO: [WPB-6647] this is implemented correctly in the navigation overhaul epic branch
     var conversationFilter: ConversationFilterType? {
         get { .none }

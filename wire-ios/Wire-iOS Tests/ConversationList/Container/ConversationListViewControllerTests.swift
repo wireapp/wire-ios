@@ -74,7 +74,7 @@ final class ConversationListViewControllerTests: XCTestCase {
             selfProfileViewControllerBuilder: .mock
         )
         tabBarController = .init()
-        tabBarController.conversationList = sut
+        tabBarController.conversationListUI = sut
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = tabBarController
