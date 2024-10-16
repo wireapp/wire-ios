@@ -240,7 +240,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     var callCenterObserverToken: Any?
     var blacklistVerificator: ZMBlacklistVerificator?
     var pushRegistry: PushRegistry
-    let notificationsTracker: NotificationsTracker?
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
@@ -322,7 +321,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         appVersion: String,
         mediaManager: MediaManagerType,
-        analytics: AnalyticsType?,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
@@ -367,7 +365,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             reachability: reachability,
-            analytics: analytics,
             minTLSVersion: minTLSVersion
         )
 
@@ -376,7 +373,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             appVersion: appVersion,
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
-            analytics: analytics,
             reachability: reachability,
             delegate: delegate,
             application: application,
@@ -439,7 +435,6 @@ public final class SessionManager: NSObject, SessionManagerType {
          appVersion: String,
          authenticatedSessionFactory: AuthenticatedSessionFactory,
          unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
-         analytics: AnalyticsType? = nil,
          reachability: ReachabilityWrapper,
          delegate: SessionManagerDelegate?,
          application: ZMApplication,
@@ -512,12 +507,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         // received a push from terminated state, it requires these properties to be
         // non nil in order to process the notification
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
-
-        if let analytics {
-            self.notificationsTracker = NotificationsTracker(analytics: analytics)
-        } else {
-            self.notificationsTracker = nil
-        }
 
         let analyticsConfig = analyticsServiceConfiguration.map {
             AnalyticsService.Config(
@@ -1495,7 +1484,6 @@ extension SessionManager {
     }
 
     @objc fileprivate func applicationDidBecomeActive(_ note: Notification) {
-        notificationsTracker?.dispatchEvent()
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()
     }

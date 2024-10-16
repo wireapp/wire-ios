@@ -108,7 +108,6 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         let testSessionManager = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: nil,
             application: application,
             environment: sessionManager.environment,
@@ -170,7 +169,6 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         let testSessionManager = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: nil,
             application: application,
             environment: sessionManager!.environment,

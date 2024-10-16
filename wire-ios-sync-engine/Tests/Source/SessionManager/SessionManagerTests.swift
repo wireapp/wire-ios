@@ -137,7 +137,6 @@ final class SessionManagerTests: IntegrationTest {
         let testSessionManager = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: nil,
             application: application,
             dispatchGroup: dispatchGroup,
@@ -234,7 +233,6 @@ final class SessionManagerTests: IntegrationTest {
         let testSessionManager = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: self.mockDelegate,
             application: application,
             dispatchGroup: dispatchGroup,
@@ -302,7 +300,6 @@ final class SessionManagerTests: IntegrationTest {
         _ = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: self.mockDelegate,
             application: application,
             environment: sessionManager!.environment,

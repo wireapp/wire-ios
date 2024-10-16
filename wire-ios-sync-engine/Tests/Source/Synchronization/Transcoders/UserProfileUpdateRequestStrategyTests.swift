@@ -30,7 +30,7 @@ class UserProfileUpdateRequestStrategyTests: MessagingTest {
 
         self.mockApplicationStatus = MockApplicationStatus()
         self.mockApplicationStatus.mockSynchronizationState = .online
-        self.userProfileUpdateStatus = TestUserProfileUpdateStatus(managedObjectContext: self.uiMOC, analytics: MockAnalytics())
+        self.userProfileUpdateStatus = TestUserProfileUpdateStatus(managedObjectContext: self.uiMOC)
         self.sut = UserProfileUpdateRequestStrategy(managedObjectContext: self.uiMOC,
                                                     applicationStatus: self.mockApplicationStatus,
                                                     userProfileUpdateStatus: self.userProfileUpdateStatus)

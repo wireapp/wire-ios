@@ -57,7 +57,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 @implementation ZMMissingUpdateEventsTranscoder
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
-                        notificationsTracker:(NotificationsTracker *)notificationsTracker
                               eventProcessor:(id<UpdateEventProcessor>)eventProcessor
                            applicationStatus:(id<ZMApplicationStatus>)applicationStatus
                       pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
@@ -70,7 +69,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     self = [super initWithManagedObjectContext:managedObjectContext applicationStatus:applicationStatus];
     if(self) {
         self.eventProcessor = eventProcessor;
-        self.notificationsTracker = notificationsTracker;
         self.pushNotificationStatus = pushNotificationStatus;
         self.syncStatus = syncStatus;
         self.operationStatus = operationStatus;
@@ -287,10 +285,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
         if (self.isFetchingStreamForAPNS && nil != request) {
             [self.pushNotificationStatus didStartFetching];
-            [self.notificationsTracker registerStartStreamFetching];
-            [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.managedObjectContext block:^(__unused ZMTransportResponse * _Nonnull response) {
-                [self.notificationsTracker registerFinishStreamFetching];
-            }]];
         }
 
         return request;

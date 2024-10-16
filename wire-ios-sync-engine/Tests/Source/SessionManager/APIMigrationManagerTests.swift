@@ -258,7 +258,6 @@ final class APIMigrationManagerTests: MessagingTest {
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            analytics: nil,
             appVersion: "999",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,

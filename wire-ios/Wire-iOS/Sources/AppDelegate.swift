@@ -312,7 +312,6 @@ private extension AppDelegate {
             maxNumberAccounts: maxNumberAccounts,
             appVersion: appVersion,
             mediaManager: mediaManager,
-            analytics: Analytics.shared,
             delegate: appStateCalculator,
             application: UIApplication.shared,
             environment: BackendEnvironment.shared,

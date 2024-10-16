@@ -110,15 +110,18 @@ class CallQualityController: NSObject {
 
     /// Presents the call quality survey after a successful call.
     private func handleCallSuccess(callStartDate: Date, callEndDate: Date) {
+        // TODO: [WPB-11630] reenable with Analytics
         let callDuration = callEndDate.timeIntervalSince(callStartDate)
 
         guard callDuration >= miminumSignificantCallDuration else {
-            Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .callTooShort, duration: Int(callDuration)))
+            // TODO: [WPB-11630] reenable with Analytics
+            // Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .callTooShort, duration: Int(callDuration)))
             return
         }
 
         guard self.canRequestSurvey(at: callEndDate) else {
-            Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .muted, duration: Int(callDuration)))
+            // TODO: [WPB-11630] reenable with Analytics
+            // Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .muted, duration: Int(callDuration)))
             return
         }
 
@@ -176,7 +179,8 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         }
 
         CallQualityController.updateLastSurveyDate(Date())
-        Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))
+        // TODO: [WPB-11630] reenable with Analytics
+        // Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))
     }
 
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController) {

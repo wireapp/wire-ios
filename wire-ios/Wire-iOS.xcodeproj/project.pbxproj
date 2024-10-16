@@ -240,7 +240,6 @@
 		16E0FBAA2331119F000E3235 /* SettingsSignOutCellDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E0FBA92331119E000E3235 /* SettingsSignOutCellDescriptor.swift */; };
 		16E2A0A01F6BEDE7005F4DB1 /* ProximityMonitorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E2A09F1F6BEDE7005F4DB1 /* ProximityMonitorManager.swift */; };
 		16E2A0A21F6BEF6E005F4DB1 /* SoundEventListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E2A0A11F6BEF6E005F4DB1 /* SoundEventListener.swift */; };
-		16E2A0A41F6BF0C6005F4DB1 /* AnalyticsCallingTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E2A0A31F6BF0C6005F4DB1 /* AnalyticsCallingTracker.swift */; };
 		16E2A0A61F6BF233005F4DB1 /* ZMConversation+Calling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E2A0A51F6BF233005F4DB1 /* ZMConversation+Calling.swift */; };
 		16E9E8A72613064500783C91 /* FederationSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E9E8A62613064500783C91 /* FederationSectionController.swift */; };
 		16F6BB0E1EDD7B23009EA803 /* SearchHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F6BB0D1EDD7B23009EA803 /* SearchHeaderViewController.swift */; };
@@ -891,7 +890,6 @@
 		A90E4AC12381E6D700468F31 /* UIControlState+ExpandState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90E4AC02381E6D600468F31 /* UIControlState+ExpandState.swift */; };
 		A90E4AC42381EFCD00468F31 /* ZMButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90E4AC32381EFCD00468F31 /* ZMButton.swift */; };
 		A90F3E08249B978400429BFE /* MessageActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90F3E07249B978400429BFE /* MessageActionTests.swift */; };
-		A9150DB523D1B6B900844185 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9150DB423D1B6B800844185 /* Analytics.swift */; };
 		A918330D241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A918330C241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift */; };
 		A918330F2419272E00CBD0B7 /* TokenSeparatorAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A918330E2419272E00CBD0B7 /* TokenSeparatorAttachment.swift */; };
 		A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift */; };
@@ -2268,7 +2266,6 @@
 		16E0FBA92331119E000E3235 /* SettingsSignOutCellDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSignOutCellDescriptor.swift; sourceTree = "<group>"; };
 		16E2A09F1F6BEDE7005F4DB1 /* ProximityMonitorManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProximityMonitorManager.swift; sourceTree = "<group>"; };
 		16E2A0A11F6BEF6E005F4DB1 /* SoundEventListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundEventListener.swift; sourceTree = "<group>"; };
-		16E2A0A31F6BF0C6005F4DB1 /* AnalyticsCallingTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsCallingTracker.swift; sourceTree = "<group>"; };
 		16E2A0A51F6BF233005F4DB1 /* ZMConversation+Calling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Calling.swift"; sourceTree = "<group>"; };
 		16E9E8A62613064500783C91 /* FederationSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationSectionController.swift; sourceTree = "<group>"; };
 		16F6BB0D1EDD7B23009EA803 /* SearchHeaderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHeaderViewController.swift; sourceTree = "<group>"; };
@@ -2950,7 +2947,6 @@
 		A90E4AC02381E6D600468F31 /* UIControlState+ExpandState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIControlState+ExpandState.swift"; path = "Wire-iOS/UIControlState+ExpandState.swift"; sourceTree = SOURCE_ROOT; };
 		A90E4AC32381EFCD00468F31 /* ZMButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMButton.swift; sourceTree = "<group>"; };
 		A90F3E07249B978400429BFE /* MessageActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionTests.swift; sourceTree = "<group>"; };
-		A9150DB423D1B6B800844185 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		A918330C241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTextAttachmentSnapshotTests.swift; sourceTree = "<group>"; };
 		A918330E2419272E00CBD0B7 /* TokenSeparatorAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachment.swift; sourceTree = "<group>"; };
 		A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachmentSnapshotTests.swift; sourceTree = "<group>"; };
@@ -5532,8 +5528,6 @@
 			children = (
 				E9CD10612C66418E0060D40D /* TrackingManager */,
 				A9730DD9250274150061BF36 /* AnalyticsCountlyProvider.swift */,
-				A9150DB423D1B6B800844185 /* Analytics.swift */,
-				16E2A0A31F6BF0C6005F4DB1 /* AnalyticsCallingTracker.swift */,
 				5E0FB21A2057F50C00FD9867 /* CallQualitySurveyReview.swift */,
 				871BBFC31D34F56300DF0793 /* Events */,
 			);
@@ -9209,7 +9203,6 @@
 				EF1A461C21AD955A0009B6B9 /* GroupDetailsDisclosureOptionsCell.swift in Sources */,
 				EFDBA24522941FE800874A15 /* UIAccessibilityIdentification+LegalHold.swift in Sources */,
 				0665DF7028EE366D0094482B /* ZMConversationMessage+Announcement.swift in Sources */,
-				A9150DB523D1B6B900844185 /* Analytics.swift in Sources */,
 				BFFA182B20FDE93400F64377 /* CompanyLoginController.swift in Sources */,
 				16E9E8A72613064500783C91 /* FederationSectionController.swift in Sources */,
 				EE571C032175ED7B0011B59C /* GroupDetailsNotificationOptionsCell.swift in Sources */,
@@ -10311,7 +10304,6 @@
 				A9CBBEC524CF81EE006543D4 /* UIView+ConstraintFactory.swift in Sources */,
 				166390D41DC34CAB00D7BF1C /* ImageToolbarView.swift in Sources */,
 				EF6DAD6A2150F2C400D9BA70 /* ContactsViewController+SearchHeaderViewControllerDelegate.swift in Sources */,
-				16E2A0A41F6BF0C6005F4DB1 /* AnalyticsCallingTracker.swift in Sources */,
 				E9DD582F2C539D0C00645A2F /* ChangeEmailError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

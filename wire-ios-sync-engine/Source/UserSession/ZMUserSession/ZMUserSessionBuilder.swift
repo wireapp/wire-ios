@@ -25,7 +25,6 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
-    private var analytics: (any AnalyticsType)?
     private var appVersion: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
@@ -86,7 +85,6 @@ struct ZMUserSessionBuilder {
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
-            analytics: analytics,
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,
@@ -110,7 +108,6 @@ struct ZMUserSessionBuilder {
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
-        analytics: (any AnalyticsType)?,
         appVersion: String,
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
@@ -155,8 +152,7 @@ struct ZMUserSessionBuilder {
             requestCancellation: transportSession,
             application: application,
             lastEventIDRepository: lastEventIDRepository,
-            coreCryptoProvider: coreCryptoProvider,
-            analytics: analytics
+            coreCryptoProvider: coreCryptoProvider
         )
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
@@ -196,7 +192,6 @@ struct ZMUserSessionBuilder {
 
         // setup builder
 
-        self.analytics = analytics
         self.appVersion = appVersion
         self.appLock = appLock
         self.application = application
