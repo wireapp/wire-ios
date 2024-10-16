@@ -28,7 +28,7 @@ final class AccountViewSnapshotTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = SnapshotHelper()
-        UIColor.setAccentOverride(.blue)
+        accentColor = .purple
         imageData = UIImage(inTestBundleNamed: "unsplash_matterhorn.jpg", for: AccountViewSnapshotTests.self)!.jpegData(compressionQuality: 0.9)
     }
 
