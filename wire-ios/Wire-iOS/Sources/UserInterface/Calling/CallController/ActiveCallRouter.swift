@@ -90,6 +90,7 @@ where TopOverlayPresenter: TopOverlayPresenting {
 
         callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
+
         callQualityController = CallQualityController(rootViewController: rootViewController)
         transitioningDelegate = CallQualityAnimator()
 

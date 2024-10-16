@@ -33,7 +33,7 @@ public extension AnalyticsEvent {
     /// An event tracking when the user fails to restores a backup.
 
     static let backupRestoredFailed = AnalyticsEvent(name: "backup.restore_failed")
-
+    
     /// An event tracking when the user initiates a call.
     ///
     /// - Parameters:
@@ -83,7 +83,7 @@ public extension AnalyticsEvent {
     ///   - conversationType: The type of conversation.
     ///   - conversationSize: The number of participants in the conversation.
     ///
-    /// - Returns: A conversation contribution anlytics event.
+    /// - Returns: A conversation contribution analytics event.
 
     static func conversationContribution(
         _ contributionType: ConversationContributionType,
@@ -100,4 +100,52 @@ public extension AnalyticsEvent {
         )
     }
 
+    /// An event tracking the call quality when the user end the call.
+    /// - Parameter review: The Review containing score, reason or duration related to the call
+    /// - Returns: A callQualitySurvey analytics event.
+    
+    static func callQualitySurvey(_ review: CallQualitySurveyReview) -> AnalyticsEvent {
+        .init(name: "calling.call_quality_review", segmentation: review.segmentation)
+    }
+}
+
+/// User review for call quality.
+
+public enum CallQualitySurveyReview {
+
+    /// The survey was not displayed.
+    case notDisplayed(reason: IgnoreReason, duration: Int)
+
+    /// The survey was answered by the user.
+    case answered(score: Int, duration: Int)
+
+    /// The survey was dismissed.
+    case dismissed(duration: Int)
+
+    public enum IgnoreReason: String {
+        case callTooShort = "call-too-short"
+        case muted = "muted"
+    }
+
+    var segmentation: Set<SegmentationEntry> {
+        switch self {
+        case .notDisplayed(let reason, let duration):
+            return [
+                .callLabel("not-displayed"),
+                .duration(UInt(duration)),
+                .ignoreReason(reason.rawValue)
+            ]
+        case .answered(let score, let duration):
+            return [
+                .callLabel("answered"),
+                .score(UInt(score)),
+                .duration(UInt(duration))
+            ]
+        case .dismissed(let duration):
+            return [
+                .callLabel("dismissed"),
+                .duration(UInt(duration))
+            ]
+        }
+    }
 }

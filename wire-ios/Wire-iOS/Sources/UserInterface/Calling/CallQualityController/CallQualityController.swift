@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
-
+import WireAnalytics
 /**
  * Observes call state to prompt the user for call quality feedback when appropriate.
  */
@@ -32,11 +32,13 @@ class CallQualityController: NSObject {
     fileprivate var token: Any?
 
     private let rootViewController: UIViewController
+    private let analyticsEventTracker: AnalyticsEventTracker
 
-    init(rootViewController: UIViewController) {
+    init(rootViewController: UIViewController, analyticsEventTracker: AnalyticsEventTracker) {
         self.rootViewController = rootViewController
+        self.analyticsEventTracker = analyticsEventTracker
         super.init()
-
+        
         if let userSession = ZMUserSession.shared() {
             token = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
         }
@@ -110,18 +112,15 @@ class CallQualityController: NSObject {
 
     /// Presents the call quality survey after a successful call.
     private func handleCallSuccess(callStartDate: Date, callEndDate: Date) {
-        // TODO: [WPB-11630] reenable with Analytics
         let callDuration = callEndDate.timeIntervalSince(callStartDate)
 
         guard callDuration >= miminumSignificantCallDuration else {
-            // TODO: [WPB-11630] reenable with Analytics
-            // Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .callTooShort, duration: Int(callDuration)))
+            analyticsEventTracker.trackEvent(.callQualitySurvey(.notDisplayed(reason: .callTooShort, duration: Int(callDuration)))
             return
         }
 
         guard self.canRequestSurvey(at: callEndDate) else {
-            // TODO: [WPB-11630] reenable with Analytics
-            // Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .muted, duration: Int(callDuration)))
+            analyticsEventTracker.trackEvent(.callQualitySurvey(.notDisplayed(reason: .muted, duration: Int(callDuration)))
             return
         }
 
@@ -179,8 +178,7 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         }
 
         CallQualityController.updateLastSurveyDate(Date())
-        // TODO: [WPB-11630] reenable with Analytics
-        // Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))
+        analyticsEventTracker.trackEvent(.callQualitySurvey(.answered(score: score, duration: controller.callDuration)))
     }
 
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController) {
