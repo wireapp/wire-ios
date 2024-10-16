@@ -29,7 +29,6 @@ final class SectionFooterView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
-        titleLabel.lineBreakMode = .byWordWrapping
         createConstraints()
     }
 
@@ -41,6 +40,7 @@ final class SectionFooterView: UIView {
     private func setupViews() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 0
+        titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = SemanticColors.Label.textSectionFooter
         addSubview(titleLabel)
     }
