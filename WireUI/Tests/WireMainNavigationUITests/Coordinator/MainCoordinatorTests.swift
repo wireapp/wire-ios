@@ -108,7 +108,7 @@ final class MainCoordinatorTests: XCTestCase {
         XCTAssertNil(tabBarController.archive)
     }
 
-    // TODO: [WPB-10903] add many more tests, e.g.
+    // TODO: [WPB-10903] consider increasing test coverage, e.g.
     // - collapsing archive, connect, settings, selfProfile
     // - expanding archive, connect, settings, selfProfile
     // - dismissing conversationList, archive, connect, connect, settings, selfProfile

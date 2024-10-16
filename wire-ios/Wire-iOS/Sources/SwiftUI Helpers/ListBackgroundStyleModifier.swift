@@ -26,22 +26,7 @@ struct ListBackgroundStyleModifier: ViewModifier {
     ///
     /// - Parameter content: The content view to be modified.
     /// - Returns: A view with the customized background style applied.
-    ///
-    /// - Note:
-    ///   - **iOS 16.0 and Later**: Starting from iOS 16.0, SwiftUI introduced
-    ///     the `scrollContentBackground(_:)` method, which allows developers to
-    ///     control the visibility of the scrollable content area’s background.
-    ///     The `.hidden` parameter hides the default background, providing a
-    ///     cleaner and more customizable look.
-    ///   - **Earlier Versions**: In iOS versions before 16.0, the `scrollContentBackground(_:)`
-    ///     method is not available. Therefore, we need an alternative way to
-    ///     customize the background. In this case, we use the `background(_:)`
-    ///     modifier to set a custom color defined by `SemanticColors.View.backgroundDefault`.
     func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content.scrollContentBackground(.hidden)
-        } else {
-            content.background(Color(SemanticColors.View.backgroundDefault))
-        }
+        content.scrollContentBackground(.hidden)
     }
 }
