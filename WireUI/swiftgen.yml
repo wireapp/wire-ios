@@ -1,0 +1,36 @@
+input_dir: Sources/MyExample/Resources
+output_dir: ${DERIVED_SOURCES_DIR}
+
+files:
+  inputs:
+    - SomeRandomVideos
+  outputs:
+    templateName: structured-swift5
+    output: Files.swift
+fonts:
+  inputs:
+    - Main Fonts
+    - Other Fonts
+  outputs:
+    templateName: swift5
+    output: Fonts.swift
+ib:
+  inputs: .
+  outputs:
+    - templateName: scenes-swift5
+      output: Storyboards Scenes.swift
+    - templateName: segues-swift5
+      output: Storyboards Segues.swift
+strings:
+  inputs:
+    - Base.lproj/Localizable.strings
+    - Base.lproj/Localizable.stringsdict
+  outputs:
+    - templateName: structured-swift5
+      output: Strings.generated.swift
+xcassets:
+  inputs:
+    - Style.xcassets
+  outputs:
+    templateName: swift5
+    output: Assets.swift
