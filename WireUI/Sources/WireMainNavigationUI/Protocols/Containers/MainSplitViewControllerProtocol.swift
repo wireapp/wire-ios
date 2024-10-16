@@ -23,10 +23,10 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController, MainCont
 
     associatedtype Sidebar: MainSidebarProtocol
     associatedtype TabBarController: MainTabBarControllerProtocol where
-    TabBarController.ConversationListUI == ConversationListUI,
-    TabBarController.ConversationUI == ConversationUI,
-    TabBarController.ArchiveUI == ArchiveUI,
-    TabBarController.SettingsUI == SettingsUI
+        TabBarController.ConversationListUI == ConversationListUI,
+        TabBarController.ConversationUI == ConversationUI,
+        TabBarController.ArchiveUI == ArchiveUI,
+        TabBarController.SettingsUI == SettingsUI
 
     /// Contains the reference to the view controller shown in the primary column.
     var sidebar: Sidebar! { get }
