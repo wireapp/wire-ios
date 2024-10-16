@@ -39,6 +39,11 @@ final class URL_WireTests: XCTestCase {
     }
 
     func testThatAccountURLsAreLoadedCorrectly() {
+        let accountsURL = URL(string: "https://account.wire.com")!
+        XCTAssertEqual(be.accountsURL, accountsURL)
+    }
+
+    func test_passwordReset_URLIsCorrect() {
         XCTAssertEqual(WireURLs.shared.passwordReset, be.accountsURL.appendingPathComponent("forgot"))
     }
 }
