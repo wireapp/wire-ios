@@ -49,17 +49,20 @@ public protocol APIServiceProtocol {
 
 public final class APIService: APIServiceProtocol {
 
+    private let clientID: String
     private let networkService: NetworkService
     private let authenticationStorage: any AuthenticationStorage
 
     /// Create a new `APIService`.
     ///
     /// - Parameters:
+    ///   - clientID: The id of the self client.
     ///   - backendURL: The url of the target backend.
     ///   - authenticationStorage: The storage for authentication objects.
     ///   - minTLSVersion: The minimum supported TLS version.
 
     public convenience init(
+        clientID: String,
         backendURL: URL,
         authenticationStorage: any AuthenticationStorage,
         minTLSVersion: TLSVersion
@@ -71,15 +74,18 @@ public final class APIService: APIServiceProtocol {
         networkService.configure(with: urlSession)
 
         self.init(
+            clientID: clientID,
             networkService: networkService,
             authenticationStorage: authenticationStorage
         )
     }
 
     init(
+        clientID: String,
         networkService: NetworkService,
         authenticationStorage: any AuthenticationStorage
     ) {
+        self.clientID = clientID
         self.networkService = networkService
         self.authenticationStorage = authenticationStorage
     }
@@ -99,14 +105,83 @@ public final class APIService: APIServiceProtocol {
         var request = request
 
         if requiringAccessToken {
-            guard let accessToken = authenticationStorage.fetchAccessToken() else {
-                throw APIServiceError.missingAccessToken
-            }
-
+            let accessToken = try await getAccessToken()
             request.setAccessToken(accessToken)
         }
 
         return try await networkService.executeRequest(request)
+    }
+
+    private func getAccessToken() async throws -> AccessToken {
+        guard
+            let currentAccessToken = await authenticationStorage.fetchAccessToken(),
+            !currentAccessToken.isExpiring
+        else {
+            let newAccessToken = try await getNewAccessToken()
+            await authenticationStorage.storeAccessToken(newAccessToken)
+            return newAccessToken
+        }
+
+        return currentAccessToken
+    }
+
+    private func getNewAccessToken() async throws -> AccessToken {
+        let cookies = try await authenticationStorage.fetchCookies()
+
+        var request = try URLRequestBuilder(path: "/access")
+            .withQueryItem(name: "client_id", value: clientID)
+            .withMethod(.post)
+            .withAcceptType(.json)
+            .withCookies(cookies)
+            .build()
+
+        if let lastKnownAccessToken = await authenticationStorage.fetchAccessToken() {
+            request.setAccessToken(lastKnownAccessToken)
+        }
+
+        let (data, response) = try await networkService.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: .ok, type: AccessTokenPayload.self)
+            .failure(code: .forbidden, label: "invalid-credentials", error: APIServiceError.invalidCredentials)
+            .parse(code: response.statusCode, data: data)
+    }
+
+
+}
+
+private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
+
+    let user: UUID
+    let accessToken: String
+    let tokenType: String
+    let expiresIn: Int
+
+    enum CodingKeys: String, CodingKey {
+
+        case user
+        case accessToken = "access_token"
+        case tokenType = "token_type"
+        case expiresIn = "expires_in"
+
+    }
+
+    func toAPIModel() -> AccessToken {
+        AccessToken(
+            userID: user,
+            token: accessToken,
+            type: tokenType,
+            expirationDate: Date(timeIntervalSinceNow: TimeInterval(expiresIn))
+        )
+    }
+
+}
+
+private extension AccessToken {
+
+    var isExpiring: Bool {
+        let secondsRemaining = expirationDate.timeIntervalSinceNow
+        return secondsRemaining < 40
     }
 
 }

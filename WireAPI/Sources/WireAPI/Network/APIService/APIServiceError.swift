@@ -22,8 +22,8 @@ import Foundation
 
 public enum APIServiceError: Error {
 
-    /// An access token is required but none is available.
+    /// An authenticated request failed due to invalid credentials.
 
-    case missingAccessToken
+    case invalidCredentials
 
 }
