@@ -2748,8 +2748,8 @@ internal enum L10n {
       }
       internal enum Filter {
         internal enum AllConversations {
-          /// All Conversations
-          internal static let title = L10n.tr("Localizable", "conversation_list.filter.all_conversations.title", fallback: "All Conversations")
+          /// All
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.all_conversations.title", fallback: "All")
         }
         internal enum Favorites {
           /// Favorites
