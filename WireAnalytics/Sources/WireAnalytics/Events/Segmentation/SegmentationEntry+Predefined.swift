@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 // MARK: - Predefined entries
 
 extension SegmentationEntry {
@@ -89,8 +91,8 @@ extension SegmentationEntry {
     /// - Parameter value: The score from 1 to 5.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func score(_ value: UInt) -> Self {
-        .init(key: "score", value: value.analyticsValue)
+    static func score(_ value: Int) -> Self {
+        .init(key: "score", value: String(value))
     }
     
     /// Creates a `SegmentationEntry` for the duration of the calling survey
@@ -98,8 +100,8 @@ extension SegmentationEntry {
     /// - Parameter value: The duration of the call.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func duration(_ value: UInt) -> Self {
-        .init(key: "duration", value: value.analyticsValue)
+    static func duration(_ value: TimeInterval) -> Self {
+        .init(key: "duration", value: String(value))
     }
     
     /// Creates a `SegmentationEntry` for the label of the calling survey

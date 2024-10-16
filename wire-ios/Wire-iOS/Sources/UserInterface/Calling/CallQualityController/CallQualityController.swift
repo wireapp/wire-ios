@@ -115,12 +115,12 @@ class CallQualityController: NSObject {
         let callDuration = callEndDate.timeIntervalSince(callStartDate)
 
         guard callDuration >= miminumSignificantCallDuration else {
-            analyticsEventTracker.trackEvent(.callQualitySurvey(.notDisplayed(reason: .callTooShort, duration: Int(callDuration)))
+            analyticsEventTracker.trackEvent(.callQualitySurvey(.notDisplayed(reason: .callTooShort, duration: callDuration)))
             return
         }
 
         guard self.canRequestSurvey(at: callEndDate) else {
-            analyticsEventTracker.trackEvent(.callQualitySurvey(.notDisplayed(reason: .muted, duration: Int(callDuration)))
+            analyticsEventTracker.trackEvent(.callQualitySurvey(.notDisplayed(reason: .muted, duration: callDuration)))
             return
         }
 

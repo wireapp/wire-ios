@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 public extension AnalyticsEvent {
 
     /// An event tracking when the user opens the app.
@@ -114,13 +116,13 @@ public extension AnalyticsEvent {
 public enum CallQualitySurveyReview {
 
     /// The survey was not displayed.
-    case notDisplayed(reason: IgnoreReason, duration: Int)
+    case notDisplayed(reason: IgnoreReason, duration: TimeInterval)
 
     /// The survey was answered by the user.
-    case answered(score: Int, duration: Int)
+    case answered(score: Int, duration: TimeInterval)
 
     /// The survey was dismissed.
-    case dismissed(duration: Int)
+    case dismissed(duration: TimeInterval)
 
     public enum IgnoreReason: String {
         case callTooShort = "call-too-short"
@@ -132,19 +134,19 @@ public enum CallQualitySurveyReview {
         case .notDisplayed(let reason, let duration):
             return [
                 .callLabel("not-displayed"),
-                .duration(UInt(duration)),
+                .duration(duration),
                 .ignoreReason(reason.rawValue)
             ]
         case .answered(let score, let duration):
             return [
                 .callLabel("answered"),
-                .score(UInt(score)),
-                .duration(UInt(duration))
+                .score(score),
+                .duration(duration)
             ]
         case .dismissed(let duration):
             return [
                 .callLabel("dismissed"),
-                .duration(UInt(duration))
+                .duration(duration)
             ]
         }
     }
