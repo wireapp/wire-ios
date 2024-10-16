@@ -16,7 +16,8 @@ let package = Package(
         .library(name: "WireMainNavigationUI", targets: ["WireMainNavigationUI"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
         .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
-        .library(name: "WireSidebarUI", targets: ["WireSidebarUI"])
+        .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
+        .library(name: "WireUserProfileUI", targets: ["WireUserProfileUI"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -42,7 +43,10 @@ let package = Package(
         .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI"]),
 
         .target(name: "WireSidebarUI", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
+        .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"]),
+
+        .target(name: "WireUserProfileUI", dependencies: ["WireFoundation"]),
+        .testTarget(name: "WireUserProfileUITests", dependencies: ["WireUserProfileUI"])
     ]
 )
 

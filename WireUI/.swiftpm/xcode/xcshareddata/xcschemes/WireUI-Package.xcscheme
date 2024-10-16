@@ -105,6 +105,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireUserProfileUI"
+               BuildableName = "WireUserProfileUI"
+               BlueprintName = "WireUserProfileUI"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -186,6 +200,16 @@
                BlueprintIdentifier = "WireSidebarUITests"
                BuildableName = "WireSidebarUITests"
                BlueprintName = "WireSidebarUITests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireUserProfileUITests"
+               BuildableName = "WireUserProfileUITests"
+               BlueprintName = "WireUserProfileUITests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
