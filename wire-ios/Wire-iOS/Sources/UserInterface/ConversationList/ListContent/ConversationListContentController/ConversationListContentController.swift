@@ -45,6 +45,7 @@ final class ConversationListContentController: UICollectionViewController {
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
+    private var emptySearchPlaceholderView: UIStackView!
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
@@ -95,6 +96,7 @@ final class ConversationListContentController: UICollectionViewController {
         guard SelfUser.provider != nil else { return }
 
         updateVisibleCells()
+        emptySearchPlaceholderView.isHidden = true
 
         scrollToCurrentSelection(animated: false)
 
@@ -112,6 +114,10 @@ final class ConversationListContentController: UICollectionViewController {
         }
     }
 
+    override func viewDidLoad() {
+        setupEmptyPlaceholder()
+    }
+
     private func activeMediaPlayerChanged() {
         DispatchQueue.main.async {
             for cell in self.collectionView.visibleCells {
@@ -123,6 +129,12 @@ final class ConversationListContentController: UICollectionViewController {
     func reload() {
         collectionView.reloadData()
         ensureCurrentSelection()
+
+        emptySearchPlaceholderView.isHidden = listViewModel.appliedSearchText.isEmpty || !listViewModel.isEmptyList
+        /*
+        1. if search result is not empty
+         emptySearchPlaceholderView.isHidden = searchString.isEmpty || !searchResult.isEmpty
+         */
 
         // we MUST call layoutIfNeeded here because otherwise bad things happen when we close the archive, reload the conv
         // and then unarchive all at the same time
@@ -148,6 +160,34 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.accessibilityIdentifier = "conversation list"
         collectionView.backgroundColor = .clear
         clearsSelectionOnViewWillAppear = false
+    }
+
+    private func setupEmptyPlaceholder() {
+        // Check if iPad
+        let titleLabel = DynamicFontLabel(
+            text: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone,
+            style: .h3,
+            color: ColorTheme.Base.secondaryText
+        )
+        titleLabel.textAlignment = .center
+
+        emptySearchPlaceholderView = UIStackView(arrangedSubviews: [titleLabel])
+        emptySearchPlaceholderView.axis = .vertical
+        emptySearchPlaceholderView.spacing = 2
+        emptySearchPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(emptySearchPlaceholderView)
+        NSLayoutConstraint.activate([
+
+            emptySearchPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptySearchPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            emptySearchPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
+            emptySearchPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptySearchPlaceholderView.trailingAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptySearchPlaceholderView.bottomAnchor, multiplier: 1),
+
+            emptySearchPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
+        ])
     }
 
     // MARK: - section header
@@ -187,6 +227,7 @@ final class ConversationListContentController: UICollectionViewController {
     /// ensures that the list selection state matches that of the model.
     func ensureCurrentSelection() {
         guard let selectedItem = listViewModel.selectedItem else { return }
+        //listViewModel.sections
 
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems
 
