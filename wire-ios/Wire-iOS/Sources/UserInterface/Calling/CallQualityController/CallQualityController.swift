@@ -113,12 +113,12 @@ class CallQualityController: NSObject {
         let callDuration = callEndDate.timeIntervalSince(callStartDate)
 
         guard callDuration >= miminumSignificantCallDuration else {
-            Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .callTooShort, duration: Int(callDuration)))
+            //Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .callTooShort, duration: Int(callDuration)))
             return
         }
 
         guard self.canRequestSurvey(at: callEndDate) else {
-            Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .muted, duration: Int(callDuration)))
+            //Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .muted, duration: Int(callDuration)))
             return
         }
 
@@ -176,7 +176,7 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         }
 
         CallQualityController.updateLastSurveyDate(Date())
-        Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))
+        //Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))
     }
 
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController) {
