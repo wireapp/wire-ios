@@ -22,6 +22,10 @@ import Foundation
 
 enum ConversationRepositoryError: Error {
 
+    /// Conversation not found
+
+    case conversationNotFound
+
     /// Unable to delete conversation.
 
     case failedToDeleteConversation(Error)

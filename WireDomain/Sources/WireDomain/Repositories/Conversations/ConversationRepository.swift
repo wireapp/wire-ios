@@ -24,6 +24,24 @@ import WireDataModel
 /// Facilitate access to conversations related domain objects.
 public protocol ConversationRepositoryProtocol {
 
+    /// Fetches a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: The `ZMConversation` found locally.
+
+    func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation?
+
+    /// Fetches and persists a conversation with a given ID.
+    /// - parameter id: The conversation ID.
+
+    func pullConversation(
+        with id: ConversationID
+    ) async throws
+
     /// Fetches and persists all conversations
 
     func pullConversations() async throws
@@ -62,6 +80,16 @@ public protocol ConversationRepositoryProtocol {
         user: ZMUser,
         removalDate: Date
     ) async
+
+    /// Adds a system message to a given conversation.
+    /// - parameters:
+    ///     - message: The system message to add.
+    ///     - conversation: The conversation to add the system message to.
+
+    func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -90,6 +118,29 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Public
+
+    public func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation? {
+        await conversationsLocalStore.fetchConversation(
+            with: id,
+            domain: domain
+        )
+    }
+
+    public func pullConversation(with id: ConversationID) async throws {
+        let conversationList = try await conversationsAPI.getConversations(for: [id])
+
+        guard let conversation = conversationList.found.first else {
+            throw ConversationRepositoryError.conversationNotFound
+        }
+
+        await conversationsLocalStore.storeConversation(
+            conversation,
+            isFederationEnabled: backendInfo.isFederationEnabled
+        )
+    }
 
     public func pullConversations() async throws {
         var qualifiedIds: [WireAPI.QualifiedID]
@@ -182,6 +233,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.removeFromConversations(
             user: user,
             removalDate: removalDate
+        )
+    }
+
+    public func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async {
+        await conversationsLocalStore.addSystemMessage(
+            message,
+            to: conversation
         )
     }
 
