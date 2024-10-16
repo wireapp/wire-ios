@@ -442,8 +442,39 @@ final class UserRepositoryTests: XCTestCase {
         }
     }
 
+    func testUpdateUser_It_Updates_User_Locally() async throws {
+        // Given
+
+        modelHelper.createUser(
+            id: Scaffolding.userID,
+            handle: Scaffolding.existingHandle,
+            email: Scaffolding.existingEmail,
+            supportedProtocols: [.mls],
+            in: context
+        )
+
+        // When
+
+        try await sut.updateUser(from: Scaffolding.event)
+
+        // Then
+
+        try await context.perform { [context] in
+            let updatedUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
+
+            XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
+            XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
+            XCTAssertEqual(updatedUser.handle, Scaffolding.existingHandle) /// ensuring handle is not updated to nil
+            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.existingEmail) /// ensuring email is not updated to nil
+            XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
+        }
+    }
+
     private enum Scaffolding {
         static let userID = UUID()
+        static let domain = "domain.com"
+        static let existingHandle = "handle"
+        static let existingEmail = "test@wire.com"
         static let userPropertyKey = UserProperty.Key.wireReceiptMode
         static let userClientID = UUID().uuidString
         static let lastPrekeyId = 65_535
@@ -490,7 +521,7 @@ final class UserRepositoryTests: XCTestCase {
         )
 
         static let user1 = User(
-            id: QualifiedID(uuid: UUID(), domain: "example.com"),
+            id: QualifiedID(uuid: userID, domain: domain),
             name: "user1",
             handle: "handle1",
             teamID: nil,
@@ -504,6 +535,17 @@ final class UserRepositoryTests: XCTestCase {
             legalholdStatus: .disabled
         )
 
+        static let event = UserUpdateEvent(
+            userID: userID,
+            accentColorID: nil,
+            name: "username",
+            handle: nil,
+            email: nil,
+            isSSOIDDeleted: nil,
+            assets: nil,
+            supportedProtocols: [.proteus, .mls]
+        )
+
         static let deviceToken = Data(repeating: 0x41, count: 10)
 
         nonisolated(unsafe) static let pushToken = PushToken(
@@ -514,6 +556,7 @@ final class UserRepositoryTests: XCTestCase {
         )
 
         static let defaultsTestSuiteName = UUID().uuidString
+
     }
 
 }

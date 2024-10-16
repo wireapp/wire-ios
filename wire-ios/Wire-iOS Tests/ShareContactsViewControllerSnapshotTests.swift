@@ -27,7 +27,7 @@ final class ShareContactsViewControllerSnapshotTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        super.setUp()
+        UIColor.setAccentOverride(.blue)
         snapshotHelper = SnapshotHelper()
         sut = ShareContactsViewController()
     }
@@ -35,7 +35,7 @@ final class ShareContactsViewControllerSnapshotTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     func testForInitState() {

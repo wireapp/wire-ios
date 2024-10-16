@@ -50,7 +50,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.conversationList = conversationList
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController) // TODO: [WPB-6647] fix index for navigation overhaul
+        let navigationController = try XCTUnwrap(sut.viewControllers?[0] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [conversationList])
     }
 
@@ -81,7 +81,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.archive = archive
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[3] as? UINavigationController) // TODO: [WPB-6647] fix index for navigation overhaul
+        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [archive])
     }
 

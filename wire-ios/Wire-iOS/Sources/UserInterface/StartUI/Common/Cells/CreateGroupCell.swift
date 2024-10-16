@@ -22,7 +22,8 @@ final class CreateGroupCell: StartUIIconCell {
         super.setupViews()
 
         icon = .createConversation
-        // TODO: title = PeoplePicker.QuickAction.createConversation
+        // TODO: [WPB-11449] why is this string missing?
+        // title = PeoplePicker.QuickAction.createConversation
         isAccessibilityElement = true
         accessibilityLabel = title
         accessibilityTraits.insert(.button)

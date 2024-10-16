@@ -22,16 +22,8 @@ import Foundation
 
 public enum APIServiceError: Error {
 
-    /// An enqueued url request is invalid.
-
-    case invalidRequest
-
     /// An access token is required but none is available.
 
     case missingAccessToken
-
-    /// The response is not an http url response.
-
-    case notAHTTPURLResponse
 
 }

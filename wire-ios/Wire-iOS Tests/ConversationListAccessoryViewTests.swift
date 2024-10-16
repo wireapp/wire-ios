@@ -45,7 +45,7 @@ final class ConversationListAccessoryViewTests: XCTestCase {
         snapshotHelper = nil
         sut = nil
         userSession = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     // MARK: - Snapshot Tests

@@ -153,7 +153,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
 
         // New Conversation Button
-        let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
+        let symbolConfiguration = UIImage.SymbolConfiguration(weight: .semibold)
+        let newConversationImage = UIImage(systemName: "plus.circle.fill", withConfiguration: symbolConfiguration)!
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
             Task {
                 await self?.mainCoordinator.showConnect()
@@ -165,8 +166,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         // startConversationItem.accessibilityLabel =
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
 
-        let defaultFilterImage = UIImage(resource: .ConversationList.Header.filterConversations)
-        let filledFilterImage = UIImage(resource: .ConversationList.Header.filterConversationsFilled)
+        let defaultFilterImage = UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: symbolConfiguration)!
+        let filledFilterImage = UIImage(systemName: "line.3.horizontal.decrease.circle.fill", withConfiguration: symbolConfiguration)!
 
         var selectedFilterImage: UIImage
 
@@ -269,8 +270,6 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     ) -> UIAction {
         let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
         let actionImage = FilterButtonStyleHelper.makeActionImage(named: imageName, isSelected: isSelected)
-        let attributedTitle = FilterButtonStyleHelper.makeAttributedTitle(for: title, isSelected: isSelected)
-
         let action = UIAction(title: title, image: actionImage) { [weak self] _ in
             if let filter {
                 self?.applyFilter(filter)
@@ -278,10 +277,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
                 self?.clearFilter()
             }
         }
-
-        action.setValue(attributedTitle, forKey: "attributedTitle")
         action.accessibilityLabel = accessibilityLabelForFilterAction(for: filter, isSelected: isSelected)
-
         return action
     }
 
