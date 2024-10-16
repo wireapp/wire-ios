@@ -38,7 +38,7 @@ final class ConversationListViewModel: NSObject {
         didSet { reloadConversationList() }
     }
 
-    fileprivate struct Section: DifferentiableSection {
+    struct Section: DifferentiableSection {
 
         enum Kind: Equatable, Hashable {
 
@@ -215,7 +215,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     // Local copies of the lists.
-    private var sections: [Section] = []
+    var sections: [Section] = []
 
     private typealias DiffKitSection = ArraySection<Int, SectionItem>
 
@@ -278,7 +278,7 @@ final class ConversationListViewModel: NSObject {
 
     private var conversationDirectoryToken: Any?
 
-    private let userSession: UserSession?
+    let userSession: UserSession?
 
     init(userSession: UserSession) {
         self.userSession = userSession
@@ -393,12 +393,12 @@ final class ConversationListViewModel: NSObject {
 
         return conversationDirectory.conversations(by: conversationListType).filter({ !$0.hasIncompleteMetadata }).map({ SectionItem(item: $0, kind: kind) })
 
-}
+    }
 
-func reloadConversationList() {
-updateAllSections()
-delegate?.listViewModelShouldBeReloaded()
-}
+    func reloadConversationList() {
+        updateAllSections()
+        delegate?.listViewModelShouldBeReloaded()
+    }
 
     private func updateAllSections() {
         sections = createSections()

@@ -41,6 +41,7 @@
 		01F5EAE42B712DD7009FD25D /* LogFileDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */; };
 		06024ABC29E69A860032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06024ABB29E69A850032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift */; };
 		0608828F29EC742B0053772B /* ConversationMessageFailedRecipientsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0608828E29EC742B0053772B /* ConversationMessageFailedRecipientsTests.swift */; };
+		060A36902CBCF1010066908C /* ConversationListViewController+EmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060A368F2CBCF1010066908C /* ConversationListViewController+EmptyState.swift */; };
 		060C06652B73DFC700B484C6 /* E2EINotificationActionsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06642B73DFC700B484C6 /* E2EINotificationActionsHandler.swift */; };
 		060E5336257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */; };
 		061275DE26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */; };
@@ -52,6 +53,8 @@
 		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		0622D6A2265B38DE00D759DB /* UserBlockingReasonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */; };
+		06231BD92CB6C79A00BFCFE3 /* SubheadlineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06231BD82CB6C79A00BFCFE3 /* SubheadlineTextView.swift */; };
+		06231BDB2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06231BDA2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift */; };
 		0630E4C42580469300C75BFB /* AppLockChangeWarningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */; };
 		06379687296491C000674AAA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06379686296491C000674AAA /* Images.xcassets */; };
 		064AD4C425DD31A600143D74 /* UIApplication+OpenURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */; };
@@ -2032,6 +2035,7 @@
 		01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFileDestination.swift; sourceTree = "<group>"; };
 		06024ABB29E69A850032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageFailedRecipientsCellDescription.swift; sourceTree = "<group>"; };
 		0608828E29EC742B0053772B /* ConversationMessageFailedRecipientsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageFailedRecipientsTests.swift; sourceTree = "<group>"; };
+		060A368F2CBCF1010066908C /* ConversationListViewController+EmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+EmptyState.swift"; sourceTree = "<group>"; };
 		060C06642B73DFC700B484C6 /* E2EINotificationActionsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EINotificationActionsHandler.swift; sourceTree = "<group>"; };
 		060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPropertyFactory+AppLock.swift"; sourceTree = "<group>"; };
 		061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragInteractionRestrictionTextView.swift; sourceTree = "<group>"; };
@@ -2042,6 +2046,8 @@
 		061EF88E2797F74800584C53 /* SettingsCopyButtonCellDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCopyButtonCellDescriptor.swift; sourceTree = "<group>"; };
 		061F34152B1A4F360099CBAB /* OAuthUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthUseCase.swift; sourceTree = "<group>"; };
 		0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBlockingReasonCell.swift; sourceTree = "<group>"; };
+		06231BD82CB6C79A00BFCFE3 /* SubheadlineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubheadlineTextView.swift; sourceTree = "<group>"; };
+		06231BDA2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPlaceholderView.swift; sourceTree = "<group>"; };
 		0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockChangeWarningViewController.swift; sourceTree = "<group>"; };
 		06379686296491C000674AAA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		064AD4C325DD31A600143D74 /* UIApplication+OpenURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+OpenURL.swift"; sourceTree = "<group>"; };
@@ -4062,6 +4068,15 @@
 				01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */,
 			);
 			path = Scripts;
+			sourceTree = "<group>";
+		};
+		060A368E2CBCF0A90066908C /* Empty placeholders */ = {
+			isa = PBXGroup;
+			children = (
+				06231BDA2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift */,
+				06231BD82CB6C79A00BFCFE3 /* SubheadlineTextView.swift */,
+			);
+			path = "Empty placeholders";
 			sourceTree = "<group>";
 		};
 		060B1E2D25BADCDB00A6ADA7 /* Password */ = {
@@ -8362,11 +8377,13 @@
 		EFEE97CC2322A0EC007A4702 /* Container */ = {
 			isa = PBXGroup;
 			children = (
+				060A368E2CBCF0A90066908C /* Empty placeholders */,
 				E96AB4FA2C0722F900792DA9 /* ConversationListViewController+NavigationBar */,
 				EFA145F3231EA4980073BA5E /* ConversationListViewController.swift */,
 				8784D4561E81832F007A6867 /* ConversationListViewController+NetworkStatusBarDelegate.swift */,
 				EF3CBC092147D81700566295 /* ConversationListViewController+PushPermissions.swift */,
 				BFAAB2421DEDB21E00CBC096 /* ConversationListViewController+Transitions.swift */,
+				060A368F2CBCF1010066908C /* ConversationListViewController+EmptyState.swift */,
 				599EA3C72C2426DA009319D4 /* ConversationListViewController+UISearchResultsUpdating.swift */,
 				EF471BE023265305008E11A5 /* ViewModel */,
 			);
@@ -9356,6 +9373,7 @@
 				D5168F2C200CBBF300F8222A /* Analytics+TeamInvites.swift in Sources */,
 				7A702FB7286322D800004580 /* ConversationEncryptionProtocolCell.swift in Sources */,
 				1648EEF32049A6F800CC6B37 /* DirectorySectionController.swift in Sources */,
+				060A36902CBCF1010066908C /* ConversationListViewController+EmptyState.swift in Sources */,
 				A96A21EF23D5AE6D005B5579 /* UIApplication+Permissions.swift in Sources */,
 				2572EC572B148EE50075A7BE /* DeviceDetailsButtonsView.swift in Sources */,
 				5E9E8A9D21621FEC0058D6E1 /* AuthenticationActioner.swift in Sources */,
@@ -10229,6 +10247,7 @@
 				7CED30721FD97748009F0DAC /* IconStringsBuilder.swift in Sources */,
 				E9B0DED42B5E7151006DC9E4 /* AccentColorPicker.swift in Sources */,
 				EFABC92420208D80001F9866 /* UIViewController+removeUserConfirmationUI.swift in Sources */,
+				06231BD92CB6C79A00BFCFE3 /* SubheadlineTextView.swift in Sources */,
 				5E35F7762181C49100D3F4FE /* ConversationSystemMessageCell.swift in Sources */,
 				F15650F221DD1B4100210504 /* UIFont+Weight.swift in Sources */,
 				63B7FB5227CFBAF50035087F /* BlacklistReason+BlockerViewControllerContext.swift in Sources */,
@@ -10336,6 +10355,7 @@
 				5E62802C222551CF0039A8AB /* IncomingRequestFooterView.swift in Sources */,
 				EF2F161E225748F100C44B88 /* ConnectRequestsCell.swift in Sources */,
 				0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */,
+				06231BDB2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift in Sources */,
 				A918330F2419272E00CBD0B7 /* TokenSeparatorAttachment.swift in Sources */,
 				5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */,
 				163495871F010F91004E80DB /* UnauthenticatedSession+Shared.swift in Sources */,
@@ -11469,7 +11489,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -11547,7 +11566,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
