@@ -20,18 +20,6 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-protocol WireTextFieldDelegate: AnyObject {
-
-    func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value)
-
-    func textFieldReturnPressed(_ textField: WireTextField)
-
-    func textFieldDidEndEditing(_ textField: WireTextField)
-
-    func textFieldDidBeginEditing(_ textField: WireTextField)
-
-}
-
 class WireTextField: UITextField {
 
     // MARK: - Properties
