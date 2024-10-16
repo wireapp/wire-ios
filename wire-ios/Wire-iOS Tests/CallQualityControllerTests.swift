@@ -21,7 +21,7 @@ import WireUITesting
 import XCTest
 
 @testable import Wire
-import WireAnalyticsSupport
+import WireSyncEngineSupport
 
 final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
@@ -34,7 +34,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     private var conversation: ZMConversation!
     private var callConversationProvider: MockCallConversationProvider!
     private var callQualityViewController: CallQualityViewController!
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var callQualitySurvey: MockCallQualitySurveyUseCaseProtocol!
 
     // MARK: - setUp
 
@@ -48,18 +48,19 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
             otherUser: otherUser
         )
         callConversationProvider = MockCallConversationProvider()
-        analyticsEventTracker = MockAnalyticsEventTracker()
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+
+        callQualitySurvey = MockCallQualitySurveyUseCaseProtocol()
+        callQualitySurvey.invoke_MockMethod = { _ in }
+
         // NOTE: the sut is not really a mock it's just the real implementation
         // but with canPresentCallQualitySurvey set to true for testing the callQualitySurvey
-        sut = MockCallQualityController(rootViewController: .init(), analyticsEventTracker: analyticsEventTracker)
+        sut = MockCallQualityController(rootViewController: .init(), callQualitySurvey: callQualitySurvey)
         sut.router = router
         sut.usesCallSurveyBudget = false
 
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
-
     }
 
     // MARK: - teardown
@@ -72,7 +73,8 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         conversation = nil
         callConversationProvider = nil
         callQualityViewController = nil
-
+        callQualitySurvey = nil
+        
         super.tearDown()
     }
 

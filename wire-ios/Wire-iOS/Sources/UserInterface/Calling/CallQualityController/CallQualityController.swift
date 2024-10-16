@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
-import WireAnalytics
+
 /**
  * Observes call state to prompt the user for call quality feedback when appropriate.
  */
@@ -32,11 +32,11 @@ class CallQualityController: NSObject {
     fileprivate var token: Any?
 
     private let rootViewController: UIViewController
-    private let analyticsEventTracker: AnalyticsEventTracker
+    private let callQualitySurvey: CallQualitySurveyUseCaseProtocol
 
-    init(rootViewController: UIViewController, analyticsEventTracker: AnalyticsEventTracker) {
+    init(rootViewController: UIViewController, callQualitySurvey: CallQualitySurveyUseCaseProtocol) {
         self.rootViewController = rootViewController
-        self.analyticsEventTracker = analyticsEventTracker
+        self.callQualitySurvey = callQualitySurvey
         super.init()
         
         if let userSession = ZMUserSession.shared() {
@@ -115,12 +115,12 @@ class CallQualityController: NSObject {
         let callDuration = callEndDate.timeIntervalSince(callStartDate)
 
         guard callDuration >= miminumSignificantCallDuration else {
-            analyticsEventTracker.trackEvent(.callQualitySurvey(.notDisplayed(reason: .callTooShort, duration: callDuration)))
+            callQualitySurvey.invoke(.notDisplayed(reason: .callTooShort, duration: callDuration))
             return
         }
 
         guard self.canRequestSurvey(at: callEndDate) else {
-            analyticsEventTracker.trackEvent(.callQualitySurvey(.notDisplayed(reason: .muted, duration: callDuration)))
+            callQualitySurvey.invoke(.notDisplayed(reason: .muted, duration: callDuration))
             return
         }
 
@@ -178,7 +178,7 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         }
 
         CallQualityController.updateLastSurveyDate(Date())
-        analyticsEventTracker.trackEvent(.callQualitySurvey(.answered(score: score, duration: controller.callDuration)))
+        callQualitySurvey.invoke(.answered(score: score, duration: controller.callDuration))
     }
 
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController) {

@@ -276,7 +276,9 @@ public protocol UserSession: AnyObject {
 
     func makeAppendFileMessageUseCase() -> any AppendFileMessageUseCaseProtocol
 
-   func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol
+    func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol
+    
+    func makeCallQualitySurveyUseCase() -> any CallQualitySurveyUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 

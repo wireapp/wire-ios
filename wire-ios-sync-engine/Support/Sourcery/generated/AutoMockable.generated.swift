@@ -31,6 +31,7 @@ import UIKit
 import AppKit
 #endif
 
+import WireAnalytics
 
 @testable import WireSyncEngine
 
@@ -53,6 +54,30 @@ import AppKit
 
 
 
+
+public class MockCallQualitySurveyUseCaseProtocol: CallQualitySurveyUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [CallQualitySurveyReview] = []
+    public var invoke_MockMethod: ((CallQualitySurveyReview) -> Void)?
+
+    public func invoke(_ review: CallQualitySurveyReview) {
+        invoke_Invocations.append(review)
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        mock(review)
+    }
+
+}
 
 public class MockCertificateRevocationListsChecking: CertificateRevocationListsChecking {
 

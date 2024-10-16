@@ -11,6 +11,7 @@
 		0145AE842B1154010097E3B8 /* WireSyncEngineSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0145AE8B2B1155690097E3B8 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549815931A43232400A7CE2E /* WireSyncEngine.framework */; };
 		0145AE902B1155760097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; };
+		014813402CC0522500F36DAA /* CallQualitySurveyUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0148133F2CC0522500F36DAA /* CallQualitySurveyUseCase.swift */; };
 		015519462C20D20800037358 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015519452C20D20800037358 /* WireDomain.framework */; };
 		0155194E2C20D29400037358 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0155194D2C20D29400037358 /* WireDomainSupport.framework */; };
 		017704E42CA4503C00BE69ED /* EnableAnalyticsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017704D92CA44C0D00BE69ED /* EnableAnalyticsUseCaseTests.swift */; };
@@ -869,6 +870,8 @@
 		01300E61296838CE00D18B2E /* SessionManagerTests+Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Proxy.swift"; sourceTree = "<group>"; };
 		0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireSyncEngineSupport.h; sourceTree = "<group>"; };
+		0148133F2CC0522500F36DAA /* CallQualitySurveyUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualitySurveyUseCase.swift; sourceTree = "<group>"; };
+		014813412CC0551500F36DAA /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		015519452C20D20800037358 /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		015519492C20D25300037358 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0155194D2C20D29400037358 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2579,6 +2582,7 @@
 		5996E8992C19CCE1007A52F0 /* Sourcery */ = {
 			isa = PBXGroup;
 			children = (
+				014813412CC0551500F36DAA /* config.yml */,
 				5996E89D2C19CF54007A52F0 /* generated */,
 			);
 			path = Sourcery;
@@ -2985,6 +2989,7 @@
 				E9C0B1E72C58E34000D242D6 /* DisableAnalyticsUseCase.swift */,
 				E9F403142C5B96CD00F81366 /* EnableAnalyticsUseCase.swift */,
 				E91180DE2CA6E86400DD63E2 /* ToggleMessageReactionUseCase.swift */,
+				0148133F2CC0522500F36DAA /* CallQualitySurveyUseCase.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -3847,6 +3852,7 @@
 				166A8BF91E02C7D500F5EEEA /* ZMHotFix+PendingChanges.swift in Sources */,
 				166507812459D7CA005300C1 /* UserClientEventConsumer.swift in Sources */,
 				F9E577211E77EC6D0065EFE4 /* WireCallCenterV3+Notifications.swift in Sources */,
+				014813402CC0522500F36DAA /* CallQualitySurveyUseCase.swift in Sources */,
 				092083401BA95EE100F82B29 /* UserClientRequestFactory.swift in Sources */,
 				59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */,
 				16D74BF42B59670B00160298 /* ChangeUsernameUseCase.swift in Sources */,
